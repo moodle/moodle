@@ -71,11 +71,11 @@ $string['aggregationcoefextra_help'] = 'If the aggregation is \'Natural\' or \'S
 
 If the aggregation is \'Mean of grades (with extra credits)\' and the extra credit is set to a value greater than zero, the extra credit is the factor by which the grade is multiplied before adding it to the total after the computation of the mean.';
 $string['aggregationcoefextra_link'] = 'grade/aggregation';
-$string['aggregationcoefextrasum'] = 'Extra credit'; // for the form with checkboxes: Natural or Simple weighted mean
+$string['aggregationcoefextrasum'] = 'Extra credit'; // For the form with checkboxes: Natural or Simple weighted mean.
 $string['aggregationcoefextrasumabbr'] = '+';
 $string['aggregationcoefextrasum_help'] = 'If the extra credit checkbox is ticked, the grade item\'s maximum grade is not added to the category\'s maximum grade, resulting in the possibility of achieving the maximum grade (or grades over the maximum if enabled by the site administrator) in the category without having the maximum grade in all the grade items.';
 $string['aggregationcoefextrasum_link'] = 'grade/aggregation';
-$string['aggregationcoefextraweight'] = 'Extra credit weight'; // for the form with input: Mean of grades (with extra credits) only
+$string['aggregationcoefextraweight'] = 'Extra credit weight'; // For the form with input: Mean of grades (with extra credits) only.
 $string['aggregationcoefextraweight_help'] = 'If the extra credit weight is set to a value greater than zero, the grade acts as extra credit during aggregation. The number is the factor by which the grade is multiplied before adding it to the total for the computation of the mean.';
 $string['aggregationcoefextraweight_link'] = 'grade/aggregation';
 $string['aggregationcoefweight'] = 'Item weight';
@@ -251,7 +251,7 @@ $string['gradeboundary_help'] = 'This setting determines the minimum percentage 
 $string['gradecategories'] = 'Grade categories';
 $string['gradecategory'] = 'Grade category';
 $string['gradecategoryonmodform'] = 'Grade category';
-$string['gradecategoryonmodform_help'] =  'This setting controls the category in which this activity\'s grades are placed in the gradebook.';
+$string['gradecategoryonmodform_help'] = 'This setting controls the category in which this activity\'s grades are placed in the gradebook.';
 $string['gradecategorysettings'] = 'Grade category settings';
 $string['gradedisplay'] = 'Grade display';
 $string['gradedisplaytype'] = 'Grade display type';

@@ -834,7 +834,7 @@ $string['frontpageformatloggedin'] = 'Front page format when logged in';
 $string['frontpagenews'] = 'News items';
 $string['frontpagesettings'] = 'Front page settings';
 $string['fulllistofcourses'] = 'All courses';
-$string['fullname'] = 'Full name'; // @deprecated - use fullnamecourse or fullnameuser or some own context specific string
+$string['fullname'] = 'Full name'; /* @deprecated - Use fullnamecourse or fullnameuser or some own context specific string. */
 $string['fullnamecourse'] = 'Course full name';
 $string['fullnamecourse_help'] = 'The full name of the course is displayed at the top of each page in the course and in the list of courses.';
 $string['fullnamedisplay'] = '{$a->firstname} {$a->lastname}';
@@ -1606,7 +1606,7 @@ $string['scalestandard_link'] = 'grade/scale';
 $string['scalestip'] = 'To create custom scales, use the \'Scales...\' link in your course administration menu.';
 $string['scalestip2'] = 'To create custom scales, click the Grades link in the course administration menu, then choose Edit, Scales.';
 $string['screenshot'] = 'Screenshot';
-$string['search'] = 'Search'; // TODO MDL-34652 rename to searchforums and move to mod_forum
+$string['search'] = 'Search'; // TODO MDL-34652 rename to searchforums and move to mod_forum.
 $string['search_help'] = 'For basic searching of one or more words anywhere in the text, just type them separated by spaces. All words longer than two characters are used.
 
 For advanced searching, press the search button without typing anything in the search box to access the advanced search form.';
@@ -1674,7 +1674,7 @@ $string['setcategorytheme'] = 'Set category theme';
 $string['setpassword'] = 'Set password';
 $string['setpasswordinstructions'] = 'Please enter and repeat your new password below, then click "Set password". <br />Your new password will be saved, and you will be logged in.';
 $string['settings'] = 'Settings';
-$string['shortname'] = 'Short name'; // @deprecated MDL-34652 - use shortnamecourse or shortnameuser or some own context specific string
+$string['shortname'] = 'Short name'; /* @deprecated MDL-34652 - Use shortnamecourse or shortnameuser or some own context specific string. */
 $string['shortnamecollisionwarning'] = '[*] = This shortname is already in use by a course and will need to be changed upon approval';
 $string['shortnamecourse'] = 'Course short name';
 $string['shortnamecourse_help'] = 'The short name of the course is displayed in the navigation and is used in the subject line of course email messages.';
