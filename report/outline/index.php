@@ -117,7 +117,7 @@ if ($uselegacyreader) {
         $sqllasttime = ", MAX(time) AS lasttime";
     }
     $logactionlike = $DB->sql_like('l.action', ':action');
-    $sql = "SELECT cm.id, COUNT('x') AS numviews $sqllasttime
+    $sql = "SELECT cm.id, COUNT('x') AS numviews, COUNT(DISTINCT userid) AS distinctusers $sqllasttime
               FROM {course_modules} cm
               JOIN {modules} m
                 ON m.id = cm.module
@@ -141,7 +141,7 @@ if ($useinternalreader) {
     if ($showlastaccess) {
         $sqllasttime = ", MAX(timecreated) AS lasttime";
     }
-    $sql = "SELECT contextinstanceid as cmid, COUNT('x') AS numviews $sqllasttime
+    $sql = "SELECT contextinstanceid as cmid, COUNT('x') AS numviews, COUNT(DISTINCT userid) AS distinctusers $sqllasttime
               FROM {" . $logtable . "} l
              WHERE courseid = :courseid
                AND anonymous = 0
@@ -215,7 +215,7 @@ foreach ($modinfo->sections as $sectionnum=>$section) {
         $numviewscell->attributes['class'] = 'numviews';
 
         if (!empty($views[$cm->id]->numviews)) {
-            $numviewscell->text = $views[$cm->id]->numviews;
+            $numviewscell->text = get_string('numviews', 'report_outline', $views[$cm->id]);
         } else {
             $numviewscell->text = '-';
         }
