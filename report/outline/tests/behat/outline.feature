@@ -29,7 +29,6 @@ Feature: View an outline report
       | Name | Book name |
       | Description | Book description |
 
-  @javascript
   Scenario: View the outline report when only the legacy log reader is enabled
     Given I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
     And I click on "Enable" "link" in the "Legacy log" "table_row"
@@ -50,10 +49,9 @@ Feature: View an outline report
     And I log in as "teacher1"
     And I follow "Course 1"
     When I navigate to "Activity report" node in "Course administration > Reports"
-    Then I should see "2" in the "//tbody/tr[(position() mod 2)=1]/child::td[contains(concat(' ', normalize-space(@class),' '),' numviews ')]" "xpath_element"
-    And I should see "1" in the "//tbody/tr[(position() mod 2)=0]/child::td[contains(concat(' ', normalize-space(@class),' '),' numviews ')]" "xpath_element"
+    Then I should see "2 by 2 users" in the "Book name" "table_row"
+    And I should see "1 by 1 users" in the "Forum name" "table_row"
 
-  @javascript
   Scenario: View the outline report when only the standard log reader is enabled
     Given I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
     And "Enable" "link" should exist in the "Legacy log" "table_row"
@@ -73,10 +71,9 @@ Feature: View an outline report
     And I am on site homepage
     And I follow "Course 1"
     When I navigate to "Activity report" node in "Course administration > Reports"
-    Then I should see "2" in the "//tbody/tr[(position() mod 2)=1]/child::td[contains(concat(' ', normalize-space(@class),' '),' numviews ')]" "xpath_element"
-    And I should see "1" in the "//tbody/tr[(position() mod 2)=0]/child::td[contains(concat(' ', normalize-space(@class),' '),' numviews ')]" "xpath_element"
+    Then I should see "2 by 2 users" in the "Book name" "table_row"
+    And I should see "1 by 1 users" in the "Forum name" "table_row"
 
-  @javascript
   Scenario: View the outline report when both the standard and legacy log readers are enabled
     Given I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
     And I click on "Enable" "link" in the "Legacy log" "table_row"
@@ -97,10 +94,9 @@ Feature: View an outline report
     And I log in as "teacher1"
     And I follow "Course 1"
     When I navigate to "Activity report" node in "Course administration > Reports"
-    Then I should see "2" in the "//tbody/tr[(position() mod 2)=1]/child::td[contains(concat(' ', normalize-space(@class),' '),' numviews ')]" "xpath_element"
-    And I should see "1" in the "//tbody/tr[(position() mod 2)=0]/child::td[contains(concat(' ', normalize-space(@class),' '),' numviews ')]" "xpath_element"
+    Then I should see "2 by 2 users" in the "Book name" "table_row"
+    And I should see "1 by 1 users" in the "Forum name" "table_row"
 
-  @javascript
   Scenario: View the outline report when no log reader is enabled
     Given I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
     And "Enable" "link" should exist in the "Legacy log" "table_row"
@@ -109,3 +105,20 @@ Feature: View an outline report
     And I follow "Course 1"
     When I navigate to "Activity report" node in "Course administration > Reports"
     Then I should see "No log reader enabled"
+
+  Scenario: Multiple views from a single user are identified as not distinct
+    Given I log out
+    And I log in as "student1"
+    And I follow "Course 1"
+    And I follow "Forum name"
+    And I follow "Course 1"
+    And I follow "Forum name"
+    And I follow "Course 1"
+    And I follow "Forum name"
+    And I am on site homepage
+    And I log out
+    When I log in as "teacher1"
+    And I follow "Course 1"
+    And I navigate to "Activity report" node in "Course administration > Reports"
+    Then I should see "3 by 1 users" in the "Forum name" "table_row"
+    And I should see "-" in the "Book name" "table_row"
