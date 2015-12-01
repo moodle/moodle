@@ -28,6 +28,9 @@ Feature: Preview a drag-drop into text question
   Scenario: Preview a question using the mouse.
     When I click on "Preview" "link" in the "Drag to text" "table_row"
     And I switch to "questionpreview" window
+    # Increase window size and wait 2 seconds to ensure elements are placed properly by js.
+    And I change window size to "medium"
+    And I wait "2" seconds
     And I drag "quick" to space "1" in the drag and drop into text question
     And I drag "fox" to space "2" in the drag and drop into text question
     And I drag "assiduous" to space "3" in the drag and drop into text question
