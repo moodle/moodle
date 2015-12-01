@@ -23,21 +23,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/ajax'], function($, Ajax) {
+define(['jquery', 'core/ajax', 'core/templates'], function($, Ajax, Templates) {
 
     return /** @alias module:tool_lp/form-cohort-selector */ {
 
         processResults: function(selector, results) {
             var cohorts = [];
             $.each(results, function(index, cohort) {
-                var name = cohort.name;
-                if (cohort.idnumber.length > 0) {
-                    // Add idnumber, but it's not a safe string so we must encode it.
-                    name += ' (' + $('<div/>').text(cohort.idnumber).html() + ')';
-                }
                 cohorts.push({
                     value: cohort.id,
-                    label: name
+                    label: cohort._label
                 });
             });
             return cohorts;
@@ -45,18 +40,37 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
 
         transport: function(selector, query, success, failure) {
             var promise,
-                contextid = parseInt($(selector).data('contextid'), 10);
+                contextid = parseInt($(selector).data('contextid'), 10),
+                includes = $(selector).data('includes');
 
             promise = Ajax.call([{
                 methodname: 'tool_lp_search_cohorts',
                 args: {
                     query: query,
-                    context: { contextid: contextid }
+                    context: { contextid: contextid },
+                    includes: includes
                 }
             }]);
 
             promise[0].then(function(results) {
-                success(results.cohorts);
+                var promises = [],
+                    i = 0;
+
+                // Render the label.
+                $.each(results.cohorts, function(index, cohort) {
+                    promises.push(Templates.render('tool_lp/form-cohort-selector-suggestion', cohort));
+                });
+
+                // Apply the label to the results.
+                return $.when.apply($.when, promises).then(function() {
+                    var args = arguments;
+                    $.each(results.cohorts, function(index, cohort) {
+                        cohort._label = args[i];
+                        i++;
+                    });
+                    success(results.cohorts);
+                });
+
             }, failure);
         }
 

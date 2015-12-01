@@ -18,7 +18,7 @@
  * Class for exporting a cohort summary from an stdClass.
  *
  * @package    tool_lp
- * @copyright  2015 Frédéric Massart - FMCorz.net
+ * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_lp\external;
@@ -29,18 +29,14 @@ use moodle_url;
 /**
  * Class for exporting a cohort summary from an stdClass.
  *
- * @package    tool_lp
- * @copyright  2015 Frédéric Massart - FMCorz.net
+ * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_summary_exporter extends exporter {
+class cohort_summary_exporter extends exporter {
 
-    protected function get_other_values(renderer_base $output) {
-        return array(
-            'fullname' => fullname($this->data),
-            'profileimageurl' => $profileimageurl,
-            'profileimageurlsmall' => $profileimageurlsmall
-        );
+    protected static function define_related() {
+        // Cohorts can exist on a category context.
+        return array('context' => '\\context');
     }
 
     public static function define_properties() {
@@ -52,35 +48,26 @@ class user_summary_exporter extends exporter {
                 'type' => PARAM_TEXT,
             ),
             'idnumber' => array(
-                'type' => PARAM_RAW,
-                'default' => ''
-            ),
-            'description' => array(
-                'type' => PARAM_TEXT,
-                'default' => ''
-            ),
-            'descriptionformat' => array(
-                'type' => PARAM_INT,
-                'default' => FORMAT_HTML
-            ),
-            'component' => array(
                 'type' => PARAM_NOTAGS,
                 'default' => ''
+            ),
+            'visible' => array(
+                'type' => PARAM_BOOL,
             )
         );
     }
 
     public static function define_other_properties() {
         return array(
-            'fullname' => array(
+            'contextname' => array(
                 'type' => PARAM_TEXT
             ),
-            'profileimageurl' => array(
-                'type' => PARAM_URL
-            ),
-            'profileimageurlsmall' => array(
-                'type' => PARAM_URL
-            ),
+        );
+    }
+
+    protected function get_other_values(renderer_base $output) {
+        return array(
+            'contextname' => $this->related['context']->get_context_name()
         );
     }
 }

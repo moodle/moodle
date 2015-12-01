@@ -44,7 +44,8 @@ class template_cohorts extends moodleform {
         $options = array(
             'ajax' => 'tool_lp/form-cohort-selector',
             'multiple' => true,
-            'data-contextid' => $this->_customdata['pagecontextid']
+            'data-contextid' => $this->_customdata['pagecontextid'],
+            'data-includes' => 'parents'
         );
         $mform->addElement('autocomplete', 'cohorts', get_string('selectcohortstosync', 'tool_lp'), array(), $options);
         $mform->addElement('submit', 'submit', get_string('addcohorts', 'tool_lp'));

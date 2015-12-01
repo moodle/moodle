@@ -42,6 +42,7 @@ use required_capability_exception;
 use grade_scale;
 use tool_lp\external\competency_framework_exporter;
 use tool_lp\external\competency_summary_exporter;
+use tool_lp\external\cohort_summary_exporter;
 use tool_lp\external\user_summary_exporter;
 use tool_lp\external\user_competency_exporter;
 use tool_lp\external\user_competency_plan_exporter;
@@ -3543,6 +3544,12 @@ class external extends external_api {
             PARAM_RAW,
             'Query string'
         );
+        $includes = new external_value(
+            PARAM_ALPHA,
+            'What other contexts to fetch the frameworks from. (all, parents, self)',
+            VALUE_DEFAULT,
+            'parents'
+        );
         $limitfrom = new external_value(
             PARAM_INT,
             'limitfrom we are fetching the records from',
@@ -3558,6 +3565,7 @@ class external extends external_api {
         return new external_function_parameters(array(
             'query' => $query,
             'context' => self::get_context_parameters(),
+            'includes' => $includes,
             'limitfrom' => $limitfrom,
             'limitnum' => $limitnum
         ));
@@ -3565,13 +3573,14 @@ class external extends external_api {
 
     /**
      * Search cohorts.
+     * TODO: MDL-52243 Move this function to cohorts/externallib.php
      *
      * @param string $query
      * @param int $limitfrom
      * @param int $limitnum
      * @return array
      */
-    public static function search_cohorts($query, $context, $limitfrom = 0, $limitnum = 25) {
+    public static function search_cohorts($query, $context, $includes = 'parents', $limitfrom = 0, $limitnum = 25) {
         global $DB, $CFG, $PAGE;
         require_once($CFG->dirroot . '/cohort/lib.php');
 
@@ -3579,29 +3588,46 @@ class external extends external_api {
                                             array(
                                                 'query' => $query,
                                                 'context' => $context,
+                                                'includes' => $includes,
                                                 'limitfrom' => $limitfrom,
                                                 'limitnum' => $limitnum,
                                             ));
         $query = $params['query'];
+        $includes = $params['includes'];
         $context = self::get_context_from_params($params['context']);
         $limitfrom = $params['limitfrom'];
         $limitnum = $params['limitnum'];
 
         self::validate_context($context);
-        $results = cohort_get_available_cohorts($context, COHORT_ALL, $limitfrom, $limitnum, $query);
+        $output = $PAGE->get_renderer('tool_lp');
 
-        $cohorts = array();
-        foreach ($results as $record) {
-            $cohorts[] = array(
-                'id' => $record->id,
-                'name' => external_format_string($record->name, $record->contextid),
-                'idnumber' => $record->idnumber,
-            );
+        $manager = has_capability('moodle/cohort:manage', $context);
+        if (!$manager) {
+            require_capability('moodle/cohort:view', $context);
         }
 
-        return array(
-            'cohorts' => $cohorts
-        );
+        if ($includes == 'parents' && !($context instanceof context_system)) {
+            $results = cohort_get_available_cohorts($context, COHORT_ALL, $limitfrom, $limitnum, $query);
+        } else if ($includes == 'parents' || $includes == 'self') {
+            $results = cohort_get_cohorts($context->id, $limitfrom, $limitnum, $query);
+            $results = $results['cohorts'];
+        } else if ($includes == 'all' && ($context instanceof context_system)) {
+            $results = cohort_get_all_cohorts($limitfrom, $limitnum, $query);
+            $results = $results['cohorts'];
+        } else {
+            throw new coding_exception('Invalid parameter value for \'includes\'.');
+        }
+
+        $cohorts = array();
+        foreach ($results as $key => $cohort) {
+            $cohortcontext = context::instance_by_id($cohort->contextid);
+            $exporter = new cohort_summary_exporter($cohort, array('context' => $cohortcontext));
+            $newcohort = $exporter->export($output);
+
+            $cohorts[$key] = $newcohort;
+        }
+
+        return array('cohorts' => $cohorts);
     }
 
     /**
@@ -3610,13 +3636,8 @@ class external extends external_api {
      * @return external_description
      */
     public static function search_cohorts_returns() {
-        global $CFG;
         return new external_single_structure(array(
-            'cohorts' => new external_multiple_structure(new external_single_structure(array(
-                'id' => new external_value(PARAM_INT, 'The cohort ID'),
-                'name' => new external_value(PARAM_TEXT, 'The cohort name'),
-                'idnumber' => new external_value(PARAM_RAW, 'The ID number'),
-            ))),
+            'cohorts' => new external_multiple_structure(cohort_summary_exporter::get_read_structure())
         ));
     }
 }
