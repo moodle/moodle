@@ -422,6 +422,12 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         } else {
             // Updating role.
             $DB->update_record('role', $this->role);
+
+            // This will ensure the course contacts cache is purged so name changes get updated in
+            // the UI. It would be better to do this only when we know that fields affected are
+            // updated. But thats getting into the weeds of the coursecat cache and role edits
+            // should not be that frequent, so here is the ugly brutal approach.
+            coursecat::role_assignment_changed($this->role->id, context_system::instance());
         }
 
         // Assignable contexts.
