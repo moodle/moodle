@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template tool_lp/form-cohort-selector-suggestion
+    @template tool_cohortroles/cohort-in-list
 
-    Moodle template for the list of valid options in an autocomplate form element.
+    Moodle template for displaying a cohort in a list.
 
     Classes required for JS:
     * none
@@ -40,10 +40,4 @@
       "description": "Some users"
     }
 }}
-<span>
-    <span>{{name}}</span>
-    {{#idnumber}}
-    <span><small>{{idnumber}}</small></span>
-    {{/idnumber}}
-    <span><small>( {{contextname}} )</small></span>
-</span>
+{{> tool_lp/form-cohort-selector-suggestion }}
