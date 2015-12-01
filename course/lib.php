@@ -1842,7 +1842,40 @@ function move_section_to($course, $section, $destination, $ignorenumsections = f
  * @return bool whether section was deleted
  */
 function course_delete_section($course, $section, $forcedeleteifnotempty = true) {
-    return course_get_format($course)->delete_section($section, $forcedeleteifnotempty);
+    global $DB;
+
+    // Prepare variables.
+    $courseid = (is_object($course)) ? $course->id : (int)$course;
+    $sectionnum = (is_object($section)) ? $section->section : (int)$section;
+    $section = $DB->get_record('course_sections', array('course' => $courseid, 'section' => $sectionnum));
+    if (!$section) {
+        // No section exists, can't proceed.
+        return false;
+    }
+    $format = course_get_format($course);
+    $sectionname = $format->get_section_name($section);
+
+    // Delete section.
+    $result = $format->delete_section($section, $forcedeleteifnotempty);
+
+    // Trigger an event for course section deletion.
+    if ($result) {
+        $context = context_course::instance($courseid);
+        $event = \core\event\course_section_deleted::create(
+                array(
+                    'objectid' => $section->id,
+                    'courseid' => $courseid,
+                    'context' => $context,
+                    'other' => array(
+                        'sectionnum' => $section->section,
+                        'sectionname' => $sectionname,
+                    )
+                )
+            );
+        $event->add_record_snapshot('course_sections', $section);
+        $event->trigger();
+    }
+    return $result;
 }
 
 /**

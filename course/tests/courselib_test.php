@@ -2009,6 +2009,44 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEventContextNotUsed($event);
     }
 
+    /**
+     * Test that triggering a course_section_deleted event works as expected.
+     */
+    public function test_course_section_deleted_event() {
+        global $USER, $DB;
+        $this->resetAfterTest();
+        $sink = $this->redirectEvents();
+
+        // Create the course with sections.
+        $course = $this->getDataGenerator()->create_course(array('numsections' => 10), array('createsections' => true));
+        $sections = $DB->get_records('course_sections', array('course' => $course->id));
+        $coursecontext = context_course::instance($course->id);
+        $section = array_pop($sections);
+        course_delete_section($course, $section);
+        $events = $sink->get_events();
+        $event = array_pop($events); // Delete section event.
+        $sink->close();
+
+        // Validate event data.
+        $this->assertInstanceOf('\core\event\course_section_deleted', $event);
+        $this->assertEquals('course_sections', $event->objecttable);
+        $this->assertEquals($section->id, $event->objectid);
+        $this->assertEquals($course->id, $event->courseid);
+        $this->assertEquals($coursecontext->id, $event->contextid);
+        $this->assertEquals($section->section, $event->other['sectionnum']);
+        $expecteddesc = "The user with id '{$event->userid}' deleted section number '{$event->other['sectionnum']}' " .
+                "(section name '{$event->other['sectionname']}') for the course with id '{$event->courseid}'";
+        $this->assertEquals($expecteddesc, $event->get_description());
+        $this->assertEquals($section, $event->get_record_snapshot('course_sections', $event->objectid));
+        $this->assertNull($event->get_url());
+
+        // Test legacy data.
+        $sectionnum = $section->section;
+        $expectedlegacydata = array($course->id, "course", "delete section", 'view.php?id=' . $course->id, $sectionnum);
+        $this->assertEventLegacyLogData($expectedlegacydata, $event);
+        $this->assertEventContextNotUsed($event);
+    }
+
     public function test_course_integrity_check() {
         global $DB;
 
