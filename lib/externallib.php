@@ -964,7 +964,7 @@ class external_util {
      * Validate a list of courses, returning the complete course objects for valid courses.
      *
      * @param  array $courseids A list of course ids
-     * @param  array $courses   An array of courses already pre-fetched.
+     * @param  array $courses   An array of courses already pre-fetched, indexed by course id.
      * @return array            An array of courses and the validation warnings
      */
     public static function validate_courses($courseids, $courses = array()) {
