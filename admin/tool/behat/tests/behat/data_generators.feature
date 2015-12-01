@@ -424,9 +424,9 @@ Feature: Set up contextual data for tests
     And the following "grade categories" exist:
       | fullname         | course |
       | Grade category 1 | C1     |
-     And the following "grade items" exist:
-       | itemname                  | course | outcome | gradecategory    |
-       | Test Outcome Grade Item 1 | C1     | OT1     | Grade category 1 |
+    And the following "grade items" exist:
+      | itemname                  | course | outcome | gradecategory    |
+      | Test Outcome Grade Item 1 | C1     | OT1     | Grade category 1 |
     And the following config values are set as admin:
       | enableoutcomes | 1 |
     When I log in as "admin"
@@ -441,3 +441,15 @@ Feature: Set up contextual data for tests
     And I expand all fieldsets
     And "//div[contains(@class, 'fitem')]/div[contains(@class, 'fitemtitle')]/div[contains(@class, fstaticlabel) and contains(., 'Grade category')]/../../div[contains(@class, 'felement') and contains(., 'Grade category 1')]" "xpath_element" should exist
     And I press "Cancel"
+
+  Scenario: Add a block
+    Given the following "courses" exist:
+      | fullname | shortname |
+      | Course 1 | C1        |
+    And the following "blocks" exist:
+      | blockname    | contextlevel | reference | pagetypepattern | defaultregion |
+      | online_users | Course       | C1        | course-view-*   | site-pre      |
+    When I log in as "admin"
+    And I am on site homepage
+    And I follow "Course 1"
+    Then I should see "Online users"
