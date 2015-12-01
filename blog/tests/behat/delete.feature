@@ -28,7 +28,7 @@ Feature: Delete a blog entry
   Scenario: Delete blog post results in post deleted
     Given I follow "Blog post one"
     And I follow "Delete"
-    And I should see "Delete the blog entry 'Blog post one'?"
+    And I should see "Delete this blog entry?"
     When I press "Continue"
     Then I should not see "Blog post one"
     And I should see "Blog post two"
@@ -36,7 +36,7 @@ Feature: Delete a blog entry
   Scenario: Delete confirmation screen works and allows cancel
     Given I follow "Blog post one"
     When I follow "Delete"
-    Then I should see "Delete the blog entry 'Blog post one'?"
+    Then I should see "Delete this blog entry?"
     And I press "Cancel"
     And I should see "Blog post one"
     And I should see "Blog post two"
