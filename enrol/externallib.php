@@ -385,7 +385,10 @@ class core_enrol_external extends external_api {
                             * onlyactive (integer) return only users with active enrolments and matching time restrictions. This option requires \'moodle/course:enrolreview\' on the course context.
                             * userfields (\'string, string, ...\') return only the values of these user fields.
                             * limitfrom (integer) sql limit from.
-                            * limitnumber (integer) maximum number of returned users.', VALUE_DEFAULT, array()),
+                            * limitnumber (integer) maximum number of returned users.
+                            * sortby (string) sort by id, firstname or lastname. For ordering like the site does, use siteorder.
+                            * sortdirection (string) ASC or DESC',
+                            VALUE_DEFAULT, array()),
             )
         );
     }
@@ -417,6 +420,9 @@ class core_enrol_external extends external_api {
         $userfields     = array();
         $limitfrom = 0;
         $limitnumber = 0;
+        $sortby = 'us.id';
+        $sortparams = array();
+        $sortdirection = 'ASC';
         foreach ($options as $option) {
             switch ($option['name']) {
             case 'withcapability':
@@ -439,6 +445,26 @@ class core_enrol_external extends external_api {
                 break;
             case 'limitnumber' :
                 $limitnumber = clean_param($option['value'], PARAM_INT);
+                break;
+            case 'sortby':
+                $sortallowedvalues = array('id', 'firstname', 'lastname', 'siteorder');
+                if (!in_array($option['value'], $sortallowedvalues)) {
+                    throw new invalid_parameter_exception('Invalid value for sortby parameter (value: ' . $option['value'] . '),' .
+                        'allowed values are: ' . implode(',', $sortallowedvalues));
+                }
+                if ($option['value'] == 'siteorder') {
+                    list($sortby, $sortparams) = users_order_by_sql('us');
+                } else {
+                    $sortby = 'us.' . $option['value'];
+                }
+                break;
+            case 'sortdirection':
+                $sortdirection = strtoupper($option['value']);
+                $directionallowedvalues = array('ASC', 'DESC');
+                if (!in_array($sortdirection, $directionallowedvalues)) {
+                    throw new invalid_parameter_exception('Invalid value for sortdirection parameter
+                        (value: ' . $sortdirection . '),' . 'allowed values are: ' . implode(',', $directionallowedvalues));
+                }
                 break;
             }
         }
@@ -503,7 +529,8 @@ class core_enrol_external extends external_api {
                         FROM {user} u $ctxjoin $groupjoin
                        WHERE u.id IN ($enrolledsql)
                   ) q ON q.id = us.id
-                ORDER BY us.id ASC";
+                ORDER BY $sortby $sortdirection";
+        $enrolledparams = array_merge($enrolledparams, $sortparams);
         $enrolledusers = $DB->get_recordset_sql($sql, $enrolledparams, $limitfrom, $limitnumber);
         $users = array();
         foreach ($enrolledusers as $user) {
