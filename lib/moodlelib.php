@@ -2211,7 +2211,7 @@ function date_format_string($date, $format, $tz = 99) {
 
 /**
  * Given a $time timestamp in GMT (seconds since epoch),
- * returns an array that represents the date in user time
+ * returns an array that represents the Gregorian date in user time
  *
  * @package core
  * @category time
