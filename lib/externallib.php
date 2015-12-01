@@ -964,21 +964,28 @@ class external_util {
      * Validate a list of courses, returning the complete course objects for valid courses.
      *
      * @param  array $courseids A list of course ids
+     * @param  array $courses   An array of courses already pre-fetched.
      * @return array            An array of courses and the validation warnings
      */
-    public static function validate_courses($courseids) {
+    public static function validate_courses($courseids, $courses = array()) {
         // Delete duplicates.
         $courseids = array_unique($courseids);
-        $courses = array();
         $warnings = array();
+
+        // Remove courses which are not even requested.
+        $courses =  array_intersect_key($courses, array_flip($courseids));
 
         foreach ($courseids as $cid) {
             // Check the user can function in this context.
             try {
                 $context = context_course::instance($cid);
                 external_api::validate_context($context);
-                $courses[$cid] = get_course($cid);
+
+                if (!isset($courses[$cid])) {
+                    $courses[$cid] = get_course($cid);
+                }
             } catch (Exception $e) {
+                unset($courses[$cid]);
                 $warnings[] = array(
                     'item' => 'course',
                     'itemid' => $cid,

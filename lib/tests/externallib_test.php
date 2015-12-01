@@ -293,6 +293,67 @@ class core_externallib_testcase extends advanced_testcase {
             $this->assertInstanceOf('external_description', $desc->returns_desc);
         }
     }
+
+    public function test_validate_courses() {
+        $this->resetAfterTest(true);
+
+        $c1 = $this->getDataGenerator()->create_course();
+        $c2 = $this->getDataGenerator()->create_course();
+        $c3 = $this->getDataGenerator()->create_course();
+        $u1 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($u1->id, $c1->id);
+        $courseids = array($c1->id, $c2->id, $c3->id);
+
+        $this->setAdminUser();
+        list($courses, $warnings) = external_util::validate_courses($courseids);
+        $this->assertEmpty($warnings);
+        $this->assertCount(3, $courses);
+        $this->assertArrayHasKey($c1->id, $courses);
+        $this->assertArrayHasKey($c2->id, $courses);
+        $this->assertArrayHasKey($c3->id, $courses);
+        $this->assertEquals($c1->id, $courses[$c1->id]->id);
+        $this->assertEquals($c2->id, $courses[$c2->id]->id);
+        $this->assertEquals($c3->id, $courses[$c3->id]->id);
+
+        $this->setUser($u1);
+        list($courses, $warnings) = external_util::validate_courses($courseids);
+        $this->assertCount(2, $warnings);
+        $this->assertEquals($c2->id, $warnings[0]['itemid']);
+        $this->assertEquals($c3->id, $warnings[1]['itemid']);
+        $this->assertCount(1, $courses);
+        $this->assertArrayHasKey($c1->id, $courses);
+        $this->assertArrayNotHasKey($c2->id, $courses);
+        $this->assertArrayNotHasKey($c3->id, $courses);
+        $this->assertEquals($c1->id, $courses[$c1->id]->id);
+    }
+
+    /**
+     * Validate courses can re-use an array of prefetched courses.
+     */
+    public function test_validate_courses_prefetch() {
+        $this->resetAfterTest(true);
+
+        $c1 = $this->getDataGenerator()->create_course();
+        $c2 = $this->getDataGenerator()->create_course();
+        $c3 = $this->getDataGenerator()->create_course();
+        $c4 = $this->getDataGenerator()->create_course();
+        $u1 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($u1->id, $c1->id);
+        $this->getDataGenerator()->enrol_user($u1->id, $c2->id);
+
+        $courseids = array($c1->id, $c2->id, $c3->id);
+        $courses = array($c2->id => $c2, $c3->id => $c3, $c4->id => $c4);
+
+        $this->setUser($u1);
+        list($courses, $warnings) = external_util::validate_courses($courseids, $courses);
+        $this->assertCount(2, $courses);
+        $this->assertCount(1, $warnings);
+        $this->assertArrayHasKey($c1->id, $courses);
+        $this->assertSame($c2, $courses[$c2->id]);
+        $this->assertArrayNotHasKey($c3->id, $courses);
+        // The extra course passed is not returned.
+        $this->assertArrayNotHasKey($c4->id, $courses);
+    }
 }
 
 /*
