@@ -473,7 +473,7 @@ EOD;
      * @param array $options further, block-specific options to control how the block is created.
      * @return stdClass new block_instance record.
      */
-    public function create_block($blockname, $record=null, array $options=null) {
+    public function create_block($blockname, $record=null, array $options=array()) {
         $generator = $this->get_plugin_generator('block_'.$blockname);
         return $generator->create_instance($record, $options);
     }
