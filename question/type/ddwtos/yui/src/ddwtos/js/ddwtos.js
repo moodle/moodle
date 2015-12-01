@@ -41,7 +41,14 @@ Y.extend(DDWTOS_DD, Y.Base, {
         this.clone_drag_items();
         this.initial_place_of_drag_items();
         this.make_drop_zones();
-        Y.later(500, this, this.position_drag_items, [pendingid], true);
+        if (!this.get('readonly')) {
+            Y.later(500, this, this.position_drag_items, [pendingid, true]);
+        } else {
+            Y.later(500, this, this.position_drag_items, [pendingid]);
+            Y.one('window').on('resize', function() {
+                this.position_drag_items(pendingid);
+            }, this);
+        }
     },
     /**
      * put all our selectors in the same place so we can quickly find and change them later
@@ -296,9 +303,12 @@ Y.extend(DDWTOS_DD, Y.Base, {
     remove_drag_from_drop : function (drop) {
         this.place_drag_in_drop(null, drop);
     },
-    position_drag_items : function (pendingid) {
+    position_drag_items : function (pendingid, dotimeout) {
        Y.all(this.selectors.drags()).each(this.position_drag_item, this);
        M.util.js_complete(pendingid);
+       if (dotimeout) {
+           Y.later(500, this, this.position_drag_items, [pendingid, true]);
+       }
     },
     position_drag_item : function (drag) {
         if (!drag.hasClass('yui3-dd-dragging')) {
