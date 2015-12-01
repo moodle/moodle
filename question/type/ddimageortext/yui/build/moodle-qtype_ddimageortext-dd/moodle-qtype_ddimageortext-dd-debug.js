@@ -255,11 +255,11 @@ Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
         this.pendingid = 'qtype_ddimageortext-' + Math.random().toString(36).slice(2); // Random string.
         M.util.js_pending(this.pendingid);
         this.doc = this.doc_structure(this);
-        this.poll_for_image_load(null, false, 0, this.create_all_drag_and_drops);
+        this.poll_for_image_load(null, false, 10, this.create_all_drag_and_drops);
         this.doc.bg_img().after('load', this.poll_for_image_load, this,
-                                                false, 0, this.create_all_drag_and_drops);
+                                                false, 10, this.create_all_drag_and_drops);
         this.doc.drag_item_homes().after('load', this.poll_for_image_load, this,
-                                                false, 0, this.create_all_drag_and_drops);
+                                                false, 10, this.create_all_drag_and_drops);
         Y.later(500, this, this.reposition_drags_for_question, [this.pendingid], true);
     },
 
