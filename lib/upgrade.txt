@@ -1,6 +1,13 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.1 ===
+
+* Plugins can extend the navigation for user by declaring the following callback:
+  <frankenstyle>_extend_navigation_user(navigation_node $parentnode, stdClass $user,
+                                        context_user $context, stdClass $course,
+                                        context_course $coursecontext)
+
 === 3.0 ===
 
 * Minify updated to 2.2.1
