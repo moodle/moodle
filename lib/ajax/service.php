@@ -82,6 +82,12 @@ foreach ($requests as $request) {
         $result = call_user_func_array($callable,
                                        array_values($params));
 
+        // Validate the return parameters.
+        if ($externalfunctioninfo->returns_desc !== null) {
+            $callable = array($externalfunctioninfo->classname, 'clean_returnvalue');
+            $result = call_user_func($callable, $externalfunctioninfo->returns_desc, $result);
+        }
+
         $response['error'] = false;
         $response['data'] = $result;
         $responses[$index] = $response;

@@ -8,6 +8,9 @@ information provided here is intended especially for developers.
                                         context_user $context, stdClass $course,
                                         context_course $coursecontext)
 * The function notify() now throws a debugging message - see MDL-50269.
+* Ajax calls going through lib/ajax/* now validate the return values before sending
+  the response. If the validation does not pass an exception is raised. This behaviour
+  is consistent with web services.
 
 === 3.0 ===
 
