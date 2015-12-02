@@ -145,13 +145,9 @@ Y.extend(DDIMAGEORTEXT_FORM, M.qtype_ddimageortext.dd_base_class, {
                     if (value !== 0) { // No item option is always selectable.
                         var cbel = Y.one('#id_drags_' + (value - 1) + '_infinite');
                         if (cbel && !cbel.get('checked')) {
-                            Y.all('fieldset#id_dropzoneheader select').some(function (selector) {
-                                if (Number(selector.get('value')) === value) {
-                                    optionnode.set('disabled', true);
-                                    return true; // Stop looping.
-                                }
-                                return false;
-                            }, this);
+                            if (this.item_is_allocated_to_dropzone(value)) {
+                                optionnode.set('disabled', true);
+                            }
                         }
                     }
                 }
@@ -161,6 +157,19 @@ Y.extend(DDIMAGEORTEXT_FORM, M.qtype_ddimageortext.dd_base_class, {
 
     stop_selector_events : function () {
         Y.all('fieldset#id_dropzoneheader select').detachAll();
+    },
+
+    /**
+     * Checks if the specified drag item is allocated to a dropzone.
+     *
+     * @method item_is_allocated_to_dropzone
+     * @param {Number} value of the drag item to check
+     * @return {Boolean} true if item is allocated to dropzone
+     */
+    item_is_allocated_to_dropzone: function(itemvalue) {
+        return Y.all('fieldset#id_dropzoneheader select').some(function(selectNode) {
+            return Number(selectNode.get('value')) === itemvalue;
+        });
     },
 
     setup_form_events : function () {
@@ -190,16 +199,8 @@ Y.extend(DDIMAGEORTEXT_FORM, M.qtype_ddimageortext.dd_base_class, {
 
         for (var i = 0; i < this.form.get_form_value('noitems', []); i++) {
             // Change to group selector.
-            Y.all('#fgroup_id_drags_' + i + ' select.draggroup').on(
-                    'change', function () {
-                this.doc.drag_items().remove(true);
-                this.draw_dd_area();
-            }, this);
-            Y.all('#fgroup_id_drags_' + i + ' select.dragitemtype').on(
-                    'change', function () {
-                this.doc.drag_items().remove(true);
-                this.draw_dd_area();
-            }, this);
+            Y.all('#fgroup_id_drags_' + i + ' select.draggroup').on('change', this.redraw_dd_area, this);
+            Y.all('#fgroup_id_drags_' + i + ' select.dragitemtype').on('change', this.redraw_dd_area, this);
             Y.all('fieldset#draggableitemheader_' + i + ' input[type="text"]')
                                 .on('blur', this.set_options_for_drag_item_selectors, this);
             // Change to infinite checkbox.
@@ -214,6 +215,16 @@ Y.extend(DDIMAGEORTEXT_FORM, M.qtype_ddimageortext.dd_base_class, {
             }
             this.draw_dd_area();
         }, M.form_filepicker, 'callback', this);
+    },
+
+    /**
+     * Redraws drag and drop preview area.
+     *
+     * @method redraw_dd_area
+     */
+    redraw_dd_area: function() {
+        this.doc.drag_items().remove(true);
+        this.draw_dd_area();
     },
 
     update_visibility_of_file_pickers : function() {
