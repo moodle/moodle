@@ -510,5 +510,26 @@ function xmldb_tool_lp_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015111020, 'tool', 'lp');
     }
 
+    if ($oldversion < 2015111021) {
+
+        // Define field ruleoutcome to be added to tool_lp_course_competency.
+        $table = new xmldb_table('tool_lp_course_competency');
+        $field = new xmldb_field('ruleoutcome', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, 0, 'competencyid');
+        $index = new xmldb_index('courseidruleoutcome', XMLDB_INDEX_NOTUNIQUE, array('courseid', 'ruleoutcome'));
+
+        // Conditionally launch add field ruleoutcome.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Conditionally launch add index ruleoutcome.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2015111021, 'tool', 'lp');
+    }
+
     return true;
 }

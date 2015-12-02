@@ -31,7 +31,10 @@ use moodle_url;
 use context_system;
 use context_course;
 use tool_lp\api;
+use tool_lp\course_competency;
+use tool_lp\competency;
 use tool_lp\external\competency_exporter;
+use tool_lp\external\course_competency_exporter;
 
 /**
  * Class containing data for course competencies page
@@ -47,8 +50,8 @@ class course_competencies_page implements renderable, templatable {
     /** @var context $context The context for this page. */
     protected $context = null;
 
-    /** @var \tool_lp\competency[] $competencies List of competencies. */
-    protected $competencies = array();
+    /** @var \tool_lp\course_competency[] $competencies List of competencies. */
+    protected $coursecompetencylist = array();
 
     /** @var bool $canmanagecompetencyframeworks Can the current user manage competency frameworks. */
     protected $canmanagecompetencyframeworks = false;
@@ -66,7 +69,7 @@ class course_competencies_page implements renderable, templatable {
     public function __construct($courseid) {
         $this->context = context_course::instance($courseid);
         $this->courseid = $courseid;
-        $this->competencies = api::list_competencies_in_course($courseid);
+        $this->coursecompetencylist = api::list_course_competencies($courseid);
         $this->canmanagecoursecompetencies = has_capability('tool/lp:coursecompetencymanage', $this->context);
 
         // Check the lowest level in which the user can manage the competencies.
@@ -95,16 +98,27 @@ class course_competencies_page implements renderable, templatable {
         $data->courseid = $this->courseid;
         $data->pagecontextid = $this->context->id;
         $data->competencies = array();
-
         $contextcache = array();
-        foreach ($this->competencies as $competency) {
+        $ruleoutcomelist = course_competency::get_ruleoutcome_list();
+        $ruleoutcomeoptions = array();
+        foreach ($ruleoutcomelist as $value => $text) {
+            $ruleoutcomeoptions[] = array('value' => $value, 'text' => (string) $text);
+        }
+        foreach ($this->coursecompetencylist as $coursecompetencyelement) {
+            $coursecompetency = $coursecompetencyelement['coursecompetency'];
+            $competency = $coursecompetencyelement['competency'];
             if (!isset($contextcache[$competency->get_competencyframeworkid()])) {
                 $contextcache[$competency->get_competencyframeworkid()] = $competency->get_context();
             }
             $context = $contextcache[$competency->get_competencyframeworkid()];
-
             $exporter = new competency_exporter($competency, array('context' => $context));
             $record = $exporter->export($output);
+            $exporter = new course_competency_exporter($coursecompetency, array('context' => $context));
+            $recordcoursecompetency = $exporter->export($output);
+            $record->coursecompetencyid = $recordcoursecompetency->id;
+            $record->coursecompetencyoutcomelabel = get_string('coursecompetencyoutcomelabel', 'tool_lp');
+            $record->ruleoutcomeoptions = $ruleoutcomeoptions;
+            $record->ruleoutcomeoptions[$recordcoursecompetency->ruleoutcome]["selected"] = true;
             array_push($data->competencies, $record);
         }
         $data->canmanagecompetencyframeworks = $this->canmanagecompetencyframeworks;
@@ -116,4 +130,5 @@ class course_competencies_page implements renderable, templatable {
 
         return $data;
     }
+
 }

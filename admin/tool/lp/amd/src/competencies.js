@@ -196,6 +196,28 @@ define(['jquery',
      */
     competencies.prototype.registerEvents = function() {
         var localthis = this;
+        $('[data-region="coursecompetenciespage"]').on('change', 'select[name="ruleoutcome"]', function(e){
+            var requests = [];
+            var pagerender = 'tool_lp/course_competencies_page';
+            var pageregion = 'coursecompetenciespage';
+            var coursecompetencyid = $(e.target).data('id') ;
+            var ruleoutcome = $(e.target).val();
+            if (localthis.itemtype == 'course') {
+                requests = ajax.call([
+                    { methodname: 'tool_lp_set_ruleoutcome_course_competency',
+                      args: { coursecompetencyid: coursecompetencyid, ruleoutcome: ruleoutcome } },
+                    { methodname: 'tool_lp_data_for_course_competencies_page',
+                      args: { courseid: localthis.itemid } }
+                ]);
+                
+                requests[1].done(function(context) {
+                    templates.render(pagerender, context).done(function(html, js) {
+                        $('[data-region="' + pageregion + '"]').replaceWith(html);
+                        templates.runTemplateJS(js);
+                    }).fail(notification.exception);
+                }).fail(notification.exception);
+            }
+        });
         $('[data-region="actions"] button').click(function(e) {
             e.preventDefault();
             localthis.pickCompetency();

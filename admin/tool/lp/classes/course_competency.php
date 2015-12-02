@@ -24,6 +24,7 @@
 namespace tool_lp;
 
 use stdClass;
+use lang_string;
 
 /**
  * Class for loading/storing course_competencies from the DB.
@@ -34,6 +35,16 @@ use stdClass;
 class course_competency extends persistent {
 
     const TABLE = 'tool_lp_course_competency';
+
+    /** Course competency ruleoutcome constant. */
+    const OUTCOME_NONE = 0;
+    /** Course competency ruleoutcome constant. */
+    const OUTCOME_EVIDENCE = 1;
+    /** Course competency ruleoutcome constant. */
+    const OUTCOME_RECOMMEND = 2;
+    /** Course competency ruleoutcome constant. */
+    const OUTCOME_COMPLETE = 3;
+
 
     /**
      * Return the definition of the properties of this model.
@@ -51,6 +62,15 @@ class course_competency extends persistent {
             'sortorder' => array(
                 'type' => PARAM_INT
             ),
+            'ruleoutcome' => array(
+                'choices' => array(self::OUTCOME_NONE,
+                    self::OUTCOME_EVIDENCE,
+                    self::OUTCOME_RECOMMEND,
+                    self::OUTCOME_COMPLETE
+                ),
+                'default' => self::OUTCOME_EVIDENCE,
+                'type' => PARAM_INT,
+            ),
         );
     }
 
@@ -63,6 +83,54 @@ class course_competency extends persistent {
         if (($this->get_id() && $this->get_sortorder() === null) || !$this->get_id()) {
             $this->set('sortorder', $this->count_records(array('courseid' => $this->get_courseid())));
         }
+    }
+
+    /**
+     * Return a list of rules.
+     *
+     * @return array
+     */
+    public static function get_ruleoutcome_list() {
+        static $list = null;
+
+        if ($list === null) {
+            $list = array(
+                self::OUTCOME_NONE => self::get_ruleoutcome_name(self::OUTCOME_NONE),
+                self::OUTCOME_EVIDENCE => self::get_ruleoutcome_name(self::OUTCOME_EVIDENCE),
+                self::OUTCOME_RECOMMEND => self::get_ruleoutcome_name(self::OUTCOME_RECOMMEND),
+                self::OUTCOME_COMPLETE => self::get_ruleoutcome_name(self::OUTCOME_COMPLETE));
+        }
+
+        return $list;
+    }
+
+    /**
+     * Human readable rule name.
+     *
+     * @param int $ruleoutcome The value of ruleoutcome.
+     * @return string
+     */
+    public static function get_ruleoutcome_name($ruleoutcome) {
+
+        switch ($ruleoutcome) {
+            case self::OUTCOME_NONE:
+                $strname = 'none';
+                break;
+            case self::OUTCOME_EVIDENCE:
+                $strname = 'evidence';
+                break;
+            case self::OUTCOME_RECOMMEND:
+                $strname = 'recommend';
+                break;
+            case self::OUTCOME_COMPLETE:
+                $strname = 'complete';
+                break;
+            default:
+                throw new \moodle_exception('errorcoursecompetencyrule', 'tool_lp', '', $rule);
+                break;
+        }
+
+        return new lang_string('coursecompetencyoutcome_' . $strname, 'tool_lp');
     }
 
     /**
@@ -169,8 +237,7 @@ class course_competency extends persistent {
                   FROM {' . competency::TABLE . '} comp
                   JOIN {' . self::TABLE . '} coursecomp
                     ON coursecomp.competencyid = comp.id
-                 WHERE coursecomp.courseid = ?
-              ORDER BY coursecomp.sortorder ASC';
+                 WHERE coursecomp.courseid = ?';
         $params = array($courseid);
 
         if ($onlyvisible) {
@@ -178,6 +245,7 @@ class course_competency extends persistent {
             $params[] = 1;
         }
 
+        $sql .= ' ORDER BY coursecomp.sortorder ASC';
         $results = $DB->get_recordset_sql($sql, $params);
         $instances = array();
         foreach ($results as $result) {
@@ -203,6 +271,39 @@ class course_competency extends persistent {
         $table = '{' . self::TABLE . '}';
         $sql = "UPDATE $table SET sortorder = sortorder -1  WHERE courseid = ? AND sortorder > ?";
         $DB->execute($sql, array($this->get_courseid(), $this->get_sortorder()));
+    }
+
+    /**
+     * List the course_competencies in this course.
+     *
+     * @param int $courseid The course id
+     * @param bool $onlyvisible If true, only count visible competencies in this course.
+     * @return course_competency[]
+     */
+    public static function list_course_competencies($courseid, $onlyvisible) {
+        global $DB;
+
+        $sql = 'SELECT coursecomp.*
+                  FROM {' . self::TABLE . '} coursecomp
+                  JOIN {' . competency::TABLE . '} comp
+                    ON coursecomp.competencyid = comp.id
+                 WHERE coursecomp.courseid = ?';
+        $params = array($courseid);
+
+        if ($onlyvisible) {
+            $sql .= ' AND comp.visible = ?';
+            $params[] = 1;
+        }
+
+        $sql .= ' ORDER BY coursecomp.sortorder ASC';
+        $results = $DB->get_recordset_sql($sql, $params);
+        $instances = array();
+        foreach ($results as $result) {
+            array_push($instances, new course_competency(0, $result));
+        }
+        $results->close();
+
+        return $instances;
     }
 
 }

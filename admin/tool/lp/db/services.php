@@ -217,9 +217,9 @@ $functions = array(
         'capabilities' => 'tool/lp:competencymanage',
         'ajax'         => true,
     ),
-    'tool_lp_list_competencies_in_course' => array(
+    'tool_lp_list_course_competencies' => array(
         'classname'    => 'tool_lp\external',
-        'methodname'   => 'list_competencies_in_course',
+        'methodname'   => 'list_course_competencies',
         'classpath'    => '',
         'description'  => 'List the competencies in a course',
         'type'         => 'read',
@@ -276,6 +276,15 @@ $functions = array(
         'methodname'   => 'remove_competency_from_course',
         'classpath'    => '',
         'description'  => 'Remove a competency from a course',
+        'type'         => 'write',
+        'capabilities' => 'tool/lp:coursecompetencymanage',
+        'ajax'         => true,
+    ),
+    'tool_lp_set_ruleoutcome_course_competency' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'set_ruleoutcome_course_competency',
+        'classpath'    => '',
+        'description'  => 'Modify the ruleoutcome value for course competency',
         'type'         => 'write',
         'capabilities' => 'tool/lp:coursecompetencymanage',
         'ajax'         => true,

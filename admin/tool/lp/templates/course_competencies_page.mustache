@@ -27,6 +27,14 @@
     <span class="drag-handlecontainer pull-left"></span>
     <div class="pull-right"><a href="#" data-action="delete-competency-link" data-id="{{id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a></div>
     {{> tool_lp/competency_summary }}
+    {{#coursecompetencyoutcomelabel}}
+        {{coursecompetencyoutcomelabel}}
+        <select name="ruleoutcome" data-id="{{coursecompetencyid}}">
+          {{#ruleoutcomeoptions}}
+             <option value="{{value}}" {{#selected}} selected {{/selected}} >{{text}}</option>
+          {{/ruleoutcomeoptions}}
+        </select>
+    {{/coursecompetencyoutcomelabel}}
     </td>
     </tr>
 {{/competencies}}

@@ -61,6 +61,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The course this competency is linked to."/>
         <FIELD NAME="competencyid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The competency that is linked to this course."/>
+        <FIELD NAME="ruleoutcome" TYPE="int" LENGTH="2" NOTNULL="true" SEQUENCE="false" COMMENT="The rule that applies to the competency when the course is completed."/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The time this link was created."/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The time this link was modified."/>
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user who modified this link."/>
@@ -71,6 +72,9 @@
         <KEY NAME="courseidlink" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" COMMENT="Course foreign key."/>
         <KEY NAME="competencyid" TYPE="foreign" FIELDS="competencyid" REFTABLE="tool_lp_competency" REFFIELDS="id" COMMENT="Competency foreign key."/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseidruleoutcome" UNIQUE="false" FIELDS="courseid, ruleoutcome"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="tool_lp_plan" COMMENT="Learning plans">
       <FIELDS>
