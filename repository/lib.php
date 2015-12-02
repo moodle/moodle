@@ -2752,7 +2752,7 @@ abstract class repository implements cacheable_object {
                     $params['filename']))) {
                 $file->set_missingsource();
             } else {
-                $file->set_synchronized($storedfile->get_contenthash(), $storedfile->get_filesize());
+                $file->set_synchronized($storedfile->get_contenthash(), $storedfile->get_filesize(), 0, $storedfile->get_timemodified());
             }
             return true;
         }

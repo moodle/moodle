@@ -375,7 +375,8 @@ class repository_filesystem extends repository {
                 $filesize = filesize($filepath);
             }
             $issyncing = false;
-            $file->set_synchronized($contenthash, $filesize);
+            $modified = filemtime($filepath);
+            $file->set_synchronized($contenthash, $filesize, 0, $modified);
         } else {
             $file->set_missingsource();
         }

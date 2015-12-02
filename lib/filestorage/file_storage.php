@@ -2196,7 +2196,7 @@ class file_storage {
         $now = time();
         foreach ($rs as $record) {
             $this->update_references($record->id, $now, null,
-                    $storedfile->get_contenthash(), $storedfile->get_filesize(), 0);
+                    $storedfile->get_contenthash(), $storedfile->get_filesize(), 0, $storedfile->get_timemodified());
         }
         $rs->close();
     }
@@ -2414,8 +2414,9 @@ class file_storage {
      * @param string $contenthash
      * @param int $filesize
      * @param int $status 0 if ok or 666 if source is missing
+     * @param int $timemodified last time modified of the source, if known
      */
-    public function update_references($referencefileid, $lastsync, $lifetime, $contenthash, $filesize, $status) {
+    public function update_references($referencefileid, $lastsync, $lifetime, $contenthash, $filesize, $status, $timemodified = null) {
         global $DB;
         $referencefileid = clean_param($referencefileid, PARAM_INT);
         $lastsync = clean_param($lastsync, PARAM_INT);
@@ -2425,9 +2426,10 @@ class file_storage {
         $params = array('contenthash' => $contenthash,
                     'filesize' => $filesize,
                     'status' => $status,
-                    'referencefileid' => $referencefileid);
+                    'referencefileid' => $referencefileid,
+                    'timemodified' => $timemodified);
         $DB->execute('UPDATE {files} SET contenthash = :contenthash, filesize = :filesize,
-            status = :status
+            status = :status ' . ($timemodified ? ', timemodified = :timemodified' : '') . '
             WHERE referencefileid = :referencefileid', $params);
         $data = array('id' => $referencefileid, 'lastsync' => $lastsync);
         $DB->update_record('files_reference', (object)$data);
