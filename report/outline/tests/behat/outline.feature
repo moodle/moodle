@@ -122,3 +122,37 @@ Feature: View an outline report
     And I navigate to "Activity report" node in "Course administration > Reports"
     Then I should see "3 by 1 users" in the "Forum name" "table_row"
     And I should see "-" in the "Book name" "table_row"
+
+  Scenario: Multiple views from multiple users are identified as not distinct
+    Given I log out
+    And I log in as "student1"
+    And I follow "Course 1"
+    And I follow "Forum name"
+    And I follow "Course 1"
+    And I follow "Forum name"
+    And I follow "Course 1"
+    And I follow "Forum name"
+    And I am on site homepage
+    And I log out
+    And I log in as "student2"
+    And I follow "Course 1"
+    And I follow "Forum name"
+    And I follow "Course 1"
+    And I follow "Forum name"
+    And I follow "Course 1"
+    And I follow "Forum name"
+    And I am on site homepage
+    And I log out
+    When I log in as "teacher1"
+    And I follow "Course 1"
+    And I navigate to "Activity report" node in "Course administration > Reports"
+    Then I should see "6 by 2 users" in the "Forum name" "table_row"
+    And I should see "-" in the "Book name" "table_row"
+
+  Scenario: No views from any users
+    Given I log out
+    When I log in as "teacher1"
+    And I follow "Course 1"
+    And I navigate to "Activity report" node in "Course administration > Reports"
+    Then I should see "-" in the "Forum name" "table_row"
+    And I should see "-" in the "Book name" "table_row"
