@@ -141,6 +141,12 @@ abstract class tablelike extends screen {
                 $html .= $this->structure->get_grade_analysis_icon($grade);
             }
 
+            // Singleview users without proper permissions should be presented
+            // disabled checkboxes for the Exclude grade attribute.
+            if ($field == 'exclude' && !has_capability('moodle/grade:manage', $this->context)){
+                $html->locked=TRUE;
+            }
+
             $line[] = $html;
         }
         return $line;
