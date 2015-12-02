@@ -63,8 +63,11 @@ require_once($CFG->dirroot . '/mod/lti/servicelib.php');
 class mod_lti_locallib_testcase extends advanced_testcase {
 
     public function test_split_custom_parameters() {
+        $this->resetAfterTest();
+
         $tool = new stdClass();
         $tool->enabledcapability = '';
+        $tool->parameter = '';
         $this->assertEquals(lti_split_custom_parameters(null, $tool, array(), "x=1\ny=2", false),
             array('custom_x' => '1', 'custom_y' => '2'));
 
@@ -76,6 +79,12 @@ class mod_lti_locallib_testcase extends advanced_testcase {
         $this->assertEquals(lti_split_custom_parameters(null, $tool, array(),
             'Complex!@#$^*(){}[]KEY=Complex!@#$^*;(){}[]½Value', false),
             array('custom_complex____________key' => 'Complex!@#$^*;(){}[]½Value'));
+
+        // Test custom parameter that returns $USER property.
+        $user = $this->getDataGenerator()->create_user(array('middlename' => 'SOMETHING'));
+        $this->setUser($user);
+        $this->assertEquals(array('custom_x' => '1', 'custom_y' => 'SOMETHING'),
+            lti_split_custom_parameters(null, $tool, array(), "x=1\ny=\$Person.name.middle", false));
     }
 
     /**
