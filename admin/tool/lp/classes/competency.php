@@ -28,6 +28,8 @@ use context_system;
 use lang_string;
 use stdClass;
 
+require_once($CFG->libdir . '/grade/grade_scale.php');
+
 /**
  * Class for loading/storing competencies from the DB.
  *

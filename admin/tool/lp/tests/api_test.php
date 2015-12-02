@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 use tool_lp\api;
+use tool_lp\user_competency;
 
 /**
  * API tests.
@@ -1539,6 +1540,84 @@ class tool_lp_api_testcase extends advanced_testcase {
             \tool_lp\course_competency::OUTCOME_NONE));
         $recordscc = api::list_course_competencies($course->id);
         $this->assertEquals(\tool_lp\course_competency::OUTCOME_NONE, $recordscc[0]['coursecompetency']->get_ruleoutcome());
+    }
+
+    /**
+     * Test validation on grade on user_competency.
+     */
+    public function test_validate_grade_in_user_competency() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user = $dg->create_user();
+
+        $dg->create_scale(array("id" => "1", "scale" => "value1, value2"));
+        $dg->create_scale(array("id" => "2", "scale" => "value3, value4, value5, value6"));
+
+        $scaleconfiguration1 = '[{"scaleid":"1"},{"name":"value1","id":1,"scaledefault":1,"proficient":0},' .
+                '{"name":"value2","id":2,"scaledefault":0,"proficient":1}]';
+        $scaleconfiguration2 = '[{"scaleid":"2"},{"name":"value3","id":1,"scaledefault":1,"proficient":0},'
+                . '{"name":"value4","id":2,"scaledefault":0,"proficient":1},'
+                . '{"name":"value5","id":3,"scaledefault":0,"proficient":0},'
+                . '{"name":"value6","id":4,"scaledefault":0,"proficient":0}]';
+
+        // Create a framework with scale configuration1.
+        $frm = array(
+            'scaleid' => 1,
+            'scaleconfiguration' => $scaleconfiguration1
+        );
+        $framework = $lpg->create_framework($frm);
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+
+        // Create competency with its own scale configuration.
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(),
+                                            'scaleid' => 2,
+                                            'scaleconfiguration' => $scaleconfiguration2
+                                        ));
+
+        // Detecte invalid grade in competency using its framework competency scale.
+        try {
+            $usercompetency = new user_competency(0, (object) array('userid' => $user->id, 'competencyid' => $c1->get_id(),
+                'proficiency' => true, 'grade' => 3 ));
+            $usercompetency->create();
+            $this->fail('Invalid grade not detected in framework scale');
+        } catch (\tool_lp\invalid_persistent_exception $e) {
+            $this->assertTrue(true);
+        }
+
+        // Detecte invalid grade in competency using its own scale.
+        try {
+            $usercompetency = new user_competency(0, (object) array('userid' => $user->id, 'competencyid' => $c2->get_id(),
+                'proficiency' => true, 'grade' => 5 ));
+            $usercompetency->create();
+            $this->fail('Invalid grade not detected in competency scale');
+        } catch (\tool_lp\invalid_persistent_exception $e) {
+            $this->assertTrue(true);
+        }
+
+        // Accept valid grade in competency using its framework competency scale.
+        try {
+            $usercompetency = new user_competency(0, (object) array('userid' => $user->id, 'competencyid' => $c1->get_id(),
+                'proficiency' => true, 'grade' => 1 ));
+            $usercompetency->create();
+            $this->assertTrue(true);
+        } catch (\tool_lp\invalid_persistent_exception $e) {
+            $this->fail('Valide grade rejected in framework scale');
+        }
+
+        // Accept valid grade in competency using its framework competency scale.
+        try {
+            $usercompetency = new user_competency(0, (object) array('userid' => $user->id, 'competencyid' => $c2->get_id(),
+                'proficiency' => true, 'grade' => 4 ));
+            $usercompetency->create();
+            $this->assertTrue(true);
+        } catch (\tool_lp\invalid_persistent_exception $e) {
+            var_dump($e);
+            $this->fail('Valide grade rejected in competency scale');
+        }
     }
 
 }
