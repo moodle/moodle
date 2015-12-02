@@ -1,0 +1,25 @@
+<table class="table table-bordered">
+<caption>{{#str}}coursecompetencybreakdownsummary, report_competency{{/str}}</caption>
+<tr>
+<td scope="col"><span class="accesshide">{{#str}}students{{/str}}</span></td>
+{{#competencies}}
+    <th scope="col">
+    {{> tool_lp/competency_summary }}
+    </th>
+{{/competencies}}
+</tr>
+{{#usercompetencies}}
+<tr>
+<th scope="row">
+{{#user}}
+{{> tool_lp/form-user-selector-suggestion }}
+{{/user}}
+</th>
+{{#usercompetencies}}
+<td class="alert {{#proficiency}}alert-success{{/proficiency}}">
+{{> report_competency/user_competency_summary}}
+</td>
+{{/usercompetencies}}
+</tr>
+{{/usercompetencies}}
+</table>

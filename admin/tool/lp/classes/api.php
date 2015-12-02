@@ -741,6 +741,33 @@ class api {
     }
 
     /**
+     * List all the user competencies in a course.
+     *
+     * @param int $courseid The id of the course to check.
+     * @param int $userid The id of the course to check.
+     * @return array of competencies
+     */
+    public static function list_user_competencies_in_course($courseid, $userid) {
+        // First we do a permissions check.
+        $context = context_course::instance($courseid);
+        $onlyvisible = 1;
+
+        $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
+        if (!has_any_capability($capabilities, $context)) {
+             throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
+        }
+
+        if (has_capability('tool/lp:coursecompetencymanage', $context)) {
+            $onlyvisible = 0;
+        }
+
+        // OK - all set.
+        $competencylist = course_competency::list_competencies($courseid, $onlyvisible);
+
+        return user_competency::get_multiple($userid, $competencylist);
+    }
+
+    /**
      * Add a competency to this course.
      *
      * @param int $courseid The id of the course

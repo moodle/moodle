@@ -52,6 +52,14 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' => 'moodle/site:backup'
     ),
+    'tool/lp:coursecompetencygradable' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'student' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/course:isincompletionreports'
+    ),
     'tool/lp:coursecompetencyread' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
