@@ -40,6 +40,9 @@ class exclude extends grade_attribute_format implements be_checked {
     /** @var string $name The name of the input */
     public $name = 'exclude';
 
+    /** @var bool $locked Is the input locked? */
+    public $locked = FALSE;
+
     /**
      * Is it checked?
      *
@@ -47,6 +50,15 @@ class exclude extends grade_attribute_format implements be_checked {
      */
     public function is_checked() {
         return $this->grade->is_excluded();
+    }
+
+    /**
+     * Is it locked?
+     *
+     * @return bool
+     */
+    public function is_locked() {
+        return $this->locked;
     }
 
     /**
@@ -58,7 +70,9 @@ class exclude extends grade_attribute_format implements be_checked {
         return new checkbox_attribute(
             $this->get_name(),
             $this->get_label(),
-            $this->is_checked()
+            $this->is_checked(),
+            // Call checkbox constructor with locked attribute, expects integer.
+            $this->is_locked() ? 1 : 0  
         );
     }
 
