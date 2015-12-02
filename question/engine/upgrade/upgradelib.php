@@ -47,6 +47,8 @@ class question_engine_attempt_upgrader {
     protected $logger;
 
     public function save_usage($preferredbehaviour, $attempt, $qas, $quizlayout) {
+        global $OUTPUT;
+
         $missing = array();
 
         $layout = explode(',', $attempt->layout);
@@ -95,9 +97,10 @@ class question_engine_attempt_upgrader {
         $this->set_quiz_attempt_layout($attempt->uniqueid, implode(',', $layout));
 
         if ($missing) {
-            notify("Question sessions for questions " .
+            $message = "Question sessions for questions " .
                     implode(', ', $missing) .
-                    " were missing when upgrading question usage {$attempt->uniqueid}.");
+                    " were missing when upgrading question usage {$attempt->uniqueid}.";
+            echo $OUTPUT->notification($message);
         }
     }
 

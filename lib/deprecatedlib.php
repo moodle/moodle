@@ -901,15 +901,18 @@ function print_container_end($return=false) {
 /**
  * Print a bold message in an optional color.
  *
- * @deprecated use $OUTPUT->notification instead.
+ * @deprecated since Moodle 2.0 MDL-12345 - use $OUTPUT->notification instead.
+ * @todo MDL-50469 This will be deleted in Moodle 3.3.
  * @param string $message The message to print out
- * @param string $style Optional style to display message text in
+ * @param string $classes Optional style to display message text in
  * @param string $align Alignment option
  * @param bool $return whether to return an output string or echo now
  * @return string|bool Depending on $result
  */
 function notify($message, $classes = 'notifyproblem', $align = 'center', $return = false) {
     global $OUTPUT;
+
+    debugging('notify() is deprecated, please use $OUTPUT->notification() instead', DEBUG_DEVELOPER);
 
     if ($classes == 'green') {
         debugging('Use of deprecated class name "green" in notify. Please change to "notifysuccess".', DEBUG_DEVELOPER);
