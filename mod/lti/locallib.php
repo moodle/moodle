@@ -868,7 +868,7 @@ function lti_parse_custom_parameter($toolproxy, $tool, $params, $value, $islti2)
                             $value = $params[$val];
                         } else {
                             $valarr = explode('->', substr($val, 1), 2);
-                            $value = "{${$valarr[0]}->$valarr[1]}";
+                            $value = "{${$valarr[0]}->{$valarr[1]}}";
                             $value = str_replace('<br />' , ' ', $value);
                             $value = str_replace('<br>' , ' ', $value);
                             $value = format_string($value);
