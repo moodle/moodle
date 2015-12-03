@@ -358,12 +358,20 @@ class submissions_table extends table_sql {
         }
 
         $buttontext = '';
+        // Check if the user submitted the assignment.
+        $submitted = !is_null($data->timemarked);
+
         if ($data->timemarked > 0) {
             $class = 's1';
             $buttontext = get_string('update');
         } else {
             $class = 's0';
             $buttontext  = get_string('grade');
+        }
+
+        if (!$submitted) {
+            $class ='s1';
+            $buttontext = get_string('nosubmission', 'kalvidassign');
         }
 
         $attr = array('id' => 'up'.$data->id,
@@ -727,11 +735,11 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
 
         // Compare student who have submitted to the assignment with students who are
         // currently enrolled in the course
-        $students = kalvidassign_get_assignment_students($cm);
-        $users = array_intersect(array_keys($users), array_keys($students));
+        $students = array_keys(kalvidassign_get_assignment_students($cm));
+        $users = array_intersect(array_keys($users), $students);
 
-        if (empty($users)) {
-            echo html_writer::tag('p', get_string('nosubmissionsforgrading', 'kalvidassign'));
+        if (empty($students)) {
+            echo html_writer::tag('p', get_string('noenrolledstudents', 'kalvidassign'));
             return;
         }
 
@@ -821,7 +829,7 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
         $columns = user_picture::fields('u').', kvs.id AS submitid, ';
         $columns .= ' kvs.grade, kvs.submissioncomment, kvs.timemodified, kvs.entry_id, kvs.source, kvs.width, kvs.height, kvs.timemarked, ';
         $columns .= 'kvs.metadata, 1 AS status, 1 AS selectgrade'.$groupscolumn;
-        $where .= ' u.deleted = 0 AND u.id IN ('.implode(',', $users).') '.$groupswhere;
+        $where .= ' u.deleted = 0 AND u.id IN ('.implode(',', $students).') '.$groupswhere;
 
         $param['instanceid'] = $cm->instance;
         $from = "{user} u LEFT JOIN {kalvidassign_submission} kvs ON kvs.userid = u.id AND kvs.vidassignid = :instanceid ".$groupsjoin;
