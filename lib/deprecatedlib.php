@@ -901,7 +901,7 @@ function print_container_end($return=false) {
 /**
  * Print a bold message in an optional color.
  *
- * @deprecated since Moodle 2.0 MDL-12345 - use $OUTPUT->notification instead.
+ * @deprecated since Moodle 2.0 MDL-19077 - use $OUTPUT->notification instead.
  * @todo MDL-50469 This will be deleted in Moodle 3.3.
  * @param string $message The message to print out
  * @param string $classes Optional style to display message text in
