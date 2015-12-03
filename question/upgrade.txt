@@ -1,5 +1,11 @@
 This files describes API changes for code that uses the question API.
 
+=== 3.1 ===
+
+1) The argument $requirecourseid was removed from question_edit_setup() and
+   is no longer respected. The behaviour was found to be buggy and now throws
+   debugging notices if passed.
+
 === 2.9 ===
 
 1) Some functions in questionlib.php which were deprecated in the past have now
