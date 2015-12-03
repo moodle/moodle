@@ -280,9 +280,9 @@ $functions = array(
         'capabilities' => 'tool/lp:coursecompetencymanage',
         'ajax'         => true,
     ),
-    'tool_lp_set_ruleoutcome_course_competency' => array(
+    'tool_lp_set_course_competency_ruleoutcome' => array(
         'classname'    => 'tool_lp\external',
-        'methodname'   => 'set_ruleoutcome_course_competency',
+        'methodname'   => 'set_course_competency_ruleoutcome',
         'classpath'    => '',
         'description'  => 'Modify the ruleoutcome value for course competency',
         'type'         => 'write',

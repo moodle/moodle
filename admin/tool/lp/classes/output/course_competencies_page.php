@@ -99,11 +99,13 @@ class course_competencies_page implements renderable, templatable {
         $data->pagecontextid = $this->context->id;
         $data->competencies = array();
         $contextcache = array();
+
         $ruleoutcomelist = course_competency::get_ruleoutcome_list();
         $ruleoutcomeoptions = array();
         foreach ($ruleoutcomelist as $value => $text) {
-            $ruleoutcomeoptions[] = array('value' => $value, 'text' => (string) $text);
+            $ruleoutcomeoptions[$value] = array('value' => $value, 'text' => (string) $text, 'selected' => false);
         }
+
         foreach ($this->coursecompetencylist as $coursecompetencyelement) {
             $coursecompetency = $coursecompetencyelement['coursecompetency'];
             $competency = $coursecompetencyelement['competency'];
@@ -111,16 +113,19 @@ class course_competencies_page implements renderable, templatable {
                 $contextcache[$competency->get_competencyframeworkid()] = $competency->get_context();
             }
             $context = $contextcache[$competency->get_competencyframeworkid()];
-            $exporter = new competency_exporter($competency, array('context' => $context));
-            $record = $exporter->export($output);
-            $exporter = new course_competency_exporter($coursecompetency, array('context' => $context));
-            $recordcoursecompetency = $exporter->export($output);
-            $record->coursecompetencyid = $recordcoursecompetency->id;
-            $record->coursecompetencyoutcomelabel = get_string('coursecompetencyoutcomelabel', 'tool_lp');
-            $record->ruleoutcomeoptions = $ruleoutcomeoptions;
-            $record->ruleoutcomeoptions[$recordcoursecompetency->ruleoutcome]["selected"] = true;
-            array_push($data->competencies, $record);
+
+            $compexporter = new competency_exporter($competency, array('context' => $context));
+            $ccexporter = new course_competency_exporter($coursecompetency, array('context' => $context));
+
+            $ccoutcomeoptions = (array) (object) $ruleoutcomeoptions;
+            $ccoutcomeoptions[$coursecompetency->get_ruleoutcome()]['selected'] = true;
+            array_push($data->competencies, array(
+                'competency' => $compexporter->export($output),
+                'coursecompetency' => $ccexporter->export($output),
+                'ruleoutcomeoptions' => $ccoutcomeoptions
+            ));
         }
+
         $data->canmanagecompetencyframeworks = $this->canmanagecompetencyframeworks;
         $data->canmanagecoursecompetencies = $this->canmanagecoursecompetencies;
         $data->manageurl = null;

@@ -88,7 +88,7 @@ class course_competency extends persistent {
     /**
      * Return a list of rules.
      *
-     * @return array
+     * @return array Indexed by outcome value.
      */
     public static function get_ruleoutcome_list() {
         static $list = null;
@@ -108,7 +108,7 @@ class course_competency extends persistent {
      * Human readable rule name.
      *
      * @param int $ruleoutcome The value of ruleoutcome.
-     * @return string
+     * @return lang_string
      */
     public static function get_ruleoutcome_name($ruleoutcome) {
 
@@ -228,7 +228,7 @@ class course_competency extends persistent {
      *
      * @param int $courseid The course id
      * @param bool $onlyvisible If true, only count visible competencies in this course.
-     * @return competency[]
+     * @return competency[] Indexed by competency ID.
      */
     public static function list_competencies($courseid, $onlyvisible) {
         global $DB;
@@ -249,7 +249,8 @@ class course_competency extends persistent {
         $results = $DB->get_recordset_sql($sql, $params);
         $instances = array();
         foreach ($results as $result) {
-            array_push($instances, new competency(0, $result));
+            $comp = new competency(0, $result);
+            $instances[$comp->get_id()] = $comp;
         }
         $results->close();
 

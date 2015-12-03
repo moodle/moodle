@@ -22,19 +22,31 @@
 <table class="generaltable fullwidth managecompetencies">
 <tbody class="drag-parentnode">
 {{#competencies}}
-    <tr class="drag-samenode" data-id="{{id}}">
+    <tr class="drag-samenode" data-id="{{competency.id}}">
     <td>
-    <span class="drag-handlecontainer pull-left"></span>
-    <div class="pull-right"><a href="#" data-action="delete-competency-link" data-id="{{id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a></div>
-    {{> tool_lp/competency_summary }}
-    {{#coursecompetencyoutcomelabel}}
-        {{coursecompetencyoutcomelabel}}
-        <select name="ruleoutcome" data-id="{{coursecompetencyid}}">
-          {{#ruleoutcomeoptions}}
-             <option value="{{value}}" {{#selected}} selected {{/selected}} >{{text}}</option>
-          {{/ruleoutcomeoptions}}
-        </select>
-    {{/coursecompetencyoutcomelabel}}
+        {{#canmanagecoursecompetencies}}
+        <span class="drag-handlecontainer pull-left"></span>
+        <div class="pull-right">
+            <a href="#" data-action="delete-competency-link" data-id="{{competency.id}}">
+                {{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}
+            </a>
+        </div>
+        {{/canmanagecoursecompetencies}}
+        {{#competency}}
+            {{> tool_lp/competency_summary }}
+        {{/competency}}
+        {{#canmanagecoursecompetencies}}
+        <div data-region="coursecompetency-ruleoutcome">
+            <label>
+                {{#str}}uponcoursecompletion, tool_lp{{/str}}
+                <select name="ruleoutcome" data-id="{{coursecompetency.id}}">
+                  {{#ruleoutcomeoptions}}
+                     <option value="{{value}}" {{#selected}}selected{{/selected}}>{{text}}</option>
+                  {{/ruleoutcomeoptions}}
+                </select>
+            </label>
+        </div>
+        {{/canmanagecoursecompetencies}}
     </td>
     </tr>
 {{/competencies}}

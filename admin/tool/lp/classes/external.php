@@ -1556,11 +1556,18 @@ class external extends external_api {
     public static function data_for_course_competencies_page_returns() {
         return new external_single_structure(array (
             'courseid' => new external_value(PARAM_INT, 'The current course id'),
+            'pagecontextid' => new external_value(PARAM_INT, 'The current page context ID.'),
             'canmanagecompetencyframeworks' => new external_value(PARAM_BOOL, 'User can manage competency frameworks'),
             'canmanagecoursecompetencies' => new external_value(PARAM_BOOL, 'User can manage linked course competencies'),
-            'competencies' => new external_multiple_structure(
-                competency_exporter::get_read_structure()
-            ),
+            'competencies' => new external_multiple_structure(new external_single_structure(array(
+                'competency' => competency_exporter::get_read_structure(),
+                'coursecompetency' => competency_exporter::get_read_structure(),
+                'ruleoutcomeoptions' => new external_single_structure(array(
+                    'value' => new external_value(PARAM_INT, 'The option value'),
+                    'text' => new external_value(PARAM_NOTAGS, 'The name of the option'),
+                    'selected' => new external_value(PARAM_BOOL, 'If this is the currently selected option'),
+                ))
+            ))),
             'manageurl' => new external_value(PARAM_LOCALURL, 'Url to the manage competencies page.'),
         ));
 
@@ -3659,7 +3666,7 @@ class external extends external_api {
      *
      * @return \external_function_parameters
      */
-    public static function set_ruleoutcome_course_competency_parameters() {
+    public static function set_course_competency_ruleoutcome_parameters() {
         $coursecompetencyid = new external_value(
             PARAM_INT,
             'Data base record id for the course competency',
@@ -3686,8 +3693,8 @@ class external extends external_api {
      * @param int $ruleoutcome The ruleoutcome value
      * @return bool
      */
-    public static function set_ruleoutcome_course_competency($coursecompetencyid, $ruleoutcome) {
-        $params = self::validate_parameters(self::set_ruleoutcome_course_competency_parameters(),
+    public static function set_course_competency_ruleoutcome($coursecompetencyid, $ruleoutcome) {
+        $params = self::validate_parameters(self::set_course_competency_ruleoutcome_parameters(),
                                             array(
                                                 'coursecompetencyid' => $coursecompetencyid,
                                                 'ruleoutcome' => $ruleoutcome,
@@ -3696,7 +3703,7 @@ class external extends external_api {
         $coursecompetency = new course_competency($params['coursecompetencyid']);
         self::validate_context(context_course::instance($coursecompetency->get_courseid()));
 
-        return api::set_ruleoutcome_course_competency($params['coursecompetencyid'], $params['ruleoutcome']);
+        return api::set_course_competency_ruleoutcome($coursecompetency, $params['ruleoutcome']);
     }
 
     /**
@@ -3704,7 +3711,7 @@ class external extends external_api {
      *
      * @return \external_value
      */
-    public static function set_ruleoutcome_course_competency_returns() {
+    public static function set_course_competency_ruleoutcome_returns() {
         return new external_value(PARAM_BOOL, 'True if the update was successful');
     }
 
