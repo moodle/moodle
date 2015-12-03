@@ -25,6 +25,7 @@
 
 use tool_lp\competency;
 use tool_lp\competency_framework;
+use tool_lp\course_competency;
 use tool_lp\plan;
 use tool_lp\related_competency;
 use tool_lp\template;
@@ -211,6 +212,26 @@ class tool_lp_generator_testcase extends advanced_testcase {
         $e = $lpg->create_evidence(array('usercompetencyid' => $rc2->get_id()));
         $this->assertEquals(2, evidence::count_records());
         $this->assertInstanceOf('\tool_lp\evidence', $e);
+    }
+
+    public function test_create_course_competency() {
+        $this->resetAfterTest(true);
+
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $this->assertEquals(0, course_competency::count_records());
+        $rc = $lpg->create_course_competency(array('competencyid' => $c1->get_id(), 'courseid' => $course1->id));
+        $rc = $lpg->create_course_competency(array('competencyid' => $c2->get_id(), 'courseid' => $course1->id));
+        $this->assertEquals(2, course_competency::count_records(array('courseid' => $course1->id)));
+        $this->assertEquals(0, course_competency::count_records(array('courseid' => $course2->id)));
+        $rc = $lpg->create_course_competency(array('competencyid' => $c3->get_id(), 'courseid' => $course2->id));
+        $this->assertEquals(1, course_competency::count_records(array('courseid' => $course2->id)));
+        $this->assertInstanceOf('\tool_lp\course_competency', $rc);
     }
 
 }

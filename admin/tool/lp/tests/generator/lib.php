@@ -25,6 +25,7 @@
 
 use tool_lp\competency;
 use tool_lp\competency_framework;
+use tool_lp\course_competency;
 use tool_lp\external;
 use tool_lp\plan;
 use tool_lp\related_competency;
@@ -391,6 +392,28 @@ class tool_lp_generator extends component_generator_base {
         $evidence->create();
 
         return $evidence;
+    }
+
+    /**
+     * Create a new course competency.
+     *
+     * @param array|stdClass $record
+     * @return user_competency
+     */
+    public function create_course_competency($record = null) {
+        $record = (object) $record;
+
+        if (!isset($record->courseid)) {
+            throw new coding_exception('The courseid value is required.');
+        }
+        if (!isset($record->competencyid)) {
+            throw new coding_exception('The competencyid value is required.');
+        }
+
+        $cc = new course_competency(0, $record);
+        $cc->create();
+
+        return $cc;
     }
 
 }
