@@ -199,7 +199,7 @@ define(['jquery',
 
         if (localthis.itemtype == 'course') {
             // Course completion rule handling.
-            $('[data-region="coursecompetenciespage"]').on('change', 'select[name="ruleoutcome"]', function(e){
+            $('[data-region="coursecompetenciespage"]').on('change', 'select[data-field="ruleoutcome"]', function(e){
                 var requests = [];
                 var pagerender = 'tool_lp/course_competencies_page';
                 var pageregion = 'coursecompetenciespage';

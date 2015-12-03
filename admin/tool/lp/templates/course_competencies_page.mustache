@@ -39,7 +39,7 @@
         <div data-region="coursecompetency-ruleoutcome">
             <label>
                 {{#str}}uponcoursecompletion, tool_lp{{/str}}
-                <select name="ruleoutcome" data-id="{{coursecompetency.id}}">
+                <select data-field="ruleoutcome" data-id="{{coursecompetency.id}}">
                   {{#ruleoutcomeoptions}}
                      <option value="{{value}}" {{#selected}}selected{{/selected}}>{{text}}</option>
                   {{/ruleoutcomeoptions}}
