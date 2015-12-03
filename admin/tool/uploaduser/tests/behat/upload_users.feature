@@ -1,4 +1,4 @@
-@core @core_admin @_file_upload
+@tool @tool_uploaduser @_file_upload
 Feature: Upload users
   In order to add users to the system
   As an admin
@@ -39,3 +39,25 @@ Feature: Upload users
     And I follow "Groups"
     And I set the field "groups" to "Section 1 (1)"
     And the "members" select box should contain "Tom Jones"
+
+  @javascript
+  Scenario: Upload users with custom profile fields
+    # Create user profile field.
+    Given I log in as "admin"
+    And I navigate to "User profile fields" node in "Site administration > Users > Accounts"
+    And I set the field "datatype" to "Text area"
+    And I set the following fields to these values:
+      | Short name | superfield  |
+      | Name       | Super field |
+    And I click on "Save changes" "button"
+    # Upload users.
+    When I navigate to "Upload users" node in "Site administration > Users > Accounts"
+    And I upload "lib/tests/fixtures/upload_users_profile.csv" file to "File" filemanager
+    And I press "Upload users"
+    And I press "Upload users"
+    # Check that users were created and the superfield is filled.
+    And I navigate to "Browse list of users" node in "Site administration > Users > Accounts"
+    And I follow "Tom Jones"
+    And I should see "Super field"
+    And I should see "The big guy"
+    And I log out
