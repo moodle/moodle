@@ -27,7 +27,9 @@
                 {{^iscompleted}}
                     <th scope="col">{{#str}}state, tool_lp{{/str}}</th>
                 {{/iscompleted}}
-                <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
+                {{#canmanage}}
+                    <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
+                {{/canmanage}}
             </tr>
         </thead>
         <tbody  class="drag-parentnode">
@@ -50,15 +52,15 @@
                     <td>{{usercompetency.proficiencyname}}</td>
                     <td>{{usercompetency.statusname}}</td>
                 {{/iscompleted}}
-                <td>
-                    {{#canmanage}}
-                    {{#canbeedited}}
-                    <div class="pull-left">
-                        <a href="#" data-action="delete-competency-link" data-id="{{id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
-                    </div>
-                    {{/canbeedited}}
-                    {{/canmanage}}
-                </td>
+                {{#canmanage}}
+                    <td>
+                        {{#canbeedited}}
+                        <div class="pull-left">
+                            <a href="#" data-action="delete-competency-link" data-id="{{id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
+                        </div>
+                        {{/canbeedited}}
+                    </td>
+                {{/canmanage}}
             </tr>
             {{/competencies}}
         </tbody>

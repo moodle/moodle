@@ -40,7 +40,9 @@
         <tr>
             <th scope="col">{{#str}}planname, tool_lp{{/str}}</th>
             <th scope="col">{{#str}}status, tool_lp{{/str}}</th>
+            {{#usercanupdate}}
             <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
+            {{/usercanupdate}}
         </tr>
     </thead>
     <tbody>
@@ -50,8 +52,8 @@
                 <span><a href="{{pluginbaseurl}}/plan.php?id={{id}}">{{name}}</a></span>
             </td>
             <td>{{statusname}}</td>
+            {{#usercanupdate}}
             <td>
-                {{#usercanupdate}}
                 <div style="display: inline-block;">
                 <ul title="{{#str}}edit{{/str}}" class="planactions">
                 <li>
@@ -59,7 +61,7 @@
                     <ul class="dropdown-menu">
                     <li {{^canbeedited}} class="disabled" {{/canbeedited}}>
                         <a href="{{#canbeedited}}
-                                    {{pluginbaseurl}}/editplan.php?id={{id}}&userid={{userid}}
+                                    {{pluginbaseurl}}/editplan.php?id={{id}}&amp;userid={{userid}}
                                  {{/canbeedited}}
                                  {{^canbeedited}}
                                     #
@@ -89,8 +91,8 @@
                     </li>
                     </ul>
                 </ul>
-                {{/usercanupdate}}
             </div>
+            {{/usercanupdate}}
             </td>
         </tr>
         {{/plans}}
