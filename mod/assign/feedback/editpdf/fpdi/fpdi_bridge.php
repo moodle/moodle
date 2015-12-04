@@ -29,8 +29,10 @@ if (!class_exists('TCPDF', false)) {
 
     /**
      * Class fpdi_bridge
+     *
+     * This has been modified to use the Moodle pdf class which in turn extends the TCPDF class.
      */
-    class fpdi_bridge extends TCPDF
+    class fpdi_bridge extends pdf
     {
         /**
          * Array of Tpl-Data
