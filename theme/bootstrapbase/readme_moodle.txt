@@ -12,8 +12,7 @@ To update to the latest release of twitter bootstrap:
 * download the new less files and store them in less/bootstrap
 * Apply change in MDL-42195 (We don't want responsive images by default).
 * Apply change in MDL-48328 (We need to reset the width of the container directly, in ./less/bootstrap/navbar.less, using the calculated value found in ./less/bootstrap/mixin.less).
-* regenerate files using recess: recess --compile --compress moodle.less > ../style/moodle.css **
-* regenerate files using recess: recess --compile --compress editor.less > ../style/editor.css **
+* regenerate css files using grunt
 * update ./thirdpartylibs.xml
 
 ** If you want to make changes to the .css generated from these .less files then you
