@@ -36,7 +36,7 @@ $string['cliincorrectvalueerror'] = 'שגיאה: ערך לא תקין
 "{$a->value}" עבור "{$a->option}"';
 $string['cliincorrectvalueretry'] = 'ערך שגוי, נסה שנית';
 $string['clitypevalue'] = 'סוג הערך';
-$string['clitypevaluedefault'] = 'סוג הערך, הקש Enter לשימוש בערך ברירת מחדל ({$a})';
+$string['clitypevaluedefault'] = 'יש להזין ערך, או להקיש על כפתור Enter לשימוש בערך בררת־המחדל ({$a})';
 $string['cliunknowoption'] = 'אפשרויות לא מוכרות :
 {$a}
 אנא השתמש באפשרות העזרה.';
