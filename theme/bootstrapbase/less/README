@@ -7,9 +7,9 @@ is using grunt.
 
 See https://docs.moodle.org/dev/Grunt for details of how to install grunt.
 
-Once grunt is installed run the 'less' task:
+Once grunt is installed run the 'css' task:
 
- $ grunt less
+ $ grunt css
 
 And the css files will be compiled.
 
