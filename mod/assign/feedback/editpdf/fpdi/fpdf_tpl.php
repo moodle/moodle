@@ -1,21 +1,12 @@
 <?php
-//
-//  FPDI - Version 1.5.4
-//
-//    Copyright 2004-2015 Setasign - Jan Slabon
-//
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
-//
+/**
+ * This file is part of FPDI
+ *
+ * @package   FPDI
+ * @copyright Copyright (c) 2015 Setasign - Jan Slabon (http://www.setasign.com)
+ * @license   http://opensource.org/licenses/mit-license The MIT License
+ * @version   1.6.1
+ */
 
 if (!class_exists('fpdi_bridge')) {
     require_once('fpdi_bridge.php');
@@ -256,7 +247,7 @@ class FPDF_TPL extends fpdi_bridge
         );
 
         $this->_out(sprintf('q %.4F 0 0 %.4F %.4F %.4F cm',
-                $tplData['scaleX'], $tplData['scaleY'], $tplData['tx'] * $this->k, $tplData['ty'] * $this->k)
+            $tplData['scaleX'], $tplData['scaleY'], $tplData['tx'] * $this->k, $tplData['ty'] * $this->k)
         ); // Translate
         $this->_out(sprintf('%s%d Do Q', $this->tplPrefix, $tplIdx));
 
@@ -362,7 +353,7 @@ class FPDF_TPL extends fpdi_bridge
      * @see http://fpdf.org/en/doc/addpage.htm
      * @see http://www.tcpdf.org/doc/code/classTCPDF.html#a5171e20b366b74523709d84c349c1ced
      */
-    public function AddPage($orientation = '', $format = '', $keepmargins = false, $tocpage = false)
+    public function AddPage($orientation = '', $format = '', $rotationOrKeepmargins = false, $tocpage = false)
     {
         if (is_subclass_of($this, 'TCPDF')) {
             $args = func_get_args();
@@ -373,7 +364,7 @@ class FPDF_TPL extends fpdi_bridge
             throw new LogicException('Adding pages in templates is not possible!');
         }
 
-        parent::AddPage($orientation, $format);
+        parent::AddPage($orientation, $format, $rotationOrKeepmargins);
     }
 
     /**

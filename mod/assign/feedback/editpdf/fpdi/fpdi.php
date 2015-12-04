@@ -1,21 +1,12 @@
 <?php
-//
-//  FPDI - Version 1.5.4
-//
-//    Copyright 2004-2015 Setasign - Jan Slabon
-//
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
-//
+/**
+ * This file is part of FPDI
+ *
+ * @package   FPDI
+ * @copyright Copyright (c) 2015 Setasign - Jan Slabon (http://www.setasign.com)
+ * @license   http://opensource.org/licenses/mit-license The MIT License
+ * @version   1.6.1
+ */
 
 if (!class_exists('FPDF_TPL')) {
     require_once('fpdf_tpl.php');
@@ -31,7 +22,7 @@ class FPDI extends FPDF_TPL
      *
      * @string
      */
-    const VERSION = '1.5.3';
+    const VERSION = '1.6.1';
 
     /**
      * Actual filename
@@ -129,7 +120,7 @@ class FPDI extends FPDF_TPL
         if (!class_exists('fpdi_pdf_parser')) {
             require_once('fpdi_pdf_parser.php');
         }
-    	return new fpdi_pdf_parser($filename);
+        return new fpdi_pdf_parser($filename);
     }
     
     /**
@@ -139,8 +130,8 @@ class FPDI extends FPDF_TPL
      */
     public function getPdfVersion()
     {
-		return $this->PDFVersion;
-	}
+        return $this->PDFVersion;
+    }
     
     /**
      * Set the PDF version.
@@ -151,7 +142,7 @@ class FPDI extends FPDF_TPL
     {
         $this->PDFVersion = sprintf('%.1F', $version);
     }
-	
+    
     /**
      * Import a page.
      *
@@ -243,7 +234,7 @@ class FPDI extends FPDF_TPL
         $rotation = $parser->getPageRotation($pageNo);
         $tpl['_rotationAngle'] = 0;
         if (isset($rotation[1]) && ($angle = $rotation[1] % 360) != 0) {
-        	$steps = $angle / 90;
+            $steps = $angle / 90;
                 
             $_w = $tpl['w'];
             $_h = $tpl['h'];
@@ -251,9 +242,9 @@ class FPDI extends FPDF_TPL
             $tpl['h'] = $steps % 2 == 0 ? $_h : $_w;
             
             if ($angle < 0)
-            	$angle += 360;
+                $angle += 360;
             
-        	$tpl['_rotationAngle'] = $angle * -1;
+            $tpl['_rotationAngle'] = $angle * -1;
         }
         
         $this->_importedPages[$pageKey] = $this->tpl;
@@ -301,29 +292,33 @@ class FPDI extends FPDF_TPL
             $size = array($size['w'], $size['h']);
             
             if (is_subclass_of($this, 'TCPDF')) {
-            	$this->setPageFormat($size, $orientation);
+                $this->setPageFormat($size, $orientation);
             } else {
-            	$size = $this->_getpagesize($size);
-            	
-            	if($orientation != $this->CurOrientation ||
+                $size = $this->_getpagesize($size);
+                
+                if($orientation != $this->CurOrientation ||
                     $size[0] != $this->CurPageSize[0] ||
                     $size[1] != $this->CurPageSize[1]
                 ) {
-					// New size or orientation
-					if ($orientation=='P') {
-						$this->w = $size[0];
-						$this->h = $size[1];
-					} else {
-						$this->w = $size[1];
-						$this->h = $size[0];
-					}
-					$this->wPt = $this->w * $this->k;
-					$this->hPt = $this->h * $this->k;
-					$this->PageBreakTrigger = $this->h - $this->bMargin;
-					$this->CurOrientation = $orientation;
-					$this->CurPageSize = $size;
-					$this->PageSizes[$this->page] = array($this->wPt, $this->hPt);
-				}
+                    // New size or orientation
+                    if ($orientation=='P') {
+                        $this->w = $size[0];
+                        $this->h = $size[1];
+                    } else {
+                        $this->w = $size[1];
+                        $this->h = $size[0];
+                    }
+                    $this->wPt = $this->w * $this->k;
+                    $this->hPt = $this->h * $this->k;
+                    $this->PageBreakTrigger = $this->h - $this->bMargin;
+                    $this->CurOrientation = $orientation;
+                    $this->CurPageSize = $size;
+                    if (FPDF_VERSION >= 1.8) {
+                        $this->PageInfo[$this->page]['size'] = array($this->wPt, $this->hPt);
+                    } else {
+                        $this->PageSizes[$this->page] = array($this->wPt, $this->hPt);
+                    }
+                }
             } 
         }
         
@@ -373,13 +368,13 @@ class FPDI extends FPDF_TPL
     protected function _putformxobjects()
     {
         $filter = ($this->compress) ? '/Filter /FlateDecode ' : '';
-	    reset($this->_tpls);
+        reset($this->_tpls);
         foreach($this->_tpls AS $tplIdx => $tpl) {
             $this->_newobj();
-    		$currentN = $this->n; // TCPDF/Protection: rem current "n"
-    		
-    		$this->_tpls[$tplIdx]['n'] = $this->n;
-    		$this->_out('<<' . $filter . '/Type /XObject');
+            $currentN = $this->n; // TCPDF/Protection: rem current "n"
+            
+            $this->_tpls[$tplIdx]['n'] = $this->n;
+            $this->_out('<<' . $filter . '/Type /XObject');
             $this->_out('/Subtype /Form');
             $this->_out('/FormType 1');
             
@@ -406,15 +401,15 @@ class FPDI extends FPDF_TPL
                     
                     switch($tpl['_rotationAngle']) {
                         case -90:
-                           $tx = -$tpl['box']['lly'];
-                           $ty = $tpl['box']['urx'];
-                           break;
+                            $tx = -$tpl['box']['lly'];
+                            $ty = $tpl['box']['urx'];
+                            break;
                         case -180:
                             $tx = $tpl['box']['urx'];
                             $ty = $tpl['box']['ury'];
                             break;
                         case -270:
-                        	$tx = $tpl['box']['ury'];
+                            $tx = $tpl['box']['ury'];
                             $ty = -$tpl['box']['llx'];
                             break;
                     }
@@ -478,15 +473,15 @@ class FPDI extends FPDF_TPL
             $buffer = ($this->compress) ? gzcompress($tpl['buffer']) : $tpl['buffer'];
 
             if (is_subclass_of($this, 'TCPDF')) {
-            	$buffer = $this->_getrawstream($buffer);
-            	$this->_out('/Length ' . strlen($buffer) . ' >>');
-            	$this->_out("stream\n" . $buffer . "\nendstream");
+                $buffer = $this->_getrawstream($buffer);
+                $this->_out('/Length ' . strlen($buffer) . ' >>');
+                $this->_out("stream\n" . $buffer . "\nendstream");
             } else {
-	            $this->_out('/Length ' . strlen($buffer) . ' >>');
-	    		$this->_putstream($buffer);
+                $this->_out('/Length ' . strlen($buffer) . ' >>');
+                $this->_putstream($buffer);
             }
-    		$this->_out('endobj');
-    		$this->n = $newN; // TCPDF: reset to new "n"
+            $this->_out('endobj');
+            $this->n = $newN; // TCPDF: reset to new "n"
         }
         
         $this->_putimportedobjects();
@@ -507,7 +502,7 @@ class FPDI extends FPDF_TPL
             $objId = ++$this->n;
         }
 
-        //Begin a new object
+        // Begin a new object
         if (!$onlyNewObj) {
             $this->offsets[$objId] = is_subclass_of($this, 'TCPDF') ? $this->bufferlen : strlen($this->buffer);
             $this->_out($objId . ' 0 obj');
@@ -532,93 +527,92 @@ class FPDI extends FPDF_TPL
         
         switch ($value[0]) {
 
-    		case pdf_parser::TYPE_TOKEN:
+            case pdf_parser::TYPE_TOKEN:
                 $this->_straightOut($value[1] . ' ');
-    			break;
-		    case pdf_parser::TYPE_NUMERIC:
-    		case pdf_parser::TYPE_REAL:
+                break;
+            case pdf_parser::TYPE_NUMERIC:
+            case pdf_parser::TYPE_REAL:
                 if (is_float($value[1]) && $value[1] != 0) {
-    			    $this->_straightOut(rtrim(rtrim(sprintf('%F', $value[1]), '0'), '.') . ' ');
-    			} else {
-        			$this->_straightOut($value[1] . ' ');
-    			}
-    			break;
-    			
-    		case pdf_parser::TYPE_ARRAY:
+                    $this->_straightOut(rtrim(rtrim(sprintf('%F', $value[1]), '0'), '.') . ' ');
+                } else {
+                    $this->_straightOut($value[1] . ' ');
+                }
+                break;
+                
+            case pdf_parser::TYPE_ARRAY:
 
-    			// An array. Output the proper
-    			// structure and move on.
+                // An array. Output the proper
+                // structure and move on.
 
-    			$this->_straightOut('[');
+                $this->_straightOut('[');
                 for ($i = 0; $i < count($value[1]); $i++) {
-    				$this->_writeValue($value[1][$i]);
-    			}
+                    $this->_writeValue($value[1][$i]);
+                }
 
-    			$this->_out(']');
-    			break;
+                $this->_out(']');
+                break;
 
-    		case pdf_parser::TYPE_DICTIONARY:
+            case pdf_parser::TYPE_DICTIONARY:
 
-    			// A dictionary.
-    			$this->_straightOut('<<');
+                // A dictionary.
+                $this->_straightOut('<<');
 
-    			reset ($value[1]);
+                reset ($value[1]);
 
-    			while (list($k, $v) = each($value[1])) {
-    				$this->_straightOut($k . ' ');
-    				$this->_writeValue($v);
-    			}
+                while (list($k, $v) = each($value[1])) {
+                    $this->_straightOut($k . ' ');
+                    $this->_writeValue($v);
+                }
 
-    			$this->_straightOut('>>');
-    			break;
+                $this->_straightOut('>>');
+                break;
 
-    		case pdf_parser::TYPE_OBJREF:
+            case pdf_parser::TYPE_OBJREF:
 
-    			// An indirect object reference
-    			// Fill the object stack if needed
-    			$cpfn =& $this->currentParser->filename;
-    			if (!isset($this->_doneObjStack[$cpfn][$value[1]])) {
-    			    $this->_newobj(false, true);
-    			    $this->_objStack[$cpfn][$value[1]] = array($this->n, $value);
+                // An indirect object reference
+                // Fill the object stack if needed
+                $cpfn =& $this->currentParser->filename;
+                if (!isset($this->_doneObjStack[$cpfn][$value[1]])) {
+                    $this->_newobj(false, true);
+                    $this->_objStack[$cpfn][$value[1]] = array($this->n, $value);
                     $this->_doneObjStack[$cpfn][$value[1]] = array($this->n, $value);
                 }
                 $objId = $this->_doneObjStack[$cpfn][$value[1]][0];
 
-    			$this->_out($objId . ' 0 R');
-    			break;
+                $this->_out($objId . ' 0 R');
+                break;
 
-    		case pdf_parser::TYPE_STRING:
+            case pdf_parser::TYPE_STRING:
 
-    			// A string.
+                // A string.
                 $this->_straightOut('(' . $value[1] . ')');
 
-    			break;
+                break;
 
-    		case pdf_parser::TYPE_STREAM:
+            case pdf_parser::TYPE_STREAM:
 
-    			// A stream. First, output the
-    			// stream dictionary, then the
-    			// stream data itself.
+                // A stream. First, output the
+                // stream dictionary, then the
+                // stream data itself.
                 $this->_writeValue($value[1]);
-    			$this->_out('stream');
-    			$this->_out($value[2][1]);
-    			$this->_straightOut("endstream");
-    			break;
-    			
+                $this->_out('stream');
+                $this->_out($value[2][1]);
+                $this->_straightOut("endstream");
+                break;
+                
             case pdf_parser::TYPE_HEX:
                 $this->_straightOut('<' . $value[1] . '>');
                 break;
 
             case pdf_parser::TYPE_BOOLEAN:
-    		    $this->_straightOut($value[1] ? 'true ' : 'false ');
-    		    break;
+                $this->_straightOut($value[1] ? 'true ' : 'false ');
+                break;
             
-    		case pdf_parser::TYPE_NULL:
+            case pdf_parser::TYPE_NULL:
                 // The null object.
-
-    			$this->_straightOut('null ');
-    			break;
-    	}
+                $this->_straightOut('null ');
+                break;
+        }
     }
     
     
@@ -629,32 +623,32 @@ class FPDI extends FPDF_TPL
     {
         if (!is_subclass_of($this, 'TCPDF')) {
             if ($this->state == 2) {
-        		$this->pages[$this->page] .= $s;
+                $this->pages[$this->page] .= $s;
             } else {
-        		$this->buffer .= $s;
+                $this->buffer .= $s;
             }
 
         } else {
             if ($this->state == 2) {
-				if ($this->inxobj) {
-					// we are inside an XObject template
-					$this->xobjects[$this->xobjid]['outdata'] .= $s;
-				} else if ((!$this->InFooter) AND isset($this->footerlen[$this->page]) AND ($this->footerlen[$this->page] > 0)) {
-					// puts data before page footer
-					$pagebuff = $this->getPageBuffer($this->page);
-					$page = substr($pagebuff, 0, -$this->footerlen[$this->page]);
-					$footer = substr($pagebuff, -$this->footerlen[$this->page]);
-					$this->setPageBuffer($this->page, $page . $s . $footer);
-					// update footer position
-					$this->footerpos[$this->page] += strlen($s);
-				} else {
-					// set page data
-					$this->setPageBuffer($this->page, $s, true);
-				}
-			} else if ($this->state > 0) {
-				// set general data
-				$this->setBuffer($s);
-			}
+                if ($this->inxobj) {
+                    // we are inside an XObject template
+                    $this->xobjects[$this->xobjid]['outdata'] .= $s;
+                } else if ((!$this->InFooter) AND isset($this->footerlen[$this->page]) AND ($this->footerlen[$this->page] > 0)) {
+                    // puts data before page footer
+                    $pagebuff = $this->getPageBuffer($this->page);
+                    $page = substr($pagebuff, 0, -$this->footerlen[$this->page]);
+                    $footer = substr($pagebuff, -$this->footerlen[$this->page]);
+                    $this->setPageBuffer($this->page, $page . $s . $footer);
+                    // update footer position
+                    $this->footerpos[$this->page] += strlen($s);
+                } else {
+                    // set page data
+                    $this->setPageBuffer($this->page, $s, true);
+                }
+            } else if ($this->state > 0) {
+                // set general data
+                $this->setBuffer($s);
+            }
         }
     }
 
@@ -677,7 +671,7 @@ class FPDI extends FPDF_TPL
     protected function _closeParsers()
     {
         if ($this->state > 2) {
-          	$this->cleanUp();
+            $this->cleanUp();
             return true;
         }
 
