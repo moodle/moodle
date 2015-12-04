@@ -131,6 +131,15 @@ class user_competency extends persistent {
     }
 
     /**
+     * Return the competency Object.
+     *
+     * @return competency Competency Object
+     */
+    public function get_competency() {
+        return new competency($this->get_competencyid());
+    }
+
+    /**
      * Validate the user ID.
      *
      * @param int $value The value.
@@ -209,6 +218,7 @@ class user_competency extends persistent {
                 return new lang_string('invalidgrade', 'tool_lp');
             }
 
+            // TODO MDL-52243 Use a core method to validate the grade_scale item.
             // Check if grade exist in the scale item values.
             $competency = $this->get_competency();
             if (!array_key_exists($value - 1 , $competency->get_scale()->scale_items)) {
@@ -232,6 +242,26 @@ class user_competency extends persistent {
     public static function create_relation($userid, $competencyid) {
         $relation = new user_competency(0, (object) array('userid' => $userid, 'competencyid' => $competencyid));
         return $relation;
+    }
+
+    /**
+     * Fetch a competency by user competency ID.
+     *
+     * This is a convenience method to attempt to efficiently fetch a competency when
+     * the only information we have is the user_competency ID, in evidence for instance.
+     *
+     * @param  int $id The user competency ID.
+     * @return competency
+     */
+    public static function get_competency_by_usercompetencyid($id) {
+        global $DB;
+        $sql = "SELECT c.*
+                  FROM {" . self::TABLE . "} uc
+                  JOIN {" . competency::TABLE . "} c
+                    ON c.id = uc.competencyid
+                 WHERE uc.id = ?";
+        $record = $DB->get_record_sql($sql, array($id), MUST_EXIST);
+        return new competency(0, $record);
     }
 
     /**
@@ -294,15 +324,6 @@ class user_competency extends persistent {
         $params = array($frameworkid);
 
         return $DB->record_exists_sql($sql, $params);
-    }
-
-    /**
-     * Return the competency Object.
-     *
-     * @return competency Competency Object
-     */
-    public function get_competency() {
-        return new competency($this->get_competencyid());
     }
 
 }

@@ -66,6 +66,15 @@ class user_competency_plan extends persistent {
     }
 
     /**
+     * Return the competency Object.
+     *
+     * @return competency Competency Object
+     */
+    public function get_competency() {
+        return new competency($this->get_competencyid());
+    }
+
+    /**
      * Validate the user ID.
      *
      * @param int $value The value.
@@ -107,6 +116,7 @@ class user_competency_plan extends persistent {
                 return new lang_string('invalidgrade', 'tool_lp');
             }
 
+            // TODO MDL-52243 Use a core method to validate the grade_scale item.
             // Check if grade exist in the scale item values.
             $competency = $this->get_competency();
             if (!array_key_exists($value - 1, $competency->get_scale()->scale_items)) {
@@ -212,15 +222,6 @@ class user_competency_plan extends persistent {
         $params = array($frameworkid);
 
         return $DB->record_exists_sql($sql, $params);
-    }
-
-    /**
-     * Return the competency Object.
-     *
-     * @return competency Competency Object
-     */
-    public function get_competency() {
-        return new competency($this->get_competencyid());
     }
 
 }

@@ -98,6 +98,15 @@ class evidence extends persistent {
     }
 
     /**
+     * Return the competency linked to this.
+     *
+     * @return competency
+     */
+    public function get_competency() {
+        return user_competency::get_competency_by_usercompetencyid($this->get_usercompetencyid());
+    }
+
+    /**
      * Convenience method to get the description $a.
      *
      * @return mixed
@@ -234,6 +243,15 @@ class evidence extends persistent {
 
         } else if ($value !== null && $action == self::ACTION_LOG) {
             return new lang_string('invalidgrade', 'tool_lp');
+        }
+
+        if ($value !== null) {
+            // TODO MDL-52243 Use a core method to validate the grade_scale item.
+            // Check if grade exist in the scale item values.
+            $competency = $this->get_competency();
+            if (!array_key_exists($value - 1, $competency->get_scale()->scale_items)) {
+                return new lang_string('invalidgrade', 'tool_lp');
+            }
         }
 
         return true;
