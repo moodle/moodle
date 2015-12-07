@@ -1052,6 +1052,7 @@ class theme_config {
      * @return bool|string Return false when the compilation failed. Else the compiled string.
      */
     protected function get_css_content_from_less($themedesigner) {
+        global $CFG;
 
         $lessfile = $this->lessfile;
         if (!$lessfile || !is_readable($this->dir . '/less/' . $lessfile . '.less')) {
@@ -1080,7 +1081,8 @@ class theme_config {
         if ($themedesigner) {
             // Add the sourceMap inline to ensure that it is atomically generated.
             $options['sourceMap'] = true;
-            $options['sourceRoot'] = 'theme';
+            $options['sourceMapBasepath'] = $CFG->dirroot;
+            $options['sourceMapRootpath'] = $CFG->wwwroot;
         }
 
         // Instantiate the compiler.
