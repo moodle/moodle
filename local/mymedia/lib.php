@@ -26,7 +26,7 @@
  * @param global_navigation $navigation a global_navigation object
  * @return void
  */
-function local_mymedia_extends_navigation($navigation) {
+function local_mymedia_extend_navigation($navigation) {
     global $USER, $DB, $PAGE;
 
     if (empty($USER->id)) {
