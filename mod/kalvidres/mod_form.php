@@ -129,6 +129,7 @@ class mod_kalvidres_mod_form extends moodleform_mod {
         $this->add_intro_editor(false);
 
         $mform->addElement('header', 'video', get_string('video_hdr', 'kalvidres'));
+        $mform->setExpanded('video',true);
         $this->add_video_definition($mform);
 
         $this->standard_coursemodule_elements();
