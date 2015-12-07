@@ -34,14 +34,14 @@
         </thead>
         <tbody  class="drag-parentnode">
             {{#competencies}}
-            <tr class="drag-samenode" data-id="{{id}}">
+            <tr class="drag-samenode" data-id="{{competency.id}}">
                 <td>
                     {{#canmanage}}
                     {{#canbeedited}}
                     <span class="drag-handlecontainer pull-left"></span>
                     {{/canbeedited}}
                     {{/canmanage}}
-                    <a href="#" data-action="competency-dialogue" data-id="{{id}}">{{shortname}}</a>
+                    <a href="#" data-action="competency-dialogue" data-id="{{competency.id}}">{{competency.shortname}}</a>
                 </td>
                 {{#iscompleted}}
                     <td>{{usercompetencyplan.gradename}}</td>
@@ -56,7 +56,7 @@
                     <td>
                         {{#canbeedited}}
                         <div class="pull-left">
-                            <a href="#" data-action="delete-competency-link" data-id="{{id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
+                            <a href="#" data-action="delete-competency-link" data-id="{{competency.id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
                         </div>
                         {{/canbeedited}}
                     </td>

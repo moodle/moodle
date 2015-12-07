@@ -47,6 +47,7 @@ use tool_lp\external\user_summary_exporter;
 use tool_lp\external\user_competency_exporter;
 use tool_lp\external\user_competency_plan_exporter;
 use tool_lp\external\competency_exporter;
+use tool_lp\external\course_competency_exporter;
 use tool_lp\external\course_summary_exporter;
 use tool_lp\external\plan_exporter;
 use tool_lp\external\template_exporter;
@@ -1625,12 +1626,13 @@ class external extends external_api {
             'canmanagecoursecompetencies' => new external_value(PARAM_BOOL, 'User can manage linked course competencies'),
             'competencies' => new external_multiple_structure(new external_single_structure(array(
                 'competency' => competency_exporter::get_read_structure(),
-                'coursecompetency' => competency_exporter::get_read_structure(),
-                'ruleoutcomeoptions' => new external_single_structure(array(
-                    'value' => new external_value(PARAM_INT, 'The option value'),
-                    'text' => new external_value(PARAM_NOTAGS, 'The name of the option'),
-                    'selected' => new external_value(PARAM_BOOL, 'If this is the currently selected option'),
-                ))
+                'coursecompetency' => course_competency_exporter::get_read_structure(),
+                'ruleoutcomeoptions' => new external_multiple_structure(
+                    new external_single_structure(array(
+                        'value' => new external_value(PARAM_INT, 'The option value'),
+                        'text' => new external_value(PARAM_NOTAGS, 'The name of the option'),
+                        'selected' => new external_value(PARAM_BOOL, 'If this is the currently selected option'),
+                )))
             ))),
             'manageurl' => new external_value(PARAM_LOCALURL, 'Url to the manage competencies page.'),
         ));
@@ -2710,8 +2712,9 @@ class external extends external_api {
     public static function data_for_template_competencies_page_returns() {
         return new external_single_structure(array (
             'templateid' => new external_value(PARAM_INT, 'The current template id'),
+            'pagecontextid' => new external_value(PARAM_INT, 'Context ID'),
             'canmanagecompetencyframeworks' => new external_value(PARAM_BOOL, 'User can manage competency frameworks'),
-            'canmanagetemplates' => new external_value(PARAM_BOOL, 'User can manage learning plan templates'),
+            'canmanagetemplatecompetencies' => new external_value(PARAM_BOOL, 'User can manage learning plan templates'),
             'competencies' => new external_multiple_structure(
                 competency_summary_exporter::get_read_structure()
             ),
@@ -2764,15 +2767,23 @@ class external extends external_api {
      * @return \external_description
      */
     public static function data_for_plan_competencies_page_returns() {
+        $uc = user_competency_exporter::get_read_structure();
+        $ucp = user_competency_plan_exporter::get_read_structure();
+
+        $uc->required = VALUE_OPTIONAL;
+        $ucp->required = VALUE_OPTIONAL;
+
         return new external_single_structure(array (
             'planid' => new external_value(PARAM_INT, 'Learning Plan id'),
             'canmanage' => new external_value(PARAM_BOOL, 'User can manage learning plan'),
+            'canbeedited' => new external_value(PARAM_BOOL, 'Plan can be edited'),
             'iscompleted' => new external_value(PARAM_BOOL, 'Is the plan completed'),
+            'contextid' => $id = new external_value(PARAM_INT, 'Context ID.'),
             'competencies' => new external_multiple_structure(
                 new external_single_structure(array(
                     'competency' => competency_exporter::get_read_structure(),
-                    'usercompetency' => user_competency_exporter::get_read_structure(),
-                    'usercompetencyplan' => user_competency_plan_exporter::get_read_structure()
+                    'usercompetency' => $uc,
+                    'usercompetencyplan' => $ucp
                 ))
             )
         ));

@@ -62,7 +62,7 @@ class competency_summary implements renderable, templatable {
         $this->competency = $competency;
         $this->framework = $framework;
         if ($includerelated) {
-            $this->relatedcompetencies = api::get_related_competencies($competency->get_id());
+            $this->relatedcompetencies = api::list_related_competencies($competency->get_id());
         }
 
         if ($includecourses) {

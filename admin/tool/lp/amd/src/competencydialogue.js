@@ -72,7 +72,7 @@ define(['jquery',
             templates.render('tool_lp/competency_summary', data)
                 .done(function(html) {
                     new Dialogue(
-                        data.shortname,
+                        data.competency.shortname,
                         html,
                         localthis.enhanceDialogue
                     );
