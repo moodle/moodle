@@ -27,7 +27,7 @@
  * @param global_navigation $navigation a global_navigation object
  * @return void
  */
-function local_kalturamediagallery_extends_navigation($navigation) {
+function local_kalturamediagallery_extend_navigation($navigation) {
     global $USER, $PAGE, $DB;
 
     if (empty($USER->id)) {
