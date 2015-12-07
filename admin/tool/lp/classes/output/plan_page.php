@@ -24,10 +24,10 @@
 namespace tool_lp\output;
 defined('MOODLE_INTERNAL') || die();
 
-use moodle_url;
 use renderable;
 use templatable;
 use stdClass;
+use moodle_url;
 use tool_lp\api;
 use tool_lp\plan;
 use tool_lp\external\competency_exporter;

@@ -100,12 +100,17 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $authrole = array_pop($userroles);
 
         // Reset all default authenticated users permissions.
+        unassign_capability('tool/lp:competencygrade', $authrole->id);
+        unassign_capability('tool/lp:competencysuggestgrade', $authrole->id);
         unassign_capability('tool/lp:competencymanage', $authrole->id);
         unassign_capability('tool/lp:competencyread', $authrole->id);
         unassign_capability('tool/lp:planmanage', $authrole->id);
         unassign_capability('tool/lp:planmanagedraft', $authrole->id);
         unassign_capability('tool/lp:planmanageown', $authrole->id);
         unassign_capability('tool/lp:planview', $authrole->id);
+        unassign_capability('tool/lp:planviewdraft', $authrole->id);
+        unassign_capability('tool/lp:planviewown', $authrole->id);
+        unassign_capability('tool/lp:planviewowndraft', $authrole->id);
         unassign_capability('tool/lp:templatemanage', $authrole->id);
         unassign_capability('tool/lp:templateread', $authrole->id);
 
@@ -119,8 +124,14 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         assign_capability('tool/lp:planmanagedraft', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:planview', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('tool/lp:planviewdraft', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:templatemanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('tool/lp:competencygrade', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('tool/lp:competencysuggestgrade', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:templateread', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('tool/lp:competencysuggestgrade', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('tool/lp:planviewown', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('tool/lp:planviewowndraft', CAP_ALLOW, $this->userrole, $syscontext->id);
 
         role_assign($this->creatorrole, $creator->id, $syscontext->id);
         role_assign($this->creatorrole, $catcreator->id, $catcontext->id);
@@ -1606,19 +1617,19 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         // Expected return value.
         $expected = array(array(
                 'id' => 1,
-                'name' => 'Excellent'
+                'name' => 'Poor'
             ), array(
                 'id' => 2,
-                'name' => 'Fine'
+                'name' => 'Not good'
             ), array(
                 'id' => 3,
                 'name' => 'Okay'
             ), array(
                 'id' => 4,
-                'name' => 'Not good'
+                'name' => 'Fine'
             ), array(
                 'id' => 5,
-                'name' => 'Poor'
+                'name' => 'Excellent'
             )
         );
         // Call the webservice.
@@ -2606,6 +2617,74 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEmpty($result['users'][0]['phone2']);
         $this->assertEmpty($result['users'][0]['department']);
         $this->assertEmpty($result['users'][0]['institution']);
+    }
+
+    public function test_grade_competency_in_plan() {
+        global $CFG;
+
+        $this->setUser($this->creator);
+
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+
+        $f1 = $lpg->create_framework();
+
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+
+        $tpl = $lpg->create_template();
+        $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $c1->get_id()));
+
+        $plan = $lpg->create_plan(array('userid' => $this->user->id, 'templateid' => $tpl->get_id(), 'name' => 'Evil'));
+
+        $uc = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c1->get_id()));
+
+        $evidence = external::grade_competency_in_plan($this->user->id, $c1->get_id(), $plan->get_id(), 1, false);
+
+        $this->assertEquals('The competency grade was manually suggested in the plan \'Evil\'.', $evidence->description);
+        $this->assertEquals('A', $evidence->gradename);
+        $evidence = external::grade_competency_in_plan($this->user->id, $c1->get_id(), $plan->get_id(), 1, true);
+
+        $this->assertEquals('The competency grade was manually set in the plan \'Evil\'.', $evidence->description);
+        $this->assertEquals('A', $evidence->gradename);
+
+        $this->setUser($this->user);
+        $evidence = external::grade_competency_in_plan($this->user->id, $c1->get_id(), $plan->get_id(), 1, false);
+        $this->assertEquals('The competency grade was manually suggested in the plan \'Evil\'.', $evidence->description);
+        $this->assertEquals('A', $evidence->gradename);
+
+        $this->setExpectedException('required_capability_exception');
+        $evidence = external::grade_competency_in_plan($this->user->id, $c1->get_id(), $plan->get_id(), 1, true);
+    }
+
+    public function test_read_user_competency_summary() {
+        global $CFG;
+
+        $this->setUser($this->creator);
+
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+
+        $f1 = $lpg->create_framework();
+
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+
+        $tpl = $lpg->create_template();
+        $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $c1->get_id()));
+
+        $plan = $lpg->create_plan(array('userid' => $this->user->id, 'templateid' => $tpl->get_id(), 'name' => 'Evil'));
+
+        $uc = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c1->get_id()));
+
+        $evidence = external::grade_competency_in_plan($this->user->id, $c1->get_id(), $plan->get_id(), 1, false);
+        $evidence = external::grade_competency_in_plan($this->user->id, $c1->get_id(), $plan->get_id(), 2, true);
+
+        $summary = external::read_user_competency_summary($this->user->id, $c1->get_id(), $plan->get_id());
+        $this->assertTrue($summary->cangrade);
+        $this->assertTrue($summary->cansuggest);
+        $this->assertEquals('Evil', $summary->plan->name);
+        $this->assertEquals('B', $summary->usercompetency->gradename);
+        $this->assertEquals('B', $summary->evidence[0]->gradename);
+        $this->assertEquals('A', $summary->evidence[1]->gradename);
     }
 
 }

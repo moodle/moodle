@@ -15,63 +15,69 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class for exporting plan competency data.
+ * Class for exporting evidence data.
  *
  * @package    tool_lp
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_lp\external;
-defined('MOODLE_INTERNAL') || die();
 
 use renderer_base;
-use stdClass;
 
 /**
- * Class for exporting plan competency data.
+ * Class for exporting evidence data.
  *
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_competency_plan_exporter extends persistent_exporter {
-
-    protected static function define_class() {
-        return 'tool_lp\\user_competency_plan';
-    }
+class evidence_exporter extends persistent_exporter {
 
     protected static function define_related() {
-        // We cache the scale so it does not need to be retrieved from the framework every time.
-        return array('scale' => 'grade_scale');
+        return array('actionuser' => '\\stdClass?',
+                     'scale' => 'grade_scale');
+    }
+
+    protected static function define_class() {
+        return 'tool_lp\\evidence';
     }
 
     protected function get_other_values(renderer_base $output) {
-        $result = new stdClass();
+        $other = array();
+        if ($this->related['actionuser']) {
+            $exporter = new user_summary_exporter($this->related['actionuser']);
+            $actionuser = $exporter->export($output);
+            $other['actionuser'] = $actionuser;
+        }
+        $other['description'] = $this->persistent->get_description();
+
+        $other['userdate'] = userdate($this->persistent->get_timecreated());
 
         if ($this->persistent->get_grade() === null) {
             $gradename = '-';
         } else {
             $gradename = $this->related['scale']->scale_items[$this->persistent->get_grade() - 1];
         }
-        $result->gradename = $gradename;
+        $other['gradename'] = $gradename;
 
-        if ($this->persistent->get_proficiency() === null) {
-            $proficiencyname = get_string('no');
-        } else {
-            $proficiencyname = get_string($this->persistent->get_proficiency() ? 'yes' : 'no');
-        }
-        $result->proficiencyname = $proficiencyname;
-
-        return (array) $result;
+        return $other;
     }
 
-    protected static function define_other_properties() {
+    public static function define_other_properties() {
         return array(
+            'actionuser' => array(
+                'type' => user_summary_exporter::read_properties_definition(),
+                'optional' => true
+            ),
+            'description' => array(
+                'type' => PARAM_TEXT,
+            ),
             'gradename' => array(
+                'type' => PARAM_TEXT,
+            ),
+            'userdate' => array(
                 'type' => PARAM_TEXT
-            ),
-            'proficiencyname' => array(
-                'type' => PARAM_RAW
-            ),
+            )
         );
     }
 }

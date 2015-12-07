@@ -132,6 +132,17 @@ class renderer extends plugin_renderer_base {
     }
 
     /**
+     * Defer to template.
+     *
+     * @param renderable $page
+     * @return string
+     */
+    public function render_user_competency_plan_page(user_competency_plan_page $page) {
+        $data = $page->export_for_template($this);
+        return parent::render_from_template('tool_lp/user_competency_info', $data);
+    }
+
+    /**
      * Render the template plans page.
      *
      * @param  renderable $page

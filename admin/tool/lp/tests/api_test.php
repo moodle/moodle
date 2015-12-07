@@ -1721,7 +1721,6 @@ class tool_lp_api_testcase extends advanced_testcase {
             $usercompetency->create();
             $this->assertTrue(true);
         } catch (\tool_lp\invalid_persistent_exception $e) {
-            var_dump($e);
             $this->fail('Valide grade rejected in competency scale');
         }
     }

@@ -79,7 +79,7 @@
                         {{#plan.canbeedited}}
                         <span class="drag-handlecontainer pull-left"></span>
                         {{/plan.canbeedited}}
-                        <a href="#" data-action="competency-dialogue" data-id="{{competency.id}}">{{competency.shortname}}</a>
+                        <a href="{{pluginbaseurl}}/usercompetencyplan.php?competencyid={{competency.id}}&amp;userid={{plan.userid}}&amp;planid={{plan.id}}">{{competency.shortname}}</a>
                         <em>{{competency.idnumber}}</em>
                     </td>
                     {{#plan.iscompleted}}

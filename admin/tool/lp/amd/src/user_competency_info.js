@@ -1,0 +1,73 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Module to refresh a user competency summary in a page.
+ *
+ * @package    tool_lp
+ * @copyright  2015 Damyon Wiese
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function($, notification, ajax, templates) {
+
+    /**
+     * Info
+     *
+     * @param {JQuery} Selector to replace when the information needs updating.
+     * @param {Number} The id of the competency.
+     * @param {Number} The id of the user.
+     * @param {Number} The id of the plan.
+     */
+    var Info = function(rootElement, competencyId, userId, planId) {
+        this._rootElement = rootElement;
+        this._competencyId = competencyId;
+        this._userId = userId;
+        this._planId = planId;
+    };
+
+    /**
+     * Reload the info for this user competency.
+     *
+     * @method reload
+     */
+    Info.prototype.reload = function() {
+        var self = this,
+            promises = [];
+
+        promises = ajax.call([{
+            methodname: 'tool_lp_read_user_competency_summary',
+            args: { userid: this._userId, competencyid: this._competencyId, planid: this._planId }
+        }]);
+
+        promises[0].done(function(context) {
+            templates.render('tool_lp/user_competency_info', context).done(function(html, js) {
+                templates.replaceNode(self._rootElement, html, js);
+            }).fail(notification.exception);
+        }).fail(notification.exception);
+    };
+
+    /** @type {JQuery} The root element to replace in the DOM. */
+    Info.prototype._rootElement = null;
+    /** @type {Number} The id of the plan. */
+    Info.prototype._planId = null;
+    /** @type {Number} The id of the competency. */
+    Info.prototype._competencyId = null;
+    /** @type {Number} The id of the user. */
+    Info.prototype._userId = null;
+
+    return /** @alias module:tool_lp/grade_user_competency_inline */ Info;
+
+});

@@ -36,7 +36,7 @@ use moodle_url;
 class user_summary_exporter extends exporter {
 
     protected function get_other_values(renderer_base $output) {
-        global $PAGE;
+        global $PAGE, $CFG;
 
         // Add user picture.
         $userpicture = new \user_picture($this->data);
@@ -45,10 +45,22 @@ class user_summary_exporter extends exporter {
         $userpicture->size = 0; // Size f2.
         $profileimageurlsmall = $userpicture->get_url($PAGE)->out(false);
 
+        $identityfields = array_flip(explode(',', $CFG->showuseridentity));
+        $identity = '';
+        $data = $this->data;
+        foreach ($identityfields as $field => $index) {
+            if (!empty($data->$field)) {
+                $identityfields[$field] = $data->$field;
+            } else {
+                unset($identityfields[$field]);
+            }
+        }
+        $identity = implode(', ', $identityfields);
         return array(
             'fullname' => fullname($this->data),
             'profileimageurl' => $profileimageurl,
-            'profileimageurlsmall' => $profileimageurlsmall
+            'profileimageurlsmall' => $profileimageurlsmall,
+            'identity' => $identity
         );
     }
 
@@ -87,6 +99,9 @@ class user_summary_exporter extends exporter {
     public static function define_other_properties() {
         return array(
             'fullname' => array(
+                'type' => PARAM_TEXT
+            ),
+            'identity' => array(
                 'type' => PARAM_TEXT
             ),
             'profileimageurl' => array(

@@ -1,0 +1,31 @@
+<form class="form-inline pull-left" id="grade-competency-form-{{uniqid}}">
+{{#cangrade}}
+<div class="btn-group">
+<button class="btn btn-primary" data-action="grade">{{#str}}grade, tool_lp{{/str}}</button>
+{{/cangrade}}
+{{#cansuggest}}
+<button class="btn btn-inverse" data-action="suggest">{{#str}}suggest, tool_lp{{/str}}</button>
+{{/cansuggest}}
+</div>
+
+<select>
+</select>
+</form>
+{{#js}}
+require(['jquery', 'tool_lp/grade_user_competency_inline', 'tool_lp/user_competency_info'], function($, mod, info) {
+    var competencyScaleConfig = '{{{competency.competency.scaleconfiguration}}}';
+    var frameworkScaleConfig = '{{{competency.framework.scaleconfiguration}}}';
+    var scaleConfig = frameworkScaleConfig;
+    {{#competency.competency.scaleid}}
+        scaleConfig = competencyScaleConfig;
+    {{/competency.competency.scaleid}}
+    scaleConfig = JSON.parse(scaleConfig);
+
+    var inlineGrader = new mod('grade-competency-form-{{uniqid}}', scaleConfig, '{{competency.competency.id}}', '{{user.id}}', '{{plan.id}}');
+    var competencyElement = $(document.getElementById('grade-competency-form-{{uniqid}}')).closest('[data-region=user-competency-full-info]');
+    var infoReloader = new info(competencyElement, '{{competency.competency.id}}', '{{user.id}}', '{{plan.id}}');
+
+    inlineGrader.on('competencyupdated', infoReloader.reload.bind(infoReloader));
+});
+
+{{/js}}

@@ -1,0 +1,15 @@
+<div class="well well-small evidence">
+{{#actionuser}}
+<div>
+{{> tool_lp/form-user-selector-suggestion }}
+</div>
+{{/actionuser}}
+<strong><time datetime="{{userdate}}">{{userdate}}</time></strong>
+{{#grade}}
+<p><span class="label">{{gradename}}</span></p>
+{{/grade}}
+<p>{{description}}</p>
+{{#url}}
+<p><a href="{{url}}" target="_blank" rel="noreferrer">{{url}}</a></p>
+{{/url}}
+</div>

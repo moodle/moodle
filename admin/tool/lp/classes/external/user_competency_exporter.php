@@ -56,7 +56,7 @@ class user_competency_exporter extends persistent_exporter {
         $result->gradename = $gradename;
 
         if ($this->persistent->get_proficiency() === null) {
-            $proficiencyname = '-';
+            $proficiencyname = get_string('no');
         } else {
             $proficiencyname = get_string($this->persistent->get_proficiency() ? 'yes' : 'no');
         }

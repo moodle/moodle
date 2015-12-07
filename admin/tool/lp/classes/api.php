@@ -2388,6 +2388,40 @@ class api {
     }
 
     /**
+     * List all the evidence for a user competency
+     *
+     * @param int $usercompetencyid The user competency id - if 0, then userid and competencyid are used.
+     * @param int $userid The user id - only used if usercompetencyid is 0.
+     * @param int $competencyid The competency id - only used it usercompetencyid is 0.
+     * @return array of \tool_lp\evidence
+     */
+    public static function list_evidence($usercompetencyid = 0,
+                                         $userid = 0,
+                                         $competencyid = 0,
+                                         $sort = 'timecreated',
+                                         $order = 'DESC',
+                                         $skip = 0,
+                                         $limit = 0) {
+
+        if ($usercompetencyid > 0) {
+            $usercompetency = new user_competency($usercompetencyid);
+
+            $context = context_user::instance($usercompetency->get_userid());
+            require_capability('tool/lp:planview', $context);
+        } else {
+            $context = context_user::instance($userid);
+            require_capability('tool/lp:planview', $context);
+
+            $usercompetency = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
+            if (!$usercompetency) {
+                return array();
+            }
+        }
+
+        return evidence::get_records(array('usercompetencyid' => $usercompetency->get_id()), $sort, $order, $skip, $limit);
+    }
+
+    /**
      * Create an evidence from a list of parameters.
      *
      * Requires no capability because evidence can be added in many situations under any user.
@@ -2682,5 +2716,77 @@ class api {
                 $event->get_url()
             );
         }
+    }
+
+    /**
+     * Returns a user competency data.
+     *
+     * @param int $userid
+     * @param array of int $competencyids
+     * @return array of \tool_lp\user_competency
+     */
+    public static function read_user_competencies($userid, $competencyids) {
+        $context = context_user::instance($userid);
+        require_capability('tool/lp:planview', $context);
+
+        return user_competency::get_multiple($userid, $competencyids);
+    }
+
+    /**
+     * Manually grade a user competency from the plans page.
+     *
+     * @param int $userid
+     * @param int $competencyid
+     * @param int $planid
+     * @param int $grade
+     * @param boolean $override
+     * @return array of \tool_lp\user_competency
+     */
+    public static function grade_competency_in_plan($userid, $competencyid, $planid, $grade, $override) {
+        global $USER;
+        $context = context_user::instance($userid);
+        if ($override) {
+            require_capability('tool/lp:competencygrade', $context);
+        } else {
+            require_capability('tool/lp:competencysuggestgrade', $context);
+        }
+
+        // Verify the data.
+
+        $plan = new plan($planid);
+        if ($plan->get_userid() != $userid) {
+            throw new coding_exception('The plan does not belong to this user: ' . $planid . ', ' . $userid);
+        }
+
+        $userplancompetencies = self::list_plan_competencies($plan);
+        $competency = null;
+
+        foreach ($userplancompetencies as $userplancompetency) {
+            if ($userplancompetency->competency->get_id() == $competencyid) {
+                $competency = $userplancompetency->competency;
+            }
+        }
+        if (!$competency) {
+            throw new coding_exception('The competency does not belong to this plan: ' . $competencyid . ', ' . $planid);
+        }
+
+        $action = evidence::ACTION_OVERRIDE;
+        $desckey = 'evidence_manualoverrideinplan';
+        if (!$override) {
+            $action = evidence::ACTION_SUGGEST;
+            $desckey = 'evidence_manualsuggestinplan';
+        }
+
+        return self::add_evidence($userid,
+                                  $competency,
+                                  $context->id,
+                                  $action,
+                                  $desckey,
+                                  'tool_lp',
+                                  $plan->get_name(),
+                                  false,
+                                  null,
+                                  $grade,
+                                  $USER->id);
     }
 }
