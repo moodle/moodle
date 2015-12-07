@@ -1,14 +1,14 @@
-<p><strong>{{shortname}} <em>{{idnumber}}</em></strong></p>
-<p>{{description}}</p>
+<p><strong>{{competency.shortname}} <em>{{competency.idnumber}}</em></strong></p>
+<p>{{competency.description}}</p>
 
 {{#framework}}
 <p><strong>{{framework.shortname}}</strong></p>
 <p>{{framework.description}}</p>
 {{/framework}}
 
-{{^visible}}
+{{^competency.visible}}
 ( {{#str}} hidden, tool_lp{{/str}})
-{{/visible}}
+{{/competency.visible}}
 
 {{#showrelatedcompetencies}}
     {{> tool_lp/related_competencies }}

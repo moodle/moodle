@@ -1045,11 +1045,7 @@ class external extends external_api {
             'canmanage' => new external_value(PARAM_BOOL, 'True if this user has permission to manage competency frameworks'),
             'pagecontextid' => new external_value(PARAM_INT, 'Context id for the framework'),
             'search' => new external_value(PARAM_RAW, 'Current search string'),
-            'rulesmodules' => new external_multiple_structure(new external_single_structure(array(
-                'type' => new external_value(PARAM_RAW, 'The rule type'),
-                'amd' => new external_value(PARAM_RAW, 'The AMD module of the rule'),
-                'name' => new external_value(PARAM_TEXT, 'The name of the rule'),
-            )))
+            'rulesmodules' => new external_value(PARAM_RAW, 'JSON encoded data for rules')
         ));
 
     }
@@ -1119,21 +1115,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function data_for_competency_summary_returns() {
-        return new external_single_structure(array (
-            'framework' => competency_Framework_exporter::get_read_structure(),
-            'id' => new external_value(PARAM_INT, 'The competency id'),
-            'shortname' => new external_value(PARAM_TEXT, 'The competency shortname'),
-            'idnumber' => new external_value(PARAM_TEXT, 'The competency idnumber'),
-            'visible' => new external_value(PARAM_BOOL, 'True if competency visible'),
-            'descriptionformatted' => new external_value(PARAM_RAW, 'The competency description'),
-            'relatedcompetencies' => new external_multiple_structure(
-                competency_exporter::get_read_structure()
-            ),
-            'courses' => self::list_courses_using_competency_returns(),
-            'showrelatedcompetencies' => new external_value(PARAM_BOOL, 'Show or not the related competencies'),
-            'showcourses' => new external_value(PARAM_BOOL, 'Show or not the linked courses'),
-        ));
-
+        return competency_summary_exporter::get_read_structure();
     }
 
     /**

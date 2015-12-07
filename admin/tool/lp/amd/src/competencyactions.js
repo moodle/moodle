@@ -420,12 +420,11 @@ define(['jquery',
     var deleteCompetencyHandler = function() {
         var competency = $('[data-region="competencyactions"]').data('competency');
 
-        // We don't need to show related actions when showing the competency info.
-        delete competency.showdeleterelatedaction;
-        delete competency.showrelatedcompetencies;
-        delete competency.showrule;
+        var context = {
+            competency: competency
+        };
 
-        templates.render('tool_lp/competency_summary', competency)
+        templates.render('tool_lp/competency_summary', context)
            .done(function(html) {
 
                str.get_strings([
@@ -565,8 +564,9 @@ define(['jquery',
      */
     var renderCompetencySummary = function(competency) {
         var promise = $.Deferred().resolve().promise(),
-            context = $.extend({}, competency);
+            context = {};
 
+        context.competency = competency;
         context.showdeleterelatedaction = true;
         context.showrelatedcompetencies = true;
         context.showrule = false;

@@ -86,14 +86,26 @@ class template_competencies_page implements renderable, templatable {
         $data->templateid = $this->templateid;
         $data->competencies = array();
         $contextcache = array();
+        $frameworkcache = array();
         foreach ($this->competencies as $competency) {
             if (!isset($contextcache[$competency->get_competencyframeworkid()])) {
                 $contextcache[$competency->get_competencyframeworkid()] = $competency->get_context();
             }
             $context = $contextcache[$competency->get_competencyframeworkid()];
+            if (!isset($frameworkcache[$competency->get_competencyframeworkid()])) {
+                $frameworkcache[$competency->get_competencyframeworkid()] = $competency->get_framework();
+            }
+            $framework = $frameworkcache[$competency->get_competencyframeworkid()];
 
             $courses = api::list_courses_using_competency($competency->get_id());
-            $related = array('competency' => $competency, 'linkedcourses' => $courses, 'context' => $context);
+            $relatedcompetencies = api::list_related_competencies($competency->get_id());
+            $related = array(
+                'competency' => $competency,
+                'linkedcourses' => $courses,
+                'context' => $context,
+                'relatedcompetencies' => $relatedcompetencies,
+                'framework' => $framework
+            );
             $exporter = new competency_summary_exporter(null, $related);
             $record = $exporter->export($output);
 

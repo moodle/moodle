@@ -28,8 +28,7 @@ use templatable;
 use renderer_base;
 use stdClass;
 use tool_lp\api;
-use tool_lp\external\competency_exporter;
-use tool_lp\external\competency_framework_exporter;
+use tool_lp\external\competency_summary_exporter;
 
 /**
  * Class containing data for competency summary
@@ -51,9 +50,6 @@ class competency_summary implements renderable, templatable {
     /** @var course[] $courses List of courses. */
     protected $courses = array();
 
-    /** @var stdClass $data result exported to template. */
-    protected $data = null;
-
     /**
      * Construct this renderable.
      *
@@ -63,13 +59,10 @@ class competency_summary implements renderable, templatable {
      * @param boolean $includecourses Include or not competency courses.
      */
     public function __construct($competency, $framework, $includerelated, $includecourses) {
-        $this->data = new stdClass();
-        $this->data->showrelatedcompetencies = $includerelated;
-        $this->data->showrcourses = $includecourses;
         $this->competency = $competency;
         $this->framework = $framework;
         if ($includerelated) {
-            $this->relatedcompetencies = $this->competency->get_related_competencies();
+            $this->relatedcompetencies = api::get_related_competencies($competency->get_id());
         }
 
         if ($includecourses) {
@@ -84,28 +77,17 @@ class competency_summary implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
+        $related = array(
+            'context' => $this->framework->get_context(),
+            'framework' => $this->framework,
+            'linkedcourses' => $this->courses,
+            'relatedcompetencies' => $this->relatedcompetencies,
+            'competency' => $this->competency
+        );
 
-        $frameworkexp = new competency_framework_exporter($this->framework, array('context' => $this->framework->get_context()));
-        $this->data->framework = $frameworkexp->export($output);
+        $exporter = new competency_summary_exporter($this->competency, $related);
+        $data = $exporter->export($output);
 
-        $compexp = new competency_exporter($this->competency, array('context' => $this->framework->get_context()));
-        $competency = $compexp->export($output);
-
-        $this->data->id = $competency->id;
-        $this->data->shortname = $competency->shortname;
-        $this->data->visible = $competency->visible;
-        $this->data->idnumber = $competency->idnumber;
-
-        $this->data->relatedcompetencies = array();
-        if ($this->relatedcompetencies) {
-            foreach ($this->relatedcompetencies as $competency) {
-                $compexporter = new competency_exporter($competency, array('context' => $this->framework->get_context()));
-                $this->data->relatedcompetencies[] = $compexporter->export($output);
-            }
-        }
-
-        $this->data->courses = $this->courses;
-
-        return $this->data;
+        return $data;
     }
 }

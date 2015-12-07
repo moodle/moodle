@@ -39,7 +39,9 @@ class competency_summary_exporter extends exporter {
         // We cache the context so it does not need to be retrieved from the framework every time.
         return array('context' => '\\context',
                      'competency' => '\\tool_lp\\competency',
-                     'linkedcourses' => '\\stdClass[]');
+                     'framework' => '\\tool_lp\\competency_framework',
+                     'linkedcourses' => '\\stdClass[]',
+                     'relatedcompetencies' => '\\tool_lp\\competency[]');
     }
 
     protected static function define_other_properties() {
@@ -48,10 +50,20 @@ class competency_summary_exporter extends exporter {
                 'type' => course_summary_exporter::read_properties_definition(),
                 'multiple' => true
             ),
+            'relatedcompetencies' => array(
+                'type' => competency_exporter::read_properties_definition(),
+                'multiple' => true
+            ),
             'competency' => array(
                 'type' => competency_exporter::read_properties_definition()
             ),
+            'framework' => array(
+                'type' => competency_framework_exporter::read_properties_definition()
+            ),
             'hascourses' => array(
+                'type' => PARAM_BOOL
+            ),
+            'hasrelatedcompetencies' => array(
                 'type' => PARAM_BOOL
             )
         );
@@ -59,6 +71,7 @@ class competency_summary_exporter extends exporter {
 
     protected function get_other_values(renderer_base $output) {
         $result = new stdClass();
+        $context = $this->related['context'];
 
         $courses = $this->related['linkedcourses'];
         $linkedcourses = array();
@@ -71,10 +84,21 @@ class competency_summary_exporter extends exporter {
         $result->linkedcourses = $linkedcourses;
         $result->hascourses = count($linkedcourses) > 0;
 
+        $relatedcompetencies = array();
+        foreach ($this->related['relatedcompetencies'] as $competency) {
+            $exporter = new competency_exporter($competency, array('context' => $context));
+            $competencyexport = $exporter->export($output);
+            array_push($relatedcompetencies, $competencyexport);
+        }
+        $result->relatedcompetencies = $relatedcompetencies;
+        $result->hasrelatedcompetencies = count($relatedcompetencies) > 0;
+
         $competency = $this->related['competency'];
-        $context = $this->related['context'];
         $exporter = new competency_exporter($competency, array('context' => $context));
         $result->competency = $exporter->export($output);
+
+        $exporter = new competency_framework_exporter($this->related['framework']);
+        $result->framework = $exporter->export($output);
 
         return (array) $result;
     }
