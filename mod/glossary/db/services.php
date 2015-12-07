@@ -15,16 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Glossary module version information
+ * Glossary module external functions.
  *
- * @package mod_glossary
- * @copyright  2011 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @package    mod_glossary
+ * @category   external
+ * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2015111601;       // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2015111000;    // Requires this Moodle version
-$plugin->component = 'mod_glossary';   // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 0;
+$functions = array(
+
+    'mod_glossary_get_glossaries_by_courses' => array(
+        'classname'     => 'mod_glossary_external',
+        'methodname'    => 'get_glossaries_by_courses',
+        'description'   => 'Retrieve a list of glossaries from several courses.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/glossary:view'
+    ),
+
+);
