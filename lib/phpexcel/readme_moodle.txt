@@ -25,6 +25,7 @@ Changes:
    - PHPExcel/Writer/Excel5/Worksheet.php
    - PHPExcel/Writer/Excel5/Xf.php
    lib/excellib.class.php has been updated so that only 2007 excel spreadsheets will be produced.
+ * MDL-52336 patch for PHP7 compatibility, after upgrade make sure that these changes are included and remove this line
 
 
 
