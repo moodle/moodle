@@ -130,6 +130,12 @@ abstract class exporter {
             if (isset($data->$property)) {
                 // This happens when we have already defined the format properties.
                 continue;
+            } else if (!property_exists($record, $property) && array_key_exists('default', $definition)) {
+                // We have a default value for this property.
+                $record->$property = $definition['default'];
+            } else if (!property_exists($record, $property) && !empty($definition['optional'])) {
+                // Fine, this property can be omitted.
+                continue;
             } else if (!property_exists($record, $property)) {
                 // Whoops, we got something that wasn't defined.
                 throw new coding_exception('Unexpected property ' . $property);
@@ -261,6 +267,15 @@ abstract class exporter {
      * E.g.
      *      'competency' => array(
      *          'type' => competency_exporter::read_properties_definition()
+     *       ),
+     *
+     * Other properties can be specifically marked as optional, in which case they do not need
+     * to be included in the export in {@link self::get_other_values()}. This is useful when exporting
+     * a substructure which cannot be set as null due to webservices protocol constraints.
+     * E.g.
+     *      'competency' => array(
+     *          'type' => competency_exporter::read_properties_definition(),
+     *          'optional' => true
      *       ),
      *
      * @return array
@@ -408,7 +423,7 @@ abstract class exporter {
      *
      * @return external_single_structure
      */
-    final protected static function get_read_structure_from_properties($properties) {
+    final protected static function get_read_structure_from_properties($properties, $required = VALUE_REQUIRED, $default = null) {
         $returns = array();
         foreach ($properties as $property => $definition) {
             if (isset($returns[$property]) && substr($property, -6) === 'format') {
@@ -418,18 +433,28 @@ abstract class exporter {
             $thisvalue = null;
 
             $type = $definition['type'];
+            $proprequired = VALUE_REQUIRED;
+            $propdefault = null;
+            if (array_key_exists('default', $definition)) {
+                $propdefault = $definition['default'];
+            }
+            if (array_key_exists('optional', $definition)) {
+                // Mark as optional. Note that this should only apply to "reading" "other" properties.
+                $proprequired = VALUE_OPTIONAL;
+            }
+
             if (is_array($type)) {
                 // This is a nested array of more properties.
-                $thisvalue = self::get_read_structure_from_properties($type);
+                $thisvalue = self::get_read_structure_from_properties($type, $proprequired, $propdefault);
             } else {
                 if ($definition['type'] == PARAM_TEXT) {
                     // PARAM_TEXT always becomes PARAM_RAW because filters may be applied.
                     $type = PARAM_RAW;
                 }
-                $thisvalue = new external_value($type, $property);
+                $thisvalue = new external_value($type, $property, $proprequired, $propdefault, $definition['null']);
             }
             if (!empty($definition['multiple'])) {
-                $returns[$property] = new external_multiple_structure($thisvalue);
+                $returns[$property] = new external_multiple_structure($thisvalue, '', $proprequired, $propdefault);
             } else {
                 $returns[$property] = $thisvalue;
 
@@ -443,11 +468,14 @@ abstract class exporter {
             }
         }
 
-        return new external_single_structure($returns);
+        return new external_single_structure($returns, '', $required, $default);
     }
 
     /**
      * Returns the update structure.
+     *
+     * This structure can never be included at the top level for an external function signature
+     * because it contains optional parameters.
      *
      * @return external_single_structure
      */
