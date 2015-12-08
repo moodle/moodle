@@ -63,13 +63,26 @@ abstract class exporter {
         // Cache the valid related objects.
         foreach (static::define_related() as $key => $classname) {
             $isarray = false;
+            $nullallowed = false;
+
+            // Allow ? to mean null is allowed.
+            if (substr($classname, -1) === '?') {
+                $classname = substr($classname, 0, -1);
+                $nullallowed = true;
+            }
+
             // Allow [] to mean an array of values.
             if (substr($classname, -2) === '[]') {
                 $classname = substr($classname, 0, -2);
                 $isarray = true;
             }
+
             $missingdataerr = 'Exporter class is missing required related data: (' . get_called_class() . ') ';
-            if ($isarray) {
+
+            if ($nullallowed && array_key_exists($key, $related) && $related[$key] === null) {
+                $this->related[$key] = $related[$key];
+
+            } else if ($isarray) {
                 if (array_key_exists($key, $related) && is_array($related[$key])) {
                     foreach ($related[$key] as $index => $value) {
                         if (!$value instanceof $classname) {
@@ -80,8 +93,9 @@ abstract class exporter {
                 } else {
                     throw new coding_exception($missingdataerr . $key . ' => ' . $classname . '[]');
                 }
+
             } else {
-                if ((array_key_exists($key, $related) && ($related[$key] instanceof $classname))) {
+                if (array_key_exists($key, $related) && $related[$key] instanceof $classname) {
                     $this->related[$key] = $related[$key];
                 } else {
                     throw new coding_exception($missingdataerr . $key . ' => ' . $classname);
@@ -272,7 +286,9 @@ abstract class exporter {
      *
      * Only objects listed here can be cached in this object.
      *
-     * The class name can be suffixed with [] to indicate an array of values.
+     * The class name can be suffixed:
+     * - with [] to indicate an array of values.
+     * - with ? to indicate that 'null' is allowed.
      *
      * @return array of 'propertyname' => array('type' => classname, 'required' => true)
      */
