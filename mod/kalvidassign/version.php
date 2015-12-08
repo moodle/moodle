@@ -25,12 +25,12 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
-$module->version = 2015091609;
-$module->component  = 'mod_kalvidassign';
-$module->release    = 'Kaltura release 4.0.07';
-$module->requires = 2014050800;
-$module->cron       = 0;
-$module->maturity = MATURITY_STABLE;
-$module->dependencies = array(
+$plugin->version = 2015091609;
+$plugin->component  = 'mod_kalvidassign';
+$plugin->release    = 'Kaltura release 4.0.07';
+$plugin->requires = 2014050800;
+$plugin->cron       = 0;
+$plugin->maturity = MATURITY_STABLE;
+$plugin->dependencies = array(
     'local_kaltura' => 2015091609,
 );
