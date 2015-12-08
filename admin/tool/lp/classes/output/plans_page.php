@@ -66,11 +66,13 @@ class plans_page implements renderable, templatable {
 
         $this->context = context_user::instance($userid);
 
-        $addplan = new single_button(
-           new moodle_url('/admin/tool/lp/editplan.php', array('userid' => $userid)),
-           get_string('addnewplan', 'tool_lp')
-        );
-        $this->navigation[] = $addplan;
+        if (plan::can_manage_user($userid) || plan::can_manage_user_draft($userid)) {
+            $addplan = new single_button(
+                new moodle_url('/admin/tool/lp/editplan.php', array('userid' => $userid)),
+                get_string('addnewplan', 'tool_lp')
+            );
+            $this->navigation[] = $addplan;
+        }
     }
 
     /**
