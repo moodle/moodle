@@ -781,21 +781,6 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
                 // No groups, do nothing
                 break;
             case SEPARATEGROUPS:
-                // If separate groups, but displaying all users then we must display only users
-                // who are in the same group as the current user
-                if (0 == $groupfilter) {
-                    $groupscolumn = ', gm.groupid ';
-                    $groupsjoin   = ' RIGHT JOIN {groups_members} gm ON gm.userid = u.id RIGHT JOIN {groups} g ON g.id = gm.groupid ';
-
-                    $param['courseid'] = $cm->course;
-                    $groupswhere  .= ' AND g.courseid = :courseid ';
-
-                    $param['groupid'] = $groupfilter;
-                    $groupswhere .= ' AND g.id IN ('.$groupids.') ';
-
-                }
-                break;
-
             case VISIBLEGROUPS:
                 // if visible groups but displaying a specific group then we must display users within
                 // that group, if displaying all groups then display all users in the course
