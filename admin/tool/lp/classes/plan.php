@@ -168,6 +168,19 @@ class plan extends persistent {
     }
 
     /**
+     * Get the plan template.
+     *
+     * @return template|null
+     */
+    public function get_template() {
+        $templateid = $this->get_templateid();
+        if ($templateid === null) {
+            return null;
+        }
+        return new template($templateid);
+    }
+
+    /**
      * Validate the template ID.
      *
      * @param mixed $value The value.
@@ -360,6 +373,6 @@ class plan extends persistent {
      * @return bool
      */
     public function can_be_edited() {
-        return $this->can_manage() && $this->get_status() != self::STATUS_COMPLETE;
+        return !$this->is_based_on_template() && $this->get_status() != self::STATUS_COMPLETE && $this->can_manage();
     }
 }

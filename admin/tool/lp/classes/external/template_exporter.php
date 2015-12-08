@@ -23,6 +23,7 @@
  */
 namespace tool_lp\external;
 
+use moodle_url;
 use renderer_base;
 use tool_lp\plan;
 use tool_lp\template_cohort;
@@ -44,6 +45,9 @@ class template_exporter extends persistent_exporter {
             'duedateformatted' => userdate($this->persistent->get_duedate()),
             'cohortscount' => template_cohort::count_records(array('templateid' => $this->persistent->get_id())),
             'planscount' => plan::count_records(array('templateid' => $this->persistent->get_id())),
+            'canmanage' => $this->persistent->can_read(),
+            'canread' => $this->persistent->can_read(),
+            'contextname' => $this->persistent->get_context()->get_context_name()
         );
     }
 
@@ -57,6 +61,15 @@ class template_exporter extends persistent_exporter {
             ),
             'planscount' => array(
                 'type' => PARAM_INT
+            ),
+            'canmanage' => array(
+                'type' => PARAM_BOOL
+            ),
+            'canread' => array(
+                'type' => PARAM_BOOL
+            ),
+            'contextname' => array(
+                'type' => PARAM_TEXT
             )
         );
     }

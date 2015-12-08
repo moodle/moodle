@@ -87,7 +87,7 @@ class plans_page implements renderable, templatable {
         $data->plans = array();
         if ($this->plans) {
             foreach ($this->plans as $plan) {
-                $exporter = new plan_exporter($plan);
+                $exporter = new plan_exporter($plan, array('template' => $plan->get_template()));
                 $record = $exporter->export($output);
                 $data->plans[] = $record;
             }

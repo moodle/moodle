@@ -27,13 +27,14 @@ require_once($CFG->libdir.'/adminlib.php');
 
 $userid = optional_param('userid', false, PARAM_INT);
 $id = optional_param('id', false, PARAM_INT);
+$returntype = optional_param('return', 'plans', PARAM_ALPHA);
 
-$url = new moodle_url('/admin/tool/lp/editplan.php', array('id' => $id, 'userid' => $userid));
+$url = new moodle_url('/admin/tool/lp/editplan.php', array('id' => $id, 'userid' => $userid, 'return' => $returntype));
 
 $plan = null;
 if (empty($id)) {
     $pagetitle = get_string('addnewplan', 'tool_lp');
-    list($title, $subtitle, $returnurl) = \tool_lp\page_helper::setup_for_plan($userid, $url, null, $pagetitle);
+    list($title, $subtitle, $returnurl) = \tool_lp\page_helper::setup_for_plan($userid, $url, null, $pagetitle, $returntype);
 } else {
     $plan = \tool_lp\api::read_plan($id);
 
@@ -43,7 +44,7 @@ if (empty($id)) {
     }
 
     $pagetitle = get_string('editplan', 'tool_lp');
-    list($title, $subtitle, $returnurl) = \tool_lp\page_helper::setup_for_plan($userid, $url, $plan, $pagetitle);
+    list($title, $subtitle, $returnurl) = \tool_lp\page_helper::setup_for_plan($userid, $url, $plan, $pagetitle, $returntype);
 }
 
 $output = $PAGE->get_renderer('tool_lp');
@@ -68,7 +69,7 @@ if ($plan != null) {
     throw new required_capability_exception($PAGE->context, 'tool/lp:planmanage', 'nopermissions', '');
 }
 
-$form = new \tool_lp\form\plan(null, $customdata);
+$form = new \tool_lp\form\plan($url->out(false), $customdata);
 if ($form->is_cancelled()) {
     redirect($returnurl);
 }
@@ -88,12 +89,12 @@ if ($data) {
         require_sesskey();
         \tool_lp\api::create_plan($data);
         echo $output->notification(get_string('plancreated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button('/admin/tool/lp/plans.php?userid=' . $userid);
+        echo $output->continue_button($returnurl);
     } else {
         require_sesskey();
         \tool_lp\api::update_plan($data);
         echo $output->notification(get_string('planupdated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button('/admin/tool/lp/plans.php?userid=' . $userid);
+        echo $output->continue_button($returnurl);
     }
 } else {
     $form->display();

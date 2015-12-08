@@ -37,17 +37,30 @@ class plan_exporter extends persistent_exporter {
         return 'tool_lp\\plan';
     }
 
+    protected static function define_related() {
+        return array('template' => 'tool_lp\\template?');
+    }
+
     protected function get_other_values(renderer_base $output) {
         $classname = static::define_class();
-        return array(
+        $values = array(
             'statusname' => $this->persistent->get_statusname(),
-            'usercanupdate' => $this->persistent->can_manage(),
+            'canmanage' => $this->persistent->can_manage(),
             'canbeedited' => $this->persistent->can_be_edited(),
             'usercanreopen' => $this->persistent->can_manage() &&
-                intval($this->persistent->get_status()) === $classname::STATUS_COMPLETE,
+                $this->persistent->get_status() == $classname::STATUS_COMPLETE,
             'usercancomplete' => $this->persistent->can_manage() &&
-                intval($this->persistent->get_status()) === $classname::STATUS_ACTIVE
+                $this->persistent->get_status() == $classname::STATUS_ACTIVE,
+            'iscompleted' => $this->persistent->get_status() == $classname::STATUS_COMPLETE,
+            'duedateformatted' => userdate($this->persistent->get_duedate())
         );
+
+        if ($this->persistent->is_based_on_template()) {
+            $exporter = new template_exporter($this->related['template']);
+            $values['template'] = $exporter->export($output);
+        }
+
+        return $values;
     }
 
     public static function define_other_properties() {
@@ -55,7 +68,7 @@ class plan_exporter extends persistent_exporter {
             'statusname' => array(
                 'type' => PARAM_RAW,
             ),
-            'usercanupdate' => array(
+            'canmanage' => array(
                 'type' => PARAM_BOOL,
             ),
             'canbeedited' => array(
@@ -66,7 +79,17 @@ class plan_exporter extends persistent_exporter {
             ),
             'usercancomplete' => array(
                 'type' => PARAM_BOOL,
-            )
+            ),
+            'iscompleted' => array(
+                'type' => PARAM_BOOL
+            ),
+            'duedateformatted' => array(
+                'type' => PARAM_TEXT
+            ),
+            'template' => array(
+                'type' => template_exporter::read_properties_definition(),
+                'optional' => true,
+            ),
         );
     }
 }

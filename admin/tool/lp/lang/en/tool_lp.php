@@ -227,6 +227,7 @@ $string['taxonomy_selected_skill'] = 'Selected skill';
 $string['taxonomy_selected_value'] = 'Selected value';
 $string['taxonomy_skill'] = 'Skill';
 $string['taxonomy_value'] = 'Value';
+$string['template'] = 'Template';
 $string['templatecompetencies'] = 'Template competencies';
 $string['templatecreated'] = 'Learning plan template created';
 $string['templatename'] = 'Name';

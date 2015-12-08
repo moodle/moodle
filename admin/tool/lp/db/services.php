@@ -496,11 +496,11 @@ $functions = array(
         'capabilities' => 'tool/lp:planviewown',
         'ajax'         => true,
     ),
-    'tool_lp_data_for_plan_competencies_page' => array(
+    'tool_lp_data_for_plan_page' => array(
         'classname'    => 'tool_lp\external',
-        'methodname'   => 'data_for_plan_competencies_page',
+        'methodname'   => 'data_for_plan_page',
         'classpath'    => '',
-        'description'  => 'Load the data for the plan competencies page template.',
+        'description'  => 'Load the data for the plan page template.',
         'type'         => 'read',
         'capabilities' => 'tool/lp:planview',
         'ajax'         => true,

@@ -1417,7 +1417,7 @@ class api {
             $params['statusdraft'] = plan::STATUS_DRAFT;
         }
 
-        return plan::get_records_select($select, $params, 'timemodified DESC');
+        return plan::get_records_select($select, $params, 'name DESC');
     }
 
     /**

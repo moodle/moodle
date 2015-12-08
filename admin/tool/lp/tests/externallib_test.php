@@ -1215,9 +1215,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->setUser($this->user);
 
         // The normal user can not edit these plans.
-        $plan1->usercanupdate = false;
-        $plan2->usercanupdate = false;
-        $plan3->usercanupdate = false;
+        $plan1->canmanage = false;
+        $plan2->canmanage = false;
+        $plan3->canmanage = false;
         $plan1->canbeedited = false;
         $plan2->canbeedited = false;
         $plan3->canbeedited = false;
@@ -1260,7 +1260,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         assign_capability('tool/lp:planmanageowndraft', CAP_ALLOW, $this->userrole, $syscontext->id, true);
         accesslib_clear_all_caches_for_unit_testing();
 
-        $plan1->usercanupdate = true;
+        $plan1->canmanage = true;
         $plan1->canbeedited = true;
         $this->assertEquals((array)$plan1, external::read_plan($plan1->id));
         try {
@@ -1283,15 +1283,15 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id, true);
         accesslib_clear_all_caches_for_unit_testing();
 
-        $plan1->usercanupdate = false;
+        $plan1->canmanage = false;
         $plan1->canbeedited = false;
 
-        $plan2->usercanupdate = true;
+        $plan2->canmanage = true;
         $plan2->canbeedited = true;
         $plan2->usercanreopen = false;
         $plan2->usercancomplete = true;
 
-        $plan3->usercanupdate = true;
+        $plan3->canmanage = true;
         $plan3->usercanreopen = true;
         $plan3->usercancomplete = false;
 

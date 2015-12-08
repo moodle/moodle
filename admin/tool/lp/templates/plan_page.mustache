@@ -17,77 +17,115 @@
 {{!
     Plan page template.
 }}
-<div data-region="plancompetenciespage">
-    <table class="generaltable fullwidth managecompetencies">
-        <thead>
-            <tr>
-                <th scope="col">{{#str}}shortname, tool_lp{{/str}}</th>
-                <th scope="col">{{#str}}status, tool_lp{{/str}}</th>
-                <th scope="col">{{#str}}proficient, tool_lp{{/str}}</th>
-                {{^iscompleted}}
-                    <th scope="col">{{#str}}state, tool_lp{{/str}}</th>
-                {{/iscompleted}}
-                {{#canmanage}}
-                    <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
-                {{/canmanage}}
-            </tr>
-        </thead>
-        <tbody  class="drag-parentnode">
-            {{#competencies}}
-            <tr class="drag-samenode" data-id="{{competency.id}}">
-                <td>
-                    {{#canmanage}}
-                    {{#canbeedited}}
-                    <span class="drag-handlecontainer pull-left"></span>
-                    {{/canbeedited}}
-                    {{/canmanage}}
-                    <a href="#" data-action="competency-dialogue" data-id="{{competency.id}}">{{competency.shortname}}</a>
-                </td>
-                {{#iscompleted}}
-                    <td>{{usercompetencyplan.gradename}}</td>
-                    <td>{{usercompetencyplan.proficiencyname}}</td>
-                {{/iscompleted}}
-                {{^iscompleted}}
-                    <td>{{usercompetency.gradename}}</td>
-                    <td>{{usercompetency.proficiencyname}}</td>
-                    <td>{{usercompetency.statusname}}</td>
-                {{/iscompleted}}
-                {{#canmanage}}
+<div data-region="plan-page" data-id="{{plan.id}}" data-userid="{{plan.userid}}">
+    <h2>
+        {{plan.name}}
+        {{#plan.canbeedited}}
+            <a href="{{pluginbaseurl}}/editplan.php?id={{plan.id}}&amp;userid={{plan.userid}}&amp;return=plan">{{#pix}}t/edit, core, {{#str}}editplan, tool_lp{{/str}}{{/pix}}</a>
+        {{/plan.canbeedited}}
+    </h2>
+    <div data-region="plan-summary">
+        <dl>
+            <dt>{{#str}}status, tool_lp{{/str}}</dt>
+            <dd>
+                {{plan.statusname}}
+                {{#plan.usercancomplete}}
+                    (<a data-action="plan-complete" href="#">{{#str}}completeplan, tool_lp{{/str}}</a>)
+                {{/plan.usercancomplete}}
+                {{#plan.usercanreopen}}
+                    (<a data-action="plan-reopen" href="#">{{#str}}reopenplan, tool_lp{{/str}}</a>)
+                {{/plan.usercanreopen}}
+            </dd>
+            <dt>{{#str}}duedate, tool_lp{{/str}}</dt>
+            <dd>{{plan.duedateformatted}}</dd>
+            {{#plan.template}}
+                <dt>{{#str}}template, tool_lp{{/str}}</dt>
+                <dd>
+                    {{#canread}}
+                        <a href="{{pluginbaseurl}}/templatecompetencies.php?templateid={{id}}&amp;pagecontextid={{contextid}}">
+                    {{/canread}}
+                    {{plan.template.shortname}}
+                    {{#canread}}
+                        </a>
+                    {{/canread}}
+                </dd>
+            {{/plan.template}}
+            {{#description}}
+                <dt>{{#str}}description{{/str}}</dt>
+                <dd>{{plan.description}}</dd>
+            {{/description}}
+        </dl>
+    </div>
+    <div data-region="plan-competencies">
+        <h3>{{#str}}learningplancompetencies, tool_lp{{/str}}</h3>
+        <table class="generaltable fullwidth managecompetencies">
+            <thead>
+                <tr>
+                    <th scope="col">{{#str}}shortname, tool_lp{{/str}}</th>
+                    <th scope="col">{{#str}}status, tool_lp{{/str}}</th>
+                    <th scope="col">{{#str}}proficient, tool_lp{{/str}}</th>
+                    {{^plan.iscompleted}}
+                        <th scope="col">{{#str}}state, tool_lp{{/str}}</th>
+                    {{/plan.iscompleted}}
+                    {{#plan.canbeedited}}
+                        <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
+                    {{/plan.canbeedited}}
+                </tr>
+            </thead>
+            <tbody  class="drag-parentnode">
+                {{#competencies}}
+                <tr class="drag-samenode" data-id="{{competency.id}}">
                     <td>
-                        {{#canbeedited}}
-                        <div class="pull-left">
-                            <a href="#" data-action="delete-competency-link" data-id="{{competency.id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
-                        </div>
-                        {{/canbeedited}}
+                        {{#plan.canbeedited}}
+                        <span class="drag-handlecontainer pull-left"></span>
+                        {{/plan.canbeedited}}
+                        <a href="#" data-action="competency-dialogue" data-id="{{competency.id}}">{{competency.shortname}}</a>
                     </td>
-                {{/canmanage}}
-            </tr>
-            {{/competencies}}
-        </tbody>
-    </table>
+                    {{#plan.iscompleted}}
+                        <td>{{usercompetencyplan.gradename}}</td>
+                        <td>{{usercompetencyplan.proficiencyname}}</td>
+                    {{/plan.iscompleted}}
+                    {{^plan.iscompleted}}
+                        <td>{{usercompetency.gradename}}</td>
+                        <td>{{usercompetency.proficiencyname}}</td>
+                        <td>{{usercompetency.statusname}}</td>
+                    {{/plan.iscompleted}}
+                    {{#plan.canbeedited}}
+                        <td>
+                            <div class="pull-left">
+                                <a href="#" data-action="delete-competency-link" data-id="{{competency.id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
+                            </div>
+                        </td>
+                    {{/plan.canbeedited}}
+                </tr>
+                {{/competencies}}
+            </tbody>
+        </table>
 
-    <div data-region="actions">
-        <div class="pull-right">
-            <!-- Button to add competencies to the plan -->
-            {{#canmanage}}
-            {{#canbeedited}}
-             <button class="btn" data-action="add">{{#pix}}t/add{{/pix}} {{#str}}addcompetency, tool_lp{{/str}}</button>
-             {{/canbeedited}}
-            {{/canmanage}}
+        <div data-region="actions">
+            <div class="pull-right">
+                <!-- Button to add competencies to the plan -->
+                {{#plan.canbeedited}}
+                <button class="btn" data-action="add">{{#pix}}t/add{{/pix}} {{#str}}addcompetency, tool_lp{{/str}}</button>
+                {{/plan.canbeedited}}
+            </div>
         </div>
     </div>
 
 </div>
-{{#canmanage}}
+{{#plan.canmanage}}
 {{#js}}
-require(['tool_lp/competencies'], function(mod) {
-    (new mod({{planid}}, 'plan', {{contextid}}));
+require(['tool_lp/competencies', 'tool_lp/planactions'], function(mod, actionsMod) {
+    (new mod({{plan.id}}, 'plan', {{contextid}}));
+
+    var planActions = new actionsMod('plan');
+    planActions.registerEvents();
 });
 {{/js}}
-{{/canmanage}}
+{{/plan.canmanage}}
 {{#js}}
 require(['tool_lp/competencydialogue'], function(Compdialogue) {
     var competencydialogue = new Compdialogue({includerelated : true});
-    competencydialogue.watch('[data-region="plancompetenciespage"]');
+    competencydialogue.watch('[data-region="plan-page"]');
 });
 {{/js}}

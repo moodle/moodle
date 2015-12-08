@@ -23,12 +23,14 @@
  */
 namespace tool_lp\output;
 
+use moodle_url;
 use renderable;
 use templatable;
 use stdClass;
 use tool_lp\api;
 use tool_lp\plan;
 use tool_lp\external\competency_exporter;
+use tool_lp\external\plan_exporter;
 
 /**
  * Plan page class.
@@ -61,17 +63,15 @@ class plan_page implements renderable, templatable {
         $frameworks = array();
         $scales = array();
 
+        $planexporter = new plan_exporter($this->plan, array('template' => $this->plan->get_template()));
+
         $data = new stdClass();
+        $data->plan = $planexporter->export($output);
         $data->competencies = array();
-        $data->planid = $this->plan->get_id();
-        $data->canmanage = $this->plan->can_manage() && !$this->plan->is_based_on_template();
-        $data->canbeedited = $this->plan->can_be_edited();
+        $data->pluginbaseurl = (new moodle_url('/admin/tool/lp'))->out(false);
         $data->contextid = $this->plan->get_context()->id;
 
-        $pclist = api::list_plan_competencies($this->plan);
-
-        $data->iscompleted = $this->plan->get_status() == plan::STATUS_COMPLETE;
-        if ($data->iscompleted) {
+        if ($data->plan->iscompleted) {
             $ucproperty = 'usercompetencyplan';
             $ucexporter = 'tool_lp\\external\\user_competency_plan_exporter';
         } else {
@@ -79,6 +79,7 @@ class plan_page implements renderable, templatable {
             $ucexporter = 'tool_lp\\external\\user_competency_exporter';
         }
 
+        $pclist = api::list_plan_competencies($this->plan);
         foreach ($pclist as $pc) {
             $comp = $pc->competency;
             $usercomp = $pc->$ucproperty;

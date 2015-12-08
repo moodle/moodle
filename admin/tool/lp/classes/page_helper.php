@@ -114,12 +114,13 @@ class page_helper {
      * @param  moodle_url $url The current page.
      * @param  \tool_lp\plan $plan The plan, if any.
      * @param  string $subtitle The title of the subpage, if any.
+     * @param  string $returntype The desired return page.
      * @return array With the following:
      *               - Page title
      *               - Page sub title
      *               - Return URL (main plan page)
      */
-    public static function setup_for_plan($userid, moodle_url $url, $plan = null, $subtitle = '') {
+    public static function setup_for_plan($userid, moodle_url $url, $plan = null, $subtitle = '', $returntype = null) {
         global $PAGE, $USER;
 
         // Check that the user is a valid user.
@@ -131,6 +132,15 @@ class page_helper {
         $context = context_user::instance($user->id);
 
         $plansurl = new moodle_url('/admin/tool/lp/plans.php', array('userid' => $userid));
+        $planurl = null;
+        if ($plan) {
+            $planurl = new moodle_url('/admin/tool/lp/plan.php', array('id' => $plan->get_id()));
+        }
+
+        $returnurl = $plansurl;
+        if ($returntype == 'plan' && $planurl) {
+            $returnurl = $planurl;
+        }
 
         $PAGE->navigation->override_active_url($plansurl);
         $PAGE->set_context($context);
@@ -154,13 +164,15 @@ class page_helper {
         $PAGE->set_heading($title);
 
         if (!empty($plan)) {
-            $PAGE->navbar->add($title);
-            $PAGE->navbar->add($subtitle, $url);
+            $PAGE->navbar->add($title, $planurl);
+            if (!empty($subtitle)) {
+                $PAGE->navbar->add($subtitle, $url);
+            }
         } else if (!empty($subtitle)) {
             // We're in a sub page without a specific plan.
             $PAGE->navbar->add($subtitle, $url);
         }
 
-        return array($title, $subtitle, $plansurl);
+        return array($title, $subtitle, $returnurl);
     }
 }

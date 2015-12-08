@@ -40,19 +40,19 @@
         <tr>
             <th scope="col">{{#str}}planname, tool_lp{{/str}}</th>
             <th scope="col">{{#str}}status, tool_lp{{/str}}</th>
-            {{#usercanupdate}}
+            {{#canmanage}}
             <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
-            {{/usercanupdate}}
+            {{/canmanage}}
         </tr>
     </thead>
     <tbody>
         {{#plans}}
-        <tr>
+        <tr data-region="plan-node" data-id="{{id}}" data-userid="{{userid}}">
             <td>
                 <span><a href="{{pluginbaseurl}}/plan.php?id={{id}}">{{name}}</a></span>
             </td>
             <td>{{statusname}}</td>
-            {{#usercanupdate}}
+            {{#canmanage}}
             <td>
                 <div style="display: inline-block;">
                 <ul title="{{#str}}edit{{/str}}" class="planactions">
@@ -72,27 +72,27 @@
                     </li>
                     {{#usercanreopen}}
                     <li>
-                        <a data-action="reopenplan" data-planid="{{id}}" data-userid="{{userid}}" href="#">
+                        <a data-action="plan-reopen" href="#">
                             {{#pix}}t/edit{{/pix}} {{#str}}reopenplan, tool_lp{{/str}}
                         </a>
                     </li>
                     {{/usercanreopen}}
                     {{#usercancomplete}}
                     <li>
-                        <a data-action="completeplan" data-planid="{{id}}" data-userid="{{userid}}" href="#">
+                        <a data-action="plan-complete" href="#">
                             {{#pix}}t/edit{{/pix}} {{#str}}completeplan, tool_lp{{/str}}
                         </a>
                     </li>
                     {{/usercancomplete}}
                     <li>
-                        <a data-action="deleteplan" data-planid="{{id}}" data-userid="{{userid}}" href="#">
+                        <a data-action="plan-delete" href="#">
                             {{#pix}}t/delete{{/pix}} {{#str}}deletethisplan, tool_lp{{/str}}
                         </a>
                     </li>
                     </ul>
                 </ul>
             </div>
-            {{/usercanupdate}}
+            {{/canmanage}}
             </td>
         </tr>
         {{/plans}}
@@ -113,15 +113,11 @@
 
 {{#js}}
 // Initialise the JS.
-require(['tool_lp/planactions',
-         'tool_lp/menubar'],
-        function(actionsMod, menubar) {
+require(['tool_lp/planactions'],
+        function(actionsMod) {
 
-    menubar.enhance('.planactions', {
-        "[data-action='deleteplan']": actionsMod.deleteHandler,
-        "[data-action='completeplan']": actionsMod.completePlanHandler,
-        "[data-action='reopenplan']": actionsMod.reopenPlanHandler,
-    });
+    var planActions = new actionsMod('plans');
+    planActions.enhanceMenubar('.planactions');
 });
 
 {{/js}}

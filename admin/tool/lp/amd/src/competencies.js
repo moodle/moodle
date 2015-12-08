@@ -170,11 +170,11 @@ define(['jquery',
                         });
                     });
                     requests.push({
-                         methodname: 'tool_lp_data_for_plan_competencies_page',
+                         methodname: 'tool_lp_data_for_plan_page',
                          args: { planid: self.itemid}
                     });
                     pagerender = 'tool_lp/plan_page';
-                    pageregion = 'plancompetenciespage';
+                    pageregion = 'plan-page';
                 }
 
                 ajax.call(requests)[requests.length - 1].then(function(context) {
@@ -257,7 +257,7 @@ define(['jquery',
                 requests = ajax.call([
                     { methodname: 'tool_lp_remove_competency_from_plan',
                         args: { planid: localthis.itemid, competencyid: deleteid } },
-                    { methodname: 'tool_lp_data_for_plan_competencies_page',
+                    { methodname: 'tool_lp_data_for_plan_page',
                         args: { planid: localthis.itemid } }
                 ]);
                 pagerender = 'tool_lp/plan_page';

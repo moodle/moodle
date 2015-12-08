@@ -2728,7 +2728,7 @@ class external extends external_api {
      *
      * @return \external_function_parameters
      */
-    public static function data_for_plan_competencies_page_parameters() {
+    public static function data_for_plan_page_parameters() {
         $planid = new external_value(
             PARAM_INT,
             'The plan id',
@@ -2739,14 +2739,14 @@ class external extends external_api {
     }
 
     /**
-     * Loads the data required to render the plan_competencies_page template.
+     * Loads the data required to render the plan_page template.
      *
      * @param int $planid Learning Plan id.
      * @return boolean
      */
-    public static function data_for_plan_competencies_page($planid) {
+    public static function data_for_plan_page($planid) {
         global $PAGE;
-        $params = self::validate_parameters(self::data_for_plan_competencies_page_parameters(),
+        $params = self::validate_parameters(self::data_for_plan_page_parameters(),
                                             array(
                                                 'planid' => $planid
                                             ));
@@ -2762,11 +2762,11 @@ class external extends external_api {
     }
 
     /**
-     * Returns description of data_for_plan_competencies_page() result value.
+     * Returns description of data_for_plan_page() result value.
      *
      * @return \external_description
      */
-    public static function data_for_plan_competencies_page_returns() {
+    public static function data_for_plan_page_returns() {
         $uc = user_competency_exporter::get_read_structure();
         $ucp = user_competency_plan_exporter::get_read_structure();
 
@@ -2774,11 +2774,9 @@ class external extends external_api {
         $ucp->required = VALUE_OPTIONAL;
 
         return new external_single_structure(array (
-            'planid' => new external_value(PARAM_INT, 'Learning Plan id'),
-            'canmanage' => new external_value(PARAM_BOOL, 'User can manage learning plan'),
-            'canbeedited' => new external_value(PARAM_BOOL, 'Plan can be edited'),
-            'iscompleted' => new external_value(PARAM_BOOL, 'Is the plan completed'),
-            'contextid' => $id = new external_value(PARAM_INT, 'Context ID.'),
+            'plan' => plan_exporter::get_read_structure(),
+            'contextid' => new external_value(PARAM_INT, 'Context ID.'),
+            'pluginbaseurl' => new external_value(PARAM_URL, 'Plugin base URL.'),
             'competencies' => new external_multiple_structure(
                 new external_single_structure(array(
                     'competency' => competency_exporter::get_read_structure(),
@@ -2820,7 +2818,7 @@ class external extends external_api {
         $params = (object) $params;
 
         $result = api::create_plan($params);
-        $exporter = new plan_exporter($result);
+        $exporter = new plan_exporter($result, array('template' => null));
         return $exporter->export($output);
     }
 
@@ -2988,7 +2986,7 @@ class external extends external_api {
         self::validate_context($plan->get_context());
         $output = $PAGE->get_renderer('tool_lp');
 
-        $exporter = new plan_exporter($plan);
+        $exporter = new plan_exporter($plan, array('template' => $plan->get_template()));
         $record = $exporter->export($output);
         return external_api::clean_returnvalue(self::read_plan_returns(), $record);
     }
@@ -3082,7 +3080,7 @@ class external extends external_api {
 
         $renderable = new \tool_lp\output\plans_page($params['userid']);
 
-        return external_api::clean_returnvalue(self::data_for_plans_page_returns(), $renderable->export_for_template($output));
+        return $renderable->export_for_template($output);
     }
 
     /**
