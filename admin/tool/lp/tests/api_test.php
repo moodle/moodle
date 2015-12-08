@@ -1620,4 +1620,82 @@ class tool_lp_api_testcase extends advanced_testcase {
         }
     }
 
+    /**
+     * Test when adding competency that belong to hidden framework to plan/template/course.
+     */
+    public function test_hidden_framework() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user = $dg->create_user();
+
+        // Create a course.
+        $cat1 = $dg->create_category();
+        $course = $dg->create_course(array('category' => $cat1->id));
+        // Create a template.
+        $template = $lpg->create_template();
+        // Create a plan.
+        $plan = $lpg->create_plan(array('userid' => $user->id));
+
+        // Create a hidden framework.
+        $frm = array(
+            'visible' => false
+        );
+        $framework = $lpg->create_framework($frm);
+        $competency = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+
+        // Linking competency that belong to hidden framework to course.
+        try {
+            api::add_competency_to_course($course->id, $competency->get_id());
+            $this->fail('A competency belonging to hidden framework can not be linked to course');
+        } catch (coding_exception $e) {
+            $this->assertTrue(true);
+        }
+
+        // Adding competency that belong to hidden framework to template.
+        try {
+            api::add_competency_to_template($template->get_id(), $competency->get_id());
+            $this->fail('A competency belonging to hidden framework can not be added to template');
+        } catch (coding_exception $e) {
+            $this->assertTrue(true);
+        }
+
+        // Adding competency that belong to hidden framework to plan.
+        try {
+            api::add_competency_to_plan($plan->get_id(), $competency->get_id());
+            $this->fail('A competency belonging to hidden framework can not be added to plan');
+        } catch (coding_exception $e) {
+            $this->assertTrue(true);
+        }
+    }
+
+    /**
+     * Test when using hidden template in plan/cohort.
+     */
+    public function test_hidden_template() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user = $dg->create_user();
+
+        // Create a cohort.
+        $cohort = $dg->create_cohort();
+        // Create a hidden template.
+        $template = $lpg->create_template(array('visible' => false));
+
+        // Can not link hidden template to plan.
+        try {
+            api::create_plan_from_template($template->get_id(), $user->id);
+            $this->fail('Can not link a hidden template to plan');
+        } catch (coding_exception $e) {
+            $this->assertTrue(true);
+        }
+
+        // Can associate hidden template to cohort.
+        $templatecohort = api::create_template_cohort($template->get_id(), $cohort->id);
+        $this->assertInstanceOf('\tool_lp\template_cohort', $templatecohort);
+    }
+
 }

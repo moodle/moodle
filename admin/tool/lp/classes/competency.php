@@ -79,10 +79,6 @@ class competency extends persistent {
                 'default' => null,
                 'type' => PARAM_INT
             ),
-            'visible' => array(
-                'default' => 1,
-                'type' => PARAM_BOOL
-            ),
             'parentid' => array(
                 'default' => 0,
                 'type' => PARAM_INT

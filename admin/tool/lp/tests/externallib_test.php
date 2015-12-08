@@ -242,7 +242,6 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             'idnumber' => 'idnumber' . $number,
             'description' => 'description' . $number,
             'descriptionformat' => FORMAT_HTML,
-            'visible' => true,
             'competencyframeworkid' => $frameworkid,
             'sortorder' => 0
         );
@@ -257,7 +256,6 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             'idnumber' => 'idnumber' . $number,
             'description' => 'description' . $number,
             'descriptionformat' => FORMAT_HTML,
-            'visible' => true,
             'sortorder' => 0
         );
         $result = external::update_competency($competency);
@@ -608,7 +606,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($result, 3);
 
         $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
-            array('contextid' => context_system::instance()->id), 'self');
+            array('contextid' => context_system::instance()->id), 'self', false);
         $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
 
         $this->assertEquals(count($result), 3);
@@ -642,7 +640,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($result, 3);
 
         $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
-            array('contextid' => context_system::instance()->id), 'self');
+            array('contextid' => context_system::instance()->id), 'self', false);
         $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
 
         $this->assertEquals(count($result), 3);
@@ -685,7 +683,6 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('idnumber1', $competency->idnumber);
         $this->assertEquals('description1', $competency->description);
         $this->assertEquals(FORMAT_HTML, $competency->descriptionformat);
-        $this->assertEquals(true, $competency->visible);
         $this->assertEquals(0, $competency->parentid);
         $this->assertEquals($framework->id, $competency->competencyframeworkid);
     }
@@ -711,7 +708,6 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('idnumber1', $competency->idnumber);
         $this->assertEquals('description1', $competency->description);
         $this->assertEquals(FORMAT_HTML, $competency->descriptionformat);
-        $this->assertEquals(true, $competency->visible);
         $this->assertEquals(0, $competency->parentid);
         $this->assertEquals($incat->id, $competency->competencyframeworkid);
 
@@ -734,7 +730,6 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             'idnumber' => 'id;"number',
             'description' => 'de<>\\..scription',
             'descriptionformat' => FORMAT_HTML,
-            'visible' => true,
             'competencyframeworkid' => $framework->id,
             'sortorder' => 0
         );
@@ -761,7 +756,6 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('idnumber1', $result->idnumber);
         $this->assertEquals('description1', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
-        $this->assertEquals(true, $result->visible);
         $this->assertEquals(0, $result->parentid);
         $this->assertEquals($framework->id, $result->competencyframeworkid);
     }
@@ -790,7 +784,6 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('idnumber2', $result->idnumber);
         $this->assertEquals('description2', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
-        $this->assertEquals(true, $result->visible);
         $this->assertEquals(0, $result->parentid);
         $this->assertEquals($catframework->id, $result->competencyframeworkid);
 
@@ -822,7 +815,6 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('idnumber1', $result->idnumber);
         $this->assertEquals('description1', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
-        $this->assertEquals(true, $result->visible);
         $this->assertEquals(0, $result->parentid);
         $this->assertEquals($framework->id, $result->competencyframeworkid);
     }
@@ -850,7 +842,6 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('idnumber2', $result->idnumber);
         $this->assertEquals('description2', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
-        $this->assertEquals(true, $result->visible);
         $this->assertEquals(0, $result->parentid);
         $this->assertEquals($catframework->id, $result->competencyframeworkid);
 
@@ -1021,7 +1012,6 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('shortname1', $result->shortname);
         $this->assertEquals('idnumber1', $result->idnumber);
         $this->assertEquals('description1', $result->description);
-        $this->assertEquals(true, $result->visible);
     }
 
     /**
@@ -1053,7 +1043,6 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('shortname1', $result->shortname);
         $this->assertEquals('idnumber1', $result->idnumber);
         $this->assertEquals('description1', $result->description);
-        $this->assertEquals(true, $result->visible);
     }
 
     /**
@@ -1080,7 +1069,6 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('shortname1', $result->shortname);
         $this->assertEquals('idnumber1', $result->idnumber);
         $this->assertEquals('description1', $result->description);
-        $this->assertEquals(true, $result->visible);
     }
 
     /**
@@ -1919,7 +1907,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         assign_capability('tool/lp:templateread', CAP_PROHIBIT, $this->userrole, $syscontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
         try {
-            external::list_templates('id', 'ASC', 0, 10, array('contextid' => $syscontextid), 'children');
+            external::list_templates('id', 'ASC', 0, 10, array('contextid' => $syscontextid), 'children', false);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
         }
@@ -1928,7 +1916,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         assign_capability('tool/lp:templateread', CAP_PREVENT, $this->userrole, $syscontextid, true);
         assign_capability('tool/lp:templateread', CAP_ALLOW, $this->userrole, $catcontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
-        $result = external::list_templates('id', 'ASC', 0, 10, array('contextid' => $syscontextid), 'children');
+        $result = external::list_templates('id', 'ASC', 0, 10, array('contextid' => $syscontextid), 'children', false);
         $result = external_api::clean_returnvalue(external::list_templates_returns(), $result);
         $this->assertCount(2, $result);
         $this->assertEquals($cat1->id, $result[0]['id']);
@@ -1937,7 +1925,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         // User with system permissions.
         assign_capability('tool/lp:templateread', CAP_ALLOW, $this->userrole, $syscontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
-        $result = external::list_templates('id', 'DESC', 0, 3, array('contextid' => $catcontextid), 'parents');
+        $result = external::list_templates('id', 'DESC', 0, 3, array('contextid' => $catcontextid), 'parents', false);
         $result = external_api::clean_returnvalue(external::list_templates_returns(), $result);
         $this->assertCount(3, $result);
         $this->assertEquals($cat2->id, $result[0]['id']);

@@ -55,8 +55,10 @@ if (($data = $form->get_data()) && !empty($data->cohorts)) {
         // Create the template/cohort relationship.
         $relation = \tool_lp\api::create_template_cohort($template, $cohortid);
 
-        // Create a plan for each member.
-        $i += \tool_lp\api::create_plans_from_template_cohort($template, $cohortid);
+        // Create a plan for each member if template visible.
+        if ($template->get_visible()) {
+            $i += \tool_lp\api::create_plans_from_template_cohort($template, $cohortid);
+        }
     }
     if ($i == 0) {
         $notification = get_string('noplanswerecreated', 'tool_lp');
@@ -73,7 +75,11 @@ $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
 echo $output->heading($title);
 echo $output->heading($subtitle, 3);
-$form->display();
+if ($template->get_visible() == false) {
+    // Display message to prevent that cohort will not be synchronzed if the template is hidden.
+    echo $output->notify_message(get_string('templatecohortpagemessage', 'tool_lp'));
+}
+echo $form->display();
 $page = new \tool_lp\output\template_cohorts_page($template, $url);
 echo $output->render($page);
 echo $output->footer();

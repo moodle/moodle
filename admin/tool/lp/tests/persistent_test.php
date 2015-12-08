@@ -65,11 +65,6 @@ class tool_lp_persistent_testcase extends advanced_testcase {
                 'default' => 0,
                 'null' => NULL_NOT_ALLOWED
             ),
-            'visible' => array(
-                'type' => PARAM_BOOL,
-                'default' => true,
-                'null' => NULL_NOT_ALLOWED
-            ),
             'path' => array(
                 'type' => PARAM_RAW,
                 'default' => '',
@@ -142,7 +137,6 @@ class tool_lp_persistent_testcase extends advanced_testcase {
             'description' => '',
             'descriptionformat' => FORMAT_HTML,
             'parentid' => 0,
-            'visible' => true,
             'path' => '',
             'sortorder' => null,
             'competencyframeworkid' => null,
@@ -167,7 +161,6 @@ class tool_lp_persistent_testcase extends advanced_testcase {
             'description' => 'xyz',
             'descriptionformat' => FORMAT_PLAIN,
             'parentid' => 999,
-            'visible' => false,
             'path' => '/a/b/c',
             'sortorder' => 12,
             'competencyframeworkid' => 5,
@@ -270,15 +263,11 @@ class tool_lp_persistent_testcase extends advanced_testcase {
     public function test_validation_type() {
         $data = (object) array(
             'idnumber' => 'abc',
-            'sortorder' => 0,
-            'visible' => 'NaN'
+            'sortorder' => 'NaN'
         );
         $p = new tool_lp_testable_persistent(0, $data);
-        $expected = array(
-            'visible' => new lang_string('invaliddata', 'error'),
-        );
         $this->assertFalse($p->is_valid());
-        $this->assertEquals($expected, $p->get_errors());
+        $this->assertArrayHasKey('sortorder', $p->get_errors());
     }
 
     public function test_validation_null() {
@@ -437,10 +426,6 @@ class tool_lp_testable_persistent extends \tool_lp\persistent {
             'parentid' => array(
                 'type' => PARAM_INT,
                 'default' => 0
-            ),
-            'visible' => array(
-                'type' => PARAM_BOOL,
-                'default' => 1
             ),
             'path' => array(
                 'type' => PARAM_RAW,

@@ -431,6 +431,12 @@ class external extends external_api {
             VALUE_DEFAULT,
             'children'
         );
+        $onlyvisible = new external_value(
+            PARAM_BOOL,
+            'Only visible frameworks will be returned if visible true',
+            VALUE_DEFAULT,
+            false
+        );
 
         $params = array(
             'sort' => $sort,
@@ -438,7 +444,8 @@ class external extends external_api {
             'skip' => $skip,
             'limit' => $limit,
             'context' => self::get_context_parameters(),
-            'includes' => $includes
+            'includes' => $includes,
+            'onlyvisible' => $onlyvisible
         );
         return new external_function_parameters($params);
     }
@@ -453,12 +460,13 @@ class external extends external_api {
      * @param int $limit
      * @param array $context
      * @param bool $includes
+     * @param bool $onlyvisible
      *
      * @return array
      * @throws \required_capability_exception
      * @throws invalid_parameter_exception
      */
-    public static function list_competency_frameworks($sort, $order, $skip, $limit, $context, $includes) {
+    public static function list_competency_frameworks($sort, $order, $skip, $limit, $context, $includes, $onlyvisible) {
         global $PAGE;
 
         $params = self::validate_parameters(self::list_competency_frameworks_parameters(),
@@ -468,7 +476,8 @@ class external extends external_api {
                                                 'skip' => $skip,
                                                 'limit' => $limit,
                                                 'context' => $context,
-                                                'includes' => $includes
+                                                'includes' => $includes,
+                                                'onlyvisible' => $onlyvisible
                                             ));
 
         $context = self::get_context_from_params($params['context']);
@@ -484,7 +493,8 @@ class external extends external_api {
                                        $params['skip'],
                                        $params['limit'],
                                        $context,
-                                       $params['includes']);
+                                       $params['includes'],
+                                       $params['onlyvisible']);
         $records = array();
         foreach ($results as $result) {
             $exporter = new competency_framework_exporter($result);
@@ -827,7 +837,7 @@ class external extends external_api {
 
         $safefilters = array();
         $validcolumns = array('id', 'shortname', 'description', 'sortorder',
-                              'idnumber', 'visible', 'parentid', 'competencyframeworkid');
+                              'idnumber', 'parentid', 'competencyframeworkid');
         foreach ($params['filters'] as $filter) {
             if (!in_array($filter->column, $validcolumns)) {
                 throw new invalid_parameter_exception('Filter column was invalid');
@@ -962,7 +972,7 @@ class external extends external_api {
 
         $safefilters = array();
         $validcolumns = array('id', 'shortname', 'description', 'sortorder', 'idnumber',
-                              'visible', 'parentid', 'competencyframeworkid');
+                              'parentid', 'competencyframeworkid');
         foreach ($params['filters'] as $filter) {
             if (!in_array($filter['column'], $validcolumns)) {
                 throw new invalid_parameter_exception('Filter column was invalid');
@@ -2033,6 +2043,12 @@ class external extends external_api {
             VALUE_DEFAULT,
             'children'
         );
+        $onlyvisible = new external_value(
+            PARAM_BOOL,
+            'If should list only visible templates',
+            VALUE_DEFAULT,
+            false
+        );
 
         $params = array(
             'sort' => $sort,
@@ -2040,7 +2056,8 @@ class external extends external_api {
             'skip' => $skip,
             'limit' => $limit,
             'context' => self::get_context_parameters(),
-            'includes' => $includes
+            'includes' => $includes,
+            'onlyvisible' => $onlyvisible
         );
         return new external_function_parameters($params);
     }
@@ -2054,10 +2071,11 @@ class external extends external_api {
      * @param int $limit Number of rows to return.
      * @param array $context
      * @param bool $includes
+     * @param bool $onlyvisible
      *
      * @return array
      */
-    public static function list_templates($sort, $order, $skip, $limit, $context, $includes) {
+    public static function list_templates($sort, $order, $skip, $limit, $context, $includes, $onlyvisible) {
         global $PAGE;
 
         $params = self::validate_parameters(self::list_templates_parameters(),
@@ -2067,7 +2085,8 @@ class external extends external_api {
                                                 'skip' => $skip,
                                                 'limit' => $limit,
                                                 'context' => $context,
-                                                'includes' => $includes
+                                                'includes' => $includes,
+                                                'onlyvisible' => $onlyvisible
                                             ));
 
         $context = self::get_context_from_params($params['context']);
@@ -2083,7 +2102,8 @@ class external extends external_api {
                                        $params['skip'],
                                        $params['limit'],
                                        $context,
-                                       $params['includes']);
+                                       $params['includes'],
+                                       $params['onlyvisible']);
         $records = array();
         foreach ($results as $result) {
             $exporter = new template_exporter($result);

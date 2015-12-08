@@ -121,10 +121,9 @@ class template_competency extends persistent {
      * Count the competencies in a template.
      *
      * @param int $templateid The template id
-     * @param bool $onlyvisible If true, only count visible competencies in this template.
      * @return int
      */
-    public static function count_competencies($templateid, $onlyvisible) {
+    public static function count_competencies($templateid) {
         global $DB;
 
         $sql = 'SELECT COUNT(comp.id)
@@ -133,11 +132,6 @@ class template_competency extends persistent {
                     ON tplcomp.competencyid = comp.id
                  WHERE tplcomp.templateid = ? ';
         $params = array($templateid);
-
-        if ($onlyvisible) {
-            $sql .= ' AND comp.visible = ?';
-            $params[] = 1;
-        }
 
         $results = $DB->count_records_sql($sql, $params);
 
@@ -148,10 +142,9 @@ class template_competency extends persistent {
      * List the competencies in this template.
      *
      * @param int $templateid The template id
-     * @param bool $onlyvisible If true, only count visible competencies in this template.
      * @return array[competency]
      */
-    public static function list_competencies($templateid, $onlyvisible) {
+    public static function list_competencies($templateid) {
         global $DB;
 
         $sql = 'SELECT comp.*
@@ -160,11 +153,6 @@ class template_competency extends persistent {
                     ON tplcomp.competencyid = comp.id
                  WHERE tplcomp.templateid = ?';
         $params = array($templateid);
-
-        if ($onlyvisible) {
-            $sql .= ' AND comp.visible = ?';
-            $params[] = 1;
-        }
 
         $sql .= 'ORDER BY tplcomp.sortorder ASC';
 

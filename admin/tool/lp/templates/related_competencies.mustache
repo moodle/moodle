@@ -4,20 +4,18 @@
 </p>
 {{#relatedcompetencies}}
     <ul>
-        {{#visible}}
-            <li>
-                {{#showdeleterelatedaction}}
-                    <div class="pull-right">
-                        <a href="#" data-action="deleterelation" id="id-related-{{id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
-                    </div>
-                {{/showdeleterelatedaction}}
-                <p>
-                    <a href="#" data-action="competency-dialogue" data-id="{{id}}">
-                        {{shortname}}{{#idnumber}} {{idnumber}}{{/idnumber}}
-                    </a>
-                </p>
-            </li>
-        {{/visible}}
+        <li>
+            {{#showdeleterelatedaction}}
+                <div class="pull-right">
+                    <a href="#" data-action="deleterelation" id="id-related-{{id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
+                </div>
+            {{/showdeleterelatedaction}}
+            <p>
+                <a href="#" data-action="competency-dialogue" data-id="{{id}}">
+                    {{shortname}}{{#idnumber}} {{idnumber}}{{/idnumber}}
+                </a>
+            </p>
+        </li>
     </ul>
 {{/relatedcompetencies}}
 {{^relatedcompetencies}}

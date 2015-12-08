@@ -636,5 +636,20 @@ function xmldb_tool_lp_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015111029, 'tool', 'lp');
     }
 
+    if ($oldversion < 2015111030) {
+
+        // Define field visible to be removed from tool_lp_competency.
+        $table = new xmldb_table('tool_lp_competency');
+        $field = new xmldb_field('visible');
+
+        // Conditionally launch drop field visible.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2015111030, 'tool', 'lp');
+    }
+
     return true;
 }

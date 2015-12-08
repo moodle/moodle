@@ -103,9 +103,6 @@ class tool_lp_generator extends component_generator_base {
         if (!isset($record->descriptionformat)) {
             $record->descriptionformat = FORMAT_HTML;
         }
-        if (!isset($record->visible)) {
-            $record->visible = 1;
-        }
         if (isset($record->scaleconfiguration)
                 && (is_array($record->scaleconfiguration) || is_object($record->scaleconfiguration))) {
             // Conveniently encode the config.

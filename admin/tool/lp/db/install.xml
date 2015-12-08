@@ -13,7 +13,6 @@
         <FIELD NAME="idnumber" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="competencyframeworkid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The framework this competency relates to."/>
         <FIELD NAME="parentid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The parent competency."/>
-        <FIELD NAME="visible" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Used to hide the competency."/>
         <FIELD NAME="path" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Used to speed up queries that use an entire branch of the tree. Looks like /5/34/54."/>
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Relative sort order within the branch"/>
         <FIELD NAME="ruletype" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>

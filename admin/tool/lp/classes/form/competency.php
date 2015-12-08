@@ -99,11 +99,6 @@ class competency extends persistent {
             $mform->setConstant('scaleid', $competency->get_scaleid());
         }
 
-        $mform->addElement('selectyesno', 'visible',
-                           get_string('visible', 'tool_lp'));
-        $mform->setDefault('visible', true);
-        $mform->addHelpButton('visible', 'visible', 'tool_lp');
-
         $this->add_action_buttons(true, get_string('savechanges', 'tool_lp'));
     }
 

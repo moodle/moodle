@@ -200,10 +200,9 @@ class course_competency extends persistent {
      * Count the competencies in this course.
      *
      * @param int $courseid The course id
-     * @param bool $onlyvisible If true, only count visible competencies in this course.
      * @return int
      */
-    public static function count_competencies($courseid, $onlyvisible) {
+    public static function count_competencies($courseid) {
         global $DB;
 
         $sql = 'SELECT COUNT(comp.id)
@@ -212,11 +211,6 @@ class course_competency extends persistent {
                     ON coursecomp.competencyid = comp.id
                  WHERE coursecomp.courseid = ? ';
         $params = array($courseid);
-
-        if ($onlyvisible) {
-            $sql .= ' AND comp.visible = ?';
-            $params[] = 1;
-        }
 
         $results = $DB->count_records_sql($sql, $params);
 
@@ -227,10 +221,9 @@ class course_competency extends persistent {
      * List the competencies in this course.
      *
      * @param int $courseid The course id
-     * @param bool $onlyvisible If true, only count visible competencies in this course.
      * @return competency[] Indexed by competency ID.
      */
-    public static function list_competencies($courseid, $onlyvisible) {
+    public static function list_competencies($courseid) {
         global $DB;
 
         $sql = 'SELECT comp.*
@@ -239,11 +232,6 @@ class course_competency extends persistent {
                     ON coursecomp.competencyid = comp.id
                  WHERE coursecomp.courseid = ?';
         $params = array($courseid);
-
-        if ($onlyvisible) {
-            $sql .= ' AND comp.visible = ?';
-            $params[] = 1;
-        }
 
         $sql .= ' ORDER BY coursecomp.sortorder ASC';
         $results = $DB->get_recordset_sql($sql, $params);
@@ -278,10 +266,9 @@ class course_competency extends persistent {
      * List the course_competencies in this course.
      *
      * @param int $courseid The course id
-     * @param bool $onlyvisible If true, only count visible competencies in this course.
      * @return course_competency[]
      */
-    public static function list_course_competencies($courseid, $onlyvisible) {
+    public static function list_course_competencies($courseid) {
         global $DB;
 
         $sql = 'SELECT coursecomp.*
@@ -290,11 +277,6 @@ class course_competency extends persistent {
                     ON coursecomp.competencyid = comp.id
                  WHERE coursecomp.courseid = ?';
         $params = array($courseid);
-
-        if ($onlyvisible) {
-            $sql .= ' AND comp.visible = ?';
-            $params[] = 1;
-        }
 
         $sql .= ' ORDER BY coursecomp.sortorder ASC';
         $results = $DB->get_recordset_sql($sql, $params);

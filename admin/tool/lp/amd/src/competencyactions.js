@@ -376,7 +376,6 @@ define(['jquery',
             idnumber: relatedTarget.idnumber,
             description: relatedTarget.description,
             descriptionformat: relatedTarget.descriptionformat,
-            visible: relatedTarget.visible,
             ruletype: config.ruletype,
             ruleoutcome: config.ruleoutcome,
             ruleconfig: config.ruleconfig

@@ -502,9 +502,10 @@ class api {
      *                          - children: All descendants
      *                          - parents: All parents, grand parents, etc...
      *                          - self: Context passed only.
+     * @param bool $onlyvisible If true return only visible frameworks
      * @return array of competency_framework
      */
-    public static function list_frameworks($sort, $order, $skip, $limit, $context, $includes = 'children') {
+    public static function list_frameworks($sort, $order, $skip, $limit, $context, $includes = 'children', $onlyvisible = false) {
         global $DB;
 
         // Get all the relevant contexts.
@@ -517,7 +518,13 @@ class api {
 
         // OK - all set.
         list($insql, $inparams) = $DB->get_in_or_equal(array_keys($contexts), SQL_PARAMS_NAMED);
-        return competency_framework::get_records_select("contextid $insql", $inparams, $sort . ' ' . $order, '*', $skip, $limit);
+        $select = "contextid $insql";
+        if ($onlyvisible) {
+            $select .= " AND visible = :visible";
+            $inparams['visible'] = 1;
+        }
+
+        return competency_framework::get_records_select($select, $inparams, $sort . ' ' . $order, '*', $skip, $limit);
     }
 
     /**
@@ -682,19 +689,14 @@ class api {
 
         // First we do a permissions check.
         $context = context_course::instance($courseid);
-        $onlyvisible = 1;
 
         $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
              throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
         }
 
-        if (has_capability('tool/lp:coursecompetencymanage', $context)) {
-            $onlyvisible = 0;
-        }
-
         // OK - all set.
-        return course_competency::count_competencies($courseid, $onlyvisible);
+        return course_competency::count_competencies($courseid);
     }
 
     /**
@@ -715,22 +717,17 @@ class api {
         // Check the user have access to the course.
         self::validate_course($course);
         $context = context_course::instance($course->id);
-        $onlyvisible = 1;
 
         $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
             throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
         }
 
-        if (has_capability('tool/lp:coursecompetencymanage', $context)) {
-            $onlyvisible = 0;
-        }
-
         $result = array();
 
         // TODO We could improve the performance of this into one single query.
-        $coursecompetencies = course_competency::list_course_competencies($course->id, $onlyvisible);
-        $competencies = course_competency::list_competencies($course->id, $onlyvisible);
+        $coursecompetencies = course_competency::list_course_competencies($course->id);
+        $competencies = course_competency::list_competencies($course->id);
 
         // Build the return values.
         foreach ($coursecompetencies as $key => $coursecompetency) {
@@ -763,10 +760,11 @@ class api {
         $record->courseid = $courseid;
         $record->competencyid = $competencyid;
 
-        $competency = new competency();
-        $competency->set_id($competencyid);
-        if (!$competency->read()) {
-             throw new coding_exception('The competency does not exist');
+        $competency = new competency($competencyid);
+
+        // Can not add a competency that belong to a hidden framework.
+        if ($competency->get_framework()->get_visible() == false) {
+            throw new coding_exception('A competency belonging to hidden framework can not be linked to course');
         }
 
         $coursecompetency = new course_competency();
@@ -800,12 +798,7 @@ class api {
         $record->courseid = $courseid;
         $record->competencyid = $competencyid;
 
-        $competency = new competency();
-        $competency->set_id($competencyid);
-        if (!$competency->read()) {
-             throw new coding_exception('The competency does not exist');
-        }
-
+        $competency = new competency($competencyid);
         $coursecompetency = new course_competency();
         $exists = $coursecompetency->get_records(array('courseid' => $courseid, 'competencyid' => $competencyid));
         if ($exists) {
@@ -1055,9 +1048,10 @@ class api {
      *                          - children: All descendants
      *                          - parents: All parents, grand parents, etc...
      *                          - self: Context passed only.
+     * @param bool $onlyvisible If should list only visible templates
      * @return array of competency_framework
      */
-    public static function list_templates($sort, $order, $skip, $limit, $context, $includes = 'children') {
+    public static function list_templates($sort, $order, $skip, $limit, $context, $includes = 'children', $onlyvisible = false) {
         global $DB;
 
         // Get all the relevant contexts.
@@ -1077,8 +1071,14 @@ class api {
 
         // OK - all set.
         $template = new template();
-        list($insql, $inparams) = $DB->get_in_or_equal(array_keys($contexts), SQL_PARAMS_NAMED);
-        return $template->get_records_select("contextid $insql", $inparams, $orderby, '*', $skip, $limit);
+        list($insql, $params) = $DB->get_in_or_equal(array_keys($contexts), SQL_PARAMS_NAMED);
+        $select = "contextid $insql";
+
+        if ($onlyvisible) {
+            $select .= " AND visible = :visible";
+            $params['visible'] = 1;
+        }
+        return $template->get_records_select($select, $params, $orderby, '*', $skip, $limit);
     }
 
     /**
@@ -1170,18 +1170,13 @@ class api {
         // First we do a permissions check.
         $template = new template($templateid);
         $context = $template->get_context();
-        $onlyvisible = 1;
 
         if (!$template->can_read()) {
             throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
         }
 
-        if ($template->can_manage()) {
-            $onlyvisible = 0;
-        }
-
         // OK - all set.
-        return template_competency::count_competencies($templateid, $onlyvisible);
+        return template_competency::count_competencies($templateid);
     }
 
     /**
@@ -1194,18 +1189,13 @@ class api {
         // First we do a permissions check.
         $template = new template($templateid);
         $context = $template->get_context();
-        $onlyvisible = 1;
 
         if (!$template->can_read()) {
             throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
         }
 
-        if ($template->can_manage()) {
-            $onlyvisible = 0;
-        }
-
         // OK - all set.
-        return template_competency::list_competencies($templateid, $onlyvisible);
+        return template_competency::list_competencies($templateid);
     }
 
     /**
@@ -1226,10 +1216,11 @@ class api {
         $record->templateid = $templateid;
         $record->competencyid = $competencyid;
 
-        $competency = new competency();
-        $competency->set_id($competencyid);
-        if (!$competency->read()) {
-            throw new coding_exception('The competency does not exist');
+        $competency = new competency($competencyid);
+
+        // Can not add a competency that belong to a hidden framework.
+        if ($competency->get_framework()->get_visible() == false) {
+            throw new coding_exception('A competency belonging to hidden framework can not be added');
         }
 
         $exists = template_competency::get_records(array('templateid' => $templateid, 'competencyid' => $competencyid));
@@ -1260,10 +1251,6 @@ class api {
         $record->competencyid = $competencyid;
 
         $competency = new competency($competencyid);
-        $competency->set_id($competencyid);
-        if (!$competency->read()) {
-             throw new coding_exception('The competency does not exist');
-        }
 
         $exists = template_competency::get_records(array('templateid' => $templateid, 'competencyid' => $competencyid));
         if ($exists) {
@@ -1461,6 +1448,10 @@ class api {
         if (!$template->can_read()) {
             throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
         }
+        // Can not create plan from a hidden template.
+        if ($template->get_visible() == false) {
+            throw new coding_exception('A plan can not be created from a hidden template');
+        }
 
         // Convert the template to a plan.
         $record = $template->to_record();
@@ -1518,6 +1509,11 @@ class api {
         // The user must be able to view the template to use it as a base for a plan.
         if (!$template->can_read()) {
             throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+        }
+
+        // Can not create plan from a hidden template.
+        if ($template->get_visible() == false) {
+            throw new coding_exception('A plan can not be created from a hidden template');
         }
 
         // The user must be able to view the cohort.
@@ -1902,6 +1898,13 @@ class api {
 
         if (!$plan->can_be_edited()) {
             throw new coding_exception('A competency can not be added to a learning plan completed');
+        }
+
+        $competency = new competency($competencyid);
+
+        // Can not add a competency that belong to a hidden framework.
+        if ($competency->get_framework()->get_visible() == false) {
+            throw new coding_exception('A competency belonging to hidden framework can not be added');
         }
 
         $exists = plan_competency::get_record(array('planid' => $planid, 'competencyid' => $competencyid));

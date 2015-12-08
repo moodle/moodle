@@ -80,6 +80,8 @@ define(['jquery',
     Picker.prototype._singleFramework = false;
     /** @type {Boolean} Do we allow multi select? */
     Picker.prototype._multiSelect = true;
+    /** @type {Boolean} Do we allow to display hidden framework? */
+    Picker.prototype._onlyVisible = true;
 
     /**
      * Hook to executed after the view is rendered.
@@ -324,7 +326,8 @@ define(['jquery',
                 { methodname: 'tool_lp_list_competency_frameworks', args: {
                     sort: 'shortname',
                     context: { contextid: self._pageContextId },
-                    includes: self._pageContextIncludes
+                    includes: self._pageContextIncludes,
+                    onlyvisible: self._onlyVisible
                 }}
             ])[0];
         }
