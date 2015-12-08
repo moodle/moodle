@@ -155,6 +155,7 @@ $string['points'] = 'Points';
 $string['pointsgivenfor'] = 'Points given for \'{$a}\'';
 $string['pointsrequiredaremet'] = 'Points required are met';
 $string['proficient'] = 'Proficient';
+$string['rating'] = 'Rating';
 $string['relatedcompetencies'] = 'Related competencies';
 $string['reopenplan'] = 'Reopen this learning plan';
 $string['reopenplanconfirm'] = 'Reopen the plan \'{$a}\'? The status of the users competencies that was recorded at the time the plan was previously completed will be deleted, and the plan will become active again.';
