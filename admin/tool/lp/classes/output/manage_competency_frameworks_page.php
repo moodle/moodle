@@ -59,6 +59,8 @@ class manage_competency_frameworks_page implements renderable, templatable {
 
     /**
      * Construct this renderable.
+     *
+     * @param context $pagecontext The page context
      */
     public function __construct(context $pagecontext) {
         $this->pagecontext = $pagecontext;
@@ -85,12 +87,7 @@ class manage_competency_frameworks_page implements renderable, templatable {
         $data->pagecontextid = $this->pagecontext->id;
         foreach ($this->competencyframeworks as $framework) {
             $exporter = new competency_framework_exporter($framework);
-            $record = $exporter->export($output);
-            $filters = array('competencyframeworkid' => $framework->get_id());
-            $record->canmanage = has_capability('tool/lp:competencymanage', $framework->get_context());
-            $record->competencies_count = api::count_competencies($filters);
-            $record->context_name = $framework->get_context()->get_context_name();
-            $data->competencyframeworks[] = $record;
+            $data->competencyframeworks[] = $exporter->export($output);
         }
         $data->pluginbaseurl = (new moodle_url('/admin/tool/lp'))->out(true);
         $data->navigation = array();

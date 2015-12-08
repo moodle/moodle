@@ -69,7 +69,7 @@ class template_exporter extends persistent_exporter {
                 'type' => PARAM_BOOL
             ),
             'contextname' => array(
-                'type' => PARAM_TEXT
+                'type' => PARAM_TEXT,
             )
         );
     }

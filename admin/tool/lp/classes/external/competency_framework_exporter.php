@@ -23,6 +23,9 @@
  */
 namespace tool_lp\external;
 
+use tool_lp\api;
+use renderer_base;
+
 /**
  * Class for exporting competency_framework data.
  *
@@ -31,8 +34,47 @@ namespace tool_lp\external;
  */
 class competency_framework_exporter extends persistent_exporter {
 
+    /**
+     * Define the name of persistent class.
+     *
+     * @return string
+     */
     protected static function define_class() {
         return 'tool_lp\\competency_framework';
+    }
+
+    /**
+     * Get other values that do not belong to the basic persisent.
+     *
+     * @param renderer_base $output
+     * @return Array
+     */
+    protected function get_other_values(renderer_base $output) {
+        $filters = array('competencyframeworkid' => $this->persistent->get_id());
+        return array(
+            'canmanage' => has_capability('tool/lp:competencymanage', $this->persistent->get_context()),
+            'competenciescount' => api::count_competencies($filters),
+            'contextname' => $this->persistent->get_context()->get_context_name()
+        );
+    }
+
+    /**
+     * Define other properties that do not belong to the basic persisent.
+     *
+     * @return Array
+     */
+    protected static function define_other_properties() {
+        return array(
+            'canmanage' => array(
+                'type' => PARAM_BOOL
+            ),
+            'competenciescount' => array(
+                'type' => PARAM_INT
+            ),
+            'contextname' => array(
+                'type' => PARAM_TEXT
+            )
+        );
     }
 
 }

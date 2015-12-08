@@ -79,8 +79,7 @@ class manage_templates_page implements renderable, templatable {
         $data->templates = array();
         foreach ($this->templates as $template) {
             $exporter = new template_exporter($template);
-            $record = $exporter->export($output);
-            $data->templates[] = $record;
+            $data->templates[] = $exporter->export($output);
         }
         $data->pluginbaseurl = (new moodle_url('/admin/tool/lp'))->out(true);
         $data->navigation = array();

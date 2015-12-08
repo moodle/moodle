@@ -279,6 +279,7 @@ class external extends external_api {
      * @return boolean
      */
     public static function duplicate_competency_framework($id) {
+        global $PAGE;
         $params = self::validate_parameters(self::duplicate_competency_framework_parameters(),
                                             array(
                                                 'id' => $id,
@@ -287,7 +288,11 @@ class external extends external_api {
         $framework = api::read_framework($params['id']);
         self::validate_context($framework->get_context());
 
-        return api::duplicate_framework($params['id']);
+        $output = $PAGE->get_renderer('tool_lp');
+        $framework = api::duplicate_framework($params['id']);
+        $exporter = new competency_framework_exporter($framework);
+        $record = $exporter->export($output);
+        return $record;
     }
 
     /**
@@ -556,7 +561,8 @@ class external extends external_api {
     /**
      * Loads the data required to render the competency_frameworks_manage_page template.
      *
-     * @return boolean
+     * @param context $pagecontext The page context
+     * @return \stdClass
      */
     public static function data_for_competency_frameworks_manage_page($pagecontext) {
         global $PAGE;
@@ -585,14 +591,14 @@ class external extends external_api {
      */
     public static function data_for_competency_frameworks_manage_page_returns() {
         return new external_single_structure(array (
-            'canmanage' => new external_value(PARAM_BOOL, 'True if this user has permission to manage competency frameworks'),
             'competencyframeworks' => new external_multiple_structure(
                 competency_framework_exporter::get_read_structure()
             ),
             'pluginbaseurl' => new external_value(PARAM_LOCALURL, 'Url to the tool_lp plugin folder on this Moodle site'),
             'navigation' => new external_multiple_structure(
                 new external_value(PARAM_RAW, 'HTML for a navigation item that should be on this page')
-            )
+            ),
+            'pagecontextid' => new external_value(PARAM_INT, 'The page context id')
         ));
 
     }
@@ -2180,14 +2186,14 @@ class external extends external_api {
      */
     public static function data_for_templates_manage_page_returns() {
         return new external_single_structure(array (
-            'canmanage' => new external_value(PARAM_BOOL, 'True if this user has permission to manage learning plan templates'),
             'templates' => new external_multiple_structure(
                 template_exporter::get_read_structure()
             ),
             'pluginbaseurl' => new external_value(PARAM_LOCALURL, 'Url to the tool_lp plugin folder on this Moodle site'),
             'navigation' => new external_multiple_structure(
                 new external_value(PARAM_RAW, 'HTML for a navigation item that should be on this page')
-            )
+            ),
+            'pagecontextid' => new external_value(PARAM_INT, 'The page context id')
         ));
 
     }
