@@ -58,7 +58,11 @@ class core_bloglib_testcase extends advanced_testcase {
         $group->id = $DB->insert_record('groups', $group);
 
         // Create default user.
-        $user = $this->getDataGenerator()->create_user(array('username' => 'testuser', 'firstname' => 'Jimmy', 'lastname' => 'Kinnon'));
+        $user = $this->getDataGenerator()->create_user(array(
+                'username' => 'testuser',
+                'firstname' => 'Jimmy',
+                'lastname' => 'Kinnon'
+        ));
 
         // Create default tag.
         $tag = new stdClass();

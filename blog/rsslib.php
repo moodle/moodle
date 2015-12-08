@@ -35,7 +35,7 @@ require_once($CFG->dirroot .'/blog/lib.php');
  * @param int    $tagid        The id of the row in the tag table that identifies the RSS Feed
  * @return string
  */
-function blog_rss_get_url($contextid, $userid, $filtertype, $filterselect=0, $tagid =0) {
+function blog_rss_get_url($contextid, $userid, $filtertype, $filterselect = 0, $tagid = 0) {
     $componentname = 'blog';
 
     $additionalargs = null;
@@ -70,7 +70,7 @@ function blog_rss_get_url($contextid, $userid, $filtertype, $filterselect=0, $ta
  * @param int         $tagid        The id of the row in the tag table that identifies the RSS Feed
  * @param string      $tooltiptext  The tooltip to be displayed with the link
  */
-function blog_rss_print_link($context, $filtertype, $filterselect=0, $tagid =0, $tooltiptext='') {
+function blog_rss_print_link($context, $filtertype, $filterselect = 0, $tagid = 0, $tooltiptext = '') {
     global $CFG, $USER, $OUTPUT;
 
     if (!isloggedin()) {
@@ -93,7 +93,7 @@ function blog_rss_print_link($context, $filtertype, $filterselect=0, $tagid =0, 
  * @param int         $filterselect The id of the item defined by $filtertype
  * @param int         $tagid        The id of the row in the tag table that identifies the RSS Feed
  */
-function blog_rss_add_http_header($context, $title, $filtertype, $filterselect=0, $tagid =0) {
+function blog_rss_add_http_header($context, $title, $filtertype, $filterselect = 0, $tagid = 0) {
     global $PAGE, $USER, $CFG;
 
     if (!isloggedin()) {
@@ -279,7 +279,7 @@ function blog_rss_get_feed($context, $args) {
  * @param int    $tagid The id of the row in the tag table that identifies the RSS Feed
  * @return string
  */
-function blog_rss_file_name($type, $id, $tagid =0) {
+function blog_rss_file_name($type, $id, $tagid = 0) {
     global $CFG;
 
     if ($tagid) {
@@ -298,7 +298,7 @@ function blog_rss_file_name($type, $id, $tagid =0) {
  * @param string $contents The contents of the RSS Feed file
  * @return bool whether the save was successful or not
  */
-function blog_rss_save_file($type, $id, $tagid =0, $contents='') {
+function blog_rss_save_file($type, $id, $tagid = 0, $contents = '') {
     global $CFG;
 
     $status = true;
