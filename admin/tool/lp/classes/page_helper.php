@@ -175,4 +175,78 @@ class page_helper {
 
         return array($title, $subtitle, $returnurl);
     }
+
+    /**
+     * Set-up a user evidence page.
+     *
+     * Example:
+     * list($title, $subtitle) = page_helper::setup_for_user_evidence($url, $template, $pagetitle);
+     * echo $OUTPUT->heading($title);
+     * echo $OUTPUT->heading($subtitle, 3);
+     *
+     * @param  int $userid The user ID.
+     * @param  moodle_url $url The current page.
+     * @param  \tool_lp\user_evidence $evidence The user evidence, if any.
+     * @param  string $subtitle The title of the subpage, if any.
+     * @param  string $returntype The desired return page.
+     * @return array With the following:
+     *               - Page title
+     *               - Page sub title
+     *               - Return URL (main plan page)
+     */
+    public static function setup_for_user_evidence($userid, moodle_url $url, $evidence = null, $subtitle = '', $returntype = null) {
+        global $PAGE, $USER;
+
+        // Check that the user is a valid user.
+        $user = core_user::get_user($userid);
+        if (!$user || !core_user::is_real_user($userid)) {
+            throw new moodle_exception('invaliduser', 'error');
+        }
+
+        $context = context_user::instance($user->id);
+
+        $evidencelisturl = new moodle_url('/admin/tool/lp/user_evidence_list.php', array('userid' => $userid));
+        $evidenceurl = null;
+        if ($evidence) {
+            $evidenceurl = new moodle_url('/admin/tool/lp/user_evidence.php', array('id' => $evidence->get_id()));
+        }
+
+        $returnurl = $evidencelisturl;
+        if ($returntype == 'evidence' && $evidenceurl) {
+            $returnurl = $evidenceurl;
+        }
+
+        $PAGE->navigation->override_active_url($evidencelisturl);
+        $PAGE->set_context($context);
+
+        // If not his own evidence, we want to extend the navigation for the user.
+        $iscurrentuser = ($USER->id == $user->id);
+        if (!$iscurrentuser) {
+            $PAGE->navigation->extend_for_user($user);
+            $PAGE->navigation->set_userid_for_parent_checks($user->id);
+        }
+
+        if (!empty($evidence)) {
+            $title = format_string($evidence->get_name(), true, array('context' => $context));
+        } else {
+            $title = get_string('userevidence', 'tool_lp');
+        }
+
+        $PAGE->set_pagelayout('standard');
+        $PAGE->set_url($url);
+        $PAGE->set_title($title);
+        $PAGE->set_heading($title);
+
+        if (!empty($evidence)) {
+            $PAGE->navbar->add($title, $evidenceurl);
+            if (!empty($subtitle)) {
+                $PAGE->navbar->add($subtitle, $url);
+            }
+        } else if (!empty($subtitle)) {
+            // We're in a sub page without a specific evidence.
+            $PAGE->navbar->add($subtitle, $url);
+        }
+
+        return array($title, $subtitle, $returnurl);
+    }
 }

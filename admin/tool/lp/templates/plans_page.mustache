@@ -110,6 +110,11 @@
 {{{.}}}
 {{/navigation}}
 </div>
+{{#canreaduserevidence}}
+<div class="pull-left">
+    <a href="{{pluginbaseurl}}/user_evidence_list.php?userid={{userid}}">{{#str}}userevidence, tool_lp{{/str}}</a>
+</div>
+{{/canreaduserevidence}}
 
 {{#js}}
 // Initialise the JS.

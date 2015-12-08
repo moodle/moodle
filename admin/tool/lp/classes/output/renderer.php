@@ -151,4 +151,26 @@ class renderer extends plugin_renderer_base {
         return $page->table->out(50, true);
     }
 
+    /**
+     * Defer to template.
+     *
+     * @param user_evidence_page $page
+     * @return string
+     */
+    public function render_user_evidence_page(user_evidence_page $page) {
+        $data = $page->export_for_template($this);
+        return parent::render_from_template('tool_lp/user_evidence_page', $data);
+    }
+
+    /**
+     * Defer to template.
+     *
+     * @param user_evidence_list_page $page
+     * @return string
+     */
+    public function render_user_evidence_list_page(user_evidence_list_page $page) {
+        $data = $page->export_for_template($this);
+        return parent::render_from_template('tool_lp/user_evidence_list_page', $data);
+    }
+
 }

@@ -57,8 +57,13 @@ function tool_lp_extend_navigation_course($navigation, $course, $coursecontext) 
  * @param context_course $coursecontext The context of the course
  */
 function tool_lp_extend_navigation_user($navigation, $user, $usercontext, $course, $coursecontext) {
-    $navigation->add(get_string('learningplans', 'tool_lp'),
-            new moodle_url('/admin/tool/lp/plans.php', array('userid' => $user->id)));
+    $node = $navigation->add(get_string('learningplans', 'tool_lp'),
+        new moodle_url('/admin/tool/lp/plans.php', array('userid' => $user->id)));
+
+    if (\tool_lp\user_evidence::can_read_user($user->id)) {
+        $node->add(get_string('userevidence', 'tool_lp'),
+            new moodle_url('/admin/tool/lp/user_evidence_list.php', array('userid' => $user->id)));
+    }
 }
 
 /**
@@ -127,4 +132,40 @@ function tool_lp_extend_navigation_category_settings($navigation, $coursecategor
             $navigation->add_node($settingsnode);
         }
     }
+}
+
+
+/**
+ * File serving.
+ *
+ * @param stdClass $course The course object.
+ * @param stdClass $cm The cm object.
+ * @param context $context The context object.
+ * @param string $filearea The file area.
+ * @param array $args List of arguments.
+ * @param bool $forcedownload Whether or not to force the download of the file.
+ * @param array $options Array of options.
+ * @return void|false
+ */
+function tool_lp_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+    global $CFG;
+
+    $fs = get_file_storage();
+    $file = null;
+
+    $itemid = array_shift($args);
+    $filename = array_shift($args);
+    $filepath = $args ? '/' .implode('/', $args) . '/' : '/';
+
+    if ($filearea == 'userevidence' && $context->contextlevel == CONTEXT_USER) {
+        if (\tool_lp\user_evidence::can_read_user($context->instanceid)) {
+            $file = $fs->get_file($context->id, 'tool_lp', $filearea, $itemid, $filepath, $filename);
+        }
+    }
+
+    if (!$file) {
+        return false;
+    }
+
+    send_stored_file($file, null, 0, $forcedownload);
 }

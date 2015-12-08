@@ -113,8 +113,10 @@
 
 .tool-lp-menu li {
     float: left;
-    display: inline; position: relative;
+    display: inline;
+    position: relative;
     list-style-type: none;
+    white-space: nowrap;
 }
 
 .tool-lp-sub-menu {
@@ -161,4 +163,17 @@
 input[type="radio"].tool_lp_scale_default,
 input[type="checkbox"].tool_lp_scale_proficient {
     margin-top: 0px;
+}
+
+/** User evidence */
+.user-evidence-documents {
+    margin: 10px 20px;
+    list-style: none;
+}
+.user-evidence-documents li {
+    margin-bottom: 5px;
+    word-break: break-all;
+}
+[data-region="user-evidence-list"] .user-evidence-documents {
+    margin: 0;
 }

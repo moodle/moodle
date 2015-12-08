@@ -15,16 +15,30 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version info
+ * User evidence (evidence of prior learning).
  *
  * @package    tool_lp
- * @copyright  2015 Damyon Wiese
+ * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/../../../config.php');
 
+require_login(null, false);
+if (isguestuser()) {
+    throw new require_login_exception('Guests are not allowed here.');
+}
 
-$plugin->version   = 2015111028; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2014110400; // Requires this Moodle version.
-$plugin->component = 'tool_lp'; // Full name of the plugin (used for diagnostics).
+$id = optional_param('id', null, PARAM_INT);
+
+$userevidence = \tool_lp\api::read_user_evidence($id);
+$url = new moodle_url('/admin/tool/lp/user_evidence_list.php', array('id' => $id));
+list($title, $subtitle) = \tool_lp\page_helper::setup_for_user_evidence($userevidence->get_userid(), $url, $userevidence);
+
+$output = $PAGE->get_renderer('tool_lp');
+echo $output->header();
+
+$page = new \tool_lp\output\user_evidence_page($userevidence);
+echo $output->render($page);
+
+echo $output->footer();

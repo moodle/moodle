@@ -597,5 +597,34 @@ $functions = array(
         'capabilities' => 'moodle/cohort:view',
         'ajax'         => true,
     ),
+
+    // User evidence.
+    'tool_lp_read_user_evidence' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'read_user_evidence',
+        'classpath'    => '',
+        'description'  => 'Read an evidence of prior learning.',
+        'type'         => 'read',
+        'capabilities' => 'tool/lp:userevidenceread',
+        'ajax'         => true,
+    ),
+    'tool_lp_delete_user_evidence' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'delete_user_evidence',
+        'classpath'    => '',
+        'description'  => 'Delete an evidence of prior learning.',
+        'type'         => 'write',
+        'capabilities' => 'tool/lp:userevidencemanageown',
+        'ajax'         => true,
+    ),
+    'tool_lp_data_for_user_evidence_list_page' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'data_for_user_evidence_list_page',
+        'classpath'    => '',
+        'description'  => 'Load the data for the user evidence list page template',
+        'type'         => 'read',
+        'capabilities' => 'tool/lp:userevidenceread',
+        'ajax'         => true,
+    ),
 );
 

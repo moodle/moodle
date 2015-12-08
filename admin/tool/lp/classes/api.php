@@ -2066,9 +2066,118 @@ class api {
     }
 
     /**
+     * Read a user evidence.
+     *
+     * @param int $id
+     * @return user_evidence
+     */
+    public static function read_user_evidence($id) {
+        $userevidence = new user_evidence($id);
+
+        if (!$userevidence->can_read()) {
+            $context = $userevidence->get_context();
+            throw new required_capability_exception($context, 'tool/lp:userevidenceread', 'nopermissions', '');
+        }
+
+        return $userevidence;
+    }
+
+    /**
+     * Create a new user evidence.
+     *
+     * @param  object $data        The data.
+     * @param  int    $draftitemid The draft ID in which files have been saved.
+     * @return user_evidence
+     */
+    public static function create_user_evidence($data, $draftitemid = null) {
+        $userevidence = new user_evidence(null, $data);
+        $context = $userevidence->get_context();
+
+        if (!$userevidence->can_manage()) {
+            throw new required_capability_exception($context, 'tool/lp:userevidencemanage', 'nopermissions', '');
+        }
+
+        $userevidence->create();
+        if (!empty($draftitemid)) {
+            $fileareaoptions = array('subdirs' => true);
+            $itemid = $userevidence->get_id();
+            file_save_draft_area_files($draftitemid, $context->id, 'tool_lp', 'userevidence', $itemid, $fileareaoptions);
+        }
+
+        return $userevidence;
+    }
+
+    /**
+     * Create a new user evidence.
+     *
+     * @param  object $data        The data.
+     * @param  int    $draftitemid The draft ID in which files have been saved.
+     * @return user_evidence
+     */
+    public static function update_user_evidence($data, $draftitemid = null) {
+        $userevidence = new user_evidence($data->id);
+        $context = $userevidence->get_context();
+
+        if (!$userevidence->can_manage()) {
+            throw new required_capability_exception($context, 'tool/lp:userevidencemanage', 'nopermissions', '');
+
+        } else if (array_key_exists('userid', $data) && $data->userid != $userevidence->get_userid()) {
+            throw new coding_exception('Can not change the userid of a user evidence.');
+        }
+
+        $userevidence->from_record($data);
+        $userevidence->update();
+
+        if (!empty($draftitemid)) {
+            $fileareaoptions = array('subdirs' => true);
+            $itemid = $userevidence->get_id();
+            file_save_draft_area_files($draftitemid, $context->id, 'tool_lp', 'userevidence', $itemid, $fileareaoptions);
+        }
+
+        return $userevidence;
+    }
+
+    /**
+     * Delete a user evidence.
+     *
+     * @param  int $id The user evidence ID.
+     * @return bool
+     */
+    public static function delete_user_evidence($id) {
+        $userevidence = new user_evidence($id);
+        $context = $userevidence->get_context();
+
+        if (!$userevidence->can_manage()) {
+            throw new required_capability_exception($context, 'tool/lp:userevidencemanage', 'nopermissions', '');
+        }
+
+        $userevidence->delete();
+        $fs = get_file_storage();
+        $fs->delete_area_files($context->id, 'tool_lp', 'userevidence', $id);
+
+        return true;
+    }
+
+    /**
+     * List the user evidence of a user.
+     *
+     * @param  int $userid The user ID.
+     * @return user_evidence[]
+     */
+    public static function list_user_evidence($userid) {
+        if (!user_evidence::can_read_user($userid)) {
+            $context = context_user::instance($userid);
+            throw new required_capability_exception($context, 'tool/lp:userevidenceread', 'nopermissions', '');
+        }
+
+        $evidence = user_evidence::get_records(array('userid' => $userid), 'name');
+        return $evidence;
+    }
+
+    /**
      * Recursively duplicate competencies from a tree, we start duplicating from parents to children to have a correct path.
      * This method does not copy the related competencies.
-     *  
+     *
      * @param int $frameworkid - framework id
      * @param competency[] $tree - array of competencies object
      * @param int $oldparent - old parent id
