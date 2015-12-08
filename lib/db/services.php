@@ -1197,6 +1197,7 @@ $services = array(
             'mod_forum_get_forum_discussion_posts',
             'mod_forum_add_discussion_post',
             'mod_forum_add_discussion',
+            'mod_forum_can_add_discussion',
             'core_files_get_files',
             'core_message_get_messages',
             'core_message_create_contacts',

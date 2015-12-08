@@ -1010,4 +1010,37 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
 
     }
 
+    /*
+     * Test can_add_discussion. A basic test since all the API functions are already covered by unit tests.
+     */
+    public function test_can_add_discussion() {
+
+        $this->resetAfterTest(true);
+
+        // Create courses to add the modules.
+        $course = self::getDataGenerator()->create_course();
+
+        $user = self::getDataGenerator()->create_user();
+
+        // First forum with tracking off.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->type = 'news';
+        $forum = self::getDataGenerator()->create_module('forum', $record);
+
+        // User with no permissions to add in a news forum.
+        self::setUser($user);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+
+        $result = mod_forum_external::can_add_discussion($forum->id);
+        $result = external_api::clean_returnvalue(mod_forum_external::can_add_discussion_returns(), $result);
+        $this->assertFalse($result['status']);
+
+        self::setAdminUser();
+        $result = mod_forum_external::can_add_discussion($forum->id);
+        $result = external_api::clean_returnvalue(mod_forum_external::can_add_discussion_returns(), $result);
+        $this->assertTrue($result['status']);
+
+    }
+
 }

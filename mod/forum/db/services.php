@@ -99,4 +99,12 @@ $functions = array(
         'type' => 'write',
         'capabilities' => 'mod/forum:startdiscussion'
     ),
+
+    'mod_forum_can_add_discussion' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'can_add_discussion',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Check if the current user can add discussions in the given forum (and optionally for the given group).',
+        'type' => 'read'
+    ),
 );

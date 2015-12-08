@@ -2014,4 +2014,104 @@ class mod_forum_lib_testcase extends advanced_testcase {
         self::assertCount(0, $discussions);
 
     }
+
+    /**
+     * Test forum_user_can_post_discussion
+     */
+    public function test_forum_user_can_post_discussion() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create course to add the module.
+        $course = self::getDataGenerator()->create_course(array('groupmode' => SEPARATEGROUPS, 'groupmodeforce' => 1));
+        $user = self::getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+
+        // Forum forcing separate gropus.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $forum = self::getDataGenerator()->create_module('forum', $record, array('groupmode' => SEPARATEGROUPS));
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
+        $context = context_module::instance($cm->id);
+
+        self::setUser($user);
+
+        // The user is not enroled in any group, try to post in a forum with separate groups.
+        $can = forum_user_can_post_discussion($forum, null, -1, $cm, $context);
+        $this->assertFalse($can);
+
+        // Create a group.
+        $group = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+
+        // Try to post in a group the user is not enrolled.
+        $can = forum_user_can_post_discussion($forum, $group->id, -1, $cm, $context);
+        $this->assertFalse($can);
+
+        // Add the user to a group.
+        groups_add_member($group->id, $user->id);
+
+        // Try to post in a group the user is not enrolled.
+        $can = forum_user_can_post_discussion($forum, $group->id + 1, -1, $cm, $context);
+        $this->assertFalse($can);
+
+        // Now try to post in the user group. (null means it will guess the group).
+        $can = forum_user_can_post_discussion($forum, null, -1, $cm, $context);
+        $this->assertTrue($can);
+
+        $can = forum_user_can_post_discussion($forum, $group->id, -1, $cm, $context);
+        $this->assertTrue($can);
+
+        // Test all groups.
+        $can = forum_user_can_post_discussion($forum, -1, -1, $cm, $context);
+        $this->assertFalse($can);
+
+        $this->setAdminUser();
+        $can = forum_user_can_post_discussion($forum, -1, -1, $cm, $context);
+        $this->assertTrue($can);
+
+        // Change forum type.
+        $forum->type = 'news';
+        $DB->update_record('forum', $forum);
+
+        // Admin can post news.
+        $can = forum_user_can_post_discussion($forum, null, -1, $cm, $context);
+        $this->assertTrue($can);
+
+        // Normal users don't.
+        self::setUser($user);
+        $can = forum_user_can_post_discussion($forum, null, -1, $cm, $context);
+        $this->assertFalse($can);
+
+        // Change forum type.
+        $forum->type = 'eachuser';
+        $DB->update_record('forum', $forum);
+
+        // I didn't post yet, so I should be able to post.
+        $can = forum_user_can_post_discussion($forum, null, -1, $cm, $context);
+        $this->assertTrue($can);
+
+        // Post now.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->userid = $user->id;
+        $record->forum = $forum->id;
+        $discussion = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        // I already posted, I shouldn't be able to post.
+        $can = forum_user_can_post_discussion($forum, null, -1, $cm, $context);
+        $this->assertFalse($can);
+
+        // Last check with no groups, normal forum and course.
+        $course->groupmode = NOGROUPS;
+        $course->groupmodeforce = 0;
+        $DB->update_record('course', $course);
+
+        $forum->type = 'general';
+        $forum->groupmode = NOGROUPS;
+        $DB->update_record('forum', $forum);
+
+        $can = forum_user_can_post_discussion($forum, null, -1, $cm, $context);
+        $this->assertTrue($can);
+    }
 }
