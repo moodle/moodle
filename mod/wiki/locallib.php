@@ -1566,3 +1566,14 @@ function wiki_get_updated_pages_by_subwiki($swid) {
             ORDER BY timemodified DESC";
     return $DB->get_records_sql($sql, array($swid, $USER->lastlogin));
 }
+
+/**
+ * Check if the user can create pages in a certain wiki.
+ * @param context $context Wiki's context.
+ * @param integer|stdClass $user A user id or object. By default (null) checks the permissions of the current user.
+ * @return bool True if user can create pages, false otherwise.
+ * @since Moodle 3.1
+ */
+function wiki_can_create_pages($context, $user = null) {
+    return has_capability('mod/wiki:createpage', $context, $user);
+}

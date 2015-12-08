@@ -495,7 +495,7 @@ function wiki_extend_navigation(navigation_node $navref, $course, $module, $cm) 
         $pageid = $page->id;
     }
 
-    if (has_capability('mod/wiki:createpage', $context)) {
+    if (wiki_can_create_pages($context)) {
         $link = new moodle_url('/mod/wiki/create.php', array('action' => 'new', 'swid' => $swid));
         $node = $navref->add(get_string('newpage', 'wiki'), $link, navigation_node::TYPE_SETTING);
     }
