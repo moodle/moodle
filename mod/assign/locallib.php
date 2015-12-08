@@ -2825,8 +2825,7 @@ class assign {
      * recorded separately.
      *
      * @param int $userid The id of the user whose submission we want or 0 in which case USER->id is used
-     * @param bool $create optional - defaults to false. If set to true a new submission object
-     *                     will be created in the database with the status set to "new".
+     * @param bool $create If set to true a new submission object will be created in the database with the status set to "new".
      * @param int $attemptnumber - -1 means the latest attempt
      * @return stdClass The submission
      */
