@@ -95,7 +95,7 @@ class webservice_xmlrpc_client {
         // Decode the response.
         $result = xmlrpc_decode($response);
         if (is_array($result) && xmlrpc_is_fault($result)) {
-            throw new moodle_exception($result['faultString']);
+            throw new Exception($result['faultString'], $result['faultCode']);
         }
 
         return $result;
