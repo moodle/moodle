@@ -2431,7 +2431,7 @@ abstract class moodle_database {
      * automatically if exceptions not caught.
      *
      * @param moodle_transaction $transaction An instance of a moodle_transaction.
-     * @param $e The related exception/throwable to this transaction rollback.
+     * @param Exception|Throwable $e The related exception/throwable to this transaction rollback.
      * @return void This does not return, instead the exception passed in will be rethrown.
      */
     public function rollback_delegated_transaction(moodle_transaction $transaction, $e) {

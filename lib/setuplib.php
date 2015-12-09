@@ -381,7 +381,8 @@ function default_exception_handler($ex) {
         } catch (Exception $e) {
             $out_ex = $e;
         } catch (Throwable $e) {
-            $out_ex = $e; // PHP7.
+            // Engine errors in PHP7 throw exceptions of type Throwable (this "catch" will be ignored in PHP5).
+            $out_ex = $e;
         }
 
         if (isset($out_ex)) {

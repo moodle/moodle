@@ -66,7 +66,8 @@ abstract class basic_testcase extends base_testcase {
         } catch (Exception $ex) {
             $e = $ex;
         } catch (Throwable $ex) {
-            $e = $ex; // PHP7.
+            // Engine errors in PHP7 throw exceptions of type Throwable (this "catch" will be ignored in PHP5).
+            $e = $ex;
         }
 
         if (isset($e)) {
