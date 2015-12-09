@@ -95,7 +95,7 @@ class moodle_transaction {
     /**
      * Rollback all current delegated transactions.
      *
-     * @param $e mandatory exception/throwable
+     * @param Exception|Throwable $e mandatory exception/throwable
      * @return void
      */
     public function rollback($e) {
