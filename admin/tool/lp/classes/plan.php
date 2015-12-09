@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_lp;
+defined('MOODLE_INTERNAL') || die();
 
 use context_user;
 use dml_missing_record_exception;

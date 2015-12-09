@@ -24,7 +24,7 @@
 
 namespace tool_lp\form;
 
-defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
+defined('MOODLE_INTERNAL') || die();
 
 use moodleform;
 use tool_lp\api;
