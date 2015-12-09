@@ -7691,6 +7691,18 @@ function shorten_text($text, $ideal=30, $exact = false, $ending='...') {
                             'tag'  => core_text::strtolower($tagmatchings[1]),
                             'pos'  => core_text::strlen($truncate),
                         );
+                } else if (preg_match('/^<!--\[if\s.*?\]>$/s', $linematchings[1], $tagmatchings)) {
+                    $tagdetails[] = (object) array(
+                            'open' => true,
+                            'tag'  => core_text::strtolower('if'),
+                            'pos'  => core_text::strlen($truncate),
+                    );
+                } else if (preg_match('/^<!--<!\[endif\]-->$/s', $linematchings[1], $tagmatchings)) {
+                    $tagdetails[] = (object) array(
+                            'open' => false,
+                            'tag'  => core_text::strtolower('if'),
+                            'pos'  => core_text::strlen($truncate),
+                    );
                 }
             }
             // Add html-tag to $truncate'd text.
@@ -7776,7 +7788,11 @@ function shorten_text($text, $ideal=30, $exact = false, $ending='...') {
 
     // Close all unclosed html-tags.
     foreach ($opentags as $tag) {
-        $truncate .= '</' . $tag . '>';
+        if ($tag === 'if') {
+            $truncate .= '<!--<![endif]-->';
+        } else {
+            $truncate .= '</' . $tag . '>';
+        }
     }
 
     return $truncate;
