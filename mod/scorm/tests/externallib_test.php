@@ -552,6 +552,9 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         $record = new stdClass();
         $record->introformat = FORMAT_HTML;
         $record->course = $course1->id;
+        $record->hidetoc = 2;
+        $record->displayattemptstatus = 2;
+        $record->skipview = 2;
         $scorm1 = self::getDataGenerator()->create_module('scorm', $record);
 
         // Second scorm.
