@@ -1441,6 +1441,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
 
         static $formcounter = 1;
 
+        // TODO MDL-52313 Replace with the call to parent::__construct().
         HTML_Common::__construct($attributes);
         $target = empty($target) ? array() : array('target' => $target);
         $this->_formName = $formName;

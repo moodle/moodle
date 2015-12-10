@@ -50,6 +50,7 @@ class HTML_QuickForm_hiddenselect extends HTML_QuickForm_select
      * @return    void
      */
     public function __construct($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
+        // TODO MDL-52313 Replace with the call to parent::__construct().
         HTML_QuickForm_element::__construct($elementName, $elementLabel, $attributes);
         $this->_persistantFreeze = true;
         $this->_type = 'hiddenselect';

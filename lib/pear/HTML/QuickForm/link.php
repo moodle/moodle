@@ -58,6 +58,7 @@ class HTML_QuickForm_link extends HTML_QuickForm_static
      * @throws    
      */
     public function __construct($elementName=null, $elementLabel=null, $href=null, $text=null, $attributes=null) {
+        // TODO MDL-52313 Replace with the call to parent::__construct().
         HTML_QuickForm_element::__construct($elementName, $elementLabel, $attributes);
         $this->_persistantFreeze = false;
         $this->_type = 'link';

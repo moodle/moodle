@@ -115,6 +115,7 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      * @return    void
      */
     public function __construct($elementName=null, $elementLabel=null, $attributes=null, $separator=null) {
+        // TODO MDL-52313 Replace with the call to parent::__construct().
         HTML_QuickForm_element::__construct($elementName, $elementLabel, $attributes);
         $this->_persistantFreeze = true;
         if (isset($separator)) {

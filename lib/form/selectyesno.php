@@ -48,6 +48,7 @@ class MoodleQuickForm_selectyesno extends MoodleQuickForm_select{
      * @param mixed $options ignored, not used.
      */
     public function __construct($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
+        // TODO MDL-52313 Replace with the call to parent::__construct().
         HTML_QuickForm_element::__construct($elementName, $elementLabel, $attributes, null);
         $this->_type = 'selectyesno';
         $this->_persistantFreeze = true;
