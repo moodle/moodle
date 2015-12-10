@@ -267,6 +267,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
     * @param    mixed   Either a typical HTML attribute string or an associative array
     */
     public function __construct($elementName = null, $elementLabel = null, $options = array(), $attributes = null) {
+        // TODO MDL-52313 Replace with the call to parent::__construct().
         HTML_QuickForm_element::__construct($elementName, $elementLabel, $attributes);
         $this->_persistantFreeze = true;
         $this->_appendName = true;

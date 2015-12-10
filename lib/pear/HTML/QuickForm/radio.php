@@ -58,6 +58,7 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input
      * @return    void
      */
     public function __construct($elementName=null, $elementLabel=null, $text=null, $value=null, $attributes=null) {
+        // TODO MDL-52313 Replace with the call to parent::__construct().
         HTML_QuickForm_element::__construct($elementName, $elementLabel, $attributes);
         if (isset($value)) {
             $this->setValue($value);

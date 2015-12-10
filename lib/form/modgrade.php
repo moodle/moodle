@@ -54,6 +54,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group{
      * @param mixed $attributes Either a typical HTML attribute string or an associative array
      */
     public function __construct($elementname = null, $elementlabel = null, $options = array(), $attributes = null) {
+        // TODO MDL-52313 Replace with the call to parent::__construct().
         HTML_QuickForm_element::__construct($elementname, $elementlabel, $attributes);
         $this->_persistantFreeze = true;
         $this->_appendName = true;
