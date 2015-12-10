@@ -40,7 +40,7 @@ class mod_lesson_mod_form extends moodleform_mod {
 
     /**
      * Old syntax of class constructor. Deprecated in PHP7.
-     * 
+     *
      * @deprecated since Moodle 3.1
      */
     public function mod_lesson_mod_form($current, $section, $cm, $course) {
