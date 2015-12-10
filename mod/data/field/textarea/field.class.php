@@ -199,7 +199,7 @@ class data_field_textarea extends data_field_base {
                 // the value will be retrieved by file_get_submitted_draft_itemid, do not need to save in DB
                 return true;
             } else {
-                $content->$names[2] = clean_param($value, PARAM_NOTAGS);  // content[1-4]
+                $content->{$names[2]} = clean_param($value, PARAM_NOTAGS);  // content[1-4]
             }
         } else {
             $content->content = clean_param($value, PARAM_CLEAN);
