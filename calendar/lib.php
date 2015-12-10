@@ -347,6 +347,8 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
             $eventids = array_unique(array_merge($eventids, $durationbyday[$day]));
         }
 
+        $finishclass = false;
+
         if (!empty($eventids)) {
             // There is at least one event on this day.
 
@@ -355,7 +357,7 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
             $dayhref = calendar_get_link_href(new moodle_url(CALENDAR_URL . 'view.php', $hrefparams), 0, 0, 0, $daytime);
 
             $popupcontent = '';
-            foreach($eventids as $eventid) {
+            foreach ($eventids as $eventid) {
                 if (!isset($events[$eventid])) {
                     continue;
                 }
@@ -376,26 +378,47 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
                     $popupicon = 'i/userevent';
                 }
 
+                if ($event->timeduration) {
+                    $startdate = $calendartype->timestamp_to_date_array($event->timestart);
+                    $enddate = $calendartype->timestamp_to_date_array($event->timestart + $event->timeduration - 1);
+                    if ($enddate['mon'] == $m && $enddate['year'] == $y && $enddate['mday'] == $day) {
+                        $finishclass = true;
+                    }
+                }
+
                 $dayhref->set_anchor('event_'.$event->id);
 
                 $popupcontent .= html_writer::start_tag('div');
                 $popupcontent .= $OUTPUT->pix_icon($popupicon, $popupalt, $component);
-                $name = format_string($event->name, true);
                 // Show ical source if needed.
                 if (!empty($event->subscription) && $CFG->calendar_showicalsource) {
                     $a = new stdClass();
                     $a->name = $name;
                     $a->source = $event->subscription->name;
                     $name = get_string('namewithsource', 'calendar', $a);
+                } else {
+                    if ($finishclass) {
+                        $samedate = $startdate['mon'] == $enddate['mon'] &&
+                                    $startdate['year'] == $enddate['year'] &&
+                                    $startdate['mday'] == $enddate['mday'];
+
+                        if ($samedate) {
+                            $name = format_string($event->name, true);
+                        } else {
+                            $name = format_string($event->name, true) . ' (' . get_string('eventendtime', 'calendar') . ')';
+                        }
+                    } else {
+                        $name = format_string($event->name, true);
+                    }
                 }
                 $popupcontent .= html_writer::link($dayhref, $name);
                 $popupcontent .= html_writer::end_tag('div');
             }
 
             if ($display->thismonth && $day == $d) {
-                $popupdata = calendar_get_popup(true, $events[$eventid]->timestart, $popupcontent);
+                $popupdata = calendar_get_popup(true, $daytime, $popupcontent);
             } else {
-                $popupdata = calendar_get_popup(false, $events[$eventid]->timestart, $popupcontent);
+                $popupdata = calendar_get_popup(false, $daytime, $popupcontent);
             }
             $cellattributes = array_merge($cellattributes, $popupdata);
 
@@ -408,6 +431,9 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
                 $class .= ' calendar_event_group';
             } else if(isset($typesbyday[$day]['startuser'])) {
                 $class .= ' calendar_event_user';
+            }
+            if ($finishclass) {
+                $class .= ' duration_finish';
             }
             $cell = html_writer::link($dayhref, $day);
         } else {
@@ -448,7 +474,7 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
             $class .= ' today';
             $today = get_string('today', 'calendar').' '.userdate(time(), get_string('strftimedayshort'));
 
-            if (!isset($eventsbyday[$day])) {
+            if (!isset($eventsbyday[$day]) && !isset($durationbyday[$day])) {
                 $class .= ' eventnone';
                 $popupdata = calendar_get_popup(true, false);
                 $cellattributes = array_merge($cellattributes, $popupdata);
