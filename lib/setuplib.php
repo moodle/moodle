@@ -378,7 +378,14 @@ function default_exception_handler($ex) {
                 $DB->set_debug(0);
             }
             echo $OUTPUT->fatal_error($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo);
-        } catch (Exception $out_ex) {
+        } catch (Exception $e) {
+            $out_ex = $e;
+        } catch (Throwable $e) {
+            // Engine errors in PHP7 throw exceptions of type Throwable (this "catch" will be ignored in PHP5).
+            $out_ex = $e;
+        }
+
+        if (isset($out_ex)) {
             // default exception handler MUST not throw any exceptions!!
             // the problem here is we do not know if page already started or not, we only know that somebody messed up in outputlib or theme
             // so we just print at least something instead of "Exception thrown without a stack frame in Unknown on line 0":-(

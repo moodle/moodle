@@ -88,7 +88,14 @@ abstract class advanced_testcase extends base_testcase {
                 trigger_error('Unexpected debugging() call detected.', E_USER_NOTICE);
             }
 
-        } catch (Exception $e) {
+        } catch (Exception $ex) {
+            $e = $ex;
+        } catch (Throwable $ex) {
+            // Engine errors in PHP7 throw exceptions of type Throwable (this "catch" will be ignored in PHP5).
+            $e = $ex;
+        }
+
+        if (isset($e)) {
             // cleanup after failed expectation
             self::resetAllData();
             throw $e;

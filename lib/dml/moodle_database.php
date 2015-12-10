@@ -2431,10 +2431,14 @@ abstract class moodle_database {
      * automatically if exceptions not caught.
      *
      * @param moodle_transaction $transaction An instance of a moodle_transaction.
-     * @param Exception $e The related exception to this transaction rollback.
+     * @param Exception|Throwable $e The related exception/throwable to this transaction rollback.
      * @return void This does not return, instead the exception passed in will be rethrown.
      */
-    public function rollback_delegated_transaction(moodle_transaction $transaction, Exception $e) {
+    public function rollback_delegated_transaction(moodle_transaction $transaction, $e) {
+        if (!($e instanceof Exception) && !($e instanceof Throwable)) {
+            // PHP7 - we catch Throwables in phpunit but can't use that as the type hint in PHP5.
+            $e = new \coding_exception("Must be given an Exception or Throwable object!");
+        }
         if ($transaction->is_disposed()) {
             throw new dml_transaction_exception('Transactions already disposed', $transaction);
         }

@@ -126,6 +126,9 @@ class backp_settings_testcase extends basic_testcase {
         } catch (exception $e) {
             $this->assertTrue($e instanceof base_setting_exception);
             $this->assertEquals($e->errorcode, 'incorrect_object_passed');
+        } catch (TypeError $e) {
+            // On PHP7+ we get a TypeError raised, lets check we've the right error.
+            $this->assertRegexp('/must be an instance of backup_setting_ui/', $e->getMessage());
         }
         restore_error_handler();
 
@@ -140,6 +143,9 @@ class backp_settings_testcase extends basic_testcase {
         } catch (exception $e) {
             $this->assertTrue($e instanceof base_setting_exception);
             $this->assertEquals($e->errorcode, 'incorrect_object_passed');
+        } catch (TypeError $e) {
+            // On PHP7+ we get a TypeError raised, lets check we've the right error.
+            $this->assertRegexp('/must be an instance of backup_setting_ui/', $e->getMessage());
         }
         restore_error_handler();
 
@@ -302,6 +308,9 @@ class backp_settings_testcase extends basic_testcase {
         } catch (exception $e) {
             $this->assertTrue($e instanceof backup_setting_exception);
             $this->assertEquals($e->errorcode, 'incorrect_object_passed');
+        } catch (TypeError $e) {
+            // On PHP7+ we get a TypeError raised, lets check we've the right error.
+            $this->assertRegexp('/must be an instance of base_setting/', $e->getMessage());
         }
         restore_error_handler();
 
