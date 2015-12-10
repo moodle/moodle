@@ -158,7 +158,7 @@ function completion_can_view_data($userid, $course = null) {
 
     if (!is_object($course)) {
         $cid = $course;
-        $course = new object();
+        $course = new stdClass();
         $course->id = $cid;
     }
 
