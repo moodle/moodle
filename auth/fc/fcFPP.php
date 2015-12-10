@@ -38,6 +38,12 @@ class fcFPP
     $this->_pwd = "";
     }
 
+    function fcFPP($host="localhost", $port="3333")
+    {
+           debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+           self::__construct($host, $port);
+    }
+
     // open a connection to the FirstClass server
     function open()
     {

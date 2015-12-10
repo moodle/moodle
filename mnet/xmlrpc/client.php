@@ -31,6 +31,16 @@ class mnet_xmlrpc_client {
     }
 
     /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function mnet_xmlrpc_client() {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct();
+    }
+
+    /**
      * Allow users to override the default timeout
      * @param   int $timeout    Request timeout in seconds
      * $return  bool            True if param is an integer or integer string
