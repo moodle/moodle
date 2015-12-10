@@ -91,6 +91,12 @@ class Crypt_CHAP extends PEAR
         $this->generateChallenge();
     }
 
+    function Crypt_CHAP()
+    {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct();
+    }
+
     /**
      * Generates a random binary challenge
      *
@@ -171,6 +177,12 @@ class Crypt_CHAP_MSv1 extends Crypt_CHAP
     {
         parent::__construct();
         $this->loadExtension('hash');
+    }
+
+    function Crypt_CHAP_MSv1()
+    {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct();
     }
 
     /**
