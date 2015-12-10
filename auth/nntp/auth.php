@@ -35,9 +35,19 @@ class auth_plugin_nntp extends auth_plugin_base {
     /**
      * Constructor.
      */
-    function auth_plugin_nntp() {
+    public function __construct() {
         $this->authtype = 'nntp';
         $this->config = get_config('auth/nntp');
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function auth_plugin_nntp() {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct();
     }
 
     /**

@@ -39,11 +39,21 @@ class auth_plugin_cas extends auth_plugin_ldap {
     /**
      * Constructor.
      */
-    function auth_plugin_cas() {
+    public function __construct() {
         $this->authtype = 'cas';
         $this->roleauth = 'auth_cas';
         $this->errorlogtag = '[AUTH CAS] ';
         $this->init_plugin($this->authtype);
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function auth_plugin_cas() {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct();
     }
 
     function prevent_local_passwords() {

@@ -143,11 +143,21 @@ class auth_plugin_ldap extends auth_plugin_base {
     /**
      * Constructor with initialisation.
      */
-    function auth_plugin_ldap() {
+    public function __construct() {
         $this->authtype = 'ldap';
         $this->roleauth = 'auth_ldap';
         $this->errorlogtag = '[AUTH LDAP] ';
         $this->init_plugin($this->authtype);
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function auth_plugin_ldap() {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct();
     }
 
     /**
