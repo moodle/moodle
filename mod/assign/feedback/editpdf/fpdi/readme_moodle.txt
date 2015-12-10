@@ -10,7 +10,7 @@ Information
 URL: http://www.setasign.de/products/pdf-php-solutions/fpdi/
 Download from: http://www.setasign.de/products/pdf-php-solutions/fpdi/downloads
 Documentation: http://www.setasign.de/products/pdf-php-solutions/fpdi/manuals/
-License: Apache Software License 2.0
+License: The MIT License (MIT)
 
 Installation
 ------------
@@ -18,6 +18,13 @@ Installation
 2) Unzip the files into this directory.
 3) Update mod/assign/feedback/editpdf/fpdi/fpdi_bridge.php (or the replacement file) to extend 'pdf' instead of 'TCPDF'.
 4) Make a note below of any changes made.
+
+2015/12/04
+----------
+Updated to FPDI: 1.6.1
+
+1) Changed 'TCPDF' to 'pdf' (as stated above).
+2) License changed from Apache Software License 2.0 to The MIT License (MIT).
 
 2015/10/01
 ----------
