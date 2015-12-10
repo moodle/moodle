@@ -83,11 +83,21 @@ class HTML_Common {
      * @param    int     $tabOffset      Indent offset in tabs
      * @access   public
      */
-    function HTML_Common($attributes = null, $tabOffset = 0)
+    public function __construct($attributes = null, $tabOffset = 0)
     {
         $this->setAttributes($attributes);
         $this->setTabOffset($tabOffset);
     } // end constructor
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function HTML_Common($attributes = null, $tabOffset = 0) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($attributes, $tabOffset);
+    }
 
     public static function raiseError($message = null,
                                        $code = null,

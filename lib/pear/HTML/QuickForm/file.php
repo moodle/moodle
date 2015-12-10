@@ -61,12 +61,21 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
      * @since     1.0
      * @access    public
      */
-    function HTML_QuickForm_file($elementName=null, $elementLabel=null, $attributes=null)
-    {
-        HTML_QuickForm_input::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
+    public function __construct($elementName=null, $elementLabel=null, $attributes=null) {
+        parent::__construct($elementName, $elementLabel, $attributes);
         $this->setType('file');
     } //end constructor
-    
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function HTML_QuickForm_file($elementName=null, $elementLabel=null, $attributes=null) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($elementName, $elementLabel, $attributes);
+    }
+
     // }}}
     // {{{ setSize()
 
@@ -176,8 +185,7 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
                 return $this->onQuickFormEvent('updateValue', null, $caller);
                 break;
             case 'createElement':
-                $className = get_class($this);
-                $this->$className($arg[0], $arg[1], $arg[2]);
+                static::__construct($arg[0], $arg[1], $arg[2], $arg[3], $arg[4]);
                 break;
         }
         return true;
