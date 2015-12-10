@@ -1,21 +1,12 @@
 <?php
-//
-//  FPDI - Version 1.5.4
-//
-//    Copyright 2004-2015 Setasign - Jan Slabon
-//
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
-//
+/**
+ * This file is part of FPDI
+ *
+ * @package   FPDI
+ * @copyright Copyright (c) 2015 Setasign - Jan Slabon (http://www.setasign.com)
+ * @license   http://opensource.org/licenses/mit-license The MIT License
+ * @version   1.6.1
+ */
 
 if (!class_exists('pdf_parser')) {
     require_once('pdf_parser.php');
@@ -127,18 +118,18 @@ class fpdi_pdf_parser extends pdf_parser
      */
     protected function _getPageResources($obj)
     {
-    	$obj = $this->resolveObject($obj);
+        $obj = $this->resolveObject($obj);
 
         // If the current object has a resources
-    	// dictionary associated with it, we use
-    	// it. Otherwise, we move back to its
-    	// parent object.
+        // dictionary associated with it, we use
+        // it. Otherwise, we move back to its
+        // parent object.
         if (isset($obj[1][1]['/Resources'])) {
-    		$res = $this->resolveObject($obj[1][1]['/Resources']);
-    		if ($res[0] == pdf_parser::TYPE_OBJECT)
+            $res = $this->resolveObject($obj[1][1]['/Resources']);
+            if ($res[0] == pdf_parser::TYPE_OBJECT)
                 return $res[1];
             return $res;
-    	}
+        }
 
         if (!isset($obj[1][1]['/Parent'])) {
             return false;
@@ -301,13 +292,13 @@ class fpdi_pdf_parser extends pdf_parser
      */
     protected function _getPageRotation($obj)
     {
-    	$obj = $this->resolveObject($obj);
-    	if (isset($obj[1][1]['/Rotate'])) {
-    		$res = $this->resolveObject($obj[1][1]['/Rotate']);
-    		if ($res[0] == pdf_parser::TYPE_OBJECT)
+        $obj = $this->resolveObject($obj);
+        if (isset($obj[1][1]['/Rotate'])) {
+            $res = $this->resolveObject($obj[1][1]['/Rotate']);
+            if ($res[0] == pdf_parser::TYPE_OBJECT)
                 return $res[1];
             return $res;
-    	}
+        }
 
         if (!isset($obj[1][1]['/Parent'])) {
             return false;
@@ -330,7 +321,7 @@ class fpdi_pdf_parser extends pdf_parser
     protected function _readPages(&$pages, &$result)
     {
         // Get the kids dictionary
-    	$_kids = $this->resolveObject($pages[1][1]['/Kids']);
+        $_kids = $this->resolveObject($pages[1][1]['/Kids']);
 
         if (!is_array($_kids)) {
             throw new Exception('Cannot find /Kids in current /Page-Dictionary');
@@ -343,14 +334,14 @@ class fpdi_pdf_parser extends pdf_parser
         $kids = $_kids[1];
 
         foreach ($kids as $v) {
-    		$pg = $this->resolveObject($v);
+            $pg = $this->resolveObject($v);
             if ($pg[1][1]['/Type'][1] === '/Pages') {
                 // If one of the kids is an embedded
-    			// /Pages array, resolve it as well.
+                // /Pages array, resolve it as well.
                 $this->_readPages($pg, $result);
-    		} else {
-    			$result[] = $pg;
-    		}
-    	}
+            } else {
+                $result[] = $pg;
+            }
+        }
     }
 }
