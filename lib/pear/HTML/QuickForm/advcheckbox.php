@@ -77,11 +77,17 @@ class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox
      * @access    public
      * @return    void
      */
-    function HTML_QuickForm_advcheckbox($elementName=null, $elementLabel=null, $text=null, $attributes=null, $values=null)
-    {
-        $this->HTML_QuickForm_checkbox($elementName, $elementLabel, $text, $attributes);
+    public function __construct($elementName=null, $elementLabel=null, $text=null, $attributes=null, $values=null) {
+        parent::__construct($elementName, $elementLabel, $text, $attributes);
         $this->setValues($values);
     } //end constructor
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function HTML_QuickForm_advcheckbox($elementName=null, $elementLabel=null, $text=null, $attributes=null, $values=null) {
+        self::__construct($elementName, $elementLabel, $text, $attributes, $values);
+    }
 
     // }}}
     // {{{ getPrivateName()

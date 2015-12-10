@@ -266,9 +266,9 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
     * @param    array   Options to control the element's display
     * @param    mixed   Either a typical HTML attribute string or an associative array
     */
-    function HTML_QuickForm_date($elementName = null, $elementLabel = null, $options = array(), $attributes = null)
-    {
-        $this->HTML_QuickForm_element($elementName, $elementLabel, $attributes);
+    public function __construct($elementName = null, $elementLabel = null, $options = array(), $attributes = null) {
+        // TODO MDL-52313 Replace with the call to parent::__construct().
+        HTML_QuickForm_element::__construct($elementName, $elementLabel, $attributes);
         $this->_persistantFreeze = true;
         $this->_appendName = true;
         $this->_type = 'date';
@@ -286,6 +286,13 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                 }
             }
         }
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function HTML_QuickForm_date($elementName = null, $elementLabel = null, $options = array(), $attributes = null) {
+        self::__construct($elementName, $elementLabel, $options, $attributes);
     }
 
     // }}}

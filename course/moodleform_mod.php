@@ -58,7 +58,7 @@ abstract class moodleform_mod extends moodleform {
     /** @var object The course format of the current course. */
     protected $courseformat;
 
-    function moodleform_mod($current, $section, $cm, $course) {
+    public function __construct($current, $section, $cm, $course) {
         global $CFG;
 
         $this->current   = $current;
@@ -83,7 +83,14 @@ abstract class moodleform_mod extends moodleform {
         }
         $this->_modname = $matches[1];
         $this->init_features();
-        parent::moodleform('modedit.php');
+        parent::__construct('modedit.php');
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function moodleform_mod($current, $section, $cm, $course) {
+        self::__construct($current, $section, $cm, $course);
     }
 
     protected function init_features() {

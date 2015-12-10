@@ -63,8 +63,9 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
     *              If not specified, minutes is used.
     * @param mixed $attributes Either a typical HTML attribute string or an associative array
     */
-    function MoodleQuickForm_duration($elementName = null, $elementLabel = null, $options = array(), $attributes = null) {
-        $this->HTML_QuickForm_element($elementName, $elementLabel, $attributes);
+    public function __construct($elementName = null, $elementLabel = null, $options = array(), $attributes = null) {
+        // TODO MDL-52313 Replace with the call to parent::__construct().
+        HTML_QuickForm_element::__construct($elementName, $elementLabel, $attributes);
         $this->_persistantFreeze = true;
         $this->_appendName = true;
         $this->_type = 'duration';
@@ -81,6 +82,13 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
             }
             $this->_options['defaultunit'] = $options['defaultunit'];
         }
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function MoodleQuickForm_duration($elementName = null, $elementLabel = null, $options = array(), $attributes = null) {
+        self::__construct($elementName, $elementLabel, $options, $attributes);
     }
 
     /**

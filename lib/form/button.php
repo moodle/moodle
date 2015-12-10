@@ -50,8 +50,15 @@ class MoodleQuickForm_button extends HTML_QuickForm_button
      * @param mixed $attributes (optional) Either a typical HTML attribute string
      *              or an associative array
      */
-    function MoodleQuickForm_button($elementName=null, $value=null, $attributes=null) {
-        parent::HTML_QuickForm_button($elementName, $value, $attributes);
+    public function __construct($elementName=null, $value=null, $attributes=null) {
+        parent::__construct($elementName, $value, $attributes);
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function MoodleQuickForm_button($elementName=null, $value=null, $attributes=null) {
+        self::__construct($elementName, $value, $attributes);
     }
 
     /**

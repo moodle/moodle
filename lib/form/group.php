@@ -50,8 +50,15 @@ class MoodleQuickForm_group extends HTML_QuickForm_group{
      * @param string $separator (optional) string to seperate elements.
      * @param string $appendName (optional) string to appened to grouped elements.
      */
-    function MoodleQuickForm_group($elementName=null, $elementLabel=null, $elements=null, $separator=null, $appendName = true) {
-        parent::HTML_QuickForm_group($elementName, $elementLabel, $elements, $separator, $appendName);
+    public function __construct($elementName=null, $elementLabel=null, $elements=null, $separator=null, $appendName = true) {
+        parent::__construct($elementName, $elementLabel, $elements, $separator, $appendName);
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function MoodleQuickForm_group($elementName=null, $elementLabel=null, $elements=null, $separator=null, $appendName = true) {
+        self::__construct($elementName, $elementLabel, $elements, $separator, $appendName);
     }
 
     /** @var string template type, would cause problems with client side validation so will leave for now */

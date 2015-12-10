@@ -60,8 +60,15 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
      * @param string $elementLabel
      * @param array $attributes
      */
-    function MoodleQuickForm_rubriceditor($elementName=null, $elementLabel=null, $attributes=null) {
-        parent::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
+    public function __construct($elementName=null, $elementLabel=null, $attributes=null) {
+        parent::__construct($elementName, $elementLabel, $attributes);
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function MoodleQuickForm_rubriceditor($elementName=null, $elementLabel=null, $attributes=null) {
+        self::__construct($elementName, $elementLabel, $attributes);
     }
 
     /**

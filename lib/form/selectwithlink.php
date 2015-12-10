@@ -62,8 +62,7 @@ class MoodleQuickForm_selectwithlink extends HTML_QuickForm_select{
      * @param mixed $attributes Either a typical HTML attribute string or an associative array
      * @param bool $linkdata data to be posted
      */
-    function MoodleQuickForm_selectwithlink($elementName=null, $elementLabel=null, $options=null, $attributes=null, $linkdata=null)
-    {
+    public function __construct($elementName=null, $elementLabel=null, $options=null, $attributes=null, $linkdata=null) {
         if (!empty($linkdata['link']) && !empty($linkdata['label'])) {
             $this->_link = $linkdata['link'];
             $this->_linklabel = $linkdata['label'];
@@ -73,7 +72,14 @@ class MoodleQuickForm_selectwithlink extends HTML_QuickForm_select{
             $this->_linkreturn = $linkdata['return'];
         }
 
-        parent::HTML_QuickForm_select($elementName, $elementLabel, $options, $attributes);
+        parent::__construct($elementName, $elementLabel, $options, $attributes);
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function MoodleQuickForm_selectwithlink($elementName=null, $elementLabel=null, $options=null, $attributes=null, $linkdata=null) {
+        self::__construct($elementName, $elementLabel, $options, $attributes, $linkdata);
     }
 
     /**

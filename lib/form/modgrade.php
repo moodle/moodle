@@ -53,11 +53,19 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group{
      * @param array $options Options to control the element's display. Not used.
      * @param mixed $attributes Either a typical HTML attribute string or an associative array
      */
-    public function MoodleQuickForm_modgrade($elementname = null, $elementlabel = null, $options = array(), $attributes = null) {
-        $this->HTML_QuickForm_element($elementname, $elementlabel, $attributes);
+    public function __construct($elementname = null, $elementlabel = null, $options = array(), $attributes = null) {
+        // TODO MDL-52313 Replace with the call to parent::__construct().
+        HTML_QuickForm_element::__construct($elementname, $elementlabel, $attributes);
         $this->_persistantFreeze = true;
         $this->_appendName = true;
         $this->_type = 'modgrade';
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function MoodleQuickForm_modgrade($elementname = null, $elementlabel = null, $options = array(), $attributes = null) {
+        self::__construct($elementname, $elementlabel, $options, $attributes);
     }
 
     /**

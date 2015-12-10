@@ -47,11 +47,18 @@ class MoodleQuickForm_selectyesno extends MoodleQuickForm_select{
      * @param mixed $attributes Either a typical HTML attribute string or an associative array
      * @param mixed $options ignored, not used.
      */
-    function MoodleQuickForm_selectyesno($elementName=null, $elementLabel=null, $attributes=null, $options=null)
-    {
-        HTML_QuickForm_element::HTML_QuickForm_element($elementName, $elementLabel, $attributes, null);
+    public function __construct($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
+        // TODO MDL-52313 Replace with the call to parent::__construct().
+        HTML_QuickForm_element::__construct($elementName, $elementLabel, $attributes, null);
         $this->_type = 'selectyesno';
         $this->_persistantFreeze = true;
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function MoodleQuickForm_selectyesno($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
+        self::__construct($elementName, $elementLabel, $attributes, $options);
     }
 
     /**

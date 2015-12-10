@@ -49,15 +49,22 @@ class HTML_QuickForm_hiddenselect extends HTML_QuickForm_select
      * @access    public
      * @return    void
      */
-    function HTML_QuickForm_hiddenselect($elementName=null, $elementLabel=null, $options=null, $attributes=null)
-    {
-        HTML_QuickForm_element::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
+    public function __construct($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
+        // TODO MDL-52313 Replace with the call to parent::__construct().
+        HTML_QuickForm_element::__construct($elementName, $elementLabel, $attributes);
         $this->_persistantFreeze = true;
         $this->_type = 'hiddenselect';
         if (isset($options)) {
             $this->load($options);
         }
     } //end constructor
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function HTML_QuickForm_hiddenselect($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
+        self::__construct($elementName, $elementLabel, $options, $attributes);
+    }
 
     // }}}
     // {{{ toHtml()

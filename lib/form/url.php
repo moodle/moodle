@@ -51,7 +51,7 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
      * @param mixed $attributes Either a typical HTML attribute string or an associative array.
      * @param array $options data which need to be posted.
      */
-    function MoodleQuickForm_url($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
+    public function __construct($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG;
         require_once("$CFG->dirroot/repository/lib.php");
         $options = (array)$options;
@@ -61,7 +61,14 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
         if (!isset($this->_options['usefilepicker'])) {
             $this->_options['usefilepicker'] = true;
         }
-        parent::HTML_QuickForm_text($elementName, $elementLabel, $attributes);
+        parent::__construct($elementName, $elementLabel, $attributes);
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function MoodleQuickForm_url($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
+        self::__construct($elementName, $elementLabel, $attributes, $options);
     }
 
     /**

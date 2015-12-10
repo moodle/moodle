@@ -60,7 +60,7 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
      * @param mixed $attributes Either a typical HTML attribute string or an associative array. Special options
      *                          "tags", "placeholder", "ajax", "multiple", "casesensitive" are supported.
      */
-    function MoodleQuickForm_autocomplete($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
+    public function __construct($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
         // Even if the constructor gets called twice we do not really want 2x options (crazy forms!).
         $this->_options = array();
         if ($attributes === null) {
@@ -87,9 +87,16 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
             $this->casesensitive = $attributes['casesensitive'] ? true : false;
             unset($attributes['casesensitive']);
         }
-        parent::HTML_QuickForm_select($elementName, $elementLabel, $options, $attributes);
+        parent::__construct($elementName, $elementLabel, $options, $attributes);
 
         $this->_type = 'autocomplete';
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function MoodleQuickForm_autocomplete($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
+        self::__construct($elementName, $elementLabel, $options, $attributes);
     }
 
     /**

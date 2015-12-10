@@ -53,8 +53,8 @@ class MoodleQuickForm_questioncategory extends MoodleQuickForm_selectgroups {
      *              from moodlelib.php.
      * @param mixed $attributes Either a typical HTML attribute string or an associative array
      */
-    function MoodleQuickForm_questioncategory($elementName = null, $elementLabel = null, $options = null, $attributes = null) {
-        MoodleQuickForm_selectgroups::MoodleQuickForm_selectgroups($elementName, $elementLabel, array(), $attributes);
+    public function __construct($elementName = null, $elementLabel = null, $options = null, $attributes = null) {
+        parent::__construct($elementName, $elementLabel, array(), $attributes);
         $this->_type = 'questioncategory';
         if (is_array($options)) {
             $this->_options = $options + $this->_options;
@@ -64,4 +64,10 @@ class MoodleQuickForm_questioncategory extends MoodleQuickForm_selectgroups {
         }
     }
 
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function MoodleQuickForm_questioncategory($elementName = null, $elementLabel = null, $options = null, $attributes = null) {
+        self::__construct($elementName, $elementLabel, $options, $attributes);
+    }
 }

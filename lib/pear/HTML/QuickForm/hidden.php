@@ -45,12 +45,18 @@ class HTML_QuickForm_hidden extends HTML_QuickForm_input
      * @access    public
      * @return    void
      */
-    function HTML_QuickForm_hidden($elementName=null, $value='', $attributes=null)
-    {
-        HTML_QuickForm_input::HTML_QuickForm_input($elementName, null, $attributes);
+    public function __construct($elementName=null, $value='', $attributes=null) {
+        parent::__construct($elementName, null, $attributes);
         $this->setType('hidden');
         $this->setValue($value);
     } //end constructor
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function HTML_QuickForm_hidden($elementName=null, $value='', $attributes=null) {
+        return self::__construct($elementName, $value, $attributes);
+    }
 
     // }}}
     // {{{ freeze()

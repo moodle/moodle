@@ -13,11 +13,18 @@ class mod_data_export_form extends moodleform {
 
      // @param string $url: the url to post to
      // @param array $datafields: objects in this database
-    function mod_data_export_form($url, $datafields, $cm, $data) {
+    public function __construct($url, $datafields, $cm, $data) {
         $this->_datafields = $datafields;
         $this->_cm = $cm;
         $this->_data = $data;
-        parent::moodleform($url);
+        parent::__construct($url);
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function mod_data_export_form($url, $datafields, $cm, $data) {
+        self::__construct($url, $datafields, $cm, $data);
     }
 
     function definition() {

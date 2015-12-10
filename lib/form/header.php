@@ -48,8 +48,15 @@ class MoodleQuickForm_header extends HTML_QuickForm_header
      * @param string $elementName name of the header element
      * @param string $text text displayed in header element
      */
-    function MoodleQuickForm_header($elementName = null, $text = null) {
-        parent::HTML_QuickForm_header($elementName, $text);
+    public function __construct($elementName = null, $text = null) {
+        parent::__construct($elementName, $text);
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function MoodleQuickForm_header($elementName = null, $text = null) {
+        self::__construct($elementName, $text);
     }
 
    /**

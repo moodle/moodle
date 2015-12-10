@@ -55,7 +55,7 @@ class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox{
      *              or an associative array
      * @param mixed $values (optional) Values to pass if checked or not checked
      */
-    function MoodleQuickForm_advcheckbox($elementName=null, $elementLabel=null, $text=null, $attributes=null, $values=null)
+    public function __construct($elementName=null, $elementLabel=null, $text=null, $attributes=null, $values=null)
     {
         if ($values === null){
             $values = array(0, 1);
@@ -81,7 +81,14 @@ class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox{
             }
         }
 
-        parent::HTML_QuickForm_advcheckbox($elementName, $elementLabel, $text, $attributes, $values);
+        parent::__construct($elementName, $elementLabel, $text, $attributes, $values);
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function MoodleQuickForm_advcheckbox($elementName=null, $elementLabel=null, $text=null, $attributes=null, $values=null) {
+        self::__construct($elementName, $elementLabel, $text, $attributes, $values);
     }
 
     /**

@@ -33,9 +33,16 @@ class mod_lesson_mod_form extends moodleform_mod {
 
     protected $course = null;
 
-    public function mod_lesson_mod_form($current, $section, $cm, $course) {
+    public function __construct($current, $section, $cm, $course) {
         $this->course = $course;
-        parent::moodleform_mod($current, $section, $cm, $course);
+        parent::__construct($current, $section, $cm, $course);
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function mod_lesson_mod_form($current, $section, $cm, $course) {
+        self::__construct($current, $section, $cm, $course);
     }
 
     function definition() {
