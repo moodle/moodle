@@ -23,12 +23,11 @@ class mnet_xmlrpc_client {
     var $mnet     = null;
 
     /**
-     * Constructor returns true
+     * Constructor
      */
-    function mnet_xmlrpc_client() {
+    public function __construct() {
         // make sure we've got this set up before we try and do anything else
         $this->mnet = get_mnet_environment();
-        return true;
     }
 
     /**

@@ -143,11 +143,18 @@ class auth_plugin_ldap extends auth_plugin_base {
     /**
      * Constructor with initialisation.
      */
-    function auth_plugin_ldap() {
+    public function __construct() {
         $this->authtype = 'ldap';
         $this->roleauth = 'auth_ldap';
         $this->errorlogtag = '[AUTH LDAP] ';
         $this->init_plugin($this->authtype);
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function auth_plugin_ldap() {
+        self::__construct();
     }
 
     /**

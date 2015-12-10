@@ -33,3 +33,8 @@ MDL-52081 - made all constructors PHP7 compatible
 Pear
 ====
 Changed constructors in classes PEAR and PEAR_ERROR to be __construct().
+
+
+Crypt/CHAP
+==========
+MDL-52285 - made all constructors PHP7 compatible

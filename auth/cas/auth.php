@@ -39,11 +39,18 @@ class auth_plugin_cas extends auth_plugin_ldap {
     /**
      * Constructor.
      */
-    function auth_plugin_cas() {
+    public function __construct() {
         $this->authtype = 'cas';
         $this->roleauth = 'auth_cas';
         $this->errorlogtag = '[AUTH CAS] ';
         $this->init_plugin($this->authtype);
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function auth_plugin_cas() {
+        self::__construct();
     }
 
     function prevent_local_passwords() {

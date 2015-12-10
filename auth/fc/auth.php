@@ -37,9 +37,16 @@ class auth_plugin_fc extends auth_plugin_base {
     /**
      * Constructor.
      */
-    function auth_plugin_fc() {
+    public function __construct() {
         $this->authtype = 'fc';
         $this->config = get_config('auth/fc');
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function auth_plugin_fc() {
+        self::__construct();
     }
 
     /**

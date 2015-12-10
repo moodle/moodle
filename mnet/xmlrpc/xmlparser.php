@@ -17,7 +17,7 @@ class mnet_encxml_parser {
      *
      * @return bool True
      */
-    function mnet_encxml_parser() {
+    public function __construct() {
         return $this->initialise();
     }
 
