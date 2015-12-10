@@ -1,5 +1,9 @@
 This files describes API changes in the quiz code.
 
+=== 3.0.1 ===
+* quiz_attempt::question_print_comment_fields() has been removed. It was broken
+  since at least Moodle 2.0.
+
 === 2.9 ===
 
 * There have been changes in classes/output/edit_renderer.php for MDL-40990.
