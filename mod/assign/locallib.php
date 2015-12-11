@@ -2722,26 +2722,35 @@ class assign {
 
                 if ($this->is_blind_marking()) {
                     $prefix = str_replace('_', ' ', $groupname . get_string('participant', 'assign'));
-                    $prefix = clean_filename($prefix . '_' . $this->get_uniqueid_for_user($userid) . '_');
+                    $prefix = clean_filename($prefix . '_' . $this->get_uniqueid_for_user($userid));
                 } else {
                     $prefix = str_replace('_', ' ', $groupname . fullname($student));
-                    $prefix = clean_filename($prefix . '_' . $this->get_uniqueid_for_user($userid) . '_');
+                    $prefix = clean_filename($prefix . '_' . $this->get_uniqueid_for_user($userid));
                 }
 
                 if ($submission) {
                     foreach ($this->submissionplugins as $plugin) {
                         if ($plugin->is_enabled() && $plugin->is_visible()) {
                             $pluginfiles = $plugin->get_files($submission, $student);
-                            foreach ($pluginfiles as $zipfilename => $file) {
+                            foreach ($pluginfiles as $zipfilepath => $file) {
                                 $subtype = $plugin->get_subtype();
                                 $type = $plugin->get_type();
+                                $zipfilename = basename($zipfilepath);
                                 $prefixedfilename = clean_filename($prefix .
+                                                                   '_' .
                                                                    $subtype .
                                                                    '_' .
                                                                    $type .
-                                                                   '_' .
-                                                                   $zipfilename);
-                                $filesforzipping[$prefixedfilename] = $file;
+                                                                   '_');
+                                if ($type == 'file') {
+                                    $pathfilename = $prefixedfilename . $file->get_filepath() . $zipfilename;
+                                } else if ($type == 'onlinetext') {
+                                    $pathfilename = $prefixedfilename . '/' . $zipfilename;
+                                } else {
+                                    $pathfilename = $prefixedfilename . '/' . $zipfilename;
+                                }
+                                $pathfilename = clean_param($pathfilename, PARAM_PATH);
+                                $filesforzipping[$pathfilename] = $file;
                             }
                         }
                     }

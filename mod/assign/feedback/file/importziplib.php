@@ -59,7 +59,7 @@ class assignfeedback_file_zip_importer {
             return false;
         }
 
-        $info = explode('_', $fileinfo->get_filename(), 5);
+        preg_match('#.*_([0-9]{1,})_(.*)_(.*)_(.*)#i', $fileinfo->get_filepath().$fileinfo->get_filename(), $info);
 
         if (count($info) < 5) {
             return false;
@@ -192,18 +192,9 @@ class assignfeedback_file_zip_importer {
                                           'assignfeedback_file',
                                           ASSIGNFEEDBACK_FILE_IMPORT_FILEAREA,
                                           $USER->id,
-                                          '/import/');
+                                          '/import/', true); // Get files recursive (all levels).
 
         $keys = array_keys($files);
-        if (count($files) == 1 && $files[$keys[0]]->is_directory()) {
-            // An entire folder was zipped, rather than its contents.
-            // We need to return the contents of the folder instead, so the import can continue.
-            $files = $fs->get_directory_files($contextid,
-                                              'assignfeedback_file',
-                                              ASSIGNFEEDBACK_FILE_IMPORT_FILEAREA,
-                                              $USER->id,
-                                              $files[$keys[0]]->get_filepath());
-        }
 
         return $files;
     }
@@ -245,13 +236,14 @@ class assignfeedback_file_zip_importer {
             if ($this->is_valid_filename_for_import($assignment, $unzippedfile, $participants, $user, $plugin, $filename)) {
                 if ($this->is_file_modified($assignment, $user, $plugin, $filename, $unzippedfile)) {
                     $grade = $assignment->get_user_grade($user->id, true);
+                    $path = pathinfo($filename);
 
                     if ($oldfile = $fs->get_file($contextid,
                                                  'assignfeedback_file',
                                                  ASSIGNFEEDBACK_FILE_FILEAREA,
                                                  $grade->id,
-                                                 '/',
-                                                 $filename)) {
+                                                 $path['dirname'],
+                                                 $path['basename'])) {
                         // Update existing feedback file.
                         $oldfile->replace_file_with($unzippedfile);
                         $feedbackfilesupdated++;
@@ -261,8 +253,8 @@ class assignfeedback_file_zip_importer {
                         $newfilerecord->contextid = $contextid;
                         $newfilerecord->component = 'assignfeedback_file';
                         $newfilerecord->filearea = ASSIGNFEEDBACK_FILE_FILEAREA;
-                        $newfilerecord->filename = $filename;
-                        $newfilerecord->filepath = '/';
+                        $newfilerecord->filename = $path['basename'];
+                        $newfilerecord->filepath = $path['dirname']."/";
                         $newfilerecord->itemid = $grade->id;
                         $fs->create_file_from_storedfile($newfilerecord, $unzippedfile);
                         $feedbackfilesadded++;
