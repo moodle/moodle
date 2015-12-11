@@ -8,6 +8,7 @@ Description of import of Horde libraries
 # Copy the following script and store it on /tmp, change it's execute bit, and run it, passing
   in your path to Horde (the directory you've cloned the repository):
     /tmp/copyhorde.sh ~/git/ext/horde/
+# MDL-52361 patched for PHP7 compatibility, after upgrade make sure it's updated upstream and remove this line
 
 ====
 #!/bin/sh
