@@ -195,6 +195,13 @@ class question_category_object {
     }
 
     /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     */
+    public function question_category_object($page, $pageurl, $contexts, $currentcat, $defaultcategory, $todelete, $addcontexts) {
+        self::__construct($page, $pageurl, $contexts, $currentcat, $defaultcategory, $todelete, $addcontexts);
+    }
+
+    /**
      * Initializes this classes general category-related variables
      */
     public function initialize($page, $contexts, $currentcat, $defaultcategory, $todelete, $addcontexts) {

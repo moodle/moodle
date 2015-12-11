@@ -24,6 +24,13 @@
         }
 
         /**
+         * Old syntax of class constructor. Deprecated in PHP7.
+         */
+        public function latex() {
+            self::__construct();
+        }
+
+        /**
          * Accessor function for support_platform field.
          * @return boolean value of supported_platform
          */

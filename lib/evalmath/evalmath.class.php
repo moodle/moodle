@@ -125,6 +125,13 @@ class EvalMath {
         $this->allowimplicitmultiplication = $allowimplicitmultiplication;
     }
 
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     */
+    public function EvalMath($allowconstants = false, $allowimplicitmultiplication = false) {
+        self::__construct($allowconstants, $allowimplicitmultiplication);
+    }
+
     function e($expr) {
         return $this->evaluate($expr);
     }

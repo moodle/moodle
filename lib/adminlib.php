@@ -4942,6 +4942,13 @@ class admin_setting_special_gradelimiting extends admin_setting_configcheckbox {
     }
 
     /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     */
+    public function admin_setting_special_gradelimiting() {
+        self::__construct();
+    }
+
+    /**
      * Force site regrading
      */
     function regrade_all() {

@@ -71,6 +71,13 @@ class calc_formula {
     }
 
     /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     */
+    public function calc_formula($formula, $params=false) {
+        self::__construct($formula, $params);
+    }
+
+    /**
      * Raplace parameters used in existing formula,
      * parameter names must contain only lowercase [a-z] letters, no other characters are allowed!
      *

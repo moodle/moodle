@@ -1103,6 +1103,13 @@ class grade_plugin_return {
     }
 
     /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     */
+    public function grade_plugin_return($params = null) {
+        self::__construct($params);
+    }
+
+    /**
      * Returns return parameters as options array suitable for buttons.
      * @return array options
      */
@@ -2050,6 +2057,13 @@ class grade_seq extends grade_structure {
     }
 
     /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     */
+    public function grade_seq($courseid, $category_grade_last=false, $nooutcomes=false) {
+        self::__construct($courseid, $category_grade_last, $nooutcomes);
+    }
+
+    /**
      * Static recursive helper - makes the grade_item for category the last children
      *
      * @param array &$element The seed of the recursion
@@ -2227,6 +2241,14 @@ class grade_tree extends grade_structure {
 
         grade_tree::fill_levels($this->levels, $this->top_element, 0);
 
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     */
+    public function grade_tree($courseid, $fillers=true, $category_grade_last=false,
+                               $collapsed=null, $nooutcomes=false) {
+        self::__construct($courseid, $fillers, $category_grade_last, $collapsed, $nooutcomes);
     }
 
     /**

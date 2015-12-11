@@ -1274,6 +1274,13 @@ class environment_results {
     }
 
     /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     */
+    public function environment_results($part) {
+        self::__construct($part);
+    }
+
+    /**
      * Set the status
      *
      * @param bool $testpassed true means the test passed and all is OK. false means it failed.

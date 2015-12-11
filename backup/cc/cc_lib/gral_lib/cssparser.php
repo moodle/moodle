@@ -25,6 +25,13 @@ class cssparser {
     $this->Clear();
   }
 
+  /**
+   * Old syntax of class constructor. Deprecated in PHP7.
+   */
+  public function cssparser($html = true) {
+      self::__construct($html);
+  }
+
   function finalize() {
     unset($this->css);
   }

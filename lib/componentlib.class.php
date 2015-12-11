@@ -207,6 +207,13 @@ class component_installer {
     }
 
     /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     */
+    public function component_installer($sourcebase, $zippath, $zipfilename, $md5filename='', $destpath='') {
+        self::__construct($sourcebase, $zippath, $zipfilename, $md5filename, $destpath);
+    }
+
+    /**
      * This function will check if everything is properly set to begin
      * one installation. Also, it will check for required settings
      * and will fill everything as needed.

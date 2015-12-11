@@ -1191,6 +1191,13 @@ class graph {
     }
 
     /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     */
+    public function graph() {
+        self::__construct();
+    }
+
+    /**
      * Prepare label's text for GD output.
      *
      * @param string    $label string to be prepared.

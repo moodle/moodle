@@ -50,7 +50,14 @@
             $this->_labels = array();
             $this->_regex = null;
         }
-        
+
+        /**
+         * Old syntax of class constructor. Deprecated in PHP7.
+         */
+        public function ParallelRegex($case) {
+            self::__construct($case);
+        }
+
         /**
          *    Adds a pattern with an optional label.
          *    @param string $pattern      Perl style regex, but ( and )
@@ -140,7 +147,14 @@
         public function __construct($start) {
             $this->_stack = array($start);
         }
-        
+
+        /**
+         * Old syntax of class constructor. Deprecated in PHP7.
+         */
+        public function StateStack($start) {
+            self::__construct($start);
+        }
+
         /**
          *    Accessor for current state.
          *    @return string State as string.

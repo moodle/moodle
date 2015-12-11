@@ -17,6 +17,13 @@ class SpellChecker {
 		$this->_config = $config;
 	}
 
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     */
+    public function SpellChecker(&$config) {
+        self::__construct($config);
+    }
+
 	/**
 	 * Simple loopback function everything that gets in will be send back.
 	 *

@@ -38,6 +38,13 @@ class Moxiecode_JSONReader {
 		$this->_needProp = false;
 	}
 
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     */
+    public function Moxiecode_JSONReader($data) {
+        self::__construct($data);
+    }
+
 	function getToken() {
 		return $this->_token;
 	}
@@ -362,6 +369,13 @@ class Moxiecode_JSONReader {
 class Moxiecode_JSON {
 	public function __construct() {
 	}
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     */
+    public function Moxiecode_JSON() {
+        self::__construct();
+    }
 
 	function decode($input) {
 		$reader = new Moxiecode_JSONReader($input);

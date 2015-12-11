@@ -630,6 +630,13 @@ class grade_export_update_buffer {
         $this->export_time = time();
     }
 
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     */
+    public function grade_export_update_buffer() {
+        self::__construct();
+    }
+
     public function flush($buffersize) {
         global $CFG, $DB;
 
