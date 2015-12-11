@@ -26,6 +26,7 @@ namespace tool_lp;
 defined('MOODLE_INTERNAL') || die();
 
 use lang_string;
+use tool_lp\template;
 
 /**
  * Template cohort persistent.
@@ -141,6 +142,49 @@ class template_cohort extends persistent {
         }
 
         return $relation;
+    }
+
+    /**
+     * Return an array of templates persistent with their missing userids.
+     * Note that only cohorts associated with visible templates were considered.
+     *
+     * @param bool $unlinkedaremissing When true, unlinked plans are considered as missing.
+     * @return array( array(
+     *                   'template' => \tool_lp\template,
+     *                   'userids' => array
+     *              ))
+     */
+    public static function get_all_missing_plans($unlinkedaremissing = false) {
+        global $DB;
+
+        $skipsql = !$unlinkedaremissing ? '(t.id = p.templateid OR t.id = p.origtemplateid)' : 't.id = p.templateid';
+
+        // TODO MDL-52526 only unexpired template are considered and fix the time()+1 duedate issue.
+        $sql = "SELECT cm.userid, t.*
+                  FROM {cohort_members} cm
+                  JOIN {" . self::TABLE . "} tc ON cm.cohortid = tc.cohortid
+                  JOIN {" . template::TABLE . "} t ON (tc.templateid = t.id AND t.visible = 1)
+             LEFT JOIN {" . plan::TABLE . "} p ON (cm.userid = p.userid AND $skipsql)
+                 WHERE p.id IS NULL
+              ORDER BY t.id";
+
+        $results = $DB->get_records_sql($sql);
+
+        $missingplans = array();
+        foreach ($results as $usertemplate) {
+            $userid = $usertemplate->userid;
+
+            // Check if template already exist in the array.
+            if (isset($missingplans[$usertemplate->id])) {
+                $missingplans[$usertemplate->id]['userids'][] = $userid;
+            } else {
+                unset($usertemplate->userid);
+                $template = new template(0, $usertemplate);
+                $missingplans[$template->get_id()]['template'] = $template;
+                $missingplans[$template->get_id()]['userids'][] = $userid;
+            }
+        }
+        return array_values($missingplans);
     }
 
 }

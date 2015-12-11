@@ -34,4 +34,13 @@ $tasks = array(
         'dayofweek' => '*',
         'month' => '*'
     ),
+    array(
+        'classname' => 'tool_lp\task\sync_plans_from_template_cohorts_task',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => '*',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    ),
 );
