@@ -23,13 +23,7 @@
  */
 
 namespace tool_lp\form;
-
 defined('MOODLE_INTERNAL') || die();
-
-use moodleform;
-use tool_lp\api;
-
-require_once($CFG->libdir.'/formslib.php');
 
 /**
  * Learning plan template form.
@@ -38,24 +32,23 @@ require_once($CFG->libdir.'/formslib.php');
  * @copyright 2015 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class template extends moodleform {
+class template extends persistent {
+
+    protected static $persistentclass = 'tool_lp\\template';
 
     /**
      * Define the form - called by parent constructor
      */
     public function definition() {
         $mform = $this->_form;
-        $template = $this->_customdata['template'];
-        if (empty($template)) {
-            $id = 0;
-        } else {
-            $id = $template->get_id();
-        }
+
         $context = $this->_customdata['context'];
 
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-        $mform->setDefault('id', 0);
+        $mform->addElement('hidden', 'contextid');
+        $mform->setType('contextid', PARAM_INT);
+        $mform->setConstant('contextid', $context->id);
+
+        $mform->addElement('header', 'generalhdr', get_string('general'));
 
         $mform->addElement('text', 'shortname',
                            get_string('shortname', 'tool_lp'));
@@ -80,51 +73,6 @@ class template extends moodleform {
 
         $this->add_action_buttons(true, get_string('savechanges', 'tool_lp'));
 
-        if (!$this->is_submitted() && !empty($template)) {
-            $record = $template->to_record();
-            // Massage for editor API.
-            $record->description = array('text' => $record->description, 'format' => $record->descriptionformat);
-            $this->set_data($record);
-        }
-
-    }
-
-    /**
-     * Get form data.
-     * Conveniently removes non-desired properties.
-     * @return object
-     */
-    public function get_data() {
-        $data = parent::get_data();
-        if (is_object($data)) {
-            unset($data->submitbutton);
-        }
-        return $data;
-    }
-
-    /**
-     * Extra the form.
-     *
-     * @param  array $data
-     * @param  array $files
-     * @return array
-     */
-    public function validation($data, $files) {
-        $data = $this->get_submitted_data();        // To remove extra fields (sesskey, __qf_, ...).
-        unset($data->submitbutton);
-
-        $data->descriptionformat = $data->description['format'];
-        $data->description = $data->description['text'];
-
-        $template = new \tool_lp\template(0, $data);
-        $errors = $template->get_errors();
-
-        // The context ID is not submitted via this form.
-        if (isset($errors['contextid'])) {
-            unset($errors['contextid']);
-        }
-
-        return $errors;
     }
 
 }

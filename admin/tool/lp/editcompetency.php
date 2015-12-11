@@ -34,7 +34,6 @@ $parentid = optional_param('parentid', 0, PARAM_INT);
 require_login();
 $pagecontext = context::instance_by_id($pagecontextid);
 
-
 // Set up the page.
 $url = new moodle_url("/admin/tool/lp/editcompetency.php", array('id' => $id, 'competencyframeworkid' => $competencyframeworkid,
     'parentid' => $parentid, 'pagecontextid' => $pagecontextid));
@@ -71,8 +70,8 @@ $PAGE->set_heading($title);
 $PAGE->navbar->add($competencyframework->get_shortname(), $frameworkurl);
 $output = $PAGE->get_renderer('tool_lp');
 
-$form = new \tool_lp\form\competency($url->out(false), array('id' => $id, 'competencyframework' => $competencyframework,
-    'parent' => $parent, 'competency' => $competency));
+$form = new \tool_lp\form\competency($url->out(false), array('competencyframework' => $competencyframework,
+    'parent' => $parent, 'persistent' => $competency));
 
 if ($form->is_cancelled()) {
     redirect($frameworkurl);
@@ -83,18 +82,12 @@ echo $output->heading($pagetitle);
 
 $data = $form->get_data();
 if ($data) {
-    // Save the changes and continue back to the manage page.
-    // Massage the editor data.
-    $data->descriptionformat = $data->description['format'];
-    $data->description = $data->description['text'];
-    if (empty($data->id)) {
-        // Create new framework.
-        require_sesskey();
+    require_sesskey();
+    if (empty($competency)) {
         \tool_lp\api::create_competency($data);
         echo $output->notification(get_string('competencycreated', 'tool_lp'), 'notifysuccess');
         echo $output->continue_button($frameworkurl);
     } else {
-        require_sesskey();
         \tool_lp\api::update_competency($data);
         echo $output->notification(get_string('competencyupdated', 'tool_lp'), 'notifysuccess');
         echo $output->continue_button($frameworkurl);

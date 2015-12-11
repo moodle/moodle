@@ -23,13 +23,9 @@
  */
 
 namespace tool_lp\form;
-
 defined('MOODLE_INTERNAL') || die();
 
-use moodleform;
-use tool_lp\api;
-
-require_once($CFG->libdir.'/formslib.php');
+use stdClass;
 
 /**
  * Competency framework form.
@@ -38,7 +34,9 @@ require_once($CFG->libdir.'/formslib.php');
  * @copyright 2015 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class competency_framework extends moodleform {
+class competency_framework extends persistent {
+
+    protected static $persistentclass = 'tool_lp\\competency_framework';
 
     /**
      * Define the form - called by parent constructor
@@ -47,17 +45,12 @@ class competency_framework extends moodleform {
         global $PAGE;
 
         $mform = $this->_form;
-        $id = $this->_customdata['id'];
         $context = $this->_customdata['context'];
-        $framework = null;
+        $framework = $this->get_persistent();
 
-        if ($id) {
-            $framework = api::read_framework($id);;
-        }
-
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-        $mform->setDefault('id', 0);
+        $mform->addElement('hidden', 'contextid');
+        $mform->setType('contextid', PARAM_INT);
+        $mform->setConstant('contextid', $context->id);
 
         $mform->addElement('header', 'generalhdr', get_string('general'));
 
@@ -110,55 +103,46 @@ class competency_framework extends moodleform {
         $mform->setDefault('taxonomies', $taxdefaults);
 
         $this->add_action_buttons(true, get_string('savechanges', 'tool_lp'));
-
-        if ($framework && !$this->is_submitted()) {
-            $record = $framework->to_record();
-            // Massage for editor API.
-            $record->description = array('text' => $record->description, 'format' => $record->descriptionformat);
-            // New hair cut for taxonomies.
-            $record->taxonomies = $framework->get_taxonomies();
-            $this->set_data($record);
-        }
-
     }
 
     /**
-     * Get form data.
-     * Conveniently removes non-desired properties.
+     * Convert some fields.
+     *
      * @return object
      */
-    public function get_data() {
-        $data = parent::get_data();
-        if (is_object($data)) {
-            unset($data->submitbutton);
-        }
+    protected static function convert_fields(stdClass $data) {
+        $data = parent::convert_fields($data);
+        $data->taxonomies = implode(',', $data->taxonomies);
         return $data;
     }
 
     /**
-     * Form validation.
-     * @param  array $data
-     * @param  array $files
-     * @return array
+     * Extra validation.
+     *
+     * @param  stdClass $data Data to validate.
+     * @param  array $files Array of files.
+     * @param  array $errors Currently reported errors.
+     * @return array of additional errors, or overridden errors.
      */
-    public function validation($data, $files) {
-        $context = $this->_customdata['context'];
-
-        $data = $this->get_submitted_data();
-        unset($data->submitbutton);
-        $data->descriptionformat = $data->description['format'];
-        $data->description = $data->description['text'];
-        $data->contextid = $context->id;
-        $data->taxonomies = implode(',', $data->taxonomies);
-
-        $framework = new \tool_lp\competency_framework(0, $data);
-        $errors = $framework->get_errors();
+    protected function extra_validation($data, $files, array &$errors) {
+        $newerrors = array();
+        // Move the error from scaleconfiguration to the form element scale ID.
         if (isset($errors['scaleconfiguration']) && !isset($errors['scaleid'])) {
-            $errors['scaleid'] = $errors['scaleconfiguration'];
+            $newerrors['scaleid'] = $errors['scaleconfiguration'];
             unset($errors['scaleconfiguration']);
         }
+        return $newerrors;
+    }
 
-        return $errors;
+    /**
+     * Get the default data.
+     *
+     * @return stdClass
+     */
+    protected function get_default_data() {
+        $data = parent::get_default_data();
+        $data->taxonomies = $this->get_persistent()->get_taxonomies();
+        return $data;
     }
 
 }

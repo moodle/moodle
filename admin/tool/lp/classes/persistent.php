@@ -191,7 +191,8 @@ abstract class persistent {
 
         // List of reserved property names. Mostly because we have methods (getters/setters) which would confict with them.
         // Think about backwards compability before adding new ones here!
-        $reserved = array('errors', 'records', 'records_select', 'property_default_value', 'property_error_message');
+        $reserved = array('errors', 'formatted_properties', 'records', 'records_select', 'property_default_value',
+            'property_error_message');
 
         foreach ($def as $property => $definition) {
 
@@ -216,6 +217,29 @@ abstract class persistent {
         }
 
         return $def;
+    }
+
+    /**
+     * Gets all the formatted properties.
+     *
+     * Formatted properties are properties which have a format associated with them.
+     *
+     * @return array Keys are property names, values are property format names.
+     */
+    final public static function get_formatted_properties() {
+        $properties = static::properties_definition();
+
+        $formatted = array();
+        foreach ($properties as $property => $definition) {
+            $propertyformat = $property . 'format';
+            // TODO MDL-52454 Check PARAM_RAW.
+            if ($definition['type'] == PARAM_TEXT && array_key_exists($propertyformat, $properties)
+                    && $properties[$propertyformat]['type'] == PARAM_INT) {
+                $formatted[$property] = $propertyformat;
+            }
+        }
+
+        return $formatted;
     }
 
     /**

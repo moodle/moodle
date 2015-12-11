@@ -23,13 +23,10 @@
  */
 
 namespace tool_lp\form;
-
 defined('MOODLE_INTERNAL') || die();
 
-use moodleform;
-use tool_lp\api;
 use tool_lp\plan as planpersistent;
-require_once($CFG->libdir.'/formslib.php');
+use required_capability_exception;
 
 /**
  * Learning plan form.
@@ -38,7 +35,9 @@ require_once($CFG->libdir.'/formslib.php');
  * @copyright 2015 David Monllao
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class plan extends moodleform {
+class plan extends persistent {
+
+    protected static $persistentclass = 'tool_lp\\plan';
 
     /**
      * Define the form - called by parent constructor
@@ -47,12 +46,9 @@ class plan extends moodleform {
         $mform = $this->_form;
         $context = $this->_customdata['context'];
 
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-        $mform->setDefault('id', 0);
-
-        $mform->addElement('hidden', 'userid', $this->_customdata['userid']);
+        $mform->addElement('hidden', 'userid');
         $mform->setType('userid', PARAM_INT);
+        $mform->setConstant('userid', $this->_customdata['userid']);
 
         $mform->addElement('text', 'name', get_string('planname', 'tool_lp'));
         $mform->setType('name', PARAM_TEXT);
@@ -74,45 +70,6 @@ class plan extends moodleform {
         }
 
         $this->add_action_buttons(true, get_string('savechanges', 'tool_lp'));
-
-        if (isset($this->_customdata['plan'])) {
-            if (!$this->is_submitted()) {
-                $plan = $this->_customdata['plan'];
-                $record = $plan->to_record();
-                $record->description = array('text' => $record->description, 'format' => $record->descriptionformat);
-                $this->set_data($record);
-            }
-        }
-
     }
 
-    /**
-     * Get form data.
-     * Conveniently removes non-desired properties.
-     * @return object
-     */
-    public function get_data() {
-        $data = parent::get_data();
-        if (is_object($data)) {
-            unset($data->submitbutton);
-        }
-        return $data;
-    }
-
-    /**
-     * Get the template select options from the templates list.
-     *
-     * @return array|false
-     */
-    protected function get_template_options() {
-        if (empty($this->_customdata['templates'])) {
-            return false;
-        }
-
-        $options = array('' => get_string('choosedots'));
-        foreach ($this->_customdata['templates'] as $template) {
-            $options[$template->get_id()] = $template->get_shortname();
-        }
-        return $options;
-    }
 }

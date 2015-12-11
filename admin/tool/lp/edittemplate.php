@@ -43,7 +43,6 @@ require_capability('tool/lp:templatemanage', $context);
 
 // We keep the original context in the URLs, so that we remain in the same context.
 $url = new moodle_url("/admin/tool/lp/edittemplate.php", array('id' => $id, 'pagecontextid' => $pagecontextid));
-$formurl = new moodle_url("/admin/tool/lp/edittemplate.php", array('pagecontextid' => $pagecontextid));
 
 if (empty($id)) {
     $pagetitle = get_string('addnewtemplate', 'tool_lp');
@@ -54,7 +53,7 @@ if (empty($id)) {
     list($title, $subtitle, $returnurl) = \tool_lp\page_helper::setup_for_template($pagecontextid, $url, $template, $pagetitle);
 }
 
-$form = new \tool_lp\form\template($formurl->out(false), array('template' => $template, 'context' => $context));
+$form = new \tool_lp\form\template($url->out(false), array('persistent' => $template, 'context' => $context));
 if ($form->is_cancelled()) {
     redirect($returnurl);
 }
@@ -68,19 +67,12 @@ if (!empty($subtitle)) {
 
 $data = $form->get_data();
 if ($data) {
-    // Save the changes and continue back to the manage page.
-    // Massage the editor data.
-    $data->descriptionformat = $data->description['format'];
-    $data->description = $data->description['text'];
+    require_sesskey();
     if (empty($data->id)) {
-        // Create new template.
-        require_sesskey();
-        $data->contextid = $context->id;
         \tool_lp\api::create_template($data);
         echo $output->notification(get_string('templatecreated', 'tool_lp'), 'notifysuccess');
         echo $output->continue_button($returnurl);
     } else {
-        require_sesskey();
         \tool_lp\api::update_template($data);
         echo $output->notification(get_string('templateupdated', 'tool_lp'), 'notifysuccess');
         echo $output->continue_button($returnurl);

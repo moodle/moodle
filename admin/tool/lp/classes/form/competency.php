@@ -23,13 +23,9 @@
  */
 
 namespace tool_lp\form;
-
 defined('MOODLE_INTERNAL') || die();
 
-use moodleform;
-use tool_lp\api;
-
-require_once($CFG->libdir.'/formslib.php');
+use stdClass;
 
 /**
  * Competency framework form.
@@ -38,7 +34,9 @@ require_once($CFG->libdir.'/formslib.php');
  * @copyright 2015 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class competency extends moodleform {
+class competency extends persistent {
+
+    protected static $persistentclass = 'tool_lp\\competency';
 
     /**
      * Define the form - called by parent constructor
@@ -47,26 +45,13 @@ class competency extends moodleform {
         global $PAGE;
 
         $mform = $this->_form;
-        $id = $this->_customdata['id'];
         $framework = $this->_customdata['competencyframework'];
         $parent = $this->_customdata['parent'];
-        $competency = $this->_customdata['competency'];
-
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-        $mform->setDefault('id', 0);
-
-        $mform->addElement('hidden', 'parentid');
-        $mform->setType('parentid', PARAM_INT);
-        if ($parent) {
-            $mform->setDefault('parentid', $parent->get_id());
-        } else {
-            $mform->setDefault('parentid', 0);
-        }
+        $competency = $this->get_persistent();
 
         $mform->addElement('hidden', 'competencyframeworkid');
         $mform->setType('competencyframeworkid', PARAM_INT);
-        $mform->setDefault('competencyframeworkid', $framework->get_id());
+        $mform->setConstant('competencyframeworkid', $framework->get_id());
 
         $mform->addElement('header', 'generalhdr', get_string('general'));
 
@@ -120,70 +105,38 @@ class competency extends moodleform {
         $mform->addHelpButton('visible', 'visible', 'tool_lp');
 
         $this->add_action_buttons(true, get_string('savechanges', 'tool_lp'));
-
-        if (!empty($competency) && !$this->is_submitted()) {
-            $record = $competency->to_record();
-            // Massage for editor API.
-            $record->description = array('text' => $record->description, 'format' => $record->descriptionformat);
-            $this->set_data($record);
-        }
-
     }
 
     /**
-     * Get form data.
-     * Conveniently removes non-desired properties.
+     * Convert some fields.
+     *
      * @return object
      */
-    public function get_data() {
-        $data = parent::get_data();
-        if (is_object($data)) {
-            unset($data->submitbutton);
-
-            // Ensure that we have the format expected by the persistent.
-            if (empty($data->scaleid)) {
-                $data->scaleid = null;
-                $data->scaleconfiguration = null;
-            }
+    protected static function convert_fields(stdClass $data) {
+        $data = parent::convert_fields($data);
+        if (empty($data->scaleid)) {
+            $data->scaleid = null;
+            $data->scaleconfiguration = null;
         }
         return $data;
     }
 
     /**
-     * Form validation.
-     * @param  array $data
-     * @param  array $files
-     * @return array
+     * Extra validation.
+     *
+     * @param  stdClass $data Data to validate.
+     * @param  array $files Array of files.
+     * @param  array $errors Currently reported errors.
+     * @return array of additional errors, or overridden errors.
      */
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-        $competency = $this->_customdata['competency'];
-        if (!$competency) {
-            $competency = new \tool_lp\competency();
-        }
-
-        // Fetch data like this to remove CSRF tokens, etc...
-        $data = $this->get_submitted_data();
-        unset($data->submitbutton);
-
-        // Ensure that we send the expected format to the persistent.
-        $data->descriptionformat = $data->description['format'];
-        $data->description = $data->description['text'];
-        if (empty($data->scaleid)) {
-            $data->scaleid = null;
-            $data->scaleconfiguration = null;
-        }
-
-        // Validate from the model.
-        $competency->from_record($data);
-        $errors = $competency->get_errors();
-
+    protected function extra_validation($data, $files, array &$errors) {
+        $newerrors = array();
         // Move the error from scaleconfiguration to the form element scale ID.
         if (isset($errors['scaleconfiguration']) && !isset($errors['scaleid'])) {
-            $errors['scaleid'] = $errors['scaleconfiguration'];
+            $newerrors['scaleid'] = $errors['scaleconfiguration'];
             unset($errors['scaleconfiguration']);
         }
-
-        return $errors;
+        return $newerrors;
     }
+
 }

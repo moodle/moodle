@@ -50,7 +50,7 @@ if (empty($id)) {
 $output = $PAGE->get_renderer('tool_lp');
 
 // Custom data to pass to the form.
-$customdata = array('userid' => $userid, 'context' => $PAGE->context);
+$customdata = array('userid' => $userid, 'context' => $PAGE->context, 'persistent' => $plan);
 
 // User can create plan if he can_manage_user with active/complete status
 // or if he can_manage_user_draft with draft status.
@@ -64,7 +64,6 @@ if ($plan != null) {
     if (!$plan->can_be_edited()) {
         throw new coding_exception('Completed plan can not be edited');
     }
-    $customdata['plan'] = $plan;
 } else if (!$cancreate) {
     throw new required_capability_exception($PAGE->context, 'tool/lp:planmanage', 'nopermissions', '');
 }
@@ -83,15 +82,12 @@ if (!empty($subtitle)) {
 $data = $form->get_data();
 
 if ($data) {
-    $data->descriptionformat = $data->description['format'];
-    $data->description = $data->description['text'];
+    require_sesskey();
     if (empty($data->id)) {
-        require_sesskey();
         \tool_lp\api::create_plan($data);
         echo $output->notification(get_string('plancreated', 'tool_lp'), 'notifysuccess');
         echo $output->continue_button($returnurl);
     } else {
-        require_sesskey();
         \tool_lp\api::update_plan($data);
         echo $output->notification(get_string('planupdated', 'tool_lp'), 'notifysuccess');
         echo $output->continue_button($returnurl);

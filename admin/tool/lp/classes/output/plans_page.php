@@ -70,7 +70,7 @@ class plans_page implements renderable, templatable {
         if (plan::can_manage_user($userid) || plan::can_manage_user_draft($userid)) {
             $addplan = new single_button(
                 new moodle_url('/admin/tool/lp/editplan.php', array('userid' => $userid)),
-                get_string('addnewplan', 'tool_lp')
+                get_string('addnewplan', 'tool_lp'), 'get'
             );
             $this->navigation[] = $addplan;
         }

@@ -59,9 +59,8 @@ $context = $PAGE->context;
 
 $fileareaoptions = array('subdirs' => false);
 $customdata = array(
-    'id' => $id,
     'fileareaoptions' => $fileareaoptions,
-    'userevidence' => $userevidence,
+    'persistent' => $userevidence,
     'userid' => $userid,
 );
 
@@ -85,12 +84,6 @@ if ($form->is_cancelled()) {
 $itemid = null;
 if ($userevidence) {
     $itemid = $userevidence->get_id();
-    $data = $userevidence->to_record();
-    $data->description = (object) array(
-        'format' => $data->descriptionformat,
-        'text' => $data->description
-    );
-    $form->set_data($data);
 }
 
 // Massaging the file API.
@@ -109,10 +102,6 @@ if (!empty($subtitle)) {
 // Hurray, the user has submitted the form! Everyone loves forms :)!
 if ($data = $form->get_data()) {
     require_sesskey();
-    $data->descriptionformat = $data->description['format'];
-    $data->description = $data->description['text'];
-    $data->userid = $userid;
-
     $draftitemid = $data->files;
     unset($data->files);
 
@@ -121,7 +110,6 @@ if ($data = $form->get_data()) {
         echo $output->notification(get_string('userevidencecreated', 'tool_lp'), 'notifysuccess');
         echo $output->continue_button($returnurl);
     } else {
-        $data->id = $userevidence->get_id();
         \tool_lp\api::update_user_evidence($data, $draftitemid);
         echo $output->notification(get_string('userevidenceupdated', 'tool_lp'), 'notifysuccess');
         echo $output->continue_button($returnurl);
