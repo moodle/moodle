@@ -709,6 +709,11 @@ ini_set('arg_separator.output', '&amp;');
 // Work around for a PHP bug   see MDL-11237
 ini_set('pcre.backtrack_limit', 20971520);  // 20 MB
 
+// Work around for PHP7 bug #70110. See MDL-52475 .
+if (ini_get('pcre.jit')) {
+    ini_set('pcre.jit', 0);
+}
+
 // Set PHP default timezone to server timezone.
 core_date::set_default_server_timezone();
 
