@@ -63,14 +63,7 @@ define('MEMORY_HUGE', -4);
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since 2.0
  */
-class object extends stdClass {
-    /**
-     * Constructor.
-     */
-    public function __construct() {
-        debugging("'object' class has been deprecated, please use stdClass instead.", DEBUG_DEVELOPER);
-    }
-};
+class object extends stdClass {};
 
 /**
  * Base Moodle Exception class
