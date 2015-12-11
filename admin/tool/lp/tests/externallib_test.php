@@ -2638,25 +2638,25 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $uc = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c1->get_id()));
 
-        $evidence = external::grade_competency_in_plan($this->user->id, $c1->get_id(), $plan->get_id(), 1, false);
+        $evidence = external::grade_competency_in_plan($plan->get_id(), $c1->get_id(), 1, false);
 
         $this->assertEquals('The competency grade was manually suggested in the plan \'Evil\'.', $evidence->description);
         $this->assertEquals('A', $evidence->gradename);
-        $evidence = external::grade_competency_in_plan($this->user->id, $c1->get_id(), $plan->get_id(), 1, true);
+        $evidence = external::grade_competency_in_plan($plan->get_id(), $c1->get_id(), 1, true);
 
         $this->assertEquals('The competency grade was manually set in the plan \'Evil\'.', $evidence->description);
         $this->assertEquals('A', $evidence->gradename);
 
         $this->setUser($this->user);
-        $evidence = external::grade_competency_in_plan($this->user->id, $c1->get_id(), $plan->get_id(), 1, false);
+        $evidence = external::grade_competency_in_plan($plan->get_id(), $c1->get_id(), 1, false);
         $this->assertEquals('The competency grade was manually suggested in the plan \'Evil\'.', $evidence->description);
         $this->assertEquals('A', $evidence->gradename);
 
         $this->setExpectedException('required_capability_exception');
-        $evidence = external::grade_competency_in_plan($this->user->id, $c1->get_id(), $plan->get_id(), 1, true);
+        $evidence = external::grade_competency_in_plan($plan->get_id(), $c1->get_id(), 1, true);
     }
 
-    public function test_read_user_competency_summary() {
+    public function test_data_for_user_competency_summary_in_plan() {
         global $CFG;
 
         $this->setUser($this->creator);
@@ -2675,16 +2675,16 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $uc = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c1->get_id()));
 
-        $evidence = external::grade_competency_in_plan($this->user->id, $c1->get_id(), $plan->get_id(), 1, false);
-        $evidence = external::grade_competency_in_plan($this->user->id, $c1->get_id(), $plan->get_id(), 2, true);
+        $evidence = external::grade_competency_in_plan($plan->get_id(), $c1->get_id(), 1, false);
+        $evidence = external::grade_competency_in_plan($plan->get_id(), $c1->get_id(), 1, true);
 
-        $summary = external::read_user_competency_summary($this->user->id, $c1->get_id(), $plan->get_id());
-        $this->assertTrue($summary->cangrade);
-        $this->assertTrue($summary->cansuggest);
+        $summary = external::data_for_user_competency_summary_in_plan($this->user->id, $c1->get_id(), $plan->get_id());
+        $this->assertTrue($summary->usercompetencysummary->cangrade);
+        $this->assertTrue($summary->usercompetencysummary->cansuggest);
         $this->assertEquals('Evil', $summary->plan->name);
-        $this->assertEquals('B', $summary->usercompetency->gradename);
-        $this->assertEquals('B', $summary->evidence[0]->gradename);
-        $this->assertEquals('A', $summary->evidence[1]->gradename);
+        $this->assertEquals('B', $summary->usercompetencysummary->usercompetency->gradename);
+        $this->assertEquals('B', $summary->usercompetencysummary->evidence[0]->gradename);
+        $this->assertEquals('A', $summary->usercompetencysummary->evidence[1]->gradename);
     }
 
 }

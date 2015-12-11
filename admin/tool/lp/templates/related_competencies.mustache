@@ -2,8 +2,8 @@
 <p>
     <strong>{{#str}}relatedcompetencies, tool_lp{{/str}}:</strong>
 </p>
-{{#relatedcompetencies}}
-    <ul>
+<ul>
+    {{#relatedcompetencies}}
         <li>
             {{#showdeleterelatedaction}}
                 <div class="pull-right">
@@ -16,8 +16,8 @@
                 </a>
             </p>
         </li>
-    </ul>
-{{/relatedcompetencies}}
+    {{/relatedcompetencies}}
+</ul>
 {{^relatedcompetencies}}
     {{#str}}norelatedcompetencies, tool_lp{{/str}}
 {{/relatedcompetencies}}

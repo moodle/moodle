@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/notification', 'core/ajax', 'core/log'], function($, notification, ajax, log) {
+define(['jquery', 'core/notification', 'core/ajax'], function($, notification, ajax) {
 
     /**
      * InlineEditor
@@ -76,7 +76,6 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/log'], function($, not
         event.preventDefault();
         if (this._planId > 0) {
             var args = {
-                userid: this._userId,
                 competencyid: this._competencyId,
                 planid: this._planId,
                 grade: grade,
@@ -105,7 +104,6 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/log'], function($, not
         event.preventDefault();
         if (this._planId > 0) {
             var args = {
-                userid: this._userId,
                 competencyid: this._competencyId,
                 planid: this._planId,
                 grade: grade,
@@ -137,11 +135,6 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/log'], function($, not
         var suggestbutton = form.find('[data-action="suggest"]');
         suggestbutton.on('click', function(event) {
             currentthis._handleSuggest.call(currentthis, event);
-        });
-
-        this.on('competencyupdated', function(event, args) {
-            log.debug('Competency updated');
-            log.debug(args);
         });
     };
 

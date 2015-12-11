@@ -36,6 +36,15 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
         this._competencyId = competencyId;
         this._userId = userId;
         this._planId = planId;
+
+        if (this._planId) {
+            this._methodName = 'tool_lp_data_for_user_competency_summary_in_plan';
+            this._args = { userid: this._userId, competencyid: this._competencyId, planid: this._planId };
+            this._templateName = 'tool_lp/user_competency_summary_in_plan';
+        } else {
+            // TODO - add optional courseid support.
+            notification.exception('Plan id is required.');
+        }
     };
 
     /**
@@ -48,12 +57,12 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
             promises = [];
 
         promises = ajax.call([{
-            methodname: 'tool_lp_read_user_competency_summary',
-            args: { userid: this._userId, competencyid: this._competencyId, planid: this._planId }
+            methodname: this._methodName,
+            args: this._args
         }]);
 
         promises[0].done(function(context) {
-            templates.render('tool_lp/user_competency_info', context).done(function(html, js) {
+            templates.render(self._templateName, context).done(function(html, js) {
                 templates.replaceNode(self._rootElement, html, js);
             }).fail(notification.exception);
         }).fail(notification.exception);
@@ -67,7 +76,13 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
     Info.prototype._competencyId = null;
     /** @type {Number} The id of the user. */
     Info.prototype._userId = null;
+    /** @type {String} The method name to load the data. */
+    Info.prototype._methodName = null;
+    /** @type {Object} The arguments to load the data. */
+    Info.prototype._args = null;
+    /** @type {String} The template to reload the fragment. */
+    Info.prototype._templateName = null;
 
-    return /** @alias module:tool_lp/grade_user_competency_inline */ Info;
+    return /** @alias module:tool_lp/user_competency_info */ Info;
 
 });

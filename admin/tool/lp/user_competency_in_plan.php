@@ -39,21 +39,17 @@ $plan = \tool_lp\api::read_plan($planid);
 $url = new moodle_url('/admin/tool/lp/usercompetencyplan.php', $params);
 $competency = new \tool_lp\competency($competencyid);
 $framework = $competency->get_framework();
-$subtitle = get_string('taxonomy_' . $framework->get_taxonomy($competency->get_level()), 'tool_lp');
+$subtitle = $competency->get_shortname();
 
 list($title, $subtitle) = \tool_lp\page_helper::setup_for_plan($userid, $url, $plan,
         $subtitle);
 
 $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
-if ($userid != $USER->id) {
-    echo $output->context_header($userid);
-} else {
-    echo $output->heading($title);
-    echo $output->heading($subtitle, 3);
-}
+echo $output->heading($title);
+echo $output->heading($subtitle, 3);
 
-$page = new \tool_lp\output\user_competency_plan_page($userid, $competencyid, $planid);
+$page = new \tool_lp\output\user_competency_summary_in_plan_page($userid, $competencyid, $planid);
 echo $output->render($page);
 
 echo $output->footer();

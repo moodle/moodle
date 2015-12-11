@@ -672,9 +672,9 @@ $functions = array(
         'capabilities' => 'tool/lp:competencygrade',
         'ajax'         => true,
     ),
-    'tool_lp_read_user_competency_summary' => array(
+    'tool_lp_data_for_user_competency_summary_in_plan' => array(
         'classname'    => 'tool_lp\external',
-        'methodname'   => 'read_user_competency_summary',
+        'methodname'   => 'data_for_user_competency_summary_in_plan',
         'classpath'    => '',
         'description'  => 'Load a summary of a user competency.',
         'type'         => 'read',

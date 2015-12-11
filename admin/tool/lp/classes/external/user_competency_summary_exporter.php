@@ -39,9 +39,9 @@ class user_competency_summary_exporter extends exporter {
         // We cache the context so it does not need to be retrieved from the framework every time.
         return array('competency' => '\\tool_lp\\competency',
                      'relatedcompetencies' => '\\tool_lp\\competency[]',
-                     'user' => '\\stdClass?',
-                     'plan' => '\\tool_lp\\plan?',
-                     'usercompetency' => '\\tool_lp\\user_competency',
+                     'user' => '\\stdClass',
+                     'usercompetency' => '\\tool_lp\\user_competency?',
+                     'usercompetencyplan' => '\\tool_lp\\user_competency_plan?',
                      'evidence' => '\\tool_lp\\evidence[]');
     }
 
@@ -64,14 +64,14 @@ class user_competency_summary_exporter extends exporter {
             ),
             'user' => array(
                 'type' => user_summary_exporter::read_properties_definition(),
-                'optional' => true
-            ),
-            'plan' => array(
-                'type' => plan_exporter::read_properties_definition(),
-                'optional' => true
             ),
             'usercompetency' => array(
-                'type' => user_competency_exporter::read_properties_definition()
+                'type' => user_competency_exporter::read_properties_definition(),
+                'optional' => true
+            ),
+            'usercompetencyplan' => array(
+                'type' => user_competency_exporter::read_properties_definition(),
+                'optional' => true
             ),
             'evidence' => array(
                 'type' => evidence_exporter::read_properties_definition(),
@@ -94,7 +94,8 @@ class user_competency_summary_exporter extends exporter {
             'relatedcompetencies' => $this->related['relatedcompetencies']
         ));
         $result->competency = $exporter->export($output);
-        $context = context_user::instance($this->related['usercompetency']->get_userid());
+
+        $context = context_user::instance($this->related['user']->id);
         $result->cangrade = has_capability('tool/lp:competencygrade', $context);
         $result->cansuggest = has_capability('tool/lp:competencysuggestgrade', $context);
         $result->cangradeorsuggest = $result->cangrade || $result->cansuggest;
@@ -102,12 +103,14 @@ class user_competency_summary_exporter extends exporter {
             $exporter = new user_summary_exporter($this->related['user']);
             $result->user = $exporter->export($output);
         }
-        $exporter = new user_competency_exporter($this->related['usercompetency'], array('scale' => $competency->get_scale()));
-        $result->usercompetency = $exporter->export($output);
-
-        if ($this->related['plan']) {
-            $exporter = new plan_exporter($this->related['plan'], array('template' => $this->related['plan']->get_template()));
-            $result->plan = $exporter->export($output);
+        $related = array('scale' => $competency->get_scale());
+        if ($this->related['usercompetency']) {
+            $exporter = new user_competency_exporter($this->related['usercompetency'], $related);
+            $result->usercompetency = $exporter->export($output);
+        }
+        if ($this->related['usercompetencyplan']) {
+            $exporter = new user_competency_plan_exporter($this->related['usercompetencyplan'], $related);
+            $result->usercompetency = $exporter->export($output);
         }
 
         $allevidence = array();
@@ -128,20 +131,12 @@ class user_competency_summary_exporter extends exporter {
             }
 
             foreach ($users as $user) {
-                if (can_view_user_details_cap($user)) {
-                    $usercache[$user->id] = $user;
-                } else {
-                    unset($usercache[$user->id]);
-                }
+                $usercache[$user->id] = $user;
             }
 
             foreach ($this->related['evidence'] as $evidence) {
                 $related = array('scale' => $scale);
-                if (!empty($usercache[$evidence->get_actionuserid()])) {
-                    $related['actionuser'] = $usercache[$evidence->get_actionuserid()];
-                } else {
-                    $related['actionuser'] = null;
-                }
+                $related['actionuser'] = $usercache[$evidence->get_actionuserid()];
                 $exporter = new evidence_exporter($evidence, $related);
                 $allevidence[] = $exporter->export($output);
             }

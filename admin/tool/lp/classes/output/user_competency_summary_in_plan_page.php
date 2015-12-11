@@ -38,7 +38,7 @@ use tool_lp\external\plan_exporter;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_competency_plan_page implements renderable, templatable {
+class user_competency_summary_in_plan_page implements renderable, templatable {
 
     /** @var userid */
     protected $userid;
@@ -69,6 +69,6 @@ class user_competency_plan_page implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(\renderer_base $output) {
-        return \tool_lp\external::read_user_competency_summary($this->userid, $this->competencyid, $this->planid);
+        return \tool_lp\external::data_for_user_competency_summary_in_plan($this->userid, $this->competencyid, $this->planid);
     }
 }

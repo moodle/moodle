@@ -34,7 +34,7 @@ use renderer_base;
 class evidence_exporter extends persistent_exporter {
 
     protected static function define_related() {
-        return array('actionuser' => '\\stdClass?',
+        return array('actionuser' => '\\stdClass',
                      'scale' => 'grade_scale');
     }
 
@@ -44,11 +44,9 @@ class evidence_exporter extends persistent_exporter {
 
     protected function get_other_values(renderer_base $output) {
         $other = array();
-        if ($this->related['actionuser']) {
-            $exporter = new user_summary_exporter($this->related['actionuser']);
-            $actionuser = $exporter->export($output);
-            $other['actionuser'] = $actionuser;
-        }
+        $exporter = new user_summary_exporter($this->related['actionuser']);
+        $actionuser = $exporter->export($output);
+        $other['actionuser'] = $actionuser;
         $other['description'] = $this->persistent->get_description();
 
         $other['userdate'] = userdate($this->persistent->get_timecreated());
