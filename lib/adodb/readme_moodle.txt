@@ -1,4 +1,4 @@
-Description of ADODB V5.19 library import into Moodle
+Description of ADODB V5.21 library import into Moodle
 
 This library will be probably removed in Moodle 2.1,
 it is now used only in enrol and auth db plugins.
@@ -9,6 +9,8 @@ Removed:
  * cute_icons_for_site/
  * docs/
  * pear/
+ * replicate/
+ * scripts/
  * session/
  * tests/
  * composer.json
@@ -21,10 +23,6 @@ Added:
  * readme_moodle.txt - this file ;-)
 
 Our changes:
- * Removed random seed initialization from lib/adodb/adodb.inc.php:177 (see 038f546 and MDL-41198).
- * Added commit to fix associative fetch mode https://github.com/ADOdb/ADOdb/commit/97c3afacb3e4f98195908101bf3621e5cc847635
-   When upgrading ADODB to 5.20 or higher, check
-   whether that commit was included and if not
-   remove this item
+ * Removed random seed initialization from lib/adodb/adodb.inc.php:216 (see 038f546 and MDL-41198).
 
 skodak, iarenaza, moodler, stronk7
