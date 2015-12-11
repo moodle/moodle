@@ -136,7 +136,7 @@ class dbObject {
 	/**
 	* NOP
 	*/
-	function dbObject( &$parent, $attributes = NULL ) {
+	function __construct( &$parent, $attributes = NULL ) {
 		$this->parent = $parent;
 	}
 
@@ -273,7 +273,7 @@ class dbTable extends dbObject {
 	* @param string $prefix DB Object prefix
 	* @param array $attributes Array of table attributes.
 	*/
-	function dbTable( &$parent, $attributes = NULL ) {
+	function __construct( &$parent, $attributes = NULL ) {
 		$this->parent = $parent;
 		$this->name = $this->prefix($attributes['NAME']);
 	}
@@ -683,7 +683,7 @@ class dbIndex extends dbObject {
 	*
 	* @internal
 	*/
-	function dbIndex( &$parent, $attributes = NULL ) {
+	function __construct( &$parent, $attributes = NULL ) {
 		$this->parent = $parent;
 
 		$this->name = $this->prefix ($attributes['NAME']);
@@ -828,7 +828,7 @@ class dbData extends dbObject {
 	*
 	* @internal
 	*/
-	function dbData( &$parent, $attributes = NULL ) {
+	function __construct( &$parent, $attributes = NULL ) {
 		$this->parent = $parent;
 	}
 
@@ -1084,7 +1084,7 @@ class dbQuerySet extends dbObject {
 	* @param object $parent Parent object
 	* @param array $attributes Attributes
 	*/
-	function dbQuerySet( &$parent, $attributes = NULL ) {
+	function __construct( &$parent, $attributes = NULL ) {
 		$this->parent = $parent;
 
 		// Overrides the manual prefix key
@@ -1405,7 +1405,7 @@ class adoSchema {
 	*
 	* @param object $db ADOdb database connection object.
 	*/
-	function adoSchema( $db ) {
+	function __construct( $db ) {
 		// Initialize the environment
 		$this->mgq = get_magic_quotes_runtime();
 		#set_magic_quotes_runtime(0);
@@ -2104,11 +2104,12 @@ class adoSchema {
 
 		$schema = '<?xml version="1.0"?>' . "\n"
 				. '<schema version="' . $this->schemaVersion . '">' . "\n";
-
-		if( is_array( $tables = $this->db->MetaTables( 'TABLES' , ($prefix) ? $prefix.'%' : '') ) ) {
+		if( is_array( $tables = $this->db->MetaTables( 'TABLES' ,false ,($prefix) ? str_replace('_','\_',$prefix).'%' : '') ) ) {
 			foreach( $tables as $table ) {
-				if ($stripprefix) $table = str_replace(str_replace('\\_', '_', $pfx ), '', $table);
-				$schema .= $indent . '<table name="' . htmlentities( $table ) . '">' . "\n";
+				$schema .= $indent
+					. '<table name="'
+					. htmlentities( $stripprefix ? str_replace($prefix, '', $table) : $table )
+					. '">' . "\n";
 
 				// grab details from database
 				$rs = $this->db->Execute( 'SELECT * FROM ' . $table . ' WHERE -1' );
