@@ -1975,23 +1975,6 @@ class quiz_attempt {
         $event->trigger();
     }
 
-    /**
-     * Print the fields of the comment form for questions in this attempt.
-     * @param $slot which question to output the fields for.
-     * @param $prefix Prefix to add to all field names.
-     */
-    public function question_print_comment_fields($slot, $prefix) {
-        // Work out a nice title.
-        $student = get_record('user', 'id', $this->get_userid());
-        $a = new object();
-        $a->fullname = fullname($student, true);
-        $a->attempt = $this->get_attempt_number();
-
-        question_print_comment_fields($this->quba->get_question_attempt($slot),
-                $prefix, $this->get_display_options(true)->markdp,
-                get_string('gradingattempt', 'quiz_grading', $a));
-    }
-
     // Private methods =========================================================
 
     /**
