@@ -12,20 +12,11 @@ notifications:
 language: php
 
 php:
-    # Moodle supports versions 5.4, 5.5, and 5.6 of PHP.
-    # Order by fastest to slowest.
-    # We currently only run the highest and lowest versions to reduce the load on travis-ci.org.
-    - 5.6
+    # We only run the highest and lowest supported versions to reduce the load on travis-ci.org.
+    - 7.0
+    # - 5.6
     # - 5.5
     - 5.4
-
-    # We hope to offer PHP 7 support in the near future.
-    - nightly
-
-services:
-    # Ensure that memcached and mongodb are running for testing of those MUC stores.
-    - memcached
-    - mongodb
 
 env:
     # Although we want to run these jobs and see failures as quickly as possible, we also want to get the slowest job to
@@ -50,28 +41,17 @@ matrix:
     # It will not stop the jobs from running.
     fast_finish: true
 
-    # Always allow failure on nightly.
-    # It's a nightly build and failures can happen.
-    allow_failures:
-        - php: nightly
-
     exclude:
-        # PHP 7 is not yet supported for actual runs.
-        # Exclude it by default - we include it for CITEST only later.
-        - php: nightly
-
         # MySQL - it's just too slow.
-        # Exclude it on all versions except for 5.6.
+        # Exclude it on all versions except for 7.0
+        # - env: DB=mysqli   PHPUNIT=true    INSTALL=false   CITEST=false
+        #   php: 5.6
+        #
         # - env: DB=mysqli   PHPUNIT=true    INSTALL=false   CITEST=false
         #   php: 5.5
 
         - env: DB=mysqli   PHPUNIT=true    INSTALL=false   CITEST=false
           php: 5.4
-
-    include:
-        # Attempt to run the CITEST set on PHP 7.
-        - php: nightly
-          env: DB=none     PHPUNIT=false   INSTALL=false   CITEST=true
 
 cache:
     directories:
@@ -85,10 +65,6 @@ install:
     # We need --no-interaction in case we hit API limits for composer. This causes it to fall back to a standard clone.
     # Typically it should be able to use the Composer cache if any other job has already completed before we started here.
     - travis_retry composer install --prefer-dist --no-interaction
-
-    - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-    - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-    - echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
 before_script:
     - >
@@ -144,9 +120,6 @@ before_script:
           sed -i \
             -e "/require_once/i \\\$CFG->phpunit_dataroot = '\/home\/travis\/roots\/phpunit';" \
             -e "/require_once/i \\\$CFG->phpunit_prefix = 'p_';" \
-            -e "/require_once/i define('TEST_CACHESTORE_MEMCACHE_TESTSERVERS', '127.0.0.1:11211');" \
-            -e "/require_once/i define('TEST_CACHESTORE_MEMCACHED_TESTSERVERS', '127.0.0.1:11211');" \
-            -e "/require_once/i define('TEST_CACHESTORE_MONGODB_TESTSERVER', 'mongodb://localhost:27017');" \
             config.php ;
 
           # Initialise PHPUnit for Moodle.
