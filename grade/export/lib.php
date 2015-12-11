@@ -630,6 +630,16 @@ class grade_export_update_buffer {
         $this->export_time = time();
     }
 
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function grade_export_update_buffer() {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct();
+    }
+
     public function flush($buffersize) {
         global $CFG, $DB;
 
