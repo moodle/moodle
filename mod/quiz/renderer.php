@@ -234,7 +234,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         if ($attemptobj->get_access_manager(time())->attempt_must_be_in_popup()) {
             $this->page->requires->js_init_call('M.mod_quiz.secure_window.init_close_button',
-                    array($url), quiz_get_js_module());
+                    array($url), false, quiz_get_js_module());
             return html_writer::empty_tag('input', array('type' => 'button',
                     'value' => get_string('finishreview', 'quiz'),
                     'id' => 'secureclosebutton'));
