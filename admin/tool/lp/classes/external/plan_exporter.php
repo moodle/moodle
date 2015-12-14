@@ -46,6 +46,7 @@ class plan_exporter extends persistent_exporter {
         $classname = static::define_class();
         $values = array(
             'statusname' => $this->persistent->get_statusname(),
+            'isbasedontemplate' => $this->persistent->is_based_on_template(),
             'canmanage' => $this->persistent->can_manage(),
             'canbeedited' => $this->persistent->can_be_edited(),
             'usercanreopen' => $this->persistent->can_manage() &&
@@ -68,6 +69,9 @@ class plan_exporter extends persistent_exporter {
         return array(
             'statusname' => array(
                 'type' => PARAM_RAW,
+            ),
+            'isbasedontemplate' => array(
+                'type' => PARAM_BOOL,
             ),
             'canmanage' => array(
                 'type' => PARAM_BOOL,

@@ -39,10 +39,9 @@
     <thead>
         <tr>
             <th scope="col">{{#str}}planname, tool_lp{{/str}}</th>
+            <th scope="col">{{#str}}templatebased, tool_lp{{/str}}</th>
             <th scope="col">{{#str}}status, tool_lp{{/str}}</th>
-            {{#canmanage}}
             <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
-            {{/canmanage}}
         </tr>
     </thead>
     <tbody>
@@ -50,6 +49,14 @@
         <tr data-region="plan-node" data-id="{{id}}" data-userid="{{userid}}">
             <td>
                 <span><a href="{{pluginbaseurl}}/plan.php?id={{id}}">{{name}}</a></span>
+            </td>
+             <td>
+               {{#isbasedontemplate}}
+               <span class="label label-info">{{#str}}yes{{/str}}</span> 
+               {{/isbasedontemplate}}
+               {{^isbasedontemplate}}
+               <span class="label">{{#str}}no{{/str}}</span>
+               {{/isbasedontemplate}}
             </td>
             <td>{{statusname}}</td>
             {{#canmanage}}
@@ -92,8 +99,8 @@
                     </ul>
                 </ul>
             </div>
-            {{/canmanage}}
             </td>
+            {{/canmanage}}
         </tr>
         {{/plans}}
     </tbody>
