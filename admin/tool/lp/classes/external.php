@@ -48,6 +48,7 @@ use tool_lp\external\user_summary_exporter;
 use tool_lp\external\user_competency_exporter;
 use tool_lp\external\user_competency_plan_exporter;
 use tool_lp\external\user_evidence_exporter;
+use tool_lp\external\user_evidence_competency_exporter;
 use tool_lp\external\competency_exporter;
 use tool_lp\external\course_competency_exporter;
 use tool_lp\external\course_summary_exporter;
@@ -3195,10 +3196,58 @@ class external extends external_api {
         );
     }
 
-   /**
+    /**
      * Returns description of external function parameters.
      *
      * @return \external_function_parameters
+     */
+    public static function list_user_plans_parameters() {
+        return new external_function_parameters(array(
+            'userid' => new external_value(PARAM_INT, 'The user ID'),
+        ));
+    }
+
+    /**
+     * External function list_user_plans.
+     *
+     * @param int $userid The user ID.
+     * @return boolean
+     */
+    public static function list_user_plans($userid) {
+        global $PAGE;
+        $params = self::validate_parameters(self::list_user_plans_parameters(), array(
+            'userid' => $userid
+        ));
+
+        $context = context_user::instance($params['userid']);
+        self::validate_context($context);
+        $output = $PAGE->get_renderer('tool_lp');
+
+        $response = array();
+        $plans = api::list_user_plans($params['userid']);
+        foreach ($plans as $plan) {
+            $exporter = new plan_exporter($plan, array('template' => $plan->get_template()));
+            $response[] = $exporter->export($output);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Returns description of external function result value.
+     *
+     * @return \external_function_parameters
+     */
+    public static function list_user_plans_returns() {
+        return new external_multiple_structure(
+            plan_exporter::get_read_structure()
+        );
+    }
+
+    /**
+     * Returns description of external function parameters.
+     *
+     * @return \external_description
      */
     public static function read_user_evidence_parameters() {
         return new external_function_parameters(array(
@@ -3221,8 +3270,8 @@ class external extends external_api {
         self::validate_context($context);
         $output = $PAGE->get_renderer('tool_lp');
 
-        // TODO MDL-51869.
-        $exporter = new user_evidence_exporter($userevidence, array('context' => $context, 'competencies' => array()));
+        $exporter = new user_evidence_exporter($userevidence, array('context' => $context,
+            'competencies' => $userevidence->get_competencies()));
         return $exporter->export($output);
     }
 
@@ -3269,7 +3318,6 @@ class external extends external_api {
     public static function delete_user_evidence_returns() {
         return new external_value(PARAM_BOOL, 'True if the delete was successful');
     }
-
 
     /**
      * Returns description of external function parameters.
@@ -3320,6 +3368,130 @@ class external extends external_api {
         ));
     }
 
+    /**
+     * Returns description of external function parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function data_for_user_evidence_page_parameters() {
+        return new external_function_parameters(array(
+            'id' => new external_value(PARAM_INT, 'The user evidence ID')
+        ));
+    }
+
+    /**
+     * Loads the data required to render the user_evidence_page template.
+     *
+     * @param int $userid User id.
+     * @return boolean
+     */
+    public static function data_for_user_evidence_page($id) {
+        global $PAGE;
+        $params = self::validate_parameters(self::data_for_user_evidence_page_parameters(),
+            array('id' => $id));
+
+        $userevidence = api::read_user_evidence($id);
+        self::validate_context($userevidence->get_context());
+        $output = $PAGE->get_renderer('tool_lp');
+
+        $renderable = new \tool_lp\output\user_evidence_page($userevidence);
+        return $renderable->export_for_template($output);
+    }
+
+    /**
+     * Returns description of external function result value.
+     *
+     * @return \external_description
+     */
+    public static function data_for_user_evidence_page_returns() {
+        return new external_single_structure(array(
+            'userevidence' => user_evidence_exporter::get_read_structure(),
+            'pluginbaseurl' => new external_value(PARAM_LOCALURL, 'Url to the tool_lp plugin folder on this Moodle site'),
+        ));
+    }
+
+    /**
+     * Returns description of external function parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function create_user_evidence_competency_parameters() {
+        return new external_function_parameters(array(
+            'userevidenceid' => new external_value(PARAM_INT, 'The user evidence ID.'),
+            'competencyid' => new external_value(PARAM_INT, 'The competency ID.'),
+        ));
+    }
+
+    /**
+     * Delete a user evidence competency relationship.
+     *
+     * @param int $userevidenceid The user evidence id.
+     * @param int $competencyid The competency id.
+     * @return boolean
+     */
+    public static function create_user_evidence_competency($userevidenceid, $competencyid) {
+        global $PAGE;
+        $params = self::validate_parameters(self::create_user_evidence_competency_parameters(), array(
+            'userevidenceid' => $userevidenceid,
+            'competencyid' => $competencyid,
+        ));
+
+        $userevidence = api::read_user_evidence($params['userevidenceid']);
+        self::validate_context($userevidence->get_context());
+
+        $relation = api::create_user_evidence_competency($userevidence, $competencyid);
+        $exporter = new user_evidence_competency_exporter($relation);
+        return $exporter->export($PAGE->get_renderer('tool_lp'));
+    }
+
+    /**
+     * Returns description of external function result value.
+     *
+     * @return \external_description
+     */
+    public static function create_user_evidence_competency_returns() {
+        return user_evidence_competency_exporter::get_read_structure();
+    }
+
+    /**
+     * Returns description of external function parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function delete_user_evidence_competency_parameters() {
+        return new external_function_parameters(array(
+            'userevidenceid' => new external_value(PARAM_INT, 'The user evidence ID.'),
+            'competencyid' => new external_value(PARAM_INT, 'The competency ID.'),
+        ));
+    }
+
+    /**
+     * Delete a user evidence competency relationship.
+     *
+     * @param int $userevidenceid The user evidence id.
+     * @param int $competencyid The competency id.
+     * @return boolean
+     */
+    public static function delete_user_evidence_competency($userevidenceid, $competencyid) {
+        $params = self::validate_parameters(self::delete_user_evidence_competency_parameters(), array(
+            'userevidenceid' => $userevidenceid,
+            'competencyid' => $competencyid,
+        ));
+
+        $userevidence = api::read_user_evidence($params['userevidenceid']);
+        self::validate_context($userevidence->get_context());
+
+        return api::delete_user_evidence_competency($userevidence, $params['competencyid']);
+    }
+
+    /**
+     * Returns description of external function result value.
+     *
+     * @return \external_description
+     */
+    public static function delete_user_evidence_competency_returns() {
+        return new external_value(PARAM_BOOL, 'True if the delete was successful');
+    }
 
     /**
      * Returns the description of the get_scale_values() parameters.

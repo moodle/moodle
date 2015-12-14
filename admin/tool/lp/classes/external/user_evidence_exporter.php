@@ -44,6 +44,9 @@ class user_evidence_exporter extends persistent_exporter {
             'canmanage' => array(
                 'type' => PARAM_BOOL
             ),
+            'competencycount' => array(
+                'type' => PARAM_INT
+            ),
             'competencies' => array(
                 'type' => competency_exporter::read_properties_definition(),
                 'multiple' => true
@@ -72,11 +75,16 @@ class user_evidence_exporter extends persistent_exporter {
     }
 
     protected function get_other_values(renderer_base $output) {
+        $contextcache = array();
 
         $competencies = array();
         foreach ($this->related['competencies'] as $competency) {
-            // TODO MDL-51869.
-            $compexporter = new competency_exporter($competency);
+            if (!isset($contextcache[$competency->get_competencyframeworkid()])) {
+                $contextcache[$competency->get_competencyframeworkid()] = $competency->get_context();
+            }
+            $context = $contextcache[$competency->get_competencyframeworkid()];
+
+            $compexporter = new competency_exporter($competency, array('context' => $context));
             $competencies[] = $compexporter->export($output);
         }
 
@@ -99,6 +107,7 @@ class user_evidence_exporter extends persistent_exporter {
 
         $values = array(
             'canmanage' => $this->persistent->can_manage(),
+            'competencycount' => count($competencies),
             'competencies' => $competencies,
             'filecount' => count($files),
             'files' => $files,

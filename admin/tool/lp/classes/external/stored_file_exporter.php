@@ -162,7 +162,7 @@ class stored_file_exporter extends exporter {
             'filenameshort' => $filenameshort,
             'filesizeformatted' => display_size((int) $this->file->get_filesize()),
             'icon' => $icon,
-            'iconurl' => $iconurl,
+            'iconurl' => $iconurl->out(false),
             'url' => $url->out(false),
             'timecreatedformatted' => userdate($this->file->get_timecreated()),
             'timemodifiedformatted' => userdate($this->file->get_timemodified()),

@@ -15,16 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version info
+ * User evidence competency exporter.
  *
  * @package    tool_lp
- * @copyright  2015 Damyon Wiese
+ * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace tool_lp\external;
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * User evidence competency exporter class.
+ *
+ * @package    tool_lp
+ * @copyright  2015 Frédéric Massart - FMCorz.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class user_evidence_competency_exporter extends persistent_exporter {
 
-$plugin->version   = 2015111029; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2014110400; // Requires this Moodle version.
-$plugin->component = 'tool_lp'; // Full name of the plugin (used for diagnostics).
+    protected static function define_class() {
+        return 'tool_lp\\user_evidence_competency';
+    }
+
+}

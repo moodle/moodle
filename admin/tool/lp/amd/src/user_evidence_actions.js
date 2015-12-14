@@ -26,8 +26,9 @@ define(['jquery',
         'core/ajax',
         'core/notification',
         'core/str',
-        'tool_lp/menubar'],
-        function($, templates, ajax, notification, str, Menubar) {
+        'tool_lp/menubar',
+        'tool_lp/competencypicker_user_plans'],
+        function($, templates, ajax, notification, str, Menubar, PickerUserPlans) {
 
     /**
      * UserEvidenceActions class.
@@ -191,6 +192,100 @@ define(['jquery',
     };
 
     /**
+     * Link a competency and reload.
+     *
+     * @param {Object} evidenceData Evidence data from evidence node.
+     * @param {Number} competencyIds The competency IDs.
+     */
+    UserEvidenceActions.prototype._doCreateUserEvidenceCompetency = function(evidenceData, competencyIds) {
+        var self = this,
+            calls = [];
+
+        $.each(competencyIds, function(index, competencyId) {
+            calls.push({
+                methodname: 'tool_lp_create_user_evidence_competency',
+                args: {
+                    userevidenceid: evidenceData.id,
+                    competencyid: competencyId,
+                }
+            });
+        });
+
+        self._callAndRefresh(calls, evidenceData);
+    };
+
+    /**
+     * Create a user evidence competency.
+     *
+     * @param  {Object} evidenceData Evidence data from evidence node.
+     */
+    UserEvidenceActions.prototype.createUserEvidenceCompetency = function(evidenceData) {
+        var self = this,
+            picker = new PickerUserPlans(evidenceData.userid);
+
+        picker.on('save', function(e, data) {
+            var competencyIds = data.competencyIds;
+            self._doCreateUserEvidenceCompetency(evidenceData, competencyIds);
+        }.bind(self));
+
+        picker.display();
+    };
+
+    /**
+     * Create user evidence competency handler.
+     *
+     * @param  {Event} e The event.
+     */
+    UserEvidenceActions.prototype._createUserEvidenceCompetencyHandler = function(e) {
+        e.preventDefault();
+        var data = this._findEvidenceData($(e.target));
+        this.createUserEvidenceCompetency(data);
+    };
+
+    /**
+     * Remove a linked competency and reload.
+     *
+     * @param {Object} evidenceData Evidence data from evidence node.
+     * @param {Number} competencyId The competency ID.
+     */
+    UserEvidenceActions.prototype._doDeleteUserEvidenceCompetency = function(evidenceData, competencyId) {
+        var self = this,
+            calls = [];
+
+        calls.push({
+            methodname: 'tool_lp_delete_user_evidence_competency',
+            args: {
+                userevidenceid: evidenceData.id,
+                competencyid: competencyId,
+            }
+        });
+
+        self._callAndRefresh(calls, evidenceData);
+    };
+
+    /**
+     * Delete a user evidence competency.
+     *
+     * @param  {Object} evidenceData Evidence data from evidence node.
+     * @param  {Number} competencyId The competency ID.
+     */
+    UserEvidenceActions.prototype.deleteUserEvidenceCompetency = function(evidenceData, competencyId) {
+        this._doDeleteUserEvidenceCompetency(evidenceData, competencyId);
+    };
+
+    /**
+     * Delete user evidence competency handler.
+     *
+     * @param  {Event} e The event.
+     */
+    UserEvidenceActions.prototype._deleteUserEvidenceCompetencyHandler = function(e) {
+        var data = this._findEvidenceData($(e.currentTarget)),
+            competencyId = $(e.currentTarget).data('id');
+        e.preventDefault();
+        this.deleteUserEvidenceCompetency(data, competencyId);
+    };
+
+    /**
      * Find the evidence data from the evidence node.
      *
      * @param  {Node} node The node to search from.
@@ -221,6 +316,7 @@ define(['jquery',
         var self = this;
         Menubar.enhance(selector, {
             '[data-action="user-evidence-delete"]': self._deleteEvidenceHandler.bind(self),
+            '[data-action="link-competency"]': self._createUserEvidenceCompetencyHandler.bind(self),
         });
     };
 
@@ -235,6 +331,8 @@ define(['jquery',
             self = this;
 
         wrapper.find('[data-action="user-evidence-delete"]').click(self._deleteEvidenceHandler.bind(self));
+        wrapper.find('[data-action="link-competency"]').click(self._createUserEvidenceCompetencyHandler.bind(self));
+        wrapper.find('[data-action="delete-competency-link"]').click(self._deleteUserEvidenceCompetencyHandler.bind(self));
     };
 
     return /** @alias module:tool_lp/user_evidence_actions */ UserEvidenceActions;

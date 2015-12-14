@@ -34,8 +34,6 @@ define(['jquery',
         'tool_lp/tree'],
         function($, Notification, Ajax, Templates, Dialogue, Str, Tree) {
 
-    var self;
-
     /**
      * Competency picker class.
      * @param {Number} pageContextId The page context ID.
@@ -44,7 +42,7 @@ define(['jquery',
      * @param {Boolean} multiSelect Support multi-select in the tree.
      */
     var Picker = function(pageContextId, singleFramework, pageContextIncludes, multiSelect) {
-        self = this;
+        var self = this;
         self._eventNode = $('<div></div>');
         self._frameworks = [];
         self._reset();
@@ -89,6 +87,7 @@ define(['jquery',
      * @method _afterRender
      */
     Picker.prototype._afterRender = function() {
+        var self = this;
 
         // Initialise the tree.
         var tree = new Tree(self._find('[data-enhance=linktree]'), self._multiSelect);
@@ -117,7 +116,7 @@ define(['jquery',
                 if (valid) {
                     validIds.push(compId);
                 }
-            });
+            }.bind(self));
 
             self._selectedCompetencies = validIds;
 
@@ -127,14 +126,14 @@ define(['jquery',
             } else {
                 self._find('[data-region="competencylinktree"] [data-action="add"]').removeAttr('disabled');
             }
-        });
+        }.bind(self));
 
         // Add listener for framework change.
         if (!self._singleFramework) {
             self._find('[data-action="chooseframework"]').change(function(e) {
                 self._frameworkId = $(e.target).val();
-                self._loadCompetencies().then(self._refresh);
-            });
+                self._loadCompetencies().then(self._refresh.bind(self));
+            }.bind(self));
         }
 
         // Add listener for search.
@@ -145,13 +144,13 @@ define(['jquery',
             return self._refresh().always(function() {
                 $(e.target).removeAttr('disabled');
             });
-        });
+        }.bind(self));
 
         // Add listener for cancel.
         self._find('[data-region="competencylinktree"] [data-action="cancel"]').click(function(e) {
             e.preventDefault();
             self.close();
-        });
+        }.bind(self));
 
         // Add listener for add.
         self._find('[data-region="competencylinktree"] [data-action="add"]').click(function(e) {
@@ -168,7 +167,7 @@ define(['jquery',
             }
 
             self.close();
-        });
+        }.bind(self));
 
         // The list of selected competencies will be modified while looping (because of the listeners above).
         var currentItems = self._selectedCompetencies.slice(0);
@@ -179,7 +178,7 @@ define(['jquery',
                 tree.toggleItem(node);
                 tree.updateFocus(node);
             }
-        });
+        }.bind(self));
 
     };
 
@@ -189,6 +188,7 @@ define(['jquery',
      * @method close
      */
     Picker.prototype.close = function() {
+        var self = this;
         self._popup.close();
         self._reset();
     };
@@ -200,15 +200,16 @@ define(['jquery',
      * @return {Promise}
      */
     Picker.prototype.display = function() {
-        return self._render().done(function(html) {
-            return Str.get_string('competencypicker', 'tool_lp').done(function(title) {
+        var self = this;
+        return self._render().then(function(html) {
+            return Str.get_string('competencypicker', 'tool_lp').then(function(title) {
                 self._popup = new Dialogue(
                     title,
                     html,
                     self._afterRender.bind(self)
                 );
-            });
-        }).fail(Notification.exception);
+            }.bind(self));
+        }.bind(self)).fail(Notification.exception);
     };
 
     /**
@@ -220,6 +221,8 @@ define(['jquery',
      * @return {Promise}
      */
     Picker.prototype._fetchCompetencies = function(frameworkId, searchText) {
+        var self = this;
+
         return Ajax.call([
             { methodname: 'tool_lp_search_competencies', args: {
                 searchtext: searchText,
@@ -253,7 +256,7 @@ define(['jquery',
 
             self._competencies = tree;
 
-        }).fail(Notification.exception);
+        }.bind(self)).fail(Notification.exception);
     };
 
     /**
@@ -263,7 +266,7 @@ define(['jquery',
      * @method _find
      */
     Picker.prototype._find = function(selector) {
-        return $(self._popup.getContent()).find(selector);
+        return $(this._popup.getContent()).find(selector);
     };
 
     /**
@@ -274,7 +277,7 @@ define(['jquery',
      */
     Picker.prototype._getFramework = function(fid) {
         var frm;
-        $.each(self._frameworks, function(i, f) {
+        $.each(this._frameworks, function(i, f) {
             if (f.id == fid) {
                 frm = f;
                 return false;
@@ -290,7 +293,7 @@ define(['jquery',
      * @return {Promise}
      */
     Picker.prototype._loadCompetencies = function() {
-        return self._fetchCompetencies(self._frameworkId, self._searchText);
+        return this._fetchCompetencies(this._frameworkId, this._searchText);
     };
 
     /**
@@ -300,7 +303,8 @@ define(['jquery',
      * @return {Promise}
      */
     Picker.prototype._loadFrameworks = function() {
-        var promise;
+        var promise,
+            self = this;
 
         // Quit early because we already have the data.
         if (self._frameworks.length > 0) {
@@ -338,7 +342,7 @@ define(['jquery',
      * @method on
      */
     Picker.prototype.on = function(type, handler) {
-        self._eventNode.on(type, handler);
+        this._eventNode.on(type, handler);
     };
 
     /**
@@ -348,6 +352,7 @@ define(['jquery',
      * @return {Promise}
      */
     Picker.prototype._preRender = function() {
+        var self = this;
         return self._loadFrameworks().then(function() {
             if (!self._frameworkId && self._frameworks.length > 0) {
                 self._frameworkId = self._frameworks[0].id;
@@ -360,7 +365,7 @@ define(['jquery',
             }
 
             return self._loadCompetencies();
-        });
+        }.bind(self));
     };
 
     /**
@@ -370,10 +375,11 @@ define(['jquery',
      * @return {Promise}
      */
     Picker.prototype._refresh = function() {
+        var self = this;
         return self._render().then(function(html) {
             self._find('[data-region="competencylinktree"]').replaceWith(html);
             self._afterRender();
-        });
+        }.bind(self));
     };
 
     /**
@@ -383,6 +389,7 @@ define(['jquery',
      * @return {Promise}
      */
     Picker.prototype._render = function() {
+        var self = this;
         return self._preRender().then(function() {
 
             if (!self._singleFramework) {
@@ -404,7 +411,7 @@ define(['jquery',
             };
 
             return Templates.render('tool_lp/competency_picker', context);
-        });
+        }.bind(self));
     };
 
     /**
@@ -415,11 +422,11 @@ define(['jquery',
      * @method _reset
      */
     Picker.prototype._reset = function() {
-        self._competencies = [];
-        self._disallowedCompetencyIDs = [];
-        self._popup = null;
-        self._searchText = '';
-        self._selectedCompetencies = [];
+        this._competencies = [];
+        this._disallowedCompetencyIDs = [];
+        this._popup = null;
+        this._searchText = '';
+        this._selectedCompetencies = [];
     };
 
     /**
@@ -431,7 +438,7 @@ define(['jquery',
      * @method _setDisallowedCompetencyIDs
      */
     Picker.prototype.setDisallowedCompetencyIDs = function(ids) {
-        self._disallowedCompetencyIDs = ids;
+        this._disallowedCompetencyIDs = ids;
     };
 
     /**
@@ -442,7 +449,7 @@ define(['jquery',
      * @method _reset
      */
     Picker.prototype._trigger = function(type, data) {
-        self._eventNode.trigger(type, [data]);
+        this._eventNode.trigger(type, [data]);
     };
 
     return /** @alias module:tool_lp/competencypicker */ Picker;

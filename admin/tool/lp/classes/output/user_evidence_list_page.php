@@ -95,8 +95,7 @@ class user_evidence_list_page implements renderable, templatable {
             foreach ($this->evidence as $evidence) {
                 $evidenceexporter = new user_evidence_exporter($evidence, array(
                     'context' => $this->context,
-                    // TODO MDL-51869.
-                    'competencies' => array()
+                    'competencies' => $evidence->get_competencies()
                 ));
                 $record = $evidenceexporter->export($output);
                 $data->evidence[] = $record;

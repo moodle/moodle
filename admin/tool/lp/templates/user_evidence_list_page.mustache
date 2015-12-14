@@ -66,12 +66,18 @@
                 {{/hasurlorfiles}}
             </td>
             <td>
-                {{^competencies}}
+                {{^competencycount}}
                 -
-                {{/competencies}}
-                {{#competencies}}
-                    {{! TODO MDL-51869 }}
-                {{/competencies}}
+                {{/competencycount}}
+                {{#competencycount}}
+                    <ul class="user-evidence-competencies">
+                    {{#competencies}}
+                        <li>
+                            {{shortname}} <small><em>{{idnumber}}</em></small>
+                        </li>
+                    {{/competencies}}
+                    </ul>
+                {{/competencycount}}
             </td>
             {{#canmanage}}
             <td>
@@ -83,6 +89,11 @@
                         <li>
                             <a href="{{pluginbaseurl}}/user_evidence_edit.php?id={{id}}&amp;userid={{userid}}">
                                 {{#pix}}t/edit{{/pix}} {{#str}}editthisuserevidence, tool_lp{{/str}}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-action="link-competency">
+                                {{#pix}}t/add{{/pix}} {{#str}}linkcompetencies, tool_lp{{/str}}
                             </a>
                         </li>
                         <li>

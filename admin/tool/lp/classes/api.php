@@ -1418,7 +1418,7 @@ class api {
             $params['statusdraft'] = plan::STATUS_DRAFT;
         }
 
-        return plan::get_records_select($select, $params, 'name DESC');
+        return plan::get_records_select($select, $params, 'name ASC');
     }
 
     /**
@@ -2151,9 +2151,20 @@ class api {
             throw new required_capability_exception($context, 'tool/lp:userevidencemanage', 'nopermissions', '');
         }
 
+        // Delete the user evidence.
         $userevidence->delete();
+
+        // Delete associated files.
         $fs = get_file_storage();
         $fs->delete_area_files($context->id, 'tool_lp', 'userevidence', $id);
+
+        // Delete relation between evidence and competencies.
+        $userevidence->set_id($id);     // Restore the ID to fully mock the object.
+        $competencies = user_evidence_competency::get_competencies_by_userevidenceid($id);
+        foreach ($competencies as $competency) {
+            static::delete_user_evidence_competency($userevidence, $competency->get_id());
+        }
+        $userevidence->set_id(0);       // Restore the object.
 
         return true;
     }
@@ -2172,6 +2183,101 @@ class api {
 
         $evidence = user_evidence::get_records(array('userid' => $userid), 'name');
         return $evidence;
+    }
+
+    /**
+     * Link a user evidence with a competency.
+     *
+     * @param  user_evidence|int $userevidenceorid User evidence or its ID.
+     * @param  int $competencyid Competency ID.
+     * @return user_evidence_competency
+     */
+    public static function create_user_evidence_competency($userevidenceorid, $competencyid) {
+        global $USER;
+
+        $userevidence = $userevidenceorid;
+        if (!is_object($userevidence)) {
+            $userevidence = self::read_user_evidence($userevidence);
+        }
+
+        // Perform user evidence capability checks.
+        if (!$userevidence->can_manage()) {
+            $context = $userevidence->get_context();
+            throw new required_capability_exception($context, 'tool/lp:userevidencemanage', 'nopermissions', '');
+        }
+
+        // Perform competency capability checks.
+        $competency = self::read_competency($competencyid);
+
+        // Get (and create) the relation.
+        $relation = user_evidence_competency::get_relation($userevidence->get_id(), $competency->get_id());
+        if (!$relation->get_id()) {
+            $relation->create();
+
+            $link = new moodle_url('/admin/tool/lp/user_evidence.php', array('id' => $userevidence->get_id()));
+            self::add_evidence(
+                $userevidence->get_userid(),
+                $competency,
+                $userevidence->get_context(),
+                evidence::ACTION_LOG,
+                'evidence_evidenceofpriorlearninglinked',
+                'tool_lp',
+                $userevidence->get_name(),
+                false,
+                $link->out(false),
+                null,
+                $USER->id
+            );
+        }
+
+        return $relation;
+    }
+
+    /**
+     * Delete a relationship between a user evidence and a competency.
+     *
+     * @param  user_evidence|int $userevidenceorid User evidence or its ID.
+     * @param  int $competencyid Competency ID.
+     * @return bool
+     */
+    public static function delete_user_evidence_competency($userevidenceorid, $competencyid) {
+        global $USER;
+
+        $userevidence = $userevidenceorid;
+        if (!is_object($userevidence)) {
+            $userevidence = self::read_user_evidence($userevidence);
+        }
+
+        // Perform user evidence capability checks.
+        if (!$userevidence->can_manage()) {
+            $context = $userevidence->get_context();
+            throw new required_capability_exception($context, 'tool/lp:userevidencemanage', 'nopermissions', '');
+        }
+
+        // Get (and delete) the relation.
+        $relation = user_evidence_competency::get_relation($userevidence->get_id(), $competencyid);
+        if (!$relation->get_id()) {
+            return true;
+        }
+
+        $success = $relation->delete();
+        if ($success) {
+            self::add_evidence(
+                $userevidence->get_userid(),
+                $competencyid,
+                $userevidence->get_context(),
+                evidence::ACTION_LOG,
+                'evidence_evidenceofpriorlearningunlinked',
+                'tool_lp',
+                $userevidence->get_name(),
+                false,
+                null,
+                null,
+                $USER->id
+            );
+        }
+
+        return $success;
     }
 
     /**
@@ -2274,7 +2380,7 @@ class api {
      *
      * @param int $userid The user id for which evidence is added.
      * @param int $competencyid The competency, or its id for which evidence is added.
-     * @param int $contextid The context in which the evidence took place.
+     * @param context|int $contextorid The context in which the evidence took place.
      * @param int $action The type of action to take on the competency. \tool_lp\evidence::ACTION_*.
      * @param string $descidentifier The strings identifier.
      * @param string $desccomponent The strings component.
@@ -2289,7 +2395,7 @@ class api {
      */
     public static function add_evidence($userid,
                                         $competencyorid,
-                                        $contextid,
+                                        $contextorid,
                                         $action,
                                         $descidentifier,
                                         $desccomponent,
@@ -2307,6 +2413,7 @@ class api {
             $competency = $competencyid;
             $competencyid = $competency->get_id();
         }
+        $contextid = is_object($contextorid) ? $contextorid->id : $contextorid;
         $setucgrade = false;
         $ucgrade = null;
         $ucproficiency = null;

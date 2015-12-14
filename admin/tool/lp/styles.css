@@ -111,6 +111,10 @@
 
 /** Styles required for menubar js */
 
+.tool-lp-menu {
+    margin: 0;
+}
+
 .tool-lp-menu li {
     float: left;
     display: inline;
@@ -170,10 +174,13 @@ input[type="checkbox"].tool_lp_scale_proficient {
     margin: 10px 20px;
     list-style: none;
 }
+.user-evidence-competencies,
 .user-evidence-documents li {
     margin-bottom: 5px;
     word-break: break-all;
 }
+[data-region="user-evidence-list"] .user-evidence-competencies,
 [data-region="user-evidence-list"] .user-evidence-documents {
     margin: 0;
+    list-style: none;
 }

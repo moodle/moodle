@@ -66,8 +66,7 @@ class user_evidence_page implements renderable, templatable {
         $data = new stdClass();
         $evidenceexporter = new user_evidence_exporter($this->userevidence, array(
             'context' => $this->context,
-            // TODO MDL-51869.
-            'competencies' => array()
+            'competencies' => $this->userevidence->get_competencies()
         ));
         $data->userevidence = $evidenceexporter->export($output);
         $data->pluginbaseurl = (new moodle_url('/admin/tool/lp'))->out(true);

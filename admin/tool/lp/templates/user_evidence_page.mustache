@@ -18,7 +18,7 @@
     User evidence page template.
 
     Data attributes required for JS:
-    * data-action = add
+    * data-action = link-competency
     * data-action = delete-competency-link
     * data-region = user-evidence-page
     * data-id = user evidence ID, or competency ID
@@ -29,7 +29,7 @@
     * pluginbaseurl - The plugin base URL
 }}
 {{#userevidence}}
-<div data-region="user-evidence-page" data-id="{{evidence.id}}" data-userid="{{evidence.userid}}">
+<div data-region="user-evidence-page" data-id="{{id}}" data-userid="{{userid}}">
     <h2>
         {{name}}
         {{#canmanage}}
@@ -48,7 +48,7 @@
                 <li>{{#pix}}url, tool_lp{{/pix}} <a href="{{url}}" title="{{url}}">{{urlshort}}</a></li>
             {{/url}}
             {{#files}}
-                <li>{{#pix}}{{icon}}{{/pix}} <a href="{{url}}">{{filename}}</a></li>
+                <li><img src="{{iconurl}}" alt=""> <a href="{{url}}">{{filename}}</a></li>
             {{/files}}
         </ul>
     </div>
@@ -70,13 +70,13 @@
                     <td>
                         <a href="#" data-action="competency-dialogue" data-id="{{id}}">{{shortname}}</a>
                     </td>
-                    {{#canmanage}}
+                    {{#userevidence.canmanage}}
                         <td>
                             <div class="pull-left">
-                                <a href="#" data-action="delete-competency-link" data-id="{{id}}">{{#pix}}t/delete, core{{#str}}delete{{/str}}{{/pix}}</a>
+                                <a href="#" data-action="delete-competency-link" data-id="{{id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
                             </div>
                         </td>
-                    {{/canmanage}}
+                    {{/userevidence.canmanage}}
                 </tr>
                 {{/competencies}}
             </tbody>
@@ -85,7 +85,7 @@
         <div data-region="actions">
             <div class="pull-right">
                 {{#canmanage}}
-                    <button class="btn" data-action="add">{{#pix}}t/add{{/pix}} {{#str}}linkcompetency, tool_lp{{/str}}</button>
+                    <button class="btn" data-action="link-competency">{{#pix}}t/add{{/pix}} {{#str}}linkcompetencies, tool_lp{{/str}}</button>
                 {{/canmanage}}
             </div>
         </div>
@@ -97,7 +97,7 @@
 require(['tool_lp/user_evidence_actions'], function(UserEvidenceActions) {
 
     var uea = new UserEvidenceActions('evidence');
-    planActions.registerEvents();
+    uea.registerEvents();
 
 });
 {{/js}}
