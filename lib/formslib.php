@@ -1249,7 +1249,7 @@ abstract class moodleform {
             if (is_array($strings)) {
                 foreach ($strings as $string) {
                     if (is_array($string)) {
-                        call_user_method_array('string_for_js', $PAGE->requires, $string);
+                        call_user_func_array(array($PAGE->requires, 'string_for_js'), $string);
                     } else {
                         $PAGE->requires->string_for_js($string, 'moodle');
                     }
