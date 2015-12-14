@@ -38,7 +38,7 @@ global $_COLONARR,$_COLONSZ;
 	$_COLONARR = array();
 	$_COLONSZ = sizeof($arr);
 
-	$sql2 = preg_replace("/(:[0-9]+)/e","_colontrack('\\1')",$sql);
+	$sql2 = preg_replace_callback('/(:[0-9]+)/', create_function('$m', 'return _colontrack($m[0]);'), $sql);
 
 	if (empty($_COLONARR)) return array($sql,$arr);
 

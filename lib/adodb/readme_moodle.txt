@@ -1,4 +1,4 @@
-Description of ADODB V5.21 library import into Moodle
+Description of ADODB V5.20.1 library import into Moodle
 
 This library will be probably removed in Moodle 2.1,
 it is now used only in enrol and auth db plugins.
@@ -24,5 +24,7 @@ Added:
 
 Our changes:
  * Removed random seed initialization from lib/adodb/adodb.inc.php:216 (see 038f546 and MDL-41198).
+ * MDL-52286 fixed usage of /e in preg_replace, incorrect constructor in ADORecordSet_ext_mysqlt
+   and ADORecordSet_mysqli::_close(). Check if fixed upstream during the next upgrade and remove this line.
 
 skodak, iarenaza, moodler, stronk7
