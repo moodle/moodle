@@ -40,7 +40,7 @@ class block_rss_client_cron_testcase extends advanced_testcase {
      * than the current time the attempt is skipped.
      */
     public function test_skip() {
-        global $DB;
+        global $DB, $CFG;
         $this->resetAfterTest();
         // Create a RSS feed record with a skip until time set to the future.
         $record = (object) array(
@@ -57,8 +57,12 @@ class block_rss_client_cron_testcase extends advanced_testcase {
 
         $block = new block_rss_client();
         ob_start();
+
         // Silence SimplePie php notices.
-        @$block->cron();
+        $errorlevel = error_reporting($CFG->debug & ~E_USER_NOTICE);
+        $block->cron();
+        error_reporting($errorlevel);
+
         $cronoutput = ob_get_clean();
         $this->assertContains('skipping until ' . userdate($record->skipuntil), $cronoutput);
         $this->assertContains('0 feeds refreshed (took ', $cronoutput);
@@ -68,7 +72,7 @@ class block_rss_client_cron_testcase extends advanced_testcase {
      * Test that when a feed has an error the skip time is increaed correctly.
      */
     public function test_error() {
-        global $DB;
+        global $DB, $CFG;
         $this->resetAfterTest();
         $time = time();
         // A record that has failed before.
@@ -113,8 +117,12 @@ class block_rss_client_cron_testcase extends advanced_testcase {
         // Run the cron.
         $block = new block_rss_client();
         ob_start();
+
         // Silence SimplePie php notices.
-        @$block->cron();
+        $errorlevel = error_reporting($CFG->debug & ~E_USER_NOTICE);
+        $block->cron();
+        error_reporting($errorlevel);
+
         $cronoutput = ob_get_clean();
         $skiptime1 = $record->skiptime * 2;
         $message1 = 'http://example.com/rss Error: could not load/find the RSS feed - skipping for ' . $skiptime1 . ' seconds.';
