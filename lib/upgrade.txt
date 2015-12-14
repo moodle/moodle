@@ -13,7 +13,8 @@ information provided here is intended especially for developers.
   is consistent with web services.
 * Several changes in Moodle core, standard plugins and third party libraries to
   ensure compatibility with PHP7. All plugins are recommended to perform testing
-  against PHP7 as well. The following changes may affect you:
+  against PHP7 as well. Refer to https://docs.moodle.org/dev/Moodle_and_PHP7 for more
+  information. The following changes may affect you:
   * Class moodleform, moodleform_mod and some module classes have been changed to use
     __construct() for the constructor. Calling parent constructors by the class
     name will display debugging message. Incorrect: parent::moodleform(),
