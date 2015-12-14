@@ -1050,7 +1050,7 @@ class ADORecordSet_mysqli extends ADORecordSet{
 		//if results are attached to this pointer from Stored Proceedure calls, the next standard query will die 2014
 		//only a problem with persistant connections
 
-		while(mysqli_more_results($this->connection->_connectionID)){
+		while (@mysqli_more_results($this->connection->_connectionID)) {
 			@mysqli_next_result($this->connection->_connectionID);
 		}
 
