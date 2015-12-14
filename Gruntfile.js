@@ -26,13 +26,14 @@ module.exports = function(grunt) {
     var path = require('path'),
         fs = require('fs'),
         tasks = {},
-        cwd = process.env.PWD || process.cwd();
+        cwd = process.env.PWD || process.cwd(),
+        inAMD = path.basename(cwd) == 'amd';
 
     // Project configuration.
     grunt.initConfig({
         jshint: {
             options: {jshintrc: '.jshintrc'},
-            files: ['**/amd/src/*.js']
+            files: [inAMD ? cwd + '/src/*.js' : '**/amd/src/*.js']
         },
         uglify: {
             dynamic_mappings: {
@@ -218,7 +219,7 @@ module.exports = function(grunt) {
         if (path.basename(path.resolve(cwd, '../../')) == 'yui') {
             grunt.task.run('shifter');
         // Are we in an AMD directory?
-        } else if (path.basename(cwd) == 'amd') {
+        } else if (inAMD) {
             grunt.task.run('amd');
         } else {
             // Run them all!.
