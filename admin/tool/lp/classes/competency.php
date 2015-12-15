@@ -302,7 +302,7 @@ class competency extends persistent {
     public function get_rule_object() {
         $rule = $this->get_ruletype();
 
-        if (!$rule || !is_subclass_of($rule, '\tool_lp\competency_rule')) {
+        if (!$rule || !is_subclass_of($rule, 'tool_lp\\competency_rule')) {
             // Double check that the rule is extending the right class to avoid bad surprises.
             return null;
         }
@@ -688,10 +688,10 @@ class competency extends persistent {
      * @return array Keys are the class names, values is an object containing name and amd.
      */
     public static function get_available_rules() {
-        // Fully qualified class names withough leading slashes because get_class() does not add them either.
+        // Fully qualified class names without leading slashes because get_class() does not add them either.
         $rules = array(
-            'tool_lp\competency_rule_all' => (object) array(),
-            'tool_lp\competency_rule_points' => (object) array(),
+            'tool_lp\\competency_rule_all' => (object) array(),
+            'tool_lp\\competency_rule_points' => (object) array(),
         );
         foreach ($rules as $class => $rule) {
             $rule->name = $class::get_name();

@@ -47,7 +47,7 @@ class competency_rule_all extends competency_rule {
         global $DB;
 
         // TODO Improve performance here, perhaps the caller could already provide records.
-        $children = competency::get_records(array('parentid' => $usercompetency->get_competencyid()));
+        $children = competency::get_records(array('parentid' => $this->competency->get_id()));
 
         if (empty($children)) {
             // Leaves are not compatible with this rule.

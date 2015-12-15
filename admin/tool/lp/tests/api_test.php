@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 use tool_lp\api;
+use tool_lp\evidence;
 use tool_lp\user_competency;
 
 /**
@@ -1423,6 +1424,105 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals(1, $evidence->get_grade());
         $this->assertEquals(1, $uc->get_grade());
         $this->assertEquals(0, $uc->get_proficiency());
+    }
+
+    public function test_add_evidence_applies_competency_rules() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $syscontext = context_system::instance();
+        $ctxid = $syscontext->id;
+
+        $u1 = $dg->create_user();
+
+        // Setting up the framework.
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c1a = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1->get_id()));
+        $c1b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2a = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c2->get_id()));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c3a = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c3->get_id()));
+        $c4 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c4a = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c4->get_id()));
+        $c5 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+
+        // Setting up the rules.
+        $c1->set_ruletype('tool_lp\\competency_rule_all');
+        $c1->set_ruleoutcome(\tool_lp\competency::OUTCOME_COMPLETE);
+        $c1->update();
+        $c2->set_ruletype('tool_lp\\competency_rule_all');
+        $c2->set_ruleoutcome(\tool_lp\competency::OUTCOME_RECOMMEND);
+        $c2->update();
+        $c3->set_ruletype('tool_lp\\competency_rule_all');
+        $c3->set_ruleoutcome(\tool_lp\competency::OUTCOME_EVIDENCE);
+        $c3->update();
+        $c4->set_ruletype('tool_lp\\competency_rule_all');
+        $c4->set_ruleoutcome(\tool_lp\competency::OUTCOME_NONE);
+        $c4->update();
+
+        // Confirm the current data.
+        $this->assertEquals(0, user_competency::count_records());
+        $this->assertEquals(0, evidence::count_records());
+
+        // Let's do this!
+        // First let's confirm that evidence not marking a completion have no impact.
+        api::add_evidence($u1->id, $c1a, $ctxid, evidence::ACTION_LOG, 'commentincontext', 'core');
+        $uc1a = user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1a->get_id()));
+        $this->assertSame(null, $uc1a->get_proficiency());
+        $this->assertFalse(user_competency::record_exists_select('userid = ? AND competencyid = ?', array($u1->id, $c1->get_id())));
+
+        api::add_evidence($u1->id, $c2a, $ctxid, evidence::ACTION_SUGGEST, 'commentincontext', 'core', null, false, null, 1);
+        $uc2a = user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c2a->get_id()));
+        $this->assertSame(null, $uc2a->get_proficiency());
+        $this->assertFalse(user_competency::record_exists_select('userid = ? AND competencyid = ?', array($u1->id, $c2->get_id())));
+
+        // Now let's try complete a competency but the rule won't match (not all children are complete).
+        // The parent (the thing with the rule) will be created but won't have any evidence attached, and not
+        // not be marked as completed.
+        api::add_evidence($u1->id, $c1a, $ctxid, evidence::ACTION_COMPLETE, 'commentincontext', 'core');
+        $uc1a = user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1a->get_id()));
+        $this->assertEquals(true, $uc1a->get_proficiency());
+        $uc1 = user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
+        $this->assertSame(null, $uc1->get_proficiency());
+        $this->assertEquals(0, evidence::count_records(array('usercompetencyid' => $uc1->get_id())));
+
+        // Now we complete the other child. That will mark the parent as complete with an evidence.
+        api::add_evidence($u1->id, $c1b, $ctxid, evidence::ACTION_COMPLETE, 'commentincontext', 'core');
+        $uc1b = user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1b->get_id()));
+        $this->assertEquals(true, $uc1a->get_proficiency());
+        $uc1 = user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
+        $this->assertEquals(true, $uc1->get_proficiency());
+        $this->assertEquals(user_competency::STATUS_IDLE, $uc1->get_status());
+        $this->assertEquals(1, evidence::count_records(array('usercompetencyid' => $uc1->get_id())));
+
+        // Check rule recommending.
+        api::add_evidence($u1->id, $c2a, $ctxid, evidence::ACTION_COMPLETE, 'commentincontext', 'core');
+        $uc2a = user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c2a->get_id()));
+        $this->assertEquals(true, $uc1a->get_proficiency());
+        $uc2 = user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c2->get_id()));
+        $this->assertSame(null, $uc2->get_proficiency());
+        $this->assertEquals(user_competency::STATUS_WAITING_FOR_REVIEW, $uc2->get_status());
+        $this->assertEquals(1, evidence::count_records(array('usercompetencyid' => $uc2->get_id())));
+
+        // Check rule evidence.
+        api::add_evidence($u1->id, $c3a, $ctxid, evidence::ACTION_COMPLETE, 'commentincontext', 'core');
+        $uc3a = user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c3a->get_id()));
+        $this->assertEquals(true, $uc1a->get_proficiency());
+        $uc3 = user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c3->get_id()));
+        $this->assertSame(null, $uc3->get_proficiency());
+        $this->assertEquals(user_competency::STATUS_IDLE, $uc3->get_status());
+        $this->assertEquals(1, evidence::count_records(array('usercompetencyid' => $uc3->get_id())));
+
+        // Check rule nothing.
+        api::add_evidence($u1->id, $c4a, $ctxid, evidence::ACTION_COMPLETE, 'commentincontext', 'core');
+        $uc4a = user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c4a->get_id()));
+        $this->assertEquals(true, $uc1a->get_proficiency());
+        $this->assertFalse(user_competency::record_exists_select('userid = ? AND competencyid = ?', array($u1->id, $c4->get_id())));
+
+        // Check marking on something that has no parent. This just checks that nothing breaks.
+        api::add_evidence($u1->id, $c5, $ctxid, evidence::ACTION_COMPLETE, 'commentincontext', 'core');
     }
 
     public function test_observe_course_completed() {

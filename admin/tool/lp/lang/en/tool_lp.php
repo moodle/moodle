@@ -85,6 +85,7 @@ $string['edittemplate'] = 'Edit learning plan template';
 $string['editthisplan'] = 'Edit this learning plan';
 $string['editthisuserevidence'] = 'Edit this evidence';
 $string['edituserevidence'] = 'Edit evidence';
+$string['evidence_competencyrule'] = 'The rule of the competency was met.';
 $string['evidence_coursecompleted'] = 'The course \'{$a}\' was completed.';
 $string['evidence_evidenceofpriorlearninglinked'] = 'The evidence of prior learning \'{$a}\' was linked.';
 $string['evidence_evidenceofpriorlearningunlinked'] = 'The evidence of prior learning \'{$a}\' was unlinked.';

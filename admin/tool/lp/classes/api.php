@@ -2502,7 +2502,11 @@ class api {
         }
 
         // Setting the grade and proficiency for the user competency.
+        $wascompleted = false;
         if ($setucgrade == true) {
+            if (!$usercompetency->get_proficiency() && $ucproficiency) {
+                $wascompleted = true;
+            }
             $usercompetency->set_grade($ucgrade);
             $usercompetency->set_proficiency($ucproficiency);
         }
@@ -2531,7 +2535,98 @@ class api {
         $usercompetency->update();
         $evidence->create();
 
+        // The competency was marked as completed, apply the rules.
+        if ($wascompleted) {
+            self::apply_competency_rules_from_usercompetency($usercompetency, $competency);
+        }
+
         return $evidence;
+    }
+
+    /**
+     * Apply the competency rules from a user competency.
+     *
+     * The user competency passed should be one that was recently marked as complete.
+     * A user competency is considered 'complete' when it's proficiency value is true.
+     *
+     * This method will check if the parent of this usercompetency's competency has any
+     * rules and if so will see if they match. When matched it will take the required
+     * step to add evidence and trigger completion, etc...
+     *
+     * @param  usercompetency  $usercompetency The user competency recently completed.
+     * @param  competency|null $competency     The competency of the user competency, useful to avoid unnecessary read.
+     * @return void
+     */
+    protected static function apply_competency_rules_from_usercompetency(user_competency $usercompetency,
+            competency $competency = null) {
+
+        // Perform some basic checks.
+        if (!$usercompetency->get_proficiency()) {
+            throw new coding_exception('The user competency passed is not completed.');
+        }
+        if ($competency === null) {
+            $competency = $usercompetency->get_competency();
+        }
+        if ($competency->get_id() != $usercompetency->get_competencyid()) {
+            throw new coding_exception('Mismatch between user competency and competency.');
+        }
+
+        // Fetch the parent.
+        $parent = $competency->get_parent();
+        if ($parent === null) {
+            return;
+        }
+
+        // The parent should have a rule, and a meaningful outcome.
+        $ruleoutcome = $parent->get_ruleoutcome();
+        if ($ruleoutcome == competency::OUTCOME_NONE) {
+            return;
+        }
+        $rule = $parent->get_rule_object();
+        if ($rule === null) {
+            return;
+        }
+
+        // Fetch or create the user competency for the parent.
+        $userid = $usercompetency->get_userid();
+        $parentuc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $parent->get_id()));
+        if (!$parentuc) {
+            $parentuc = user_competency::create_relation($userid, $parent->get_id());
+            $parentuc->create();
+        }
+
+        // Does the rule match?
+        if (!$rule->matches($parentuc)) {
+            return;
+        }
+
+        // Figuring out what to do.
+        $recommend = false;
+        if ($ruleoutcome == competency::OUTCOME_EVIDENCE) {
+            $action = evidence::ACTION_LOG;
+
+        } else if ($ruleoutcome == competency::OUTCOME_RECOMMEND) {
+            $action = evidence::ACTION_LOG;
+            $recommend = true;
+
+        } else if ($ruleoutcome == competency::OUTCOME_COMPLETE) {
+            $action = evidence::ACTION_COMPLETE;
+
+        } else {
+            throw new moodle_exception('Unexpected rule outcome: ' + $ruleoutcome);
+        }
+
+        // Finally add an evidence.
+        static::add_evidence(
+            $userid,
+            $parent,
+            $parent->get_context()->id,
+            $action,
+            'evidence_competencyrule',
+            'tool_lp',
+            null,
+            $recommend
+        );
     }
 
     /**
