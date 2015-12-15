@@ -110,7 +110,7 @@ class user_competency_summary_exporter extends exporter {
         }
         if ($this->related['usercompetencyplan']) {
             $exporter = new user_competency_plan_exporter($this->related['usercompetencyplan'], $related);
-            $result->usercompetency = $exporter->export($output);
+            $result->usercompetencyplan = $exporter->export($output);
         }
 
         $allevidence = array();
