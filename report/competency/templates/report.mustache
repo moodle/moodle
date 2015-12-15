@@ -1,10 +1,13 @@
+<div data-region="competency-breakdown-report" data-courseid="{{course.id}}" data-groupid="{{groupid}}" data-onlyactive="{{onlyactive}}">
 <table class="table table-bordered">
-<caption>{{#str}}coursecompetencybreakdownsummary, report_competency{{/str}}</caption>
+<summary>{{#str}}coursecompetencybreakdownsummary, report_competency{{/str}}</summary>
 <tr>
-<td scope="col"><span class="accesshide">{{#str}}students{{/str}}</span></td>
+<th scope="col"><span class="accesshide">{{#str}}students{{/str}}</span></th>
 {{#competencies}}
     <th scope="col">
-    {{> tool_lp/competency_summary }}
+        <a href="#" data-action="competency-dialogue" data-id="{{id}}">
+            {{shortname}} - {{idnumber}}
+        </a>
     </th>
 {{/competencies}}
 </tr>
@@ -12,14 +15,28 @@
 <tr>
 <th scope="row">
 {{#user}}
-{{> tool_lp/form-user-selector-suggestion }}
+{{> tool_lp/user_summary }}
 {{/user}}
 </th>
 {{#usercompetencies}}
-<td class="alert {{#proficiency}}alert-success{{/proficiency}}">
+<td class="alert {{#proficiency}}alert-success{{/proficiency}}"
+    data-user-competency="true"
+    data-userid="{{user.id}}"
+    data-competencyid="{{competencyid}}"
+    data-courseid="{{course.id}}">
 {{> report_competency/user_competency_summary}}
 </td>
 {{/usercompetencies}}
 </tr>
 {{/usercompetencies}}
 </table>
+</div>
+{{#js}}
+require(['tool_lp/competencydialogue'], function(Compdialogue) {
+    var competencydialogue = new Compdialogue({includerelated : true});
+    competencydialogue.watch('[data-region="competency-breakdown-report"]');
+});
+require(['report_competency/grading_popup'], function(Popup) {
+    (new Popup('[data-region=competency-breakdown-report]', '[data-user-competency=true]'));
+});
+{{/js}}

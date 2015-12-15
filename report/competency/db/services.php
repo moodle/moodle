@@ -14,14 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
- * Strings for component 'report_competency', language 'en'
+ * Competency report webservice functions
+ *
  *
  * @package    report_competency
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Competency breakdown';
-$string['coursecompetencybreakdownsummary'] = 'A report of all the students in the course, and their progress towards the course competencies';
-$string['usercompetencysummary'] = 'User competency summary';
+defined('MOODLE_INTERNAL') || die();
+
+$functions = array(
+
+    // Learning plan related functions.
+
+    'report_competency_data_for_report' => array(
+        'classname'    => 'report_competency\external',
+        'methodname'   => 'data_for_report',
+        'classpath'    => '',
+        'description'  => 'Load the data for the competency report in a course.',
+        'type'         => 'read',
+        'capabilities' => 'tool/lp:coursecompetencyread',
+        'ajax'         => true,
+    )
+);
+
