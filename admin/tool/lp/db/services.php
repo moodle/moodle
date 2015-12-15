@@ -681,5 +681,23 @@ $functions = array(
         'capabilities' => 'tool/lp:planview',
         'ajax'         => true,
     ),
+    'tool_lp_grade_competency_in_course' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'grade_competency_in_course',
+        'classpath'    => '',
+        'description'  => 'Grade a competency from the course page.',
+        'type'         => 'write',
+        'capabilities' => 'tool/lp:competencygrade',
+        'ajax'         => true,
+    ),
+    'tool_lp_data_for_user_competency_summary_in_course' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'data_for_user_competency_summary_in_course',
+        'classpath'    => '',
+        'description'  => 'Load a summary of a user competency.',
+        'type'         => 'read',
+        'capabilities' => 'tool/lp:coursecompetencyread',
+        'ajax'         => true,
+    ),
 );
 

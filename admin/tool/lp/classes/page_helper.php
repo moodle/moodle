@@ -30,6 +30,8 @@ use context;
 use moodle_url;
 use core_user;
 use context_user;
+use context_course;
+use stdClass;
 
 /**
  * Page helper.
@@ -39,6 +41,53 @@ use context_user;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_helper {
+
+    /**
+     * Set-up a course page.
+     *
+     * Example:
+     * list($title, $subtitle) = page_helper::setup_for_course($pagecontextid, $url, $course, $pagetitle);
+     * echo $OUTPUT->heading($title);
+     * echo $OUTPUT->heading($subtitle, 3);
+     *
+     * @param  int $pagecontextid The page context ID.
+     * @param  moodle_url $url The current page.
+     * @param  \stdClass $couse The course.
+     * @param  string $subpage The title of the subpage, if any.
+     * @return array With the following:
+     *               - Page title
+     *               - Page sub title
+     *               - Return URL (course competencies page)
+     */
+    public static function setup_for_course(moodle_url $url, $course, $subtitle = '') {
+        global $PAGE, $SITE;
+
+        $context = context_course::instance($course->id);
+
+        $PAGE->set_course($course);
+
+        if (!empty($subtitle)) {
+            $title = $subtitle;
+        } else {
+            $title = get_string('coursecompetencies', 'tool_lp');
+        }
+
+        $returnurl = new moodle_url('/admin/tool/lp/coursecompetencies.php', array('courseid' => 2));
+
+        $heading = $context->get_context_name();
+        $PAGE->set_pagelayout('incourse');
+        $PAGE->set_url($url);
+        $PAGE->set_title($title);
+        $PAGE->set_heading($heading);
+
+        if (!empty($subtitle)) {
+            $PAGE->navbar->add(get_string('coursecompetencies', 'tool_lp'), $returnurl);
+            // We're in a sub page without a specific template.
+            $PAGE->navbar->add($subtitle, $url);
+        }
+
+        return array($title, $subtitle, $returnurl);
+    }
 
     /**
      * Set-up a template page.

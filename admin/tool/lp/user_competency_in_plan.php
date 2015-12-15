@@ -36,7 +36,7 @@ if (isguestuser()) {
 $params = array('userid' => $userid, 'competencyid' => $competencyid);
 $params['planid'] = $planid;
 $plan = \tool_lp\api::read_plan($planid);
-$url = new moodle_url('/admin/tool/lp/usercompetencyplan.php', $params);
+$url = new moodle_url('/admin/tool/lp/user_competency_in_plan.php', $params);
 $competency = new \tool_lp\competency($competencyid);
 $framework = $competency->get_framework();
 $subtitle = $competency->get_shortname();

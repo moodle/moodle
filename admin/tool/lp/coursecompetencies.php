@@ -33,16 +33,13 @@ $context = context_course::instance($course->id);
 $urlparams = array('courseid' => $id);
 
 $url = new moodle_url('/admin/tool/lp/coursecompetencies.php', $urlparams);
-$title = get_string('coursecompetencies', 'tool_lp');
-$PAGE->set_url($url);
-$PAGE->set_title($title);
-$coursename = format_text($course->fullname, false, array('context' => $context));
-$PAGE->set_heading($coursename);
-$PAGE->set_pagelayout('incourse');
+
+list($title, $subtitle) = \tool_lp\page_helper::setup_for_course($url, $course);
 
 $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
 echo $output->heading($title);
+
 
 $page = new \tool_lp\output\course_competencies_page($course->id);
 echo $output->render($page);

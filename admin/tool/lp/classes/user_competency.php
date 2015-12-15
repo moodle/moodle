@@ -295,7 +295,7 @@ class user_competency extends persistent {
             $sql = "competencyid $insql";
         }
 
-        return parent::get_records_select("userid = :userid AND $sql", $params);
+        return self::get_records_select("userid = :userid AND $sql", $params);
     }
 
     /**

@@ -184,3 +184,14 @@ input[type="checkbox"].tool_lp_scale_proficient {
     margin: 0;
     list-style: none;
 }
+
+.user-competency-course-navigation select {
+    display: none;
+}
+.user-competency-course-navigation {
+    width: 240px;
+    height: 80px;
+}
+.user-competency-course-navigation .form-autocomplete-selection {
+    display: none;
+}

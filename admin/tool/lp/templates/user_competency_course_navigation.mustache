@@ -1,0 +1,35 @@
+<form class="pull-right well user-competency-course-navigation">
+{{#hasusers}}
+<span>
+<label for="user-nav-{{uniqid}}" class="accesshide">{{#str}}jumptouser, tool_lp{{/str}}</label>
+<select id="user-nav-{{uniqid}}">
+{{#users}}
+<option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{fullname}}</option>
+{{/users}}
+</select>
+</span>
+{{/hasusers}}
+<br>
+{{#hascompetencies}}
+<span>
+<label for="competency-nav-{{uniqid}}" class="accesshide">{{#str}}jumptocompetency, tool_lp{{/str}}</label>
+<select id="competency-nav-{{uniqid}}">
+{{#competencies}}
+<option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{shortname}} {{idnumber}}</option>
+{{/competencies}}
+</select>
+</span>
+{{/hascompetencies}}
+</form>
+{{#js}}
+require(['core/form-autocomplete', 'tool_lp/user_competency_course_navigation'], function(autocomplete, nav) {
+{{#hasusers}}
+    autocomplete.enhance('#user-nav-{{uniqid}}', false, false, '{{#str}}jumptouser, tool_lp{{/str}}');
+{{/hasusers}}
+    (new nav('#user-nav-{{uniqid}}', '#competency-nav-{{uniqid}}', '{{baseurl}}', {{userid}}, {{competencyid}}, {{courseid}}));
+{{#hascompetencies}}
+    autocomplete.enhance('#competency-nav-{{uniqid}}', false, false, '{{#str}}jumptocompetency, tool_lp{{/str}}');
+{{/hascompetencies}}
+
+});
+{{/js}}

@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template tool_lp/user_competency_summary_in_plan
+    @template tool_lp/user_competency_summary_in_course
 
     Moodle template for the the summary of a user competency
 
@@ -35,7 +35,7 @@
         * user - user record
         * usercompetency - user competency record
         * evidence - array of evidence
-    * plan - plan summary record
+    * course - course summary record
 
     This template does not have an example context because it includes ajax functionality.
 }}
@@ -46,7 +46,6 @@
         {{> tool_lp/competency_summary }}
     {{/competency}}
     <dl>
-        <dt>{{#str}}rating, tool_lp{{/str}}</dt>
         {{#usercompetency}}
         <dt>{{#str}}proficient, tool_lp{{/str}}</dt>
         <dd>
@@ -77,12 +76,13 @@
         require(['jquery', 'tool_lp/grade_user_competency_inline', 'tool_lp/user_competency_info'], function($, mod, info) {
             var scaleConfig = JSON.parse('{{{competency.scaleconfiguration}}}');
 
-            var inlineGrader = new mod('grade-competency-form-{{uniqid}}', scaleConfig, '{{competency.competency.id}}', '{{user.id}}', '{{plan.id}}', '', '{{#str}}chooserating, tool_lp{{/str}}');
+            var inlineGrader = new mod('grade-competency-form-{{uniqid}}', scaleConfig, '{{competency.competency.id}}', '{{user.id}}', '', '{{course.id}}', '{{#str}}chooserating, tool_lp{{/str}}');
             var competencyElement = $(document.getElementById('grade-competency-form-{{uniqid}}')).closest('[data-region=user-competency-full-info]');
-            var infoReloader = new info(competencyElement, '{{competency.competency.id}}', '{{user.id}}', '{{plan.id}}');
+            var infoReloader = new info(competencyElement, '{{competency.competency.id}}', '{{user.id}}', '', '{{course.id}}');
 
             inlineGrader.on('competencyupdated', infoReloader.reload.bind(infoReloader));
         });
+
         {{/js}}
         {{/cangradeorsuggest}}
         {{/usercompetency}}
