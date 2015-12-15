@@ -48,6 +48,7 @@ use tool_lp\external\user_summary_exporter;
 use tool_lp\external\user_competency_exporter;
 use tool_lp\external\user_competency_plan_exporter;
 use tool_lp\external\user_competency_summary_exporter;
+use tool_lp\external\user_competency_summary_in_course_exporter;
 use tool_lp\external\user_competency_summary_in_plan_exporter;
 use tool_lp\external\user_evidence_exporter;
 use tool_lp\external\user_evidence_competency_exporter;
@@ -1455,7 +1456,9 @@ class external extends external_api {
                                                 'id' => $courseid,
                                             ));
 
-        self::validate_context(context_course::instance($params['id']));
+        $coursecontext = context_course::instance($params['id']);
+        self::validate_context($coursecontext);
+
         $output = $PAGE->get_renderer('tool_lp');
 
         $competencies = api::list_course_competencies($params['id']);
@@ -1471,6 +1474,7 @@ class external extends external_api {
             $competencyrecord = $exporter->export($output);
             $exporter = new course_competency_exporter($competency['coursecompetency'], array('context' => $context));
             $coursecompetencyrecord = $exporter->export($output);
+
             $result[] = array(
                 'competency' => $competencyrecord,
                 'coursecompetency' => $coursecompetencyrecord
@@ -1486,7 +1490,6 @@ class external extends external_api {
      * @return \external_description
      */
     public static function list_course_competencies_returns() {
-
         return new external_multiple_structure(
             new external_single_structure(array(
                 'competency' => competency_exporter::get_read_structure(),
@@ -1641,14 +1644,19 @@ class external extends external_api {
      * @return \external_description
      */
     public static function data_for_course_competencies_page_returns() {
+        $uc = user_competency_exporter::get_read_structure();
+        $uc->required = VALUE_OPTIONAL;
+
         return new external_single_structure(array (
             'courseid' => new external_value(PARAM_INT, 'The current course id'),
             'pagecontextid' => new external_value(PARAM_INT, 'The current page context ID.'),
+            'gradableuserid' => new external_value(PARAM_INT, 'Current user id, if the user is a gradable user.', VALUE_OPTIONAL),
             'canmanagecompetencyframeworks' => new external_value(PARAM_BOOL, 'User can manage competency frameworks'),
             'canmanagecoursecompetencies' => new external_value(PARAM_BOOL, 'User can manage linked course competencies'),
             'competencies' => new external_multiple_structure(new external_single_structure(array(
                 'competency' => competency_exporter::get_read_structure(),
                 'coursecompetency' => course_competency_exporter::get_read_structure(),
+                'usercompetency' => $uc,
                 'ruleoutcomeoptions' => new external_multiple_structure(
                     new external_single_structure(array(
                         'value' => new external_value(PARAM_INT, 'The option value'),
@@ -4295,6 +4303,188 @@ class external extends external_api {
      */
     public static function data_for_user_competency_summary_in_plan_returns() {
         return user_competency_summary_in_plan_exporter::get_read_structure();
+    }
+
+    /**
+     * Returns description of data_for_user_competency_summary_in_course() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function data_for_user_competency_summary_in_course_parameters() {
+        $userid = new external_value(
+            PARAM_INT,
+            'Data base record id for the user',
+            VALUE_REQUIRED
+        );
+        $competencyid = new external_value(
+            PARAM_INT,
+            'Data base record id for the competency',
+            VALUE_REQUIRED
+        );
+        $courseid = new external_value(
+            PARAM_INT,
+            'Data base record id for the course',
+            VALUE_REQUIRED
+        );
+
+        $params = array(
+            'userid' => $userid,
+            'competencyid' => $competencyid,
+            'courseid' => $courseid,
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Read a user competency summary.
+     *
+     * @param int $userid The user id
+     * @param int $competencyid The competency id
+     * @param int $courseid The course id
+     * @return \stdClass
+     */
+    public static function data_for_user_competency_summary_in_course($userid, $competencyid, $courseid) {
+        global $PAGE, $DB, $CFG;
+        $params = self::validate_parameters(self::data_for_user_competency_summary_in_course_parameters(),
+                                            array(
+                                                'userid' => $userid,
+                                                'competencyid' => $competencyid,
+                                                'courseid' => $courseid
+                                            ));
+        $context = context_user::instance($params['userid']);
+        self::validate_context($context);
+        $output = $PAGE->get_renderer('tool_lp');
+
+        $competencies = api::list_user_competencies_in_course($params['courseid'], $params['userid']);
+        $usercompetency = false;
+        $competency = false;
+        foreach ($competencies as $usercoursecompetency) {
+            if ($usercoursecompetency->get_competencyid() == $params['competencyid']) {
+                $usercompetency = $usercoursecompetency;
+                $competency = $usercompetency->get_competency();
+            }
+        }
+        if (empty($usercompetency) || empty($competency)) {
+            throw new invalid_parameter_exception('Invalid params. The competency does not belong to the course.');
+        }
+
+        $relatedcompetencies = api::list_related_competencies($competency->get_id());
+        $user = $DB->get_record('user', array('id' => $params['userid']));
+        $evidence = api::list_evidence($params['userid'], $params['competencyid']);
+        $course = $DB->get_record('course', array('id' => $params['courseid']));
+
+        $params = array(
+            'competency' => $competency,
+            'usercompetency' => $usercompetency,
+            'evidence' => $evidence,
+            'user' => $user,
+            'course' => $course,
+            'relatedcompetencies' => $relatedcompetencies
+        );
+        $exporter = new user_competency_summary_in_course_exporter(null, $params);
+        $data = $exporter->export($output);
+
+        return $data;
+    }
+
+    /**
+     * Returns description of data_for_user_competency_summary_in_course() result value.
+     *
+     * @return \external_description
+     */
+    public static function data_for_user_competency_summary_in_course_returns() {
+        return user_competency_summary_in_course_exporter::get_read_structure();
+    }
+
+    /**
+     * Returns description of grade_competency_in_course() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function grade_competency_in_course_parameters() {
+        $courseid = new external_value(
+            PARAM_INT,
+            'Course id',
+            VALUE_REQUIRED
+        );
+        $userid = new external_value(
+            PARAM_INT,
+            'User id',
+            VALUE_REQUIRED
+        );
+        $competencyid = new external_value(
+            PARAM_INT,
+            'Competency id',
+            VALUE_REQUIRED
+        );
+        $grade = new external_value(
+            PARAM_INT,
+            'New grade',
+            VALUE_REQUIRED
+        );
+        $override = new external_value(
+            PARAM_BOOL,
+            'Override the grade, or just suggest it',
+            VALUE_REQUIRED
+        );
+
+        $params = array(
+            'courseid' => $courseid,
+            'userid' => $userid,
+            'competencyid' => $competencyid,
+            'grade' => $grade,
+            'override' => $override
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Grade a competency in a course.
+     *
+     * @param int $courseid The course id
+     * @param int $userid The user id
+     * @param int $competencyid The competency id
+     * @param int $grade The new grade value
+     * @param bool $override Override the grade or only suggest it
+     * @return bool
+     */
+    public static function grade_competency_in_course($courseid, $userid, $competencyid, $grade, $override) {
+        global $USER, $PAGE, $DB;
+
+        $params = self::validate_parameters(self::grade_competency_in_course_parameters(),
+                                            array(
+                                                'courseid' => $courseid,
+                                                'userid' => $userid,
+                                                'competencyid' => $competencyid,
+                                                'grade' => $grade,
+                                                'override' => $override
+                                            ));
+
+        $course = $DB->get_record('course', array('id' => $params['courseid']));
+        $context = context_course::instance($course->id);
+        self::validate_context($context);
+        $output = $PAGE->get_renderer('tool_lp');
+
+        $evidence = api::grade_competency_in_course(
+                $params['courseid'],
+                $params['userid'],
+                $params['competencyid'],
+                $params['grade'],
+                $params['override']
+        );
+        $competency = api::read_competency($params['competencyid']);
+        $scale = $competency->get_scale();
+        $exporter = new evidence_exporter($evidence, array('actionuser' => $USER, 'scale' => $scale));
+        return $exporter->export($output);
+    }
+
+    /**
+     * Returns description of grade_competency_in_course() result value.
+     *
+     * @return \external_value
+     */
+    public static function grade_competency_in_course_returns() {
+        return evidence_exporter::get_read_structure();
     }
 
 }
