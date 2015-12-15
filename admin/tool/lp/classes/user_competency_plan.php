@@ -162,6 +162,36 @@ class user_competency_plan extends persistent {
     }
 
     /**
+     * List the competencies in this plan.
+     *
+     * @param int $planid The plan ID
+     * @param int $userid The user ID
+     * @return competency[]
+     */
+    public static function list_competencies($planid, $userid) {
+        global $DB;
+
+        // TODO Fix ordering. The order set in template_competency, or plan_competency is not applied here.
+        // Perhaps we should have copied the sortorder here as well.
+        $sql = 'SELECT c.*
+                  FROM {' . competency::TABLE . '} c
+                  JOIN {' . self::TABLE . '} ucp
+                    ON ucp.competencyid = c.id
+                   AND ucp.userid = :userid
+                 WHERE ucp.planid = :planid';
+        $params = array('userid' => $userid, 'planid' => $planid);
+
+        $results = $DB->get_recordset_sql($sql, $params);
+        $instances = array();
+        foreach ($results as $key => $result) {
+             $instances[$key] = new competency(0, $result);
+        }
+        $results->close();
+
+        return $instances;
+    }
+
+    /**
      * Get multiple user_competency_plan for a user.
      *
      * @param int $userid The user ID.

@@ -122,13 +122,18 @@ class plan extends persistent {
      */
     public function get_competencies() {
         $competencies = array();
-        if ($this->get_templateid()) {
+
+        if ($this->get_status() == self::STATUS_COMPLETE) {
+            // Get the competencies from the archive of the plan.
+            $competencies = user_competency_plan::list_competencies($this->get_id(), $this->get_userid());
+        } else if ($this->is_based_on_template()) {
             // Get the competencies from the template.
             $competencies = template_competency::list_competencies($this->get_templateid(), true);
         } else {
             // Get the competencies from the plan.
             $competencies = plan_competency::list_competencies($this->get_id());
         }
+
         return $competencies;
     }
 

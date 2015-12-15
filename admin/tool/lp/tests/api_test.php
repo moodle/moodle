@@ -667,6 +667,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
         $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
         $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c4 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
 
         // Create two plans and assign competencies.
         $plan = $lpg->create_plan(array('userid' => $user->id));
@@ -713,6 +714,20 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertNull($usercompetenciesplan[2]->get_proficiency());
         $this->assertNull($usercompetenciesplan[2]->get_grade());
         $this->assertEquals($plan->get_id(), $usercompetenciesplan[2]->get_planid());
+
+        // Check we can not add competency to completed plan.
+        try {
+            api::add_competency_to_plan($plan->get_id(), $c4->get_id());
+            $this->fail('We can not add competency to completed plan.');
+        } catch (coding_exception $e) {
+        }
+
+        // Check we can not remove competency to completed plan.
+        try {
+            api::remove_competency_from_plan($plan->get_id(), $c3->get_id());
+            $this->fail('We can not remove competency to completed plan.');
+        } catch (coding_exception $e) {
+        }
 
         // Completing a plan that is completed throws an exception.
         $this->setExpectedException('coding_exception');
@@ -938,15 +953,6 @@ class tool_lp_api_testcase extends advanced_testcase {
                 'planid' => $completedplan->get_id()));
         $ucp2 = $lpg->create_user_competency_plan(array('userid' => $user->id, 'competencyid' => $c2->get_id(),
                 'planid' => $completedplan->get_id()));
-
-         // Check that an exception is thrown when a user competency plan is missing.
-        try {
-            $plancompetencies = api::list_plan_competencies($completedplan);
-            $this->fail('All competencies in the plan must be associated to a user competency plan');
-        } catch (coding_exception $e) {
-            $this->assertTrue(true);
-        }
-
         $ucp3 = $lpg->create_user_competency_plan(array('userid' => $user->id, 'competencyid' => $c3->get_id(),
                 'planid' => $completedplan->get_id()));
 
@@ -1698,4 +1704,54 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertInstanceOf('\tool_lp\template_cohort', $templatecohort);
     }
 
+    /**
+     * Test that completed plan created form a template does not change when template is modified.
+     */
+    public function test_completed_plan_doesnot_change() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user = $dg->create_user();
+
+        // Create a framework and assign competencies.
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c4 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+
+        // Create template and assign competencies.
+        $tp = $lpg->create_template();
+        $tpc1 = $lpg->create_template_competency(array('templateid' => $tp->get_id(), 'competencyid' => $c1->get_id()));
+        $tpc2 = $lpg->create_template_competency(array('templateid' => $tp->get_id(), 'competencyid' => $c2->get_id()));
+        $tpc3 = $lpg->create_template_competency(array('templateid' => $tp->get_id(), 'competencyid' => $c3->get_id()));
+
+        // Create a plan form template and change it status to complete.
+        $plan = $lpg->create_plan(array('userid' => $user->id, 'templateid' => $tp->get_id()));
+        api::complete_plan($plan);
+
+        // Check user competency plan created correctly.
+        $this->assertEquals(3, \tool_lp\user_competency_plan::count_records());
+        $ucp = \tool_lp\user_competency_plan::get_records();
+        $this->assertEquals($ucp[0]->get_competencyid(), $c1->get_id());
+        $this->assertEquals($ucp[1]->get_competencyid(), $c2->get_id());
+        $this->assertEquals($ucp[2]->get_competencyid(), $c3->get_id());
+
+        // Add and remove a competency from the template.
+        api::add_competency_to_template($tp->get_id(), $c4->get_id());
+        api::remove_competency_from_template($tp->get_id(), $c1->get_id());
+
+        // Check that user competency plan did not change.
+        $competencies = $plan->get_competencies();
+        $this->assertEquals(3, count($competencies));
+        $ucp1 = array($c1->get_id(), $c2->get_id(), $c3->get_id());
+        $ucp2 = array();
+        foreach ($competencies as $id => $cmp) {
+            $ucp2[] = $id;
+        }
+        $this->assertEquals(0, count(array_diff($ucp1, $ucp2)));
+    }
 }

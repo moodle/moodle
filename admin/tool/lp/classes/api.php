@@ -1738,9 +1738,10 @@ class api {
 
         // Check if the plan was already completed.
         if ($plan->get_status() == plan::STATUS_COMPLETE) {
-            throw new coding_exception('The plan is already complete.');
+            throw new coding_exception('The plan is already completed.');
         }
 
+        $originalstatus = $plan->get_status();
         $plan->set_status(plan::STATUS_COMPLETE);
 
         // The user should also be able to manage the plan when it's completed.
@@ -1748,9 +1749,13 @@ class api {
             throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
         }
 
+        // Put back original status because archive needs it to extract competencies from the right table.
+        $plan->set_status($originalstatus);
+
         // Do the things.
         $transaction = $DB->start_delegated_transaction();
         self::archive_user_competencies_in_plan($plan);
+        $plan->set_status(plan::STATUS_COMPLETE);
         $success = $plan->update();
 
         if (!$success) {
@@ -2328,6 +2333,12 @@ class api {
      * @return void
      */
     protected static function archive_user_competencies_in_plan($plan) {
+
+        // Check if the plan was already completed.
+        if ($plan->get_status() == plan::STATUS_COMPLETE) {
+            throw new coding_exception('The plan is already completed.');
+        }
+
         $competencies = $plan->get_competencies();
         $usercompetencies = user_competency::get_multiple($plan->get_userid(), $competencies);
 
