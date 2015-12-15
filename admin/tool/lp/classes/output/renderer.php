@@ -137,6 +137,17 @@ class renderer extends plugin_renderer_base {
      * @param renderable $page
      * @return string
      */
+    public function render_user_competency_summary_in_course_page(user_competency_summary_in_course_page $page) {
+        $data = $page->export_for_template($this);
+        return parent::render_from_template('tool_lp/user_competency_summary_in_course', $data);
+    }
+
+    /**
+     * Defer to template.
+     *
+     * @param renderable $page
+     * @return string
+     */
     public function render_user_competency_summary_in_plan_page(user_competency_summary_in_plan_page $page) {
         $data = $page->export_for_template($this);
         return parent::render_from_template('tool_lp/user_competency_summary_in_plan', $data);
@@ -184,4 +195,14 @@ class renderer extends plugin_renderer_base {
         return parent::render_from_template('tool_lp/user_evidence_list_page', $data);
     }
 
+    /**
+     * Defer to template.
+     *
+     * @param user_competency_course_navigation $nav
+     * @return string
+     */
+    public function render_user_competency_course_navigation(user_competency_course_navigation $nav) {
+        $data = $nav->export_for_template($this);
+        return parent::render_from_template('tool_lp/user_competency_course_navigation', $data);
+    }
 }
