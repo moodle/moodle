@@ -778,7 +778,7 @@ abstract class testing_util {
      * @return string The site info
      */
     public static function get_site_info() {
-        global $CFG;
+        global $CFG, $DB;
 
         $output = '';
 
@@ -787,11 +787,25 @@ abstract class testing_util {
         $release = null;
         require("$CFG->dirroot/version.php");
 
-        $output .= "Moodle $release, $CFG->dbtype";
+        $output .= "Moodle $release";
         if ($hash = self::get_git_hash()) {
             $output .= ", $hash";
         }
         $output .= "\n";
+
+        // Add php version.
+        $phpversion = phpversion();
+        $output .= "Php: ". $phpversion;
+
+        // Add database type and version.
+        $dbtype = $DB->get_dbvendor();
+        $dbinfo = $DB->get_server_info();
+        $dbversion = $dbinfo['version'];
+        $output .= ", " . ucfirst($dbtype) . ": " . $dbversion;
+
+        // OS details.
+        $osdetails = php_uname('s') . " " . php_uname('r') . " " . php_uname('m');
+        $output .= ", OS: " . $osdetails . "\n";
 
         return $output;
     }
