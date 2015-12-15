@@ -45,6 +45,8 @@ class user_summary_exporter extends exporter {
         $userpicture->size = 0; // Size f2.
         $profileimageurlsmall = $userpicture->get_url($PAGE)->out(false);
 
+        $profileurl = (new moodle_url('/user/profile.php', array('id' => $this->data->id)))->out(false);
+
         $identityfields = array_flip(explode(',', $CFG->showuseridentity));
         $identity = '';
         $data = $this->data;
@@ -60,6 +62,7 @@ class user_summary_exporter extends exporter {
             'fullname' => fullname($this->data),
             'profileimageurl' => $profileimageurl,
             'profileimageurlsmall' => $profileimageurlsmall,
+            'profileurl' => $profileurl,
             'identity' => $identity
         );
     }
@@ -103,6 +106,9 @@ class user_summary_exporter extends exporter {
             ),
             'identity' => array(
                 'type' => PARAM_TEXT
+            ),
+            'profileurl' => array(
+                'type' => PARAM_URL
             ),
             'profileimageurl' => array(
                 'type' => PARAM_URL
