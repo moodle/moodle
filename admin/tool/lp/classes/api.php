@@ -764,7 +764,31 @@ class api {
         // OK - all set.
         $competencylist = course_competency::list_competencies($courseid, $onlyvisible);
 
-        return user_competency::get_multiple($userid, $competencylist);
+        $existing = user_competency::get_multiple($userid, $competencylist);
+        // Create missing.
+
+        $somemissing = false;
+        foreach ($competencylist as $coursecompetency) {
+            $found = false;
+            foreach ($existing as $usercompetency) {
+                if ($usercompetency->get_competencyid() == $coursecompetency->get_id()) {
+                    $found = true;
+                }
+            }
+            if (!$found) {
+                $somemissing = true;
+                $uc = user_competency::create_relation($userid, $coursecompetency->get_id());
+                $uc->create();
+            }
+        }
+        if ($somemissing) {
+            // Fetch again.
+            $all = user_competency::get_multiple($userid, $competencylist);
+        } else {
+            $all = $existing;
+        }
+
+        return $all;
     }
 
     /**
@@ -2051,7 +2075,9 @@ class api {
     public static function list_related_competencies($competencyid) {
         $competency = new competency($competencyid);
 
-        require_capability('tool/lp:competencymanage', $competency->get_context());
+        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $competency->get_context())) {
+             throw new required_capability_exception($competency->get_context(), 'tool/lp:competencyread', 'nopermissions', '');
+        }
 
         return $competency->get_related_competencies();
     }
@@ -2429,9 +2455,16 @@ class api {
                                          $order = 'DESC',
                                          $skip = 0,
                                          $limit = 0) {
+        global $USER;
 
         $context = context_user::instance($userid);
-        require_capability('tool/lp:planview', $context);
+        if ($userid == $USER->id) {
+            if (!has_any_capability(array('tool/lp:planview', 'tool/lp:planviewown'), $context)) {
+                throw new required_capability_exception($context, 'tool/lp:planviewown', 'nopermissions', '');
+            }
+        } else {
+            require_capability('tool/lp:planview', $context);
+        }
 
         // TODO - handle archived plans.
 
@@ -2792,6 +2825,64 @@ class api {
                                   $desckey,
                                   'tool_lp',
                                   $plan->get_name(),
+                                  false,
+                                  null,
+                                  $grade,
+                                  $USER->id);
+    }
+
+    /**
+     * Manually grade a user competency from the course page.
+     *
+     * @param mixed $courseorid
+     * @param int $userid
+     * @param int $competencyid
+     * @param int $grade
+     * @param boolean $override
+     * @return array of \tool_lp\user_competency
+     */
+    public static function grade_competency_in_course($courseorid, $userid, $competencyid, $grade, $override) {
+        global $USER, $DB;
+
+        $course = $courseorid;
+        if (!is_object($courseorid)) {
+            $course = $DB->get_record('course', array('id' => $courseorid));
+        }
+        $context = context_course::instance($course->id);
+        if ($override) {
+            require_capability('tool/lp:competencygrade', $context);
+        } else {
+            require_capability('tool/lp:competencysuggestgrade', $context);
+        }
+
+        $coursecompetencies = self::list_course_competencies($course);
+        // Verify the data.
+
+        $competency = null;
+
+        foreach ($coursecompetencies as $coursecompetency) {
+            if ($coursecompetency['competency']->get_id() == $competencyid) {
+                $competency = $coursecompetency['competency'];
+            }
+        }
+        if (!$competency) {
+            throw new coding_exception('The competency does not belong to this course: ' . $competencyid . ', ' . $courseid);
+        }
+
+        $action = evidence::ACTION_OVERRIDE;
+        $desckey = 'evidence_manualoverrideincourse';
+        if (!$override) {
+            $action = evidence::ACTION_SUGGEST;
+            $desckey = 'evidence_manualsuggestincourse';
+        }
+
+        return self::add_evidence($userid,
+                                  $competency,
+                                  $context->id,
+                                  $action,
+                                  $desckey,
+                                  'tool_lp',
+                                  $context->get_context_name(),
                                   false,
                                   null,
                                   $grade,
