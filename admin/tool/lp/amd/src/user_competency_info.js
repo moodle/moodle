@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function($, notification, ajax, templates) {
+define(['jquery', 'core/notification', 'core/ajax', 'core/templates', 'core/log'], function($, notification, ajax, templates, log) {
 
     /**
      * Info
@@ -30,20 +30,28 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
      * @param {Number} The id of the competency.
      * @param {Number} The id of the user.
      * @param {Number} The id of the plan.
+     * @param {Number} The id of the course.
      */
-    var Info = function(rootElement, competencyId, userId, planId) {
+    var Info = function(rootElement, competencyId, userId, planId, courseId) {
         this._rootElement = rootElement;
         this._competencyId = competencyId;
         this._userId = userId;
         this._planId = planId;
+        this._courseId = courseId;
+        this._valid = true;
 
         if (this._planId) {
             this._methodName = 'tool_lp_data_for_user_competency_summary_in_plan';
             this._args = { userid: this._userId, competencyid: this._competencyId, planid: this._planId };
             this._templateName = 'tool_lp/user_competency_summary_in_plan';
+        } else if (this._courseId) {
+            this._methodName = 'tool_lp_data_for_user_competency_summary_in_course';
+            this._args = { userid: this._userId, competencyid: this._competencyId, courseid: this._courseId };
+            this._templateName = 'tool_lp/user_competency_summary_in_course';
         } else {
             // TODO - add optional courseid support.
-            notification.exception('Plan id is required.');
+            log.error('Plan id or course id is required.');
+            this._valid = false;
         }
     };
 
@@ -55,6 +63,10 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
     Info.prototype.reload = function() {
         var self = this,
             promises = [];
+
+        if (!this._valid) {
+            return;
+        }
 
         promises = ajax.call([{
             methodname: this._methodName,
@@ -70,6 +82,10 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
 
     /** @type {JQuery} The root element to replace in the DOM. */
     Info.prototype._rootElement = null;
+    /** @type {Number} The id of the course. */
+    Info.prototype._courseId = null;
+    /** @type {Boolean} Is this module valid? */
+    Info.prototype._valid = null;
     /** @type {Number} The id of the plan. */
     Info.prototype._planId = null;
     /** @type {Number} The id of the competency. */

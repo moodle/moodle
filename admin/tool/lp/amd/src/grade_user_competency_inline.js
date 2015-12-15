@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/notification', 'core/ajax'], function($, notification, ajax) {
+define(['jquery', 'core/notification', 'core/ajax', 'core/log'], function($, notification, ajax, log) {
 
     /**
      * InlineEditor
@@ -31,15 +31,38 @@ define(['jquery', 'core/notification', 'core/ajax'], function($, notification, a
      * @param {Number} The id of the competency.
      * @param {Number} The id of the user.
      * @param {Number} The id of the plan.
+     * @param {Number} The id of the course.
+     * @param {String} Language string for choose a rating.
      */
-    var InlineEditor = function(formId, scaleConfig, competencyId, userId, planId) {
+    var InlineEditor = function(formId, scaleConfig, competencyId, userId, planId, courseId, chooseStr) {
         this._formId = formId;
         this._scaleConfig = scaleConfig;
         this._competencyId = competencyId;
         this._userId = userId;
         this._planId = planId;
+        this._courseId = courseId;
+        this._valid = true;
+        this._chooseStr = chooseStr;
         this._buildSelect();
         this._addListeners();
+
+        if (this._planId) {
+            this._methodName = 'tool_lp_grade_competency_in_plan';
+            this._args = {
+                competencyid: this._competencyId,
+                planid: this._planId
+            };
+        } else if (this._courseId) {
+            this._methodName = 'tool_lp_grade_competency_in_course';
+            this._args = {
+                competencyid: this._competencyId,
+                courseid: this._courseId,
+                userid: this._userId
+            };
+        } else {
+            log.error('Plan id or course id is required.');
+            this._valid = false;
+        }
     };
 
     /**
@@ -50,15 +73,16 @@ define(['jquery', 'core/notification', 'core/ajax'], function($, notification, a
     InlineEditor.prototype._buildSelect = function() {
         var i = 1;
 
+        var blankOption = $('<option></option>');
+        blankOption.text(this._chooseStr);
+        blankOption.attr('value', '');
+        $(document.getElementById(this._formId)).find('select').append(blankOption);
         // The first item is the scaleid - we don't care about that.
         for (i = 1; i < this._scaleConfig.length; i++) {
             var optionConfig = this._scaleConfig[i];
             var optionEle = $('<option></option>');
             optionEle.text(optionConfig.name);
             optionEle.attr('value', optionConfig.id);
-            if (optionConfig.scaledefault) {
-                optionEle.attr('selected', 'selected');
-            }
 
             $(document.getElementById(this._formId)).find('select').append(optionEle);
         }
@@ -74,15 +98,13 @@ define(['jquery', 'core/notification', 'core/ajax'], function($, notification, a
         var currentthis = this;
         var grade = $(document.getElementById(this._formId)).find('select').val();
         event.preventDefault();
-        if (this._planId > 0) {
-            var args = {
-                competencyid: this._competencyId,
-                planid: this._planId,
-                grade: grade,
-                override: true
-            };
+        if (this._valid && grade) {
+            var args = this._args;
+            args.grade = grade;
+            args.override = true;
+
             ajax.call([{
-                methodname: 'tool_lp_grade_competency_in_plan',
+                methodname: this._methodName,
                 args: args,
                 done: function(evidence) {
                     currentthis._trigger('competencyupdated', { args: args, evidence: evidence});
@@ -102,15 +124,12 @@ define(['jquery', 'core/notification', 'core/ajax'], function($, notification, a
         var currentthis = this;
         var grade = $(document.getElementById(this._formId)).find('select').val();
         event.preventDefault();
-        if (this._planId > 0) {
-            var args = {
-                competencyid: this._competencyId,
-                planid: this._planId,
-                grade: grade,
-                override: false
-            };
+        if (this._valid && grade) {
+            var args = this._args;
+            args.grade = grade;
+            args.override = false;
             ajax.call([{
-                methodname: 'tool_lp_grade_competency_in_plan',
+                methodname: this._methodName,
                 args: args,
                 done: function(evidence) {
                     currentthis._trigger('competencyupdated', { args: args, evidence: evidence});
@@ -181,6 +200,10 @@ define(['jquery', 'core/notification', 'core/ajax'], function($, notification, a
     InlineEditor.prototype._userId = null;
     /** @type {Number} The id of the plan. */
     InlineEditor.prototype._planId = null;
+    /** @type {Number} The id of the course. */
+    InlineEditor.prototype._courseId = null;
+    /** @type {Boolean} Is this module valid. */
+    InlineEditor.prototype._valid = null;
 
     return /** @alias module:tool_lp/grade_user_competency_inline */ InlineEditor;
 
