@@ -60,6 +60,10 @@ class competency extends persistent {
                            get_string('competencyframework', 'tool_lp'),
                            s($framework->get_shortname()));
         if ($parent) {
+            $mform->addElement('hidden', 'parentid');
+            $mform->setType('parentid', PARAM_INT);
+            $mform->setConstant('parentid', $parent->get_id());
+
             $mform->addElement('static',
                                'parentdesc',
                                get_string('taxonomy_parent_' . $framework->get_taxonomy($parent->get_level()), 'tool_lp'),
