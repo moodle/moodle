@@ -36,6 +36,7 @@ use tool_lp\course_competency;
 use tool_lp\competency;
 use tool_lp\external\competency_exporter;
 use tool_lp\external\course_competency_exporter;
+use tool_lp\external\user_competency_exporter;
 
 /**
  * Class containing data for course competencies page
@@ -95,11 +96,19 @@ class course_competencies_page implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
+        global $USER;
+
         $data = new stdClass();
         $data->courseid = $this->courseid;
         $data->pagecontextid = $this->context->id;
         $data->competencies = array();
         $contextcache = array();
+
+        $gradable = is_enrolled($this->context, $USER, 'tool/lp:coursecompetencygradable');
+        if ($gradable) {
+            $usercompetencies = api::list_user_competencies_in_course($this->courseid, $USER->id);
+            $data->gradableuserid = $USER->id;
+        }
 
         $ruleoutcomelist = course_competency::get_ruleoutcome_list();
         $ruleoutcomeoptions = array();
@@ -120,11 +129,25 @@ class course_competencies_page implements renderable, templatable {
 
             $ccoutcomeoptions = (array) (object) $ruleoutcomeoptions;
             $ccoutcomeoptions[$coursecompetency->get_ruleoutcome()]['selected'] = true;
-            array_push($data->competencies, array(
+
+            $onerow = array(
                 'competency' => $compexporter->export($output),
                 'coursecompetency' => $ccexporter->export($output),
                 'ruleoutcomeoptions' => $ccoutcomeoptions
-            ));
+            );
+            if ($gradable) {
+                $foundusercompetency = false;
+                foreach ($usercompetencies as $usercompetency) {
+                    if ($usercompetency->get_competencyid() == $competency->get_id()) {
+                        $foundusercompetency = $usercompetency;
+                    }
+                }
+                if ($foundusercompetency) {
+                    $exporter = new user_competency_exporter($foundusercompetency, array('scale' => $competency->get_scale()));
+                    $onerow['usercompetency'] = $exporter->export($output);
+                }
+            }
+            array_push($data->competencies, $onerow);
         }
 
         $data->canmanagecompetencyframeworks = $this->canmanagecompetencyframeworks;
