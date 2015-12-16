@@ -52,11 +52,11 @@ class sync_plans_from_template_cohorts_task extends \core\task\scheduled_task {
      */
     public function execute() {
 
-        $missingplans = template_cohort::get_all_missing_plans(true);
+        $missingplans = template_cohort::get_all_missing_plans();
 
         foreach ($missingplans as $missingplan) {
             foreach ($missingplan['userids'] as $userid) {
-                api::create_plan_from_template($missingplan['template']->get_id(), $userid);
+                api::create_plan_from_template($missingplan['template'], $userid);
             }
         }
     }

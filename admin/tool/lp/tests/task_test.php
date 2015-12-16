@@ -46,6 +46,7 @@ class tool_lp_task_testcase extends advanced_testcase {
         $user2 = $dg->create_user();
         $user3 = $dg->create_user();
         $user4 = $dg->create_user();
+        $user5 = $dg->create_user();
 
         $cohort = $dg->create_cohort();
         $tpl = $lpg->create_template();
@@ -76,6 +77,34 @@ class tool_lp_task_testcase extends advanced_testcase {
         cohort_remove_member($cohort->id, $user4->id);
 
         $task->execute();
+        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+
+        // The template is now hidden, and I've added a user with a missing plan. Nothing should happen.
+        $tpl->set_visible(false);
+        $tpl->update();
+        cohort_add_member($cohort->id, $user5->id);
+        $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
+        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+        $task->execute();
+        $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
+        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+
+        // Now I set the template as visible again, the plan is created.
+        $tpl->set_visible(true);
+        $tpl->update();
+        $task->execute();
+        $this->assertTrue(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
+        $this->assertEquals(5, plan::count_records(array('templateid' => $tpl->get_id())));
+
+        // Let's unlink the plan and run the task again, it should not be recreated.
+        $plan = plan::get_record(array('userid' => $user5->id, 'templateid' => $tpl->get_id()));
+        \tool_lp\api::unlink_plan_from_template($plan);
+        $this->assertTrue(plan::record_exists_select('userid = ?', array($user5->id)));
+        $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
+        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+        $task->execute();
+        $this->assertTrue(plan::record_exists_select('userid = ?', array($user5->id)));
+        $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
         $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
 
         // Adding users to cohort that already exist in plans.
