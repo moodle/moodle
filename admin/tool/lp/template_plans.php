@@ -70,7 +70,7 @@ if ($template->get_visible()) {
     echo $form->display();
 } else {
     // Display message that plan can not be created if the template is hidden.
-    echo $output->notify_message(get_string('templateplanspagemessage', 'tool_lp'));
+    echo $output->notify_message(get_string('cannotcreateuserplanswhentemplatehidden', 'tool_lp'));
 }
 $page = new \tool_lp\output\template_plans_page($template, $url);
 echo $output->render($page);

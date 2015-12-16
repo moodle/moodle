@@ -149,18 +149,21 @@ class template extends persistent {
      * @return bool|lang_string
      */
     protected function validate_duedate($value) {
+        $neworupdated = true;
 
         // During update.
         if ($this->get_id()) {
             $before = $this->beforeupdate->get_duedate();
-            if (!empty($before) && $before < time() && $value != $before) {
+            $haschanged = $before != $value;
+
+            if (!empty($before) && $before < time() && $haschanged) {
                 // We cannot set a due date after it was reached.
                 return new lang_string('errorcannotchangeapastduedate', 'tool_lp');
             }
         }
 
-        // During create and update.
-        if (!empty($value) && $value < time()) {
+        // During create and update when it has changed.
+        if (!empty($value) && $value < time() && $haschanged) {
             // We cannot set the date in the past, but we can leave it empty.
             return new lang_string('errorcannotsetduedateinthepast', 'tool_lp');
         }

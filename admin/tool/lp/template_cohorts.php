@@ -77,7 +77,7 @@ echo $output->heading($title);
 echo $output->heading($subtitle, 3);
 if ($template->get_visible() == false) {
     // Display message to prevent that cohort will not be synchronzed if the template is hidden.
-    echo $output->notify_message(get_string('templatecohortpagemessage', 'tool_lp'));
+    echo $output->notify_message(get_string('templatecohortnotsyncedwhilehidden', 'tool_lp'));
 }
 echo $form->display();
 $page = new \tool_lp\output\template_cohorts_page($template, $url);
