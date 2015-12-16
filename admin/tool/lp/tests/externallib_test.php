@@ -2678,7 +2678,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $evidence = external::grade_competency_in_plan($plan->get_id(), $c1->get_id(), 1, false);
         $evidence = external::grade_competency_in_plan($plan->get_id(), $c1->get_id(), 2, true);
 
-        $summary = external::data_for_user_competency_summary_in_plan($this->user->id, $c1->get_id(), $plan->get_id());
+        $summary = external::data_for_user_competency_summary_in_plan($c1->get_id(), $plan->get_id());
         $this->assertTrue($summary->usercompetencysummary->cangrade);
         $this->assertTrue($summary->usercompetencysummary->cansuggest);
         $this->assertEquals('Evil', $summary->plan->name);

@@ -49,7 +49,7 @@ echo $output->header();
 echo $output->heading($title);
 echo $output->heading($subtitle, 3);
 
-$page = new \tool_lp\output\user_competency_summary_in_plan_page($userid, $competencyid, $planid);
+$page = new \tool_lp\output\user_competency_summary_in_plan($competencyid, $planid);
 echo $output->render($page);
 
 echo $output->footer();

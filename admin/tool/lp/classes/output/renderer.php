@@ -137,7 +137,7 @@ class renderer extends plugin_renderer_base {
      * @param renderable $page
      * @return string
      */
-    public function render_user_competency_summary_in_course_page(user_competency_summary_in_course_page $page) {
+    public function render_user_competency_summary_in_course(user_competency_summary_in_course $page) {
         $data = $page->export_for_template($this);
         return parent::render_from_template('tool_lp/user_competency_summary_in_course', $data);
     }
@@ -148,7 +148,7 @@ class renderer extends plugin_renderer_base {
      * @param renderable $page
      * @return string
      */
-    public function render_user_competency_summary_in_plan_page(user_competency_summary_in_plan_page $page) {
+    public function render_user_competency_summary_in_plan(user_competency_summary_in_plan $page) {
         $data = $page->export_for_template($this);
         return parent::render_from_template('tool_lp/user_competency_summary_in_plan', $data);
     }

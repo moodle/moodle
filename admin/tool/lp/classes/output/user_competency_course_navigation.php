@@ -83,7 +83,7 @@ class user_competency_course_navigation implements renderable, templatable {
         $data->courseid = $this->courseid;
         $data->baseurl = $this->baseurl;
 
-        if (has_capability('tool/lp:coursecompetencyread', $context)) {
+        if (has_capability('tool/lp:coursecompetencymanage', $context)) {
             $course = $DB->get_record('course', array('id' => $this->courseid));
             $currentgroup = optional_param('group', null, PARAM_INT);
             $select = groups_allgroups_course_menu($course, $PAGE->url, true, $currentgroup);
@@ -116,8 +116,14 @@ class user_competency_course_navigation implements renderable, templatable {
 
         $coursecompetencies = \tool_lp\api::list_course_competencies($this->courseid);
         $data->competencies = array();
+        $contextcache = array();
         foreach ($coursecompetencies as $coursecompetency) {
-            $coursecompetencycontext = $coursecompetency['competency']->get_context();
+            $frameworkid = $coursecompetency['competency']->get_competencyframeworkid();
+            if (!isset($contextcache[$frameworkid])) {
+                $contextcache[$frameworkid] = $coursecompetency['competency']->get_context();
+            }
+            $context = $contextcache[$frameworkid];
+            $coursecompetencycontext = $context;
             $exporter = new competency_exporter($coursecompetency['competency'], array('context' => $coursecompetencycontext));
             $competency = $exporter->export($output);
             if ($competency->id == $this->competencyid) {

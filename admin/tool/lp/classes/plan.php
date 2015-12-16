@@ -138,6 +138,23 @@ class plan extends persistent {
     }
 
     /**
+     * Get a single competency from this plan
+     *
+     * @return competency
+     */
+    public function get_competency($competencyid) {
+        $competencies = array();
+        if ($this->get_templateid()) {
+            // Get the competency from the template.
+            $competency = template_competency::get_competency($this->get_templateid(), $competencyid);
+        } else {
+            // Get the competency from the plan.
+            $competency = plan_competency::get_competency($this->get_id(), $competencyid);
+        }
+        return $competency;
+    }
+
+    /**
      * Get the context in which the plan is attached.
      *
      * @return context_user

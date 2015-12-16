@@ -34,7 +34,7 @@ use renderer_base;
 class evidence_exporter extends persistent_exporter {
 
     protected static function define_related() {
-        return array('actionuser' => '\\stdClass',
+        return array('actionuser' => 'stdClass',
                      'scale' => 'grade_scale');
     }
 

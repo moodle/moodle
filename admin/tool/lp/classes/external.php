@@ -58,6 +58,8 @@ use tool_lp\external\course_summary_exporter;
 use tool_lp\external\plan_exporter;
 use tool_lp\external\template_exporter;
 use tool_lp\external\evidence_exporter;
+use tool_lp\output\user_competency_summary_in_plan;
+use tool_lp\output\user_competency_summary_in_course;
 
 /**
  * This is the external API for this tool.
@@ -4213,11 +4215,6 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function data_for_user_competency_summary_in_plan_parameters() {
-        $userid = new external_value(
-            PARAM_INT,
-            'Data base record id for the user',
-            VALUE_REQUIRED
-        );
         $competencyid = new external_value(
             PARAM_INT,
             'Data base record id for the competency',
@@ -4230,7 +4227,6 @@ class external extends external_api {
         );
 
         $params = array(
-            'userid' => $userid,
             'competencyid' => $competencyid,
             'planid' => $planid,
         );
@@ -4240,60 +4236,25 @@ class external extends external_api {
     /**
      * Read a user competency summary.
      *
-     * @param int $userid The user id
      * @param int $competencyid The competency id
      * @param int $planid The plan id
      * @return \stdClass
      */
-    public static function data_for_user_competency_summary_in_plan($userid, $competencyid, $planid) {
-        global $PAGE, $DB, $CFG;
+    public static function data_for_user_competency_summary_in_plan($competencyid, $planid) {
+        global $PAGE;
         $params = self::validate_parameters(self::data_for_user_competency_summary_in_plan_parameters(),
                                             array(
-                                                'userid' => $userid,
                                                 'competencyid' => $competencyid,
                                                 'planid' => $planid
                                             ));
-        $context = context_user::instance($params['userid']);
+
+        $plan = api::read_plan($params['planid']);
+        $context = $plan->get_context();
         self::validate_context($context);
         $output = $PAGE->get_renderer('tool_lp');
-        $plan = api::read_plan($params['planid']);
-        if ($plan->get_userid() != $params['userid']) {
-            throw new invalid_parameter_exception('Invalid params. The plan does not belong to the user.');
-        }
 
-        $records = api::list_plan_competencies($planid);
-
-        $competency = $usercompetency = $usercompetencyplan = null;
-        foreach ($records as $record) {
-            if ($record->competency->get_id() == $params['competencyid']) {
-                $competency = $record->competency;
-                $usercompetency = $record->usercompetency;
-                $usercompetencyplan = $record->usercompetencyplan;
-                break;
-            }
-        }
-        if (empty($competency)) {
-            throw new invalid_parameter_exception('Invalid params. The competency does not belong to the plan.');
-        }
-
-        $relatedcompetencies = api::list_related_competencies($competency->get_id());
-        $userid = $params['userid'];
-        $user = $DB->get_record('user', array('id' => $userid));
-        $evidence = api::list_evidence($params['userid'], $params['competencyid'], $plan->get_id());
-
-        $params = array(
-            'competency' => $competency,
-            'usercompetency' => $usercompetency,
-            'usercompetencyplan' => $usercompetencyplan,
-            'evidence' => $evidence,
-            'user' => $user,
-            'plan' => $plan,
-            'relatedcompetencies' => $relatedcompetencies
-        );
-        $exporter = new user_competency_summary_in_plan_exporter(null, $params);
-        $data = $exporter->export($output);
-
-        return $data;
+        $renderable = new user_competency_summary_in_plan($params['competencyid'], $params['planid']);
+        return $renderable->export_for_template($output);
     }
 
     /**
@@ -4344,7 +4305,7 @@ class external extends external_api {
      * @return \stdClass
      */
     public static function data_for_user_competency_summary_in_course($userid, $competencyid, $courseid) {
-        global $PAGE, $DB, $CFG;
+        global $PAGE;
         $params = self::validate_parameters(self::data_for_user_competency_summary_in_course_parameters(),
                                             array(
                                                 'userid' => $userid,
@@ -4355,36 +4316,8 @@ class external extends external_api {
         self::validate_context($context);
         $output = $PAGE->get_renderer('tool_lp');
 
-        $competencies = api::list_user_competencies_in_course($params['courseid'], $params['userid']);
-        $usercompetency = false;
-        $competency = false;
-        foreach ($competencies as $usercoursecompetency) {
-            if ($usercoursecompetency->get_competencyid() == $params['competencyid']) {
-                $usercompetency = $usercoursecompetency;
-                $competency = $usercompetency->get_competency();
-            }
-        }
-        if (empty($usercompetency) || empty($competency)) {
-            throw new invalid_parameter_exception('Invalid params. The competency does not belong to the course.');
-        }
-
-        $relatedcompetencies = api::list_related_competencies($competency->get_id());
-        $user = $DB->get_record('user', array('id' => $params['userid']));
-        $evidence = api::list_evidence($params['userid'], $params['competencyid']);
-        $course = $DB->get_record('course', array('id' => $params['courseid']));
-
-        $params = array(
-            'competency' => $competency,
-            'usercompetency' => $usercompetency,
-            'evidence' => $evidence,
-            'user' => $user,
-            'course' => $course,
-            'relatedcompetencies' => $relatedcompetencies
-        );
-        $exporter = new user_competency_summary_in_course_exporter(null, $params);
-        $data = $exporter->export($output);
-
-        return $data;
+        $renderable = new user_competency_summary_in_course($params['userid'], $params['competencyid'], $params['courseid']);
+        return $renderable->export_for_template($output);
     }
 
     /**

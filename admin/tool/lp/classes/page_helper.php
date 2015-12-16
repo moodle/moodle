@@ -72,7 +72,7 @@ class page_helper {
             $title = get_string('coursecompetencies', 'tool_lp');
         }
 
-        $returnurl = new moodle_url('/admin/tool/lp/coursecompetencies.php', array('courseid' => 2));
+        $returnurl = new moodle_url('/admin/tool/lp/coursecompetencies.php', array('courseid' => $course->id));
 
         $heading = $context->get_context_name();
         $PAGE->set_pagelayout('incourse');

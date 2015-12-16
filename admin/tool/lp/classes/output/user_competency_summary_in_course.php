@@ -26,6 +26,8 @@ namespace tool_lp\output;
 use renderable;
 use renderer_base;
 use templatable;
+use tool_lp\api;
+use tool_lp\external\user_competency_summary_in_course_exporter;
 
 /**
  * User competency page class.
@@ -34,7 +36,7 @@ use templatable;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_competency_summary_in_course_page implements renderable, templatable {
+class user_competency_summary_in_course implements renderable, templatable {
 
     /** @var userid */
     protected $userid;
@@ -65,6 +67,30 @@ class user_competency_summary_in_course_page implements renderable, templatable 
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
-        return \tool_lp\external::data_for_user_competency_summary_in_course($this->userid, $this->competencyid, $this->courseid);
+        global $DB;
+
+        $usercompetency = api::get_user_competency_in_course($this->courseid, $this->userid, $this->competencyid);
+        $competency = $usercompetency->get_competency();
+        if (empty($usercompetency) || empty($competency)) {
+            throw new invalid_parameter_exception('Invalid params. The competency does not belong to the course.');
+        }
+
+        $relatedcompetencies = api::list_related_competencies($competency->get_id());
+        $user = $DB->get_record('user', array('id' => $this->userid));
+        $evidence = api::list_evidence($this->userid, $this->competencyid);
+        $course = $DB->get_record('course', array('id' => $this->courseid));
+
+        $params = array(
+            'competency' => $competency,
+            'usercompetency' => $usercompetency,
+            'evidence' => $evidence,
+            'user' => $user,
+            'course' => $course,
+            'relatedcompetencies' => $relatedcompetencies
+        );
+        $exporter = new user_competency_summary_in_course_exporter(null, $params);
+        $data = $exporter->export($output);
+
+        return $data;
     }
 }

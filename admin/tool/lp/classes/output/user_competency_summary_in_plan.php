@@ -24,12 +24,9 @@
 namespace tool_lp\output;
 
 use renderable;
-use context_user;
 use templatable;
-use stdClass;
 use tool_lp\api;
-use tool_lp\external\user_competency_summary_exporter;
-use tool_lp\external\plan_exporter;
+use tool_lp\external\user_competency_summary_in_plan_exporter;
 
 /**
  * User competency page class.
@@ -38,10 +35,7 @@ use tool_lp\external\plan_exporter;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_competency_summary_in_plan_page implements renderable, templatable {
-
-    /** @var userid */
-    protected $userid;
+class user_competency_summary_in_plan implements renderable, templatable {
 
     /** @var competencyid */
     protected $competencyid;
@@ -52,12 +46,10 @@ class user_competency_summary_in_plan_page implements renderable, templatable {
     /**
      * Construct.
      *
-     * @param $userid
      * @param $competencyid
      * @param $planid
      */
-    public function __construct($userid, $competencyid, $planid) {
-        $this->userid = $userid;
+    public function __construct($competencyid, $planid) {
         $this->competencyid = $competencyid;
         $this->planid = $planid;
     }
@@ -69,6 +61,35 @@ class user_competency_summary_in_plan_page implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(\renderer_base $output) {
-        return \tool_lp\external::data_for_user_competency_summary_in_plan($this->userid, $this->competencyid, $this->planid);
+        global $DB;
+
+        $plan = api::read_plan($this->planid);
+        $pc = api::get_plan_competency($this->planid, $this->competencyid);
+        $competency = $pc->competency;
+        $usercompetency = $pc->usercompetency;
+        $usercompetencyplan = $pc->usercompetencyplan;
+
+        if (empty($competency)) {
+            throw new invalid_parameter_exception('Invalid params. The competency does not belong to the plan.');
+        }
+
+        $relatedcompetencies = api::list_related_competencies($competency->get_id());
+        $userid = $plan->get_userid();
+        $user = $DB->get_record('user', array('id' => $userid));
+        $evidence = api::list_evidence($userid, $this->competencyid, $plan->get_id());
+
+        $params = array(
+            'competency' => $competency,
+            'usercompetency' => $usercompetency,
+            'usercompetencyplan' => $usercompetencyplan,
+            'evidence' => $evidence,
+            'user' => $user,
+            'plan' => $plan,
+            'relatedcompetencies' => $relatedcompetencies
+        );
+        $exporter = new user_competency_summary_in_plan_exporter(null, $params);
+        $data = $exporter->export($output);
+
+        return $data;
     }
 }

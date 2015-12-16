@@ -139,6 +139,31 @@ class template_competency extends persistent {
     }
 
     /**
+     * Get a single competency from the template (only if it is really in the template).
+     *
+     * @param int $templateid The template id
+     * @param int $competencyid The competency id
+     * @return competency
+     */
+    public static function get_competency($templateid, $competencyid) {
+        global $DB;
+
+        $sql = 'SELECT comp.*
+                  FROM {' . competency::TABLE . '} comp
+                  JOIN {' . self::TABLE . '} tplcomp
+                    ON tplcomp.competencyid = comp.id
+                 WHERE tplcomp.templateid = ? AND tplcomp.competencyid = ?';
+        $params = array($templateid, $competencyid);
+
+        $result = $DB->get_record_sql($sql, $params);
+        if (!$result) {
+            throw new coding_exception('The competency does not belong to this template: ' . $competencyid . ', ' . $templateid);
+        }
+
+        return new competency(0, $result);
+    }
+
+    /**
      * List the competencies in this template.
      *
      * @param int $templateid The template id

@@ -700,6 +700,49 @@ class api {
     }
 
     /**
+     * Get a single competency associated to a course.
+     *
+     * @param mixed $courseorid The course, or its ID.
+     * @param int $competencyid The competency id
+     * @return array( array(
+     *                   'competency' => \tool_lp\competency,
+     *                   'coursecompetency' => \tool_lp\course_competency
+     *              ))
+     */
+    public static function get_course_comptency($courseorid) {
+        $course = $courseorid;
+        if (!is_object($courseorid)) {
+            $course = get_course($courseorid);
+        }
+
+        // Check the user have access to the course.
+        self::validate_course($course);
+        $context = context_course::instance($course->id);
+        $onlyvisible = 1;
+
+        $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
+        if (!has_any_capability($capabilities, $context)) {
+            throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
+        }
+
+        $result = array();
+
+        // TODO We could improve the performance of this into one single query.
+        $coursecompetencies = course_competency::list_course_competencies($course->id, false);
+        $competencies = course_competency::list_competencies($course->id, false);
+
+        // Build the return values.
+        foreach ($coursecompetencies as $key => $coursecompetency) {
+            $result[] = array(
+                'competency' => $competencies[$coursecompetency->get_competencyid()],
+                'coursecompetency' => $coursecompetency
+            );
+        }
+
+        return $result;
+    }
+
+    /**
      * List the competencies associated to a course.
      *
      * @param mixed $courseorid The course, or its ID.
@@ -741,6 +784,39 @@ class api {
     }
 
     /**
+     * Get a user competency in a course.
+     *
+     * @param int $courseid The id of the course to check.
+     * @param int $userid The id of the course to check.
+     * @param int $competencyid The id of the competency.
+     * @return user_competency
+     */
+    public static function get_user_competency_in_course($courseid, $userid, $competencyid) {
+        // First we do a permissions check.
+        $context = context_course::instance($courseid);
+
+        $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
+        if (!has_any_capability($capabilities, $context)) {
+             throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
+        }
+
+        // This will throw an exception if the competency does not belong to the course.
+        $competency = course_competency::get_competency($courseid, $competencyid);
+
+        $existing = user_competency::get_multiple($userid, array($competencyid));
+        // Create missing.
+        $found = count($existing);
+        if ($found) {
+            $uc = array_pop($existing);
+        } else {
+            $uc = user_competency::create_relation($userid, $coursecompetency->get_id());
+            $uc->create();
+        }
+
+        return $uc;
+    }
+
+    /**
      * List all the user competencies in a course.
      *
      * @param int $courseid The id of the course to check.
@@ -757,15 +833,12 @@ class api {
              throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
         }
 
-        if (has_capability('tool/lp:coursecompetencymanage', $context)) {
-            $onlyvisible = 0;
-        }
-
         // OK - all set.
-        $competencylist = course_competency::list_competencies($courseid, $onlyvisible);
+        $competencylist = course_competency::list_competencies($courseid, false);
 
         $existing = user_competency::get_multiple($userid, $competencylist);
         // Create missing.
+        $orderedusercompetencies = array();
 
         $somemissing = false;
         foreach ($competencylist as $coursecompetency) {
@@ -773,22 +846,18 @@ class api {
             foreach ($existing as $usercompetency) {
                 if ($usercompetency->get_competencyid() == $coursecompetency->get_id()) {
                     $found = true;
+                    $orderedusercompetencies[$usercompetency->get_id()] = $usercompetency;
+                    break;
                 }
             }
             if (!$found) {
-                $somemissing = true;
                 $uc = user_competency::create_relation($userid, $coursecompetency->get_id());
                 $uc->create();
+                $orderedusercompetencies[$uc->get_id()] = $uc;
             }
         }
-        if ($somemissing) {
-            // Fetch again.
-            $all = user_competency::get_multiple($userid, $competencylist);
-        } else {
-            $all = $existing;
-        }
 
-        return $all;
+        return $orderedusercompetencies;
     }
 
     /**
@@ -1868,6 +1937,63 @@ class api {
     }
 
     /**
+     * Get a single competency from the user plan.
+     *
+     * @param  int $planorid The plan, or its ID.
+     * @param  int $competencyid The competency id.
+     * @return (object) array(
+     *                      'competency' => \tool_lp\competency,
+     *                      'usercompetency' => \tool_lp\user_competency
+     *                      'usercompetencyplan' => \tool_lp\user_competency_plan
+     *                  )
+     *         The values of of keys usercompetency and usercompetencyplan cannot be defined at the same time.
+     */
+    public static function get_plan_competency($planorid, $competencyid) {
+        $plan = $planorid;
+        if (!is_object($planorid)) {
+            $plan = new plan($planorid);
+        }
+
+        if (!$plan->can_read()) {
+            $context = context_user::instance($plan->get_userid());
+            throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
+        }
+
+        $competency = $plan->get_competency($competencyid);
+
+        // Get user competencies from user_competency_plan if the plan status is set to complete.
+        $iscompletedplan = $plan->get_status() == plan::STATUS_COMPLETE;
+        if ($iscompletedplan) {
+            $usercompetencies = user_competency_plan::get_multiple($plan->get_userid(), $plan->get_id(), array($competencyid));
+            $ucresultkey = 'usercompetencyplan';
+        } else {
+            $usercompetencies = user_competency::get_multiple($plan->get_userid(), array($competencyid));
+            $ucresultkey = 'usercompetency';
+        }
+
+        $found = count($usercompetencies);
+
+        if ($found) {
+            $uc = array_pop($usercompetencies);
+        } else {
+            if ($iscompletedplan) {
+                throw new coding_exception('A user competency plan is missing');
+            } else {
+                $uc = user_competency::create_relation($plan->get_userid(), $competency->get_id());
+            }
+        }
+
+        $plancompetency = (object) array(
+            'competency' => $competency,
+            'usercompetency' => null,
+            'usercompetencyplan' => null
+        );
+        $plancompetency->$ucresultkey = $uc;
+
+        return $plancompetency;
+    }
+
+    /**
      * List the competencies in a user plan.
      *
      * @param  int $planorid The plan, or its ID.
@@ -2455,15 +2581,10 @@ class api {
                                          $order = 'DESC',
                                          $skip = 0,
                                          $limit = 0) {
-        global $USER;
 
-        $context = context_user::instance($userid);
-        if ($userid == $USER->id) {
-            if (!has_any_capability(array('tool/lp:planview', 'tool/lp:planviewown'), $context)) {
-                throw new required_capability_exception($context, 'tool/lp:planviewown', 'nopermissions', '');
-            }
-        } else {
-            require_capability('tool/lp:planview', $context);
+        if (!plan::can_read_user($userid)) {
+            $context = context_user::instance($userid);
+            throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
         }
 
         // TODO - handle archived plans.
@@ -2796,19 +2917,11 @@ class api {
             require_capability('tool/lp:competencysuggestgrade', $context);
         }
 
-        // Verify the data.
-
-
-        $userplancompetencies = self::list_plan_competencies($plan);
-        $competency = null;
-
-        foreach ($userplancompetencies as $userplancompetency) {
-            if ($userplancompetency->competency->get_id() == $competencyid) {
-                $competency = $userplancompetency->competency;
-            }
-        }
-        if (!$competency) {
-            throw new coding_exception('The competency does not belong to this plan: ' . $competencyid . ', ' . $planid);
+        // Throws exception if competency not in plan.
+        $competency = $plan->get_competency($competencyid);
+        $competencycontext = $competency->get_context();
+        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $competencycontext)) {
+             throw new required_capability_exception($competencycontext, 'tool/lp:competencyread', 'nopermissions', '');
         }
 
         $action = evidence::ACTION_OVERRIDE;
@@ -2855,18 +2968,11 @@ class api {
             require_capability('tool/lp:competencysuggestgrade', $context);
         }
 
-        $coursecompetencies = self::list_course_competencies($course);
-        // Verify the data.
-
-        $competency = null;
-
-        foreach ($coursecompetencies as $coursecompetency) {
-            if ($coursecompetency['competency']->get_id() == $competencyid) {
-                $competency = $coursecompetency['competency'];
-            }
-        }
-        if (!$competency) {
-            throw new coding_exception('The competency does not belong to this course: ' . $competencyid . ', ' . $courseid);
+        // Throws exception if competency not in course.
+        $competency = course_competency::get_competency($course->id, $competencyid);
+        $competencycontext = $competency->get_context();
+        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $competencycontext)) {
+             throw new required_capability_exception($competencycontext, 'tool/lp:competencyread', 'nopermissions', '');
         }
 
         $action = evidence::ACTION_OVERRIDE;

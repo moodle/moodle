@@ -246,6 +246,31 @@ class course_competency extends persistent {
     }
 
     /**
+     * Get a single competency from the course (only if it is really in the course).
+     *
+     * @param int $courseid The course id
+     * @param int $competencyid The competency id
+     * @return competency
+     */
+    public static function get_competency($courseid, $competencyid) {
+        global $DB;
+
+        $sql = 'SELECT comp.*
+                  FROM {' . competency::TABLE . '} comp
+                  JOIN {' . self::TABLE . '} crscomp
+                    ON crscomp.competencyid = comp.id
+                 WHERE crscomp.courseid = ? AND crscomp.competencyid = ?';
+        $params = array($courseid, $competencyid);
+
+        $result = $DB->get_record_sql($sql, $params);
+        if (!$result) {
+            throw new coding_exception('The competency does not belong to this course: ' . $competencyid . ', ' . $courseid);
+        }
+
+        return new competency(0, $result);
+    }
+
+    /**
      * Hook to execute after delete.
      *
      * @param bool $result Whether or not the delete was successful.
@@ -260,6 +285,29 @@ class course_competency extends persistent {
         $table = '{' . self::TABLE . '}';
         $sql = "UPDATE $table SET sortorder = sortorder -1  WHERE courseid = ? AND sortorder > ?";
         $DB->execute($sql, array($this->get_courseid(), $this->get_sortorder()));
+    }
+
+    /**
+     * Get the specified course_competency in this course.
+     *
+     * @param int $courseid The course id
+     * @param int $competencyid The competency id
+     * @return course_competency
+     */
+    public static function get_course_competency($courseid, $competencyid) {
+        global $DB;
+
+        $sql = 'SELECT crscomp.*
+                  FROM {' . self::TABLE . '} crscomp
+                 WHERE crscomp.courseid = ? AND crscomp.competencyid = ?';
+        $params = array($courseid, $competencyid);
+
+        $result = $DB->get_record_sql($sql, $params);
+        if (!$result) {
+            throw new coding_exception('The competency does not belong to this course: ' . $competencyid . ', ' . $courseid);
+        }
+
+        return new course_competency(0, $result);
     }
 
     /**
