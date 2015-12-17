@@ -41,7 +41,9 @@
             <th scope="col">{{#str}}planname, tool_lp{{/str}}</th>
             <th scope="col">{{#str}}templatebased, tool_lp{{/str}}</th>
             <th scope="col">{{#str}}status, tool_lp{{/str}}</th>
+            {{#canmanageuserplans}}
             <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
+            {{/canmanageuserplans}}
         </tr>
     </thead>
     <tbody>
@@ -59,7 +61,7 @@
                {{/isbasedontemplate}}
             </td>
             <td>{{statusname}}</td>
-            {{#canmanage}}
+            {{#canmanageuserplans}}
             <td>
                 <div style="display: inline-block;">
                 <ul title="{{#str}}edit{{/str}}" class="planactions">
@@ -100,7 +102,7 @@
                 </ul>
             </div>
             </td>
-            {{/canmanage}}
+            {{/canmanageuserplans}}
         </tr>
         {{/plans}}
     </tbody>

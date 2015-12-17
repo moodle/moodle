@@ -3141,6 +3141,7 @@ class external extends external_api {
                 new external_value(PARAM_RAW, 'HTML for a navigation item that should be on this page')
             ),
             'canreaduserevidence' => new external_value(PARAM_BOOL, 'Can the current user view the user\'s evidence'),
+            'canmanageuserplans' => new external_value(PARAM_BOOL, 'Can the current user manage the user\'s plans'),
         ));
     }
 
