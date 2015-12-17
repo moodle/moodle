@@ -21,8 +21,8 @@
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'jquery'],
-       function(ajax, notification, templates, Ariatree, $) {
+define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'tool_lp/competency_outcomes', 'jquery'],
+       function(ajax, notification, templates, Ariatree, CompOutcomes, $) {
 
     // Private variables and functions.
     /** @var {Object[]} competencies - Cached list of competencies */
@@ -218,6 +218,21 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'jqu
          */
         hasChildren: function(id) {
             return this.getChildren(id).length > 0;
+        },
+
+        /**
+         * Does the competency have a rule?
+         *
+         * @param  {Number}  id The competency ID.
+         * @return {Boolean}
+         */
+        hasRule: function(id) {
+            var comp = this.getCompetency(id);
+            if (comp) {
+                return comp.ruleoutcome != CompOutcomes.OUTCOME_NONE
+                    && comp.ruletype;
+            }
+            return false;
         },
 
         /**

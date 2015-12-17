@@ -353,6 +353,17 @@ class competency extends persistent {
     }
 
     /**
+     * Reset the rule.
+     *
+     * @return void
+     */
+    public function reset_rule() {
+        $this->set_ruleoutcome(static::OUTCOME_NONE);
+        $this->set_ruletype(null);
+        $this->set_ruleconfig(null);
+    }
+
+    /**
      * Helper method to set the path.
      *
      * @param competency $parent The parent competency object.

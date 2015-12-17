@@ -72,8 +72,30 @@ define(['jquery',
             // We are adding at a sub node.
             params.parentid = parent.id;
         }
-        var queryparams = $.param(params);
-        window.location = url.relativeUrl('/admin/tool/lp/editcompetency.php?' + queryparams);
+
+        var relocate = function() {
+            var queryparams = $.param(params);
+            window.location = url.relativeUrl('/admin/tool/lp/editcompetency.php?' + queryparams);
+        };
+
+        if (parent !== null && treeModel.hasRule(parent.id)) {
+            str.get_strings([
+                { key: 'confirm', component: 'moodle' },
+                { key: 'addingcompetencywillresetparentrule', component: 'tool_lp', param: parent.shortname },
+                { key: 'yes', component: 'core' },
+                { key: 'no', component: 'core' }
+            ]).done(function (strings) {
+                notification.confirm(
+                    strings[0],
+                    strings[1],
+                    strings[2],
+                    strings[3],
+                    relocate
+                );
+            }).fail(notification.exception);
+        } else {
+            relocate();
+        }
     };
 
     /**
@@ -81,14 +103,6 @@ define(['jquery',
      * @method doMove
      */
     var doMove = function() {
-        if (typeof (moveTarget) === "undefined") {
-            // This is a top level node.
-            moveTarget = 0;
-        }
-
-        if (moveTarget == moveSource) {
-            return;
-        }
         var frameworkid = $('[data-region="filtercompetencies"]').data('frameworkid');
         var requests = ajax.call([{
             methodname: 'tool_lp_set_parent_competency',
@@ -99,6 +113,61 @@ define(['jquery',
                     search: $('[data-region="filtercompetencies"] input').val() }
         }]);
         requests[1].done(reloadPage).fail(notification.exception);
+    };
+
+    /**
+     * Confirms a competency move.
+     *
+     * @method confirmMove
+     */
+    var confirmMove = function() {
+        moveTarget = typeof moveTarget === "undefined" ? 0 : moveTarget;
+        if (moveTarget == moveSource) {
+            // No move to do.
+            return;
+        }
+
+        var targetComp = treeModel.getCompetency(moveTarget) || {},
+            sourceComp = treeModel.getCompetency(moveSource) || {},
+            confirmMessage = 'movecompetencywillresetrules',
+            showConfirm = false;
+
+        // We shouldn't be moving the competency to the same parent.
+        if (sourceComp.parentid == moveTarget) {
+            return;
+        }
+
+        // If we are moving to a child of self.
+        if (targetComp.path && targetComp.path.indexOf('/' + sourceComp.id + '/') >= 0) {
+            confirmMessage = 'movecompetencytochildofselfwillresetrules';
+
+            // Show a confirmation if self has rules, as they'll disappear.
+            showConfirm = showConfirm || treeModel.hasRule(sourceComp.id);
+        }
+
+        // Show a confirmation if the current parent, or the destination have rules.
+        showConfirm = showConfirm || (treeModel.hasRule(targetComp.id) || treeModel.hasRule(sourceComp.parentid));
+
+        // Show confirm, and/or do the things.
+        if (showConfirm) {
+            str.get_strings([
+                { key: 'confirm', component: 'moodle' },
+                { key: confirmMessage, component: 'tool_lp' },
+                { key: 'yes', component: 'moodle' },
+                { key: 'no', component: 'moodle' }
+            ]).done(function (strings) {
+                notification.confirm(
+                    strings[0], // Confirm.
+                    strings[1], // Delete competency X?
+                    strings[2], // Delete.
+                    strings[3], // Cancel.
+                    doMove
+                );
+            }).fail(notification.exception);
+
+        } else {
+            doMove();
+        }
     };
 
     /**
@@ -116,7 +185,7 @@ define(['jquery',
         });
         treeRoot.show();
 
-        body.on('click', '[data-action="move"]', function() { popup.close(); doMove(); });
+        body.on('click', '[data-action="move"]', function() { popup.close(); confirmMove(); });
         body.on('click', '[data-action="cancel"]', function() { popup.close(); });
     };
 
@@ -144,7 +213,8 @@ define(['jquery',
      * A node was chosen and "Move" was selected from the menu. Open a popup to select the target.
      * @method moveHandler
      */
-    var moveHandler = function() {
+    var moveHandler = function(e) {
+        e.preventDefault();
         var competency = $('[data-region="competencyactions"]').data('competency');
 
         // Remember what we are moving.
@@ -417,31 +487,27 @@ define(['jquery',
      * @method deleteCompetencyHandler
      */
     var deleteCompetencyHandler = function() {
-        var competency = $('[data-region="competencyactions"]').data('competency');
+        var competency = $('[data-region="competencyactions"]').data('competency'),
+            confirmMessage = 'deletecompetency';
 
-        var context = {
-            competency: competency
-        };
+        if (treeModel.hasRule(competency.parentid)) {
+            confirmMessage = 'deletecompetencyparenthasrule';
+        }
 
-        templates.render('tool_lp/competency_summary', context)
-           .done(function(html) {
-
-               str.get_strings([
-                   { key: 'confirm', component: 'moodle' },
-                   { key: 'deletecompetency', component: 'tool_lp', param: html },
-                   { key: 'delete', component: 'moodle' },
-                   { key: 'cancel', component: 'moodle' }
-               ]).done(function (strings) {
-                    notification.confirm(
-                       strings[0], // Confirm.
-                       strings[1], // Delete competency X?
-                       strings[2], // Delete.
-                       strings[3], // Cancel.
-                       doDelete
-                    );
-               }).fail(notification.exception);
-           }).fail(notification.exception);
-
+        str.get_strings([
+            { key: 'confirm', component: 'moodle' },
+            { key: confirmMessage, component: 'tool_lp', param: competency.shortname },
+            { key: 'delete', component: 'moodle' },
+            { key: 'cancel', component: 'moodle' }
+        ]).done(function (strings) {
+            notification.confirm(
+                strings[0], // Confirm.
+                strings[1], // Delete competency X?
+                strings[2], // Delete.
+                strings[3], // Cancel.
+                doDelete
+            );
+        }).fail(notification.exception);
     };
 
     /**
@@ -489,7 +555,7 @@ define(['jquery',
         moveTarget = $(e.target).parent().data('id');
         $(this).removeClass('currentdragtarget');
 
-        doMove();
+        confirmMove();
     };
 
     /**

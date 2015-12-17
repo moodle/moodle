@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 use tool_lp\api;
+use tool_lp\competency;
 use tool_lp\evidence;
 use tool_lp\user_competency;
 
@@ -1852,5 +1853,171 @@ class tool_lp_api_testcase extends advanced_testcase {
             $ucp2[] = $id;
         }
         $this->assertEquals(0, count(array_diff($ucp1, $ucp2)));
+    }
+
+    protected function setup_framework_for_reset_rules_tests() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+
+        $this->setAdminUser();
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c1a = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1->get_id()));
+        $c1a1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1a->get_id()));
+        $c1a1a = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1a1->get_id()));
+        $c1b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c1b1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1b->get_id()));
+        $c1b1a = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1b1->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2a = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+
+        $c1->set_ruleoutcome(competency::OUTCOME_EVIDENCE);
+        $c1->set_ruletype('tool_lp\\competency_rule_all');
+        $c1->update();
+        $c1a->set_ruleoutcome(competency::OUTCOME_EVIDENCE);
+        $c1a->set_ruletype('tool_lp\\competency_rule_all');
+        $c1a->update();
+        $c1a1->set_ruleoutcome(competency::OUTCOME_EVIDENCE);
+        $c1a1->set_ruletype('tool_lp\\competency_rule_all');
+        $c1a1->update();
+        $c1b->set_ruleoutcome(competency::OUTCOME_EVIDENCE);
+        $c1b->set_ruletype('tool_lp\\competency_rule_all');
+        $c1b->update();
+        $c2->set_ruleoutcome(competency::OUTCOME_EVIDENCE);
+        $c2->set_ruletype('tool_lp\\competency_rule_all');
+        $c2->update();
+
+        return array(
+            'f1' => $f1,
+            'c1' => $c1,
+            'c1a' => $c1a,
+            'c1a1' => $c1a1,
+            'c1a1a' => $c1a1a,
+            'c1b' => $c1b,
+            'c1b1' => $c1b1,
+            'c1b1a' => $c1b1a,
+            'c2' => $c2,
+            'c2a' => $c2a,
+        );
+    }
+
+    public function test_moving_competency_reset_rules_updown() {
+        extract($this->setup_framework_for_reset_rules_tests());
+
+        // Moving up and down doesn't change anything.
+        api::move_down_competency($c1a->get_id());
+        $c1->read();
+        $c1a->read();
+        $c1a1->read();
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c1->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c1a->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c1a1->get_ruleoutcome());
+        api::move_up_competency($c1a->get_id());
+        $c1->read();
+        $c1a->read();
+        $c1a1->read();
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c1->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c1a->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c1a1->get_ruleoutcome());
+    }
+
+    public function test_moving_competency_reset_rules_parent() {
+        extract($this->setup_framework_for_reset_rules_tests());
+
+        // Moving out of parent will reset the parent, and the destination.
+        api::set_parent_competency($c1a->get_id(), $c1b->get_id());
+        $c1->read();
+        $c1a->read();
+        $c1a1->read();
+        $c1b->read();
+        $c2->read();
+        $this->assertEquals(competency::OUTCOME_NONE, $c1->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c1a->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c1a1->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_NONE, $c1b->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c2->get_ruleoutcome());
+    }
+
+    public function test_moving_competency_reset_rules_totoplevel() {
+        extract($this->setup_framework_for_reset_rules_tests());
+
+        // Moving to top level only affects the initial parent.
+        api::set_parent_competency($c1a1->get_id(), 0);
+        $c1->read();
+        $c1a->read();
+        $c1a1->read();
+        $c1b->read();
+        $c2->read();
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c1->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_NONE, $c1a->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c1a1->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c1b->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c2->get_ruleoutcome());
+    }
+
+    public function test_moving_competency_reset_rules_fromtoplevel() {
+        extract($this->setup_framework_for_reset_rules_tests());
+
+        // Moving from top level only affects the destination parent.
+        api::set_parent_competency($c2->get_id(), $c1a1->get_id());
+        $c1->read();
+        $c1a->read();
+        $c1a1->read();
+        $c1b->read();
+        $c2->read();
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c1->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c1a->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_NONE, $c1a1->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c1b->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c2->get_ruleoutcome());
+    }
+
+    public function test_moving_competency_reset_rules_child() {
+        extract($this->setup_framework_for_reset_rules_tests());
+
+        // Moving to a child of self resets self, parent and destination.
+        api::set_parent_competency($c1a->get_id(), $c1a1->get_id());
+        $c1->read();
+        $c1a->read();
+        $c1a1->read();
+        $c1b->read();
+        $c2->read();
+        $this->assertEquals(competency::OUTCOME_NONE, $c1->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_NONE, $c1a->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_NONE, $c1a1->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c1b->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c2->get_ruleoutcome());
+    }
+
+    public function test_create_competency_reset_rules() {
+        extract($this->setup_framework_for_reset_rules_tests());
+
+        // Adding a new competency resets the rule of its parent.
+        api::create_competency((object) array('shortname' => 'A', 'parentid' => $c1->get_id(), 'idnumber' => 'A',
+            'competencyframeworkid' => $f1->get_id()));
+        $c1->read();
+        $c1a->read();
+        $c1a1->read();
+        $c1b->read();
+        $c2->read();
+        $this->assertEquals(competency::OUTCOME_NONE, $c1->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c1a->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c1a1->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c1b->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c2->get_ruleoutcome());
+    }
+
+    public function test_delete_competency_reset_rules() {
+        extract($this->setup_framework_for_reset_rules_tests());
+
+        // Deleting a competency resets the rule of its parent.
+        api::delete_competency($c1a->get_id());
+        $c1->read();
+        $c1b->read();
+        $c2->read();
+        $this->assertEquals(competency::OUTCOME_NONE, $c1->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c1b->get_ruleoutcome());
+        $this->assertEquals(competency::OUTCOME_EVIDENCE, $c2->get_ruleoutcome());
     }
 }

@@ -85,9 +85,15 @@ class api {
 
         // Reset the sortorder, use reorder instead.
         $competency->set_sortorder(null);
+        $competency->create();
 
-        // OK - all set.
-        $id = $competency->create();
+        // Reset the rule of the parent.
+        $parent = $competency->get_parent();
+        if ($parent) {
+            $parent->reset_rule();
+            $parent->update();
+        }
+
         return $competency;
     }
 
@@ -104,6 +110,13 @@ class api {
 
         // First we do a permissions check.
         require_capability('tool/lp:competencymanage', $competency->get_context());
+
+        // Reset the rule of the parent.
+        $parent = $competency->get_parent();
+        if ($parent) {
+            $parent->reset_rule();
+            $parent->update();
+        }
 
         // OK - all set.
         return $competency->delete();
@@ -195,39 +208,62 @@ class api {
      * @return boolean
      */
     public static function set_parent_competency($id, $newparentid) {
+        global $DB;
         $current = new competency($id);
 
         // First we do a permissions check.
         require_capability('tool/lp:competencymanage', $current->get_context());
-
-        // This will throw an exception if the parent does not exist.
-
-        // Check the current one too.
-        $parentframeworkid = $current->get_competencyframeworkid();
-        $parentpath = '/0/';
-        if ($newparentid) {
-            $parent = new competency($newparentid);
-            $parentframeworkid = $parent->get_competencyframeworkid();
-            $parentpath = $parent->get_path();
+        if ($id == $newparentid) {
+            throw new coding_exception('Can not set a competency as a parent of itself.');
+        } if ($newparentid == $current->get_parentid()) {
+            throw new coding_exception('Can not move a competency to the same location.');
         }
 
-        // If we are moving a node to a child of itself, promote all the child nodes by one level.
+        // Some great variable assignment right here.
+        $currentparent = $current->get_parent();
+        $parent = !empty($newparentid) ? new competency($newparentid) : null;
+        $parentpath = !empty($parent) ? $parent->get_path() : '/0/';
 
+        // We're going to change quite a few things.
+        $transaction = $DB->start_delegated_transaction();
+
+        // If we are moving a node to a child of itself:
+        // - promote all the child nodes by one level.
+        // - remove the rule on self.
+        // - re-read the parent.
         $newparents = explode('/', $parentpath);
         if (in_array($current->get_id(), $newparents)) {
-            $filters = array('parentid' => $current->get_id(), 'competencyframeworkid' => $current->get_competencyframeworkid());
-            $children = self::list_competencies($filters, 'id');
-
+            $children = competency::get_records(array('parentid' => $current->get_id()), 'id');
             foreach ($children as $child) {
                 $child->set_parentid($current->get_parentid());
                 $child->update();
             }
+
+            // Reset the rule on self as our children have changed.
+            $current->reset_rule();
+
+            // The destination parent is one of our descendants, we need to re-fetch its values (path, parentid).
+            $parent->read();
         }
 
-        $current->set_parentid($newparentid);
+        // Reset the rules of initial parent and destination.
+        if (!empty($currentparent)) {
+            $currentparent->reset_rule();
+            $currentparent->update();
+        }
+        if (!empty($parent)) {
+            $parent->reset_rule();
+            $parent->update();
+        }
 
-        // OK - all set.
-        return $current->update();
+        // Do the actual move.
+        $current->set_parentid($newparentid);
+        $current->update();
+
+        // All right, let's commit this.
+        $transaction->allow_commit();
+
+        return true;
     }
 
     /**
