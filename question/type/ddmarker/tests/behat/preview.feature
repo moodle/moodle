@@ -24,7 +24,7 @@ Feature: Preview a drag-drop onto image question
     And I follow "Course 1"
     And I navigate to "Question bank" node in "Course administration"
 
-  @javascript
+  @javascript @_bug_phantomjs
   Scenario: Preview a question using the mouse.
     When I click on "Preview" "link" in the "Drag markers" "table_row"
     And I switch to "questionpreview" window
