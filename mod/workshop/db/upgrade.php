@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool result
  */
 function xmldb_workshop_upgrade($oldversion) {
-    global $CFG;
+    global $CFG, $DB;
 
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
@@ -46,5 +46,30 @@ function xmldb_workshop_upgrade($oldversion) {
     // Moodle v3.0.0 release upgrade line.
     // Put any upgrade step following this.
 
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2016022200) {
+
+        // Define field submissionfiletypes to be added to workshop.
+        $table = new xmldb_table('workshop');
+        $field = new xmldb_field('submissionfiletypes', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'nattachments');
+
+        // Conditionally launch add field submissionfiletypes.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field overallfeedbackfiletypes to be added to workshop.
+        $field = new xmldb_field('overallfeedbackfiletypes',
+                XMLDB_TYPE_CHAR, '255', null, null, null, null, 'overallfeedbackfiles');
+
+        // Conditionally launch add field overallfeedbackfiletypes.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Workshop savepoint reached.
+        upgrade_mod_savepoint(true, 2016022200, 'workshop');
+    }
     return true;
 }

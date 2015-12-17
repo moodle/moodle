@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -124,6 +123,9 @@ class workshop {
     /** @var int number of allowed submission attachments and the files embedded into submission */
     public $nattachments;
 
+     /** @var string list of allowed file types that are allowed to be embedded into submission */
+    public $submissionfiletypes = null;
+
     /** @var bool allow submitting the work after the deadline */
     public $latesubmissions;
 
@@ -159,6 +161,9 @@ class workshop {
 
     /** @var int maximum number of overall feedback attachments */
     public $overallfeedbackfiles;
+
+    /** @var string list of allowed file types that can be attached to the overall feedback */
+    public $overallfeedbackfiletypes = null;
 
     /** @var int maximum size of one file attached to the overall feedback */
     public $overallfeedbackmaxbytes;
@@ -410,6 +415,40 @@ class workshop {
             $a->distanceday = get_string('daysleft', 'workshop', $distance);
         }
         return $a;
+    }
+
+    /**
+     * Split a list of file extensions to an array
+     * @param string  $listofextensions
+     * @return array of extensions
+     */
+    public static function get_array_of_file_extensions($listofextensions) {
+        return preg_split("/[\s,;:\"']+/", strtolower($listofextensions), null, PREG_SPLIT_NO_EMPTY);
+    }
+
+    /**
+     * Check allowed file types and return an error when invalid file extensions found in the list
+     *
+     * @param string $extensionlist
+     */
+    public static function check_allowed_file_types($extensionlist) {
+        if (!$extensionlist) {
+            return '';
+        }
+
+        if ($extensions = self::get_array_of_file_extensions($extensionlist)) {
+            $coreextensions = array_keys(get_mimetypes_array());
+            foreach ($extensions as $ext) {
+                $ext = ltrim($ext, '.');
+                if (!$ext) {
+                    continue;
+                }
+                // Use strtolower(), because all extensions are in lower case.
+                if (!in_array($ext, $coreextensions)) {
+                    return get_string('err_notallowedfiletype', 'workshop', $ext);
+                }
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -2371,6 +2410,7 @@ class workshop {
         return array(
             'subdirs' => 0,
             'maxbytes' => $this->overallfeedbackmaxbytes,
+            'filetypes' => $this->overallfeedbackfiletypes,
             'maxfiles' => $this->overallfeedbackfiles,
             'changeformat' => 1,
             'context' => $this->context,
@@ -2386,6 +2426,7 @@ class workshop {
         return array(
             'subdirs' => 1,
             'maxbytes' => $this->overallfeedbackmaxbytes,
+            'filetypes' => $this->overallfeedbackfiletypes,
             'maxfiles' => $this->overallfeedbackfiles,
             'return_types' => FILE_INTERNAL,
         );

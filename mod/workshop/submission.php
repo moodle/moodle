@@ -184,17 +184,20 @@ if ($edit) {
     require_once(dirname(__FILE__).'/submission_form.php');
 
     $maxfiles       = $workshop->nattachments;
+    $filetypes      = $workshop->submissionfiletypes;
     $maxbytes       = $workshop->maxbytes;
     $contentopts    = array(
                         'trusttext' => true,
                         'subdirs'   => false,
                         'maxfiles'  => $maxfiles,
+                        'filetypes' => $filetypes,
                         'maxbytes'  => $maxbytes,
                         'context'   => $workshop->context,
                         'return_types' => FILE_INTERNAL | FILE_EXTERNAL
                       );
 
-    $attachmentopts = array('subdirs' => true, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes, 'return_types' => FILE_INTERNAL);
+    $attachmentopts = array('subdirs' => true, 'maxfiles' => $maxfiles, 'filetypes' => $filetypes, 'maxbytes' => $maxbytes,
+                                        'return_types' => FILE_INTERNAL);
     $submission     = file_prepare_standard_editor($submission, 'content', $contentopts, $workshop->context,
                                         'mod_workshop', 'submission_content', $submission->id);
     $submission     = file_prepare_standard_filemanager($submission, 'attachment', $attachmentopts, $workshop->context,

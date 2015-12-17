@@ -121,6 +121,7 @@ if ($edit and $canmanage) {
                         'trusttext' => true,
                         'subdirs'   => false,
                         'maxfiles'  => $maxfiles,
+                        'filetypes' => $workshop->submissionfiletypes,
                         'maxbytes'  => $maxbytes,
                         'context'   => $workshop->context
                       );

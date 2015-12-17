@@ -622,4 +622,92 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
         $this->assertEquals(0, $DB->count_records('workshop_submissions', array('workshopid' => $this->workshop->id)));
         $this->assertEquals(0, $DB->count_records('workshop_assessments'));
     }
+
+    /**
+     * Test converting the string to array.
+     */
+    public function test_get_array_of_file_extensions() {
+        $this->resetAfterTest(true);
+
+        $listofextensions = 'doc, jpg, mp3';
+        $actual = workshop::get_array_of_file_extensions($listofextensions);
+        $expected = array('doc', 'jpg', 'mp3');
+        $this->assertEquals($expected, $actual);
+
+        $listofextensions = 'mp4,; docx,; gif';
+        $actual = workshop::get_array_of_file_extensions($listofextensions);
+        $expected = array('mp4', 'docx', 'gif');
+        $this->assertEquals($expected, $actual);
+
+        $listofextensions = 'mp4 docx gif';
+        $actual = workshop::get_array_of_file_extensions($listofextensions);
+        $expected = array('mp4', 'docx', 'gif');
+        $this->assertEquals($expected, $actual);
+
+        $listofextensions = 'MP4 DOCx Gif';
+        $actual = workshop::get_array_of_file_extensions($listofextensions);
+        $expected = array('mp4', 'docx', 'gif');
+        $this->assertEquals($expected, $actual);
+
+        $listofextensions = '.doc; .jpg; Mp4 "mp3"';
+        $actual = workshop::get_array_of_file_extensions($listofextensions);
+        $expected = array('.doc', '.jpg', 'mp4', 'mp3');
+        $this->assertEquals($expected, $actual);
+
+        $listofextensions = '.doc,;.jpg; .Mp3, ".Avi"';
+        $actual = workshop::get_array_of_file_extensions($listofextensions);
+        $expected = array('.doc', '.jpg', '.mp3', '.avi');
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * Test the list of allowed file extensions.
+     */
+    public function test_check_allowed_file_types() {
+        $this->resetAfterTest(true);
+
+        // Valid file extensions.
+        $listofextensions = '';
+        $expected = '';
+        // The function returns '' when file extensions are valid or the input field is empty.
+        $actual = workshop::check_allowed_file_types($listofextensions);
+        $this->assertEquals($expected, $actual);
+
+        $listofextensions = 'doc, jpg, mp3';
+        $expected = '';
+        $actual = workshop::check_allowed_file_types($listofextensions);
+        $this->assertEquals($expected, $actual);
+
+        $listofextensions = 'doc; ".jpg"; mp4 ...mp3';
+        $expected = '';
+        $actual = workshop::check_allowed_file_types($listofextensions);
+        $this->assertEquals($expected, $actual);
+
+        // Error handling.
+        $listofextensions = 'doc.jpg .mp3 .avi';
+        $expected = get_string('err_notallowedfiletype', 'workshop', 'doc.jpg');
+        // The function returns and error on the form-field: 'The file extension "doc.jpg" is not allowed'.
+        $actual = workshop::check_allowed_file_types($listofextensions);
+        $this->assertEquals($expected, $actual);
+
+        $listofextensions = 'doc, jpg, mp3, unusual';
+        $expected = get_string('err_notallowedfiletype', 'workshop', 'unusual');
+        $actual = workshop::check_allowed_file_types($listofextensions);
+        $this->assertEquals($expected, $actual);
+
+        $listofextensions = 'doc,; unusual1, unusual2';
+        $expected = get_string('err_notallowedfiletype', 'workshop', 'unusual1');
+        $actual = workshop::check_allowed_file_types($listofextensions);
+        $this->assertEquals($expected, $actual);
+
+        $listofextensions = 'unusual1,; unsusual2, doc, jpg';
+        $expected = get_string('err_notallowedfiletype', 'workshop', 'unusual1');
+        $actual = workshop::check_allowed_file_types($listofextensions);
+        $this->assertEquals($expected, $actual);
+
+        $listofextensions = 'unusual1; unusual2; mp4';
+        $expected = get_string('err_notallowedfiletype', 'workshop', 'unusual1');
+        $actual = workshop::check_allowed_file_types($listofextensions);
+        $this->assertEquals($expected, $actual);
+    }
 }

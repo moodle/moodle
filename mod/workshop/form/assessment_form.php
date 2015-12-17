@@ -120,4 +120,52 @@ class workshop_assessment_form extends moodleform {
     public function is_editable() {
         return !$this->_form->isFrozen();
     }
+
+    /**
+     * Validate incoming data.
+     *
+     * @param array $data
+     * @param array $files
+     * @return array
+     */
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        if (isset($data['feedbackauthorattachment_filemanager'])) {
+            $draftitemid = $data['feedbackauthorattachment_filemanager'];
+
+            // If we have draft files, then make sure they are the correct ones.
+            if ($draftfiles = file_get_drafarea_files($draftitemid)) {
+
+                if (!$validfileextensions = workshop::get_array_of_file_extensions($this->workshop->overallfeedbackfiletypes)) {
+                    return $errors;
+                }
+                $wrongfileextensions = null;
+                $bigfiles = null;
+
+                // Check the size of each file.
+                foreach ($draftfiles->list as $file) {
+                    $a = new stdClass();
+                    $a->maxbytes = $this->workshop->overallfeedbackmaxbytes;
+                    $a->currentbytes = $file->size;
+                    $a->filename = $file->filename;
+                    $a->validfileextensions = implode(',', $validfileextensions);
+
+                    // Check whether the extension of uploaded file is in the list.
+                    $thisextension = substr(strrchr($file->filename, '.'), 1);
+                    if (!in_array($thisextension, $validfileextensions)) {
+                        $wrongfileextensions .= get_string('err_wrongfileextension', 'workshop', $a) . '<br/>';
+                    }
+                    if ($file->size > $this->workshop->overallfeedbackmaxbytes) {
+                        $bigfiles .= get_string('err_maxbytes', 'workshop', $a) . '<br/>';
+                    }
+                }
+                if ($bigfiles || $wrongfileextensions) {
+                    $errors['feedbackauthorattachment_filemanager'] = $bigfiles . $wrongfileextensions;
+                }
+            }
+        }
+        return $errors;
+    }
+
 }
