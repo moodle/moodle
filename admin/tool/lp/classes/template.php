@@ -104,9 +104,18 @@ class template extends persistent {
      * @return bool
      */
     public function can_manage() {
-        return has_capability('tool/lp:templatemanage', $this->get_context());
+        return self::can_manage_context($this->get_context());
     }
 
+    /**
+     * Whether or not the current user can manage the template.
+     *
+     * @param  context $context
+     * @return bool
+     */
+    public static function can_manage_context($context) {
+        return has_capability('tool/lp:templatemanage', $context);
+    }
 
     /**
      * Whether or not the current user can read the template.
@@ -114,7 +123,17 @@ class template extends persistent {
      * @return bool
      */
     public function can_read() {
-        return has_any_capability(array('tool/lp:templateread', 'tool/lp:templatemanage'), $this->get_context());
+        return self::can_read_context($this->get_context());
+    }
+
+    /**
+     * Whether or not the current user can read the template.
+     *
+     * @param  context $context
+     * @return bool
+     */
+    public static function can_read_context($context) {
+        return has_capability('tool/lp:templateread', $context) || self::can_manage_context($context);
     }
 
     /**

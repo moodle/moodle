@@ -31,7 +31,12 @@ require_login(0, false);
 
 $template = \tool_lp\api::read_template($id);
 $context = $template->get_context();
-require_capability('tool/lp:templatemanage', $context);
+$canreadtemplate = $template->can_read();
+$canmanagetemplate = $template->can_manage();
+
+if (!$canreadtemplate) {
+    throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
+}
 
 // Set up the page.
 $url = new moodle_url('/admin/tool/lp/template_cohorts.php', array(
@@ -42,13 +47,13 @@ list($title, $subtitle) = \tool_lp\page_helper::setup_for_template($pagecontexti
     get_string('cohortssyncedtotemplate', 'tool_lp'));
 
 // Remove cohort.
-if (($removecohort = optional_param('removecohort', false, PARAM_INT)) !== false && confirm_sesskey()) {
+if ($canmanagetemplate && ($removecohort = optional_param('removecohort', false, PARAM_INT)) !== false && confirm_sesskey()) {
     \tool_lp\api::delete_template_cohort($template, $removecohort);
 }
 
 // Capture the form submission.
 $form = new \tool_lp\form\template_cohorts($url->out(false), array('pagecontextid' => $pagecontextid));
-if (($data = $form->get_data()) && !empty($data->cohorts)) {
+if ($canmanagetemplate && ($data = $form->get_data()) && !empty($data->cohorts)) {
     $i = 0;
     foreach ($data->cohorts as $cohortid) {
 
@@ -75,11 +80,14 @@ $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
 echo $output->heading($title);
 echo $output->heading($subtitle, 3);
-if ($template->get_visible() == false) {
-    // Display message to prevent that cohort will not be synchronzed if the template is hidden.
-    echo $output->notify_message(get_string('templatecohortnotsyncedwhilehidden', 'tool_lp'));
+if ($canmanagetemplate) {
+    if ($template->get_visible() == false) {
+        // Display message to prevent that cohort will not be synchronzed if the template is hidden.
+        echo $output->notify_message(get_string('templatecohortnotsyncedwhilehidden', 'tool_lp'));
+    }
+    echo $form->display();
 }
-echo $form->display();
+
 $page = new \tool_lp\output\template_cohorts_page($template, $url);
 echo $output->render($page);
 echo $output->footer();

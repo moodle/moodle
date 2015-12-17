@@ -30,6 +30,7 @@ require_once($CFG->libdir . '/tablelib.php');
 use html_writer;
 use moodle_url;
 use table_sql;
+use tool_lp\template;
 
 /**
  * Template plans table class.
@@ -60,7 +61,9 @@ class template_plans_table extends table_sql {
         parent::__construct($uniqueid);
 
         // This object should not be used without the right permissions.
-        require_capability('tool/lp:templatemanage', $template->get_context());
+        if (!$template->can_read()) {
+            throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+        }
 
         // Set protected properties.
         $this->template = $template;

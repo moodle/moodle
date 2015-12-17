@@ -97,14 +97,14 @@ function tool_lp_myprofile_navigation(core_user\output\myprofile\tree $tree, $us
  */
 function tool_lp_extend_navigation_category_settings($navigation, $coursecategorycontext) {
     // We check permissions before renderring the links.
-    $templatemanagecapability = has_capability('tool/lp:templatemanage', $coursecategorycontext);
+    $templatereadcapability = \tool_lp\template::can_read_context($coursecategorycontext);
     $competencymanagecapability = has_capability('tool/lp:competencymanage', $coursecategorycontext);
-    if (!$templatemanagecapability && !$competencymanagecapability) {
+    if (!$templatereadcapability && !$competencymanagecapability) {
         return false;
     }
 
     // The link to the learning plan page.
-    if ($templatemanagecapability) {
+    if ($templatereadcapability) {
         $title = get_string('learningplans', 'tool_lp');
         $path = new moodle_url("/admin/tool/lp/learningplans.php", array('pagecontextid' => $coursecategorycontext->id));
         $settingsnode = navigation_node::create($title,

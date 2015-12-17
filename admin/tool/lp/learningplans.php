@@ -29,7 +29,9 @@ $pagecontextid = required_param('pagecontextid', PARAM_INT);
 $context = context::instance_by_id($pagecontextid);
 
 require_login(0, false);
-require_capability('tool/lp:templatemanage', $context);
+if (!\tool_lp\template::can_read_context($context)) {
+    throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
+}
 
 $url = new moodle_url('/admin/tool/lp/learningplans.php', array('pagecontextid' => $pagecontextid));
 list($title, $subtitle) = \tool_lp\page_helper::setup_for_template($pagecontextid, $url);

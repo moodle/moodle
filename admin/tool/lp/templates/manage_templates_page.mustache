@@ -40,7 +40,9 @@
             <th scope="col">{{#str}}context, core_role{{/str}}</th>
             <th scope="col">{{#str}}cohorts, core_cohort{{/str}}</th>
             <th scope="col">{{#str}}userplans, tool_lp{{/str}}</th>
+            {{#canmanage}}
             <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
+            {{/canmanage}}
         </tr>
     </thead>
     <tbody class="drag-parentnode">

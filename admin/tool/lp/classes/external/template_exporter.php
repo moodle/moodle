@@ -46,7 +46,7 @@ class template_exporter extends persistent_exporter {
             'duedateformatted' => userdate($this->persistent->get_duedate()),
             'cohortscount' => template_cohort::count_records(array('templateid' => $this->persistent->get_id())),
             'planscount' => plan::count_records(array('templateid' => $this->persistent->get_id())),
-            'canmanage' => $this->persistent->can_read(),
+            'canmanage' => $this->persistent->can_manage(),
             'canread' => $this->persistent->can_read(),
             'contextname' => $this->persistent->get_context()->get_context_name()
         );

@@ -33,6 +33,7 @@ use stdClass;
 use moodle_url;
 use context_system;
 use tool_lp\api;
+use tool_lp\template;
 use tool_lp\external\template_exporter;
 
 /**
@@ -58,12 +59,14 @@ class manage_templates_page implements renderable, templatable {
     public function __construct(context $pagecontext) {
         $this->pagecontext = $pagecontext;
 
-        $addpage = new single_button(
-           new moodle_url('/admin/tool/lp/edittemplate.php', array('pagecontextid' => $this->pagecontext->id)),
-           get_string('addnewtemplate', 'tool_lp'),
-           'get'
-        );
-        $this->navigation[] = $addpage;
+        if (template::can_manage_context($this->pagecontext)) {
+            $addpage = new single_button(
+               new moodle_url('/admin/tool/lp/edittemplate.php', array('pagecontextid' => $this->pagecontext->id)),
+               get_string('addnewtemplate', 'tool_lp'),
+               'get'
+            );
+            $this->navigation[] = $addpage;
+        }
 
         $this->templates = api::list_templates('shortname', 'ASC', 0, 0, $this->pagecontext);
     }

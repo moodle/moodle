@@ -33,7 +33,9 @@ require_login(0, false);
 $pagecontext = context::instance_by_id($pagecontextid);
 $template = \tool_lp\api::read_template($templateid);
 $context = $template->get_context();
-require_capability('tool/lp:templatemanage', $context);
+if (!$template->can_read()) {
+    throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
+}
 
 // Set up the page.
 $url = new moodle_url('/admin/tool/lp/templatecompetencies.php', array('templateid' => $template->get_id(),
