@@ -584,10 +584,9 @@ class competency extends persistent {
             if ($value === null) {
                 // No config, perfect.
                 return true;
-            } else if (empty($rule) && !$value !== null) {
-                // Config but no rules, whoops!
-                return new lang_string('invaliddata', 'error');
             }
+            // Config but no rules, whoops!
+            return new lang_string('invaliddata', 'error');
         }
 
         $valid = $rule->validate_config($value);

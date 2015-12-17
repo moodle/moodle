@@ -265,11 +265,31 @@ class tool_lp_api_testcase extends advanced_testcase {
         $competency2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
         $competency3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
         $competency4 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $competency41 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(),
+                                                        'parentid' => $competency4->get_id())
+                                                    );
+        $competency42 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(),
+                                                        'parentid' => $competency4->get_id())
+                                                    );
         $competencyidnumbers = array($competency1->get_idnumber(),
                                         $competency2->get_idnumber(),
                                         $competency3->get_idnumber(),
-                                        $competency4->get_idnumber()
+                                        $competency4->get_idnumber(),
+                                        $competency41->get_idnumber(),
+                                        $competency42->get_idnumber()
                                     );
+
+        $config = json_encode(array(
+            'base' => array('points' => 4),
+            'competencies' => array(
+                array('id' => $competency41->get_id(), 'points' => 3, 'required' => 0),
+                array('id' => $competency42->get_id(), 'points' => 2, 'required' => 1),
+            )
+        ));
+        $competency4->set_ruletype('tool_lp\competency_rule_points');
+        $competency4->set_ruleoutcome(\tool_lp\competency::OUTCOME_EVIDENCE);
+        $competency4->set_ruleconfig($config);
+        $competency4->update();
 
         api::add_related_competency($competency1->get_id(), $competency2->get_id());
         api::add_related_competency($competency3->get_id(), $competency4->get_id());
@@ -295,8 +315,8 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         $this->assertEmpty(array_diff($competencyidsfr1, $competencyidnumbers));
         $this->assertEmpty(array_diff($competencyidsfr2, $competencyidnumbers));
-        $this->assertCount(4, $competenciesfr1);
-        $this->assertCount(4, $competenciesfr2);
+        $this->assertCount(6, $competenciesfr1);
+        $this->assertCount(6, $competenciesfr2);
 
         // Test the related competencies.
         reset($competenciesfr1);
@@ -304,6 +324,26 @@ class tool_lp_api_testcase extends advanced_testcase {
         $relatedcompetencies = $compduplicated1->get_related_competencies();
         $comprelated = current($relatedcompetencies);
         $this->assertEquals($comprelated->get_idnumber(), $competency2->get_idnumber());
+        
+        // Check if config rule have been ported correctly.
+        $competency4duplicated = competency::get_record(array(
+                                                            'idnumber' => $competency4->get_idnumber(),
+                                                            'competencyframeworkid' => $frameworkduplicated2->get_id()
+                                                        ));
+        $configduplicated = json_decode($competency4duplicated->get_ruleconfig(), true);
+        $configorigin = json_decode($config, true);
+        // Check that the 2 config have the same base.
+        $this->assertEquals($configorigin['base'], $configduplicated['base']);
+        $this->assertEquals(count($configorigin['competencies']), count($configduplicated['competencies']));
+        $competenciesidsrules = array();
+        foreach ($configduplicated['competencies'] as $key => $value) {
+            // Check that the only difference between the 2 config is id competency.
+            $this->assertEquals(1, count(array_diff($value, $configorigin['competencies'][$key])));
+            $competenciesidsrules[] = $value['id'];
+        }
+        $this->assertTrue($competency4duplicated->is_parent_of($competenciesidsrules));
+        
+        
     }
 
     /**

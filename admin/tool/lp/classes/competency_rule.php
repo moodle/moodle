@@ -98,4 +98,16 @@ abstract class competency_rule {
         throw new coding_exception('Method not implemented.');
     }
 
+    /**
+     * Migrate rule config when duplicate competency based on mapping competencies ids.
+     *
+     * @param string $config the config rule of a competency
+     * @param array $mappings array that match the old competency ids with the new competencies object
+     * 
+     * @return string
+     */
+    public static function migrate_config($config, $mappings) {
+        return $config;
+    }
+
 }

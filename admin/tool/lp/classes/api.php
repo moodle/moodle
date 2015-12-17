@@ -430,43 +430,59 @@ class api {
      * @return competency_framework the framework duplicated
      */
     public static function duplicate_framework($id) {
+        global $DB;
+
         $framework = new competency_framework($id);
         require_capability('tool/lp:competencymanage', $framework->get_context());
+        // Starting transaction.
+        $transaction = $DB->start_delegated_transaction();
 
-        // Get a uniq idnumber based on the origin framework.
-        $idnumber = competency_framework::get_unused_idnumber($framework->get_idnumber());
-        $framework->set_idnumber($idnumber);
-        // Adding the suffix copy to the shortname.
-        $framework->set_shortname(get_string('duplicateditemname', 'tool_lp', $framework->get_shortname()));
-        $framework->set_id(0);
-        $framework->create();
+        try {
+            // Get a uniq idnumber based on the origin framework.
+            $idnumber = competency_framework::get_unused_idnumber($framework->get_idnumber());
+            $framework->set_idnumber($idnumber);
+            // Adding the suffix copy to the shortname.
+            $framework->set_shortname(get_string('duplicateditemname', 'tool_lp', $framework->get_shortname()));
+            $framework->set_id(0);
+            $framework->create();
 
-        // Array that match the old competencies ids with the new one to use when copying related competencies.
-        $matchids = self::duplicate_competency_tree($framework->get_id(), competency::get_framework_tree($id), 0, 0);
+            // Array that match the old competencies ids with the new one to use when copying related competencies.
+            $frameworkcompetency = competency::get_framework_tree($id);
+            $matchids = self::duplicate_competency_tree($framework->get_id(), $frameworkcompetency, 0, 0);
 
-        // Copy the related competencies.
-        $relcomps = related_competency::get_multiple_relations(array_keys($matchids));
+            // Copy the related competencies.
+            $relcomps = related_competency::get_multiple_relations(array_keys($matchids));
 
-        foreach ($relcomps as $relcomp) {
-            $compid = $relcomp->get_competencyid();
-            $relcompid = $relcomp->get_relatedcompetencyid();
-            if (isset($matchids[$compid]) && isset($matchids[$relcompid])) {
-                $newcompid = $matchids[$compid];
-                $newrelcompid = $matchids[$relcompid];
-                if ($newcompid < $newrelcompid) {
-                    $relcomp->set_competencyid($newcompid);
-                    $relcomp->set_relatedcompetencyid($newrelcompid);
+            foreach ($relcomps as $relcomp) {
+                $compid = $relcomp->get_competencyid();
+                $relcompid = $relcomp->get_relatedcompetencyid();
+                if (isset($matchids[$compid]) && isset($matchids[$relcompid])) {
+                    $newcompid = $matchids[$compid]->get_id();
+                    $newrelcompid = $matchids[$relcompid]->get_id();
+                    if ($newcompid < $newrelcompid) {
+                        $relcomp->set_competencyid($newcompid);
+                        $relcomp->set_relatedcompetencyid($newrelcompid);
+                    } else {
+                        $relcomp->set_competencyid($newrelcompid);
+                        $relcomp->set_relatedcompetencyid($newcompid);
+                    }
+                    $relcomp->set_id(0);
+                    $relcomp->create();
                 } else {
-                    $relcomp->set_competencyid($newrelcompid);
-                    $relcomp->set_relatedcompetencyid($newcompid);
+                    // Debugging message when there is no match found.
+                    debugging('related competency id not found');
                 }
-                $relcomp->set_id(0);
-                $relcomp->create();
-            } else {
-                // Debugging message when there is no match found.
-                debugging('related competency id not found');
             }
+
+            // Setting rules on duplicated competencies.
+            self::migrate_competency_tree_rules($frameworkcompetency, $matchids);
+
+            $transaction->allow_commit();
+
+        } catch (\Exception $e) {
+            $transaction->rollback(new moodle_exception('Error while duplicating the competency framework.'));
         }
+
         return $framework;
     }
 
@@ -2516,7 +2532,7 @@ class api {
      * @param competency[] $tree - array of competencies object
      * @param int $oldparent - old parent id
      * @param int $newparent - new parent id
-     * @return array $matchids - List of old competencies ids matched with new ids.
+     * @return competency[] $matchids - List of old competencies ids matched with new competencies object.
      */
     protected static function duplicate_competency_tree($frameworkid, $tree, $oldparent = 0, $newparent = 0) {
         $matchids = array();
@@ -2525,15 +2541,16 @@ class api {
                 $parentid = $node->competency->get_id();
 
                 // Create the competency.
-                $competency = $node->competency;
+                $competency = new competency(0, $node->competency->to_record());
                 $competency->set_competencyframeworkid($frameworkid);
                 $competency->set_parentid($newparent);
                 $competency->set_path('');
                 $competency->set_id(0);
+                $competency->reset_rule();
                 $competency->create();
 
                 // Match the old id with the new one.
-                $matchids[$parentid] = $competency->get_id();
+                $matchids[$parentid] = $competency;
 
                 if (!empty($node->children)) {
                     // Duplicate children competency.
@@ -2544,6 +2561,37 @@ class api {
             }
         }
         return $matchids;
+    }
+
+    /**
+     * Recursively migrate competency rules.
+     *
+     * @param competency[] $tree - array of competencies object
+     * @param competency[] $matchids - List of old competencies ids matched with new competencies object
+     */
+    protected static function migrate_competency_tree_rules($tree, $matchids) {
+
+        foreach ($tree as $node) {
+            $oldcompid = $node->competency->get_id();
+            if ($node->competency->get_ruletype() && array_key_exists($oldcompid, $matchids)) {
+                try {
+                    // Get the new competency.
+                    $competency = $matchids[$oldcompid];
+                    $class = $node->competency->get_ruletype();
+                    $newruleconfig = $class::migrate_config($node->competency->get_ruleconfig(), $matchids);
+                    $competency->set_ruleconfig($newruleconfig);
+                    $competency->set_ruletype($class);
+                    $competency->set_ruleoutcome($node->competency->get_ruleoutcome());
+                    $competency->update();
+                } catch (\Exception $e) {
+                    debugging('Error occured when migrating rules');
+                }
+            }
+
+            if (!empty($node->children)) {
+                self::migrate_competency_tree_rules($node->children, $matchids);
+            }
+        }
     }
 
     /**

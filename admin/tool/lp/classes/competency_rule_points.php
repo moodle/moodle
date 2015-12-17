@@ -196,4 +196,35 @@ class competency_rule_points extends competency_rule {
     public static function get_name() {
         return new lang_string('pointsrequiredaremet', 'tool_lp');
     }
+
+    /**
+     * Migrate rule config when duplicate competency based on mapping competencies ids.
+     * An exception can be thrown if the competency id is not found in the matchids.
+     * An exception can be thrown if the json config can not be decoded.
+     *
+     * @param string $config the config rule of a competency
+     * @param array $mappings array that match the old competency ids with the new competencies
+     * 
+     * @return string
+     */
+    public static function migrate_config($config, $mappings) {
+        $ruleconfig = json_decode($config, true);
+        if ($ruleconfig) {
+            foreach ($ruleconfig['competencies'] as $key => $rulecomp) {
+                $rulecmpid = $rulecomp['id'];
+                if (array_key_exists($rulecmpid, $mappings)) {
+                    $ruleconfig['competencies'][$key]['id'] = $mappings[$rulecmpid]->get_id();
+                } else {
+                    // Debugging message and throw exception when there is no match found.
+                    debugging('Migrate rule config, the competency id is not found: ' . $rulecmpid);
+                    throw new coding_exception("the competency id is not found in the matchids.");
+                }
+            }
+        } else {
+            debugging('Error decoding json config:' . $config);
+            throw new coding_exception("invalid json config rule.");
+        }
+
+        return json_encode($ruleconfig);
+    }
 }
