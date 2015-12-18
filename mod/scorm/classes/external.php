@@ -226,6 +226,21 @@ class mod_scorm_external extends external_api {
         if (!$scoes = scorm_get_scoes($scorm->id, $params['organization'])) {
             // Function scorm_get_scoes return false, not an empty array.
             $scoes = array();
+        } else {
+            $scoreturnstructure = self::get_scorm_scoes_returns();
+            foreach ($scoes as $sco) {
+                $extradata = array();
+                foreach ($sco as $element => $value) {
+                    // Check if the element is extra data (not a basic SCO element).
+                    if (!isset($scoreturnstructure->keys['scoes']->content->keys[$element])) {
+                        $extradata[] = array(
+                            'element' => $element,
+                            'value' => $value
+                        );
+                    }
+                }
+                $sco->extradata = $extradata;
+            }
         }
 
         $result = array();
@@ -257,6 +272,14 @@ class mod_scorm_external extends external_api {
                             'scormtype' => new external_value(PARAM_ALPHA, 'scorm type (asset, sco)'),
                             'title' => new external_value(PARAM_NOTAGS, 'sco title'),
                             'sortorder' => new external_value(PARAM_INT, 'sort order'),
+                            'extradata' => new external_multiple_structure(
+                                new external_single_structure(
+                                    array(
+                                        'element' => new external_value(PARAM_RAW, 'element name'),
+                                        'value' => new external_value(PARAM_RAW, 'element value')
+                                    )
+                                ), 'Additional SCO data', VALUE_OPTIONAL
+                            )
                         ), 'SCORM SCO data'
                     )
                 ),
