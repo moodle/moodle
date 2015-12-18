@@ -61,6 +61,42 @@ function xmldb_qtype_multianswer_upgrade($oldversion) {
     // Put any upgrade step following this.
 
     if ($oldversion < 2015100201) {
+
+        // Upgrade steps need to be isolated from our APIs, so we should prevent using constants that
+        // can change over time. This is a simple copy & paste from question/type/multianswer/questiontype.php
+        // with the following changes, the idea is to prevent regressions as much as possible.
+        // * All constants prefixed with UPGRADE_2015100201_
+        // * Removed all constants not required by UPGRADE_2015100201_ANSWER_REGEX
+        if (!defined('UPGRADE_2015100201_ANSWER_REGEX')) {
+            define('UPGRADE_2015100201_ANSWER_ALTERNATIVE_FRACTION_REGEX',
+                   '=|%(-?[0-9]+)%');
+            define('UPGRADE_2015100201_ANSWER_ALTERNATIVE_ANSWER_REGEX',
+                    '.+?(?<!\\\\|&|&amp;)(?=[~#}]|$)');
+            define('UPGRADE_2015100201_ANSWER_ALTERNATIVE_FEEDBACK_REGEX',
+                    '.*?(?<!\\\\)(?=[~}]|$)');
+            define('UPGRADE_2015100201_ANSWER_ALTERNATIVE_REGEX',
+                   '(' . UPGRADE_2015100201_ANSWER_ALTERNATIVE_FRACTION_REGEX .')?' .
+                   '(' . UPGRADE_2015100201_ANSWER_ALTERNATIVE_ANSWER_REGEX . ')' .
+                   '(#(' . UPGRADE_2015100201_ANSWER_ALTERNATIVE_FEEDBACK_REGEX .'))?');
+
+            // Remaining ANSWER regexes.
+            define('UPGRADE_2015100201_ANSWER_TYPE_DEF_REGEX',
+                    '(NUMERICAL|NM)|(MULTICHOICE|MC)|(MULTICHOICE_V|MCV)|(MULTICHOICE_H|MCH)|' .
+                    '(SHORTANSWER|SA|MW)|(SHORTANSWER_C|SAC|MWC)|' .
+                    '(MULTICHOICE_S|MCS)|(MULTICHOICE_VS|MCVS)|(MULTICHOICE_HS|MCHS)');
+            define('UPGRADE_2015100201_ANSWER_START_REGEX',
+                   '\{([0-9]*):(' . UPGRADE_2015100201_ANSWER_TYPE_DEF_REGEX . '):');
+
+            define('UPGRADE_2015100201_ANSWER_REGEX',
+                    UPGRADE_2015100201_ANSWER_START_REGEX
+                    . '(' . UPGRADE_2015100201_ANSWER_ALTERNATIVE_REGEX
+                    . '(~'
+                    . UPGRADE_2015100201_ANSWER_ALTERNATIVE_REGEX
+                    . ')*)\}');
+
+            define('UPGRADE_2015100201_ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE', 4);
+        }
+
         // Detect the exact table/field we want to use, coz can be different
         // depending of the version we are upgrading from. See MDL-52291 and MDL-52298.
         $multichoicetable = 'qtype_multichoice_options';
@@ -82,9 +118,9 @@ function xmldb_qtype_multianswer_upgrade($oldversion) {
                     if ($wrapped->qtype == 'multichoice') {
                         $options = $DB->get_record($multichoicetable, array($multichoicefield => $wrapped->id), '*');
                         if (isset($options->shuffleanswers)) {
-                            preg_match('/'.ANSWER_REGEX.'/s', $wrapped->questiontext, $answerregs);
-                            if (isset($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE]) &&
-                                    $answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE] !== '') {
+                            preg_match('/'.UPGRADE_2015100201_ANSWER_REGEX.'/s', $wrapped->questiontext, $answerregs);
+                            if (isset($answerregs[UPGRADE_2015100201_ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE]) &&
+                                    $answerregs[UPGRADE_2015100201_ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE] !== '') {
                                 $DB->set_field($multichoicetable, 'shuffleanswers', '0',
                                         array('id' => $options->id) );
                             }
