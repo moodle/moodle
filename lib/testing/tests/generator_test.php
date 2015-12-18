@@ -362,6 +362,7 @@ class core_test_generator_testcase extends advanced_testcase {
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
         $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
 
         $this->assertEquals(3, $DB->count_records('enrol', array('enrol'=>'self')));
         $instance1 = $DB->get_record('enrol', array('courseid'=>$course1->id, 'enrol'=>'self'), '*', MUST_EXIST);
@@ -392,6 +393,13 @@ class core_test_generator_testcase extends advanced_testcase {
         $this->assertTrue($result);
         $this->assertTrue($DB->record_exists('user_enrolments', array('enrolid'=>$maninstance2->id, 'userid'=>$user1->id)));
         $this->assertTrue($DB->record_exists('role_assignments', array('contextid'=>$context2->id, 'userid'=>$user1->id, 'roleid'=>$teacherrole->id)));
+
+        $result = $this->getDataGenerator()->enrol_user($user4->id, $course2->id, 'teacher', 'manual');
+        $this->assertTrue($result);
+        $this->assertTrue($DB->record_exists('user_enrolments',
+                array('enrolid' => $maninstance2->id, 'userid' => $user4->id)));
+        $this->assertTrue($DB->record_exists('role_assignments',
+                array('contextid' => $context2->id, 'userid' => $user4->id, 'roleid' => $teacherrole->id)));
 
         $result = $this->getDataGenerator()->enrol_user($user1->id, $course3->id, 0, 'manual');
         $this->assertTrue($result);
