@@ -2229,7 +2229,8 @@ class external extends external_api {
             'navigation' => new external_multiple_structure(
                 new external_value(PARAM_RAW, 'HTML for a navigation item that should be on this page')
             ),
-            'pagecontextid' => new external_value(PARAM_INT, 'The page context id')
+            'pagecontextid' => new external_value(PARAM_INT, 'The page context id'),
+            'canmanage' => new external_value(PARAM_BOOL, 'Whether the user manage the templates')
         ));
 
     }

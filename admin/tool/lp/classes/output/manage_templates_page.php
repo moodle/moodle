@@ -90,6 +90,7 @@ class manage_templates_page implements renderable, templatable {
         foreach ($this->navigation as $button) {
             $data->navigation[] = $output->render($button);
         }
+        $data->canmanage = template::can_manage_context($this->pagecontext);
 
         return $data;
     }

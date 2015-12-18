@@ -84,13 +84,12 @@ class template_cohorts_table extends table_sql {
      */
     protected function col_actions($row) {
         global $OUTPUT;
-        $actionlink = "";
-        if ($this->template->can_manage()) {
-            $action = new \confirm_action(get_string('areyousure'));
-            $url = new moodle_url($this->baseurl);
-            $url->params(array('removecohort' => $row->id, 'sesskey' => sesskey()));
-            $actionlink = $OUTPUT->action_link($url, '', $action, null, new \pix_icon('t/delete', get_string('stopsyncingcohort', 'tool_lp')));
-        }
+
+        $action = new \confirm_action(get_string('areyousure'));
+        $url = new moodle_url($this->baseurl);
+        $url->params(array('removecohort' => $row->id, 'sesskey' => sesskey()));
+        $actionlink = $OUTPUT->action_link($url, '', $action, null, new \pix_icon('t/delete',
+            get_string('stopsyncingcohort', 'tool_lp')));
 
         return $actionlink;
 
@@ -106,8 +105,11 @@ class template_cohorts_table extends table_sql {
         $cols = array(
             'name' => get_string('name', 'cohort'),
             'idnumber' => get_string('idnumber', 'cohort'),
-            'actions' => get_string('actions')
         );
+
+        if ($this->template->can_manage()) {
+            $cols['actions'] = get_string('actions');
+        }
 
         $this->define_columns(array_keys($cols));
         $this->define_headers(array_values($cols));
