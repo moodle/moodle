@@ -48,7 +48,7 @@ $string['environmentsub2'] = 'Iga Moodle väljalaskel on oma minimaalne PHP vers
 Täielik keskkonna kontroll tehakse enne iga installeerimist ja uuendamist. Palun võta ühendust serveri administraatoriga, kui sa ei sa kuidas installeerida või võimaldada PHP laiendusi.';
 $string['errorsinenvironment'] = 'Keskkonna sobivuse kontroll ebaõnnestus!';
 $string['installation'] = 'Installeerimine';
-$string['langdownloaderror'] = 'Kahjuks keelt "{$a}" ei paigaldatud. Paigaldamine jätkub inglise keeles.';
+$string['langdownloaderror'] = 'Kahjuks ei õnnestunud alla laadida keelt "{$a}". Paigaldamine jätkub inglise keeles.';
 $string['memorylimithelp'] = '<p>PHP mälu limiit sinu serveri jaoks on hetkel {$a}.</p>
 <p>See võib hiljem tekitada Moodle\'il mäluprobleeme, eriti kui sul on palju mooduleid ja/või kasutajaid.
 </p>
