@@ -895,7 +895,7 @@ EOD;
      *
      * @param int $userid
      * @param int $courseid
-     * @param int $roleid optional role id, use only with manual plugin
+     * @param int|string $roleidorshortname optional role id or role shortname, use only with manual plugin
      * @param string $enrol name of enrol plugin,
      *     there must be exactly one instance in course,
      *     it must support enrol_user() method.
@@ -904,8 +904,16 @@ EOD;
      * @param int $status (optional) default to ENROL_USER_ACTIVE for new enrolments
      * @return bool success
      */
-    public function enrol_user($userid, $courseid, $roleid = null, $enrol = 'manual', $timestart = 0, $timeend = 0, $status = null) {
+    public function enrol_user($userid, $courseid, $roleidorshortname = null, $enrol = 'manual',
+            $timestart = 0, $timeend = 0, $status = null) {
         global $DB;
+
+        // If role is specified by shortname, convert it into an id.
+        if (!is_numeric($roleidorshortname) && is_string($roleidorshortname)) {
+            $roleid = $DB->get_field('role', 'id', array('shortname' => $roleidorshortname), MUST_EXIST);
+        } else {
+            $roleid = $roleidorshortname;
+        }
 
         if (!$plugin = enrol_get_plugin($enrol)) {
             return false;
