@@ -8425,7 +8425,12 @@ function mtrace($string, $eol="\n", $sleep=0) {
  * @return string the path with double slashes removed
  */
 function cleardoubleslashes ($path) {
-    return preg_replace('/(\/|\\\){1,}/', '/', $path);
+    if (strlen($path) > 2 && (substr($path, 0, 2) == "\\\\" || substr($path, 0, 2) == "//")) {
+        return substr($path, 0, 2).preg_replace('/(\/|\\\){1,}/', '/', substr($path, 2));
+    }
+    else {
+        return preg_replace('/(\/|\\\){1,}/', '/', $path);
+    }
 }
 
 /**
