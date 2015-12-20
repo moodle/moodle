@@ -1002,7 +1002,7 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
         $json .= ',{"courseId":"'.$coursetwo->id.'","courseName":"'.$coursetwo->fullname.'","roles":"Learner"}';
         $json .= ',{"courseId":"'.$coursefour->id.'","courseName":"'.$coursefour->fullname.'","roles":"Instructor"}]}';
 
-        $this->assertEquals($json, $result);
+        $this->assertEquals(base64_encode($json), $result);
     }
 
     /**
@@ -1046,7 +1046,7 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
         $json .= ',{"courseId":"'.$coursethree->id.'","courseName":"'.$coursethree->fullname.'","roles":"urn:lti:sysrole:ims\/lis\/Administrator"}';
         $json .= ',{"courseId":"'.$coursefour->id.'","courseName":"'.$coursefour->fullname.'","roles":"urn:lti:sysrole:ims\/lis\/Administrator"}]}';
 
-        $this->assertEquals($json, $result);
+        $this->assertEquals(base64_encode($json), $result);
     }
 
     /**
