@@ -1173,6 +1173,7 @@ $services = array(
             'core_user_get_users_by_id',
             'core_webservice_get_site_info',
             'core_notes_create_notes',
+            'core_notes_delete_notes',
             'core_user_get_course_user_profiles',
             'core_message_send_instant_messages',
             'mod_assign_get_grades',
