@@ -317,14 +317,14 @@ class plan extends persistent {
     }
 
     /**
-     * Get the recordset of the plans that are due and incomplete.
+     * Get the recordset of the plans that are due, incomplete and not draft.
      *
      * @return \moodle_recordset
      */
     public static function get_recordset_for_due_and_incomplete() {
         global $DB;
-        $sql = "duedate > 0 AND duedate < :now AND status != :status";
-        $params = array('now' => time(), 'status' => self::STATUS_COMPLETE);
+        $sql = "duedate > 0 AND duedate < :now AND status != :complete AND status != :draft";
+        $params = array('now' => time(), 'complete' => self::STATUS_COMPLETE, 'draft' => self::STATUS_DRAFT);
         return $DB->get_recordset_select(self::TABLE, $sql, $params);
     }
 

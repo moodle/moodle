@@ -114,4 +114,43 @@ class tool_lp_task_testcase extends advanced_testcase {
         $task->execute();
         $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
     }
+
+    public function test_complete_plans_task() {
+        global $DB;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+
+        $user = $dg->create_user();
+
+        $up1 = $lpg->create_plan(array('userid' => $user->id,
+                                        'status' => \tool_lp\plan::STATUS_DRAFT));
+        $up2 = $lpg->create_plan(array('userid' => $user->id,
+                                        'status' => \tool_lp\plan::STATUS_ACTIVE));
+        // Set duedate in the past.
+        $date = new \DateTime('yesterday');
+        $record1 = $up1->to_record();
+        $record2 = $up2->to_record();
+
+        $record1->duedate = $date->getTimestamp();
+        $record2->duedate = $date->getTimestamp();
+        $DB->update_record(plan::TABLE, $record1);
+        $DB->update_record(plan::TABLE, $record2);
+
+        $task = \core\task\manager::get_scheduled_task('\\tool_lp\\task\\complete_plans_task');
+        $this->assertInstanceOf('\\tool_lp\\task\\complete_plans_task', $task);
+
+        // Test that draft plan can not be completed on running task.
+        $task->execute();
+
+        $plandraft = api::read_plan($up1->get_id());
+        $this->assertEquals(\tool_lp\plan::STATUS_DRAFT, $plandraft->get_status());
+
+        // Test that active plan can be completed on running task.
+        $task->execute();
+
+        $planactive = api::read_plan($up2->get_id());
+        $this->assertEquals(\tool_lp\plan::STATUS_COMPLETE, $planactive->get_status());
+    }
 }
