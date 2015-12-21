@@ -34,7 +34,7 @@ defined('BEHAT_SITE_RUNNING') || die('Only available on Behat test server');
  * @copyright 2015 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_max_input_vars_test_form extends moodleform {
+class core_max_input_vars_form extends moodleform {
     /**
      * Form definition.
      */
@@ -93,7 +93,7 @@ $context = context_system::instance();
 $type = optional_param('type', '', PARAM_ALPHA);
 
 // Set up the page details.
-$PAGE->set_url(new moodle_url('/lib/tests/fixtures/max_input_vars_test.php'));
+$PAGE->set_url(new moodle_url('/lib/tests/fixtures/max_input_vars.php'));
 $PAGE->set_context($context);
 
 if ($type) {
@@ -117,7 +117,7 @@ if ($type) {
         $fieldcount = (int)ini_get('max_input_vars') + 100;
     }
 
-    $mform = new core_max_input_vars_test_form('max_input_vars_test.php',
+    $mform = new core_max_input_vars_form('max_input_vars.php',
             array('type' => $type, 'fieldcount' => $fieldcount, 'control' => $type[0]));
     if ($type[0] === 'c') {
         $data = array();
@@ -222,7 +222,7 @@ foreach (array('c' => 'Advanced checkboxes',
         'a' => 'Select options') as $control => $controlname) {
     foreach (array('s' => 'Small', 'm' => 'Below limit', 'e' => 'Exact PHP limit',
             'l' => 'Above limit') as $size => $sizename) {
-        echo html_writer::tag('li', html_writer::link('max_input_vars_test.php?type=' .
+        echo html_writer::tag('li', html_writer::link('max_input_vars.php?type=' .
                 $control . $size, $controlname . ' / ' . $sizename));
     }
 }
