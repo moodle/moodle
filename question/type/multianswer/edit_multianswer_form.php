@@ -235,8 +235,8 @@ class qtype_multianswer_edit_form extends question_edit_form {
                         "</strong>");
             }
             $a = new stdClass();
-            $a->nbofquiz = $this->nbofquiz;
-            $a->nbofattempts = $this->nbofattempts;
+            $a->nb_of_quiz = $this->nbofquiz;
+            $a->nb_of_attempts = $this->nbofattempts;
             $mform->addElement('header', 'additemhdr2',
                     get_string('questionusedinquiz', 'qtype_multianswer', $a));
             $mform->addElement('static', 'alertas',
