@@ -1755,6 +1755,9 @@ function scorm_format_toc_for_treeview($user, $scorm, $scoes, $usertracks, $cmid
                 $result->toc .= html_writer::start_tag('ul');
                 $childresult = scorm_format_toc_for_treeview($user, $scorm, $sco->children, $usertracks, $cmid,
                                                                 $toclink, $currentorg, $attempt, $play, $organizationsco, true);
+
+                // Is any of the children incomplete?
+                $sco->incomplete = $childresult->incomplete;
                 $result->toc .= $childresult->toc;
                 $result->toc .= html_writer::end_tag('ul');
                 $result->toc .= html_writer::end_tag('li');
