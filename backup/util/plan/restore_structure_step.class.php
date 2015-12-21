@@ -313,6 +313,10 @@ abstract class restore_structure_step extends restore_step {
      * @return void
      */
     protected function add_subplugin_structure($subplugintype, $element, $plugintype = null, $pluginname = null) {
+        global $CFG;
+        // This global declaration is required, because where we do require_once($backupfile);
+        // That file may in turn try to do require_once($CFG->dirroot ...).
+        // That worked in the past, we should keep it working.
 
         // Verify if this is a BC call for an activity restore. See NOTE above for this special case.
         if ($plugintype === null and $pluginname === null) {
