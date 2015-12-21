@@ -1084,7 +1084,10 @@ function workaround_max_input_vars() {
         return;
     }
 
-    if (count($_POST, COUNT_RECURSIVE) < $max) {
+    // Worst case is advanced checkboxes which use up to two max_input_vars
+    // slots for each entry in $_POST, because of sending two fields with the
+    // same name. So count everything twice just in case.
+    if (count($_POST, COUNT_RECURSIVE) * 2 < $max) {
         return;
     }
 
@@ -1099,6 +1102,15 @@ function workaround_max_input_vars() {
     $delim = '&';
     $fun = create_function('$p', 'return implode("'.$delim.'", $p);');
     $chunks = array_map($fun, array_chunk(explode($delim, $str), $max));
+
+    // Clear everything from existing $_POST array, otherwise it might be included
+    // twice (this affects array params primarily).
+    foreach ($_POST as $key => $value) {
+        unset($_POST[$key]);
+        // Also clear from request array - but only the things that are in $_POST,
+        // that way it will leave the things from a get request if any.
+        unset($_REQUEST[$key]);
+    }
 
     foreach ($chunks as $chunk) {
         $values = array();
