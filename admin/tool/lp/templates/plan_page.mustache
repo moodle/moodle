@@ -66,15 +66,13 @@
                     <th scope="col">{{#str}}proficient, tool_lp{{/str}}</th>
                     {{^plan.iscompleted}}
                         <th scope="col">{{#str}}status, tool_lp{{/str}}</th>
-                    {{/plan.iscompleted}}
-                    {{#plan.canbeedited}}
                         <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
-                    {{/plan.canbeedited}}
+                    {{/plan.iscompleted}}
                 </tr>
             </thead>
-            <tbody  class="drag-parentnode">
+            <tbody class="drag-parentnode">
                 {{#competencies}}
-                <tr class="drag-samenode" data-id="{{competency.id}}">
+                <tr class="drag-samenode" data-node="user-competency" data-id="{{competency.id}}" data-competencyid="{{usercompetency.competencyid}}" data-userid="{{usercompetency.userid}}">
                     <td>
                         {{#plan.canbeedited}}
                         <span class="drag-handlecontainer pull-left"></span>
@@ -91,13 +89,32 @@
                         <td>{{usercompetency.proficiencyname}}</td>
                         <td>{{usercompetency.statusname}}</td>
                     {{/plan.iscompleted}}
-                    {{#plan.canbeedited}}
+                    {{^plan.iscompleted}}
                         <td>
-                            <div class="pull-left">
-                                <a href="#" data-action="delete-competency-link" data-id="{{competency.id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
-                            </div>
+                            <ul title="{{#str}}edit{{/str}}" class="user-competency-actions">
+                                <li>
+                                    <a href="#">{{#str}}edit{{/str}}</a><b class="caret"></b>
+                                    <ul class="dropdown-menu">
+                                        {{#usercompetency.isrequestreviewallowed}}
+                                            <li>
+                                                <a href="#" data-action="request-review">{{#pix}}t/edit, core{{/pix}} {{#str}}requestreview, tool_lp{{/str}}</a>
+                                            </li>
+                                        {{/usercompetency.isrequestreviewallowed}}
+                                        {{#usercompetency.iscancelreviewrequestallowed}}
+                                            <li>
+                                                <a href="#" data-action="cancel-review-request">{{#pix}}t/edit, core{{/pix}} {{#str}}cancelreviewrequest, tool_lp{{/str}}</a>
+                                            </li>
+                                        {{/usercompetency.iscancelreviewrequestallowed}}
+                                        {{#plan.canbeedited}}
+                                            <li>
+                                                <a href="#" data-action="delete-competency-link" data-id="{{competency.id}}">{{#pix}}t/delete, core{{/pix}} {{#str}}delete{{/str}}</a>
+                                            </li>
+                                        {{/plan.canbeedited}}
+                                    </ul>
+                                </li>
+                            </ul>
                         </td>
-                    {{/plan.canbeedited}}
+                    {{/plan.iscompleted}}
                 </tr>
                 {{/competencies}}
             </tbody>
@@ -114,19 +131,25 @@
     </div>
 
 </div>
-{{#plan.canmanage}}
 {{#js}}
-require(['tool_lp/competencies', 'tool_lp/planactions'], function(mod, actionsMod) {
-    (new mod({{plan.id}}, 'plan', {{contextid}}));
-
+require(['tool_lp/competencies', 'tool_lp/planactions', 'tool_lp/user_competency_workflow'], function(mod, actionsMod, UserCompWorkflow) {
     var planActions = new actionsMod('plan');
-    planActions.registerEvents();
+
+    {{#plan.canmanage}}
+        (new mod({{plan.id}}, 'plan', {{contextid}}));
+        planActions.registerEvents();
+    {{/plan.canmanage}}
+
+    var ucw = new UserCompWorkflow();
+    ucw.enhanceMenubar('.user-competency-actions');
+    ucw.on('status-changed', planActions.refresh.bind(planActions, '[data-region="plan-summary"]'));
+    ucw.on('error-occured', planActions.refresh.bind(planActions, '[data-region="plan-summary"]'));
 });
 {{/js}}
-{{/plan.canmanage}}
 {{#js}}
 require(['tool_lp/competencydialogue'], function(Compdialogue) {
     var competencydialogue = new Compdialogue({includerelated : true});
     competencydialogue.watch('[data-region="plan-page"]');
+
 });
 {{/js}}

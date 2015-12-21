@@ -2044,6 +2044,7 @@ class api {
                 throw new coding_exception('A user competency plan is missing');
             } else {
                 $uc = user_competency::create_relation($plan->get_userid(), $competency->get_id());
+                $uc->create();
             }
         }
 
@@ -2254,6 +2255,110 @@ class api {
         }
         $competencyfrom->set_sortorder($competencyto->get_sortorder());
         return $competencyfrom->update();
+    }
+
+    /**
+     * Cancel a user competency review request.
+     *
+     * @param  int $userid       The user ID.
+     * @param  int $competencyid The competency ID.
+     * @return bool
+     */
+    public static function user_competency_cancel_review_request($userid, $competencyid) {
+        if (!plan::can_read_user($userid)) {
+            $context = context_user::instance($userid);
+            throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
+        }
+
+        $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
+        if (!$uc || $uc->get_status() != user_competency::STATUS_WAITING_FOR_REVIEW) {
+            throw new coding_exception('The competency can not be cancel review request at this stage.');
+        } else if (!$uc->can_request_review()) {
+            throw new required_capability_exception($context, 'tool/lp:userevidencemanage', 'nopermissions', '');
+        }
+
+        $uc->set_status(user_competency::STATUS_IDLE);
+        return $uc->update();
+    }
+
+    /**
+     * Request a user competency review.
+     *
+     * @param  int $userid       The user ID.
+     * @param  int $competencyid The competency ID.
+     * @return bool
+     */
+    public static function user_competency_request_review($userid, $competencyid) {
+        if (!plan::can_read_user($userid)) {
+            $context = context_user::instance($userid);
+            throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
+        }
+
+        $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
+        if (!$uc) {
+            $uc = user_competency::create_relation($userid, $competencyid);
+            $uc->create();
+        }
+
+        if ($uc->get_status() != user_competency::STATUS_IDLE) {
+            throw new coding_exception('The competency can not be sent for review at this stage.');
+        } else if (!$uc->can_request_review()) {
+            throw new required_capability_exception($context, 'tool/lp:userevidencemanage', 'nopermissions', '');
+        }
+
+        $uc->set_status(user_competency::STATUS_WAITING_FOR_REVIEW);
+        return $uc->update();
+    }
+
+    /**
+     * Start a user competency review.
+     *
+     * @param  int $userid       The user ID.
+     * @param  int $competencyid The competency ID.
+     * @return bool
+     */
+    public static function user_competency_start_review($userid, $competencyid) {
+        global $USER;
+
+        if (!plan::can_read_user($userid)) {
+            $context = context_user::instance($userid);
+            throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
+        }
+
+        $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
+        if (!$uc || $uc->get_status() != user_competency::STATUS_WAITING_FOR_REVIEW) {
+            throw new coding_exception('The competency review can not be started at this stage.');
+        } else if (!$uc->can_review()) {
+            throw new required_capability_exception($context, 'tool/lp:competencygrade', 'nopermissions', '');
+        }
+
+        $uc->set_status(user_competency::STATUS_IN_REVIEW);
+        $uc->set_reviewerid($USER->id);
+        return $uc->update();
+    }
+
+    /**
+     * Stop a user competency review.
+     *
+     * @param  int $userid       The user ID.
+     * @param  int $competencyid The competency ID.
+     * @return bool
+     */
+    public static function user_competency_stop_review($userid, $competencyid) {
+        if (!plan::can_read_user($userid)) {
+            $context = context_user::instance($userid);
+            throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
+        }
+
+        $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
+        if (!$uc || $uc->get_status() != user_competency::STATUS_IN_REVIEW) {
+            throw new coding_exception('The competency review can not be stopped at this stage.');
+        } else if (!$uc->can_review()) {
+            throw new required_capability_exception($context, 'tool/lp:competencygrade', 'nopermissions', '');
+        }
+
+        $uc->set_status(user_competency::STATUS_IDLE);
+        return $uc->update();
     }
 
     /**

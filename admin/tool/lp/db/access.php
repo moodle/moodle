@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
 
+    // Competencies.
     'tool/lp:competencymanage' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSECAT,
@@ -43,6 +44,22 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' => 'moodle/block:view'
     ),
+    'tool/lp:competencysuggestgrade' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE, // And CONTEXT_USER.
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW
+        ),
+    ),
+    'tool/lp:competencygrade' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE, // And CONTEXT_USER.
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+    ),
+    // Course competencies.
     'tool/lp:coursecompetencymanage' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -68,6 +85,7 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' => 'moodle/block:view'
     ),
+    // User plans.
     'tool/lp:planmanage' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_USER,
@@ -125,6 +143,7 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' => 'moodle/site:config'
     ),
+    // Template.
     'tool/lp:templatemanage' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSECAT,
@@ -162,20 +181,5 @@ $capabilities = array(
         'archetypes' => array(
         ),
         'clonepermissionsfrom' => 'moodle/site:config'
-    ),
-    'tool/lp:competencysuggestgrade' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE, // And CONTEXT_USER.
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW
-        ),
-    ),
-    'tool/lp:competencygrade' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE, // And CONTEXT_USER.
-        'archetypes' => array(
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ),
     ),
 );

@@ -662,6 +662,45 @@ $functions = array(
         'capabilities' => 'tool/lp:userevidencemanageown',
         'ajax'         => true,
     ),
+
+    // User competency.
+    'tool_lp_user_competency_cancel_review_request' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'user_competency_cancel_review_request',
+        'classpath'    => '',
+        'description'  => 'Cancel a review request.',
+        'type'         => 'write',
+        'capabilities' => 'tool/lp:userevidencemanageown',
+        'ajax'         => true,
+    ),
+    'tool_lp_user_competency_request_review' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'user_competency_request_review',
+        'classpath'    => '',
+        'description'  => 'Request a review.',
+        'type'         => 'write',
+        'capabilities' => 'tool/lp:userevidencemanageown',
+        'ajax'         => true,
+    ),
+    'tool_lp_user_competency_start_review' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'user_competency_start_review',
+        'classpath'    => '',
+        'description'  => 'Start a review.',
+        'type'         => 'write',
+        'capabilities' => 'tool/lp:competencygrade',
+        'ajax'         => true,
+    ),
+    'tool_lp_user_competency_stop_review' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'user_competency_stop_review',
+        'classpath'    => '',
+        'description'  => 'Stop a review.',
+        'type'         => 'write',
+        'capabilities' => 'tool/lp:competencygrade',
+        'ajax'         => true,
+    ),
+
     'tool_lp_grade_competency_in_plan' => array(
         'classname'    => 'tool_lp\external',
         'methodname'   => 'grade_competency_in_plan',

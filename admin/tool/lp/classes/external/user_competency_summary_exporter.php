@@ -26,6 +26,7 @@ namespace tool_lp\external;
 use context_user;
 use renderer_base;
 use stdClass;
+use tool_lp\user_competency;
 
 /**
  * Class for exporting user competency data with additional related data.
@@ -76,7 +77,11 @@ class user_competency_summary_exporter extends exporter {
             'evidence' => array(
                 'type' => evidence_exporter::read_properties_definition(),
                 'multiple' => true
-            )
+            ),
+            'commentarea' => array(
+                'type' => comment_area_exporter::read_properties_definition(),
+                'optional' => true
+            ),
         );
     }
 
@@ -141,6 +146,13 @@ class user_competency_summary_exporter extends exporter {
                 $allevidence[] = $exporter->export($output);
             }
             $result->evidence = $allevidence;
+        }
+
+        $usercompetency = !empty($this->related['usercompetency']) ? $this->related['usercompetency'] : null;
+
+        if (!empty($usercompetency)) {
+            $commentareaexporter = new comment_area_exporter($usercompetency->get_comment_object());
+            $result->commentarea = $commentareaexporter->export($output);
         }
 
         return (array) $result;

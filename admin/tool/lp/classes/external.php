@@ -2679,6 +2679,163 @@ class external extends external_api {
     }
 
     /**
+     * Returns description of external function parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function user_competency_cancel_review_request_parameters() {
+        return new external_function_parameters(array(
+            'userid' => new external_value(PARAM_INT, 'The user ID'),
+            'competencyid' => new external_value(PARAM_INT, 'The competency ID'),
+        ));
+    }
+
+    /**
+     * External function user_competency_cancel_review_request.
+     *
+     * @param int $id The ID description.
+     * @return boolean
+     */
+    public static function user_competency_cancel_review_request($userid, $competencyid) {
+        $params = self::validate_parameters(self::user_competency_request_review_parameters(), array(
+            'userid' => $userid,
+            'competencyid' => $competencyid
+        ));
+
+        $context = context_user::instance($params['userid']);
+        self::validate_context($context);
+
+        return api::user_competency_cancel_review_request($userid, $competencyid);
+    }
+
+    /**
+     * Returns description of external function result value.
+     *
+     * @return \external_function_parameters
+     */
+    public static function user_competency_cancel_review_request_returns() {
+        new external_value(PARAM_BOOL, 'The success');
+    }
+
+    /**
+     * Returns description of external function parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function user_competency_request_review_parameters() {
+        return new external_function_parameters(array(
+            'userid' => new external_value(PARAM_INT, 'The user ID'),
+            'competencyid' => new external_value(PARAM_INT, 'The competency ID'),
+        ));
+    }
+
+    /**
+     * External function user_competency_request_review.
+     *
+     * @param int $userid The user ID.
+     * @param int $competencyid The competency ID.
+     * @return boolean
+     */
+    public static function user_competency_request_review($userid, $competencyid) {
+        $params = self::validate_parameters(self::user_competency_request_review_parameters(), array(
+            'userid' => $userid,
+            'competencyid' => $competencyid
+        ));
+
+        $context = context_user::instance($params['userid']);
+        self::validate_context($context);
+
+        return api::user_competency_request_review($userid, $competencyid);
+    }
+
+    /**
+     * Returns description of external function result value.
+     *
+     * @return \external_function_parameters
+     */
+    public static function user_competency_request_review_returns() {
+        new external_value(PARAM_BOOL, 'The success');
+    }
+
+    /**
+     * Returns description of external function parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function user_competency_start_review_parameters() {
+        return new external_function_parameters(array(
+            'userid' => new external_value(PARAM_INT, 'The user ID'),
+            'competencyid' => new external_value(PARAM_INT, 'The competency ID'),
+        ));
+    }
+
+    /**
+     * External function user_competency_start_review.
+     *
+     * @param int $id The ID description.
+     * @return boolean
+     */
+    public static function user_competency_start_review($userid, $competencyid) {
+        $params = self::validate_parameters(self::user_competency_request_review_parameters(), array(
+            'userid' => $userid,
+            'competencyid' => $competencyid
+        ));
+
+        $context = context_user::instance($params['userid']);
+        self::validate_context($context);
+
+        return api::user_competency_start_review($userid, $competencyid);
+    }
+
+    /**
+     * Returns description of external function result value.
+     *
+     * @return \external_function_parameters
+     */
+    public static function user_competency_start_review_returns() {
+        new external_value(PARAM_BOOL, 'The success');
+    }
+
+    /**
+     * Returns description of external function parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function user_competency_stop_review_parameters() {
+        return new external_function_parameters(array(
+            'userid' => new external_value(PARAM_INT, 'The user ID'),
+            'competencyid' => new external_value(PARAM_INT, 'The competency ID'),
+        ));
+    }
+
+    /**
+     * External function user_competency_stop_review.
+     *
+     * @param int $id The ID description.
+     * @return boolean
+     */
+    public static function user_competency_stop_review($userid, $competencyid) {
+        $params = self::validate_parameters(self::user_competency_request_review_parameters(), array(
+            'userid' => $userid,
+            'competencyid' => $competencyid
+        ));
+
+        $context = context_user::instance($params['userid']);
+        self::validate_context($context);
+
+        return api::user_competency_stop_review($userid, $competencyid);
+    }
+
+    /**
+     * Returns description of external function result value.
+     *
+     * @return \external_function_parameters
+     */
+    public static function user_competency_stop_review_returns() {
+        new external_value(PARAM_BOOL, 'The success');
+    }
+
+    /**
      * Count the competencies (visible to this user) in this learning plan template.
      *
      * @param int $templateid Template id.

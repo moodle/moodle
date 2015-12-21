@@ -24,6 +24,9 @@
 namespace tool_lp;
 defined('MOODLE_INTERNAL') || die();
 
+use coding_exception;
+use context_user;
+use comment;
 use lang_string;
 
 /**
@@ -87,6 +90,24 @@ class user_competency extends persistent {
     }
 
     /**
+     * Can the current user send the user competency for review?
+     *
+     * @return bool
+     */
+    public function can_request_review() {
+        return static::can_request_review_user($this->get_userid());
+    }
+
+    /**
+     * Can the current user review the user competency?
+     *
+     * @return bool
+     */
+    public function can_review() {
+        return static::can_review_user($this->get_userid());
+    }
+
+    /**
      * Human readable status name.
      *
      * @param int $status The status code.
@@ -132,12 +153,45 @@ class user_competency extends persistent {
     }
 
     /**
+     * Get the comment object.
+     *
+     * @return comment
+     */
+    public function get_comment_object() {
+        global $CFG;
+        require_once($CFG->dirroot . '/comment/lib.php');
+
+        if (!$this->get_id()) {
+            throw new coding_exception('The user competency record must exist.');
+        }
+
+        $comment = new comment((object) array(
+            'context' => $this->get_context(),
+            'component' => 'tool_lp',
+            'itemid' => $this->get_id(),
+            'area' => 'user_competency',
+            'showcount' => true,
+        ));
+        $comment->set_fullwidth(true);
+        return $comment;
+    }
+
+    /**
      * Return the competency Object.
      *
      * @return competency Competency Object
      */
     public function get_competency() {
         return new competency($this->get_competencyid());
+    }
+
+    /**
+     * Get the context.
+     *
+     * @return context The context.
+     */
+    public function get_context() {
+        return context_user::instance($this->get_userid());
     }
 
     /**
@@ -228,6 +282,28 @@ class user_competency extends persistent {
         }
 
         return true;
+    }
+
+    /**
+     * Can the current user send a user's competency for review?
+     *
+     * @param  int $userid The user ID the competency belongs to.
+     * @return bool
+     */
+    public static function can_request_review_user($userid) {
+        // We can request a review when we can attach evidence of prior learning.
+        return user_evidence::can_manage_user($userid);
+    }
+
+    /**
+     * Can the current user send review the user competency?
+     *
+     * @param  int $userid The user ID the competency belongs to.
+     * @return bool
+     */
+    public static function can_review_user($userid) {
+        // We can review a competency when we can grade them.
+        return has_capability('tool/lp:competencygrade', context_user::instance($userid));
     }
 
     /**

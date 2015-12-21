@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_lp\output;
+defined('MOODLE_INTERNAL') || die();
 
 use renderable;
 use templatable;
@@ -64,7 +65,7 @@ class user_competency_summary_in_plan implements renderable, templatable {
         global $DB;
 
         $plan = api::read_plan($this->planid);
-        $pc = api::get_plan_competency($this->planid, $this->competencyid);
+        $pc = api::get_plan_competency($plan, $this->competencyid);
         $competency = $pc->competency;
         $usercompetency = $pc->usercompetency;
         $usercompetencyplan = $pc->usercompetencyplan;

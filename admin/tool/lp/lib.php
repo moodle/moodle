@@ -169,3 +169,64 @@ function tool_lp_pluginfile($course, $cm, $context, $filearea, $args, $forcedown
 
     send_stored_file($file, null, 0, $forcedownload);
 }
+
+/**
+ * Hook when a comment is added.
+ *
+ * @param  stdClass $comment The comment.
+ * @param  stdClass $params The parameters.
+ * @return array
+ */
+function tool_lp_comment_add($comment, $params) {
+    if ($params->commentarea == 'user_competency') {
+        $uc = new \tool_lp\user_competency($params->itemid);
+
+        // When the owner comments we message the reviewer, otherwise we message the current user.
+        $recipient = $comment->userid == $uc->get_userid() ? $uc->get_reviewerid() : $uc->get_userid();
+        if (!$recipient) {
+            return;
+        }
+
+        $message = new stdClass();
+        $message->component = 'tool_lp';
+        $message->name = 'user_competency_comment';
+        $message->notification = 1;
+        $message->userto = $recipient;
+        $message->userfrom = $comment->userid;
+        // TODO Make message useful.
+        $message->fullmessage = get_string('acommentwaspostedonacompetency', 'tool_lp');
+        $message->fullmessageformat = FORMAT_PLAIN;
+        $message->fullmessagehtml = '';
+        $message->smallmessage = get_string('acommentwaspostedonacompetency', 'tool_lp');
+        // TODO Make URL useful.
+        $message->contexturl = new moodle_url('/admin/tool/lp/plans.php', array('userid' => $uc->get_userid()));
+        $message->contexturlname = get_string('userplans', 'tool_lp');
+
+        message_send($message);
+    }
+}
+
+/**
+ * Return the permissions of for the comments.
+ *
+ * @param  stdClass $params The parameters.
+ * @return array
+ */
+function tool_lp_comment_permissions($params) {
+    if ($params->commentarea == 'user_competency') {
+        $uc = new \tool_lp\user_competency($params->itemid);
+        $can = \tool_lp\plan::can_read_user($uc->get_userid());
+        return array('post' => $can, 'view' => $can);
+    }
+    return array('post' => false, 'view' => false);
+}
+
+/**
+ * Validates comments.
+ *
+ * @param  stdClass $params The parameters.
+ * @return array
+ */
+function tool_lp_comment_validate($params) {
+    return true;
+}

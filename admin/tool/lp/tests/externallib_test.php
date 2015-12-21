@@ -1405,7 +1405,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $plan = $lpg->create_plan(array('userid' => $this->user->id, 'templateid' => $tpl->get_id()));
 
         $uc1a = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c1a->get_id(),
-            'status' => user_competency::STATUS_IN_REVIEW));
+            'status' => user_competency::STATUS_IN_REVIEW, 'reviewerid' => $this->creator->id));
         $uc1b = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c1b->get_id()));
         $uc2b = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c2b->get_id(),
             'grade' => 2, 'proficiency' => 1));

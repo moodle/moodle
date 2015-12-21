@@ -24,6 +24,7 @@
 namespace tool_lp\external;
 defined('MOODLE_INTERNAL') || die();
 
+use core_user;
 use renderer_base;
 use stdClass;
 use tool_lp\user_competency;
@@ -68,16 +69,65 @@ class user_competency_exporter extends persistent_exporter {
         }
         $result->statusname = $statusname;
 
+        $result->canrequestreview = $this->persistent->can_request_review();
+        $result->canreview = $this->persistent->can_review();
+
+        $result->isstatusidle = $this->persistent->get_status() == user_competency::STATUS_IDLE;
+        $result->isstatusinreview = $this->persistent->get_status() == user_competency::STATUS_IN_REVIEW;
+        $result->isstatuswaitingforreview = $this->persistent->get_status() == user_competency::STATUS_WAITING_FOR_REVIEW;
+
+        $result->isrequestreviewallowed = $result->canrequestreview && $result->isstatusidle;
+        $result->iscancelreviewrequestallowed = $result->canrequestreview && $result->isstatuswaitingforreview;
+        $result->isstartreviewallowed = $result->canreview && $result->isstatuswaitingforreview;
+        $result->isstopreviewallowed = $result->canreview && $result->isstatusinreview;
+
+        if (!empty($result->isstatusinreview)) {
+            // TODO Make this more efficient.
+            $userexporter = new user_summary_exporter(core_user::get_user($this->persistent->get_reviewerid(), '*', MUST_EXIST));
+            $result->reviewer = $userexporter->export($output);
+        }
+
         return (array) $result;
     }
 
     protected static function define_other_properties() {
         return array(
+            'canrequestreview' => array(
+                'type' => PARAM_BOOL,
+            ),
+            'canreview' => array(
+                'type' => PARAM_BOOL,
+            ),
             'gradename' => array(
                 'type' => PARAM_TEXT
             ),
+            'isrequestreviewallowed' => array(
+                'type' => PARAM_BOOL,
+            ),
+            'iscancelreviewrequestallowed' => array(
+                'type' => PARAM_BOOL,
+            ),
+            'isstartreviewallowed' => array(
+                'type' => PARAM_BOOL,
+            ),
+            'isstopreviewallowed' => array(
+                'type' => PARAM_BOOL,
+            ),
+            'isstatusidle' => array(
+                'type' => PARAM_BOOL,
+            ),
+            'isstatusinreview' => array(
+                'type' => PARAM_BOOL,
+            ),
+            'isstatuswaitingforreview' => array(
+                'type' => PARAM_BOOL,
+            ),
             'proficiencyname' => array(
                 'type' => PARAM_RAW
+            ),
+            'reviewer' => array(
+                'type' => user_summary_exporter::read_properties_definition(),
+                'optional' => true
             ),
             'statusname' => array(
                 'type' => PARAM_RAW

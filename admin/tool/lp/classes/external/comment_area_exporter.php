@@ -24,6 +24,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_lp\external;
+require_once($CFG->dirroot . '/comment/lib.php');
+
 defined('MOODLE_INTERNAL') || die();
 
 use comment;
@@ -51,6 +53,7 @@ class comment_area_exporter extends exporter {
         $data->courseid = $comment->get_courseid();
         $data->contextid = $comment->get_context()->id;
         $data->cid = $comment->get_cid();
+
         parent::__construct($data, $related);
     }
 

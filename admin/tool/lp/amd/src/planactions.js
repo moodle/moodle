@@ -94,6 +94,18 @@ define(['jquery',
     };
 
     /**
+     * Refresh the plan view.
+     *
+     * This is useful when you only want to refresh the view.
+     *
+     * @param  {String} selector The node to search the plan data from.
+     */
+    PlanActions.prototype.refresh = function(selector) {
+        var planData = this._findPlanData($(selector));
+        this._callAndRefresh([], planData);
+    };
+
+    /**
      * Callback to render the region template.
      *
      * @param {Object} context The context for the template.
