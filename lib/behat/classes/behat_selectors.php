@@ -118,7 +118,7 @@ XPATH
 XPATH
         , 'question' => <<<XPATH
 .//div[contains(concat(' ', normalize-space(@class), ' '), ' que ')]
-    [contains(div[@class='content']/div[@class='formulation'], %locator%)]
+    [contains(div[@class='content']/div[contains(concat(' ', normalize-space(@class), ' '), ' formulation ')], %locator%)]
 XPATH
         , 'region' => <<<XPATH
 .//*[self::div | self::section | self::aside | self::header | self::footer][./@id = %locator%]
