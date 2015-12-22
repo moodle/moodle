@@ -76,7 +76,8 @@ class behat_question extends behat_question_base {
         // Split in two checkings to give more feedback in case of exception.
         $exception = new ElementNotFoundException($this->getSession(), 'Question "' . $questiondescription . '" ');
         $questionxpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' que ')]" .
-                "[contains(div[@class='content']/div[@class='formulation'], {$questiondescriptionliteral})]";
+                "[contains(div[@class='content']/div[contains(concat(' ', normalize-space(@class), ' '), ' formulation ')]," .
+                "{$questiondescriptionliteral})]";
         $this->find('xpath', $questionxpath, $exception);
 
         $exception = new ExpectationException('Question "' . $questiondescription . '" state is not "' . $state . '"', $this->getSession());
