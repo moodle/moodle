@@ -391,4 +391,32 @@ class enrol_guest_plugin extends enrol_plugin {
         $fields['status']          = $this->get_config('status');
         return $fields;
     }
+
+    /**
+     * Return information for enrolment instance containing list of parameters required
+     * for enrolment, name of enrolment plugin etc.
+     *
+     * @param stdClass $instance enrolment instance
+     * @return stdClass instance info.
+     * @since Moodle 3.1
+     */
+    public function get_enrol_info(stdClass $instance) {
+
+        $instanceinfo = new stdClass();
+        $instanceinfo->id = $instance->id;
+        $instanceinfo->courseid = $instance->courseid;
+        $instanceinfo->type = $this->get_name();
+        $instanceinfo->name = $this->get_instance_name($instance);
+        $instanceinfo->status = $instance->status == ENROL_INSTANCE_ENABLED;
+
+        // Specifics enrolment method parameters.
+        $instanceinfo->requiredparam = new stdClass();
+        $instanceinfo->requiredparam->passwordrequired = !empty($instance->password);
+
+        // If the plugin is enabled, return the URL for obtaining more information.
+        if ($instanceinfo->status) {
+            $instanceinfo->wsfunction = 'enrol_guest_get_instance_info';
+        }
+        return $instanceinfo;
+    }
 }
