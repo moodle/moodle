@@ -296,6 +296,7 @@ class page_requirements_manager {
 
         // Every page should include definition of following modules.
         $this->js_module($this->find_module('core_filepicker'));
+        $this->js_module($this->find_module('core_comment'));
     }
 
     /**

@@ -1039,6 +1039,87 @@ class comment {
     public function set_fullwidth($fullwidth = true) {
         $this->fullwidth = (bool)$fullwidth;
     }
+
+    /**
+     * Return the template.
+     *
+     * @since 3.1
+     * @return string
+     */
+    public function get_template() {
+        return $this->template;
+    }
+
+    /**
+     * Return the cid.
+     *
+     * @since 3.1
+     * @return string
+     */
+    public function get_cid() {
+        return $this->cid;
+    }
+
+    /**
+     * Return the link text.
+     *
+     * @since 3.1
+     * @return string
+     */
+    public function get_linktext() {
+        return $this->linktext;
+    }
+
+    /**
+     * Return no toggle.
+     *
+     * @since 3.1
+     * @return bool
+     */
+    public function get_notoggle() {
+        return $this->notoggle;
+    }
+
+    /**
+     * Return display total count.
+     *
+     * @since 3.1
+     * @return bool
+     */
+    public function get_displaytotalcount() {
+        return $this->displaytotalcount;
+    }
+
+    /**
+     * Return display cancel.
+     *
+     * @since 3.1
+     * @return bool
+     */
+    public function get_displaycancel() {
+        return $this->displaycancel;
+    }
+
+    /**
+     * Return fullwidth.
+     *
+     * @since 3.1
+     * @return bool
+     */
+    public function get_fullwidth() {
+        return $this->fullwidth;
+    }
+
+    /**
+     * Return autostart.
+     *
+     * @since 3.1
+     * @return bool
+     */
+    public function get_autostart() {
+        return $this->autostart;
+    }
+
 }
 
 /**

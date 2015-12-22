@@ -1,0 +1,113 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_lp/comment_area
+
+    IDs required for JS:
+    * all
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * autostart
+    * canpost
+    * cid
+    * collapsediconurl
+    * commentarea
+    * component
+    * contextid
+    * count
+    * courseid
+    * displaycancel
+    * fullwidth
+    * itemid
+    * linktext
+    * notoggle
+    * displaytotalcount
+    * template
+    * uniqid
+
+    Example context (json):
+    {
+    }
+
+}}
+<div style="display: none;" id="cmt-tmpl">{{{template}}}</div>
+<div class="mdl-left">
+    {{^notoggle}}
+        <a href="#" class="comment-link" id="comment-link-{{cid}}">
+            <img src="{{{collapsediconurl}}}" id="comment-img-{{cid}}" alt="{{linktext}}" title="{{linktext}}"><span id="comment-link-text-{{cid}}">{{linktext}}
+                {{#displaytotalcount}}
+                    ({{count}})
+                {{/displaytotalcount}}</span>
+        </a>
+    {{/notoggle}}
+
+    <div id="comment-ctrl-{{cid}}" class="comment-ctrl">
+        <ul id="comment-list-{{cid}}" class="comment-list">
+            <li class="first"></li>
+        </ul>
+        <div id="comment-pagination-{{cid}}" class="comment-pagination"></div>
+
+        {{#canpost}}
+            <div class="comment-area">
+                <div class="db">
+                    <textarea name="context" id="dlg-content-{{cid}}" rows="2" {{^fullwidth}}cols="20"{{/fullwidth}}{{#fullwidth}}class="fullwidth"{{/fullwidth}}></textarea>
+                </div>
+                <div class="fd" id="comment-action-{{cid}}">
+                    <a href="#" id="comment-action-post-{{cid}}">{{#str}}savecomment{{/str}}</a>
+                    {{#displaycancel}}
+                    | <a href="#" id="comment-action-cancel-{{cid}}">{{#str}}cancel{{/str}}</a>
+                    {{/displaycancel}}
+                </div>
+            </div>
+            <div class="clearer"></div>
+        {{/canpost}}
+
+    </div>
+</div>
+{{#js}}
+require(['core/str'], function(Str) {
+    // Preloading strings.
+    Str.get_strings([
+        { key: 'addcomment', component: 'moodle' },
+        { key: 'comments', component: 'moodle' },
+        { key: 'commentscount', component: 'moodle' },
+        { key: 'commentsrequirelogin', component: 'moodle' },
+        { key: 'deletecomment', component: 'moodle' },
+    ]).then(function() {
+        // Kick off when strings are loaded.
+        Y.use('core_comment', function(Y) {
+            M.core_comment.init(Y, {
+                client_id: '{{cid}}',
+                commentarea: '{{commentarea}}',
+                itemid: {{itemid}},
+                page: 0,
+                courseid: {{courseid}},
+                contextid: {{contextid}},
+                component: '{{component}}',
+                notoggle: false, // {{notoggle}} True not supported just yet.
+                autostart: false // {{autostart}} True not supported just yet.
+            });
+        });
+    });
+})
+{{/js}}
