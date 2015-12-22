@@ -204,5 +204,5 @@ if (!empty($user)) {
     $usertoken->token = $token->token;
     echo json_encode($usertoken);
 } else {
-    throw new moodle_exception('usernamenotfound', 'moodle');
+    throw new moodle_exception('invalidlogin');
 }
