@@ -261,12 +261,27 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
 
         $scoes = scorm_get_scoes($scorm->id);
         $sco = array_shift($scoes);
+        $sco->extradata = array();
         $this->assertEquals((array) $sco, $result['scoes'][0]);
 
         $sco = array_shift($scoes);
-        // Remove specific sco data.
+        $sco->extradata = array();
+        $sco->extradata[] = array(
+            'element' => 'isvisible',
+            'value' => $sco->isvisible
+        );
+        $sco->extradata[] = array(
+            'element' => 'parameters',
+            'value' => $sco->parameters
+        );
         unset($sco->isvisible);
         unset($sco->parameters);
+
+        // Sort the array (if we don't sort tests will fails for Postgres).
+        usort($result['scoes'][1]['extradata'], function($a, $b) {
+            return strcmp($a['element'], $b['element']);
+        });
+
         $this->assertEquals((array) $sco, $result['scoes'][1]);
 
         // Use organization.
@@ -284,6 +299,47 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         } catch (moodle_exception $e) {
             $this->assertEquals('invalidrecord', $e->errorcode);
         }
+
+    }
+
+    /**
+     * Test get scorm scoes (with a complex SCORM package)
+     */
+    public function test_mod_scorm_get_scorm_scoes_complex_package() {
+        global $CFG;
+
+        // As student.
+        self::setUser($this->student);
+
+        $record = new stdClass();
+        $record->course = $this->course->id;
+        $record->packagefilepath = $CFG->dirroot.'/mod/scorm/tests/packages/complexscorm.zip';
+        $scorm = self::getDataGenerator()->create_module('scorm', $record);
+
+        $result = mod_scorm_external::get_scorm_scoes($scorm->id);
+        $result = external_api::clean_returnvalue(mod_scorm_external::get_scorm_scoes_returns(), $result);
+        $this->assertCount(9, $result['scoes']);
+        $this->assertCount(0, $result['warnings']);
+
+        $expectedscoes = array();
+        $scoreturnstructure = mod_scorm_external::get_scorm_scoes_returns();
+        $scoes = scorm_get_scoes($scorm->id);
+        foreach ($scoes as $sco) {
+            $sco->extradata = array();
+            foreach ($sco as $element => $value) {
+                // Add the extra data to the extradata array and remove the object element.
+                if (!isset($scoreturnstructure->keys['scoes']->content->keys[$element])) {
+                    $sco->extradata[] = array(
+                        'element' => $element,
+                        'value' => $value
+                    );
+                    unset($sco->{$element});
+                }
+            }
+            $expectedscoes[] = (array) $sco;
+        }
+
+        $this->assertEquals($expectedscoes, $result['scoes']);
     }
 
     /*
