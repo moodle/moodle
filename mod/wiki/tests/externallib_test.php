@@ -196,6 +196,123 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
         $wikis = mod_wiki_external::get_wikis_by_courses(array($this->course->id));
         $wikis = external_api::clean_returnvalue(mod_wiki_external::get_wikis_by_courses_returns(), $wikis);
         $this->assertFalse($wikis['wikis'][0]['cancreatepages']);
+
+    }
+
+    /**
+     * Test view_wiki.
+     */
+    public function test_view_wiki() {
+
+        // Test invalid instance id.
+        try {
+            mod_wiki_external::view_wiki(0);
+            $this->fail('Exception expected due to invalid mod_wiki instance id.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('incorrectwikiid', $e->errorcode);
+        }
+
+        // Test not-enrolled user.
+        $usernotenrolled = self::getDataGenerator()->create_user();
+        $this->setUser($usernotenrolled);
+        try {
+            mod_wiki_external::view_wiki($this->wiki->id);
+            $this->fail('Exception expected due to not enrolled user.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        $result = mod_wiki_external::view_wiki($this->wiki->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::view_wiki_returns(), $result);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_shift($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_wiki\event\course_module_viewed', $event);
+        $this->assertEquals($this->context, $event->get_context());
+        $moodlewiki = new \moodle_url('/mod/wiki/view.php', array('id' => $this->cm->id));
+        $this->assertEquals($moodlewiki, $event->get_url());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+
+        // Test user with no capabilities.
+        // We need a explicit prohibit since this capability is allowed for students by default.
+        assign_capability('mod/wiki:viewpage', CAP_PROHIBIT, $this->studentrole->id, $this->context->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        try {
+            mod_wiki_external::view_wiki($this->wiki->id);
+            $this->fail('Exception expected due to missing capability.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('cannotviewpage', $e->errorcode);
+        }
+
+    }
+
+    /**
+     * Test view_page.
+     */
+    public function test_view_page() {
+
+        // Test invalid page id.
+        try {
+            mod_wiki_external::view_page(0);
+            $this->fail('Exception expected due to invalid view_page page id.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('incorrectpageid', $e->errorcode);
+        }
+
+        // Test not-enrolled user.
+        $usernotenrolled = self::getDataGenerator()->create_user();
+        $this->setUser($usernotenrolled);
+        try {
+            mod_wiki_external::view_page($this->firstpage->id);
+            $this->fail('Exception expected due to not enrolled user.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        $result = mod_wiki_external::view_page($this->firstpage->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::view_page_returns(), $result);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_shift($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_wiki\event\page_viewed', $event);
+        $this->assertEquals($this->context, $event->get_context());
+        $pageurl = new \moodle_url('/mod/wiki/view.php', array('pageid' => $this->firstpage->id));
+        $this->assertEquals($pageurl, $event->get_url());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+
+        // Test user with no capabilities.
+        // We need a explicit prohibit since this capability is allowed for students by default.
+        assign_capability('mod/wiki:viewpage', CAP_PROHIBIT, $this->studentrole->id, $this->context->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        try {
+            mod_wiki_external::view_page($this->firstpage->id);
+            $this->fail('Exception expected due to missing capability.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('cannotviewpage', $e->errorcode);
+        }
+
     }
 
 }

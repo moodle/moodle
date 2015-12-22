@@ -33,5 +33,21 @@ $functions = array(
                            'no courses are provided then all the wiki instances the user has access to will be returned.',
         'type'          => 'read',
         'capabilities'  => 'mod/wiki:viewpage'
+    ),
+
+    'mod_wiki_view_wiki' => array(
+        'classname'     => 'mod_wiki_external',
+        'methodname'    => 'view_wiki',
+        'description'   => 'Trigger the course module viewed event and update the module completion status.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/wiki:viewpage'
+    ),
+
+    'mod_wiki_view_page' => array(
+        'classname'     => 'mod_wiki_external',
+        'methodname'    => 'view_page',
+        'description'   => 'Trigger the page viewed event and update the module completion status.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/wiki:viewpage'
     )
 );

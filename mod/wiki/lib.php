@@ -659,3 +659,72 @@ function wiki_page_type_list($pagetype, $parentcontext, $currentcontext) {
     );
     return $module_pagetype;
 }
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $wiki       Wiki object.
+ * @param  stdClass $course     Course object.
+ * @param  stdClass $cm         Course module object.
+ * @param  stdClass $context    Context object.
+ * @since Moodle 3.1
+ */
+function wiki_view($wiki, $course, $cm, $context) {
+    // Trigger course_module_viewed event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $wiki->id
+    );
+    $event = \mod_wiki\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('wiki', $wiki);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}
+
+/**
+ * Mark the activity completed (if required) and trigger the page_viewed event.
+ *
+ * @param  stdClass $wiki       Wiki object.
+ * @param  stdClass $page       Page object.
+ * @param  stdClass $course     Course object.
+ * @param  stdClass $cm         Course module object.
+ * @param  stdClass $context    Context object.
+ * @param  int $uid             Optional User ID.
+ * @param  array $other         Optional Other params: title, wiki ID, group ID, groupanduser, prettyview.
+ * @param  stdClass $subwiki    Optional Subwiki.
+ * @since Moodle 3.1
+ */
+function wiki_page_view($wiki, $page, $course, $cm, $context, $uid = null, $other = null, $subwiki = null) {
+
+    // Trigger course_module_viewed event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $page->id
+    );
+    if ($uid != null) {
+        $params['relateduserid'] = $uid;
+    }
+    if ($other != null) {
+        $params['other'] = $other;
+    }
+
+    $event = \mod_wiki\event\page_viewed::create($params);
+
+    $event->add_record_snapshot('wiki_pages', $page);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('wiki', $wiki);
+    if ($subwiki != null) {
+        $event->add_record_snapshot('wiki_subwikis', $subwiki);
+    }
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}

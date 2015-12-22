@@ -174,4 +174,150 @@ class mod_wiki_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for view_wiki.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function view_wiki_parameters() {
+        return new external_function_parameters (
+            array(
+                'wikiid' => new external_value(PARAM_INT, 'Wiki instance ID.')
+            )
+        );
+    }
+
+    /**
+     * Trigger the course module viewed event and update the module completion status.
+     *
+     * @param int $wikiid The wiki instance ID.
+     * @return array of warnings and status result.
+     * @since Moodle 3.1
+     */
+    public static function view_wiki($wikiid) {
+
+        $params = self::validate_parameters(self::view_wiki_parameters(),
+                                            array(
+                                                'wikiid' => $wikiid
+                                            ));
+        $warnings = array();
+
+        // Get wiki instance.
+        if (!$wiki = wiki_get_wiki($params['wikiid'])) {
+            throw new moodle_exception('incorrectwikiid', 'wiki');
+        }
+
+        // Permission validation.
+        list($course, $cm) = get_course_and_cm_from_instance($wiki, 'wiki');
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        // Check if user can view this wiki.
+        // We don't use wiki_user_can_view because it requires to have a valid subwiki for the user.
+        if (!has_capability('mod/wiki:viewpage', $context)) {
+            throw new moodle_exception('cannotviewpage', 'wiki');
+        }
+
+        // Trigger course_module_viewed event and completion.
+        wiki_view($wiki, $course, $cm, $context);
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the view_wiki return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function view_wiki_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'Status: true if success.'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for view_page.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function view_page_parameters() {
+        return new external_function_parameters (
+            array(
+                'pageid' => new external_value(PARAM_INT, 'Wiki page ID.'),
+            )
+        );
+    }
+
+    /**
+     * Trigger the page viewed event and update the module completion status.
+     *
+     * @param int $pageid The page ID.
+     * @return array of warnings and status result.
+     * @since Moodle 3.1
+     * @throws moodle_exception if page is not valid.
+     */
+    public static function view_page($pageid) {
+
+        $params = self::validate_parameters(self::view_page_parameters(),
+                                            array(
+                                                'pageid' => $pageid
+                                            ));
+        $warnings = array();
+
+        // Get wiki page.
+        if (!$page = wiki_get_page($params['pageid'])) {
+            throw new moodle_exception('incorrectpageid', 'wiki');
+        }
+
+        // Get wiki instance.
+        if (!$wiki = wiki_get_wiki_from_pageid($params['pageid'])) {
+            throw new moodle_exception('incorrectwikiid', 'wiki');
+        }
+
+        // Permission validation.
+        list($course, $cm) = get_course_and_cm_from_instance($wiki, 'wiki');
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        // Check if user can view this wiki.
+        if (!$subwiki = wiki_get_subwiki($page->subwikiid)) {
+            throw new moodle_exception('incorrectsubwikiid', 'wiki');
+        }
+        if (!wiki_user_can_view($subwiki, $wiki)) {
+            throw new moodle_exception('cannotviewpage', 'wiki');
+        }
+
+        // Trigger page_viewed event and completion.
+        wiki_page_view($wiki, $page, $course, $cm, $context);
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the view_page return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function view_page_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'Status: true if success.'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }
