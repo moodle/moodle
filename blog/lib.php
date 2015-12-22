@@ -332,9 +332,9 @@ function blog_get_all_options(moodle_page $page, stdClass $userid = null) {
             $userid = $page->context->instanceid;
         }
         // Check the userid var.
-        if (!is_null($userid) && $userid!==$USER->id) {
+        if (!is_null($userid) && $userid !== $USER->id) {
             // Load the user from the userid... it MUST EXIST throw a wobbly if it doesn't!
-            $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
+            $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
         } else {
             $user = null;
         }
@@ -350,7 +350,7 @@ function blog_get_all_options(moodle_page $page, stdClass $userid = null) {
         // Get the options for the user.
         if ($user !== null and !isguestuser($user)) {
             // Load for the requested user.
-            $options[CONTEXT_USER+1] = blog_get_options_for_user($user);
+            $options[CONTEXT_USER + 1] = blog_get_options_for_user($user);
         }
         // Load for the current user.
         if (isloggedin() and !isguestuser()) {
@@ -413,7 +413,7 @@ function blog_get_options_for_user(stdClass $user=null) {
         // Not the current user, but we can view and its blogs are enabled for SITE or GLOBAL.
         $options['userentries'] = array(
             'string' => get_string('viewuserentries', 'blog', fullname($user)),
-            'link' => new moodle_url('/blog/index.php', array('userid'=>$user->id))
+            'link' => new moodle_url('/blog/index.php', array('userid' => $user->id))
         );
     } else {
         // It's the current user.
@@ -421,14 +421,14 @@ function blog_get_options_for_user(stdClass $user=null) {
             // We can view our own blogs .... BIG surprise.
             $options['view'] = array(
                 'string' => get_string('blogentries', 'blog'),
-                'link' => new moodle_url('/blog/index.php', array('userid'=>$USER->id))
+                'link' => new moodle_url('/blog/index.php', array('userid' => $USER->id))
             );
         }
         if (has_capability('moodle/blog:create', $sitecontext)) {
             // We can add to our own blog.
             $options['add'] = array(
                 'string' => get_string('addnewentry', 'blog'),
-                'link' => new moodle_url('/blog/edit.php', array('action'=>'add'))
+                'link' => new moodle_url('/blog/edit.php', array('action' => 'add'))
             );
         }
     }
@@ -560,13 +560,13 @@ function blog_get_options_for_module($module, $user=null) {
             $a->type = $modulename;
             $options['moduleview'] = array(
                 'string' => get_string('viewallmodentries', 'blog', $a),
-                'link' => new moodle_url('/blog/index.php', array('modid'=>$module->id))
+                'link' => new moodle_url('/blog/index.php', array('modid' => $module->id))
             );
         }
         // View MY entries about this module.
         $options['moduleviewmine'] = array(
             'string' => get_string('viewmyentriesaboutmodule', 'blog', $modulename),
-            'link' => new moodle_url('/blog/index.php', array('modid'=>$module->id, 'userid'=>$USER->id))
+            'link' => new moodle_url('/blog/index.php', array('modid' => $module->id, 'userid' => $USER->id))
         );
         if (!empty($user) && ($CFG->bloglevel >= BLOG_SITE_LEVEL)) {
             // View the given users entries about this module.
@@ -575,7 +575,7 @@ function blog_get_options_for_module($module, $user=null) {
             $a->user = fullname($user);
             $options['moduleviewuser'] = array(
                 'string' => get_string('blogentriesbyuseraboutmodule', 'blog', $a),
-                'link' => new moodle_url('/blog/index.php', array('modid'=>$module->id, 'userid'=>$user->id))
+                'link' => new moodle_url('/blog/index.php', array('modid' => $module->id, 'userid' => $user->id))
             );
         }
     }
@@ -584,7 +584,7 @@ function blog_get_options_for_module($module, $user=null) {
         // The user can blog about this module.
         $options['moduleadd'] = array(
             'string' => get_string('blogaboutthismodule', 'blog', $modulename),
-            'link' => new moodle_url('/blog/edit.php', array('action'=>'add', 'modid'=>$module->id))
+            'link' => new moodle_url('/blog/edit.php', array('action' => 'add', 'modid' => $module->id))
         );
     }
     // Cache the options.
@@ -673,7 +673,7 @@ function blog_get_headers($courseid=null, $groupid=null, $userid=null, $tagid=nu
 
         $headers['filters']['module'] = $modid;
         // A groupid param may conflict with this coursemod's courseid. Ignore groupid in that case.
-        $courseid = $DB->get_field('course_modules', 'course', array('id'=>$modid));
+        $courseid = $DB->get_field('course_modules', 'course', array('id' => $modid));
         $course = $DB->get_record('course', array('id' => $courseid));
         $cm = $DB->get_record('course_modules', array('id' => $modid));
         $cm->modname = $DB->get_field('modules', 'name', array('id' => $cm->module));
@@ -861,7 +861,7 @@ function blog_get_headers($courseid=null, $groupid=null, $userid=null, $tagid=nu
         if (!empty($tagid)) {
             $headers['filters']['tag'] = $tagid;
             $blogurl->param('tagid', $tagid);
-            $tagrec = $DB->get_record('tag', array('id'=>$tagid));
+            $tagrec = $DB->get_record('tag', array('id' => $tagid));
             $PAGE->navbar->add($tagrec->name, $blogurl);
         } else if (!empty($tag)) {
             if ($tagrec = $DB->get_record('tag', array('name' => $tag))) {
@@ -921,7 +921,7 @@ function blog_get_associated_count($courseid, $cmid=null) {
  * @package  core_blog
  * @category comment
  *
- * @param stdClass $comment_param {
+ * @param stdClass $commentparam {
  *              context  => context the context object
  *              courseid => int course id
  *              cm       => stdClass course module object
@@ -930,11 +930,11 @@ function blog_get_associated_count($courseid, $cmid=null) {
  * }
  * @return array
  */
-function blog_comment_permissions($comment_param) {
+function blog_comment_permissions($commentparam) {
     global $DB;
 
     // If blog is public and current user is guest, then don't let him post comments.
-    $blogentry = $DB->get_record('post', array('id' => $comment_param->itemid), 'publishstate', MUST_EXIST);
+    $blogentry = $DB->get_record('post', array('id' => $commentparam->itemid), 'publishstate', MUST_EXIST);
 
     if ($blogentry->publishstate != 'public') {
         if (!isloggedin() || isguestuser()) {
@@ -959,7 +959,7 @@ function blog_comment_permissions($comment_param) {
  * }
  * @return boolean
  */
-function blog_comment_validate($comment_param) {
+function blog_comment_validate($commentparam) {
     global $CFG, $DB, $USER;
 
     // Check if blogs are enabled user can comment.
@@ -968,22 +968,22 @@ function blog_comment_validate($comment_param) {
     }
 
     // Validate comment area.
-    if ($comment_param->commentarea != 'format_blog') {
+    if ($commentparam->commentarea != 'format_blog') {
         throw new comment_exception('invalidcommentarea');
     }
 
-    $blogentry = $DB->get_record('post', array('id' => $comment_param->itemid), '*', MUST_EXIST);
+    $blogentry = $DB->get_record('post', array('id' => $commentparam->itemid), '*', MUST_EXIST);
 
     // Validation for comment deletion.
-    if (!empty($comment_param->commentid)) {
-        if ($record = $DB->get_record('comments', array('id'=>$comment_param->commentid))) {
+    if (!empty($commentparam->commentid)) {
+        if ($record = $DB->get_record('comments', array('id' => $commentparam->commentid))) {
             if ($record->commentarea != 'format_blog') {
                 throw new comment_exception('invalidcommentarea');
             }
-            if ($record->contextid != $comment_param->context->id) {
+            if ($record->contextid != $commentparam->context->id) {
                 throw new comment_exception('invalidcontext');
             }
-            if ($record->itemid != $comment_param->itemid) {
+            if ($record->itemid != $commentparam->itemid) {
                 throw new comment_exception('invalidcommentitemid');
             }
         } else {
@@ -1005,10 +1005,10 @@ function blog_comment_validate($comment_param) {
  */
 function blog_page_type_list($pagetype, $parentcontext, $currentcontext) {
     return array(
-        '*'=>get_string('page-x', 'pagetype'),
-        'blog-*'=>get_string('page-blog-x', 'blog'),
-        'blog-index'=>get_string('page-blog-index', 'blog'),
-        'blog-edit'=>get_string('page-blog-edit', 'blog')
+        '*' => get_string('page-x', 'pagetype'),
+        'blog-*' => get_string('page-blog-x', 'blog'),
+        'blog-index' => get_string('page-blog-index', 'blog'),
+        'blog-edit' => get_string('page-blog-edit', 'blog')
     );
 }
 

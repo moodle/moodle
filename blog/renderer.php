@@ -141,10 +141,10 @@ class core_blog_renderer extends plugin_renderer_base {
             if ($officialtags) {
                 $o .= get_string('tags', 'tag') .': '. $this->output->container($officialtags, 'officialblogtags');
                 if ($defaulttags) {
-                    $o .=  ', ';
+                    $o .= ', ';
                 }
             }
-            $o .=  $defaulttags;
+            $o .= $defaulttags;
             $o .= $this->output->container_end();
         }
 
@@ -155,7 +155,7 @@ class core_blog_renderer extends plugin_renderer_base {
             $assocstr = '';
             $coursesarray = array();
             foreach ($entry->renderable->blogassociations as $assocrec) {
-                if ($assocrec->contextlevel ==  CONTEXT_COURSE) {
+                if ($assocrec->contextlevel == CONTEXT_COURSE) {
                     $coursesarray[] = $this->output->action_icon($assocrec->url, $assocrec->icon, null, array(), true);
                 }
             }
@@ -166,7 +166,7 @@ class core_blog_renderer extends plugin_renderer_base {
             // Now show mod association.
             $modulesarray = array();
             foreach ($entry->renderable->blogassociations as $assocrec) {
-                if ($assocrec->contextlevel ==  CONTEXT_MODULE) {
+                if ($assocrec->contextlevel == CONTEXT_MODULE) {
                     $str = get_string('associated', 'blog', $assocrec->type) . ': ';
                     $str .= $this->output->action_icon($assocrec->url, $assocrec->icon, null, array(), true);
                     $modulesarray[] = $str;
