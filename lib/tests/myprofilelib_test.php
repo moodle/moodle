@@ -25,7 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/user/tests/fixtures/myprofile_fixtures.php');
 require_once($CFG->dirroot . '/lib/myprofilelib.php');
 
 /**
@@ -38,23 +37,45 @@ require_once($CFG->dirroot . '/lib/myprofilelib.php');
 class core_myprofilelib_testcase extends advanced_testcase {
 
     /**
-     * Tests for report_log_myprofile_navigation() api.
+     * @var stdClass The user.
      */
-    public function test_core_myprofile_navigation() {
-        global $CFG;
+    private $user;
 
+    /**
+     * @var stdClass The course.
+     */
+    private $course;
+
+    /**
+     * @var \core_user\output\myprofile\tree The navigation tree.
+     */
+    private $tree;
+
+    public function setUp() {
+        // Set the $PAGE->url value so core_myprofile_navigation() doesn't complain.
+        global $PAGE;
+        $PAGE->set_url('/test');
+
+        $this->user = $this->getDataGenerator()->create_user();
+        $this->user2 = $this->getDataGenerator()->create_user();
+        $this->course = $this->getDataGenerator()->create_course();
+        $this->tree = new \core_user\output\myprofile\tree();
         $this->resetAfterTest();
-        $this->setAdminUser();
+    }
 
-        $tree = new phpunit_fixture_myprofile_tree();
-        $user = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
-        $course = $this->getDataGenerator()->create_course();
+    /**
+     * Tests the core_myprofile_navigation() function as an admin viewing a user's course profile.
+     */
+    public function test_core_myprofile_navigation_as_admin() {
+        $this->setAdminUser();
         $iscurrentuser = false;
 
         // Test tree as admin user.
-        core_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $cats = $tree->get_categories();
+        core_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $categories = $reflector->getProperty('categories');
+        $categories->setAccessible(true);
+        $cats = $categories->getValue($this->tree);
         $this->assertArrayHasKey('contact', $cats);
         $this->assertArrayHasKey('coursedetails', $cats);
         $this->assertArrayHasKey('miscellaneous', $cats);
@@ -62,55 +83,90 @@ class core_myprofilelib_testcase extends advanced_testcase {
         $this->assertArrayHasKey('administration', $cats);
         $this->assertArrayHasKey('loginactivity', $cats);
 
-        // Course node.
-        $nodes = $tree->get_nodes();
-        $this->assertArrayHasKey('fullprofile', $nodes);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('fullprofile', $nodes->getValue($this->tree));
+    }
 
-        // User without permission cannot access full course profile.
-        $this->setUser($user2);
-        $tree = new phpunit_fixture_myprofile_tree();
-        core_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayNotHasKey('fullprofile', $nodes);
+    /**
+     * Tests the core_myprofile_navigation() function as a user without permission to view the full
+     * profile of another another user.
+     */
+    public function test_core_myprofile_navigation_course_without_permission() {
+        $this->setUser($this->user2);
+        $iscurrentuser = false;
 
-        // Edit profile link.
-        $this->setUser($user);
+        core_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('fullprofile', $nodes->getValue($this->tree));
+    }
+
+    /**
+     * Tests the core_myprofile_navigation() function as the currently logged in user.
+     */
+    public function test_core_myprofile_navigation_profile_link_as_current_user() {
+        $this->setUser($this->user);
         $iscurrentuser = true;
-        $tree = new phpunit_fixture_myprofile_tree();
-        core_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayHasKey('editprofile', $nodes);
 
-        // Edit profile link as admin user.
+        core_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('editprofile', $nodes->getValue($this->tree));
+    }
+
+    /**
+     * Tests the core_myprofile_navigation() function as the admin viewing another user.
+     */
+    public function test_core_myprofile_navigation_profile_link_as_admin() {
         $this->setAdminUser();
         $iscurrentuser = false;
-        $tree = new phpunit_fixture_myprofile_tree();
-        core_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayHasKey('editprofile', $nodes);
 
-        // Preference page.
+        core_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('editprofile', $nodes->getValue($this->tree));
+    }
+
+    /**
+     * Tests the core_myprofile_navigation() function when viewing the preference page as an admin.
+     */
+    public function test_core_myprofile_navigation_preference_as_admin() {
         $this->setAdminUser();
         $iscurrentuser = false;
-        $tree = new phpunit_fixture_myprofile_tree();
-        core_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayHasKey('preferences', $nodes);
 
-        // Login as.
-        $this->setAdminUser();
+        core_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('preferences', $nodes->getValue($this->tree));
+        $this->assertArrayHasKey('loginas', $nodes->getValue($this->tree));
+    }
+
+    /**
+     * Tests the core_myprofile_navigation() function when viewing the preference
+     * page as another user without the ability to use the 'loginas' functionality.
+     */
+    public function test_core_myprofile_navigation_preference_without_permission() {
+        // Login as link for a user who doesn't have the capability to login as.
+        $this->setUser($this->user2);
         $iscurrentuser = false;
-        $tree = new phpunit_fixture_myprofile_tree();
-        core_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayHasKey('loginas', $nodes);
 
-        // Login as link for a user who doesn't have the cap.
-        $this->setUser($user2);
-        $tree = new phpunit_fixture_myprofile_tree();
-        core_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayNotHasKey('loginas', $nodes);
+        core_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('loginas', $nodes->getValue($this->tree));
+    }
+
+    /**
+     * Tests the core_myprofile_navigation() function as an admin viewing another user's contact details.
+     */
+    public function test_core_myprofile_navigation_contact_fields_as_admin() {
+        global $CFG;
 
         // User contact fields.
         set_config("hiddenuserfields", "country,city,webpage,icqnumber,skypeid,yahooid,aimid,msnid");
@@ -139,51 +195,81 @@ class core_myprofilelib_testcase extends advanced_testcase {
             'idnumber' => 'SLHL'
         );
         foreach ($fields as $field => $value) {
-            $user->$field = $value;
+            $this->user->$field = $value;
         }
 
         // User with proper permissions.
-        $tree = new phpunit_fixture_myprofile_tree();
-        core_myprofile_navigation($tree, $user, $iscurrentuser, null);
-        $nodes = $tree->get_nodes();
+        core_myprofile_navigation($this->tree, $this->user, $iscurrentuser, null);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
         foreach ($hiddenfields as $field) {
-            $this->assertArrayHasKey($field, $nodes);
+            $this->assertArrayHasKey($field, $nodes->getValue($this->tree));
         }
         foreach ($identityfields as $field) {
-            $this->assertArrayHasKey($field, $nodes);
+            $this->assertArrayHasKey($field, $nodes->getValue($this->tree));
         }
+    }
+
+    /**
+     * Tests the core_myprofile_navigation() function as a user viewing another user's profile
+     * ensuring that the contact details are not shown.
+     */
+    public function test_core_myprofile_navigation_contact_field_without_permission() {
+        global $CFG;
+
+        $iscurrentuser = false;
+        $hiddenfields = explode(',', $CFG->hiddenuserfields);
+        $identityfields = explode(',', $CFG->showuseridentity);
 
         // User without permission.
-        $this->setUser($user2);
-        $tree = new phpunit_fixture_myprofile_tree();
-        core_myprofile_navigation($tree, $user, $iscurrentuser, null);
-        $nodes = $tree->get_nodes();
+        $this->setUser($this->user2);
+        core_myprofile_navigation($this->tree, $this->user, $iscurrentuser, null);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
         foreach ($hiddenfields as $field) {
-            $this->assertArrayNotHasKey($field, $nodes);
+            $this->assertArrayNotHasKey($field, $nodes->getValue($this->tree));
         }
         foreach ($identityfields as $field) {
-            $this->assertArrayNotHasKey($field, $nodes);
+            $this->assertArrayNotHasKey($field, $nodes->getValue($this->tree));
         }
+    }
 
+    /**
+     * Tests the core_myprofile_navigation() function as an admin viewing another user's
+     * profile ensuring the login activity links are shown.
+     */
+    public function test_core_myprofile_navigation_login_activity() {
         // First access, last access, last ip.
         $this->setAdminUser();
         $iscurrentuser = false;
-        $tree = new phpunit_fixture_myprofile_tree();
-        core_myprofile_navigation($tree, $user, $iscurrentuser, null);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayHasKey('firstaccess', $nodes);
-        $this->assertArrayHasKey('lastaccess', $nodes);
-        $this->assertArrayHasKey('lastip', $nodes);
 
+        core_myprofile_navigation($this->tree, $this->user, $iscurrentuser, null);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('firstaccess', $nodes->getValue($this->tree));
+        $this->assertArrayHasKey('lastaccess', $nodes->getValue($this->tree));
+        $this->assertArrayHasKey('lastip', $nodes->getValue($this->tree));
+    }
+
+    /**
+     * Tests the core_myprofile_navigation() function as a user viewing another user's profile
+     * ensuring the login activity links are not shown.
+     */
+    public function test_core_myprofile_navigationn_login_activity_without_permission() {
         // User without permission.
         set_config("hiddenuserfields", "firstaccess,lastaccess,lastip");
-        $this->setUser($user2);
+        $this->setUser($this->user2);
         $iscurrentuser = false;
-        $tree = new phpunit_fixture_myprofile_tree();
-        core_myprofile_navigation($tree, $user, $iscurrentuser, null);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayNotHasKey('firstaccess', $nodes);
-        $this->assertArrayNotHasKey('lastaccess', $nodes);
-        $this->assertArrayNotHasKey('lastip', $nodes);
+
+        core_myprofile_navigation($this->tree, $this->user, $iscurrentuser, null);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('firstaccess', $nodes->getValue($this->tree));
+        $this->assertArrayNotHasKey('lastaccess', $nodes->getValue($this->tree));
+        $this->assertArrayNotHasKey('lastip', $nodes->getValue($this->tree));
     }
 }

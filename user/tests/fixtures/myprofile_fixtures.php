@@ -70,18 +70,4 @@ class phpunit_fixture_myprofile_tree extends \core_user\output\myprofile\tree {
     public function find_categories_after($cat) {
         return parent::find_categories_after($cat);
     }
-
-    /**
-     * @return \core_user\output\myprofile\category[]
-     */
-    public function get_categories() {
-        return $this->categories;
-    }
-
-    /**
-     * @return \core_user\output\myprofile\node[]
-     */
-    public function get_nodes() {
-        return $this->nodes;
-    }
 }

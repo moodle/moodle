@@ -25,7 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/user/tests/fixtures/myprofile_fixtures.php');
 
 /**
  * Class report_log_events_testcase.
@@ -35,6 +34,28 @@ require_once($CFG->dirroot . '/user/tests/fixtures/myprofile_fixtures.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
 class report_log_lib_testcase extends advanced_testcase {
+
+    /**
+     * @var stdClass The user.
+     */
+    private $user;
+
+    /**
+     * @var stdClass The course.
+     */
+    private $course;
+
+    /**
+     * @var \core_user\output\myprofile\tree The navigation tree.
+     */
+    private $tree;
+
+    public function setUp() {
+        $this->user = $this->getDataGenerator()->create_user();
+        $this->course = $this->getDataGenerator()->create_course();
+        $this->tree = new \core_user\output\myprofile\tree();
+        $this->resetAfterTest();
+    }
 
     /**
      * Test report_log_supports_logstore.
@@ -59,32 +80,36 @@ class report_log_lib_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests for report_log_myprofile_navigation() api.
+     * Tests the report_log_myprofile_navigation() function as an admin viewing the logs for a user.
      */
     public function test_report_log_myprofile_navigation() {
-
-        $this->resetAfterTest();
+        // Set as the admin.
         $this->setAdminUser();
-
-        $tree = new phpunit_fixture_myprofile_tree();
-        $user = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
-        $course = $this->getDataGenerator()->create_course();
         $iscurrentuser = false;
 
-        // As user with permissions.
-        report_log_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayHasKey('alllogs', $nodes);
-        $this->assertArrayHasKey('todayslogs', $nodes);
+        // Check the node tree is correct.
+        report_log_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('alllogs', $nodes->getValue($this->tree));
+        $this->assertArrayHasKey('todayslogs', $nodes->getValue($this->tree));
+    }
 
-        // Try to see as a user without permission.
-        $this->setUser($user2);
-        $tree = new phpunit_fixture_myprofile_tree();
+    /**
+     * Tests the report_log_myprofile_navigation() function as a user without permission.
+     */
+    public function test_report_log_myprofile_navigation_without_permission() {
+        // Set to the other user.
+        $this->setUser($this->user);
         $iscurrentuser = true;
-        report_log_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayNotHasKey('alllogs', $nodes);
-        $this->assertArrayNotHasKey('todayslogs', $nodes);
+
+        // Check the node tree is correct.
+        report_log_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('alllogs', $nodes->getValue($this->tree));
+        $this->assertArrayNotHasKey('todayslogs', $nodes->getValue($this->tree));
     }
 }
