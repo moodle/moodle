@@ -157,7 +157,9 @@ define(['jquery'], function($) {
                     }
                 });
             }
-            if (!eventHandled) {
+            // If we didn't find a handler, and the HREF is # that probably means that
+            // we are handling it from somewhere else. Let's just do nothing in that case.
+            if (!eventHandled && anchor.attr('href') !== '#') {
                 window.location.href = anchor.attr('href');
             }
             return true;
