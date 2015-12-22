@@ -29,7 +29,6 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir . '/badgeslib.php');
 require_once($CFG->dirroot . '/badges/lib.php');
-require_once($CFG->dirroot . '/user/tests/fixtures/myprofile_fixtures.php');
 
 class core_badges_badgeslib_testcase extends advanced_testcase {
     protected $badgeid;
@@ -476,52 +475,67 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests for core_badges_myprofile_navigation() api.
+     * Tests the core_badges_myprofile_navigation() function.
      */
     public function test_core_badges_myprofile_navigation() {
-        $this->resetAfterTest();
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
         $this->setAdminUser();
-        $user = $this->user;
         $badge = new badge($this->badgeid);
-        $badge->issue($user->id, true);
-        $this->assertTrue($badge->is_issued($user->id));
-
-        // Disable badges.
-        set_config('enablebadges', false);
-        $tree = new phpunit_fixture_myprofile_tree();
-        $user2 = $this->getDataGenerator()->create_user();
+        $badge->issue($this->user->id, true);
+        $iscurrentuser = true;
         $course = null;
-        $iscurrentuser = false;
-
-        core_badges_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayNotHasKey('localbadges', $nodes);
 
         // Enable badges.
         set_config('enablebadges', true);
-        $this->setUser($user);
-        $tree = new phpunit_fixture_myprofile_tree();
-        $iscurrentuser = true;
-        core_badges_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayHasKey('localbadges', $nodes);
 
-        $tree = new phpunit_fixture_myprofile_tree();
-        $iscurrentuser = true;
-        core_badges_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayHasKey('localbadges', $nodes);
+        // Check the node tree is correct.
+        core_badges_myprofile_navigation($tree, $this->user, $iscurrentuser, $course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('localbadges', $nodes->getValue($tree));
+    }
 
-        // Course badge.
-        $badge = new badge($this->coursebadge);
-        $badge->issue($user->id, true);
-        $this->assertTrue($badge->is_issued($user->id));
-        $course = $this->course;
-        $this->setUser($user2);
-        $tree = new phpunit_fixture_myprofile_tree();
+    /**
+     * Tests the core_badges_myprofile_navigation() function with badges disabled..
+     */
+    public function test_core_badges_myprofile_navigation_badges_disabled() {
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $this->setAdminUser();
+        $badge = new badge($this->badgeid);
+        $badge->issue($this->user->id, true);
         $iscurrentuser = false;
-        core_badges_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayHasKey('localbadges', $nodes);
+        $course = null;
+
+        // Disable badges.
+        set_config('enablebadges', false);
+
+        // Check the node tree is correct.
+        core_badges_myprofile_navigation($tree, $this->user, $iscurrentuser, $course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('localbadges', $nodes->getValue($tree));
+    }
+
+    /**
+     * Tests the core_badges_myprofile_navigation() function with a course badge.
+     */
+    public function test_core_badges_myprofile_navigation_with_course_badge() {
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $this->setAdminUser();
+        $badge = new badge($this->coursebadge);
+        $badge->issue($this->user->id, true);
+        $iscurrentuser = false;
+
+        // Check the node tree is correct.
+        core_badges_myprofile_navigation($tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('localbadges', $nodes->getValue($tree));
     }
 }

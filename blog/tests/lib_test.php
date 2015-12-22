@@ -26,7 +26,6 @@
 global $CFG;
 require_once($CFG->dirroot . '/blog/locallib.php');
 require_once($CFG->dirroot . '/blog/lib.php');
-require_once($CFG->dirroot . '/user/tests/fixtures/myprofile_fixtures.php');
 
 /**
  * Test functions that rely on the DB tables
@@ -479,37 +478,71 @@ class core_blog_lib_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests for core_blog_myprofile_navigation() api.
+     * Tests the core_blog_myprofile_navigation() function.
      */
     public function test_core_blog_myprofile_navigation() {
         global $USER;
 
-        $this->resetAfterTest();
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $this->setAdminUser();
+        $iscurrentuser = true;
+        $course = null;
+
+        // Enable blogs.
+        set_config('enableblogs', true);
+
+        // Check the node tree is correct.
+        core_blog_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('blogs', $nodes->getValue($tree));
+    }
+
+    /**
+     * Tests the core_blog_myprofile_navigation() function as a guest.
+     */
+    public function test_core_blog_myprofile_navigation_as_guest() {
+        global $USER;
+
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $iscurrentuser = false;
+        $course = null;
+
+        // Set user as guest.
         $this->setGuestUser();
 
-        // No blogs for guest users.
-        $tree = new phpunit_fixture_myprofile_tree();
-        $course = null;
-        $iscurrentuser = false;
+        // Check the node tree is correct.
         core_blog_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayNotHasKey('blogs', $nodes);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('blogs', $nodes->getValue($tree));
+    }
+
+    /**
+     * Tests the core_blog_myprofile_navigation() function when blogs are disabled.
+     */
+    public function test_core_blog_myprofile_navigation_blogs_disabled() {
+        global $USER;
+
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $this->setAdminUser();
+        $iscurrentuser = false;
+        $course = null;
 
         // Disable blogs.
-        $this->setAdminUser();
         set_config('enableblogs', false);
-        $tree = new phpunit_fixture_myprofile_tree();
-        core_blog_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayNotHasKey('blogs', $nodes);
 
-        // Enable badges.
-        set_config('enableblogs', true);
-        $tree = new phpunit_fixture_myprofile_tree();
-        $iscurrentuser = true;
+        // Check the node tree is correct.
         core_blog_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayHasKey('blogs', $nodes);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('blogs', $nodes->getValue($tree));
     }
 }
 

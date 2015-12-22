@@ -24,9 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-require_once($CFG->dirroot . '/user/tests/fixtures/myprofile_fixtures.php');
-
 /**
  * Class report_stats_lib_testcase
  *
@@ -35,6 +32,28 @@ require_once($CFG->dirroot . '/user/tests/fixtures/myprofile_fixtures.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
 class report_stats_lib_testcase extends advanced_testcase {
+
+    /**
+     * @var stdClass The user.
+     */
+    private $user;
+
+    /**
+     * @var stdClass The course.
+     */
+    private $course;
+
+    /**
+     * @var \core_user\output\myprofile\tree The navigation tree.
+     */
+    private $tree;
+
+    public function setUp() {
+        $this->user = $this->getDataGenerator()->create_user();
+        $this->course = $this->getDataGenerator()->create_course();
+        $this->tree = new \core_user\output\myprofile\tree();
+        $this->resetAfterTest();
+    }
 
     /**
      * Test report_log_supports_logstore.
@@ -58,48 +77,54 @@ class report_stats_lib_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests for report_stats_myprofile_navigation() api.
+     * Tests the report_stats_myprofile_navigation() function.
      */
     public function test_report_stats_myprofile_navigation() {
-
-        $this->resetAfterTest();
         $this->setAdminUser();
-        // Enabling stats.
-        set_config('enablestats', true);
-
-        $tree = new phpunit_fixture_myprofile_tree();
-        $user = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
-        $course = $this->getDataGenerator()->create_course();
         $iscurrentuser = false;
 
-        report_stats_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayHasKey('stats', $nodes);
-
-        $tree = new phpunit_fixture_myprofile_tree();
-        $iscurrentuser = true;
-        report_stats_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayHasKey('stats', $nodes);
-
-        // Disabling stats.
-        set_config('enablestats', false);
-        $tree = new phpunit_fixture_myprofile_tree();
-        $iscurrentuser = true;
-        report_stats_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayNotHasKey('stats', $nodes);
-
-        // Enabling stats.
+        // Enable stats.
         set_config('enablestats', true);
 
+        report_stats_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('stats', $nodes->getValue($this->tree));
+    }
+
+    /**
+     * Tests the report_stats_myprofile_navigation() function when stats are disabled.
+     */
+    public function test_report_stats_myprofile_navigation_stats_disabled() {
+        $this->setAdminUser();
+        $iscurrentuser = false;
+
+        // Disable stats.
+        set_config('enablestats', false);
+
+        report_stats_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('stats', $nodes->getValue($this->tree));
+    }
+
+    /**
+     * Tests the report_stats_myprofile_navigation() function without permission.
+     */
+    public function test_report_stats_myprofile_navigation_without_permission() {
         // Try to see as a user without permission.
-        $this->setUser($user2);
-        $tree = new phpunit_fixture_myprofile_tree();
+        $this->setUser($this->user);
         $iscurrentuser = true;
-        report_stats_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayNotHasKey('stats', $nodes);
+
+        // Enable stats.
+        set_config('enablestats', true);
+
+        report_stats_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('stats', $nodes->getValue($this->tree));
     }
 }

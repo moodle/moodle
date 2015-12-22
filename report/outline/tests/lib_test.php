@@ -25,7 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/user/tests/fixtures/myprofile_fixtures.php');
 
 /**
  * Class report_outline_lib_testcase
@@ -35,6 +34,29 @@ require_once($CFG->dirroot . '/user/tests/fixtures/myprofile_fixtures.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
 class report_outline_lib_testcase extends advanced_testcase {
+
+    /**
+     * @var stdClass The user.
+     */
+    private $user;
+
+    /**
+     * @var stdClass The course.
+     */
+    private $course;
+
+    /**
+     * @var \core_user\output\myprofile\tree The navigation tree.
+     */
+    private $tree;
+
+    public function setUp() {
+        $this->user = $this->getDataGenerator()->create_user();
+        $this->user2 = $this->getDataGenerator()->create_user();
+        $this->course = $this->getDataGenerator()->create_course();
+        $this->tree = new \core_user\output\myprofile\tree();
+        $this->resetAfterTest();
+    }
 
     /**
      * Test report_log_supports_logstore.
@@ -58,38 +80,32 @@ class report_outline_lib_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests for report_outline_myprofile_navigation() api.
+     * Tests the report_outline_myprofile_navigation() function as an admin user.
      */
     public function test_report_outline_myprofile_navigation() {
-
-        $this->resetAfterTest();
         $this->setAdminUser();
-
-        $tree = new phpunit_fixture_myprofile_tree();
-        $user = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
-        $course = $this->getDataGenerator()->create_course();
         $iscurrentuser = false;
 
-        report_outline_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayHasKey('outline', $nodes);
-        $this->assertArrayHasKey('complete', $nodes);
+        report_outline_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('outline', $nodes->getValue($this->tree));
+        $this->assertArrayHasKey('complete', $nodes->getValue($this->tree));
+    }
 
-        $tree = new phpunit_fixture_myprofile_tree();
+    /**
+     * Tests the report_outline_myprofile_navigation() function as a user without permission.
+     */
+    public function test_report_outline_myprofile_navigation_without_permission() {
+        $this->setUser($this->user);
         $iscurrentuser = true;
-        report_outline_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayHasKey('outline', $nodes);
-        $this->assertArrayHasKey('complete', $nodes);
 
-        // Try to see as a user without permission.
-        $this->setUser($user2);
-        $tree = new phpunit_fixture_myprofile_tree();
-        $iscurrentuser = true;
-        report_outline_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayNotHasKey('outline', $nodes);
-        $this->assertArrayNotHasKey('complete', $nodes);
+        report_outline_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('outline', $nodes->getValue($this->tree));
+        $this->assertArrayNotHasKey('complete', $nodes->getValue($this->tree));
     }
 }
