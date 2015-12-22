@@ -181,7 +181,7 @@ class enrol_self_edit_form extends moodleform {
             $policy  = $plugin->get_config('usepasswordpolicy');
             if ($require and trim($data['password']) === '') {
                 $errors['password'] = get_string('required');
-            } else if (!empty($data['password'] && $policy)) {
+            } else if (!empty($data['password']) && $policy) {
                 $errmsg = '';
                 if (!check_password_policy($data['password'], $errmsg)) {
                     $errors['password'] = $errmsg;
