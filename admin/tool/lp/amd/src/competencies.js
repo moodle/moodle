@@ -261,7 +261,7 @@ define(['jquery',
                         args: { planid: localthis.itemid } }
                 ]);
                 pagerender = 'tool_lp/plan_page';
-                pageregion = 'plancompetenciespage';
+                pageregion = 'plan-page';
             }
 
             requests[1].done(function(context) {
