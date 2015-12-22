@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/user/tests/fixtures/myprofile_fixtures.php');
+
 require_once($CFG->dirroot. '/report/usersessions/lib.php');
 
 /**
@@ -38,45 +38,84 @@ require_once($CFG->dirroot. '/report/usersessions/lib.php');
 class report_usersessions_lib_testcase extends advanced_testcase {
 
     /**
-     * Tests for report_userssesions_myprofile_navigation() api.
+     * @var stdClass The user.
      */
-    public function test_report_usersessions_myprofile_navigation() {
+    private $user;
 
+    /**
+     * @var stdClass The course.
+     */
+    private $course;
+
+    /**
+     * @var \core_user\output\myprofile\tree The navigation tree.
+     */
+    private $tree;
+
+    public function setUp() {
+        $this->user = $this->getDataGenerator()->create_user();
+        $this->course = $this->getDataGenerator()->create_course();
+        $this->tree = new \core_user\output\myprofile\tree();
         $this->resetAfterTest();
-        $this->setAdminUser();
+    }
 
-        $tree = new phpunit_fixture_myprofile_tree();
-        $user = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
-        $course = $this->getDataGenerator()->create_course();
+    /**
+     * Tests the report_userssesions_myprofile_navigation() function as an admin.
+     */
+    public function test_report_usersessions_myprofile_navigation_as_admin() {
+        $this->setAdminUser();
         $iscurrentuser = false;
 
         // Not even admins allowed to pick at other user's sessions.
-        report_usersessions_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayNotHasKey('usersessions', $nodes);
+        report_usersessions_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('usersessions', $nodes->getValue($this->tree));
+    }
 
-        // Try as guest user.
+    /**
+     * Tests the report_userssesions_myprofile_navigation() function as the currently logged in user.
+     */
+    public function test_report_usersessions_myprofile_navigation_as_current_user() {
+        $this->setUser($this->user);
+        $iscurrentuser = true;
+
+        report_usersessions_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('usersessions', $nodes->getValue($this->tree));
+    }
+
+    /**
+     * Tests the report_userssesions_myprofile_navigation() function as a guest.
+     */
+    public function test_report_usersessions_myprofile_navigation_as_guest() {
         $this->setGuestUser();
-        report_usersessions_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayNotHasKey('usersessions', $nodes);
-
-        // As current user.
-        $this->setUser($user);
-        $tree = new phpunit_fixture_myprofile_tree();
         $iscurrentuser = true;
-        report_usersessions_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayHasKey('usersessions', $nodes);
 
+        report_usersessions_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('usersessions', $nodes->getValue($this->tree));
+    }
+
+    /**
+     * Tests the report_userssesions_myprofile_navigation() function as a user without permission.
+     */
+    public function test_report_usersessions_myprofile_navigation_without_permission() {
         // Try to see as a user without permission.
+        $user2 = $this->getDataGenerator()->create_user();
         $this->setUser($user2);
-        $tree = new phpunit_fixture_myprofile_tree();
-        $iscurrentuser = true;
-        report_usersessions_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayNotHasKey('usersessions', $nodes);
+        $iscurrentuser = false;
+
+        report_usersessions_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('usersessions', $nodes->getValue($this->tree));
 
     }
 }

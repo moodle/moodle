@@ -25,7 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/user/tests/fixtures/myprofile_fixtures.php');
 require_once($CFG->dirroot . '/grade/report/user/lib.php');
 
 /**
@@ -38,30 +37,53 @@ require_once($CFG->dirroot . '/grade/report/user/lib.php');
 class gradereport_user_lib_testcase extends advanced_testcase {
 
     /**
-     * Tests for gradereport_user_myprofile_navigation() api.
+     * @var stdClass The user.
+     */
+    private $user;
+
+    /**
+     * @var stdClass The course.
+     */
+    private $course;
+
+    /**
+     * @var \core_user\output\myprofile\tree The navigation tree.
+     */
+    private $tree;
+
+    public function setUp() {
+        $this->user = $this->getDataGenerator()->create_user();
+        $this->course = $this->getDataGenerator()->create_course();
+        $this->tree = new \core_user\output\myprofile\tree();
+        $this->resetAfterTest();
+    }
+
+    /**
+     * Tests the gradereport_user_myprofile_navigation() function.
      */
     public function test_gradereport_user_myprofile_navigation() {
-
-        $this->resetAfterTest();
         $this->setAdminUser();
-
-        // User with all permissions.
-        $tree = new phpunit_fixture_myprofile_tree();
-        $user = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
-        $course = $this->getDataGenerator()->create_course();
         $iscurrentuser = false;
 
-        gradereport_user_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayHasKey('grade', $nodes);
+        gradereport_user_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('grade', $nodes->getValue($this->tree));
+    }
 
-        // Try to see as a user without permission.
-        $this->setUser($user2);
-        $tree = new phpunit_fixture_myprofile_tree();
+    /**
+     * Tests the gradereport_user_myprofile_navigation() function for a user
+     * without permission to view the grade node.
+     */
+    public function test_gradereport_user_myprofile_navigation_without_permission() {
+        $this->setUser($this->user);
         $iscurrentuser = true;
-         gradereport_user_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayNotHasKey('grade', $nodes);
+
+        gradereport_user_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('grade', $nodes->getValue($this->tree));
     }
 }

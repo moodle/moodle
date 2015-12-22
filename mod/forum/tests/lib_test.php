@@ -27,7 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/mod/forum/lib.php');
 require_once($CFG->dirroot . '/rating/lib.php');
-require_once($CFG->dirroot . '/user/tests/fixtures/myprofile_fixtures.php');
 
 class mod_forum_lib_testcase extends advanced_testcase {
 
@@ -1500,42 +1499,76 @@ class mod_forum_lib_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests for mod_forum_myprofile_navigation() api.
+     * Tests the mod_forum_myprofile_navigation() function.
      */
     public function test_mod_forum_myprofile_navigation() {
+        $this->resetAfterTest(true);
+
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $iscurrentuser = true;
+
+        // Set as the current user.
+        $this->setUser($user);
+
+        // Check the node tree is correct.
+        mod_forum_myprofile_navigation($tree, $user, $iscurrentuser, $course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('forumposts', $nodes->getValue($tree));
+        $this->assertArrayHasKey('forumdiscussions', $nodes->getValue($tree));
+    }
+
+    /**
+     * Tests the mod_forum_myprofile_navigation() function as a guest.
+     */
+    public function test_mod_forum_myprofile_navigation_as_guest() {
         global $USER;
 
-        $this->resetAfterTest();
+        $this->resetAfterTest(true);
+
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $course = $this->getDataGenerator()->create_course();
+        $iscurrentuser = true;
+
+        // Set user as guest.
         $this->setGuestUser();
 
-        $tree = new phpunit_fixture_myprofile_tree();
+        // Check the node tree is correct.
+        mod_forum_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('forumposts', $nodes->getValue($tree));
+        $this->assertArrayNotHasKey('forumdiscussions', $nodes->getValue($tree));
+    }
+
+    /**
+     * Tests the mod_forum_myprofile_navigation() function as a user viewing another user's profile.
+     */
+    public function test_mod_forum_myprofile_navigation_different_user() {
+        $this->resetAfterTest(true);
+
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
         $user = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
-        $iscurrentuser = false;
-
-        // Nothing for guest users.
-        mod_forum_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayNotHasKey('forumposts', $nodes);
-        $this->assertArrayNotHasKey('forumdiscussions', $nodes);
-
-        // Current user.
-        $this->setUser($user);
-        $tree = new phpunit_fixture_myprofile_tree();
         $iscurrentuser = true;
-        mod_forum_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayHasKey('forumposts', $nodes);
-        $this->assertArrayHasKey('forumdiscussions', $nodes);
 
-        // Different user's profile.
+        // Set to different user's profile.
         $this->setUser($user2);
-        $tree = new phpunit_fixture_myprofile_tree();
-        $iscurrentuser = true;
+
+        // Check the node tree is correct.
         mod_forum_myprofile_navigation($tree, $user, $iscurrentuser, $course);
-        $nodes = $tree->get_nodes();
-        $this->assertArrayHasKey('forumposts', $nodes);
-        $this->assertArrayHasKey('forumdiscussions', $nodes);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('forumposts', $nodes->getValue($tree));
+        $this->assertArrayHasKey('forumdiscussions', $nodes->getValue($tree));
     }
 }
