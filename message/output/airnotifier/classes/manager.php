@@ -139,6 +139,7 @@ class message_airnotifier_manager {
                 return $key['accesskey'];
             }
         }
+        debugging("Unexpected response from the Airnotifier server: $resp");
         return false;
     }
 
@@ -164,11 +165,12 @@ class message_airnotifier_manager {
         $params = array();
         $resp = $curl->post($serverurl, $params);
 
-        if ($resp = json_decode($resp, true)) {
-            if (!empty($resp['status'])) {
-                return $resp['status'] == 'ok' || $resp['status'] == 'token exists';
+        if ($token = json_decode($resp, true)) {
+            if (!empty($token['status'])) {
+                return $token['status'] == 'ok' || $token['status'] == 'token exists';
             }
         }
+        debugging("Unexpected response from the Airnotifier server: $resp");
         return false;
     }
 
