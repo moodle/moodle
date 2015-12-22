@@ -26,11 +26,17 @@ namespace core\plugininfo;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class for admin tool plugins
+ * Class for cache store plugins
  */
 class cachestore extends base {
 
     public function is_uninstall_allowed() {
-        return false;
+        $instance = \cache_config::instance();
+        foreach ($instance->get_all_stores() as $store) {
+            if ($store['plugin'] == $this->name) {
+                return false;
+            }
+        }
+        return true;
     }
 }
