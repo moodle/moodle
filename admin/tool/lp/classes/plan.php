@@ -337,6 +337,49 @@ class plan extends persistent {
     }
 
     /**
+     * Get the plans of a user containing a specific competency.
+     *
+     * @param  int $userid       The user ID.
+     * @param  int $competencyid The competency ID.
+     * @return plans[]
+     */
+    public static function get_by_user_and_competency($userid, $competencyid) {
+        global $DB;
+
+        $sql = 'SELECT p.*
+                  FROM {' . self::TABLE . '} p
+             LEFT JOIN {' . plan_competency::TABLE . '} pc
+                    ON pc.planid = p.id
+                   AND pc.competencyid = :competencyid1
+             LEFT JOIN {' . user_competency_plan::TABLE . '} ucp
+                    ON ucp.planid = p.id
+                   AND ucp.competencyid = :competencyid2
+             LEFT JOIN {' . template_competency::TABLE . '} tc
+                    ON tc.templateid = p.templateid
+                   AND tc.competencyid = :competencyid3
+                 WHERE p.userid = :userid
+                   AND (pc.id IS NOT NULL
+                    OR ucp.id IS NOT NULL
+                    OR tc.id IS NOT NULL)
+              ORDER BY p.id ASC';
+
+        $params = array(
+            'competencyid1' => $competencyid,
+            'competencyid2' => $competencyid,
+            'competencyid3' => $competencyid,
+            'userid' => $userid
+        );
+
+        $plans = array();
+        $records = $DB->get_records_sql($sql, $params);
+        foreach ($records as $record) {
+            $plans[$record->id] = new plan(0, $record);
+        }
+
+        return $plans;
+    }
+
+    /**
      * Get the recordset of the plans that are due, incomplete and not draft.
      *
      * @return \moodle_recordset
