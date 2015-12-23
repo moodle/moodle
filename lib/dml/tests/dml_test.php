@@ -1432,9 +1432,9 @@ class core_dml_testcase extends database_driver_testcase {
                 $this->assertSame('ddltablenotexist', $e->errorcode);
             }
         }
-        // And without params.
+
         try {
-            $records = $DB->get_records('xxxx', array());
+            $records = $DB->get_records('xxxx', array('id' => '1'));
             $this->fail('An Exception is missing, expected due to query against non-existing table');
         } catch (moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
@@ -5347,7 +5347,7 @@ class core_dml_testcase extends database_driver_testcase {
 
         // The get_records() method generates 2 queries the first time is called
         // as it is fetching the table structure.
-        $whatever = $DB->get_records($tablename);
+        $whatever = $DB->get_records($tablename, array('id' => '1'));
         $this->assertEquals($initreads + 3, $DB->perf_get_reads());
         $this->assertEquals($initwrites, $DB->perf_get_writes());
 
