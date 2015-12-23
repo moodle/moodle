@@ -53,6 +53,9 @@ class plan_exporter extends persistent_exporter {
                 $this->persistent->get_status() == $classname::STATUS_COMPLETE,
             'usercancomplete' => $this->persistent->can_manage() &&
                 $this->persistent->get_status() == $classname::STATUS_ACTIVE,
+            'usercanunlink' => $this->persistent->can_manage() &&
+                $this->persistent->get_status() != $classname::STATUS_COMPLETE &&
+                $this->persistent->is_based_on_template(),
             'iscompleted' => $this->persistent->get_status() == $classname::STATUS_COMPLETE,
             'duedateformatted' => userdate($this->persistent->get_duedate())
         );
@@ -83,6 +86,9 @@ class plan_exporter extends persistent_exporter {
                 'type' => PARAM_BOOL,
             ),
             'usercancomplete' => array(
+                'type' => PARAM_BOOL,
+            ),
+            'usercanunlink' => array(
                 'type' => PARAM_BOOL,
             ),
             'iscompleted' => array(

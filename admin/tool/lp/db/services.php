@@ -662,7 +662,6 @@ $functions = array(
         'capabilities' => 'tool/lp:userevidencemanageown',
         'ajax'         => true,
     ),
-
     'tool_lp_grade_competency_in_plan' => array(
         'classname'    => 'tool_lp\external',
         'methodname'   => 'grade_competency_in_plan',
@@ -697,6 +696,15 @@ $functions = array(
         'description'  => 'Load a summary of a user competency.',
         'type'         => 'read',
         'capabilities' => 'tool/lp:coursecompetencyread',
+        'ajax'         => true,
+    ),
+    'tool_lp_unlink_plan_from_template' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'unlink_plan_from_template',
+        'classpath'    => '',
+        'description'  => 'Unlink a plan form it template.',
+        'type'         => 'write',
+        'capabilities' => 'tool/lp:planmanage',
         'ajax'         => true,
     ),
 );

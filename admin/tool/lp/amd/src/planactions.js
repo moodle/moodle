@@ -305,6 +305,63 @@ define(['jquery',
         var data = this._findPlanData($(e.target));
         this.completePlan(data);
     };
+    
+    /**
+     * Unlink plan and reload the region.
+     *
+     * @param  {Object} planData Plan data from plan node.
+     */
+    PlanActions.prototype._doUnlinkPlan = function(planData) {
+        var self = this,
+            calls = [{
+                methodname: 'tool_lp_unlink_plan_from_template',
+                args: { planid: planData.id}
+            }];
+        self._callAndRefresh(calls, planData);
+    };
+    
+    /**
+     * Unlink a plan process.
+     *
+     * @param  {Object} planData Plan data from plan node.
+     */
+    PlanActions.prototype.unlinkPlan = function(planData) {
+        var self = this,
+            requests = ajax.call([{
+                methodname: 'tool_lp_read_plan',
+                args: { id: planData.id }
+            }]);
+
+        requests[0].done(function(plan) {
+            str.get_strings([
+                { key: 'confirm', component: 'moodle' },
+                { key: 'unlinkplantemplateconfirm', component: 'tool_lp', param: plan.name },
+                { key: 'unlinkplantemplate', component: 'tool_lp' },
+                { key: 'cancel', component: 'moodle' }
+            ]).done(function (strings) {
+                notification.confirm(
+                    strings[0], // Confirm.
+                    strings[1], // Unlink plan X?
+                    strings[2], // Unlink.
+                    strings[3], // Cancel.
+                    function() {
+                        self._doUnlinkPlan(planData);
+                    }.bind(self)
+                );
+            }).fail(notification.exception);
+        }).fail(notification.exception);
+    };
+    
+    /**
+     * Unlink plan handler.
+     *
+     * @param  {Event} e The event.
+     */
+    PlanActions.prototype._unlinkPlanHandler = function(e) {
+        e.preventDefault();
+        var data = this._findPlanData($(e.target));
+        this.unlinkPlan(data);
+    };
 
     /**
      * Find the plan data from the plan node.
@@ -339,6 +396,7 @@ define(['jquery',
             '[data-action="plan-delete"]': self._deletePlanHandler.bind(self),
             '[data-action="plan-complete"]': self._completePlanHandler.bind(self),
             '[data-action="plan-reopen"]': self._reopenPlanHandler.bind(self),
+            '[data-action="plan-unlink"]': self._unlinkPlanHandler.bind(self),
         });
     };
 
@@ -355,6 +413,7 @@ define(['jquery',
         wrapper.find('[data-action="plan-delete"]').click(self._deletePlanHandler.bind(self));
         wrapper.find('[data-action="plan-complete"]').click(self._completePlanHandler.bind(self));
         wrapper.find('[data-action="plan-reopen"]').click(self._reopenPlanHandler.bind(self));
+        wrapper.find('[data-action="plan-unlink"]').click(self._unlinkPlanHandler.bind(self));
     };
 
     return PlanActions;

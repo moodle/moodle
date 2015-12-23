@@ -29,6 +29,7 @@ use tool_lp\api;
 use tool_lp\competency;
 use tool_lp\evidence;
 use tool_lp\user_competency;
+use tool_lp\plan;
 
 /**
  * API tests.
@@ -519,8 +520,9 @@ class tool_lp_api_testcase extends advanced_testcase {
             'sortorder' => 8));
         $tplc2a = $lpg->create_template_competency(array('templateid' => $tpl2->get_id(), 'competencyid' => $c2a->get_id()));
 
-        $plan1 = $lpg->create_plan(array('userid' => $u1->id, 'templateid' => $tpl1->get_id()));
+        $plan1 = $lpg->create_plan(array('userid' => $u1->id, 'templateid' => $tpl1->get_id(), 'status' => plan::STATUS_ACTIVE));
         $plan2 = $lpg->create_plan(array('userid' => $u2->id, 'templateid' => $tpl2->get_id()));
+        $plan3 = $lpg->create_plan(array('userid' => $u1->id, 'templateid' => $tpl1->get_id(), 'status' => plan::STATUS_COMPLETE));
 
         // Check that we have what we expect at this stage.
         $this->assertEquals(2, \tool_lp\template_competency::count_records(array('templateid' => $tpl1->get_id())));
@@ -548,6 +550,20 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals($tpl1->get_id(), $plan1->get_origtemplateid());
         $this->assertTrue($plan2->is_based_on_template());
         $this->assertEquals(null, $plan2->get_origtemplateid());
+
+        // Check we can unlink draft plan.
+        try {
+            api::unlink_plan_from_template($plan2);
+        } catch (coding_exception $e) {
+            $this->fail('Fail to unlink draft plan.');
+        }
+
+        // Check we can not unlink completed plan.
+        try {
+            api::unlink_plan_from_template($plan3);
+            $this->fail('We can not unlink completed plan.');
+        } catch (coding_exception $e) {
+        }
 
         // Even the order remains.
         $plan1comps = \tool_lp\plan_competency::list_competencies($plan1->get_id());

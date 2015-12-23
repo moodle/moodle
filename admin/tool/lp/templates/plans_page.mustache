@@ -93,6 +93,13 @@
                         </a>
                     </li>
                     {{/usercancomplete}}
+                    {{#usercanunlink}}
+                    <li>
+                        <a data-action="plan-unlink" href="#">
+                            {{#pix}}t/edit{{/pix}} {{#str}}unlinkplantemplate, tool_lp{{/str}}
+                        </a>
+                    </li>
+                    {{/usercanunlink}}
                     <li>
                         <a data-action="plan-delete" href="#">
                             {{#pix}}t/delete{{/pix}} {{#str}}deletethisplan, tool_lp{{/str}}

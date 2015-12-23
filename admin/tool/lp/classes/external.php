@@ -4422,4 +4422,49 @@ class external extends external_api {
         return evidence_exporter::get_read_structure();
     }
 
+    /**
+     * Returns description of unlink_plan_from_template_() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function unlink_plan_from_template_parameters() {
+        $planid = new external_value(
+            PARAM_INT,
+            'Data base record id for the plan',
+            VALUE_REQUIRED
+        );
+
+        $params = array(
+            'planid' => $planid,
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Unlink the plan from the template.
+     *
+     * @param int $planid The plan id
+     * @return bool
+     */
+    public static function unlink_plan_from_template($planid) {
+        $params = self::validate_parameters(self::unlink_plan_from_template_parameters(),
+                                            array(
+                                                'planid' => $planid,
+                                            ));
+
+        $plan = new plan($params['planid']);
+        self::validate_context($plan->get_context());
+
+        return api::unlink_plan_from_template($plan);
+    }
+
+    /**
+     * Returns description of unlink_plan_from_template_() result value.
+     *
+     * @return \external_value
+     */
+    public static function unlink_plan_from_template_returns() {
+        return new external_value(PARAM_BOOL, 'True if the unlink was successful');
+    }
+
 }

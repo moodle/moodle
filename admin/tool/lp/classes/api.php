@@ -1741,6 +1741,11 @@ class api {
             throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
         }
 
+        // Only plan with status DRAFT or ACTIVE can be unliked..
+        if ($plan->get_status() == plan::STATUS_COMPLETE) {
+            throw new coding_exception('Only draft or active plan can be unliked from a template');
+        }
+
         // Early exit, it's already done...
         if (!$plan->is_based_on_template()) {
             return true;

@@ -44,10 +44,10 @@
                     {{#canread}}
                         <a href="{{pluginbaseurl}}/templatecompetencies.php?templateid={{id}}&amp;pagecontextid={{contextid}}">
                     {{/canread}}
-                    {{plan.template.shortname}}
-                    {{#canread}}
-                        </a>
-                    {{/canread}}
+                    {{plan.template.shortname}}{{#canread}}</a>{{/canread}}
+                    {{#plan.usercanunlink}}
+                        (<a data-action="plan-unlink" href="#">{{#str}}unlinkplantemplate, tool_lp{{/str}}</a>)
+                    {{/plan.usercanunlink}}
                 </dd>
             {{/plan.template}}
             {{#description}}
