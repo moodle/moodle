@@ -58,6 +58,9 @@ cache:
       - $HOME/.composer/cache
 
 install:
+    # Disable xdebug. We aren't generating code coverage, and it has a huge impact upon test performance.
+    - rm /home/travis/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+
     # Set the encrypted GITHUB_TOKEN if it's available to raise the API limit.
     - if [ -n "$GITHUB_APITOKEN" ]; then composer config github-oauth.github.com $GITHUB_APITOKEN; fi
 
