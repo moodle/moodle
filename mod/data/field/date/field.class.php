@@ -47,7 +47,15 @@ class data_field_date extends data_field_base {
 
             $calendartype = \core_calendar\type_factory::get_calendar_instance();
             $gregoriandate = $calendartype->convert_to_gregorian($year, $month, $day);
-            $content = make_timestamp($gregoriandate['year'], $gregoriandate['month'], $gregoriandate['day'], 12, 0, 0, 0, false);
+            $content = make_timestamp(
+                $gregoriandate['year'],
+                $gregoriandate['month'],
+                $gregoriandate['day'],
+                $gregoriandate['hour'],
+                $gregoriandate['minute'],
+                0,
+                0,
+                false);
         } else if ($recordid) {
             $content = (int)$DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
         } else {
@@ -95,8 +103,15 @@ class data_field_date extends data_field_base {
             $calendartype = \core_calendar\type_factory::get_calendar_instance();
             $gregoriandate = $calendartype->convert_to_gregorian($year, $month, $day);
 
-            $data['timestamp'] = make_timestamp($gregoriandate['year'], $gregoriandate['month'], $gregoriandate['day'],
-                    12, 0, 0, 0, false);
+            $data['timestamp'] = make_timestamp(
+                $gregoriandate['year'],
+                $gregoriandate['month'],
+                $gregoriandate['day'],
+                $gregoriandate['hour'],
+                $gregoriandate['minute'],
+                0,
+                0,
+                false);
             $data['usedate'] = 1;
             return $data;
         } else {
@@ -120,8 +135,15 @@ class data_field_date extends data_field_base {
 
             $calendartype = \core_calendar\type_factory::get_calendar_instance();
             $gregoriandate = $calendartype->convert_to_gregorian($this->year, $this->month, $this->day);
-            $content->content = make_timestamp($gregoriandate['year'], $gregoriandate['month'], $gregoriandate['day'],
-                    12, 0, 0, 0, false);
+            $content->content = make_timestamp(
+                $gregoriandate['year'],
+                $gregoriandate['month'],
+                $gregoriandate['day'],
+                $gregoriandate['hour'],
+                $gregoriandate['minute'],
+                0,
+                0,
+                false);
 
             if ($oldcontent = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
                 $content->id = $oldcontent->id;
