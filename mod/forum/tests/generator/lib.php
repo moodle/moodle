@@ -185,10 +185,25 @@ class mod_forum_generator extends testing_module_generator {
             $record['mailnow'] = "0";
         }
 
+        if (isset($record['timemodified'])) {
+            $timemodified = $record['timemodified'];
+        }
+
         $record = (object) $record;
 
         // Add the discussion.
         $record->id = forum_add_discussion($record, null, null, $record->userid);
+
+        if (isset($timemodified)) {
+            // Enforce the time modified.
+            $post = $DB->get_record('forum_posts', array('discussion' => $record->id));
+            $post = $DB->get_record('forum_posts', array('discussion' => $record->id));
+            $record->timemodified = $timemodified;
+            $post->modified = $post->created = $timemodified;
+
+            $DB->update_record('forum_discussions', $record);
+            $DB->update_record('forum_posts', $post);
+        }
 
         return $record;
     }
