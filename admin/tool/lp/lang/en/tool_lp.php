@@ -23,7 +23,6 @@
  */
 
 $string['actions'] = 'Actions';
-$string['acommentwaspostedonacompetency'] = 'A comment was posted on a competency.';
 $string['addcohorts'] = 'Add cohorts';
 $string['addcompetency'] = 'Add competency';
 $string['addingcompetencywillresetparentrule'] = 'Adding a new competency will remove the rule set on \'{$a}\'. Do you want to continue?';
@@ -293,6 +292,16 @@ $string['totalrequiredtocomplete'] = 'Total required to complete';
 $string['unlinkplantemplate'] = 'Unlink from template';
 $string['unlinkplantemplateconfirm'] = 'Unlink the plan \'{$a}\' from its template? Any change made to the template will no longer be applied to the plan. This action can not be undone.';
 $string['uponcoursecompletion'] = 'Upon course completion:';
+$string['usercommentedonacompetency'] = '{$a->fullname} commented on the competency "{$a->competency}":
+
+{$a->comment}
+
+See: {$a->url}';
+$string['usercommentedonacompetencyhtml'] = '<p>{$a->fullname} commented on the competency "{$a->competency}":</p>
+<div>{$a->comment}</div>
+<p>See: <a href="{$a->url}">{$a->urlname}</a>.</p>';
+$string['usercommentedonacompetencysmall'] = '{$a->fullname} commented on the competency "{$a->competency}".';
+$string['usercommentedonacompetencysubject'] = '{$a} commented on a competency.';
 $string['usercompetencystatus_idle'] = 'Idle';
 $string['usercompetencystatus_inreview'] = 'In review';
 $string['usercompetencystatus_waitingforreview'] = 'Waiting for review';

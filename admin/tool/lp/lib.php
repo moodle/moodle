@@ -23,6 +23,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+require_once($CFG->libdir . '/externallib.php');
 
 /**
  * This function extends the course navigation
@@ -178,31 +179,104 @@ function tool_lp_pluginfile($course, $cm, $context, $filearea, $args, $forcedown
  * @return array
  */
 function tool_lp_comment_add($comment, $params) {
+    global $USER;
+
     if ($params->commentarea == 'user_competency') {
         $uc = new \tool_lp\user_competency($params->itemid);
 
-        // When the owner comments we message the reviewer, otherwise we message the current user.
-        $recipient = $comment->userid == $uc->get_userid() ? $uc->get_reviewerid() : $uc->get_userid();
-        if (!$recipient) {
+        // Message both the user and the reviewer, except when they are the author of the message.
+        $recipients = array($uc->get_userid());
+        if ($uc->get_reviewerid()) {
+            $recipients[] = $uc->get_reviewerid();
+        }
+        $recipients = array_diff($recipients, array($comment->userid));
+        if (empty($recipients)) {
             return;
         }
 
-        $message = new stdClass();
+        // Get the sender.
+        $user = $USER;
+        if ($USER->id != $comment->userid) {
+            $user = core_user::get_user($comment->userid);
+        }
+        $fullname = fullname($user);
+
+        // Get the competency.
+        $competency = $uc->get_competency();
+        $competencyname = format_string($competency->get_shortname(), true, array('context' => $competency->get_context()));
+
+        // We want to send a message for one plan, trying to find an active one first, or the last modified one.
+        $plan = null;
+        $plans = $uc->get_plans();
+        foreach ($plans as $candidate) {
+            if ($candidate->get_status() == \tool_lp\plan::STATUS_ACTIVE) {
+                $plan = $candidate;
+                break;
+
+            } else if (!empty($plan) && $plan->get_timemodified() < $candidate->get_timemodified()) {
+                $plan = $candidate;
+
+            } else if (empty($plan)) {
+                $plan = $candidate;
+            }
+        }
+
+        // Urls.
+        if (empty($plan)) {
+            $urlname = get_string('userplans', 'tool_lp');
+            $url = new moodle_url('/admin/tool/lp/plans.php', array('userid' => $uc->get_userid()));
+        } else {
+            $urlname = $competencyname;
+            $url = new moodle_url('/admin/tool/lp/user_competency_in_plan.php', array(
+                'userid' => $uc->get_userid(),
+                'competencyid' => $uc->get_competencyid(),
+                'planid' => $plan->get_id()
+            ));
+        }
+
+        // Construct the message content.
+        $fullmessagehtml = get_string('usercommentedonacompetencyhtml', 'tool_lp', array(
+            'fullname' => $fullname,
+            'competency' => $competencyname,
+            'comment' => format_text($comment->content, $comment->format, array('context' => $params->context->id)),
+            'url' => $url->out(true),
+            'urlname' => $urlname,
+        ));
+        if ($comment->format == FORMAT_PLAIN || $comment->format == FORMAT_MOODLE) {
+            $format = FORMAT_MOODLE;
+            $fullmessage = get_string('usercommentedonacompetency', 'tool_lp', array(
+                'fullname' => $fullname,
+                'competency' => $competencyname,
+                'comment' => $comment->content,
+                'url' => $url->out(false),
+            ));
+        } else {
+            $format = FORMAT_HTML;
+            $fullmessage = $fullmessagehtml;
+        }
+
+        $message = new \core\message\message();
         $message->component = 'tool_lp';
         $message->name = 'user_competency_comment';
-        $message->notification = 1;
-        $message->userto = $recipient;
+        $message->notification = 0;
         $message->userfrom = $comment->userid;
-        // TODO Make message useful.
-        $message->fullmessage = get_string('acommentwaspostedonacompetency', 'tool_lp');
-        $message->fullmessageformat = FORMAT_PLAIN;
-        $message->fullmessagehtml = '';
-        $message->smallmessage = get_string('acommentwaspostedonacompetency', 'tool_lp');
-        // TODO Make URL useful.
-        $message->contexturl = new moodle_url('/admin/tool/lp/plans.php', array('userid' => $uc->get_userid()));
-        $message->contexturlname = get_string('userplans', 'tool_lp');
+        $message->subject = get_string('usercommentedonacompetencysubject', 'tool_lp', $fullname);
+        $message->fullmessage = $fullmessage;
+        $message->fullmessageformat = $format;
+        $message->fullmessagehtml = $fullmessagehtml;
+        $message->smallmessage = get_string('usercommentedonacompetencysmall', 'tool_lp', array(
+            'fullname' => $fullname,
+            'competency' => $competencyname,
+        ));
+        $message->contexturl = $url->out(false);
+        $message->contexturlname = $urlname;
 
-        message_send($message);
+        // Message each recipient.
+        foreach ($recipients as $recipient) {
+            $msgcopy = clone($message);
+            $msgcopy->userto = $recipient;
+            message_send($msgcopy);
+        }
     }
 }
 

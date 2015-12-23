@@ -195,6 +195,20 @@ class user_competency extends persistent {
     }
 
     /**
+     * Find the plans for the user and this competency.
+     *
+     * Note that this:
+     * - does not perform any capability check.
+     * - may return completed plans.
+     * - may return an empty array.
+     *
+     * @return plans[]
+     */
+    public function get_plans() {
+        return plan::get_by_user_and_competency($this->get_userid(), $this->get_competencyid());
+    }
+
+    /**
      * Validate the user ID.
      *
      * @param int $value The value.
