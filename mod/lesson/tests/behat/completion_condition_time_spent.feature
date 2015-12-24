@@ -4,7 +4,6 @@ Feature: Set time spent as a completion condition for a lesson
   As a teacher
   I need to set time spent to mark the lesson activity as completed
 
-  @javascript
   Scenario: Set time spent as a condition
     Given the following "users" exist:
       | username | firstname | lastname | email |
@@ -31,8 +30,8 @@ Feature: Set time spent as a completion condition for a lesson
       | Description | Test lesson description |
       | Completion tracking | Show activity as complete when conditions are met |
       | completiontimespentenabled | 1 |
-      | completiontimespent[timeunit] | 60 |
-      | completiontimespent[number] | 1 |
+      | completiontimespent[timeunit] | 1 |
+      | completiontimespent[number] | 10 |
     And I follow "Test lesson"
     And I follow "Add a content page"
     And I set the following fields to these values:
@@ -56,15 +55,17 @@ Feature: Set time spent as a completion condition for a lesson
     Then the "Test lesson" "lesson" activity with "auto" completion should be marked as not complete
     And I follow "Test lesson"
     And I press "Next page"
+    # Add 1 sec delay so lesson knows a valid attempt has been made in past.
+    And I wait "1" seconds
     And I press "Next page"
     And I should see "You completed this lesson in"
-    And I should see ", which is less than the required time of 1 min. You might need to attempt the lesson again."
+    And I should see ", which is less than the required time of 10 secs. You might need to attempt the lesson again."
     And I follow "Course 1"
     And the "Test lesson" "lesson" activity with "auto" completion should be marked as not complete
     And I follow "Course 1"
     And I follow "Test lesson"
     And I press "Next page"
-    And I wait "61" seconds
+    And I wait "11" seconds
     And I press "Next page"
     And I should not see "You might need to attempt the lesson again."
     And I follow "Course 1"
