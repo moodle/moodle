@@ -95,7 +95,11 @@
 .path-mod-workshop .submission-full .header .userdate {
     margin: 0px 0px 0px 80px;
 }
-
+.dir-rtl.path-mod-workshop .submission-full .header .title,
+.dir-rtl.path-mod-workshop .submission-full .header .author,
+.dir-rtl.path-mod-workshop .submission-full .header .userdate {
+    margin: 0px 80px 0px 0px;
+}
 .path-mod-workshop .submission-full.anonymous .header .title,
 .path-mod-workshop .submission-full.anonymous .header .author,
 .path-mod-workshop .submission-full.anonymous .header .userdate {
@@ -126,6 +130,10 @@
     position: absolute;
     top: 3px;
     left: 3px;
+}
+.dir-rtl.path-mod-workshop .submission-full .header .author .picture{
+    right:3px;
+    left:auto;
 }
 
 .path-mod-workshop .submission-full .content,
@@ -355,6 +363,12 @@
 .path-mod-workshop .assessment-full .header .weight {
     margin: 0px 0px 0px 40px;
 }
+.dir-rtl.path-mod-workshop .assessment-full .header .title,
+.dir-rtl.path-mod-workshop .assessment-full .header .reviewer,
+.dir-rtl.path-mod-workshop .assessment-full .header .grade,
+.dir-rtl.path-mod-workshop .assessment-full .header .weight {
+    margin: 0px 40px 0px 0px;
+}
 
 .path-mod-workshop .assessment-full.anonymous .header .title,
 .path-mod-workshop .assessment-full.anonymous .header .reviewer,
@@ -367,6 +381,10 @@
     position: absolute;
     top: 3px;
     left: 3px;
+}
+.path-mod-workshop .assessment-full .header .reviewer .picture {
+    right:3px;
+    left:auto;
 }
 
 .path-mod-workshop .assessment-full .header .actions {
