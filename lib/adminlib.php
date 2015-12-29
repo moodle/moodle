@@ -7612,28 +7612,16 @@ class admin_setting_managerepository extends admin_setting {
  */
 class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
 
-    /** @var boolean True means that the capability 'webservice/xmlrpc:use' is set for authenticated user role */
-    private $xmlrpcuse;
     /** @var boolean True means that the capability 'webservice/rest:use' is set for authenticated user role */
     private $restuse;
 
     /**
-     * Return true if Authenticated user role has the capability 'webservice/xmlrpc:use' and 'webservice/rest:use', otherwise false.
+     * Return true if Authenticated user role has the capability 'webservice/rest:use', otherwise false.
      *
      * @return boolean
      */
     private function is_protocol_cap_allowed() {
         global $DB, $CFG;
-
-        // We keep xmlrpc enabled for backward compatibility.
-        // If the $this->xmlrpcuse variable is not set, it needs to be set.
-        if (empty($this->xmlrpcuse) and $this->xmlrpcuse!==false) {
-            $params = array();
-            $params['permission'] = CAP_ALLOW;
-            $params['roleid'] = $CFG->defaultuserroleid;
-            $params['capability'] = 'webservice/xmlrpc:use';
-            $this->xmlrpcuse = $DB->record_exists('role_capabilities', $params);
-        }
 
         // If the $this->restuse variable is not set, it needs to be set.
         if (empty($this->restuse) and $this->restuse!==false) {
@@ -7644,11 +7632,11 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
             $this->restuse = $DB->record_exists('role_capabilities', $params);
         }
 
-        return ($this->xmlrpcuse && $this->restuse);
+        return $this->restuse;
     }
 
     /**
-     * Set the 'webservice/xmlrpc:use'/'webservice/rest:use' to the Authenticated user role (allow or not)
+     * Set the 'webservice/rest:use' to the Authenticated user role (allow or not)
      * @param type $status true to allow, false to not set
      */
     private function set_protocol_cap($status) {
@@ -7664,7 +7652,6 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
         }
         if (!empty($assign)) {
             $systemcontext = context_system::instance();
-            assign_capability('webservice/xmlrpc:use', $permission, $CFG->defaultuserroleid, $systemcontext->id, true);
             assign_capability('webservice/rest:use', $permission, $CFG->defaultuserroleid, $systemcontext->id, true);
         }
     }
@@ -7755,13 +7742,8 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
              $mobileservice->enabled = 1;
              $webservicemanager->update_external_service($mobileservice);
 
-             //enable xml-rpc server
+             // Enable REST server.
              $activeprotocols = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
-
-             if (!in_array('xmlrpc', $activeprotocols)) {
-                 $activeprotocols[] = 'xmlrpc';
-                 $updateprotocol = true;
-             }
 
              if (!in_array('rest', $activeprotocols)) {
                  $activeprotocols[] = 'rest';
@@ -7772,7 +7754,7 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
                  set_config('webserviceprotocols', implode(',', $activeprotocols));
              }
 
-             //allow xml-rpc:use capability for authenticated user
+             // Allow rest:use capability for authenticated user.
              $this->set_protocol_cap(true);
 
          } else {
@@ -7783,13 +7765,8 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
              if (empty($otherenabledservices)) {
                  set_config('enablewebservices', false);
 
-                 //also disable xml-rpc server
+                 // Also disable REST server.
                  $activeprotocols = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
-                 $protocolkey = array_search('xmlrpc', $activeprotocols);
-                 if ($protocolkey !== false) {
-                    unset($activeprotocols[$protocolkey]);
-                    $updateprotocol = true;
-                 }
 
                  $protocolkey = array_search('rest', $activeprotocols);
                  if ($protocolkey !== false) {
@@ -7801,7 +7778,7 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
                     set_config('webserviceprotocols', implode(',', $activeprotocols));
                  }
 
-                 //disallow xml-rpc:use capability for authenticated user
+                 // Disallow rest:use capability for authenticated user.
                  $this->set_protocol_cap(false);
              }
 
