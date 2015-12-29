@@ -2087,3 +2087,114 @@ function scorm_require_available($scorm, $checkviewreportcap = false, $context =
     }
 
 }
+
+/**
+ * Return a SCO object and the SCO launch URL
+ *
+ * @param  stdClass $scorm SCORM object
+ * @param  int $scoid The SCO id in database
+ * @param  stdClass $context context object
+ * @return array the SCO object and URL
+ * @since  Moodle 3.1
+ */
+function scorm_get_sco_and_launch_url($scorm, $scoid, $context) {
+    global $CFG, $DB;
+
+    if (!empty($scoid)) {
+        // Direct SCO request.
+        if ($sco = scorm_get_sco($scoid)) {
+            if ($sco->launch == '') {
+                // Search for the next launchable sco.
+                if ($scoes = $DB->get_records_select(
+                        'scorm_scoes',
+                        'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true).' AND id > ?',
+                        array($scorm->id, $sco->id),
+                        'sortorder, id')) {
+                    $sco = current($scoes);
+                }
+            }
+        }
+    }
+
+    // If no sco was found get the first of SCORM package.
+    if (!isset($sco)) {
+        $scoes = $DB->get_records_select(
+            'scorm_scoes',
+            'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true),
+            array($scorm->id),
+            'sortorder, id'
+        );
+        $sco = current($scoes);
+    }
+
+    $connector = '';
+    $version = substr($scorm->version, 0, 4);
+    if ((isset($sco->parameters) && (!empty($sco->parameters))) || ($version == 'AICC')) {
+        if (stripos($sco->launch, '?') !== false) {
+            $connector = '&';
+        } else {
+            $connector = '?';
+        }
+        if ((isset($sco->parameters) && (!empty($sco->parameters))) && ($sco->parameters[0] == '?')) {
+            $sco->parameters = substr($sco->parameters, 1);
+        }
+    }
+
+    if ($version == 'AICC') {
+        require_once("$CFG->dirroot/mod/scorm/datamodels/aicclib.php");
+        $aiccsid = scorm_aicc_get_hacp_session($scorm->id);
+        if (empty($aiccsid)) {
+            $aiccsid = sesskey();
+        }
+        $scoparams = '';
+        if (isset($sco->parameters) && (!empty($sco->parameters))) {
+            $scoparams = '&'. $sco->parameters;
+        }
+        $launcher = $sco->launch.$connector.'aicc_sid='.$aiccsid.'&aicc_url='.$CFG->wwwroot.'/mod/scorm/aicc.php'.$scoparams;
+    } else {
+        if (isset($sco->parameters) && (!empty($sco->parameters))) {
+            $launcher = $sco->launch.$connector.$sco->parameters;
+        } else {
+            $launcher = $sco->launch;
+        }
+    }
+
+    if (scorm_external_link($sco->launch)) {
+        // TODO: does this happen?
+        $scolaunchurl = $launcher;
+    } else if ($scorm->scormtype === SCORM_TYPE_EXTERNAL) {
+        // Remote learning activity.
+        $scolaunchurl = dirname($scorm->reference).'/'.$launcher;
+    } else if ($scorm->scormtype === SCORM_TYPE_LOCAL && strtolower($scorm->reference) == 'imsmanifest.xml') {
+        // This SCORM content sits in a repository that allows relative links.
+        $scolaunchurl = "$CFG->wwwroot/pluginfile.php/$context->id/mod_scorm/imsmanifest/$scorm->revision/$launcher";
+    } else if ($scorm->scormtype === SCORM_TYPE_LOCAL or $scorm->scormtype === SCORM_TYPE_LOCALSYNC) {
+        // Note: do not convert this to use get_file_url() or moodle_url()
+        // SCORM does not work without slasharguments and moodle_url() encodes querystring vars.
+        $scolaunchurl = "$CFG->wwwroot/pluginfile.php/$context->id/mod_scorm/content/$scorm->revision/$launcher";
+    }
+    return array($sco, $scolaunchurl);
+}
+
+/**
+ * Trigger the scorm_launched event.
+ *
+ * @param  stdClass $scorm   scorm object
+ * @param  stdClass $sco     sco object
+ * @param  stdClass $cm      course module object
+ * @param  stdClass $context context object
+ * @param  string $scourl    SCO URL
+ * @since Moodle 3.1
+ */
+function scorm_launch_sco($scorm, $sco, $cm, $context, $scourl) {
+
+    $event = \mod_scorm\event\sco_launched::create(array(
+        'objectid' => $sco->id,
+        'context' => $context,
+        'other' => array('instanceid' => $scorm->id, 'loadedcontent' => $scourl)
+    ));
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('scorm', $scorm);
+    $event->add_record_snapshot('scorm_scoes', $sco);
+    $event->trigger();
+}
