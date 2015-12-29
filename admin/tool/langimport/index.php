@@ -188,7 +188,7 @@ echo html_writer::end_tag('td');
 $options = array();
 foreach ($availablelangs as $alang) {
     if (!empty($alang[0]) and trim($alang[0]) !== 'en' and !$controller->is_installed_lang($alang[0], $alang[1])) {
-        $options[$alang[0]] = $alang[2].' ('.$alang[0].')';
+        $options[$alang[0]] = $alang[2].' &lrm;('.$alang[0].')&lrm;';
     }
 }
 if (!empty($options)) {
