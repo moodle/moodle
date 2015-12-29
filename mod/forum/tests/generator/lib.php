@@ -197,7 +197,6 @@ class mod_forum_generator extends testing_module_generator {
         if (isset($timemodified)) {
             // Enforce the time modified.
             $post = $DB->get_record('forum_posts', array('discussion' => $record->id));
-            $post = $DB->get_record('forum_posts', array('discussion' => $record->id));
             $record->timemodified = $timemodified;
             $post->modified = $post->created = $timemodified;
 
