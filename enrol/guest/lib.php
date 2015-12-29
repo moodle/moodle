@@ -371,7 +371,8 @@ class enrol_guest_plugin extends enrol_plugin {
                 }
             }
 
-            if ($this->get_config('usepasswordpolicy')) {
+            // Only check the password if it is set.
+            if (!empty($instance->password) && $this->get_config('usepasswordpolicy')) {
                 if (!check_password_policy($instance->password, $errmsg)) {
                     return false;
                 }

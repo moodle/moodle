@@ -58,7 +58,11 @@ class enrol_guest_edit_form extends moodleform {
         $mform->addElement('passwordunmask', 'password', get_string('password', 'enrol_guest'));
         $mform->addHelpButton('password', 'password', 'enrol_guest');
 
-        if ($plugin->get_config('requirepassword')) {
+        // If we have a new instance and the password is required - make sure it is set. For existing
+        // instances we do not force the password to be required as it may have been set to empty before
+        // the password was required. We check in the validation function whether this check is required
+        // for existing instances.
+        if (empty($instance->id) && $plugin->get_config('requirepassword')) {
             $mform->addRule('password', get_string('required'), 'required', null);
         }
 
@@ -84,20 +88,25 @@ class enrol_guest_edit_form extends moodleform {
         $checkpassword = false;
 
         if ($data['id']) {
-            if ($data['status'] == ENROL_INSTANCE_ENABLED) {
-                if ($instance->password !== $data['password']) {
-                    $checkpassword = true;
-                }
-            }
-        } else {
-            if ($data['status'] == ENROL_INSTANCE_ENABLED) {
+            // Check the password if we are enabling the plugin again.
+            if (($instance->status == ENROL_INSTANCE_DISABLED) && ($data['status'] == ENROL_INSTANCE_ENABLED)) {
                 $checkpassword = true;
             }
+
+            // Check the password if the instance is enabled and the password has changed.
+            if (($data['status'] == ENROL_INSTANCE_ENABLED) && ($instance->password !== $data['password'])) {
+                $checkpassword = true;
+            }
+        } else {
+            $checkpassword = true;
         }
 
         if ($checkpassword) {
+            $require = $plugin->get_config('requirepassword');
             $policy  = $plugin->get_config('usepasswordpolicy');
-            if ($policy) {
+            if ($require && trim($data['password']) === '') {
+                $errors['password'] = get_string('required');
+            } else if (!empty($data['password']) && $policy) {
                 $errmsg = '';
                 if (!check_password_policy($data['password'], $errmsg)) {
                     $errors['password'] = $errmsg;
