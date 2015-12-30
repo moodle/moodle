@@ -492,7 +492,7 @@ class course_modinfo {
         // Loop through each piece of module data, constructing it
         static $modexists = array();
         foreach ($coursemodinfo->modinfo as $mod) {
-            if (strval($mod->name) === '') {
+            if (!isset($mod->name) || strval($mod->name) === '') {
                 // something is wrong here
                 continue;
             }
