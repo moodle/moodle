@@ -571,24 +571,24 @@ function groups_delete_grouping($groupingorid) {
 function groups_delete_group_members($courseid, $userid=0, $showfeedback=false) {
     global $DB, $OUTPUT;
 
-    if (is_bool($userid)) {
-        debugging('Incorrect userid function parameter');
-        return false;
+    // Get the users in the course which are in a group.
+    $sql = "SELECT gm.id as gmid, gm.userid, g.*
+              FROM {groups_members} gm
+        INNER JOIN {groups} g
+                ON gm.groupid = g.id
+             WHERE g.courseid = :courseid";
+    $params = array();
+    $params['courseid'] = $courseid;
+    // Check if we want to delete a specific user.
+    if ($userid) {
+        $sql .= " AND gm.userid = :userid";
+        $params['userid'] = $userid;
     }
-
-    // Select * so that the function groups_remove_member() gets the whole record.
-    $groups = $DB->get_recordset('groups', array('courseid' => $courseid));
-    foreach ($groups as $group) {
-        if ($userid) {
-            $userids = array($userid);
-        } else {
-            $userids = $DB->get_fieldset_select('groups_members', 'userid', 'groupid = :groupid', array('groupid' => $group->id));
-        }
-
-        foreach ($userids as $id) {
-            groups_remove_member($group, $id);
-        }
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach ($rs as $usergroup) {
+        groups_remove_member($usergroup, $usergroup->userid);
     }
+    $rs->close();
 
     // TODO MDL-41312 Remove events_trigger_legacy('groups_members_removed').
     // This event is kept here for backwards compatibility, because it cannot be
