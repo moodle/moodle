@@ -894,8 +894,10 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
         $this->assertCount(2, $return['entries']);
         $this->assertEquals(2, $return['count']);
-        $this->assertEquals($e1->id, $return['entries'][0]['id']);
-        $this->assertEquals($e2->id, $return['entries'][1]['id']);
+        // Compare ids, ignore ordering of array, using canonicalize parameter of assertEquals.
+        $expected = array($e1->id, $e2->id);
+        $actual = array($return['entries'][0]['id'], $return['entries'][1]['id']);
+        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
 
         // Search alias.
         $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 20, array('includenotapproved' => false));
@@ -903,29 +905,32 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
 
         $this->assertCount(2, $return['entries']);
         $this->assertEquals(2, $return['count']);
-        $this->assertEquals($e2->id, $return['entries'][0]['id']);
-        $this->assertEquals($e3->id, $return['entries'][1]['id']);
+        // Compare ids, ignore ordering of array, using canonicalize parameter of assertEquals.
+        $expected = array($e2->id, $e3->id);
+        $actual = array($return['entries'][0]['id'], $return['entries'][1]['id']);
+        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
 
         // Search including not approved.
         $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 20, array('includenotapproved' => true));
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
         $this->assertCount(3, $return['entries']);
         $this->assertEquals(3, $return['count']);
-        $this->assertEquals($e4->id, $return['entries'][0]['id']);
-        $this->assertEquals($e2->id, $return['entries'][1]['id']);
-        $this->assertEquals($e3->id, $return['entries'][2]['id']);
+        // Compare ids, ignore ordering of array, using canonicalize parameter of assertEquals.
+        $expected = array($e4->id, $e2->id, $e3->id);
+        $actual = array($return['entries'][0]['id'], $return['entries'][1]['id'], $return['entries'][2]['id']);
+        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
 
         // Pagination.
         $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 1, array('includenotapproved' => true));
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
         $this->assertCount(1, $return['entries']);
+        // We don't compare the returned entry id because it may be different depending on the DBMS,
+        // for example, Postgres does a random sorting in this case.
         $this->assertEquals(3, $return['count']);
-        $this->assertEquals($e4->id, $return['entries'][0]['id']);
         $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 1, 1, array('includenotapproved' => true));
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
         $this->assertCount(1, $return['entries']);
         $this->assertEquals(3, $return['count']);
-        $this->assertEquals($e2->id, $return['entries'][0]['id']);
     }
 
     public function test_get_entries_to_approve() {
