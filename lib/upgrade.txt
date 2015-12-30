@@ -31,6 +31,8 @@ information provided here is intended especially for developers.
     custom user filters. Similar deprecations in existing user_filter_* classes.
   * table_default_export_format_parent::table_default_export_format_parent() is
     deprecated, use parent::__construct() in extending classes.
+  * groups_delete_group_members() $showfeedback parameter has been removed and is no longer
+    respected. Users of this function should output their own feedback if required.
 
 === 3.0 ===
 

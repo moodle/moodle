@@ -565,10 +565,10 @@ function groups_delete_grouping($groupingorid) {
  *
  * @param int $courseid
  * @param int $userid 0 means all users
- * @param bool $showfeedback
+ * @param bool $unused - formerly $showfeedback, is no longer used.
  * @return bool success
  */
-function groups_delete_group_members($courseid, $userid=0, $showfeedback=false) {
+function groups_delete_group_members($courseid, $userid=0, $unused=false) {
     global $DB, $OUTPUT;
 
     // Get the users in the course which are in a group.
@@ -597,10 +597,6 @@ function groups_delete_group_members($courseid, $userid=0, $showfeedback=false) 
     $eventdata->courseid = $courseid;
     $eventdata->userid   = $userid;
     events_trigger_legacy('groups_members_removed', $eventdata);
-
-    if ($showfeedback) {
-        echo $OUTPUT->notification(get_string('deleted').' - '.get_string('groupmembers', 'group'), 'notifysuccess');
-    }
 
     return true;
 }
