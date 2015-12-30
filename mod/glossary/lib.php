@@ -3605,7 +3605,7 @@ function glossary_get_authors($glossary, $context, $limit, $from, $options = arr
     }
 
     $sqlselectcount = "SELECT COUNT(DISTINCT(u.id))";
-    $sqlselect = "SELECT DISTINCT(u.id), $userfields";
+    $sqlselect = "SELECT DISTINCT(u.id) AS userId, $userfields";
     $sql = "  FROM {user} u
               JOIN {glossary_entries} ge
                 ON ge.userid = u.id
@@ -3641,6 +3641,77 @@ function glossary_get_categories($glossary, $from, $limit) {
 }
 
 /**
+ * Get the SQL where clause for searching terms.
+ *
+ * Note that this does not handle invalid or too short terms.
+ *
+ * @param array   $terms      Array of terms.
+ * @param bool    $fullsearch Whether or not full search should be enabled.
+ * @return array The first element being the where clause, the second array of parameters.
+ * @since Moodle 3.1
+ */
+function glossary_get_search_terms_sql(array $terms, $fullsearch = true) {
+    global $DB;
+    static $i = 0;
+
+    if ($DB->sql_regex_supported()) {
+        $regexp = $DB->sql_regex(true);
+        $notregexp = $DB->sql_regex(false);
+    }
+
+    $params = array();
+    $conditions = array();
+
+    foreach ($terms as $searchterm) {
+        $i++;
+
+        $not = false; // Initially we aren't going to perform NOT LIKE searches, only MSSQL and Oracle
+                      // will use it to simulate the "-" operator with LIKE clause.
+
+        if (empty($fullsearch)) {
+            // With fullsearch disabled, look only within concepts and aliases.
+            $concat = $DB->sql_concat('ge.concept', "' '", "COALESCE(al.alias, :emptychar{$i})");
+        } else {
+            // With fullsearch enabled, look also within definitions.
+            $concat = $DB->sql_concat('ge.concept', "' '", 'ge.definition', "' '", "COALESCE(al.alias, :emptychar{$i})");
+        }
+        $params['emptychar' . $i] = '';
+
+        // Under Oracle and MSSQL, trim the + and - operators and perform simpler LIKE (or NOT LIKE) queries.
+        if (!$DB->sql_regex_supported()) {
+            if (substr($searchterm, 0, 1) === '-') {
+                $not = true;
+            }
+            $searchterm = trim($searchterm, '+-');
+        }
+
+        if (substr($searchterm, 0, 1) === '+') {
+            $searchterm = trim($searchterm, '+-');
+            $conditions[] = "$concat $regexp :searchterm{$i}";
+            $params['searchterm' . $i] = '(^|[^a-zA-Z0-9])' . preg_quote($searchterm, '|') . '([^a-zA-Z0-9]|$)';
+
+        } else if (substr($searchterm, 0, 1) === "-") {
+            $searchterm = trim($searchterm, '+-');
+            $conditions[] = "$concat $notregexp :searchterm{$i}";
+            $params['searchterm' . $i] = '(^|[^a-zA-Z0-9])' . preg_quote($searchterm, '|') . '([^a-zA-Z0-9]|$)';
+
+        } else {
+            $conditions[] = $DB->sql_like($concat, ":searchterm{$i}", false, true, $not);
+            $params['searchterm' . $i] = '%' . $DB->sql_like_escape($searchterm) . '%';
+        }
+    }
+
+    // When there are no conditions we add a negative one to ensure that we don't return anything.
+    if (empty($conditions)) {
+        $conditions[] = '1 = 2';
+    }
+
+    $where = implode(' AND ', $conditions);
+    return array($where, $params);
+}
+
+
+/**
  * Returns the entries of a glossary by search.
  *
  * @param  object $glossary The glossary.
@@ -3658,7 +3729,8 @@ function glossary_get_categories($glossary, $from, $limit) {
  * @since Moodle 3.1
  */
 function glossary_get_entries_by_search($glossary, $context, $query, $fullsearch, $order, $sort, $from, $limit,
-        $options = array()) {
+                                        $options = array()) {
+    global $DB, $USER;
 
     // Remove too little terms.
     $terms = explode(' ', $query);
@@ -3668,34 +3740,43 @@ function glossary_get_entries_by_search($glossary, $context, $query, $fullsearch
         }
     }
 
-    // Build the query.
-    $qb = new mod_glossary_entry_query_builder($glossary);
-    if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
-        $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ALL);
-    } else {
-        $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_SELF);
-    }
+    list($searchcond, $params) = glossary_get_search_terms_sql($terms, $fullsearch);
 
-    $qb->add_field('*', 'entries');
-    $qb->join_alias();
-    $qb->distinct('id', 'entries');
-    $qb->join_user();
-    $qb->add_user_fields();
-    $qb->filter_by_search_terms($terms, $fullsearch);
+    $userfields = user_picture::fields('u', null, 'userdataid', 'userdata');
+
+    // Need one inner view here to avoid distinct + text.
+    $sqlwrapheader = 'SELECT ge.*, ge.concept AS glossarypivot, ' . $userfields . '
+                        FROM {glossary_entries} ge
+                        LEFT JOIN {user} u ON u.id = ge.userid
+                        JOIN ( ';
+    $sqlwrapfooter = ' ) gei ON (ge.id = gei.id)';
+    $sqlselect  = "SELECT DISTINCT ge.id";
+    $sqlfrom    = "FROM {glossary_entries} ge
+                   LEFT JOIN {glossary_alias} al ON al.entryid = ge.id";
+
+    if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
+        $approvedsql = '';
+    } else {
+        $approvedsql = 'AND (ge.approved <> 0 OR ge.userid = :myid)';
+        $params['myid'] = $USER->id;
+    }
 
     if ($order == 'CREATION') {
-        $qb->order_by('timecreated', 'entries', $sort);
+        $sqlorderby = "ORDER BY ge.timecreated $sort";
     } else if ($order == 'UPDATE') {
-        $qb->order_by('timemodified', 'entries', $sort);
+        $sqlorderby = "ORDER BY ge.timemodified $sort";
     } else {
-        $qb->order_by('concept', 'entries', $sort);
+        $sqlorderby = "ORDER BY ge.concept $sort";
     }
-    $qb->order_by('id', 'entries', $sort); // Sort on ID to avoid random ordering when entries share an ordering value.
-    $qb->limit($from, $limit);
+    $sqlorderby .= " , ge.id ASC"; // Sort on ID to avoid random ordering when entries share an ordering value.
+
+    $sqlwhere = "WHERE ($searchcond) $approvedsql";
 
     // Fetching the entries.
-    $count = $qb->count_records();
-    $entries = $qb->get_recordset();
+    $count = $DB->count_records_sql("SELECT COUNT(DISTINCT(ge.id)) $sqlfrom $sqlwhere", $params);
+
+    $query = "$sqlwrapheader $sqlselect $sqlfrom $sqlwhere $sqlwrapfooter $sqlorderby";
+    $entries = $DB->get_recordset_sql($query, $params, $from, $limit);
 
     return array($entries, $count);
 }
@@ -3726,7 +3807,6 @@ function glossary_get_entries_by_term($glossary, $context, $term, $from, $limit,
 
     $qb->add_field('*', 'entries');
     $qb->join_alias();
-    $qb->distinct('id', 'entries');
     $qb->join_user();
     $qb->add_user_fields();
     $qb->filter_by_term($term);
