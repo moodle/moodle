@@ -71,7 +71,13 @@ $string['pathsroparentdataroot'] = '上層目錄({$a->parent})是不可寫入的
 $string['pathssubadmindir'] = '有些網站主機使用/admin這個網址來瀏覽控制面版或其他功能。很不幸，這個設定和Moodle管理頁面的標準路徑產生衝突。這個問題可以解決，只需在您的安裝目錄中把admin更換名稱，然後把新名稱輸入到這裡。例如<em>moodleadmin</em>這麼做會改變Moodle中的管理連接。';
 $string['pathssubdataroot'] = '你需要有一個地方讓Moodle可以儲存上傳的檔案。這一目錄對於網頁伺服器用戶(通常是"nobody"或"apache")而言，應該是可讀的和<b>可寫的</b>。但是它必須不能經由網頁直接存取。若此目錄不存在，這安裝程式將會試著建立它。';
 $string['pathssubdirroot'] = '包含Moodle程式碼的目錄的完整路徑';
-$string['pathssubwwwroot'] = '可以瀏覽到Moodle的完整網址。Moodle不支援透過多個網址瀏覽，如果您的網站有多個公開網址，您必須把這個網址以外的網址都設定為永久重新導向。如果您的網站可以透過內部網址瀏覽，有可以透過這個公開網址瀏覽，那麼請設定DNS使網內用戶也能使用這公開的網址。如果此網址不正確，請在你的瀏覽器中修改URL來重新安裝，並設定另一個網址。';
+$string['pathssubwwwroot'] = '可以進入使用Moodle的完整網址，也就是用戶為了要使用Moodle，而需要輸入到瀏覽器的網址列的地址。
+
+不可能使用多個網址來存取Moodle，如果您的網站有多個公開網址，您必須選擇一個最簡單的網址，並把其他的網址都設定為永久重新導向。
+
+如果您的網站可以透過網際網路，也可以透過內部網路來瀏覽，那麼在此請設定公開的網址。
+
+如果目前的網址不正確，請在你的瀏覽器的網址列中更改網址，並重新安裝。';
 $string['pathsunsecuredataroot'] = '資料根(Dataroot)目錄的位置不安全';
 $string['pathswrongadmindir'] = '管理目錄不存在';
 $string['phpextension'] = '{$a} PHP擴展';
