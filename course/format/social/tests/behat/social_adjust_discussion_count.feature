@@ -39,6 +39,7 @@ Background:
     And I press "Post to forum"
     And I wait to be redirected
     And I follow "Course 1"
+    And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
       | Subject | Forum Post 7 |
@@ -46,6 +47,7 @@ Background:
     And I press "Post to forum"
     And I wait to be redirected
     And I follow "Course 1"
+    And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
       | Subject | Forum Post 6 |
@@ -53,6 +55,7 @@ Background:
     And I press "Post to forum"
     And I wait to be redirected
     And I follow "Course 1"
+    And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
       | Subject | Forum Post 5 |
@@ -60,6 +63,7 @@ Background:
     And I press "Post to forum"
     And I wait to be redirected
     And I follow "Course 1"
+    And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
       | Subject | Forum Post 4 |
@@ -67,6 +71,7 @@ Background:
     And I press "Post to forum"
     And I wait to be redirected
     And I follow "Course 1"
+    And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
       | Subject | Forum Post 3 |
@@ -74,14 +79,15 @@ Background:
     And I press "Post to forum"
     And I wait to be redirected
     And I follow "Course 1"
+    And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
       | Subject | Forum Post 2 |
       | Message | This is forum post two |
     And I press "Post to forum"
     And I wait to be redirected
-    And I wait "1" seconds
     And I follow "Course 1"
+    And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
       | Subject | Forum Post 1 |
