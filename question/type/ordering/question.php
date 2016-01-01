@@ -190,18 +190,14 @@ class qtype_ordering_question extends question_graded_automatically {
                 foreach ($correctresponse as $thisanswerid => $answerids) {
                     if (isset($currentresponse[$thisanswerid])) {
                         $prev = $currentresponse[$thisanswerid]->prev;
-                        $prev = array_intersect($answerids->prev, $prev);
+                        $prev = array_intersect($prev, $answerids->prev);
                         $countcorrect += count($prev);
                         $next = $currentresponse[$thisanswerid]->next;
-                        $next = array_intersect($answerids->next, $next);
+                        $next = array_intersect($next, $answerids->next);
                         $countcorrect += count($next);
                     }
-                    $countanswers++;
-                }
-                if ($options->gradingtype) {
-                    $countanswers *= 2;
-                } else {
-                    $countanswers *= (count($correctresponse) - 1);
+                    $countanswers += count($answerids->prev);
+                    $countanswers += count($answerids->next);
                 }
                 break;
         }

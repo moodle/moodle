@@ -21,6 +21,7 @@ $string['answer'] = 'Item text';
 $string['answerheader'] = 'Draggable item {no}';
 $string['correctorder'] = 'The correct order for these items is as follows:';
 $string['defaultquestionname'] = 'Drag the following items into the correct order.';
+$string['gradedetails'] = 'Grade details';
 $string['gradingtype'] = 'Grading type';
 $string['gradingtype_help'] = 'Choose the type of grading calculation.
 
@@ -49,6 +50,7 @@ $string['relativenextincludelast'] = 'Relative to the next item (including last)
 $string['relativeonepreviousandnext'] = 'Relative to both the previous and next items';
 $string['removeeditor'] = 'Remove HTML editor';
 $string['removeitem'] = 'Remove draggable item';
+$string['scoredetails'] = 'Here are the scores for each item in this response:';
 $string['selectall'] = 'Select all items';
 $string['selectcontiguous'] = 'Select a contiguous subset of items';
 $string['selectcount_help'] = 'The number of items that will be displayed when the question is appears in a quiz.';
