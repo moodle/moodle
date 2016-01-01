@@ -42,6 +42,12 @@ class qtype_ordering_edit_form extends question_edit_form {
     const NUM_ANS_MIN     =  3;
     const NUM_ANS_ADD     =  3;
 
+    const ABSOLUTE_POSITION = 0;
+    const RELATIVE_NEXT_EXCLUDE_LAST = 1;
+    const RELATIVE_NEXT_INCLUDE_LAST = 2;
+    const RELATIVE_ONE_PREVIOUS_AND_NEXT = 3;
+    const RELATIVE_ALL_PREVIOUS_AND_NEXT = 4;
+
     // this functionality is currently disabled
     // because it is not fully functional
     protected $use_editor_for_answers = true;
@@ -95,6 +101,20 @@ class qtype_ordering_edit_form extends question_edit_form {
         }
         $mform->addElement('select', $name, $label, $options);
         $mform->disabledIf($name, 'selecttype', 'eq', 0);
+        $mform->addHelpButton($name, $name, $plugin);
+        $mform->setDefault($name, 0);
+
+        // gradingtype
+        $name = 'gradingtype';
+        $label = get_string($name, $plugin);
+        $options = array(
+            self::ABSOLUTE_POSITION => get_string('absoluteposition', $plugin),
+            self::RELATIVE_NEXT_EXCLUDE_LAST => get_string('relativenextexcludelast', $plugin),
+            self::RELATIVE_NEXT_INCLUDE_LAST => get_string('relativenextincludelast', $plugin),
+            self::RELATIVE_ONE_PREVIOUS_AND_NEXT => get_string('relativeonepreviousandnext', $plugin),
+            self::RELATIVE_ALL_PREVIOUS_AND_NEXT => get_string('relativeallpreviousandnext', $plugin)
+        );
+        $mform->addElement('select', $name, $label, $options);
         $mform->addHelpButton($name, $name, $plugin);
         $mform->setDefault($name, 0);
 
@@ -310,6 +330,13 @@ class qtype_ordering_edit_form extends question_edit_form {
             $question->selectcount = max(3, count($question->answer));
         }
 
+        // gradingtype
+        if (isset($question->options->gradingtype)) {
+            $question->gradingtype = $question->options->gradingtype;
+        } else {
+            $question->gradingtype = 0;
+        }
+
         return $question;
     }
 
@@ -397,5 +424,40 @@ class qtype_ordering_edit_form extends question_edit_form {
             }
         }
         return $question;
+    }
+
+    /**
+     * this javascript could be useful for inserting buttons
+     * into the form once it has loaded in the browser
+     * however this means that the buttons are not recognized
+     * by the Moodle Form API
+     */
+    protected function unused_js() {
+        $removeeditor = 'Remove HTML editor';
+        $js = '';
+        $js .= '<script type="text/javascript">'."\n";
+        $js .= "//<![CDATA[\n";
+        $js .= "    var formatname = new RegExp('answer\\\\[(\\\\d+)\\\\]\\\\[format\\\\]');\n";
+        $js .= "    var inputs = document.getElementsByTagName('INPUT');\n";
+        $js .= "    for (var i=0; i<inputs.length; i++) {\n";
+        $js .= "        var input = inputs[i];\n";
+        $js .= "        if (input.type && input.type=='hidden') {\n";
+        $js .= "            var m = formatname.exec(input.name);\n";
+        $js .= "            if (m && m.length) {\n";
+        $js .= "                var submit = document.createElement('INPUT');\n";
+        $js .= "                submit.type = 'submit';\n";
+        $js .= "                submit.value = '$removeeditor';\n";
+        $js .= "                submit.format = input;\n";
+        $js .= "                submit.onclick = function() {\n";
+        $js .= "                    skipClientValidation = true;\n";
+        $js .= "                    this.format.value = 0;\n";
+        $js .= "                };\n";
+        $js .= "                input.parentNode.insertBefore(submit, input.nextSibling);\n";
+        $js .= "            }\n";
+        $js .= "        }\n";
+        $js .= "    }\n";
+        $js .= "//]]>\n";
+        $js .= "</script>\n";
+        $mform->addElement('html', $js);
     }
 }

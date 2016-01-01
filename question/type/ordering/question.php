@@ -149,15 +149,61 @@ class qtype_ordering_question extends question_graded_automatically {
 
     public function grade_response(array $response) {
         $this->update_current_response($response);
+
         $countcorrect = 0;
         $countanswers = 0;
-        $correctresponse = $this->correctresponse;
-        $currentresponse = $this->currentresponse;
-        foreach ($currentresponse as $position => $answerid) {
-            if ($correctresponse[$position]==$answerid) {
-                $countcorrect++;
-            }
-            $countanswers++;
+
+        $options = $this->get_ordering_options();
+        switch ($options->gradingtype) {
+
+            case 0: // ABSOLUTE_POSITION
+                $correctresponse = $this->correctresponse;
+                $currentresponse = $this->currentresponse;
+                foreach ($correctresponse as $position => $answerid) {
+                    if (isset($currentresponse[$position])) {
+                        if ($currentresponse[$position]==$answerid) {
+                            $countcorrect++;
+                        }
+                    }
+                    $countanswers++;
+                }
+                break;
+
+            case 1: // RELATIVE_NEXT_EXCLUDE_LAST
+            case 2: // RELATIVE_NEXT_INCLUDE_LAST
+                $currentresponse = $this->get_next_answerids($this->currentresponse, ($options->gradingtype==2));
+                $correctresponse = $this->get_next_answerids($this->correctresponse, ($options->gradingtype==2));
+                foreach ($correctresponse as $thisanswerid => $nextanswerid) {
+                    if (isset($currentresponse[$thisanswerid])) {
+                        if ($currentresponse[$thisanswerid]==$nextanswerid) {
+                            $countcorrect++;
+                        }
+                    }
+                    $countanswers++;
+                }
+                break;
+
+            case 3: // RELATIVE_ONE_PREVIOUS_AND_NEXT
+            case 4: // RELATIVE_ALL_PREVIOUS_AND_NEXT
+                $currentresponse = $this->get_previous_and_next_answerids($this->currentresponse, ($options->gradingtype==4));
+                $correctresponse = $this->get_previous_and_next_answerids($this->correctresponse, ($options->gradingtype==4));
+                foreach ($correctresponse as $thisanswerid => $answerids) {
+                    if (isset($currentresponse[$thisanswerid])) {
+                        $prev = $currentresponse[$thisanswerid]->prev;
+                        $prev = array_intersect($answerids->prev, $prev);
+                        $countcorrect += count($prev);
+                        $next = $currentresponse[$thisanswerid]->next;
+                        $next = array_intersect($answerids->next, $next);
+                        $countcorrect += count($next);
+                    }
+                    $countanswers++;
+                }
+                if ($options->gradingtype) {
+                    $countanswers *= 2;
+                } else {
+                    $countanswers *= (count($correctresponse) - 1);
+                }
+                break;
         }
         if ($countanswers==0) {
             $fraction = 0;
@@ -165,6 +211,45 @@ class qtype_ordering_question extends question_graded_automatically {
             $fraction = ($countcorrect / $countanswers);
         }
         return array($fraction, question_state::graded_state_for_fraction($fraction));
+    }
+
+    public function get_next_answerids($answerids, $last_item=false) {
+        $nextanswerids = array();
+        $i_max = count($answerids);
+        $i_max--;
+        if ($last_item) {
+            $nextanswerid = 0;
+        } else {
+            $nextanswerid = $answerids[$i_max];
+            $i_max--;
+        }
+        for ($i=$i_max; $i>=0; $i--) {
+            $thisanswerid = $answerids[$i];
+            $nextanswerids[$thisanswerid] = $nextanswerid;
+            $nextanswerid = $thisanswerid;
+        }
+        return $nextanswerids;
+    }
+
+    public function get_previous_and_next_answerids($answerids, $all=false) {
+        $prevnextanswerids = array();
+        $next = $answerids;
+        $prev = array();
+        while ($answerid = array_shift($next)) {
+            if ($all) {
+                $prevnextanswerids[$answerid] = (object)array(
+                    'prev' => $prev,
+                    'next' => $next
+                );
+            } else {
+                $prevnextanswerids[$answerid] = (object)array(
+                    'prev' => array(empty($prev) ? 0 : $prev[0]),
+                    'next' => array(empty($next) ? 0 : $next[0])
+                );
+            }
+            array_unshift($prev, $answerid);
+        }
+        return $prevnextanswerids;
     }
 
     public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
@@ -219,6 +304,7 @@ class qtype_ordering_question extends question_graded_automatically {
                     'layouttype' => 0, // vertical
                     'selecttype' => 0, // all answers
                     'selectcount' => 0,
+                    'gradingtype' => 0, // absolute
                     'correctfeedback' => '',
                     'correctfeedbackformat' => FORMAT_MOODLE, // =0
                     'incorrectfeedback' => '',

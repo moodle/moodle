@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->cron      = 0;
 $plugin->component = 'qtype_ordering';
-$plugin->maturity  = MATURITY_STABLE; // ALPHA=50, BETA=100, RC=150, STABLE=200
-$plugin->release   = '2015-11-23 (33)';
-$plugin->version   = 2015112333;
+$plugin->maturity  = MATURITY_STABLE;
 $plugin->requires  = 2010112400; // Moodle 2.0
+$plugin->version   = 2015123135;
+$plugin->release   = '2015-12-31 (35)';

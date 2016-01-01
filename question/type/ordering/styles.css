@@ -37,16 +37,34 @@
 .que.ordering ul.sortablelist li.vertical {
     min-height       : 18px;
 }
-.que.ordering ul.sortablelist li.correctposition {
-    background-color : #dff0d8;           /* light green */
-    border           : 4px solid #99ff66; /* gentle green */
+.que.ordering ul.sortablelist li.correct {
+    background-color : #dff0d8; /* light green */
+    border-color     : #99ff66; /* gentle green */
 }
-.que.ordering ul.sortablelist li.wrongposition {
-    background-color : #f2dede;           /* light red */
-    border           : 4px solid #ff7373; /* gentle red */
+.que.ordering ul.sortablelist li.partial66 {
+    background-color : #dff0d8; /* light green */
+    border-color     : #ff9900; /* dark  orange */
 }
-.que.ordering ul.sortablelist li.correctposition,
-.que.ordering ul.sortablelist li.wrongposition {
+.que.ordering ul.sortablelist li.partial33 {
+    background-color : #ffebcc; /* light orange */
+    border-color     : #ff9900; /* dark orange */
+}
+.que.ordering ul.sortablelist li.partial01 {
+    background-color : #f2dede; /* light red */
+    border-color     : #ff9900; /* dark orange */
+}
+.que.ordering ul.sortablelist li.incorrect {
+    background-color : #f2dede; /* light red */
+    border-color     : #ff7373; /* gentle red */
+}
+.que.ordering ul.sortablelist li.correct,
+.que.ordering ul.sortablelist li.partial66,
+.que.ordering ul.sortablelist li.partial33,
+.que.ordering ul.sortablelist li.partial01,
+.que.ordering ul.sortablelist li.incorrect,
+.que.ordering ul.sortablelist li.unscored {
+    border-style     : solid;
+    border-width     : 4px;
     margin-bottom    : 4px;
     margin-top       : 4px;
 }

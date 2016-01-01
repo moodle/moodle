@@ -15,16 +15,38 @@ $string['pluginnameadding'] = 'Adding an Ordering question';
 $string['pluginnameediting'] = 'Editing an Ordering question';
 $string['pluginnamesummary'] = 'Put jumbled items into a meaningful order.';
 
+$string['absoluteposition'] = 'Absolute position';
 $string['addmoreanswers'] = 'Add {$a} more items';
 $string['answer'] = 'Item text';
 $string['answerheader'] = 'Draggable item {no}';
 $string['correctorder'] = 'The correct order for these items is as follows:';
 $string['defaultquestionname'] = 'Drag the following items into the correct order.';
+$string['gradingtype'] = 'Grading type';
+$string['gradingtype_help'] = 'Choose the type of grading calculation.
+
+**Absolute position**
+: An item is considered correct if it is in the same position as in the correct answer. The highest possible score for the question is **the same as** the number of items displayed to the student.
+
+**Relative to the next item (excluding last)**
+: An item is considered correct if it is followed by the same item as it is in the correct answer. The item in the last position is not checked. Thus, the highest possible score for the question is **one less than** the number of items displayed to the student.
+
+**Relative to the next item (including last)**
+: An item is considered correct if it is followed by the same item as it is in the correct answer. This includes the last item which must have no item following it. Thus, the highest possible score for the question is **the same as** the number of items displayed to the student.
+
+**Relative to both the previous and next items**
+: An item is considered correct if the previous and next items are the same as they are in the correct answer. The first item should have no previous item, and the last item should have no next item. Thus, there are two possible points for each item, and the highest possible score for the question is **twice** the number of items displayed to the student.
+
+**Relative to ALL previous and next items**
+: An item is considered correct if it is preceded by all the same items as it is in the correct answer, and it is followed by all the same items as it is in the correct answer. The order of the previous items does not matter, and nor does the order of the following items. Thus, if ***n*** items are displayed to the student, the number of marks available for each item is ***(n - 1)***, and the highest mark availabe for the question is ***n x (n - 1)*** which is the same as ***(n² - n)***.';
 $string['horizontal'] = 'Horizontal';
 $string['layouttype_help'] = 'Choose whether to display the items vertically or horizontally.';
 $string['layouttype'] = 'Layout of items';
 $string['noresponsedetails'] = 'Sorry, no details of the response to this question are available.';
 $string['notenoughanswers'] = 'Ordering questions must have more than {$a} answers.';
+$string['relativeallpreviousandnext'] = 'Relative to ALL the previous and next items';
+$string['relativenextexcludelast'] = 'Relative to the next item (excluding last)';
+$string['relativenextincludelast'] = 'Relative to the next item (including last)';
+$string['relativeonepreviousandnext'] = 'Relative to both the previous and next items';
 $string['removeeditor'] = 'Remove HTML editor';
 $string['removeitem'] = 'Remove draggable item';
 $string['selectall'] = 'Select all items';

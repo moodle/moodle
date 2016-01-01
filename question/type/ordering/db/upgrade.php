@@ -166,6 +166,25 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, $newversion, 'qtype', 'ordering');
     }
 
+    $newversion = 2015121734;
+    if ($oldversion < $newversion) {
+        $table = new xmldb_table('qtype_ordering_options');
+        $fields = array(
+            new xmldb_field('gradingtype', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, 0, 'selectcount')
+        );
+        foreach ($fields as $field) {
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_type($table, $field);
+            } else {
+                $dbman->add_field($table, $field);
+                // when adding this field to existing records,
+                // the gradingtype is set to whatever the selecttype is
+                $DB->execute('UPDATE {qtype_ordering_options} SET gradingtype = selecttype', array());
+            }
+        }
+        upgrade_plugin_savepoint(true, $newversion, 'qtype', 'ordering');
+    }
+
     return true;
 }
 

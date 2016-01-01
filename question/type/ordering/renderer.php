@@ -44,6 +44,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         $question = $qa->get_question();
         $response = $qa->get_last_qt_data();
         $question->update_current_response($response);
+
         $currentresponse = $question->currentresponse;
         $correctresponse = $question->correctresponse;
 
@@ -71,7 +72,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         } else {
             $script = "\n";
             $script .= "//<![CDATA[\n";
-            $script .= "if (window.$) {\n"; // $ is an alias for jQuery
+            $script .= "if (window.$) {\n";
             $script .= "    $(function() {\n";
             $script .= "        $('#$sortable_id').sortable({\n";
             $script .= "            axis: '$axis',\n";
@@ -101,6 +102,29 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
             // set layout class
             $layoutclass = $question->get_ordering_layoutclass();
 
+            // get info about current/correct responses
+            if ($options->correctness) {
+                switch ($question->options->gradingtype) {
+
+                    case 0: // ABSOLUTE
+                        $correctinfo = $correctresponse;
+                        $currentinfo = $currentresponse;
+                        break;
+
+                    case 1: // RELATIVE_NEXT_EXCLUDE_LAST
+                    case 2: // RELATIVE_NEXT_INCLUDE_LAST
+                        $currentinfo = $question->get_next_answerids($currentresponse, ($question->options->gradingtype==2));
+                        $correctinfo = $question->get_next_answerids($correctresponse, ($question->options->gradingtype==2));
+                        break;
+
+                    case 3: // RELATIVE_ONE_PREVIOUS_AND_NEXT
+                    case 4: // RELATIVE_ALL_PREVIOUS_AND_NEXT
+                        $currentinfo = $question->get_previous_and_next_answerids($currentresponse, ($question->options->gradingtype==4));
+                        $correctinfo = $question->get_previous_and_next_answerids($correctresponse, ($question->options->gradingtype==4));
+                        break;
+                }
+            }
+
             // generate ordering items
             foreach ($currentresponse as $position => $answerid) {
                 if (! array_key_exists($answerid, $question->answers)) {
@@ -117,18 +141,71 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                     $result .= html_writer::start_tag('ul',  array('class' => 'sortablelist', 'id' => $sortable_id));
                 }
 
+                // CSS $class and $img are only used to show correctness
+                $class = '';
+                $img = '';
+
+                // display the correctness of this item
                 if ($options->correctness) {
-                    if ($correctresponse[$position]==$answerid) {
-                        $class = 'correctposition';
-                        $img = $this->feedback_image(1);
-                    } else {
-                        $class = 'wrongposition';
-                        $img = $this->feedback_image(0);
+
+                    // correctness depends on grading type
+                    $score = 0; // actual score for this item
+                    $maxscore = null; // maximum score for this item
+                    switch ($question->options->gradingtype) {
+
+                        case 0: // ABSOLUTE
+                            if (isset($correctinfo[$position])) {
+                                if ($correctinfo[$position]==$answerid) {
+                                    $score = 1;
+                                }
+                                $maxscore = 1;
+                            }
+                            break;
+
+                        case 1; // RELATIVE_NEXT_EXCLUDE_LAST
+                        case 2; // RELATIVE_NEXT_INCLUDE_LAST
+                            if (isset($correctinfo[$answerid])) {
+                                if (isset($currentinfo[$answerid]) && $currentinfo[$answerid]==$correctinfo[$answerid]) {
+                                    $score = 1;
+                                }
+                                $maxscore = 1;
+                            }
+                            break;
+
+                        case 3; // RELATIVE_ONE_PREVIOUS_AND_NEXT
+                        case 4; // RELATIVE_ALL_PREVIOUS_AND_NEXT
+                            if (isset($correctinfo[$answerid])) {
+                                $maxscore = 0;
+                                $prev = $correctinfo[$answerid]->prev;
+                                $maxscore += count($prev);
+                                $prev = array_intersect($prev, $currentinfo[$answerid]->prev);
+                                $score += count($prev);
+                                $next = $correctinfo[$answerid]->next;
+                                $maxscore += count($next);
+                                $next = array_intersect($next, $currentinfo[$answerid]->next);
+                                $score += count($next);
+                            }
+                            break;
                     }
-                    $img = "$img ";
+                    if ($maxscore===null) {
+                        $class = 'unscored';
+                    } else {
+                        if ($maxscore==0) {
+                            $score = 0.0;
+                        } else {
+                            $score = ($score / $maxscore);
+                        }
+                        switch (true) {
+                            case ($score > 0.999999): $class = 'correct'; break;
+                            case ($score < 0.000001): $class = 'incorrect'; break;
+                            case ($score >= 0.66):    $class = 'partial66'; break;
+                            case ($score >= 0.33):    $class = 'partial33'; break;
+                            default:                  $class = 'partial01'; break;
+                        }
+                        $img = $this->feedback_image($score).' ';
+                    }
                 } else {
                     $class = 'sortableitem';
-                    $img = '';
                 }
                 $class = "$class $layoutclass";
 
