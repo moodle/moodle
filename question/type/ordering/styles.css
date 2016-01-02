@@ -69,13 +69,21 @@
     margin-top       : 4px;
 }
 
-.que.ordering div.rightanswer ol.correctorder {
-    overflow: auto; /* cover the floating LI elements */
+/*
+    force containing DIV to cover the floating LI elements
+    Note: if you add "overflow:auto;  to "ol.correctorder"
+    then the numbers for the <LI> elements disappear !!
+*/
+.que.ordering div.rightanswer {
+    overflow: auto;
 }
 .que.ordering div.rightanswer ol.correctorder li.horizontal {
     float            : left;
     margin-left      : 24px;
     margin-right     : 24px;
+}
+.que.ordering div.rightanswer ol.correctorder li.horizontal:first-child {
+    margin-left      : 0px;
 }
 .que.ordering div.rightanswer ol.correctorder li.vertical {
 }
