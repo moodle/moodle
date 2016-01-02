@@ -35,10 +35,10 @@ $string['gradingtype_help'] = 'Choose the type of grading calculation.
 : An item is considered correct if it is followed by the same item as it is in the correct answer. This includes the last item which must have no item following it. Thus, the highest possible score for the question is **the same as** the number of items displayed to the student.
 
 **Relative to both the previous and next items**
-: An item is considered correct if the previous and next items are the same as they are in the correct answer. The first item should have no previous item, and the last item should have no next item. Thus, there are two possible points for each item, and the highest possible score for the question is **twice** the number of items displayed to the student.
+: An item is considered correct if both the previous and next items are the same as they are in the correct answer. The first item should have no previous item, and the last item should have no next item. Thus, there are two possible points for each item, and the highest possible score for the question is **twice** the number of items displayed to the student.
 
 **Relative to ALL previous and next items**
-: An item is considered correct if it is preceded by all the same items as it is in the correct answer, and it is followed by all the same items as it is in the correct answer. The order of the previous items does not matter, and nor does the order of the following items. Thus, if ***n*** items are displayed to the student, the number of marks available for each item is ***(n - 1)***, and the highest mark availabe for the question is ***n x (n - 1)*** which is the same as ***(n² - n)***.';
+: An item is considered correct if it is preceded by all the same items as it is in the correct answer, and it is followed by all the same items as it is in the correct answer. The order of the previous items does not matter, and nor does the order of the following items. Thus, if ***n*** items are displayed to the student, the number of marks available for each item is ***(n - 1)***, and the highest mark availabe for the question is ***n x (n - 1)***, which is the same as ***(n² - n)***.';
 $string['horizontal'] = 'Horizontal';
 $string['layouttype_help'] = 'Choose whether to display the items vertically or horizontally.';
 $string['layouttype'] = 'Layout of items';
