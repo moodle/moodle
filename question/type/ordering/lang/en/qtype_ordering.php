@@ -43,6 +43,7 @@ $string['horizontal'] = 'Horizontal';
 $string['layouttype_help'] = 'Choose whether to display the items vertically or horizontally.';
 $string['layouttype'] = 'Layout of items';
 $string['noresponsedetails'] = 'Sorry, no details of the response to this question are available.';
+$string['noscore'] = 'No score';
 $string['notenoughanswers'] = 'Ordering questions must have more than {$a} answers.';
 $string['relativeallpreviousandnext'] = 'Relative to ALL the previous and next items';
 $string['relativenextexcludelast'] = 'Relative to the next item (excluding last)';

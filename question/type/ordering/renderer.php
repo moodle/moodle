@@ -209,9 +209,13 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                         $answer = $question->answers[$answerid];
                         $score = $this->get_ordering_item_score($question, $position, $answerid);
                         list($score, $maxscore, $fraction, $percent, $class, $img) = $score;
-                        $totalscore += $score;
-                        $totalmaxscore += $maxscore;
-                        $score = "$score / $maxscore = $percent%";
+                        if ($maxscore===null) {
+                            $score = get_string('noscore', $plugin);
+                        } else {
+                            $totalscore += $score;
+                            $totalmaxscore += $maxscore;
+                            $score = "$score / $maxscore = $percent%";
+                        }
                         $scoredetails .= html_writer::tag('li', $score, $params);
                     }
 
@@ -310,6 +314,8 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
             $maxscore = null; // max score for this item
             $fraction = 0.0;  // $score / $maxscore
             $percent  = 0;    // 100 * $fraction
+            $class    = '';   // CSS class
+            $img      = '';   // icon to show correctness
 
             switch ($question->options->gradingtype) {
 
