@@ -473,6 +473,7 @@ $string['timeremaining'] = 'Time remaining';
 $string['timespenterror'] = 'Spend at least {$a} minutes in the lesson';
 $string['timespentminutes'] = 'Time spent (minutes)';
 $string['timetaken'] = 'Time taken';
+$string['totalpagesviewedheader'] = 'Number of pages viewed';
 $string['true'] = 'True';
 $string['truefalse'] = 'True/false';
 $string['unabledtosavefile'] = 'The file you uploaded could not be saved';
