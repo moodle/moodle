@@ -1,6 +1,9 @@
 This files describes API changes in /message/ messaging system,
 information provided here is intended especially for developers.
 
+=== 3.1 ===
+* get_message_processors accepts an addition parameter for testing, which will just reset processor and exit.
+
 === 2.9 ===
 * Renderer method \core_message_renderer::manage_messagingoptions now accepts a user id parameter as well.
 
