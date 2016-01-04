@@ -393,7 +393,7 @@ $string['postincontext'] = 'See this post in context';
 $string['postmailinfo'] = 'This is a copy of a message posted on the {$a} website.
 
 To reply click on this link:';
-$string['postmailinfolink'] = 'This is a copy of a message posted on the {$a->coursename} website.
+$string['postmailinfolink'] = 'This is a copy of a message posted in {$a->coursename}.
 
 To reply click on this link: {$a->replylink}';
 $string['postmailnow'] = '<p>This post will be mailed out immediately to all forum subscribers.</p>';

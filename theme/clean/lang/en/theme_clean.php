@@ -66,6 +66,6 @@ $string['region-side-pre'] = 'Left';
 
 $string['sitelogo'] = 'Site logo';
 $string['sitename'] = 'Display site name along with small logo';
-$string['sitenamedesc'] = 'This setting is only applied if a "Small logo" is set. If no small logo is set the site name is always displayed in the navigation bar, but if it is you can use this setting to display it or not.';
+$string['sitenamedesc'] = 'If there is no small logo, the site name is always displayed in the navigation bar. If a small logo is set, it may be displayed with or without the site name.';
 $string['smalllogo'] = 'Small logo';
-$string['smalllogodesc'] = 'This logo is displayed in the navbar next to the site name, if a "Logo" is set, then it is only displayed on the pages where the logo is not displayed.';
+$string['smalllogodesc'] = 'The small logo is displayed in the navigation bar. If there is a header logo for the front page and login page, the small logo is not displayed on these pages.';
