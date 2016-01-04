@@ -577,6 +577,11 @@ abstract class moodle_database {
     protected function where_clause($table, array $conditions=null) {
         // We accept nulls in conditions
         $conditions = is_null($conditions) ? array() : $conditions;
+
+        if (empty($conditions)) {
+            return array('', array());
+        }
+
         // Some checks performed under debugging only
         if (debugging()) {
             $columns = $this->get_columns($table);
@@ -600,9 +605,6 @@ abstract class moodle_database {
         }
 
         $allowed_types = $this->allowed_param_types();
-        if (empty($conditions)) {
-            return array('', array());
-        }
         $where = array();
         $params = array();
 
