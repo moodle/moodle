@@ -476,14 +476,14 @@ class mod_forum_external extends external_api {
                 $post->children = array();
             }
 
-            $userpicture = new user_picture($post);
-            $userpicture->size = 1; // Size f1.
-            $post->userpictureurl = $userpicture->get_url($PAGE)->out(false);
-
             $user = new stdclass();
             $user->id = $post->userid;
-            $user = username_load_fields_from_object($user, $post);
+            $user = username_load_fields_from_object($user, $post, null, array('picture', 'imagealt', 'email'));
             $post->userfullname = fullname($user, $canviewfullname);
+
+            $userpicture = new user_picture($user);
+            $userpicture->size = 1; // Size f1.
+            $post->userpictureurl = $userpicture->get_url($PAGE)->out(false);
 
             // Rewrite embedded images URLs.
             list($post->message, $post->messageformat) =
