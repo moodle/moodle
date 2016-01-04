@@ -255,19 +255,7 @@ break;
 }
 
 // Trigger module viewed event.
-$event = \mod_glossary\event\course_module_viewed::create(array(
-    'objectid' => $glossary->id,
-    'context' => $context,
-    'other' => array('mode' => $mode)
-));
-$event->add_record_snapshot('course', $course);
-$event->add_record_snapshot('course_modules', $cm);
-$event->add_record_snapshot('glossary', $glossary);
-$event->trigger();
-
-// Mark as viewed
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
+glossary_view($glossary, $course, $cm, $context, $mode);
 
 /// Printing the heading
 $strglossaries = get_string("modulenameplural", "glossary");
@@ -459,31 +447,31 @@ if ($allentries) {
     foreach ($allentries as $entry) {
 
         // Setting the pivot for the current entry
-        $pivot = $entry->glossarypivot;
-        $upperpivot = core_text::strtoupper($pivot);
-        $pivottoshow = core_text::strtoupper(format_string($pivot, true, $fmtoptions));
-        // Reduce pivot to 1cc if necessary
-        if ( !$fullpivot ) {
-            $upperpivot = core_text::substr($upperpivot, 0, 1);
-            $pivottoshow = core_text::substr($pivottoshow, 0, 1);
-        }
+        if ($printpivot) {
+            $pivot = $entry->{$pivotkey};
+            $upperpivot = core_text::strtoupper($pivot);
+            $pivottoshow = core_text::strtoupper(format_string($pivot, true, $fmtoptions));
 
-        // if there's a group break
-        if ( $currentpivot != $upperpivot ) {
+            // Reduce pivot to 1cc if necessary.
+            if (!$fullpivot) {
+                $upperpivot = core_text::substr($upperpivot, 0, 1);
+                $pivottoshow = core_text::substr($pivottoshow, 0, 1);
+            }
 
-            // print the group break if apply
-            if ( $printpivot )  {
+            // If there's a group break.
+            if ($currentpivot != $upperpivot) {
                 $currentpivot = $upperpivot;
+
+                // print the group break if apply
 
                 echo '<div>';
                 echo '<table cellspacing="0" class="glossarycategoryheader">';
 
                 echo '<tr>';
-                if ( isset($entry->userispivot) ) {
+                if ($userispivot) {
                 // printing the user icon if defined (only when browsing authors)
                     echo '<th align="left">';
-
-                    $user = $DB->get_record("user", array("id"=>$entry->userid));
+                    $user = mod_glossary_entry_query_builder::get_user_from_record($entry);
                     echo $OUTPUT->user_picture($user, array('courseid'=>$course->id));
                     $pivottoshow = fullname($user, has_capability('moodle/site:viewfullnames', context_course::instance($course->id)));
                 } else {
@@ -492,7 +480,6 @@ if ($allentries) {
 
                 echo $OUTPUT->heading($pivottoshow, 3);
                 echo "</th></tr></table></div>\n";
-
             }
         }
 
