@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+
 /**
  * Class report_log_events_testcase.
  *
@@ -32,6 +34,28 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
 class report_log_lib_testcase extends advanced_testcase {
+
+    /**
+     * @var stdClass The user.
+     */
+    private $user;
+
+    /**
+     * @var stdClass The course.
+     */
+    private $course;
+
+    /**
+     * @var \core_user\output\myprofile\tree The navigation tree.
+     */
+    private $tree;
+
+    public function setUp() {
+        $this->user = $this->getDataGenerator()->create_user();
+        $this->course = $this->getDataGenerator()->create_course();
+        $this->tree = new \core_user\output\myprofile\tree();
+        $this->resetAfterTest();
+    }
 
     /**
      * Test report_log_supports_logstore.
@@ -53,5 +77,39 @@ class report_log_lib_testcase extends advanced_testcase {
         foreach ($expectedstores as $expectedstore) {
             $this->assertContains($expectedstore, $stores);
         }
+    }
+
+    /**
+     * Tests the report_log_myprofile_navigation() function as an admin viewing the logs for a user.
+     */
+    public function test_report_log_myprofile_navigation() {
+        // Set as the admin.
+        $this->setAdminUser();
+        $iscurrentuser = false;
+
+        // Check the node tree is correct.
+        report_log_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('alllogs', $nodes->getValue($this->tree));
+        $this->assertArrayHasKey('todayslogs', $nodes->getValue($this->tree));
+    }
+
+    /**
+     * Tests the report_log_myprofile_navigation() function as a user without permission.
+     */
+    public function test_report_log_myprofile_navigation_without_permission() {
+        // Set to the other user.
+        $this->setUser($this->user);
+        $iscurrentuser = true;
+
+        // Check the node tree is correct.
+        report_log_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('alllogs', $nodes->getValue($this->tree));
+        $this->assertArrayNotHasKey('todayslogs', $nodes->getValue($this->tree));
     }
 }

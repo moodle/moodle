@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/blog/lib.php');
 /**
  * Test functions that rely on the DB tables
  */
-class core_bloglib_testcase extends advanced_testcase {
+class core_blog_lib_testcase extends advanced_testcase {
 
     private $courseid;
     private $cmid;
@@ -471,6 +471,74 @@ class core_bloglib_testcase extends advanced_testcase {
         $url = new moodle_url('/blog/index.php', array('entryid' => $this->postid));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Tests the core_blog_myprofile_navigation() function.
+     */
+    public function test_core_blog_myprofile_navigation() {
+        global $USER;
+
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $this->setAdminUser();
+        $iscurrentuser = true;
+        $course = null;
+
+        // Enable blogs.
+        set_config('enableblogs', true);
+
+        // Check the node tree is correct.
+        core_blog_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('blogs', $nodes->getValue($tree));
+    }
+
+    /**
+     * Tests the core_blog_myprofile_navigation() function as a guest.
+     */
+    public function test_core_blog_myprofile_navigation_as_guest() {
+        global $USER;
+
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $iscurrentuser = false;
+        $course = null;
+
+        // Set user as guest.
+        $this->setGuestUser();
+
+        // Check the node tree is correct.
+        core_blog_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('blogs', $nodes->getValue($tree));
+    }
+
+    /**
+     * Tests the core_blog_myprofile_navigation() function when blogs are disabled.
+     */
+    public function test_core_blog_myprofile_navigation_blogs_disabled() {
+        global $USER;
+
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $this->setAdminUser();
+        $iscurrentuser = false;
+        $course = null;
+
+        // Disable blogs.
+        set_config('enableblogs', false);
+
+        // Check the node tree is correct.
+        core_blog_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('blogs', $nodes->getValue($tree));
     }
 }
 
