@@ -23,6 +23,8 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+
+use tool_lp\plan;
 use tool_lp\user_competency;
 
 global $CFG;
@@ -170,6 +172,141 @@ class tool_lp_lib_testcase extends advanced_testcase {
         ));
         $this->assertEquals(core_user::get_noreply_user()->id, $message->useridfrom);
         $this->assertEquals($u1->id, $message->useridto);
+        $this->assertTrue(strpos($message->fullmessage, '<em>Hello world!</em>') !== false);
+        $this->assertTrue(strpos($message->fullmessagehtml, '<em>Hello world!</em>') !== false);
+        $this->assertEquals(FORMAT_HTML, $message->fullmessageformat);
+        $this->assertEquals($expectedurl->out(false), $message->contexturl);
+        $this->assertEquals($expectedurlname, $message->contexturlname);
+    }
+
+    /**
+     * Commenting on a plan.
+     */
+    public function test_comment_add_plan() {
+        $this->resetAfterTest();
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
+        $userroleid = $dg->create_role();
+        $reviewerroleid = $dg->create_role();
+        assign_capability('tool/lp:planviewowndraft', CAP_ALLOW, $userroleid, context_system::instance()->id, true);
+        assign_capability('tool/lp:planviewown', CAP_ALLOW, $userroleid, context_system::instance()->id, true);
+        assign_capability('tool/lp:planviewdraft', CAP_ALLOW, $reviewerroleid, context_system::instance()->id, true);
+        assign_capability('tool/lp:planmanage', CAP_ALLOW, $reviewerroleid, context_system::instance()->id, true);
+        assign_capability('tool/lp:plancomment', CAP_ALLOW, $reviewerroleid, context_system::instance()->id, true);
+        $dg->role_assign($userroleid, $u1->id, context_user::instance($u1->id));
+        $dg->role_assign($reviewerroleid, $u2->id, context_user::instance($u1->id));
+        $dg->role_assign($reviewerroleid, $u3->id, context_system::instance());
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $p1 = $lpg->create_plan(array('userid' => $u1->id));
+
+        // Post a comment in own plan, no reviewer. Nobody is messaged.
+        $this->setUser($u1);
+        $comment = $p1->get_comment_object();
+        $sink = $this->redirectMessages();
+        $comment->add('Hello world!');
+        $messages = $sink->get_messages();
+        $sink->close();
+        $this->assertCount(0, $messages);
+
+        // Post a comment in plan as someone else, no reviewer. The owner is messages.
+        $this->setUser($u3);
+        $comment = $p1->get_comment_object();
+        $sink = $this->redirectMessages();
+        $comment->add('Hello world!');
+        $messages = $sink->get_messages();
+        $sink->close();
+        $this->assertCount(1, $messages);
+        $message = array_pop($messages);
+        $this->assertEquals(core_user::get_noreply_user()->id, $message->useridfrom);
+        $this->assertEquals($u1->id, $message->useridto);
+
+        // Post a comment in a plan with reviewer. The reviewer is messaged.
+        $p1->set_reviewerid($u2->id);
+        $p1->update();
+        $this->setUser($u1);
+        $comment = $p1->get_comment_object();
+        $sink = $this->redirectMessages();
+        $comment->add('Hello world!');
+        $messages = $sink->get_messages();
+        $sink->close();
+        $this->assertCount(1, $messages);
+        $message = array_pop($messages);
+        $this->assertEquals(core_user::get_noreply_user()->id, $message->useridfrom);
+        $this->assertEquals($u2->id, $message->useridto);
+
+        // Post a comment as reviewer in a plan being reviewed. The owner is messaged.
+        $p1->set_reviewerid($u2->id);
+        $p1->update();
+        $this->setUser($u2);
+        $comment = $p1->get_comment_object();
+        $sink = $this->redirectMessages();
+        $comment->add('Hello world!');
+        $messages = $sink->get_messages();
+        $sink->close();
+        $this->assertCount(1, $messages);
+        $message = array_pop($messages);
+        $this->assertEquals(core_user::get_noreply_user()->id, $message->useridfrom);
+        $this->assertEquals($u1->id, $message->useridto);
+
+        // Post a comment as someone else in a plan being reviewed. The owner and reviewer are messaged.
+        $p1->set_reviewerid($u2->id);
+        $p1->update();
+        $this->setUser($u3);
+        $comment = $p1->get_comment_object();
+        $sink = $this->redirectMessages();
+        $comment->add('Hello world!');
+        $messages = $sink->get_messages();
+        $sink->close();
+        $this->assertCount(2, $messages);
+        $message1 = array_shift($messages);
+        $message2 = array_shift($messages);
+        $this->assertEquals(core_user::get_noreply_user()->id, $message1->useridfrom);
+        $this->assertEquals($u1->id, $message1->useridto);
+        $this->assertEquals(core_user::get_noreply_user()->id, $message2->useridfrom);
+        $this->assertEquals($u2->id, $message2->useridto);
+
+        $p1->set_reviewerid(null);
+        $p1->update();
+
+        // Test message content.
+        $this->setUser($u3);
+        $comment = $p1->get_comment_object();
+        $sink = $this->redirectMessages();
+        $comment->add('Hello world!');
+        $messages = $sink->get_messages();
+        $sink->close();
+        $this->assertCount(1, $messages);
+        $message = array_pop($messages);
+
+        $expectedurlname = $p1->get_name();
+        $expectedurl = new moodle_url('/admin/tool/lp/plan.php', array(
+            'id' => $p1->get_id()
+        ));
+        $this->assertTrue(strpos($message->fullmessage, 'Hello world!') !== false);
+        $this->assertTrue(strpos($message->fullmessagehtml, 'Hello world!') !== false);
+        $this->assertEquals(FORMAT_MOODLE, $message->fullmessageformat);
+        $this->assertEquals($expectedurl->out(false), $message->contexturl);
+        $this->assertEquals($expectedurlname, $message->contexturlname);
+
+        // Test message content as HTML.
+        $this->setUser($u3);
+        $comment = $p1->get_comment_object();
+        $sink = $this->redirectMessages();
+        $comment->add('<em>Hello world!</em>', FORMAT_HTML);
+        $messages = $sink->get_messages();
+        $sink->close();
+        $this->assertCount(1, $messages);
+        $message = array_pop($messages);
+
+        $expectedurlname = $p1->get_name();
+        $expectedurl = new moodle_url('/admin/tool/lp/plan.php', array(
+            'id' => $p1->get_id()
+        ));
         $this->assertTrue(strpos($message->fullmessage, '<em>Hello world!</em>') !== false);
         $this->assertTrue(strpos($message->fullmessagehtml, '<em>Hello world!</em>') !== false);
         $this->assertEquals(FORMAT_HTML, $message->fullmessageformat);

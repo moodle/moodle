@@ -1131,12 +1131,11 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         $plan3 = $this->create_plan(4, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
-        $plan4 = $this->create_plan(5, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
         try {
             $plan4 = $this->create_plan(6, $this->creator->id, 0, plan::STATUS_COMPLETE, 0);
-            $this->fail('Exception expected due to not permissions to manage other users plans');
-        } catch (moodle_exception $e) {
-            $this->assertEquals('nopermissions', $e->errorcode);
+            $this->fail('Plans cannot be created as complete.');
+        } catch (coding_exception $e) {
+            $this->assertRegexp('/A plan cannot be created as complete./', $e->getMessage());
         }
 
         try {
@@ -1151,10 +1150,10 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         try {
             // Cannot be updated even if they created it.
-            $plan1 = $this->update_plan($plan0->id, 1, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
-            $this->fail('Exception expected due to not permissions to create draft plan');
-        } catch (moodle_exception $e) {
-            $this->assertEquals('nopermissions', $e->errorcode);
+            $this->update_plan($plan2->id, 1, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
+            $this->fail('The user can not update their own plan without permissions.');
+        } catch (required_capability_exception $e) {
+            $this->assertRegexp('/Manage learning plans./', $e->getMessage());
         }
     }
 
@@ -1196,7 +1195,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $this->setUser($this->user);
 
-        $plan = $this->create_plan(1, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+        $plan = $this->create_plan(1, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
+        external::complete_plan($plan->id);
 
         $result = external::reopen_plan($plan->id);
         $this->assertTrue($result);
@@ -1206,16 +1206,22 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      * Test that we can read plans.
      */
     public function test_read_plans() {
+        global $OUTPUT;
         $this->setUser($this->creator);
 
         $syscontext = context_system::instance();
 
         $plan1 = $this->create_plan(1, $this->user->id, 0, plan::STATUS_DRAFT, 0);
         $plan2 = $this->create_plan(2, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
-        $plan3 = $this->create_plan(3, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+        $plan3 = $this->create_plan(3, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
+        external::complete_plan($plan3->id);
+        $plan3 = (object) external::read_plan($plan3->id);
 
+        $data = external::read_plan($plan1->id);
         $this->assertEquals((array)$plan1, external::read_plan($plan1->id));
+        $data = external::read_plan($plan2->id);
         $this->assertEquals((array)$plan2, external::read_plan($plan2->id));
+        $data = external::read_plan($plan3->id);
         $this->assertEquals((array)$plan3, external::read_plan($plan3->id));
 
         $this->setUser($this->user);
@@ -1227,11 +1233,30 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $plan1->canbeedited = false;
         $plan2->canbeedited = false;
         $plan3->canbeedited = false;
-        $plan1->usercancomplete = false;
-        $plan2->usercancomplete = false;
-        $plan3->usercanreopen = false;
+        $plan1->canrequestreview = true;
+        $plan2->canrequestreview = true;
+        $plan3->canrequestreview = true;
+        $plan1->canreview = false;
+        $plan2->canreview = false;
+        $plan3->canreview = false;
+        $plan1->iscompleteallowed = false;
+        $plan2->iscompleteallowed = false;
+        $plan3->iscompleteallowed = false;
+        $plan1->isrequestreviewallowed = true;
+        $plan2->isrequestreviewallowed = true;
+        $plan3->isrequestreviewallowed = true;
+        $plan1->isapproveallowed = false;
+        $plan2->isapproveallowed = false;
+        $plan3->isapproveallowed = false;
+        $plan1->isunapproveallowed = false;
+        $plan2->isunapproveallowed = false;
+        $plan3->isunapproveallowed = false;
+        $plan3->isreopenallowed = false;
+        $plan1->commentarea['canpost'] = false;
+        $plan1->commentarea['canview'] = true;
 
         // Prevent the user from seeing their own non-draft plans.
+        assign_capability('tool/lp:plancommentown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
         assign_capability('tool/lp:planviewown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
         assign_capability('tool/lp:planviewowndraft', CAP_ALLOW, $this->userrole, $syscontext->id, true);
         accesslib_clear_all_caches_for_unit_testing();
@@ -1252,9 +1277,17 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         }
 
         // Allow user to see their plan.
+        assign_capability('tool/lp:plancommentown', CAP_ALLOW, $this->userrole, $syscontext->id, true);
         assign_capability('tool/lp:planviewown', CAP_ALLOW, $this->userrole, $syscontext->id, true);
         assign_capability('tool/lp:planmanageowndraft', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
         accesslib_clear_all_caches_for_unit_testing();
+
+        $plan1->commentarea['canpost'] = true;
+        $plan1->commentarea['canview'] = true;
+        $plan2->commentarea['canpost'] = true;
+        $plan2->isrequestreviewallowed = false;
+        $plan3->commentarea['canpost'] = true;
+        $plan3->isrequestreviewallowed = false;
 
         $this->assertEquals((array)$plan1, external::read_plan($plan1->id));
         $this->assertEquals((array)$plan2, external::read_plan($plan2->id));
@@ -1268,6 +1301,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $plan1->canmanage = true;
         $plan1->canbeedited = true;
+        $plan1->canrequestreview = true;
+        $plan1->isrequestreviewallowed = true;
         $this->assertEquals((array)$plan1, external::read_plan($plan1->id));
         try {
             external::read_plan($plan2->id);
@@ -1284,22 +1319,27 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // Allow use to manage their plan.
         assign_capability('tool/lp:planviewown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
-        assign_capability('tool/lp:planmanageown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
         assign_capability('tool/lp:planmanageowndraft', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
         assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id, true);
         accesslib_clear_all_caches_for_unit_testing();
 
         $plan1->canmanage = false;
         $plan1->canbeedited = false;
+        $plan1->canrequestreview = true;
+        $plan1->canreview = true;
+        $plan1->isrequestreviewallowed = true;
+        $plan1->isapproveallowed = true;
+        $plan1->iscompleteallowed = false;
 
         $plan2->canmanage = true;
         $plan2->canbeedited = true;
-        $plan2->usercanreopen = false;
-        $plan2->usercancomplete = true;
+        $plan2->canreview = true;
+        $plan2->iscompleteallowed = true;
+        $plan2->isunapproveallowed = true;
 
         $plan3->canmanage = true;
-        $plan3->usercanreopen = true;
-        $plan3->usercancomplete = false;
+        $plan3->canreview = true;
+        $plan3->isreopenallowed = true;
 
         $this->assertEquals((array)$plan1, external::read_plan($plan1->id));
         $this->assertEquals((array)$plan2, external::read_plan($plan2->id));
@@ -1311,9 +1351,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $syscontext = context_system::instance();
 
-        $plan1 = $this->create_plan(1, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
-        $plan2 = $this->create_plan(2, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
-        $plan3 = $this->create_plan(3, $this->creator->id, 0, plan::STATUS_COMPLETE, 0);
+        $plan1 = $this->create_plan(1, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
+        $plan2 = $this->create_plan(2, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
+        $plan3 = $this->create_plan(3, $this->creator->id, 0, plan::STATUS_ACTIVE, 0);
 
         $this->assertTrue(external::delete_plan($plan1->id));
 
@@ -1350,7 +1390,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
 
-        $plan4 = $this->create_plan(4, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+        $plan4 = $this->create_plan(4, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
         $this->assertTrue(external::delete_plan($plan4->id));
     }
 

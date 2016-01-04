@@ -651,5 +651,21 @@ function xmldb_tool_lp_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015111030, 'tool', 'lp');
     }
 
+    if ($oldversion < 2015111041) {
+
+        // Define field reviewerid to be added to tool_lp_plan.
+        $table = new xmldb_table('tool_lp_plan');
+        $field = new xmldb_field('reviewerid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'duedate');
+
+        // Conditionally launch add field reviewerid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2015111041, 'tool', 'lp');
+    }
+
+
     return true;
 }

@@ -24,6 +24,7 @@
 namespace tool_lp;
 defined('MOODLE_INTERNAL') || die();
 
+use comment;
 use context_user;
 use dml_missing_record_exception;
 use lang_string;
@@ -38,14 +39,20 @@ class plan extends persistent {
 
     const TABLE = 'tool_lp_plan';
 
-    /** Draft status */
+    /** Draft status. */
     const STATUS_DRAFT = 0;
 
-    /** Active status */
+    /** Active status. */
     const STATUS_ACTIVE = 1;
 
-    /** Complete status */
+    /** Complete status. */
     const STATUS_COMPLETE = 2;
+
+    /** Waiting for review. */
+    const STATUS_WAITING_FOR_REVIEW = 3;
+
+    /** In review. */
+    const STATUS_IN_REVIEW = 4;
 
     /** 10 minutes threshold **/
     const DUEDATE_THRESHOLD = 600;
@@ -86,7 +93,8 @@ class plan extends persistent {
                 'null' => NULL_ALLOWED,
             ),
             'status' => array(
-                'choices' => array(self::STATUS_DRAFT, self::STATUS_COMPLETE, self::STATUS_ACTIVE),
+                'choices' => array(self::STATUS_DRAFT, self::STATUS_COMPLETE, self::STATUS_ACTIVE,
+                    self::STATUS_WAITING_FOR_REVIEW, self::STATUS_IN_REVIEW),
                 'type' => PARAM_INT,
                 'default' => self::STATUS_DRAFT,
             ),
@@ -94,6 +102,11 @@ class plan extends persistent {
                 'type' => PARAM_INT,
                 'default' => 0,
             ),
+            'reviewerid' => array(
+                'type' => PARAM_INT,
+                'default' => null,
+                'null' => NULL_ALLOWED,
+            )
         );
     }
 
@@ -112,12 +125,21 @@ class plan extends persistent {
     }
 
     /**
+     * Whether the current user can comment on this plan.
+     *
+     * @return bool
+     */
+    public function can_comment() {
+        return static::can_comment_user($this->get_userid());
+    }
+
+    /**
      * Whether the current user can manage the plan.
      *
      * @return bool
      */
     public function can_manage() {
-        if ($this->get_status() == self::STATUS_DRAFT) {
+        if ($this->is_draft()) {
             return self::can_manage_user_draft($this->get_userid());
         }
         return self::can_manage_user($this->get_userid());
@@ -129,10 +151,62 @@ class plan extends persistent {
      * @return bool
      */
     public function can_read() {
-        if ($this->get_status() == self::STATUS_DRAFT) {
+        if ($this->is_draft()) {
             return self::can_read_user_draft($this->get_userid());
         }
         return self::can_read_user($this->get_userid());
+    }
+
+    /**
+     * Whether the current user can read comments on this plan.
+     *
+     * @return bool
+     */
+    public function can_read_comments() {
+        return $this->can_read();
+    }
+
+    /**
+     * Whether the current user can request a review of the plan.
+     *
+     * @return bool
+     */
+    public function can_request_review() {
+        return self::can_request_review_user($this->get_userid());
+    }
+
+    /**
+     * Whether the current user can review the plan.
+     *
+     * @return bool
+     */
+    public function can_review() {
+        return self::can_review_user($this->get_userid());
+    }
+
+    /**
+     * Get the comment object.
+     *
+     * @return comment
+     */
+    public function get_comment_object() {
+        global $CFG;
+        require_once($CFG->dirroot . '/comment/lib.php');
+
+        if (!$this->get_id()) {
+            throw new coding_exception('The plan must exist.');
+        }
+
+        $comment = new comment((object) array(
+            'client_id' => 'tool_lp_plan_' . $this->get_id(),
+            'context' => $this->get_context(),
+            'component' => 'tool_lp',
+            'itemid' => $this->get_id(),
+            'area' => 'plan',
+            'showcount' => true,
+        ));
+        $comment->set_fullwidth(true);
+        return $comment;
     }
 
     /**
@@ -196,6 +270,12 @@ class plan extends persistent {
             case self::STATUS_DRAFT:
                 $strname = 'draft';
                 break;
+            case self::STATUS_IN_REVIEW:
+                $strname = 'inreview';
+                break;
+            case self::STATUS_WAITING_FOR_REVIEW:
+                $strname = 'waitingforreview';
+                break;
             case self::STATUS_ACTIVE:
                 $strname = 'active';
                 break;
@@ -221,6 +301,18 @@ class plan extends persistent {
             return null;
         }
         return new template($templateid);
+    }
+
+    /**
+     * Is the plan in draft mode?
+     *
+     * This method is convenient to know if the plan is a draft because whilst a draft
+     * is being reviewed its status is not "draft" any more, but it still is a draft nonetheless.
+     *
+     * @return boolean
+     */
+    public function is_draft() {
+        return in_array($this->get_status(), static::get_draft_statuses());
     }
 
     /**
@@ -263,6 +355,23 @@ class plan extends persistent {
     }
 
     /**
+     * Can the current user comment on a user's plan?
+     *
+     * @param int $planuserid The user ID the plan belongs to.
+     * @return bool
+     */
+    public static function can_comment_user($planuserid) {
+        global $USER;
+
+        $capabilities = array('tool/lp:plancomment');
+        if ($USER->id == $planuserid) {
+            $capabilities[] = 'tool/lp:plancommentown';
+        }
+
+        return has_any_capability($capabilities, context_user::instance($planuserid));
+    }
+
+    /**
      * Can the current user manage a user's plan?
      *
      * @param  int $planuserid The user to whom the plan would belong.
@@ -296,6 +405,17 @@ class plan extends persistent {
         }
 
         return has_any_capability($capabilities, $context);
+    }
+
+    /**
+     * Can the current user read the comments on a user's plan?
+     *
+     * @param int $planuserid The user ID the plan belongs to.
+     * @return bool
+     */
+    public static function can_read_comments_user($planuserid) {
+        // Everyone who can read the plan can read the comments.
+        return static::can_read_user($planuserid);
     }
 
     /**
@@ -334,6 +454,36 @@ class plan extends persistent {
 
         return has_any_capability($capabilities, $context)
             || self::can_manage_user_draft($planuserid);
+    }
+
+    /**
+     * Can the current user request the draft to be reviewed.
+     *
+     * @param  int $planuserid The user to whom the plan would belong.
+     * @return bool
+     */
+    public static function can_request_review_user($planuserid) {
+        global $USER;
+
+        $capabilities = array('tool/lp:planrequestreview');
+        if ($USER->id == $planuserid) {
+            $capabilities[] = 'tool/lp:planrequestreviewown';
+        }
+
+        return has_any_capability($capabilities, context_user::instance($planuserid));
+    }
+
+    /**
+     * Can the current user review the plan.
+     *
+     * This means being able to send the plan from draft to active, and vice versa.
+     *
+     * @param  int $planuserid The user to whom the plan would belong.
+     * @return bool
+     */
+    public static function can_review_user($planuserid) {
+        return has_capability('tool/lp:planreview', context_user::instance($planuserid))
+            || self::can_manage_user($planuserid);
     }
 
     /**
@@ -380,14 +530,23 @@ class plan extends persistent {
     }
 
     /**
+     * Get the list of draft statuses.
+     *
+     * @return array Contains the status constants.
+     */
+    public static function get_draft_statuses() {
+        return array(self::STATUS_DRAFT, self::STATUS_WAITING_FOR_REVIEW, self::STATUS_IN_REVIEW);
+    }
+
+    /**
      * Get the recordset of the plans that are due, incomplete and not draft.
      *
      * @return \moodle_recordset
      */
     public static function get_recordset_for_due_and_incomplete() {
         global $DB;
-        $sql = "duedate > 0 AND duedate < :now AND status != :complete AND status != :draft";
-        $params = array('now' => time(), 'complete' => self::STATUS_COMPLETE, 'draft' => self::STATUS_DRAFT);
+        $sql = "duedate > 0 AND duedate < :now AND status = :status";
+        $params = array('now' => time(), 'status' => self::STATUS_ACTIVE);
         return $DB->get_recordset_select(self::TABLE, $sql, $params);
     }
 
@@ -473,7 +632,7 @@ class plan extends persistent {
 
         // We do not check duedate when plan is draft, complete, unset, or based on a template.
         if ($this->is_based_on_template()
-                || $this->get_status() == self::STATUS_DRAFT
+                || $this->is_draft()
                 || $this->get_status() == self::STATUS_COMPLETE
                 || empty($value)) {
             return true;
@@ -486,7 +645,7 @@ class plan extends persistent {
 
             // The value has not changed, then it's always OK. Though if we're going
             // from draft to active it has to has to be validated.
-            if ($before == $value && $beforestatus != self::STATUS_DRAFT) {
+            if ($before == $value && !in_array($beforestatus, self::get_draft_statuses())) {
                 return true;
             }
         }

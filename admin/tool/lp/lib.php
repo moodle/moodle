@@ -278,6 +278,76 @@ function tool_lp_comment_add($comment, $params) {
             $msgcopy->userto = $recipient;
             message_send($msgcopy);
         }
+
+    } else if ($params->commentarea == 'plan') {
+        $plan = new \tool_lp\plan($params->itemid);
+
+        // Message both the user and the reviewer, except when they are the author of the message.
+        $recipients = array($plan->get_userid());
+        if ($plan->get_reviewerid()) {
+            $recipients[] = $plan->get_reviewerid();
+        }
+        $recipients = array_diff($recipients, array($comment->userid));
+        if (empty($recipients)) {
+            return;
+        }
+
+        // Get the sender.
+        $user = $USER;
+        if ($USER->id != $comment->userid) {
+            $user = core_user::get_user($comment->userid);
+        }
+
+        $fullname = fullname($user);
+        $planname = format_string($plan->get_name(), true, array('context' => $plan->get_context()));
+        $urlname = $planname;
+        $url = new moodle_url('/admin/tool/lp/plan.php', array(
+            'id' => $plan->get_id()
+        ));
+
+        // Construct the message content.
+        $fullmessagehtml = get_string('usercommentedonaplanhtml', 'tool_lp', array(
+            'fullname' => $fullname,
+            'plan' => $planname,
+            'comment' => format_text($comment->content, $comment->format, array('context' => $params->context->id)),
+            'url' => $url->out(true),
+            'urlname' => $urlname,
+        ));
+        if ($comment->format == FORMAT_PLAIN || $comment->format == FORMAT_MOODLE) {
+            $format = FORMAT_MOODLE;
+            $fullmessage = get_string('usercommentedonaplan', 'tool_lp', array(
+                'fullname' => $fullname,
+                'plan' => $planname,
+                'comment' => $comment->content,
+                'url' => $url->out(false),
+            ));
+        } else {
+            $format = FORMAT_HTML;
+            $fullmessage = $fullmessagehtml;
+        }
+
+        $message = new \core\message\message();
+        $message->component = 'tool_lp';
+        $message->name = 'plan_comment';
+        $message->notification = 1;
+        $message->userfrom = core_user::get_noreply_user();
+        $message->subject = get_string('usercommentedonaplansubject', 'tool_lp', $fullname);
+        $message->fullmessage = $fullmessage;
+        $message->fullmessageformat = $format;
+        $message->fullmessagehtml = $fullmessagehtml;
+        $message->smallmessage = get_string('usercommentedonaplansmall', 'tool_lp', array(
+            'fullname' => $fullname,
+            'plan' => $planname,
+        ));
+        $message->contexturl = $url->out(false);
+        $message->contexturlname = $urlname;
+
+        // Message each recipient.
+        foreach ($recipients as $recipient) {
+            $msgcopy = clone($message);
+            $msgcopy->userto = $recipient;
+            message_send($msgcopy);
+        }
     }
 }
 
@@ -293,7 +363,13 @@ function tool_lp_comment_permissions($params) {
         if ($uc->can_read()) {
             return array('post' => $uc->can_comment(), 'view' => $uc->can_read_comments());
         }
+    } else if ($params->commentarea == 'plan') {
+        $plan = new \tool_lp\plan($params->itemid);
+        if ($plan->can_read()) {
+            return array('post' => $plan->can_comment(), 'view' => $plan->can_read_comments());
+        }
     }
+
     return array('post' => false, 'view' => false);
 }
 
@@ -306,6 +382,11 @@ function tool_lp_comment_permissions($params) {
 function tool_lp_comment_validate($params) {
     if ($params->commentarea == 'user_competency') {
         if (!\tool_lp\user_competency::record_exists($params->itemid)) {
+            return false;
+        }
+        return true;
+    } else if ($params->commentarea == 'plan') {
+        if (!\tool_lp\plan::record_exists($params->itemid)) {
             return false;
         }
         return true;

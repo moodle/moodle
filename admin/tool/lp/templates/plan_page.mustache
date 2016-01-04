@@ -29,12 +29,36 @@
             <dt>{{#str}}status, tool_lp{{/str}}</dt>
             <dd>
                 {{plan.statusname}}
-                {{#plan.usercancomplete}}
+
+                {{#plan.isinreview}}
+                    - {{plan.reviewer.fullname}}
+                {{/plan.isinreview}}
+
+                {{#plan.iscompleteallowed}}
                     (<a data-action="plan-complete" href="#">{{#str}}completeplan, tool_lp{{/str}}</a>)
-                {{/plan.usercancomplete}}
-                {{#plan.usercanreopen}}
+                {{/plan.iscompleteallowed}}
+                {{#plan.isreopenallowed}}
                     (<a data-action="plan-reopen" href="#">{{#str}}reopenplan, tool_lp{{/str}}</a>)
-                {{/plan.usercanreopen}}
+                {{/plan.isreopenallowed}}
+                {{#plan.isrequestreviewallowed}}
+                    (<a data-action="plan-request-review" href="#">{{#str}}requestreview, tool_lp{{/str}}</a>)
+                {{/plan.isrequestreviewallowed}}
+                {{#plan.iscancelreviewrequestallowed}}
+                    (<a data-action="plan-cancel-review-request" href="#">{{#str}}cancelreviewrequest, tool_lp{{/str}}</a>)
+                {{/plan.iscancelreviewrequestallowed}}
+                {{#plan.isstartreviewallowed}}
+                    (<a data-action="plan-start-review" href="#">{{#str}}startreview, tool_lp{{/str}}</a>)
+                {{/plan.isstartreviewallowed}}
+                {{#plan.isstopreviewallowed}}
+                    (<a data-action="plan-stop-review" href="#">{{#str}}stopreview, tool_lp{{/str}}</a>)
+                {{/plan.isstopreviewallowed}}
+                {{#plan.isapproveallowed}}
+                    (<a data-action="plan-approve" href="#">{{#str}}planapprove, tool_lp{{/str}}</a>)
+                {{/plan.isapproveallowed}}
+                {{#plan.isunapproveallowed}}
+                    (<a data-action="plan-unapprove" href="#">{{#str}}planunapprove, tool_lp{{/str}}</a>)
+                {{/plan.isunapproveallowed}}
+
             </dd>
             <dt>{{#str}}duedate, tool_lp{{/str}}</dt>
             <dd>{{plan.duedateformatted}}</dd>
@@ -45,9 +69,9 @@
                         <a href="{{pluginbaseurl}}/templatecompetencies.php?templateid={{id}}&amp;pagecontextid={{contextid}}">
                     {{/canread}}
                     {{plan.template.shortname}}{{#canread}}</a>{{/canread}}
-                    {{#plan.usercanunlink}}
+                    {{#plan.isunlinkallowed}}
                         (<a data-action="plan-unlink" href="#">{{#str}}unlinkplantemplate, tool_lp{{/str}}</a>)
-                    {{/plan.usercanunlink}}
+                    {{/plan.isunlinkallowed}}
                 </dd>
             {{/plan.template}}
             {{#description}}
@@ -56,6 +80,11 @@
             {{/description}}
         </dl>
     </div>
+    {{#plan.commentarea}}
+        <div data-region="comments">
+            {{>tool_lp/comment_area}}
+        </div>
+    {{/plan.commentarea}}
     <div data-region="plan-competencies">
         <h3>{{#str}}learningplancompetencies, tool_lp{{/str}}</h3>
         <table class="generaltable fullwidth managecompetencies">
@@ -135,10 +164,8 @@
 require(['tool_lp/competencies', 'tool_lp/planactions', 'tool_lp/user_competency_workflow'], function(mod, actionsMod, UserCompWorkflow) {
     var planActions = new actionsMod('plan');
 
-    {{#plan.canmanage}}
-        (new mod({{plan.id}}, 'plan', {{contextid}}));
-        planActions.registerEvents();
-    {{/plan.canmanage}}
+    (new mod({{plan.id}}, 'plan', {{contextid}}));
+    planActions.registerEvents();
 
     var ucw = new UserCompWorkflow();
     ucw.enhanceMenubar('.user-competency-actions');

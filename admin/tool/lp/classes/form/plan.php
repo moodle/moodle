@@ -60,10 +60,17 @@ class plan extends persistent {
         $mform->addHelpButton('duedate', 'duedate', 'tool_lp');
 
         // Display status selector in form.
+        // When the plan was already saved then the status can not be changed via this form.
         $status = planpersistent::get_status_list($this->_customdata['userid']);
-        if (!empty($status) && count($status) > 1) {
+        $plan = $this->get_persistent();
+        if ($plan->get_id()) {
+            // The current status is not selectable (workflow status probably), we just display it.
+            $mform->addElement('static', 'staticstatus', get_string('status', 'tool_lp'), $plan->get_statusname());
+        } else if (!empty($status) && count($status) > 1) {
+            // There is more than one status to select from.
             $mform->addElement('select', 'status', get_string('status', 'tool_lp'), $status);
         } else if (count($status) === 1) {
+            // There is only one status to select from.
             $mform->addElement('static', 'staticstatus', get_string('status', 'tool_lp'), current($status));
         } else {
             throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');

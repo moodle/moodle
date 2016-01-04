@@ -193,17 +193,6 @@ define(['jquery',
     };
 
     /**
-     * Delete plan handler.
-     *
-     * @param  {Event} e The event.
-     */
-    PlanActions.prototype._deletePlanHandler = function(e) {
-        e.preventDefault();
-        var data = this._findPlanData($(e.target));
-        this.deletePlan(data);
-    };
-
-    /**
      * Reopen plan and reload the region.
      *
      * @param  {Object} planData Plan data from plan node.
@@ -248,17 +237,6 @@ define(['jquery',
             }).fail(notification.exception);
         }).fail(notification.exception);
 
-    };
-
-    /**
-     * Reopen plan handler.
-     *
-     * @param  {Event} e The event.
-     */
-    PlanActions.prototype._reopenPlanHandler = function(e) {
-        e.preventDefault();
-        var data = this._findPlanData($(e.target));
-        this.reopenPlan(data);
     };
 
     /**
@@ -308,17 +286,6 @@ define(['jquery',
     };
 
     /**
-     * Complete plan handler.
-     *
-     * @param  {Event} e The event.
-     */
-    PlanActions.prototype._completePlanHandler = function(e) {
-        e.preventDefault();
-        var data = this._findPlanData($(e.target));
-        this.completePlan(data);
-    };
-    
-    /**
      * Unlink plan and reload the region.
      *
      * @param  {Object} planData Plan data from plan node.
@@ -331,7 +298,7 @@ define(['jquery',
             }];
         self._callAndRefresh(calls, planData);
     };
-    
+
     /**
      * Unlink a plan process.
      *
@@ -363,16 +330,175 @@ define(['jquery',
             }).fail(notification.exception);
         }).fail(notification.exception);
     };
-    
+
     /**
-     * Unlink plan handler.
+     * Request review of a plan.
      *
-     * @param  {Event} e The event.
+     * @param  {Object} planData Plan data from plan node.
+     * @method _doRequestReview
      */
-    PlanActions.prototype._unlinkPlanHandler = function(e) {
+    PlanActions.prototype._doRequestReview = function(planData) {
+        var calls = [{
+            methodname: 'tool_lp_plan_request_review',
+            args: {
+                id: planData.id
+            }
+        }];
+        this._callAndRefresh(calls, planData);
+    };
+
+    /**
+     * Request review of a plan.
+     *
+     * @param  {Object} planData Plan data from plan node.
+     * @method requestReview
+     */
+    PlanActions.prototype.requestReview = function(planData) {
+        this._doRequestReview(planData);
+    };
+
+    /**
+     * Cancel review request of a plan.
+     *
+     * @param  {Object} planData Plan data from plan node.
+     * @method _doCancelReviewRequest
+     */
+    PlanActions.prototype._doCancelReviewRequest = function(planData) {
+        var calls = [{
+            methodname: 'tool_lp_plan_cancel_review_request',
+            args: {
+                id: planData.id
+            }
+        }];
+        this._callAndRefresh(calls, planData);
+    };
+
+    /**
+     * Cancel review request of a plan.
+     *
+     * @param  {Object} planData Plan data from plan node.
+     * @method cancelReviewRequest
+     */
+    PlanActions.prototype.cancelReviewRequest = function(planData) {
+        this._doCancelReviewRequest(planData);
+    };
+
+    /**
+     * Start review of a plan.
+     *
+     * @param  {Object} planData Plan data from plan node.
+     * @method _doStartReview
+     */
+    PlanActions.prototype._doStartReview = function(planData) {
+        var calls = [{
+            methodname: 'tool_lp_plan_start_review',
+            args: {
+                id: planData.id
+            }
+        }];
+        this._callAndRefresh(calls, planData);
+    };
+
+    /**
+     * Start review of a plan.
+     *
+     * @param  {Object} planData Plan data from plan node.
+     * @method startReview
+     */
+    PlanActions.prototype.startReview = function(planData) {
+        this._doStartReview(planData);
+    };
+
+    /**
+     * Stop review of a plan.
+     *
+     * @param  {Object} planData Plan data from plan node.
+     * @method _doStopReview
+     */
+    PlanActions.prototype._doStopReview = function(planData) {
+        var calls = [{
+            methodname: 'tool_lp_plan_stop_review',
+            args: {
+                id: planData.id
+            }
+        }];
+        this._callAndRefresh(calls, planData);
+    };
+
+    /**
+     * Stop review of a plan.
+     *
+     * @param  {Object} planData Plan data from plan node.
+     * @method stopReview
+     */
+    PlanActions.prototype.stopReview = function(planData) {
+        this._doStopReview(planData);
+    };
+
+    /**
+     * Approve a plan.
+     *
+     * @param  {Object} planData Plan data from plan node.
+     * @method _doApprove
+     */
+    PlanActions.prototype._doApprove = function(planData) {
+        var calls = [{
+            methodname: 'tool_lp_approve_plan',
+            args: {
+                id: planData.id
+            }
+        }];
+        this._callAndRefresh(calls, planData);
+    };
+
+    /**
+     * Approve a plan.
+     *
+     * @param  {Object} planData Plan data from plan node.
+     * @method approve
+     */
+    PlanActions.prototype.approve = function(planData) {
+        this._doApprove(planData);
+    };
+
+    /**
+     * Unapprove a plan.
+     *
+     * @param  {Object} planData Plan data from plan node.
+     * @method _doUnapprove
+     */
+    PlanActions.prototype._doUnapprove = function(planData) {
+        var calls = [{
+            methodname: 'tool_lp_unapprove_plan',
+            args: {
+                id: planData.id
+            }
+        }];
+        this._callAndRefresh(calls, planData);
+    };
+
+    /**
+     * Unapprove a plan.
+     *
+     * @param  {Object} planData Plan data from plan node.
+     * @method unapprove
+     */
+    PlanActions.prototype.unapprove = function(planData) {
+        this._doUnapprove(planData);
+    };
+
+
+    /**
+     * Plan event handler.
+     *
+     * @param  {String} method The method to call.
+     * @param  {Event} e The event.
+     * @method _eventHandler
+     */
+    PlanActions.prototype._eventHandler = function(method, e) {
         e.preventDefault();
         var data = this._findPlanData($(e.target));
-        this.unlinkPlan(data);
+        this[method](data);
     };
 
     /**
@@ -403,12 +529,17 @@ define(['jquery',
      * @param  {String} selector Menubar selector.
      */
     PlanActions.prototype.enhanceMenubar = function(selector) {
-        var self = this;
         Menubar.enhance(selector, {
-            '[data-action="plan-delete"]': self._deletePlanHandler.bind(self),
-            '[data-action="plan-complete"]': self._completePlanHandler.bind(self),
-            '[data-action="plan-reopen"]': self._reopenPlanHandler.bind(self),
-            '[data-action="plan-unlink"]': self._unlinkPlanHandler.bind(self),
+            '[data-action="plan-delete"]': this._eventHandler.bind(this, 'deletePlan'),
+            '[data-action="plan-complete"]': this._eventHandler.bind(this, 'completePlan'),
+            '[data-action="plan-reopen"]': this._eventHandler.bind(this, 'reopenPlan'),
+            '[data-action="plan-unlink"]': this._eventHandler.bind(this, 'unlinkPlan'),
+            '[data-action="plan-request-review"]': this._eventHandler.bind(this, 'requestReview'),
+            '[data-action="plan-cancel-review-request"]': this._eventHandler.bind(this, 'cancelReviewRequest'),
+            '[data-action="plan-start-review"]': this._eventHandler.bind(this, 'startReview'),
+            '[data-action="plan-stop-review"]': this._eventHandler.bind(this, 'stopReview'),
+            '[data-action="plan-approve"]': this._eventHandler.bind(this, 'approve'),
+            '[data-action="plan-unapprove"]': this._eventHandler.bind(this, 'unapprove'),
         });
     };
 
@@ -419,13 +550,19 @@ define(['jquery',
      * will be added to the same node.
      */
     PlanActions.prototype.registerEvents = function() {
-        var wrapper = $(this._region),
-            self = this;
+        var wrapper = $(this._region);
 
-        wrapper.find('[data-action="plan-delete"]').click(self._deletePlanHandler.bind(self));
-        wrapper.find('[data-action="plan-complete"]').click(self._completePlanHandler.bind(self));
-        wrapper.find('[data-action="plan-reopen"]').click(self._reopenPlanHandler.bind(self));
-        wrapper.find('[data-action="plan-unlink"]').click(self._unlinkPlanHandler.bind(self));
+        wrapper.find('[data-action="plan-delete"]').click(this._eventHandler.bind(this, 'deletePlan'));
+        wrapper.find('[data-action="plan-complete"]').click(this._eventHandler.bind(this, 'completePlan'));
+        wrapper.find('[data-action="plan-reopen"]').click(this._eventHandler.bind(this, 'reopenPlan'));
+        wrapper.find('[data-action="plan-unlink"]').click(this._eventHandler.bind(this, 'unlinkPlan'));
+
+        wrapper.find('[data-action="plan-request-review"]').click(this._eventHandler.bind(this, 'requestReview'));
+        wrapper.find('[data-action="plan-cancel-review-request"]').click(this._eventHandler.bind(this, 'cancelReviewRequest'));
+        wrapper.find('[data-action="plan-start-review"]').click(this._eventHandler.bind(this, 'startReview'));
+        wrapper.find('[data-action="plan-stop-review"]').click(this._eventHandler.bind(this, 'stopReview'));
+        wrapper.find('[data-action="plan-approve"]').click(this._eventHandler.bind(this, 'approve'));
+        wrapper.find('[data-action="plan-unapprove"]').click(this._eventHandler.bind(this, 'unapprove'));
     };
 
     return PlanActions;

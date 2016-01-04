@@ -25,5 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $messageproviders = array (
+    'plan_comment' => array(),
     'user_competency_comment' => array(),
 );

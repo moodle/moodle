@@ -409,13 +409,13 @@ class tool_lp_api_testcase extends advanced_testcase {
         $plan = api::update_plan($record);
         $this->assertInstanceOf('\tool_lp\plan', $plan);
 
-        // Thrown exception when manageowndraft user try to change the status.
+        // The status cannot be changed in this method.
         $record->status = \tool_lp\plan::STATUS_ACTIVE;
         try {
             $plan = api::update_plan($record);
-            $this->fail('User with manage own draft capability cannot edit the plan status.');
-        } catch (required_capability_exception $e) {
-            $this->assertTrue(true);
+            $this->fail('Updating the status is not allowed.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/To change the status of a plan use the appropriate methods./', $e->getMessage());
         }
 
         // Test when user with manage own plan capability try to edit other user plan.
@@ -431,7 +431,7 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         // User with manage plan capability cannot edit the other user plans with status draft.
         $this->setUser($usermanage);
-        $record->status = \tool_lp\plan::STATUS_COMPLETE;
+        $record->name = 'plan create draft modified 3';
         try {
             $plan = api::update_plan($record);
             $this->fail('User with manage plan capability cannot edit the other user plans with status draft');
@@ -790,6 +790,611 @@ class tool_lp_api_testcase extends advanced_testcase {
         // Completing a plan that is completed throws an exception.
         $this->setExpectedException('coding_exception');
         api::complete_plan($plan);
+    }
+
+    /**
+     * Set-up the workflow data (review, active, ...).
+     *
+     * @return array
+     */
+    protected function setup_workflow_data() {
+        $this->resetAfterTest();
+
+        $dg = $this->getDataGenerator();
+        $user = $dg->create_user();
+        $reviewer = $dg->create_user();
+        $otheruser = $dg->create_user();
+
+        $syscontext = context_system::instance();
+        $userrole = $dg->create_role();
+        $reviewerrole = $dg->create_role();
+        $otheruserrole = $dg->create_role();
+
+        assign_capability('tool/lp:planmanageowndraft', CAP_ALLOW, $userrole, $syscontext->id);
+        assign_capability('tool/lp:planmanage', CAP_ALLOW, $reviewerrole, $syscontext->id);
+        assign_capability('tool/lp:planviewdraft', CAP_ALLOW, $reviewerrole, $syscontext->id);
+        $dg->role_assign($userrole, $user->id, $syscontext->id);
+        $dg->role_assign($reviewerrole, $reviewer->id, $syscontext->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $tpl = $lpg->create_template();
+        $plan = $lpg->create_plan(array('userid' => $user->id));
+        $tplplan = $lpg->create_plan(array('userid' => $user->id, 'templateid' => $tpl->get_id()));
+
+        return array(
+            'dg' => $dg,
+            'lpg' => $lpg,
+            'user' => $user,
+            'reviewer' => $reviewer,
+            'otheruser' => $otheruser,
+            'plan' => $plan,
+            'tplplan' => $tplplan,
+        );
+    }
+
+    /**
+     * Testing requesting the review of a plan.
+     */
+    public function test_plan_request_review() {
+        $data = $this->setup_workflow_data();
+        extract($data);
+
+        $this->assertEquals(plan::STATUS_DRAFT, $plan->get_status());
+        $this->assertEquals(plan::STATUS_DRAFT, $tplplan->get_status());
+
+        // Foreign user cannot do anything.
+        $this->setUser($otheruser);
+        try {
+            api::plan_request_review($plan);
+            $this->fail('The user can not read the plan.');
+        } catch (required_capability_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        // Can not change a plan based on a template.
+        $this->setUser($user);
+        try {
+            api::plan_request_review($tplplan);
+            $this->fail('The plan is based on a template.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/Template plans cannot be reviewed./', $e->getMessage());
+        }
+
+        // Can not send for review when not draft.
+        $this->setUser($user);
+        $plan->set_status(plan::STATUS_WAITING_FOR_REVIEW);
+        try {
+            api::plan_request_review($plan);
+            $this->fail('The plan cannot be sent for review at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan cannot be sent for review at this stage./', $e->getMessage());
+        }
+
+        // Can not send for review when not draft.
+        $this->setUser($user);
+        $plan->set_status(plan::STATUS_ACTIVE);
+        try {
+            api::plan_request_review($plan);
+            $this->fail('The plan cannot be sent for review at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan cannot be sent for review at this stage./', $e->getMessage());
+        }
+
+        // Can not send for review when not draft.
+        $this->setUser($user);
+        $plan->set_status(plan::STATUS_IN_REVIEW);
+        try {
+            api::plan_request_review($plan);
+            $this->fail('The plan cannot be sent for review at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan cannot be sent for review at this stage./', $e->getMessage());
+        }
+
+        // Can not send for review when not draft.
+        $this->setUser($user);
+        $plan->set_status(plan::STATUS_COMPLETE);
+        try {
+            api::plan_request_review($plan);
+            $this->fail('The plan cannot be sent for review at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan cannot be sent for review at this stage./', $e->getMessage());
+        }
+
+        // Sending for review as a reviewer.
+        $this->setUser($reviewer);
+        $plan->set_status(plan::STATUS_DRAFT);
+        try {
+            api::plan_request_review($plan);
+            $this->fail('The user can not request a review.');
+        } catch (required_capability_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        // Sending for review.
+        $this->setUser($user);
+        api::plan_request_review($plan);
+        $plan->read();
+        $this->assertEquals(plan::STATUS_WAITING_FOR_REVIEW, $plan->get_status());
+
+        // Sending for review by ID.
+        $plan->set_status(plan::STATUS_DRAFT);
+        $plan->update();
+        api::plan_request_review($plan->get_id());
+        $plan->read();
+        $this->assertEquals(plan::STATUS_WAITING_FOR_REVIEW, $plan->get_status());
+    }
+
+    /**
+     * Testing cancelling the review request.
+     */
+    public function test_plan_cancel_review_request() {
+        $data = $this->setup_workflow_data();
+        extract($data);
+
+        // Set waiting for review.
+        $tplplan->set_status(plan::STATUS_WAITING_FOR_REVIEW);
+        $tplplan->update();
+        $plan->set_status(plan::STATUS_WAITING_FOR_REVIEW);
+        $plan->update();
+
+        // Foreign user cannot do anything.
+        $this->setUser($otheruser);
+        try {
+            api::plan_cancel_review_request($plan);
+            $this->fail('The user can not read the plan.');
+        } catch (required_capability_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        // Can not change a plan based on a template.
+        $this->setUser($user);
+        try {
+            api::plan_cancel_review_request($tplplan);
+            $this->fail('The plan is based on a template.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/Template plans cannot be reviewed./', $e->getMessage());
+        }
+
+        // Can not cancel review request when not waiting for review.
+        $this->setUser($user);
+        $plan->set_status(plan::STATUS_DRAFT);
+        try {
+            api::plan_cancel_review_request($plan);
+            $this->fail('The plan cannot be sent for review at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan review cannot be cancelled at this stage./', $e->getMessage());
+        }
+
+        // Can not cancel review request when not waiting for review.
+        $this->setUser($user);
+        $plan->set_status(plan::STATUS_IN_REVIEW);
+        try {
+            api::plan_cancel_review_request($plan);
+            $this->fail('The plan review cannot be cancelled at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan review cannot be cancelled at this stage./', $e->getMessage());
+        }
+
+        // Can not cancel review request when not waiting for review.
+        $this->setUser($user);
+        $plan->set_status(plan::STATUS_ACTIVE);
+        try {
+            api::plan_cancel_review_request($plan);
+            $this->fail('The plan review cannot be cancelled at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan review cannot be cancelled at this stage./', $e->getMessage());
+        }
+
+        // Can not cancel review request when not waiting for review.
+        $this->setUser($user);
+        $plan->set_status(plan::STATUS_COMPLETE);
+        try {
+            api::plan_cancel_review_request($plan);
+            $this->fail('The plan review cannot be cancelled at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan review cannot be cancelled at this stage./', $e->getMessage());
+        }
+
+        // Cancelling as a reviewer.
+        $this->setUser($reviewer);
+        $plan->set_status(plan::STATUS_WAITING_FOR_REVIEW);
+        try {
+            api::plan_cancel_review_request($plan);
+            $this->fail('The user can not cancel a review request.');
+        } catch (required_capability_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        // Cancelling review request.
+        $this->setUser($user);
+        api::plan_cancel_review_request($plan);
+        $plan->read();
+        $this->assertEquals(plan::STATUS_DRAFT, $plan->get_status());
+
+        // Cancelling review request by ID.
+        $plan->set_status(plan::STATUS_WAITING_FOR_REVIEW);
+        $plan->update();
+        api::plan_cancel_review_request($plan->get_id());
+        $plan->read();
+        $this->assertEquals(plan::STATUS_DRAFT, $plan->get_status());
+    }
+
+    /**
+     * Testing starting the review.
+     */
+    public function test_plan_start_review() {
+        $data = $this->setup_workflow_data();
+        extract($data);
+
+        // Set waiting for review.
+        $tplplan->set_status(plan::STATUS_WAITING_FOR_REVIEW);
+        $tplplan->update();
+        $plan->set_status(plan::STATUS_WAITING_FOR_REVIEW);
+        $plan->update();
+
+        // Foreign user cannot do anything.
+        $this->setUser($otheruser);
+        try {
+            api::plan_start_review($plan);
+            $this->fail('The user can not read the plan.');
+        } catch (required_capability_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        // Can not change a plan based on a template.
+        $this->setUser($reviewer);
+        try {
+            api::plan_start_review($tplplan);
+            $this->fail('The plan is based on a template.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/Template plans cannot be reviewed./', $e->getMessage());
+        }
+
+        // Can not start a review when not waiting for review.
+        $this->setUser($reviewer);
+        $plan->set_status(plan::STATUS_DRAFT);
+        try {
+            api::plan_start_review($plan);
+            $this->fail('The plan review cannot be started at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan review cannot be started at this stage./', $e->getMessage());
+        }
+
+        // Can not start a review when not waiting for review.
+        $this->setUser($reviewer);
+        $plan->set_status(plan::STATUS_IN_REVIEW);
+        try {
+            api::plan_start_review($plan);
+            $this->fail('The plan review cannot be started at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan review cannot be started at this stage./', $e->getMessage());
+        }
+
+        // Can not start a review when not waiting for review.
+        $this->setUser($reviewer);
+        $plan->set_status(plan::STATUS_ACTIVE);
+        try {
+            api::plan_start_review($plan);
+            $this->fail('The plan review cannot be started at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan review cannot be started at this stage./', $e->getMessage());
+        }
+
+        // Can not start a review when not waiting for review.
+        $this->setUser($reviewer);
+        $plan->set_status(plan::STATUS_COMPLETE);
+        try {
+            api::plan_start_review($plan);
+            $this->fail('The plan review cannot be started at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan review cannot be started at this stage./', $e->getMessage());
+        }
+
+        // Starting as the owner.
+        $this->setUser($user);
+        $plan->set_status(plan::STATUS_WAITING_FOR_REVIEW);
+        try {
+            api::plan_start_review($plan);
+            $this->fail('The user can not start a review.');
+        } catch (required_capability_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        // Starting review.
+        $this->setUser($reviewer);
+        api::plan_start_review($plan);
+        $plan->read();
+        $this->assertEquals(plan::STATUS_IN_REVIEW, $plan->get_status());
+        $this->assertEquals($reviewer->id, $plan->get_reviewerid());
+
+        // Starting review by ID.
+        $plan->set_status(plan::STATUS_WAITING_FOR_REVIEW);
+        $plan->set_reviewerid(null);
+        $plan->update();
+        api::plan_start_review($plan->get_id());
+        $plan->read();
+        $this->assertEquals(plan::STATUS_IN_REVIEW, $plan->get_status());
+        $this->assertEquals($reviewer->id, $plan->get_reviewerid());
+    }
+
+    /**
+     * Testing stopping the review.
+     */
+    public function test_plan_stop_review() {
+        $data = $this->setup_workflow_data();
+        extract($data);
+
+        // Set waiting for review.
+        $tplplan->set_status(plan::STATUS_IN_REVIEW);
+        $tplplan->update();
+        $plan->set_status(plan::STATUS_IN_REVIEW);
+        $plan->update();
+
+        // Foreign user cannot do anything.
+        $this->setUser($otheruser);
+        try {
+            api::plan_stop_review($plan);
+            $this->fail('The user can not read the plan.');
+        } catch (required_capability_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        // Can not change a plan based on a template.
+        $this->setUser($reviewer);
+        try {
+            api::plan_stop_review($tplplan);
+            $this->fail('The plan is based on a template.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/Template plans cannot be reviewed./', $e->getMessage());
+        }
+
+        // Can not stop a review whe not in review.
+        $this->setUser($reviewer);
+        $plan->set_status(plan::STATUS_DRAFT);
+        try {
+            api::plan_stop_review($plan);
+            $this->fail('The plan review cannot be stopped at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan review cannot be stopped at this stage./', $e->getMessage());
+        }
+
+        // Can not stop a review whe not in review.
+        $this->setUser($reviewer);
+        $plan->set_status(plan::STATUS_WAITING_FOR_REVIEW);
+        try {
+            api::plan_stop_review($plan);
+            $this->fail('The plan review cannot be stopped at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan review cannot be stopped at this stage./', $e->getMessage());
+        }
+
+        // Can not stop a review whe not in review.
+        $this->setUser($reviewer);
+        $plan->set_status(plan::STATUS_ACTIVE);
+        try {
+            api::plan_stop_review($plan);
+            $this->fail('The plan review cannot be stopped at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan review cannot be stopped at this stage./', $e->getMessage());
+        }
+
+        // Can not stop a review whe not in review.
+        $this->setUser($reviewer);
+        $plan->set_status(plan::STATUS_COMPLETE);
+        try {
+            api::plan_stop_review($plan);
+            $this->fail('The plan review cannot be stopped at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan review cannot be stopped at this stage./', $e->getMessage());
+        }
+
+        // Stopping as the owner.
+        $this->setUser($user);
+        $plan->set_status(plan::STATUS_IN_REVIEW);
+        try {
+            api::plan_stop_review($plan);
+            $this->fail('The user can not stop a review.');
+        } catch (required_capability_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        // Stopping review.
+        $this->setUser($reviewer);
+        api::plan_stop_review($plan);
+        $plan->read();
+        $this->assertEquals(plan::STATUS_DRAFT, $plan->get_status());
+
+        // Stopping review by ID.
+        $plan->set_status(plan::STATUS_IN_REVIEW);
+        $plan->update();
+        api::plan_stop_review($plan->get_id());
+        $plan->read();
+        $this->assertEquals(plan::STATUS_DRAFT, $plan->get_status());
+    }
+
+    /**
+     * Testing approving the plan.
+     */
+    public function test_approve_plan() {
+        $data = $this->setup_workflow_data();
+        extract($data);
+
+        // Set waiting for review.
+        $tplplan->set_status(plan::STATUS_IN_REVIEW);
+        $tplplan->update();
+        $plan->set_status(plan::STATUS_IN_REVIEW);
+        $plan->update();
+
+        // Foreign user cannot do anything.
+        $this->setUser($otheruser);
+        try {
+            api::approve_plan($plan);
+            $this->fail('The user can not read the plan.');
+        } catch (required_capability_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        // Can not change a plan based on a template.
+        $this->setUser($reviewer);
+        try {
+            api::approve_plan($tplplan);
+            $this->fail('The plan is based on a template.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/Template plans are already approved./', $e->getMessage());
+        }
+
+        // Can not approve a plan already approved.
+        $this->setUser($reviewer);
+        $plan->set_status(plan::STATUS_ACTIVE);
+        try {
+            api::approve_plan($plan);
+            $this->fail('The plan cannot be approved at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan cannot be approved at this stage./', $e->getMessage());
+        }
+
+        // Can not approve a plan already approved.
+        $this->setUser($reviewer);
+        $plan->set_status(plan::STATUS_COMPLETE);
+        try {
+            api::approve_plan($plan);
+            $this->fail('The plan cannot be approved at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan cannot be approved at this stage./', $e->getMessage());
+        }
+
+        // Approve as the owner.
+        $this->setUser($user);
+        $plan->set_status(plan::STATUS_IN_REVIEW);
+        try {
+            api::approve_plan($plan);
+            $this->fail('The user can not approve the plan.');
+        } catch (required_capability_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        // Approve plan from in review.
+        $this->setUser($reviewer);
+        api::approve_plan($plan);
+        $plan->read();
+        $this->assertEquals(plan::STATUS_ACTIVE, $plan->get_status());
+
+        // Approve plan by ID.
+        $plan->set_status(plan::STATUS_IN_REVIEW);
+        $plan->update();
+        api::approve_plan($plan->get_id());
+        $plan->read();
+        $this->assertEquals(plan::STATUS_ACTIVE, $plan->get_status());
+
+        // Approve plan from draft.
+        $plan->set_status(plan::STATUS_DRAFT);
+        $plan->update();
+        api::approve_plan($plan);
+        $plan->read();
+        $this->assertEquals(plan::STATUS_ACTIVE, $plan->get_status());
+
+        // Approve plan from waiting for review.
+        $plan->set_status(plan::STATUS_WAITING_FOR_REVIEW);
+        $plan->update();
+        api::approve_plan($plan);
+        $plan->read();
+        $this->assertEquals(plan::STATUS_ACTIVE, $plan->get_status());
+    }
+
+    /**
+     * Testing stopping the review.
+     */
+    public function test_unapprove_plan() {
+        $data = $this->setup_workflow_data();
+        extract($data);
+
+        // Set waiting for review.
+        $tplplan->set_status(plan::STATUS_ACTIVE);
+        $tplplan->update();
+        $plan->set_status(plan::STATUS_ACTIVE);
+        $plan->update();
+
+        // Foreign user cannot do anything.
+        $this->setUser($otheruser);
+        try {
+            api::unapprove_plan($plan);
+            $this->fail('The user can not read the plan.');
+        } catch (required_capability_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        // Can not change a plan based on a template.
+        $this->setUser($reviewer);
+        try {
+            api::unapprove_plan($tplplan);
+            $this->fail('The plan is based on a template.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/Template plans are always approved./', $e->getMessage());
+        }
+
+        // Can not unapprove a non-draft plan.
+        $this->setUser($reviewer);
+        $plan->set_status(plan::STATUS_DRAFT);
+        try {
+            api::unapprove_plan($plan);
+            $this->fail('The plan cannot be sent back to draft at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan cannot be sent back to draft at this stage./', $e->getMessage());
+        }
+
+        // Can not unapprove a non-draft plan.
+        $this->setUser($reviewer);
+        $plan->set_status(plan::STATUS_WAITING_FOR_REVIEW);
+        try {
+            api::unapprove_plan($plan);
+            $this->fail('The plan cannot be sent back to draft at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan cannot be sent back to draft at this stage./', $e->getMessage());
+        }
+
+        // Can not unapprove a non-draft plan.
+        $this->setUser($reviewer);
+        $plan->set_status(plan::STATUS_IN_REVIEW);
+        try {
+            api::unapprove_plan($plan);
+            $this->fail('The plan cannot be sent back to draft at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan cannot be sent back to draft at this stage./', $e->getMessage());
+        }
+
+        // Can not unapprove a non-draft plan.
+        $this->setUser($reviewer);
+        $plan->set_status(plan::STATUS_COMPLETE);
+        try {
+            api::unapprove_plan($plan);
+            $this->fail('The plan cannot be sent back to draft at this stage.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/The plan cannot be sent back to draft at this stage./', $e->getMessage());
+        }
+
+        // Unapprove as the owner.
+        $this->setUser($user);
+        $plan->set_status(plan::STATUS_ACTIVE);
+        try {
+            api::unapprove_plan($plan);
+            $this->fail('The user can not unapprove the plan.');
+        } catch (required_capability_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        // Unapprove plan.
+        $this->setUser($reviewer);
+        api::unapprove_plan($plan);
+        $plan->read();
+        $this->assertEquals(plan::STATUS_DRAFT, $plan->get_status());
+
+        // Unapprove plan by ID.
+        $plan->set_status(plan::STATUS_ACTIVE);
+        $plan->update();
+        api::unapprove_plan($plan->get_id());
+        $plan->read();
+        $this->assertEquals(plan::STATUS_DRAFT, $plan->get_status());
     }
 
     /**

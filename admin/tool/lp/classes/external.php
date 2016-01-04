@@ -3246,6 +3246,228 @@ class external extends external_api {
     }
 
     /**
+     * Returns description of external function parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function plan_cancel_review_request_parameters() {
+        return new external_function_parameters(array(
+            'id' => new external_value(PARAM_INT, 'The plan ID'),
+        ));
+    }
+
+    /**
+     * External function plan_cancel_review_request.
+     *
+     * @param int $id The plan ID.
+     * @return boolean
+     */
+    public static function plan_cancel_review_request($id) {
+        $params = self::validate_parameters(self::plan_cancel_review_request_parameters(), array(
+            'id' => $id
+        ));
+
+        $plan = api::read_plan($id);
+        self::validate_context($plan->get_context());
+
+        return api::plan_cancel_review_request($plan);
+    }
+
+    /**
+     * Returns description of external function result value.
+     *
+     * @return \external_function_parameters
+     */
+    public static function plan_cancel_review_request_returns() {
+        return new external_value(PARAM_BOOL, 'The success');
+    }
+
+    /**
+     * Returns description of external function parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function plan_request_review_parameters() {
+        return new external_function_parameters(array(
+            'id' => new external_value(PARAM_INT, 'The plan ID'),
+        ));
+    }
+
+    /**
+     * External function plan_request_review.
+     *
+     * @param int $id The plan ID.
+     * @return boolean
+     */
+    public static function plan_request_review($id) {
+        $params = self::validate_parameters(self::plan_request_review_parameters(), array(
+            'id' => $id
+        ));
+
+        $plan = api::read_plan($id);
+        self::validate_context($plan->get_context());
+
+        return api::plan_request_review($plan);
+    }
+
+    /**
+     * Returns description of external function result value.
+     *
+     * @return \external_function_parameters
+     */
+    public static function plan_request_review_returns() {
+        return new external_value(PARAM_BOOL, 'The success');
+    }
+
+    /**
+     * Returns description of external function parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function plan_start_review_parameters() {
+        return new external_function_parameters(array(
+            'id' => new external_value(PARAM_INT, 'The plan ID'),
+        ));
+    }
+
+    /**
+     * External function plan_start_review.
+     *
+     * @param int $id The plan ID.
+     * @return boolean
+     */
+    public static function plan_start_review($id) {
+        $params = self::validate_parameters(self::plan_start_review_parameters(), array(
+            'id' => $id
+        ));
+
+        $plan = api::read_plan($id);
+        self::validate_context($plan->get_context());
+
+        return api::plan_start_review($plan);
+    }
+
+    /**
+     * Returns description of external function result value.
+     *
+     * @return \external_function_parameters
+     */
+    public static function plan_start_review_returns() {
+        return new external_value(PARAM_BOOL, 'The success');
+    }
+
+    /**
+     * Returns description of external function parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function plan_stop_review_parameters() {
+        return new external_function_parameters(array(
+            'id' => new external_value(PARAM_INT, 'The plan ID'),
+        ));
+    }
+
+    /**
+     * External function plan_stop_review.
+     *
+     * @param int $id The plan ID.
+     * @return boolean
+     */
+    public static function plan_stop_review($id) {
+        $params = self::validate_parameters(self::plan_stop_review_parameters(), array(
+            'id' => $id
+        ));
+
+        $plan = api::read_plan($id);
+        self::validate_context($plan->get_context());
+
+        return api::plan_stop_review($plan);
+    }
+
+    /**
+     * Returns description of external function result value.
+     *
+     * @return \external_function_parameters
+     */
+    public static function plan_stop_review_returns() {
+        return new external_value(PARAM_BOOL, 'The success');
+    }
+
+    /**
+     * Returns description of external function parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function approve_plan_parameters() {
+        return new external_function_parameters(array(
+            'id' => new external_value(PARAM_INT, 'The plan ID'),
+        ));
+    }
+
+    /**
+     * External function approve_plan.
+     *
+     * @param int $id The plan ID.
+     * @return boolean
+     */
+    public static function approve_plan($id) {
+        $params = self::validate_parameters(self::approve_plan_parameters(), array(
+            'id' => $id,
+        ));
+
+        $plan = api::read_plan($id);
+        self::validate_context($plan->get_context());
+
+        return api::approve_plan($plan);
+    }
+
+    /**
+     * Returns description of external function result value.
+     *
+     * @return \external_function_parameters
+     */
+    public static function approve_plan_returns() {
+        return new external_value(PARAM_BOOL, 'The success');
+    }
+
+    /**
+     * Returns description of external function parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function unapprove_plan_parameters() {
+        return new external_function_parameters(array(
+            'id' => new external_value(PARAM_INT, 'The plan ID'),
+        ));
+    }
+
+    /**
+     * External function unapprove_plan.
+     *
+     * @param int $id The plan ID.
+     * @return boolean
+     */
+    public static function unapprove_plan($id) {
+        $params = self::validate_parameters(self::unapprove_plan_parameters(), array(
+            'id' => $id,
+        ));
+
+        $plan = api::read_plan($id);
+        self::validate_context($plan->get_context());
+
+        return api::unapprove_plan($plan);
+    }
+
+    /**
+     * Returns description of external function result value.
+     *
+     * @return \external_function_parameters
+     */
+    public static function unapprove_plan_returns() {
+        return new external_value(PARAM_BOOL, 'The success');
+    }
+
+    /**
      * Returns description of data_for_plans_page() parameters.
      *
      * @return \external_function_parameters

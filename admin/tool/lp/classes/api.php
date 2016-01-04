@@ -1560,7 +1560,7 @@ class api {
      * @return \tool_lp\plan[]
      */
     public static function list_user_plans($userid) {
-        global $USER;
+        global $DB, $USER;
         $select = 'userid = :userid';
         $params = array('userid' => $userid);
         $context = context_user::instance($userid);
@@ -1572,13 +1572,16 @@ class api {
 
         // The user cannot view the drafts.
         if (!plan::can_read_user_draft($userid)) {
-            $select .= ' AND status != :statusdraft';
-            $params['statusdraft'] = plan::STATUS_DRAFT;
+            list($insql, $inparams) = $DB->get_in_or_equal(plan::get_draft_statuses(), SQL_PARAMS_NAMED, 'param', false);
+            $select .= " AND status $insql";
+            $params += $inparams;
         }
         // The user cannot view the non-drafts.
         if (!plan::can_read_user($userid)) {
-            $select .= ' AND status = :statusdraft';
-            $params['statusdraft'] = plan::STATUS_DRAFT;
+            list($insql, $inparams) = $DB->get_in_or_equal(array(plan::STATUS_ACTIVE, plan::STATUS_COMPLETE),
+                SQL_PARAMS_NAMED, 'param', false);
+            $select .= " AND status $insql";
+            $params += $inparams;
         }
 
         return plan::get_records_select($select, $params, 'name ASC');
@@ -1596,6 +1599,8 @@ class api {
 
         if ($plan->is_based_on_template()) {
             throw new coding_exception('To create a plan from a template use api::create_plan_from_template().');
+        } else if ($plan->get_status() == plan::STATUS_COMPLETE) {
+            throw new coding_exception('A plan cannot be created as complete.');
         }
 
         if (!$plan->can_manage()) {
@@ -1805,40 +1810,29 @@ class api {
         if (!$plan->can_manage()) {
             throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
 
+        } else if ($plan->get_status() == plan::STATUS_COMPLETE) {
+            // A completed plan cannot be edited.
+            throw new coding_exception('Completed plan cannot be edited.');
+
         } else if ($plan->is_based_on_template()) {
             // Prevent a plan based on a template to be edited.
             throw new coding_exception('Cannot update a plan that is based on a template.');
 
+        } else if (isset($record->templateid) && $plan->get_templateid() != $record->templateid) {
+            // Prevent a plan to be based on a template.
+            throw new coding_exception('Cannot base a plan on a template.');
+
         } else if (isset($record->userid) && $plan->get_userid() != $record->userid) {
             // Prevent change of ownership as the capabilities are checked against that.
             throw new coding_exception('A plan cannot be transfered to another user');
+
+        } else if (isset($record->status) && $plan->get_status() != $record->status) {
+            // Prevent change of status.
+            throw new coding_exception('To change the status of a plan use the appropriate methods.');
+
         }
 
-        $beforestatus = $plan->get_status();
-        $beforetemplateid = $plan->get_templateid();
         $plan->from_record($record);
-
-        if ($beforestatus == plan::STATUS_COMPLETE) {
-            throw new coding_exception('Completed plan can not be edited');
-        }
-
-        if ($plan->get_status() == plan::STATUS_COMPLETE && $beforestatus != plan::STATUS_COMPLETE) {
-            throw new coding_exception('Completing plan is not allowed in api::update_status (use complete_plan instead)');
-        }
-
-        if ($plan->get_status() == plan::STATUS_ACTIVE && $beforestatus == plan::STATUS_COMPLETE) {
-            throw new coding_exception('Re-opening plan is not allowed in api::update_status (use reopen_plan instead)');
-        }
-
-        if ($beforetemplateid === null && $plan->get_templateid() !== null) {
-            throw new coding_exception('A plan cannot be updated to use a template.');
-        }
-
-        // Revalidate after the data has be injected. This handles status change, etc...
-        if (!$plan->can_manage()) {
-            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
-        }
-
         $plan->update();
 
         return $plan;
@@ -1898,6 +1892,189 @@ class api {
         $transaction->allow_commit();
 
         return $success;
+    }
+
+    /**
+     * Cancel the review of a plan.
+     *
+     * @param int|plan $planorid The plan, or its ID.
+     * @return bool
+     */
+    public static function plan_cancel_review_request($planorid) {
+        $plan = $planorid;
+        if (!is_object($plan)) {
+            $plan = new plan($plan);
+        }
+
+        // We need to be able to view the plan at least.
+        if (!$plan->can_read()) {
+            throw new required_capability_exception($plan->get_context(), 'tool/lp:planview', 'nopermissions', '');
+        }
+
+        if ($plan->is_based_on_template()) {
+            throw new coding_exception('Template plans cannot be reviewed.');   // This should never happen.
+        } else if ($plan->get_status() != plan::STATUS_WAITING_FOR_REVIEW) {
+            throw new coding_exception('The plan review cannot be cancelled at this stage.');
+        } else if (!$plan->can_request_review()) {
+            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+        }
+
+        $plan->set_status(plan::STATUS_DRAFT);
+        return $plan->update();
+    }
+
+    /**
+     * Request the review of a plan.
+     *
+     * @param int|plan $planorid The plan, or its ID.
+     * @return bool
+     */
+    public static function plan_request_review($planorid) {
+        $plan = $planorid;
+        if (!is_object($plan)) {
+            $plan = new plan($plan);
+        }
+
+        // We need to be able to view the plan at least.
+        if (!$plan->can_read()) {
+            throw new required_capability_exception($plan->get_context(), 'tool/lp:planview', 'nopermissions', '');
+        }
+
+        if ($plan->is_based_on_template()) {
+            throw new coding_exception('Template plans cannot be reviewed.');   // This should never happen.
+        } else if ($plan->get_status() != plan::STATUS_DRAFT) {
+            throw new coding_exception('The plan cannot be sent for review at this stage.');
+        } else if (!$plan->can_request_review()) {
+            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+        }
+
+        $plan->set_status(plan::STATUS_WAITING_FOR_REVIEW);
+        return $plan->update();
+    }
+
+    /**
+     * Start the review of a plan.
+     *
+     * @param int|plan $planorid The plan, or its ID.
+     * @return bool
+     */
+    public static function plan_start_review($planorid) {
+        global $USER;
+        $plan = $planorid;
+        if (!is_object($plan)) {
+            $plan = new plan($plan);
+        }
+
+        // We need to be able to view the plan at least.
+        if (!$plan->can_read()) {
+            throw new required_capability_exception($plan->get_context(), 'tool/lp:planview', 'nopermissions', '');
+        }
+
+        if ($plan->is_based_on_template()) {
+            throw new coding_exception('Template plans cannot be reviewed.');   // This should never happen.
+        } else if ($plan->get_status() != plan::STATUS_WAITING_FOR_REVIEW) {
+            throw new coding_exception('The plan review cannot be started at this stage.');
+        } else if (!$plan->can_review()) {
+            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+        }
+
+        $plan->set_status(plan::STATUS_IN_REVIEW);
+        $plan->set_reviewerid($USER->id);
+        return $plan->update();
+    }
+
+    /**
+     * Stop reviewing a plan.
+     *
+     * @param  int|plan $planorid The plan, or its ID.
+     * @return bool
+     */
+    public static function plan_stop_review($planorid) {
+        $plan = $planorid;
+        if (!is_object($plan)) {
+            $plan = new plan($plan);
+        }
+
+        // We need to be able to view the plan at least.
+        if (!$plan->can_read()) {
+            throw new required_capability_exception($plan->get_context(), 'tool/lp:planview', 'nopermissions', '');
+        }
+
+        if ($plan->is_based_on_template()) {
+            throw new coding_exception('Template plans cannot be reviewed.');   // This should never happen.
+        } else if ($plan->get_status() != plan::STATUS_IN_REVIEW) {
+            throw new coding_exception('The plan review cannot be stopped at this stage.');
+        } else if (!$plan->can_review()) {
+            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+        }
+
+        $plan->set_status(plan::STATUS_DRAFT);
+        $plan->set_reviewerid(null);
+        return $plan->update();
+    }
+
+    /**
+     * Approve a plan.
+     *
+     * This means making the plan active.
+     *
+     * @param  int|plan $planorid The plan, or its ID.
+     * @return bool
+     */
+    public static function approve_plan($planorid) {
+        $plan = $planorid;
+        if (!is_object($plan)) {
+            $plan = new plan($plan);
+        }
+
+        // We need to be able to view the plan at least.
+        if (!$plan->can_read()) {
+            throw new required_capability_exception($plan->get_context(), 'tool/lp:planview', 'nopermissions', '');
+        }
+
+        // We can approve a plan that is either a draft, in review, or waiting for review.
+        if ($plan->is_based_on_template()) {
+            throw new coding_exception('Template plans are already approved.');   // This should never happen.
+        } else if (!$plan->is_draft()) {
+            throw new coding_exception('The plan cannot be approved at this stage.');
+        } else if (!$plan->can_review()) {
+            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+        }
+
+        $plan->set_status(plan::STATUS_ACTIVE);
+        $plan->set_reviewerid(null);
+        return $plan->update();
+    }
+
+    /**
+     * Unapprove a plan.
+     *
+     * This means making the plan draft.
+     *
+     * @param  int|plan $planorid The plan, or its ID.
+     * @return bool
+     */
+    public static function unapprove_plan($planorid) {
+        $plan = $planorid;
+        if (!is_object($plan)) {
+            $plan = new plan($plan);
+        }
+
+        // We need to be able to view the plan at least.
+        if (!$plan->can_read()) {
+            throw new required_capability_exception($plan->get_context(), 'tool/lp:planview', 'nopermissions', '');
+        }
+
+        if ($plan->is_based_on_template()) {
+            throw new coding_exception('Template plans are always approved.');   // This should never happen.
+        } else if ($plan->get_status() != plan::STATUS_ACTIVE) {
+            throw new coding_exception('The plan cannot be sent back to draft at this stage.');
+        } else if (!$plan->can_review()) {
+            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+        }
+
+        $plan->set_status(plan::STATUS_DRAFT);
+        return $plan->update();
     }
 
     /**

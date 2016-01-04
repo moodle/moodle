@@ -41,9 +41,7 @@
             <th scope="col">{{#str}}planname, tool_lp{{/str}}</th>
             <th scope="col">{{#str}}templatebased, tool_lp{{/str}}</th>
             <th scope="col">{{#str}}status, tool_lp{{/str}}</th>
-            {{#canmanageuserplans}}
             <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
-            {{/canmanageuserplans}}
         </tr>
     </thead>
     <tbody>
@@ -54,15 +52,15 @@
             </td>
              <td>
                {{#isbasedontemplate}}
-               <span class="label label-info">{{#str}}yes{{/str}}</span> 
+               <span class="label label-info">{{#str}}yes{{/str}}</span>
                {{/isbasedontemplate}}
                {{^isbasedontemplate}}
                <span class="label">{{#str}}no{{/str}}</span>
                {{/isbasedontemplate}}
             </td>
             <td>{{statusname}}</td>
-            {{#canmanageuserplans}}
             <td>
+            {{#canmanage}}
                 <div style="display: inline-block;">
                 <ul title="{{#str}}edit{{/str}}" class="planactions">
                 <li>
@@ -79,27 +77,57 @@
                             {{#pix}}t/edit{{/pix}} {{#str}}editthisplan, tool_lp{{/str}}
                         </a>
                     </li>
-                    {{#usercanreopen}}
+                    {{#isreopenallowed}}
                     <li>
                         <a data-action="plan-reopen" href="#">
                             {{#pix}}t/edit{{/pix}} {{#str}}reopenplan, tool_lp{{/str}}
                         </a>
                     </li>
-                    {{/usercanreopen}}
-                    {{#usercancomplete}}
+                    {{/isreopenallowed}}
+                    {{#iscompleteallowed}}
                     <li>
                         <a data-action="plan-complete" href="#">
                             {{#pix}}t/edit{{/pix}} {{#str}}completeplan, tool_lp{{/str}}
                         </a>
                     </li>
-                    {{/usercancomplete}}
-                    {{#usercanunlink}}
+                    {{/iscompleteallowed}}
+                    {{#isrequestreviewallowed}}
+                    <li>
+                        <a data-action="plan-request-review" href="#">{{#pix}}t/edit{{/pix}} {{#str}}requestreview, tool_lp{{/str}}</a>
+                    </li>
+                    {{/isrequestreviewallowed}}
+                    {{#iscancelreviewrequestallowed}}
+                    <li>
+                        <a data-action="plan-cancel-review-request" href="#">{{#pix}}t/edit{{/pix}} {{#str}}cancelreviewrequest, tool_lp{{/str}}</a>
+                    </li>
+                    {{/iscancelreviewrequestallowed}}
+                    {{#isstartreviewallowed}}
+                    <li>
+                        <a data-action="plan-start-review" href="#">{{#pix}}t/edit{{/pix}} {{#str}}startreview, tool_lp{{/str}}</a>
+                    </li>
+                    {{/isstartreviewallowed}}
+                    {{#isstopreviewallowed}}
+                    <li>
+                        <a data-action="plan-stop-review" href="#">{{#pix}}t/edit{{/pix}} {{#str}}stopreview, tool_lp{{/str}}</a>
+                    </li>
+                    {{/isstopreviewallowed}}
+                    {{#isapproveallowed}}
+                    <li>
+                        <a data-action="plan-approve" href="#">{{#pix}}t/edit{{/pix}} {{#str}}planapprove, tool_lp{{/str}}</a>
+                    </li>
+                    {{/isapproveallowed}}
+                    {{#isunapproveallowed}}
+                    <li>
+                        <a data-action="plan-unapprove" href="#">{{#pix}}t/edit{{/pix}} {{#str}}planunapprove, tool_lp{{/str}}</a>
+                    </li>
+                    {{/isunapproveallowed}}
+                    {{#isunlinkallowed}}
                     <li>
                         <a data-action="plan-unlink" href="#">
                             {{#pix}}t/edit{{/pix}} {{#str}}unlinkplantemplate, tool_lp{{/str}}
                         </a>
                     </li>
-                    {{/usercanunlink}}
+                    {{/isunlinkallowed}}
                     <li>
                         <a data-action="plan-delete" href="#">
                             {{#pix}}t/delete{{/pix}} {{#str}}deletethisplan, tool_lp{{/str}}
@@ -108,8 +136,8 @@
                     </ul>
                 </ul>
             </div>
+            {{/canmanage}}
             </td>
-            {{/canmanageuserplans}}
         </tr>
         {{/plans}}
     </tbody>
