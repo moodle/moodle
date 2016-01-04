@@ -413,7 +413,7 @@ function chat_refresh_events($courseid = 0) {
     $moduleid = $DB->get_field('modules', 'id', array('name' => 'chat'));
 
     foreach ($chats as $chat) {
-        $cm = get_coursemodule_from_id('chat', $chat->id);
+        $cm = get_coursemodule_from_instance('chat', $chat->id, $chat->course);
         $event = new stdClass();
         $event->name        = $chat->name;
         $event->description = format_module_intro('chat', $chat, $cm->id);
