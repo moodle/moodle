@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/badgeslib.php');
+require_once($CFG->dirroot . '/badges/lib.php');
 
 class core_badges_badgeslib_testcase extends advanced_testcase {
     protected $badgeid;
@@ -471,5 +472,70 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         $this->assertStringMatchesFormat($testassertion->badge, json_encode($assertion->get_badge_assertion()));
         $this->assertStringMatchesFormat($testassertion->class, json_encode($assertion->get_badge_class()));
         $this->assertStringMatchesFormat($testassertion->issuer, json_encode($assertion->get_issuer()));
+    }
+
+    /**
+     * Tests the core_badges_myprofile_navigation() function.
+     */
+    public function test_core_badges_myprofile_navigation() {
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $this->setAdminUser();
+        $badge = new badge($this->badgeid);
+        $badge->issue($this->user->id, true);
+        $iscurrentuser = true;
+        $course = null;
+
+        // Enable badges.
+        set_config('enablebadges', true);
+
+        // Check the node tree is correct.
+        core_badges_myprofile_navigation($tree, $this->user, $iscurrentuser, $course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('localbadges', $nodes->getValue($tree));
+    }
+
+    /**
+     * Tests the core_badges_myprofile_navigation() function with badges disabled..
+     */
+    public function test_core_badges_myprofile_navigation_badges_disabled() {
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $this->setAdminUser();
+        $badge = new badge($this->badgeid);
+        $badge->issue($this->user->id, true);
+        $iscurrentuser = false;
+        $course = null;
+
+        // Disable badges.
+        set_config('enablebadges', false);
+
+        // Check the node tree is correct.
+        core_badges_myprofile_navigation($tree, $this->user, $iscurrentuser, $course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('localbadges', $nodes->getValue($tree));
+    }
+
+    /**
+     * Tests the core_badges_myprofile_navigation() function with a course badge.
+     */
+    public function test_core_badges_myprofile_navigation_with_course_badge() {
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $this->setAdminUser();
+        $badge = new badge($this->coursebadge);
+        $badge->issue($this->user->id, true);
+        $iscurrentuser = false;
+
+        // Check the node tree is correct.
+        core_badges_myprofile_navigation($tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('localbadges', $nodes->getValue($tree));
     }
 }

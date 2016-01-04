@@ -2020,4 +2020,78 @@ class mod_forum_lib_testcase extends advanced_testcase {
         self::assertCount(0, $discussions);
 
     }
+
+    /**
+     * Tests the mod_forum_myprofile_navigation() function.
+     */
+    public function test_mod_forum_myprofile_navigation() {
+        $this->resetAfterTest(true);
+
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $iscurrentuser = true;
+
+        // Set as the current user.
+        $this->setUser($user);
+
+        // Check the node tree is correct.
+        mod_forum_myprofile_navigation($tree, $user, $iscurrentuser, $course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('forumposts', $nodes->getValue($tree));
+        $this->assertArrayHasKey('forumdiscussions', $nodes->getValue($tree));
+    }
+
+    /**
+     * Tests the mod_forum_myprofile_navigation() function as a guest.
+     */
+    public function test_mod_forum_myprofile_navigation_as_guest() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $course = $this->getDataGenerator()->create_course();
+        $iscurrentuser = true;
+
+        // Set user as guest.
+        $this->setGuestUser();
+
+        // Check the node tree is correct.
+        mod_forum_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('forumposts', $nodes->getValue($tree));
+        $this->assertArrayNotHasKey('forumdiscussions', $nodes->getValue($tree));
+    }
+
+    /**
+     * Tests the mod_forum_myprofile_navigation() function as a user viewing another user's profile.
+     */
+    public function test_mod_forum_myprofile_navigation_different_user() {
+        $this->resetAfterTest(true);
+
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $user = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $iscurrentuser = true;
+
+        // Set to different user's profile.
+        $this->setUser($user2);
+
+        // Check the node tree is correct.
+        mod_forum_myprofile_navigation($tree, $user, $iscurrentuser, $course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('forumposts', $nodes->getValue($tree));
+        $this->assertArrayHasKey('forumdiscussions', $nodes->getValue($tree));
+    }
 }
