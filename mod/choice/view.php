@@ -40,6 +40,19 @@ if ($action == 'delchoice' and confirm_sesskey() and is_enrolled($context, NULL,
         and $choiceavailable) {
     $answercount = $DB->count_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id));
     if ($answercount > 0) {
+
+        // Trigger the answer_deleted event.
+        $eventdata = array();
+        $eventdata['context'] = $context;
+        $eventdata['userid'] = $USER->id;
+        $eventdata['courseid'] = $course->id;
+        $eventdata['other'] = array();
+        $eventdata['other']['choiceid'] = $choice->id;
+        $event = \mod_choice\event\answer_deleted::create($eventdata);
+        $event->add_record_snapshot('course', $course);
+        $event->add_record_snapshot('course_modules', $cm);
+        $event->add_record_snapshot('choice', $choice);
+        $event->trigger();
         $DB->delete_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id));
 
         // Update completion state
