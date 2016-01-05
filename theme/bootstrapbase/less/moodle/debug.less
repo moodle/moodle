@@ -1,3 +1,12 @@
+// Here we are forcing the navbar to be absolutely positioned for behat, because
+// when driver scrolls something into view in browser it doesn't account
+// for fixed positioned elements that end up obscuring the item thus
+// leading to errors that could be avoided by scrolling an additional amount.
+body.behat-site {
+    .navbar-fixed-top {
+        position: absolute;
+    }
+}
 .phpinfo table,
 .phpinfo th,
 .phpinfo h2 {
