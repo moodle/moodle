@@ -2272,12 +2272,9 @@ function useredit_shared_definition_preferences($user, &$mform, $editoroptions =
  * Convert region timezone to php supported timezone
  *
  * @deprecated since Moodle 2.9
- * @param string $tz value from ical file
- * @return string $tz php supported timezone
  */
 function calendar_normalize_tz($tz) {
-    debugging('calendar_normalize_tz() is deprecated, use core_date::normalise_timezone() instead', DEBUG_DEVELOPER);
-    return core_date::normalise_timezone($tz);
+    throw new coding_exception('calendar_normalize_tz() can not be used any more, please use core_date::normalise_timezone() instead.');
 }
 
 /**
