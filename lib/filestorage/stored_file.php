@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/lib/filestorage/file_progress.php');
+require_once($CFG->dirroot . '/lib/filestorage/file_system.php');
 
 /**
  * Class representing local files stored in a sha1 file pool.
@@ -44,10 +45,10 @@ class stored_file {
     private $fs;
     /** @var stdClass record from the files table left join files_reference table */
     private $file_record;
-    /** @var string location of content files */
-    private $filedir;
     /** @var repository repository plugin instance */
     private $repository;
+    /** @var file_system filesystem instance */
+    private $filesystem;
 
     /**
      * @var int Indicates a file handle of the type returned by fopen.
@@ -65,13 +66,12 @@ class stored_file {
      *
      * @param file_storage $fs file  storage instance
      * @param stdClass $file_record description of file
-     * @param string $filedir location of file directory with sh1 named content files
+     * @param string $deprecated
      */
-    public function __construct(file_storage $fs, stdClass $file_record, $filedir) {
+    public function __construct(file_storage $fs, stdClass $file_record, $deprecated = null) {
         global $DB, $CFG;
         $this->fs          = $fs;
         $this->file_record = clone($file_record); // prevent modifications
-        $this->filedir     = $filedir; // keep secret, do not expose!
 
         if (!empty($file_record->repositoryid)) {
             require_once("$CFG->dirroot/repository/lib.php");
@@ -89,6 +89,8 @@ class stored_file {
                 $this->file_record->$key = null;
             }
         }
+
+        $this->filesystem = $fs->get_file_system();
     }
 
     /**
@@ -179,15 +181,7 @@ class stored_file {
             }
         }
         // Validate mimetype field
-        // we don't use {@link stored_file::get_content_file_location()} here becaues it will try to update file_record
-        $pathname = $this->get_pathname_by_contenthash();
-        // try to recover the content from trash
-        if (!is_readable($pathname)) {
-            if (!$this->fs->try_content_recovery($this) or !is_readable($pathname)) {
-                throw new file_exception('storedfilecannotread', '', $pathname);
-            }
-        }
-        $mimetype = $this->fs->mimetype($pathname, $this->file_record->filename);
+        $mimetype = $this->filesystem->mimetype_from_storedfile($this);
         $this->file_record->mimetype = $mimetype;
 
         $DB->update_record('files', $this->file_record);
@@ -255,8 +249,8 @@ class stored_file {
         }
 
         $filerecord = new stdClass;
-        $contenthash = $newfile->get_contenthash();
-        if ($this->fs->content_exists($contenthash)) {
+        if ($this->filesystem->is_file_readable_remotely_by_storedfile($newfile)) {
+            $contenthash = $newfile->get_contenthash();
             $filerecord->contenthash = $contenthash;
         } else {
             throw new file_exception('storedfileproblem', 'Invalid contenthash, content must be already in filepool', $contenthash);
@@ -357,38 +351,8 @@ class stored_file {
         }
 
         // Move pool file to trash if content not needed any more.
-        $this->fs->deleted_file_cleanup($this->file_record->contenthash);
+        $this->filesystem->remove_file($this->file_record->contenthash);
         return true; // BC only
-    }
-
-    /**
-     * Get file pathname by contenthash
-     *
-     * NOTE, this function is not calling sync_external_file, it assume the contenthash is current
-     * Protected - developers must not gain direct access to this function.
-     *
-     * @return string full path to pool file with file content
-     */
-    protected function get_pathname_by_contenthash() {
-        // Detect is local file or not.
-        $contenthash = $this->file_record->contenthash;
-        $l1 = $contenthash[0].$contenthash[1];
-        $l2 = $contenthash[2].$contenthash[3];
-        return "$this->filedir/$l1/$l2/$contenthash";
-    }
-
-    /**
-     * Get file pathname by given contenthash, this method will try to sync files
-     *
-     * Protected - developers must not gain direct access to this function.
-     *
-     * NOTE: do not make this public, we must not modify or delete the pool files directly! ;-)
-     *
-     * @return string full path to pool file with file content
-     **/
-    protected function get_content_file_location() {
-        $this->sync_external_file();
-        return $this->get_pathname_by_contenthash();
     }
 
     /**
@@ -399,13 +363,7 @@ class stored_file {
     * @return void
     */
     public function add_to_curl_request(&$curlrequest, $key) {
-        if (function_exists('curl_file_create')) {
-            // As of PHP 5.5, the usage of the @filename API for file uploading is deprecated.
-            $value = curl_file_create($this->get_content_file_location());
-        } else {
-            $value = '@' . $this->get_content_file_location();
-        }
-        $curlrequest->_tmp_file_post_params[$key] = $value;
+        return $this->filesystem->add_to_curl_request($this, $curlrequest, $key);
     }
 
     /**
@@ -417,35 +375,14 @@ class stored_file {
      * @return resource file handle
      */
     public function get_content_file_handle($type = self::FILE_HANDLE_FOPEN) {
-        $path = $this->get_content_file_location();
-        if (!is_readable($path)) {
-            if (!$this->fs->try_content_recovery($this) or !is_readable($path)) {
-                throw new file_exception('storedfilecannotread', '', $path);
-            }
-        }
-        switch ($type) {
-            case self::FILE_HANDLE_FOPEN:
-                // Binary reading.
-                return fopen($path, 'rb');
-            case self::FILE_HANDLE_GZOPEN:
-                // Binary reading of file in gz format.
-                return gzopen($path, 'rb');
-            default:
-                throw new coding_exception('Unexpected file handle type');
-        }
+        return $this->filesystem->get_content_file_handle($this, $type);
     }
 
     /**
      * Dumps file content to page.
      */
     public function readfile() {
-        $path = $this->get_content_file_location();
-        if (!is_readable($path)) {
-            if (!$this->fs->try_content_recovery($this) or !is_readable($path)) {
-                throw new file_exception('storedfilecannotread', '', $path);
-            }
-        }
-        readfile_allow_large($path, $this->get_filesize());
+        return $this->filesystem->readfile($this);
     }
 
     /**
@@ -454,13 +391,7 @@ class stored_file {
      * @return string content
      */
     public function get_content() {
-        $path = $this->get_content_file_location();
-        if (!is_readable($path)) {
-            if (!$this->fs->try_content_recovery($this) or !is_readable($path)) {
-                throw new file_exception('storedfilecannotread', '', $path);
-            }
-        }
-        return file_get_contents($this->get_content_file_location());
+        return $this->filesystem->get_content($this);
     }
 
     /**
@@ -470,13 +401,7 @@ class stored_file {
      * @return bool success
      */
     public function copy_content_to($pathname) {
-        $path = $this->get_content_file_location();
-        if (!is_readable($path)) {
-            if (!$this->fs->try_content_recovery($this) or !is_readable($path)) {
-                throw new file_exception('storedfilecannotread', '', $path);
-            }
-        }
-        return copy($path, $pathname);
+        return $this->filesystem->copy_content_from_storedfile($this, $pathname);
     }
 
     /**
@@ -509,8 +434,7 @@ class stored_file {
      * @return array of file infos
      */
     public function list_files(file_packer $packer) {
-        $archivefile = $this->get_content_file_location();
-        return $packer->list_files($archivefile);
+        return $this->filesystem->list_files($this, $packer);
     }
 
     /**
@@ -523,8 +447,7 @@ class stored_file {
      */
     public function extract_to_pathname(file_packer $packer, $pathname,
             file_progress $progress = null) {
-        $archivefile = $this->get_content_file_location();
-        return $packer->extract_to_pathname($archivefile, $pathname, null, $progress);
+        return $this->filesystem->extract_to_pathname($this, $packer, $pathname, $progress);
     }
 
     /**
@@ -542,9 +465,9 @@ class stored_file {
      */
     public function extract_to_storage(file_packer $packer, $contextid,
             $component, $filearea, $itemid, $pathbase, $userid = null, file_progress $progress = null) {
-        $archivefile = $this->get_content_file_location();
-        return $packer->extract_to_storage($archivefile, $contextid,
-                $component, $filearea, $itemid, $pathbase, $userid, $progress);
+
+        return $this->filesystem->extract_to_storage($this, $packer, $contextid, $component, $filearea,
+                $itemid, $pathbase, $userid, $progress);
     }
 
     /**
@@ -555,15 +478,7 @@ class stored_file {
      * @return bool success
      */
     public function archive_file(file_archive $filearch, $archivepath) {
-        if ($this->is_directory()) {
-            return $filearch->add_directory($archivepath);
-        } else {
-            $path = $this->get_content_file_location();
-            if (!is_readable($path)) {
-                return false;
-            }
-            return $filearch->add_file_from_pathname($archivepath, $path);
-        }
+        return $this->filesystem->add_storedfile_to_archive($this, $filearch, $archivepath);
     }
 
     /**
@@ -573,22 +488,7 @@ class stored_file {
      * @return mixed array with width, height and mimetype; false if not an image
      */
     public function get_imageinfo() {
-        $path = $this->get_content_file_location();
-        if (!is_readable($path)) {
-            if (!$this->fs->try_content_recovery($this) or !is_readable($path)) {
-                throw new file_exception('storedfilecannotread', '', $path);
-            }
-        }
-        $mimetype = $this->get_mimetype();
-        if (!preg_match('|^image/|', $mimetype) || !filesize($path) || !($imageinfo = getimagesize($path))) {
-            return false;
-        }
-        $image = array('width'=>$imageinfo[0], 'height'=>$imageinfo[1], 'mimetype'=>image_type_to_mime_type($imageinfo[2]));
-        if (empty($image['width']) or empty($image['height']) or empty($image['mimetype'])) {
-            // gd can not parse it, sorry
-            return false;
-        }
-        return $image;
+        return $this->filesystem->get_imageinfo($this);
     }
 
     /**
@@ -985,7 +885,7 @@ class stored_file {
             $this->file_record->timemodified = $timemodified;
         }
         if (isset($oldcontenthash)) {
-            $this->fs->deleted_file_cleanup($oldcontenthash);
+            $this->filesystem->remove_file($oldcontenthash);
         }
     }
 
@@ -1051,14 +951,16 @@ class stored_file {
             return false;
         }
 
+        $content = $this->get_content();
+
         // Fetch the image information for this image.
-        $imageinfo = @getimagesizefromstring($this->get_content());
+        $imageinfo = @getimagesizefromstring($content);
         if (empty($imageinfo)) {
             return false;
         }
 
         // Create a new image from the file.
-        $original = @imagecreatefromstring($this->get_content());
+        $original = @imagecreatefromstring($content);
 
         // Generate the thumbnail.
         return generate_image_thumbnail_from_image($original, $imageinfo, $width, $height);
@@ -1075,14 +977,16 @@ class stored_file {
         global $CFG;
         require_once($CFG->libdir . '/gdlib.php');
 
+        $content = $this->get_content();
+
         // Fetch the image information for this image.
-        $imageinfo = @getimagesizefromstring($this->get_content());
+        $imageinfo = @getimagesizefromstring($content);
         if (empty($imageinfo)) {
             return false;
         }
 
         // Create a new image from the file.
-        $original = @imagecreatefromstring($this->get_content());
+        $original = @imagecreatefromstring($content);
 
         // Generate the resized image.
         return resize_image_from_image($original, $imageinfo, $width, $height);
