@@ -805,8 +805,18 @@ class grade_grade extends grade_object {
 
                 } else if (!array_intersect($dependson[$do], $todo)) {
                     $hidden_precursors = array_intersect($dependson[$do], array_keys($altered));
-                    if (!$hidden_precursors) {
-                        // hiding does not affect this grade
+                    // If the dependency is a sum aggregation, we need to process it as if it had hidden items.
+                    // The reason for this, is that the code will recalculate the maxgrade by removing ungraded
+                    // items and accounting for 'drop x grades' and then stored back in our virtual grade_items.
+                    // This recalculation is necessary because there will be a call to:
+                    //              $grade_category->aggregate_values_and_adjust_bounds
+                    // for the top level grade that will depend on knowing what that caclulated grademax is
+                    // and it finds that value by checking the virtual grade_items.
+                    $issumaggregate = false;
+                    if ($grade_items[$do]->itemtype == 'category') {
+                        $issumaggregate = $grade_items[$do]->load_item_category()->aggregation == GRADE_AGGREGATE_SUM;
+                    }
+                    if (!$hidden_precursors && !$issumaggregate) {
                         unset($todo[$key]);
                         $found = true;
                         continue;
