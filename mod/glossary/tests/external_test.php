@@ -773,7 +773,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $e3 = $gg->create_content($g1, array('approved' => 1, 'concept' => 'Hero'));
         $e4 = $gg->create_content($g1, array('approved' => 0, 'concept' => 'Toulouse'));
         $e5 = $gg->create_content($g1, array('approved' => 1, 'definition' => 'Heroes', 'concept' => 'Abcd'));
-        $e6 = $gg->create_content($g1, array('approved' => 0, 'definition' => 'When used for heroes'));
+        $e6 = $gg->create_content($g1, array('approved' => 0, 'definition' => 'When used for Heroes'));
         $e7 = $gg->create_content($g1, array('approved' => 1, 'timecreated' => 1, 'timemodified' => time() + 3600,
             'concept' => 'Z'), array('Couscous'));
         $e8 = $gg->create_content($g1, array('approved' => 0), array('Heroes'));
@@ -859,7 +859,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($e7->id, $return['entries'][3]['id']);
 
         // Advanced query string.
-        $query = '+heroes -abcd';
+        $query = '+Heroes -Abcd';
         $return = mod_glossary_external::get_entries_by_search($g1->id, $query, true, 'CONCEPT', 'ASC', 0, 20,
             array('includenotapproved' => true));
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_search_returns(), $return);

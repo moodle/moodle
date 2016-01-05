@@ -3386,7 +3386,7 @@ function glossary_get_entries_by_letter($glossary, $context, $letter, $from, $li
 
     // Fetching the entries.
     $count = $qb->count_records();
-    $entries = $qb->get_recordset();
+    $entries = $qb->get_records();
 
     return array($entries, $count);
 }
@@ -3429,7 +3429,7 @@ function glossary_get_entries_by_date($glossary, $context, $order, $sort, $from,
 
     // Fetching the entries.
     $count = $qb->count_records();
-    $entries = $qb->get_recordset();
+    $entries = $qb->get_records();
 
     return array($entries, $count);
 }
@@ -3459,6 +3459,12 @@ function glossary_get_entries_by_category($glossary, $context, $categoryid, $fro
 
     $qb->join_category($categoryid);
     $qb->join_user();
+
+    // The first field must be the relationship ID when viewing all categories.
+    if ($categoryid === GLOSSARY_SHOW_ALL_CATEGORIES) {
+        $qb->add_field('id', 'entries_categories', 'cid');
+    }
+
     $qb->add_field('*', 'entries');
     $qb->add_field('categoryid', 'entries_categories');
     $qb->add_user_fields();
@@ -3478,7 +3484,7 @@ function glossary_get_entries_by_category($glossary, $context, $categoryid, $fro
 
     // Fetching the entries.
     $count = $qb->count_records();
-    $entries = $qb->get_recordset();
+    $entries = $qb->get_records();
 
     return array($entries, $count);
 }
@@ -3526,7 +3532,7 @@ function glossary_get_entries_by_author($glossary, $context, $letter, $field, $s
 
     // Fetching the entries.
     $count = $qb->count_records();
-    $entries = $qb->get_recordset();
+    $entries = $qb->get_records();
 
     return array($entries, $count);
 }
@@ -3574,7 +3580,7 @@ function glossary_get_entries_by_author_id($glossary, $context, $authorid, $orde
 
     // Fetching the entries.
     $count = $qb->count_records();
-    $entries = $qb->get_recordset();
+    $entries = $qb->get_records();
 
     return array($entries, $count);
 }
@@ -3817,7 +3823,7 @@ function glossary_get_entries_by_term($glossary, $context, $term, $from, $limit,
 
     // Fetching the entries.
     $count = $qb->count_records();
-    $entries = $qb->get_recordset();
+    $entries = $qb->get_records();
 
     return array($entries, $count);
 }
@@ -3861,7 +3867,7 @@ function glossary_get_entries_to_approve($glossary, $context, $letter, $order, $
 
     // Fetching the entries.
     $count = $qb->count_records();
-    $entries = $qb->get_recordset();
+    $entries = $qb->get_records();
 
     return array($entries, $count);
 }
