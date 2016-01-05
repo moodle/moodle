@@ -18,6 +18,10 @@ information provided here is intended especially for developers.
 * The mcore YUI rollup which included various YUI modules such as moodle-core-notification is no longer included on every
   page. Missing YUI depdencies may be exposed by this change (e.g. missing a requirement on moodle-core-notification when
   using M.core.dialogue).
+* The following functions have been deprecated and should not be used any more:
+  - file_storage::try_content_recovery  - See MDL-46375 for more information
+  - file_storage::content_exists        - See MDL-46375 for more information
+  - file_storage::deleted_file_cleanup  - See MDL-46375 for more information
 
 === 3.2 ===
 
