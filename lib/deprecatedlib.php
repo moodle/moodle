@@ -2116,24 +2116,9 @@ function enrol_cohort_search_cohorts(course_enrolment_manager $manager, $offset 
  * $user2 will be null if viewing a user's recent conversations
  *
  * @deprecated since Moodle 2.9 MDL-49371 - please do not use this function any more.
- * @todo MDL-49290 This will be deleted in Moodle 3.1.
- * @param stdClass the first user
- * @param stdClass the second user or null
- * @return bool True if the current user is one of either $user1 or $user2
  */
 function message_current_user_is_involved($user1, $user2) {
-    global $USER;
-
-    debugging('message_current_user_is_involved() is deprecated, please do not use this function.', DEBUG_DEVELOPER);
-
-    if (empty($user1->id) || (!empty($user2) && empty($user2->id))) {
-        throw new coding_exception('Invalid user object detected. Missing id.');
-    }
-
-    if ($user1->id != $USER->id && (empty($user2) || $user2->id != $USER->id)) {
-        return false;
-    }
-    return true;
+    throw new coding_exception('message_current_user_is_involved() can not be used any more.');
 }
 
 /**
