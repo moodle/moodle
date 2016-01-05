@@ -491,7 +491,6 @@ class mod_glossary_external extends external_api {
             self::fill_entry_details($record, $context);
             $entries[] = $record;
         }
-        $records->close();
 
         return array(
             'count' => $count,
@@ -589,7 +588,6 @@ class mod_glossary_external extends external_api {
             self::fill_entry_details($record, $context);
             $entries[] = $record;
         }
-        $records->close();
 
         return array(
             'count' => $count,
@@ -767,7 +765,6 @@ class mod_glossary_external extends external_api {
             }
             $entries[] = $record;
         }
-        $records->close();
 
         return array(
             'count' => $count,
@@ -962,7 +959,6 @@ class mod_glossary_external extends external_api {
             self::fill_entry_details($record, $context);
             $entries[] = $record;
         }
-        $records->close();
 
         return array(
             'count' => $count,
@@ -1066,7 +1062,6 @@ class mod_glossary_external extends external_api {
             self::fill_entry_details($record, $context);
             $entries[] = $record;
         }
-        $records->close();
 
         return array(
             'count' => $count,
@@ -1168,7 +1163,6 @@ class mod_glossary_external extends external_api {
             self::fill_entry_details($record, $context);
             $entries[] = $record;
         }
-        $records->close();
 
         return array(
             'count' => $count,
@@ -1249,7 +1243,6 @@ class mod_glossary_external extends external_api {
             self::fill_entry_details($record, $context);
             $entries[] = $record;
         }
-        $records->close();
 
         return array(
             'count' => $count,
@@ -1336,7 +1329,6 @@ class mod_glossary_external extends external_api {
             self::fill_entry_details($record, $context);
             $entries[] = $record;
         }
-        $records->close();
 
         return array(
             'count' => $count,
