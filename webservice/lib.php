@@ -755,7 +755,7 @@ class webservice_access_exception extends moodle_exception {
 /**
  * Check if a protocol is enabled
  *
- * @param string $protocol name of WS protocol ('rest', 'soap', 'xmlrpc', 'amf'...)
+ * @param string $protocol name of WS protocol ('rest', 'soap', 'xmlrpc'...)
  * @return bool true if the protocol is enabled
  */
 function webservice_protocol_is_enabled($protocol) {
@@ -1108,7 +1108,7 @@ abstract class webservice_server implements webservice_server_interface {
  */
 abstract class webservice_zend_server extends webservice_server {
 
-    /** @var string Name of the zend server class : Zend_Amf_Server, moodle_zend_soap_server, Zend_Soap_AutoDiscover, ...*/
+    /** @var string Name of the zend server class : moodle_zend_soap_server, Zend_Soap_AutoDiscover, ...*/
     protected $zend_class;
 
     /** @var stdClass Zend server instance */
@@ -1412,8 +1412,7 @@ class '.$classname.' {
 
     /**
      * You can override this function in your child class to add extra code into the dynamically
-     * created service class. For example it is used in the amf server to cast types of parameters and to
-     * cast the return value to the types as specified in the return value description.
+     * created service class.
      *
      * @param stdClass $function a record from external_function
      * @param array $params web service function parameters

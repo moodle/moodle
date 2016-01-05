@@ -1665,6 +1665,7 @@ class core_plugin_manager {
             'theme' => array('mymobile', 'afterburner', 'anomaly', 'arialist', 'binarius', 'boxxie', 'brick', 'formal_white',
                 'formfactor', 'fusion', 'leatherbound', 'magazine', 'nimble', 'nonzero', 'overlay', 'serenity', 'sky_high',
                 'splash', 'standard', 'standardold'),
+            'webservice' => array('amf'),
         );
 
         if (!isset($plugins[$type])) {
@@ -1897,7 +1898,7 @@ class core_plugin_manager {
             ),
 
             'webservice' => array(
-                'amf', 'rest', 'soap', 'xmlrpc'
+                'rest', 'soap', 'xmlrpc'
             ),
 
             'workshopallocation' => array(
