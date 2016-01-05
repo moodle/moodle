@@ -45,7 +45,7 @@ $string['datarootpermission'] = 'Ovlasti nad mapom s podacima';
 $string['dbprefix'] = 'Prefiks tablice';
 $string['dirroot'] = 'Moodle mapa';
 $string['environmenthead'] = 'Provjera okruženja vašeg poslužitelja ...';
-$string['environmentsub2'] = 'Svaka inačica Moodle-a ima minimalne zahtjeve po pitanju odgovarajuće PHP inačice i nekoliko obveznih PHP ekstenzija.
+$string['environmentsub2'] = 'Svaka inačica Moodle-a ima minimalne zahtjeve po pitanju odgovarajuće PHP inačice i nekoliko obvezatnih PHP ekstenzija.
 Puna provjera okruženja se obavlja prije svake instalacije ili nadogradnje postojeće inačice. Ako ne znate kako instalirati novu inačicu ili omogućiti PHP ekstenzije, kontaktirajte administratora vašeg poslužitelja.';
 $string['errorsinenvironment'] = 'Pogreške u okruženju poslužitelja!';
 $string['installation'] = 'Instalacija';
