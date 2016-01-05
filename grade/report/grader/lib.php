@@ -1637,39 +1637,9 @@ class grade_report_grader extends grade_report {
      * Given a category element returns collapsing +/- icon if available
      *
      * @deprecated since Moodle 2.9 MDL-46662 - please do not use this function any more.
-     * @todo MDL-49021 This will be deleted in Moodle 3.1
-     * @see grade_report_grader::get_course_header()
-     * @param object $element
-     * @return string HTML
      */
     protected function get_collapsing_icon($element) {
-        global $OUTPUT;
-        debugging('get_collapsing_icon is deprecated, please use get_course_header instead.', DEBUG_DEVELOPER);
-
-        $icon = '';
-        // If object is a category, display expand/contract icon
-        if ($element['type'] == 'category') {
-            // Load language strings
-            $strswitchminus = $this->get_lang_string('aggregatesonly', 'grades');
-            $strswitchplus  = $this->get_lang_string('gradesonly', 'grades');
-            $strswitchwhole = $this->get_lang_string('fullmode', 'grades');
-
-            $url = new moodle_url($this->gpr->get_return_url(null, array('target'=>$element['eid'], 'sesskey'=>sesskey())));
-
-            if (in_array($element['object']->id, $this->collapsed['aggregatesonly'])) {
-                $url->param('action', 'switch_plus');
-                $icon = $OUTPUT->action_icon($url, new pix_icon('t/switch_plus', $strswitchplus));
-
-            } else if (in_array($element['object']->id, $this->collapsed['gradesonly'])) {
-                $url->param('action', 'switch_whole');
-                $icon = $OUTPUT->action_icon($url, new pix_icon('t/switch_whole', $strswitchwhole));
-
-            } else {
-                $url->param('action', 'switch_minus');
-                $icon = $OUTPUT->action_icon($url, new pix_icon('t/switch_minus', $strswitchminus));
-            }
-        }
-        return $icon;
+        throw new coding_exception('get_collapsing_icon() can not be used any more, please use get_course_header() instead.');
     }
 
     /**
