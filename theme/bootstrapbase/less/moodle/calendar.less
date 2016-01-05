@@ -320,6 +320,34 @@
                 height: 100%;
                 display: block;
             }
+            &.duration_global {
+                border-top: 1px solid @calendarEventGlobalColor;
+                border-bottom: 1px solid @calendarEventGlobalColor;
+                &.duration_finish {
+                    background-color: @calendarEventGlobalColor;
+                }
+            }
+            &.duration_course {
+                border-top: 1px solid @calendarEventCourseColor;
+                border-bottom: 1px solid @calendarEventCourseColor;
+                &.duration_finish {
+                    background-color: @calendarEventCourseColor;
+                }
+            }
+            &.duration_group {
+                border-top: 1px solid @calendarEventGroupColor;
+                border-bottom: 1px solid @calendarEventGroupColor;
+                &.duration_finish {
+                    background-color: @calendarEventGroupColor;
+                }
+            }
+            &.duration_user {
+                border-top: 1px solid @calendarEventUserColor;
+                border-bottom: 1px solid @calendarEventUserColor;
+                &.duration_finish {
+                    background-color: @calendarEventUserColor;
+                }
+            }
         }
         caption {
             font-size: inherit;
