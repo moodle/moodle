@@ -390,9 +390,6 @@ $string['postbymailsuccess'] = 'Congratulations, your forum post with subject "{
 $string['postbymailsuccess_html'] = 'Congratulations, your <a href="{$a->discussionurl}">forum post</a> with subject "{$a->subject}" was successfully posted.';
 $string['postbyuser'] = '{$a->post} by {$a->user}';
 $string['postincontext'] = 'See this post in context';
-$string['postmailinfo'] = 'This is a copy of a message posted on the {$a} website.
-
-To reply click on this link:';
 $string['postmailinfolink'] = 'This is a copy of a message posted on the {$a->coursename} website.
 
 To reply click on this link: {$a->replylink}';
@@ -529,3 +526,8 @@ $string['yourreply'] = 'Your reply';
 
 // Deprecated since Moodle 3.0.
 $string['subscribersto'] = 'Subscribers to "{$a->name}"';
+
+// Deprecated since Moodle 3.1.
+$string['postmailinfo'] = 'This is a copy of a message posted on the {$a} website.
+
+To reply click on this link:';
