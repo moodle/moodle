@@ -338,7 +338,7 @@ class forum_post implements \renderable {
      */
     public function get_unsubscribediscussionlink() {
         $link = new \moodle_url(
-            '/mod/discussion/subscribe.php', array(
+            '/mod/forum/subscribe.php', array(
                 'id'  => $this->forum->id,
                 'd'   => $this->discussion->id,
             )
