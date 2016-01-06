@@ -38,7 +38,10 @@ class template extends persistent {
 
     const TABLE = 'tool_lp_template';
 
-    /** @var template Object before update. */
+    /** One day threshold **/
+    const DUEDATE_THRESHOLD = 86400;
+
+    /** @var template object before update. */
     protected $beforeupdate = null;
 
     /**
@@ -163,28 +166,35 @@ class template extends persistent {
 
     /**
      * Validate the due date.
+     * We set a threshold to avoid creating templates with duedate too soon, so the plans can be created safely.
      *
      * @param  int $value The due date.
      * @return bool|lang_string
      */
     protected function validate_duedate($value) {
-        $neworupdated = true;
 
         // During update.
         if ($this->get_id()) {
             $before = $this->beforeupdate->get_duedate();
             $haschanged = $before != $value;
 
-            if (!empty($before) && $before < time() && $haschanged) {
+            if (!empty($before) && $before <= time() && $haschanged) {
                 // We cannot set a due date after it was reached.
                 return new lang_string('errorcannotchangeapastduedate', 'tool_lp');
             }
         }
 
-        // During create and update when it has changed.
-        if (!empty($value) && $value < time() && $haschanged) {
-            // We cannot set the date in the past, but we can leave it empty.
-            return new lang_string('errorcannotsetduedateinthepast', 'tool_lp');
+        // During create and update when due date in the past or too soon.
+        if (!empty($value)) {
+            if ($value <= time()) {
+                // We cannot set the date in the past, but we can leave it empty.
+                return new lang_string('errorcannotsetduedateinthepast', 'tool_lp');
+            }
+
+            if ($value <= time() + self::DUEDATE_THRESHOLD) {
+                // We cannot set the date too soon, but we can leave it empty.
+                return new lang_string('errorcannotsetduedatetoosoon', 'tool_lp');
+            }
         }
 
         return true;

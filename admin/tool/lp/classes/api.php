@@ -1657,6 +1657,12 @@ class api {
             return false;
         }
 
+        // Ignore create if there is duedate error.
+        $errors = $plan->validate();
+        if (isset($errors['duedate']) && count($errors) === 1) {
+            return false;
+        }
+
         $plan->create();
         return $plan;
     }
@@ -1986,6 +1992,11 @@ class api {
         $mustremovearchivedcompetencies = ($beforestatus == plan::STATUS_COMPLETE && $plan->get_status() != plan::STATUS_COMPLETE);
         if ($mustremovearchivedcompetencies) {
             self::remove_archived_user_competencies_in_plan($plan);
+        }
+
+        // If duedate less than or equal to duedate_threshold unset it.
+        if ($plan->get_duedate() <= time() + plan::DUEDATE_THRESHOLD) {
+            $plan->set_duedate(0);
         }
 
         $success = $plan->update();

@@ -99,6 +99,7 @@ $string['evidence_manualoverrideinplan'] = 'The competency grade was manually se
 $string['evidence_manualsuggestincourse'] = 'The competency grade was manually suggested in the course \'{$a}\'.';
 $string['evidence_manualsuggestinplan'] = 'The competency grade was manually suggested in the plan \'{$a}\'.';
 $string['errorcannotsetduedateinthepast'] = 'The due date cannot be set in the past.';
+$string['errorcannotsetduedatetoosoon'] = 'The due date is too soon.';
 $string['errorcannotchangeapastduedate'] = 'The due date has passed, it cannot be changed.';
 $string['errornocompetency'] = '{$a} competency can not be found';
 $string['errorplanstatus'] = 'Learning plans \'{$a}\' status unknown';

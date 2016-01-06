@@ -39,6 +39,9 @@ class template_cohort extends persistent {
 
     const TABLE = 'tool_lp_template_cohort';
 
+    /** 2 hours of threshold to prevent expired plans **/
+    const DUEDATE_THRESHOLD = 7200;
+
     /**
      * Return the custom definition of the properties of this model.
      *
@@ -147,6 +150,8 @@ class template_cohort extends persistent {
     /**
      * Return an array of templates persistent with their missing userids.
      * Note that only cohorts associated with visible templates were considered.
+     * We set a due date threshold for templates to avoid a failed validation when creating plans
+     * caused by expired duedates.
      *
      * @param bool $unlinkedaremissing When true, unlinked plans are considered as missing.
      * @return array( array(
@@ -157,18 +162,22 @@ class template_cohort extends persistent {
     public static function get_all_missing_plans($unlinkedaremissing = false) {
         global $DB;
 
+        // Safe enough with 2 hours.
+        $time = time() + self::DUEDATE_THRESHOLD;
         $skipsql = !$unlinkedaremissing ? '(t.id = p.templateid OR t.id = p.origtemplateid)' : 't.id = p.templateid';
 
         // TODO MDL-52526 only unexpired template are considered and fix the time()+1 duedate issue.
         $sql = "SELECT cm.userid, t.*
                   FROM {cohort_members} cm
                   JOIN {" . self::TABLE . "} tc ON cm.cohortid = tc.cohortid
-                  JOIN {" . template::TABLE . "} t ON (tc.templateid = t.id AND t.visible = 1)
+                  JOIN {" . template::TABLE . "} t ON (tc.templateid = t.id
+                       AND t.visible = 1
+                       AND (t.duedate > :time OR t.duedate = 0))
              LEFT JOIN {" . plan::TABLE . "} p ON (cm.userid = p.userid AND $skipsql)
                  WHERE p.id IS NULL
               ORDER BY t.id";
 
-        $results = $DB->get_records_sql($sql);
+        $results = $DB->get_records_sql($sql, array('time' => $time));
 
         $missingplans = array();
         foreach ($results as $usertemplate) {

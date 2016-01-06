@@ -250,4 +250,168 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $this->assertFalse(\tool_lp\plan::can_read_user_draft($u4->id));
         $this->assertTrue(\tool_lp\plan::can_read_user_draft($u5->id));
     }
+
+    public function test_validate_duedate() {
+        global $DB;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user = $dg->create_user();
+
+        $record = array('userid' => $user->id,
+                        'status' => tool_lp\plan::STATUS_DRAFT,
+                        'duedate' => time() - 8000);
+
+        // Ignore duedate validation on create/update draft plan.
+        $plan = $lpg->create_plan($record);
+        $this->assertInstanceOf('\tool_lp\plan', $plan);
+
+        // Passing from draft to active.
+        $plan->set_status(tool_lp\plan::STATUS_ACTIVE);
+
+        // Draft to active with duedate in the past.
+        $expected = array(
+            'duedate' => new lang_string('errorcannotsetduedateinthepast', 'tool_lp'),
+        );
+        $this->assertEquals($expected, $plan->validate());
+
+        // Draft to active: past date => past date(fail).
+        $plan->set_duedate(time() - 100);
+        $expected = array(
+            'duedate' => new lang_string('errorcannotsetduedateinthepast', 'tool_lp'),
+        );
+        $this->assertEquals($expected, $plan->validate());
+
+        // Draft to active: past date => too soon (fail).
+        $plan->set_duedate(time() + 100);
+        $expected = array(
+            'duedate' => new lang_string('errorcannotsetduedatetoosoon', 'tool_lp'),
+        );
+        $this->assertEquals($expected, $plan->validate());
+
+        // Draft to active: past date => future date (pass).
+        $plan->set_duedate(time() + tool_lp\plan::DUEDATE_THRESHOLD + 10);
+        $this->assertEquals(true, $plan->validate());
+
+        // Draft to active: past date => unset date (pass).
+        $plan->set_duedate(0);
+        $this->assertEquals(true, $plan->validate());
+
+        // Updating active plan.
+        $plan->update();
+
+        // Active to active: unset date => past date(fail).
+        $plan->set_duedate(time() - 100);
+        $expected = array(
+            'duedate' => new lang_string('errorcannotsetduedateinthepast', 'tool_lp'),
+        );
+        $this->assertEquals($expected, $plan->validate());
+
+        // Active to active: unset date => too soon (fail).
+        $plan->set_duedate(time() + 100);
+        $expected = array(
+            'duedate' => new lang_string('errorcannotsetduedatetoosoon', 'tool_lp'),
+        );
+        $this->assertEquals($expected, $plan->validate());
+
+        // Active to active: unset date => future date (pass).
+        $plan->set_duedate(time() + tool_lp\plan::DUEDATE_THRESHOLD + 10);
+        $this->assertEquals(true, $plan->validate());
+
+        // Updating active plan with future date.
+        $plan->update();
+
+        // Active to active: future date => unset date (pass).
+        $plan->set_duedate(0);
+        $this->assertEquals(true, $plan->validate());
+
+        // Active to active: future date => past date(fail).
+        $plan->set_duedate(time() - 100);
+        $expected = array(
+            'duedate' => new lang_string('errorcannotsetduedateinthepast', 'tool_lp'),
+        );
+        $this->assertEquals($expected, $plan->validate());
+
+        // Active to active: future date => too soon (fail).
+        $plan->set_duedate(time() + 100);
+        $expected = array(
+            'duedate' => new lang_string('errorcannotsetduedatetoosoon', 'tool_lp'),
+        );
+        $this->assertEquals($expected, $plan->validate());
+
+        // Active to active: future date => future date (pass).
+        $plan->set_duedate(time() + tool_lp\plan::DUEDATE_THRESHOLD + 10);
+        $this->assertEquals(true, $plan->validate());
+
+        // Completing plan: with due date in the past.
+        $record = $plan->to_record();
+        $record->status = tool_lp\plan::STATUS_ACTIVE;
+        $record->duedate = time() - 200;
+        $DB->update_record(tool_lp\plan::TABLE, $record);
+
+        $success = tool_lp\api::complete_plan($plan->get_id());
+        $this->assertTrue($success);
+
+        // Completing plan: with due date too soon (pass).
+        $record = $plan->to_record();
+        $record->status = tool_lp\plan::STATUS_ACTIVE;
+        $record->duedate = time() + 200;
+        $DB->update_record(tool_lp\plan::TABLE, $record);
+
+        $success = tool_lp\api::complete_plan($plan->get_id());
+        $this->assertTrue($success);
+
+        // Completing plan: with due date in the future (pass).
+        $record = $plan->to_record();
+        $record->status = tool_lp\plan::STATUS_ACTIVE;
+        $record->duedate = time() + tool_lp\plan::DUEDATE_THRESHOLD + 10;
+        $DB->update_record(tool_lp\plan::TABLE, $record);
+
+        $success = tool_lp\api::complete_plan($plan->get_id());
+        $this->assertTrue($success);
+
+        // Completing plan: with due date unset (pass).
+        $record = $plan->to_record();
+        $record->status = tool_lp\plan::STATUS_ACTIVE;
+        $record->duedate = 0;
+        $DB->update_record(tool_lp\plan::TABLE, $record);
+
+        $success = tool_lp\api::complete_plan($plan->get_id());
+        $this->assertTrue($success);
+
+        // Reopening plan: with due date in the past => duedate unset.
+        $record = $plan->to_record();
+        $record->status = tool_lp\plan::STATUS_COMPLETE;
+        $record->duedate = time() - 200;
+        $DB->update_record(tool_lp\plan::TABLE, $record);
+
+        $success = tool_lp\api::reopen_plan($plan->get_id());
+        $this->assertTrue($success);
+        $plan->read();
+        $this->assertEquals(0, $plan->get_duedate());
+
+        // Reopening plan: with due date too soon => duedate unset.
+        $record = $plan->to_record();
+        $record->status = tool_lp\plan::STATUS_COMPLETE;
+        $record->duedate = time() + 100;
+        $DB->update_record(tool_lp\plan::TABLE, $record);
+
+        $success = tool_lp\api::reopen_plan($plan->get_id());
+        $this->assertTrue($success);
+        $plan->read();
+        $this->assertEquals(0, $plan->get_duedate());
+
+        // Reopening plan: with due date in the future => duedate unchanged.
+        $record = $plan->to_record();
+        $record->status = tool_lp\plan::STATUS_COMPLETE;
+        $record->duedate = time() + tool_lp\plan::DUEDATE_THRESHOLD + 10;
+        $DB->update_record(tool_lp\plan::TABLE, $record);
+
+        $success = tool_lp\api::reopen_plan($plan->get_id());
+        $this->assertTrue($success);
+        $plan->read();
+        $this->assertEquals(time() + tool_lp\plan::DUEDATE_THRESHOLD + 10, $plan->get_duedate());
+
+    }
 }
