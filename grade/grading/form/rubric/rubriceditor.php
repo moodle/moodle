@@ -119,7 +119,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
                 'requires' => array('base', 'dom', 'event', 'event-touch', 'escape'),
                 'strings' => array(array('confirmdeletecriterion', 'gradingform_rubric'), array('confirmdeletelevel', 'gradingform_rubric'),
                     array('criterionempty', 'gradingform_rubric'), array('levelempty', 'gradingform_rubric')
-                    ));
+                ));
             $PAGE->requires->js_init_call('M.gradingform_rubriceditor.init', array(
                 array('name' => $this->getName(),
                     'criteriontemplate' => $renderer->criterion_template($mode, $data['options'], $this->getName()),
@@ -141,7 +141,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
             $html .= $renderer->display_regrade_confirmation($this->getName(), $this->regradeconfirmation, $data['regrade']);
         }
         if ($this->validationerrors) {
-            $html .= $renderer->notification($this->validationerrors, 'error');
+            $html .= html_writer::div($renderer->notification($this->validationerrors, 'error'), '', array('role' => 'alert'));
         }
         $html .= $renderer->display_rubric($data['criteria'], $data['options'], $mode, $this->getName());
         return $html;
