@@ -1095,11 +1095,9 @@ abstract class moodle_database {
      * Enable/disable detailed sql logging
      *
      * @deprecated since Moodle 2.9
-     * @todo MDL-49824 This will be deleted in Moodle 3.1.
-     * @param bool $state
      */
     public function set_logging($state) {
-        debugging('set_logging() is deprecated and will not be replaced.', DEBUG_DEVELOPER);
+        throw new coding_exception('set_logging() can not be used any more.');
     }
 
     /**
