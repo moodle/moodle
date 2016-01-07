@@ -1882,6 +1882,12 @@ class api {
         // Wrap the suppression in a DB transaction.
         $transaction = $DB->start_delegated_transaction();
 
+        // Delete plan competencies.
+        $plancomps = plan_competency::get_records(array('planid' => $plan->get_id()));
+        foreach ($plancomps as $plancomp) {
+            $plancomp->delete();
+        }
+
         // Delete archive user competencies if the status of the plan is complete.
         if ($plan->get_status() == plan::STATUS_COMPLETE) {
             self::remove_archived_user_competencies_in_plan($plan);

@@ -27,10 +27,12 @@ global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
+use tool_lp\api;
 use tool_lp\external;
 use tool_lp\plan;
 use tool_lp\related_competency;
 use tool_lp\user_competency;
+use tool_lp\user_competency_plan;
 use tool_lp\plan_competency;
 use tool_lp\template_competency;
 
@@ -1345,6 +1347,34 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $plan4 = $this->create_plan(4, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
         $this->assertTrue(external::delete_plan($plan4->id));
+    }
+
+    public function test_delete_plan_removes_relations() {
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+
+        $user = $dg->create_user();
+        $plan = $lpg->create_plan(array('userid' => $user->id));
+        $framework = $lpg->create_framework();
+        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $comp3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $pc1 = $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $comp1->get_id()));
+        $pc2 = $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $comp2->get_id()));
+        $pc3 = $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $comp3->get_id()));
+
+        // Complete the plan to generate user_competency_plan entries.
+        api::complete_plan($plan);
+
+        // Confirm the data we have.
+        $this->assertEquals(3, plan_competency::count_records(array('planid' => $plan->get_id())));
+        $this->assertEquals(3, user_competency_plan::count_records(array('planid' => $plan->get_id(), 'userid' => $user->id)));
+
+        // Delete the plan now.
+        api::delete_plan($plan->get_id());
+        $this->assertEquals(0, plan_competency::count_records(array('planid' => $plan->get_id())));
+        $this->assertEquals(0, user_competency_plan::count_records(array('planid' => $plan->get_id(), 'userid' => $user->id)));
     }
 
     public function test_list_plan_competencies() {
