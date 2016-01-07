@@ -2750,6 +2750,7 @@ function message_page_type_list($pagetype, $parentcontext, $currentcontext) {
 
 /**
  * Get messages sent or/and received by the specified users.
+ * Please note that this function return deleted messages too.
  *
  * @param  int      $useridto       the user id who received the message
  * @param  int      $useridfrom     the user id who sent the message. -10 or -20 for no-reply or support user

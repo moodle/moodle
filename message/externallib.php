@@ -750,6 +750,14 @@ class core_message_external extends external_api {
             }
             foreach ($messages as $mid => $message) {
 
+                // Do not return deleted messages.
+                if (($useridto == $USER->id and $message->timeusertodeleted) or
+                        ($useridfrom == $USER->id and $message->timeuserfromdeleted)) {
+
+                    unset($messages[$mid]);
+                    continue;
+                }
+
                 // We need to get the user from the query.
                 if (empty($userfromfullname)) {
                     // Check for non-reply and support users.
