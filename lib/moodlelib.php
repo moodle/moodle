@@ -3268,7 +3268,7 @@ function fullname($user, $override=false) {
     $allnames = get_all_user_name_fields();
     if ($CFG->debugdeveloper) {
         foreach ($allnames as $allname) {
-            if (!array_key_exists($allname, $user)) {
+            if (!property_exists($user, $allname)) {
                 // If all the user name fields are not set in the user object, then notify the programmer that it needs to be fixed.
                 debugging('You need to update your sql to include additional name fields in the user object.', DEBUG_DEVELOPER);
                 // Message has been sent, no point in sending the message multiple times.
