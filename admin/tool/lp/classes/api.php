@@ -2584,7 +2584,9 @@ class api {
                     $competency->set_ruleoutcome($node->competency->get_ruleoutcome());
                     $competency->update();
                 } catch (\Exception $e) {
-                    debugging('Error occured when migrating rules');
+                    debugging('Could not migrate competency rule from: ' . $oldcompid . ' to: ' . $competency->get_id() . '.' .
+                        ' Exception: ' . $e->getMessage(), DEBUG_DEVELOPER);
+                    $competency->reset_rule();
                 }
             }
 

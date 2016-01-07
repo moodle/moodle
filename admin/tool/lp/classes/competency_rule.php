@@ -99,12 +99,14 @@ abstract class competency_rule {
     }
 
     /**
-     * Migrate rule config when duplicate competency based on mapping competencies ids.
+     * Migrate rule config from one set of competencies to another.
      *
-     * @param string $config the config rule of a competency
-     * @param array $mappings array that match the old competency ids with the new competencies object
-     * 
-     * @return string
+     * Exceptions should be thrown when the migration can not be performed.
+     *
+     * @param string $config Original config rule of a competency.
+     * @param array $mappings Array that matches the original competency IDs with the new competencies objects.
+     * @return string New configuration.
+     * @throws Exception
      */
     public static function migrate_config($config, $mappings) {
         return $config;
