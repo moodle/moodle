@@ -2170,7 +2170,6 @@ class mod_forum_lib_testcase extends advanced_testcase {
     }
 
     public function test_print_overview_groups() {
-        global $SESSION;
         $this->resetAfterTest();
         $course1 = self::getDataGenerator()->create_course();
         $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course1->id));
@@ -2219,10 +2218,6 @@ class mod_forum_lib_testcase extends advanced_testcase {
         // There should be one entry for a forum in course1.
         $this->assertCount(1, $results[$course1->id]);
         $this->assertArrayHasKey('forum', $results[$course1->id]);
-
-        // As viewer2 (different group to post).
-        // Temporary hack to workaround for MDL-52656.
-        $SESSION->currentgroup = null;
 
         $this->setUser($viewer2->id);
         $results = array();
@@ -2290,7 +2285,6 @@ class mod_forum_lib_testcase extends advanced_testcase {
      * @dataProvider print_overview_timed_provider
      */
     public function test_print_overview_timed_groups($config, $hasresult) {
-        global $SESSION;
         $this->resetAfterTest();
         $course1 = self::getDataGenerator()->create_course();
         $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course1->id));
@@ -2350,10 +2344,6 @@ class mod_forum_lib_testcase extends advanced_testcase {
             // There should be no entries for any course.
             $this->assertCount(0, $results);
         }
-
-        // As viewer2 (different group to post).
-        // Temporary hack to workaround for MDL-52656.
-        $SESSION->currentgroup = null;
 
         $this->setUser($viewer2->id);
         $results = array();
