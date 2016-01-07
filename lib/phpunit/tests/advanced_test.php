@@ -72,7 +72,9 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
     }
 
     public function test_set_user() {
-        global $USER, $DB;
+        global $USER, $DB, $SESSION;
+
+        $this->resetAfterTest();
 
         $this->assertEquals(0, $USER->id);
         $this->assertSame($_SESSION['USER'], $USER);
@@ -109,6 +111,11 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertEquals(0, $USER->id);
         $this->assertSame($_SESSION['USER'], $USER);
         $this->assertSame($GLOBALS['USER'], $USER);
+
+        // Ensure session is reset after setUser, as it may contain extra info.
+        $SESSION->sometestvalue = true;
+        $this->setUser($user);
+        $this->assertObjectNotHasAttribute('sometestvalue', $SESSION);
     }
 
     public function test_set_admin_user() {
