@@ -136,6 +136,7 @@ $string['lp:competencymanage'] = 'Manage competency frameworks';
 $string['lp:competencysuggestgrade'] = 'Suggest competency grade';
 $string['lp:competencygrade'] = 'Set competency grade';
 $string['lp:competencyread'] = 'View competency frameworks';
+$string['lp:coursecompetencygradable'] = 'Receive competency marks';
 $string['lp:coursecompetencymanage'] = 'Manage course competencies';
 $string['lp:coursecompetencyread'] = 'View course competencies';
 $string['lp:planmanage'] = 'Manage learning plans';
