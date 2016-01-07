@@ -41,11 +41,9 @@ Feature: New discussions and discussions with recently added replies are display
     When I add a new discussion to "Course general forum" forum with:
       | Subject | Forum post 1            |
       | Message | This is the first post  |
-    And I wait "1" seconds
     And I add a new discussion to "Course general forum" forum with:
       | Subject | Forum post 2            |
       | Message | This is the second post |
-    And I wait "1" seconds
     And I add a new discussion to "Course general forum" forum with:
       | Subject | Forum post 3            |
       | Message | This is the third post  |

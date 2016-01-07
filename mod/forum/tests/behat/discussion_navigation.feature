@@ -39,11 +39,9 @@ Feature: A user can navigate to previous and next discussions
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 1 |
       | Message | Test post message |
-    And I wait "1" seconds
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 2 |
       | Message | Test post message |
-    And I wait "1" seconds
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 3 |
       | Message | Test post message |
@@ -56,7 +54,6 @@ Feature: A user can navigate to previous and next discussions
     And I follow "Discussion 1"
     And I should see "Discussion 2"
     And I should not see "Discussion 3"
-    And I wait "1" seconds
     And I follow "Reply"
     And I set the following fields to these values:
       | Message | Answer to discussion |
@@ -81,26 +78,21 @@ Feature: A user can navigate to previous and next discussions
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 1 Group 0 |
       | Message | Test post message |
-    And I wait "1" seconds
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 2 Group 0 |
       | Message | Test post message |
-    And I wait "1" seconds
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 1 Group 1 |
       | Message | Test post message |
       | Group   | Group 1 |
-    And I wait "1" seconds
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 2 Group 1 |
       | Message | Test post message |
       | Group   | Group 1 |
-    And I wait "1" seconds
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 1 Group 2 |
       | Message | Test post message |
       | Group   | Group 2 |
-    And I wait "1" seconds
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 2 Group 2 |
       | Message | Test post message |
@@ -143,26 +135,21 @@ Feature: A user can navigate to previous and next discussions
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 1 Group 0 |
       | Message | Test post message |
-    And I wait "1" seconds
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 2 Group 0 |
       | Message | Test post message |
-    And I wait "1" seconds
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 1 Group 1 |
       | Message | Test post message |
       | Group   | Group 1 |
-    And I wait "1" seconds
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 2 Group 1 |
       | Message | Test post message |
       | Group   | Group 1 |
-    And I wait "1" seconds
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 1 Group 2 |
       | Message | Test post message |
       | Group   | Group 2 |
-    And I wait "1" seconds
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 2 Group 2 |
       | Message | Test post message |

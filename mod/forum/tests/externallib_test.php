@@ -696,7 +696,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 'usermodifiedpictureurl' => '',
                 'numreplies' => 3,
                 'numunread' => 0,
-                'pinned' => 0
+                'pinned' => FORUM_DISCUSSION_UNPINNED
             );
 
         // Call the external function passing forum id.

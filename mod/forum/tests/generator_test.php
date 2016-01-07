@@ -108,9 +108,9 @@ class mod_forum_generator_testcase extends advanced_testcase {
         $record['course'] = $course->id;
         $record['forum'] = $forum->id;
         $record['userid'] = $user->id;
-        $record['pinned'] = 1; // Pin one discussion.
+        $record['pinned'] = FORUM_DISCUSSION_PINNED; // Pin one discussion.
         self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
-        $record['pinned'] = 0; // No pin for others.
+        $record['pinned'] = FORUM_DISCUSSION_UNPINNED; // No pin for others.
         self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
         self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
 
