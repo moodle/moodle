@@ -49,7 +49,7 @@ class cohort_summary_exporter extends exporter {
                 'type' => PARAM_TEXT,
             ),
             'idnumber' => array(
-                'type' => PARAM_NOTAGS,
+                'type' => PARAM_RAW,        // ID numbers are plain text.
                 'default' => ''
             ),
             'visible' => array(
