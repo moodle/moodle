@@ -54,21 +54,32 @@ if ($canmanagetemplate && ($removecohort = optional_param('removecohort', false,
 // Capture the form submission.
 $form = new \tool_lp\form\template_cohorts($url->out(false), array('pagecontextid' => $pagecontextid));
 if ($canmanagetemplate && ($data = $form->get_data()) && !empty($data->cohorts)) {
+    $maxtocreate = 50;
+    $maxreached = false;
     $i = 0;
     foreach ($data->cohorts as $cohortid) {
 
         // Create the template/cohort relationship.
         $relation = \tool_lp\api::create_template_cohort($template, $cohortid);
 
-        // Create a plan for each member if template visible.
-        if ($template->get_visible()) {
-            $i += \tool_lp\api::create_plans_from_template_cohort($template, $cohortid);
+        // Create a plan for each member if template visible, and we didn't reach our limit yet.
+        if ($template->get_visible() && $i < $maxtocreate) {
+
+            // Only create a few plans right now.
+            $tocreate = \tool_lp\template_cohort::get_missing_plans($template->get_id(), $cohortid);
+            if ($i + count($tocreate) <= $maxtocreate) {
+                $i += \tool_lp\api::create_plans_from_template_cohort($template, $cohortid);
+            } else {
+                $maxreached = true;
+            }
         }
     }
     if ($i == 0) {
         $notification = get_string('noplanswerecreated', 'tool_lp');
     } else if ($i == 1) {
         $notification = get_string('oneplanwascreated', 'tool_lp');
+    } else if ($maxreached) {
+        $notification = get_string('aplanswerecreatedmoremayrequiresync', 'tool_lp', $i);
     } else {
         $notification = get_string('aplanswerecreated', 'tool_lp', $i);
     }
