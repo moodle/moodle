@@ -72,11 +72,14 @@ echo $output->heading($subtitle, 3);
 
 // Do not display form when the template is hidden.
 if ($canmanagetemplate) {
-    if ($template->get_visible()) {
-        echo $form->display();
-    } else {
+    if (!$template->get_visible()) {
         // Display message that plan can not be created if the template is hidden.
         echo $output->notify_message(get_string('cannotcreateuserplanswhentemplatehidden', 'tool_lp'));
+    } else if ($template->get_duedate() > 0 && $template->get_duedate() < time() + 900) {
+        // Prevent the user from creating plans when the due date is passed, or in less than 15 minutes.
+        echo $output->notify_message(get_string('cannotcreateuserplanswhentemplateduedateispassed', 'tool_lp'));
+    } else {
+        echo $form->display();
     }
 }
 

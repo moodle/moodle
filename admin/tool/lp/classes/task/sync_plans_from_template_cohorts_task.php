@@ -56,7 +56,12 @@ class sync_plans_from_template_cohorts_task extends \core\task\scheduled_task {
 
         foreach ($missingplans as $missingplan) {
             foreach ($missingplan['userids'] as $userid) {
-                api::create_plan_from_template($missingplan['template'], $userid);
+                try {
+                    api::create_plan_from_template($missingplan['template'], $userid);
+                } catch (\Exception $e) {
+                    debugging(sprintf('Exception caught while creating plan for user %d from template %d. Message: %s',
+                        $userid, $missingplan['template']->get_id(), $e->getMessage()), DEBUG_DEVELOPER);
+                }
             }
         }
     }

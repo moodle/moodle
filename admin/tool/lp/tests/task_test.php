@@ -194,6 +194,44 @@ class tool_lp_task_testcase extends advanced_testcase {
         $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
     }
 
+    public function test_sync_plans_from_cohorts_with_passed_duedate() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+
+        $user1 = $dg->create_user();
+        $user2 = $dg->create_user();
+        $cohort = $dg->create_cohort();
+        $tpl = $lpg->create_template(array('duedate' => time() + 1000));
+        $templatecohort = api::create_template_cohort($tpl->get_id(), $cohort->id);
+        $task = \core\task\manager::get_scheduled_task('\\tool_lp\\task\\sync_plans_from_template_cohorts_task');
+
+        // Add 1 user to the cohort.
+        cohort_add_member($cohort->id, $user1->id);
+
+        // Creating plans from template cohort.
+        $task->execute();
+        $this->assertEquals(1, \tool_lp\plan::count_records());
+
+        // Now add another user, but this time the template will be expired.
+        cohort_add_member($cohort->id, $user2->id);
+        $record = $tpl->to_record();
+        $record->duedate = time() - 10000;
+        $DB->update_record(\tool_lp\template::TABLE, $record);
+        $tpl->read();
+        $task->execute();
+        $this->assertEquals(1, \tool_lp\plan::count_records()); // Still only one plan.
+
+        // Pretend it wasn't expired.
+        $tpl->set_duedate(time() + 100);
+        $tpl->update();
+        $task->execute();
+        $this->assertEquals(2, \tool_lp\plan::count_records()); // Now there is two.
+    }
+
     public function test_complete_plans_task() {
         global $DB;
         $this->resetAfterTest(true);

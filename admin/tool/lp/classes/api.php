@@ -1657,12 +1657,6 @@ class api {
             return false;
         }
 
-        // Ignore create if there is duedate error.
-        $errors = $plan->validate();
-        if (isset($errors['duedate']) && count($errors) === 1) {
-            return false;
-        }
-
         $plan->create();
         return $plan;
     }
@@ -1727,12 +1721,8 @@ class api {
             $record = (object) (array) $recordbase;
             $record->userid = $userid;
 
-            try {
-                $plan = new plan(0, $record);
-                if (!$plan->can_manage()) {
-                    throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
-                }
-            } catch (required_capability_exception $e) {
+            $plan = new plan(0, $record);
+            if (!$plan->can_manage()) {
                 // Silently skip members where permissions are lacking.
                 continue;
             }

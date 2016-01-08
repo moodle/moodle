@@ -33,6 +33,7 @@ $template = \tool_lp\api::read_template($id);
 $context = $template->get_context();
 $canreadtemplate = $template->can_read();
 $canmanagetemplate = $template->can_manage();
+$duedatereached = $template->get_duedate() > 0 && $template->get_duedate() < time();
 
 if (!$canreadtemplate) {
     throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
@@ -62,8 +63,8 @@ if ($canmanagetemplate && ($data = $form->get_data()) && !empty($data->cohorts))
         // Create the template/cohort relationship.
         $relation = \tool_lp\api::create_template_cohort($template, $cohortid);
 
-        // Create a plan for each member if template visible, and we didn't reach our limit yet.
-        if ($template->get_visible() && $i < $maxtocreate) {
+        // Create a plan for each member if template visible, and the due date is not reached, and we didn't reach our limit yet.
+        if ($template->get_visible() && $i < $maxtocreate && !$duedatereached) {
 
             // Only create a few plans right now.
             $tocreate = \tool_lp\template_cohort::get_missing_plans($template->get_id(), $cohortid);
@@ -95,6 +96,8 @@ if ($canmanagetemplate) {
     if ($template->get_visible() == false) {
         // Display message to prevent that cohort will not be synchronzed if the template is hidden.
         echo $output->notify_message(get_string('templatecohortnotsyncedwhilehidden', 'tool_lp'));
+    } else if ($duedatereached) {
+        echo $output->notify_message(get_string('templatecohortnotsyncedwhileduedateispassed', 'tool_lp'));
     }
     echo $form->display();
 }

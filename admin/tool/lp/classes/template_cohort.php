@@ -93,6 +93,8 @@ class template_cohort extends persistent {
      * When the parameter $unlinkedaremissing is set to false, plans that were unlinked from
      * their template will be ignored so that we do not recreate unlinked plans endlessly.
      *
+     * This method ignores the due date of the template.
+     *
      * @param  int     $templateid The template ID.
      * @param  int     $cohortid The cohort ID.
      * @param  boolean $unlinkedaremissing When true, unlinked plans are considered as missing.
@@ -149,9 +151,9 @@ class template_cohort extends persistent {
 
     /**
      * Return an array of templates persistent with their missing userids.
-     * Note that only cohorts associated with visible templates were considered.
-     * We set a due date threshold for templates to avoid a failed validation when creating plans
-     * caused by expired duedates.
+     *
+     * Note that only cohorts associated with visible templates are considered,
+     * as well as only templates with a due date in the future, or no due date.
      *
      * @param bool $unlinkedaremissing When true, unlinked plans are considered as missing.
      * @return array( array(
@@ -162,19 +164,19 @@ class template_cohort extends persistent {
     public static function get_all_missing_plans($unlinkedaremissing = false) {
         global $DB;
 
-        // Safe enough with 2 hours.
         $skipsql = !$unlinkedaremissing ? '(t.id = p.templateid OR t.id = p.origtemplateid)' : 't.id = p.templateid';
 
-        // TODO MDL-52526 only unexpired template are considered and fix the time()+1 duedate issue.
         $sql = "SELECT cm.userid, t.*
                   FROM {cohort_members} cm
                   JOIN {" . self::TABLE . "} tc ON cm.cohortid = tc.cohortid
-                  JOIN {" . template::TABLE . "} t ON (tc.templateid = t.id AND t.visible = 1)
+                  JOIN {" . template::TABLE . "} t
+                    ON (tc.templateid = t.id AND t.visible = 1)
+                   AND (t.duedate = 0 OR t.duedate > :time)
              LEFT JOIN {" . plan::TABLE . "} p ON (cm.userid = p.userid AND $skipsql)
                  WHERE p.id IS NULL
               ORDER BY t.id";
 
-        $results = $DB->get_records_sql($sql);
+        $results = $DB->get_records_sql($sql, array('time' => time()));
 
         $missingplans = array();
         foreach ($results as $usertemplate) {
