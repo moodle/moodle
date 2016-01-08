@@ -2532,14 +2532,14 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $dg = $this->getDataGenerator();
         $ux = $dg->create_user();
-        $u1 = $dg->create_user(array('idnumber' => 'Cats', 'firstname' => 'Bob', 'lastname' => 'Dylan',
-            'email' => 'bobby@dylan.com', 'phone1' => '123456', 'phone2' => '78910', 'department' => 'Marketing',
+        $u1 = $dg->create_user(array('idnumber' => 'Cats', 'firstname' => 'Bob', 'lastname' => 'Dyyylan',
+            'email' => 'bobbyyy@dyyylan.com', 'phone1' => '123456', 'phone2' => '78910', 'department' => 'Marketing',
             'institution' => 'HQ'));
-        $u2 = $dg->create_user(array('idnumber' => 'Dogs', 'firstname' => 'Alice', 'lastname' => 'Dylan',
-            'email' => 'alyson@dylan.com', 'phone1' => '33333', 'phone2' => '77777', 'department' => 'Development',
+        $u2 = $dg->create_user(array('idnumber' => 'Dogs', 'firstname' => 'Alice', 'lastname' => 'Dyyylan',
+            'email' => 'alyyyson@dyyylan.com', 'phone1' => '33333', 'phone2' => '77777', 'department' => 'Development',
             'institution' => 'O2'));
         $u3 = $dg->create_user(array('idnumber' => 'Fish', 'firstname' => 'Thomas', 'lastname' => 'Xow',
-            'email' => 'fishy@moodle.com', 'phone1' => '77777', 'phone2' => '33333', 'department' => 'Research',
+            'email' => 'fishyyy@moodle.com', 'phone1' => '77777', 'phone2' => '33333', 'department' => 'Research',
             'institution' => 'Bob'));
 
         // We need to give the user the capability we are searching for on each of the test users.
@@ -2570,7 +2570,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // Filter by name.
         $CFG->showuseridentity = '';
-        $result = external::search_users('dylan', 'tool/lp:planmanage');
+        $result = external::search_users('dyyylan', 'tool/lp:planmanage');
         $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(2, $result['users']);
         $this->assertEquals(2, $result['count']);
@@ -2602,7 +2602,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // Filter by email.
         $CFG->showuseridentity = 'email';
-        $result = external::search_users('y', 'tool/lp:planmanage');
+        $result = external::search_users('yyy', 'tool/lp:planmanage');
         $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(3, $result['users']);
         $this->assertEquals(3, $result['count']);
@@ -2615,7 +2615,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // Filter by any.
         $CFG->showuseridentity = 'idnumber,email,phone1,phone2,department,institution';
-        $result = external::search_users('y', 'tool/lp:planmanage');
+        $result = external::search_users('yyy', 'tool/lp:planmanage');
         $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(3, $result['users']);
         $this->assertEquals(3, $result['count']);
