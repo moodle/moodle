@@ -53,7 +53,7 @@ class template extends persistent {
             ),
             'description' => array(
                 'default' => '',
-                'type' => PARAM_TEXT,
+                'type' => PARAM_RAW,
             ),
             'descriptionformat' => array(
                 'choices' => array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN),

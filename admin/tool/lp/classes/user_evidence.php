@@ -53,7 +53,7 @@ class user_evidence extends persistent {
                 'type' => PARAM_TEXT
             ),
             'description' => array(
-                'type' => PARAM_TEXT,       // TODO MDL-52454 Make PARAM_RAW.
+                'type' => PARAM_RAW,
                 'default' => '',
             ),
             'descriptionformat' => array(

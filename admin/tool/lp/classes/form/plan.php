@@ -54,7 +54,7 @@ class plan extends persistent {
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addElement('editor', 'description', get_string('plandescription', 'tool_lp'), array('rows' => 4));
-        $mform->setType('description', PARAM_TEXT);
+        $mform->setType('description', PARAM_RAW);
 
         $mform->addElement('date_time_selector', 'duedate', get_string('duedate', 'tool_lp'), array('optional' => true));
         $mform->addHelpButton('duedate', 'duedate', 'tool_lp');

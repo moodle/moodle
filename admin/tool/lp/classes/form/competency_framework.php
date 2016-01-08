@@ -60,7 +60,7 @@ class competency_framework extends persistent {
         $mform->addRule('shortname', null, 'required', null, 'client');
         $mform->addElement('editor', 'description',
                            get_string('description', 'tool_lp'), array('rows' => 4));
-        $mform->setType('description', PARAM_TEXT);
+        $mform->setType('description', PARAM_RAW);
         $mform->addElement('text', 'idnumber',
                            get_string('idnumber', 'tool_lp'));
         $mform->setType('idnumber', PARAM_TEXT);

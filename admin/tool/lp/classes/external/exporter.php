@@ -144,7 +144,7 @@ abstract class exporter {
 
             $data->$property = $record->$property;
 
-            // If the field is PARAM_TEXT and has a format field.
+            // If the field is PARAM_RAW and has a format field.
             if ($propertyformat = self::get_format_field($properties, $property)) {
                 if (!property_exists($record, $propertyformat)) {
                     // Whoops, we got something that wasn't defined.
@@ -155,7 +155,6 @@ abstract class exporter {
                 $data->$property = $text;
                 $data->$propertyformat = $format;
 
-            // If it's a PARAM_TEXT without format field.
             } else if ($definition['type'] === PARAM_TEXT) {
                 if (!empty($definition['multiple'])) {
                     foreach ($data->$property as $key => $value) {
@@ -334,7 +333,7 @@ abstract class exporter {
      */
     final protected static function get_format_field($definitions, $property) {
         $formatproperty = $property . 'format';
-        if ($definitions[$property]['type'] == PARAM_TEXT && isset($definitions[$formatproperty])
+        if ($definitions[$property]['type'] == PARAM_RAW && isset($definitions[$formatproperty])
                 && $definitions[$formatproperty]['type'] == PARAM_INT) {
             return $formatproperty;
         }

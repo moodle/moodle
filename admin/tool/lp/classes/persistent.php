@@ -232,8 +232,7 @@ abstract class persistent {
         $formatted = array();
         foreach ($properties as $property => $definition) {
             $propertyformat = $property . 'format';
-            // TODO MDL-52454 Check PARAM_RAW.
-            if ($definition['type'] == PARAM_TEXT && array_key_exists($propertyformat, $properties)
+            if ($definition['type'] == PARAM_RAW && array_key_exists($propertyformat, $properties)
                     && $properties[$propertyformat]['type'] == PARAM_INT) {
                 $formatted[$property] = $propertyformat;
             }
