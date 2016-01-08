@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "41df6dfdc9bbd1b15fcc822663823918",
-    "content-hash": "4ff7a81bbdcee555fd2b1ede523a8232",
+    "hash": "fce02b5a02caca2fa2580c06c00a3aae",
+    "content-hash": "f53746369a68b1323a9a37a6d0737307",
     "packages": [],
     "packages-dev": [
         {
@@ -474,33 +474,33 @@
         },
         {
             "name": "doctrine/cache",
-            "version": "v1.6.0",
+            "version": "v1.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/cache.git",
-                "reference": "f8af318d14bdb0eff0336795b428b547bd39ccb6"
+                "reference": "47cdc76ceb95cc591d9c79a36dc3794975b5d136"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/cache/zipball/f8af318d14bdb0eff0336795b428b547bd39ccb6",
-                "reference": "f8af318d14bdb0eff0336795b428b547bd39ccb6",
+                "url": "https://api.github.com/repos/doctrine/cache/zipball/47cdc76ceb95cc591d9c79a36dc3794975b5d136",
+                "reference": "47cdc76ceb95cc591d9c79a36dc3794975b5d136",
                 "shasum": ""
             },
             "require": {
-                "php": "~5.5|~7.0"
+                "php": ">=5.3.2"
             },
             "conflict": {
                 "doctrine/common": ">2.2,<2.4"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.8|~5.0",
+                "phpunit/phpunit": ">=3.7",
                 "predis/predis": "~1.0",
                 "satooshi/php-coveralls": "~0.6"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.6.x-dev"
+                    "dev-master": "1.5.x-dev"
                 }
             },
             "autoload": {
@@ -540,7 +540,7 @@
                 "cache",
                 "caching"
             ],
-            "time": "2015-12-31 16:37:02"
+            "time": "2015-12-19 05:03:47"
         },
         {
             "name": "doctrine/collections",
@@ -1010,16 +1010,16 @@
         },
         {
             "name": "moodlehq/behat-extension",
-            "version": "v1.29.6",
+            "version": "v1.29.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/moodlehq/moodle-behat-extension.git",
-                "reference": "c048249ac59fea11174c658e8fb35f11ef2aa763"
+                "reference": "be645f6c345cc71cc0fb20e438a20c25791ccae4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/moodlehq/moodle-behat-extension/zipball/c048249ac59fea11174c658e8fb35f11ef2aa763",
-                "reference": "c048249ac59fea11174c658e8fb35f11ef2aa763",
+                "url": "https://api.github.com/repos/moodlehq/moodle-behat-extension/zipball/be645f6c345cc71cc0fb20e438a20c25791ccae4",
+                "reference": "be645f6c345cc71cc0fb20e438a20c25791ccae4",
                 "shasum": ""
             },
             "require": {
@@ -1028,6 +1028,7 @@
                 "behat/mink-extension": "1.2.0",
                 "behat/mink-goutte-driver": "1.0.9",
                 "behat/mink-selenium2-driver": "1.1.1",
+                "doctrine/cache": "1.5.4",
                 "doctrine/common": "2.5.0",
                 "guzzlehttp/guzzle": "~3.1",
                 "php": ">=5.4.4",
@@ -1057,9 +1058,9 @@
                 "Moodle"
             ],
             "support": {
-                "source": "https://github.com/moodlehq/moodle-behat-extension/tree/v1.29.6"
+                "source": "https://github.com/moodlehq/moodle-behat-extension/tree/v1.29.7"
             },
-            "time": "2016-01-05 02:26:57"
+            "time": "2016-01-08 05:29:02"
         },
         {
             "name": "phpunit/dbunit",
@@ -1521,20 +1522,22 @@
         },
         {
             "name": "symfony/icu",
-            "version": "v1.0.1",
+            "version": "v1.2.2",
             "target-dir": "Symfony/Component/Icu",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/icu.git",
-                "reference": "fdba214b1e087c149843bde976263c53ac10c975"
+                "reference": "d4d85d6055b87f394d941b45ddd3a9173e1e3d2a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/icu/zipball/fdba214b1e087c149843bde976263c53ac10c975",
-                "reference": "fdba214b1e087c149843bde976263c53ac10c975",
+                "url": "https://api.github.com/repos/symfony/icu/zipball/d4d85d6055b87f394d941b45ddd3a9173e1e3d2a",
+                "reference": "d4d85d6055b87f394d941b45ddd3a9173e1e3d2a",
                 "shasum": ""
             },
             "require": {
+                "ext-intl": "*",
+                "lib-icu": ">=4.4",
                 "php": ">=5.3.3",
                 "symfony/intl": "~2.3"
             },
@@ -1564,7 +1567,7 @@
                 "icu",
                 "intl"
             ],
-            "time": "2013-10-04 09:12:07"
+            "time": "2014-07-25 09:58:17"
         },
         {
             "name": "symfony/symfony",
