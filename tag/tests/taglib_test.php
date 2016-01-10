@@ -471,17 +471,17 @@ class core_tag_taglib_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $defaultcoll = core_tag_collection::get_default();
 
-        // Setting tags will create non-official tags 'cat', 'dog' and 'fish'.
+        // Setting tags will create non-standard tags 'cat', 'dog' and 'fish'.
         core_tag_tag::set_item_tags('core', 'user', $user->id, context_user::instance($user->id), array('cat', 'dog', 'fish'));
 
         $this->assertTrue($DB->record_exists('tag', array('name' => 'cat')));
         $this->assertTrue($DB->record_exists('tag', array('name' => 'dog')));
         $this->assertTrue($DB->record_exists('tag', array('name' => 'fish')));
 
-        // Make tag 'dog' official.
+        // Make tag 'dog' standard.
         $dogtag = core_tag_tag::get_by_name($defaultcoll, 'dog', '*');
         $fishtag = core_tag_tag::get_by_name($defaultcoll, 'fish');
-        $dogtag->update(array('tagtype' => 'official'));
+        $dogtag->update(array('isstandard' => 1));
 
         // Manually remove the instances pointing on tags 'dog' and 'fish'.
         $DB->execute('DELETE FROM {tag_instance} WHERE tagid in (?,?)', array($dogtag->id, $fishtag->id));
@@ -489,8 +489,8 @@ class core_tag_taglib_testcase extends advanced_testcase {
         // Call tag_cleanup().
         $task->cleanup();
 
-        // Tag 'cat' is still present because it's used. Tag 'dog' is present because it's official.
-        // Tag 'fish' was removed because it is not official and it is no longer used by anybody.
+        // Tag 'cat' is still present because it's used. Tag 'dog' is present because it's standard.
+        // Tag 'fish' was removed because it is not standard and it is no longer used by anybody.
         $this->assertTrue($DB->record_exists('tag', array('name' => 'cat')));
         $this->assertTrue($DB->record_exists('tag', array('name' => 'dog')));
         $this->assertFalse($DB->record_exists('tag', array('name' => 'fish')));
@@ -705,9 +705,9 @@ class core_tag_taglib_testcase extends advanced_testcase {
         core_tag_tag::set_item_tags('core', 'user', $user2->id, context_user::instance($user2->id),
                 array('Tag2', 'Tag3'));
         $this->getDataGenerator()->create_tag(array('rawname' => 'Tag4',
-            'tagcollid' => $collid1, 'tagtype' => 'official'));
+            'tagcollid' => $collid1, 'isstandard' => 1));
         $this->getDataGenerator()->create_tag(array('rawname' => 'Tag5',
-            'tagcollid' => $collid2, 'tagtype' => 'official'));
+            'tagcollid' => $collid2, 'isstandard' => 1));
 
         return array($collid1, $collid2, $user1, $user2, $blogpost);
     }
@@ -820,7 +820,7 @@ class core_tag_taglib_testcase extends advanced_testcase {
 
         // We already have Tag1 in coll1, now let's create it in coll3.
         $extratag1 = $this->getDataGenerator()->create_tag(array('rawname' => 'Tag1',
-            'tagcollid' => $collid3, 'tagtype' => 'official'));
+            'tagcollid' => $collid3, 'isstandard' => 1));
 
         // Artificially add 'Tag1' from coll3 to user2.
         $DB->insert_record('tag_instance', array('tagid' => $extratag1->id, 'itemtype' => 'user',

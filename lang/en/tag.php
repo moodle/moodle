@@ -22,8 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['added'] = 'Official tag(s) added';
-$string['addotags'] = 'Add official tags';
+$string['added'] = 'Standard tag(s) added';
+$string['addotags'] = 'Add standard tags';
 $string['addtagcoll'] = 'Add tag collection';
 $string['addtagtomyinterests'] = 'Add "{$a}" to my interests';
 $string['alltagpages'] = 'All tag pages';
@@ -69,7 +69,7 @@ $string['id'] = 'id';
 $string['inalltagcoll'] = 'Everywhere';
 $string['itemstaggedwith'] = '{$a->tagarea} tagged with "{$a->tag}"';
 $string['lesstags'] = 'less...';
-$string['manageofficialtags'] = 'Manage official tags';
+$string['managestandardtags'] = 'Manage standard tags';
 $string['managetags'] = 'Manage tags';
 $string['managetagcolls'] = 'Manage tag collections';
 $string['moretags'] = 'more...';
@@ -80,9 +80,6 @@ $string['nextpage'] = 'More';
 $string['notagsfound'] = 'No tags matching "{$a}" found';
 $string['noresultsfor'] = 'No results for "{$a}"';
 $string['nothingtoupdate'] = 'Nothing to update';
-$string['officialtag'] = 'Official';
-$string['otags'] = 'Official tags';
-$string['othertags'] = 'Other tags';
 $string['owner'] = 'Owner';
 $string['prevpage'] = 'Back';
 $string['ptags'] = 'User defined tags (Comma separated)';
@@ -103,9 +100,10 @@ $string['seeallblogs'] = 'See all blog entries tagged with "{$a}"';
 $string['select'] = 'Select';
 $string['selectcoll'] = 'Select tag collection';
 $string['selecttag'] = 'Select tag {$a}';
-$string['settypedefault'] = 'Remove from official tags';
-$string['settypeofficial'] = 'Make official';
+$string['settypedefault'] = 'Remove from standard tags';
+$string['settypestandard'] = 'Make standard';
 $string['showingfirsttags'] = 'Showing {$a} most popular tags';
+$string['standardtag'] = 'Standard';
 $string['suredeletecoll'] = 'Are you sure you want to delete tag collection "{$a}"?';
 $string['tag'] = 'Tag';
 $string['tagarea_blog_external'] = 'External blog posts';
@@ -120,7 +118,6 @@ $string['tagcollections'] = 'Tag collections';
 $string['tagdescription'] = 'Tag description';
 $string['tags'] = 'Tags';
 $string['tagsaredisabled'] = 'Tags are disabled';
-$string['tagtype'] = 'Tag type';
 $string['thingstaggedwith'] = '"{$a->name}" is used {$a->count} times';
 $string['thingtaggedwith'] = '"{$a->name}" is used once';
 $string['timemodified'] = 'Modified';
@@ -143,4 +140,10 @@ $string['withselectedtags'] = 'With selected tags...';
 
 // Deprecated since 3.1 .
 
+$string['manageofficialtags'] = 'Manage official tags';
+$string['officialtag'] = 'Official';
+$string['otags'] = 'Official tags';
+$string['othertags'] = 'Other tags';
+$string['settypeofficial'] = 'Make official';
 $string['taggedwith'] = 'tagged with "{$a}"';
+$string['tagtype'] = 'Tag type';

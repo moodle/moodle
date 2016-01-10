@@ -4849,5 +4849,46 @@ function xmldb_main_upgrade($oldversion) {
 
         upgrade_main_savepoint(true, 2016011901.00);
     }
+
+    if ($oldversion < 2016020200.00) {
+
+        // Define field isstandard to be added to tag.
+        $table = new xmldb_table('tag');
+        $field = new xmldb_field('isstandard', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'rawname');
+
+        // Conditionally launch add field isstandard.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define index tagcolltype (not unique) to be dropped form tag.
+        $index = new xmldb_index('tagcolltype', XMLDB_INDEX_NOTUNIQUE, array('tagcollid', 'tagtype'));
+
+        // Conditionally launch drop index tagcolltype.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Define index tagcolltype (not unique) to be added to tag.
+        $index = new xmldb_index('tagcolltype', XMLDB_INDEX_NOTUNIQUE, array('tagcollid', 'isstandard'));
+
+        // Conditionally launch add index tagcolltype.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define field tagtype to be dropped from tag.
+        $field = new xmldb_field('tagtype');
+
+        // Conditionally launch drop field tagtype and update isstandard.
+        if ($dbman->field_exists($table, $field)) {
+            $DB->execute("UPDATE {tag} SET isstandard=(CASE WHEN (tagtype = ?) THEN 1 ELSE 0 END)", array('official'));
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2016020200.00);
+    }
+
     return true;
 }

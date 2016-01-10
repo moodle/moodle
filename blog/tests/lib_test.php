@@ -66,7 +66,7 @@ class core_blog_lib_testcase extends advanced_testcase {
 
         // Create default tag.
         $tag = $this->getDataGenerator()->create_tag(array('userid' => $user->id,
-            'rawname' => 'Testtagname', 'tagtype' => 'official'));
+            'rawname' => 'Testtagname', 'isstandard' => 1));
 
         // Create default post.
         $post = new stdClass();

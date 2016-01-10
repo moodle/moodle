@@ -29,6 +29,7 @@ use templatable;
 use renderer_base;
 use stdClass;
 use moodle_url;
+use core_tag_tag;
 
 /**
  * Class to help display tag
@@ -39,16 +40,16 @@ use moodle_url;
  */
 class tag implements renderable, templatable {
 
-    /** @var \core_tag_tag|stdClass */
+    /** @var core_tag_tag|stdClass */
     protected $record;
 
     /**
      * Constructor
      *
-     * @param \core_tag_tag|stdClass $tag
+     * @param core_tag_tag|stdClass $tag
      */
     public function __construct($tag) {
-        if ($tag instanceof \core_tag_tag) {
+        if ($tag instanceof core_tag_tag) {
             $this->record = $tag;
             return;
         }
@@ -59,7 +60,7 @@ class tag implements renderable, templatable {
                 'description' => '',
                 'descriptionformat' => FORMAT_HTML,
                 'flag' => 0,
-                'tagtype' => 'default',
+                'isstandard' => 0,
                 'id' => 0,
                 'tagcollid' => 0,
             );
@@ -85,20 +86,19 @@ class tag implements renderable, templatable {
         list($r->description, $r->descriptionformat) = external_format_text($this->record->description,
             $format, \context_system::instance()->id, 'core', 'tag', $r->id);
         $r->flag = clean_param($this->record->flag, PARAM_INT);
-        if (isset($this->record->official)) {
-            $r->official = clean_param($this->record->official, PARAM_INT);
-        } else {
-            $r->official = ($this->record->tagtype === 'official') ? 1 : 0;
+        if (isset($this->record->isstandard)) {
+            $r->isstandard = clean_param($this->record->isstandard, PARAM_INT) ? 1 : 0;
         }
+        $r->official = $r->isstandard; // For backwards compatibility.
 
-        $url = \core_tag_tag::make_url($r->tagcollid, $r->rawname);
+        $url = core_tag_tag::make_url($r->tagcollid, $r->rawname);
         $r->viewurl = $url->out(false);
 
         $manageurl = new moodle_url('/tag/manage.php', array('sesskey' => sesskey(),
             'tagid' => $this->record->id));
         $url = new moodle_url($manageurl);
         $url->param('action', 'changetype');
-        $url->param('tagtype', $r->official ? 'default' : 'official');
+        $url->param('isstandard', $r->isstandard ? 0 : 1);
         $r->changetypeurl = $url->out(false);
 
         $url = new moodle_url($manageurl);

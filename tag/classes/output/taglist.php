@@ -84,8 +84,8 @@ class taglist implements templatable {
             $viewurl = core_tag_tag::make_url($tag->tagcollid, $tag->rawname, 0, $fromctx);
             $this->tags[$idx]->viewurl = $viewurl->out(false);
 
-            if (!empty($tag->tagtype)) {
-                $this->tags[$idx]->tagtype = $tag->tagtype;
+            if (isset($tag->isstandard)) {
+                $this->tags[$idx]->isstandard = $tag->isstandard ? 1 : 0;
             }
 
             if ($limit && count($this->tags) > $limit) {

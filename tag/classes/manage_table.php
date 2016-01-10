@@ -57,14 +57,14 @@ class core_tag_manage_table extends table_sql {
         $baseurl = new moodle_url('/tag/manage.php', array('tc' => $tagcollid,
             'perpage' => $perpage, 'page' => $page));
 
-        $tablecolumns = array('select', 'name', 'fullname', 'count', 'flag', 'timemodified', 'tagtype', 'controls');
+        $tablecolumns = array('select', 'name', 'fullname', 'count', 'flag', 'timemodified', 'isstandard', 'controls');
         $tableheaders = array(get_string('select', 'tag'),
                               get_string('name', 'tag'),
                               get_string('owner', 'tag'),
                               get_string('count', 'tag'),
                               get_string('flag', 'tag'),
                               get_string('timemodified', 'tag'),
-                              get_string('officialtag', 'tag'),
+                              get_string('standardtag', 'tag'),
                               '');
 
         $this->define_columns($tablecolumns);
@@ -77,7 +77,7 @@ class core_tag_manage_table extends table_sql {
         $this->column_class('count', 'mdl-align col-count');
         $this->column_class('flag', 'mdl-align col-flag');
         $this->column_class('timemodified', 'col-timemodified');
-        $this->column_class('tagtype', 'mdl-align col-tagtype');
+        $this->column_class('isstandard', 'mdl-align col-isstandard');
         $this->column_class('controls', 'mdl-align col-controls');
 
         $this->sortable(true, 'flag', SORT_DESC);
@@ -143,14 +143,14 @@ class core_tag_manage_table extends table_sql {
 
         $allusernames = get_all_user_name_fields(true, 'u');
         $sql = "
-            SELECT tg.id, tg.name, tg.rawname, tg.tagtype, tg.flag, tg.timemodified,
+            SELECT tg.id, tg.name, tg.rawname, tg.isstandard, tg.flag, tg.timemodified,
                        u.id AS owner, $allusernames,
                        COUNT(ti.id) AS count, tg.tagcollid
             FROM {tag} tg
             LEFT JOIN {tag_instance} ti ON ti.tagid = tg.id
             LEFT JOIN {user} u ON u.id = tg.userid
                        WHERE tagcollid = :tagcollid $where
-            GROUP BY tg.id, tg.name, tg.rawname, tg.tagtype, tg.flag, tg.timemodified,
+            GROUP BY tg.id, tg.name, tg.rawname, tg.isstandard, tg.flag, tg.timemodified,
                        u.id, $allusernames, tg.tagcollid
             ORDER BY $sort";
 
@@ -224,10 +224,10 @@ class core_tag_manage_table extends table_sql {
      * @param stdClass $tag
      * @return string
      */
-    public function col_tagtype($tag) {
+    public function col_isstandard($tag) {
         global $OUTPUT;
         $tagoutput = new core_tag\output\tag($tag);
-        return $OUTPUT->render_from_template('core_tag/tagtype', $tagoutput->export_for_template($OUTPUT));
+        return $OUTPUT->render_from_template('core_tag/tagisstandard', $tagoutput->export_for_template($OUTPUT));
     }
 
     /**

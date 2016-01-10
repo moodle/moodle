@@ -183,7 +183,7 @@ class MoodleQuickForm_tags extends MoodleQuickForm_autocomplete {
         $managelink = '';
         if (has_capability('moodle/tag:manage', context_system::instance()) && $this->showingofficial) {
             $url = new moodle_url('/tag/manage.php', array('tc' => $this->get_tag_collection()));
-            $managelink = ' ' . $OUTPUT->action_link($url, get_string('manageofficialtags', 'tag'));
+            $managelink = ' ' . $OUTPUT->action_link($url, get_string('managestandardtags', 'tag'));
         }
 
         return parent::toHTML() . $managelink;
@@ -214,7 +214,7 @@ class MoodleQuickForm_tags extends MoodleQuickForm_autocomplete {
         }
         $namefield = empty($CFG->keeptagnamecase) ? 'name' : 'rawname';
         $tags = $DB->get_records_menu('tag',
-            array('tagtype' => 'official', 'tagcollid' => $this->get_tag_collection()),
+            array('tagtype' => core_tag_tag::TAGTYPE_OFFICIAL, 'tagcollid' => $this->get_tag_collection()),
             $namefield, 'id,' . $namefield);
         return array_combine($tags, $tags);
     }

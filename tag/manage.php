@@ -32,7 +32,7 @@ define('DEFAULT_PAGE_SIZE', 30);
 
 $tagschecked = optional_param_array('tagschecked', array(), PARAM_INT);
 $tagid       = optional_param('tagid', null, PARAM_INT);
-$tagtype     = optional_param('tagtype', null, PARAM_ALPHA);
+$isstandard  = optional_param('isstandard', null, PARAM_INT);
 $action      = optional_param('action', '', PARAM_ALPHA);
 $perpage     = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);
 $page        = optional_param('page', 0, PARAM_INT);
@@ -189,13 +189,14 @@ switch($action) {
 
     case 'changetype':
         require_sesskey();
-        if ($tagid && $tagobject->update(array('tagtype' => $tagtype))) {
+        if ($tagid && $tagobject->update(
+                array('isstandard' => $isstandard ? 1 : 0))) {
             redirect(new moodle_url($PAGE->url, array('notice' => 'typechanged')));
         }
         redirect($PAGE->url);
         break;
 
-    case 'addofficialtag':
+    case 'addstandardtag':
         require_sesskey();
         $tagobjects = null;
         if ($tagcoll) {
@@ -204,8 +205,8 @@ switch($action) {
             $tagobjects = core_tag_tag::create_if_missing($tagcoll->id, $newtags, true);
         }
         foreach ($tagobjects as $tagobject) {
-            if ($tagobject->tagtype !== 'official') {
-                $tagobject->update(array('tagtype' => 'official'));
+            if (!$tagobject->isstandard) {
+                $tagobject->update(array('isstandard' => 1));
             }
         }
         redirect(new moodle_url($PAGE->url, $tagobjects ? array('notice' => 'added') : null));
@@ -237,10 +238,10 @@ if (!$tagcoll) {
 
 // Tag collection is specified. Manage tags in this collection.
 
-// Small form to add an official tag.
+// Small form to add an standard tag.
 print('<form class="tag-addtags-form" method="post" action="'.$CFG->wwwroot.'/tag/manage.php">');
 print('<input type="hidden" name="tc" value="'.$tagcollid.'" />');
-print('<input type="hidden" name="action" value="addofficialtag" />');
+print('<input type="hidden" name="action" value="addstandardtag" />');
 print('<input type="hidden" name="perpage" value="'.$perpage.'" />');
 print('<input type="hidden" name="page" value="'.$page.'" />');
 print('<div class="tag-management-form generalbox"><label class="accesshide" for="id_otagsadd">' .

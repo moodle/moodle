@@ -2363,7 +2363,7 @@ function coursetag_get_tags($courseid, $userid=0, $tagtype='', $numtags=0, $unus
 
     // get tags from the db ordered by highest count first
     $params = array();
-    $sql = "SELECT id as tkey, name, id, tagtype, rawname, f.timemodified, flag, count
+    $sql = "SELECT id as tkey, name, id, isstandard, rawname, f.timemodified, flag, count
               FROM {tag} t,
                  (SELECT tagid, MAX(timemodified) as timemodified, COUNT(id) as count
                     FROM {tag_instance}
@@ -2388,8 +2388,8 @@ function coursetag_get_tags($courseid, $userid=0, $tagtype='', $numtags=0, $unus
     $sql .= "   GROUP BY tagid) f
              WHERE t.id = f.tagid ";
     if ($tagtype != '') {
-        $sql .= "AND tagtype = :tagtype ";
-        $params['tagtype'] = $tagtype;
+        $sql .= "AND isstandard = :isstandard ";
+        $params['isstandard'] = ($tagtype === 'official') ? 1 : 0;
     }
     $sql .= "ORDER BY count DESC, name ASC";
 
@@ -2430,7 +2430,7 @@ function coursetag_get_all_tags($unused='', $numtags=0) {
     global $CFG, $DB;
 
     // note that this selects all tags except for courses that are not visible
-    $sql = "SELECT id, name, tagtype, rawname, f.timemodified, flag, count
+    $sql = "SELECT id, name, isstandard, rawname, f.timemodified, flag, count
         FROM {tag} t,
         (SELECT tagid, MAX(timemodified) as timemodified, COUNT(id) as count
             FROM {tag_instance} WHERE tagid NOT IN
@@ -2628,7 +2628,7 @@ function coursetag_delete_course_tags($courseid, $showfeedback=false) {
 function tag_type_set($tagid, $type) {
     debugging('Function tag_type_set() is deprecated and can be replaced with use core_tag_tag::get($tagid)->update().', DEBUG_DEVELOPER);
     if ($tag = core_tag_tag::get($tagid, '*')) {
-        return $tag->update(array('tagtype' => $type));
+        return $tag->update(array('isstandard' => ($type === 'official') ? 1 : 0));
     }
     return false;
 }
@@ -2666,8 +2666,9 @@ function tag_description_set($tagid, $description, $descriptionformat) {
 function tag_get_tags($record_type, $record_id, $type=null, $userid=0) {
     debugging('Method tag_get_tags() is deprecated and replaced with core_tag_tag::get_item_tags(). ' .
         'Component is now required when retrieving tag instances.', DEBUG_DEVELOPER);
-    $official = ($type === 'official' ? true : (!empty($type) ? false : null));
-    $tags = core_tag_tag::get_item_tags(null, $record_type, $record_id, $official, $userid);
+    $standardonly = ($type === 'official' ? core_tag_tag::STANDARD_ONLY :
+        (!empty($type) ? core_tag_tag::NOT_STANDARD_ONLY : core_tag_tag::BOTH_STANDARD_AND_NOT));
+    $tags = core_tag_tag::get_item_tags(null, $record_type, $record_id, $standardonly, $userid);
     $rv = array();
     foreach ($tags as $id => $t) {
         $rv[$id] = $t->to_object();
@@ -2688,8 +2689,9 @@ function tag_get_tags($record_type, $record_id, $type=null, $userid=0) {
 function tag_get_tags_array($record_type, $record_id, $type=null) {
     debugging('Method tag_get_tags_array() is deprecated and replaced with core_tag_tag::get_item_tags_array(). ' .
         'Component is now required when retrieving tag instances.', DEBUG_DEVELOPER);
-    $official = ($type === 'official' ? true : (!empty($type) ? false : null));
-    return core_tag_tag::get_item_tags_array('', $record_type, $record_id, $official);
+    $standardonly = ($type === 'official' ? core_tag_tag::STANDARD_ONLY :
+        (!empty($type) ? core_tag_tag::NOT_STANDARD_ONLY : core_tag_tag::BOTH_STANDARD_AND_NOT));
+    return core_tag_tag::get_item_tags_array('', $record_type, $record_id, $standardonly);
 }
 
 /**
@@ -2710,11 +2712,12 @@ function tag_get_tags_csv($record_type, $record_id, $html=null, $type=null) {
     debugging('Method tag_get_tags_csv() is deprecated. Instead you should use either ' .
             'core_tag_tag::get_item_tags_array() or $OUTPUT->tag_list(core_tag_tag::get_item_tags()). ' .
         'Component is now required when retrieving tag instances.', DEBUG_DEVELOPER);
-    $official = ($type === 'official' ? true : (!empty($type) ? false : null));
+    $standardonly = ($type === 'official' ? core_tag_tag::STANDARD_ONLY :
+        (!empty($type) ? core_tag_tag::NOT_STANDARD_ONLY : core_tag_tag::BOTH_STANDARD_AND_NOT));
     if ($html != TAG_RETURN_TEXT) {
-        return $OUTPUT->tag_list(core_tag_tag::get_item_tags('', $record_type, $record_id, $official), '');
+        return $OUTPUT->tag_list(core_tag_tag::get_item_tags('', $record_type, $record_id, $standardonly), '');
     } else {
-        return join(', ', core_tag_tag::get_item_tags_array('', $record_type, $record_id, $official, 0, false));
+        return join(', ', core_tag_tag::get_item_tags_array('', $record_type, $record_id, $standardonly, 0, false));
     }
 }
 
@@ -2856,7 +2859,8 @@ function tag_add($tags, $type="default") {
     if (!is_array($tags)) {
         $tags = array($tags);
     }
-    $objects = core_tag_tag::create_if_missing(core_tag_collection::get_default(), $tags, $type === 'official');
+    $objects = core_tag_tag::create_if_missing(core_tag_collection::get_default(), $tags,
+            $type === 'official');
 
     // New function returns the tags in different format, for BC we keep the format that this function used to have.
     $rv = array();
@@ -3007,7 +3011,7 @@ function tag_print_cloud($tagset=null, $nr_of_tags=150, $return=false, $sort='')
     if (is_null($tagset)) {
         // No tag set received, so fetch tags from database.
         // Always add query by tagcollid even when it's not known to make use of the table index.
-        $tagcloud = core_tag_collection::get_tag_cloud(0, '', $nr_of_tags, $sort);
+        $tagcloud = core_tag_collection::get_tag_cloud(0, false, $nr_of_tags, $sort);
     } else {
         $tagsincloud = $tagset;
 

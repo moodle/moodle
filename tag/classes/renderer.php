@@ -46,7 +46,7 @@ class core_tag_renderer extends plugin_renderer_base {
         $searchbox = $this->search_form($query, $tagcollid);
         $rv .= html_writer::div($searchbox, '', array('id' => 'tag-search-box'));
 
-        $tagcloud = core_tag_collection::get_tag_cloud($tagcollid, '', 150, 'name', $query);
+        $tagcloud = core_tag_collection::get_tag_cloud($tagcollid, false, 150, 'name', $query);
         $searchresults = '';
         if ($tagcloud->get_count()) {
             $searchresults = $this->output->render_from_template('core_tag/tagcloud',

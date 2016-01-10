@@ -13,8 +13,8 @@ Feature: Manager is able to delete tags
       | user     | course               | role      |
       | manager1 | Acceptance test site | manager   |
     And the following "tags" exist:
-      | name         | tagtype  |
-      | Neverusedtag | official |
+      | name         | isstandard |
+      | Neverusedtag | 1          |
 
   Scenario: Deleting a tag with javascript disabled
     When I log in as "manager1"

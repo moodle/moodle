@@ -14,8 +14,8 @@ Feature: Adding blog tag block
       | fullname  | shortname |
       | Course 1  | c1        |
     And the following "tags" exist:
-      | name         | tagtype  |
-      | Neverusedtag | official |
+      | name         | isstandard  |
+      | Neverusedtag | 1           |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | c1     | editingteacher |
