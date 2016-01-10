@@ -29,7 +29,6 @@ defined('MOODLE_INTERNAL') || die();
  * Library of functions and constants for blog
  */
 require_once($CFG->dirroot .'/blog/rsslib.php');
-require_once($CFG->dirroot.'/tag/lib.php');
 
 /**
  * User can edit a blog entry if this is their own blog entry and they have
@@ -254,8 +253,8 @@ function blog_sync_external_entries($externalblog) {
             $id = $DB->insert_record('post', $newentry);
 
             // Set tags.
-            if ($tags = tag_get_tags_array('blog_external', $externalblog->id)) {
-                tag_set('post', $id, $tags, 'core', context_user::instance($externalblog->userid)->id);
+            if ($tags = core_tag_tag::get_item_tags_array('core', 'blog_external', $externalblog->id)) {
+                core_tag_tag::set_item_tags('core', 'post', $id, context_user::instance($externalblog->userid), $tags);
             }
         } else {
             $newentry->id = $postid;
@@ -1045,4 +1044,106 @@ function core_blog_myprofile_navigation(core_user\output\myprofile\tree $tree, $
     $blognode = new core_user\output\myprofile\node('miscellaneous', 'blogs', $title, null, $url);
     $tree->add_node($blognode);
     return true;
+}
+
+/**
+ * Returns posts tagged with a specified tag.
+ *
+ * @param core_tag_tag $tag
+ * @param bool $exclusivemode if set to true it means that no other entities tagged with this tag
+ *             are displayed on the page and the per-page limit may be bigger
+ * @param int $fromctx context id where the link was displayed, may be used by callbacks
+ *            to display items in the same context first
+ * @param int $ctx context id where to search for records
+ * @param bool $rec search in subcontexts as well
+ * @param int $page 0-based number of page being displayed
+ * @return \core_tag\output\tagindex
+ */
+function blog_get_tagged_posts($tag, $exclusivemode = false, $fromctx = 0, $ctx = 0, $rec = true, $page = 0) {
+    global $CFG, $OUTPUT;
+    require_once($CFG->dirroot.'/user/lib.php');
+
+    $systemcontext = context_system::instance();
+    $perpage = $exclusivemode ? 20 : 5;
+    $context = $ctx ? context::instance_by_id($ctx) : context_system::instance();
+
+    $content = '';
+    if (empty($CFG->enableblogs) || !has_capability('moodle/blog:view', $systemcontext)) {
+        // Blogs are not enabled or are not visible to the current user.
+        $totalpages = 0;
+    } else if ($context->contextlevel != CONTEXT_SYSTEM && empty($CFG->useblogassociations)) {
+        // No blog entries can be associated to the non-system context.
+        $totalpages = 0;
+    } else if (!$rec && $context->contextlevel != CONTEXT_COURSE && $context->contextlevel != CONTEXT_MODULE) {
+        // No blog entries can be associated with category or block context.
+        $totalpages = 0;
+    } else {
+        require_once($CFG->dirroot.'/blog/locallib.php');
+
+        $filters = array('tag' => $tag->id);
+        if ($rec) {
+            if ($context->contextlevel != CONTEXT_SYSTEM) {
+                $filters['context'] = $context->id;
+            }
+        } else if ($context->contextlevel == CONTEXT_COURSE) {
+            $filters['course'] = $context->instanceid;
+        } else if ($context->contextlevel == CONTEXT_MODULE) {
+            $filters['module'] = $context->instanceid;
+        }
+        $bloglisting = new blog_listing($filters);
+        $blogs = $bloglisting->get_entries($page * $perpage, $perpage);
+        $totalcount = $bloglisting->count_entries();
+        $totalpages = ceil($totalcount / $perpage);
+        if (!empty($blogs)) {
+            $tagfeed = new core_tag\output\tagfeed();
+            foreach ($blogs as $blog) {
+                $user = fullclone($blog);
+                $user->id = $blog->userid;
+                $user->deleted = 0;
+                $img = $OUTPUT->user_picture($user, array('size' => 35));
+                $subject = format_string($blog->subject);
+
+                if ($blog->publishstate == 'draft') {
+                    $class = 'dimmed';
+                } else {
+                    $class = '';
+                }
+
+                $url = new moodle_url('/blog/index.php', array('entryid' => $blog->id));
+                $subject = html_writer::link($url, $subject, array('class' => $class));
+
+                $fullname = fullname($user);
+                if (user_can_view_profile($user)) {
+                    $profilelink = new moodle_url('/user/view.php', array('id' => $blog->userid));
+                    $fullname = html_writer::link($profilelink, $fullname);
+                }
+                $details = $fullname . ', ' . userdate($blog->created);
+
+                $tagfeed->add($img, $subject, $details);
+            }
+
+            $items = $tagfeed->export_for_template($OUTPUT);
+            $content = $OUTPUT->render_from_template('core_tag/tagfeed', $items);
+
+            $urlparams = array('tagid' => $tag->id);
+            if ($context->contextlevel == CONTEXT_COURSE) {
+                $urlparams['courseid'] = $context->instanceid;
+            } else if ($context->contextlevel == CONTEXT_MODULE) {
+                $urlparams['modid'] = $context->instanceid;
+            }
+            $allblogsurl = new moodle_url('/blog/index.php', $urlparams);
+
+            $rv = new core_tag\output\tagindex($tag, 'core', 'post',
+                    $content,
+                    $exclusivemode, $fromctx, $ctx, $rec, $page, $totalpages);
+            $rv->exclusiveurl = $allblogsurl;
+            return $rv;
+        }
+    }
+
+    $rv = new core_tag\output\tagindex($tag, 'core', 'post',
+            $content,
+            $exclusivemode, $fromctx, $ctx, $rec, $page, $totalpages);
+    $rv->exclusiveurl = null;
+    return $rv;
 }

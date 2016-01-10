@@ -217,10 +217,8 @@ function blog_rss_get_feed($context, $args) {
             $summary = file_rewrite_pluginfile_urls($blogentry->summary, 'pluginfile.php',
                 $sitecontext->id, 'blog', 'post', $blogentry->id);
             $item->description = format_text($summary, $blogentry->format);
-            if ( !empty($CFG->usetags) && ($blogtags = tag_get_tags_array('post', $blogentry->id)) ) {
-                if ($blogtags) {
-                    $item->tags = $blogtags;
-                }
+            if ($blogtags = core_tag_tag::get_item_tags_array('core', 'post', $blogentry->id)) {
+                $item->tags = $blogtags;
                 $item->tagscheme = $CFG->wwwroot . '/tag';
             }
             $items[] = $item;

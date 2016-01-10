@@ -24,7 +24,6 @@ require_once(dirname(dirname(__FILE__)).'/config.php');
 require_once($CFG->dirroot .'/blog/lib.php');
 require_once($CFG->dirroot .'/blog/locallib.php');
 require_once($CFG->dirroot .'/course/lib.php');
-require_once($CFG->dirroot .'/tag/lib.php');
 require_once($CFG->dirroot .'/comment/lib.php');
 
 $id       = optional_param('id', null, PARAM_INT);
