@@ -162,8 +162,8 @@ Feature: Users can edit tags to add description or rename
     And I click on "Edit tag name" "link" in the "Turtle" "table_row"
     And I set the field "New name for tag Turtle" to "DOG"
     And I press key "13" in the field "New name for tag Turtle"
-    And I should see "Tag names already being used"
-    And I press "Close"
+    And I should see "This tag name is already used, do you want to combine these tags?"
+    And I press "Cancel"
     And "New name for tag" "field" should not exist
     And I should see "Turtle"
     And I should see "Dog"
@@ -182,4 +182,40 @@ Feature: Users can edit tags to add description or rename
     And I follow "Default collection"
     And I should see "Turtle"
     And I should not see "Penguin"
+    And I log out
+
+  @javascript
+  Scenario: Combining tags when renaming
+    When I log in as "manager1"
+    And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I follow "Default collection"
+    And I click on "Edit tag name" "link" in the "Turtle" "table_row"
+    And I set the field "New name for tag Turtle" to "DOG"
+    And I press key "13" in the field "New name for tag Turtle"
+    And I should see "This tag name is already used, do you want to combine these tags?"
+    And I press "Yes"
+    Then I should not see "Turtle"
+    And I should not see "DOG"
+    And I should see "Dog"
+    And I log out
+
+  @javascript
+  Scenario: Combining multiple tags
+    When I log in as "manager1"
+    And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I follow "Default collection"
+    And I set the following fields to these values:
+      | Select tag Dog | 1 |
+      | Select tag Neverusedtag | 1 |
+      | Select tag Turtle | 1 |
+    And I press "Combine selected"
+    And I should see "Select the tag that will be used after combining"
+    And I click on "//form[@id='combinetags_form']//input[@type='radio'][3]" "xpath_element"
+    And I press "Continue"
+    Then I should see "Tags are combined"
+    And I should not see "Dog"
+    And I should not see "Neverusedtag"
+    And I should see "Turtle"
+    # Even though Turtle was not standard but at least one of combined tags was (Neverusedtag). Now Turtle is also standard.
+    And "Remove from standard tags" "link" should exist in the "Turtle" "table_row"
     And I log out
