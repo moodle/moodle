@@ -260,4 +260,79 @@ class core_external extends external_api {
                 'string' => new external_value(PARAM_RAW, 'translated string'))
             ));
     }
+
+    /**
+     * Returns description of get_fragment parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function get_fragment_parameters() {
+        return new external_function_parameters(
+            array(
+                'component' => new external_value(PARAM_RAW, 'Component for the callback e.g. mod_asign'),
+                'callback' => new external_value(PARAM_RAW, 'Name of the callback to execute'),
+                'args' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUMEXT, 'param name'),
+                            'value' => new external_value(PARAM_TEXT, 'param value')
+                        )
+                    ), 'args for the callback are optional', VALUE_OPTIONAL
+                )
+            )
+        );
+    }
+
+    /**
+     * Get a HTML fragment for inserting into something. Initial use is for inserting mforms into
+     * a page using AJAX.
+     *
+     * @param string $component Name of the component.
+     * @param string $callback Function callback name.
+     * @param array $args optional arguments for the callback.
+     * @return array HTML and JavaScript fragments for insertion into stuff.
+     * @since Moodle 3.1
+     */
+    public static function get_fragment($component, $callback, $args = null) {
+        global $PAGE;
+
+        $params = self::validate_parameters(self::get_fragment_parameters(),
+                array(
+                    'component' => $component,
+                    'callback' => $callback,
+                    'args' => $args
+                )
+        );
+
+        // Reformat arguments into something less unwieldy.
+        $arguments = array();
+        foreach ($params['args'] as $paramargument) {
+            $arguments[$paramargument['name']] = $paramargument['value'];
+        }
+
+        // Remove warning about context not being set.
+        $PAGE->set_context(context_system::instance());
+
+        $PAGE->set_requirements_for_fragments();
+        $data = component_callback($params['component'], $params['callback'], $arguments);
+        $jsfooter = $PAGE->requires->get_end_code();
+        $output = array('html' => $data, 'javascript' => $jsfooter);
+        return $output;
+    }
+
+    /**
+     * Returns description of get_fragment() result value
+     *
+     * @return array
+     * @since Moodle 3.1
+     */
+    public static function get_fragment_returns() {
+        return new external_single_structure(
+            array(
+                'html' => new external_value(PARAM_RAW, 'HTML fragment.'),
+                'javascript' => new external_value(PARAM_RAW, 'JavaScript fragment')
+            )
+        );
+    }
 }

@@ -33,6 +33,7 @@ require_once($CFG->libdir.'/outputactions.php');
 require_once($CFG->libdir.'/outputfactories.php');
 require_once($CFG->libdir.'/outputrenderers.php');
 require_once($CFG->libdir.'/outputrequirementslib.php');
+require_once($CFG->libdir.'/outputfragmentrequirementslib.php');
 
 /**
  * Invalidate all server and client side caches.

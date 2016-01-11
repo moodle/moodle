@@ -825,6 +825,13 @@ class moodle_page {
     }
 
     /**
+     * Changes the requirements manager over to receive fragments.
+     */
+    public function set_requirements_for_fragments() {
+        $this->_requires = new fragment_requirements_manager();
+    }
+
+    /**
      * Should the current user see this page in editing mode.
      * That is, are they allowed to edit this page, and are they currently in
      * editing mode.
