@@ -184,6 +184,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                     case 2: $gradingtype = get_string('relativenextincludelast', $plugin); break;
                     case 3: $gradingtype = get_string('relativeonepreviousandnext', $plugin); break;
                     case 4: $gradingtype = get_string('relativeallpreviousandnext', $plugin); break;
+                    case 5: $gradingtype = get_string('longestorderedsubset', $plugin); break;
                 }
 
                 // format grading type, e.g. Grading type: Relative to next item, excluding last item
@@ -222,7 +223,11 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                     $scoredetails .= html_writer::end_tag('ol');
 
                     // format gradedetails, e.g. 4 /6 = 67%
-                    $gradedetails = round(100 * $totalscore / $totalmaxscore, 0);
+                    if ($totalscore==0 || $totalmaxscore==0) {
+                        $gradedetails = 0;
+                    } else {
+                        $gradedetails = round(100 * $totalscore / $totalmaxscore, 0);
+                    }
                     $gradedetails = "$totalscore / $totalmaxscore = $gradedetails%";
                     $gradedetails = get_string('gradedetails', $plugin).': '.$gradedetails;
                     $gradedetails = html_writer::tag('p', $gradedetails, array('class' => 'gradedetails'));
@@ -296,6 +301,18 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                 $this->correctinfo = $question->get_previous_and_next_answerids($question->correctresponse, true);
                 $this->currentinfo = $question->get_previous_and_next_answerids($question->currentresponse, true);
                 break;
+            case 5: // LONGEST_ORDERED_SUBSET
+                $this->correctinfo = $question->correctresponse;
+                $this->currentinfo = $question->currentresponse;
+                $subset = $question->get_ordered_subset();
+                foreach ($this->currentinfo as $position => $answerid) {
+                    if (array_search($position, $subset)===false) {
+                        $this->currentinfo[$position] = 0;
+                    } else {
+                        $this->currentinfo[$position] = 1;
+                    }
+                }
+                break;
         }
     }
 
@@ -350,6 +367,15 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                         $maxscore += count($next);
                         $next = array_intersect($next, $currentinfo[$answerid]->next);
                         $score += count($next);
+                    }
+                    break;
+
+                case 5: // LONGEST_ORDERED_SUBSET
+                    if (isset($correctinfo[$position])) {
+                        if (isset($currentinfo[$position])) {
+                            $score = $currentinfo[$position];
+                        }
+                        $maxscore = 1;
                     }
                     break;
             }

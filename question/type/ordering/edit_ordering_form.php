@@ -47,6 +47,7 @@ class qtype_ordering_edit_form extends question_edit_form {
     const RELATIVE_NEXT_INCLUDE_LAST = 2;
     const RELATIVE_ONE_PREVIOUS_AND_NEXT = 3;
     const RELATIVE_ALL_PREVIOUS_AND_NEXT = 4;
+    const LONGEST_ORDERED_SUBSET = 5;
 
     // this functionality is currently disabled
     // because it is not fully functional
@@ -112,7 +113,8 @@ class qtype_ordering_edit_form extends question_edit_form {
             self::RELATIVE_NEXT_EXCLUDE_LAST => get_string('relativenextexcludelast', $plugin),
             self::RELATIVE_NEXT_INCLUDE_LAST => get_string('relativenextincludelast', $plugin),
             self::RELATIVE_ONE_PREVIOUS_AND_NEXT => get_string('relativeonepreviousandnext', $plugin),
-            self::RELATIVE_ALL_PREVIOUS_AND_NEXT => get_string('relativeallpreviousandnext', $plugin)
+            self::RELATIVE_ALL_PREVIOUS_AND_NEXT => get_string('relativeallpreviousandnext', $plugin),
+            self::LONGEST_ORDERED_SUBSET => get_string('longestorderedsubset', $plugin)
         );
         $mform->addElement('select', $name, $label, $options);
         $mform->addHelpButton($name, $name, $plugin);

@@ -200,6 +200,12 @@ class qtype_ordering_question extends question_graded_automatically {
                     $countanswers += count($answerids->next);
                 }
                 break;
+
+            case 5: // LONGEST_ORDERED_SUBSET
+                $subset = $this->get_ordered_subset();
+                $countcorrect = count($subset);
+                $countanswers = count($this->currentresponse);
+                break;
         }
         if ($countanswers==0) {
             $fraction = 0;
@@ -207,45 +213,6 @@ class qtype_ordering_question extends question_graded_automatically {
             $fraction = ($countcorrect / $countanswers);
         }
         return array($fraction, question_state::graded_state_for_fraction($fraction));
-    }
-
-    public function get_next_answerids($answerids, $last_item=false) {
-        $nextanswerids = array();
-        $i_max = count($answerids);
-        $i_max--;
-        if ($last_item) {
-            $nextanswerid = 0;
-        } else {
-            $nextanswerid = $answerids[$i_max];
-            $i_max--;
-        }
-        for ($i=$i_max; $i>=0; $i--) {
-            $thisanswerid = $answerids[$i];
-            $nextanswerids[$thisanswerid] = $nextanswerid;
-            $nextanswerid = $thisanswerid;
-        }
-        return $nextanswerids;
-    }
-
-    public function get_previous_and_next_answerids($answerids, $all=false) {
-        $prevnextanswerids = array();
-        $next = $answerids;
-        $prev = array();
-        while ($answerid = array_shift($next)) {
-            if ($all) {
-                $prevnextanswerids[$answerid] = (object)array(
-                    'prev' => $prev,
-                    'next' => $next
-                );
-            } else {
-                $prevnextanswerids[$answerid] = (object)array(
-                    'prev' => array(empty($prev) ? 0 : $prev[0]),
-                    'next' => array(empty($next) ? 0 : $next[0])
-                );
-            }
-            array_unshift($prev, $answerid);
-        }
-        return $prevnextanswerids;
     }
 
     public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
@@ -341,5 +308,109 @@ class qtype_ordering_question extends question_graded_automatically {
             case 1:  return 'horizontal';
             default: return ''; // shouldn't happen !!
         }
+    }
+
+    public function get_next_answerids($answerids, $last_item=false) {
+        $nextanswerids = array();
+        $i_max = count($answerids);
+        $i_max--;
+        if ($last_item) {
+            $nextanswerid = 0;
+        } else {
+            $nextanswerid = $answerids[$i_max];
+            $i_max--;
+        }
+        for ($i=$i_max; $i>=0; $i--) {
+            $thisanswerid = $answerids[$i];
+            $nextanswerids[$thisanswerid] = $nextanswerid;
+            $nextanswerid = $thisanswerid;
+        }
+        return $nextanswerids;
+    }
+
+    public function get_previous_and_next_answerids($answerids, $all=false) {
+        $prevnextanswerids = array();
+        $next = $answerids;
+        $prev = array();
+        while ($answerid = array_shift($next)) {
+            if ($all) {
+                $prevnextanswerids[$answerid] = (object)array(
+                    'prev' => $prev,
+                    'next' => $next
+                );
+            } else {
+                $prevnextanswerids[$answerid] = (object)array(
+                    'prev' => array(empty($prev) ? 0 : $prev[0]),
+                    'next' => array(empty($next) ? 0 : $next[0])
+                );
+            }
+            array_unshift($prev, $answerid);
+        }
+        return $prevnextanswerids;
+    }
+
+    public function get_ordered_subset() {
+        $positions = $this->get_ordered_positions($this->correctresponse,
+                                                  $this->currentresponse);
+        $subsets = $this->get_ordered_subsets($positions, count($positions));
+        $countcorrect = 1; // i.e. ignore single item subsets
+        $subsetcorrect = array();
+        foreach ($subsets as $subset) {
+            $count = count($subset);
+            if ($count > $countcorrect) {
+                $countcorrect = $count;
+                $subsetcorrect = $subset;
+            }
+        }
+        return $subsetcorrect;
+    }
+
+    public function get_ordered_positions($correctresponse, $currentresponse) {
+        $positions = array();
+        foreach ($currentresponse as $answerid) {
+            $positions[] = array_search($answerid, $correctresponse);
+        }
+        return $positions;
+    }
+
+    public function get_ordered_subsets($positions, $i_max, $i_min=0, $previous=-1) {
+
+        // $subsets is the collection of all subsets within $positions
+        $subsets = array();
+
+        // $subset is the main (=earliest or leftmost) subset within $positions
+        $subset = array();
+
+        for ($i=$i_min; $i<$i_max; $i++) {
+            $current = $positions[$i];
+
+            // if $current is out of sequence, skip it
+            if ($current < $previous) {
+                continue;
+            }
+
+            // if $current is not the position immediately after
+            // $previous, then we have a non-contiguous sequence
+            if ($current > ($previous + 1)) {
+
+                // fetch all the subsets in the tail of $positions,
+                // and prepend $subset-so-far onto each tail subset
+                $tailsets = $this->get_ordered_subsets($positions, $i_max, $i+1, $previous);
+                foreach ($tailsets as $tailset) {
+                    $subsets[] = array_merge($subset, $tailset);
+                }
+            }
+
+            // add $i to the main subset
+            $subset[] = $i;
+
+            // update the $previous value
+            $previous = $current;
+        }
+        if (count($subset)) {
+            // put the main $subset first
+            array_unshift($subsets, $subset);
+        }
+        return $subsets;
     }
 }
