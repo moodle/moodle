@@ -134,7 +134,7 @@ class tool_lp_testable_exporter extends \tool_lp\external\exporter {
     public static function define_properties() {
         return array(
             'stringA' => array(
-                'type' => PARAM_TEXT,
+                'type' => PARAM_RAW,
             ),
             'stringAformat' => array(
                 'type' => PARAM_INT,
