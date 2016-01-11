@@ -36,4 +36,12 @@ $functions = array(
         'type'          => 'read',
         'capabilities'  => 'mod/quiz:view'
     ),
+
+    'mod_quiz_view_quiz' => array(
+        'classname'     => 'mod_quiz_external',
+        'methodname'    => 'view_quiz',
+        'description'   => 'Trigger the course module viewed event and update the module completion status.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/quiz:view'
+    ),
 );

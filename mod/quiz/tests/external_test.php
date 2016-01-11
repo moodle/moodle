@@ -206,4 +206,66 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
 
     }
 
+    /**
+     * Test test_view_quiz
+     */
+    public function test_view_quiz() {
+        global $DB;
+
+        // Test invalid instance id.
+        try {
+            mod_quiz_external::view_quiz(0);
+            $this->fail('Exception expected due to invalid mod_quiz instance id.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('invalidrecord', $e->errorcode);
+        }
+
+        // Test not-enrolled user.
+        $usernotenrolled = self::getDataGenerator()->create_user();
+        $this->setUser($usernotenrolled);
+        try {
+            mod_quiz_external::view_quiz($this->quiz->id);
+            $this->fail('Exception expected due to not enrolled user.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        $result = mod_quiz_external::view_quiz($this->quiz->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::view_quiz_returns(), $result);
+        $this->assertTrue($result['status']);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_shift($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_quiz\event\course_module_viewed', $event);
+        $this->assertEquals($this->context, $event->get_context());
+        $moodlequiz = new \moodle_url('/mod/quiz/view.php', array('id' => $this->cm->id));
+        $this->assertEquals($moodlequiz, $event->get_url());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+
+        // Test user with no capabilities.
+        // We need a explicit prohibit since this capability is only defined in authenticated user and guest roles.
+        assign_capability('mod/quiz:view', CAP_PROHIBIT, $this->studentrole->id, $this->context->id);
+        // Empty all the caches that may be affected  by this change.
+        accesslib_clear_all_caches_for_unit_testing();
+        course_modinfo::clear_instance_cache();
+
+        try {
+            mod_quiz_external::view_quiz($this->quiz->id);
+            $this->fail('Exception expected due to missing capability.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
+    }
+
 }
