@@ -393,7 +393,7 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
                 // Show ical source if needed.
                 if (!empty($event->subscription) && $CFG->calendar_showicalsource) {
                     $a = new stdClass();
-                    $a->name = $name;
+                    $a->name = format_string($event->name, true);
                     $a->source = $event->subscription->name;
                     $name = get_string('namewithsource', 'calendar', $a);
                 } else {
