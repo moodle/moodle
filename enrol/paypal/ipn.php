@@ -58,7 +58,7 @@ $data = new stdClass();
 
 foreach ($_POST as $key => $value) {
     $req .= "&$key=".urlencode($value);
-    $data->$key = $value;
+    $data->$key = fix_utf8($value);
 }
 
 $custom = explode('-', $data->custom);
@@ -211,6 +211,8 @@ if (strlen($result) > 0) {
             die;
 
         }
+        // Use the queried course's full name for the item_name field.
+        $data->item_name = $course->fullname;
 
         // ALL CLEAR !
 
