@@ -83,7 +83,7 @@ class enrol_ldap_testcase extends advanced_testcase {
         $enrol->set_config('start_tls', 0);
         $enrol->set_config('ldap_version', 3);
         $enrol->set_config('ldapencoding', 'utf-8');
-        $enrol->set_config('page_size', '2');
+        $enrol->set_config('pagesize', '2');
         $enrol->set_config('bind_dn', TEST_ENROL_LDAP_BIND_DN);
         $enrol->set_config('bind_pw', TEST_ENROL_LDAP_BIND_PW);
         $enrol->set_config('course_search_sub', 0);
