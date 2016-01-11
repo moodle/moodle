@@ -205,6 +205,9 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     // Create a page for general import configuration and defaults.
     $temp = new admin_settingpage('importgeneralsettings', new lang_string('importgeneralsettings', 'backup'), 'moodle/backup:backupcourse');
     $temp->add(new admin_setting_configtext('backup/import_general_maxresults', new lang_string('importgeneralmaxresults', 'backup'), new lang_string('importgeneralmaxresults_desc', 'backup'), 10));
+    $temp->add(new admin_setting_configcheckbox('backup/import_general_duplicate_admin_allowed',
+            new lang_string('importgeneralduplicateadminallowed', 'backup'),
+            new lang_string('importgeneralduplicateadminallowed_desc', 'backup'), 0));
     $ADMIN->add('backups', $temp);
 
     // Create a page for automated backups configuration and defaults.
