@@ -168,14 +168,15 @@ M.gradingform_guideeditor.buttonclick = function(e, confirmed) {
         return;
     }
     // prepare the id of the next inserted criterion
-
+    var elements_str;
     if (section == 'criteria') {
         elements_str = '#guide-'+name+' .criteria .criterion'
     } else if (section == 'comments') {
         elements_str = '#guide-'+name+' .comments .criterion'
     }
+    var newid = 0;
     if (action == 'addcriterion' || action == 'addcomment') {
-        var newid = M.gradingform_guideeditor.calculatenewid(elements_str)
+        newid = M.gradingform_guideeditor.calculatenewid(elements_str);
     }
     var dialog_options = {
         'scope' : this,
@@ -199,7 +200,14 @@ M.gradingform_guideeditor.buttonclick = function(e, confirmed) {
         M.gradingform_guideeditor.addhandlers();
         M.gradingform_guideeditor.disablealleditors()
         M.gradingform_guideeditor.assignclasses(elements_str)
-        //M.gradingform_guideeditor.editmode(Y.one('#guide-'+name+' #'+name+'-'+section+'-NEWID'+newid+'-shortname'),true)
+
+        // Enable edit mode of the newly added criterion/comment entry.
+        var inputTarget = 'shortname';
+        if (action == 'addcomment') {
+            inputTarget = 'description';
+        }
+        var inputTargetId = '#guide-' + name + ' #' + name + '-' + section + '-NEWID' + newid + '-' + inputTarget;
+        M.gradingform_guideeditor.editmode(Y.one(inputTargetId), true);
     } else if (chunks.length == 4 && action == 'moveup') {
         // MOVE UP
         el = Y.one('#'+name+'-'+section+'-'+chunks[2])
