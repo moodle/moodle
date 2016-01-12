@@ -436,6 +436,18 @@ class plan extends persistent {
             return true;
         }
 
+        // During update.
+        if ($this->get_id()) {
+            $before = $this->beforeupdate->get_duedate();
+            $beforestatus = $this->beforeupdate->get_status();
+
+            // The value has not changed, then it's always OK. Though if we're going
+            // from draft to active it has to has to be validated.
+            if ($before == $value && $beforestatus != self::STATUS_DRAFT) {
+                return true;
+            }
+        }
+
         if ($value <= time()) {
             // We cannot set the date in the past.
             return new lang_string('errorcannotsetduedateinthepast', 'tool_lp');

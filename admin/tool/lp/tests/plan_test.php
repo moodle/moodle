@@ -25,6 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
+use tool_lp\plan;
+
 /**
  * Plan persistent testcase.
  *
@@ -301,6 +303,23 @@ class tool_lp_plan_testcase extends advanced_testcase {
         // Updating active plan.
         $plan->update();
 
+        // Active to active: past => same past (pass).
+        $record = $plan->to_record();
+        $record->duedate = 1;
+        $DB->update_record(plan::TABLE, $record);
+        $plan->read();
+        $plan->set_description(uniqid()); // Force revalidation.
+        $this->assertTrue($plan->is_valid());
+
+        // Active to active: past => unset (pass).
+        $plan->set_duedate(0);
+        $this->assertTrue($plan->is_valid());
+        $plan->update();
+
+        // Active to active: unset => unset (pass).
+        $plan->set_description(uniqid()); // Force revalidation.
+        $this->assertTrue($plan->is_valid());
+
         // Active to active: unset date => past date(fail).
         $plan->set_duedate(time() - 100);
         $expected = array(
@@ -321,6 +340,10 @@ class tool_lp_plan_testcase extends advanced_testcase {
 
         // Updating active plan with future date.
         $plan->update();
+
+        // Active to active: future => same future (pass).
+        $plan->set_description(uniqid()); // Force revalidation.
+        $this->assertTrue($plan->is_valid());
 
         // Active to active: future date => unset date (pass).
         $plan->set_duedate(0);
@@ -411,7 +434,10 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $success = tool_lp\api::reopen_plan($plan->get_id());
         $this->assertTrue($success);
         $plan->read();
-        $this->assertEquals(time() + tool_lp\plan::DUEDATE_THRESHOLD + 10, $plan->get_duedate());
+
+        // Check that the due date has not changed, but allow for PHP Unit latency.
+        $this->assertTrue($plan->get_duedate() >= time() + tool_lp\plan::DUEDATE_THRESHOLD + 10);
+        $this->assertTrue($plan->get_duedate() <= time() + tool_lp\plan::DUEDATE_THRESHOLD + 15);
 
     }
 }
