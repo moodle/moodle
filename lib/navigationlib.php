@@ -3888,8 +3888,10 @@ class settings_navigation extends navigation_node {
         }
 
         //Add badges navigation
-        require_once($CFG->libdir .'/badgeslib.php');
-        badges_add_course_navigation($coursenode, $course);
+        if (!empty($CFG->enablebadges)) {
+            require_once($CFG->libdir .'/badgeslib.php');
+            badges_add_course_navigation($coursenode, $course);
+        }
 
         // Backup this course
         if (has_capability('moodle/backup:backupcourse', $coursecontext)) {
