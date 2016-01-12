@@ -18,10 +18,18 @@
     text-align: left;
     padding-top: 1.5em;
 }
-
 #page-mod-quiz-attempt.dir-rtl .submitbtns,
 #page-mod-quiz-review.dir-rtl .submitbtns {
     text-align: right;
+}
+
+#page-mod-quiz-attempt .submitbtns .mod_quiz-next-nav,
+#page-mod-quiz-review .submitbtns .mod_quiz-next-nav {
+    float: right;
+}
+#page-mod-quiz-attempt.dir-rtl .submitbtns .mod_quiz-next-nav,
+#page-mod-quiz-review.dir-rtl .submitbtns .mod_quiz-next-nav {
+    float: left;
 }
 
 .path-mod-quiz .mod_quiz-redo_question_button {

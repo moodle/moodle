@@ -39,7 +39,7 @@ Feature: Quiz reset
     And I follow "Test quiz name"
     And I press "Attempt quiz now"
     And I set the field "True" to "1"
-    And I press "Next"
+    And I press "Finish attempt ..."
     And I press "Submit all and finish"
     And I log out
     And I log in as "teacher1"

@@ -38,7 +38,7 @@ Feature: Set a quiz to be marked complete when the student passes
     And I follow "Test quiz name"
     And I press "Attempt quiz now"
     And I set the field "True" to "1"
-    And I press "Next"
+    And I press "Finish attempt ..."
     And I press "Submit all and finish"
     And I follow "C1"
     Then "//img[contains(@alt, 'Completed: Test quiz name')]" "xpath_element" should exist in the "li.modtype_quiz" "css_element"
