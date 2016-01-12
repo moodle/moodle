@@ -4103,6 +4103,23 @@ EOD;
         $html .= html_writer::end_tag('header');
         return $html;
     }
+
+    /**
+     * Displays the list of tags associated with an entry
+     *
+     * @param array $tags list of instances of core_tag or stdClass
+     * @param string $label label to display in front, by default 'Tags' (get_string('tags')), set to null
+     *               to use default, set to '' (empty string) to omit the label completely
+     * @param string $classes additional classes for the enclosing div element
+     * @param int $limit limit the number of tags to display, if size of $tags is more than this limit the "more" link
+     *               will be appended to the end, JS will toggle the rest of the tags
+     * @param context $pagecontext specify if needed to overwrite the current page context for the view tag link
+     * @return string
+     */
+    public function tag_list($tags, $label = null, $classes = '', $limit = 10, $pagecontext = null) {
+        $list = new \core_tag\output\taglist($tags, $label, $classes, $limit, $pagecontext);
+        return $this->render_from_template('core_tag/taglist', $list->export_for_template($this));
+    }
 }
 
 /**

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,8 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    core
- * @subpackage tag
+ * Managing tags, tag areas and tags collections
+ *
+ * @package    core_tag
  * @copyright  2007 Luiz Cruz <luiz.laydner@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -37,12 +37,8 @@ $action      = optional_param('action', '', PARAM_ALPHA);
 $perpage     = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);
 $page        = optional_param('page', 0, PARAM_INT);
 $notice      = optional_param('notice', '', PARAM_ALPHA);
-
-require_login();
-
-if (empty($CFG->usetags)) {
-    print_error('tagsaredisabled', 'tag');
-}
+$tagcollid   = optional_param('tc', 0, PARAM_INT);
+$tagareaid   = optional_param('ta', null, PARAM_INT);
 
 $params = array();
 if ($perpage != DEFAULT_PAGE_SIZE) {
@@ -51,60 +47,168 @@ if ($perpage != DEFAULT_PAGE_SIZE) {
 if ($page > 0) {
     $params['page'] = $page;
 }
+
 admin_externalpage_setup('managetags', '', $params, '', array('pagelayout' => 'report'));
+
+if (empty($CFG->usetags)) {
+    print_error('tagsaredisabled', 'tag');
+}
+
+$tagobject = null;
+if ($tagid) {
+    $tagobject = core_tag_tag::get($tagid, '*', MUST_EXIST);
+    $tagcollid = $tagobject->tagcollid;
+}
+$tagcoll = core_tag_collection::get_by_id($tagcollid);
+$tagarea = core_tag_area::get_by_id($tagareaid);
+$manageurl = new moodle_url('/tag/manage.php');
+if ($tagcoll) {
+    // We are inside a tag collection - add it to the page url and the breadcrumb.
+    $PAGE->set_url(new moodle_url($PAGE->url, array('tc' => $tagcoll->id)));
+    $PAGE->navbar->add(core_tag_collection::display_name($tagcoll),
+            new moodle_url($manageurl, array('tc' => $tagcoll->id)));
+}
 
 $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
 
 switch($action) {
+
+    case 'colladd':
+    case 'colledit':
+        if ($action === 'colladd' || ($action === 'colledit' && $tagcoll && empty($tagcoll->component))) {
+            $form = new core_tag_collection_form($manageurl, $tagcoll);
+            if ($form->is_cancelled()) {
+                redirect($manageurl);
+            } else if ($data = $form->get_data()) {
+                if ($action === 'colladd') {
+                    core_tag_collection::create($data);
+                } else {
+                    core_tag_collection::update($tagcoll, $data);
+                }
+                redirect($manageurl);
+            } else {
+                $title = ($action === 'colladd') ?
+                        get_string('addtagcoll', 'tag') :
+                        get_string('edittagcoll', 'tag', core_tag_collection::display_name($tagcoll));
+                $PAGE->navbar->add($title);
+                echo $OUTPUT->header();
+                echo $OUTPUT->heading($title, 2);
+                $form->display();
+                echo $OUTPUT->footer();
+                exit;
+            }
+        }
+        break;
+
+    case 'colldelete':
+        $confirm = optional_param('confirm', false, PARAM_BOOL);
+        if (!$confirm) {
+            echo $OUTPUT->header();
+            $strconfirm = get_string('suredeletecoll', 'tag', core_tag_collection::display_name($tagcoll));
+            $params = array('tc' => $tagcoll->id, 'confirm' => 1, 'sesskey' => sesskey(), 'action' => 'colldelete');
+            $formcontinue = new single_button(new moodle_url($manageurl, $params), get_string('yes'));
+            $formcancel = new single_button($manageurl, get_string('no'), 'get');
+            echo $OUTPUT->confirm($strconfirm, $formcontinue, $formcancel);
+            echo $OUTPUT->footer();
+            die;
+        }
+        if ($tagcoll && !$tagcoll->component) {
+            require_sesskey();
+            core_tag_collection::delete($tagcoll);
+            redirect(new moodle_url($manageurl, array('notice' => 'changessaved')));
+        }
+        redirect($manageurl);
+        break;
+
+    case 'collmoveup':
+        if ($tagcoll) {
+            require_sesskey();
+            core_tag_collection::change_sortorder($tagcoll, -1);
+            redirect(new moodle_url($manageurl, array('notice' => 'changessaved')));
+        }
+        redirect($manageurl);
+        break;
+
+    case 'collmovedown':
+        if ($tagcoll) {
+            require_sesskey();
+            core_tag_collection::change_sortorder($tagcoll, 1);
+            redirect(new moodle_url($manageurl, array('notice' => 'changessaved')));
+        }
+        redirect($manageurl);
+        break;
+
+    case 'areaenable':
+    case 'areadisable':
+        if ($tagarea) {
+            require_sesskey();
+            $data = array('enabled' => ($action === 'areaenable') ? 1 : 0);
+            core_tag_area::update($tagarea, $data);
+            redirect(new moodle_url($manageurl, array('notice' => 'changessaved')));
+        }
+        redirect($manageurl);
+        break;
+
+    case 'areasetcoll':
+        if ($tagarea) {
+            require_sesskey();
+            if ($newtagcollid = optional_param('areacollid', null, PARAM_INT)) {
+                core_tag_area::update($tagarea, array('tagcollid' => $newtagcollid));
+                redirect(new moodle_url($manageurl, array('notice' => 'changessaved')));
+            }
+        }
+        redirect($manageurl);
+        break;
 
     case 'delete':
         require_sesskey();
         if (!$tagschecked && $tagid) {
             $tagschecked = array($tagid);
         }
-        tag_delete($tagschecked);
-        redirect(new moodle_url($PAGE->url, array('notice' => 'deleted')));
+        core_tag_tag::delete_tags($tagschecked);
+        redirect(new moodle_url($PAGE->url, $tagschecked ? array('notice' => 'deleted') : null));
         break;
 
     case 'setflag':
         require_sesskey();
-        tag_set_flag($tagid);
-        redirect(new moodle_url($PAGE->url, array('notice' => 'flagged')));
+        if ($tagid) {
+            $tagobject->flag();
+            redirect(new moodle_url($PAGE->url, array('notice' => 'flagged')));
+        }
+        redirect($PAGE->url);
         break;
 
     case 'resetflag':
         require_sesskey();
-        tag_unset_flag($tagid);
-        redirect(new moodle_url($PAGE->url, array('notice' => 'resetflag')));
+        if ($tagid) {
+            $tagobject->reset_flag();
+            redirect(new moodle_url($PAGE->url, array('notice' => 'resetflag')));
+        }
+        redirect($PAGE->url);
         break;
 
     case 'changetype':
         require_sesskey();
-        if ($tagtype === 'official' || $tagtype === 'default') {
-            if (tag_type_set($tagid, $tagtype)) {
-                redirect(new moodle_url($PAGE->url, array('notice' => 'typechanged')));
-            }
+        if ($tagid && $tagobject->update(array('tagtype' => $tagtype))) {
+            redirect(new moodle_url($PAGE->url, array('notice' => 'typechanged')));
         }
         redirect($PAGE->url);
         break;
 
     case 'addofficialtag':
         require_sesskey();
-        $otagsadd = optional_param('otagsadd', '', PARAM_RAW);
-        $newtags = preg_split('/\s*,\s*/', trim($otagsadd), -1, PREG_SPLIT_NO_EMPTY);
-        $newtags = array_filter(tag_normalize($newtags, TAG_CASE_ORIGINAL));
-        if (!$newtags) {
-            redirect($PAGE->url);
+        $tagobjects = null;
+        if ($tagcoll) {
+            $otagsadd = optional_param('otagsadd', '', PARAM_RAW);
+            $newtags = preg_split('/\s*,\s*/', trim($otagsadd), -1, PREG_SPLIT_NO_EMPTY);
+            $tagobjects = core_tag_tag::create_if_missing($tagcoll->id, $newtags, true);
         }
-        foreach ($newtags as $newotag) {
-            if ($newotagid = tag_get_id($newotag) ) {
-                // Tag exists, change the type.
-                tag_type_set($newotagid, 'official');
-            } else {
-                tag_add($newotag, 'official');
+        foreach ($tagobjects as $tagobject) {
+            if ($tagobject->tagtype !== 'official') {
+                $tagobject->update(array('tagtype' => 'official'));
             }
         }
-        redirect(new moodle_url($PAGE->url, array('notice' => 'added')));
+        redirect(new moodle_url($PAGE->url, $tagobjects ? array('notice' => 'added') : null));
         break;
 }
 
@@ -114,8 +218,28 @@ if ($notice && get_string_manager()->string_exists($notice, 'tag')) {
     echo $OUTPUT->notification(get_string($notice, 'tag'), 'notifysuccess');
 }
 
+if (!$tagcoll) {
+    // Tag collection is not specified. Display the overview of tag collections and tag areas.
+    $tagareastable = new core_tag_areas_table($manageurl);
+    $colltable = new core_tag_collections_table($manageurl);
+
+    echo $OUTPUT->heading(get_string('tagcollections', 'core_tag'), 3);
+    echo html_writer::table($colltable);
+    $url = new moodle_url($manageurl, array('action' => 'colladd'));
+    echo html_writer::div(html_writer::link($url, get_string('addtagcoll', 'tag')), 'mdl-right addtagcoll');
+
+    echo $OUTPUT->heading(get_string('tagareas', 'core_tag'), 3);
+    echo html_writer::table($tagareastable);
+
+    echo $OUTPUT->footer();
+    exit;
+}
+
+// Tag collection is specified. Manage tags in this collection.
+
 // Small form to add an official tag.
 print('<form class="tag-addtags-form" method="post" action="'.$CFG->wwwroot.'/tag/manage.php">');
+print('<input type="hidden" name="tc" value="'.$tagcollid.'" />');
 print('<input type="hidden" name="action" value="addofficialtag" />');
 print('<input type="hidden" name="perpage" value="'.$perpage.'" />');
 print('<input type="hidden" name="page" value="'.$page.'" />');
@@ -128,18 +252,21 @@ print('<div class="tag-management-form generalbox"><label class="accesshide" for
     '</div>');
 print('</form>');
 
-$table = new core_tag_manage_table();
+$table = new core_tag_manage_table($tagcollid);
 echo '<form class="tag-management-form" method="post" action="'.$CFG->wwwroot.'/tag/manage.php">';
+echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'tc', 'value' => $tagcollid));
 echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
 echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'action', 'value' => 'delete'));
 echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'perpage', 'value' => $perpage));
 echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'page', 'value' => $page));
 echo $table->out($perpage, true);
 
-echo html_writer::start_tag('p');
-echo html_writer::tag('button', get_string('deleteselected', 'tag'),
-        array('id' => 'tag-management-delete', 'type' => 'submit', 'class' => 'tagdeleteselected'));
-echo html_writer::end_tag('p');
+if ($table->rawdata) {
+    echo html_writer::start_tag('p');
+    echo html_writer::tag('button', get_string('deleteselected', 'tag'),
+            array('id' => 'tag-management-delete', 'type' => 'submit', 'class' => 'tagdeleteselected'));
+    echo html_writer::end_tag('p');
+}
 echo '</form>';
 
 $totalcount = $table->totalcount;

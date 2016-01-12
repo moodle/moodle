@@ -96,6 +96,7 @@ $STD_FIELDS = array('id', 'username', 'email',
         'suspended',   // 1 means suspend user account, 0 means activate user account, nothing means keep as is for existing users
         'deleted',     // 1 means delete user
         'mnethostid',  // Can not be used for adding, updating or deleting of users - only for enrolments, groups, cohorts and suspending.
+        'interests',
     );
 // Include all name fields.
 $STD_FIELDS = array_merge($STD_FIELDS, get_all_user_name_fields());
@@ -836,6 +837,10 @@ if ($formdata = $mform2->is_cancelled()) {
             }
         }
 
+        // Update user interests.
+        if (isset($user->interests) && strval($user->interests) !== '') {
+            useredit_update_interests($user, preg_split('/\s*,\s*/', $user->interests, -1, PREG_SPLIT_NO_EMPTY));
+        }
 
         // add to cohort first, it might trigger enrolments indirectly - do NOT create cohorts here!
         foreach ($filecolumns as $column) {

@@ -26,8 +26,8 @@ require_once('../config.php');
 require_once('lib.php');
 require_once('edit_form.php');
 
-$tag_id = optional_param('id', 0, PARAM_INT);
-$tag_name = optional_param('tag', '', PARAM_TAG);
+$tagid = optional_param('id', 0, PARAM_INT);
+$tagname = optional_param('tag', '', PARAM_TAG);
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 
 require_login();
@@ -40,34 +40,50 @@ if (empty($CFG->usetags)) {
 $systemcontext   = context_system::instance();
 require_capability('moodle/tag:edit', $systemcontext);
 
-if ($tag_name) {
-    $tag = tag_get('name', $tag_name, '*');
-} else if ($tag_id) {
-    $tag = tag_get('id', $tag_id, '*');
+if ($tagname) {
+    $tagcollid = optional_param('tc', 0, PARAM_INT);
+    if (!$tagcollid) {
+        // Tag name specified but tag collection was not. Try to guess it.
+        $tags = core_tag_tag::guess_by_name($tagname, '*');
+        if (count($tags) > 1) {
+            // This tag was found in more than one collection, redirect to search.
+            redirect(new moodle_url('/tag/search.php', array('tag' => $tagname)));
+        } else if (count($tags) == 1) {
+            $tag = reset($tags);
+        }
+    } else {
+        if (!$tag = core_tag_tag::get_by_name($tagcollid, $tagname, '*')) {
+            redirect(new moodle_url('/tag/search.php', array('tagcollid' => $tagcollid)));
+        }
+    }
+} else if ($tagid) {
+    $tag = core_tag_tag::get($tagid, '*');
 }
 
 if (empty($tag)) {
-    redirect($CFG->wwwroot.'/tag/search.php');
+    redirect(new moodle_url('/tag/search.php'));
 }
 
-$PAGE->set_url('/tag/index.php', array('id' => $tag->id));
+$PAGE->set_url($tag->get_view_url());
 $PAGE->set_subpage($tag->id);
 $PAGE->set_context($systemcontext);
 $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
 $PAGE->set_pagelayout('standard');
 
-$tagname = tag_display_name($tag);
+$tagname = $tag->get_display_name();
+$tagcollid = $tag->tagcollid;
 
 // set the relatedtags field of the $tag object that will be passed to the form
-$tag->relatedtags = tag_get_tags_array('tag', $tag->id);
+$data = $tag->to_object();
+$data->relatedtags = core_tag_tag::get_item_tags_array('core', 'tag', $tag->id);
 
 $options = new stdClass();
 $options->smiley = false;
 $options->filter = false;
 
 // convert and remove any XSS
-$tag->description       = format_text($tag->description, $tag->descriptionformat, $options);
-$tag->descriptionformat = FORMAT_HTML;
+$data->description       = format_text($tag->description, $tag->descriptionformat, $options);
+$data->descriptionformat = FORMAT_HTML;
 
 $errorstring = '';
 
@@ -78,76 +94,37 @@ $editoroptions = array(
     'context'   => $systemcontext,
     'subdirs'   => file_area_contains_subdirs($systemcontext, 'tag', 'description', $tag->id),
 );
-$tag = file_prepare_standard_editor($tag, 'description', $editoroptions, $systemcontext, 'tag', 'description', $tag->id);
+$data = file_prepare_standard_editor($data, 'description', $editoroptions, $systemcontext, 'tag', 'description', $data->id);
 
-$tagform = new tag_edit_form(null, compact('editoroptions'));
-if ( $tag->tagtype == 'official' ) {
-    $tag->tagtype = '1';
-} else {
-    $tag->tagtype = '0';
-}
+$tagform = new tag_edit_form(null, array('editoroptions' => $editoroptions, 'tag' => $tag));
+$data->tagtype = ($data->tagtype === 'official') ? '1' : '0';
+$data->returnurl = $returnurl;
 
-$tag->returnurl = $returnurl;
-$tagform->set_data($tag);
+$tagform->set_data($data);
 
-// If new data has been sent, update the tag record
 if ($tagform->is_cancelled()) {
-    redirect($returnurl ? new moodle_url($returnurl) :
-        new moodle_url('/tag/index.php', array('tag' => $tag->name)));
+    redirect($returnurl ? new moodle_url($returnurl) : $tag->get_view_url());
 } else if ($tagnew = $tagform->get_data()) {
+    // If new data has been sent, update the tag record.
+    $updatedata = array();
 
     if (has_capability('moodle/tag:manage', $systemcontext)) {
-        if (($tag->tagtype != 'default') && (!isset($tagnew->tagtype) || ($tagnew->tagtype != '1'))) {
-            tag_type_set($tag->id, 'default');
-
-        } elseif (($tag->tagtype != 'official') && ($tagnew->tagtype == '1')) {
-            tag_type_set($tag->id, 'official');
-        }
+        $updatedata['tagtype'] = empty($tagnew->tagtype) ? 'default' : 'official';
+        $updatedata['rawname'] = $tagnew->rawname;
     }
 
-    if (!has_capability('moodle/tag:manage', $systemcontext)) {
-        unset($tagnew->name);
-        unset($tagnew->rawname);
+    $tagnew = file_postupdate_standard_editor($tagnew, 'description', $editoroptions,
+            $systemcontext, 'tag', 'description', $tag->id);
+    $updatedata['description'] = $tagnew->description;
+    $updatedata['descriptionformat'] = $tagnew->descriptionformat;
 
-    } else {  // They might be trying to change the rawname, make sure it's a change that doesn't affect name
-        $norm = tag_normalize($tagnew->rawname, TAG_CASE_LOWER);
-        $tagnew->name = array_shift($norm);
+    // Update name, description and official type.
+    $tag->update($updatedata);
 
-        if ($tag->rawname !== $tagnew->rawname) {  // The name has changed, let's make sure it's not another existing tag
-            if (($id = tag_get_id($tagnew->name)) && $id != $tag->id) { // Something exists already, so flag an error.
-                $errorstring = s($tagnew->rawname).': '.get_string('namesalreadybeeingused', 'tag');
-            }
-        }
-    }
+    // Updated related tags.
+    $tag->set_related_tags($tagnew->relatedtags);
 
-    if (empty($errorstring)) {    // All is OK, let's save it
-
-        $tagnew = file_postupdate_standard_editor($tagnew, 'description', $editoroptions, $systemcontext, 'tag', 'description', $tag->id);
-
-        if ($tag->description != $tagnew->description) {
-            tag_description_set($tag_id, $tagnew->description, $tagnew->descriptionformat);
-        }
-
-        $tagnew->timemodified = time();
-
-        if (has_capability('moodle/tag:manage', $systemcontext)) {
-            // Check if we need to rename the tag.
-            if (isset($tagnew->name) && ($tag->rawname != $tagnew->rawname)) {
-                // Rename the tag.
-                if (!tag_rename($tag->id, $tagnew->rawname)) {
-                    print_error('errorupdatingrecord', 'tag');
-                }
-            }
-        }
-
-        //updated related tags
-        tag_set('tag', $tagnew->id, $tagnew->relatedtags, 'core', $systemcontext->id);
-        //print_object($tagnew); die();
-
-        $tagname = isset($tagnew->rawname) ? $tagnew->rawname : $tag->rawname;
-        redirect($returnurl ? new moodle_url($returnurl) :
-            new moodle_url('/tag/index.php', array('tag' => $tagname)));
-    }
+    redirect($returnurl ? new moodle_url($returnurl) : $tag->get_view_url());
 }
 
 navigation_node::override_active_url(new moodle_url('/tag/search.php'));

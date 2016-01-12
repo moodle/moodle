@@ -70,6 +70,22 @@ class block_tags extends block_base {
             $this->config->numberoftags = 80;
         }
 
+        if (empty($this->config->tagtype)) {
+            $this->config->tagtype = '';
+        }
+
+        if (empty($this->config->ctx)) {
+            $this->config->ctx = 0;
+        }
+
+        if (empty($this->config->rec)) {
+            $this->config->rec = 1;
+        }
+
+        if (empty($this->config->tagcoll)) {
+            $this->config->tagcoll = 0;
+        }
+
         if ($this->content !== NULL) {
             return $this->content;
         }
@@ -85,9 +101,11 @@ class block_tags extends block_base {
 
         // Get a list of tags.
 
-        require_once($CFG->dirroot.'/tag/locallib.php');
-
-        $this->content->text = tag_print_cloud(null, $this->config->numberoftags, true);
+        $tagcloud = core_tag_collection::get_tag_cloud($this->config->tagcoll,
+                $this->config->tagtype,
+                $this->config->numberoftags,
+                'name', '', $this->page->context->id, $this->config->ctx, $this->config->rec);
+        $this->content->text = $OUTPUT->render_from_template('core_tag/tagcloud', $tagcloud->export_for_template($OUTPUT));
 
         return $this->content;
     }

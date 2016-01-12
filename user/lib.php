@@ -463,10 +463,10 @@ function user_get_user_details($user, $course = null, array $userfields = array(
         $userdetails['email'] = $user->email;
     }
 
-    if (in_array('interests', $userfields) && !empty($CFG->usetags)) {
-        require_once($CFG->dirroot . '/tag/lib.php');
-        if ($interests = tag_get_tags_csv('user', $user->id, TAG_RETURN_TEXT) ) {
-            $userdetails['interests'] = $interests;
+    if (in_array('interests', $userfields)) {
+        $interests = core_tag_tag::get_item_tags_array('core', 'user', $user->id, null, 0, false);
+        if ($interests) {
+            $userdetails['interests'] = join(', ', $interests);
         }
     }
 
@@ -1133,4 +1133,42 @@ function user_can_view_profile($user, $course = null, $usercontext = null) {
         }
     }
     return false;
+}
+
+/**
+ * Returns users tagged with a specified tag.
+ *
+ * @param core_tag_tag $tag
+ * @param bool $exclusivemode if set to true it means that no other entities tagged with this tag
+ *             are displayed on the page and the per-page limit may be bigger
+ * @param int $fromctx context id where the link was displayed, may be used by callbacks
+ *            to display items in the same context first
+ * @param int $ctx context id where to search for records
+ * @param bool $rec search in subcontexts as well
+ * @param int $page 0-based number of page being displayed
+ * @return \core_tag\output\tagindex
+ */
+function user_get_tagged_users($tag, $exclusivemode = false, $fromctx = 0, $ctx = 0, $rec = 1, $page = 0) {
+    global $PAGE;
+
+    if ($ctx && $ctx != context_system::instance()->id) {
+        $usercount = 0;
+    } else {
+        // Users can only be displayed in system context.
+        $usercount = $tag->count_tagged_items('core', 'user',
+                'it.deleted=:notdeleted', array('notdeleted' => 0));
+    }
+    $perpage = $exclusivemode ? 24 : 5;
+    $content = '';
+    $totalpages = ceil($usercount / $perpage);
+
+    if ($usercount) {
+        $userlist = $tag->get_tagged_items('core', 'user', $page * $perpage, $perpage,
+                'it.deleted=:notdeleted', array('notdeleted' => 0));
+        $renderer = $PAGE->get_renderer('core', 'user');
+        $content .= $renderer->user_list($userlist, $exclusivemode);
+    }
+
+    return new core_tag\output\tagindex($tag, 'core', 'user', $content,
+            $exclusivemode, $fromctx, $ctx, $rec, $page, $totalpages);
 }

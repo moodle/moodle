@@ -174,7 +174,7 @@ class core_test_generator_testcase extends advanced_testcase {
         $this->assertEquals($course->id, $section->course);
 
         $course = $generator->create_course(array('tags' => 'Cat, Dog'));
-        $this->assertEquals('Cat, Dog', tag_get_tags_csv('course', $course->id, TAG_RETURN_TEXT));
+        $this->assertEquals(array('Cat', 'Dog'), array_values(core_tag_tag::get_item_tags_array('core', 'course', $course->id)));
 
         $scale = $generator->create_scale();
         $this->assertNotEmpty($scale);

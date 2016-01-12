@@ -304,11 +304,12 @@ class course_edit_form extends moodleform {
             }
         }
 
-        if (!empty($CFG->usetags) &&
+        if (core_tag_tag::is_enabled('core', 'course') &&
                 ((empty($course->id) && guess_if_creator_will_have_course_capability('moodle/course:tag', $categorycontext))
                 || (!empty($course->id) && has_capability('moodle/course:tag', $coursecontext)))) {
             $mform->addElement('header', 'tagshdr', get_string('tags', 'tag'));
-            $mform->addElement('tags', 'tags', get_string('tags'));
+            $mform->addElement('tags', 'tags', get_string('tags'),
+                    array('itemtype' => 'course', 'component' => 'core'));
         }
 
         // When two elements we need a group.

@@ -3901,7 +3901,6 @@ function delete_user(stdClass $user) {
     require_once($CFG->libdir.'/grouplib.php');
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/message/lib.php');
-    require_once($CFG->dirroot.'/tag/lib.php');
     require_once($CFG->dirroot.'/user/lib.php');
 
     // Make sure nobody sends bogus record type as parameter.
@@ -3944,7 +3943,7 @@ function delete_user(stdClass $user) {
     // TODO: remove from cohorts using standard API here.
 
     // Remove user tags.
-    tag_set('user', $user->id, array(), 'core', $usercontext->id);
+    core_tag_tag::remove_all_item_tags('core', 'user', $user->id);
 
     // Unconditionally unenrol from all courses.
     enrol_user_delete($user);
@@ -4735,7 +4734,6 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     require_once($CFG->libdir.'/questionlib.php');
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/group/lib.php');
-    require_once($CFG->dirroot.'/tag/lib.php');
     require_once($CFG->dirroot.'/comment/lib.php');
     require_once($CFG->dirroot.'/rating/lib.php');
     require_once($CFG->dirroot.'/notes/lib.php');
@@ -4910,7 +4908,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     $rm->delete_ratings($delopt);
 
     // Delete course tags.
-    tag_set('course', $course->id, array(), 'core', $coursecontext->id);
+    core_tag_tag::remove_all_item_tags('core', 'course', $course->id);
 
     // Delete calendar events.
     $DB->delete_records('event', array('courseid' => $course->id));

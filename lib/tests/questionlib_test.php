@@ -29,7 +29,6 @@ global $CFG;
 
 require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-require_once($CFG->dirroot . '/tag/lib.php');
 
 // Get the necessary files to perform backup and restore.
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
@@ -164,21 +163,23 @@ class core_questionlib_testcase extends advanced_testcase {
         $coursecat2 = $this->getDataGenerator()->create_category();
 
         // Create a couple of categories and questions.
+        $context1 = context_coursecat::instance($coursecat1->id);
+        $context2 = context_coursecat::instance($coursecat2->id);
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $questioncat1 = $questiongenerator->create_question_category(array('contextid' =>
-            context_coursecat::instance($coursecat1->id)->id));
+            $context1->id));
         $questioncat2 = $questiongenerator->create_question_category(array('contextid' =>
-            context_coursecat::instance($coursecat2->id)->id));
+            $context2->id));
         $question1 = $questiongenerator->create_question('shortanswer', null, array('category' => $questioncat1->id));
         $question2 = $questiongenerator->create_question('shortanswer', null, array('category' => $questioncat1->id));
         $question3 = $questiongenerator->create_question('shortanswer', null, array('category' => $questioncat2->id));
         $question4 = $questiongenerator->create_question('shortanswer', null, array('category' => $questioncat2->id));
 
         // Now lets tag these questions.
-        tag_set('question', $question1->id, array('tag 1', 'tag 2'), 'core_question', $questioncat1->contextid);
-        tag_set('question', $question2->id, array('tag 3', 'tag 4'), 'core_question', $questioncat1->contextid);
-        tag_set('question', $question3->id, array('tag 5', 'tag 6'), 'core_question', $questioncat2->contextid);
-        tag_set('question', $question4->id, array('tag 7', 'tag 8'), 'core_question', $questioncat2->contextid);
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $context1, array('tag 1', 'tag 2'));
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $context1, array('tag 3', 'tag 4'));
+        core_tag_tag::set_item_tags('core_question', 'question', $question3->id, $context2, array('tag 5', 'tag 6'));
+        core_tag_tag::set_item_tags('core_question', 'question', $question4->id, $context2, array('tag 7', 'tag 8'));
 
         // Test moving the questions to another category.
         question_move_questions_to_category(array($question1->id, $question2->id), $questioncat2->id);
@@ -224,14 +225,15 @@ class core_questionlib_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         // Create some question categories and questions in this course.
+        $coursecontext = context_course::instance($course->id);
         $questioncat = $questiongenerator->create_question_category(array('contextid' =>
-            context_course::instance($course->id)->id));
+            $coursecontext->id));
         $question1 = $questiongenerator->create_question('shortanswer', null, array('category' => $questioncat->id));
         $question2 = $questiongenerator->create_question('shortanswer', null, array('category' => $questioncat->id));
 
         // Add some tags to these questions.
-        tag_set('question', $question1->id, array('tag 1', 'tag 2'), 'core_question', $questioncat->contextid);
-        tag_set('question', $question2->id, array('tag 1', 'tag 2'), 'core_question', $questioncat->contextid);
+        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $coursecontext, array('tag 1', 'tag 2'));
+        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $coursecontext, array('tag 1', 'tag 2'));
 
         // Create a course that we are going to restore the other course to.
         $course2 = $this->getDataGenerator()->create_course();

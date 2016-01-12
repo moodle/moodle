@@ -1896,29 +1896,52 @@ class core_course_renderer extends plugin_renderer_base {
      * Renders html to print list of courses tagged with particular tag
      *
      * @param int $tagid id of the tag
+     * @param bool $exclusivemode if set to true it means that no other entities tagged with this tag
+     *             are displayed on the page and the per-page limit may be bigger
+     * @param int $fromctx context id where the link was displayed, may be used by callbacks
+     *            to display items in the same context first
+     * @param int $ctx context id where to search for records
+     * @param bool $rec search in subcontexts as well
+     * @param array $displayoptions
      * @return string empty string if no courses are marked with this tag or rendered list of courses
      */
-    public function tagged_courses($tagid) {
+    public function tagged_courses($tagid, $exclusivemode = true, $ctx = 0, $rec = true, $displayoptions = null) {
         global $CFG;
-        require_once($CFG->libdir. '/coursecatlib.php');
-        $displayoptions = array('limit' => $CFG->coursesperpage);
-        $displayoptions['viewmoreurl'] = new moodle_url('/course/search.php',
-                array('tagid' => $tagid, 'page' => 1, 'perpage' => $CFG->coursesperpage));
-        $displayoptions['viewmoretext'] = new lang_string('findmorecourses');
+        require_once($CFG->libdir . '/coursecatlib.php');
+        if (empty($displayoptions)) {
+            $displayoptions = array();
+        }
+        $showcategories = coursecat::count_all() > 1;
+        $displayoptions += array('limit' => $CFG->coursesperpage, 'offset' => 0);
         $chelper = new coursecat_helper();
-        $searchcriteria = array('tagid' => $tagid);
-        $chelper->set_show_courses(self::COURSECAT_SHOW_COURSES_EXPANDED_WITH_CAT)->
-                set_search_criteria(array('tagid' => $tagid))->
+        $searchcriteria = array('tagid' => $tagid, 'ctx' => $ctx, 'rec' => $rec);
+        $chelper->set_show_courses($showcategories ? self::COURSECAT_SHOW_COURSES_EXPANDED_WITH_CAT :
+                    self::COURSECAT_SHOW_COURSES_EXPANDED)->
+                set_search_criteria($searchcriteria)->
                 set_courses_display_options($displayoptions)->
                 set_attributes(array('class' => 'course-search-result course-search-result-tagid'));
                 // (we set the same css class as in search results by tagid)
-        $courses = coursecat::search_courses($searchcriteria, $chelper->get_courses_display_options());
-        $totalcount = coursecat::search_courses_count($searchcriteria);
-        $content = $this->coursecat_courses($chelper, $courses, $totalcount);
-        if ($totalcount) {
-            require_once $CFG->dirroot.'/tag/lib.php';
-            $heading = get_string('courses') . ' ' . get_string('taggedwith', 'tag', tag_get_name($tagid)) .': '. $totalcount;
-            return $this->heading($heading, 3). $content;
+        if ($totalcount = coursecat::search_courses_count($searchcriteria)) {
+            $courses = coursecat::search_courses($searchcriteria, $chelper->get_courses_display_options());
+            if ($exclusivemode) {
+                return $this->coursecat_courses($chelper, $courses, $totalcount);
+            } else {
+                $tagfeed = new core_tag\output\tagfeed();
+                $img = $this->output->pix_icon('i/course', '');
+                foreach ($courses as $course) {
+                    $url = course_get_url($course);
+                    $imgwithlink = html_writer::link($url, $img);
+                    $coursename = html_writer::link($url, $course->get_formatted_name());
+                    $details = '';
+                    if ($showcategories && ($cat = coursecat::get($course->category, IGNORE_MISSING))) {
+                        $details = get_string('category').': '.
+                                html_writer::link(new moodle_url('/course/index.php', array('categoryid' => $cat->id)),
+                                        $cat->get_formatted_name(), array('class' => $cat->visible ? '' : 'dimmed'));
+                    }
+                    $tagfeed->add($imgwithlink, $coursename, $details);
+                }
+                return $this->output->render_from_template('core_tag/tagfeed', $tagfeed->export_for_template($this->output));
+            }
         }
         return '';
     }

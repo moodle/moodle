@@ -71,8 +71,8 @@ $tasks = array(
     array(
         'classname' => 'core\task\tag_cron_task',
         'blocking' => 0,
-        'minute' => '20',
-        'hour' => '*',
+        'minute' => 'R',
+        'hour' => '3',
         'day' => '*',
         'dayofweek' => '*',
         'month' => '*'

@@ -659,6 +659,10 @@ class tool_uploadcourse_course {
         $this->data = $coursedata;
         $this->enrolmentdata = tool_uploadcourse_helper::get_enrolment_data($this->rawdata);
 
+        if (isset($this->rawdata['tags']) && strval($this->rawdata['tags']) !== '') {
+            $this->data['tags'] = preg_split('/\s*,\s*/', trim($this->rawdata['tags']), -1, PREG_SPLIT_NO_EMPTY);
+        }
+
         // Restore data.
         // TODO Speed up things by not really extracting the backup just yet, but checking that
         // the backup file or shortname passed are valid. Extraction should happen in proceed().

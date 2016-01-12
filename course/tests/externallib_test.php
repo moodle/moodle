@@ -605,8 +605,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
      */
     public function test_search_courses () {
 
-        global $DB, $CFG;
-        require_once($CFG->dirroot . '/tag/lib.php');
+        global $DB;
 
         $this->resetAfterTest(true);
         $this->setAdminUser();
@@ -636,8 +635,10 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         // Enable coursetag option.
         set_config('block_tags_showcoursetags', true);
         // Add tag 'TAG-LABEL ON SECOND COURSE' to Course2.
-        tag_set('course', $course2->id, array('TAG-LABEL ON SECOND COURSE'), 'core', context_course::instance($course2->id)->id);
-        $taginstance = $DB->get_record('tag_instance', array('itemtype' => 'course', 'itemid' => $course2->id), '*', MUST_EXIST);
+        core_tag_tag::set_item_tags('core', 'course', $course2->id, context_course::instance($course2->id),
+                array('TAG-LABEL ON SECOND COURSE'));
+        $taginstance = $DB->get_record('tag_instance',
+                array('itemtype' => 'course', 'itemid' => $course2->id), '*', MUST_EXIST);
         // Search by tagid.
         $results = core_course_external::search_courses('tagid', $taginstance->tagid);
         $results = external_api::clean_returnvalue(core_course_external::search_courses_returns(), $results);
