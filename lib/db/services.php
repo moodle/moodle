@@ -1217,6 +1217,7 @@ $services = array(
             'core_user_view_user_list',
             'core_message_mark_message_read',
             'core_notes_view_notes',
+            'core_notes_delete_notes',
             'mod_forum_view_forum_discussion',
             'core_user_view_user_profile',
             'gradereport_user_view_grade_report',
