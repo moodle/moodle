@@ -1554,6 +1554,7 @@ $string['restorecancelled'] = 'Restore cancelled';
 $string['restorecannotassignroles'] = 'Restore needs to assign roles and you do not have permission to do so';
 $string['restorecannotcreateorassignroles'] = 'Restore needs to create or assign roles and you do not have permission to do so';
 $string['restorecannotcreateuser'] = 'Restore needs to create user \'{$a}\' from backup file and you do not have permission to do so';
+$string['restoremnethostidmismatch'] = 'MNet host id of user \'{$a}\' does not match local MNet host ID.';
 $string['restorecannotoverrideperms'] = 'Restore needs to override permissions and you do not have permission to do so';
 $string['restorecoursenow'] = 'Restore this course now!';
 $string['restoredaccount'] = 'Restored account';
