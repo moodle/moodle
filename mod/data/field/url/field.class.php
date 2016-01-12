@@ -81,7 +81,7 @@ class data_field_url extends data_field_base {
             }
             $str .= '</td><td>';
             $str .= $label;
-            $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="'.$fieldid.'" value="'.$url.'" size="60" />';
+            $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="'.$fieldid.'" value="'.s($url).'" size="60" />';
             $str .= '<button id="filepicker-button-'.$options->client_id.'" style="display:none">'.$straddlink.'</button></td></tr>';
             $str .= '<tr><td align="right"><span class="mod-data-input">'.get_string('text', 'data').':</span></td><td>';
             $str .= '<input type="text" name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="'.s($text).'"';
@@ -108,7 +108,7 @@ class data_field_url extends data_field_base {
 
     function display_search_field($value = '') {
         return '<label class="accesshide" for="f_'.$this->field->id.'">' . get_string('fieldname', 'data') . '</label>' .
-               '<input type="text" size="16" id="f_'.$this->field->id.'" name="f_'.$this->field->id.'" value="'.$value.'" />';
+               '<input type="text" size="16" id="f_'.$this->field->id.'" name="f_'.$this->field->id.'" value="'.s($value).'" />';
     }
 
     function parse_search_field() {

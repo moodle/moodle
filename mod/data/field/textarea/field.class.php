@@ -79,7 +79,7 @@ class data_field_textarea extends data_field_base {
             }
             $fieldname = 'field_' . $this->field->id . '_itemid';
             if (isset($formdata->$fieldname)) {
-                $draftitemid = $formdata->$fieldname;
+                $draftitemid = clean_param($formdata->$fieldname, PARAM_INT);
             } else {
                 $draftitemid = file_get_unused_draft_itemid();
             }
@@ -146,7 +146,7 @@ class data_field_textarea extends data_field_base {
         }
         $editor->set_text($text);
         $editor->use_editor($field, $options, $fpoptions);
-        $str .= '<input type="hidden" name="'.$field.'_itemid" value="'.$draftitemid.'" />';
+        $str .= '<input type="hidden" name="'.$field.'_itemid" value="'.s($draftitemid).'" />';
         $str .= '<div class="mod-data-input">';
         $str .= '<div><textarea id="'.$field.'" name="'.$field.'" rows="'.$this->field->param3.'" cols="'.$this->field->param2.'" spellcheck="true">'.s($text).'</textarea></div>';
         $str .= '<div><label class="accesshide" for="' . $field . '_content1">' . get_string('format') . '</label>';
@@ -166,7 +166,7 @@ class data_field_textarea extends data_field_base {
 
     function display_search_field($value = '') {
         return '<label class="accesshide" for="f_' . $this->field->id . '">' . $this->field->name . '</label>' .
-               '<input type="text" size="16" id="f_'.$this->field->id.'" name="f_'.$this->field->id.'" value="'.$value.'" />';
+               '<input type="text" size="16" id="f_'.$this->field->id.'" name="f_'.$this->field->id.'" value="'.s($value).'" />';
     }
 
     function parse_search_field() {
