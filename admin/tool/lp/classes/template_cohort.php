@@ -150,6 +150,31 @@ class template_cohort extends persistent {
     }
 
     /**
+     * Get a relations by templateid.
+     *
+     * This does not perform any validation on the data passed. If the relation exists in the database
+     * then it is loaded in a the model, if not then it is up to the developer to save the model.
+     *
+     * @param int $templateid
+     * @return template_cohort[] array of template cohort
+     */
+    public static function get_relations_by_templateid($templateid) {
+        global $DB;
+
+        $params = array(
+            'templateid' => $templateid
+        );
+
+        $relations = array();
+        $records = $DB->get_records(self::TABLE, $params);
+        foreach ($records as $record) {
+            $relations[] = new template_cohort(0, $record);
+        }
+
+        return $relations;
+    }
+
+    /**
      * Return an array of templates persistent with their missing userids.
      *
      * Note that only cohorts associated with visible templates are considered,

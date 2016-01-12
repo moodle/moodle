@@ -1117,6 +1117,7 @@ class api {
 
     /**
      * Delete a learning plan template by id.
+     * If the learning plan template has associated cohorts they will be deleted.
      *
      * Requires tool/lp:templatemanage capability.
      *
@@ -1124,6 +1125,7 @@ class api {
      * @return boolean
      */
     public static function delete_template($id) {
+        global $DB;
         $template = new template($id);
 
         // First we do a permissions check.
@@ -1131,8 +1133,31 @@ class api {
             throw new required_capability_exception($template->get_context(), 'tool/lp:templatemanage', 'nopermissions', '');
         }
 
+        $transaction = $DB->start_delegated_transaction();
+        $success = true;
+
+        // Check if there are cohorts associated.
+        $templatecohorts = template_cohort::get_relations_by_templateid($template->get_id());
+        foreach ($templatecohorts as $templatecohort) {
+            $success = $templatecohort->delete();
+            if (!$success) {
+                break;
+            }
+        }
+
         // OK - all set.
-        return $template->delete();
+        if ($success) {
+            $success = $template->delete();
+        }
+
+        if ($success) {
+            // Commit the transaction.
+            $transaction->allow_commit();
+        } else {
+            $transaction->rollback(new moodle_exception('Error while deleting the template.'));
+        }
+
+        return $success;
     }
 
     /**

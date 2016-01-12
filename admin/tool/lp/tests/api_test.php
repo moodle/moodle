@@ -324,7 +324,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $relatedcompetencies = $compduplicated1->get_related_competencies();
         $comprelated = current($relatedcompetencies);
         $this->assertEquals($comprelated->get_idnumber(), $competency2->get_idnumber());
-        
+
         // Check if config rule have been ported correctly.
         $competency4duplicated = competency::get_record(array(
                                                             'idnumber' => $competency4->get_idnumber(),
@@ -342,8 +342,7 @@ class tool_lp_api_testcase extends advanced_testcase {
             $competenciesidsrules[] = $value['id'];
         }
         $this->assertTrue($competency4duplicated->is_parent_of($competenciesidsrules));
-        
-        
+
     }
 
     /**
@@ -627,7 +626,6 @@ class tool_lp_api_testcase extends advanced_testcase {
         $lpg = $dg->get_plugin_generator('tool_lp');
         $tpl1 = $lpg->create_template();
         $tpl2 = $lpg->create_template();
-
 
         // Create plans with data not matching templates.
         $time = time();
@@ -1658,6 +1656,36 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals($t1->get_id(), $result->get_templateid());
         $this->assertEquals(2, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t1->get_id())));
         $this->assertEquals(0, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t2->get_id())));
+    }
+
+    public function test_delete_template() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $c1 = $dg->create_cohort();
+        $c2 = $dg->create_cohort();
+        $template = $lpg->create_template();
+        $id = $template->get_id();
+
+        // Create 2 template cohorts.
+        $tc1 = $lpg->create_template_cohort(array('templateid' => $template->get_id(), 'cohortid' => $c1->id));
+        $tc1 = $lpg->create_template_cohort(array('templateid' => $template->get_id(), 'cohortid' => $c2->id));
+
+        // Check pre-test.
+        $this->assertTrue(tool_lp\template::record_exists($id));
+        $this->assertEquals(2, \tool_lp\template_cohort::count_records(array('templateid' => $id)));
+
+        $result = api::delete_template($template->get_id());
+        $this->assertTrue($result);
+
+        // Check that the template deos not exist anymore.
+        $this->assertFalse(tool_lp\template::record_exists($id));
+
+        // Test if associated cohorts are also deleted.
+        $this->assertEquals(0, \tool_lp\template_cohort::count_records(array('templateid' => $id)));
     }
 
     public function test_delete_template_cohort() {
