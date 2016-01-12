@@ -38,7 +38,7 @@ class data_field_file extends data_field_base {
         // editing an existing database entry
         if ($formdata) {
             $fieldname = 'field_' . $this->field->id . '_file';
-            $itemid = $formdata->$fieldname;
+            $itemid = clean_param($formdata->$fieldname, PARAM_INT);
         } else if ($recordid) {
             if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
 
@@ -79,7 +79,7 @@ class data_field_file extends data_field_base {
         }
 
         // itemid element
-        $html .= '<input type="hidden" name="field_'.$this->field->id.'_file" value="'.$itemid.'" />';
+        $html .= '<input type="hidden" name="field_'.$this->field->id.'_file" value="'.s($itemid).'" />';
 
         $options = new stdClass();
         $options->maxbytes = $this->field->param3;
@@ -104,7 +104,7 @@ class data_field_file extends data_field_base {
 
     function display_search_field($value = '') {
         return '<label class="accesshide" for="f_' . $this->field->id . '">' . $this->field->name . '</label>' .
-               '<input type="text" size="16" id="f_'.$this->field->id.'" name="f_'.$this->field->id.'" value="'.$value.'" />';
+               '<input type="text" size="16" id="f_'.$this->field->id.'" name="f_'.$this->field->id.'" value="'.s($value).'" />';
     }
 
     function generate_sql($tablealias, $value) {
