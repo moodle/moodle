@@ -128,7 +128,7 @@ class tool_lp_task_testcase extends advanced_testcase {
         $user5 = $dg->create_user();
 
         $cohort = $dg->create_cohort();
-        $tpl = $lpg->create_template(array('duedate' => time() + tool_lp\template::DUEDATE_THRESHOLD + 400));
+        $tpl = $lpg->create_template(array('duedate' => time() + 400));
 
         // Add 2 users to the cohort.
         cohort_add_member($cohort->id, $user1->id);

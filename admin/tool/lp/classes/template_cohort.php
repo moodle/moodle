@@ -163,21 +163,18 @@ class template_cohort extends persistent {
         global $DB;
 
         // Safe enough with 2 hours.
-        $time = time() + self::DUEDATE_THRESHOLD;
         $skipsql = !$unlinkedaremissing ? '(t.id = p.templateid OR t.id = p.origtemplateid)' : 't.id = p.templateid';
 
         // TODO MDL-52526 only unexpired template are considered and fix the time()+1 duedate issue.
         $sql = "SELECT cm.userid, t.*
                   FROM {cohort_members} cm
                   JOIN {" . self::TABLE . "} tc ON cm.cohortid = tc.cohortid
-                  JOIN {" . template::TABLE . "} t ON (tc.templateid = t.id
-                       AND t.visible = 1
-                       AND (t.duedate > :time OR t.duedate = 0))
+                  JOIN {" . template::TABLE . "} t ON (tc.templateid = t.id AND t.visible = 1)
              LEFT JOIN {" . plan::TABLE . "} p ON (cm.userid = p.userid AND $skipsql)
                  WHERE p.id IS NULL
               ORDER BY t.id";
 
-        $results = $DB->get_records_sql($sql, array('time' => $time));
+        $results = $DB->get_records_sql($sql);
 
         $missingplans = array();
         foreach ($results as $usertemplate) {

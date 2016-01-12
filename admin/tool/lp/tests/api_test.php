@@ -681,7 +681,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $data->shortname = 'Awesome!';
         $data->description = 'This is too awesome!';
         $data->descriptionformat = FORMAT_HTML;
-        $data->duedate = $time + tool_lp\template::DUEDATE_THRESHOLD + 200;
+        $data->duedate = $time + 200;
         api::update_template($data);
         $tpl1->read();
 

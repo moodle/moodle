@@ -38,9 +38,6 @@ class template extends persistent {
 
     const TABLE = 'tool_lp_template';
 
-    /** One day threshold **/
-    const DUEDATE_THRESHOLD = 86400;
-
     /** @var template object before update. */
     protected $beforeupdate = null;
 
@@ -166,7 +163,10 @@ class template extends persistent {
 
     /**
      * Validate the due date.
-     * We set a threshold to avoid creating templates with duedate too soon, so the plans can be created safely.
+     *
+     * The due date can always be changed, but when it is it must be:
+     *  - unset
+     *  - set in the future.
      *
      * @param  int $value The due date.
      * @return bool|lang_string
@@ -176,25 +176,18 @@ class template extends persistent {
         // During update.
         if ($this->get_id()) {
             $before = $this->beforeupdate->get_duedate();
-            $haschanged = $before != $value;
 
-            if (!empty($before) && $before <= time() && $haschanged) {
-                // We cannot set a due date after it was reached.
-                return new lang_string('errorcannotchangeapastduedate', 'tool_lp');
+            // The value has not changed, then it's always OK.
+            if ($before == $value) {
+                return true;
             }
         }
 
-        // During create and update when due date in the past or too soon.
-        if (!empty($value)) {
-            if ($value <= time()) {
-                // We cannot set the date in the past, but we can leave it empty.
-                return new lang_string('errorcannotsetduedateinthepast', 'tool_lp');
-            }
-
-            if ($value <= time() + self::DUEDATE_THRESHOLD) {
-                // We cannot set the date too soon, but we can leave it empty.
-                return new lang_string('errorcannotsetduedatetoosoon', 'tool_lp');
-            }
+        // During create and update, the date must be set in the future, or not set.
+        if (!empty($value) && $value <= time() - 600) {
+            // We cannot set the date in the past. But we allow for 10 minutes of margin so that
+            // a user can set the due date to "now" without risking to hit a validation error.
+            return new lang_string('errorcannotsetduedateinthepast', 'tool_lp');
         }
 
         return true;

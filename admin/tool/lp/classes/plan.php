@@ -428,8 +428,9 @@ class plan extends persistent {
      */
     protected function validate_duedate($value) {
 
-        // We do not check duedate when plan is draft, complete or unset.
-        if ($this->get_status() == self::STATUS_DRAFT
+        // We do not check duedate when plan is draft, complete, unset, or based on a template.
+        if ($this->is_based_on_template()
+                || $this->get_status() == self::STATUS_DRAFT
                 || $this->get_status() == self::STATUS_COMPLETE
                 || empty($value)) {
             return true;
