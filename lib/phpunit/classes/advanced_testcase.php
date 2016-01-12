@@ -485,6 +485,9 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
         unset($user->access);
         unset($user->preference);
 
+        // Enusre session is empty, as it may contain caches and user specific info.
+        \core\session\manager::init_empty_session();
+
         \core\session\manager::set_user($user);
     }
 
