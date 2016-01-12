@@ -11,6 +11,8 @@ This information is intended for authors of webservices, not people writing webs
   on the string returned by the getMessage() method of the thrown exception.
 * The xmlrpc server is no longer enabled when the Mobile service is activated.
 
+* Support for the AMF protocol has been dropped completely.
+
 === 3.0 ===
 
 * WS protocols webservice/myprotocol:use capabilities were defined with a high riskbitmask value
