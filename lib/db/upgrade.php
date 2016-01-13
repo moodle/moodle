@@ -4804,7 +4804,7 @@ function xmldb_main_upgrade($oldversion) {
             // Remove all other associated config.
             unset_all_config_for_plugin('webservice_amf');
         }
-        upgrade_main_savepoint(true, 2016011100.16);
+        upgrade_main_savepoint(true, 2016011200.00));
     }
 
     return true;
