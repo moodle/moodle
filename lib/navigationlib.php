@@ -1296,18 +1296,8 @@ class global_navigation extends navigation_node {
         }
 
         // Give the local plugins a chance to include some navigation if they want.
-        foreach (core_component::get_plugin_list_with_file('local', 'lib.php', true) as $plugin => $unused) {
-            $function = "local_{$plugin}_extend_navigation";
-            $oldfunction = "local_{$plugin}_extends_navigation";
-
-            if (function_exists($function)) {
-                $function($this);
-
-            } else if (function_exists($oldfunction)) {
-                debugging("Deprecated local plugin navigation callback: Please rename '{$oldfunction}' to '{$function}'. ".
-                    "Support for the old callback will be dropped in Moodle 3.1", DEBUG_DEVELOPER);
-                $oldfunction($this);
-            }
+        foreach (get_plugin_list_with_function('local', 'extend_navigation') as $function) {
+            $function($this);
         }
 
         // Remove any empty root nodes
@@ -4830,18 +4820,8 @@ class settings_navigation extends navigation_node {
      */
     protected function load_local_plugin_settings() {
 
-        foreach (core_component::get_plugin_list_with_file('local', 'lib.php', true) as $plugin => $unused) {
-            $function = "local_{$plugin}_extend_settings_navigation";
-            $oldfunction = "local_{$plugin}_extends_settings_navigation";
-
-            if (function_exists($function)) {
-                $function($this, $this->context);
-
-            } else if (function_exists($oldfunction)) {
-                debugging("Deprecated local plugin navigation callback: Please rename '{$oldfunction}' to '{$function}'. ".
-                    "Support for the old callback will be dropped in Moodle 3.1", DEBUG_DEVELOPER);
-                $oldfunction($this, $this->context);
-            }
+        foreach (get_plugin_list_with_function('local', 'extend_settings_navigation') as $function) {
+            $function($this, $this->context);
         }
     }
 
