@@ -193,6 +193,9 @@ class core_webservice_external extends external_api {
         // User max upload file size. -1 means the user can ignore the upload file size.
         $siteinfo['usermaxuploadfilesize'] = get_user_max_upload_file_size($context, $CFG->maxbytes);
 
+        // User home page.
+        $siteinfo['userhomepage'] = get_home_page();
+
         return $siteinfo;
     }
 
@@ -251,7 +254,10 @@ class core_webservice_external extends external_api {
                                     'user quota (bytes). 0 means user can ignore the quota', VALUE_OPTIONAL),
                 'usermaxuploadfilesize' => new external_value(PARAM_INT,
                                             'user max upload file size (bytes). -1 means the user can ignore the upload file size',
-                                            VALUE_OPTIONAL)
+                                            VALUE_OPTIONAL),
+                'userhomepage' => new external_value(PARAM_INT,
+                                                        'the default home page for the user: 0 for the site home, 1 for dashboard',
+                                                        VALUE_OPTIONAL)
             )
         );
     }

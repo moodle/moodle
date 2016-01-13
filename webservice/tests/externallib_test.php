@@ -124,6 +124,8 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         $this->assertEquals(get_max_upload_file_size($maxbytes), $siteinfo['usermaxuploadfilesize']);
         $this->assertEquals(true, $siteinfo['usercanmanageownfiles']);
 
+        $this->assertEquals(HOMEPAGE_MY, $siteinfo['userhomepage']);
+
         // Now as admin.
         $this->setAdminUser();
 
@@ -138,6 +140,11 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         $externaltoken->creatorid = $USER->id;
         $externaltoken->timecreated = time();
         $DB->insert_record('external_tokens', $externaltoken);
+
+        // Set a home page by user preferences.
+        $CFG->defaulthomepage = HOMEPAGE_USER;
+        set_user_preference('user_home_page_preference', HOMEPAGE_SITE);
+
         $siteinfo = core_webservice_external::get_site_info();
 
         // We need to execute the return values cleaning process to simulate the web service server.
@@ -146,6 +153,8 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         $this->assertEquals(0, $siteinfo['userquota']);
         $this->assertEquals(USER_CAN_IGNORE_FILE_SIZE_LIMITS, $siteinfo['usermaxuploadfilesize']);
         $this->assertEquals(true, $siteinfo['usercanmanageownfiles']);
+
+        $this->assertEquals(HOMEPAGE_SITE, $siteinfo['userhomepage']);
 
     }
 
