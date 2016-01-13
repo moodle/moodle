@@ -517,12 +517,12 @@ if ($roleid > 0) {
     $a->role = $rolenames[$roleid];
     $heading = format_string(get_string('xuserswiththerole', 'role', $a));
 
-    if ($currentgroup and $group) {
+    if ($currentgroup and !empty($group)) {
         $a->group = $group->name;
         $heading .= ' ' . format_string(get_string('ingroup', 'role', $a));
     }
 
-    if ($accesssince) {
+    if ($accesssince && !empty($timeoptions[$accesssince])) {
         $a->timeperiod = $timeoptions[$accesssince];
         $heading .= ' ' . format_string(get_string('inactiveformorethan', 'role', $a));
     }
