@@ -207,9 +207,9 @@
         case 'blog':
             echo '<br />';
             if (!empty($showall)) {
-                forum_print_latest_discussions($course, $forum, 0, 'plain', 'p.created DESC', -1, -1, -1, 0, $cm);
+                forum_print_latest_discussions($course, $forum, 0, 'plain', 'd.pinned DESC, p.created DESC', -1, -1, -1, 0, $cm);
             } else {
-                forum_print_latest_discussions($course, $forum, -1, 'plain', 'p.created DESC', -1, -1, $page,
+                forum_print_latest_discussions($course, $forum, -1, 'plain', 'd.pinned DESC, p.created DESC', -1, -1, $page,
                     $CFG->forum_manydiscussions, $cm);
             }
             break;

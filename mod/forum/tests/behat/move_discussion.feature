@@ -28,7 +28,6 @@ Feature: A teacher can move discussions between forums
     And I add a new discussion to "Test forum 1" forum with:
       | Subject | Discussion 1 |
       | Message | Test post message |
-    And I wait "1" seconds
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"

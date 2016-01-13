@@ -41,11 +41,9 @@ Feature: Blog posts are always displayed in reverse chronological order
     When I add a new topic to "Course blog forum" forum with:
       | Subject | Blog post 1             |
       | Message | This is the first post  |
-    And I wait "1" seconds
     And I add a new topic to "Course blog forum" forum with:
       | Subject | Blog post 2             |
       | Message | This is the second post |
-    And I wait "1" seconds
     And I add a new topic to "Course blog forum" forum with:
       | Subject | Blog post 3             |
       | Message | This is the third post  |

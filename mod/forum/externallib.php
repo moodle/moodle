@@ -649,7 +649,7 @@ class mod_forum_external extends external_api {
         // Check they have the view forum capability.
         require_capability('mod/forum:viewdiscussion', $modcontext, null, true, 'noviewdiscussionspermission', 'forum');
 
-        $sort = 'd.' . $sortby . ' ' . $sortdirection;
+        $sort = 'd.pinned DESC, d.' . $sortby . ' ' . $sortdirection;
         $alldiscussions = forum_get_discussions($cm, $sort, true, -1, -1, true, $page, $perpage, FORUM_POSTS_ALL_USER_GROUPS);
 
         if ($alldiscussions) {
@@ -801,7 +801,8 @@ class mod_forum_external extends external_api {
                                 'userpictureurl' => new external_value(PARAM_URL, 'Post author picture.'),
                                 'usermodifiedpictureurl' => new external_value(PARAM_URL, 'Post modifier picture.'),
                                 'numreplies' => new external_value(PARAM_TEXT, 'The number of replies in the discussion'),
-                                'numunread' => new external_value(PARAM_INT, 'The number of unread discussions.')
+                                'numunread' => new external_value(PARAM_INT, 'The number of unread discussions.'),
+                                'pinned' => new external_value(PARAM_BOOL, 'Is the discussion pinned')
                             ), 'post'
                         )
                     ),
@@ -1115,6 +1116,7 @@ class mod_forum_external extends external_api {
                             'name' => new external_value(PARAM_ALPHANUM,
                                         'The allowed keys (value format) are:
                                         discussionsubscribe (bool); subscribe to the discussion?, default to true
+                                        discussionpinned    (bool); is the discussion pinned, default to false
                             '),
                             'value' => new external_value(PARAM_RAW, 'The value of the option,
                                                             This param is validated in the external function.'
@@ -1151,12 +1153,16 @@ class mod_forum_external extends external_api {
                                             ));
         // Validate options.
         $options = array(
-            'discussionsubscribe' => true
+            'discussionsubscribe' => true,
+            'discussionpinned' => false
         );
         foreach ($params['options'] as $option) {
             $name = trim($option['name']);
             switch ($name) {
                 case 'discussionsubscribe':
+                    $value = clean_param($option['value'], PARAM_BOOL);
+                    break;
+                case 'discussionpinned':
                     $value = clean_param($option['value'], PARAM_BOOL);
                     break;
                 default:
@@ -1210,6 +1216,11 @@ class mod_forum_external extends external_api {
         $discussion->name = $discussion->subject;
         $discussion->timestart = 0;
         $discussion->timeend = 0;
+        if (has_capability('mod/forum:pindiscussions', $context) && $options['discussionpinned']) {
+            $discussion->pinned = FORUM_DISCUSSION_PINNED;
+        } else {
+            $discussion->pinned = FORUM_DISCUSSION_UNPINNED;
+        }
 
         if ($discussionid = forum_add_discussion($discussion)) {
 
