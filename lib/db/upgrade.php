@@ -4609,7 +4609,7 @@ function xmldb_main_upgrade($oldversion) {
     // Moodle v3.0.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2016011100.00) {
+    if ($oldversion < 2016011300.01) {
 
         // This is a big upgrade script. We create new table tag_coll and the field
         // tag.tagcollid pointing to it.
@@ -4654,10 +4654,10 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2016011100.00);
+        upgrade_main_savepoint(true, 2016011300.01);
     }
 
-    if ($oldversion < 2016011100.02) {
+    if ($oldversion < 2016011300.02) {
         // Create a default tag collection if not exists and update the field tag.tagcollid to point to it.
         if (!$tcid = $DB->get_field_sql('SELECT id FROM {tag_coll} ORDER BY isdefault DESC, sortorder, id', null,
                 IGNORE_MULTIPLE)) {
@@ -4694,10 +4694,10 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2016011100.02);
+        upgrade_main_savepoint(true, 2016011300.02);
     }
 
-    if ($oldversion < 2016011100.03) {
+    if ($oldversion < 2016011300.03) {
 
         // Define table tag_area to be created.
         $table = new xmldb_table('tag_area');
@@ -4724,10 +4724,10 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2016011100.03);
+        upgrade_main_savepoint(true, 2016011300.03);
     }
 
-    if ($oldversion < 2016011100.12) {
+    if ($oldversion < 2016011300.04) {
 
         // Define index itemtype-itemid-tagid-tiuserid (unique) to be dropped form tag_instance.
         $table = new xmldb_table('tag_instance');
@@ -4740,10 +4740,10 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2016011100.12);
+        upgrade_main_savepoint(true, 2016011300.04);
     }
 
-    if ($oldversion < 2016011100.13) {
+    if ($oldversion < 2016011300.05) {
 
         $DB->execute("UPDATE {tag_instance} SET component = ? WHERE component IS NULL", array(''));
 
@@ -4762,10 +4762,10 @@ function xmldb_main_upgrade($oldversion) {
         $dbman->change_field_type($table, $field);
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2016011100.13);
+        upgrade_main_savepoint(true, 2016011300.05);
     }
 
-    if ($oldversion < 2016011100.14) {
+    if ($oldversion < 2016011300.06) {
 
         // Define index taggeditem (unique) to be added to tag_instance.
         $table = new xmldb_table('tag_instance');
@@ -4777,10 +4777,10 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2016011100.14);
+        upgrade_main_savepoint(true, 2016011300.06);
     }
 
-    if ($oldversion < 2016011100.15) {
+    if ($oldversion < 2016011300.07) {
 
         // Define index taglookup (not unique) to be added to tag_instance.
         $table = new xmldb_table('tag_instance');
@@ -4792,10 +4792,10 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2016011100.15);
+        upgrade_main_savepoint(true, 2016011300.07);
     }
 
-    if ($oldversion < 2016011200.00) {
+    if ($oldversion < 2016011301.00) {
 
         // Force uninstall of deleted tool.
         if (!file_exists("$CFG->dirroot/webservice/amf")) {
@@ -4804,7 +4804,7 @@ function xmldb_main_upgrade($oldversion) {
             // Remove all other associated config.
             unset_all_config_for_plugin('webservice_amf');
         }
-        upgrade_main_savepoint(true, 2016011200.00);
+        upgrade_main_savepoint(true, 2016011301.00);
     }
 
     return true;
