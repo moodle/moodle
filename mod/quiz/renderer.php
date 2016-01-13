@@ -92,10 +92,11 @@ class mod_quiz_renderer extends plugin_renderer_base {
     /**
      * Renders the review question pop-up.
      *
+     * @param quiz_attempt $attemptobj an instance of quiz_attempt.
      * @param string $message Why the review is not allowed.
      * @return string html to output.
      */
-    public function review_question_not_allowed($message) {
+    public function review_question_not_allowed(quiz_attempt $attemptobj, $message) {
         $output = '';
         $output .= $this->header();
         $output .= $this->heading(format_string($attemptobj->get_quiz_name(), true,
