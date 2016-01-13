@@ -52,4 +52,4 @@ Feature: Chat reset
     And I follow "Test chat name"
     And I navigate to "Edit settings" node in "Chat administration"
     And I expand all fieldsets
-    And the "id_chattime_year" select box should contain "2030" 
+    And the "id_chattime_year" select box should contain "2030"
