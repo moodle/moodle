@@ -27,8 +27,8 @@ define(['jquery',
         'core/notification',
         'core/str',
         'tool_lp/menubar',
-        'tool_lp/base'],
-        function($, Templates, Ajax, Notification, Str, Menubar, Base) {
+        'tool_lp/event_base'],
+        function($, Templates, Ajax, Notification, Str, Menubar, EventBase) {
 
     /**
      * UserCompetencyWorkflow class.
@@ -36,9 +36,9 @@ define(['jquery',
      * @param {String} selector The node containing the buttons to switch mode.
      */
     var UserCompetencyWorkflow = function() {
-        Base.prototype.constructor.apply(this, []);
+        EventBase.prototype.constructor.apply(this, []);
     };
-    UserCompetencyWorkflow.prototype = Object.create(Base.prototype);
+    UserCompetencyWorkflow.prototype = Object.create(EventBase.prototype);
 
     /** @type {String} The selector to find the user competency data. */
     UserCompetencyWorkflow.prototype._nodeSelector = '[data-node="user-competency"]';

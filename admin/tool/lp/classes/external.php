@@ -2714,7 +2714,7 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function user_competency_cancel_review_request_returns() {
-        new external_value(PARAM_BOOL, 'The success');
+        return new external_value(PARAM_BOOL, 'The success');
     }
 
     /**
@@ -2754,7 +2754,7 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function user_competency_request_review_returns() {
-        new external_value(PARAM_BOOL, 'The success');
+        return new external_value(PARAM_BOOL, 'The success');
     }
 
     /**
@@ -2793,7 +2793,7 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function user_competency_start_review_returns() {
-        new external_value(PARAM_BOOL, 'The success');
+        return new external_value(PARAM_BOOL, 'The success');
     }
 
     /**
@@ -2832,7 +2832,7 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function user_competency_stop_review_returns() {
-        new external_value(PARAM_BOOL, 'The success');
+        return new external_value(PARAM_BOOL, 'The success');
     }
 
     /**

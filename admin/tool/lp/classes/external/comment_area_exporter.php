@@ -26,6 +26,7 @@
 namespace tool_lp\external;
 require_once($CFG->dirroot . '/comment/lib.php');
 
+// TODO MDL-52243 Move this to core.
 defined('MOODLE_INTERNAL') || die();
 
 use comment;

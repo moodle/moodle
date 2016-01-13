@@ -40,13 +40,25 @@
     This template does not have an example context because it includes ajax functionality.
 }}
 {{#usercompetencysummary}}
-<div data-region="user-competency-full-info" >
+<div data-region="user-competency-full-info" data-node="user-competency" data-competencyid="{{usercompetency.competencyid}}" data-userid="{{usercompetency.userid}}" data-region-id="{{uniqid}}">
 <div data-region="competency-summary">
     {{#competency}}
         {{> tool_lp/competency_summary }}
     {{/competency}}
     <dl>
         {{#usercompetency}}
+        <dt>{{#str}}reviewstatus, tool_lp{{/str}}</dt>
+        <dd data-region="user-competency-status">{{statusname}}
+
+            {{#isstatusinreview}}
+                - {{reviewer.fullname}}
+            {{/isstatusinreview}}
+
+            {{#isrequestreviewallowed}}<button data-action="request-review">{{#str}}requestreview, tool_lp{{/str}}</button>{{/isrequestreviewallowed}}
+            {{#iscancelreviewrequestallowed}}<button data-action="cancel-review-request">{{#str}}cancelreviewrequest, tool_lp{{/str}}</button>{{/iscancelreviewrequestallowed}}
+            {{#isstartreviewallowed}}<button data-action="start-review">{{#str}}startreview, tool_lp{{/str}}</button>{{/isstartreviewallowed}}
+            {{#isstopreviewallowed}}<button data-action="stop-review">{{#str}}stopreview, tool_lp{{/str}}</button>{{/isstopreviewallowed}}
+        </dd>
         <dt>{{#str}}proficient, tool_lp{{/str}}</dt>
         <dd>
             <span class="label{{^proficiency}} label-important{{/proficiency}} pull-left">
@@ -71,20 +83,25 @@
         </form>
         <br><br>
         </p>
+        {{/cangradeorsuggest}}
         </dd>
         {{#js}}
-        require(['jquery', 'tool_lp/grade_user_competency_inline', 'tool_lp/user_competency_info'], function($, mod, info) {
+        require(['jquery', 'tool_lp/grade_user_competency_inline', 'tool_lp/user_competency_info', 'tool_lp/user_competency_workflow'], function($, mod, info, UserCompWorkflow) {
             var scaleConfig = JSON.parse('{{{competency.scaleconfiguration}}}');
 
             var inlineGrader = new mod('grade-competency-form-{{uniqid}}', scaleConfig, '{{competency.competency.id}}', '{{user.id}}', '', '{{course.id}}', '{{#str}}chooserating, tool_lp{{/str}}');
-            var competencyElement = $(document.getElementById('grade-competency-form-{{uniqid}}')).closest('[data-region=user-competency-full-info]');
+            var competencyElement = $('[data-region-id="{{uniqid}}"]');
             var infoReloader = new info(competencyElement, '{{competency.competency.id}}', '{{user.id}}', '', '{{course.id}}');
+
+            var ucw = new UserCompWorkflow();
+            ucw.registerEvents('[data-region="user-competency-status"]');
+            ucw.on('status-changed', infoReloader.reload.bind(infoReloader));
+            ucw.on('error-occured', infoReloader.reload.bind(infoReloader));
 
             inlineGrader.on('competencyupdated', infoReloader.reload.bind(infoReloader));
         });
 
         {{/js}}
-        {{/cangradeorsuggest}}
         {{/usercompetency}}
         {{#usercompetencyplan}}
         <dd>{{gradename}} - {{#str}}plancompleted, tool_lp{{/str}}</dd>
@@ -101,6 +118,9 @@
         </dd>
         {{/usercompetencyplan}}
     </dl>
+    {{#commentarea}}
+        {{>tool_lp/comment_area}}
+    {{/commentarea}}
     <dl data-region="evidence-listing">
         <dt>{{#str}}evidence, tool_lp{{/str}}</dt>
         <dd>

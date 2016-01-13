@@ -24,6 +24,7 @@
 namespace tool_lp;
 defined('MOODLE_INTERNAL') || die();
 
+use coding_exception;
 use stdClass;
 use lang_string;
 

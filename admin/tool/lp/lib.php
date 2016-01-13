@@ -222,6 +222,7 @@ function tool_lp_comment_add($comment, $params) {
         }
 
         // Urls.
+        // TODO MDL-52749 Replace the link to the plan with the user competency page.
         if (empty($plan)) {
             $urlname = get_string('userplans', 'tool_lp');
             $url = new moodle_url('/admin/tool/lp/plans.php', array('userid' => $uc->get_userid()));
@@ -258,8 +259,8 @@ function tool_lp_comment_add($comment, $params) {
         $message = new \core\message\message();
         $message->component = 'tool_lp';
         $message->name = 'user_competency_comment';
-        $message->notification = 0;
-        $message->userfrom = $comment->userid;
+        $message->notification = 1;
+        $message->userfrom = core_user::get_noreply_user();
         $message->subject = get_string('usercommentedonacompetencysubject', 'tool_lp', $fullname);
         $message->fullmessage = $fullmessage;
         $message->fullmessageformat = $format;
@@ -299,8 +300,14 @@ function tool_lp_comment_permissions($params) {
  * Validates comments.
  *
  * @param  stdClass $params The parameters.
- * @return array
+ * @return bool
  */
 function tool_lp_comment_validate($params) {
-    return true;
+    if ($params->commentarea == 'user_competency') {
+        if (!\tool_lp\user_competency::record_exists($params->itemid)) {
+            return false;
+        }
+        return true;
+    }
+    return false;
 }

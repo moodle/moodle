@@ -14,9 +14,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Base javascript module.
+ * Event base javascript module.
  *
- * @module     tool_lp/base
+ * @module     tool_lp/event_base
  * @package    tool_lp
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -55,5 +55,5 @@ define(['jquery'], function($) {
         this._eventNode.trigger(type, [data]);
     };
 
-    return /** @alias module:tool_lp/base */ Base;
+    return /** @alias module:tool_lp/event_base */ Base;
 });
