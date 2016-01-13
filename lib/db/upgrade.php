@@ -4606,17 +4606,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015100800.01);
     }
 
-    if ($oldversion < 2015123100.01) {
-        // Force uninstall of deleted tool.
-        if (!file_exists("$CFG->dirroot/webservice/amf")) {
-            // Remove capabilities.
-            capabilities_cleanup('webservice_amf');
-            // Remove all other associated config.
-            unset_all_config_for_plugin('webservice_amf');
-        }
-        upgrade_main_savepoint(true, 2015123100.01);
-    }
-
     // Moodle v3.0.0 release upgrade line.
     // Put any upgrade step following this.
 
@@ -4804,6 +4793,18 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2016011100.15);
+    }
+
+    if ($oldversion < 2016011200.00) {
+
+        // Force uninstall of deleted tool.
+        if (!file_exists("$CFG->dirroot/webservice/amf")) {
+            // Remove capabilities.
+            capabilities_cleanup('webservice_amf');
+            // Remove all other associated config.
+            unset_all_config_for_plugin('webservice_amf');
+        }
+        upgrade_main_savepoint(true, 2016011100.16);
     }
 
     return true;
