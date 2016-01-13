@@ -37,6 +37,8 @@ information provided here is intended especially for developers.
 * The previous events API handlers are being deprecated in favour of events 2 API, debugging messages are being displayed if
   there are 3rd party plugins using it. Switch to events 2 API please, see https://docs.moodle.org/dev/Event_2#Event_dispatching_and_observers
   Note than you will need to bump the plugin version so moodle is aware that you removed the plugin's event handlers.
+* mforms validation functions are not available in the global JS namespace anymore, event listeners
+  are assigned to fields and buttons through a self-contained JS function.
 
 === 3.0 ===
 
