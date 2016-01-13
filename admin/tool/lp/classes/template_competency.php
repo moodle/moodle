@@ -257,4 +257,16 @@ class template_competency extends persistent {
         $DB->execute($sql, array($this->get_templateid(), $this->get_sortorder()));
     }
 
+    /**
+     * Check if template competency has records for competencies.
+     *
+     * @param array $competencyids Array of competencies ids.
+     * @return boolean Return true if competencies were found in template_competency.
+     */
+    public static function has_records_for_competencies($competencyids) {
+        global $DB;
+        list($insql, $params) = $DB->get_in_or_equal($competencyids, SQL_PARAMS_NAMED);
+        return self::record_exists_select("competencyid $insql", $params);
+    }
+
 }

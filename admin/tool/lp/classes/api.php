@@ -106,20 +106,46 @@ class api {
      * @return boolean
      */
     public static function delete_competency($id) {
+        global $DB;
         $competency = new competency($id);
 
         // First we do a permissions check.
         require_capability('tool/lp:competencymanage', $competency->get_context());
 
-        // Reset the rule of the parent.
-        $parent = $competency->get_parent();
-        if ($parent) {
-            $parent->reset_rule();
-            $parent->update();
+        $competencyids = array(intval($competency->get_id()));
+        $competencyids = array_merge(competency::get_descendants_ids($competency), $competencyids);
+        if (!competency::can_all_be_deleted($competencyids)) {
+            return false;
         }
+        $transaction = $DB->start_delegated_transaction();
 
-        // OK - all set.
-        return $competency->delete();
+        try {
+
+            // Reset the rule of the parent.
+            $parent = $competency->get_parent();
+            if ($parent) {
+                $parent->reset_rule();
+                $parent->update();
+            }
+
+            // Delete the competency separately so the after_delete event can be triggered.
+            $competency->delete();
+
+            // Delete the competencies.
+            competency::delete_multiple($competencyids);
+
+            // Delete the competencies relation.
+            related_competency::delete_multiple_relations($competencyids);
+
+            // Delete competency evidences.
+            user_evidence_competency::delete_by_competencyids($competencyids);
+
+            $transaction->allow_commit();
+            return true;
+
+        } catch (\Exception $e) {
+            $transaction->rollback($e);
+        }
     }
 
     /**

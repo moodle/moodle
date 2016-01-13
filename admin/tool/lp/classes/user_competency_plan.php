@@ -255,4 +255,16 @@ class user_competency_plan extends persistent {
         return $DB->record_exists_sql($sql, $params);
     }
 
+    /**
+     * Check if user competency plan has records for competencies.
+     *
+     * @param array $competencyids The competences IDs
+     * @return boolean
+     */
+    public static function has_records_for_competencies($competencyids) {
+        global $DB;
+        list($insql, $params) = $DB->get_in_or_equal($competencyids, SQL_PARAMS_NAMED);
+        return self::record_exists_select("competencyid $insql", $params);
+    }
+
 }

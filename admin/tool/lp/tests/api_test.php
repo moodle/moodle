@@ -335,13 +335,13 @@ class tool_lp_api_testcase extends advanced_testcase {
         // Check that the 2 config have the same base.
         $this->assertEquals($configorigin['base'], $configduplicated['base']);
         $this->assertEquals(count($configorigin['competencies']), count($configduplicated['competencies']));
-        $competenciesidsrules = array();
+        $competencyidsrules = array();
         foreach ($configduplicated['competencies'] as $key => $value) {
             // Check that the only difference between the 2 config is id competency.
             $this->assertEquals(1, count(array_diff($value, $configorigin['competencies'][$key])));
-            $competenciesidsrules[] = $value['id'];
+            $competencyidsrules[] = $value['id'];
         }
-        $this->assertTrue($competency4duplicated->is_parent_of($competenciesidsrules));
+        $this->assertTrue($competency4duplicated->is_parent_of($competencyidsrules));
 
         // Test duplicate an empty framework.
         $emptyfrm = $lpg->create_framework();
@@ -2816,5 +2816,239 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals(1, count($plans));
         $this->assertEquals($plans[0]->get_origtemplateid(), $tpl->get_id());
         $this->assertNull($plans[0]->get_templateid());
+    }
+
+    public function test_delete_competency() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $this->setAdminUser();
+
+        $u1 = $dg->create_user();
+
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c1a = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1->get_id()));
+        $c1b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1a->get_id()));
+        $c11b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1b->get_id()));
+        $c12b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1b->get_id()));
+
+        // Set rules on parent competency.
+        $c1->set_ruleoutcome(competency::OUTCOME_EVIDENCE);
+        $c1->set_ruletype('tool_lp\\competency_rule_all');
+        $c1->update();
+
+        // If we delete competeny, the related competencies relations and evidences should be deleted.
+        // Create related competencies using one of c1a competency descendants.
+        $rc = $lpg->create_related_competency(array(
+            'competencyid' => $c2->get_id(),
+            'relatedcompetencyid' => $c11b->get_id()
+        ));
+        $this->assertEquals($c11b->get_id(), $rc->get_relatedcompetencyid());
+
+        // Creating a standard evidence with minimal information.
+        $uc2 = $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $c11b->get_id()));
+        $evidence = $lpg->create_evidence(array('usercompetencyid' => $uc2->get_id()));
+        $this->assertEquals($uc2->get_id(), $evidence->get_usercompetencyid());
+        $uc2->delete();
+
+        $this->assertTrue(api::delete_competency($c1a->get_id()));
+        $this->assertFalse(competency::record_exists($c1a->get_id()));
+
+        // Check that on delete, we reset the rule on parent competency.
+        $c1->read();
+        $this->assertNull($c1->get_ruletype());
+        $this->assertNull($c1->get_ruletype());
+        $this->assertEquals(competency::OUTCOME_NONE, $c1->get_ruleoutcome());
+
+        // Check that descendants were also deleted.
+        $this->assertFalse(competency::record_exists($c1b->get_id()));
+        $this->assertFalse(competency::record_exists($c11b->get_id()));
+        $this->assertFalse(competency::record_exists($c12b->get_id()));
+
+        // Check if evidence are also deleted.
+        $this->assertEquals(0, tool_lp\user_evidence_competency::count_records(array('competencyid' => $c11b->get_id())));
+
+        // Check if related conpetency relation is deleted.
+        $this->assertEquals(0, count(api::list_related_competencies($c2->get_id())));
+
+        // Delete a simple competency.
+        $this->assertTrue(api::delete_competency($c2->get_id()));
+        $this->assertFalse(competency::record_exists($c2->get_id()));
+    }
+
+    public function test_delete_competency_used_in_plan() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $this->setAdminUser();
+
+        $u1 = $dg->create_user();
+
+        $plan = $lpg->create_plan((object) array('userid' => $u1->id));
+
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c1a = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1->get_id()));
+        $c1b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1a->get_id()));
+        $c11b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1b->get_id()));
+        $c12b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1b->get_id()));
+
+        // Add competency to plan.
+        $pc = $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $c11b->get_id()));
+        // We can not delete a competency , if competency or competency children is associated to plan.
+        $this->assertFalse(api::delete_competency($c1a->get_id()));
+
+        // We can delete the competency if we remove the competency from the plan.
+        $pc->delete();
+
+        $this->assertTrue(api::delete_competency($c1a->get_id()));
+        $this->assertFalse(competency::record_exists($c1a->get_id()));
+        $this->assertFalse(competency::record_exists($c1b->get_id()));
+        $this->assertFalse(competency::record_exists($c11b->get_id()));
+        $this->assertFalse(competency::record_exists($c12b->get_id()));
+    }
+
+    public function test_delete_competency_used_in_usercompetency() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $this->setAdminUser();
+
+        $u1 = $dg->create_user();
+
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c1a = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1->get_id()));
+        $c1b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1a->get_id()));
+        $c11b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1b->get_id()));
+        $c12b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1b->get_id()));
+
+        // Create user competency.
+        $uc1 = $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $c11b->get_id()));
+
+        // We can not delete a competency , if competency or competency children exist in user competency.
+        $this->assertFalse(api::delete_competency($c1a->get_id()));
+
+        // We can delete the competency if we remove the competency from user competency.
+        $uc1->delete();
+
+        $this->assertTrue(api::delete_competency($c1a->get_id()));
+        $this->assertFalse(competency::record_exists($c1a->get_id()));
+        $this->assertFalse(competency::record_exists($c1b->get_id()));
+        $this->assertFalse(competency::record_exists($c11b->get_id()));
+        $this->assertFalse(competency::record_exists($c12b->get_id()));
+    }
+
+    public function test_delete_competency_used_in_usercompetencyplan() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $this->setAdminUser();
+
+        $u1 = $dg->create_user();
+
+        $plan = $lpg->create_plan((object) array('userid' => $u1->id));
+
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c1a = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1->get_id()));
+        $c1b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1a->get_id()));
+        $c11b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1b->get_id()));
+        $c12b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1b->get_id()));
+
+        // Create user competency plan.
+        $uc2 = $lpg->create_user_competency_plan(array(
+            'userid' => $u1->id,
+            'competencyid' => $c11b->get_id(),
+            'planid' => $plan->get_id()
+        ));
+
+        // We can not delete a competency , if competency or competency children exist in user competency plan.
+        $this->assertFalse(api::delete_competency($c1a->get_id()));
+
+        // We can delete the competency if we remove the competency from user competency plan.
+        $uc2->delete();
+
+        $this->assertTrue(api::delete_competency($c1a->get_id()));
+        $this->assertFalse(competency::record_exists($c1a->get_id()));
+        $this->assertFalse(competency::record_exists($c1b->get_id()));
+        $this->assertFalse(competency::record_exists($c11b->get_id()));
+        $this->assertFalse(competency::record_exists($c12b->get_id()));
+    }
+
+    public function test_delete_competency_used_in_template() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $this->setAdminUser();
+
+        $template = $lpg->create_template();
+
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c1a = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1->get_id()));
+        $c1b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1a->get_id()));
+        $c11b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1b->get_id()));
+        $c12b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1b->get_id()));
+
+        // Add competency to a template.
+        $tc = $lpg->create_template_competency(array(
+            'templateid' => $template->get_id(),
+            'competencyid' => $c11b->get_id()
+        ));
+        // We can not delete a competency , if competency or competency children is linked to template.
+        $this->assertFalse(api::delete_competency($c1a->get_id()));
+
+        // We can delete the competency if we remove the competency from template.
+        $tc->delete();
+
+        $this->assertTrue(api::delete_competency($c1a->get_id()));
+        $this->assertFalse(competency::record_exists($c1a->get_id()));
+        $this->assertFalse(competency::record_exists($c1b->get_id()));
+        $this->assertFalse(competency::record_exists($c11b->get_id()));
+        $this->assertFalse(competency::record_exists($c12b->get_id()));
+    }
+
+    public function test_delete_competency_used_in_course() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $this->setAdminUser();
+
+        $cat1 = $dg->create_category();
+
+        $course = $dg->create_course(array('category' => $cat1->id));
+
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c1a = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1->get_id()));
+        $c1b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1a->get_id()));
+        $c11b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1b->get_id()));
+        $c12b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1b->get_id()));
+
+        // Add competency to course.
+        $cc = $lpg->create_course_competency(array(
+            'courseid' => $course->id,
+            'competencyid' => $c11b->get_id()
+        ));
+
+        // We can not delete a competency if the competency or competencies children is linked to a course.
+        $this->assertFalse(api::delete_competency($c1a->get_id()));
+
+        // We can delete the competency if we remove the competency from course.
+        $cc->delete();
+
+        $this->assertTrue(api::delete_competency($c1a->get_id()));
+        $this->assertFalse(competency::record_exists($c1a->get_id()));
+        $this->assertFalse(competency::record_exists($c1b->get_id()));
+        $this->assertFalse(competency::record_exists($c11b->get_id()));
+        $this->assertFalse(competency::record_exists($c12b->get_id()));
     }
 }

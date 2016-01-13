@@ -45,6 +45,7 @@ $string['chooserating'] = 'Choose a rating...';
 $string['cohortssyncedtotemplate'] = 'Cohorts synced to this template';
 $string['competencies'] = 'Competencies';
 $string['competenciesforframework'] = 'Competencies for {$a}';
+$string['competencycannotbedeleted'] = 'The competency \'{$a}\' can not be deleted';
 $string['competencycreated'] = 'Competency created';
 $string['competencyframework'] = 'Competency framework';
 $string['competencyframeworkcreated'] = 'Competency framework created.';

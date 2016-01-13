@@ -479,6 +479,19 @@ define(['jquery',
             args: { competencyframeworkid: competency.competencyframeworkid,
                     search: $('[data-region="filtercompetencies"] input').val() }
         }]);
+        requests[0].done(function(success) {
+            if (success === false) {
+                str.get_strings([
+                { key: 'competencycannotbedeleted', component: 'tool_lp', param: competency.shortname },
+                { key: 'cancel', component: 'moodle' }
+                ]).done(function (strings) {
+                    notification.alert(
+                        null,
+                        strings[0]
+                    );
+                }).fail(notification.exception);
+            }
+        }).fail(notification.exception);
         requests[1].done(reloadPage).fail(notification.exception);
     };
 

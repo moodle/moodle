@@ -164,4 +164,16 @@ class plan_competency extends persistent {
         $DB->execute($sql, array($this->get_planid(), $this->get_sortorder()));
     }
 
+    /**
+     * Check if plan competency has records for competencies.
+     *
+     * @param array $competencyids The competences IDs
+     * @return boolean
+     */
+    public static function has_records_for_competencies($competencyids) {
+        global $DB;
+        list($insql, $params) = $DB->get_in_or_equal($competencyids, SQL_PARAMS_NAMED);
+        return self::record_exists_select("competencyid $insql", $params);
+    }
+
 }

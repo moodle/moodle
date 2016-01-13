@@ -206,14 +206,6 @@ class competency extends persistent {
             return;
         }
 
-        // We need to delete all the children.
-        $deletepath = $DB->sql_like_escape($this->get_path() . $this->get_id() . '/') . '%';
-        $like = $DB->sql_like('path', ':deletepath');
-        $DB->delete_records_select(self::TABLE, $like, array('deletepath' => $deletepath));
-
-        // And all the links to courses.
-        $DB->delete_records('tool_lp_course_competency', array('competencyid' => $this->get_id()));
-
         // Resolving sortorder holes left after delete.
         $table = '{' . self::TABLE . '}';
         $sql = "UPDATE $table SET sortorder = sortorder -1  WHERE  competencyframeworkid = ? AND parentid = ? AND sortorder > ?";
@@ -735,6 +727,7 @@ class competency extends persistent {
      *
      * @param array $all - List of all competency classes.
      * @param int $parentid - The current parent ID. Pass 0 to build the tree from the top.
+     * @return node[] $tree tree of nodes
      */
     protected static function build_tree($all, $parentid) {
         $tree = array();
@@ -747,6 +740,71 @@ class competency extends persistent {
             }
         }
         return $tree;
+    }
+
+    /**
+     * Check if we can delete competencies safely.
+     *
+     * This moethod does not check any capablities.
+     * Check if competency is used in a plan and user competency.
+     * Check if competency is used in a template.
+     * Check if competency is linked to a course.
+     *
+     * @param array $ids Array of competencies ids.
+     * @return bool True if we can delete the competencies.
+     */
+    public static function can_all_be_deleted($ids) {
+        // Check if competency is used in template.
+        if (template_competency::has_records_for_competencies($ids)) {
+            return false;
+        }
+        // Check if competency is used in plan.
+        if (plan_competency::has_records_for_competencies($ids)) {
+            return false;
+        }
+        // Check if competency is used in course.
+        if (course_competency::has_records_for_competencies($ids)) {
+            return false;
+        }
+        // Check if competency is used in user_competency.
+        if (user_competency::has_records_for_competencies($ids)) {
+            return false;
+        }
+        // Check if competency is used in user_competency_plan.
+        if (user_competency_plan::has_records_for_competencies($ids)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Delete the competencies.
+     *
+     * This method is reserved to core usage.
+     * This method does not trigger the after_delete event.
+     * This method does not delete related objects such as related competencies and evidences.
+     *
+     * @param array $ids The competencies ids.
+     * @return bool True if the competencies were deleted successfully.
+     */
+    public static function delete_multiple($ids) {
+        global $DB;
+        list($insql, $params) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
+        return $DB->delete_records_select(self::TABLE, "id $insql", $params);
+    }
+
+    /**
+     * Get descendant ids.
+     *
+     * @param competency $competency The competency.
+     * @return array Array of competencies ids.
+     */
+    public static function get_descendants_ids($competency) {
+        global $DB;
+
+        $path = $DB->sql_like_escape($competency->get_path() . $competency->get_id() . '/') . '%';
+        $like = $DB->sql_like('path', ':likepath');
+        return $DB->get_fieldset_select(self::TABLE, 'id', $like, array('likepath' => $path));
     }
 
 }
