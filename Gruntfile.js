@@ -33,7 +33,9 @@ module.exports = function(grunt) {
     grunt.initConfig({
         jshint: {
             options: {jshintrc: '.jshintrc'},
-            files: [inAMD ? cwd + '/src/*.js' : '**/amd/src/*.js']
+            amd: {
+                src: [inAMD ? cwd + '/src/*.js' : '**/amd/src/*.js']
+            }
         },
         uglify: {
             dynamic_mappings: {
