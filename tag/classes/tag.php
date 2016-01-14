@@ -796,10 +796,11 @@ class core_tag_tag {
                 'contextid' => $record->taginstancecontextid, 'tiuserid' => $tiuserid);
             $tag = new static($record);
             $tag->delete_instance_as_record($taginstance, false);
-            $sql = "UPDATE {tag_instance} ti SET ordering = ordering - 1
-                    WHERE ti.itemtype = :itemtype
-                AND ti.itemid = :itemid $componentsql $usersql
-                AND ti.ordering > :ordering";
+            $componentsql = $component ? " AND component = :component " : "";
+            $sql = "UPDATE {tag_instance} SET ordering = ordering - 1
+                    WHERE itemtype = :itemtype
+                AND itemid = :itemid $componentsql $usersql
+                AND ordering > :ordering";
             $params['ordering'] = $record->ordering;
             $DB->execute($sql, $params);
         }
