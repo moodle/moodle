@@ -2122,3 +2122,29 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number,
         quiz_add_quiz_question($question->id, $quiz, $addonpage);
     }
 }
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $quiz       quiz object
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ * @since Moodle 3.1
+ */
+function quiz_view($quiz, $course, $cm, $context) {
+
+    $params = array(
+        'objectid' => $quiz->id,
+        'context' => $context
+    );
+
+    $event = \mod_quiz\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('quiz', $quiz);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+
+}
