@@ -46,6 +46,7 @@ class tool_lp_lib_testcase extends advanced_testcase {
         $u3 = $dg->create_user();
         $reviewerroleid = $dg->create_role();
         assign_capability('tool/lp:planview', CAP_ALLOW, $reviewerroleid, context_system::instance()->id, true);
+        assign_capability('tool/lp:usercompetencycomment', CAP_ALLOW, $reviewerroleid, context_system::instance()->id, true);
         $dg->role_assign($reviewerroleid, $u2->id, context_user::instance($u1->id));
         $dg->role_assign($reviewerroleid, $u3->id, context_user::instance($u1->id));
         accesslib_clear_all_caches_for_unit_testing();

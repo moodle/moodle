@@ -87,6 +87,59 @@ class course_competency extends persistent {
     }
 
     /**
+     * Return the courses where both competency and user are.
+     *
+     * A user is considered being in a course when they are enrolled, the enrolment is valid,
+     * the enrolment instance is enabled, and the enrolment plugin is enabled..
+     *
+     * @param int $competencyid The competency ID.
+     * @param int $userid The user ID.
+     * @return array Indexed by course ID.
+     */
+    public static function get_courses_with_competency_and_user($competencyid, $userid) {
+        global $CFG, $DB;
+
+        if (!$plugins = explode(',', $CFG->enrol_plugins_enabled)) {
+            return array();
+        }
+
+        $ctxfields = \context_helper::get_preload_record_columns_sql('ctx');
+        list($plugins, $params) = $DB->get_in_or_equal($plugins, SQL_PARAMS_NAMED, 'ee');
+        $params['competencyid'] = $competencyid;
+        $params['userid'] = $userid;
+        $params['enabled'] = ENROL_INSTANCE_ENABLED;
+        $params['active'] = ENROL_USER_ACTIVE;
+        $params['contextlevel'] = CONTEXT_COURSE;
+
+        // Heavily based on enrol_get_shared_courses().
+        $sql = "SELECT c.*, $ctxfields
+                  FROM {course} c
+                  JOIN {" . static::TABLE . "} cc
+                    ON cc.courseid = c.id
+                   AND cc.competencyid = :competencyid
+                  JOIN (
+                    SELECT DISTINCT c.id
+                      FROM {enrol} e
+                      JOIN {user_enrolments} ue
+                        ON ue.enrolid = e.id
+                       AND ue.status = :active
+                       AND ue.userid = :userid
+                      JOIN {course} c
+                        ON c.id = e.courseid
+                     WHERE e.status = :enabled
+                       AND e.enrol $plugins
+                  ) ec ON ec.id = c.id
+             LEFT JOIN {context} ctx
+                    ON ctx.instanceid = c.id
+                   AND ctx.contextlevel = :contextlevel
+              ORDER BY c.id";
+
+        $courses = $DB->get_records_sql($sql, $params);
+        array_map('context_helper::preload_from_record', $courses);
+        return $courses;
+    }
+
+    /**
      * Return a list of rules.
      *
      * @return array Indexed by outcome value.

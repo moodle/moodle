@@ -290,8 +290,9 @@ function tool_lp_comment_add($comment, $params) {
 function tool_lp_comment_permissions($params) {
     if ($params->commentarea == 'user_competency') {
         $uc = new \tool_lp\user_competency($params->itemid);
-        $can = \tool_lp\plan::can_read_user($uc->get_userid());
-        return array('post' => $can, 'view' => $can);
+        if ($uc->can_read()) {
+            return array('post' => $uc->can_comment(), 'view' => $uc->can_read_comments());
+        }
     }
     return array('post' => false, 'view' => false);
 }

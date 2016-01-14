@@ -25,6 +25,7 @@ namespace tool_lp;
 defined('MOODLE_INTERNAL') || die();
 
 use coding_exception;
+use context_course;
 use context_user;
 use comment;
 use lang_string;
@@ -90,21 +91,52 @@ class user_competency extends persistent {
     }
 
     /**
+     * Whether the current user can comment on this user competency.
+     *
+     * @return bool
+     */
+    public function can_comment() {
+        return static::can_comment_user($this->get_userid(), $this->get_competencyid());
+    }
+
+    /**
+     * Whether the current user can read this user competency.
+     *
+     * @return bool
+     */
+    public function can_read() {
+        return static::can_read_user($this->get_userid(), $this->get_competencyid());
+    }
+
+    /**
+     * Whether the current user can read comments on this user competency.
+     *
+     * @return bool
+     */
+    public function can_read_comments() {
+        return static::can_read_comments_user($this->get_userid(), $this->get_competencyid());
+    }
+
+    /**
      * Can the current user send the user competency for review?
+     *
+     * This also performs checks in relevant courses.
      *
      * @return bool
      */
     public function can_request_review() {
-        return static::can_request_review_user($this->get_userid());
+        return static::can_request_review_user($this->get_userid(), $this->get_competencyid());
     }
 
     /**
      * Can the current user review the user competency?
      *
+     * This also performs checks in relevant courses.
+     *
      * @return bool
      */
     public function can_review() {
-        return static::can_review_user($this->get_userid());
+        return static::can_review_user($this->get_userid(), $this->get_competencyid());
     }
 
     /**
@@ -299,25 +331,165 @@ class user_competency extends persistent {
     }
 
     /**
-     * Can the current user send a user's competency for review?
+     * Can the current user comment on a user's competency?
      *
-     * @param  int $userid The user ID the competency belongs to.
+     * This follows the same philosophy as {@link self::can_read_user()}.
+     *
+     * @param int $userid The user ID the competency belongs to.
+     * @param int $competencyid The competency ID.
      * @return bool
      */
-    public static function can_request_review_user($userid) {
-        // We can request a review when we can attach evidence of prior learning.
-        return user_evidence::can_manage_user($userid);
+    public static function can_comment_user($userid, $competencyid) {
+        global $USER;
+
+        $capabilities = array('tool/lp:usercompetencycomment');
+        if ($USER->id == $userid) {
+            $capabilities[] = 'tool/lp:usercompetencycommentown';
+        }
+
+        if (has_any_capability($capabilities, context_user::instance($userid))) {
+            return true;
+        }
+
+        $courses = course_competency::get_courses_with_competency_and_user($competencyid, $userid);
+        foreach ($courses as $course) {
+            if (has_any_capability($capabilities, context_course::instance($course->id))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
-     * Can the current user send review the user competency?
+     * Can the current user read the comments on a user's competency?
      *
-     * @param  int $userid The user ID the competency belongs to.
+     * This follows the same philosophy as {@link self::can_read_user()}.
+     *
+     * @param int $userid The user ID the competency belongs to.
+     * @param int $competencyid The competency ID.
      * @return bool
      */
-    public static function can_review_user($userid) {
-        // We can review a competency when we can grade them.
-        return has_capability('tool/lp:competencygrade', context_user::instance($userid));
+    public static function can_read_comments_user($userid, $competencyid) {
+        // Everyone who can read the user competency can read the comments.
+        return static::can_read_user($userid, $competencyid);
+    }
+
+    /**
+     * Can the current user read the user competencies of a user in a course?
+     *
+     * This method is useful when the competency IDs are not known in advance, but the course is.
+     * Though this removes a level of granirality as it will not check other courses in which
+     * a user could have access to the user competency, therefore not following the
+     * philosophy "If you can view it somewhere, you can view it anywhere.".
+     *
+     * Only use this when you want to check for "all or nothing".
+     *
+     * @param int $userid The user ID the competency belongs to.
+     * @param int $courseid The course ID.
+     * @return bool
+     */
+    public static function can_read_user_in_course($userid, $courseid) {
+        $capability = 'tool/lp:usercompetencyview';
+        return plan::can_read_user($userid)
+            || has_capability($capability, context_user::instance($userid))
+            || has_capability($capability, context_course::instance($courseid));
+    }
+
+    /**
+     * Can the current user read a user's competency?
+     *
+     * Following the philosophy "If you can view it somewhere, you can view it anywhere.",
+     * this methods checks if any of the following are true:
+     *
+     * - Can view the user's plans (user context).
+     * - Can view the user's user competencies (user context).
+     * - Can view the user's user competencies in courses where the user is enrolled (course context).
+     *
+     * Note that the competency ID is required, that's because if you're not passing it you're
+     * probably trying to check the wrong permissions. If you just to know if a user can read other
+     * users' competencies in a course, refer to {@link self::can_read_user_in_course()}, though its
+     * usage is not preferred. If you want to refer to a user context, for instance when viewing a plan,
+     * then you should simply refer to the permissions to read the plan. If you can read the plan, by
+     * definition you can read any of the user competencies it contains: {@link plan::can_read_user()}.
+     *
+     * @param int $userid The user ID the competency belongs to.
+     * @param int $competencyid The competency ID.
+     * @return bool
+     */
+    public static function can_read_user($userid, $competencyid) {
+        $capability = 'tool/lp:usercompetencyview';
+
+        if (plan::can_read_user($userid)) {
+            return true;
+        } else if (has_capability($capability, context_user::instance($userid))) {
+            return true;
+        }
+
+        $courses = course_competency::get_courses_with_competency_and_user($competencyid, $userid);
+        foreach ($courses as $course) {
+            if (has_capability($capability, context_course::instance($course->id))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Can the current user send a user's competency for review?
+     *
+     * This follows the same philosophy as {@link self::can_read_user()}.
+     *
+     * @param int $userid The user ID the competency belongs to.
+     * @param int $competencyid The competency ID.
+     * @return bool
+     */
+    public static function can_request_review_user($userid, $competencyid) {
+        global $USER;
+
+        $capabilities = array('tool/lp:usercompetencyrequestreview');
+        if ($USER->id == $userid) {
+            $capabilities[] = 'tool/lp:usercompetencyrequestreviewown';
+        }
+
+        if (has_any_capability($capabilities, context_user::instance($userid))) {
+            return true;
+        }
+
+        $courses = course_competency::get_courses_with_competency_and_user($competencyid, $userid);
+        foreach ($courses as $course) {
+            if (has_any_capability($capabilities, context_course::instance($course->id))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Can the current user review the user competency?
+     *
+     * This follows the same philosophy as {@link self::can_read_user()}.
+     *
+     * @param int $userid The user ID the competency belongs to.
+     * @param int $competencyid The competency ID.
+     * @return bool
+     */
+    public static function can_review_user($userid, $competencyid) {
+        $capability = 'tool/lp:usercompetencyreview';
+        if (has_capability($capability, context_user::instance($userid))) {
+            return true;
+        }
+
+        $courses = course_competency::get_courses_with_competency_and_user($competencyid, $userid);
+        foreach ($courses as $course) {
+            if (has_capability($capability, context_course::instance($course->id))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

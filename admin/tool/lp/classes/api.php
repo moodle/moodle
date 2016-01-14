@@ -849,7 +849,9 @@ class api {
 
         $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
+        } else if (!user_competency::can_read_user($userid, $competencyid)) {
+            throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
         }
 
         // This will throw an exception if the competency does not belong to the course.
@@ -882,7 +884,9 @@ class api {
 
         $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
+        } else if (!user_competency::can_read_user_in_course($userid, $courseid)) {
+            throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -2018,9 +2022,8 @@ class api {
             $plan = new plan($planorid);
         }
 
-        if (!$plan->can_read()) {
-            $context = context_user::instance($plan->get_userid());
-            throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
+        if (!user_competency::can_read_user($plan->get_userid(), $competencyid)) {
+            throw new required_capability_exception($plan->get_context(), 'tool/lp:usercompetencyview', 'nopermissions', '');
         }
 
         $competency = $plan->get_competency($competencyid);
@@ -2265,16 +2268,14 @@ class api {
      * @return bool
      */
     public static function user_competency_cancel_review_request($userid, $competencyid) {
-        if (!plan::can_read_user($userid)) {
-            $context = context_user::instance($userid);
-            throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
-        }
-
+        $context = context_user::instance($userid);
         $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
-        if (!$uc || $uc->get_status() != user_competency::STATUS_WAITING_FOR_REVIEW) {
+        if (!$uc || !$uc->can_read()) {
+            throw new required_capability_exception($context, 'tool/lp:usercompetencyread', 'nopermissions', '');
+        } else if ($uc->get_status() != user_competency::STATUS_WAITING_FOR_REVIEW) {
             throw new coding_exception('The competency can not be cancel review request at this stage.');
         } else if (!$uc->can_request_review()) {
-            throw new required_capability_exception($context, 'tool/lp:userevidencemanage', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:usercompetencyrequestreview', 'nopermissions', '');
         }
 
         $uc->set_status(user_competency::STATUS_IDLE);
@@ -2289,21 +2290,18 @@ class api {
      * @return bool
      */
     public static function user_competency_request_review($userid, $competencyid) {
-        if (!plan::can_read_user($userid)) {
-            $context = context_user::instance($userid);
-            throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
-        }
-
         $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
         if (!$uc) {
             $uc = user_competency::create_relation($userid, $competencyid);
             $uc->create();
         }
 
-        if ($uc->get_status() != user_competency::STATUS_IDLE) {
+        if (!$uc->can_read()) {
+            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyread', 'nopermissions', '');
+        } else if ($uc->get_status() != user_competency::STATUS_IDLE) {
             throw new coding_exception('The competency can not be sent for review at this stage.');
         } else if (!$uc->can_request_review()) {
-            throw new required_capability_exception($context, 'tool/lp:userevidencemanage', 'nopermissions', '');
+            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyrequestreview', 'nopermissions', '');
         }
 
         $uc->set_status(user_competency::STATUS_WAITING_FOR_REVIEW);
@@ -2320,16 +2318,14 @@ class api {
     public static function user_competency_start_review($userid, $competencyid) {
         global $USER;
 
-        if (!plan::can_read_user($userid)) {
-            $context = context_user::instance($userid);
-            throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
-        }
-
+        $context = context_user::instance($userid);
         $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
-        if (!$uc || $uc->get_status() != user_competency::STATUS_WAITING_FOR_REVIEW) {
+        if (!$uc || !$uc->can_read()) {
+            throw new required_capability_exception($context, 'tool/lp:usercompetencyread', 'nopermissions', '');
+        } else if ($uc->get_status() != user_competency::STATUS_WAITING_FOR_REVIEW) {
             throw new coding_exception('The competency review can not be started at this stage.');
         } else if (!$uc->can_review()) {
-            throw new required_capability_exception($context, 'tool/lp:competencygrade', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:usercompetencyreview', 'nopermissions', '');
         }
 
         $uc->set_status(user_competency::STATUS_IN_REVIEW);
@@ -2345,16 +2341,14 @@ class api {
      * @return bool
      */
     public static function user_competency_stop_review($userid, $competencyid) {
-        if (!plan::can_read_user($userid)) {
-            $context = context_user::instance($userid);
-            throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
-        }
-
+        $context = context_user::instance($userid);
         $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
-        if (!$uc || $uc->get_status() != user_competency::STATUS_IN_REVIEW) {
+        if (!$uc || !$uc->can_read()) {
+            throw new required_capability_exception($context, 'tool/lp:usercompetencyread', 'nopermissions', '');
+        } else if ($uc->get_status() != user_competency::STATUS_IN_REVIEW) {
             throw new coding_exception('The competency review can not be stopped at this stage.');
         } else if (!$uc->can_review()) {
-            throw new required_capability_exception($context, 'tool/lp:competencygrade', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:usercompetencyreview', 'nopermissions', '');
         }
 
         $uc->set_status(user_competency::STATUS_IDLE);
@@ -2785,9 +2779,9 @@ class api {
                                          $skip = 0,
                                          $limit = 0) {
 
-        if (!plan::can_read_user($userid)) {
+        if (!user_competency::can_read_user($userid, $competencyid)) {
             $context = context_user::instance($userid);
-            throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
         }
 
         // TODO - handle archived plans.
