@@ -115,6 +115,7 @@ class report implements renderable, templatable {
         $data->pluginbaseurl = (new moodle_url('/admin/tool/lp/'))->out(false);
         $data->usercompetencies = array();
         $scalecache = array();
+        $frameworkcache = array();
         foreach ($this->users as $user) {
             $usercompetencies = api::list_user_competencies_in_course($this->courseid, $user->id);
             $onerow = new stdClass();
@@ -131,7 +132,20 @@ class report implements renderable, templatable {
                         break;
                     }
                 }
-                if (!isset($scalecache[$competency->get_scaleid()])) {
+
+                // Fetch the scale.
+                $scaleid = $competency->get_scaleid();
+                if ($scaleid === null) {
+                    if (!isset($frameworkcache[$competency->get_competencyframeworkid()])) {
+                        $frameworkcache[$competency->get_competencyframeworkid()] = $competency->get_framework();
+                    }
+                    $framework = $frameworkcache[$competency->get_competencyframeworkid()];
+                    $scaleid = $framework->get_scaleid();
+                    if (!isset($scalecache[$scaleid])) {
+                        $scalecache[$competency->get_scaleid()] = $framework->get_scale();
+                    }
+
+                } else if (!isset($scalecache[$scaleid])) {
                     $scalecache[$competency->get_scaleid()] = $competency->get_scale();
                 }
                 $scale = $scalecache[$competency->get_scaleid()];
