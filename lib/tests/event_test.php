@@ -29,6 +29,8 @@ require_once(__DIR__.'/fixtures/event_fixtures.php');
 
 class core_event_testcase extends advanced_testcase {
 
+    const DEBUGGING_MSG = 'Events API using $handlers array has been deprecated in favour of Events 2 API, please use it instead.';
+
     public function test_event_properties() {
         global $USER;
 
@@ -591,6 +593,7 @@ class core_event_testcase extends advanced_testcase {
 
         $DB->delete_records('log', array());
         events_update_definition('unittest');
+        $this->assertDebuggingCalled(self::DEBUGGING_MSG, DEBUG_DEVELOPER);
         $DB->delete_records_select('events_handlers', "component <> 'unittest'");
         events_get_handlers('reset');
         $this->assertEquals(3, $DB->count_records('events_handlers'));
@@ -601,10 +604,12 @@ class core_event_testcase extends advanced_testcase {
 
         $event1 = \core_tests\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>5, 'xx'=>10)));
         $event1->trigger();
+        $this->assertDebuggingCalled(self::DEBUGGING_MSG, DEBUG_DEVELOPER);
 
         $event2 = \core_tests\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>6, 'xx'=>11)));
         $event2->nest = true;
         $event2->trigger();
+        $this->assertDebuggingCalledCount(2, array(self::DEBUGGING_MSG, self::DEBUGGING_MSG), array(DEBUG_DEVELOPER, DEBUG_DEVELOPER));
 
         $this->assertSame(
             array('observe_all-5', 'observe_one-5', 'legacy_handler-0', 'observe_all-nesting-6', 'legacy_handler-0', 'observe_one-6', 'observe_all-666', 'observe_one-666', 'legacy_handler-0'),
