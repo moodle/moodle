@@ -44,4 +44,12 @@ $functions = array(
         'type'          => 'write',
         'capabilities'  => 'mod/quiz:view'
     ),
+
+    'mod_quiz_get_user_attempts' => array(
+        'classname'     => 'mod_quiz_external',
+        'methodname'    => 'get_user_attempts',
+        'description'   => 'Return a list of attempts for the given quiz and user.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/quiz:view'
+    ),
 );
