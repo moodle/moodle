@@ -101,8 +101,8 @@ class user_competency_summary_exporter extends exporter {
         $result->competency = $exporter->export($output);
 
         $context = context_user::instance($this->related['user']->id);
-        $result->cangrade = has_capability('tool/lp:competencygrade', $context);
-        $result->cansuggest = has_capability('tool/lp:competencysuggestgrade', $context);
+        $result->cangrade = user_competency::can_grade_user($this->related['user']->id, $competency->get_id());
+        $result->cansuggest = user_competency::can_suggest_grade_user($this->related['user']->id, $competency->get_id());
         $result->cangradeorsuggest = $result->cangrade || $result->cansuggest;
         if ($this->related['user']) {
             $exporter = new user_summary_exporter($this->related['user']);

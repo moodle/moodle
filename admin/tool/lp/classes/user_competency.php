@@ -362,6 +362,33 @@ class user_competency extends persistent {
     }
 
     /**
+     * Can the current user grade a user's user competency?
+     *
+     * This follows the same philosophy as {@link self::can_read_user()}.
+     *
+     * @param int $userid The user ID the competency belongs to.
+     * @param int $competencyid The competency ID.
+     * @return bool
+     */
+    public static function can_grade_user($userid, $competencyid) {
+        $ratecap = 'tool/lp:competencygrade';
+        if (has_capability($ratecap, context_user::instance($userid))) {
+            return true;
+        }
+
+        $courses = course_competency::get_courses_with_competency_and_user($competencyid, $userid);
+        foreach ($courses as $course) {
+            $context = context_course::instance($course->id);
+            if (has_capability($ratecap, $context) && has_capability('tool/lp:coursecompetencygradable', $context, $userid)) {
+                // We must be able to grade, and the user must be 'gradable'.
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Can the current user read the comments on a user's competency?
      *
      * This follows the same philosophy as {@link self::can_read_user()}.
@@ -485,6 +512,33 @@ class user_competency extends persistent {
         $courses = course_competency::get_courses_with_competency_and_user($competencyid, $userid);
         foreach ($courses as $course) {
             if (has_capability($capability, context_course::instance($course->id))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Can the current user suggest a grade for a user's user competency?
+     *
+     * This follows the same philosophy as {@link self::can_read_user()}.
+     *
+     * @param int $userid The user ID the competency belongs to.
+     * @param int $competencyid The competency ID.
+     * @return bool
+     */
+    public static function can_suggest_grade_user($userid, $competencyid) {
+        $suggestcap = 'tool/lp:competencysuggestgrade';
+        if (has_capability($suggestcap, context_user::instance($userid))) {
+            return true;
+        }
+
+        $courses = course_competency::get_courses_with_competency_and_user($competencyid, $userid);
+        foreach ($courses as $course) {
+            $context = context_course::instance($course->id);
+            if (has_capability($suggestcap, $context) && has_capability('tool/lp:coursecompetencygradable', $context, $userid)) {
+                // We must be able to suggest a grade, and the user must be 'gradable'.
                 return true;
             }
         }

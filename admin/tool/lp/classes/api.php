@@ -3107,18 +3107,23 @@ class api {
         if (!is_object($planorid)) {
             $plan = new plan($planorid);
         }
+
         $context = $plan->get_context();
         if ($override) {
-            require_capability('tool/lp:competencygrade', $context);
+            if (!user_competency::can_grade_user($plan->get_userid(), $competencyid)) {
+                throw new required_capability_exception($context, 'tool/lp:competencygrade', 'nopermissions', '');
+            }
         } else {
-            require_capability('tool/lp:competencysuggestgrade', $context);
+            if (!user_competency::can_suggest_grade_user($plan->get_userid(), $competencyid)) {
+                throw new required_capability_exception($context, 'tool/lp:competencysuggestgrade', 'nopermissions', '');
+            }
         }
 
         // Throws exception if competency not in plan.
         $competency = $plan->get_competency($competencyid);
         $competencycontext = $competency->get_context();
         if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $competencycontext)) {
-             throw new required_capability_exception($competencycontext, 'tool/lp:competencyread', 'nopermissions', '');
+            throw new required_capability_exception($competencycontext, 'tool/lp:competencyread', 'nopermissions', '');
         }
 
         $action = evidence::ACTION_OVERRIDE;
@@ -3160,9 +3165,13 @@ class api {
         }
         $context = context_course::instance($course->id);
         if ($override) {
-            require_capability('tool/lp:competencygrade', $context);
+            if (!user_competency::can_grade_user($userid, $competencyid)) {
+                throw new required_capability_exception($context, 'tool/lp:competencygrade', 'nopermissions', '');
+            }
         } else {
-            require_capability('tool/lp:competencysuggestgrade', $context);
+            if (!user_competency::can_suggest_grade_user($userid, $competencyid)) {
+                throw new required_capability_exception($context, 'tool/lp:competencysuggestgrade', 'nopermissions', '');
+            }
         }
 
         // Throws exception if competency not in course.
