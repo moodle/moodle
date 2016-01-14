@@ -29,29 +29,39 @@ module.exports = function(grunt) {
         cwd = process.env.PWD || process.cwd(),
         inAMD = path.basename(cwd) == 'amd';
 
+    // Globbing pattern for matching all AMD JS source files.
+    var amdSrc = [inAMD ? cwd + '/src/*.js' : '**/amd/src/*.js'];
+
+    /**
+     * Function to generate the destination for the uglify task
+     * (e.g. build/file.min.js). This function will be passed to
+     * the rename property of files array when building dynamically:
+     * http://gruntjs.com/configuring-tasks#building-the-files-object-dynamically
+     *
+     * @param {String} destPath the current destination
+     * @param {String} srcPath the  matched src path
+     * @return {String} The rewritten destination path.
+     */
+    var uglify_rename = function (destPath, srcPath) {
+        destPath = srcPath.replace('src', 'build');
+        destPath = destPath.replace('.js', '.min.js');
+        destPath = path.resolve(cwd, destPath);
+        return destPath;
+    };
+
     // Project configuration.
     grunt.initConfig({
         jshint: {
             options: {jshintrc: '.jshintrc'},
-            amd: {
-                src: [inAMD ? cwd + '/src/*.js' : '**/amd/src/*.js']
-            }
+            amd: { src: amdSrc }
         },
         uglify: {
-            dynamic_mappings: {
-                files: grunt.file.expandMapping(
-                    ['**/src/*.js', '!**/node_modules/**'],
-                    '',
-                    {
-                        cwd: cwd,
-                        rename: function(destBase, destPath) {
-                            destPath = destPath.replace('src', 'build');
-                            destPath = destPath.replace('.js', '.min.js');
-                            destPath = path.resolve(cwd, destPath);
-                            return destPath;
-                        }
-                    }
-                )
+            amd: {
+                files: [{
+                    expand: true,
+                    src: amdSrc,
+                    rename: uglify_rename
+                }]
             }
         },
         less: {
