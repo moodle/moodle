@@ -74,6 +74,23 @@ module.exports = function(grunt) {
                     compress: true
                 }
            }
+        },
+        watch: {
+            options: {
+                nospawn: true // We need not to spawn so config can be changed dynamically.
+            },
+            amd: {
+                files: ['**/amd/src/**/*.js'],
+                tasks: ['amd']
+            },
+            bootstrapbase: {
+                files: ["theme/bootstrapbase/less/**/*.less"],
+                tasks: ["less:bootstrapbase"]
+            },
+            yui: {
+                files: ['**/yui/src/**/*.js'],
+                tasks: ['shifter']
+            },
         }
     });
 
@@ -245,10 +262,17 @@ module.exports = function(grunt) {
     };
 
 
+    // On watch, we dynamically modify config to build only affected files.
+    grunt.event.on('watch', function(action, filepath) {
+      grunt.config('jshint.amd.src', filepath);
+      grunt.config('uglify.amd.files', [{ expand: true, src: filepath, rename: uglify_rename }]);
+    });
+
     // Register NPM tasks.
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
     // Register JS tasks.
     grunt.registerTask('shifter', 'Run Shifter against the current directory', tasks.shifter);
