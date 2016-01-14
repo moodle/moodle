@@ -369,15 +369,17 @@ class core_tag_area {
         $cleanupcollections = $DB->get_fieldset_sql($sql, $params);
 
         // Find all tags that are related to the tags being moved and make sure they are present in the target tagcoll.
-        $sql = "SELECT DISTINCT r.name, r.rawname, r.description, r.descriptionformat, ".
-                "    r.userid, r.tagtype, r.flag ".
+        // This query is a little complicated because Oracle does not allow to run SELECT DISTINCT on CLOB fields.
+        $sql = "SELECT name, rawname, description, descriptionformat, userid, tagtype, flag ".
+                "FROM {tag} WHERE id IN ".
+                "(SELECT r.id ".
                 "FROM {tag_instance} ti ". // Instances that need moving.
                 "JOIN {tag} t ON t.id = ti.tagid AND t.tagcollid <> :tagcollid1 ". // Tags that need moving.
                 "JOIN {tag_instance} tr ON tr.itemtype = 'tag' and tr.component = 'core' AND tr.itemid = t.id ".
                 "JOIN {tag} r ON r.id = tr.tagid ". // Tags related to the tags that need moving.
                 "LEFT JOIN {tag} re ON re.name = r.name AND re.tagcollid = :tagcollid2 ". // Existing tags in the target tagcoll with the same name as related tags.
                 "WHERE ti.itemtype = :itemtype2 AND ti.component = :component2 ".
-                "    AND re.id IS NULL"; // We need related tags that ARE NOT present in the target tagcoll.
+                "    AND re.id IS NULL)"; // We need related tags that ARE NOT present in the target tagcoll.
         $result = $DB->get_records_sql($sql, $params);
         foreach ($result as $tag) {
             $tag->tagcollid = $tagcollid;
