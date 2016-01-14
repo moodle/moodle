@@ -273,7 +273,7 @@ class assign_grading_table extends table_sql implements renderable {
             $columns[] = 'fullname';
             $headers[] = get_string('fullname');
 
-            // MDL-52269 - Participant # details if can view real identities.
+            // Participant # details if can view real identities.
             if ($this->assignment->is_blind_marking()) {
                 if (!$this->is_downloading()) {
                     $columns[] = 'recordid';

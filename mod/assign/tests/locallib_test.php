@@ -2278,8 +2278,8 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $this->setUser($manager);
         $gradingtable = new assign_grading_table($assign, 1, '', 0, true);
         $output = $assign->get_renderer()->render($gradingtable);
-        $this->assertEquals(false, strpos($output, get_string('hiddenuser', 'assign')));
-        $this->assertEquals(true, strpos($output, fullname($student)));    //students full name doesn't appear.
+        $this->assertEquals(true, strpos($output, get_string('hiddenuser', 'assign')));
+        $this->assertEquals(true, strpos($output, fullname($student)));
     }
 
     /**
