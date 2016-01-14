@@ -314,8 +314,9 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 $streditsection = get_string('editsection');
             }
 
+            $sectionreturn = $onsectionpage ? $section->section : 0;
             $controls['edit'] = array(
-                'url'   => new moodle_url('/course/editsection.php', array('id' => $section->id, 'sr' => $onsectionpage)),
+                'url'   => new moodle_url('/course/editsection.php', array('id' => $section->id, 'sr' => $sectionreturn)),
                 'icon' => 'i/settings',
                 'name' => $streditsection,
                 'pixattr' => array('class' => '', 'alt' => $streditsection),
