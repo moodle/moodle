@@ -160,6 +160,17 @@ switch($action) {
         redirect($manageurl);
         break;
 
+    case 'areasetshowstandard':
+        if ($tagarea) {
+            require_sesskey();
+            if (($showstandard = optional_param('showstandard', null, PARAM_INT)) !== null) {
+                core_tag_area::update($tagarea, array('showstandard' => $showstandard));
+                redirect(new moodle_url($manageurl, array('notice' => 'changessaved')));
+            }
+        }
+        redirect($manageurl);
+        break;
+
     case 'delete':
         require_sesskey();
         if (!$tagschecked && $tagid) {
@@ -224,7 +235,7 @@ if (!$tagcoll) {
     $tagareastable = new core_tag_areas_table($manageurl);
     $colltable = new core_tag_collections_table($manageurl);
 
-    echo $OUTPUT->heading(get_string('tagcollections', 'core_tag'), 3);
+    echo $OUTPUT->heading(get_string('tagcollections', 'core_tag') . $OUTPUT->help_icon('tagcollection', 'tag'), 3);
     echo html_writer::table($colltable);
     $url = new moodle_url($manageurl, array('action' => 'colladd'));
     echo html_writer::div(html_writer::link($url, get_string('addtagcoll', 'tag')), 'mdl-right addtagcoll');
@@ -237,6 +248,7 @@ if (!$tagcoll) {
 }
 
 // Tag collection is specified. Manage tags in this collection.
+echo $OUTPUT->heading(core_tag_collection::display_name($tagcoll));
 
 // Small form to add an standard tag.
 print('<form class="tag-addtags-form" method="post" action="'.$CFG->wwwroot.'/tag/manage.php">');

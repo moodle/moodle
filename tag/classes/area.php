@@ -141,6 +141,24 @@ class core_tag_area {
     }
 
     /**
+     * Returns wether this tag area should display or not standard tags when user edits it.
+     *
+     * @param string $component component responsible for tagging
+     * @param string $itemtype what is being tagged, for example, 'post', 'course', 'user', etc.
+     * @return int
+     */
+    public static function get_showstandard($component, $itemtype) {
+        $itemtypes = self::get_areas();
+        if (array_key_exists($itemtype, $itemtypes)) {
+            if (!array_key_exists($component, $itemtypes[$itemtype])) {
+                $component = key($itemtypes[$itemtype]);
+            }
+            return $itemtypes[$itemtype][$component]->showstandard;
+        }
+        return core_tag_tag::BOTH_STANDARD_AND_NOT;
+    }
+
+    /**
      * Returns all tag areas and collections that are currently cached in DB for this component
      *
      * @param string $componentname
@@ -198,7 +216,8 @@ class core_tag_area {
             'itemtype' => $record->itemtype,
             'tagcollid' => $record->tagcollid,
             'callback' => $record->callback,
-            'callbackfile' => $record->callbackfile));
+            'callbackfile' => $record->callbackfile,
+            'showstandard' => isset($record->showstandard) ? $record->showstandard : core_tag_tag::BOTH_STANDARD_AND_NOT));
 
         // Reset cache.
         cache::make('core', 'tags')->delete('tag_area');
@@ -214,7 +233,7 @@ class core_tag_area {
         global $DB;
         $data = array_intersect_key((array)$data,
                 array('enabled' => 1, 'tagcollid' => 1,
-                    'callback' => 1, 'callbackfile' => 1));
+                    'callback' => 1, 'callbackfile' => 1, 'showstandard' => 1));
         foreach ($data as $key => $value) {
             if ($existing->$key == $value) {
                 unset($data[$key]);
@@ -312,6 +331,7 @@ class core_tag_area {
                     }
                 }
             }
+            unset($itemtypes[$key]->showstandard); // Do not override value that was already changed by admin with the default.
             self::update($tagarea, $itemtypes[$key]);
         }
 

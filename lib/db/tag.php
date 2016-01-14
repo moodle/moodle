@@ -28,6 +28,8 @@
  *     any other tag areas to this collection nor move this tag area elsewhere
  *   - searchable (only if collection is specified) - wether the tag collection
  *     should be searchable on /tag/search.php
+ *   - showstandard - default value for the "Standard tags" attribute of the area,
+ *     this is only respected when new tag area is added and ignored during upgrade
  *   - customurl (only if collection is specified) - custom url to use instead of
  *     /tag/search.php to display information about one tag
  *   - callback - name of the function that returns items tagged with this tag,
@@ -56,6 +58,7 @@ $tagareas = array(
         'component' => 'core',
         'callback' => 'user_get_tagged_users',
         'callbackfile' => '/user/lib.php',
+        'showstandard' => core_tag_tag::HIDE_STANDARD,
     ),
     array(
         'itemtype' => 'course', // Courses.
