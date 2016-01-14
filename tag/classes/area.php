@@ -412,14 +412,21 @@ class core_tag_area {
                 LEFT JOIN {tag} tt ON tt.name = t.name AND tt.tagcollid = :tagcollid2
                 WHERE ti.itemtype = :itemtype2 AND ti.component = :component2
                     AND tt.id IS NULL)";
-        $todelete = array();
+        $movedtags = array(); // Keep track of moved tags so we don't hit DB index violation.
         $result = $DB->get_records_sql($sql, $params);
         foreach ($result as $tag) {
             $originaltagid = $tag->id;
-            unset($tag->id);
-            $tag->tagcollid = $tagcollid;
-            $tag->id = $DB->insert_record('tag', $tag);
-            \core\event\tag_created::create_from_tag($tag);
+            if (array_key_exists($tag->name, $movedtags)) {
+                // Case of corrupted data when the same tag was in several collections.
+                $tag->id = $movedtags[$tag->name];
+            } else {
+                // Copy the tag into the new collection.
+                unset($tag->id);
+                $tag->tagcollid = $tagcollid;
+                $tag->id = $DB->insert_record('tag', $tag);
+                \core\event\tag_created::create_from_tag($tag);
+                $movedtags[$tag->name] = $tag->id;
+            }
             $DB->execute("UPDATE {tag_instance} SET tagid = ? WHERE tagid = ? AND itemtype = ? AND component = ?",
                     array($tag->id, $originaltagid, $itemtype, $component));
         }

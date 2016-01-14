@@ -813,6 +813,39 @@ class core_tag_taglib_testcase extends advanced_testcase {
         $this->assertEquals('Tag2, Tag4', join(', ', $related21));
     }
 
+    public function test_move_tags_corrupted() {
+        global $DB;
+        list($collid1, $collid2, $user1, $user2, $blogpost) = $this->prepare_move_tags();
+        $collid3 = core_tag_collection::create(array('name' => 'weirdcoll'))->id;
+
+        // We already have Tag1 in coll1, now let's create it in coll3.
+        $extratag1 = $this->getDataGenerator()->create_tag(array('rawname' => 'Tag1',
+            'tagcollid' => $collid3, 'tagtype' => 'official'));
+
+        // Artificially add 'Tag1' from coll3 to user2.
+        $DB->insert_record('tag_instance', array('tagid' => $extratag1->id, 'itemtype' => 'user',
+            'component' => 'core', 'itemid' => $user2->id, 'ordering' => 3));
+
+        // Now we have corrupted data: both users are tagged with 'Tag1', however these are two tags in different collections.
+        $user1tags = array_values(core_tag_tag::get_item_tags('core', 'user', $user1->id));
+        $user2tags = array_values(core_tag_tag::get_item_tags('core', 'user', $user2->id));
+        $this->assertEquals('Tag1', $user1tags[0]->rawname);
+        $this->assertEquals('Tag1', $user2tags[2]->rawname);
+        $this->assertNotEquals($user1tags[0]->tagcollid, $user2tags[2]->tagcollid);
+
+        // Move user interests tag area into coll2.
+        $tagarea = $DB->get_record('tag_area', array('itemtype' => 'user', 'component' => 'core'));
+        core_tag_area::update($tagarea, array('tagcollid' => $collid2));
+
+        // Now all tags are correctly moved to the new collection and both tags 'Tag1' were merged.
+        $user1tags = array_values(core_tag_tag::get_item_tags('core', 'user', $user1->id));
+        $user2tags = array_values(core_tag_tag::get_item_tags('core', 'user', $user2->id));
+        $this->assertEquals('Tag1', $user1tags[0]->rawname);
+        $this->assertEquals('Tag1', $user2tags[2]->rawname);
+        $this->assertEquals($collid2, $user1tags[0]->tagcollid);
+        $this->assertEquals($collid2, $user2tags[2]->tagcollid);
+    }
+
     public function test_normalize() {
         $tagset = array('Cat', ' Dog  ', '<Mouse', '<>', 'mouse', 'Dog');
 
