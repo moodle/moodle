@@ -401,13 +401,15 @@ class core_tag_area {
         $result->close();
 
         // Find all tags that are used for this itemtype/component and are not present in the target tag collection.
-        $sql = "SELECT DISTINCT t.id, t.name, t.rawname, t.description, t.descriptionformat,
-                    t.userid, t.tagtype, t.flag
+        // This query is a little complicated because Oracle does not allow to run SELECT DISTINCT on CLOB fields.
+        $sql = "SELECT id, name, rawname, description, descriptionformat, userid, tagtype, flag
+                FROM {tag} WHERE id IN
+                (SELECT t.id
                 FROM {tag_instance} ti
                 JOIN {tag} t ON t.id = ti.tagid AND t.tagcollid <> :tagcollid1
                 LEFT JOIN {tag} tt ON tt.name = t.name AND tt.tagcollid = :tagcollid2
                 WHERE ti.itemtype = :itemtype2 AND ti.component = :component2
-                    AND tt.id IS NULL";
+                    AND tt.id IS NULL)";
         $todelete = array();
         $result = $DB->get_records_sql($sql, $params);
         foreach ($result as $tag) {
