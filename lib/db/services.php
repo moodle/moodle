@@ -1311,6 +1311,7 @@ $services = array(
             'mod_imscp_view_imscp',
             'mod_imscp_get_imscps_by_courses',
             'mod_quiz_get_quizzes_by_courses',
+            'mod_quiz_get_combined_review_options',
             'mod_quiz_get_user_attempts',
             'mod_quiz_view_quiz',
             'mod_quiz_get_user_best_grade',

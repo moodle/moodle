@@ -60,4 +60,12 @@ $functions = array(
         'type'          => 'read',
         'capabilities'  => 'mod/quiz:view'
     ),
+
+    'mod_quiz_get_combined_review_options' => array(
+        'classname'     => 'mod_quiz_external',
+        'methodname'    => 'get_combined_review_options',
+        'description'   => 'Combines the review options from a number of different quiz attempts.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/quiz:view'
+    ),
 );

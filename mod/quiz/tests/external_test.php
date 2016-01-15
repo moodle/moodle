@@ -448,4 +448,141 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $DB->delete_records('quiz_grades', array('id' => $grade->id));
 
     }
+    /**
+     * Test get_combined_review_options.
+     * This is a basic test, this is already tested in mod_quiz_display_options_testcase.
+     */
+    public function test_get_combined_review_options() {
+        global $DB;
+
+        // Create a new quiz with attempts.
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $data = array('course' => $this->course->id,
+                      'sumgrades' => 1);
+        $quiz = $quizgenerator->create_instance($data);
+
+        // Create a couple of questions.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        $cat = $questiongenerator->create_question_category();
+        $question = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
+        quiz_add_quiz_question($question->id, $quiz);
+
+        $quizobj = quiz::create($quiz->id, $this->student->id);
+
+        // Set grade to pass.
+        $item = grade_item::fetch(array('courseid' => $this->course->id, 'itemtype' => 'mod',
+                                        'itemmodule' => 'quiz', 'iteminstance' => $quiz->id, 'outcomeid' => null));
+        $item->gradepass = 80;
+        $item->update();
+
+        // Start the passing attempt.
+        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+
+        $timenow = time();
+        $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $this->student->id);
+        quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
+        quiz_attempt_save_started($quizobj, $quba, $attempt);
+
+        $this->setUser($this->student);
+
+        $result = mod_quiz_external::get_combined_review_options($quiz->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_combined_review_options_returns(), $result);
+
+        // Expected values.
+        $expected = array(
+            "someoptions" => array(
+                array("name" => "feedback", "value" => 1),
+                array("name" => "generalfeedback", "value" => 1),
+                array("name" => "rightanswer", "value" => 1),
+                array("name" => "overallfeedback", "value" => 0),
+                array("name" => "marks", "value" => 2),
+            ),
+            "alloptions" => array(
+                array("name" => "feedback", "value" => 1),
+                array("name" => "generalfeedback", "value" => 1),
+                array("name" => "rightanswer", "value" => 1),
+                array("name" => "overallfeedback", "value" => 0),
+                array("name" => "marks", "value" => 2),
+            ),
+            "warnings" => [],
+        );
+
+        $this->assertEquals($expected, $result);
+
+        // Now, finish the attempt.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj->process_finish($timenow, false);
+
+        $expected = array(
+            "someoptions" => array(
+                array("name" => "feedback", "value" => 1),
+                array("name" => "generalfeedback", "value" => 1),
+                array("name" => "rightanswer", "value" => 1),
+                array("name" => "overallfeedback", "value" => 1),
+                array("name" => "marks", "value" => 2),
+            ),
+            "alloptions" => array(
+                array("name" => "feedback", "value" => 1),
+                array("name" => "generalfeedback", "value" => 1),
+                array("name" => "rightanswer", "value" => 1),
+                array("name" => "overallfeedback", "value" => 1),
+                array("name" => "marks", "value" => 2),
+            ),
+            "warnings" => [],
+        );
+
+        // We should see now the overall feedback.
+        $result = mod_quiz_external::get_combined_review_options($quiz->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_combined_review_options_returns(), $result);
+        $this->assertEquals($expected, $result);
+
+        // Start a new attempt, but not finish it.
+        $timenow = time();
+        $attempt = quiz_create_attempt($quizobj, 2, false, $timenow, false, $this->student->id);
+        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+        quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
+        quiz_attempt_save_started($quizobj, $quba, $attempt);
+
+        $expected = array(
+            "someoptions" => array(
+                array("name" => "feedback", "value" => 1),
+                array("name" => "generalfeedback", "value" => 1),
+                array("name" => "rightanswer", "value" => 1),
+                array("name" => "overallfeedback", "value" => 1),
+                array("name" => "marks", "value" => 2),
+            ),
+            "alloptions" => array(
+                array("name" => "feedback", "value" => 1),
+                array("name" => "generalfeedback", "value" => 1),
+                array("name" => "rightanswer", "value" => 1),
+                array("name" => "overallfeedback", "value" => 0),
+                array("name" => "marks", "value" => 2),
+            ),
+            "warnings" => [],
+        );
+
+        $result = mod_quiz_external::get_combined_review_options($quiz->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_combined_review_options_returns(), $result);
+        $this->assertEquals($expected, $result);
+
+        // Teacher, for see student options.
+        $this->setUser($this->teacher);
+
+        $result = mod_quiz_external::get_combined_review_options($quiz->id, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_combined_review_options_returns(), $result);
+
+        $this->assertEquals($expected, $result);
+
+        // Invalid user.
+        try {
+            mod_quiz_external::get_combined_review_options($quiz->id, -1);
+            $this->fail('Exception expected due to missing capability.');
+        } catch (dml_missing_record_exception $e) {
+            $this->assertEquals('invaliduser', $e->errorcode);
+        }
+    }
+
 }
