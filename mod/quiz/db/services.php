@@ -52,4 +52,12 @@ $functions = array(
         'type'          => 'read',
         'capabilities'  => 'mod/quiz:view'
     ),
+
+    'mod_quiz_get_user_best_grade' => array(
+        'classname'     => 'mod_quiz_external',
+        'methodname'    => 'get_user_best_grade',
+        'description'   => 'Get the best current grade for the given user on a quiz.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/quiz:view'
+    ),
 );

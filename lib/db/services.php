@@ -1313,6 +1313,7 @@ $services = array(
             'mod_quiz_get_quizzes_by_courses',
             'mod_quiz_get_user_attempts',
             'mod_quiz_view_quiz',
+            'mod_quiz_get_user_best_grade',
             'mod_glossary_get_glossaries_by_courses',
             'mod_wiki_get_wikis_by_courses',
             'mod_wiki_view_wiki',
