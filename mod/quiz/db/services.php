@@ -73,4 +73,13 @@ $functions = array(
         'capabilities'  => 'mod/quiz:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+
+    'mod_quiz_start_attempt' => array(
+        'classname'     => 'mod_quiz_external',
+        'methodname'    => 'start_attempt',
+        'description'   => 'Starts a new attempt at a quiz.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/quiz:attempt',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

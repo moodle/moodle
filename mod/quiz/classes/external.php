@@ -406,6 +406,40 @@ class mod_quiz_external extends external_api {
     }
 
     /**
+     * Describes a single attempt structure.
+     *
+     * @return external_single_structure the attempt structure
+     */
+    private static function attempt_structure() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'Attempt id.', VALUE_OPTIONAL),
+                'quiz' => new external_value(PARAM_INT, 'Foreign key reference to the quiz that was attempted.',
+                                                VALUE_OPTIONAL),
+                'userid' => new external_value(PARAM_INT, 'Foreign key reference to the user whose attempt this is.',
+                                                VALUE_OPTIONAL),
+                'attempt' => new external_value(PARAM_INT, 'Sequentially numbers this students attempts at this quiz.',
+                                                VALUE_OPTIONAL),
+                'uniqueid' => new external_value(PARAM_INT, 'Foreign key reference to the question_usage that holds the
+                                                    details of the the question_attempts that make up this quiz
+                                                    attempt.', VALUE_OPTIONAL),
+                'layout' => new external_value(PARAM_RAW, 'Attempt layout.', VALUE_OPTIONAL),
+                'currentpage' => new external_value(PARAM_INT, 'Attempt current page.', VALUE_OPTIONAL),
+                'preview' => new external_value(PARAM_INT, 'Whether is a preview attempt or not.', VALUE_OPTIONAL),
+                'state' => new external_value(PARAM_ALPHA, 'The current state of the attempts. \'inprogress\',
+                                                \'overdue\', \'finished\' or \'abandoned\'.', VALUE_OPTIONAL),
+                'timestart' => new external_value(PARAM_INT, 'Time when the attempt was started.', VALUE_OPTIONAL),
+                'timefinish' => new external_value(PARAM_INT, 'Time when the attempt was submitted.
+                                                    0 if the attempt has not been submitted yet.', VALUE_OPTIONAL),
+                'timemodified' => new external_value(PARAM_INT, 'Last modified time.', VALUE_OPTIONAL),
+                'timecheckstate' => new external_value(PARAM_INT, 'Next time quiz cron should check attempt for
+                                                        state changes.  NULL means never check.', VALUE_OPTIONAL),
+                'sumgrades' => new external_value(PARAM_FLOAT, 'Total marks for this attempt.', VALUE_OPTIONAL),
+            )
+        );
+    }
+
+    /**
      * Describes the get_user_attempts return value.
      *
      * @return external_single_structure
@@ -414,34 +448,7 @@ class mod_quiz_external extends external_api {
     public static function get_user_attempts_returns() {
         return new external_single_structure(
             array(
-                'attempts' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'Attempt id.', VALUE_OPTIONAL),
-                            'quiz' => new external_value(PARAM_INT, 'Foreign key reference to the quiz that was attempted.',
-                                                            VALUE_OPTIONAL),
-                            'userid' => new external_value(PARAM_INT, 'Foreign key reference to the user whose attempt this is.',
-                                                            VALUE_OPTIONAL),
-                            'attempt' => new external_value(PARAM_INT, 'Sequentially numbers this students attempts at this quiz.',
-                                                            VALUE_OPTIONAL),
-                            'uniqueid' => new external_value(PARAM_INT, 'Foreign key reference to the question_usage that holds the
-                                                                details of the the question_attempts that make up this quiz
-                                                                attempt.', VALUE_OPTIONAL),
-                            'layout' => new external_value(PARAM_RAW, 'Attempt layout.', VALUE_OPTIONAL),
-                            'currentpage' => new external_value(PARAM_INT, 'Attempt current page.', VALUE_OPTIONAL),
-                            'preview' => new external_value(PARAM_INT, 'Whether is a preview attempt or not.', VALUE_OPTIONAL),
-                            'state' => new external_value(PARAM_ALPHA, 'The current state of the attempts. \'inprogress\',
-                                                            \'overdue\', \'finished\' or \'abandoned\'.', VALUE_OPTIONAL),
-                            'timestart' => new external_value(PARAM_INT, 'Time when the attempt was started.', VALUE_OPTIONAL),
-                            'timefinish' => new external_value(PARAM_INT, 'Time when the attempt was submitted.
-                                                                0 if the attempt has not been submitted yet.', VALUE_OPTIONAL),
-                            'timemodified' => new external_value(PARAM_INT, 'Last modified time.', VALUE_OPTIONAL),
-                            'timecheckstate' => new external_value(PARAM_INT, 'Next time quiz cron should check attempt for
-                                                                    state changes.  NULL means never check.', VALUE_OPTIONAL),
-                            'sumgrades' => new external_value(PARAM_FLOAT, 'Total marks for this attempt.', VALUE_OPTIONAL),
-                        )
-                    )
-                ),
+                'attempts' => new external_multiple_structure(self::attempt_structure()),
                 'warnings' => new external_warnings(),
             )
         );
@@ -631,6 +638,137 @@ class mod_quiz_external extends external_api {
                         )
                     )
                 ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for start_attempt.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function start_attempt_parameters() {
+        return new external_function_parameters (
+            array(
+                'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
+                'preflightdata' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, array()
+                ),
+                'forcenew' => new external_value(PARAM_BOOL, 'Whether to force a new attempt or not.', VALUE_DEFAULT, false),
+
+            )
+        );
+    }
+
+    /**
+     * Starts a new attempt at a quiz.
+     *
+     * @param int $quizid quiz instance id
+     * @param array $preflightdata preflight required data (like passwords)
+     * @param bool $forcenew Whether to force a new attempt or not.
+     * @return array of warnings and the attempt basic data
+     * @since Moodle 3.1
+     * @throws moodle_quiz_exception
+     */
+    public static function start_attempt($quizid, $preflightdata = array(), $forcenew = false) {
+        global $DB, $USER;
+
+        $warnings = array();
+        $attempt = array();
+
+        $params = array(
+            'quizid' => $quizid,
+            'preflightdata' => $preflightdata,
+            'forcenew' => $forcenew,
+        );
+        $params = self::validate_parameters(self::start_attempt_parameters(), $params);
+        $forcenew = $params['forcenew'];
+
+        // Request and permission validation.
+        $quiz = $DB->get_record('quiz', array('id' => $params['quizid']), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($quiz, 'quiz');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        $quizobj = quiz::create($cm->instance, $USER->id);
+
+        // Check questions.
+        if (!$quizobj->has_questions()) {
+            throw new moodle_quiz_exception($quizobj, 'noquestionsfound');
+        }
+
+        // Create an object to manage all the other (non-roles) access rules.
+        $timenow = time();
+        $accessmanager = $quizobj->get_access_manager($timenow);
+
+        // Validate permissions for creating a new attempt and start a new preview attempt if required.
+        list($currentattemptid, $attemptnumber, $lastattempt, $messages, $page) =
+            quiz_validate_new_attempt($quizobj, $accessmanager, $forcenew, -1, false);
+
+        // Check access.
+        if (!$quizobj->is_preview_user() && $messages) {
+            // Create warnings with the exact messages.
+            foreach ($messages as $message) {
+                $warnings[] = array(
+                    'item' => 'quiz',
+                    'itemid' => $quiz->id,
+                    'warningcode' => '1',
+                    'message' => clean_text($message, PARAM_TEXT)
+                );
+            }
+        } else {
+            if ($accessmanager->is_preflight_check_required($currentattemptid)) {
+                // Need to do some checks before allowing the user to continue.
+
+                $provideddata = array();
+                foreach ($params['preflightdata'] as $data) {
+                    $provideddata[$data['name']] = $data['value'];
+                }
+
+                $errors = $accessmanager->validate_preflight_check($provideddata, [], $currentattemptid);
+
+                if (!empty($errors)) {
+                    throw new moodle_quiz_exception($quizobj, array_shift($errors));
+                }
+
+                // Pre-flight check passed.
+                $accessmanager->notify_preflight_check_passed($currentattemptid);
+            }
+
+            if ($currentattemptid) {
+                if ($lastattempt->state == quiz_attempt::OVERDUE) {
+                    throw new moodle_quiz_exception($quizobj, 'stateoverdue');
+                } else {
+                    throw new moodle_quiz_exception($quizobj, 'attemptstillinprogress');
+                }
+            }
+            $attempt = quiz_prepare_and_start_new_attempt($quizobj, $attemptnumber, $lastattempt);
+        }
+
+        $result = array();
+        $result['attempt'] = $attempt;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the start_attempt return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function start_attempt_returns() {
+        return new external_single_structure(
+            array(
+                'attempt' => self::attempt_structure(),
                 'warnings' => new external_warnings(),
             )
         );
