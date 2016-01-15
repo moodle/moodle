@@ -4040,12 +4040,17 @@ class external extends external_api {
             require_capability('moodle/cohort:view', $context);
         }
 
-        if ($includes == 'parents' && !($context instanceof context_system)) {
-            $results = cohort_get_available_cohorts($context, COHORT_ALL, $limitfrom, $limitnum, $query);
-        } else if ($includes == 'parents' || $includes == 'self') {
+        // TODO Make this more efficient.
+        if ($includes == 'self') {
             $results = cohort_get_cohorts($context->id, $limitfrom, $limitnum, $query);
             $results = $results['cohorts'];
-        } else if ($includes == 'all' && ($context instanceof context_system)) {
+        } else if ($includes == 'parents') {
+            $results = cohort_get_cohorts($context->id, $limitfrom, $limitnum, $query);
+            $results = $results['cohorts'];
+            if (!$context instanceof context_system) {
+                $results = array_merge($results, cohort_get_available_cohorts($context, COHORT_ALL, $limitfrom, $limitnum, $query));
+            }
+        } else if ($includes == 'all') {
             $results = cohort_get_all_cohorts($limitfrom, $limitnum, $query);
             $results = $results['cohorts'];
         } else {
