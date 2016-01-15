@@ -1416,8 +1416,6 @@ function quiz_get_review_options($quiz, $attempt, $context) {
  *
  * @param object $quiz the quiz instance.
  * @param array $attempts an array of attempt objects.
- * @param $context the roles and permissions context,
- *          normally the context for the quiz module instance.
  *
  * @return array of two options objects, one showing which options are true for
  *          at least one of the attempts, the other showing which options are true
