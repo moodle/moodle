@@ -153,7 +153,7 @@ $output = $PAGE->get_renderer('mod_quiz');
 // Print table with existing attempts.
 if ($attempts) {
     // Work out which columns we need, taking account what data is available in each attempt.
-    list($someoptions, $alloptions) = quiz_get_combined_reviewoptions($quiz, $attempts, $context);
+    list($someoptions, $alloptions) = quiz_get_combined_reviewoptions($quiz, $attempts);
 
     $viewobj->attemptcolumn  = $quiz->attempts != 1;
 
