@@ -4807,5 +4807,47 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016011301.00);
     }
 
+    if ($oldversion < 2016011500.00) {
+
+        // Convert calendar_lookahead to nearest new value.
+        $transaction = $DB->start_delegated_transaction();
+
+        // Count all users who curretly have that preference set (for progress bar).
+        $total = $DB->count_records_select('user_preferences', 'name = \'calendar_lookahead\' AND value > 0');
+        $pbar = new progress_bar('upgradecalendarlookahead', 500, true);
+
+        // Get all these users, one at a time.
+        $rs = $DB->get_recordset_select('user_preferences', 'name = \'calendar_lookahead\' AND value > 0');
+        $i = 0;
+        foreach ($rs as $userpref) {
+
+            // Calculate and set new lookahead value.
+            if ($userpref->value > 90) {
+                $newvalue = 120;
+            } else if ($userpref->value > 60 and $userpref->value < 90) {
+                $newvalue = 90;
+            } else if ($userpref->value > 30 and $userpref->value < 60) {
+                $newvalue = 60;
+            } else if ($userpref->value > 21 and $userpref->value < 30) {
+                $newvalue = 30;
+            } else if ($userpref->value > 14 and $userpref->value < 21) {
+                $newvalue = 21;
+            } else if ($userpref->value > 7 and $userpref->value < 14) {
+                $newvalue = 14;
+            } else {
+                $newvalue = $userpref->value;
+            }
+
+            $DB->set_field('user_preferences', 'value', $newvalue, array('id' => $userpref->id));
+
+            // Update progress.
+            $i++;
+            $pbar->update($i, $total, "Upgrading user preference settings - $i/$total.");
+        }
+        $rs->close();
+        $transaction->allow_commit();
+
+        upgrade_main_savepoint(true, 2016011500.00);
+    }
     return true;
 }
