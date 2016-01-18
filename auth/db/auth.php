@@ -314,6 +314,7 @@ class auth_plugin_db extends auth_plugin_base {
                         $updateuser = new stdClass();
                         $updateuser->id   = $user->id;
                         $updateuser->suspended = 1;
+                        $updateuser = $this->clean_data($updateuser);
                         user_update_user($updateuser, false);
                         $trace->output(get_string('auth_dbsuspenduser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)), 1);
                     }
@@ -400,6 +401,7 @@ class auth_plugin_db extends auth_plugin_base {
                         $updateuser = new stdClass();
                         $updateuser->id = $olduser->id;
                         $updateuser->suspended = 0;
+                        $updateuser = $this->clean_data($updateuser);
                         user_update_user($updateuser);
                         $trace->output(get_string('auth_dbreviveduser', 'auth_db', array('name' => $username,
                             'id' => $olduser->id)), 1);
@@ -422,6 +424,7 @@ class auth_plugin_db extends auth_plugin_base {
                     $trace->output(get_string('auth_dbinsertuserduplicate', 'auth_db', array('username'=>$user->username, 'auth'=>$collision->auth)), 1);
                     continue;
                 }
+                $user = $this->clean_data($user);
                 try {
                     $id = user_create_user($user, false); // It is truly a new user.
                     $trace->output(get_string('auth_dbinsertuser', 'auth_db', array('name'=>$user->username, 'id'=>$id)), 1);
@@ -563,6 +566,7 @@ class auth_plugin_db extends auth_plugin_base {
         }
         if ($needsupdate) {
             require_once($CFG->dirroot . '/user/lib.php');
+            $updateuser = $this->clean_data($updateuser);
             user_update_user($updateuser);
         }
         return $DB->get_record('user', array('id'=>$userid, 'deleted'=>0));
@@ -887,6 +891,30 @@ class auth_plugin_db extends auth_plugin_base {
         ini_set('display_errors', $olddisplay);
         error_reporting($CFG->debug);
         ob_end_flush();
+    }
+
+    /**
+     * Clean the user data that comes from an external database.
+     *
+     * @param array $user the user data to be validated against properties definition.
+     * @return stdClass $user the cleaned user data.
+     */
+    public function clean_data($user) {
+        if (empty($user)) {
+            return $user;
+        }
+
+        foreach ($user as $field => $value) {
+            // Get the property parameter type and do the cleaning.
+            try {
+                $property = core_user::get_property_definition($field);
+                $user->$field = clean_param($value, $property['type']);
+            } catch (coding_exception $e) {
+                debugging("The property '$field' could not be cleaned.", DEBUG_DEVELOPER);
+            }
+        }
+
+        return $user;
     }
 }
 
