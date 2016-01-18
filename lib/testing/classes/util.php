@@ -638,7 +638,12 @@ abstract class testing_util {
 
         foreach ($data as $table => $records) {
             if ($borkedmysql) {
-                if (empty($records) and isset($empties[$table])) {
+                if (empty($records)) {
+                    if (isset($empties[$table])) {
+                        // Table was not modified and is empty.
+                    } else {
+                        $DB->delete_records($table, null);
+                    }
                     continue;
                 }
 
