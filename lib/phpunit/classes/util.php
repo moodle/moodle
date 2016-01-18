@@ -202,6 +202,7 @@ class phpunit_util extends testing_util {
         core_text::reset_caches();
         get_message_processors(false, true);
         filter_manager::reset_caches();
+        core_user::reset_caches();
 
         // Reset static unit test options.
         if (class_exists('\availability_date\condition', false)) {
