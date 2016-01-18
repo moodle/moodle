@@ -106,9 +106,8 @@ if ($table->is_downloading()) {
 print_grade_page_head($COURSE->id, 'report', 'history', get_string('pluginname', 'gradereport_history'), false, '');
 $mform->display();
 
-// MDL-52309: Display report after form has been submitted.
 if ($showreport) {
-    // Render table.
+    // Only display report after form has been submitted.
     echo $output->render($table);
 
     $event = \gradereport_history\event\grade_report_viewed::create(
