@@ -702,4 +702,21 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
 
     }
 
+    /**
+     * Test get_attempt_data
+     */
+    public function test_get_attempt_data() {
+
+        $result = mod_quiz_external::get_attempt_data();
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_data_returns(), $result);
+
+        try {
+            mod_quiz_external::get_attempt_data();
+            $this->fail('Exception expected due to missing capability.');
+        } catch (required_capability_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+    }
+
 }
