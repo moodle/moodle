@@ -310,6 +310,9 @@
     min-height: 16px;
     margin: .3em 0;
 }
+.dir-rtl.path-mod-workshop .userplan tr.phasetasks li {
+    background-position: top right;
+}
 
 .path-mod-workshop .userplan tr.phasetasks li.completed {
     background-image: url([[pix:mod_workshop|userplan/task-done]]);
@@ -332,10 +335,16 @@
 .path-mod-workshop .userplan tr.phasetasks .title {
     padding: 0px 10px 0px 20px;
 }
+.dir-rtl.path-mod-workshop .userplan tr.phasetasks .title {
+    padding: 0px 20px 0px 10px;
+}
 
 .path-mod-workshop .userplan tr.phasetasks .details {
     padding: 0px 10px 0px 25px;
     font-size: 80%;
+}
+.dir-rtl.path-mod-workshop .userplan tr.phasetasks .details {
+    padding: 0px 25px 0px 10px;
 }
 
 /**
