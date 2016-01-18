@@ -508,7 +508,9 @@ function httpsrequired() {
 /**
  * Given a physical path to a file, returns the URL through which it can be reached in Moodle.
  *
- * @deprecated use moodle_url factory methods instead
+ * @deprecated since 3.1 - replacement legacy file API methods can be found on the moodle_url class, for example:
+ * The moodle_url::make_legacyfile_url() method can be used to generate a legacy course file url. To generate
+ * course module file.php url the moodle_url::make_file_url() should be used.
  *
  * @param string $path Physical path to a file
  * @param array $options associative array of GET variables to append to the URL
@@ -516,6 +518,7 @@ function httpsrequired() {
  * @return string URL to file
  */
 function get_file_url($path, $options=null, $type='coursefile') {
+    debugging('Function get_file_url() is deprecated, please use moodle_url factory methods instead.', DEBUG_DEVELOPER);
     global $CFG;
 
     $path = str_replace('//', '/', $path);

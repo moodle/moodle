@@ -2169,7 +2169,7 @@ function scorm_get_sco_and_launch_url($scorm, $scoid, $context) {
         // This SCORM content sits in a repository that allows relative links.
         $scolaunchurl = "$CFG->wwwroot/pluginfile.php/$context->id/mod_scorm/imsmanifest/$scorm->revision/$launcher";
     } else if ($scorm->scormtype === SCORM_TYPE_LOCAL or $scorm->scormtype === SCORM_TYPE_LOCALSYNC) {
-        // Note: do not convert this to use get_file_url() or moodle_url()
+        // Note: do not convert this to use moodle_url().
         // SCORM does not work without slasharguments and moodle_url() encodes querystring vars.
         $scolaunchurl = "$CFG->wwwroot/pluginfile.php/$context->id/mod_scorm/content/$scorm->revision/$launcher";
     }
