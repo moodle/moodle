@@ -184,4 +184,29 @@ class core_user_testcase extends advanced_testcase {
         }
 
     }
+
+    /**
+     * Test get_property_definition() method.
+     */
+    public function test_get_property_definition() {
+        // Try to get a existing property.
+        $properties = core_user::get_property_definition('id');
+        $this->assertEquals($properties['type'], PARAM_INT);
+        $properties = core_user::get_property_definition('username');
+        $this->assertEquals($properties['type'], PARAM_USERNAME);
+
+        // Invalid property.
+        try {
+            core_user::get_property_definition('fullname');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/Invalid property requested./', $e->getMessage());
+        }
+
+        // Empty parameter.
+        try {
+            core_user::get_property_definition('');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/Invalid property requested./', $e->getMessage());
+        }
+    }
 }

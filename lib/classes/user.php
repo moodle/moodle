@@ -49,6 +49,9 @@ class core_user {
     /** @var stdClass keep record of support user */
     public static $supportuser = false;
 
+    /** @var array store user fields properties cache. */
+    protected static $propertiescache = null;
+
     /**
      * Return user object from db or create noreply or support user,
      * if userid matches corse_user::NOREPLY_USER or corse_user::SUPPORT_USER
@@ -273,5 +276,105 @@ class core_user {
         if ($checknologin and $user->auth == 'nologin') {
             throw new moodle_exception('suspended', 'auth');
         }
+    }
+
+    /**
+     * Definition of user profile fields and the expected parameter type for data validation.
+     *
+     * @return void
+     */
+    protected static function fill_properties_cache() {
+
+        if (self::$propertiescache !== null) {
+            return;
+        }
+
+        // Array of user fields properties and expected parameters.
+        // Every new field on the user table should be added here otherwise it won't be validated.
+        $fields = array();
+        $fields['id'] = array('type' => PARAM_INT);
+        $fields['auth'] = array('type' => PARAM_NOTAGS);
+        $fields['confirmed'] = array('type' => PARAM_BOOL);
+        $fields['policyagreed'] = array('type' => PARAM_BOOL);
+        $fields['deleted'] = array('type' => PARAM_BOOL);
+        $fields['suspended'] = array('type' => PARAM_BOOL);
+        $fields['mnethostid'] = array('type' => PARAM_BOOL);
+        $fields['username'] = array('type' => PARAM_USERNAME);
+        $fields['password'] = array('type' => PARAM_NOTAGS);
+        $fields['idnumber'] = array('type' => PARAM_NOTAGS);
+        $fields['firstname'] = array('type' => PARAM_NOTAGS);
+        $fields['lastname'] = array('type' => PARAM_NOTAGS);
+        $fields['surname'] = array('type' => PARAM_NOTAGS);
+        $fields['email'] = array('type' => PARAM_RAW_TRIMMED);
+        $fields['emailstop'] = array('type' => PARAM_INT);
+        $fields['icq'] = array('type' => PARAM_NOTAGS);
+        $fields['skype'] = array('type' => PARAM_NOTAGS);
+        $fields['aim'] = array('type' => PARAM_NOTAGS);
+        $fields['yahoo'] = array('type' => PARAM_NOTAGS);
+        $fields['msn'] = array('type' => PARAM_NOTAGS);
+        $fields['phone1'] = array('type' => PARAM_NOTAGS);
+        $fields['phone2'] = array('type' => PARAM_NOTAGS);
+        $fields['institution'] = array('type' => PARAM_TEXT);
+        $fields['department'] = array('type' => PARAM_TEXT);
+        $fields['address'] = array('type' => PARAM_TEXT);
+        $fields['city'] = array('type' => PARAM_TEXT);
+        $fields['country'] = array('type' => PARAM_TEXT);
+        $fields['lang'] = array('type' => PARAM_TEXT);
+        $fields['calendartype'] = array('type' => PARAM_NOTAGS);
+        $fields['theme'] = array('type' => PARAM_NOTAGS);
+        $fields['timezones'] = array('type' => PARAM_TEXT);
+        $fields['firstaccess'] = array('type' => PARAM_INT);
+        $fields['lastaccess'] = array('type' => PARAM_INT);
+        $fields['lastlogin'] = array('type' => PARAM_INT);
+        $fields['currentlogin'] = array('type' => PARAM_INT);
+        $fields['lastip'] = array('type' => PARAM_NOTAGS);
+        $fields['secret'] = array('type' => PARAM_TEXT);
+        $fields['picture'] = array('type' => PARAM_INT);
+        $fields['url'] = array('type' => PARAM_URL);
+        $fields['description'] = array('type' => PARAM_CLEANHTML);
+        $fields['descriptionformat'] = array('type' => PARAM_INT);
+        $fields['mailformat'] = array('type' => PARAM_INT);
+        $fields['maildigest'] = array('type' => PARAM_INT);
+        $fields['maildisplay'] = array('type' => PARAM_INT);
+        $fields['autosubscribe'] = array('type' => PARAM_INT);
+        $fields['trackforums'] = array('type' => PARAM_INT);
+        $fields['timecreated'] = array('type' => PARAM_INT);
+        $fields['timemodified'] = array('type' => PARAM_INT);
+        $fields['trustbitmask'] = array('type' => PARAM_INT);
+        $fields['imagealt'] = array('type' => PARAM_TEXT);
+        $fields['lastnamephonetic'] = array('type' => PARAM_NOTAGS);
+        $fields['firstnamephonetic'] = array('type' => PARAM_NOTAGS);
+        $fields['middlename'] = array('type' => PARAM_NOTAGS);
+        $fields['alternatename'] = array('type' => PARAM_NOTAGS);
+
+        self::$propertiescache = $fields;
+    }
+
+    /**
+     * Get properties of a user field.
+     *
+     * @param string $property property name to be retrieved.
+     * @throws coding_exception if the requested property name is invalid.
+     * @return array the property definition.
+     */
+    public static function get_property_definition($property) {
+
+        self::fill_properties_cache();
+
+        if (!array_key_exists($property, self::$propertiescache)) {
+            throw new coding_exception('Invalid property requested.');
+        }
+
+        return self::$propertiescache[$property];
+    }
+
+    /**
+     * Clean the properties cache.
+     *
+     * During unit tests we need to be able to reset all caches so that each new test starts in a known state.
+     * Intended for use only for testing, phpunit calls this before every test.
+     */
+    public static function reset_caches() {
+        self::$propertiescache = null;
     }
 }

@@ -1,6 +1,14 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.0.3 ===
+
+* The core_user::fill_properties_cache() static method has been introduced to be a reference
+  and allow standard user fields data validation. Right now only type validation is supported
+  checking it against the parameter (PARAM_*) type of the target user field. MDL-52781 is
+  going to add support to null/not null and choices validation, replacing the existing code to
+  validate the user fields in different places in a common way.
+
 === 3.0.1 ===
 
 * Number of changes to allow to run Moodle on PHP7. This should not affect existing plugins
