@@ -204,6 +204,7 @@ class phpunit_util extends testing_util {
         filter_manager::reset_caches();
         // Reset internal users.
         core_user::reset_internal_users();
+        core_user::reset_caches();
 
         //TODO MDL-25290: add more resets here and probably refactor them to new core function
 
