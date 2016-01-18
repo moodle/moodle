@@ -370,6 +370,30 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(1, count($events['events']));
         $this->assertEquals(0, count($events['warnings']));
+
+        // Now, create an activity event.
+        $this->setAdminUser();
+        $nexttime = time() + DAYSECS;
+        $assign = $this->getDataGenerator()->create_module('assign', array('course' => $course->id, 'duedate' => $nexttime));
+
+        $this->setUser($user);
+        $paramevents = array ('courseids' => array($course->id));
+        $options = array ('siteevents' => true, 'userevents' => true, 'timeend' => time() + WEEKSECS);
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+
+        $this->assertCount(5, $events['events']);
+
+        // Hide the assignment.
+        set_coursemodule_visible($assign->cmid, 0);
+        // Empty all the caches that may be affected  by this change.
+        accesslib_clear_all_caches_for_unit_testing();
+        course_modinfo::clear_instance_cache();
+
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        // Expect one less.
+        $this->assertCount(4, $events['events']);
     }
 
     /**

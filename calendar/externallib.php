@@ -227,21 +227,21 @@ class core_calendar_external extends external_api {
             $params['options']['timeend'] = PHP_INT_MAX;
         }
 
+        // Event list does not check visibility and permissions, we'll check that later.
         $eventlist = calendar_get_events($params['options']['timestart'], $params['options']['timeend'], $funcparam['users'], $funcparam['groups'],
                 $funcparam['courses'], true, $params['options']['ignorehidden']);
+
         // WS expects arrays.
         $events = array();
-        foreach ($eventlist as $id => $event) {
-            $events[$id] = (array) $event;
-        }
 
         // We need to get events asked for eventids.
-        $eventsbyid = calendar_get_events_by_id($params['events']['eventids']);
-        foreach ($eventsbyid as $eventid => $eventobj) {
+        if ($eventsbyid = calendar_get_events_by_id($params['events']['eventids'])) {
+            $eventlist += $eventsbyid;
+        }
+
+        foreach ($eventlist as $eventid => $eventobj) {
             $event = (array) $eventobj;
-            if (isset($events[$eventid])) {
-                   continue;
-            }
+
             if ($hassystemcap) {
                 // User can see everything, no further check is needed.
                 $events[$eventid] = $event;
