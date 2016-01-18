@@ -216,6 +216,7 @@ class phpunit_util extends testing_util {
         filter_manager::reset_caches();
         core_filetypes::reset_caches();
         \core_search\manager::clear_static();
+        core_user::reset_caches();
 
         // Reset static unit test options.
         if (class_exists('\availability_date\condition', false)) {
