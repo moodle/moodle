@@ -26,7 +26,6 @@ Feature: Teachers can review student progress on all lessons in a course by view
     And I press "Save and return to course"
     And I follow "Test lesson name"
 
-  @javascript
   Scenario: View student progress for lesson that was never attempted
     Given I follow "Add a content page"
     And I set the following fields to these values:
@@ -35,7 +34,7 @@ Feature: Teachers can review student progress on all lessons in a course by view
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I set the field "qtype" to "Question"
+    And I select "Question" from the "qtype" singleselect
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
     And I set the following fields to these values:
@@ -54,7 +53,6 @@ Feature: Teachers can review student progress on all lessons in a course by view
     And I follow "Outline report"
     Then I should see "No attempts have been made on this lesson"
 
-  @javascript
   Scenario: View student progress for an incomplete lesson containing both content and question pages
     Given I follow "Add a content page"
     And I set the following fields to these values:
@@ -63,7 +61,7 @@ Feature: Teachers can review student progress on all lessons in a course by view
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I set the field "qtype" to "Question"
+    And I select "Question" from the "qtype" singleselect
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
     And I set the following fields to these values:
@@ -76,7 +74,7 @@ Feature: Teachers can review student progress on all lessons in a course by view
       | id_response_editor_1 | Wrong |
       | id_jumpto_1 | This page |
     And I press "Save page"
-    And I set the field "qtype" to "Add a content page"
+    And I select "Add a content page" from the "qtype" singleselect
     And I set the following fields to these values:
       | Page title | Second page name |
       | Page contents | Second page contents |
@@ -99,7 +97,6 @@ Feature: Teachers can review student progress on all lessons in a course by view
     And I follow "Outline report"
     And I should see "Lesson has been started, but not yet completed"
 
-  @javascript
   Scenario: View student progress for a lesson containing both content and question pages
     Given I follow "Add a content page"
     And I set the following fields to these values:
@@ -108,7 +105,7 @@ Feature: Teachers can review student progress on all lessons in a course by view
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I set the field "qtype" to "Question"
+    And I select "Question" from the "qtype" singleselect
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
     And I set the following fields to these values:
@@ -121,7 +118,7 @@ Feature: Teachers can review student progress on all lessons in a course by view
       | id_response_editor_1 | Wrong |
       | id_jumpto_1 | This page |
     And I press "Save page"
-    And I set the field "qtype" to "Add a content page"
+    And I select "Add a content page" from the "qtype" singleselect
     And I set the following fields to these values:
       | Page title | Second page name |
       | Page contents | Second page contents |
@@ -152,7 +149,6 @@ Feature: Teachers can review student progress on all lessons in a course by view
     And I follow "Outline report"
     And I should see "Grade: 100.00 / 100.00"
 
-  @javascript
   Scenario: View student attempts in a lesson containing only content pages
     Given I follow "Add a content page"
     And I set the following fields to these values:
@@ -161,7 +157,7 @@ Feature: Teachers can review student progress on all lessons in a course by view
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I set the field "qtype" to "Add a content page"
+    And I select "Add a content page" from the "qtype" singleselect
     And I set the following fields to these values:
       | Page title | Second page name |
       | Page contents | Second page contents |
