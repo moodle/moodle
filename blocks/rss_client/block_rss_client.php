@@ -15,6 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Contains block_rss_client
+ * @package    block_rss_client
+ * @copyright  Daryl Hawes
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
+ */
+
+/**
  * A block which displays Remote feeds
  *
  * @package   block_rss_client
@@ -43,6 +50,31 @@
             // No customized block title, use localized remote news feed string
             $this->title = get_string('remotenewsfeed', 'block_rss_client');
         }
+    }
+
+    /**
+     * Gets the footer, which is the channel link of the last feed in our list of feeds
+     *
+     * @param array $feedrecords The feed records from the database.
+     * @return block_rss_client\output\footer|null The renderable footer or null if none should be displayed.
+     */
+    protected function get_footer($feedrecords) {
+        $footer = null;
+
+        if ($this->config->block_rss_client_show_channel_link) {
+            global $CFG;
+            require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
+
+            $feedrecord     = array_pop($feedrecords);
+            $feed           = new moodle_simplepie($feedrecord->url);
+            $channellink    = new moodle_url($feed->get_link());
+
+            if (!empty($channellink)) {
+                $footer = new block_rss_client\output\footer($channellink);
+            }
+        }
+
+        return $footer;
     }
 
     function get_content() {
@@ -80,31 +112,38 @@
             $maxentries = intval($CFG->block_rss_client_num_entries);
         }
 
-
         /* ---------------------------------
          * Begin Normal Display of Block Content
          * --------------------------------- */
 
-        $output = '';
-
+        $renderer = $this->page->get_renderer('block_rss_client');
+        $block = new \block_rss_client\output\block();
 
         if (!empty($this->config->rssid)) {
-            list($rss_ids_sql, $params) = $DB->get_in_or_equal($this->config->rssid);
+            list($rssidssql, $params) = $DB->get_in_or_equal($this->config->rssid);
+            $rssfeeds = $DB->get_records_select('block_rss_client', "id $rssidssql", $params);
 
-            $rss_feeds = $DB->get_records_select('block_rss_client', "id $rss_ids_sql", $params);
+            if (!empty($rssfeeds)) {
+                $showtitle = false;
+                if (count($rssfeeds) > 1) {
+                    // When many feeds show the title for each feed.
+                    $showtitle = true;
+                }
 
-            $showtitle = false;
-            if (count($rss_feeds) > 1) {
-                // when many feeds show the title for each feed
-                $showtitle = true;
-            }
+                foreach ($rssfeeds as $feed) {
+                    if ($renderablefeed = $this->get_feed($feed, $maxentries, $showtitle)) {
+                        $block->add_feed($renderablefeed);
+                    }
+                }
 
-            foreach($rss_feeds as $feed){
-                $output.= $this->get_feed_html($feed, $maxentries, $showtitle);
+                $footer = $this->get_footer($rssfeeds);
             }
         }
 
-        $this->content->text = $output;
+        $this->content->text = $renderer->render_block($block);
+        if (isset($footer)) {
+            $this->content->footer = $renderer->render_footer($footer);
+        }
 
         return $this->content;
     }
@@ -128,71 +167,27 @@
      * @param mixed feedrecord The feed record from the database
      * @param int maxentries The maximum number of entries to be displayed
      * @param boolean showtitle Should the feed title be displayed in html
-     * @return string html representing the rss feed content
+     * @return block_rss_client\output\feed|null The renderable feed or null of there is an error
      */
-    function get_feed_html($feedrecord, $maxentries, $showtitle){
+    public function get_feed($feedrecord, $maxentries, $showtitle) {
         global $CFG;
         require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
 
-        $feed = new moodle_simplepie($feedrecord->url);
+        $simplepiefeed = new moodle_simplepie($feedrecord->url);
 
         if(isset($CFG->block_rss_client_timeout)){
-            $feed->set_cache_duration($CFG->block_rss_client_timeout*60);
+            $simplepiefeed->set_cache_duration($CFG->block_rss_client_timeout * 60);
         }
 
-        if ($CFG->debugdeveloper && $feed->error()) {
-            return '<p>'. $feedrecord->url .' Failed with code: '.$feed->error().'</p>';
-        }
-
-        $r = ''; // return string
-
-        if($this->config->block_rss_client_show_channel_image){
-            if($image = $feed->get_image_url()){
-                $imagetitle = s($feed->get_image_title());
-                $imagelink  = $feed->get_image_link();
-
-                $r.='<div class="image" title="'.$imagetitle.'">'."\n";
-                if($imagelink){
-                    $r.='<a href="'.$imagelink.'">';
-                }
-                $r.='<img src="'.$image.'" alt="'.$imagetitle.'" />'."\n";
-                if($imagelink){
-                    $r.='</a>';
-                }
-                $r.= '</div>';
-            }
+        if ($simplepiefeed->error()) {
+            debugging($feedrecord->url .' Failed with code: '.$simplepiefeed->error());
+            return null;
         }
 
         if(empty($feedrecord->preferredtitle)){
-            $feedtitle = $this->format_title($feed->get_title());
+            $feedtitle = $this->format_title($simplepiefeed->get_title());
         }else{
             $feedtitle = $this->format_title($feedrecord->preferredtitle);
-        }
-
-        if($showtitle){
-            $r.='<div class="title">'.$feedtitle.'</div>';
-        }
-
-
-        $r.='<ul class="list no-overflow">'."\n";
-
-        $feeditems = $feed->get_items(0, $maxentries);
-        foreach($feeditems as $item){
-            $r.= $this->get_item_html($item);
-        }
-
-        $r.='</ul>';
-
-
-        if ($this->config->block_rss_client_show_channel_link) {
-
-            $channellink = $feed->get_link();
-
-            if (!empty($channellink)){
-                //NOTE: this means the 'last feed' display wins the block title - but
-                //this is exiting behaviour..
-                $this->content->footer = '<a href="'.htmlspecialchars(clean_param($channellink,PARAM_URL)).'">'. get_string('clientchannellink', 'block_rss_client') .'</a>';
-            }
         }
 
         if (empty($this->config->title)){
@@ -201,63 +196,51 @@
             $this->title = strip_tags($feedtitle);
         }
 
-        return $r;
-    }
+        $feed = new \block_rss_client\output\feed($feedtitle, $showtitle, $this->config->block_rss_client_show_channel_image);
 
+        if ($simplepieitems = $simplepiefeed->get_items(0, $maxentries)) {
+            foreach ($simplepieitems as $simplepieitem) {
+                try {
+                    $item = new \block_rss_client\output\item(
+                        $simplepieitem->get_id(),
+                        new moodle_url($simplepieitem->get_link()),
+                        $simplepieitem->get_title(),
+                        $simplepieitem->get_description(),
+                        new moodle_url($simplepieitem->get_permalink()),
+                        $simplepieitem->get_date('U'),
+                        $this->config->display_description
+                    );
 
-    /**
-     * Returns the html list item of a feed item
-     *
-     * @param mixed item simplepie_item representing the feed item
-     * @return string html li representing the rss feed item
-     */
-    function get_item_html($item){
-
-        $link        = $item->get_link();
-        $title       = $item->get_title();
-        $description = $item->get_description();
-
-
-        if(empty($title)){
-            // no title present, use portion of description
-            $title = core_text::substr(strip_tags($description), 0, 20) . '...';
-        }else{
-            $title = break_up_long_words($title, 30);
+                    $feed->add_item($item);
+                } catch (moodle_exception $e) {
+                    // If there is an error with the RSS item, we don't
+                    // want to crash the page. Specifically, moodle_url can
+                    // throw an exception of the param is an extremely
+                    // malformed url.
+                    debugging($e->getMessage());
+                }
+            }
         }
 
-        if(empty($link)){
-            $link = $item->get_id();
-        } else {
+        // Feed image.
+        if ($imageurl = $simplepiefeed->get_image_url()) {
             try {
-                // URLs in our RSS cache will be escaped (correctly as theyre store in XML)
-                // html_writer::link() will re-escape them. To prevent double escaping unescape here.
-                // This can by done using htmlspecialchars_decode() but moodle_url also has that effect.
-                $link = new moodle_url($link);
+                $image = new \block_rss_client\output\channel_image(
+                    new moodle_url($imageurl),
+                    $simplepiefeed->get_image_title(),
+                    new moodle_url($simplepiefeed->get_image_link())
+                );
+
+                $feed->set_image($image);
             } catch (moodle_exception $e) {
-                // Catching the exception to prevent the whole site to crash in case of malformed RSS feed
-                $link = '';
+                // If there is an error with the RSS image, we don'twant to
+                // crash the page. Specifically, moodle_url can throw an
+                // exception if the param is an extremely malformed url.
+                debugging($e->getMessage());
             }
         }
 
-        $r = html_writer::start_tag('li');
-            $r.= html_writer::start_tag('div',array('class'=>'link'));
-                $r.= html_writer::link($link, s($title), array('onclick'=>'this.target="_blank"'));
-            $r.= html_writer::end_tag('div');
-
-            if($this->config->display_description && !empty($description)){
-
-                $formatoptions = new stdClass();
-                $formatoptions->para = false;
-
-                $r.= html_writer::start_tag('div',array('class'=>'description'));
-                    $description = format_text($description, FORMAT_HTML, $formatoptions, $this->page->course->id);
-                    $description = break_up_long_words($description, 30);
-                    $r.= $description;
-                $r.= html_writer::end_tag('div');
-            }
-        $r.= html_writer::end_tag('li');
-
-        return $r;
+        return $feed;
     }
 
     /**
@@ -378,5 +361,3 @@
         return $newskiptime;
     }
 }
-
-
