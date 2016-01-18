@@ -120,7 +120,7 @@ class data_field_textarea extends data_field_base {
             $formats[$fid] = $strformats[$fid];
         }
         $editor->use_editor($field, $options, $fpoptions);
-        $str .= '<input type="hidden" name="'.$field.'_itemid" value="'.$draftitemid.'" />';
+        $str .= '<input type="hidden" name="'.$field.'_itemid" value="'.s($draftitemid).'" />';
         $str .= '<div><textarea id="'.$field.'" name="'.$field.'" rows="'.$this->field->param3.'" cols="'.$this->field->param2.'" spellcheck="true">'.s($text).'</textarea></div>';
         $str .= '<div><label class="accesshide" for="' . $field . '_content1">' . get_string('format') . '</label>';
         $str .= '<select id="' . $field . '_content1" name="'.$field.'_content1">';
@@ -138,7 +138,7 @@ class data_field_textarea extends data_field_base {
 
     function display_search_field($value = '') {
         return '<label class="accesshide" for="f_' . $this->field->id . '">' . $this->field->name . '</label>' .
-               '<input type="text" size="16" id="f_'.$this->field->id.'" name="f_'.$this->field->id.'" value="'.$value.'" />';
+               '<input type="text" size="16" id="f_'.$this->field->id.'" name="f_'.$this->field->id.'" value="'.s($value).'" />';
     }
 
     function parse_search_field() {
