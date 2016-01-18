@@ -179,8 +179,8 @@ class core_tag_manage_table extends table_sql {
      */
     public function col_name($tag) {
         global $OUTPUT;
-        $tagoutput = new core_tag\output\tag($tag);
-        return $OUTPUT->render_from_template('core_tag/tagname', $tagoutput->export_for_template($OUTPUT));
+        $tagoutput = new core_tag\output\tagname($tag);
+        return $OUTPUT->render_from_template('core/inplace_editable', $tagoutput->export_for_template($OUTPUT));
     }
 
     /**

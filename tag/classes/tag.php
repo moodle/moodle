@@ -892,14 +892,12 @@ class core_tag_tag {
             $data['rawname'] = clean_param($data['rawname'], PARAM_TAG);
             $name = core_text::strtolower($data['rawname']);
 
-            if (!$name) {
+            if (!$name || $data['rawname'] === $this->rawname) {
                 unset($data['rawname']);
             } else if ($existing = static::get_by_name($this->tagcollid, $name, 'id')) {
                 // Prevent the rename if a tag with that name already exists.
                 if ($existing->id != $this->id) {
-                    debugging('New tag name already exists, you should check it before calling core_tag_tag::update()',
-                            DEBUG_DEVELOPER);
-                    unset($data['rawname']);
+                    throw new moodle_exception('namesalreadybeeingused', 'core_tag');
                 }
             }
             if (isset($data['rawname'])) {

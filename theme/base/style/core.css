@@ -751,14 +751,7 @@ span.flagged-tag a,
 tr.flagged-tag a {color:#FF0000;}
 .tag-management-table td,
 .tag-management-table th {vertical-align: middle;padding: 4px;}
-.tag-management-table tr td.tageditingon .displaytagname,
-.tag-management-table td .edittagname {display: none;}
-.tag-management-table tr td.tageditingon .edittagname {display: inherit; position: relative;}
-.tag-management-table tr td.tageditingon .edittagname .editinstructions {margin-right: -300px; margin-left: 0;}
-.tag-management-table tr td .tagnameedit img {opacity: 0.2;}
-.tag-management-table tr:hover td .tagnameedit img,
-.tag-management-table tr td .tagnameedit:focus img {opacity: 1;}
-.tag-management-table tr:hover td.tageditingon .tagnameedit img {opacity: 0.2;}
+.tag-management-table span.inplaceeditable.inplaceeditingon input {width: 150px;}
 .tag_feed .media, .tag_feed .media-body {overflow: hidden;}
 .tag_feed.media-list .media .itemimage {float: left;}
 .dir-rtl .tag_feed.media-list .media .itemimage {float: right;}
@@ -2329,4 +2322,31 @@ body.lockscroll {
 /* IE10 only fix for calendar titling */
 .ie10 .yui3-calendar-header-label {
     display: inline-block;
+}
+
+span.inplaceeditable.inplaceeditingon {
+    position: relative;
+}
+span.inplaceeditable.inplaceeditingon span.editinstructions {
+    margin-top: -30px;
+    font-weight: normal;
+    margin-right: -300px;
+    margin-left: 0;
+}
+.dir-rtl span.inplaceeditable.inplaceeditingon span.editinstructions {
+    margin-left: -300px;
+    margin-right: 0;
+}
+span.inplaceeditable .quickeditlink img {
+    opacity: 0.2;
+}
+span.inplaceeditable:hover .quickeditlink img,
+span.inplaceeditable .quickeditlink:focus img {
+    opacity: 1;
+}
+span.inplaceeditable.inplaceeditingon input {
+    width: 330px;
+    height: 16px;
+    vertical-align: text-bottom;
+    margin-bottom: 0;
 }

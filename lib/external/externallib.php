@@ -346,4 +346,65 @@ class core_external extends external_api {
             )
         );
     }
+
+    /**
+     * Parameters for function update_inplace_editable()
+     *
+     * @since Moodle 3.1
+     * @return external_function_parameters
+     */
+    public static function update_inplace_editable_parameters() {
+        return new external_function_parameters(
+            array(
+                'component' => new external_value(PARAM_COMPONENT, 'component responsible for the update', VALUE_REQUIRED),
+                'itemtype' => new external_value(PARAM_NOTAGS, 'type of the updated item inside the component', VALUE_REQUIRED),
+                'itemid' => new external_value(PARAM_INT, 'identifier of the updated item', VALUE_REQUIRED),
+                'value' => new external_value(PARAM_RAW, 'new value', VALUE_REQUIRED),
+            ));
+    }
+
+    /**
+     * Update any component's editable value assuming that component implements necessary callback
+     *
+     * @since Moodle 3.1
+     * @param string $component
+     * @param string $itemtype
+     * @param string $itemid
+     * @param string $value
+     */
+    public static function update_inplace_editable($component, $itemtype, $itemid, $value) {
+        global $PAGE;
+        // Validate and normalize parameters.
+        $params = self::validate_parameters(self::update_inplace_editable_parameters(),
+                      array('component' => $component, 'itemtype' => $itemtype, 'itemid' => $itemid, 'value' => $value));
+        if (!$functionname = component_callback_exists($component, 'inplace_editable')) {
+            throw new \moodle_exception('inplaceeditableerror');
+        }
+        $tmpl = component_callback($params['component'], 'inplace_editable',
+            array($params['itemtype'], $params['itemid'], $params['value']));
+        if (!$tmpl || !($tmpl instanceof \core\output\inplace_editable)) {
+            throw new \moodle_exception('inplaceeditableerror');
+        }
+        return $tmpl->export_for_template($PAGE->get_renderer('core'));
+    }
+
+    /**
+     * Return structure for update_inplace_editable()
+     *
+     * @since Moodle 3.1
+     * @return external_description
+     */
+    public static function update_inplace_editable_returns() {
+        return new external_single_structure(
+            array(
+                'displayvalue' => new external_value(PARAM_RAW, 'display value (may contain link or other html tags)'),
+                'component' => new external_value(PARAM_NOTAGS, 'component responsible for the update', VALUE_OPTIONAL),
+                'itemtype' => new external_value(PARAM_NOTAGS, 'itemtype', VALUE_OPTIONAL),
+                'value' => new external_value(PARAM_RAW, 'value of the item as it is stored', VALUE_OPTIONAL),
+                'itemid' => new external_value(PARAM_RAW, 'identifier of the updated item', VALUE_OPTIONAL),
+                'edithint' => new external_value(PARAM_NOTAGS, 'hint for editing element', VALUE_OPTIONAL),
+                'editlabel' => new external_value(PARAM_NOTAGS, 'label for editing element', VALUE_OPTIONAL),
+            )
+        );
+    }
 }
