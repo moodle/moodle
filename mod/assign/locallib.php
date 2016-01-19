@@ -3426,6 +3426,10 @@ class assign {
             $o .= plagiarism_update_status($this->get_course(), $this->get_course_module());
         }
 
+        if ($this->is_blind_marking() && has_capability('mod/assign:viewblinddetails', $this->get_context())) {
+            $o .= $this->get_renderer()->notification(get_string('blindmarkingenabledwarning', 'assign'), 'notifymessage');
+        }
+
         // Load and print the table of submissions.
         if ($showquickgrading && $quickgrading) {
             $gradingtable = new assign_grading_table($this, $perpage, $filter, 0, true);
