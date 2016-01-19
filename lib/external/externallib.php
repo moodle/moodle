@@ -295,7 +295,7 @@ class core_external extends external_api {
      * @since Moodle 3.1
      */
     public static function get_fragment($component, $callback, $args = null) {
-        global $PAGE;
+        global $OUTPUT, $PAGE;
 
         $params = self::validate_parameters(self::get_fragment_parameters(),
                 array(
@@ -314,6 +314,11 @@ class core_external extends external_api {
         // Remove warning about context not being set.
         $PAGE->set_context(context_system::instance());
 
+        // Hack alert: Forcing bootstrap_renderer to initiate moodle page.
+        $OUTPUT->header();
+
+        // Overwriting page_requirements_manager with the fragment one so only JS included from
+        // this point is returned to the user.
         $PAGE->set_requirements_for_fragments();
         $data = component_callback($params['component'], $params['callback'], $arguments);
         $jsfooter = $PAGE->requires->get_end_code();
