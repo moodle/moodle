@@ -140,6 +140,12 @@ class user_editadvanced_form extends moodleform {
         global $USER, $CFG, $DB, $OUTPUT;
 
         $mform = $this->_form;
+
+        // Trim required name fields.
+        foreach (useredit_get_required_name_fields() as $field) {
+            $mform->applyFilter($field, 'trim');
+        }
+
         if ($userid = $mform->getElementValue('id')) {
             $user = $DB->get_record('user', array('id' => $userid));
         } else {
