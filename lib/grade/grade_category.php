@@ -838,11 +838,12 @@ class grade_category extends grade_object {
 
             $itemlist['userid'] = $userid;
 
-            $DB->set_field_select('grade_grades',
-                                  'aggregationstatus',
-                                  'novalue',
-                                  "itemid $itemsql AND userid = :userid",
-                                  $itemlist);
+            $sql = "UPDATE {grade_grades}
+                       SET aggregationstatus = 'novalue',
+                           aggregationweight = 0
+                     WHERE itemid $itemsql AND userid = :userid";
+
+            $DB->execute($sql, $itemlist);
         }
 
         // Dropped.
@@ -851,11 +852,12 @@ class grade_category extends grade_object {
 
             $itemlist['userid'] = $userid;
 
-            $DB->set_field_select('grade_grades',
-                                  'aggregationstatus',
-                                  'dropped',
-                                  "itemid $itemsql AND userid = :userid",
-                                  $itemlist);
+            $sql = "UPDATE {grade_grades}
+                       SET aggregationstatus = 'dropped',
+                           aggregationweight = 0
+                     WHERE itemid $itemsql AND userid = :userid";
+
+            $DB->execute($sql, $itemlist);
         }
 
         // Extra credit.
