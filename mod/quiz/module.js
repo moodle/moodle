@@ -272,23 +272,6 @@ M.mod_quiz.secure_window = {
         e.halt();
     },
 
-    /**
-     * Event handler for the quiz start attempt button.
-     */
-    start_attempt_action: function(e, args) {
-        if (args.startattemptwarning == '') {
-            openpopup(e, args);
-        } else {
-            M.util.show_confirm_dialog(e, {
-                message: args.startattemptwarning,
-                callback: function() {
-                    openpopup(e, args);
-                },
-                continuelabel: M.util.get_string('startattempt', 'quiz')
-            });
-        }
-    },
-
     init_close_button: function(Y, url) {
         Y.on('click', function(e) {
             M.mod_quiz.secure_window.close(url, 0)

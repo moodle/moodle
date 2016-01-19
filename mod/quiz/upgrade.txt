@@ -1,8 +1,17 @@
 This files describes API changes in the quiz code.
 
 === 3.1 ===
+
 * quiz_attempt::question_print_comment_fields() has been removed. It was broken
   since at least Moodle 2.0.
+
+* quiz::confirm_start_attempt_message and mod_quiz_view_object::$startattemptwarning
+  have been deprecated. This functionality is now entirely handled within the
+  quiz access rule plugins.
+
+* The third argument to mod_quiz_renderer::start_attempt_button has been changed
+  from a warning string to a mod_quiz_preflight_check_form.
+
 
 === 2.9 ===
 
@@ -100,6 +109,7 @@ This files describes API changes in the quiz code.
   trigger the event outside this function. Note that the appropriate start event is
   fired automatically by the quiz_attempt_save_started function.
 
+
 === 2.7 ===
 
 * The old quiz.questions database column (comma-separated list of question ids)
@@ -129,6 +139,7 @@ This files describes API changes in the quiz code.
 * The following internal functions have had their API changed.
       quiz_delete_empty_page: has had its arguments changed to $quiz and $pagenumber.
       quiz_has_question_use: now takes $quiz and $slot, not $questionid.
+
 
 === 2.6 ===
 

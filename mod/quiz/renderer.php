@@ -422,9 +422,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= $this->heading(format_string($quizobj->get_quiz_name(), true,
                                   array("context" => $quizobj->get_context())));
         $output .= $this->quiz_intro($quizobj->get_quiz(), $quizobj->get_cm());
-        ob_start();
-        $mform->display();
-        $output .= ob_get_clean();
+        $output .= $mform->render();
         $output .= $this->footer();
         return $output;
     }
@@ -798,9 +796,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         if ($viewobj->buttontext) {
             $output .= $this->start_attempt_button($viewobj->buttontext,
-                    $viewobj->startattempturl, $viewobj->startattemptwarning,
+                    $viewobj->startattempturl, $viewobj->preflightcheckform,
                     $viewobj->popuprequired, $viewobj->popupoptions);
-
         }
 
         if ($viewobj->showbacktocourse) {
@@ -815,43 +812,44 @@ class mod_quiz_renderer extends plugin_renderer_base {
     /**
      * Generates the view attempt button
      *
-     * @param int $course The course ID
-     * @param array $quiz Array containging quiz date
-     * @param int $cm The Course Module ID
-     * @param int $context The page Context ID
-     * @param mod_quiz_view_object $viewobj
-     * @param string $buttontext
+     * @param string $buttontext the label to display on the button.
+     * @param moodle_url $url The URL to POST to in order to start the attempt.
+     * @param mod_quiz_preflight_check_form $preflightcheckform deprecated.
+     * @param bool $popuprequired whether the attempt needs to be opened in a pop-up.
+     * @param array $popupoptions the options to use if we are opening a popup.
+     * @return string HTML fragment.
      */
     public function start_attempt_button($buttontext, moodle_url $url,
-            $startattemptwarning, $popuprequired, $popupoptions) {
+            mod_quiz_preflight_check_form $preflightcheckform = null,
+            $popuprequired = false, $popupoptions = null) {
+
+        if (is_string($preflightcheckform)) {
+            // Calling code was not updated since the API change.
+            debugging('The third argument to start_attempt_button should now be the ' .
+                    'mod_quiz_preflight_check_form from ' .
+                    'quiz_access_manager::get_preflight_check_form, not a warning message string.');
+        }
 
         $button = new single_button($url, $buttontext);
         $button->class .= ' quizstartbuttondiv';
 
-        $warning = '';
-        if ($popuprequired) {
-            $this->page->requires->js_module(quiz_get_js_module());
-            $this->page->requires->js('/mod/quiz/module.js');
-            $popupaction = new popup_action('click', $url, 'quizpopup', $popupoptions);
-
-            $button->class .= ' quizsecuremoderequired';
-            $button->add_action(new component_action('click',
-                    'M.mod_quiz.secure_window.start_attempt_action', array(
-                        'url' => $url->out(false),
-                        'windowname' => 'quizpopup',
-                        'options' => $popupaction->get_js_options(),
-                        'fullscreen' => true,
-                        'startattemptwarning' => $startattemptwarning,
-                    )));
-
-            $warning = html_writer::tag('noscript', $this->heading(get_string('noscript', 'quiz')));
-
-        } else if ($startattemptwarning) {
-            $button->add_action(new confirm_action($startattemptwarning, null,
-                    get_string('startattempt', 'quiz')));
+        $popupjsoptions = null;
+        if ($popuprequired && $popupoptions) {
+            $action = new popup_action('click', $url, 'popup', $popupoptions);
+            $popupjsoptions = $action->get_js_options();
         }
 
-        return $this->render($button) . $warning;
+        if ($preflightcheckform) {
+            $checkform = $preflightcheckform->render();
+        } else {
+            $checkform = null;
+        }
+
+        $this->page->requires->js_call_amd('mod_quiz/preflightcheck', 'init',
+                array('.quizstartbuttondiv input[type=submit]', get_string('startattempt', 'quiz'),
+                       '#mod_quiz_preflight_form', $popupjsoptions));
+
+        return $this->render($button) . $checkform;
     }
 
     /**
@@ -1316,10 +1314,11 @@ class mod_quiz_view_object {
     /** @var string $buttontext caption for the start attempt button. If this is null, show no
      *      button, or if it is '' show a back to the course button. */
     public $buttontext;
-    /** @var string $startattemptwarning alert to show the user before starting an attempt. */
-    public $startattemptwarning;
     /** @var moodle_url $startattempturl URL to start an attempt. */
     public $startattempturl;
+    /** @var moodleform|null $preflightcheckform confirmation form that must be
+     *       submitted before an attempt is started, if required. */
+    public $preflightcheckform;
     /** @var moodle_url $startattempturl URL for any Back to the course button. */
     public $backtocourseurl;
     /** @var bool $showbacktocourse should we show a back to the course button? */
@@ -1330,4 +1329,16 @@ class mod_quiz_view_object {
     public $popupoptions;
     /** @var bool $quizhasquestions whether the quiz has any questions. */
     public $quizhasquestions;
+
+    public function __get($field) {
+        switch ($field) {
+            case 'startattemptwarning':
+                debugging('startattemptwarning has been deprecated. It is now always blank.');
+                return '';
+
+            default:
+                debugging('Unknown property ' . $field);
+                return null;
+        }
+    }
 }

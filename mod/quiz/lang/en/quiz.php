@@ -202,9 +202,6 @@ $string['confirmclose'] = 'Once you submit, you will no longer be able to change
 $string['confirmremovequestion'] = 'Are you sure you want to remove this {$a} question?';
 $string['confirmremovesectionheading'] = 'Are you sure you want to remove the \'{$a}\' section heading?';
 $string['confirmserverdelete'] = 'Are you sure you want to remove the server <b>{$a}</b> from the list?';
-$string['confirmstartattemptlimit'] = 'Number of attempts allowed:  {$a}. You are about to start a new attempt.  Do you wish to proceed?';
-$string['confirmstartattempttimelimit'] = 'This quiz has a time limit and is limited to {$a} attempt(s). You are about to start a new attempt.  Do you wish to proceed?';
-$string['confirmstarttimelimit'] = 'The quiz has a time limit. Are you sure that you wish to start?';
 $string['connectionok'] = 'Network connection restored. You may continue safely.';
 $string['connectionerror'] = 'Network connection lost. (Autosave failed).
 
