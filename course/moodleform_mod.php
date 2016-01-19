@@ -31,6 +31,14 @@ abstract class moodleform_mod extends moodleform {
      * @var mixed
      */
     protected $_cm;
+
+    /**
+     * Current course.
+      *
+     * @var mixed
+     */
+    protected $_course;
+
     /**
      * List of modform features
      */
@@ -65,6 +73,7 @@ abstract class moodleform_mod extends moodleform {
         $this->_instance = $current->instance;
         $this->_section  = $section;
         $this->_cm       = $cm;
+        $this->_course   = $course;
         if ($this->_cm) {
             $this->context = context_module::instance($this->_cm->id);
         } else {
@@ -95,6 +104,63 @@ abstract class moodleform_mod extends moodleform {
         debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
         self::__construct($current, $section, $cm, $course);
     }
+
+    /**
+     * Get the current data for the form.
+     * @return stdClass|null
+     */
+    function get_current() {
+        return $this->current;
+    }
+
+    /**
+     * Get the DB record for the current instance.
+     * @return stdClass|null
+     */
+    function get_instance() {
+        return $this->_instance;
+    }
+
+    /**
+     * Get the course section number (relative).
+     * @return int
+     */
+    function get_section() {
+        return $this->_section;
+    }
+
+    /**
+     * Get the course id.
+     * @return int
+     */
+    function get_course() {
+        return $this->_course;
+    }
+
+    /**
+     * Get the course module object.
+     * @return stdClass|null
+     */
+    function get_coursemodule() {
+        return $this->_cm;
+    }
+
+    /**
+     * Return the course context for new modules, or the module context for existing modules.
+     * @return context
+     */
+    function get_context() {
+        return $this->context;
+    }
+
+    /**
+     * Return the features this module supports.
+     * @return stdClass
+     */
+    function get_features() {
+        return $this->_features;
+    }
+
 
     protected function init_features() {
         global $CFG;
@@ -359,6 +425,33 @@ abstract class moodleform_mod extends moodleform {
             \core_availability\frontend::report_validation_errors($data, $errors);
         }
 
+        $pluginerrors = $this->plugin_extend_coursemodule_validation($data);
+        if (!empty($pluginerrors)) {
+            $errors = array_merge($errors, $pluginerrors);
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Extend the validation function from any other plugin.
+     *
+     * @param stdClass $data The form data.
+     * @return array $errors The list of errors keyed by element name.
+     */
+    function plugin_extend_coursemodule_validation($data) {
+        $errors = array();
+
+        $callbacks = get_plugins_with_function('coursemodule_validation', 'lib.php');
+        foreach ($callbacks as $type => $plugins) {
+            foreach ($plugins as $plugin => $pluginfunction) {
+                // We have exposed all the important properties with public getters - the errors array should be pass by reference.
+                $pluginerrors = $pluginfunction($this, $data);
+                if (!empty($pluginerrors)) {
+                    $errors = array_merge($errors, $pluginerrors);
+                }
+            }
+        }
         return $errors;
     }
 
@@ -608,6 +701,22 @@ abstract class moodleform_mod extends moodleform {
         }
 
         $this->standard_hidden_coursemodule_elements();
+
+        $this->plugin_extend_coursemodule_standard_elements();
+    }
+
+    /**
+     * Plugins can extend the coursemodule settings form.
+     */
+    function plugin_extend_coursemodule_standard_elements() {
+        $callbacks = get_plugins_with_function('coursemodule_standard_elements', 'lib.php');
+        foreach ($callbacks as $type => $plugins) {
+            foreach ($plugins as $plugin => $pluginfunction) {
+                // We have exposed all the important properties with public getters - and the callback can manipulate the mform
+                // directly.
+                $pluginfunction($this, $this->_form);
+            }
+        }
     }
 
     /**

@@ -174,6 +174,23 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     return $moduleinfo;
 }
 
+/**
+ * Hook for plugins to take action when a module is created or updated.
+ *
+ * @param stdClass $moduleinfo the module info
+ * @param stdClass $course the course of the module
+ *
+ * @return stdClass moduleinfo updated by plugins.
+ */
+function plugin_extend_coursemodule_edit_post_actions($moduleinfo, $course) {
+    $callbacks = get_plugins_with_function('coursemodule_edit_post_actions', 'lib.php');
+    foreach ($callbacks as $type => $plugins) {
+        foreach ($plugins as $plugin => $pluginfunction) {
+            $moduleinfo = $pluginfunction($moduleinfo, $course);
+        }
+    }
+    return $moduleinfo;
+}
 
 /**
  * Common create/update module module actions that need to be processed as soon as a module is created/updaded.
@@ -327,6 +344,9 @@ function edit_module_post_actions($moduleinfo, $course) {
     }
     require_once($CFG->libdir.'/plagiarismlib.php');
     plagiarism_save_form_elements($moduleinfo);
+
+    // Allow plugins to extend the course module form.
+    $moduleinfo = plugin_extend_coursemodule_edit_post_actions($moduleinfo, $course);
 
     return $moduleinfo;
 }
