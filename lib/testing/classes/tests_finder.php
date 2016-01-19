@@ -132,7 +132,7 @@ class tests_finder {
         $directoriestosearch = array();
         $alldirs = glob($CFG->dirroot . DIRECTORY_SEPARATOR . '*' , GLOB_ONLYDIR);
         foreach ($alldirs as $dir) {
-            if (!in_array(basename($dir), $excludedir)) {
+            if (!in_array(basename($dir), $excludedir) && (filetype($dir) != 'link')) {
                 $directoriestosearch[] = $dir;
             }
         }
