@@ -15,23 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Definition of event observers.
+ * Class for exporting course module competency data.
  *
  * @package    tool_lp
- * @copyright  2015 Frédéric Massart - FMCorz.net
+ * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+namespace tool_lp\external;
 defined('MOODLE_INTERNAL') || die();
 
-// TODO MDL-52243 Do not use an event, move callback to core.
-$observers = array(
-    array(
-        'eventname'   => '\\core\\event\\course_completed',
-        'callback'    => '\\tool_lp\\api::observe_course_completed',
-    ),
-    array(
-        'eventname'   => '\\core\\event\\course_module_completion_updated',
-        'callback'    => '\\tool_lp\\api::observe_course_module_completion_updated',
-    ),
-);
+/**
+ * Class for exporting course module competency data.
+ *
+ * @copyright  2015 Damyon Wiese
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class course_module_competency_exporter extends persistent_exporter {
+
+    protected static function define_class() {
+        return 'tool_lp\\course_module_competency';
+    }
+}

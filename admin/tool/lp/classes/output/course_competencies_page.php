@@ -36,6 +36,7 @@ use tool_lp\course_competency;
 use tool_lp\competency;
 use tool_lp\external\competency_exporter;
 use tool_lp\external\course_competency_exporter;
+use tool_lp\external\course_module_summary_exporter;
 use tool_lp\external\user_competency_exporter;
 
 /**
@@ -130,10 +131,19 @@ class course_competencies_page implements renderable, templatable {
             $ccoutcomeoptions = (array) (object) $ruleoutcomeoptions;
             $ccoutcomeoptions[$coursecompetency->get_ruleoutcome()]['selected'] = true;
 
+            $coursemodules = api::list_course_modules_using_competency($competency->get_id(), $this->courseid);
+
+            $exportedmodules = array();
+            foreach ($coursemodules as $cm) {
+                $cmexporter = new course_module_summary_exporter($cm);
+                $exportedmodules[] = $cmexporter->export($output);
+            }
+
             $onerow = array(
                 'competency' => $compexporter->export($output),
                 'coursecompetency' => $ccexporter->export($output),
-                'ruleoutcomeoptions' => $ccoutcomeoptions
+                'ruleoutcomeoptions' => $ccoutcomeoptions,
+                'coursemodules' => $exportedmodules
             );
             if ($gradable) {
                 $foundusercompetency = false;

@@ -55,6 +55,16 @@
             </label>
         </div>
         {{/canmanagecoursecompetencies}}
+        <div data-region="coursecompetencyactivities">
+        <ul class="inline">
+        {{#coursemodules}}
+            <li><a href="{{url}}"><img src="{{iconurl}}"> {{name}} </a></li>
+        {{/coursemodules}}
+        {{^coursemodules}}
+            <li><span class="alert">{{#str}}noactivities, tool_lp{{/str}}</span></li>
+        {{/coursemodules}}
+        </ul>
+        </div>
     </td>
     </tr>
 {{/competencies}}

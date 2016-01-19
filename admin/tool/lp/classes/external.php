@@ -56,6 +56,7 @@ use tool_lp\external\user_evidence_competency_exporter;
 use tool_lp\external\competency_exporter;
 use tool_lp\external\course_competency_exporter;
 use tool_lp\external\course_summary_exporter;
+use tool_lp\external\course_module_summary_exporter;
 use tool_lp\external\plan_exporter;
 use tool_lp\external\template_exporter;
 use tool_lp\external\evidence_exporter;
@@ -1511,6 +1512,141 @@ class external extends external_api {
     }
 
     /**
+    /**
+     * Returns description of list_course_module_competencies() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function list_course_module_competencies_parameters() {
+        $cmid = new external_value(
+            PARAM_INT,
+            'The course module id',
+            VALUE_REQUIRED
+        );
+        $params = array(
+            'cmid' => $cmid
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * List the course modules using this competency (visible to this user) in this course.
+     *
+     * @param int $cmid The course module id to check.
+     * @return array
+     */
+    public static function list_course_module_competencies($cmid) {
+        global $PAGE;
+
+        $params = self::validate_parameters(self::list_course_module_competencies_parameters(),
+                                            array(
+                                                'cmid' => $cmid
+                                            ));
+
+        $cm = course_module_instance_from_id($params['cmid']);
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        $output = $PAGE->get_renderer('tool_lp');
+
+        $apiresult = api::list_course_module_competencies($params['cmid']);
+        $result = array();
+
+        foreach ($apiresult as $cmrecord) {
+            $one = new stdClass();
+            $exporter = new competency_exporter($cmrecord['competency']);
+            $one->competency = $exporter->export($output);
+            $exporter = new course_module_competency_exporter($cmrecord['coursemodulecompetency']);
+            $one->coursemodulecompetency = $exporter->export($output);
+
+            $result[] = (array) $one;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns description of list_course_module_competencies() result value.
+     *
+     * @return \external_description
+     */
+    public static function list_course_module_competencies_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(array(
+                'competency' => competency_exporter::get_read_structure(),
+                'coursemodulecompetency' => course_module_competency_exporter::get_read_structure()
+            ))
+        );
+    }
+
+    /**
+     * Returns description of list_course_modules_using_competency() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function list_course_modules_using_competency_parameters() {
+        $competencyid = new external_value(
+            PARAM_INT,
+            'The competency id',
+            VALUE_REQUIRED
+        );
+        $courseid = new external_value(
+            PARAM_INT,
+            'The course id',
+            VALUE_REQUIRED
+        );
+        $params = array(
+            'competencyid' => $competencyid,
+            'courseid' => $courseid,
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * List the course modules using this competency (visible to this user) in this course.
+     *
+     * @param int $competencyid The competency id to check.
+     * @param int $courseid The course id to check.
+     * @return array
+     */
+    public static function list_course_modules_using_competency($competencyid, $courseid) {
+        global $PAGE;
+
+        $params = self::validate_parameters(self::list_course_modules_using_competency_parameters(),
+                                            array(
+                                                'competencyid' => $competencyid,
+                                                'courseid' => $courseid,
+                                            ));
+
+        $coursecontext = context_course::instance($params['courseid']);
+        self::validate_context($coursecontext);
+
+        $output = $PAGE->get_renderer('tool_lp');
+
+        $coursemodules = api::list_course_modules_using_competency($params['competencyid'], $params['courseid']);
+        $result = array();
+
+        foreach ($coursemodules as $cmrecord) {
+            $context = context_module::instance($cmrecord->id);
+            $exporter = new course_module_summary_exporter($cmrecord, array('context' => $context));
+            $coursemodulesummary = $exporter->export($output);
+
+            $result[] = $coursemodulesummary;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns description of list_course_modules_using_competency() result value.
+     *
+     * @return \external_description
+     */
+    public static function list_course_modules_using_competency_returns() {
+        return new external_multiple_structure(course_module_summary_exporter::get_read_structure());
+    }
+
+    /**
      * Returns description of list_course_competencies() parameters.
      *
      * @return \external_function_parameters
@@ -1741,6 +1877,7 @@ class external extends external_api {
             'competencies' => new external_multiple_structure(new external_single_structure(array(
                 'competency' => competency_exporter::get_read_structure(),
                 'coursecompetency' => course_competency_exporter::get_read_structure(),
+                'coursemodules' => new external_multiple_structure(course_module_summary_exporter::get_read_structure()),
                 'usercompetency' => $uc,
                 'ruleoutcomeoptions' => new external_multiple_structure(
                     new external_single_structure(array(

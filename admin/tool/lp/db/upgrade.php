@@ -651,6 +651,38 @@ function xmldb_tool_lp_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015111030, 'tool', 'lp');
     }
 
+    if ($oldversion < 2015111039) {
+
+          // Define table tool_lp_module_competency to be created.
+        $table = new xmldb_table('tool_lp_module_competency');
+
+        // Adding fields to table tool_lp_module_competency.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('cmid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('sortorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('competencyid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('ruleoutcome', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table tool_lp_module_competency.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('cmidkey', XMLDB_KEY_FOREIGN, array('cmid'), 'id', array('course_modules'));
+        $table->add_key('competencyidkey', XMLDB_KEY_FOREIGN, array('competencyid'), 'tool_lp_competency', array('id'));
+
+        // Adding indexes to table tool_lp_module_competency.
+        $table->add_index('cmidruleoutcome', XMLDB_INDEX_NOTUNIQUE, array('cmid', 'ruleoutcome'));
+
+        // Conditionally launch create table for tool_lp_module_competency.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2015111039, 'tool', 'lp');
+    }
+
     if ($oldversion < 2015111041) {
 
         // Define field reviewerid to be added to tool_lp_plan.
@@ -665,7 +697,6 @@ function xmldb_tool_lp_upgrade($oldversion) {
         // Lp savepoint reached.
         upgrade_plugin_savepoint(true, 2015111041, 'tool', 'lp');
     }
-
 
     return true;
 }

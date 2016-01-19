@@ -395,3 +395,62 @@ function tool_lp_comment_validate($params) {
     }
     return false;
 }
+
+/**
+ * Inject the competencies elements into all moodle module settings forms.
+ *
+ * @param moodleform $formwrapper The moodle quickforms wrapper object.
+ * @param MoodleQuickForm $mform The actual form object (required to modify the form).
+ */
+function tool_lp_coursemodule_standard_elements($formwrapper, $mform) {
+    global $CFG, $COURSE;
+
+    $mform->addElement('header', 'competenciessection', get_string('competencies', 'tool_lp'));
+
+    MoodleQuickForm::registerElementType('course_competencies',
+                                         "$CFG->dirroot/admin/tool/lp/classes/course_competencies_form_element.php",
+                                         'tool_lp_course_competencies_form_element');
+    $cmid = null;
+    if ($cm = $formwrapper->get_coursemodule()) {
+        $cmid = $cm->id;
+    }
+    $options = array(
+        'courseid' => $COURSE->id,
+        'cmid' => $cmid
+    );
+    $mform->addElement('course_competencies', 'competencies', get_string('modcompetencies', 'tool_lp'), $options);
+    $mform->addHelpButton('competencies', 'modcompetencies', 'tool_lp');
+    MoodleQuickForm::registerElementType('course_competency_rule',
+                                         "$CFG->dirroot/admin/tool/lp/classes/course_competency_rule_form_element.php",
+                                         'tool_lp_course_competency_rule_form_element');
+    // Reuse the same options.
+    $mform->addElement('course_competency_rule', 'competency_rule', get_string('uponcoursemodulecompletion', 'tool_lp'), $options);
+}
+
+/**
+ * Hook the add/edit of the course module.
+ *
+ * @param stdClass $data Data from the form submission.
+ */
+function tool_lp_coursemodule_edit_post_actions($data, $course) {
+    $existing = \tool_lp\api::list_course_module_competencies_in_course_module($data->coursemodule);
+
+    $getid = function($value) { return $value->get_competencyid(); };
+    $existingids = array_map($getid, $existing);
+
+    $removed = array_diff($existingids, $data->competencies);
+    $added = array_diff($data->competencies, $existingids);
+
+    foreach ($removed as $removedid) {
+        \tool_lp\api::remove_competency_from_course_module($data->coursemodule, $removedid);
+    }
+    foreach ($added as $addedid) {
+        \tool_lp\api::add_competency_to_course_module($data->coursemodule, $addedid);
+    }
+
+    $current = \tool_lp\api::list_course_module_competencies_in_course_module($data->coursemodule);
+    // Now update the rules for each course_module_competency.
+    foreach ($current as $coursemodulecompetency) {
+        \tool_lp\api::set_course_module_competency_ruleoutcome($coursemodulecompetency, $data->competency_rule);
+    }
+}

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="admin/tool/lp/db" VERSION="20160104" COMMENT="XMLDB file for Moodle admin/tool/lp"
+<XMLDB PATH="admin/tool/lp/db" VERSION="20160114" COMMENT="XMLDB file for Moodle admin/tool/lp"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -276,6 +276,26 @@
       <INDEXES>
         <INDEX NAME="userevidenceid" UNIQUE="false" FIELDS="userevidenceid"/>
         <INDEX NAME="userevidencecompids" UNIQUE="true" FIELDS="userevidenceid, competencyid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="tool_lp_module_competency" COMMENT="Link a competency to a module.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="cmid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the record in the course_modules table."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The time this record was created."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The time this record was last modified"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user who last modified this field."/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The field used to naturally sort this link."/>
+        <FIELD NAME="competencyid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The course competency this activity is linked to."/>
+        <FIELD NAME="ruleoutcome" TYPE="int" LENGTH="2" NOTNULL="true" SEQUENCE="false" COMMENT="The outcome when an activity is completed."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="cmidkey" TYPE="foreign" FIELDS="cmid" REFTABLE="id" REFFIELDS="course_modules" COMMENT="Foreign key on course modules table."/>
+        <KEY NAME="competencyidkey" TYPE="foreign" FIELDS="competencyid" REFTABLE="tool_lp_competency" REFFIELDS="id" COMMENT="Foreign key on competency id."/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="cmidruleoutcome" UNIQUE="false" FIELDS="cmid, ruleoutcome" COMMENT="Index on cmid and outcome so we can quickly find what to do when an activity is completed."/>
       </INDEXES>
     </TABLE>
   </TABLES>

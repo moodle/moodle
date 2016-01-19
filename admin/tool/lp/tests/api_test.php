@@ -2318,6 +2318,76 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals(null, $ev4->get_actionuserid());
     }
 
+    public function test_list_course_modules_using_competency() {
+        global $SITE;
+
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $course = $dg->create_course();
+        $course2 = $dg->create_course();
+
+        $this->setAdminUser();
+        $f = $lpg->create_framework();
+        $c = $lpg->create_competency(array('competencyframeworkid' => $f->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f->get_id()));
+        $cc = api::add_competency_to_course($course->id, $c->get_id());
+        $cc2 = api::add_competency_to_course($course->id, $c2->get_id());
+
+        // First check we get an empty list when there are no links.
+        $expected = array();
+        $result = api::list_course_modules_using_competency($c->get_id(), $course->id);
+        $this->assertEquals($expected, $result);
+
+        $pagegenerator = $this->getDataGenerator()->get_plugin_generator('mod_page');
+        $page = $pagegenerator->create_instance(array('course'=>$course->id));
+
+        $cm = get_coursemodule_from_instance('page', $page->id);
+        // Add a link and list again.
+        $ccm = api::add_competency_to_course_module($cm, $c->get_id());
+        $one = (object) array(
+            'id' => $cm->id,
+            'visible' => true
+        );
+        $expected = array($one);
+        $result = api::list_course_modules_using_competency($c->get_id(), $course->id);
+        $this->assertEquals($expected, $result);
+
+        // Check a different course.
+        $expected = array();
+        $result = api::list_course_modules_using_competency($c->get_id(), $course2->id);
+        $this->assertEquals($expected, $result);
+
+        // Remove the link and check again.
+        $result = api::remove_competency_from_course_module($cm, $c->get_id());
+        $expected = true;
+        $this->assertEquals($expected, $result);
+        $expected = array();
+        $result = api::list_course_modules_using_competency($c->get_id(), $course->id);
+        $this->assertEquals($expected, $result);
+
+        // Now add 2 links.
+        api::add_competency_to_course_module($cm, $c->get_id());
+        api::add_competency_to_course_module($cm, $c2->get_id());
+        $result = api::list_course_module_competencies_in_course_module($cm->id);
+        $this->assertEquals($result[0]->get_competencyid(), $c->get_id());
+        $this->assertEquals($result[1]->get_competencyid(), $c2->get_id());
+
+        // Now re-order.
+        api::reorder_course_module_competency($cm, $c->get_id(), $c2->get_id());
+        $result = api::list_course_module_competencies_in_course_module($cm->id);
+        $this->assertEquals($result[0]->get_competencyid(), $c2->get_id());
+        $this->assertEquals($result[1]->get_competencyid(), $c->get_id());
+
+        // And re-order again.
+        api::reorder_course_module_competency($cm, $c->get_id(), $c2->get_id());
+        $result = api::list_course_module_competencies_in_course_module($cm->id);
+        $this->assertEquals($result[0]->get_competencyid(), $c->get_id());
+        $this->assertEquals($result[1]->get_competencyid(), $c2->get_id());
+    }
+
     /**
      * Test update ruleoutcome for course_competency.
      */

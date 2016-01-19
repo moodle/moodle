@@ -48,11 +48,23 @@ class restore_tool_lp_plugin extends restore_tool_plugin {
     }
 
     /**
+     * Return the paths.
+     *
+     * @return restore_path_element[]
+     */
+    protected function define_module_plugin_structure() {
+        $paths = array(
+            new restore_path_element('course_module_competency', $this->get_pathfor('/course_module_competencies/competency'))
+        );
+        return $paths;
+    }
+
+    /**
      * Process a course competency.
      *
      * @param  array $data The data.
      */
-    public function process_course_competency($data) {
+    public function process_course_module_competency($data) {
         global $DB;
 
         $data = (object) $data;
@@ -70,16 +82,16 @@ class restore_tool_lp_plugin extends restore_tool_plugin {
 
         $params = array(
             'competencyid' => $competency->get_id(),
-            'courseid' => $this->task->get_courseid()
+            'cmid' => $this->task->get_moduleid()
         );
-        $existing = \tool_lp\course_competency::record_exists_select('competencyid = :competencyid AND courseid = :courseid', $params);
+        $existing = \tool_lp\course_module_competency::record_exists_select('competencyid = :competencyid AND cmid = :cmid', $params);
 
         if (!$existing) {
             // Sortorder is ignored by precaution, anyway we should walk through the records in the right order.
             $record = (object) $params;
             $record->ruleoutcome = $data->ruleoutcome;
-            $coursecompetency = new \tool_lp\course_competency(0, $record);
-            $coursecompetency->create();
+            $coursemodulecompetency = new \tool_lp\course_module_competency(0, $record);
+            $coursemodulecompetency->create();
         }
 
     }

@@ -65,6 +65,35 @@ class backup_tool_lp_plugin extends backup_tool_plugin {
     }
 
     /**
+     * Define the module plugin structure.
+     *
+     * @return backup_plugin_element
+     */
+    protected function define_module_plugin_structure() {
+        $plugin = $this->get_plugin_element(null, $this->get_include_condition(), 'include');
+
+        $pluginwrapper = new backup_nested_element($this->get_recommended_name());
+        $plugin->add_child($pluginwrapper);
+
+        $coursecompetencies = new backup_nested_element('course_module_competencies');
+        $pluginwrapper->add_child($coursecompetencies);
+
+        $competency = new backup_nested_element('competency', null, array('idnumber', 'ruleoutcome',
+            'sortorder', 'frameworkidnumber'));
+        $coursecompetencies->add_child($competency);
+
+        $sql = 'SELECT c.idnumber, cmc.ruleoutcome, cmc.sortorder, f.idnumber AS frameworkidnumber
+                  FROM {' . \tool_lp\course_module_competency::TABLE . '} cmc
+                  JOIN {' . \tool_lp\competency::TABLE . '} c ON c.id = cmc.competencyid
+                  JOIN {' . \tool_lp\competency_framework::TABLE . '} f ON f.id = c.competencyframeworkid
+                 WHERE cmc.cmid = :coursemoduleid
+              ORDER BY cmc.sortorder';
+        $competency->set_source_sql($sql, array('coursemoduleid' => backup::VAR_MODID));
+
+        return $plugin;
+    }
+
+    /**
      * Returns a condition for whether we include this report in the backup or not.
      *
      * @return array

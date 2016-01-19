@@ -23,6 +23,7 @@
  */
 namespace tool_lp\external;
 
+use tool_lp\api;
 use context_course;
 use renderer_base;
 use stdClass;
@@ -52,6 +53,10 @@ class user_competency_summary_in_course_exporter extends exporter {
             ),
             'course' => array(
                 'type' => course_summary_exporter::read_properties_definition(),
+            ),
+            'coursemodules' => array(
+                'type' => course_module_summary_exporter::read_properties_definition(),
+                'multiple' => true
             )
         );
     }
@@ -69,6 +74,16 @@ class user_competency_summary_in_course_exporter extends exporter {
         $context = context_course::instance($this->related['course']->id);
         $exporter = new course_summary_exporter($this->related['course'], array('context' => $context));
         $result->course = $exporter->export($output);
+
+        $coursemodules = api::list_course_modules_using_competency($this->related['competency']->get_id(),
+                                                                   $this->related['course']->id);
+
+        $exportedmodules = array();
+        foreach ($coursemodules as $cm) {
+            $cmexporter = new course_module_summary_exporter($cm);
+            $exportedmodules[] = $cmexporter->export($output);
+        }
+        $result->coursemodules = $exportedmodules;
 
         return (array) $result;
     }

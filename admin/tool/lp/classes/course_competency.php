@@ -339,6 +339,16 @@ class course_competency extends persistent {
         $table = '{' . self::TABLE . '}';
         $sql = "UPDATE $table SET sortorder = sortorder -1  WHERE courseid = ? AND sortorder > ?";
         $DB->execute($sql, array($this->get_courseid(), $this->get_sortorder()));
+
+        // Delete all course_module_competencies for this competency in this course.
+        $cmids = course_module_competency::list_course_modules($this->get_competencyid(), $this->get_courseid());
+        if (!empty($cmids)) {
+            list($in, $params) = $DB->get_in_or_equal(array_keys($cmids), SQL_PARAMS_NAMED);
+            $params['compid'] = $this->get_competencyid();
+            $DB->delete_records_select(course_module_competencies::TABLE,
+                                       'cmid ' . $in . ' AND competencyid = :compid',
+                                       $params);
+        }
     }
 
     /**
