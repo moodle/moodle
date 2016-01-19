@@ -787,6 +787,9 @@ class mod_quiz_external extends external_api {
 
         $attemptobj = quiz_attempt::create($params['attemptid']);
 
+        // If the attempt is now overdue, or abandoned, deal with that.
+        $attemptobj->handle_if_time_expired(time(), true);
+
         $context = context_module::instance($attemptobj->get_cm()->id);
         self::validate_context($context);
 
@@ -831,23 +834,27 @@ class mod_quiz_external extends external_api {
             $accessmanager->notify_preflight_check_passed($params['attemptid']);
         }
 
-        // Check if the page is out of range.
-        if ($params['page'] != $attemptobj->force_page_number_into_range($params['page'])) {
-            throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'Invalid page number');
-        }
-
-        // Prevent out of sequence access.
-        if ($attemptobj->get_currentpage() != $params['page']) {
-            if ($attemptobj->get_navigation_method() == QUIZ_NAVMETHOD_SEQ && $attemptobj->get_currentpage() > $params['page']) {
-                throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'Out of sequence access');
+        if (isset($params['page'])) {
+            // Check if the page is out of range.
+            if ($params['page'] != $attemptobj->force_page_number_into_range($params['page'])) {
+                throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'Invalid page number');
             }
-        }
 
-        // Check slots.
-        $slots = $attemptobj->get_slots($params['page']);
+            // Prevent out of sequence access.
+            if ($attemptobj->get_currentpage() != $params['page']) {
+                if ($attemptobj->get_navigation_method() == QUIZ_NAVMETHOD_SEQ &&
+                        $attemptobj->get_currentpage() > $params['page']) {
 
-        if (empty($slots)) {
-            throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'noquestionsfound');
+                    throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'Out of sequence access');
+                }
+            }
+
+            // Check slots.
+            $slots = $attemptobj->get_slots($params['page']);
+
+            if (empty($slots)) {
+                throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'noquestionsfound');
+            }
         }
 
         return array($attemptobj, $messages);
@@ -996,6 +1003,70 @@ class mod_quiz_external extends external_api {
                     'access messages, will only be returned for users with mod/quiz:preview capability,
                     for other users this method will throw an exception if there are messages'),
                 'nextpage' => new external_value(PARAM_INT, 'next page number'),
+                'questions' => new external_multiple_structure(self::question_structure()),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for get_attempt_summary.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function get_attempt_summary_parameters() {
+        return new external_function_parameters (
+            array(
+                'attemptid' => new external_value(PARAM_INT, 'attempt id'),
+                'preflightdata' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, array()
+                )
+            )
+        );
+    }
+
+    /**
+     * Returns a summary of a quiz attempt before it is submitted.
+     *
+     * @param int $attemptid attempt id
+     * @param int $preflightdata preflight required data (like passwords)
+     * @return array of warnings and the attempt summary data for each question
+     * @since Moodle 3.1
+     */
+    public static function get_attempt_summary($attemptid, $preflightdata = array()) {
+
+        $warnings = array();
+
+        $params = array(
+            'attemptid' => $attemptid,
+            'preflightdata' => $preflightdata,
+        );
+        $params = self::validate_parameters(self::get_attempt_summary_parameters(), $params);
+
+        list($attemptobj, $messages) = self::validate_attempt($params);
+
+        $result = array();
+        $result['warnings'] = $warnings;
+        $result['questions'] = self::get_attempt_questions_data($attemptobj, false, 'all');
+
+        return $result;
+    }
+
+    /**
+     * Describes the get_attempt_summary return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function get_attempt_summary_returns() {
+        return new external_single_structure(
+            array(
                 'questions' => new external_multiple_structure(self::question_structure()),
                 'warnings' => new external_warnings(),
             )
