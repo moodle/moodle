@@ -405,7 +405,9 @@ abstract class moodleform_mod extends moodleform {
 
             $permission=CAP_ALLOW;
             $rolenamestring = null;
+            $isupdate = false;
             if (!empty($this->_cm)) {
+                $isupdate = true;
                 $context = context_module::instance($this->_cm->id);
 
                 $rolenames = get_role_names_with_caps_in_context($context, array('moodle/rating:rate', 'mod/'.$this->_cm->modname.':rate'));
@@ -420,7 +422,25 @@ abstract class moodleform_mod extends moodleform {
             $mform->setDefault('assessed', 0);
             $mform->addHelpButton('assessed', 'aggregatetype', 'rating');
 
-            $mform->addElement('modgrade', 'scale', get_string('scale'), false);
+            $gradeoptions = array('isupdate' => $isupdate,
+                                  'currentgrade' => false,
+                                  'hasgrades' => false,
+                                  'canrescale' => $this->_features->canrescale,
+                                  'useratings' => $this->_features->rating);
+            if ($isupdate) {
+                $gradeitem = grade_item::fetch(array('itemtype' => 'mod',
+                                                     'itemmodule' => $this->_cm->modname,
+                                                     'iteminstance' => $this->_cm->instance,
+                                                     'itemnumber' => 0,
+                                                     'courseid' => $COURSE->id));
+                if ($gradeitem) {
+                    $gradeoptions['currentgrade'] = $gradeitem->grademax;
+                    $gradeoptions['currentgradetype'] = $gradeitem->gradetype;
+                    $gradeoptions['currentscaleid'] = $gradeitem->scaleid;
+                    $gradeoptions['hasgrades'] = $gradeitem->has_grades();
+                }
+            }
+            $mform->addElement('modgrade', 'scale', get_string('scale'), $gradeoptions);
             $mform->disabledIf('scale', 'assessed', 'eq', 0);
             $mform->addHelpButton('scale', 'modgrade', 'grades');
             $mform->setDefault('scale', $CFG->gradepointdefault);
@@ -645,7 +665,8 @@ abstract class moodleform_mod extends moodleform {
         $gradeoptions = array('isupdate' => $isupdate,
                               'currentgrade' => false,
                               'hasgrades' => false,
-                              'canrescale' => $this->_features->canrescale);
+                              'canrescale' => $this->_features->canrescale,
+                              'useratings' => $this->_features->rating);
 
         if ($this->_features->hasgrades) {
 
@@ -662,9 +683,12 @@ abstract class moodleform_mod extends moodleform {
                                                          'iteminstance' => $this->_cm->instance,
                                                          'itemnumber' => 0,
                                                          'courseid' => $COURSE->id));
-
-                    $gradeoptions['currentgrade'] = $gradeitem->grademax;
-                    $gradeoptions['hasgrades'] = $gradeitem->has_grades();
+                    if ($gradeitem) {
+                        $gradeoptions['currentgrade'] = $gradeitem->grademax;
+                        $gradeoptions['currentgradetype'] = $gradeitem->gradetype;
+                        $gradeoptions['currentscaleid'] = $gradeitem->scaleid;
+                        $gradeoptions['hasgrades'] = $gradeitem->has_grades();
+                    }
                 }
                 $mform->addElement('modgrade', 'grade', get_string('grade'), $gradeoptions);
                 $mform->addHelpButton('grade', 'modgrade', 'grades');
