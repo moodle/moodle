@@ -49,5 +49,13 @@ $functions = array(
         'description'   => 'Trigger the page viewed event and update the module completion status.',
         'type'          => 'write',
         'capabilities'  => 'mod/wiki:viewpage'
+    ),
+
+    'mod_wiki_get_subwikis' => array(
+        'classname'     => 'mod_wiki_external',
+        'methodname'    => 'get_subwikis',
+        'description'   => 'Returns the list of subwikis the user can see in a specific wiki.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/wiki:viewpage'
     )
 );

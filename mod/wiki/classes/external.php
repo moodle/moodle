@@ -320,4 +320,79 @@ class mod_wiki_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for get_subwikis.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function get_subwikis_parameters() {
+        return new external_function_parameters (
+            array(
+                'wikiid' => new external_value(PARAM_INT, 'Wiki instance ID.')
+            )
+        );
+    }
+
+    /**
+     * Returns the list of subwikis the user can see in a specific wiki.
+     *
+     * @param int $wikiid The wiki instance ID.
+     * @return array Containing a list of warnings and a list of subwikis.
+     * @since Moodle 3.1
+     */
+    public static function get_subwikis($wikiid) {
+        global $USER;
+
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_subwikis_parameters(), array('wikiid' => $wikiid));
+
+        // Get wiki instance.
+        if (!$wiki = wiki_get_wiki($params['wikiid'])) {
+            throw new moodle_exception('incorrectwikiid', 'wiki');
+        }
+
+        // Validate context and capabilities.
+        list($course, $cm) = get_course_and_cm_from_instance($wiki, 'wiki');
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+        require_capability('mod/wiki:viewpage', $context);
+
+        $returnedsubwikis = wiki_get_visible_subwikis($wiki, $cm, $context);
+        foreach ($returnedsubwikis as $subwiki) {
+            $subwiki->canedit = wiki_user_can_edit($subwiki);
+        }
+
+        $result = array();
+        $result['subwikis'] = $returnedsubwikis;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_subwikis return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function get_subwikis_returns() {
+        return new external_single_structure(
+            array(
+                'subwikis' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'Subwiki ID.'),
+                            'wikiid' => new external_value(PARAM_INT, 'Wiki ID.'),
+                            'groupid' => new external_value(PARAM_RAW, 'Group ID.'),
+                            'userid' => new external_value(PARAM_INT, 'User ID.'),
+                            'canedit' => new external_value(PARAM_BOOL, 'True if user can edit the subwiki.'),
+                        ), 'Subwikis'
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }

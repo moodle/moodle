@@ -1562,3 +1562,127 @@ function wiki_get_updated_pages_by_subwiki($swid) {
 function wiki_can_create_pages($context, $user = null) {
     return has_capability('mod/wiki:createpage', $context, $user);
 }
+
+/**
+ * Get a sub wiki instance by wiki id, group id and user id.
+ * If the wiki doesn't exist in DB it will return an isntance with id -1.
+ *
+ * @param int $wikiid  Wiki ID.
+ * @param int $groupid Group ID.
+ * @param int $userid  User ID.
+ * @return object      Subwiki instance.
+ * @since Moodle 3.1
+ */
+function wiki_get_possible_subwiki_by_group($wikiid, $groupid, $userid = 0) {
+    if (!$subwiki = wiki_get_subwiki_by_group($wikiid, $groupid, $userid)) {
+        $subwiki = new stdClass();
+        $subwiki->id = -1;
+        $subwiki->wikiid = $wikiid;
+        $subwiki->groupid = $groupid;
+        $subwiki->userid = $userid;
+    }
+    return $subwiki;
+}
+
+/**
+ * Get all the possible subwikis visible to the user in a wiki.
+ * It will return all the subwikis that can be created in a wiki, even if they don't exist in DB yet.
+ *
+ * @param  stdClass $wiki          Wiki to get the subwikis from.
+ * @param  cm_info|stdClass $cm    Optional. The course module object.
+ * @param  context_module $context Optional. Context of wiki module.
+ * @return array                   List of subwikis.
+ * @since Moodle 3.1
+ */
+function wiki_get_visible_subwikis($wiki, $cm = null, $context = null) {
+    global $USER;
+
+    $subwikis = array();
+
+    if (empty($wiki) or !is_object($wiki)) {
+        // Wiki not valid.
+        return $subwikis;
+    }
+
+    if (empty($cm)) {
+        $cm = get_coursemodule_from_instance('wiki', $wiki->id);
+    }
+    if (empty($context)) {
+        $context = context_module::instance($cm->id);
+    }
+
+    if (!has_capability('mod/wiki:viewpage', $context)) {
+        return $subwikis;
+    }
+
+    $manage = has_capability('mod/wiki:managewiki', $context);
+
+    if (!$groupmode = groups_get_activity_groupmode($cm)) {
+        // No groups.
+        if ($wiki->wikimode == 'collaborative') {
+            // Only 1 subwiki.
+            $subwikis[] = wiki_get_possible_subwiki_by_group($wiki->id, 0, 0);
+        } else if ($wiki->wikimode == 'individual') {
+            // There's 1 subwiki per user.
+            if ($manage) {
+                // User can view all subwikis.
+                $users = get_enrolled_users($context);
+                foreach ($users as $user) {
+                    $subwikis[] = wiki_get_possible_subwiki_by_group($wiki->id, 0, $user->id);
+                }
+            } else {
+                // User can only see his subwiki.
+                $subwikis[] = wiki_get_possible_subwiki_by_group($wiki->id, 0, $USER->id);
+            }
+        }
+    } else {
+        if ($wiki->wikimode == 'collaborative') {
+            // 1 subwiki per group.
+            $aag = has_capability('moodle/site:accessallgroups', $context);
+            if ($aag || $groupmode == VISIBLEGROUPS) {
+                // User can see all groups.
+                $allowedgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid);
+                $allparticipants = new stdClass();
+                $allparticipants->id = 0;
+                array_unshift($allowedgroups, $allparticipants); // Add all participants.
+            } else {
+                // User can only see the groups he belongs to.
+                $allowedgroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid);
+            }
+
+            foreach ($allowedgroups as $group) {
+                $subwikis[] = wiki_get_possible_subwiki_by_group($wiki->id, $group->id, 0);
+            }
+        } else if ($wiki->wikimode == 'individual') {
+            // 1 subwiki per user and group.
+
+            if ($manage || $groupmode == VISIBLEGROUPS) {
+                // User can view all subwikis.
+                $users = get_enrolled_users($context);
+                foreach ($users as $user) {
+                    // Get all the groups this user belongs to.
+                    $groups = groups_get_all_groups($cm->course, $user->id);
+                    if (!empty($groups)) {
+                        foreach ($groups as $group) {
+                            $subwikis[] = wiki_get_possible_subwiki_by_group($wiki->id, $group->id, $user->id);
+                        }
+                    } else {
+                        // User doesn't belong to any group, add it to group 0.
+                        $subwikis[] = wiki_get_possible_subwiki_by_group($wiki->id, 0, $user->id);
+                    }
+                }
+            } else {
+                // The user can only see the subwikis of the groups he belongs.
+                $allowedgroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid);
+                foreach ($allowedgroups as $group) {
+                    $users = groups_get_members($group->id);
+                    foreach ($users as $user) {
+                        $subwikis[] = wiki_get_possible_subwiki_by_group($wiki->id, $group->id, $user->id);
+                    }
+                }
+            }
+        }
+    }
+
+    return $subwikis;
+}
