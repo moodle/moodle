@@ -1035,7 +1035,11 @@ class api {
         $ucfields = user_competency::get_sql_fields('uc');
         $compfields = competency::get_sql_fields('c');
         $usercols = array('id') + get_user_fieldnames();
-        $userfields = implode(',', array_map(create_function('$a', 'return "u.".$a." AS usr_".$a;'), $usercols));
+        $userfields = array();
+        foreach ($usercols as $field) {
+            $userfields[] = "u." . $field . " AS usr_" . $field;
+        }
+        $userfields = implode(',', $userfields);
 
         $select = "SELECT $ucfields, $compfields, $userfields";
         $countselect = "SELECT COUNT('x')";
@@ -1848,7 +1852,11 @@ class api {
         $planfields = plan::get_sql_fields('p');
         $tplfields = template::get_sql_fields('t');
         $usercols = array('id') + get_user_fieldnames();
-        $userfields = implode(',', array_map(create_function('$a', 'return "u.".$a." AS usr_".$a;'), $usercols));
+        $userfields = array();
+        foreach ($usercols as $field) {
+            $userfields[] = "u." . $field . " AS usr_" . $field;
+        }
+        $userfields = implode(',', $userfields);
 
         $select = "SELECT $planfields, $tplfields, $userfields";
         $countselect = "SELECT COUNT('x')";
