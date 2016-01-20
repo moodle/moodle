@@ -4807,7 +4807,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016011301.00);
     }
 
-    if ($oldversion < 2016011500.00) {
+    if ($oldversion < 2016011901.00) {
 
         // Convert calendar_lookahead to nearest new value.
         $transaction = $DB->start_delegated_transaction();
@@ -4847,7 +4847,7 @@ function xmldb_main_upgrade($oldversion) {
         $rs->close();
         $transaction->allow_commit();
 
-        upgrade_main_savepoint(true, 2016011500.00);
+        upgrade_main_savepoint(true, 2016011901.00);
     }
     return true;
 }
