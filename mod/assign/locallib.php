@@ -7138,7 +7138,7 @@ class assign {
 
         $this->update_submission($newsubmission, $userid, false, $this->get_instance()->teamsubmission);
         $flags = $this->get_user_flags($userid, false);
-        if ($flags->locked) {
+        if (isset($flags->locked) && $flags->locked) { // May not exist.
             $this->process_unlock_submission($userid);
         }
         return true;
