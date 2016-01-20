@@ -30,6 +30,7 @@ require_once("$CFG->libdir/grade/grade_scale.php");
 use context;
 use context_system;
 use context_course;
+use context_helper;
 use context_user;
 use coding_exception;
 use external_api;
@@ -4291,69 +4292,78 @@ class external extends external_api {
         }
 
         // Check capability on system level.
+        $syscontext = context_system::instance();
+        $hassystem = has_capability($capability, $syscontext);
 
-        $sql = 'SELECT
-                    rc.id,
-                    ctx.id contextid,
-                    ctx.instanceid,
-                    rc.roleid,
-                    rc.capability,
-                    rc.permission
-                FROM {role_capabilities} rc
-                JOIN {role_assignments} ra ON ra.contextid = rc.contextid
-                JOIN {context} ctx ON (ctx.id = rc.contextid)
-                WHERE ctx.contextlevel = :userlevel AND ra.userid = :userid';
-        $siterecords = $DB->get_records_sql($sql, array('userlevel' => CONTEXT_SYSTEM, 'userid' => $userid));
-        $userrecords = $DB->get_records_sql($sql, array('userlevel' => CONTEXT_USER, 'userid' => $userid));
-
-        $hassystem = false;
-        if (!empty($siterecords)) {
-            foreach ($siterecords as $record) {
-                if ($record->permission == CAP_PROHIBIT) {
-                    return $noresultsfilter;
-                } else if ($record->permission == CAP_ALLOW) {
-                    $hassystem = true;
-                }
+        $access = get_user_access_sitewide($userid);
+        // Build up a list of level 2 contexts (candidates to be user context)
+        $filtercontexts = array();
+        foreach ($access['ra'] as $path => $role) {
+            $parts = explode('/', $path);
+            if (count($parts) == 3) {
+                $filtercontexts[$parts[2]] = $parts[2];
+            } else if (count($parts) > 3) {
+                // We know this is not a user context because there is another path with more than 2 levels.
+                unset($filtercontexts[$parts[2]]);
             }
         }
-
+        // No interesting contexts - return all or no results.
+        if (empty($filtercontexts)) {
+            if ($hassystem) {
+                return $allresultsfilter;
+            } else {
+                return $noresultsfilter;
+            }
+        }
+        // Fetch all interesting contexts for further examination.
+        list($insql, $params) = $DB->get_in_or_equal($filtercontexts, SQL_PARAMS_NAMED);
+        $params['level'] = CONTEXT_USER;
+        $fields = context_helper::get_preload_record_columns_sql('ctx');
+        $interestingcontexts = $DB->get_recordset_sql('SELECT ' . $fields . '
+                                                       FROM {context} ctx
+                                                       WHERE ctx.contextlevel = :level
+                                                         AND ctx.id ' . $insql . '
+                                                       ORDER BY ctx.id', $params);
         if ($hassystem) {
-            // If allowed at system, search for roles prohibiting the capability at user context.
+            // If allowed at system, search for exceptions prohibiting the capability at user context.
             $excludeusers = array();
-            foreach ($userrecords as $record) {
-                if ($record->permission == CAP_PROHIBIT) {
-                    $excludeusers[$record->instanceid] = $record->instanceid;
+            foreach ($interestingcontexts as $contextrecord) {
+                $userid = $contextrecord->ctxinstance;
+                context_helper::preload_from_record($contextrecord);
+                $usercontext = context_user::instance($userid);
+                // Has capability should use the data already preloaded.
+                if (!has_capability($capability, $usercontext)) {
+                    $excludeusers[$userid] = $userid;
                 }
             }
 
             // Construct SQL excluding users with this role assigned for this user.
             if (empty($excludeusers)) {
+                $interestingcontexts->close();
                 return $allresultsfilter;
             }
             list($sql, $params) = $DB->get_in_or_equal($excludeusers, $type, $prefix, false);
         } else {
-            // If not allowed at system, search for roles allowing the capability at user context.
-            // Construct SQL excluding users with this role NOT assigned for this user.
+            // If not allowed at system, search for exceptions allowing the capability at user context.
             $allowusers = array();
-            $prohibitusers = array();
-            foreach ($userrecords as $record) {
-                if ($record->permission == CAP_PROHIBIT) {
-                    $prohibitusers[$record->instanceid] = $record->instanceid;
-                }
-                if ($record->permission == CAP_ALLOW) {
-                    $allowusers[$record->instanceid] = $record->instanceid;
+            foreach ($interestingcontexts as $contextrecord) {
+                $userid = $contextrecord->ctxinstance;
+                context_helper::preload_from_record($contextrecord);
+                $usercontext = context_user::instance($userid);
+                // Has capability should use the data already preloaded.
+                if (has_capability($capability, $usercontext)) {
+                    $allowusers[$userid] = $userid;
                 }
             }
 
-            foreach ($prohibitusers as $userid => $userid2) {
-                unset($allowusers[$record->instanceid]);
-            }
-
+            // Construct SQL excluding users with this role assigned for this user.
             if (empty($allowusers)) {
+                $interestingcontexts->close();
                 return $noresultsfilter;
             }
             list($sql, $params) = $DB->get_in_or_equal($allowusers, $type, $prefix);
         }
+        $interestingcontexts->close();
 
         // Return the goods!.
         return array($sql, $params);

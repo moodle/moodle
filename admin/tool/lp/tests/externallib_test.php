@@ -2571,6 +2571,86 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(2, $c2a->get_sortorder());
     }
 
+    public function test_search_users_by_capability() {
+        global $CFG;
+        $this->resetAfterTest(true);
+
+        $dg = $this->getDataGenerator();
+        $ux = $dg->create_user();
+        $u1 = $dg->create_user(array('idnumber' => 'Cats', 'firstname' => 'Bob', 'lastname' => 'Dyyylan',
+            'email' => 'bobbyyy@dyyylan.com', 'phone1' => '123456', 'phone2' => '78910', 'department' => 'Marketing',
+            'institution' => 'HQ'));
+
+        // First we search with no capability assigned.
+        $this->setUser($ux);
+        $result = external::search_users('yyylan', 'tool/lp:planmanage');
+        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $this->assertCount(0, $result['users']);
+        $this->assertEquals(0, $result['count']);
+
+        // Now we assign a different capability.
+        $usercontext = context_user::instance($u1->id);
+        $systemcontext = context_system::instance();
+        $customrole = $this->assignUserCapability('tool/lp:planview', $usercontext->id);
+
+        $result = external::search_users('yyylan', 'tool/lp:planmanage');
+        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $this->assertCount(0, $result['users']);
+        $this->assertEquals(0, $result['count']);
+
+        // Now we assign a matching capability in the same role.
+        $usercontext = context_user::instance($u1->id);
+        $this->assignUserCapability('tool/lp:planmanage', $usercontext->id, $customrole);
+
+        $result = external::search_users('yyylan', 'tool/lp:planmanage');
+        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $this->assertCount(1, $result['users']);
+        $this->assertEquals(1, $result['count']);
+
+        // Now assign another role with the same capability (test duplicates).
+        role_assign($this->creatorrole, $ux->id, $usercontext->id);
+        $result = external::search_users('yyylan', 'tool/lp:planmanage');
+        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $this->assertCount(1, $result['users']);
+        $this->assertEquals(1, $result['count']);
+
+        // Now lets try a different user with only the role at system level.
+        $ux2 = $dg->create_user();
+        role_assign($this->creatorrole, $ux2->id, $systemcontext->id);
+        $this->setUser($ux2);
+        $result = external::search_users('yyylan', 'tool/lp:planmanage');
+        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $this->assertCount(1, $result['users']);
+        $this->assertEquals(1, $result['count']);
+
+        // Now lets try a different user with only the role at user level.
+        $ux3 = $dg->create_user();
+        role_assign($this->creatorrole, $ux3->id, $usercontext->id);
+        $this->setUser($ux3);
+        $result = external::search_users('yyylan', 'tool/lp:planmanage');
+        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $this->assertCount(1, $result['users']);
+        $this->assertEquals(1, $result['count']);
+
+        // Switch back.
+        $this->setUser($ux);
+
+        // Now add a prevent override (will change nothing because we still have an ALLOW).
+        assign_capability('tool/lp:planmanage', CAP_PREVENT, $customrole, $usercontext->id);
+        $result = external::search_users('yyylan', 'tool/lp:planmanage');
+        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $this->assertCount(1, $result['users']);
+        $this->assertEquals(1, $result['count']);
+
+        // Now change to a prohibit override (should prevent access).
+        assign_capability('tool/lp:planmanage', CAP_PROHIBIT, $customrole, $usercontext->id);
+        $result = external::search_users('yyylan', 'tool/lp:planmanage');
+        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $this->assertCount(1, $result['users']);
+        $this->assertEquals(1, $result['count']);
+
+    }
+
     public function test_search_users() {
         global $CFG;
         $this->resetAfterTest(true);
