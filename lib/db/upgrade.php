@@ -4813,11 +4813,11 @@ function xmldb_main_upgrade($oldversion) {
         $transaction = $DB->start_delegated_transaction();
 
         // Count all users who curretly have that preference set (for progress bar).
-        $total = $DB->count_records_select('user_preferences', 'name = \'calendar_lookahead\' AND value > 0');
+        $total = $DB->count_records_select('user_preferences', "name = 'calendar_lookahead' AND value != '0'");
         $pbar = new progress_bar('upgradecalendarlookahead', 500, true);
 
         // Get all these users, one at a time.
-        $rs = $DB->get_recordset_select('user_preferences', 'name = \'calendar_lookahead\' AND value > 0');
+        $rs = $DB->get_recordset_select('user_preferences', "name = 'calendar_lookahead' AND value != '0'");
         $i = 0;
         foreach ($rs as $userpref) {
 
