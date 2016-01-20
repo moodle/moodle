@@ -1,5 +1,8 @@
 This files describes API changes in the mod_scorm code.
 
+=== 3.1 ===
+* Group and groupings support has now been enabled.
+
 === 3.0 ===
 
 * External function mod_scorm_external::get_scorms_by_courses returned parameter "name" has been changed to PARAM_RAW,
