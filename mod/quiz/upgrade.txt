@@ -12,6 +12,9 @@ This files describes API changes in the quiz code.
 * The third argument to mod_quiz_renderer::start_attempt_button has been changed
   from a warning string to a mod_quiz_preflight_check_form.
 
+* mod_quiz_renderer::review_next_navigation has a new optional argument. If you
+  have overridden that method, consider updating your code to match.
+
 
 === 2.9 ===
 

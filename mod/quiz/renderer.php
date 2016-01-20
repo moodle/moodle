@@ -56,7 +56,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
                 $this->questions($attemptobj, true, $slots, $page, $showall, $displayoptions),
                 $attemptobj);
 
-        $output .= $this->review_next_navigation($attemptobj, $page, $lastpage);
+        $output .= $this->review_next_navigation($attemptobj, $page, $lastpage, $showall);
         $output .= $this->footer();
         return $output;
     }
@@ -256,18 +256,22 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param quiz_attempt $attemptobj instance of quiz_attempt
      * @param int $page the current page
      * @param bool $lastpage if true current page is the last page
+     * @param bool|null $showall if true, the URL will be to review the entire attempt on one page,
+     *      and $page will be ignored. If null, a sensible default will be chosen.
+     *
+     * @return string HTML fragment.
      */
-    public function review_next_navigation(quiz_attempt $attemptobj, $page, $lastpage) {
+    public function review_next_navigation(quiz_attempt $attemptobj, $page, $lastpage, $showall = null) {
         $nav = '';
         if ($page > 0) {
             $nav .= link_arrow_left(get_string('navigateprevious', 'quiz'),
-                    $attemptobj->review_url(null, $page - 1), false, 'mod_quiz-prev-nav');
+                    $attemptobj->review_url(null, $page - 1, $showall), false, 'mod_quiz-prev-nav');
         }
         if ($lastpage) {
             $nav .= $this->finish_review_link($attemptobj);
         } else {
             $nav .= link_arrow_right(get_string('navigatenext', 'quiz'),
-                    $attemptobj->review_url(null, $page + 1), false, 'mod_quiz-next-nav');
+                    $attemptobj->review_url(null, $page + 1, $showall), false, 'mod_quiz-next-nav');
         }
         return html_writer::tag('div', $nav, array('class' => 'submitbtns'));
     }
