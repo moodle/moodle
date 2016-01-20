@@ -367,9 +367,9 @@ class assign_submission_onlinetext extends assign_submission_plugin {
             if ($text != $shorttext) {
                 $wordcount = get_string('numwords', 'assignsubmission_onlinetext', count_words($text));
 
-                return $shorttext . $plagiarismlinks . $wordcount;
+                return $plagiarismlinks . $wordcount . $shorttext;
             } else {
-                return $shorttext . $plagiarismlinks;
+                return $plagiarismlinks . $shorttext;
             }
         }
         return '';
@@ -423,6 +423,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
      * @return string
      */
     public function view(stdClass $submission) {
+        global $CFG;
         $result = '';
 
         $onlinetextsubmission = $this->get_onlinetext_submission($submission->id);
@@ -436,9 +437,20 @@ class assign_submission_onlinetext extends assign_submission_plugin {
                                                                 'onlinetext',
                                                                 'assignsubmission_onlinetext');
 
+            $plagiarismlinks = '';
+
+            if (!empty($CFG->enableplagiarism)) {
+                require_once($CFG->libdir . '/plagiarismlib.php');
+
+                $plagiarismlinks .= plagiarism_get_links(array('userid' => $submission->userid,
+                    'content' => trim($result),
+                    'cmid' => $this->assignment->get_course_module()->id,
+                    'course' => $this->assignment->get_course()->id,
+                    'assignment' => $submission->assignment));
+            }
         }
 
-        return $result;
+        return $plagiarismlinks . $result;
     }
 
     /**
