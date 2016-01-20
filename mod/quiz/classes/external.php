@@ -1073,4 +1073,89 @@ class mod_quiz_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for save_attempt.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function save_attempt_parameters() {
+        return new external_function_parameters (
+            array(
+                'attemptid' => new external_value(PARAM_INT, 'attempt id'),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'the data to be saved'
+                ),
+                'preflightdata' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, array()
+                )
+            )
+        );
+    }
+
+    /**
+     * Processes save requests during the quiz. This function is intended for the quiz auto-save feature.
+     *
+     * @param int $attemptid attempt id
+     * @param array $data the data to be saved
+     * @param  array $preflightdata preflight required data (like passwords)
+     * @return array of warnings and execution result
+     * @since Moodle 3.1
+     */
+    public static function save_attempt($attemptid, $data, $preflightdata = array()) {
+        global $DB;
+
+        $warnings = array();
+
+        $params = array(
+            'attemptid' => $attemptid,
+            'data' => $data,
+            'preflightdata' => $preflightdata,
+        );
+        $params = self::validate_parameters(self::save_attempt_parameters(), $params);
+
+        // Add a page, required by validate_attempt.
+        list($attemptobj, $messages) = self::validate_attempt($params);
+
+        $transaction = $DB->start_delegated_transaction();
+        // Create the $_POST object required by the question engine.
+        $_POST = array();
+        foreach ($data as $element) {
+            $_POST[$element['name']] = $element['value'];
+        }
+        $timenow = time();
+        $attemptobj->process_auto_save($timenow);
+        $transaction->allow_commit();
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the save_attempt return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function save_attempt_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }

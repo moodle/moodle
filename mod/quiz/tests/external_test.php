@@ -139,7 +139,7 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
                 // Finish the attempt.
                 $attemptobj->process_finish(time(), false);
             }
-            return array($quiz, $context, $quizobj, $attempt, $attemptobj);
+            return array($quiz, $context, $quizobj, $attempt, $attemptobj, $quba);
         } else {
             return array($quiz, $context, $quizobj);
         }
@@ -947,6 +947,66 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $this->assertFalse($result['questions'][1]['flagged']);
         $this->assertEmpty($result['questions'][0]['mark']);
         $this->assertEmpty($result['questions'][1]['mark']);
+
+    }
+
+    /**
+     * Test save_attempt
+     */
+    public function test_save_attempt() {
+
+        // Create a new quiz with one attempt started.
+        list($quiz, $context, $quizobj, $attempt, $attemptobj, $quba) = $this->create_quiz_with_questions(true);
+
+        // Response for slot 1.
+        $prefix = $quba->get_field_prefix(1);
+        $data = array(
+            array('name' => 'slots', 'value' => 1),
+            array('name' => $prefix . ':sequencecheck',
+                    'value' => $attemptobj->get_question_attempt(1)->get_sequence_check_count()),
+            array('name' => $prefix . 'answer', 'value' => 1),
+        );
+
+        $this->setUser($this->student);
+
+        $result = mod_quiz_external::save_attempt($attempt->id, $data);
+        $result = external_api::clean_returnvalue(mod_quiz_external::save_attempt_returns(), $result);
+        $this->assertTrue($result['status']);
+
+        // Now, get the summary.
+        $result = mod_quiz_external::get_attempt_summary($attempt->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
+
+        // Check it's marked as completed only the first one.
+        $this->assertEquals('complete', $result['questions'][0]['state']);
+        $this->assertEquals('todo', $result['questions'][1]['state']);
+        $this->assertEquals(1, $result['questions'][0]['number']);
+        $this->assertEquals(2, $result['questions'][1]['number']);
+        $this->assertFalse($result['questions'][0]['flagged']);
+        $this->assertFalse($result['questions'][1]['flagged']);
+        $this->assertEmpty($result['questions'][0]['mark']);
+        $this->assertEmpty($result['questions'][1]['mark']);
+
+        // Now, second slot.
+        $prefix = $quba->get_field_prefix(2);
+        $data = array(
+            array('name' => 'slots', 'value' => 2),
+            array('name' => $prefix . ':sequencecheck',
+                    'value' => $attemptobj->get_question_attempt(1)->get_sequence_check_count()),
+            array('name' => $prefix . 'answer', 'value' => 1),
+        );
+
+        $result = mod_quiz_external::save_attempt($attempt->id, $data);
+        $result = external_api::clean_returnvalue(mod_quiz_external::save_attempt_returns(), $result);
+        $this->assertTrue($result['status']);
+
+        // Now, get the summary.
+        $result = mod_quiz_external::get_attempt_summary($attempt->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
+
+        // Check it's marked as completed only the first one.
+        $this->assertEquals('complete', $result['questions'][0]['state']);
+        $this->assertEquals('complete', $result['questions'][1]['state']);
 
     }
 
