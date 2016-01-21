@@ -351,25 +351,12 @@ if ($edit) {
 if ($deletable and $delete) {
     $prompt = get_string('submissiondeleteconfirm', 'workshop');
     if ($candeleteall) {
-        $assessments = $workshop->get_assessments_of_submission($submission->id);
-        if (count($assessments) > 0) {
-            $prompt = html_writer::tag('p', $prompt);
-            $prompt .= html_writer::tag('p', get_string('submissiondeleteconfirmteacher', 'workshop'));
-            $affected = '';
-            $fields = get_all_user_name_fields(true);
-            $reviewers = array();
-            foreach ($assessments as $assessment) {
-                if (!in_array($assessment->reviewerid, $reviewers)) {
-                    $reviewers[] = $assessment->reviewerid;
-                    $names = $DB->get_record('user', array('id' => $assessment->reviewerid), $fields);
-                    $affected .= html_writer::tag('li', fullname($names));
-                }
-            }
-            $prompt .= html_writer::tag('ul', $affected);
+        $count = count($workshop->get_assessments_of_submission($submission->id));
+        if ($count > 0) {
+            $prompt = get_string('submissiondeleteconfirmassess', 'workshop', ['count' => $count]);
         }
     }
-    echo $output->confirm($prompt,
-            new moodle_url($PAGE->url, array('delete' => 1, 'confirm' => 1)), $workshop->view_url());
+    echo $output->confirm($prompt, new moodle_url($PAGE->url, ['delete' => 1, 'confirm' => 1]), $workshop->view_url());
 }
 
 // else display the submission
@@ -385,25 +372,28 @@ if ($submission->id) {
     echo $output->box(get_string('noyoursubmission', 'workshop'));
 }
 
-if ($editable) {
-    if ($submission->id) {
-        $btnurl = new moodle_url($PAGE->url, array('edit' => 'on', 'id' => $submission->id));
-        $btntxt = get_string('editsubmission', 'workshop');
-    } else {
-        $btnurl = new moodle_url($PAGE->url, array('edit' => 'on'));
-        $btntxt = get_string('createsubmission', 'workshop');
+// If not at removal confirmation screen, some action buttons can be displayed.
+if (!$delete) {
+    if ($editable) {
+        if ($submission->id) {
+            $btnurl = new moodle_url($PAGE->url, array('edit' => 'on', 'id' => $submission->id));
+            $btntxt = get_string('editsubmission', 'workshop');
+        } else {
+            $btnurl = new moodle_url($PAGE->url, array('edit' => 'on'));
+            $btntxt = get_string('createsubmission', 'workshop');
+        }
+        echo $output->single_button($btnurl, $btntxt, 'get');
     }
-    echo $output->single_button($btnurl, $btntxt, 'get');
-}
 
-if ($submission->id and $deletable) {
-    $url = new moodle_url($PAGE->url, array('delete' => 1));
-    echo $output->single_button($url, get_string('deletesubmission', 'workshop'), 'get');
-}
+    if ($submission->id and $deletable) {
+        $url = new moodle_url($PAGE->url, array('delete' => 1));
+        echo $output->single_button($url, get_string('deletesubmission', 'workshop'), 'get');
+    }
 
-if ($submission->id and !$edit and !$isreviewer and $canallocate and $workshop->assessing_allowed($USER->id)) {
-    $url = new moodle_url($PAGE->url, array('assess' => 1));
-    echo $output->single_button($url, get_string('assess', 'workshop'), 'post');
+    if ($submission->id and !$edit and !$isreviewer and $canallocate and $workshop->assessing_allowed($USER->id)) {
+        $url = new moodle_url($PAGE->url, array('assess' => 1));
+        echo $output->single_button($url, get_string('assess', 'workshop'), 'post');
+    }
 }
 
 if (($workshop->phase == workshop::PHASE_CLOSED) and ($ownsubmission or $canviewall)) {
