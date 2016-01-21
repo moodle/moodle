@@ -215,6 +215,9 @@ class behat_course extends behat_base {
             throw new DriverException('Section edit menu not available when Javascript is disabled');
         }
 
+        // Wait for section to be available, before clicking on the menu.
+        $this->i_wait_until_section_is_available($sectionnumber);
+
         // If it is already opened we do nothing.
         $xpath = $this->section_exists($sectionnumber);
         $xpath .= "/descendant::div[contains(@class, 'section-actions')]/descendant::a[contains(@class, 'textmenu')]";
@@ -300,6 +303,11 @@ class behat_course extends behat_base {
      */
     public function i_show_section($sectionnumber) {
         $showlink = $this->show_section_icon_exists($sectionnumber);
+
+        // Ensure section edit menu is open before interacting with it.
+        if ($this->running_javascript()) {
+            $this->i_open_section_edit_menu($sectionnumber);
+        }
         $showlink->click();
 
         if ($this->running_javascript()) {
@@ -316,6 +324,11 @@ class behat_course extends behat_base {
      */
     public function i_hide_section($sectionnumber) {
         $hidelink = $this->hide_section_icon_exists($sectionnumber);
+
+        // Ensure section edit menu is open before interacting with it.
+        if ($this->running_javascript()) {
+            $this->i_open_section_edit_menu($sectionnumber);
+        }
         $hidelink->click();
 
         if ($this->running_javascript()) {
@@ -964,11 +977,6 @@ class behat_course extends behat_base {
         // We need to know the course format as the text strings depends on them.
         $courseformat = $this->get_course_format();
 
-        // If javascript is on, link is inside a menu.
-        if ($this->running_javascript()) {
-            $this->i_open_section_edit_menu($sectionnumber);
-        }
-
         // Checking the show button alt text and show icon.
         $showtext = $this->getSession()->getSelectorsHandler()->xpathLiteral(get_string('showfromothers', $courseformat));
         $linkxpath = $xpath . "/descendant::a[@title=$showtext]";
@@ -995,11 +1003,6 @@ class behat_course extends behat_base {
 
         // We need to know the course format as the text strings depends on them.
         $courseformat = $this->get_course_format();
-
-        // If javascript is on, link is inside a menu.
-        if ($this->running_javascript()) {
-            $this->i_open_section_edit_menu($sectionnumber);
-        }
 
         // Checking the hide button alt text and hide icon.
         $hidetext = $this->getSession()->getSelectorsHandler()->xpathLiteral(get_string('hidefromothers', $courseformat));
