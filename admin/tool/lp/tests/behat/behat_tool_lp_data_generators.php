@@ -54,6 +54,10 @@ class behat_tool_lp_data_generators extends behat_base {
         'frameworks' => array(
             'datagenerator' => 'framework',
             'required' => array()
+        ),
+        'templates' => array(
+            'datagenerator' => 'template',
+            'required' => array()
         )
     );
 
