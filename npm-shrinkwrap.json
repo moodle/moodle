@@ -59,9 +59,9 @@
       "resolved": "https://registry.npmjs.org/assert-plus/-/assert-plus-0.1.5.tgz"
     },
     "async": {
-      "version": "0.1.22",
-      "from": "async@>=0.1.22 <0.2.0",
-      "resolved": "https://registry.npmjs.org/async/-/async-0.1.22.tgz"
+      "version": "1.5.2",
+      "from": "async@*",
+      "resolved": "https://registry.npmjs.org/async/-/async-1.5.2.tgz"
     },
     "aws-sign2": {
       "version": "0.6.0",
@@ -550,7 +550,14 @@
     "grunt": {
       "version": "0.4.5",
       "from": "grunt@0.4.5",
-      "resolved": "https://registry.npmjs.org/grunt/-/grunt-0.4.5.tgz"
+      "resolved": "https://registry.npmjs.org/grunt/-/grunt-0.4.5.tgz",
+      "dependencies": {
+        "async": {
+          "version": "0.1.22",
+          "from": "async@>=0.1.22 <0.2.0",
+          "resolved": "https://registry.npmjs.org/async/-/async-0.1.22.tgz"
+        }
+      }
     },
     "grunt-contrib-jshint": {
       "version": "0.11.3",
@@ -640,7 +647,14 @@
     "grunt-legacy-util": {
       "version": "0.2.0",
       "from": "grunt-legacy-util@>=0.2.0 <0.3.0",
-      "resolved": "https://registry.npmjs.org/grunt-legacy-util/-/grunt-legacy-util-0.2.0.tgz"
+      "resolved": "https://registry.npmjs.org/grunt-legacy-util/-/grunt-legacy-util-0.2.0.tgz",
+      "dependencies": {
+        "async": {
+          "version": "0.1.22",
+          "from": "async@>=0.1.22 <0.2.0",
+          "resolved": "https://registry.npmjs.org/async/-/async-0.1.22.tgz"
+        }
+      }
     },
     "gzip-size": {
       "version": "1.0.0",
