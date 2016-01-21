@@ -636,7 +636,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
             $this->lasternoller = get_admin();
         }
 
-        $this->lasternollercourseid == $courseid;
+        $this->lasternollercourseid = $courseid;
 
         return $this->lasternoller;
     }
