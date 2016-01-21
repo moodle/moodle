@@ -270,13 +270,14 @@ class core_external extends external_api {
     public static function get_fragment_parameters() {
         return new external_function_parameters(
             array(
-                'component' => new external_value(PARAM_RAW, 'Component for the callback e.g. mod_asign'),
-                'callback' => new external_value(PARAM_RAW, 'Name of the callback to execute'),
+                'component' => new external_value(PARAM_COMPONENT, 'Component for the callback e.g. mod_assign'),
+                'callback' => new external_value(PARAM_ALPHANUMEXT, 'Name of the callback to execute'),
+                'contextid' => new external_value(PARAM_INT, 'Context ID that the fragment is from'),
                 'args' => new external_multiple_structure(
                     new external_single_structure(
                         array(
                             'name' => new external_value(PARAM_ALPHANUMEXT, 'param name'),
-                            'value' => new external_value(PARAM_TEXT, 'param value')
+                            'value' => new external_value(PARAM_RAW, 'param value')
                         )
                     ), 'args for the callback are optional', VALUE_OPTIONAL
                 )
@@ -287,20 +288,25 @@ class core_external extends external_api {
     /**
      * Get a HTML fragment for inserting into something. Initial use is for inserting mforms into
      * a page using AJAX.
+     * This web service is designed to be called only via AJAX and not directly.
+     * Callbacks that are called by this web service are responsible for doing the appropriate security checks
+     * to access the information returned. This only does minimal validation on the context.
      *
      * @param string $component Name of the component.
      * @param string $callback Function callback name.
+     * @param int $contextid Context ID this fragment is in.
      * @param array $args optional arguments for the callback.
      * @return array HTML and JavaScript fragments for insertion into stuff.
      * @since Moodle 3.1
      */
-    public static function get_fragment($component, $callback, $args = null) {
+    public static function get_fragment($component, $callback, $contextid, $args = null) {
         global $OUTPUT, $PAGE;
 
         $params = self::validate_parameters(self::get_fragment_parameters(),
                 array(
                     'component' => $component,
                     'callback' => $callback,
+                    'contextid' => $contextid,
                     'args' => $args
                 )
         );
@@ -311,16 +317,16 @@ class core_external extends external_api {
             $arguments[$paramargument['name']] = $paramargument['value'];
         }
 
-        // Remove warning about context not being set.
-        $PAGE->set_context(context_system::instance());
+        $context = context::instance_by_id($contextid);
+        self::validate_context($context);
 
         // Hack alert: Forcing bootstrap_renderer to initiate moodle page.
         $OUTPUT->header();
 
         // Overwriting page_requirements_manager with the fragment one so only JS included from
         // this point is returned to the user.
-        $PAGE->set_requirements_for_fragments();
-        $data = component_callback($params['component'], $params['callback'], $arguments);
+        $PAGE->start_collecting_javascript_requirements();
+        $data = component_callback($params['component'], 'output_fragment_' . $params['callback'], $arguments);
         $jsfooter = $PAGE->requires->get_end_code();
         $output = array('html' => $data, 'javascript' => $jsfooter);
         return $output;

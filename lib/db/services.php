@@ -1057,7 +1057,6 @@ $functions = array(
         'classpath'   => 'lib/external/externallib.php',
         'description' => 'Return a fragment for inclusion, such as a JavaScript page.',
         'type'        => 'read',
-        'loginrequired' => false,
         'ajax'        => true,
     ),
 
