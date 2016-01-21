@@ -417,7 +417,11 @@ class api {
             $framework->set_taxonomies($record->taxonomies);
         }
 
-        $id = $framework->create();
+        $framework = $framework->create();
+
+        // Trigger a competency framework created event.
+        \tool_lp\event\competency_framework_created::create_from_framework($framework)->trigger();
+
         return $framework;
     }
 
@@ -444,7 +448,7 @@ class api {
             // Adding the suffix copy to the shortname.
             $framework->set_shortname(get_string('duplicateditemname', 'tool_lp', $framework->get_shortname()));
             $framework->set_id(0);
-            $framework->create();
+            $framework = $framework->create();
 
             // Array that match the old competencies ids with the new one to use when copying related competencies.
             $frameworkcompetency = competency::get_framework_tree($id);
@@ -483,6 +487,9 @@ class api {
             $transaction->rollback(new moodle_exception('Error while duplicating the competency framework.'));
         }
 
+        // Trigger a competency framework created event.
+        \tool_lp\event\competency_framework_created::create_from_framework($framework)->trigger();
+
         return $framework;
     }
 
@@ -497,6 +504,10 @@ class api {
     public static function delete_framework($id) {
         $framework = new competency_framework($id);
         require_capability('tool/lp:competencymanage', $framework->get_context());
+
+        // Trigger a competency framework deleted event.
+        \tool_lp\event\competency_framework_deleted::create_from_framework($framework)->trigger();
+
         return $framework->delete();
     }
 
@@ -519,6 +530,9 @@ class api {
         if (isset($record->taxonomies)) {
             $framework->set_taxonomies($record->taxonomies);
         }
+
+        // Trigger a competency framework updated event.
+        \tool_lp\event\competency_framework_updated::create_from_framework($framework)->trigger();
 
         return $framework->update();
     }
