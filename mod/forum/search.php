@@ -296,6 +296,11 @@ foreach ($posts as $post) {
     // Prepare a link to the post in context, to be displayed after the forum post.
     $fulllink = "<a href=\"discuss.php?d=$post->discussion#p$post->id\">".get_string("postincontext", "forum")."</a>";
 
+    // Message is now html format.
+    if ($post->messageformat != FORMAT_HTML) {
+        $post->messageformat = FORMAT_HTML;
+    }
+
     // Now pring the post.
     forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false,
             $fulllink, '', -99, false);
