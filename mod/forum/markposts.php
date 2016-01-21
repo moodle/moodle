@@ -57,9 +57,9 @@ $user = $USER;
 require_login($course, false, $cm);
 
 if ($returnpage == 'index.php') {
-    $returnto = forum_go_back_to(new moodle_url("/mod/forum/$returnpage", array('id' => $course->id)));
+    $returnto = new moodle_url("/mod/forum/$returnpage", array('id' => $course->id));
 } else {
-    $returnto = forum_go_back_to(new moodle_url("/mod/forum/$returnpage", array('f' => $forum->id)));
+    $returnto = new moodle_url("/mod/forum/$returnpage", array('f' => $forum->id));
 }
 
 if (isguestuser()) {   // Guests can't change forum
