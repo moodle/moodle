@@ -71,6 +71,7 @@ class submission_deleted extends \core\event\base {
 
     /**
      * Returns relevant URL.
+     *
      * @return \moodle_url
      */
     public function get_url() {
@@ -79,7 +80,7 @@ class submission_deleted extends \core\event\base {
     }
 
     /**
-     * replace add_to_log() statement.
+     * Replace add_to_log() statement.
      *
      * @return array of parameters to be passed to legacy add_to_log() function.
      */
@@ -89,10 +90,20 @@ class submission_deleted extends \core\event\base {
             $this->objectid, $this->contextinstanceid);
     }
 
+    /**
+     * Defines mapping of the 'objectid' property when restoring course logs.
+     *
+     * @return array
+     */
     public static function get_objectid_mapping() {
         return array('db' => 'workshop_submissions', 'restore' => 'workshop_submission');
     }
 
+    /**
+     * Defines mapping of the 'other' property when restoring course logs.
+     *
+     * @return array|bool
+     */
     public static function get_other_mapping() {
         // Nothing to map.
         return false;

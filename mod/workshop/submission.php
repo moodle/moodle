@@ -27,15 +27,15 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 require_once($CFG->dirroot . '/repository/lib.php');
 
-$cmid       = required_param('cmid', PARAM_INT);            // course module id
-$id         = optional_param('id', 0, PARAM_INT);           // submission id
-$edit       = optional_param('edit', false, PARAM_BOOL);    // open for editing?
-$assess     = optional_param('assess', false, PARAM_BOOL);  // instant assessment required
-$delete     = optional_param('delete', false, PARAM_BOOL);  // example removal requested
-$confirm    = optional_param('confirm', false, PARAM_BOOL); // example removal request confirmed
+$cmid = required_param('cmid', PARAM_INT); // Course module id.
+$id = optional_param('id', 0, PARAM_INT); // Submission id.
+$edit = optional_param('edit', false, PARAM_BOOL); // Open the page for editing?
+$assess = optional_param('assess', false, PARAM_BOOL); // Instant assessment required.
+$delete = optional_param('delete', false, PARAM_BOOL); // Submission removal requested.
+$confirm = optional_param('confirm', false, PARAM_BOOL); // Submission removal request confirmed.
 
-$cm         = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
-$course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+$cm = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
+$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_login($course, false, $cm);
 if (isguestuser()) {
