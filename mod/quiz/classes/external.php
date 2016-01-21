@@ -1254,4 +1254,136 @@ class mod_quiz_external extends external_api {
         );
     }
 
+    /**
+     * Validate an attempt finished for review. The attempt would be reviewed by a user or a teacher.
+     *
+     * @param  array $params Array of parameters including the attemptid
+     * @return  array containing the attempt object and display options
+     * @since  Moodle 3.1
+     * @throws  moodle_exception
+     * @throws  moodle_quiz_exception
+     */
+    protected static function validate_attempt_review($params) {
+
+        $attemptobj = quiz_attempt::create($params['attemptid']);
+        $attemptobj->check_review_capability();
+
+        $displayoptions = $attemptobj->get_display_options(true);
+        if ($attemptobj->is_own_attempt()) {
+            if (!$attemptobj->is_finished()) {
+                throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'attemptclosed');
+            } else if (!$displayoptions->attempt) {
+                throw new moodle_exception($attemptobj->cannot_review_message());
+            }
+        } else if (!$attemptobj->is_review_allowed()) {
+            throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'noreviewattempt');
+        }
+        return array($attemptobj, $displayoptions);
+    }
+
+    /**
+     * Describes the parameters for get_attempt_review.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function get_attempt_review_parameters() {
+        return new external_function_parameters (
+            array(
+                'attemptid' => new external_value(PARAM_INT, 'attempt id'),
+                'page' => new external_value(PARAM_INT, 'page number, empty for all the questions in all the pages',
+                                                VALUE_DEFAULT, -1),
+            )
+        );
+    }
+
+    /**
+     * Returns review information for the given finished attempt, can be used by users or teachers.
+     *
+     * @param int $attemptid attempt id
+     * @param int $page page number, empty for all the questions in all the pages
+     * @return array of warnings and the attempt data, feedback and questions
+     * @since Moodle 3.1
+     * @throws  moodle_exception
+     * @throws  moodle_quiz_exception
+     */
+    public static function get_attempt_review($attemptid, $page = -1) {
+        global $PAGE;
+
+        $warnings = array();
+
+        $params = array(
+            'attemptid' => $attemptid,
+            'page' => $page,
+        );
+        $params = self::validate_parameters(self::get_attempt_review_parameters(), $params);
+
+        list($attemptobj, $displayoptions) = self::validate_attempt_review($params);
+
+        if ($params['page'] !== -1) {
+            $page = $attemptobj->force_page_number_into_range($params['page']);
+        } else {
+            $page = 'all';
+        }
+
+        // Prepare the output.
+        $result = array();
+        $result['attempt'] = $attemptobj->get_attempt();
+        $result['questions'] = self::get_attempt_questions_data($attemptobj, true, $page, true);
+
+        $result['additionaldata'] = array();
+        // Summary data (from behaviours).
+        $summarydata = $attemptobj->get_additional_summary_data($displayoptions);
+        foreach ($summarydata as $key => $data) {
+            // This text does not need formatting (no need for external_format_[string|text]).
+            $result['additionaldata'][] = array(
+                'id' => $key,
+                'title' => $data['title'], $attemptobj->get_quizobj()->get_context()->id,
+                'content' => $data['content'],
+            );
+        }
+
+        // Feedback if there is any, and the user is allowed to see it now.
+        $grade = quiz_rescale_grade($attemptobj->get_attempt()->sumgrades, $attemptobj->get_quiz(), false);
+
+        $feedback = $attemptobj->get_overall_feedback($grade);
+        if ($displayoptions->overallfeedback && $feedback) {
+            $result['additionaldata'][] = array(
+                'id' => 'feedback',
+                'title' => get_string('feedback', 'quiz'),
+                'content' => $feedback,
+            );
+        }
+
+        $result['grade'] = $grade;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_attempt_review return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function get_attempt_review_returns() {
+        return new external_single_structure(
+            array(
+                'grade' => new external_value(PARAM_RAW, 'grade for the quiz (or empty or "notyetgraded")'),
+                'attempt' => self::attempt_structure(),
+                'additionaldata' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_ALPHANUMEXT, 'id of the data'),
+                            'title' => new external_value(PARAM_TEXT, 'data title'),
+                            'content' => new external_value(PARAM_RAW, 'data content'),
+                        )
+                    )
+                ),
+                'questions' => new external_multiple_structure(self::question_structure()),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }

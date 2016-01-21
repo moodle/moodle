@@ -119,4 +119,13 @@ $functions = array(
         'capabilities'  => 'mod/quiz:attempt',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+
+    'mod_quiz_get_attempt_review' => array(
+        'classname'     => 'mod_quiz_external',
+        'methodname'    => 'get_attempt_review',
+        'description'   => 'Returns review information for the given finished attempt, can be used by users or teachers.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/quiz:reviewmyattempts',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

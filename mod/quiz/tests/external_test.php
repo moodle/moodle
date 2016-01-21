@@ -51,6 +51,16 @@ class testable_mod_quiz_external extends mod_quiz_external {
     public static function validate_attempt($params, $checkaccessrules = true, $failifoverdue = true) {
         return parent::validate_attempt($params, $checkaccessrules, $failifoverdue);
     }
+
+    /**
+     * Public accessor.
+     *
+     * @param  array $params Array of parameters including the attemptid
+     * @return  array containing the attempt object and display options
+     */
+    public static function validate_attempt_review($params) {
+        return parent::validate_attempt_review($params);
+    }
 }
 
 /**
@@ -101,7 +111,7 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         // Create a new quiz with attempts.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
         $data = array('course' => $this->course->id,
-                      'sumgrades' => 1);
+                      'sumgrades' => 2);
         $quiz = $quizgenerator->create_instance($data);
         $context = context_module::instance($quiz->cmid);
 
@@ -1118,6 +1128,122 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $result = mod_quiz_external::process_attempt($attempt->id, array());
         $result = external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
         $this->assertEquals(quiz_attempt::ABANDONED, $result['state']);
+
+    }
+
+    /**
+     * Test validate_attempt_review
+     */
+    public function test_validate_attempt_review() {
+        global $DB;
+
+        // Create a new quiz with one attempt started.
+        list($quiz, $context, $quizobj, $attempt, $attemptobj) = $this->create_quiz_with_questions(true);
+
+        $this->setUser($this->student);
+
+        // Invalid attempt, invalid id.
+        try {
+            $params = array('attemptid' => -1);
+            testable_mod_quiz_external::validate_attempt_review($params);
+            $this->fail('Exception expected due invalid id.');
+        } catch (dml_missing_record_exception $e) {
+            $this->assertEquals('invalidrecord', $e->errorcode);
+        }
+
+        // Invalid attempt, not closed.
+        try {
+            $params = array('attemptid' => $attempt->id);
+            testable_mod_quiz_external::validate_attempt_review($params);
+            $this->fail('Exception expected due not closed attempt.');
+        } catch (moodle_quiz_exception $e) {
+            $this->assertEquals('attemptclosed', $e->errorcode);
+        }
+
+        // Test ok case (finished attempt).
+        list($quiz, $context, $quizobj, $attempt, $attemptobj) = $this->create_quiz_with_questions(true, true);
+
+        $params = array('attemptid' => $attempt->id);
+        testable_mod_quiz_external::validate_attempt_review($params);
+
+        // Teacher should be able to view the review of one student's attempt.
+        $this->setUser($this->teacher);
+        testable_mod_quiz_external::validate_attempt_review($params);
+
+        // We should not see other students attempts.
+        $anotherstudent = self::getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($anotherstudent->id, $this->course->id, $this->studentrole->id, 'manual');
+
+        $this->setUser($anotherstudent);
+        try {
+            $params = array('attemptid' => $attempt->id);
+            testable_mod_quiz_external::validate_attempt_review($params);
+            $this->fail('Exception expected due missing permissions.');
+        } catch (moodle_quiz_exception $e) {
+            $this->assertEquals('noreviewattempt', $e->errorcode);
+        }
+    }
+
+
+    /**
+     * Test get_attempt_review
+     */
+    public function test_get_attempt_review() {
+        global $DB;
+
+        // Create a new quiz with two questions and one attempt finished.
+        list($quiz, $context, $quizobj, $attempt, $attemptobj, $quba) = $this->create_quiz_with_questions(true, true);
+
+        // Add feedback to the quiz.
+        $feedback = new stdClass();
+        $feedback->quizid = $quiz->id;
+        $feedback->feedbacktext = 'Feedback text 1';
+        $feedback->feedbacktextformat = 1;
+        $feedback->mingrade = 49;
+        $feedback->maxgrade = 100;
+        $feedback->id = $DB->insert_record('quiz_feedback', $feedback);
+
+        $feedback->feedbacktext = 'Feedback text 2';
+        $feedback->feedbacktextformat = 1;
+        $feedback->mingrade = 30;
+        $feedback->maxgrade = 48;
+        $feedback->id = $DB->insert_record('quiz_feedback', $feedback);
+
+        $result = mod_quiz_external::get_attempt_review($attempt->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_review_returns(), $result);
+
+        // Two questions, one completed and correct, the other gave up.
+        $this->assertEquals(50, $result['grade']);
+        $this->assertEquals(1, $result['attempt']['attempt']);
+        $this->assertEquals('finished', $result['attempt']['state']);
+        $this->assertEquals(1, $result['attempt']['sumgrades']);
+        $this->assertCount(2, $result['questions']);
+        $this->assertEquals('gradedright', $result['questions'][0]['state']);
+        $this->assertEquals(1, $result['questions'][0]['slot']);
+        $this->assertEquals('gaveup', $result['questions'][1]['state']);
+        $this->assertEquals(2, $result['questions'][1]['slot']);
+
+        $this->assertCount(1, $result['additionaldata']);
+        $this->assertEquals('feedback', $result['additionaldata'][0]['id']);
+        $this->assertEquals('Feedback', $result['additionaldata'][0]['title']);
+        $this->assertEquals('Feedback text 1', $result['additionaldata'][0]['content']);
+
+        // Only first page.
+        $result = mod_quiz_external::get_attempt_review($attempt->id, 0);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_review_returns(), $result);
+
+        $this->assertEquals(50, $result['grade']);
+        $this->assertEquals(1, $result['attempt']['attempt']);
+        $this->assertEquals('finished', $result['attempt']['state']);
+        $this->assertEquals(1, $result['attempt']['sumgrades']);
+        $this->assertCount(1, $result['questions']);
+        $this->assertEquals('gradedright', $result['questions'][0]['state']);
+        $this->assertEquals(1, $result['questions'][0]['slot']);
+
+         $this->assertCount(1, $result['additionaldata']);
+        $this->assertEquals('feedback', $result['additionaldata'][0]['id']);
+        $this->assertEquals('Feedback', $result['additionaldata'][0]['title']);
+        $this->assertEquals('Feedback text 1', $result['additionaldata'][0]['content']);
 
     }
 
