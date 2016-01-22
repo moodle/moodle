@@ -550,6 +550,33 @@ class core_formslib_testcase extends advanced_testcase {
         $data = $mform->get_data();
         $this->assertSame($expectedvalues, (array) $data);
     }
+
+    /**
+     * MDL-52873
+     */
+    public function test_multiple_modgrade_fields() {
+        $this->resetAfterTest(true);
+
+        $form = new formslib_multiple_modgrade_form();
+        ob_start();
+        $form->display();
+        $html = ob_get_clean();
+
+        $this->assertTag(array('id' => 'fgroup_id_grade1'), $html);
+        $this->assertTag(array('id' => 'id_grade1_modgrade_type'), $html);
+        $this->assertTag(array('id' => 'id_grade1_modgrade_point'), $html);
+        $this->assertTag(array('id' => 'id_grade1_modgrade_scale'), $html);
+
+        $this->assertTag(array('id' => 'fgroup_id_grade2'), $html);
+        $this->assertTag(array('id' => 'id_grade2_modgrade_type'), $html);
+        $this->assertTag(array('id' => 'id_grade2_modgrade_point'), $html);
+        $this->assertTag(array('id' => 'id_grade2_modgrade_scale'), $html);
+
+        $this->assertTag(array('id' => 'fgroup_id_grade_3'), $html);
+        $this->assertTag(array('id' => 'id_grade_3_modgrade_type'), $html);
+        $this->assertTag(array('id' => 'id_grade_3_modgrade_point'), $html);
+        $this->assertTag(array('id' => 'id_grade_3_modgrade_scale'), $html);
+    }
 }
 
 
@@ -820,5 +847,17 @@ class formslib_clean_value extends moodleform {
         $group = $mform->createElement('group', 'repeatnamedgroup', 'repeatnamedgroup', $groupelements, null, true);
         $this->repeat_elements(array($group), 2, array('repeatnamedgroup[repeatnamedgroupel1]' => array('type' => PARAM_INT),
             'repeatnamedgroup[repeatnamedgroupel2]' => array('type' => PARAM_INT)), 'repeatablenamedgroup', 'add', 0);
+    }
+}
+
+/**
+ * Used to test that modgrade fields get unique id attributes.
+ */
+class formslib_multiple_modgrade_form extends moodleform {
+    public function definition() {
+        $mform = $this->_form;
+        $mform->addElement('modgrade', 'grade1', 'Grade 1');
+        $mform->addElement('modgrade', 'grade2', 'Grade 2');
+        $mform->addElement('modgrade', 'grade[3]', 'Grade 3');
     }
 }
