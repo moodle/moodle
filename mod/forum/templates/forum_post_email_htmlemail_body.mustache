@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_forum/forum_post_emaildigestfull_htmlemail
+    @template mod_forum/forum_post_emaildigestfull_htmlemail_body
 
-    Template which defines a forum post for sending in a single-post HTML email.
+    Template which defines the body component of a forum post for sending in a single-post HTML email.
 
     Classes required for JS:
     * none
@@ -77,4 +77,58 @@
         "unsubscribediscussionlink": "https://example.com/mod/discussion/subscribe.php?id=2&d=2"
     }
 }}
-{{> mod_forum/forum_post_email_htmlemail_body }}
+<table border="0" cellpadding="3" cellspacing="0" class="forumpost">
+    <tr class="header">
+        <td width="35" valign="top" class="picture left">
+            {{{ authorpicture }}}
+        </td>
+        <td class="topic {{# firstpost }}starter{{/ firstpost }}">
+            <div class="subject">
+                {{{ subject }}}
+            </div>
+            <div class="author">
+                {{# str }} bynameondate, forum, { "name": "<a target='_blank' href='{{{ authorlink }}}'>{{ authorfullname }}</a>", "date": "{{ postdate }}" } {{/ str }}
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td class="left side" valign="top">
+            {{# grouppicture }}
+                {{{ grouppicture }}}
+            {{/ grouppicture }}
+            {{^ grouppicture }}
+                &nbsp;
+            {{/ grouppicture }}
+        </td>
+        <td class="content">
+            {{# attachments }}
+                <div class="attachments">
+                    {{{ attachments }}}
+                </div>
+            {{/ attachments }}
+            {{{ message }}}
+
+            <div class="commands">
+                {{^ firstpost }}
+                    <a target="_blank" href="{{{ parentpostlink }}}">
+                        {{# str }} parent, forum {{/ str }}
+                    </a>
+                    {{# canreply }}
+                        |
+                    {{/ canreply }}
+                {{/ firstpost }}
+                {{# canreply }}
+                    <a target="_blank" href="{{{ replylink }}}">
+                        {{# str }} reply, forum {{/ str }}
+                    </a>
+                {{/ canreply }}
+            </div>
+
+            <div class="link">
+                <a target="_blank" href="{{{ permalink }}}">
+                    {{# str }} postincontext, forum {{/ str }}
+                </a>
+            </div>
+        </td>
+    </tr>
+</table>
