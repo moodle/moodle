@@ -937,7 +937,7 @@ class api {
         $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
             throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
-        } else if (!user_competency::can_read_user($userid, $competencyid)) {
+        } else if (!user_competency::can_read_user_in_course($userid, $courseid)) {
             throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
         }
 
@@ -2516,7 +2516,7 @@ class api {
             $plan = new plan($planorid);
         }
 
-        if (!user_competency::can_read_user($plan->get_userid(), $competencyid)) {
+        if (!user_competency::can_read_user($plan->get_userid())) {
             throw new required_capability_exception($plan->get_context(), 'tool/lp:usercompetencyview', 'nopermissions', '');
         }
 
@@ -3277,11 +3277,16 @@ class api {
     }
 
     /**
-     * List all the evidence for a user competency
+     * List all the evidence for a user competency.
      *
      * @param int $userid The user id - only used if usercompetencyid is 0.
      * @param int $competencyid The competency id - only used it usercompetencyid is 0.
      * @param int $planid The plan id - not used yet - but can be used to only list archived evidence if a plan is completed.
+     * @param string $sort The field to sort the evidence by.
+     * @param string $order The ordering of the sorting.
+     * @param int $skip Number of records to skip.
+     * @param int $limit Number of records to return.
+     * @return \tool_lp\evidence[]
      * @return array of \tool_lp\evidence
      */
     public static function list_evidence($userid = 0,
@@ -3292,7 +3297,7 @@ class api {
                                          $skip = 0,
                                          $limit = 0) {
 
-        if (!user_competency::can_read_user($userid, $competencyid)) {
+        if (!user_competency::can_read_user($userid)) {
             $context = context_user::instance($userid);
             throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
         }
@@ -3305,6 +3310,43 @@ class api {
         }
 
         return evidence::get_records(array('usercompetencyid' => $usercompetency->get_id()), $sort, $order, $skip, $limit);
+    }
+
+    /**
+     * List all the evidence for a user competency in a course.
+     *
+     * @param int $userid The user ID.
+     * @param int $courseid The course ID.
+     * @param int $competencyid The competency ID.
+     * @param string $sort The field to sort the evidence by.
+     * @param string $order The ordering of the sorting.
+     * @param int $skip Number of records to skip.
+     * @param int $limit Number of records to return.
+     * @return \tool_lp\evidence[]
+     */
+    public static function list_evidence_in_course($userid = 0,
+                                                   $courseid = 0,
+                                                   $competencyid = 0,
+                                                   $sort = 'timecreated',
+                                                   $order = 'DESC',
+                                                   $skip = 0,
+                                                   $limit = 0) {
+
+        if (!user_competency::can_read_user_in_course($userid, $courseid)) {
+            $context = context_user::instance($userid);
+            throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
+        }
+
+        $usercompetency = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
+        if (!$usercompetency) {
+            return array();
+        }
+
+        $params = array(
+            'usercompetencyid' => $usercompetency->get_id(),
+            'contextid' => context_course::instance($courseid)->id
+        );
+        return evidence::get_records($params, $sort, $order, $skip, $limit);
     }
 
     /**
@@ -3623,11 +3665,11 @@ class api {
 
         $context = $plan->get_context();
         if ($override) {
-            if (!user_competency::can_grade_user($plan->get_userid(), $competencyid)) {
+            if (!user_competency::can_grade_user($plan->get_userid())) {
                 throw new required_capability_exception($context, 'tool/lp:competencygrade', 'nopermissions', '');
             }
         } else {
-            if (!user_competency::can_suggest_grade_user($plan->get_userid(), $competencyid)) {
+            if (!user_competency::can_suggest_grade_user($plan->get_userid())) {
                 throw new required_capability_exception($context, 'tool/lp:competencysuggestgrade', 'nopermissions', '');
             }
         }
@@ -3678,11 +3720,11 @@ class api {
         }
         $context = context_course::instance($course->id);
         if ($override) {
-            if (!user_competency::can_grade_user($userid, $competencyid)) {
+            if (!user_competency::can_grade_user_in_course($userid, $course->id)) {
                 throw new required_capability_exception($context, 'tool/lp:competencygrade', 'nopermissions', '');
             }
         } else {
-            if (!user_competency::can_suggest_grade_user($userid, $competencyid)) {
+            if (!user_competency::can_suggest_grade_user_in_course($userid, $course->id)) {
                 throw new required_capability_exception($context, 'tool/lp:competencysuggestgrade', 'nopermissions', '');
             }
         }

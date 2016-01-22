@@ -53,11 +53,6 @@
             {{#isstatusinreview}}
                 - {{reviewer.fullname}}
             {{/isstatusinreview}}
-
-            {{#isrequestreviewallowed}}<button data-action="request-review">{{#str}}requestreview, tool_lp{{/str}}</button>{{/isrequestreviewallowed}}
-            {{#iscancelreviewrequestallowed}}<button data-action="cancel-review-request">{{#str}}cancelreviewrequest, tool_lp{{/str}}</button>{{/iscancelreviewrequestallowed}}
-            {{#isstartreviewallowed}}<button data-action="start-review">{{#str}}startreview, tool_lp{{/str}}</button>{{/isstartreviewallowed}}
-            {{#isstopreviewallowed}}<button data-action="stop-review">{{#str}}stopreview, tool_lp{{/str}}</button>{{/isstopreviewallowed}}
         </dd>
         <dt>{{#str}}proficient, tool_lp{{/str}}</dt>
         <dd>
@@ -86,17 +81,12 @@
         {{/cangradeorsuggest}}
         </dd>
         {{#js}}
-        require(['jquery', 'tool_lp/grade_user_competency_inline', 'tool_lp/user_competency_info', 'tool_lp/user_competency_workflow'], function($, mod, info, UserCompWorkflow) {
+        require(['jquery', 'tool_lp/grade_user_competency_inline', 'tool_lp/user_competency_info'], function($, mod, info) {
             var scaleConfig = JSON.parse('{{{competency.scaleconfiguration}}}');
 
             var inlineGrader = new mod('grade-competency-form-{{uniqid}}', scaleConfig, '{{competency.competency.id}}', '{{user.id}}', '', '{{course.id}}', '{{#str}}chooserating, tool_lp{{/str}}');
             var competencyElement = $('[data-region-id="{{uniqid}}"]');
             var infoReloader = new info(competencyElement, '{{competency.competency.id}}', '{{user.id}}', '', '{{course.id}}');
-
-            var ucw = new UserCompWorkflow();
-            ucw.registerEvents('[data-region="user-competency-status"]');
-            ucw.on('status-changed', infoReloader.reload.bind(infoReloader));
-            ucw.on('error-occured', infoReloader.reload.bind(infoReloader));
 
             inlineGrader.on('competencyupdated', infoReloader.reload.bind(infoReloader));
         });

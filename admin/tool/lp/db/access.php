@@ -180,41 +180,41 @@ $capabilities = array(
     // User competencies.
     'tool/lp:usercompetencyview' => array(
         'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE, // And CONTEXT_USER.
+        'contextlevel' => CONTEXT_USER,     // And CONTEXT_COURSE.
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW
         )
     ),
     'tool/lp:usercompetencyrequestreview' => array(
         'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE, // And CONTEXT_USER.
+        'contextlevel' => CONTEXT_USER,
         'archetypes' => array(
         )
     ),
     'tool/lp:usercompetencyrequestreviewown' => array(
         'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE, // And CONTEXT_USER.
+        'contextlevel' => CONTEXT_USER,
         'archetypes' => array(
             'user' => CAP_ALLOW
         )
     ),
     'tool/lp:usercompetencyreview' => array(
         'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE, // And CONTEXT_USER.
+        'contextlevel' => CONTEXT_USER,
         'archetypes' => array(
         ),
         'clonepermissionsfrom' => 'moodle/site:config'
     ),
     'tool/lp:usercompetencycomment' => array(
         'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE, // And CONTEXT_USER.
+        'contextlevel' => CONTEXT_USER,
         'archetypes' => array(
         ),
         'clonepermissionsfrom' => 'moodle/site:config'
     ),
     'tool/lp:usercompetencycommentown' => array(
         'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE, // And CONTEXT_USER.
+        'contextlevel' => CONTEXT_USER,
         'archetypes' => array(
             'user' => CAP_ALLOW
         ),

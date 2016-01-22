@@ -101,8 +101,8 @@ class user_competency_summary_exporter extends exporter {
         $result->competency = $exporter->export($output);
 
         $context = context_user::instance($this->related['user']->id);
-        $result->cangrade = user_competency::can_grade_user($this->related['user']->id, $competency->get_id());
-        $result->cansuggest = user_competency::can_suggest_grade_user($this->related['user']->id, $competency->get_id());
+        $result->cangrade = user_competency::can_grade_user($this->related['user']->id);
+        $result->cansuggest = user_competency::can_suggest_grade_user($this->related['user']->id);
         $result->cangradeorsuggest = $result->cangrade || $result->cansuggest;
         if ($this->related['user']) {
             $exporter = new user_summary_exporter($this->related['user']);
@@ -150,7 +150,7 @@ class user_competency_summary_exporter extends exporter {
 
         $usercompetency = !empty($this->related['usercompetency']) ? $this->related['usercompetency'] : null;
 
-        if (!empty($usercompetency)) {
+        if (!empty($usercompetency) && $usercompetency->can_read_comments()) {
             $commentareaexporter = new comment_area_exporter($usercompetency->get_comment_object());
             $result->commentarea = $commentareaexporter->export($output);
         }

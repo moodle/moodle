@@ -27,6 +27,7 @@ use renderable;
 use renderer_base;
 use templatable;
 use tool_lp\api;
+use tool_lp\user_competency;
 use tool_lp\external\user_competency_summary_in_course_exporter;
 
 /**
@@ -77,7 +78,7 @@ class user_competency_summary_in_course implements renderable, templatable {
 
         $relatedcompetencies = api::list_related_competencies($competency->get_id());
         $user = $DB->get_record('user', array('id' => $this->userid));
-        $evidence = api::list_evidence($this->userid, $this->competencyid);
+        $evidence = api::list_evidence_in_course($this->userid, $this->courseid, $this->competencyid);
         $course = $DB->get_record('course', array('id' => $this->courseid));
 
         $params = array(
@@ -90,6 +91,13 @@ class user_competency_summary_in_course implements renderable, templatable {
         );
         $exporter = new user_competency_summary_in_course_exporter(null, $params);
         $data = $exporter->export($output);
+
+        // Some adjustments specific to course.
+        $data->usercompetencysummary->cangrade = user_competency::can_grade_user_in_course($this->userid, $this->courseid);
+        $data->usercompetencysummary->cansuggest =
+            user_competency::can_suggest_grade_user_in_course($this->userid, $this->courseid);
+        $data->usercompetencysummary->cangradeorsuggest = $data->usercompetencysummary->cangrade
+            || $data->usercompetencysummary->cansuggest;
 
         return $data;
     }
