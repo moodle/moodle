@@ -56,8 +56,8 @@ Feature: The activity results block displays student scores as scales
       | Assignment name | Test assignment |
       | Description | Offline text |
       | assignsubmission_file_enabled | 0 |
-      | id_modgrade_type | Scale |
-      | id_modgrade_scale | My Scale |
+      | id_grade_modgrade_type | Scale |
+      | id_grade_modgrade_scale | My Scale |
       | Group mode | Separate groups |
     And I follow "Course 1"
     And I navigate to "Grades" node in "Course administration"
