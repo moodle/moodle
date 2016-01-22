@@ -43,6 +43,14 @@ class block_settings_renderer extends plugin_renderer_base {
         return $content;
     }
 
+    /**
+     * Build the navigation node.
+     *
+     * @param navigation_node $node the navigation node object.
+     * @param array $attrs list of attributes.
+     * @param int $depth the depth, default to 1.
+     * @return string the navigation node code.
+     */
     protected function navigation_node(navigation_node $node, $attrs=array(), $depth = 1) {
         $items = $node->children;
 
@@ -73,7 +81,8 @@ class block_settings_renderer extends plugin_renderer_base {
             $liexpandable = array();
             if ($isbranch) {
                 $liclasses[] = 'contains_branch';
-                if (!$item->forceopen || (!$item->forceopen && $item->collapse) || ($item->children->count()==0  && $item->nodetype==navigation_node::NODETYPE_BRANCH)) {
+                if (!$item->forceopen || (!$item->forceopen && $item->collapse) || ($item->children->count() == 0
+                        && $item->nodetype == navigation_node::NODETYPE_BRANCH)) {
                     $liexpandable = array('aria-expanded' => 'false');
                 } else {
                     $liexpandable = array('aria-expanded' => 'true');
@@ -90,7 +99,7 @@ class block_settings_renderer extends plugin_renderer_base {
                 $liclasses[] = 'current_branch';
             }
             $nodetextid = 'label_' . $depth . '_' . $number;
-            $liattr = array('class' => join(' ',$liclasses), 'tabindex' => '-1', 'role' => 'treeitem') + $liexpandable;
+            $liattr = array('class' => join(' ', $liclasses), 'tabindex' => '-1', 'role' => 'treeitem') + $liexpandable;
             // class attribute on the div item which only contains the item content
             $divclasses = array('tree_item');
             if ($isbranch) {
@@ -105,7 +114,7 @@ class block_settings_renderer extends plugin_renderer_base {
             if (!empty($item->id)) {
                 $divattr['id'] = $item->id;
             }
-            $content = html_writer::tag('p', $content, $divattr) . $this->navigation_node($item, array(), $depth+1);
+            $content = html_writer::tag('p', $content, $divattr) . $this->navigation_node($item, array(), $depth + 1);
             if (!empty($item->preceedwithhr) && $item->preceedwithhr===true) {
                 $content = html_writer::empty_tag('hr') . $content;
             }

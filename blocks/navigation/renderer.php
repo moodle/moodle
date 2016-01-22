@@ -182,7 +182,8 @@ class block_navigation_renderer extends plugin_renderer_base {
             // Create the structure.
             $content = html_writer::tag('p', $content, $divattr);
             if ($isexpandable) {
-                $content .= $this->navigation_node($item->children, array('role' => 'group'), $expansionlimit, $options, $depth+1);
+                $content .= $this->navigation_node($item->children, array('role' => 'group'), $expansionlimit,
+                    $options, $depth + 1);
             }
             if (!empty($item->preceedwithhr) && $item->preceedwithhr===true) {
                 $content = html_writer::empty_tag('hr') . $content;

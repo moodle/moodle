@@ -33,7 +33,7 @@ define(['jquery', 'core/ajax', 'core/config', 'block_navigation/ajax_response_re
             var promise = $.Deferred();
             var data = {
                 type: SITE_ADMIN_NODE_TYPE,
-                sesskey: config.sesskey,
+                sesskey: config.sesskey
             };
             var settings = {
                 type: 'POST',

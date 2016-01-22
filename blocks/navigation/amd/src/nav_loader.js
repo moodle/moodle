@@ -22,13 +22,19 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['jquery', 'core/ajax', 'core/config', 'block_navigation/ajax_response_renderer'],
-        function($, ajax, config, renderer) {
+    function($, ajax, config, renderer) {
+        var URL = config.wwwroot + '/lib/ajax/getnavbranch.php';
 
-    var URL = config.wwwroot + '/lib/ajax/getnavbranch.php';
-
-    function getBlockInstanceId(element) {
-        return element.closest('[data-block]').attr('data-instanceid');
-    }
+        /**
+         * Get the block instance id.
+         *
+         * @function getBlockInstanceId
+         * @param element
+         * @returns {*}
+         */
+        function getBlockInstanceId(element) {
+            return element.closest('[data-block]').attr('data-instanceid');
+        }
 
     return {
         load: function(element) {

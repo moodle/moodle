@@ -107,7 +107,6 @@ class block_navigation extends block_base {
      * Gets Javascript that may be required for navigation
      */
     function get_required_javascript() {
-        global $CFG;
         parent::get_required_javascript();
         $this->page->requires->string_for_js('viewallcourses', 'moodle');
         $this->page->requires->js_call_amd('block_navigation/navblock', 'init', array());
@@ -119,6 +118,7 @@ class block_navigation extends block_base {
      * @return object $this->content
      */
     function get_content() {
+        global $CFG;
         // First check if we have already generated, don't waste cycles
         if ($this->contentgenerated === true) {
             return $this->content;

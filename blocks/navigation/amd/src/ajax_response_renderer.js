@@ -27,34 +27,42 @@ define(['jquery'], function($) {
     // Mappings for the different types of nodes coming from the navigation.
     // Copied from lib/navigationlib.php navigation_node constants.
     var NODETYPE = {
-        // @type int Root node = 0
+        // @type int Root node = 0.
         ROOTNODE : 0,
-        // @type int System context = 1
+        // @type int System context = 1.
         SYSTEM : 1,
-        // @type int Course category = 10
+        // @type int Course category = 10.
         CATEGORY : 10,
-        // @type int MYCATEGORY = 11
+        // @type int MYCATEGORY = 11.
         MYCATEGORY : 11,
-        // @type int Course = 20
+        // @type int Course = 20.
         COURSE : 20,
-        // @type int Course section = 30
+        // @type int Course section = 30.
         SECTION : 30,
-        // @type int Activity (course module) = 40
+        // @type int Activity (course module) = 40.
         ACTIVITY : 40,
-        // @type int Resource (course module = 50
+        // @type int Resource (course module = 50.
         RESOURCE : 50,
-        // @type int Custom node (could be anything) = 60
+        // @type int Custom node (could be anything) = 60.
         CUSTOM : 60,
-        // @type int Setting = 70
+        // @type int Setting = 70.
         SETTING : 70,
-        // @type int site administration = 71
+        // @type int site administration = 71.
         SITEADMIN : 71,
-        // @type int User context = 80
+        // @type int User context = 80.
         USER : 80,
-        // @type int Container = 90
+        // @type int Container = 90.
         CONTAINER : 90
     };
 
+    /**
+     * Build DOM.
+     *
+     * @method buildDOM
+     * @param {Object} rootElement the root element of DOM.
+     * @param {object} nodes jquery object representing the nodes to be build.
+     * @return
+     */
     function buildDOM(rootElement, nodes) {
         var ul = $('<ul></ul>');
         ul.attr('role', 'group');
@@ -149,8 +157,7 @@ define(['jquery'], function($) {
 
     return {
         render: function(element, nodes) {
-            // The first element of the response is the existing node
-            // so we start with processing the children.
+            // The first element of the response is the existing node so we start with processing the children.
             if (nodes.children && nodes.children.length) {
                 buildDOM(element, nodes.children);
             } else {

@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Load the navtree javscript
+ * Load the navigation tree javascript.
  *
  * @module     block_navigation/navblock
  * @package    core
