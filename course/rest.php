@@ -150,49 +150,6 @@ switch($requestmethod) {
                         $isvisible = moveto_module($cm, $section, $beforemod);
                         echo json_encode(array('visible' => (bool) $isvisible));
                         break;
-                    case 'gettitle':
-                        require_capability('moodle/course:manageactivities', $modcontext);
-                        $cm = get_coursemodule_from_id('', $id, 0, false, MUST_EXIST);
-                        $module = new stdClass();
-                        $module->id = $cm->instance;
-
-                        // Don't pass edit strings through multilang filters - we need the entire string
-                        echo json_encode(array('instancename' => $cm->name));
-                        break;
-                    case 'updatetitle':
-                        require_capability('moodle/course:manageactivities', $modcontext);
-                        require_once($CFG->libdir . '/gradelib.php');
-                        $cm = get_coursemodule_from_id('', $id, 0, false, MUST_EXIST);
-                        $module = new stdClass();
-                        $module->id = $cm->instance;
-
-                        // Escape strings as they would be by mform
-                        if (!empty($CFG->formatstringstriptags)) {
-                            $module->name = clean_param($title, PARAM_TEXT);
-                        } else {
-                            $module->name = clean_param($title, PARAM_CLEANHTML);
-                        }
-
-                        if (strval($module->name) !== '') {
-                            $DB->update_record($cm->modname, $module);
-                            $cm->name = $module->name;
-                            \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
-                            rebuild_course_cache($cm->course);
-                        } else {
-                            $module->name = $cm->name;
-                        }
-
-                        // Attempt to update the grade item if relevant
-                        $grademodule = $DB->get_record($cm->modname, array('id' => $cm->instance));
-                        $grademodule->cmidnumber = $cm->idnumber;
-                        $grademodule->modname = $cm->modname;
-                        grade_update_mod_grades($grademodule);
-
-                        // We need to return strings after they've been through filters for multilang
-                        $stringoptions = new stdClass;
-                        $stringoptions->context = $coursecontext;
-                        echo json_encode(array('instancename' => html_entity_decode(format_string($module->name, true,  $stringoptions))));
-                        break;
                 }
                 break;
 

@@ -11,6 +11,9 @@ information provided here is intended especially for theme designer.
   * notification_problem.mustache => notification_error.mustache
   * notification_message          => notification_info
   * notification_redirect         => notification_warning
+* Method core_course_renderer::course_section_cm_name() is split into two methods, custom themes that override
+  this method must be modified or otherwise editing functionality may become broken. This method is now also used by
+  social activities block and site menu block to display activities names.
 
 === 3.0 ===
 
