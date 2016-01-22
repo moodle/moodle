@@ -196,6 +196,21 @@ function lti_delete_instance($id) {
     return $DB->delete_records("lti", array("id" => $basiclti->id));
 }
 
+/**
+ * Return aliases of this activity. LTI should have an alias for each configured tool type
+ * This is so you can add an external tool types directly from the activity chooser
+ *
+ * @return array An array of aliases for this activity
+ **/
+function lti_get_aliases() {
+    global $CFG, $COURSE;
+    require_once($CFG->dirroot.'/mod/lti/locallib.php');
+
+    $types = lti_get_configured_types($COURSE->id);
+
+    return $types;
+}
+
 function lti_get_types() {
     global $OUTPUT;
 

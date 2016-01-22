@@ -1257,6 +1257,15 @@ function get_module_metadata($course, $modnames, $sectionreturn = null) {
         }
         include_once($libfile);
 
+        $aliases = component_callback($modname, 'get_aliases', array(), array());
+        if (count($aliases) > 0) {
+            foreach ($aliases as $alias) {
+                $module = $alias;
+                $module->archetype = plugin_supports('mod', $modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
+                $return[$alias->name] = $module;
+            }
+        }
+
         // NOTE: this is legacy stuff, module subtypes are very strongly discouraged!!
         $gettypesfunc =  $modname.'_get_types';
         $types = MOD_SUBTYPE_NO_CHILDREN;

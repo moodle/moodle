@@ -144,6 +144,20 @@ class behat_forms extends behat_base {
     }
 
     /**
+     * Sets the field to wwwroot plus the given path. Include the first slash.
+     *
+     * @Given /^I set the field "(?P<field_string>(?:[^"]|\\")*)" to local url "(?P<field_path_string>(?:[^"]|\\")*)"$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $field
+     * @param string $path
+     * @return void
+     */
+    public function i_set_the_field_to_local_url($field, $path) {
+        global $CFG;
+        $this->set_field_value($field, $CFG->wwwroot . $path);
+    }
+
+    /**
      * Sets the specified value to the field.
      *
      * @Given /^I set the field "(?P<field_string>(?:[^"]|\\")*)" to "(?P<field_value_string>(?:[^"]|\\")*)"$/
