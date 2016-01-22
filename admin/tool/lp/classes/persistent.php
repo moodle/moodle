@@ -192,7 +192,7 @@ abstract class persistent {
         // List of reserved property names. Mostly because we have methods (getters/setters) which would confict with them.
         // Think about backwards compability before adding new ones here!
         $reserved = array('errors', 'formatted_properties', 'records', 'records_select', 'property_default_value',
-            'property_error_message');
+            'property_error_message', 'sql_fields');
 
         foreach ($def as $property => $definition) {
 
@@ -658,6 +658,35 @@ abstract class persistent {
     }
 
     /**
+     * Extract a record from a row of data.
+     *
+     * Most likely used in combination with {@see self::get_sql_fields()}. This method is
+     * simple enough to be used by non-persistent classes, keep that in mind when modifying it.
+     *
+     * e.g. persistent::extract_record($row, 'user'); should work.
+     *
+     * @param stdClass $row The row of data.
+     * @param string $prefix The prefix the data fields are prefixed with, defaults to the table name followed by underscore.
+     * @return stdClass The extracted data.
+     */
+    public static function extract_record($row, $prefix = null) {
+        if ($prefix === null) {
+            $prefix = static::TABLE . '_';
+        }
+        $prefixlength = strlen($prefix);
+
+        $data = new stdClass();
+        foreach ($row as $property => $value) {
+            if (strpos($property, $prefix) === 0) {
+                $propertyname = substr($property, $prefixlength);
+                $data->$propertyname = $value;
+            }
+        }
+
+        return $data;
+    }
+
+    /**
      * Load a list of records.
      *
      * @param array $filters Filters to apply.
@@ -723,6 +752,36 @@ abstract class persistent {
 
         return $instances;
 
+    }
+
+    /**
+     * Return the list of fields for use in a SELECT clause.
+     *
+     * Having the complete list of fields prefixed allows for multiple persistents to be fetched
+     * in a single query. Use {@see self::extract_record()} to extract the records from the query result.
+     *
+     * @param string $alias The alias used for the table.
+     * @param string $prefix The prefix to use for each field, defaults to the table name followed by underscore.
+     * @return string The SQL fragment.
+     */
+    public static function get_sql_fields($alias, $prefix = null) {
+        $fields = array();
+
+        if ($prefix === null) {
+            $prefix = static::TABLE . '_';
+        }
+
+        // Get the properties and move ID to the top.
+        $properties = static::properties_definition();
+        $id = $properties['id'];
+        unset($properties['id']);
+        $properties = array('id' => $id) + $properties;
+
+        foreach ($properties as $property => $definition) {
+            $fields[] = $alias . '.' . $property . ' AS ' . $prefix . $property;
+        }
+
+        return implode(', ', $fields);
     }
 
     /**
