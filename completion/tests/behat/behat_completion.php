@@ -88,22 +88,10 @@ class behat_completion extends behat_base {
      * @Given /^I go to the current course activity completion report$/
      */
     public function go_to_the_current_course_activity_completion_report() {
+        $completionnode = get_string('pluginname', 'report_progress');
+        $reportsnode = get_string('courseadministration') . ' > ' . get_string('reports');
 
-        $steps = array();
-
-        // Expand reports node if we can't see the link.
-        try {
-            $this->find('xpath', "//div[@id='settingsnav']" .
-                "/descendant::li" .
-                "/descendant::li[not(contains(concat(' ', normalize-space(@class), ' '), ' collapsed '))]" .
-                "/descendant::p[contains(., '" . get_string('pluginname', 'report_progress') . "')]");
-        } catch (ElementNotFoundException $e) {
-            $steps[] = new Given('I expand "' . get_string('reports') . '" node');
-        }
-
-        $steps[] = new Given('I follow "' . get_string('pluginname', 'report_progress') . '"');
-
-        return $steps;
+        return new Given('I navigate to "' . $completionnode . '" node in "' . $reportsnode . '"');
     }
 
     /**
