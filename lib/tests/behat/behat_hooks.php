@@ -490,64 +490,6 @@ class behat_hooks extends behat_base {
     }
 
     /**
-     * Waits for all the JS to be loaded.
-     *
-     * @throws \Exception
-     * @throws NoSuchWindow
-     * @throws UnknownError
-     * @return bool True or false depending whether all the JS is loaded or not.
-     */
-    protected function wait_for_pending_js() {
-
-        // We don't use behat_base::spin() here as we don't want to end up with an exception
-        // if the page & JSs don't finish loading properly.
-        for ($i = 0; $i < self::EXTENDED_TIMEOUT * 10; $i++) {
-            $pending = '';
-            try {
-                $jscode =
-                    'return function() {
-                        if (typeof M === "undefined") {
-                            if (document.readyState === "complete") {
-                                return "";
-                            } else {
-                                return "incomplete";
-                            }
-                        } else if (' . self::PAGE_READY_JS . ') {
-                            return "";
-                        } else {
-                            return M.util.pending_js.join(":");
-                        }
-                    }();';
-                $pending = $this->getSession()->evaluateScript($jscode);
-            } catch (NoSuchWindow $nsw) {
-                // We catch an exception here, in case we just closed the window we were interacting with.
-                // No javascript is running if there is no window right?
-                $pending = '';
-            } catch (UnknownError $e) {
-                // M is not defined when the window or the frame don't exist anymore.
-                if (strstr($e->getMessage(), 'M is not defined') != false) {
-                    $pending = '';
-                }
-            }
-
-            // If there are no pending JS we stop waiting.
-            if ($pending === '') {
-                return true;
-            }
-
-            // 0.1 seconds.
-            usleep(100000);
-        }
-
-        // Timeout waiting for JS to complete. It will be catched and forwarded to behat_hooks::i_look_for_exceptions().
-        // It is unlikely that Javascript code of a page or an AJAX request needs more than self::EXTENDED_TIMEOUT seconds
-        // to be loaded, although when pages contains Javascript errors M.util.js_complete() can not be executed, so the
-        // number of JS pending code and JS completed code will not match and we will reach this point.
-        throw new \Exception('Javascript code and/or AJAX requests are not ready after ' . self::EXTENDED_TIMEOUT .
-            ' seconds. There is a Javascript error or the code is extremely slow.');
-    }
-
-    /**
      * Internal step definition to find exceptions, debugging() messages and PHP debug messages.
      *
      * Part of behat_hooks class as is part of the testing framework, is auto-executed
