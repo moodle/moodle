@@ -24,6 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/** Prevent direct access to this script */
 defined('MOODLE_INTERNAL') || die();
 
 if (! class_exists('qtype_with_combined_feedback_renderer')) { // Moodle 2.0
@@ -64,9 +65,9 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         $ablock_id          = 'id_ablock_'.$question->id;
 
         switch ($question->options->layouttype) {
-            case 0 : $axis = 'y'; break; // vertical
-            case 1 : $axis = ''; break;  // horizontal
-            default: $axis = '';         // unknown
+            case qtype_ordering_question::LAYOUT_VERTICAL   : $axis = 'y'; break;
+            case qtype_ordering_question::LAYOUT_HORIZONTAL : $axis = '';  break;
+            default: $axis = '';
         }
 
         $result = '';
@@ -178,14 +179,8 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                 $question = $qa->get_question();
 
                 // fetch grading type
-                switch ($question->options->gradingtype) {
-                    case 0: $gradingtype = get_string('absoluteposition', $plugin); break;
-                    case 1: $gradingtype = get_string('relativenextexcludelast', $plugin); break;
-                    case 2: $gradingtype = get_string('relativenextincludelast', $plugin); break;
-                    case 3: $gradingtype = get_string('relativeonepreviousandnext', $plugin); break;
-                    case 4: $gradingtype = get_string('relativeallpreviousandnext', $plugin); break;
-                    case 5: $gradingtype = get_string('longestorderedsubset', $plugin); break;
-                }
+                $gradingtype = $question->options->gradingtype;
+                $gradingtype = qtype_ordering_question::get_grading_types($gradingtype);
 
                 // format grading type, e.g. Grading type: Relative to next item, excluding last item
                 if ($gradingtype) {
@@ -276,35 +271,32 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
     /////////////////////////////////////
 
     protected function get_response_info($question) {
-        switch ($question->options->gradingtype) {
 
-            case 0: // ABSOLUTE
+        $gradingtype = $question->options->gradingtype;
+        switch ($gradingtype) {
+
+            case qtype_ordering_question::GRADING_ABSOLUTE_POSITION:
                 $this->correctinfo = $question->correctresponse;
                 $this->currentinfo = $question->currentresponse;
                 break;
 
-            case 1: // RELATIVE_NEXT_EXCLUDE_LAST
-                $this->correctinfo = $question->get_next_answerids($question->correctresponse, false);
-                $this->currentinfo = $question->get_next_answerids($question->currentresponse, false);
-                break;
-            case 2: // RELATIVE_NEXT_INCLUDE_LAST
-                $this->correctinfo = $question->get_next_answerids($question->correctresponse, true);
-                $this->currentinfo = $question->get_next_answerids($question->currentresponse, true);
+            case qtype_ordering_question::GRADING_RELATIVE_NEXT_EXCLUDE_LAST:
+            case qtype_ordering_question::GRADING_RELATIVE_NEXT_INCLUDE_LAST:
+                $this->correctinfo = $question->get_next_answerids($question->correctresponse, $gradingtype==2);
+                $this->currentinfo = $question->get_next_answerids($question->currentresponse, $gradingtype==2);
                 break;
 
-            case 3: // RELATIVE_ONE_PREVIOUS_AND_NEXT
-                $this->correctinfo = $question->get_previous_and_next_answerids($question->correctresponse, false);
-                $this->currentinfo = $question->get_previous_and_next_answerids($question->currentresponse, false);
+            case qtype_ordering_question::GRADING_RELATIVE_ONE_PREVIOUS_AND_NEXT:
+            case qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT:
+                $this->correctinfo = $question->get_previous_and_next_answerids($question->correctresponse, $gradingtype==4);
+                $this->currentinfo = $question->get_previous_and_next_answerids($question->currentresponse, $gradingtype==4);
                 break;
 
-            case 4: // RELATIVE_ALL_PREVIOUS_AND_NEXT
-                $this->correctinfo = $question->get_previous_and_next_answerids($question->correctresponse, true);
-                $this->currentinfo = $question->get_previous_and_next_answerids($question->currentresponse, true);
-                break;
-            case 5: // LONGEST_ORDERED_SUBSET
+            case qtype_ordering_question::GRADING_LONGEST_ORDERED_SUBSET:
+            case qtype_ordering_question::GRADING_LONGEST_CONTIGUOUS_SUBSET:
                 $this->correctinfo = $question->correctresponse;
                 $this->currentinfo = $question->currentresponse;
-                $subset = $question->get_ordered_subset();
+                $subset = $question->get_ordered_subset($gradingtype==6);
                 foreach ($this->currentinfo as $position => $answerid) {
                     if (array_search($position, $subset)===false) {
                         $this->currentinfo[$position] = 0;
@@ -336,7 +328,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
             switch ($question->options->gradingtype) {
 
-                case 0: // ABSOLUTE
+                case qtype_ordering_question::GRADING_ABSOLUTE_POSITION:
                     if (isset($correctinfo[$position])) {
                         if ($correctinfo[$position]==$answerid) {
                             $score = 1;
@@ -345,8 +337,8 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                     }
                     break;
 
-                case 1; // RELATIVE_NEXT_EXCLUDE_LAST
-                case 2; // RELATIVE_NEXT_INCLUDE_LAST
+                case qtype_ordering_question::GRADING_RELATIVE_NEXT_EXCLUDE_LAST:
+                case qtype_ordering_question::GRADING_RELATIVE_NEXT_INCLUDE_LAST:
                     if (isset($correctinfo[$answerid])) {
                         if (isset($currentinfo[$answerid]) && $currentinfo[$answerid]==$correctinfo[$answerid]) {
                             $score = 1;
@@ -355,8 +347,8 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                     }
                     break;
 
-                case 3; // RELATIVE_ONE_PREVIOUS_AND_NEXT
-                case 4; // RELATIVE_ALL_PREVIOUS_AND_NEXT
+                case qtype_ordering_question::GRADING_RELATIVE_ONE_PREVIOUS_AND_NEXT:
+                case qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT:
                     if (isset($correctinfo[$answerid])) {
                         $maxscore = 0;
                         $prev = $correctinfo[$answerid]->prev;
@@ -370,7 +362,8 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                     }
                     break;
 
-                case 5: // LONGEST_ORDERED_SUBSET
+                case qtype_ordering_question::GRADING_LONGEST_ORDERED_SUBSET:
+                case qtype_ordering_question::GRADING_LONGEST_CONTIGUOUS_SUBSET:
                     if (isset($correctinfo[$position])) {
                         if (isset($currentinfo[$position])) {
                             $score = $currentinfo[$position];
@@ -383,6 +376,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
             if ($maxscore===null) {
                 // an unscored item is either an illegal item
                 // or last item of RELATIVE_NEXT_EXCLUDE_LAST
+                // or an item from an unrecognized grading type
                 $class = 'unscored';
             } else {
                 if ($maxscore==0) {

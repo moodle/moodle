@@ -41,10 +41,14 @@ $string['gradingtype_help'] = 'Choose the type of grading calculation.
 : An item is considered correct if it is preceded by all the same items as it is in the correct answer, and it is followed by all the same items as it is in the correct answer. The order of the previous items does not matter, and nor does the order of the following items. Thus, if ***n*** items are displayed to the student, the number of marks available for each item is ***(n - 1)***, and the highest mark availabe for the question is ***n x (n - 1)***, which is the same as ***(n² - n)***.
 
 **Longest ordered subset**
-: The grade is the number of items in the longest ordered subset of items. The highest possible grade is the same as the number of items displayed. A subset must have at least two items. Subsets do not need to start at the first item (but they can) and they do not need to be contiguous (but they can be). Where there are multiple subsets of equal length, items in the subset that is found first, when searching from left to right, will be displayed as correct. Other items will be marked as incorrect.';
+: The grade is the number of items in the longest ordered subset of items. The highest possible grade is the same as the number of items displayed. A subset must have at least two items. Subsets do not need to start at the first item (but they can) and they do not need to be contiguous (but they can be). Where there are multiple subsets of equal length, items in the subset that is found first, when searching from left to right, will be displayed as correct. Other items will be marked as incorrect.
+
+**Longest contiguous subset**
+: The grade is the number of items in the longest contiguous subset of items. The highest possible grade is the same as the number of items displayed. A subset must have at least two items. Subsets do not need to start at the first item (but they can) and they MUST BE CONTIGUOUS. Where there are multiple subsets of equal length, items in the subset that is found first, when searching from left to right, will be displayed as correct. Other items will be marked as incorrect.';
 $string['horizontal'] = 'Horizontal';
 $string['layouttype_help'] = 'Choose whether to display the items vertically or horizontally.';
 $string['layouttype'] = 'Layout of items';
+$string['longestcontiguoussubset'] = 'Longest contiguous subset';
 $string['longestorderedsubset'] = 'Longest ordered subset';
 $string['noresponsedetails'] = 'Sorry, no details of the response to this question are available.';
 $string['noscore'] = 'No score';

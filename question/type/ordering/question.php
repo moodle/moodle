@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/** Prevent direct access to this script */
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -32,6 +33,21 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ordering_question extends question_graded_automatically {
+
+    const SELECT_ALL        = 0;
+    const SELECT_RANDOM     = 1;
+    const SELECT_CONTIGUOUS = 2;
+
+    const LAYOUT_VERTICAL   = 0;
+    const LAYOUT_HORIZONTAL = 1;
+
+    const GRADING_ABSOLUTE_POSITION              = 0;
+    const GRADING_RELATIVE_NEXT_EXCLUDE_LAST     = 1;
+    const GRADING_RELATIVE_NEXT_INCLUDE_LAST     = 2;
+    const GRADING_RELATIVE_ONE_PREVIOUS_AND_NEXT = 3;
+    const GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT = 4;
+    const GRADING_LONGEST_ORDERED_SUBSET         = 5;
+    const GRADING_LONGEST_CONTIGUOUS_SUBSET      = 6;
 
     /** fields from "qtype_ordering_options" */
     public $correctfeedback;
@@ -156,7 +172,7 @@ class qtype_ordering_question extends question_graded_automatically {
         $options = $this->get_ordering_options();
         switch ($options->gradingtype) {
 
-            case 0: // ABSOLUTE_POSITION
+            case self::GRADING_ABSOLUTE_POSITION:
                 $correctresponse = $this->correctresponse;
                 $currentresponse = $this->currentresponse;
                 foreach ($correctresponse as $position => $answerid) {
@@ -169,8 +185,8 @@ class qtype_ordering_question extends question_graded_automatically {
                 }
                 break;
 
-            case 1: // RELATIVE_NEXT_EXCLUDE_LAST
-            case 2: // RELATIVE_NEXT_INCLUDE_LAST
+            case self::GRADING_RELATIVE_NEXT_EXCLUDE_LAST:
+            case self::GRADING_RELATIVE_NEXT_INCLUDE_LAST:
                 $currentresponse = $this->get_next_answerids($this->currentresponse, ($options->gradingtype==2));
                 $correctresponse = $this->get_next_answerids($this->correctresponse, ($options->gradingtype==2));
                 foreach ($correctresponse as $thisanswerid => $nextanswerid) {
@@ -183,8 +199,8 @@ class qtype_ordering_question extends question_graded_automatically {
                 }
                 break;
 
-            case 3: // RELATIVE_ONE_PREVIOUS_AND_NEXT
-            case 4: // RELATIVE_ALL_PREVIOUS_AND_NEXT
+            case self::GRADING_RELATIVE_ONE_PREVIOUS_AND_NEXT:
+            case self::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT:
                 $currentresponse = $this->get_previous_and_next_answerids($this->currentresponse, ($options->gradingtype==4));
                 $correctresponse = $this->get_previous_and_next_answerids($this->correctresponse, ($options->gradingtype==4));
                 foreach ($correctresponse as $thisanswerid => $answerids) {
@@ -201,8 +217,9 @@ class qtype_ordering_question extends question_graded_automatically {
                 }
                 break;
 
-            case 5: // LONGEST_ORDERED_SUBSET
-                $subset = $this->get_ordered_subset();
+            case self::GRADING_LONGEST_ORDERED_SUBSET:
+            case self::GRADING_LONGEST_CONTIGUOUS_SUBSET:
+                $subset = $this->get_ordered_subset($options->gradingtype==5);
                 $countcorrect = count($subset);
                 $countanswers = count($this->currentresponse);
                 break;
@@ -349,10 +366,10 @@ class qtype_ordering_question extends question_graded_automatically {
         return $prevnextanswerids;
     }
 
-    public function get_ordered_subset() {
+    public function get_ordered_subset($contiguous) {
         $positions = $this->get_ordered_positions($this->correctresponse,
                                                   $this->currentresponse);
-        $subsets = $this->get_ordered_subsets($positions, count($positions));
+        $subsets = $this->get_ordered_subsets($positions, $contiguous, count($positions));
         $countcorrect = 1; // i.e. ignore single item subsets
         $subsetcorrect = array();
         foreach ($subsets as $subset) {
@@ -373,7 +390,7 @@ class qtype_ordering_question extends question_graded_automatically {
         return $positions;
     }
 
-    public function get_ordered_subsets($positions, $i_max, $i_min=0, $previous=-1) {
+    public function get_ordered_subsets($positions, $contiguous, $i_max, $i_min=0, $previous=-1) {
 
         // $subsets is the collection of all subsets within $positions
         $subsets = array();
@@ -394,23 +411,75 @@ class qtype_ordering_question extends question_graded_automatically {
             if ($current > ($previous + 1)) {
 
                 // fetch all the subsets in the tail of $positions,
-                // and prepend $subset-so-far onto each tail subset
-                $tailsets = $this->get_ordered_subsets($positions, $i_max, $i+1, $previous);
+                $tailsets = $this->get_ordered_subsets($positions, $contiguous, $i_max, $i+1, $previous);
                 foreach ($tailsets as $tailset) {
-                    $subsets[] = array_merge($subset, $tailset);
+                    if ($contiguous) {
+                        // add this tail subset
+                        $subsets[] = $tailset;
+                    } else {
+                        // prepend $subset-so-far to each tail subset
+                        $subsets[] = array_merge($subset, $tailset);
+                    }
                 }
             }
 
-            // add $i to the main subset
-            $subset[] = $i;
+            // decide if we want to add this $i(tem) to the main $subset
+            if ($contiguous==false || $previous < 0 || $current==($previous + 1)) {
 
-            // update the $previous value
-            $previous = $current;
+                // add $i to the main subset
+                $subset[] = $i;
+
+                // update the $previous value
+                $previous = $current;
+            }
         }
         if (count($subset)) {
             // put the main $subset first
             array_unshift($subsets, $subset);
         }
         return $subsets;
+    }
+
+    static public function get_types($types, $type) {
+        if ($type===null) {
+            return $types; // return all $types
+        }
+        if (array_key_exists($type, $types)) {
+            return $types[$type]; // one $type
+        }
+        return $type; // shouldn't happen !!
+    }
+
+    static public function get_select_types($type=null) {
+        $plugin = 'qtype_ordering';
+        $types = array(
+            self::SELECT_ALL        => get_string('selectall',        $plugin),
+            self::SELECT_RANDOM     => get_string('selectrandom',     $plugin),
+            self::SELECT_CONTIGUOUS => get_string('selectcontiguous', $plugin)
+        );
+        return self::get_types($types, $type);
+    }
+
+    static public function get_layout_types($type=null) {
+        $plugin = 'qtype_ordering';
+        $types = array(
+            self::LAYOUT_VERTICAL   => get_string('vertical',   $plugin),
+            self::LAYOUT_HORIZONTAL => get_string('horizontal', $plugin)
+        );
+        return self::get_types($types, $type);
+    }
+
+    static public function get_grading_types($type=null) {
+        $plugin = 'qtype_ordering';
+        $types = array(
+            self::GRADING_ABSOLUTE_POSITION              => get_string('absoluteposition',           $plugin),
+            self::GRADING_RELATIVE_NEXT_EXCLUDE_LAST     => get_string('relativenextexcludelast',    $plugin),
+            self::GRADING_RELATIVE_NEXT_INCLUDE_LAST     => get_string('relativenextincludelast',    $plugin),
+            self::GRADING_RELATIVE_ONE_PREVIOUS_AND_NEXT => get_string('relativeonepreviousandnext', $plugin),
+            self::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT => get_string('relativeallpreviousandnext', $plugin),
+            self::GRADING_LONGEST_ORDERED_SUBSET         => get_string('longestorderedsubset',       $plugin),
+            self::GRADING_LONGEST_CONTIGUOUS_SUBSET      => get_string('longestcontiguoussubset',    $plugin)
+        );
+        return self::get_types($types, $type);
     }
 }

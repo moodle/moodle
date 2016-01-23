@@ -26,9 +26,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 if (class_exists('question_type')) {
-    $register_question_type = false;
+    $register_ordering_questiontype = false;
 } else {
-    $register_question_type = true; // Moodle 2.0
+    $register_ordering_questiontype = true; // Moodle 2.0
     require_once($CFG->dirroot.'/question/type/ordering/legacy/questiontypebase.php');
 }
 
@@ -671,8 +671,9 @@ class qtype_ordering extends question_type {
     }
 }
 
-if ($register_question_type) {
+if ($register_ordering_questiontype) {
     class question_ordering_qtype extends qtype_ordering {
     }
     question_register_questiontype(new question_ordering_qtype());
 }
+unset($register_ordering_questiontype);

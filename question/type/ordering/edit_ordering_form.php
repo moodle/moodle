@@ -23,9 +23,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
+/** Prevent direct access to this script */
 defined('MOODLE_INTERNAL') || die();
 
+/** Include required files */
+require_once($CFG->dirroot.'/question/type/ordering/question.php');
 
 /**
  * Ordering editing form definition
@@ -41,13 +43,6 @@ class qtype_ordering_edit_form extends question_edit_form {
     const NUM_ANS_DEFAULT =  6;
     const NUM_ANS_MIN     =  3;
     const NUM_ANS_ADD     =  3;
-
-    const ABSOLUTE_POSITION = 0;
-    const RELATIVE_NEXT_EXCLUDE_LAST = 1;
-    const RELATIVE_NEXT_INCLUDE_LAST = 2;
-    const RELATIVE_ONE_PREVIOUS_AND_NEXT = 3;
-    const RELATIVE_ALL_PREVIOUS_AND_NEXT = 4;
-    const LONGEST_ORDERED_SUBSET = 5;
 
     // this functionality is currently disabled
     // because it is not fully functional
@@ -73,10 +68,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         // layouttype
         $name = 'layouttype';
         $label = get_string($name, $plugin);
-        $options = array(
-            0 => get_string('vertical', $plugin),
-            1 => get_string('horizontal', $plugin)
-        );
+        $options = qtype_ordering_question::get_layout_types();
         $mform->addElement('select', $name, $label, $options);
         $mform->addHelpButton($name, $name, $plugin);
         $mform->setDefault($name, 0);
@@ -84,11 +76,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         // selecttype
         $name = 'selecttype';
         $label = get_string($name, $plugin);
-        $options = array(
-            0 => get_string('selectall', $plugin),
-            1 => get_string('selectrandom', $plugin),
-            2 => get_string('selectcontiguous', $plugin)
-        );
+        $options = qtype_ordering_question::get_select_types();
         $mform->addElement('select', $name, $label, $options);
         $mform->addHelpButton($name, $name, $plugin);
         $mform->setDefault($name, 0);
@@ -108,14 +96,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         // gradingtype
         $name = 'gradingtype';
         $label = get_string($name, $plugin);
-        $options = array(
-            self::ABSOLUTE_POSITION => get_string('absoluteposition', $plugin),
-            self::RELATIVE_NEXT_EXCLUDE_LAST => get_string('relativenextexcludelast', $plugin),
-            self::RELATIVE_NEXT_INCLUDE_LAST => get_string('relativenextincludelast', $plugin),
-            self::RELATIVE_ONE_PREVIOUS_AND_NEXT => get_string('relativeonepreviousandnext', $plugin),
-            self::RELATIVE_ALL_PREVIOUS_AND_NEXT => get_string('relativeallpreviousandnext', $plugin),
-            self::LONGEST_ORDERED_SUBSET => get_string('longestorderedsubset', $plugin)
-        );
+        $options = qtype_ordering_question::get_grading_types();
         $mform->addElement('select', $name, $label, $options);
         $mform->addHelpButton($name, $name, $plugin);
         $mform->setDefault($name, 0);
@@ -315,14 +296,14 @@ class qtype_ordering_edit_form extends question_edit_form {
         if (isset($question->options->layouttype)) {
             $question->layouttype = $question->options->layouttype;
         } else {
-            $question->layouttype = 0;
+            $question->layouttype = qtype_ordering_question::LAYOUT_VERTICAL;
         }
 
         // selecttype
         if (isset($question->options->selecttype)) {
             $question->selecttype = $question->options->selecttype;
         } else {
-            $question->selecttype = 0;
+            $question->selecttype = qtype_ordering_question::SELECT_ALL;
         }
 
         // selectcount
@@ -336,7 +317,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         if (isset($question->options->gradingtype)) {
             $question->gradingtype = $question->options->gradingtype;
         } else {
-            $question->gradingtype = 0;
+            $question->gradingtype = qtype_ordering_question::GRADING_ABSOLUTE_POSITION;
         }
 
         return $question;
