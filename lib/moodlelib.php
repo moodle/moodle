@@ -7532,7 +7532,7 @@ function count_words($string) {
     // Replace underscores (which are classed as word characters) with spaces.
     $string = preg_replace('/_/u', ' ', $string);
     // Remove any characters that shouldn't be treated as word boundaries.
-    $string = preg_replace('/[\'’-]/u', '', $string);
+    $string = preg_replace('/[\'"’-]/u', '', $string);
     // Remove dots and commas from within numbers only.
     $string = preg_replace('/([0-9])[.,]([0-9])/u', '$1$2', $string);
 
