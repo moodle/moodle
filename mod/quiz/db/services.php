@@ -146,4 +146,13 @@ $functions = array(
         'capabilities'  => 'mod/quiz:attempt',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+
+    'mod_quiz_view_attempt_review' => array(
+        'classname'     => 'mod_quiz_external',
+        'methodname'    => 'view_attempt_review',
+        'description'   => 'Trigger the attempt reviewed event.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/quiz:reviewmyattempts',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

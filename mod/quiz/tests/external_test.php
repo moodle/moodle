@@ -1329,4 +1329,37 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
 
     }
 
+    /**
+     * Test test_view_attempt_summary
+     */
+    public function test_view_attempt_review() {
+        global $DB;
+
+        // Create a new quiz with two questions and one attempt finished.
+        list($quiz, $context, $quizobj, $attempt, $attemptobj, $quba) = $this->create_quiz_with_questions(true, true);
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        $result = mod_quiz_external::view_attempt_review($attempt->id, 0);
+        $result = external_api::clean_returnvalue(mod_quiz_external::view_attempt_review_returns(), $result);
+        $this->assertTrue($result['status']);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_shift($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_quiz\event\attempt_reviewed', $event);
+        $this->assertEquals($context, $event->get_context());
+        $moodlequiz = new \moodle_url('/mod/quiz/review.php', array('attempt' => $attempt->id));
+        $this->assertEquals($moodlequiz, $event->get_url());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+
+    }
+
 }

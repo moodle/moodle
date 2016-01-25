@@ -1500,4 +1500,59 @@ class mod_quiz_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for view_attempt_review.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function view_attempt_review_parameters() {
+        return new external_function_parameters (
+            array(
+                'attemptid' => new external_value(PARAM_INT, 'attempt id'),
+            )
+        );
+    }
+
+    /**
+     * Trigger the attempt reviewed event.
+     *
+     * @param int $attemptid attempt id
+     * @return array of warnings and status result
+     * @since Moodle 3.1
+     */
+    public static function view_attempt_review($attemptid) {
+
+        $warnings = array();
+
+        $params = array(
+            'attemptid' => $attemptid,
+        );
+        $params = self::validate_parameters(self::view_attempt_review_parameters(), $params);
+        list($attemptobj, $displayoptions) = self::validate_attempt_review($params);
+
+        // Log action.
+        $attemptobj->fire_attempt_reviewed_event();
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the view_attempt_review return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function view_attempt_review_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }

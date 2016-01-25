@@ -259,15 +259,4 @@ $PAGE->blocks->add_fake_block($navbc, reset($regions));
 echo $output->review_page($attemptobj, $slots, $page, $showall, $lastpage, $options, $summarydata);
 
 // Trigger an event for this review.
-$params = array(
-    'objectid' => $attemptobj->get_attemptid(),
-    'relateduserid' => $attemptobj->get_userid(),
-    'courseid' => $attemptobj->get_courseid(),
-    'context' => context_module::instance($attemptobj->get_cmid()),
-    'other' => array(
-        'quizid' => $attemptobj->get_quizid()
-    )
-);
-$event = \mod_quiz\event\attempt_reviewed::create($params);
-$event->add_record_snapshot('quiz_attempts', $attemptobj->get_attempt());
-$event->trigger();
+$attemptobj->fire_attempt_reviewed_event();

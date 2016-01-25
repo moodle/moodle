@@ -2246,6 +2246,27 @@ class quiz_attempt {
         $event->trigger();
     }
 
+    /**
+     * Trigger the attempt_reviewed event.
+     *
+     * @since Moodle 3.1
+     */
+    public function fire_attempt_reviewed_event() {
+
+        $params = array(
+            'objectid' => $this->get_attemptid(),
+            'relateduserid' => $this->get_userid(),
+            'courseid' => $this->get_courseid(),
+            'context' => context_module::instance($this->get_cmid()),
+            'other' => array(
+                'quizid' => $this->get_quizid()
+            )
+        );
+        $event = \mod_quiz\event\attempt_reviewed::create($params);
+        $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
+        $event->trigger();
+    }
+
 }
 
 
