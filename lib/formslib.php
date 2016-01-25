@@ -1427,6 +1427,12 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     var $_pageparams = '';
 
     /**
+     * Whether the form contains any client-side validation or not.
+     * @var bool
+     */
+    protected $clientvalidation = false;
+
+    /**
      * Class constructor - same parameters as HTML_QuickForm_DHTMLRulesTableless
      *
      * @staticvar int $formcounter counts number of forms
@@ -2026,7 +2032,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     {
         parent::addRule($element, $message, $type, $format, $validation, $reset, $force);
         if ($validation == 'client') {
-            $this->updateAttributes(array('onsubmit' => 'try { var myValidator = validate_' . $this->_formName . '; } catch(e) { return true; } return myValidator(this);'));
+            $this->clientvalidation = true;
         }
 
     }
@@ -2055,16 +2061,14 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
              foreach ($arg1 as $rules) {
                 foreach ($rules as $rule) {
                     $validation = (isset($rule[3]) && 'client' == $rule[3])? 'client': 'server';
-
-                    if ('client' == $validation) {
-                        $this->updateAttributes(array('onsubmit' => 'try { var myValidator = validate_' . $this->_formName . '; } catch(e) { return true; } return myValidator(this);'));
+                    if ($validation == 'client') {
+                        $this->clientvalidation = true;
                     }
                 }
             }
         } elseif (is_string($arg1)) {
-
             if ($validation == 'client') {
-                $this->updateAttributes(array('onsubmit' => 'try { var myValidator = validate_' . $this->_formName . '; } catch(e) { return true; } return myValidator(this);'));
+                $this->clientvalidation = true;
             }
         }
     }
@@ -2080,7 +2084,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      */
     function getValidationScript()
     {
-        if (empty($this->_rules) || empty($this->_attributes['onsubmit'])) {
+        if (empty($this->_rules) || $this->clientvalidation === false) {
             return '';
         }
 
@@ -2164,60 +2168,62 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
 
 var skipClientValidation = false;
 
-function qf_errorHandler(element, _qfMsg, escapedName) {
-  div = element.parentNode;
+(function() {
 
-  if ((div == undefined) || (element.name == undefined)) {
-    //no checking can be done for undefined elements so let server handle it.
-    return true;
-  }
+    function qf_errorHandler(element, _qfMsg, escapedName) {
+      div = element.parentNode;
 
-  if (_qfMsg != \'\') {
-    var errorSpan = document.getElementById(\'id_error_\' + escapedName);
-    if (!errorSpan) {
-      errorSpan = document.createElement("span");
-      errorSpan.id = \'id_error_\' + escapedName;
-      errorSpan.className = "error";
-      element.parentNode.insertBefore(errorSpan, element.parentNode.firstChild);
-      document.getElementById(errorSpan.id).setAttribute(\'TabIndex\', \'0\');
-      document.getElementById(errorSpan.id).focus();
-    }
+      if ((div == undefined) || (element.name == undefined)) {
+        //no checking can be done for undefined elements so let server handle it.
+        return true;
+      }
 
-    while (errorSpan.firstChild) {
-      errorSpan.removeChild(errorSpan.firstChild);
-    }
+      if (_qfMsg != \'\') {
+        var errorSpan = document.getElementById(\'id_error_\' + escapedName);
+        if (!errorSpan) {
+          errorSpan = document.createElement("span");
+          errorSpan.id = \'id_error_\' + escapedName;
+          errorSpan.className = "error";
+          element.parentNode.insertBefore(errorSpan, element.parentNode.firstChild);
+          document.getElementById(errorSpan.id).setAttribute(\'TabIndex\', \'0\');
+          document.getElementById(errorSpan.id).focus();
+        }
 
-    errorSpan.appendChild(document.createTextNode(_qfMsg.substring(3)));
+        while (errorSpan.firstChild) {
+          errorSpan.removeChild(errorSpan.firstChild);
+        }
 
-    if (div.className.substr(div.className.length - 6, 6) != " error"
-      && div.className != "error") {
-        div.className += " error";
-        linebreak = document.createElement("br");
-        linebreak.className = "error";
-        linebreak.id = \'id_error_break_\' + escapedName;
-        errorSpan.parentNode.insertBefore(linebreak, errorSpan.nextSibling);
-    }
+        errorSpan.appendChild(document.createTextNode(_qfMsg.substring(3)));
 
-    return false;
-  } else {
-    var errorSpan = document.getElementById(\'id_error_\' + escapedName);
-    if (errorSpan) {
-      errorSpan.parentNode.removeChild(errorSpan);
-    }
-    var linebreak = document.getElementById(\'id_error_break_\' + escapedName);
-    if (linebreak) {
-      linebreak.parentNode.removeChild(linebreak);
-    }
+        if (div.className.substr(div.className.length - 6, 6) != " error"
+          && div.className != "error") {
+            div.className += " error";
+            linebreak = document.createElement("br");
+            linebreak.className = "error";
+            linebreak.id = \'id_error_break_\' + escapedName;
+            errorSpan.parentNode.insertBefore(linebreak, errorSpan.nextSibling);
+        }
 
-    if (div.className.substr(div.className.length - 6, 6) == " error") {
-      div.className = div.className.substr(0, div.className.length - 6);
-    } else if (div.className == "error") {
-      div.className = "";
-    }
+        return false;
+      } else {
+        var errorSpan = document.getElementById(\'id_error_\' + escapedName);
+        if (errorSpan) {
+          errorSpan.parentNode.removeChild(errorSpan);
+        }
+        var linebreak = document.getElementById(\'id_error_break_\' + escapedName);
+        if (linebreak) {
+          linebreak.parentNode.removeChild(linebreak);
+        }
 
-    return true;
-  }
-}';
+        if (div.className.substr(div.className.length - 6, 6) == " error") {
+          div.className = div.className.substr(0, div.className.length - 6);
+        } else if (div.className == "error") {
+          div.className = "";
+        }
+
+        return true;
+      }
+    }';
         $validateJS = '';
         foreach ($test as $elementName => $jsandelement) {
             // Fix for bug displaying errors for elements in a group
@@ -2228,64 +2234,86 @@ function qf_errorHandler(element, _qfMsg, escapedName) {
                 '/[_\[\]-]/',
                 create_function('$matches', 'return sprintf("_%2x",ord($matches[0]));'),
                 $elementName);
+            $valFunc = 'validate_' . $this->_formName . '_' . $escapedElementName . '(ev.target, \''.$escapedElementName.'\')';
+
             $js .= '
-function validate_' . $this->_formName . '_' . $escapedElementName . '(element, escapedName) {
-  if (undefined == element) {
-     //required element was not found, then let form be submitted without client side validation
-     return true;
-  }
-  var value = \'\';
-  var errFlag = new Array();
-  var _qfGroups = {};
-  var _qfMsg = \'\';
-  var frm = element.parentNode;
-  if ((undefined != element.name) && (frm != undefined)) {
-      while (frm && frm.nodeName.toUpperCase() != "FORM") {
-        frm = frm.parentNode;
+    function validate_' . $this->_formName . '_' . $escapedElementName . '(element, escapedName) {
+      if (undefined == element) {
+         //required element was not found, then let form be submitted without client side validation
+         return true;
       }
-    ' . join("\n", $jsArr) . '
-      return qf_errorHandler(element, _qfMsg, escapedName);
-  } else {
-    //element name should be defined else error msg will not be displayed.
-    return true;
-  }
-}
+      var value = \'\';
+      var errFlag = new Array();
+      var _qfGroups = {};
+      var _qfMsg = \'\';
+      var frm = element.parentNode;
+      if ((undefined != element.name) && (frm != undefined)) {
+          while (frm && frm.nodeName.toUpperCase() != "FORM") {
+            frm = frm.parentNode;
+          }
+        ' . join("\n", $jsArr) . '
+          return qf_errorHandler(element, _qfMsg, escapedName);
+      } else {
+        //element name should be defined else error msg will not be displayed.
+        return true;
+      }
+    }
+
+    document.getElementById(\'id_' . $elementName . '\').addEventListener(\'blur\', function(ev) {
+        ' . $valFunc . '
+    });
+    document.getElementById(\'id_' . $elementName . '\').addEventListener(\'change\', function(ev) {
+        ' . $valFunc . '
+    });
 ';
             $validateJS .= '
-  ret = validate_' . $this->_formName . '_' . $escapedElementName.'(frm.elements[\''.$elementName.'\'], \''.$escapedElementName.'\') && ret;
-  if (!ret && !first_focus) {
-    first_focus = true;
-    Y.use(\'moodle-core-event\', function() {
-        Y.Global.fire(M.core.globalEvents.FORM_ERROR, {formid: \'' . $this->_attributes['id'] . '\',
-                                                       elementid: \'id_error_' . $escapedElementName . '\'});
-        document.getElementById(\'id_error_' . $escapedElementName . '\').focus();
-    });
-  }
+      ret = validate_' . $this->_formName . '_' . $escapedElementName.'(frm.elements[\''.$elementName.'\'], \''.$escapedElementName.'\') && ret;
+      if (!ret && !first_focus) {
+        first_focus = true;
+        Y.use(\'moodle-core-event\', function() {
+            Y.Global.fire(M.core.globalEvents.FORM_ERROR, {formid: \'' . $this->_attributes['id'] . '\',
+                                                           elementid: \'id_error_' . $escapedElementName . '\'});
+            document.getElementById(\'id_error_' . $escapedElementName . '\').focus();
+        });
+      }
 ';
 
             // Fix for bug displaying errors for elements in a group
             //unset($element);
             //$element =& $this->getElement($elementName);
             //end of fix
-            $valFunc = 'validate_' . $this->_formName . '_' . $escapedElementName . '(this, \''.$escapedElementName.'\')';
-            $onBlur = $element->getAttribute('onBlur');
-            $onChange = $element->getAttribute('onChange');
-            $element->updateAttributes(array('onBlur' => $onBlur . $valFunc,
-                                             'onChange' => $onChange . $valFunc));
+            //$onBlur = $element->getAttribute('onBlur');
+            //$onChange = $element->getAttribute('onChange');
+            //$element->updateAttributes(array('onBlur' => $onBlur . $valFunc,
+                                             //'onChange' => $onChange . $valFunc));
         }
 //  do not rely on frm function parameter, because htmlarea breaks it when overloading the onsubmit method
         $js .= '
-function validate_' . $this->_formName . '(frm) {
-  if (skipClientValidation) {
-     return true;
-  }
-  var ret = true;
 
-  var frm = document.getElementById(\''. $this->_attributes['id'] .'\')
-  var first_focus = false;
-' . $validateJS . ';
-  return ret;
-}
+    function validate_' . $this->_formName . '() {
+      if (skipClientValidation) {
+         return true;
+      }
+      var ret = true;
+
+      var frm = document.getElementById(\''. $this->_attributes['id'] .'\')
+      var first_focus = false;
+    ' . $validateJS . ';
+      return ret;
+    }
+
+
+    document.getElementById(\'' . $this->_attributes['id'] . '\').addEventListener(\'submit\', function(ev) {
+        try {
+            var myValidator = validate_' . $this->_formName . ';
+        } catch(e) {
+            return true;
+        }
+        if (!myValidator()) {
+            ev.preventDefault();
+        }
+    });
+})();
 //]]>
 </script>';
         return $js;
