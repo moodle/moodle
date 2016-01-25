@@ -181,4 +181,12 @@ class mod_scorm_lib_testcase extends externallib_advanced_testcase {
         scorm_require_available($this->scorm, false);
     }
 
+    /**
+     * Test scorm_get_last_completed_attempt
+     *
+     * @return void
+     */
+    public function test_scorm_get_last_completed_attempt() {
+        $this->assertEquals(1, scorm_get_last_completed_attempt($this->scorm->id, $this->student->id));
+    }
 }
