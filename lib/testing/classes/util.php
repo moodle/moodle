@@ -685,7 +685,11 @@ abstract class testing_util {
             }
 
             if ($borkedmysql) {
-                if (empty($records) and isset($empties[$table])) {
+                if (empty($records)) {
+                    if (!isset($empties[$table])) {
+                        // Table has been modified and is not empty.
+                        $DB->delete_records($table, null);
+                    }
                     continue;
                 }
 
@@ -707,9 +711,8 @@ abstract class testing_util {
             }
 
             if (empty($records)) {
-                if (isset($empties[$table])) {
-                    // table was not modified and is empty
-                } else {
+                if (!isset($empties[$table])) {
+                    // Table has been modified and is not empty.
                     $DB->delete_records($table, array());
                 }
                 continue;
