@@ -141,6 +141,8 @@ class navigation_node implements renderable {
     protected static $loadadmintree = false;
     /** @var mixed If set to an int, that section will be included even if it has no activities */
     public $includesectionnum = false;
+    /** @var bool does the node need to be loaded via ajax */
+    public $requiresajaxloading = false;
 
     /**
      * Constructs a new navigation_node
@@ -612,6 +614,7 @@ class navigation_node implements renderable {
             if ($child->display && $child->has_children() && $child->children->count() == 0) {
                 $child->id = 'expandable_branch_'.$child->type.'_'.clean_param($child->key, PARAM_ALPHANUMEXT);
                 $this->add_class('canexpand');
+                $child->requiresajaxloading = true;
                 $expandable[] = array('id' => $child->id, 'key' => $child->key, 'type' => $child->type);
             }
             $child->find_expandable($expandable);
@@ -3549,7 +3552,7 @@ class settings_navigation extends navigation_node {
                 }
                 $siteadminnode = $this->add(get_string('administrationsite'), new moodle_url('/admin'), self::TYPE_SITE_ADMIN, null, 'siteadministration');
                 $siteadminnode->id = 'expandable_branch_'.$siteadminnode->type.'_'.clean_param($siteadminnode->key, PARAM_ALPHANUMEXT);
-                $this->page->requires->data_for_js('siteadminexpansion', $siteadminnode);
+                $siteadminnode->requiresajaxloading = 'true';
             }
         }
 
@@ -4950,6 +4953,7 @@ class navigation_json {
         $attributes['type'] = $child->type;
         $attributes['key'] = $child->key;
         $attributes['class'] = $child->get_css_type();
+        $attributes['requiresajaxloading'] = $child->requiresajaxloading;
 
         if ($child->icon instanceof pix_icon) {
             $attributes['icon'] = array(
