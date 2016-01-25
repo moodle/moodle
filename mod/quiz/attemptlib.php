@@ -2225,6 +2225,27 @@ class quiz_attempt {
         $event->trigger();
     }
 
+    /**
+     * Trigger the attempt_summary_viewed event.
+     *
+     * @since Moodle 3.1
+     */
+    public function fire_attempt_summary_viewed_event() {
+
+        $params = array(
+            'objectid' => $this->get_attemptid(),
+            'relateduserid' => $this->get_userid(),
+            'courseid' => $this->get_courseid(),
+            'context' => context_module::instance($this->get_cmid()),
+            'other' => array(
+                'quizid' => $this->get_quizid()
+            )
+        );
+        $event = \mod_quiz\event\attempt_summary_viewed::create($params);
+        $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
+        $event->trigger();
+    }
+
 }
 
 

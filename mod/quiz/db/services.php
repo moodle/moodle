@@ -137,4 +137,13 @@ $functions = array(
         'capabilities'  => 'mod/quiz:attempt',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+
+    'mod_quiz_view_attempt_summary' => array(
+        'classname'     => 'mod_quiz_external',
+        'methodname'    => 'view_attempt_summary',
+        'description'   => 'Trigger the attempt summary viewed event.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/quiz:attempt',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
