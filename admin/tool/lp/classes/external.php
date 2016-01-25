@@ -568,6 +568,48 @@ class external extends external_api {
     }
 
     /**
+     * Returns description of competency_framework_viewed() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function competency_framework_viewed_parameters() {
+        $id = new external_value(
+            PARAM_INT,
+            'The competency framework id',
+            VALUE_REQUIRED
+        );
+
+        $params = array(
+            'id' => $id
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Log event competency framework viewed.
+     *
+     * @param int $id The competency framework ID.
+     * @return boolean
+     */
+    public static function competency_framework_viewed($id) {
+        $params = self::validate_parameters(self::competency_framework_viewed_parameters(),
+                                            array(
+                                                'id' => $id
+                                            ));
+        return api::competency_framework_viewed($params['id']);
+
+    }
+
+    /**
+     * Returns description of competency_framework_viewed() result value.
+     *
+     * @return \external_description
+     */
+    public static function competency_framework_viewed_returns() {
+        return new external_value(PARAM_BOOL, 'True if the event competency framework was logged');
+    }
+
+    /**
      * Returns description of data_for_competency_frameworks_manage_page() parameters.
      *
      * @return \external_function_parameters

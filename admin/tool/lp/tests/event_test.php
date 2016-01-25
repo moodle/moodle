@@ -122,4 +122,31 @@ class tool_lp_event_testcase extends advanced_testcase {
         $this->assertDebuggingNotCalled();
     }
 
+    /**
+     * Test the competency framework viewed event.
+     *
+     */
+    public function test_competency_framework_viewed() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $framework = $lpg->create_framework();
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        api::competency_framework_viewed($framework);
+
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\tool_lp\event\competency_framework_viewed', $event);
+        $this->assertEquals($framework->get_id(), $event->objectid);
+        $this->assertEquals($framework->get_contextid(), $event->contextid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
 }

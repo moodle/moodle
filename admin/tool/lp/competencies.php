@@ -58,4 +58,7 @@ echo $output->heading($pagetitle);
 $page = new \tool_lp\output\manage_competencies_page($framework, $search, $pagecontext);
 echo $output->render($page);
 
+// Log the framework viewed event after rendering the page.
+\tool_lp\api::competency_framework_viewed($framework);
+
 echo $output->footer();

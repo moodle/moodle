@@ -554,6 +554,24 @@ class api {
     }
 
     /**
+     * Logg the competency framework viewed event.
+     *
+     * @param competency_framework|int $frameworkorid The competency_framework object or competency framework id
+     * @return bool
+     */
+    public static function competency_framework_viewed($frameworkorid) {
+        $framework = $frameworkorid;
+        if (!is_object($framework)) {
+            $framework = new competency_framework($framework);
+        }
+        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $framework->get_context())) {
+             throw new required_capability_exception($framework->get_context(), 'tool/lp:competencyread', 'nopermissions', '');
+        }
+        \tool_lp\event\competency_framework_viewed::create_from_framework($framework)->trigger();
+        return true;
+    }
+
+    /**
      * Perform a search based on the provided filters and return a paginated list of records.
      *
      * Requires tool/lp:competencyread capability at the system context.

@@ -93,6 +93,15 @@ $functions = array(
         'capabilities' => 'tool/lp:competencyview',
         'ajax'         => true,
     ),
+    'tool_lp_competency_framework_viewed' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'competency_framework_viewed',
+        'classpath'    => '',
+        'description'  => 'Log event competency framework viewed',
+        'type'         => 'read',
+        'capabilities' => 'tool/lp:competencyread',
+        'ajax'         => true,
+    ),
     'tool_lp_data_for_competency_frameworks_manage_page' => array(
         'classname'    => 'tool_lp\external',
         'methodname'   => 'data_for_competency_frameworks_manage_page',
