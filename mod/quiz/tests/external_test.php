@@ -1247,4 +1247,53 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
 
     }
 
+    /**
+     * Test test_view_attempt
+     */
+    public function test_view_attempt() {
+        global $DB;
+
+        // Create a new quiz with two questions and one attempt started.
+        list($quiz, $context, $quizobj, $attempt, $attemptobj, $quba) = $this->create_quiz_with_questions(true, false);
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        $result = mod_quiz_external::view_attempt($attempt->id, 0);
+        $result = external_api::clean_returnvalue(mod_quiz_external::view_attempt_returns(), $result);
+        $this->assertTrue($result['status']);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_shift($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_quiz\event\attempt_viewed', $event);
+        $this->assertEquals($context, $event->get_context());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+
+        // Now, force the quiz with QUIZ_NAVMETHOD_SEQ (sequencial) navigation method.
+        $DB->set_field('quiz', 'navmethod', QUIZ_NAVMETHOD_SEQ, array('id' => $quiz->id));
+        // See next page.
+        $result = mod_quiz_external::view_attempt($attempt->id, 1);
+        $result = external_api::clean_returnvalue(mod_quiz_external::view_attempt_returns(), $result);
+        $this->assertTrue($result['status']);
+
+        $events = $sink->get_events();
+        $this->assertCount(2, $events);
+
+        // Try to go to previous page.
+        try {
+            mod_quiz_external::view_attempt($attempt->id, 0);
+            $this->fail('Exception expected due to try to see a previous page.');
+        } catch (moodle_quiz_exception $e) {
+            $this->assertEquals('Out of sequence access', $e->errorcode);
+        }
+
+    }
+
 }
