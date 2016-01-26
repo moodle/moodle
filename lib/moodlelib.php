@@ -5589,6 +5589,25 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         }
     }
 
+    // If the X-PHP-Originating-Script email header is on then also add an additional
+    // header with details of where exactly in moodle the email was triggered from,
+    // either a call to message_send() or to email_to_user().
+    if (ini_get('mail.add_x_header')) {
+
+        $stack = debug_backtrace(false);
+        $origin = $stack[0];
+
+        foreach ($stack as $depth => $call) {
+            if ($call['function'] == 'message_send') {
+                $origin = $call;
+            }
+        }
+
+        $originheader = $CFG->wwwroot . ' => ' . gethostname() . ':'
+             . str_replace($CFG->dirroot . '/', '', $origin['file']) . ':' . $origin['line'];
+        $mail->addCustomHeader('X-Moodle-Originating-Script: ' . $originheader);
+    }
+
     if (!empty($from->priority)) {
         $mail->Priority = $from->priority;
     }
