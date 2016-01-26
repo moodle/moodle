@@ -74,7 +74,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     /**
      * The JS code to check that the page is ready.
      */
-    const PAGE_READY_JS = '(M && M.util && M.util.pending_js && !Boolean(M.util.pending_js.length)) && (document.readyState === "complete")';
+    const PAGE_READY_JS = '(typeof M !== "undefined" && M.util && M.util.pending_js && !Boolean(M.util.pending_js.length)) && (document.readyState === "complete")';
 
     /**
      * Locates url, based on provided path.
