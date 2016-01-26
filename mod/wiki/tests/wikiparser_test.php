@@ -128,6 +128,23 @@ class mod_wiki_wikiparser_test extends basic_testcase {
         $this->assertEquals($toc, $actual['toc']);
         $this->assertNotEquals(false, $section);
 
+        // Test toc section names being wikilinks.
+        $input = '<h1>[[Heading 1]]</h1><h2>[[Heading A]]</h2><h2>Heading D</h2>';
+        $regexpoutput = '!<h1><a name="toc-1"></a>' .
+            '<a class="wiki_newentry" href.*mod/wiki/create\.php\?.*title=Heading\+1.*action=new.*>Heading 1<.*' .
+            '<h2><a name="toc-2"></a>' .
+            '<a class="wiki_newentry" href.*mod/wiki/create\.php\?.*title=Heading\+A.*action=new.*>Heading A<.*' .
+            '<h2><a name="toc-3"></a>' .
+            'Heading D!ms';
+        $regexptoc = '!<a href="#toc-1">Heading 1.*<a href="#toc-2">Heading A</a>.*<a href="#toc-3">Heading D</a>!ms';
+        $section = wiki_parser_proxy::get_section($input, 'html', 'Another [[wikilinked]] test');
+        $actual = wiki_parser_proxy::parse($input, 'html', array(
+            'link_callback' => '/mod/wiki/locallib.php:wiki_parser_link',
+            'link_callback_args' => array('swid' => 1)
+        ));
+        $this->assertRegExp($regexpoutput, $actual['parsed_text']);
+        $this->assertRegExp($regexptoc, $actual['toc']);
+
         // Now going to test Creole markup.
         // Note that Creole uses links to the escaped version of the section.
 
