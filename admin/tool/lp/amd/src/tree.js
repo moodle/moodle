@@ -323,13 +323,14 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
                     // Move up to the parent.
                     var itemUL = item.parent();
                     var itemParent = itemUL.parent();
-                    itemParent.focus();
-                    if (e.shiftKey) {
-                        this.multiSelectItem(itemParent);
-                    } else if (!e.ctrlKey) {
-                        this.selectItem(itemParent);
+                    if (itemParent.is('li')) {
+                        itemParent.focus();
+                        if (e.shiftKey) {
+                            this.multiSelectItem(itemParent);
+                        } else if (!e.ctrlKey) {
+                            this.selectItem(itemParent);
+                        }
                     }
-
                 }
 
                 e.stopPropagation();
@@ -341,11 +342,13 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
                 } else {
                     // Move to the first item in the child group.
                     newItem = item.children('ul').children('li').first();
-                    newItem.focus();
-                    if (e.shiftKey) {
-                        this.multiSelectItem(newItem);
-                    } else if (!e.ctrlKey) {
-                        this.selectItem(newItem);
+                    if (newItem.length > 0) {
+                        newItem.focus();
+                        if (e.shiftKey) {
+                            this.multiSelectItem(newItem);
+                        } else if (!e.ctrlKey) {
+                            this.selectItem(newItem);
+                        }
                     }
                 }
 
