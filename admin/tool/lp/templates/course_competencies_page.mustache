@@ -32,12 +32,14 @@
             </a>
         </div>
         {{/canmanagecoursecompetencies}}
-        <a href="{{pluginbaseurl}}user_competency_in_course.php?courseid={{courseid}}&competencyid={{competency.id}}&userid={{gradableuserid}}"
-           title="{{#str}}viewdetails, tool_lp{{/str}}" style="text-decoration: none; color: #333;">
         {{#competency}}
-            {{> tool_lp/competency_summary }}
+            <a href="{{pluginbaseurl}}user_competency_in_course.php?courseid={{courseid}}&competencyid={{competency.id}}&userid={{gradableuserid}}"
+                   title="{{#str}}viewdetails, tool_lp{{/str}}">
+                <p><strong>{{competency.shortname}} <em>{{competency.idnumber}}</em></strong></p>
+
+            </a>
+            <p>{{{competency.description}}}</p>
         {{/competency}}
-        </a>
         {{#usercompetency}}
             <span class="label {{^proficiency}}label-important{{/proficiency}}">{{gradename}}</span>
         {{/usercompetency}}
