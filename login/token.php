@@ -27,12 +27,13 @@ define('NO_MOODLE_COOKIES', true);
 
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 
+// Allow CORS requests.
+header('Access-Control-Allow-Origin: *');
+
 $username = required_param('username', PARAM_USERNAME);
 $password = required_param('password', PARAM_RAW);
 $serviceshortname  = required_param('service',  PARAM_ALPHANUMEXT);
 
-// Allow CORS requests.
-header('Access-Control-Allow-Origin: *');
 echo $OUTPUT->header();
 
 if (!$CFG->enablewebservices) {
