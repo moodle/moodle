@@ -55,6 +55,11 @@
     text-align: center;
 }
 
+.path-admin-tool-lp [data-region="competencylinktree"]>ul {
+    overflow-y: auto;
+    height: 400px;
+}
+
 .dir-rtl.path-admin-tool-lp [data-region="filtercompetencies"] input {
     margin-right: 10px;
 }

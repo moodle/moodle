@@ -66,6 +66,7 @@ define(['core/yui'], function(Y) {
                     if ((typeof afterShow !== 'undefined')) {
                         Y.soon(function() {
                             afterShow(parent);
+                            parent.yuiDialogue.centerDialogue();
                         });
                     }
                 } else {
