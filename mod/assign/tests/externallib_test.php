@@ -903,6 +903,16 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
 
         $this->assertEquals(0, count($result));
 
+        // Set up a due and cutoff passed date.
+        $instance->duedate = time() - WEEKSECS;
+        $instance->cutoffdate = time() - WEEKSECS;
+        $DB->update_record('assign', $instance);
+
+        $result = mod_assign_external::save_submission($instance->id, $submissionpluginparams);
+        $result = external_api::clean_returnvalue(mod_assign_external::save_submission_returns(), $result);
+
+        $this->assertCount(1, $result);
+        $this->assertEquals(get_string('duedatereached', 'assign'), $result[0]['item']);
     }
 
     /**
