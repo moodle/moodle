@@ -140,7 +140,8 @@ class block_navigation_renderer extends plugin_renderer_base {
                 $liclasses[] = 'contains_branch';
                 if ($depth == 1) {
                     $liexpandable = array(
-                        'data-expandable' => 'false'
+                        'data-expandable' => 'false',
+                        'data-collapsible' => 'false'
                     );
                 } else {
                     $liexpandable = array(
