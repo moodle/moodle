@@ -66,7 +66,7 @@ class plan_exporter extends persistent_exporter {
 
         $values->isreopenallowed = $values->canmanage && $values->iscompleted;
         $values->iscompleteallowed = $values->canmanage && $values->isactive;
-        $values->isunlinkallowed = $values->canmanage && $values->iscompleted && $values->isbasedontemplate;
+        $values->isunlinkallowed = $values->canmanage && !$values->iscompleted && $values->isbasedontemplate;
 
         $values->isrequestreviewallowed = false;
         $values->iscancelreviewrequestallowed = false;
