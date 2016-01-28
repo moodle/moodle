@@ -469,4 +469,64 @@ class enrol_ldap_testcase extends advanced_testcase {
             }
         }
     }
+
+    /**
+     * Test that normalisation of the use objectclass is completed successfully.
+     *
+     * @dataProvider objectclass_fetch_provider
+     * @param string $usertype The supported user type
+     * @param string $expected The expected filter value
+     */
+    public function test_objectclass_fetch($usertype, $expected) {
+        $this->resetAfterTest();
+        // Set the user type - this must be performed before the plugin is instantiated.
+        set_config('user_type', $usertype, 'enrol_ldap');
+
+        // Fetch the plugin.
+        $instance = enrol_get_plugin('ldap');
+
+        // Use reflection to sneak a look at the plugin.
+        $rc = new ReflectionClass('enrol_ldap_plugin');
+        $rcp = $rc->getProperty('userobjectclass');
+        $rcp->setAccessible(true);
+
+        // Fetch the current userobjectclass value.
+        $value = $rcp->getValue($instance);
+        $this->assertEquals($expected, $value);
+    }
+
+    /**
+     * Data provider for the test_objectclass_fetch testcase.
+     *
+     * @return array of testcases.
+     */
+    public function objectclass_fetch_provider() {
+        return array(
+            // This is the list of values from ldap_getdefaults() normalised.
+            'edir' => array(
+                'edir',
+                '(objectClass=user)'
+            ),
+            'rfc2307' => array(
+                'rfc2307',
+                '(objectClass=posixaccount)'
+            ),
+            'rfc2307bis' => array(
+                'rfc2307bis',
+                '(objectClass=posixaccount)'
+            ),
+            'samba' => array(
+                'samba',
+                '(objectClass=sambasamaccount)'
+            ),
+            'ad' => array(
+                'ad',
+                '(samaccounttype=805306368)'
+            ),
+            'default' => array(
+                'default',
+                '(objectClass=*)'
+            ),
+        );
+    }
 }
