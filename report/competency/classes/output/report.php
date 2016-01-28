@@ -24,12 +24,13 @@
 namespace report_competency\output;
 
 use context_course;
-use tool_lp\external\competency_exporter;
+use tool_lp\external\competency_summary_exporter;
 use tool_lp\external\course_summary_exporter;
 use tool_lp\external\user_competency_exporter;
 use tool_lp\external\user_summary_exporter;
 use tool_lp\user_competency;
 use renderable;
+use core_user;
 use templatable;
 use renderer_base;
 use moodle_url;
@@ -61,22 +62,16 @@ class report implements renderable, templatable {
      * Construct this renderable.
      *
      * @param int $courseid The course id
+     * @param int $userid The user id
      * @param int $groupid The group id
      * @param bool $onlyactive Only show active (not suspended) students.
      */
-    public function __construct($courseid, $groupid, $onlyactive) {
+    public function __construct($courseid, $userid, $groupid, $onlyactive) {
         $this->courseid = $courseid;
         $this->groupid = $groupid;
+        $this->userid = $userid;
         $this->onlyactive = $onlyactive;
         $this->context = context_course::instance($courseid);
-        // Get all the competencies in this course.
-        $this->competencies = api::list_course_competencies($courseid);
-
-        // Get all the users in this course.
-        // tool/lp:coursecompetencygradable
-        $this->users = get_enrolled_users($this->context, 'tool/lp:coursecompetencygradable', $groupid,
-                                          'u.*', null, 0, 0, $onlyactive);
-
     }
 
     /**
@@ -93,20 +88,6 @@ class report implements renderable, templatable {
         $data->groupid = $this->groupid;
         $data->onlyactive = $this->onlyactive;
 
-        $competencies = array();
-        $contextcache = array();
-        foreach ($this->competencies as $coursecompetency) {
-            $competency = $coursecompetency['competency'];
-            if (!isset($contextcache[$competency->get_competencyframeworkid()])) {
-                $contextcache[$competency->get_competencyframeworkid()] = $competency->get_context();
-            }
-            $context = $contextcache[$competency->get_competencyframeworkid()];
-            $exporter = new competency_exporter($competency, array('context' => $context));
-            $record = $exporter->export($output);
-            array_push($competencies, $record);
-        }
-        $data->competencies = $competencies;
-
         $course = $DB->get_record('course', array('id' => $this->courseid));
         $coursecontext = context_course::instance($course->id);
         $exporter = new course_summary_exporter($course, array('context' => $coursecontext));
@@ -116,44 +97,55 @@ class report implements renderable, templatable {
         $data->usercompetencies = array();
         $scalecache = array();
         $frameworkcache = array();
-        foreach ($this->users as $user) {
-            $usercompetencies = api::list_user_competencies_in_course($this->courseid, $user->id);
+
+        $user = core_user::get_user($this->userid);
+
+        $exporter = new user_summary_exporter($user);
+        $data->user = $exporter->export($output);
+        $data->usercompetencies = array();
+        $coursecompetencies = api::list_course_competencies($this->courseid);
+        $usercompetencies = api::list_user_competencies_in_course($this->courseid, $user->id);
+
+        foreach ($usercompetencies as $usercompetency) {
             $onerow = new stdClass();
-            $exporter = new user_summary_exporter($user);
-            $onerow->user = $exporter->export($output);
-            $onerow->usercompetencies = array();
-
-            foreach ($this->competencies as $coursecompetency) {
-                $competency = $coursecompetency['competency'];
-                $usercompetency = new user_competency(0, (object) array('userid' => $user->id, 'competencyid' => $competency->get_id()));
-                foreach ($usercompetencies as $uc) {
-                    if ($uc->get_competencyid() == $competency->get_id()) {
-                        $usercompetency = $uc;
-                        break;
-                    }
+            $competency = null;
+            foreach ($coursecompetencies as $coursecompetency) {
+                if ($coursecompetency['competency']->get_id() == $usercompetency->get_competencyid()) {
+                    $competency = $coursecompetency['competency'];
+                    break;
                 }
-
-                // Fetch the scale.
-                $scaleid = $competency->get_scaleid();
-                if ($scaleid === null) {
-                    if (!isset($frameworkcache[$competency->get_competencyframeworkid()])) {
-                        $frameworkcache[$competency->get_competencyframeworkid()] = $competency->get_framework();
-                    }
-                    $framework = $frameworkcache[$competency->get_competencyframeworkid()];
-                    $scaleid = $framework->get_scaleid();
-                    if (!isset($scalecache[$scaleid])) {
-                        $scalecache[$competency->get_scaleid()] = $framework->get_scale();
-                    }
-
-                } else if (!isset($scalecache[$scaleid])) {
-                    $scalecache[$competency->get_scaleid()] = $competency->get_scale();
-                }
-                $scale = $scalecache[$competency->get_scaleid()];
-
-                $exporter = new user_competency_exporter($usercompetency, array('scale' => $scale));
-                $record = $exporter->export($output);
-                array_push($onerow->usercompetencies, $record);
             }
+            if (!$competency) {
+                continue;
+            }
+            // Fetch the framework.
+            if (!isset($frameworkcache[$competency->get_competencyframeworkid()])) {
+                $frameworkcache[$competency->get_competencyframeworkid()] = $competency->get_framework();
+            }
+            $framework = $frameworkcache[$competency->get_competencyframeworkid()];
+
+            // Fetch the scale.
+            $scaleid = $competency->get_scaleid();
+            if ($scaleid === null) {
+                $scaleid = $framework->get_scaleid();
+                if (!isset($scalecache[$scaleid])) {
+                    $scalecache[$competency->get_scaleid()] = $framework->get_scale();
+                }
+
+            } else if (!isset($scalecache[$scaleid])) {
+                $scalecache[$competency->get_scaleid()] = $competency->get_scale();
+            }
+            $scale = $scalecache[$competency->get_scaleid()];
+
+            $exporter = new user_competency_exporter($usercompetency, array('scale' => $scale));
+            $record = $exporter->export($output);
+            $onerow->usercompetency = $record;
+            $exporter = new competency_summary_exporter(null, array('competency' => $competency,
+                                                                    'framework' => $framework,
+                                                                    'context' => $framework->get_context(),
+                                                                    'relatedcompetencies' => array(),
+                                                                    'linkedcourses' => array()));
+            $onerow->competency = $exporter->export($output);
             array_push($data->usercompetencies, $onerow);
         }
 

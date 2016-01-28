@@ -1,24 +1,18 @@
-<div data-region="competency-breakdown-report" data-courseid="{{course.id}}" data-groupid="{{groupid}}" data-onlyactive="{{onlyactive}}">
+<div data-region="competency-breakdown-report" data-courseid="{{course.id}}" data-groupid="{{groupid}}" data-userid="{{user.id}}" data-onlyactive="{{onlyactive}}">
+<div class="row-fluid">
+<span class="span6">
 <table class="table table-bordered">
-<summary>{{#str}}coursecompetencybreakdownsummary, report_competency{{/str}}</summary>
+<summary><p>{{#str}}coursecompetencybreakdownsummary, report_competency{{/str}}</p></summary>
 <tr>
-<th scope="col"><span class="accesshide">{{#str}}students{{/str}}</span></th>
-{{#competencies}}
-    <th scope="col">
-        <a href="#" data-action="competency-dialogue" data-id="{{id}}">
-            {{shortname}} - {{idnumber}}
-        </a>
-    </th>
-{{/competencies}}
+<th scope="col">{{#str}}competency, report_competency{{/str}}</span></th>
+<th scope="col">{{#str}}rating, report_competency{{/str}}</span></th>
 </tr>
 {{#usercompetencies}}
 <tr>
-<th scope="row">
-{{#user}}
-{{> tool_lp/user_summary }}
-{{/user}}
-</th>
-{{#usercompetencies}}
+{{#competency}}
+<td><a href="#" data-action="competency-dialogue" data-id="{{competency.id}}">{{competency.shortname}} - {{competency.idnumber}}</a></td>
+{{/competency}}
+{{#usercompetency}}
 <td class="alert {{#proficiency}}alert-success{{/proficiency}}"
     data-user-competency="true"
     data-userid="{{user.id}}"
@@ -26,10 +20,11 @@
     data-courseid="{{course.id}}">
 {{> report_competency/user_competency_summary}}
 </td>
-{{/usercompetencies}}
-</tr>
+{{/usercompetency}}
 {{/usercompetencies}}
 </table>
+</span>
+</div>
 </div>
 {{#js}}
 require(['tool_lp/competencydialogue'], function(Compdialogue) {

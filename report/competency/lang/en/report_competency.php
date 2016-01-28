@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Competency breakdown';
+$string['competency'] = 'Competency';
 $string['coursecompetencybreakdownsummary'] = 'A report of all the students in the course, and their progress towards the course competencies';
+$string['pluginname'] = 'Competency breakdown';
+$string['rating'] = 'Rating';
 $string['usercompetencysummary'] = 'User competency summary';

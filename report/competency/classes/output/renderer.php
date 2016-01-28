@@ -50,4 +50,14 @@ class renderer extends plugin_renderer_base {
         return parent::render_from_template('report_competency/report', $data);
     }
 
+    /**
+     * Defer to template.
+     *
+     * @param user_course_navigation $nav
+     * @return string
+     */
+    public function render_user_course_navigation(user_course_navigation $nav) {
+        $data = $nav->export_for_template($this);
+        return parent::render_from_template('report_competency/user_course_navigation', $data);
+    }
 }
