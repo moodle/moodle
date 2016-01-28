@@ -58,8 +58,10 @@ function tool_lp_extend_navigation_course($navigation, $course, $coursecontext) 
  * @param context_course $coursecontext The context of the course
  */
 function tool_lp_extend_navigation_user($navigation, $user, $usercontext, $course, $coursecontext) {
-    $node = $navigation->add(get_string('learningplans', 'tool_lp'),
-        new moodle_url('/admin/tool/lp/plans.php', array('userid' => $user->id)));
+    if (\tool_lp\plan::can_read_user($user->id)) {
+        $node = $navigation->add(get_string('learningplans', 'tool_lp'),
+            new moodle_url('/admin/tool/lp/plans.php', array('userid' => $user->id)));
+    }
 
     if (\tool_lp\user_evidence::can_read_user($user->id)) {
         $node->add(get_string('userevidence', 'tool_lp'),

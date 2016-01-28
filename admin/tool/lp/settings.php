@@ -30,7 +30,7 @@ $temp = new admin_externalpage(
     'toollpcompetencies',
     get_string('competencyframeworks', 'tool_lp'),
     new moodle_url('/admin/tool/lp/competencyframeworks.php', array('pagecontextid' => context_system::instance()->id)),
-    'tool/lp:competencymanage'
+    array('tool/lp:competencymanage')
 );
 $ADMIN->add('root', $temp, 'badges');
 // Manage learning plans page.
@@ -38,7 +38,7 @@ $temp = new admin_externalpage(
     'toollplearningplans',
     get_string('learningplans', 'tool_lp'),
     new moodle_url('/admin/tool/lp/learningplans.php', array('pagecontextid' => context_system::instance()->id)),
-    array('tool/lp:templateread', 'tool/lp:templatemanage')
+    array('tool/lp:templatemanage')
 );
 $ADMIN->add('root', $temp, 'toollpcompetencies');
 
