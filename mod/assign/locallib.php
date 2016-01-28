@@ -4463,6 +4463,8 @@ class assign {
             $summary = $this->get_assign_grading_summary_renderable();
             $o .= $this->get_renderer()->render($summary);
         }
+        $grade = $this->get_user_grade($USER->id, false);
+        $submission = $this->get_user_submission($USER->id, false);
 
         if ($this->can_view_submission($USER->id)) {
             $o .= $this->view_student_summary($USER, true);
