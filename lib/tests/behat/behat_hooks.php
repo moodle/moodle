@@ -375,12 +375,21 @@ class behat_hooks extends behat_base {
      * @AfterStep
      */
     public function after_step(StepEvent $event) {
-        global $CFG;
+        global $CFG, $DB;
 
         // Save the page content if the step failed.
         if (!empty($CFG->behat_faildump_path) &&
                 $event->getResult() === StepEvent::FAILED) {
             $this->take_contentdump($event);
+        }
+
+        // Abort any open transactions to prevent subsequent tests hanging.
+        // This does the same as abort_all_db_transactions(), but doesn't call error_log() as we don't
+        // want to see a message in the behat output.
+        if ($event->hasException()) {
+            if ($DB && $DB->is_transaction_started()) {
+                $DB->force_transaction_rollback();
+            }
         }
     }
 
