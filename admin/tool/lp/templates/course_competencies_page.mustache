@@ -41,7 +41,9 @@
             <p>{{{competency.description}}}</p>
         {{/competency}}
         {{#usercompetency}}
+            {{#grade}}
             <span class="label {{^proficiency}}label-important{{/proficiency}}">{{gradename}}</span>
+            {{/grade}}
         {{/usercompetency}}
         {{#canmanagecoursecompetencies}}
         <div data-region="coursecompetency-ruleoutcome">
@@ -56,6 +58,7 @@
         </div>
         {{/canmanagecoursecompetencies}}
         <div data-region="coursecompetencyactivities">
+        <p>
         <ul class="inline">
         {{#coursemodules}}
             <li><a href="{{url}}"><img src="{{iconurl}}"> {{name}} </a></li>
@@ -64,6 +67,7 @@
             <li><span class="alert">{{#str}}noactivities, tool_lp{{/str}}</span></li>
         {{/coursemodules}}
         </ul>
+        </p>
         </div>
     </td>
     </tr>
