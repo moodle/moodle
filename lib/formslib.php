@@ -2259,10 +2259,10 @@ var skipClientValidation = false;
       }
     }
 
-    document.getElementById(\'id_' . $elementName . '\').addEventListener(\'blur\', function(ev) {
+    document.getElementById(\'' . $element->_attributes['id'] . '\').addEventListener(\'blur\', function(ev) {
         ' . $valFunc . '
     });
-    document.getElementById(\'id_' . $elementName . '\').addEventListener(\'change\', function(ev) {
+    document.getElementById(\'' . $element->_attributes['id'] . '\').addEventListener(\'change\', function(ev) {
         ' . $valFunc . '
     });
 ';
