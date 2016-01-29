@@ -700,6 +700,6 @@ class grade_export_update_buffer {
  */
 function export_verify_grades($courseid) {
     if (grade_needs_regrade_final_grades($courseid)) {
-        throw new moodle_exception('gradesneedregrading', 'grades', '', implode(', ', array_unique($regraderesult)));
+        throw new moodle_exception('gradesneedregrading', 'grades');
     }
 }
