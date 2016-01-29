@@ -46,7 +46,16 @@ if (empty($itemid)) {
 }
 
 $courseparams = array('id' => $courseid);
-$PAGE->set_url(new moodle_url('/grade/report/singleview/index.php', $courseparams));
+$pageparams = array(
+        'id'        => $courseid,
+        'group'     => $groupid,
+        'userid'    => $userid,
+        'itemid'    => $itemid,
+        'item'      => $itemtype,
+        'page'      => $page,
+        'perpage'   => $perpage,
+    );
+$PAGE->set_url(new moodle_url('/grade/report/singleview/index.php', $pageparams));
 $PAGE->set_pagelayout('incourse');
 
 if (!$course = $DB->get_record('course', $courseparams)) {
