@@ -246,14 +246,13 @@ class behat_hooks extends behat_base {
         } catch (CurlExec $e) {
             // Exception thrown by WebDriver, so only @javascript tests will be caugth; in
             // behat_util::is_server_running() we already checked that the server is running.
-            throw new Exception($driverexceptionmsg);
+            $this->stop_execution($driverexceptionmsg);
         } catch (DriverException $e) {
-            throw new Exception($driverexceptionmsg);
+            $this->stop_execution($driverexceptionmsg);
         } catch (UnknownError $e) {
             // Generic 'I have no idea' Selenium error. Custom exception to provide more feedback about possible solutions.
-            $this->throw_unknown_exception($e);
+            $this->stop_execution($e->getMessage());
         }
-
 
         // We need the Mink session to do it and we do it only before the first scenario.
         if (self::is_first_scenario()) {
@@ -287,7 +286,7 @@ class behat_hooks extends behat_base {
             // Let's be conservative as we never know when new upstream issues will affect us.
             $session->visit($this->locate_path('/'));
         } catch (UnknownError $e) {
-            $this->throw_unknown_exception($e);
+            $this->stop_execution($e->getMessage());
         }
 
 
@@ -607,15 +606,15 @@ class behat_hooks extends behat_base {
     }
 
     /**
-     * Throws an exception after appending an extra info text.
+     * Stops execution because of some exception.
      *
-     * @throws Exception
-     * @param UnknownError $exception
+     * @param string $exception
      * @return void
      */
-    protected function throw_unknown_exception(UnknownError $exception) {
+    protected function stop_execution($exception) {
         $text = get_string('unknownexceptioninfo', 'tool_behat');
-        throw new Exception($text . PHP_EOL . $exception->getMessage());
+        echo $text . PHP_EOL . $exception . PHP_EOL;
+        exit(1);
     }
 
 }
