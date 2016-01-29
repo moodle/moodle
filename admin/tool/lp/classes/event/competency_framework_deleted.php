@@ -86,7 +86,7 @@ class competency_framework_deleted extends base {
     protected function init() {
         $this->data['crud'] = 'd';
         $this->data['edulevel'] = self::LEVEL_OTHER;
-        $this->data['objecttable'] = competency_framework::TABLE;;
+        $this->data['objecttable'] = competency_framework::TABLE;
     }
 
     /**

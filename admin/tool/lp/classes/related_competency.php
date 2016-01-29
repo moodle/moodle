@@ -196,6 +196,10 @@ class related_competency extends persistent {
      */
     public static function delete_multiple_relations($competencyids) {
         global $DB;
+        if (empty($competencyids)) {
+            return true;
+        }
+
         list($insql, $params) = $DB->get_in_or_equal($competencyids);
         return $DB->delete_records_select(self::TABLE,
                                             "competencyid $insql OR relatedcompetencyid $insql",

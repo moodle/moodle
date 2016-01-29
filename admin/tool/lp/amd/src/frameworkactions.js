@@ -93,6 +93,25 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
                 }
             }
         }]);
+        requests[0].done(function (success) {
+            if (success === false) {
+                var req = ajax.call([{
+                    methodname: 'tool_lp_read_competency_framework',
+                    args: { id: frameworkid }
+                }]);
+                req[0].done(function (framework) {
+                    str.get_strings([
+                        { key: 'frameworkcannotbedeleted', component: 'tool_lp', param: framework.shortname },
+                        { key: 'cancel', component: 'moodle' }
+                    ]).done(function (strings) {
+                        notification.alert(
+                            null,
+                            strings[0]
+                        );
+                    }).fail(notification.exception);
+                });
+            }
+        }).fail(notification.exception);
         requests[1].done(reloadList).fail(notification.exception);
     };
 

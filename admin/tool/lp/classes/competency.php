@@ -754,6 +754,9 @@ class competency extends persistent {
      * @return bool True if we can delete the competencies.
      */
     public static function can_all_be_deleted($ids) {
+        if (empty($ids)) {
+            return true;
+        }
         // Check if competency is used in template.
         if (template_competency::has_records_for_competencies($ids)) {
             return false;
@@ -805,6 +808,33 @@ class competency extends persistent {
         $path = $DB->sql_like_escape($competency->get_path() . $competency->get_id() . '/') . '%';
         $like = $DB->sql_like('path', ':likepath');
         return $DB->get_fieldset_select(self::TABLE, 'id', $like, array('likepath' => $path));
+    }
+
+    /**
+     * Get competencyids by frameworkid.
+     *
+     * @param int $frameworkid The competency framework ID.
+     * @return array Array of competency ids.
+     */
+    public static function get_ids_by_frameworkid($frameworkid) {
+        global $DB;
+
+        return $DB->get_fieldset_select(self::TABLE, 'id', 'competencyframeworkid = :frmid', array('frmid' => $frameworkid));
+    }
+
+    /**
+     * Delete competencies by framework ID.
+     *
+     * This method is reserved to core usage.
+     * This method does not trigger the after_delete event.
+     * This method does not delete related objects such as related competencies and evidences.
+     *
+     * @param int $id the framework ID
+     * @return bool Return true if delete was successful.
+     */
+    public static function delete_by_frameworkid($id) {
+        global $DB;
+        return $DB->delete_records(self::TABLE, array('competencyframeworkid' => $id));
     }
 
 }

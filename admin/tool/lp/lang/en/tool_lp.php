@@ -119,6 +119,7 @@ $string['errornocompetency'] = '{$a} competency can not be found';
 $string['errorplanstatus'] = 'Learning plans \'{$a}\' status unknown';
 $string['errorscalealreadyused'] = 'The scale cannot be changed, it is already being used.';
 $string['errorscaleconfiguration'] = 'You must configure the scale by selecting default and proficient values.';
+$string['frameworkcannotbedeleted'] = 'The competency framework \'{$a}\' can not be deleted';
 $string['hidden'] = 'Hidden';
 $string['hiddenhint'] = '(hidden)';
 $string['idnumber'] = 'Id number';
