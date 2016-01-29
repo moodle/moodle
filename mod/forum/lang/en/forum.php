@@ -461,6 +461,7 @@ $string['shortpost'] = 'Short post';
 $string['showsubscribers'] = 'Show/edit current subscribers';
 $string['singleforum'] = 'A single simple discussion';
 $string['smallmessage'] = '{$a->user} posted in {$a->forumname}';
+$string['smallmessagedigest'] = 'Forum digest containing {$a} messages';
 $string['startedby'] = 'Started by';
 $string['subject'] = 'Subject';
 $string['subscribe'] = 'Subscribe to this forum';

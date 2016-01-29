@@ -150,9 +150,10 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
      * specified number of times.
      *
      * @param integer $expected The number of times that the post should have been sent
-     * @return array An array of the messages caught by the message sink
+     * @param integer $individualcount The number of individual messages sent
+     * @param integer $digestcount The number of digest messages sent
      */
-    protected function helper_run_cron_check_count($expected, $messagecount, $mailcount) {
+    protected function helper_run_cron_check_count($expected, $individualcount, $digestcount) {
         if ($expected === 0) {
             $this->expectOutputRegex('/(Email digests successfully sent to .* users.){0}/');
         } else {
@@ -162,15 +163,18 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
 
         // Now check the results in the message sink.
         $messages = $this->helper->messagesink->get_messages();
-        // There should be the expected number of messages.
-        $this->assertEquals($messagecount, count($messages));
 
-        // Now check the results in the mail sink.
-        $messages = $this->helper->mailsink->get_messages();
-        // There should be the expected number of messages.
-        $this->assertEquals($mailcount, count($messages));
+        $counts = (object) array('digest' => 0, 'individual' => 0);
+        foreach ($messages as $message) {
+            if (strpos($message->subject, 'forum digest') !== false) {
+                $counts->digest++;
+            } else {
+                $counts->individual++;
+            }
+        }
 
-        return $messages;
+        $this->assertEquals($digestcount, $counts->digest);
+        $this->assertEquals($individualcount, $counts->individual);
     }
 
     public function test_set_maildigest() {
