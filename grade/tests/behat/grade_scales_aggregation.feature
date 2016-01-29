@@ -36,7 +36,6 @@ Feature: Control the aggregation of the scales
       | grade_includescalesinaggregation | 0 |
     And I log out
 
-  @javascript
   Scenario Outline: Scales can be excluded from aggregation
     Given I log in as "teacher1"
     And I follow "Course 1"

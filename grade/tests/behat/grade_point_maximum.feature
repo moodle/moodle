@@ -76,7 +76,6 @@ Feature: We can change the grading type and maximum grade point values
     And the "Maximum grade" "field" should be disabled
     And I press "Save and return to course"
 
-  @javascript
   Scenario: Create an activity with a maximum grade point value higher than the system maximum
     When I follow "Test Assignment 1"
     And I follow "Edit settings"
@@ -87,7 +86,6 @@ Feature: We can change the grading type and maximum grade point values
     Then I should see "Invalid grade value. This must be an integer between 1 and 900"
     And I press "Cancel"
 
-  @javascript
   Scenario: Create an activity with a valid maximum grade point and then change the system maximum to be lower
     When I follow "Test Assignment 1"
     And I follow "Edit settings"
