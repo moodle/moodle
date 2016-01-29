@@ -30,8 +30,6 @@ require_once $CFG->dirroot.'/grade/edit/tree/lib.php';
 $courseid        = required_param('id', PARAM_INT);
 $action          = optional_param('action', 0, PARAM_ALPHA);
 $eid             = optional_param('eid', 0, PARAM_ALPHANUM);
-$category        = optional_param('category', null, PARAM_INT);
-$aggregationtype = optional_param('aggregationtype', null, PARAM_INT);
 
 $url = new moodle_url('/grade/edit/tree/index.php', array('id' => $courseid));
 $PAGE->set_url($url);
@@ -52,18 +50,6 @@ $PAGE->requires->js('/grade/edit/tree/functions.js');
 /// return tracking object
 $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'tree', 'courseid'=>$courseid));
 $returnurl = $gpr->get_return_url(null);
-
-// Change category aggregation if requested
-if (!is_null($category) && !is_null($aggregationtype) && confirm_sesskey()) {
-    if (!$grade_category = grade_category::fetch(array('id'=>$category, 'courseid'=>$courseid))) {
-        print_error('invalidcategoryid');
-    }
-
-    $data = new stdClass();
-    $data->aggregation = $aggregationtype;
-    grade_category::set_properties($grade_category, $data);
-    $grade_category->update();
-}
 
 //first make sure we have proper final grades - we need it for locking changes
 $normalisationmessage = null;
