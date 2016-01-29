@@ -79,16 +79,7 @@ if (!isset($USER->grade_last_report)) {
 $USER->grade_last_report[$course->id] = 'singleview';
 
 // First make sure we have proper final grades.
-if (grade_needs_regrade_final_grades($courseid)) {
-    $PAGE->set_heading($course->fullname);
-    $progress = new \core\progress\display(true);
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('recalculatinggrades', 'grades'));
-    grade_regrade_final_grades($courseid, null, null, $progress);
-    echo $OUTPUT->continue_button($PAGE->url);
-    echo $OUTPUT->footer();
-    die();
-}
+grade_regrade_final_grades_if_required($course);
 
 $report = new gradereport_singleview($courseid, $gpr, $context, $itemtype, $itemid);
 

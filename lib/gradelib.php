@@ -336,6 +336,56 @@ function grade_needs_regrade_final_grades($courseid) {
     return $course_item->needsupdate;
 }
 
+/**
+ * Return true if the regrade process is likely to be time consuming and
+ * will therefore require the progress bar.
+ *
+ * @param int $courseid The course ID
+ * @return bool Whether the regrade process is likely to be time consuming
+ */
+function grade_needs_regrade_progress_bar($courseid) {
+    global $DB;
+    $grade_items = grade_item::fetch_all(array('courseid' => $courseid));
+
+    list($sql, $params) = $DB->get_in_or_equal(array_keys($grade_items), SQL_PARAMS_NAMED, 'gi');
+    $gradecount = $DB->count_records_select('grade_grades', 'id ' . $sql, $params);
+
+    // This figure may seem arbitrary, but after analysis it seems that 100 grade_grades can be calculated in ~= 0.5 seconds.
+    // Any longer than this and we want to show the progress bar.
+    return $gradecount > 100;
+}
+
+/**
+ * Check whether regarding of final grades is required and, if so, perform the regrade.
+ *
+ * If the regrade is expected to be time consuming (see grade_needs_regrade_progress_bar), then this
+ * function will output the progress bar, and redirect to the current PAGE->url after regrading
+ * completes. Otherwise the regrading will happen immediately and the page will be loaded as per
+ * normal.
+ *
+ * @param stdClass $course The course to regrade
+ * @return bool Whether the regrade process has taken place
+ */
+function grade_regrade_final_grades_if_required($course) {
+    global $PAGE, $OUTPUT;
+
+    if (!grade_needs_regrade_final_grades($course->id)) {
+        return false;
+    }
+
+    if (grade_needs_regrade_progress_bar($course->id)) {
+        $PAGE->set_heading($course->fullname);
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('recalculatinggrades', 'grades'));
+        $progress = new \core\progress\display(true);
+        grade_regrade_final_grades($course->id, null, null, $progress);
+        echo $OUTPUT->continue_button($PAGE->url);
+        echo $OUTPUT->footer();
+        die();
+    } else {
+        return grade_regrade_final_grades($course->id);
+    }
+}
 
 /**
  * Returns grading information for given activity, optionally with user grades

@@ -238,16 +238,8 @@ if ($data = data_submitted() and confirm_sesskey()) {
     }
 }
 
-// Do this check just before printing the grade header (and only do it once).
-if (grade_needs_regrade_final_grades($courseid)) {
-    $PAGE->set_heading($course->fullname);
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('recalculatinggrades', 'grades'));
-    $progress = new \core\progress\display(true);
-    grade_regrade_final_grades($courseid, null, null, $progress);
-    echo $OUTPUT->continue_button($PAGE->url);
-    echo $OUTPUT->footer();
-    die();
+if (grade_regrade_final_grades_if_required($course)) {
+    $recreatetree = true;
 }
 
 print_grade_page_head($courseid, 'settings', 'setup', get_string('gradebooksetup', 'grades'));

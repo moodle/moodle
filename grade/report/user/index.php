@@ -80,16 +80,7 @@ if (!isset($USER->grade_last_report)) {
 $USER->grade_last_report[$course->id] = 'user';
 
 // First make sure we have proper final grades.
-if (grade_needs_regrade_final_grades($courseid)) {
-    $PAGE->set_heading($course->fullname);
-    $progress = new \core\progress\display(true);
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('recalculatinggrades', 'grades'));
-    grade_regrade_final_grades($courseid, null, null, $progress);
-    echo $OUTPUT->continue_button($PAGE->url);
-    echo $OUTPUT->footer();
-    die();
-}
+grade_regrade_final_grades_if_required($course);
 
 if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all student reports
     $groupmode    = groups_get_course_groupmode($course);   // Groups are being used

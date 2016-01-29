@@ -123,16 +123,8 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
 $reportname = get_string('pluginname', 'gradereport_grader');
 
 // Do this check just before printing the grade header (and only do it once).
-if (grade_needs_regrade_final_grades($courseid)) {
-    $PAGE->set_heading($course->fullname);
-    $progress = new \core\progress\display(true);
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('recalculatinggrades', 'grades'));
-    grade_regrade_final_grades($courseid, null, null, $progress);
-    echo $OUTPUT->continue_button($PAGE->url);
-    echo $OUTPUT->footer();
-    die();
-}
+grade_regrade_final_grades_if_required($course);
+
 // Print header
 print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons);
 
