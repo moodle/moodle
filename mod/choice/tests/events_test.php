@@ -232,6 +232,7 @@ class mod_choice_events_testcase extends advanced_testcase {
         $this->assertEquals($user->id, $event->relateduserid);
         $this->assertEquals(context_module::instance($this->choice->cmid), $event->get_context());
         $this->assertEquals($this->choice->id, $event->other['choiceid']);
+        $this->assertEquals($answer->optionid, $event->other['optionid']);
         $this->assertEventContextNotUsed($event);
         $sink->close();
     }
@@ -289,7 +290,7 @@ class mod_choice_events_testcase extends advanced_testcase {
         $eventdata['courseid'] = $this->course->id;
         $eventdata['other']['content'] = 'choicereportcontentviewed';
         $eventdata['other']['format'] = 'csv';
-        $eventdata['other']['choice'] = $this->choice->id;
+        $eventdata['other']['choiceid'] = $this->choice->id;
 
         // This is fired in a page view so we can't run this through a function.
         $event = \mod_choice\event\report_downloaded::create($eventdata);
@@ -305,7 +306,7 @@ class mod_choice_events_testcase extends advanced_testcase {
         $this->assertEquals($USER->id, $event[0]->userid);
         $this->assertEquals(context_module::instance($this->choice->cmid), $event[0]->get_context());
         $this->assertEquals('csv', $event[0]->other['format']);
-        $this->assertEquals($this->choice->id, $event[0]->other['choice']);
+        $this->assertEquals($this->choice->id, $event[0]->other['choiceid']);
         $this->assertEventContextNotUsed($event[0]);
         $sink->close();
     }

@@ -31,7 +31,9 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about the event.
  *
- *      - string content: (optional) The content we are viewing.
+ *      - string content: The content we are viewing.
+ *      - string format: The report format
+ *      - int choiced: The id of the choice
  * }
  *
  * @package    mod_choice
@@ -86,12 +88,16 @@ class report_downloaded extends \core\event\base {
         parent::validate_data();
 
         // Report format downloaded.
+        if (!isset($this->other['content'])) {
+            throw new \coding_exception('The \'content\' value must be set in other.');
+        }
+        // Report format downloaded.
         if (!isset($this->other['format'])) {
             throw new \coding_exception('The \'format\' value must be set in other.');
         }
         // ID of the choice activity.
-        if (!isset($this->other['choice'])) {
-            throw new \coding_exception('The \'choice\' value must be set in other.');
+        if (!isset($this->other['choiceid'])) {
+            throw new \coding_exception('The \'choiceid\' value must be set in other.');
         }
     }
 
@@ -100,7 +106,9 @@ class report_downloaded extends \core\event\base {
     }
 
     public static function get_other_mapping() {
-        // No need to map the 'content' value.
-        return false;
+        $othermapped = array();
+        $othermapped['choiceid'] = array('db' => 'choice', 'restore' => 'choice');
+
+        return $othermapped;
     }
 }

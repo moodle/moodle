@@ -78,7 +78,7 @@
         $eventdata['courseid'] = $course->id;
         $eventdata['other']['content'] = 'choicereportcontentviewed';
         $eventdata['other']['format'] = $download;
-        $eventdata['other']['choice'] = $choice->id;
+        $eventdata['other']['choiceid'] = $choice->id;
         $event = \mod_choice\event\report_downloaded::create($eventdata);
         $event->trigger();
 
