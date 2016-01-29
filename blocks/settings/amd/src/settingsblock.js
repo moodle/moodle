@@ -23,8 +23,13 @@
  */
 define(['jquery', 'core/tree'], function($, Tree) {
     return {
-        init: function() {
-            new Tree(".block_settings .block_tree");
+        init: function(siteAdminNodeId) {
+            var adminTree = new Tree(".block_settings .block_tree");
+            if (siteAdminNodeId) {
+                var siteAdminNode = adminTree.treeRoot.find('#' + siteAdminNodeId)
+                var siteAdminLink = siteAdminNode.children('a').first();
+                siteAdminLink.replaceWith('<span tabindex="0">' + siteAdminLink.html() + '</span>');
+            }
         }
     };
 });

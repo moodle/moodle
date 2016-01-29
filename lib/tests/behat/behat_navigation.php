@@ -273,7 +273,7 @@ class behat_navigation extends behat_base {
 
                 // Wait for node to load, if not loaded before.
                 $linode = $nodetoexpand->getParent();
-                if ($linode->hasAttribute('data-loaded') && $linode->getAttribute('data-loaded') == "false") {
+                if ($linode && $linode->hasAttribute('data-loaded') && $linode->getAttribute('data-loaded') == "false") {
                     $jscondition = '(document.evaluate("' . $linode->getXpath() . '", document, null, '.
                         'XPathResult.ANY_TYPE, null).iterateNext().getAttribute(\'data-loaded\') == "true")';
 
