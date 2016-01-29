@@ -4916,5 +4916,23 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016020201.00);
     }
 
+    if ($oldversion < 2016021500.00) {
+        $root = $CFG->tempdir . '/download';
+        if (is_dir($root)) {
+            // Fetch each repository type - include all repos, not just enabled.
+            $repositories = $DB->get_records('repository', array(), '', 'type');
+
+            foreach ($repositories as $id => $repository) {
+                $directory = $root . '/repository_' . $repository->type;
+                if (is_dir($directory)) {
+                    fulldelete($directory);
+                }
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2016021500.00);
+    }
+
     return true;
 }
