@@ -48,9 +48,17 @@ var CSS = {
                 panel.set('aria-live', 'polite');
 
                 wrapper.addClass(CSS.LINK);
-                (COUNT == 1) ? wrapper.addClass(CSS.OPEN) : wrapper.addClass(CSS.CLOSED);
+                if (COUNT == 1) {
+                    wrapper.addClass(CSS.OPEN);
+                } else {
+                    wrapper.addClass(CSS.CLOSED);
+                }
                 panel.addClass(CSS.PANEL);
-                (COUNT == 1) ? panel.show() : panel.hide();
+                if (COUNT == 1) {
+                    panel.show();
+                } else {
+                    panel.hide();
+                }
                 link = null;
             } else {
                 link = this;
