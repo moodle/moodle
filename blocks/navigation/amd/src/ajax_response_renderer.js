@@ -86,9 +86,7 @@ define(['jquery'], function($) {
             }
 
             if (node.link) {
-                var link = $('<a></a>');
-                link.attr('title', node.title);
-                link.attr('href', node.link);
+                var link = $('<a title="' + node.title + '" href="' + node.link + '"></a>');
 
                 if (icon) {
                     link.append(icon);
