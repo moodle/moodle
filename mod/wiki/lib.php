@@ -141,10 +141,15 @@ function wiki_delete_instance($id) {
     return $result;
 }
 
+/**
+ * Implements callback to reset course
+ *
+ * @param stdClass $data
+ * @return boolean|array
+ */
 function wiki_reset_userdata($data) {
     global $CFG,$DB;
     require_once($CFG->dirroot . '/mod/wiki/pagelib.php');
-    require_once($CFG->dirroot . '/tag/lib.php');
     require_once($CFG->dirroot . "/mod/wiki/locallib.php");
 
     $componentstr = get_string('modulenameplural', 'wiki');
@@ -154,10 +159,12 @@ function wiki_reset_userdata($data) {
     if (!$wikis = $DB->get_records('wiki', array('course' => $data->courseid))) {
         return false;
     }
-    $errors = false;
-    foreach ($wikis as $wiki) {
+    if (empty($data->reset_wiki_comments) && empty($data->reset_wiki_tags) && empty($data->reset_wiki_pages)) {
+        return $status;
+    }
 
-        if (!$cm = get_coursemodule_from_instance('wiki', $wiki->id)) {
+    foreach ($wikis as $wiki) {
+        if (!$cm = get_coursemodule_from_instance('wiki', $wiki->id, $data->courseid)) {
             continue;
         }
         $context = context_module::instance($cm->id);
@@ -175,14 +182,7 @@ function wiki_reset_userdata($data) {
                     if (empty($data->reset_wiki_pages)) {
                         // Go through each page and delete the tags.
                         foreach ($pages as $page) {
-
-                            $tags = tag_get_tags_array('wiki_pages', $page->id);
-                            foreach ($tags as $tagid => $tagname) {
-                                // Delete the related tag_instances related to the wiki page.
-                                $errors = tag_delete_instance('wiki_pages', $page->id, $tagid);
-                                $status[] = array('component' => $componentstr, 'item' => get_string('tagsdeleted', 'wiki'),
-                                        'error' => $errors);
-                            }
+                            core_tag_tag::remove_all_item_tags('mod_wiki', 'wiki_pages', $page->id);
                         }
                     } else {
                         // Otherwise we are removing pages and tags.
@@ -196,17 +196,24 @@ function wiki_reset_userdata($data) {
                     // Delete any attached files.
                     $fs = get_file_storage();
                     $fs->delete_area_files($context->id, 'mod_wiki', 'attachments');
-
-                    $status[] = array('component' => $componentstr, 'item' => get_string('deleteallpages', 'wiki'),
-                            'error' => $errors);
                 }
+            }
+
+            if (!empty($data->reset_wiki_pages)) {
+                $status[] = array('component' => $componentstr, 'item' => get_string('deleteallpages', 'wiki'),
+                    'error' => false);
+            }
+            if (!empty($data->reset_wiki_tags)) {
+                $status[] = array('component' => $componentstr, 'item' => get_string('tagsdeleted', 'wiki'), 'error' => false);
             }
         }
 
         // Remove all comments.
         if (!empty($data->reset_wiki_comments) || !empty($data->reset_wiki_pages)) {
             $DB->delete_records_select('comments', "contextid = ? AND commentarea='wiki_page'", array($context->id));
-            $status[] = array('component' => $componentstr, 'item' => get_string('deleteallcomments'), 'error' => false);
+            if (!empty($data->reset_wiki_comments)) {
+                $status[] = array('component' => $componentstr, 'item' => get_string('deleteallcomments'), 'error' => false);
+            }
         }
     }
     return $status;

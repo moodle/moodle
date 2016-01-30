@@ -56,7 +56,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
                 $this->questions($attemptobj, true, $slots, $page, $showall, $displayoptions),
                 $attemptobj);
 
-        $output .= $this->review_next_navigation($attemptobj, $page, $lastpage);
+        $output .= $this->review_next_navigation($attemptobj, $page, $lastpage, $showall);
         $output .= $this->footer();
         return $output;
     }
@@ -92,10 +92,11 @@ class mod_quiz_renderer extends plugin_renderer_base {
     /**
      * Renders the review question pop-up.
      *
+     * @param quiz_attempt $attemptobj an instance of quiz_attempt.
      * @param string $message Why the review is not allowed.
      * @return string html to output.
      */
-    public function review_question_not_allowed($message) {
+    public function review_question_not_allowed(quiz_attempt $attemptobj, $message) {
         $output = '';
         $output .= $this->header();
         $output .= $this->heading(format_string($attemptobj->get_quiz_name(), true,
@@ -237,25 +238,40 @@ class mod_quiz_renderer extends plugin_renderer_base {
                     array($url), false, quiz_get_js_module());
             return html_writer::empty_tag('input', array('type' => 'button',
                     'value' => get_string('finishreview', 'quiz'),
-                    'id' => 'secureclosebutton'));
+                    'id' => 'secureclosebutton',
+                    'class' => 'mod_quiz-next-nav'));
 
         } else {
-            return html_writer::link($url, get_string('finishreview', 'quiz'));
+            return html_writer::link($url, get_string('finishreview', 'quiz'),
+                    array('class' => 'mod_quiz-next-nav'));
         }
     }
 
     /**
-     * Creates a next page arrow or the finishing link
+     * Creates the navigation links/buttons at the bottom of the reivew attempt page.
+     *
+     * Note, the name of this function is no longer accurate, but when the design
+     * changed, it was decided to keep the old name for backwards compatibility.
      *
      * @param quiz_attempt $attemptobj instance of quiz_attempt
      * @param int $page the current page
      * @param bool $lastpage if true current page is the last page
+     * @param bool|null $showall if true, the URL will be to review the entire attempt on one page,
+     *      and $page will be ignored. If null, a sensible default will be chosen.
+     *
+     * @return string HTML fragment.
      */
-    public function review_next_navigation(quiz_attempt $attemptobj, $page, $lastpage) {
+    public function review_next_navigation(quiz_attempt $attemptobj, $page, $lastpage, $showall = null) {
+        $nav = '';
+        if ($page > 0) {
+            $nav .= link_arrow_left(get_string('navigateprevious', 'quiz'),
+                    $attemptobj->review_url(null, $page - 1, $showall), false, 'mod_quiz-prev-nav');
+        }
         if ($lastpage) {
-            $nav = $this->finish_review_link($attemptobj);
+            $nav .= $this->finish_review_link($attemptobj);
         } else {
-            $nav = link_arrow_right(get_string('next'), $attemptobj->review_url(null, $page + 1));
+            $nav .= link_arrow_right(get_string('navigatenext', 'quiz'),
+                    $attemptobj->review_url(null, $page + 1, $showall), false, 'mod_quiz-next-nav');
         }
         return html_writer::tag('div', $nav, array('class' => 'submitbtns'));
     }
@@ -410,9 +426,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= $this->heading(format_string($quizobj->get_quiz_name(), true,
                                   array("context" => $quizobj->get_context())));
         $output .= $this->quiz_intro($quizobj->get_quiz(), $quizobj->get_cm());
-        ob_start();
-        $mform->display();
-        $output .= ob_get_clean();
+        $output .= $mform->render();
         $output .= $this->footer();
         return $output;
     }
@@ -476,10 +490,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
                     $attemptobj->attempt_url($slot, $page), $this);
         }
 
-        $output .= html_writer::start_tag('div', array('class' => 'submitbtns'));
-        $output .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'next',
-                'value' => get_string('next')));
-        $output .= html_writer::end_tag('div');
+        $output .= $this->attempt_navigation_buttons($page, $attemptobj->is_last_page($page));
 
         // Some hidden fields to trach what is going on.
         $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'attempt',
@@ -506,6 +517,33 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= html_writer::end_tag('form');
 
         $output .= $this->connection_warning();
+
+        return $output;
+    }
+
+    /**
+     * Display the prev/next buttons that go at the bottom of each page of the attempt.
+     *
+     * @param int $page the page number. Starts at 0 for the first page.
+     * @param bool $lastpage is this the last page in the quiz?
+     * @return string HTML fragment.
+     */
+    protected function attempt_navigation_buttons($page, $lastpage) {
+        $output = '';
+
+        $output .= html_writer::start_tag('div', array('class' => 'submitbtns'));
+        if ($page > 0) {
+            $output .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'previous',
+                    'value' => get_string('navigateprevious', 'quiz'), 'class' => 'mod_quiz-prev-nav'));
+        }
+        if ($lastpage) {
+            $nextlabel = get_string('endtest', 'quiz');
+        } else {
+            $nextlabel = get_string('navigatenext', 'quiz');
+        }
+        $output .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'next',
+                'value' => $nextlabel, 'class' => 'mod_quiz-next-nav'));
+        $output .= html_writer::end_tag('div');
 
         return $output;
     }
@@ -762,9 +800,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         if ($viewobj->buttontext) {
             $output .= $this->start_attempt_button($viewobj->buttontext,
-                    $viewobj->startattempturl, $viewobj->startattemptwarning,
+                    $viewobj->startattempturl, $viewobj->preflightcheckform,
                     $viewobj->popuprequired, $viewobj->popupoptions);
-
         }
 
         if ($viewobj->showbacktocourse) {
@@ -779,43 +816,44 @@ class mod_quiz_renderer extends plugin_renderer_base {
     /**
      * Generates the view attempt button
      *
-     * @param int $course The course ID
-     * @param array $quiz Array containging quiz date
-     * @param int $cm The Course Module ID
-     * @param int $context The page Context ID
-     * @param mod_quiz_view_object $viewobj
-     * @param string $buttontext
+     * @param string $buttontext the label to display on the button.
+     * @param moodle_url $url The URL to POST to in order to start the attempt.
+     * @param mod_quiz_preflight_check_form $preflightcheckform deprecated.
+     * @param bool $popuprequired whether the attempt needs to be opened in a pop-up.
+     * @param array $popupoptions the options to use if we are opening a popup.
+     * @return string HTML fragment.
      */
     public function start_attempt_button($buttontext, moodle_url $url,
-            $startattemptwarning, $popuprequired, $popupoptions) {
+            mod_quiz_preflight_check_form $preflightcheckform = null,
+            $popuprequired = false, $popupoptions = null) {
+
+        if (is_string($preflightcheckform)) {
+            // Calling code was not updated since the API change.
+            debugging('The third argument to start_attempt_button should now be the ' .
+                    'mod_quiz_preflight_check_form from ' .
+                    'quiz_access_manager::get_preflight_check_form, not a warning message string.');
+        }
 
         $button = new single_button($url, $buttontext);
         $button->class .= ' quizstartbuttondiv';
 
-        $warning = '';
-        if ($popuprequired) {
-            $this->page->requires->js_module(quiz_get_js_module());
-            $this->page->requires->js('/mod/quiz/module.js');
-            $popupaction = new popup_action('click', $url, 'quizpopup', $popupoptions);
-
-            $button->class .= ' quizsecuremoderequired';
-            $button->add_action(new component_action('click',
-                    'M.mod_quiz.secure_window.start_attempt_action', array(
-                        'url' => $url->out(false),
-                        'windowname' => 'quizpopup',
-                        'options' => $popupaction->get_js_options(),
-                        'fullscreen' => true,
-                        'startattemptwarning' => $startattemptwarning,
-                    )));
-
-            $warning = html_writer::tag('noscript', $this->heading(get_string('noscript', 'quiz')));
-
-        } else if ($startattemptwarning) {
-            $button->add_action(new confirm_action($startattemptwarning, null,
-                    get_string('startattempt', 'quiz')));
+        $popupjsoptions = null;
+        if ($popuprequired && $popupoptions) {
+            $action = new popup_action('click', $url, 'popup', $popupoptions);
+            $popupjsoptions = $action->get_js_options();
         }
 
-        return $this->render($button) . $warning;
+        if ($preflightcheckform) {
+            $checkform = $preflightcheckform->render();
+        } else {
+            $checkform = null;
+        }
+
+        $this->page->requires->js_call_amd('mod_quiz/preflightcheck', 'init',
+                array('.quizstartbuttondiv input[type=submit]', get_string('startattempt', 'quiz'),
+                       '#mod_quiz_preflight_form', $popupjsoptions));
+
+        return $this->render($button) . $checkform;
     }
 
     /**
@@ -1280,10 +1318,11 @@ class mod_quiz_view_object {
     /** @var string $buttontext caption for the start attempt button. If this is null, show no
      *      button, or if it is '' show a back to the course button. */
     public $buttontext;
-    /** @var string $startattemptwarning alert to show the user before starting an attempt. */
-    public $startattemptwarning;
     /** @var moodle_url $startattempturl URL to start an attempt. */
     public $startattempturl;
+    /** @var moodleform|null $preflightcheckform confirmation form that must be
+     *       submitted before an attempt is started, if required. */
+    public $preflightcheckform;
     /** @var moodle_url $startattempturl URL for any Back to the course button. */
     public $backtocourseurl;
     /** @var bool $showbacktocourse should we show a back to the course button? */
@@ -1294,4 +1333,16 @@ class mod_quiz_view_object {
     public $popupoptions;
     /** @var bool $quizhasquestions whether the quiz has any questions. */
     public $quizhasquestions;
+
+    public function __get($field) {
+        switch ($field) {
+            case 'startattemptwarning':
+                debugging('startattemptwarning has been deprecated. It is now always blank.');
+                return '';
+
+            default:
+                debugging('Unknown property ' . $field);
+                return null;
+        }
+    }
 }

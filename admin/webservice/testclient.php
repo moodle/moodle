@@ -95,10 +95,6 @@ if (!$function or !$protocol) {
     $descparams = new stdClass();
     $descparams->atag = $atag;
     $descparams->mode = get_string('debugnormal', 'admin');
-    $amfclienturl = new moodle_url('/webservice/amf/testclient/index.php');
-    $amfclientatag =html_writer::tag('a', get_string('amftestclient', 'webservice'),
-            array('href' => $amfclienturl));
-    $descparams->amfatag = $amfclientatag;
     echo get_string('testclientdescription', 'webservice', $descparams);
     echo $OUTPUT->box_end();
 

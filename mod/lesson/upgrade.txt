@@ -1,5 +1,9 @@
 This files describes API changes in the lesson code.
 
+=== 3.1 ===
+* Removed the unused file reformat.php
+* removedoublecr() and importmodifiedaikenstyle() have now been removed.
+
 === 3.0 ===
 * Removed broken high score code.  Use the activity results block instead.
 

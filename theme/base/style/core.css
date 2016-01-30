@@ -734,28 +734,17 @@ table.mod_index {width:100%;}
 /**
  * Tags
  */
-#page-tag-coursetags_edit .coursetag_edit_centered {position: relative;width: 600px;margin: 20px auto;}
-#page-tag-coursetags_edit .coursetag_edit_row {clear:both;}
-#page-tag-coursetags_edit .coursetag_edit_row .coursetag_edit_left {float:left;width:50%;text-align:right;}
-#page-tag-coursetags_edit .coursetag_edit_row .coursetag_edit_right {margin-left:50%;}
-#page-tag-coursetags_edit .coursetag_edit_input3 {display: none;}
-#page-tag-coursetags_more .coursetag_more_large {font-size: 120%;}
-#page-tag-coursetags_more .coursetag_more_small {font-size: 80%;}
-#page-tag-coursetags_more .coursetag_more_link {font-size: 80%;}
-#tag-description,
-#tag-blogs {width:100%;}
 #tag-management-box {margin-bottom:10px;line-height:20px;}
-#tag-user-table {padding:3px;clear: both;width:100%;}
-#tag-user-table:after {content:".";display:block;clear:both;visibility:hidden;height:0;overflow:hidden;}
 img.user-image {height:100px;width:100px;}
-#small-tag-cloud-box {width:300px;margin:0 auto;}
-#big-tag-cloud-box {width:600px;margin:0 auto;float:none;}
-ul#tag-cloud-list {list-style:none;padding:5px;margin:0;}
-ul#tag-cloud-list li {margin:0;display:inline;list-style-type:none;}
 #tag-search-box {text-align:center;margin:10px auto;}
-#tag-search-results-container {padding:0;width:100%;}
-#tag-search-results {padding:0;margin: 15px 20% 0 20%;float:left;width:60%;display:block;}
-#tag-search-results li {width:30%;float:left;padding-left:1%;text-align:left;line-height:20px;padding-right:1%;list-style:none;}
+.tagarea {clear:both;overflow:hidden;}
+.tagarea .controls {text-align: center;}
+.tagarea .controls .gotopage.nextpage {float: right;}
+.tagarea .controls .gotopage.prevpage {float: left;}
+.tagarea .controls .exclusivemode {display: inline-block;}
+.dir-rtl .tagarea .controls .gotopage.nextpage {float: left;}
+.dir-rtl .tagarea .controls .gotopage.prevpage {float: right;}
+.tagarea .controls.controls-bottom {margin-top: 5px;}
 span.flagged-tag,
 tr.flagged-tag,
 span.flagged-tag a,
@@ -770,31 +759,35 @@ tr.flagged-tag a {color:#FF0000;}
 .tag-management-table tr:hover td .tagnameedit img,
 .tag-management-table tr td .tagnameedit:focus img {opacity: 1;}
 .tag-management-table tr:hover td.tageditingon .tagnameedit img {opacity: 0.2;}
-h2.tag-heading,
-div#tag-description,
-div#tag-blogs,
-body.tag .managelink {padding: 5px;}
-.tag_cloud .s20 {font-size: 1.5em;font-weight: bold;}
-.tag_cloud .s19 {font-size: 1.5em;}
-.tag_cloud .s18 {font-size: 1.4em;font-weight: bold;}
-.tag_cloud .s17 {font-size: 1.4em;}
-.tag_cloud .s16 {font-size: 1.3em;font-weight: bold;}
-.tag_cloud .s15 {font-size: 1.3em;}
-.tag_cloud .s14 {font-size: 1.2em;font-weight: bold;}
-.tag_cloud .s13 {font-size: 1.2em;}
-.tag_cloud .s12,
-.tag_cloud .s11 {font-size: 1.1em;font-weight: bold;}
-.tag_cloud .s10,
-.tag_cloud .s9 {font-size: 1.1em;}
-.tag_cloud .s8,
-.tag_cloud .s7 {font-size: 1em;font-weight: bold;}
-.tag_cloud .s6,
-.tag_cloud .s5 {font-size: 1em;}
-.tag_cloud .s4,
-.tag_cloud .s3 {font-size: 0.9em;font-weight: bold;}
-.tag_cloud .s2,
-.tag_cloud .s1 {font-size: 0.9em;}
-.tag_cloud .s0 {font-size: 0.8em;}
+.tag_feed .media, .tag_feed .media-body {overflow: hidden;}
+.tag_feed.media-list .media .itemimage {float: left;}
+.dir-rtl .tag_feed.media-list .media .itemimage {float: right;}
+.tag_feed.media-list .media .itemimage img {height: 35px;width: 35px;}
+.tag_feed.media-list .media .media-body {padding-right: 10px;padding-left: 10px;}
+.tag_cloud {text-align: center;}
+.tag_cloud .inline-list li {padding: 0px 0.2em;}
+.tag_cloud .tag_overflow {margin-top: 1em;font-style: italic;}
+.tag_cloud .s20 {font-size: 2.7em;}
+.tag_cloud .s19 {font-size: 2.6em;}
+.tag_cloud .s18 {font-size: 2.5em;}
+.tag_cloud .s17 {font-size: 2.4em;}
+.tag_cloud .s16 {font-size: 2.3em;}
+.tag_cloud .s15 {font-size: 2.2em;}
+.tag_cloud .s14 {font-size: 2.1em;}
+.tag_cloud .s13 {font-size: 2em;}
+.tag_cloud .s12 {font-size: 1.9em;}
+.tag_cloud .s11 {font-size: 1.8em;}
+.tag_cloud .s10 {font-size: 1.7em;}
+.tag_cloud .s9 {font-size: 1.6em;}
+.tag_cloud .s8 {font-size: 1.5em;}
+.tag_cloud .s7 {font-size: 1.4em;}
+.tag_cloud .s6 {font-size: 1.3em;}
+.tag_cloud .s5 {font-size: 1.2em;}
+.tag_cloud .s4 {font-size: 1.1em;}
+.tag_cloud .s3 {font-size: 1em;}
+.tag_cloud .s2 {font-size: 0.9em;}
+.tag_cloud .s1 {font-size: 0.8em;}
+.tag_cloud .s0 {font-size: 0.7em;}
 
 /*
  * Backup and Restore CSS

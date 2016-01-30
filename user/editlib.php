@@ -264,9 +264,8 @@ function useredit_update_trackforums($user, $usernew) {
  * @param array $interests
  */
 function useredit_update_interests($user, $interests) {
-    global $CFG;
-    require_once($CFG->dirroot . '/tag/lib.php');
-    tag_set('user', $user->id, $interests, 'core', context_user::instance($user->id)->id);
+    core_tag_tag::set_item_tags('core', 'user', $user->id,
+            context_user::instance($user->id), $interests);
 }
 
 /**
@@ -397,9 +396,10 @@ function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions
         }
     }
 
-    if (!empty($CFG->usetags) and empty($USER->newadminuser)) {
+    if (core_tag_tag::is_enabled('core', 'user') and empty($USER->newadminuser)) {
         $mform->addElement('header', 'moodle_interests', get_string('interests'));
-        $mform->addElement('tags', 'interests', get_string('interestslist'), array('display' => 'noofficial'));
+        $mform->addElement('tags', 'interests', get_string('interestslist'),
+            array('display' => 'noofficial', 'itemtype' => 'user', 'component' => 'core'));
         $mform->addHelpButton('interests', 'interestslist');
     }
 

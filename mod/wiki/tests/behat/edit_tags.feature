@@ -49,6 +49,7 @@ Feature: Edited wiki pages handle tags correctly
     And I expand "Site administration" node
     And I expand "Appearance" node
     And I follow "Manage tags"
+    And I follow "Default collection"
     And I set the field "otagsadd" to "OT1, OT2, OT3"
     And I press "Add official tags"
     And I log out

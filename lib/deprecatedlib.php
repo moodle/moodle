@@ -508,7 +508,9 @@ function httpsrequired() {
 /**
  * Given a physical path to a file, returns the URL through which it can be reached in Moodle.
  *
- * @deprecated use moodle_url factory methods instead
+ * @deprecated since 3.1 - replacement legacy file API methods can be found on the moodle_url class, for example:
+ * The moodle_url::make_legacyfile_url() method can be used to generate a legacy course file url. To generate
+ * course module file.php url the moodle_url::make_file_url() should be used.
  *
  * @param string $path Physical path to a file
  * @param array $options associative array of GET variables to append to the URL
@@ -516,6 +518,7 @@ function httpsrequired() {
  * @return string URL to file
  */
 function get_file_url($path, $options=null, $type='coursefile') {
+    debugging('Function get_file_url() is deprecated, please use moodle_url factory methods instead.', DEBUG_DEVELOPER);
     global $CFG;
 
     $path = str_replace('//', '/', $path);
@@ -2116,24 +2119,9 @@ function enrol_cohort_search_cohorts(course_enrolment_manager $manager, $offset 
  * $user2 will be null if viewing a user's recent conversations
  *
  * @deprecated since Moodle 2.9 MDL-49371 - please do not use this function any more.
- * @todo MDL-49290 This will be deleted in Moodle 3.1.
- * @param stdClass the first user
- * @param stdClass the second user or null
- * @return bool True if the current user is one of either $user1 or $user2
  */
 function message_current_user_is_involved($user1, $user2) {
-    global $USER;
-
-    debugging('message_current_user_is_involved() is deprecated, please do not use this function.', DEBUG_DEVELOPER);
-
-    if (empty($user1->id) || (!empty($user2) && empty($user2->id))) {
-        throw new coding_exception('Invalid user object detected. Missing id.');
-    }
-
-    if ($user1->id != $USER->id && (empty($user2) || $user2->id != $USER->id)) {
-        return false;
-    }
-    return true;
+    throw new coding_exception('message_current_user_is_involved() can not be used any more.');
 }
 
 /**
@@ -2185,86 +2173,9 @@ function profile_display_badges($userid, $courseid = 0) {
  * Adds user preferences elements to user edit form.
  *
  * @deprecated since Moodle 2.9 MDL-45774 - Please do not use this function any more.
- * @todo MDL-49784 Remove this function in Moodle 3.1
- * @param stdClass $user
- * @param moodleform $mform
- * @param array|null $editoroptions
- * @param array|null $filemanageroptions
  */
 function useredit_shared_definition_preferences($user, &$mform, $editoroptions = null, $filemanageroptions = null) {
-    global $CFG;
-
-    debugging('useredit_shared_definition_preferences() is deprecated.', DEBUG_DEVELOPER, backtrace);
-
-    $choices = array();
-    $choices['0'] = get_string('emaildisplayno');
-    $choices['1'] = get_string('emaildisplayyes');
-    $choices['2'] = get_string('emaildisplaycourse');
-    $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
-    $mform->setDefault('maildisplay', $CFG->defaultpreference_maildisplay);
-
-    $choices = array();
-    $choices['0'] = get_string('textformat');
-    $choices['1'] = get_string('htmlformat');
-    $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);
-    $mform->setDefault('mailformat', $CFG->defaultpreference_mailformat);
-
-    if (!empty($CFG->allowusermailcharset)) {
-        $choices = array();
-        $charsets = get_list_of_charsets();
-        if (!empty($CFG->sitemailcharset)) {
-            $choices['0'] = get_string('site').' ('.$CFG->sitemailcharset.')';
-        } else {
-            $choices['0'] = get_string('site').' (UTF-8)';
-        }
-        $choices = array_merge($choices, $charsets);
-        $mform->addElement('select', 'preference_mailcharset', get_string('emailcharset'), $choices);
-    }
-
-    $choices = array();
-    $choices['0'] = get_string('emaildigestoff');
-    $choices['1'] = get_string('emaildigestcomplete');
-    $choices['2'] = get_string('emaildigestsubjects');
-    $mform->addElement('select', 'maildigest', get_string('emaildigest'), $choices);
-    $mform->setDefault('maildigest', $CFG->defaultpreference_maildigest);
-    $mform->addHelpButton('maildigest', 'emaildigest');
-
-    $choices = array();
-    $choices['1'] = get_string('autosubscribeyes');
-    $choices['0'] = get_string('autosubscribeno');
-    $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
-    $mform->setDefault('autosubscribe', $CFG->defaultpreference_autosubscribe);
-
-    if (!empty($CFG->forum_trackreadposts)) {
-        $choices = array();
-        $choices['0'] = get_string('trackforumsno');
-        $choices['1'] = get_string('trackforumsyes');
-        $mform->addElement('select', 'trackforums', get_string('trackforums'), $choices);
-        $mform->setDefault('trackforums', $CFG->defaultpreference_trackforums);
-    }
-
-    $editors = editors_get_enabled();
-    if (count($editors) > 1) {
-        $choices = array('' => get_string('defaulteditor'));
-        $firsteditor = '';
-        foreach (array_keys($editors) as $editor) {
-            if (!$firsteditor) {
-                $firsteditor = $editor;
-            }
-            $choices[$editor] = get_string('pluginname', 'editor_' . $editor);
-        }
-        $mform->addElement('select', 'preference_htmleditor', get_string('textediting'), $choices);
-        $mform->setDefault('preference_htmleditor', '');
-    } else {
-        // Empty string means use the first chosen text editor.
-        $mform->addElement('hidden', 'preference_htmleditor');
-        $mform->setDefault('preference_htmleditor', '');
-        $mform->setType('preference_htmleditor', PARAM_PLUGIN);
-    }
-
-    $mform->addElement('select', 'lang', get_string('preferredlanguage'), get_string_manager()->get_list_of_translations());
-    $mform->setDefault('lang', $CFG->lang);
-
+    throw new coding_exception('useredit_shared_definition_preferences() can not be used any more.');
 }
 
 
@@ -2272,12 +2183,9 @@ function useredit_shared_definition_preferences($user, &$mform, $editoroptions =
  * Convert region timezone to php supported timezone
  *
  * @deprecated since Moodle 2.9
- * @param string $tz value from ical file
- * @return string $tz php supported timezone
  */
 function calendar_normalize_tz($tz) {
-    debugging('calendar_normalize_tz() is deprecated, use core_date::normalise_timezone() instead', DEBUG_DEVELOPER);
-    return core_date::normalise_timezone($tz);
+    throw new coding_exception('calendar_normalize_tz() can not be used any more, please use core_date::normalise_timezone() instead.');
 }
 
 /**
@@ -2617,30 +2525,17 @@ function coursetag_store_keywords($tags, $courseid, $userid=0, $tagtype='officia
     debugging('Function coursetag_store_keywords() is deprecated. Userid is no longer used for tagging courses.', DEBUG_DEVELOPER);
 
     global $CFG;
-    require_once $CFG->dirroot.'/tag/lib.php';
 
     if (is_array($tags) and !empty($tags)) {
+        if ($tagtype === 'official') {
+            $tagcoll = core_tag_area::get_collection('core', 'course');
+            // We don't normally need to create tags, they are created automatically when added to items. but we do here because we want them to be official.
+            core_tag_tag::create_if_missing($tagcoll, $tags, true);
+        }
         foreach ($tags as $tag) {
             $tag = trim($tag);
             if (strlen($tag) > 0) {
-                //tag_set_add('course', $courseid, $tag, $userid); //deletes official tags
-
-                //add tag if does not exist
-                if (!$tagid = tag_get_id($tag)) {
-                    $tag_id_array = tag_add(array($tag), $tagtype);
-                    $tagid = $tag_id_array[core_text::strtolower($tag)];
-                }
-                //ordering
-                $ordering = 0;
-                if ($current_ids = tag_get_tags_ids('course', $courseid)) {
-                    end($current_ids);
-                    $ordering = key($current_ids) + 1;
-                }
-                //set type
-                tag_type_set($tagid, $tagtype);
-
-                //tag_instance entry
-                tag_assign('course', $courseid, $tagid, $ordering, $userid, 'core', context_course::instance($courseid)->id);
+                core_tag_tag::add_item_tag('core', 'course', $courseid, context_course::instance($courseid), $tag, $userid);
             }
         }
     }
@@ -2660,7 +2555,8 @@ function coursetag_store_keywords($tags, $courseid, $userid=0, $tagtype='officia
 function coursetag_delete_keyword($tagid, $userid, $courseid) {
     debugging('Function coursetag_delete_keyword() is deprecated. Userid is no longer used for tagging courses.', DEBUG_DEVELOPER);
 
-    tag_delete_instance('course', $courseid, $tagid, $userid);
+    $tag = core_tag_tag::get($tagid);
+    core_tag_tag::remove_item_tag('core', 'course', $courseid, $tag->rawname, $userid);
 }
 
 /**
@@ -2709,21 +2605,428 @@ function coursetag_get_tagged_courses($tagid) {
  * @param   bool     $showfeedback if we should output a notification of the delete to the end user
  */
 function coursetag_delete_course_tags($courseid, $showfeedback=false) {
-    debugging('Function coursetag_delete_course_tags() is deprecated. Userid is no longer used for tagging courses.', DEBUG_DEVELOPER);
+    debugging('Function coursetag_delete_course_tags() is deprecated. Use core_tag_tag::remove_all_item_tags().', DEBUG_DEVELOPER);
 
-    global $DB, $OUTPUT;
-
-    if ($taginstances = $DB->get_recordset_select('tag_instance', "itemtype = 'course' AND itemid = :courseid",
-        array('courseid' => $courseid), '', 'tagid, tiuserid')) {
-
-        foreach ($taginstances as $record) {
-            tag_delete_instance('course', $courseid, $record->tagid, $record->tiuserid);
-        }
-        $taginstances->close();
-    }
+    global $OUTPUT;
+    core_tag_tag::remove_all_item_tags('core', 'course', $courseid);
 
     if ($showfeedback) {
         echo $OUTPUT->notification(get_string('deletedcoursetags', 'tag'), 'notifysuccess');
+    }
+}
+
+/**
+ * Set the type of a tag.  At this time (version 2.2) the possible values are 'default' or 'official'.  Official tags will be
+ * displayed separately "at tagging time" (while selecting the tags to apply to a record).
+ *
+ * @package  core_tag
+ * @deprecated since 3.1
+ * @param    string   $tagid tagid to modify
+ * @param    string   $type either 'default' or 'official'
+ * @return   bool     true on success, false otherwise
+ */
+function tag_type_set($tagid, $type) {
+    debugging('Function tag_type_set() is deprecated and can be replaced with use core_tag_tag::get($tagid)->update().', DEBUG_DEVELOPER);
+    if ($tag = core_tag_tag::get($tagid, '*')) {
+        return $tag->update(array('tagtype' => $type));
+    }
+    return false;
+}
+
+/**
+ * Set the description of a tag
+ *
+ * @package  core_tag
+ * @deprecated since 3.1
+ * @param    int      $tagid the id of the tag
+ * @param    string   $description the tag's description string to be set
+ * @param    int      $descriptionformat the moodle text format of the description
+ *                    {@link http://docs.moodle.org/dev/Text_formats_2.0#Database_structure}
+ * @return   bool     true on success, false otherwise
+ */
+function tag_description_set($tagid, $description, $descriptionformat) {
+    debugging('Function tag_type_set() is deprecated and can be replaced with core_tag_tag::get($tagid)->update().', DEBUG_DEVELOPER);
+    if ($tag = core_tag_tag::get($tagid, '*')) {
+        return $tag->update(array('description' => $description, 'descriptionformat' => $descriptionformat));
+    }
+    return false;
+}
+
+/**
+ * Get the array of db record of tags associated to a record (instances).
+ *
+ * @package core_tag
+ * @deprecated since 3.1
+ * @param string $record_type the record type for which we want to get the tags
+ * @param int $record_id the record id for which we want to get the tags
+ * @param string $type the tag type (either 'default' or 'official'). By default, all tags are returned.
+ * @param int $userid (optional) only required for course tagging
+ * @return array the array of tags
+ */
+function tag_get_tags($record_type, $record_id, $type=null, $userid=0) {
+    debugging('Method tag_get_tags() is deprecated and replaced with core_tag_tag::get_item_tags(). ' .
+        'Component is now required when retrieving tag instances.', DEBUG_DEVELOPER);
+    $official = ($type === 'official' ? true : (!empty($type) ? false : null));
+    $tags = core_tag_tag::get_item_tags(null, $record_type, $record_id, $official, $userid);
+    $rv = array();
+    foreach ($tags as $id => $t) {
+        $rv[$id] = $t->to_object();
+    }
+    return $rv;
+}
+
+/**
+ * Get the array of tags display names, indexed by id.
+ *
+ * @package  core_tag
+ * @deprecated since 3.1
+ * @param    string $record_type the record type for which we want to get the tags
+ * @param    int    $record_id   the record id for which we want to get the tags
+ * @param    string $type        the tag type (either 'default' or 'official'). By default, all tags are returned.
+ * @return   array  the array of tags (with the value returned by core_tag_tag::make_display_name), indexed by id
+ */
+function tag_get_tags_array($record_type, $record_id, $type=null) {
+    debugging('Method tag_get_tags_array() is deprecated and replaced with core_tag_tag::get_item_tags_array(). ' .
+        'Component is now required when retrieving tag instances.', DEBUG_DEVELOPER);
+    $official = ($type === 'official' ? true : (!empty($type) ? false : null));
+    return core_tag_tag::get_item_tags_array('', $record_type, $record_id, $official);
+}
+
+/**
+ * Get a comma-separated string of tags associated to a record.
+ *
+ * Use {@link tag_get_tags()} to get the same information in an array.
+ *
+ * @package  core_tag
+ * @deprecated since 3.1
+ * @param    string   $record_type the record type for which we want to get the tags
+ * @param    int      $record_id   the record id for which we want to get the tags
+ * @param    int      $html        either TAG_RETURN_HTML or TAG_RETURN_TEXT, depending on the type of output desired
+ * @param    string   $type        either 'official' or 'default', if null, all tags are returned
+ * @return   string   the comma-separated list of tags.
+ */
+function tag_get_tags_csv($record_type, $record_id, $html=null, $type=null) {
+    global $CFG, $OUTPUT;
+    debugging('Method tag_get_tags_csv() is deprecated. Instead you should use either ' .
+            'core_tag_tag::get_item_tags_array() or $OUTPUT->tag_list(core_tag_tag::get_item_tags()). ' .
+        'Component is now required when retrieving tag instances.', DEBUG_DEVELOPER);
+    $official = ($type === 'official' ? true : (!empty($type) ? false : null));
+    if ($html != TAG_RETURN_TEXT) {
+        return $OUTPUT->tag_list(core_tag_tag::get_item_tags('', $record_type, $record_id, $official), '');
+    } else {
+        return join(', ', core_tag_tag::get_item_tags_array('', $record_type, $record_id, $official, 0, false));
+    }
+}
+
+/**
+ * Get an array of tag ids associated to a record.
+ *
+ * @package  core_tag
+ * @deprecated since 3.1
+ * @param    string    $record_type the record type for which we want to get the tags
+ * @param    int       $record_id the record id for which we want to get the tags
+ * @return   array     tag ids, indexed and sorted by 'ordering'
+ */
+function tag_get_tags_ids($record_type, $record_id) {
+    debugging('Method tag_get_tags_ids() is deprecated. Please consider using core_tag_tag::get_item_tags() or similar methods.', DEBUG_DEVELOPER);
+    $tag_ids = array();
+    $tagobjects = core_tag_tag::get_item_tags(null, $record_type, $record_id);
+    foreach ($tagobjects as $tagobject) {
+        $tag = $tagobject->to_object();
+        if ( array_key_exists($tag->ordering, $tag_ids) ) {
+            $tag->ordering++;
+        }
+        $tag_ids[$tag->ordering] = $tag->id;
+    }
+    ksort($tag_ids);
+    return $tag_ids;
+}
+
+/**
+ * Returns the database ID of a set of tags.
+ *
+ * @deprecated since 3.1
+ * @param    mixed $tags one tag, or array of tags, to look for.
+ * @param    bool  $return_value specify the type of the returned value. Either TAG_RETURN_OBJECT, or TAG_RETURN_ARRAY (default).
+ *                               If TAG_RETURN_ARRAY is specified, an array will be returned even if only one tag was passed in $tags.
+ * @return   mixed tag-indexed array of ids (or objects, if second parameter is TAG_RETURN_OBJECT), or only an int, if only one tag
+ *                 is given *and* the second parameter is null. No value for a key means the tag wasn't found.
+ */
+function tag_get_id($tags, $return_value = null) {
+    global $CFG, $DB;
+    debugging('Method tag_get_id() is deprecated and can be replaced with core_tag_tag::get_by_name() or core_tag_tag::get_by_name_bulk(). ' .
+        'You need to specify tag collection when retrieving tag by name', DEBUG_DEVELOPER);
+
+    if (!is_array($tags)) {
+        if(is_null($return_value) || $return_value == TAG_RETURN_OBJECT) {
+            if ($tagobject = core_tag_tag::get_by_name(core_tag_collection::get_default(), $tags)) {
+                return $tagobject->id;
+            } else {
+                return 0;
+            }
+        }
+        $tags = array($tags);
+    }
+
+    $records = core_tag_tag::get_by_name_bulk(core_tag_collection::get_default(), $tags,
+        $return_value == TAG_RETURN_OBJECT ? '*' : 'id, name');
+    foreach ($records as $name => $record) {
+        if ($return_value != TAG_RETURN_OBJECT) {
+            $records[$name] = $record->id ? $record->id : null;
+        } else {
+            $records[$name] = $record->to_object();
+        }
+    }
+    return $records;
+}
+
+/**
+ * Change the "value" of a tag, and update the associated 'name'.
+ *
+ * @package  core_tag
+ * @deprecated since 3.1
+ * @param    int      $tagid  the id of the tag to modify
+ * @param    string   $newrawname the new rawname
+ * @return   bool     true on success, false otherwise
+ */
+function tag_rename($tagid, $newrawname) {
+    debugging('Function tag_rename() is deprecated and may be replaced with core_tag_tag::get($tagid)->update().', DEBUG_DEVELOPER);
+    if ($tag = core_tag_tag::get($tagid, '*')) {
+        return $tag->update(array('rawname' => $newrawname));
+    }
+    return false;
+}
+
+/**
+ * Delete one instance of a tag.  If the last instance was deleted, it will also delete the tag, unless its type is 'official'.
+ *
+ * @package  core_tag
+ * @deprecated since 3.1
+ * @param    string $record_type the type of the record for which to remove the instance
+ * @param    int    $record_id   the id of the record for which to remove the instance
+ * @param    int    $tagid       the tagid that needs to be removed
+ * @param    int    $userid      (optional) the userid
+ * @return   bool   true on success, false otherwise
+ */
+function tag_delete_instance($record_type, $record_id, $tagid, $userid = null) {
+    debugging('Function tag_delete_instance() is deprecated and replaced with core_tag_tag::remove_item_tag() instead. ' .
+        'Component is required for retrieving instances', DEBUG_DEVELOPER);
+    $tag = core_tag_tag::get($tagid);
+    core_tag_tag::remove_item_tag('', $record_type, $record_id, $tag->rawname, $userid);
+}
+
+/**
+ * Find all records tagged with a tag of a given type ('post', 'user', etc.)
+ *
+ * @package  core_tag
+ * @category tag
+ * @param    string   $tag       tag to look for
+ * @param    string   $type      type to restrict search to.  If null, every matching record will be returned
+ * @param    int      $limitfrom (optional, required if $limitnum is set) return a subset of records, starting at this point.
+ * @param    int      $limitnum  (optional, required if $limitfrom is set) return a subset comprising this many records.
+ * @return   array of matching objects, indexed by record id, from the table containing the type requested
+ */
+function tag_find_records($tag, $type, $limitfrom='', $limitnum='') {
+    debugging('Function tag_find_records() is deprecated and replaced with core_tag_tag::get_by_name()->get_tagged_items(). '.
+        'You need to specify tag collection when retrieving tag by name', DEBUG_DEVELOPER);
+
+    if (!$tag || !$type) {
+        return array();
+    }
+
+    $tagobject = core_tag_tag::get_by_name(core_tag_area::get_collection('', $type), $tag);
+    return $tagobject->get_tagged_items('', $type, $limitfrom, $limitnum);
+}
+
+/**
+ * Adds one or more tag in the database.  This function should not be called directly : you should
+ * use tag_set.
+ *
+ * @package core_tag
+ * @deprecated since 3.1
+ * @param   mixed    $tags     one tag, or an array of tags, to be created
+ * @param   string   $type     type of tag to be created ("default" is the default value and "official" is the only other supported
+ *                             value at this time). An official tag is kept even if there are no records tagged with it.
+ * @return array     $tags ids indexed by their lowercase normalized names. Any boolean false in the array indicates an error while
+ *                             adding the tag.
+ */
+function tag_add($tags, $type="default") {
+    debugging('Function tag_add() is deprecated. You can use core_tag_tag::create_if_missing(), however it should not be necessary ' .
+        'since tags are created automatically when assigned to items', DEBUG_DEVELOPER);
+    if (!is_array($tags)) {
+        $tags = array($tags);
+    }
+    $objects = core_tag_tag::create_if_missing(core_tag_collection::get_default(), $tags, $type === 'official');
+
+    // New function returns the tags in different format, for BC we keep the format that this function used to have.
+    $rv = array();
+    foreach ($objects as $name => $tagobject) {
+        if (isset($tagobject->id)) {
+            $rv[$tagobject->name] = $tagobject->id;
+        } else {
+            $rv[$name] = false;
+        }
+    }
+    return $rv;
+}
+
+/**
+ * Assigns a tag to a record; if the record already exists, the time and ordering will be updated.
+ *
+ * @package core_tag
+ * @deprecated since 3.1
+ * @param string $record_type the type of the record that will be tagged
+ * @param int $record_id the id of the record that will be tagged
+ * @param string $tagid the tag id to set on the record.
+ * @param int $ordering the order of the instance for this record
+ * @param int $userid (optional) only required for course tagging
+ * @param string|null $component the component that was tagged
+ * @param int|null $contextid the context id of where this tag was assigned
+ * @return bool true on success, false otherwise
+ */
+function tag_assign($record_type, $record_id, $tagid, $ordering, $userid = 0, $component = null, $contextid = null) {
+    global $DB;
+    $message = 'Function tag_assign() is deprecated. Use core_tag_tag::set_item_tags() or core_tag_tag::add_item_tag() instead. ' .
+        'Tag instance ordering should not be set manually';
+    if ($component === null || $contextid === null) {
+        $message .= '. You should specify the component and contextid of the item being tagged in your call to tag_assign.';
+    }
+    debugging($message, DEBUG_DEVELOPER);
+
+    if ($contextid) {
+        $context = context::instance_by_id($contextid);
+    } else {
+        $context = context_system::instance();
+    }
+
+    // Get the tag.
+    $tag = $DB->get_record('tag', array('id' => $tagid), 'name, rawname', MUST_EXIST);
+
+    $taginstanceid = core_tag_tag::add_item_tag($component, $record_type, $record_id, $context, $tag->rawname, $userid);
+
+    // Alter the "ordering" of tag_instance. This should never be done manually and only remains here for the backward compatibility.
+    $taginstance = new stdClass();
+    $taginstance->id = $taginstanceid;
+    $taginstance->ordering     = $ordering;
+    $taginstance->timemodified = time();
+
+    $DB->update_record('tag_instance', $taginstance);
+
+    return true;
+}
+
+/**
+ * Count how many records are tagged with a specific tag.
+ *
+ * @package core_tag
+ * @deprecated since 3.1
+ * @param   string   $record_type record to look for ('post', 'user', etc.)
+ * @param   int      $tagid       is a single tag id
+ * @return  int      number of mathing tags.
+ */
+function tag_record_count($record_type, $tagid) {
+    debugging('Method tag_record_count() is deprecated and replaced with core_tag_tag::get($tagid)->count_tagged_items(). '.
+        'Component is now required when retrieving tag instances.', DEBUG_DEVELOPER);
+    return core_tag_tag::get($tagid)->count_tagged_items('', $record_type);
+}
+
+/**
+ * Determine if a record is tagged with a specific tag
+ *
+ * @package core_tag
+ * @deprecated since 3.1
+ * @param   string   $record_type the record type to look for
+ * @param   int      $record_id   the record id to look for
+ * @param   string   $tag         a tag name
+ * @return  bool/int true if it is tagged, 0 (false) otherwise
+ */
+function tag_record_tagged_with($record_type, $record_id, $tag) {
+    debugging('Method tag_record_tagged_with() is deprecated and replaced with core_tag_tag::get($tagid)->is_item_tagged_with(). '.
+        'Component is now required when retrieving tag instances.', DEBUG_DEVELOPER);
+    return core_tag_tag::is_item_tagged_with('', $record_type, $record_id, $tag);
+}
+
+/**
+ * Flag a tag as inappropriate.
+ *
+ * @deprecated since 3.1
+ * @param int|array $tagids a single tagid, or an array of tagids
+ */
+function tag_set_flag($tagids) {
+    debugging('Function tag_set_flag() is deprecated and replaced with core_tag_tag::get($tagid)->flag().', DEBUG_DEVELOPER);
+    $tagids = (array) $tagids;
+    foreach ($tagids as $tagid) {
+        if ($tag = core_tag_tag::get($tagid, '*')) {
+            $tag->flag();
+        }
+    }
+}
+
+/**
+ * Remove the inappropriate flag on a tag.
+ *
+ * @deprecated since 3.1
+ * @param int|array $tagids a single tagid, or an array of tagids
+ */
+function tag_unset_flag($tagids) {
+    debugging('Function tag_unset_flag() is deprecated and replaced with core_tag_tag::get($tagid)->reset_flag().', DEBUG_DEVELOPER);
+    $tagids = (array) $tagids;
+    foreach ($tagids as $tagid) {
+        if ($tag = core_tag_tag::get($tagid, '*')) {
+            $tag->reset_flag();
+        }
+    }
+}
+
+/**
+ * Prints or returns a HTML tag cloud with varying classes styles depending on the popularity and type of each tag.
+ *
+ * @deprecated since 3.1
+ *
+ * @param    array     $tagset Array of tags to display
+ * @param    int       $nr_of_tags Limit for the number of tags to return/display, used if $tagset is null
+ * @param    bool      $return     if true the function will return the generated tag cloud instead of displaying it.
+ * @param    string    $sort (optional) selected sorting, default is alpha sort (name) also timemodified or popularity
+ * @return string|null a HTML string or null if this function does the output
+ */
+function tag_print_cloud($tagset=null, $nr_of_tags=150, $return=false, $sort='') {
+    global $OUTPUT;
+
+    debugging('Function tag_print_cloud() is deprecated and replaced with function core_tag_collection::get_tag_cloud(), '
+            . 'templateable core_tag\output\tagcloud and template core_tag/tagcloud.', DEBUG_DEVELOPER);
+
+    // Set up sort global - used to pass sort type into core_tag_collection::cloud_sort through usort() avoiding multiple sort functions.
+    if ($sort == 'popularity') {
+        $sort = 'count';
+    } else if ($sort == 'date') {
+        $sort = 'timemodified';
+    } else {
+        $sort = 'name';
+    }
+
+    if (is_null($tagset)) {
+        // No tag set received, so fetch tags from database.
+        // Always add query by tagcollid even when it's not known to make use of the table index.
+        $tagcloud = core_tag_collection::get_tag_cloud(0, '', $nr_of_tags, $sort);
+    } else {
+        $tagsincloud = $tagset;
+
+        $etags = array();
+        foreach ($tagsincloud as $tag) {
+            $etags[] = $tag;
+        }
+
+        core_tag_collection::$cloudsortfield = $sort;
+        usort($tagsincloud, "core_tag_collection::cloud_sort");
+
+        $tagcloud = new \core_tag\output\tagcloud($tagsincloud);
+    }
+
+    $output = $OUTPUT->render_from_template('core_tag/tagcloud', $tagcloud->export_for_template($OUTPUT));
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
     }
 }
 
@@ -2743,4 +3046,1333 @@ function tag_autocomplete($text) {
     return $DB->get_records_sql("SELECT tg.id, tg.name, tg.rawname
                                    FROM {tag} tg
                                   WHERE tg.name LIKE ?", array(core_text::strtolower($text)."%"));
+}
+
+/**
+ * Prints a box with the description of a tag and its related tags
+ *
+ * @package core_tag
+ * @deprecated since 3.1
+ * @param   stdClass    $tag_object
+ * @param   bool        $return     if true the function will return the generated tag cloud instead of displaying it.
+ * @return  string/null a HTML box showing a description of the tag object and it's relationsips or null if output is done directly
+ *                      in the function.
+ */
+function tag_print_description_box($tag_object, $return=false) {
+    global $USER, $CFG, $OUTPUT;
+    require_once($CFG->libdir.'/filelib.php');
+
+    debugging('Function tag_print_description_box() is deprecated without replacement. ' .
+            'See core_tag_renderer for similar code.', DEBUG_DEVELOPER);
+
+    $relatedtags = array();
+    if ($tag = core_tag_tag::get($tag_object->id)) {
+        $relatedtags = $tag->get_related_tags();
+    }
+
+    $content = !empty($tag_object->description);
+    $output = '';
+
+    if ($content) {
+        $output .= $OUTPUT->box_start('generalbox tag-description');
+    }
+
+    if (!empty($tag_object->description)) {
+        $options = new stdClass();
+        $options->para = false;
+        $options->overflowdiv = true;
+        $tag_object->description = file_rewrite_pluginfile_urls($tag_object->description, 'pluginfile.php', context_system::instance()->id, 'tag', 'description', $tag_object->id);
+        $output .= format_text($tag_object->description, $tag_object->descriptionformat, $options);
+    }
+
+    if ($content) {
+        $output .= $OUTPUT->box_end();
+    }
+
+    if ($relatedtags) {
+        $output .= $OUTPUT->tag_list($relatedtags, get_string('relatedtags', 'tag'), 'tag-relatedtags');
+    }
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Prints a box that contains the management links of a tag
+ *
+ * @deprecated since 3.1
+ * @param  core_tag_tag|stdClass    $tag_object
+ * @param  bool        $return     if true the function will return the generated tag cloud instead of displaying it.
+ * @return string|null a HTML string or null if this function does the output
+ */
+function tag_print_management_box($tag_object, $return=false) {
+    global $USER, $CFG, $OUTPUT;
+
+    debugging('Function tag_print_description_box() is deprecated without replacement. ' .
+            'See core_tag_renderer for similar code.', DEBUG_DEVELOPER);
+
+    $tagname  = core_tag_tag::make_display_name($tag_object);
+    $output = '';
+
+    if (!isguestuser()) {
+        $output .= $OUTPUT->box_start('box','tag-management-box');
+        $systemcontext   = context_system::instance();
+        $links = array();
+
+        // Add a link for users to add/remove this from their interests
+        if (core_tag_tag::is_enabled('core', 'user') && core_tag_area::get_collection('core', 'user') == $tag_object->tagcollid) {
+            if (core_tag_tag::is_item_tagged_with('core', 'user', $USER->id, $tag_object->name)) {
+                $links[] = '<a href="'. $CFG->wwwroot .'/tag/user.php?action=removeinterest&amp;sesskey='. sesskey() .
+                        '&amp;tag='. rawurlencode($tag_object->name) .'">'.
+                        get_string('removetagfrommyinterests', 'tag', $tagname) .'</a>';
+            } else {
+                $links[] = '<a href="'. $CFG->wwwroot .'/tag/user.php?action=addinterest&amp;sesskey='. sesskey() .
+                        '&amp;tag='. rawurlencode($tag_object->name) .'">'.
+                        get_string('addtagtomyinterests', 'tag', $tagname) .'</a>';
+            }
+        }
+
+        // Flag as inappropriate link.  Only people with moodle/tag:flag capability.
+        if (has_capability('moodle/tag:flag', $systemcontext)) {
+            $links[] = '<a href="'. $CFG->wwwroot .'/tag/user.php?action=flaginappropriate&amp;sesskey='.
+                    sesskey() . '&amp;id='. $tag_object->id . '">'. get_string('flagasinappropriate',
+                            'tag', rawurlencode($tagname)) .'</a>';
+        }
+
+        // Edit tag: Only people with moodle/tag:edit capability who either have it as an interest or can manage tags
+        if (has_capability('moodle/tag:edit', $systemcontext) ||
+            has_capability('moodle/tag:manage', $systemcontext)) {
+            $links[] = '<a href="' . $CFG->wwwroot . '/tag/edit.php?id=' . $tag_object->id . '">' .
+                    get_string('edittag', 'tag') . '</a>';
+        }
+
+        $output .= implode(' | ', $links);
+        $output .= $OUTPUT->box_end();
+    }
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Prints the tag search box
+ *
+ * @deprecated since 3.1
+ * @param  bool        $return if true return html string
+ * @return string|null a HTML string or null if this function does the output
+ */
+function tag_print_search_box($return=false) {
+    global $CFG, $OUTPUT;
+
+    debugging('Function tag_print_search_box() is deprecated without replacement. ' .
+            'See core_tag_renderer for similar code.', DEBUG_DEVELOPER);
+
+    $query = optional_param('query', '', PARAM_RAW);
+
+    $output = $OUTPUT->box_start('','tag-search-box');
+    $output .= '<form action="'.$CFG->wwwroot.'/tag/search.php" style="display:inline">';
+    $output .= '<div>';
+    $output .= '<label class="accesshide" for="searchform_search">'.get_string('searchtags', 'tag').'</label>';
+    $output .= '<input id="searchform_search" name="query" type="text" size="40" value="'.s($query).'" />';
+    $output .= '<button id="searchform_button" type="submit">'. get_string('search', 'tag') .'</button><br />';
+    $output .= '</div>';
+    $output .= '</form>';
+    $output .= $OUTPUT->box_end();
+
+    if ($return) {
+        return $output;
+    }
+    else {
+        echo $output;
+    }
+}
+
+/**
+ * Prints the tag search results
+ *
+ * @deprecated since 3.1
+ * @param string       $query text that tag names will be matched against
+ * @param int          $page current page
+ * @param int          $perpage nr of users displayed per page
+ * @param bool         $return if true return html string
+ * @return string|null a HTML string or null if this function does the output
+ */
+function tag_print_search_results($query,  $page, $perpage, $return=false) {
+    global $CFG, $USER, $OUTPUT;
+
+    debugging('Function tag_print_search_results() is deprecated without replacement. ' .
+            'In /tag/search.php the search results are printed using the core_tag/tagcloud template.', DEBUG_DEVELOPER);
+
+    $query = clean_param($query, PARAM_TAG);
+
+    $count = count(tag_find_tags($query, false));
+    $tags = array();
+
+    if ( $found_tags = tag_find_tags($query, true,  $page * $perpage, $perpage) ) {
+        $tags = array_values($found_tags);
+    }
+
+    $baseurl = $CFG->wwwroot.'/tag/search.php?query='. rawurlencode($query);
+    $output = '';
+
+    // link "Add $query to my interests"
+    $addtaglink = '';
+    if (core_tag_tag::is_enabled('core', 'user') && !core_tag_tag::is_item_tagged_with('core', 'user', $USER->id, $query)) {
+        $addtaglink = html_writer::link(new moodle_url('/tag/user.php', array('action' => 'addinterest', 'sesskey' => sesskey(),
+            'tag' => $query)), get_string('addtagtomyinterests', 'tag', s($query)));
+    }
+
+    if ( !empty($tags) ) { // there are results to display!!
+        $output .= $OUTPUT->heading(get_string('searchresultsfor', 'tag', htmlspecialchars($query)) ." : {$count}", 3, 'main');
+
+        //print a link "Add $query to my interests"
+        if (!empty($addtaglink)) {
+            $output .= $OUTPUT->box($addtaglink, 'box', 'tag-management-box');
+        }
+
+        $nr_of_lis_per_ul = 6;
+        $nr_of_uls = ceil( sizeof($tags) / $nr_of_lis_per_ul );
+
+        $output .= '<ul id="tag-search-results">';
+        for($i = 0; $i < $nr_of_uls; $i++) {
+            foreach (array_slice($tags, $i * $nr_of_lis_per_ul, $nr_of_lis_per_ul) as $tag) {
+                $output .= '<li>';
+                $tag_link = html_writer::link(core_tag_tag::make_url($tag->tagcollid, $tag->rawname),
+                    core_tag_tag::make_display_name($tag));
+                $output .= $tag_link;
+                $output .= '</li>';
+            }
+        }
+        $output .= '</ul>';
+        $output .= '<div>&nbsp;</div>'; // <-- small layout hack in order to look good in Firefox
+
+        $output .= $OUTPUT->paging_bar($count, $page, $perpage, $baseurl);
+    }
+    else { //no results were found!!
+        $output .= $OUTPUT->heading(get_string('noresultsfor', 'tag', htmlspecialchars($query)), 3, 'main');
+
+        //print a link "Add $query to my interests"
+        if (!empty($addtaglink)) {
+            $output .= $OUTPUT->box($addtaglink, 'box', 'tag-management-box');
+        }
+    }
+
+    if ($return) {
+        return $output;
+    }
+    else {
+        echo $output;
+    }
+}
+
+/**
+ * Prints a table of the users tagged with the tag passed as argument
+ *
+ * @deprecated since 3.1
+ * @param  stdClass    $tagobject the tag we wish to return data for
+ * @param  int         $limitfrom (optional, required if $limitnum is set) prints users starting at this point.
+ * @param  int         $limitnum (optional, required if $limitfrom is set) prints this many users.
+ * @param  bool        $return if true return html string
+ * @return string|null a HTML string or null if this function does the output
+ */
+function tag_print_tagged_users_table($tagobject, $limitfrom='', $limitnum='', $return=false) {
+
+    debugging('Function tag_print_tagged_users_table() is deprecated without replacement. ' .
+            'See core_user_renderer for similar code.', DEBUG_DEVELOPER);
+
+    //List of users with this tag
+    $tagobject = core_tag_tag::get($tagobject->id);
+    $userlist = $tagobject->get_tagged_items('core', 'user', $limitfrom, $limitnum);
+
+    $output = tag_print_user_list($userlist, true);
+
+    if ($return) {
+        return $output;
+    }
+    else {
+        echo $output;
+    }
+}
+
+/**
+ * Prints an individual user box
+ *
+ * @deprecated since 3.1
+ * @param user_object  $user  (contains the following fields: id, firstname, lastname and picture)
+ * @param bool         $return if true return html string
+ * @return string|null a HTML string or null if this function does the output
+ */
+function tag_print_user_box($user, $return=false) {
+    global $CFG, $OUTPUT;
+
+    debugging('Function tag_print_user_box() is deprecated without replacement. ' .
+            'See core_user_renderer for similar code.', DEBUG_DEVELOPER);
+
+    $usercontext = context_user::instance($user->id);
+    $profilelink = '';
+
+    if ($usercontext and (has_capability('moodle/user:viewdetails', $usercontext) || has_coursecontact_role($user->id))) {
+        $profilelink = $CFG->wwwroot .'/user/view.php?id='. $user->id;
+    }
+
+    $output = $OUTPUT->box_start('user-box', 'user'. $user->id);
+    $fullname = fullname($user);
+    $alt = '';
+
+    if (!empty($profilelink)) {
+        $output .= '<a href="'. $profilelink .'">';
+        $alt = $fullname;
+    }
+
+    $output .= $OUTPUT->user_picture($user, array('size'=>100));
+    $output .= '<br />';
+
+    if (!empty($profilelink)) {
+        $output .= '</a>';
+    }
+
+    //truncate name if it's too big
+    if (core_text::strlen($fullname) > 26) {
+        $fullname = core_text::substr($fullname, 0, 26) .'...';
+    }
+
+    $output .= '<strong>'. $fullname .'</strong>';
+    $output .= $OUTPUT->box_end();
+
+    if ($return) {
+        return $output;
+    }
+    else {
+        echo $output;
+    }
+}
+
+/**
+ * Prints a list of users
+ *
+ * @deprecated since 3.1
+ * @param  array       $userlist an array of user objects
+ * @param  bool        $return if true return html string, otherwise output the result
+ * @return string|null a HTML string or null if this function does the output
+ */
+function tag_print_user_list($userlist, $return=false) {
+
+    debugging('Function tag_print_user_list() is deprecated without replacement. ' .
+            'See core_user_renderer for similar code.', DEBUG_DEVELOPER);
+
+    $output = '<div><ul class="inline-list">';
+
+    foreach ($userlist as $user){
+        $output .= '<li>'. tag_print_user_box($user, true) ."</li>\n";
+    }
+    $output .= "</ul></div>\n";
+
+    if ($return) {
+        return $output;
+    }
+    else {
+        echo $output;
+    }
+}
+
+/**
+ * Function that returns the name that should be displayed for a specific tag
+ *
+ * @package  core_tag
+ * @category tag
+ * @deprecated since 3.1
+ * @param    stdClass|core_tag_tag   $tagobject a line out of tag table, as returned by the adobd functions
+ * @param    int      $html TAG_RETURN_HTML (default) will return htmlspecialchars encoded string, TAG_RETURN_TEXT will not encode.
+ * @return   string
+ */
+function tag_display_name($tagobject, $html=TAG_RETURN_HTML) {
+    debugging('Function tag_display_name() is deprecated. Use core_tag_tag::make_display_name().', DEBUG_DEVELOPER);
+    if (!isset($tagobject->name)) {
+        return '';
+    }
+    return core_tag_tag::make_display_name($tagobject, $html != TAG_RETURN_TEXT);
+}
+
+/**
+ * Function that normalizes a list of tag names.
+ *
+ * @package core_tag
+ * @deprecated since 3.1
+ * @param   array/string $rawtags array of tags, or a single tag.
+ * @param   int          $case    case to use for returned value (default: lower case). Either TAG_CASE_LOWER (default) or TAG_CASE_ORIGINAL
+ * @return  array        lowercased normalized tags, indexed by the normalized tag, in the same order as the original array.
+ *                       (Eg: 'Banana' => 'banana').
+ */
+function tag_normalize($rawtags, $case = TAG_CASE_LOWER) {
+    debugging('Function tag_normalize() is deprecated. Use core_tag_tag::normalize().', DEBUG_DEVELOPER);
+
+    if ( !is_array($rawtags) ) {
+        $rawtags = array($rawtags);
+    }
+
+    return core_tag_tag::normalize($rawtags, $case == TAG_CASE_LOWER);
+}
+
+/**
+ * Get a comma-separated list of tags related to another tag.
+ *
+ * @package  core_tag
+ * @deprecated since 3.1
+ * @param    array    $related_tags the array returned by tag_get_related_tags
+ * @param    int      $html    either TAG_RETURN_HTML (default) or TAG_RETURN_TEXT : return html links, or just text.
+ * @return   string   comma-separated list
+ */
+function tag_get_related_tags_csv($related_tags, $html=TAG_RETURN_HTML) {
+    global $OUTPUT;
+    debugging('Method tag_get_related_tags_csv() is deprecated. Consider '
+            . 'looping through array or using $OUTPUT->tag_list(core_tag_tag::get_item_tags())',
+        DEBUG_DEVELOPER);
+    if ($html != TAG_RETURN_TEXT) {
+        return $OUTPUT->tag_list($related_tags, '');
+    }
+
+    $tagsnames = array();
+    foreach ($related_tags as $tag) {
+        $tagsnames[] = core_tag_tag::make_display_name($tag, false);
+    }
+    return implode(', ', $tagsnames);
+}
+
+/**
+ * Used to require that the return value from a function is an array.
+ * Only used in the deprecated function {@link tag_get_id()}
+ * @deprecated since 3.1
+ */
+define('TAG_RETURN_ARRAY', 0);
+/**
+ * Used to require that the return value from a function is an object.
+ * Only used in the deprecated function {@link tag_get_id()}
+ * @deprecated since 3.1
+ */
+define('TAG_RETURN_OBJECT', 1);
+/**
+ * Use to specify that HTML free text is expected to be returned from a function.
+ * Only used in deprecated functions {@link tag_get_tags_csv()}, {@link tag_display_name()},
+ * {@link tag_get_related_tags_csv()}
+ * @deprecated since 3.1
+ */
+define('TAG_RETURN_TEXT', 2);
+/**
+ * Use to specify that encoded HTML is expected to be returned from a function.
+ * Only used in deprecated functions {@link tag_get_tags_csv()}, {@link tag_display_name()},
+ * {@link tag_get_related_tags_csv()}
+ * @deprecated since 3.1
+ */
+define('TAG_RETURN_HTML', 3);
+
+/**
+ * Used to specify that we wish a lowercased string to be returned
+ * Only used in deprecated function {@link tag_normalize()}
+ * @deprecated since 3.1
+ */
+define('TAG_CASE_LOWER', 0);
+/**
+ * Used to specify that we do not wish the case of the returned string to change
+ * Only used in deprecated function {@link tag_normalize()}
+ * @deprecated since 3.1
+ */
+define('TAG_CASE_ORIGINAL', 1);
+
+/**
+ * Used to specify that we want all related tags returned, no matter how they are related.
+ * Only used in deprecated function {@link tag_get_related_tags()}
+ * @deprecated since 3.1
+ */
+define('TAG_RELATED_ALL', 0);
+/**
+ * Used to specify that we only want back tags that were manually related.
+ * Only used in deprecated function {@link tag_get_related_tags()}
+ * @deprecated since 3.1
+ */
+define('TAG_RELATED_MANUAL', 1);
+/**
+ * Used to specify that we only want back tags where the relationship was automatically correlated.
+ * Only used in deprecated function {@link tag_get_related_tags()}
+ * @deprecated since 3.1
+ */
+define('TAG_RELATED_CORRELATED', 2);
+
+/**
+ * Set the tags assigned to a record.  This overwrites the current tags.
+ *
+ * This function is meant to be fed the string coming up from the user interface, which contains all tags assigned to a record.
+ *
+ * Due to API change $component and $contextid are now required. Instead of
+ * calling  this function you can use {@link core_tag_tag::set_item_tags()} or
+ * {@link core_tag_tag::set_related_tags()}
+ *
+ * @package core_tag
+ * @deprecated since 3.1
+ * @param string $itemtype the type of record to tag ('post' for blogs, 'user' for users, 'tag' for tags, etc.)
+ * @param int $itemid the id of the record to tag
+ * @param array $tags the array of tags to set on the record. If given an empty array, all tags will be removed.
+ * @param string|null $component the component that was tagged
+ * @param int|null $contextid the context id of where this tag was assigned
+ * @return bool|null
+ */
+function tag_set($itemtype, $itemid, $tags, $component = null, $contextid = null) {
+    debugging('Function tag_set() is deprecated. Use ' .
+        ' core_tag_tag::set_item_tags() instead', DEBUG_DEVELOPER);
+
+    if ($itemtype === 'tag') {
+        return core_tag_tag::get($itemid, '*', MUST_EXIST)->set_related_tags($tags);
+    } else {
+        $context = $contextid ? context::instance_by_id($contextid) : context_system::instance();
+        return core_tag_tag::set_item_tags($component, $itemtype, $itemid, $context, $tags);
+    }
+}
+
+/**
+ * Adds a tag to a record, without overwriting the current tags.
+ *
+ * This function remains here for backward compatiblity. It is recommended to use
+ * {@link core_tag_tag::add_item_tag()} or {@link core_tag_tag::add_related_tags()} instead
+ *
+ * @package core_tag
+ * @deprecated since 3.1
+ * @param string $itemtype the type of record to tag ('post' for blogs, 'user' for users, etc.)
+ * @param int $itemid the id of the record to tag
+ * @param string $tag the tag to add
+ * @param string|null $component the component that was tagged
+ * @param int|null $contextid the context id of where this tag was assigned
+ * @return bool|null
+ */
+function tag_set_add($itemtype, $itemid, $tag, $component = null, $contextid = null) {
+    debugging('Function tag_set_add() is deprecated. Use ' .
+        ' core_tag_tag::add_item_tag() instead', DEBUG_DEVELOPER);
+
+    if ($itemtype === 'tag') {
+        return core_tag_tag::get($itemid, '*', MUST_EXIST)->add_related_tags(array($tag));
+    } else {
+        $context = $contextid ? context::instance_by_id($contextid) : context_system::instance();
+        return core_tag_tag::add_item_tag($component, $itemtype, $itemid, $context, $tag);
+    }
+}
+
+/**
+ * Removes a tag from a record, without overwriting other current tags.
+ *
+ * This function remains here for backward compatiblity. It is recommended to use
+ * {@link core_tag_tag::remove_item_tag()} instead
+ *
+ * @package core_tag
+ * @deprecated since 3.1
+ * @param string $itemtype the type of record to tag ('post' for blogs, 'user' for users, etc.)
+ * @param int $itemid the id of the record to tag
+ * @param string $tag the tag to delete
+ * @param string|null $component the component that was tagged
+ * @param int|null $contextid the context id of where this tag was assigned
+ * @return bool|null
+ */
+function tag_set_delete($itemtype, $itemid, $tag, $component = null, $contextid = null) {
+    debugging('Function tag_set_delete() is deprecated. Use ' .
+        ' core_tag_tag::remove_item_tag() instead', DEBUG_DEVELOPER);
+    return core_tag_tag::remove_item_tag($component, $itemtype, $itemid, $tag);
+}
+
+/**
+ * Simple function to just return a single tag object when you know the name or something
+ *
+ * See also {@link core_tag_tag::get()} and {@link core_tag_tag::get_by_name()}
+ *
+ * @package  core_tag
+ * @deprecated since 3.1
+ * @param    string $field        which field do we use to identify the tag: id, name or rawname
+ * @param    string $value        the required value of the aforementioned field
+ * @param    string $returnfields which fields do we want returned. This is a comma seperated string containing any combination of
+ *                                'id', 'name', 'rawname' or '*' to include all fields.
+ * @return   mixed  tag object
+ */
+function tag_get($field, $value, $returnfields='id, name, rawname, tagcollid') {
+    global $DB;
+    debugging('Function tag_get() is deprecated. Use ' .
+        ' core_tag_tag::get() or core_tag_tag::get_by_name()',
+        DEBUG_DEVELOPER);
+    if ($field === 'id') {
+        $tag = core_tag_tag::get((int)$value, $returnfields);
+    } else if ($field === 'name') {
+        $tag = core_tag_tag::get_by_name(0, $value, $returnfields);
+    } else {
+        $params = array($field => $value);
+        return $DB->get_record('tag', $params, $returnfields);
+    }
+    if ($tag) {
+        return $tag->to_object();
+    }
+    return null;
+}
+
+/**
+ * Returns tags related to a tag
+ *
+ * Related tags of a tag come from two sources:
+ *   - manually added related tags, which are tag_instance entries for that tag
+ *   - correlated tags, which are calculated
+ *
+ * @package  core_tag
+ * @deprecated since 3.1
+ * @param    string   $tagid          is a single **normalized** tag name or the id of a tag
+ * @param    int      $type           the function will return either manually (TAG_RELATED_MANUAL) related tags or correlated
+ *                                    (TAG_RELATED_CORRELATED) tags. Default is TAG_RELATED_ALL, which returns everything.
+ * @param    int      $limitnum       (optional) return a subset comprising this many records, the default is 10
+ * @return   array    an array of tag objects
+ */
+function tag_get_related_tags($tagid, $type=TAG_RELATED_ALL, $limitnum=10) {
+    debugging('Method tag_get_related_tags() is deprecated, '
+        . 'use core_tag_tag::get_correlated_tags(), core_tag_tag::get_related_tags() or '
+        . 'core_tag_tag::get_manual_related_tags()', DEBUG_DEVELOPER);
+    $result = array();
+    if ($tag = core_tag_tag::get($tagid)) {
+        if ($type == TAG_RELATED_CORRELATED) {
+            $tags = $tag->get_correlated_tags();
+        } else if ($type == TAG_RELATED_MANUAL) {
+            $tags = $tag->get_manual_related_tags();
+        } else {
+            $tags = $tag->get_related_tags();
+        }
+        $tags = array_slice($tags, 0, $limitnum);
+        foreach ($tags as $id => $tag) {
+            $result[$id] = $tag->to_object();
+        }
+    }
+    return $result;
+}
+
+/**
+ * Delete one or more tag, and all their instances if there are any left.
+ *
+ * @package  core_tag
+ * @deprecated since 3.1
+ * @param    mixed    $tagids one tagid (int), or one array of tagids to delete
+ * @return   bool     true on success, false otherwise
+ */
+function tag_delete($tagids) {
+    debugging('Method tag_delete() is deprecated, use core_tag_tag::delete_tags()',
+        DEBUG_DEVELOPER);
+    return core_tag_tag::delete_tags($tagids);
+}
+
+/**
+ * Deletes all the tag instances given a component and an optional contextid.
+ *
+ * @deprecated since 3.1
+ * @param string $component
+ * @param int $contextid if null, then we delete all tag instances for the $component
+ */
+function tag_delete_instances($component, $contextid = null) {
+    debugging('Method tag_delete() is deprecated, use core_tag_tag::delete_instances()',
+        DEBUG_DEVELOPER);
+    core_tag_tag::delete_instances($component, null, $contextid);
+}
+
+/**
+ * Clean up the tag tables, making sure all tagged object still exists.
+ *
+ * This should normally not be necessary, but in case related tags are not deleted when the tagged record is removed, this should be
+ * done once in a while, perhaps on an occasional cron run.  On a site with lots of tags, this could become an expensive function to
+ * call: don't run at peak time.
+ *
+ * @package core_tag
+ * @deprecated since 3.1
+ */
+function tag_cleanup() {
+    debugging('Method tag_cleanup() is deprecated, use \core\task\tag_cron_task::cleanup()',
+        DEBUG_DEVELOPER);
+
+    $task = new \core\task\tag_cron_task();
+    return $task->cleanup();
+}
+
+/**
+ * This function will delete numerous tag instances efficiently.
+ * This removes tag instances only. It doesn't check to see if it is the last use of a tag.
+ *
+ * @deprecated since 3.1
+ * @param array $instances An array of tag instance objects with the addition of the tagname and tagrawname
+ *        (used for recording a delete event).
+ */
+function tag_bulk_delete_instances($instances) {
+    debugging('Method tag_bulk_delete_instances() is deprecated, '
+        . 'use \core\task\tag_cron_task::bulk_delete_instances()',
+        DEBUG_DEVELOPER);
+
+    $task = new \core\task\tag_cron_task();
+    return $task->bulk_delete_instances($instances);
+}
+
+/**
+ * Calculates and stores the correlated tags of all tags. The correlations are stored in the 'tag_correlation' table.
+ *
+ * Two tags are correlated if they appear together a lot. Ex.: Users tagged with "computers" will probably also be tagged with "algorithms".
+ *
+ * The rationale for the 'tag_correlation' table is performance. It works as a cache for a potentially heavy load query done at the
+ * 'tag_instance' table. So, the 'tag_correlation' table stores redundant information derived from the 'tag_instance' table.
+ *
+ * @package core_tag
+ * @deprecated since 3.1
+ * @param   int      $mincorrelation Only tags with more than $mincorrelation correlations will be identified.
+ */
+function tag_compute_correlations($mincorrelation = 2) {
+    debugging('Method tag_compute_correlations() is deprecated, '
+        . 'use \core\task\tag_cron_task::compute_correlations()',
+        DEBUG_DEVELOPER);
+
+    $task = new \core\task\tag_cron_task();
+    return $task->compute_correlations($mincorrelation);
+}
+
+/**
+ * This function processes a tag correlation and makes changes in the database as required.
+ *
+ * The tag correlation object needs have both a tagid property and a correlatedtags property that is an array.
+ *
+ * @package core_tag
+ * @deprecated since 3.1
+ * @param   stdClass $tagcorrelation
+ * @return  int/bool The id of the tag correlation that was just processed or false.
+ */
+function tag_process_computed_correlation(stdClass $tagcorrelation) {
+    debugging('Method tag_process_computed_correlation() is deprecated, '
+        . 'use \core\task\tag_cron_task::process_computed_correlation()',
+        DEBUG_DEVELOPER);
+
+    $task = new \core\task\tag_cron_task();
+    return $task->process_computed_correlation($tagcorrelation);
+}
+
+/**
+ * Tasks that should be performed at cron time
+ *
+ * @package core_tag
+ * @deprecated since 3.1
+ */
+function tag_cron() {
+    debugging('Method tag_cron() is deprecated, use \core\task\tag_cron_task::execute()',
+        DEBUG_DEVELOPER);
+
+    $task = new \core\task\tag_cron_task();
+    $task->execute();
+}
+
+/**
+ * Search for tags with names that match some text
+ *
+ * @package core_tag
+ * @deprecated since 3.1
+ * @param   string        $text      escaped string that the tag names will be matched against
+ * @param   bool          $ordered   If true, tags are ordered by their popularity. If false, no ordering.
+ * @param   int/string    $limitfrom (optional, required if $limitnum is set) return a subset of records, starting at this point.
+ * @param   int/string    $limitnum  (optional, required if $limitfrom is set) return a subset comprising this many records.
+ * @param   int           $tagcollid
+ * @return  array/boolean an array of objects, or false if no records were found or an error occured.
+ */
+function tag_find_tags($text, $ordered=true, $limitfrom='', $limitnum='', $tagcollid = null) {
+    debugging('Method tag_find_tags() is deprecated without replacement', DEBUG_DEVELOPER);
+    global $DB;
+
+    $text = core_text::strtolower(clean_param($text, PARAM_TAG));
+
+    list($sql, $params) = $DB->get_in_or_equal($tagcollid ? array($tagcollid) :
+        array_keys(core_tag_collection::get_collections(true)));
+    array_unshift($params, "%{$text}%");
+
+    if ($ordered) {
+        $query = "SELECT tg.id, tg.name, tg.rawname, tg.tagcollid, COUNT(ti.id) AS count
+                    FROM {tag} tg LEFT JOIN {tag_instance} ti ON tg.id = ti.tagid
+                   WHERE tg.name LIKE ? AND tg.tagcollid $sql
+                GROUP BY tg.id, tg.name, tg.rawname
+                ORDER BY count DESC";
+    } else {
+        $query = "SELECT tg.id, tg.name, tg.rawname, tg.tagcollid
+                    FROM {tag} tg
+                   WHERE tg.name LIKE ? AND tg.tagcollid $sql";
+    }
+    return $DB->get_records_sql($query, $params, $limitfrom , $limitnum);
+}
+
+/**
+ * Get the name of a tag
+ *
+ * @package core_tag
+ * @deprecated since 3.1
+ * @param   mixed    $tagids the id of the tag, or an array of ids
+ * @return  mixed    string name of one tag, or id-indexed array of strings
+ */
+function tag_get_name($tagids) {
+    debugging('Method tag_get_name() is deprecated without replacement', DEBUG_DEVELOPER);
+    global $DB;
+
+    if (!is_array($tagids)) {
+        if ($tag = $DB->get_record('tag', array('id'=>$tagids))) {
+            return $tag->name;
+        }
+        return false;
+    }
+
+    $tag_names = array();
+    foreach($DB->get_records_list('tag', 'id', $tagids) as $tag) {
+        $tag_names[$tag->id] = $tag->name;
+    }
+
+    return $tag_names;
+}
+
+/**
+ * Returns the correlated tags of a tag, retrieved from the tag_correlation table. Make sure cron runs, otherwise the table will be
+ * empty and this function won't return anything.
+ *
+ * Correlated tags are calculated in cron based on existing tag instances.
+ *
+ * @package core_tag
+ * @deprecated since 3.1
+ * @param   int      $tagid   is a single tag id
+ * @param   int      $notused  this argument is no longer used
+ * @return  array    an array of tag objects or an empty if no correlated tags are found
+ */
+function tag_get_correlated($tagid, $notused = null) {
+    debugging('Method tag_get_correlated() is deprecated, '
+        . 'use core_tag_tag::get_correlated_tags()', DEBUG_DEVELOPER);
+    $result = array();
+    if ($tag = core_tag_tag::get($tagid)) {
+        $tags = $tag->get_correlated_tags(true);
+        // Convert to objects for backward-compatibility.
+        foreach ($tags as $id => $tag) {
+            $result[$id] = $tag->to_object();
+        }
+    }
+    return $result;
+}
+
+/**
+ * This function is used by print_tag_cloud, to usort() the tags in the cloud. See php.net/usort for the parameters documentation.
+ * This was originally in blocks/blog_tags/block_blog_tags.php, named blog_tags_sort().
+ *
+ * @package core_tag
+ * @deprecated since 3.1
+ * @param   string $a Tag name to compare against $b
+ * @param   string $b Tag name to compare against $a
+ * @return  int    The result of the comparison/validation 1, 0 or -1
+ */
+function tag_cloud_sort($a, $b) {
+    debugging('Method tag_cloud_sort() is deprecated, similar method can be found in core_tag_collection::cloud_sort()', DEBUG_DEVELOPER);
+    global $CFG;
+
+    if (empty($CFG->tagsort)) {
+        $tagsort = 'name'; // by default, sort by name
+    } else {
+        $tagsort = $CFG->tagsort;
+    }
+
+    if (is_numeric($a->$tagsort)) {
+        return ($a->$tagsort == $b->$tagsort) ? 0 : ($a->$tagsort > $b->$tagsort) ? 1 : -1;
+    } elseif (is_string($a->$tagsort)) {
+        return strcmp($a->$tagsort, $b->$tagsort);
+    } else {
+        return 0;
+    }
+}
+
+/**
+ * Loads the events definitions for the component (from file). If no
+ * events are defined for the component, we simply return an empty array.
+ *
+ * @access protected To be used from eventslib only
+ * @deprecated since Moodle 3.1
+ * @param string $component examples: 'moodle', 'mod_forum', 'block_quiz_results'
+ * @return array Array of capabilities or empty array if not exists
+ */
+function events_load_def($component) {
+    global $CFG;
+    if ($component === 'unittest') {
+        $defpath = $CFG->dirroot.'/lib/tests/fixtures/events.php';
+    } else {
+        $defpath = core_component::get_component_directory($component).'/db/events.php';
+    }
+
+    $handlers = array();
+
+    if (file_exists($defpath)) {
+        require($defpath);
+    }
+
+    // make sure the definitions are valid and complete; tell devs what is wrong
+    foreach ($handlers as $eventname => $handler) {
+        if ($eventname === 'reset') {
+            debugging("'reset' can not be used as event name.");
+            unset($handlers['reset']);
+            continue;
+        }
+        if (!is_array($handler)) {
+            debugging("Handler of '$eventname' must be specified as array'");
+            unset($handlers[$eventname]);
+            continue;
+        }
+        if (!isset($handler['handlerfile'])) {
+            debugging("Handler of '$eventname' must include 'handlerfile' key'");
+            unset($handlers[$eventname]);
+            continue;
+        }
+        if (!isset($handler['handlerfunction'])) {
+            debugging("Handler of '$eventname' must include 'handlerfunction' key'");
+            unset($handlers[$eventname]);
+            continue;
+        }
+        if (!isset($handler['schedule'])) {
+            $handler['schedule'] = 'instant';
+        }
+        if ($handler['schedule'] !== 'instant' and $handler['schedule'] !== 'cron') {
+            debugging("Handler of '$eventname' must include valid 'schedule' type (instant or cron)'");
+            unset($handlers[$eventname]);
+            continue;
+        }
+        if (!isset($handler['internal'])) {
+            $handler['internal'] = 1;
+        }
+        $handlers[$eventname] = $handler;
+    }
+
+    return $handlers;
+}
+
+/**
+ * Puts a handler on queue
+ *
+ * @access protected To be used from eventslib only
+ * @deprecated since Moodle 3.1
+ * @param stdClass $handler event handler object from db
+ * @param stdClass $event event data object
+ * @param string $errormessage The error message indicating the problem
+ * @return int id number of new queue handler
+ */
+function events_queue_handler($handler, $event, $errormessage) {
+    global $DB;
+
+    if ($qhandler = $DB->get_record('events_queue_handlers', array('queuedeventid'=>$event->id, 'handlerid'=>$handler->id))) {
+        debugging("Please check code: Event id $event->id is already queued in handler id $qhandler->id");
+        return $qhandler->id;
+    }
+
+    // make a new queue handler
+    $qhandler = new stdClass();
+    $qhandler->queuedeventid  = $event->id;
+    $qhandler->handlerid      = $handler->id;
+    $qhandler->errormessage   = $errormessage;
+    $qhandler->timemodified   = time();
+    if ($handler->schedule === 'instant' and $handler->status == 1) {
+        $qhandler->status     = 1; //already one failed attempt to dispatch this event
+    } else {
+        $qhandler->status     = 0;
+    }
+
+    return $DB->insert_record('events_queue_handlers', $qhandler);
+}
+
+/**
+ * trigger a single event with a specified handler
+ *
+ * @access protected To be used from eventslib only
+ * @deprecated since Moodle 3.1
+ * @param stdClass $handler This shoudl be a row from the events_handlers table.
+ * @param stdClass $eventdata An object containing information about the event
+ * @param string $errormessage error message indicating problem
+ * @return bool|null True means event processed, false means retry event later; may throw exception, NULL means internal error
+ */
+function events_dispatch($handler, $eventdata, &$errormessage) {
+    global $CFG;
+
+    debugging('Events API using $handlers array has been deprecated in favour of Events 2 API, please use it instead.', DEBUG_DEVELOPER);
+
+    $function = unserialize($handler->handlerfunction);
+
+    if (is_callable($function)) {
+        // oki, no need for includes
+
+    } else if (file_exists($CFG->dirroot.$handler->handlerfile)) {
+        include_once($CFG->dirroot.$handler->handlerfile);
+
+    } else {
+        $errormessage = "Handler file of component $handler->component: $handler->handlerfile can not be found!";
+        return null;
+    }
+
+    // checks for handler validity
+    if (is_callable($function)) {
+        $result = call_user_func($function, $eventdata);
+        if ($result === false) {
+            $errormessage = "Handler function of component $handler->component: $handler->handlerfunction requested resending of event!";
+            return false;
+        }
+        return true;
+
+    } else {
+        $errormessage = "Handler function of component $handler->component: $handler->handlerfunction not callable function or class method!";
+        return null;
+    }
+}
+
+/**
+ * given a queued handler, call the respective event handler to process the event
+ *
+ * @access protected To be used from eventslib only
+ * @deprecated since Moodle 3.1
+ * @param stdClass $qhandler events_queued_handler row from db
+ * @return boolean true means event processed, false means retry later, NULL means fatal failure
+ */
+function events_process_queued_handler($qhandler) {
+    global $DB;
+
+    // get handler
+    if (!$handler = $DB->get_record('events_handlers', array('id'=>$qhandler->handlerid))) {
+        debugging("Error processing queue handler $qhandler->id, missing handler id: $qhandler->handlerid");
+        //irrecoverable error, remove broken queue handler
+        events_dequeue($qhandler);
+        return NULL;
+    }
+
+    // get event object
+    if (!$event = $DB->get_record('events_queue', array('id'=>$qhandler->queuedeventid))) {
+        // can't proceed with no event object - might happen when two crons running at the same time
+        debugging("Error processing queue handler $qhandler->id, missing event id: $qhandler->queuedeventid");
+        //irrecoverable error, remove broken queue handler
+        events_dequeue($qhandler);
+        return NULL;
+    }
+
+    // call the function specified by the handler
+    try {
+        $errormessage = 'Unknown error';
+        if (events_dispatch($handler, unserialize(base64_decode($event->eventdata)), $errormessage)) {
+            //everything ok
+            events_dequeue($qhandler);
+            return true;
+        }
+    } catch (Exception $e) {
+        // the problem here is that we do not want one broken handler to stop all others,
+        // cron handlers are very tricky because the needed data might have been deleted before the cron execution
+        $errormessage = "Handler function of component $handler->component: $handler->handlerfunction threw exception :" .
+                $e->getMessage() . "\n" . format_backtrace($e->getTrace(), true);
+        if (!empty($e->debuginfo)) {
+            $errormessage .= $e->debuginfo;
+        }
+    }
+
+    //dispatching failed
+    $qh = new stdClass();
+    $qh->id           = $qhandler->id;
+    $qh->errormessage = $errormessage;
+    $qh->timemodified = time();
+    $qh->status       = $qhandler->status + 1;
+    $DB->update_record('events_queue_handlers', $qh);
+
+    debugging($errormessage);
+
+    return false;
+}
+
+/**
+ * Updates all of the event definitions within the database.
+ *
+ * Unfortunately this isn't as simple as removing them all and then readding
+ * the updated event definitions. Chances are queued items are referencing the
+ * existing definitions.
+ *
+ * Note that the absence of the db/events.php event definition file
+ * will cause any queued events for the component to be removed from
+ * the database.
+ *
+ * @category event
+ * @deprecated since Moodle 3.1
+ * @param string $component examples: 'moodle', 'mod_forum', 'block_quiz_results'
+ * @return boolean always returns true
+ */
+function events_update_definition($component='moodle') {
+    global $DB;
+
+    // load event definition from events.php
+    $filehandlers = events_load_def($component);
+
+    if ($filehandlers) {
+        debugging('Events API using $handlers array has been deprecated in favour of Events 2 API, please use it instead.', DEBUG_DEVELOPER);
+    }
+
+    // load event definitions from db tables
+    // if we detect an event being already stored, we discard from this array later
+    // the remaining needs to be removed
+    $cachedhandlers = events_get_cached($component);
+
+    foreach ($filehandlers as $eventname => $filehandler) {
+        if (!empty($cachedhandlers[$eventname])) {
+            if ($cachedhandlers[$eventname]['handlerfile'] === $filehandler['handlerfile'] &&
+                $cachedhandlers[$eventname]['handlerfunction'] === serialize($filehandler['handlerfunction']) &&
+                $cachedhandlers[$eventname]['schedule'] === $filehandler['schedule'] &&
+                $cachedhandlers[$eventname]['internal'] == $filehandler['internal']) {
+                // exact same event handler already present in db, ignore this entry
+
+                unset($cachedhandlers[$eventname]);
+                continue;
+
+            } else {
+                // same event name matches, this event has been updated, update the datebase
+                $handler = new stdClass();
+                $handler->id              = $cachedhandlers[$eventname]['id'];
+                $handler->handlerfile     = $filehandler['handlerfile'];
+                $handler->handlerfunction = serialize($filehandler['handlerfunction']); // static class methods stored as array
+                $handler->schedule        = $filehandler['schedule'];
+                $handler->internal        = $filehandler['internal'];
+
+                $DB->update_record('events_handlers', $handler);
+
+                unset($cachedhandlers[$eventname]);
+                continue;
+            }
+
+        } else {
+            // if we are here, this event handler is not present in db (new)
+            // add it
+            $handler = new stdClass();
+            $handler->eventname       = $eventname;
+            $handler->component       = $component;
+            $handler->handlerfile     = $filehandler['handlerfile'];
+            $handler->handlerfunction = serialize($filehandler['handlerfunction']); // static class methods stored as array
+            $handler->schedule        = $filehandler['schedule'];
+            $handler->status          = 0;
+            $handler->internal        = $filehandler['internal'];
+
+            $DB->insert_record('events_handlers', $handler);
+        }
+    }
+
+    // clean up the left overs, the entries in cached events array at this points are deprecated event handlers
+    // and should be removed, delete from db
+    events_cleanup($component, $cachedhandlers);
+
+    events_get_handlers('reset');
+
+    return true;
+}
+
+/**
+ * Events cron will try to empty the events queue by processing all the queued events handlers
+ *
+ * @access public Part of the public API
+ * @deprecated since Moodle 3.1
+ * @category event
+ * @param string $eventname empty means all
+ * @return int number of dispatched events
+ */
+function events_cron($eventname='') {
+    global $DB;
+
+    $failed = array();
+    $processed = 0;
+
+    if ($eventname) {
+        $sql = "SELECT qh.*
+                  FROM {events_queue_handlers} qh, {events_handlers} h
+                 WHERE qh.handlerid = h.id AND h.eventname=?
+              ORDER BY qh.id";
+        $params = array($eventname);
+    } else {
+        $sql = "SELECT *
+                  FROM {events_queue_handlers}
+              ORDER BY id";
+        $params = array();
+    }
+
+    $rs = $DB->get_recordset_sql($sql, $params);
+    if ($rs->valid()) {
+        debugging('Events API using $handlers array has been deprecated in favour of Events 2 API, please use it instead.', DEBUG_DEVELOPER);
+    }
+
+    foreach ($rs as $qhandler) {
+        if (isset($failed[$qhandler->handlerid])) {
+            // do not try to dispatch any later events when one already asked for retry or ended with exception
+            continue;
+        }
+        $status = events_process_queued_handler($qhandler);
+        if ($status === false) {
+            // handler is asking for retry, do not send other events to this handler now
+            $failed[$qhandler->handlerid] = $qhandler->handlerid;
+        } else if ($status === NULL) {
+            // means completely broken handler, event data was purged
+            $failed[$qhandler->handlerid] = $qhandler->handlerid;
+        } else {
+            $processed++;
+        }
+    }
+    $rs->close();
+
+    // remove events that do not have any handlers waiting
+    $sql = "SELECT eq.id
+              FROM {events_queue} eq
+              LEFT JOIN {events_queue_handlers} qh ON qh.queuedeventid = eq.id
+             WHERE qh.id IS NULL";
+    $rs = $DB->get_recordset_sql($sql);
+    foreach ($rs as $event) {
+        //debugging('Purging stale event '.$event->id);
+        $DB->delete_records('events_queue', array('id'=>$event->id));
+    }
+    $rs->close();
+
+    return $processed;
+}
+
+/**
+ * Do not call directly, this is intended to be used from new event base only.
+ *
+ * @private
+ * @deprecated since Moodle 3.1
+ * @param string $eventname name of the event
+ * @param mixed $eventdata event data object
+ * @return int number of failed events
+ */
+function events_trigger_legacy($eventname, $eventdata) {
+    global $CFG, $USER, $DB;
+
+    $failedcount = 0; // number of failed events.
+
+    // pull out all registered event handlers
+    if ($handlers = events_get_handlers($eventname)) {
+        foreach ($handlers as $handler) {
+            $errormessage = '';
+
+            if ($handler->schedule === 'instant') {
+                if ($handler->status) {
+                    //check if previous pending events processed
+                    if (!$DB->record_exists('events_queue_handlers', array('handlerid'=>$handler->id))) {
+                        // ok, queue is empty, lets reset the status back to 0 == ok
+                        $handler->status = 0;
+                        $DB->set_field('events_handlers', 'status', 0, array('id'=>$handler->id));
+                        // reset static handler cache
+                        events_get_handlers('reset');
+                    }
+                }
+
+                // dispatch the event only if instant schedule and status ok
+                if ($handler->status or (!$handler->internal and $DB->is_transaction_started())) {
+                    // increment the error status counter
+                    $handler->status++;
+                    $DB->set_field('events_handlers', 'status', $handler->status, array('id'=>$handler->id));
+                    // reset static handler cache
+                    events_get_handlers('reset');
+
+                } else {
+                    $errormessage = 'Unknown error';
+                    $result = events_dispatch($handler, $eventdata, $errormessage);
+                    if ($result === true) {
+                        // everything is fine - event dispatched
+                        continue;
+                    } else if ($result === false) {
+                        // retry later - set error count to 1 == send next instant into cron queue
+                        $DB->set_field('events_handlers', 'status', 1, array('id'=>$handler->id));
+                        // reset static handler cache
+                        events_get_handlers('reset');
+                    } else {
+                        // internal problem - ignore the event completely
+                        $failedcount ++;
+                        continue;
+                    }
+                }
+
+                // update the failed counter
+                $failedcount ++;
+
+            } else if ($handler->schedule === 'cron') {
+                //ok - use queueing of events only
+
+            } else {
+                // unknown schedule - ignore event completely
+                debugging("Unknown handler schedule type: $handler->schedule");
+                $failedcount ++;
+                continue;
+            }
+
+            // if even type is not instant, or dispatch asked for retry, queue it
+            $event = new stdClass();
+            $event->userid      = $USER->id;
+            $event->eventdata   = base64_encode(serialize($eventdata));
+            $event->timecreated = time();
+            if (debugging()) {
+                $dump = '';
+                $callers = debug_backtrace();
+                foreach ($callers as $caller) {
+                    if (!isset($caller['line'])) {
+                        $caller['line'] = '?';
+                    }
+                    if (!isset($caller['file'])) {
+                        $caller['file'] = '?';
+                    }
+                    $dump .= 'line ' . $caller['line'] . ' of ' . substr($caller['file'], strlen($CFG->dirroot) + 1);
+                    if (isset($caller['function'])) {
+                        $dump .= ': call to ';
+                        if (isset($caller['class'])) {
+                            $dump .= $caller['class'] . $caller['type'];
+                        }
+                        $dump .= $caller['function'] . '()';
+                    }
+                    $dump .= "\n";
+                }
+                $event->stackdump = $dump;
+            } else {
+                $event->stackdump = '';
+            }
+            $event->id = $DB->insert_record('events_queue', $event);
+            events_queue_handler($handler, $event, $errormessage);
+        }
+    } else {
+        // No handler found for this event name - this is ok!
+    }
+
+    return $failedcount;
+}
+
+/**
+ * checks if an event is registered for this component
+ *
+ * @access public Part of the public API
+ * @deprecated since Moodle 3.1
+ * @param string $eventname name of the event
+ * @param string $component component name, can be mod/data or moodle
+ * @return bool
+ */
+function events_is_registered($eventname, $component) {
+    global $DB;
+
+    debugging('events_is_registered() has been deprecated along with all Events 1 API in favour of Events 2 API,' .
+        ' please use it instead.', DEBUG_DEVELOPER);
+
+    return $DB->record_exists('events_handlers', array('component'=>$component, 'eventname'=>$eventname));
+}
+
+/**
+ * checks if an event is queued for processing - either cron handlers attached or failed instant handlers
+ *
+ * @access public Part of the public API
+ * @deprecated since Moodle 3.1
+ * @param string $eventname name of the event
+ * @return int number of queued events
+ */
+function events_pending_count($eventname) {
+    global $DB;
+
+    debugging('events_pending_count() has been deprecated along with all Events 1 API in favour of Events 2 API,' .
+        ' please use it instead.', DEBUG_DEVELOPER);
+
+    $sql = "SELECT COUNT('x')
+              FROM {events_queue_handlers} qh
+              JOIN {events_handlers} h ON h.id = qh.handlerid
+             WHERE h.eventname = ?";
+
+    return $DB->count_records_sql($sql, array($eventname));
 }

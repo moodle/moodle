@@ -35,9 +35,9 @@ Feature: Rubrics can be created and edited
       | TMP Criterion 4 | TMP Level 41 | 41 | TMP Level 42 | 42 |
     # Checking that only the last ones are saved.
     And I define the following rubric:
-      | Criterion 1 | Level 11 | 1 | Level 12 | 20 | Level 13 | 40 | Level 14 | 50 |
-      | Criterion 2 | Level 21 | 10 | Level 22 | 20 | Level 23 | 30 |
-      | Criterion 3 | Level 31 | 5 | Level 32 | 20 |
+      | Criterion 1 | Level 11 | 1  | Level 12 | 20 | Level 13 | 40 | Level 14  | 50  |
+      | Criterion 2 | Level 21 | 10 | Level 22 | 20 | Level 23 | 30 |           |     |
+      | Criterion 3 | Level 31 | 5  | Level 32 | 20 |          |    |           |     |
     And I press "Save as draft"
     And I go to "Test assignment 1 name" advanced grading definition page
     And I click on "Move down" "button" in the "Criterion 1" "table_row"

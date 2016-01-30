@@ -1148,6 +1148,14 @@ $functions = array(
         'ajax'        => true
     ),
 
+    'core_tag_get_tagindex' => array(
+        'classname'   => 'core_tag_external',
+        'methodname'  => 'get_tagindex',
+        'description' => 'Gets tag index page for one tag and one tag area',
+        'type'        => 'read',
+        'ajax'        => true
+    ),
+
 );
 
 $services = array(

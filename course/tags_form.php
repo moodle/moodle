@@ -41,7 +41,8 @@ class coursetags_form extends moodleform {
     public function definition() {
         $mform    = $this->_form;
 
-        $mform->addElement('tags', 'tags', get_string('tags'));
+        $mform->addElement('tags', 'tags', get_string('tags'),
+                    array('itemtype' => 'course', 'component' => 'core'));
 
         $mform->addElement('hidden', 'id', null);
         $mform->setType('id', PARAM_INT);

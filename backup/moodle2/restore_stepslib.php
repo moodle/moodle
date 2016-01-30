@@ -1778,22 +1778,8 @@ class restore_course_structure_step extends restore_structure_step {
 
         $data = (object)$data;
 
-        if (!empty($CFG->usetags)) { // if enabled in server
-            // TODO: This is highly inneficient. Each time we add one tag
-            // we fetch all the existing because tag_set() deletes them
-            // so everything must be reinserted on each call
-            $tags = array();
-            $existingtags = tag_get_tags('course', $this->get_courseid());
-            // Re-add all the existitng tags
-            foreach ($existingtags as $existingtag) {
-                $tags[] = $existingtag->rawname;
-            }
-            // Add the one being restored
-            $tags[] = $data->rawname;
-            // Send all the tags back to the course
-            tag_set('course', $this->get_courseid(), $tags, 'core',
-                context_course::instance($this->get_courseid())->id);
-        }
+        core_tag_tag::add_item_tag('core', 'course', $this->get_courseid(),
+                context_course::instance($this->get_courseid()), $data->rawname);
     }
 
     public function process_allowed_module($data) {
@@ -4078,25 +4064,17 @@ class restore_create_categories_and_questions extends restore_structure_step {
             return;
         }
 
-        if (!empty($CFG->usetags)) { // if enabled in server
-            // TODO: This is highly inefficient. Each time we add one tag
-            // we fetch all the existing because tag_set() deletes them
-            // so everything must be reinserted on each call
-            $tags = array();
-            $existingtags = tag_get_tags('question', $newquestion);
-            // Re-add all the existitng tags
-            foreach ($existingtags as $existingtag) {
-                $tags[] = $existingtag->rawname;
-            }
-            // Add the one being restored
-            $tags[] = $data->rawname;
+        if (core_tag_tag::is_enabled('core_question', 'question')) {
+            $tagname = $data->rawname;
             // Get the category, so we can then later get the context.
             $categoryid = $this->get_new_parentid('question_category');
             if (empty($this->cachedcategory) || $this->cachedcategory->id != $categoryid) {
                 $this->cachedcategory = $DB->get_record('question_categories', array('id' => $categoryid));
             }
-            // Send all the tags back to the question
-            tag_set('question', $newquestion, $tags, 'core_question', $this->cachedcategory->contextid);
+            // Add the tag to the question.
+            core_tag_tag::add_item_tag('core_question', 'question', $newquestion,
+                    context::instance_by_id($this->cachedcategory->contextid),
+                    $tagname);
         }
     }
 

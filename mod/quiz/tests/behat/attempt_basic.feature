@@ -37,7 +37,7 @@ Feature: Attemp a quiz where some questions require that the previous question h
     And I press "Attempt quiz now"
     And I click on "True" "radio" in the "First question" "question"
     And I click on "False" "radio" in the "Second question" "question"
-    And I press "Next"
+    And I press "Finish attempt ..."
     And I press "Submit all and finish"
     And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
     Then I should see "25.00 out of 100.00"
@@ -99,3 +99,45 @@ Feature: Attemp a quiz where some questions require that the previous question h
     And I should see question "4" in section "Section 2" in the quiz navigation
     And I should see question "5" in section "Section 3" in the quiz navigation
     And I should see question "6" in section "Section 3" in the quiz navigation
+
+  @javascript
+  Scenario: Next and previous navigation
+    Given the following "questions" exist:
+      | questioncategory | qtype       | name  | questiontext                |
+      | Test questions   | truefalse   | TF1   | Text of the first question  |
+      | Test questions   | truefalse   | TF2   | Text of the second question |
+    And quiz "Quiz 1" contains the following questions:
+      | question | page |
+      | TF1      | 1    |
+      | TF2      | 2    |
+    When I log in as "student"
+    And I follow "Course 1"
+    And I follow "Quiz 1"
+    And I press "Attempt quiz now"
+    Then I should see "Text of the first question"
+    And I should not see "Text of the second question"
+    And I press "Next page"
+    And I should see "Text of the second question"
+    And I should not see "Text of the first question"
+    And I click on "Finish attempt ..." "button" in the "region-main" "region"
+    And I should see "Summary of attempt"
+    And I press "Return to attempt"
+    And I should see "Text of the second question"
+    And I should not see "Text of the first question"
+    And I press "Previous page"
+    And I should see "Text of the first question"
+    And I should not see "Text of the second question"
+    And I follow "Finish attempt ..."
+    And I press "Submit all and finish"
+    And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
+    And I should see "Text of the first question"
+    And I should see "Text of the second question"
+    And I follow "Show one page at a time"
+    And I should see "Text of the first question"
+    And I should not see "Text of the second question"
+    And I follow "Next page"
+    And I should see "Text of the second question"
+    And I should not see "Text of the first question"
+    And I follow "Previous page"
+    And I should see "Text of the first question"
+    And I should not see "Text of the second question"

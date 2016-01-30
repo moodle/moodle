@@ -69,6 +69,9 @@ if (!defined('FORUM_CRON_USER_CACHE')) {
  */
 define('FORUM_POSTS_ALL_USER_GROUPS', -2);
 
+define('FORUM_DISCUSSION_PINNED', 1);
+define('FORUM_DISCUSSION_UNPINNED', 0);
+
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
 
 /**
@@ -1394,8 +1397,11 @@ function forum_print_overview($courses,&$htmlarray) {
                 .'JOIN {forum_posts} p ON p.discussion = d.id '
                 ."WHERE ($coursessql) "
                 .'AND p.userid != ? '
+                .'AND (d.timestart <= ? AND (d.timeend = 0 OR d.timeend > ?)) '
                 .'GROUP BY d.id, d.forum, d.course, d.groupid '
                 .'ORDER BY d.course, d.forum';
+    $params[] = time();
+    $params[] = time();
 
     // Avoid warnings.
     if (!$discussions = $DB->get_records_sql($sql, $params)) {
@@ -1440,8 +1446,12 @@ function forum_print_overview($courses,&$htmlarray) {
             $params[] = $groupid;
         }
         $sql = substr($sql,0,-3); // take off the last OR
-        $sql .= ') AND p.modified >= ? AND r.id is NULL GROUP BY d.forum,d.course';
+        $sql .= ') AND p.modified >= ? AND r.id is NULL ';
+        $sql .= 'AND (d.timestart < ? AND (d.timeend = 0 OR d.timeend > ?)) ';
+        $sql .= 'GROUP BY d.forum,d.course';
         $params[] = $cutoffdate;
+        $params[] = time();
+        $params[] = time();
 
         if (!$unread = $DB->get_records_sql($sql, $params)) {
             $unread = array();
@@ -2586,7 +2596,7 @@ function forum_get_discussions($cm, $forumsort="", $fullpost=true, $unused=-1, $
     }
 
     $allnames = get_all_user_name_fields(true, 'u');
-    $sql = "SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid, d.timestart, d.timeend, $allnames,
+    $sql = "SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid, d.timestart, d.timeend, d.pinned, $allnames,
                    u.email, u.picture, u.imagealt $umfields
               FROM {forum_discussions} d
                    JOIN {forum_posts} p ON p.discussion = d.id
@@ -2594,17 +2604,15 @@ function forum_get_discussions($cm, $forumsort="", $fullpost=true, $unused=-1, $
                    $umtable
              WHERE d.forum = ? AND p.parent = 0
                    $timelimit $groupselect
-          ORDER BY $forumsort";
+          ORDER BY $forumsort, d.id DESC";
     return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
 }
 
 /**
  * Gets the neighbours (previous and next) of a discussion.
  *
- * The calculation is based on the timemodified of the discussion and does not handle
- * the neighbours having an identical timemodified. The reason is that we do not have any
- * other mean to sort the records, e.g. we cannot use IDs as a greater ID can have a lower
- * timemodified.
+ * The calculation is based on the timemodified when time modified or time created is identical
+ * It will revert to using the ID to sort consistently. This is better tha skipping a discussion.
  *
  * For blog-style forums, the calculation is based on the original creation time of the
  * blog post.
@@ -2668,78 +2676,82 @@ function forum_get_discussion_neighbours($cm, $discussion, $forum) {
         }
     }
 
-    if ($forum->type === 'blog') {
-        $params['forumid'] = $cm->instance;
-        $params['discid1'] = $discussion->id;
-        $params['discid2'] = $discussion->id;
+    $params['forumid'] = $cm->instance;
+    $params['discid1'] = $discussion->id;
+    $params['discid2'] = $discussion->id;
+    $params['discid3'] = $discussion->id;
+    $params['discid4'] = $discussion->id;
+    $params['disctimecompare1'] = $discussion->timemodified;
+    $params['disctimecompare2'] = $discussion->timemodified;
+    $params['pinnedstate1'] = (int) $discussion->pinned;
+    $params['pinnedstate2'] = (int) $discussion->pinned;
+    $params['pinnedstate3'] = (int) $discussion->pinned;
+    $params['pinnedstate4'] = (int) $discussion->pinned;
 
-        $sql = "SELECT d.id, d.name, d.timemodified, d.groupid, d.timestart, d.timeend
-                  FROM {forum_discussions} d
-                  JOIN {forum_posts} p ON d.firstpost = p.id
-                 WHERE d.forum = :forumid
-                   AND d.id <> :discid1
-                       $timelimit
-                       $groupselect";
-
-        $sub = "SELECT pp.created
-                  FROM {forum_discussions} dd
-                  JOIN {forum_posts} pp ON dd.firstpost = pp.id
-                 WHERE dd.id = :discid2";
-
-        $prevsql = $sql . " AND p.created < ($sub)
-                       ORDER BY p.created DESC";
-
-        $nextsql = $sql . " AND p.created > ($sub)
-                       ORDER BY p.created ASC";
-
-        $neighbours['prev'] = $DB->get_record_sql($prevsql, $params, IGNORE_MULTIPLE);
-        $neighbours['next'] = $DB->get_record_sql($nextsql, $params, IGNORE_MULTIPLE);
-
-    } else {
-        $params['forumid'] = $cm->instance;
-        $params['discid'] = $discussion->id;
-        $params['disctimemodified'] = $discussion->timemodified;
-
-        $sql = "SELECT d.id, d.name, d.timemodified, d.groupid, d.timestart, d.timeend
-                  FROM {forum_discussions} d
-                 WHERE d.forum = :forumid
-                   AND d.id <> :discid
-                       $timelimit
-                       $groupselect";
-
-        if (empty($CFG->forum_enabletimedposts)) {
-            $prevsql = $sql . " AND d.timemodified < :disctimemodified";
-            $nextsql = $sql . " AND d.timemodified > :disctimemodified";
-
-        } else {
+    $sql = "SELECT d.id, d.name, d.timemodified, d.groupid, d.timestart, d.timeend
+              FROM {forum_discussions} d
+              JOIN {forum_posts} p ON d.firstpost = p.id
+             WHERE d.forum = :forumid
+               AND d.id <> :discid1
+                   $timelimit
+                   $groupselect";
+    $comparefield = "d.timemodified";
+    $comparevalue = ":disctimecompare1";
+    $comparevalue2  = ":disctimecompare2";
+    if (!empty($CFG->forum_enabletimedposts)) {
+        // Here we need to take into account the release time (timestart)
+        // if one is set, of the neighbouring posts and compare it to the
+        // timestart or timemodified of *this* post depending on if the
+        // release date of this post is in the future or not.
+        // This stops discussions that appear later because of the
+        // timestart value from being buried under discussions that were
+        // made afterwards.
+        $comparefield = "CASE WHEN d.timemodified < d.timestart
+                                THEN d.timestart ELSE d.timemodified END";
+        if ($discussion->timemodified < $discussion->timestart) {
             // Normally we would just use the timemodified for sorting
             // discussion posts. However, when timed discussions are enabled,
             // then posts need to be sorted base on the later of timemodified
             // or the release date of the post (timestart).
-            $params['disctimecompare'] = $discussion->timemodified;
-            if ($discussion->timemodified < $discussion->timestart) {
-                $params['disctimecompare'] = $discussion->timestart;
-            }
-
-            // Here we need to take into account the release time (timestart)
-            // if one is set, of the neighbouring posts and compare it to the
-            // timestart or timemodified of *this* post depending on if the
-            // release date of this post is in the future or not.
-            // This stops discussions that appear later because of the
-            // timestart value from being buried under discussions that were
-            // made afterwards.
-            $prevsql = $sql . " AND CASE WHEN d.timemodified < d.timestart
-                                    THEN d.timestart ELSE d.timemodified END < :disctimecompare";
-            $nextsql = $sql . " AND CASE WHEN d.timemodified < d.timestart
-                                    THEN d.timestart ELSE d.timemodified END > :disctimecompare";
+            $params['disctimecompare1'] = $discussion->timestart;
+            $params['disctimecompare2'] = $discussion->timestart;
         }
-        $prevsql .= ' ORDER BY '.forum_get_default_sort_order();
-        $nextsql .= ' ORDER BY '.forum_get_default_sort_order(false);
+    }
+    $orderbydesc = forum_get_default_sort_order(true, $comparefield, 'd', false);
+    $orderbyasc = forum_get_default_sort_order(false, $comparefield, 'd', false);
 
-        $neighbours['prev'] = $DB->get_record_sql($prevsql, $params, IGNORE_MULTIPLE);
-        $neighbours['next'] = $DB->get_record_sql($nextsql, $params, IGNORE_MULTIPLE);
+    if ($forum->type === 'blog') {
+         $subselect = "SELECT pp.created
+                   FROM {forum_discussions} dd
+                   JOIN {forum_posts} pp ON dd.firstpost = pp.id ";
+
+         $subselectwhere1 = " WHERE dd.id = :discid3";
+         $subselectwhere2 = " WHERE dd.id = :discid4";
+
+         $comparefield = "p.created";
+
+         $sub1 = $subselect.$subselectwhere1;
+         $comparevalue = "($sub1)";
+
+         $sub2 = $subselect.$subselectwhere2;
+         $comparevalue2 = "($sub2)";
+
+         $orderbydesc = "d.pinned, p.created DESC";
+         $orderbyasc = "d.pinned, p.created ASC";
     }
 
+    $prevsql = $sql . " AND ( (($comparefield < $comparevalue) AND :pinnedstate1 = d.pinned)
+                         OR ($comparefield = $comparevalue2 AND (d.pinned = 0 OR d.pinned = :pinnedstate4) AND d.id < :discid2)
+                         OR (d.pinned = 0 AND d.pinned <> :pinnedstate2))
+                   ORDER BY CASE WHEN d.pinned = :pinnedstate3 THEN 1 ELSE 0 END DESC, $orderbydesc, d.id DESC";
+
+    $nextsql = $sql . " AND ( (($comparefield > $comparevalue) AND :pinnedstate1 = d.pinned)
+                         OR ($comparefield = $comparevalue2 AND (d.pinned = 1 OR d.pinned = :pinnedstate4) AND d.id > :discid2)
+                         OR (d.pinned = 1 AND d.pinned <> :pinnedstate2))
+                   ORDER BY CASE WHEN d.pinned = :pinnedstate3 THEN 1 ELSE 0 END DESC, $orderbyasc, d.id ASC";
+
+    $neighbours['prev'] = $DB->get_record_sql($prevsql, $params, IGNORE_MULTIPLE);
+    $neighbours['next'] = $DB->get_record_sql($nextsql, $params, IGNORE_MULTIPLE);
     return $neighbours;
 }
 
@@ -2751,9 +2763,10 @@ function forum_get_discussion_neighbours($cm, $discussion, $forum) {
  * @param bool $desc True for DESC, False for ASC.
  * @param string $compare The field in the SQL to compare to normally sort by.
  * @param string $prefix The prefix being used for the discussion table.
+ * @param bool $pinned sort pinned posts to the top
  * @return string
  */
-function forum_get_default_sort_order($desc = true, $compare = 'd.timemodified', $prefix = 'd') {
+function forum_get_default_sort_order($desc = true, $compare = 'd.timemodified', $prefix = 'd', $pinned = true) {
     global $CFG;
 
     if (!empty($prefix)) {
@@ -2762,6 +2775,12 @@ function forum_get_default_sort_order($desc = true, $compare = 'd.timemodified',
 
     $dir = $desc ? 'DESC' : 'ASC';
 
+    if ($pinned == true) {
+        $pinned = "{$prefix}pinned DESC,";
+    } else {
+        $pinned = '';
+    }
+
     $sort = "{$prefix}timemodified";
     if (!empty($CFG->forum_enabletimedposts)) {
         $sort = "CASE WHEN {$compare} < {$prefix}timestart
@@ -2769,7 +2788,7 @@ function forum_get_default_sort_order($desc = true, $compare = 'd.timemodified',
                  ELSE {$compare}
                  END";
     }
-    return "$sort $dir";
+    return "$pinned $sort $dir";
 }
 
 /**
@@ -3625,9 +3644,14 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
     echo "\n\n";
     echo '<tr class="discussion r'.$rowcount.$timedoutsidewindow.'">';
 
-    // Topic
-    echo '<td class="topic starter">';
-
+    $topicclass = 'topic starter';
+    if (FORUM_DISCUSSION_PINNED == $post->pinned) {
+        $topicclass .= ' pinned';
+    }
+    echo '<td class="'.$topicclass.'">';
+    if (FORUM_DISCUSSION_PINNED == $post->pinned) {
+        echo $OUTPUT->pix_icon('i/pinned', get_string('discussionpinned', 'forum'), 'mod_forum');
+    }
     $canalwaysseetimedpost = $USER->id == $post->userid || $canviewhiddentimedposts;
     if ($timeddiscussion && $canalwaysseetimedpost) {
         echo $PAGE->get_renderer('mod_forum')->timed_discussion_tooltip($post, empty($timedoutsidewindow));
@@ -4343,6 +4367,10 @@ function forum_update_post($post, $mform, &$message) {
         $discussion->name      = $post->subject;
         $discussion->timestart = $post->timestart;
         $discussion->timeend   = $post->timeend;
+
+        if (isset($post->pinned)) {
+            $discussion->pinned = $post->pinned;
+        }
     }
     $post->message = file_save_draft_area_files($post->itemid, $context->id, 'mod_forum', 'post', $post->id,
             mod_forum_post_form::editor_options($context, $post->id), $post->message);
@@ -4375,7 +4403,7 @@ function forum_update_post($post, $mform, &$message) {
 function forum_add_discussion($discussion, $mform=null, $unused=null, $userid=null) {
     global $USER, $CFG, $DB;
 
-    $timenow = time();
+    $timenow = isset($discussion->timenow) ? $discussion->timenow : time();
 
     if (is_null($userid)) {
         $userid = $USER->id;
@@ -5419,7 +5447,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
         } else {
             $ownpost=false;
         }
-        // Use discussion name instead of subject of first post
+        // Use discussion name instead of subject of first post.
         $discussion->subject = $discussion->name;
 
         switch ($displayformat) {
@@ -7755,6 +7783,54 @@ function forum_discussion_view($modcontext, $forum, $discussion) {
     $event = \mod_forum\event\discussion_viewed::create($params);
     $event->add_record_snapshot('forum_discussions', $discussion);
     $event->add_record_snapshot('forum', $forum);
+    $event->trigger();
+}
+
+/**
+ * Set the discussion to pinned and trigger the discussion pinned event
+ *
+ * @param  stdClass $modcontext module context object
+ * @param  stdClass $forum      forum object
+ * @param  stdClass $discussion discussion object
+ * @since Moodle 3.1
+ */
+function forum_discussion_pin($modcontext, $forum, $discussion) {
+    global $DB;
+
+    $DB->set_field('forum_discussions', 'pinned', FORUM_DISCUSSION_PINNED, array('id' => $discussion->id));
+
+    $params = array(
+        'context' => $modcontext,
+        'objectid' => $discussion->id,
+        'other' => array('forumid' => $forum->id)
+    );
+
+    $event = \mod_forum\event\discussion_pinned::create($params);
+    $event->add_record_snapshot('forum_discussions', $discussion);
+    $event->trigger();
+}
+
+/**
+ * Set discussion to unpinned and trigger the discussion unpin event
+ *
+ * @param  stdClass $modcontext module context object
+ * @param  stdClass $forum      forum object
+ * @param  stdClass $discussion discussion object
+ * @since Moodle 3.1
+ */
+function forum_discussion_unpin($modcontext, $forum, $discussion) {
+    global $DB;
+
+    $DB->set_field('forum_discussions', 'pinned', FORUM_DISCUSSION_UNPINNED, array('id' => $discussion->id));
+
+    $params = array(
+        'context' => $modcontext,
+        'objectid' => $discussion->id,
+        'other' => array('forumid' => $forum->id)
+    );
+
+    $event = \mod_forum\event\discussion_unpinned::create($params);
+    $event->add_record_snapshot('forum_discussions', $discussion);
     $event->trigger();
 }
 

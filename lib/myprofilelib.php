@@ -23,7 +23,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-require_once($CFG->dirroot . '/tag/lib.php');
 
 /**
  * Defines core nodes for my profile navigation tree.
@@ -36,7 +35,7 @@ require_once($CFG->dirroot . '/tag/lib.php');
  * @return bool
  */
 function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
-    global $CFG, $USER, $DB, $PAGE;
+    global $CFG, $USER, $DB, $PAGE, $OUTPUT;
 
     $usercontext = context_user::instance($user->id, MUST_EXIST);
     $systemcontext = context_system::instance();
@@ -218,11 +217,10 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
     }
 
     // Printing tagged interests. We want this only for full profile.
-    if (!empty($CFG->usetags) && empty($course)) {
-        if ($interests = tag_get_tags_csv('user', $user->id) ) {
-            $node = new core_user\output\myprofile\node('contact', 'interests', get_string('interests'), null, null, $interests);
-            $tree->add_node($node);
-        }
+    if (empty($course) && ($interests = core_tag_tag::get_item_tags('core', 'user', $user->id))) {
+        $node = new core_user\output\myprofile\node('contact', 'interests', get_string('interests'), null, null,
+                $OUTPUT->tag_list($interests, ''));
+        $tree->add_node($node);
     }
 
     if (!isset($hiddenfields['mycourses'])) {

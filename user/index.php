@@ -506,42 +506,45 @@ if (count($rolenames) > 1) {
     echo '</div>';
 }
 
+$editlink = '';
+if ($course->id != SITEID && has_capability('moodle/course:enrolreview', $context)) {
+    $editlink = new moodle_url('/enrol/users.php', array('id' => $course->id));
+}
+
 if ($roleid > 0) {
     $a = new stdClass();
     $a->number = $totalcount;
     $a->role = $rolenames[$roleid];
     $heading = format_string(get_string('xuserswiththerole', 'role', $a));
 
-    if ($currentgroup and $group) {
+    if ($currentgroup and !empty($group)) {
         $a->group = $group->name;
         $heading .= ' ' . format_string(get_string('ingroup', 'role', $a));
     }
 
-    if ($accesssince) {
+    if ($accesssince && !empty($timeoptions[$accesssince])) {
         $a->timeperiod = $timeoptions[$accesssince];
         $heading .= ' ' . format_string(get_string('inactiveformorethan', 'role', $a));
     }
 
     $heading .= ": $a->number";
 
-    if (user_can_assign($context, $roleid)) {
-        $headingurl = new moodle_url($CFG->wwwroot . '/' . $CFG->admin . '/roles/assign.php',
-                array('roleid' => $roleid, 'contextid' => $context->id));
-        $heading .= $OUTPUT->action_icon($headingurl, new pix_icon('t/edit', get_string('edit')));
+    if (!empty($editlink)) {
+        $editlink->param('role', $roleid);
+        $heading .= $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit')));
     }
     echo $OUTPUT->heading($heading, 3);
 } else {
-    if ($course->id != SITEID && has_capability('moodle/course:enrolreview', $context)) {
-        $editlink = $OUTPUT->action_icon(new moodle_url('/enrol/users.php', array('id' => $course->id)),
-                                         new pix_icon('t/edit', get_string('edit')));
-    } else {
-        $editlink = '';
-    }
     if ($course->id == SITEID and $roleid < 0) {
         $strallparticipants = get_string('allsiteusers', 'role');
     } else {
         $strallparticipants = get_string('allparticipants');
     }
+
+    if (!empty($editlink)) {
+        $editlink = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit')));
+    }
+
     if ($matchcount < $totalcount) {
         echo $OUTPUT->heading($strallparticipants.get_string('labelsep', 'langconfig').$matchcount.'/'.$totalcount . $editlink, 3);
     } else {

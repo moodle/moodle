@@ -65,18 +65,15 @@ class core_blog_lib_testcase extends advanced_testcase {
         ));
 
         // Create default tag.
-        $tag = new stdClass();
-        $tag->userid = $user->id;
-        $tag->name = 'testtagname';
-        $tag->rawname = 'Testtagname';
-        $tag->tagtype = 'official';
-        $tag->id = $DB->insert_record('tag', $tag);
+        $tag = $this->getDataGenerator()->create_tag(array('userid' => $user->id,
+            'rawname' => 'Testtagname', 'tagtype' => 'official'));
 
         // Create default post.
         $post = new stdClass();
         $post->userid = $user->id;
         $post->groupid = $group->id;
         $post->content = 'test post content text';
+        $post->module = 'blog';
         $post->id = $DB->insert_record('post', $post);
 
         // Grab important ids.
@@ -543,6 +540,67 @@ class core_blog_lib_testcase extends advanced_testcase {
         $nodes = $reflector->getProperty('nodes');
         $nodes->setAccessible(true);
         $this->assertArrayNotHasKey('blogs', $nodes->getValue($tree));
+    }
+
+    public function test_blog_get_listing_course() {
+        $this->setAdminUser();
+        $coursecontext = context_course::instance($this->courseid);
+        $anothercourse = $this->getDataGenerator()->create_course();
+
+        // Add blog associations with a course.
+        $blog = new blog_entry($this->postid);
+        $blog->add_association($coursecontext->id);
+
+        // There is one entry associated with a course.
+        $bloglisting = new blog_listing(array('course' => $this->courseid));
+        $this->assertCount(1, $bloglisting->get_entries());
+
+        // There is no entry associated with a wrong course.
+        $bloglisting = new blog_listing(array('course' => $anothercourse->id));
+        $this->assertCount(0, $bloglisting->get_entries());
+
+        // There is no entry associated with a module.
+        $bloglisting = new blog_listing(array('module' => $this->cmid));
+        $this->assertCount(0, $bloglisting->get_entries());
+
+        // There is one entry associated with a site (id is ignored).
+        $bloglisting = new blog_listing(array('site' => 12345));
+        $this->assertCount(1, $bloglisting->get_entries());
+
+        // There is one entry associated with course context.
+        $bloglisting = new blog_listing(array('context' => $coursecontext->id));
+        $this->assertCount(1, $bloglisting->get_entries());
+    }
+
+    public function test_blog_get_listing_module() {
+        $this->setAdminUser();
+        $coursecontext = context_course::instance($this->courseid);
+        $contextmodule = context_module::instance($this->cmid);
+        $anothermodule = $this->getDataGenerator()->create_module('page', array('course' => $this->courseid));
+
+        // Add blog associations with a course.
+        $blog = new blog_entry($this->postid);
+        $blog->add_association($contextmodule->id);
+
+        // There is no entry associated with a course.
+        $bloglisting = new blog_listing(array('course' => $this->courseid));
+        $this->assertCount(0, $bloglisting->get_entries());
+
+        // There is one entry associated with a module.
+        $bloglisting = new blog_listing(array('module' => $this->cmid));
+        $this->assertCount(1, $bloglisting->get_entries());
+
+        // There is no entry associated with a wrong module.
+        $bloglisting = new blog_listing(array('module' => $anothermodule->cmid));
+        $this->assertCount(0, $bloglisting->get_entries());
+
+        // There is one entry associated with a site (id is ignored).
+        $bloglisting = new blog_listing(array('site' => 12345));
+        $this->assertCount(1, $bloglisting->get_entries());
+
+        // There is one entry associated with course context (module is a subcontext of a course).
+        $bloglisting = new blog_listing(array('context' => $coursecontext->id));
+        $this->assertCount(1, $bloglisting->get_entries());
     }
 }
 

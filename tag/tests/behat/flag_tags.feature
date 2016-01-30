@@ -49,6 +49,7 @@ Feature: Users can flag tags and manager can reset flags
   Scenario: Managing tag flags with javascript disabled
     When I log in as "manager1"
     And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I follow "Default collection"
     Then "Sweartag" "link" should appear before "Badtag" "link"
     And "Badtag" "link" should appear before "Nicetag" "link"
     And "(2)" "text" should exist in the "//tr[contains(.,'Sweartag')]//td[contains(@class,'col-flag')]" "xpath_element"
@@ -69,6 +70,7 @@ Feature: Users can flag tags and manager can reset flags
   Scenario: Managing tag flags with javascript enabled
     When I log in as "manager1"
     And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I follow "Default collection"
     Then "Sweartag" "link" should appear before "Badtag" "link"
     And "Badtag" "link" should appear before "Nicetag" "link"
     And "(2)" "text" should exist in the "//tr[contains(.,'Sweartag')]//td[contains(@class,'col-flag')]" "xpath_element"
@@ -84,7 +86,7 @@ Feature: Users can flag tags and manager can reset flags
     And "(1)" "text" should exist in the "//tr[contains(.,'Nicetag')]//td[contains(@class,'col-flag')]" "xpath_element"
     And "(" "text" should not exist in the "//tr[contains(.,'Badtag')]//td[contains(@class,'col-flag')]" "xpath_element"
     And "(" "text" should not exist in the "//tr[contains(.,'Neverusedtag')]//td[contains(@class,'col-flag')]" "xpath_element"
-    And I follow "Manage tags"
+    And I follow "Default collection"
     And "Nicetag" "link" should appear before "Sweartag" "link"
     And "Sweartag" "link" should appear before "Badtag" "link"
     And "(1)" "text" should exist in the "//tr[contains(.,'Sweartag')]//td[contains(@class,'col-flag')]" "xpath_element"

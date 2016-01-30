@@ -3264,7 +3264,7 @@ function fullname($user, $override=false) {
     $allnames = get_all_user_name_fields();
     if ($CFG->debugdeveloper) {
         foreach ($allnames as $allname) {
-            if (!array_key_exists($allname, $user)) {
+            if (!property_exists($user, $allname)) {
                 // If all the user name fields are not set in the user object, then notify the programmer that it needs to be fixed.
                 debugging('You need to update your sql to include additional name fields in the user object.', DEBUG_DEVELOPER);
                 // Message has been sent, no point in sending the message multiple times.
@@ -3901,7 +3901,6 @@ function delete_user(stdClass $user) {
     require_once($CFG->libdir.'/grouplib.php');
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/message/lib.php');
-    require_once($CFG->dirroot.'/tag/lib.php');
     require_once($CFG->dirroot.'/user/lib.php');
 
     // Make sure nobody sends bogus record type as parameter.
@@ -3944,7 +3943,7 @@ function delete_user(stdClass $user) {
     // TODO: remove from cohorts using standard API here.
 
     // Remove user tags.
-    tag_set('user', $user->id, array(), 'core', $usercontext->id);
+    core_tag_tag::remove_all_item_tags('core', 'user', $user->id);
 
     // Unconditionally unenrol from all courses.
     enrol_user_delete($user);
@@ -4735,7 +4734,6 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     require_once($CFG->libdir.'/questionlib.php');
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/group/lib.php');
-    require_once($CFG->dirroot.'/tag/lib.php');
     require_once($CFG->dirroot.'/comment/lib.php');
     require_once($CFG->dirroot.'/rating/lib.php');
     require_once($CFG->dirroot.'/notes/lib.php');
@@ -4910,7 +4908,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     $rm->delete_ratings($delopt);
 
     // Delete course tags.
-    tag_set('course', $course->id, array(), 'core', $coursecontext->id);
+    core_tag_tag::remove_all_item_tags('core', 'course', $course->id);
 
     // Delete calendar events.
     $DB->delete_records('event', array('courseid' => $course->id));
@@ -5589,6 +5587,25 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         } else {
             $mail->addCustomHeader($from->customheaders);
         }
+    }
+
+    // If the X-PHP-Originating-Script email header is on then also add an additional
+    // header with details of where exactly in moodle the email was triggered from,
+    // either a call to message_send() or to email_to_user().
+    if (ini_get('mail.add_x_header')) {
+
+        $stack = debug_backtrace(false);
+        $origin = $stack[0];
+
+        foreach ($stack as $depth => $call) {
+            if ($call['function'] == 'message_send') {
+                $origin = $call;
+            }
+        }
+
+        $originheader = $CFG->wwwroot . ' => ' . gethostname() . ':'
+             . str_replace($CFG->dirroot . '/', '', $origin['file']) . ':' . $origin['line'];
+        $mail->addCustomHeader('X-Moodle-Originating-Script: ' . $originheader);
     }
 
     if (!empty($from->priority)) {
@@ -7532,7 +7549,7 @@ function count_words($string) {
     // Replace underscores (which are classed as word characters) with spaces.
     $string = preg_replace('/_/u', ' ', $string);
     // Remove any characters that shouldn't be treated as word boundaries.
-    $string = preg_replace('/[\'’-]/u', '', $string);
+    $string = preg_replace('/[\'"’-]/u', '', $string);
     // Remove dots and commas from within numbers only.
     $string = preg_replace('/([0-9])[.,]([0-9])/u', '$1$2', $string);
 

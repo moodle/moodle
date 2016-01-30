@@ -29,7 +29,6 @@ global $CFG;
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/course/tests/fixtures/course_capability_assignment.php');
 require_once($CFG->dirroot . '/enrol/imsenterprise/tests/imsenterprise_test.php');
-require_once($CFG->dirroot . '/tag/lib.php');
 
 class core_course_courselib_testcase extends advanced_testcase {
 
@@ -1501,6 +1500,7 @@ class core_course_courselib_testcase extends advanced_testcase {
      */
     public function test_course_delete_module($type, $options) {
         global $DB;
+
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
@@ -1521,7 +1521,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         switch ($type) {
             case 'assign':
                 // Add some tags to this assignment.
-                tag_set('assign', $module->id, array('Tag 1', 'Tag 2', 'Tag 3'), 'mod_assign', $modcontext->id);
+                core_tag_tag::set_item_tags('mod_assign', 'assign', $module->id, $modcontext, array('Tag 1', 'Tag 2', 'Tag 3'));
 
                 // Confirm the tag instances were added.
                 $criteria = array('component' => 'mod_assign', 'contextid' => $modcontext->id);

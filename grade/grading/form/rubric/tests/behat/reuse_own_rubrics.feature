@@ -28,7 +28,7 @@ Feature: Reuse my rubrics in other activities
     And I define the following rubric:
       | Criterion 1 | Level 11 | 11 | Level 12 | 12 | Level 3 | 13 |
       | Criterion 2 | Level 21 | 21 | Level 22 | 22 | Level 3 | 23 |
-      | Criterion 3 | Level 31 | 31 | Level 32 | 32 |
+      | Criterion 3 | Level 31 | 31 | Level 32 | 32 |         |    |
     And I press "Save rubric and make it ready"
     And I follow "Course 1"
     When I add a "Assignment" to section "1" and I fill the form with:
@@ -40,7 +40,6 @@ Feature: Reuse my rubrics in other activities
     And I should see "Criterion 1"
     And I should see "Criterion 2"
     And I should see "Criterion 3"
-    And I follow "C1"
     And I go to "Test assignment 1 name" advanced grading definition page
     And I should see "Criterion 1"
     And I should see "Criterion 2"

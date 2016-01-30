@@ -81,7 +81,7 @@ class behat_gradingform_rubric extends behat_base {
         $addcriterionbutton = $this->find_button(get_string('addcriterion', 'gradingform_rubric'));
 
         // Cleaning the current ones.
-        $deletebuttons = $this->find_all('css', "input[title='" . get_string('criteriondelete', 'gradingform_rubric') . "']");
+        $deletebuttons = $this->find_all('css', "input[value='" . get_string('criteriondelete', 'gradingform_rubric') . "']");
         if ($deletebuttons) {
 
             // We should reverse the deletebuttons because otherwise once we delete
@@ -100,6 +100,12 @@ class behat_gradingform_rubric extends behat_base {
 
         if ($criteria) {
             foreach ($criteria as $criterionit => $criterion) {
+                // Unset empty levels in criterion.
+                foreach ($criterion as $i => $value) {
+                    if (empty($value)) {
+                        unset($criterion[$i]);
+                    }
+                }
 
                 // Checking the number of cells.
                 if (count($criterion) % 2 === 0) {

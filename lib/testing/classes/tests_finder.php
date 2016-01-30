@@ -125,15 +125,30 @@ class tests_finder {
     private static function get_all_directories_with_tests($testtype) {
         global $CFG;
 
+        // List of directories to exclude from test file searching.
+        $excludedir = array('node_modules', 'vendor');
+
+        // Get first level directories in which tests should be searched.
+        $directoriestosearch = array();
+        $alldirs = glob($CFG->dirroot . DIRECTORY_SEPARATOR . '*' , GLOB_ONLYDIR);
+        foreach ($alldirs as $dir) {
+            if (!in_array(basename($dir), $excludedir) && (filetype($dir) != 'link')) {
+                $directoriestosearch[] = $dir;
+            }
+        }
+
+        // Search for tests in valid directories.
         $dirs = array();
-        $dirite = new RecursiveDirectoryIterator($CFG->dirroot);
-        $iteite = new RecursiveIteratorIterator($dirite);
-        $regexp = self::get_regexp($testtype);
-        $regite = new RegexIterator($iteite, $regexp);
-        foreach ($regite as $path => $element) {
-            $key = dirname(dirname($path));
-            $value = trim(str_replace('/', '_', str_replace($CFG->dirroot, '', $key)), '_');
-            $dirs[$key] = $value;
+        foreach ($directoriestosearch as $dir) {
+            $dirite = new RecursiveDirectoryIterator($dir);
+            $iteite = new RecursiveIteratorIterator($dirite);
+            $regexp = self::get_regexp($testtype);
+            $regite = new RegexIterator($iteite, $regexp);
+            foreach ($regite as $path => $element) {
+                $key = dirname(dirname($path));
+                $value = trim(str_replace(DIRECTORY_SEPARATOR, '_', str_replace($CFG->dirroot, '', $key)), '_');
+                $dirs[$key] = $value;
+            }
         }
         ksort($dirs);
         return array_flip($dirs);

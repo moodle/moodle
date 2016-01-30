@@ -61,7 +61,7 @@ class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox{
             $values = array(0, 1);
         }
 
-        if (!is_null($attributes['group'])) {
+        if (!empty($attributes['group'])) {
 
             $this->_group = 'checkboxgroup' . $attributes['group'];
             unset($attributes['group']);

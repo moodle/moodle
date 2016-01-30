@@ -99,7 +99,7 @@ Feature: Attemp a quiz where some questions require that the previous question h
     And I follow "Course 1"
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
-    And I press "Next"
+    And I press "Finish attempt ..."
     And I press "Submit all and finish"
     And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
 
@@ -177,7 +177,7 @@ Feature: Attemp a quiz where some questions require that the previous question h
     And I follow "Course 1"
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
-    And I press "Next"
+    And I press "Next page"
 
     Then I should see "Second question"
     And I should not see "This question cannot be attempted until the previous question has been completed."

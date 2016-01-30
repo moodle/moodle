@@ -39,6 +39,7 @@ $timenow = time();
 $attemptid     = required_param('attempt',  PARAM_INT);
 $thispage      = optional_param('thispage', 0, PARAM_INT);
 $nextpage      = optional_param('nextpage', 0, PARAM_INT);
+$previous      = optional_param('previous',      false, PARAM_BOOL);
 $next          = optional_param('next',          false, PARAM_BOOL);
 $finishattempt = optional_param('finishattempt', false, PARAM_BOOL);
 $timeup        = optional_param('timeup',        0,      PARAM_BOOL); // True if form was submitted by timer.
@@ -50,6 +51,8 @@ $attemptobj = quiz_attempt::create($attemptid);
 // Set $nexturl now.
 if ($next) {
     $page = $nextpage;
+} else if ($previous && $thispage > 0) {
+    $page = $thispage - 1;
 } else {
     $page = $thispage;
 }

@@ -138,6 +138,11 @@ class mod_forum_post_form extends moodleform {
             $mform->addHelpButton('attachments', 'attachment', 'forum');
         }
 
+        if (!$post->parent && has_capability('mod/forum:pindiscussions', $modcontext)) {
+            $mform->addElement('checkbox', 'pinned', get_string('discussionpinned', 'forum'));
+            $mform->addHelpButton('pinned', 'discussionpinned', 'forum');
+        }
+
         if (empty($post->id) && $manageactivities) {
             $mform->addElement('checkbox', 'mailnow', get_string('mailnow', 'forum'));
         }

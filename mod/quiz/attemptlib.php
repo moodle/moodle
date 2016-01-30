@@ -371,23 +371,13 @@ class quiz {
     // Bits of content =========================================================
 
     /**
-     * @param bool $unfinished whether there is currently an unfinished attempt active.
-     * @return string if the quiz policies merit it, return a warning string to
-     *      be displayed in a javascript alert on the start attempt button.
+     * @param bool $notused not used.
+     * @return string an empty string.
+     * @deprecated since 3.1. This sort of functionality is now entirely handled by quiz access rules.
      */
-    public function confirm_start_attempt_message($unfinished) {
-        if ($unfinished) {
-            return '';
-        }
-
-        if ($this->quiz->timelimit && $this->quiz->attempts) {
-            return get_string('confirmstartattempttimelimit', 'quiz', $this->quiz->attempts);
-        } else if ($this->quiz->timelimit) {
-            return get_string('confirmstarttimelimit', 'quiz');
-        } else if ($this->quiz->attempts) {
-            return get_string('confirmstartattemptlimit', 'quiz', $this->quiz->attempts);
-        }
-
+    public function confirm_start_attempt_message($notused) {
+        debugging('confirm_start_attempt_message is deprecated. ' .
+                'This sort of functionality is now entirely handled by quiz access rules.');
         return '';
     }
 

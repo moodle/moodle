@@ -138,6 +138,9 @@ $string['discussionmovedpost'] = 'This discussion has been moved to <a href="{$a
 $string['discussionname'] = 'Discussion name';
 $string['discussionnownotsubscribed'] = '{$a->name} will NOT be notified of new posts in \'{$a->discussion}\' of \'{$a->forum}\'';
 $string['discussionnowsubscribed'] = '{$a->name} will be notified of new posts in \'{$a->discussion}\' of \'{$a->forum}\'';
+$string['discussionpin'] = 'Pin';
+$string['discussionpinned'] = 'Pinned';
+$string['discussionpinned_help'] = 'Pinned discussions will appear at the top of a forum.';
 $string['discussionsubscribestop'] = 'I don\'t want to be notified of new posts in this discussion';
 $string['discussionsubscribestart'] = 'Send me notifications of new posts in this discussion';
 $string['discussionsubscription'] = 'Discussion subscription';
@@ -146,6 +149,7 @@ $string['discussions'] = 'Discussions';
 $string['discussionsstartedby'] = 'Discussions started by {$a}';
 $string['discussionsstartedbyrecent'] = 'Discussions recently started by {$a}';
 $string['discussionsstartedbyuserincourse'] = 'Discussions started by {$a->fullname} in {$a->coursename}';
+$string['discussionunpin'] = 'Unpin';
 $string['discussthistopic'] = 'Discuss this topic';
 $string['displayend'] = 'Display end';
 $string['displayend_help'] = 'This setting specifies whether a forum post should be hidden after a certain date. Note that administrators can always view forum posts.';
@@ -168,6 +172,8 @@ $string['eventdiscussionmoved'] = 'Discussion moved';
 $string['eventdiscussionviewed'] = 'Discussion viewed';
 $string['eventdiscussionsubscriptioncreated'] = 'Discussion subscription created';
 $string['eventdiscussionsubscriptiondeleted'] = 'Discussion subscription deleted';
+$string['eventdiscussionpinned'] = 'Discussion pinned';
+$string['eventdiscussionunpinned'] = 'Discussion unpinned';
 $string['eventuserreportviewed'] = 'User report viewed';
 $string['eventpostcreated'] = 'Post created';
 $string['eventpostdeleted'] = 'Post deleted';
@@ -229,6 +235,7 @@ $string['forum:exportpost'] = 'Export post';
 $string['forumintro'] = 'Description';
 $string['forum:managesubscriptions'] = 'Manage subscriptions';
 $string['forum:movediscussions'] = 'Move discussions';
+$string['forum:pindiscussions'] = 'Pin discussions';
 $string['forum:postwithoutthrottling'] = 'Exempt from post threshold';
 $string['forumname'] = 'Forum name';
 $string['forumposts'] = 'Forum posts';
@@ -390,9 +397,6 @@ $string['postbymailsuccess'] = 'Congratulations, your forum post with subject "{
 $string['postbymailsuccess_html'] = 'Congratulations, your <a href="{$a->discussionurl}">forum post</a> with subject "{$a->subject}" was successfully posted.';
 $string['postbyuser'] = '{$a->post} by {$a->user}';
 $string['postincontext'] = 'See this post in context';
-$string['postmailinfo'] = 'This is a copy of a message posted on the {$a} website.
-
-To reply click on this link:';
 $string['postmailinfolink'] = 'This is a copy of a message posted in {$a->coursename}.
 
 To reply click on this link: {$a->replylink}';
@@ -529,3 +533,8 @@ $string['yourreply'] = 'Your reply';
 
 // Deprecated since Moodle 3.0.
 $string['subscribersto'] = 'Subscribers to "{$a->name}"';
+
+// Deprecated since Moodle 3.1.
+$string['postmailinfo'] = 'This is a copy of a message posted on the {$a} website.
+
+To reply click on this link:';

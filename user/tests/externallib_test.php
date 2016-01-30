@@ -70,7 +70,6 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $user1 = self::getDataGenerator()->create_user($user1);
         set_config('usetags', 1);
         require_once($CFG->dirroot . '/user/editlib.php');
-        require_once($CFG->dirroot . '/tag/lib.php');
         $user1->interests = array('Cinema', 'Tennis', 'Dance', 'Guitar', 'Cooking');
         useredit_update_interests($user1, $user1->interests);
 
@@ -228,7 +227,6 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $user1 = self::getDataGenerator()->create_user($user1);
         if (!empty($CFG->usetags)) {
             require_once($CFG->dirroot . '/user/editlib.php');
-            require_once($CFG->dirroot . '/tag/lib.php');
             $user1->interests = array('Cinema', 'Tennis', 'Dance', 'Guitar', 'Cooking');
             useredit_update_interests($user1, $user1->interests);
         }
@@ -390,7 +388,6 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $return->user1 = self::getDataGenerator()->create_user($return->user1);
         if (!empty($CFG->usetags)) {
             require_once($CFG->dirroot . '/user/editlib.php');
-            require_once($CFG->dirroot . '/tag/lib.php');
             $return->user1->interests = array('Cinema', 'Tennis', 'Dance', 'Guitar', 'Cooking');
             useredit_update_interests($return->user1, $return->user1->interests);
         }
@@ -594,7 +591,6 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $user1 = self::getDataGenerator()->create_user($user1);
         if (!empty($CFG->usetags)) {
             require_once($CFG->dirroot . '/user/editlib.php');
-            require_once($CFG->dirroot . '/tag/lib.php');
             $user1->interests = array('Cinema', 'Tennis', 'Dance', 'Guitar', 'Cooking');
             useredit_update_interests($user1, $user1->interests);
         }

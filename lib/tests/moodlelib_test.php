@@ -2846,7 +2846,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertEquals(3, $count);
 
         $count = count_words('one"two three-four');
-        $this->assertEquals(3, $count);
+        $this->assertEquals(2, $count);
 
         $count = count_words('one@two three_four');
         $this->assertEquals(4, $count);

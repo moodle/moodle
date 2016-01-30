@@ -252,6 +252,12 @@ $definitions = array(
         'simpledata' => true,
         'staticacceleration' => true,
         'staticaccelerationsize' => 5
+    ),
+
+    // Caches data about tag collections and areas.
+    'tags' => array(
+        'mode' => cache_store::MODE_REQUEST,
+        'simplekeys' => true,
     )
 
 );

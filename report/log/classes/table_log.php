@@ -36,13 +36,6 @@ class report_log_table_log extends table_sql {
     /** @var array list of user fullnames shown in report */
     private $userfullnames = array();
 
-    /**
-     * @deprecated since Moodle 2.9 MDL-48595 - please do not use this argument any more.
-     * @todo MDL-49291 This will be deleted in 3.1
-     * @var array list of course short names shown in report.
-     */
-    private $courseshortnames = array();
-
     /** @var array list of context name shown in report */
     private $contextname = array();
 
@@ -99,19 +92,9 @@ class report_log_table_log extends table_sql {
      * Generate the course column.
      *
      * @deprecated since Moodle 2.9 MDL-48595 - please do not use this function any more.
-     * @todo MDL-49291 This will be deleted in 3.1
-     * @param stdClass $event event data.
-     * @return string HTML for the course column.
      */
     public function col_course($event) {
-
-        debugging('col_course() is deprecated, there is no such column', DEBUG_DEVELOPER);
-
-        if (empty($event->courseid) || empty($this->courseshortnames[$event->courseid])) {
-            return '-';
-        } else {
-            return $this->courseshortnames[$event->courseid];
-        }
+        throw new coding_exception('col_course() can not be used any more, there is no such column.');
     }
 
     /**
@@ -544,82 +527,9 @@ class report_log_table_log extends table_sql {
      * which will be used to render logs in table.
      *
      * @deprecated since Moodle 2.9 MDL-48595 - please do not use this function any more.
-     * @todo MDL-49291 This will be deleted in 3.1
-     * @see self::update_users_used()
      */
     public function update_users_and_courses_used() {
-        global $SITE, $DB;
-
-        debugging('update_users_and_courses_used() is deprecated, please use update_users_used() instead.', DEBUG_DEVELOPER);
-
-        // We should not call self::update_users_used() as would have to iterate twice around the list of logs.
-
-        $this->userfullnames = array();
-        $this->courseshortnames = array($SITE->id => $SITE->shortname);
-        $userids = array();
-        $courseids = array();
-        // For each event cache full username and course.
-        // Get list of userids and courseids which will be shown in log report.
-        foreach ($this->rawdata as $event) {
-            $logextra = $event->get_logextra();
-            if (!empty($event->userid) && empty($userids[$event->userid])) {
-                $userids[$event->userid] = $event->userid;
-            }
-            if (!empty($logextra['realuserid']) && empty($userids[$logextra['realuserid']])) {
-                $userids[$logextra['realuserid']] = $logextra['realuserid'];
-            }
-            if (!empty($event->relateduserid) && empty($userids[$event->relateduserid])) {
-                $userids[$event->relateduserid] = $event->relateduserid;
-            }
-
-            if (!empty($event->courseid) && ($event->courseid != $SITE->id) && !in_array($event->courseid, $courseids)) {
-                $courseids[] = $event->courseid;
-            }
-        }
-
-        // Closing it just in case, we can not rewind moodle recordsets anyway.
-        if ($this->rawdata instanceof \core\dml\recordset_walk ||
-                $this->rawdata instanceof moodle_recordset) {
-            $this->rawdata->close();
-        }
-
-        // Get user fullname and put that in return list.
-        if (!empty($userids)) {
-            list($usql, $uparams) = $DB->get_in_or_equal($userids);
-            $users = $DB->get_records_sql("SELECT id," . get_all_user_name_fields(true) . " FROM {user} WHERE id " . $usql,
-                    $uparams);
-            foreach ($users as $userid => $user) {
-                $this->userfullnames[$userid] = fullname($user);
-                unset($userids[$userid]);
-            }
-
-            // We fill the array with false values for the users that don't exist anymore
-            // in the database so we don't need to query the db again later.
-            foreach ($userids as $userid) {
-                $this->userfullnames[$userid] = false;
-            }
-        }
-
-        // Get course shortname and put that in return list.
-        if (!empty($courseids)) { // If all logs don't belog to site level then get course info.
-            list($coursesql, $courseparams) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
-            $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
-            $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
-            $courseparams['contextlevel'] = CONTEXT_COURSE;
-            $sql = "SELECT c.id,c.shortname $ccselect FROM {course} c
-                   $ccjoin
-                     WHERE c.id " . $coursesql;
-
-            $courses = $DB->get_records_sql($sql, $courseparams);
-            foreach ($courses as $courseid => $course) {
-                $url = new moodle_url("/course/view.php", array('id' => $courseid));
-                context_helper::preload_from_record($course);
-                $context = context_course::instance($courseid, IGNORE_MISSING);
-                // Method format_string() takes care of missing contexts.
-                $this->courseshortnames[$courseid] = html_writer::link($url, format_string($course->shortname, true,
-                        array('context' => $context)));
-            }
-        }
+        throw new coding_exception('update_users_and_courses_used() can not be used any more, please use update_users_used() instead.');
     }
 
     /**

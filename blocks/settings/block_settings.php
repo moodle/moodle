@@ -90,13 +90,19 @@ class block_settings extends block_base {
     }
 
     function get_required_javascript() {
+        global $PAGE;
+        $adminnodeid = null;
+        $adminnode = $PAGE->settingsnav->find('siteadministration', navigation_node::TYPE_SITE_ADMIN);
+        if (!empty($adminnode)) {
+            $adminnodeid = $adminnode->id;
+        }
         parent::get_required_javascript();
         $arguments = array(
             'id' => $this->instance->id,
             'instance' => $this->instance->id,
             'candock' => $this->instance_can_be_docked()
         );
-        $this->page->requires->yui_module('moodle-block_navigation-navigation', 'M.block_navigation.init_add_tree', array($arguments));
+        $this->page->requires->js_call_amd('block_settings/settingsblock', 'init', array($adminnodeid));
     }
 
     /**

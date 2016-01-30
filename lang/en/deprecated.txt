@@ -20,3 +20,4 @@ updated,core_tag
 withselectedtags,core_tag
 tag:create,core_role
 categoriesanditems,core_grades
+taggedwith,core_tag

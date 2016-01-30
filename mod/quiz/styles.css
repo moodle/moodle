@@ -18,10 +18,18 @@
     text-align: left;
     padding-top: 1.5em;
 }
-
 #page-mod-quiz-attempt.dir-rtl .submitbtns,
 #page-mod-quiz-review.dir-rtl .submitbtns {
     text-align: right;
+}
+
+#page-mod-quiz-attempt .submitbtns .mod_quiz-next-nav,
+#page-mod-quiz-review .submitbtns .mod_quiz-next-nav {
+    float: right;
+}
+#page-mod-quiz-attempt.dir-rtl .submitbtns .mod_quiz-next-nav,
+#page-mod-quiz-review.dir-rtl .submitbtns .mod_quiz-next-nav {
+    float: left;
 }
 
 .path-mod-quiz .mod_quiz-redo_question_button {
@@ -336,6 +344,47 @@ table.quizattemptsummary .noreviewmessage {
 }
 .jsenabled .quizstartbuttondiv.quizsecuremoderequired input {
     display: inline;
+}
+.quizattempt #mod_quiz_preflight_form {
+    display: none;
+}
+
+#mod_quiz_preflight_form .femptylabel .fitemtitle {
+    display: none;
+}
+#mod_quiz_preflight_form .femptylabel .felement {
+    margin: 0;
+    padding: 0;
+}
+
+.moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup {
+    width: 600px;
+}
+.moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup .moodle-dialogue-wrap {
+    overflow: hidden;
+}
+.moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup .moodle-dialogue-bd {
+    padding: 0;
+}
+.moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup .moodle-dialogue-bd #mod_quiz_preflight_form legend {
+    padding: 0 10px;
+    margin: 0;
+    border: 0 none;
+}
+.moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup .moodle-dialogue-bd #mod_quiz_preflight_form .fitem {
+    margin-left: 10px;
+}
+.moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup .moodle-dialogue-bd #mod_quiz_preflight_form #fgroup_id_buttonar {
+    padding: 10px 0 0;
+    margin: 0;
+}
+.moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup .moodle-dialogue-content .moodle-dialogue-ft {
+    margin: 0;
+}
+/* Standard Moodle rule that needs to be more specific here. */
+.moodle-dialogue-bd #mod_quiz_preflight_form fieldset.hidden {
+    display: inherit;
+    visibility: inherit;
 }
 
 body.path-mod-quiz .gradedattempt,

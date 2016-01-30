@@ -383,9 +383,9 @@ class qformat_xml extends qformat_default {
     public function import_question_tags($qo, $questionxml) {
         global $CFG;
 
-        if (!empty($CFG->usetags) && array_key_exists('tags', $questionxml['#'])
+        if (core_tag_tag::is_enabled('core_question', 'question')
+                && array_key_exists('tags', $questionxml['#'])
                 && !empty($questionxml['#']['tags'][0]['#']['tag'])) {
-            require_once($CFG->dirroot.'/tag/lib.php');
             $qo->tags = array();
             foreach ($questionxml['#']['tags'][0]['#']['tag'] as $tagdata) {
                 $qo->tags[] = $this->getpath($tagdata, array('#', 'text', 0, '#'), '', true);
@@ -1467,16 +1467,13 @@ class qformat_xml extends qformat_default {
         $expout .= $this->write_hints($question);
 
         // Write the question tags.
-        if (!empty($CFG->usetags)) {
-            require_once($CFG->dirroot.'/tag/lib.php');
-            $tags = tag_get_tags_array('question', $question->id);
-            if (!empty($tags)) {
-                $expout .= "    <tags>\n";
-                foreach ($tags as $tag) {
-                    $expout .= "      <tag>" . $this->writetext($tag, 0, true) . "</tag>\n";
-                }
-                $expout .= "    </tags>\n";
+        $tags = core_tag_tag::get_item_tags_array('core_question', 'question', $question->id);
+        if (!empty($tags)) {
+            $expout .= "    <tags>\n";
+            foreach ($tags as $tag) {
+                $expout .= "      <tag>" . $this->writetext($tag, 0, true) . "</tag>\n";
             }
+            $expout .= "    </tags>\n";
         }
 
         // Close the question tag.

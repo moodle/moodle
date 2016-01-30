@@ -65,8 +65,8 @@ class behat_navigation extends behat_base {
         $nodetextliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
         $hasblocktree = "[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]";
         $hasbranch = "[contains(concat(' ', normalize-space(@class), ' '), ' branch ')]";
-        $hascollapsed = "li[contains(concat(' ', normalize-space(@class), ' '), ' collapsed ') or @data-expandable='1']";
-        $notcollapsed = "li[not(contains(concat(' ', normalize-space(@class), ' '), ' collapsed '))]";
+        $hascollapsed = "li[@aria-expanded='false']";
+        $notcollapsed = "li[@aria-expanded='true']";
         $match = "[normalize-space(.)={$nodetextliteral}]";
 
         // Avoid problems with quotes.
@@ -79,12 +79,15 @@ class behat_navigation extends behat_base {
             $iscollapsed = 'li';
         }
 
-        // First check root nodes.
+        // First check root nodes, it can be a span or link.
         $xpath  = "//ul{$hasblocktree}/$hascollapsed/p{$isbranch}/span{$match}|";
+        $xpath  .= "//ul{$hasblocktree}/$hascollapsed/p{$isbranch}/a{$match}|";
+
         // Next search for the node containing the text within a link.
-        $xpath .= "//ul{$hasblocktree}//{$notcollapsed}/ul/{$iscollapsed}/p{$isbranch}/a{$match}|";
+        $xpath .= "//ul{$hasblocktree}//ul/{$iscollapsed}/p{$isbranch}/a{$match}|";
+
         // Finally search for the node containing the text within a span.
-        $xpath .= "//ul{$hasblocktree}//{$notcollapsed}/ul/{$iscollapsed}/p{$isbranch}/span{$match}";
+        $xpath .= "//ul{$hasblocktree}//ul/{$iscollapsed}/p{$isbranch}/span{$match}";
 
         $node = $this->find('xpath', $xpath, $exception);
         $this->ensure_node_is_visible($node);
@@ -108,10 +111,11 @@ class behat_navigation extends behat_base {
 
         $node = $this->get_node_text_node($nodetext, true);
         $node = $node->getParent();
-        if ($node->hasAttribute('data-expandable') && $node->getAttribute('data-expandable')) {
-            return true;
+        if ($node->hasClass('emptybranch')) {
+            throw new ExpectationException('The "' . $nodetext . '" node is not expandable', $this->getSession());
         }
-        throw new ExpectationException('The "' . $nodetext . '" node is not expandable', $this->getSession());
+
+        return true;
     }
 
     /**
@@ -131,10 +135,11 @@ class behat_navigation extends behat_base {
 
         $node = $this->get_node_text_node($nodetext);
         $node = $node->getParent();
-        if ($node->hasAttribute('data-expandable') && $node->getAttribute('data-expandable')) {
-            throw new ExpectationException('The "' . $nodetext . '" node is expandable', $this->getSession());
+
+        if ($node->hasClass('emptybranch') || $node->hasClass('tree_item')) {
+            return true;
         }
-        return true;
+        throw new ExpectationException('The "' . $nodetext . '" node is expandable', $this->getSession());
     }
 
     /**
@@ -257,7 +262,9 @@ class behat_navigation extends behat_base {
             }
 
             // Keep expanding all sub-parents if js enabled.
-            if ($this->running_javascript() && $node->hasClass('collapsed')) {
+            if ($this->running_javascript() && $node->hasAttribute('aria-expanded') &&
+                ($node->getAttribute('aria-expanded') == "false")) {
+
                 $xpath = "/p[contains(concat(' ', normalize-space(@class), ' '), ' tree_item ')]";
                 $nodetoexpand = $node->find('xpath', $xpath);
 
@@ -265,9 +272,10 @@ class behat_navigation extends behat_base {
                 $nodetoexpand->click();
 
                 // Wait for node to load, if not loaded before.
-                if ($nodetoexpand->hasAttribute('data-loaded') && $nodetoexpand->getAttribute('data-loaded') == 0) {
-                    $jscondition = '(document.evaluate("' . $nodetoexpand->getXpath() . '", document, null, '.
-                        'XPathResult.ANY_TYPE, null).iterateNext().getAttribute(\'data-loaded\') == 1)';
+                $linode = $nodetoexpand->getParent();
+                if ($linode && $linode->hasAttribute('data-loaded') && $linode->getAttribute('data-loaded') == "false") {
+                    $jscondition = '(document.evaluate("' . $linode->getXpath() . '", document, null, '.
+                        'XPathResult.ANY_TYPE, null).iterateNext().getAttribute(\'data-loaded\') == "true")';
 
                     $this->getSession()->wait(self::EXTENDED_TIMEOUT * 1000, $jscondition);
                 }
@@ -320,8 +328,14 @@ class behat_navigation extends behat_base {
             "//div[contains(concat(' ', normalize-space(@class), ' '), ' content ')]/div" .
             "/ul[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]" .
             "/li[p[contains(concat(' ', normalize-space(@class), ' '), ' branch ')]" .
-            "/span[normalize-space(.)=" . $nodetextliteral ."]]";
-            $node = $this->find('xpath', $xpath, $exception);
+            "/span[normalize-space(.)=" . $nodetextliteral ."]]" .
+            "|" .
+            "//div[contains(concat(' ', normalize-space(@class), ' '), ' content ')]/div" .
+            "/ul[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]" .
+            "/li[p[contains(concat(' ', normalize-space(@class), ' '), ' branch ')]" .
+            "/a[normalize-space(.)=" . $nodetextliteral ."]]";
+
+        $node = $this->find('xpath', $xpath, $exception);
 
         return $node;
     }

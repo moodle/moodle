@@ -31,8 +31,14 @@ information provided here is intended especially for developers.
     custom user filters. Similar deprecations in existing user_filter_* classes.
   * table_default_export_format_parent::table_default_export_format_parent() is
     deprecated, use parent::__construct() in extending classes.
-  * groups_delete_group_members() $showfeedback parameter has been removed and is no longer
-    respected. Users of this function should output their own feedback if required.
+* groups_delete_group_members() $showfeedback parameter has been removed and is no longer
+  respected. Users of this function should output their own feedback if required.
+* Number of changes to Tags API, see tag/upgrade.txt for more details
+* The previous events API handlers are being deprecated in favour of events 2 API, debugging messages are being displayed if
+  there are 3rd party plugins using it. Switch to events 2 API please, see https://docs.moodle.org/dev/Event_2#Event_dispatching_and_observers
+  Note than you will need to bump the plugin version so moodle is aware that you removed the plugin's event handlers.
+* mforms validation functions are not available in the global JS namespace anymore, event listeners
+  are assigned to fields and buttons through a self-contained JS function.
 
 === 3.0 ===
 

@@ -141,6 +141,8 @@ class navigation_node implements renderable {
     protected static $loadadmintree = false;
     /** @var mixed If set to an int, that section will be included even if it has no activities */
     public $includesectionnum = false;
+    /** @var bool does the node need to be loaded via ajax */
+    public $requiresajaxloading = false;
 
     /**
      * Constructs a new navigation_node
@@ -612,6 +614,7 @@ class navigation_node implements renderable {
             if ($child->display && $child->has_children() && $child->children->count() == 0) {
                 $child->id = 'expandable_branch_'.$child->type.'_'.clean_param($child->key, PARAM_ALPHANUMEXT);
                 $this->add_class('canexpand');
+                $child->requiresajaxloading = true;
                 $expandable[] = array('id' => $child->id, 'key' => $child->key, 'type' => $child->type);
             }
             $child->find_expandable($expandable);
@@ -1296,18 +1299,8 @@ class global_navigation extends navigation_node {
         }
 
         // Give the local plugins a chance to include some navigation if they want.
-        foreach (core_component::get_plugin_list_with_file('local', 'lib.php', true) as $plugin => $unused) {
-            $function = "local_{$plugin}_extend_navigation";
-            $oldfunction = "local_{$plugin}_extends_navigation";
-
-            if (function_exists($function)) {
-                $function($this);
-
-            } else if (function_exists($oldfunction)) {
-                debugging("Deprecated local plugin navigation callback: Please rename '{$oldfunction}' to '{$function}'. ".
-                    "Support for the old callback will be dropped in Moodle 3.1", DEBUG_DEVELOPER);
-                $oldfunction($this);
-            }
+        foreach (get_plugin_list_with_function('local', 'extend_navigation') as $function) {
+            $function($this);
         }
 
         // Remove any empty root nodes
@@ -3559,7 +3552,7 @@ class settings_navigation extends navigation_node {
                 }
                 $siteadminnode = $this->add(get_string('administrationsite'), new moodle_url('/admin'), self::TYPE_SITE_ADMIN, null, 'siteadministration');
                 $siteadminnode->id = 'expandable_branch_'.$siteadminnode->type.'_'.clean_param($siteadminnode->key, PARAM_ALPHANUMEXT);
-                $this->page->requires->data_for_js('siteadminexpansion', $siteadminnode);
+                $siteadminnode->requiresajaxloading = 'true';
             }
         }
 
@@ -3888,8 +3881,10 @@ class settings_navigation extends navigation_node {
         }
 
         //Add badges navigation
-        require_once($CFG->libdir .'/badgeslib.php');
-        badges_add_course_navigation($coursenode, $course);
+        if (!empty($CFG->enablebadges)) {
+            require_once($CFG->libdir .'/badgeslib.php');
+            badges_add_course_navigation($coursenode, $course);
+        }
 
         // Backup this course
         if (has_capability('moodle/backup:backupcourse', $coursecontext)) {
@@ -4828,18 +4823,8 @@ class settings_navigation extends navigation_node {
      */
     protected function load_local_plugin_settings() {
 
-        foreach (core_component::get_plugin_list_with_file('local', 'lib.php', true) as $plugin => $unused) {
-            $function = "local_{$plugin}_extend_settings_navigation";
-            $oldfunction = "local_{$plugin}_extends_settings_navigation";
-
-            if (function_exists($function)) {
-                $function($this, $this->context);
-
-            } else if (function_exists($oldfunction)) {
-                debugging("Deprecated local plugin navigation callback: Please rename '{$oldfunction}' to '{$function}'. ".
-                    "Support for the old callback will be dropped in Moodle 3.1", DEBUG_DEVELOPER);
-                $oldfunction($this, $this->context);
-            }
+        foreach (get_plugin_list_with_function('local', 'extend_settings_navigation') as $function) {
+            $function($this, $this->context);
         }
     }
 
@@ -4968,6 +4953,7 @@ class navigation_json {
         $attributes['type'] = $child->type;
         $attributes['key'] = $child->key;
         $attributes['class'] = $child->get_css_type();
+        $attributes['requiresajaxloading'] = $child->requiresajaxloading;
 
         if ($child->icon instanceof pix_icon) {
             $attributes['icon'] = array(
