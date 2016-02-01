@@ -348,7 +348,7 @@ function grade_needs_regrade_progress_bar($courseid) {
     $grade_items = grade_item::fetch_all(array('courseid' => $courseid));
 
     list($sql, $params) = $DB->get_in_or_equal(array_keys($grade_items), SQL_PARAMS_NAMED, 'gi');
-    $gradecount = $DB->count_records_select('grade_grades', 'id ' . $sql, $params);
+    $gradecount = $DB->count_records_select('grade_grades', 'itemid ' . $sql, $params);
 
     // This figure may seem arbitrary, but after analysis it seems that 100 grade_grades can be calculated in ~= 0.5 seconds.
     // Any longer than this and we want to show the progress bar.
@@ -363,10 +363,14 @@ function grade_needs_regrade_progress_bar($courseid) {
  * completes. Otherwise the regrading will happen immediately and the page will be loaded as per
  * normal.
  *
+ * A callback may be specified, which is called if regrading has taken place.
+ * The callback may optionally return a URL which will be redirected to when the progress bar is present.
+ *
  * @param stdClass $course The course to regrade
- * @return bool Whether the regrade process has taken place
+ * @param callable $callback A function to call if regrading took place
+ * @return moodle_url The URL to redirect to if redirecting
  */
-function grade_regrade_final_grades_if_required($course) {
+function grade_regrade_final_grades_if_required($course, callable $callback = null) {
     global $PAGE, $OUTPUT;
 
     if (!grade_needs_regrade_final_grades($course->id)) {
@@ -379,11 +383,25 @@ function grade_regrade_final_grades_if_required($course) {
         echo $OUTPUT->heading(get_string('recalculatinggrades', 'grades'));
         $progress = new \core\progress\display(true);
         grade_regrade_final_grades($course->id, null, null, $progress);
-        echo $OUTPUT->continue_button($PAGE->url);
+
+        if ($callback) {
+            //
+            $url = call_user_func($callback);
+        }
+
+        if (empty($url)) {
+            $url = $PAGE->url;
+        }
+
+        echo $OUTPUT->continue_button($url);
         echo $OUTPUT->footer();
         die();
     } else {
-        return grade_regrade_final_grades($course->id);
+        $result = grade_regrade_final_grades($course->id);
+        if ($callback) {
+            call_user_func($callback);
+        }
+        return $result;
     }
 }
 
