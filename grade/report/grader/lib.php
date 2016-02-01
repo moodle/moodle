@@ -819,20 +819,23 @@ class grade_report_grader extends grade_report {
                     $fillercell->header = false;
                     $headingrow->cells[] = $fillercell;
                 } else if ($type == 'category') {
-                    // Element is a category
-                    $categorycell = new html_table_cell();
-                    $categorycell->attributes['class'] = 'category ' . $catlevel;
-                    $categorycell->colspan = $colspan;
-                    $categorycell->text = $this->get_course_header($element);
-                    $categorycell->header = true;
-                    $categorycell->scope = 'col';
+                    // Make sure the grade category has a grade total or at least has child grade items.
+                    if (grade_tree::can_output_item($element)) {
+                        // Element is a category.
+                        $categorycell = new html_table_cell();
+                        $categorycell->attributes['class'] = 'category ' . $catlevel;
+                        $categorycell->colspan = $colspan;
+                        $categorycell->text = $this->get_course_header($element);
+                        $categorycell->header = true;
+                        $categorycell->scope = 'col';
 
-                    // Print icons
-                    if ($USER->gradeediting[$this->courseid]) {
-                        $categorycell->text .= $this->get_icons($element);
+                        // Print icons.
+                        if ($USER->gradeediting[$this->courseid]) {
+                            $categorycell->text .= $this->get_icons($element);
+                        }
+
+                        $headingrow->cells[] = $categorycell;
                     }
-
-                    $headingrow->cells[] = $categorycell;
                 } else {
                     // Element is a grade_item
                     if ($element['object']->id == $this->sortitemid) {
