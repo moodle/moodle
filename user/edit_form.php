@@ -99,6 +99,11 @@ class user_edit_form extends moodleform {
         $mform = $this->_form;
         $userid = $mform->getElementValue('id');
 
+        // Trim required name fields.
+        foreach (useredit_get_required_name_fields() as $field) {
+            $mform->applyFilter($field, 'trim');
+        }
+
         if ($user = $DB->get_record('user', array('id' => $userid))) {
 
             // Remove description.
