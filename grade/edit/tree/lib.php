@@ -538,6 +538,13 @@ class grade_edit_tree {
                 }
                 $deepest_level = $this->get_deepest_level($child_el, $level, $deepest_level);
             }
+
+            $category = grade_category::fetch(array('id' => $object->id));
+            $item = $category->get_grade_item();
+            if ($item->gradetype == GRADE_TYPE_NONE) {
+                // Add 1 more level for grade category that has no total.
+                $deepest_level++;
+            }
         }
 
         return $deepest_level;
