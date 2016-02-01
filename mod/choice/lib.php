@@ -513,7 +513,7 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses) {
  * @return bool
  */
 function choice_delete_responses($attemptids, $choice, $cm, $course) {
-    global $DB, $CFG;
+    global $DB, $CFG, $USER;
     require_once($CFG->libdir.'/completionlib.php');
 
     if(!is_array($attemptids) || empty($attemptids)) {
@@ -526,16 +526,36 @@ function choice_delete_responses($attemptids, $choice, $cm, $course) {
         }
     }
 
+    $context = context_module::instance($cm->id);
     $completion = new completion_info($course);
     foreach($attemptids as $attemptid) {
         if ($todelete = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'id' => $attemptid))) {
+            // Trigger the event answer deleted.
+            $eventdata = array();
+            $eventdata['objectid'] = $todelete->id;
+            $eventdata['context'] = $context;
+            $eventdata['userid'] = $USER->id;
+            $eventdata['courseid'] = $course->id;
+            $eventdata['relateduserid'] = $todelete->userid;
+            $eventdata['other'] = array();
+            $eventdata['other']['choiceid'] = $choice->id;
+            $eventdata['other']['optionid'] = $todelete->optionid;
+            $event = \mod_choice\event\answer_deleted::create($eventdata);
+            $event->add_record_snapshot('course', $course);
+            $event->add_record_snapshot('course_modules', $cm);
+            $event->add_record_snapshot('choice', $choice);
+            $event->add_record_snapshot('choice_answers', $todelete);
+            $event->trigger();
+
             $DB->delete_records('choice_answers', array('choiceid' => $choice->id, 'id' => $attemptid));
-            // Update completion state
-            if ($completion->is_enabled($cm) && $choice->completionsubmit) {
-                $completion->update_state($cm, COMPLETION_INCOMPLETE, $attemptid);
-            }
         }
     }
+
+    // Update completion state.
+    if ($completion->is_enabled($cm) && $choice->completionsubmit) {
+        $completion->update_state($cm, COMPLETION_INCOMPLETE);
+    }
+
     return true;
 }
 

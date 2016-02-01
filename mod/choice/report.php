@@ -71,6 +71,17 @@
         }
     } else {
         $groupmode = groups_get_activity_groupmode($cm);
+
+        // Trigger the report downloaded event.
+        $eventdata = array();
+        $eventdata['context'] = $context;
+        $eventdata['courseid'] = $course->id;
+        $eventdata['other']['content'] = 'choicereportcontentviewed';
+        $eventdata['other']['format'] = $download;
+        $eventdata['other']['choiceid'] = $choice->id;
+        $event = \mod_choice\event\report_downloaded::create($eventdata);
+        $event->trigger();
+
     }
 
     // Check if we want to include responses from inactive users.
