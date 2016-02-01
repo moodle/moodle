@@ -59,6 +59,10 @@ class delete_incomplete_users_task extends scheduled_task {
                 if (isguestuser($user) or is_siteadmin($user)) {
                     continue;
                 }
+                if ($user->lastname !== '' and $user->firstname !== '' and $user->email !== '') {
+                    // This can happen on MySQL - see MDL-52831.
+                    continue;
+                }
                 delete_user($user);
                 mtrace(" Deleted not fully setup user $user->username ($user->id)");
             }

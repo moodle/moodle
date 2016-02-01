@@ -112,6 +112,11 @@ class login_signup_form extends moodleform {
     function definition_after_data(){
         $mform = $this->_form;
         $mform->applyFilter('username', 'trim');
+
+        // Trim required name fields.
+        foreach (useredit_get_required_name_fields() as $field) {
+            $mform->applyFilter($field, 'trim');
+        }
     }
 
     function validation($data, $files) {

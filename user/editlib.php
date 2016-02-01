@@ -285,11 +285,17 @@ function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions
     }
 
     $strrequired = get_string('required');
+    $stringman = get_string_manager();
 
     // Add the necessary names.
     foreach (useredit_get_required_name_fields() as $fullname) {
         $mform->addElement('text', $fullname,  get_string($fullname),  'maxlength="100" size="30"');
-        $mform->addRule($fullname, $strrequired, 'required', null, 'client');
+        if ($stringman->string_exists('missing'.$fullname, 'core')) {
+            $strmissingfield = get_string('missing'.$fullname, 'core');
+        } else {
+            $strmissingfield = $strrequired;
+        }
+        $mform->addRule($fullname, $strmissingfield, 'required', null, 'client');
         $mform->setType($fullname, PARAM_NOTAGS);
     }
 
