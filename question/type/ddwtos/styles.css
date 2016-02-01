@@ -36,6 +36,7 @@
     box-shadow: 3px 3px 4px #000;
 }
 
+.que.ddwtos .drop:focus,
 .que.ddwtos .drop.yui3-dd-drop-over.yui3-dd-drop-active-valid {
     border-color: #0a0;
     box-shadow: 0 0 5px 5px rgba(255, 255, 150, 1);
