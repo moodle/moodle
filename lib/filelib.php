@@ -4506,6 +4506,14 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
                 send_file_not_found();
             }
 
+            if ($context->get_course_context(false)) {
+                // If block is in course context, then check if user has capability to access course.
+                require_course_login($course);
+            } else if ($CFG->forcelogin) {
+                // If user is logged out, bp record will not be visible, even if the user would have access if logged in.
+                require_login();
+            }
+
             $bprecord = $DB->get_record('block_positions', array('contextid' => $context->id, 'blockinstanceid' => $context->instanceid));
             // User can't access file, if block is hidden or doesn't have block:view capability
             if (($bprecord && !$bprecord->visible) || !has_capability('moodle/block:view', $context)) {
