@@ -25,13 +25,13 @@ Feature: Check that messages can be deleted
     And "Delete" "link" should exist in the "#message_1" "css_element"
     And "Delete" "link" should exist in the "#message_2" "css_element"
     # Confirm that there is a confirmation box before deleting, and that when we cancel the messages remain.
-    And I click on "#message_2" "css_element"
+    And I hover "#message_2" "css_element"
     And I click on "Delete" "link" in the "#message_2" "css_element"
     And I press "Cancel"
     And I should see "Hey bud, what's happening?"
     And I should see "Whoops, forgot to mention that I drank all your beers. Lol."
     # Confirm we can delete a message and then can no longer see it.
-    And I click on "#message_2" "css_element"
+    And I hover "#message_2" "css_element"
     And I click on "Delete" "link" in the "#message_2" "css_element"
     And I press "Delete"
     And I should see "Hey bud, what's happening?"
@@ -69,10 +69,10 @@ Feature: Check that messages can be deleted
     And "Delete" "link" should exist in the "#message_3" "css_element"
     And "Delete" "link" should exist in the "#message_4" "css_element"
     # Now, delete one of the messages that User 1 sent and one by User 2.
-    And I click on "#message_1" "css_element"
+    And I hover "#message_1" "css_element"
     And I click on "Delete" "link" in the "#message_1" "css_element"
     And I press "Delete"
-    And I click on "#message_2" "css_element"
+    And I hover "#message_2" "css_element"
     And I click on "Delete" "link" in the "#message_2" "css_element"
     And I press "Delete"
     # Confirm that the messages are no longer listed.
@@ -111,7 +111,7 @@ Feature: Check that messages can be deleted
     # Send a message from the admin to User 1
     And I send "Hey there, this is the all-powerful administrator. Obey my commands." message to "User 1" user
     # Check the admin is still able to delete messages.
-    And I click on "#message_1" "css_element"
+    And I hover "#message_1" "css_element"
     And I click on "Delete" "link" in the "#message_1" "css_element"
     And I press "Delete"
     And I should not see "Hey there, this is the all-powerful administrator. Obey my commands."
