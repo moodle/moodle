@@ -1002,6 +1002,11 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
         grade_extend_settings($plugin_info, $courseid);
     }
 
+    // Set the current report as active in the breadcrumbs.
+    if ($active_plugin !== null && $reportnav = $PAGE->settingsnav->find($active_plugin, navigation_node::TYPE_SETTING)) {
+        $reportnav->make_active();
+    }
+
     $returnval = $OUTPUT->header();
 
     if (!$return) {
