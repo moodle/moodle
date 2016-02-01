@@ -42,7 +42,10 @@ information provided here is intended especially for developers.
     - upgrade_course_modules_sequences()
     - upgrade_grade_item_fix_sortorder()
     - upgrade_availability_item()
-
+* A new parameter $ajaxformdata was added to the constructor for moodleform. When building a
+  moodleform in a webservice or ajax script (for example using the new fragments API) we
+  cannot allow the moodleform to parse it's own data from _GET and _POST - we must pass it as
+  an array.
 * Plugins can extend the navigation for user by declaring the following callback:
   <frankenstyle>_extend_navigation_user(navigation_node $parentnode, stdClass $user,
                                         context_user $context, stdClass $course,

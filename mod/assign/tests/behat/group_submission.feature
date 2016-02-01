@@ -35,7 +35,7 @@ Feature: Group assignment submissions
       | Students submit in groups | Yes |
       | Group mode | No groups |
     And I follow "Test assignment name"
-    When I follow "View/grade all submissions"
+    When I follow "View all submissions"
     Then "//tr[contains(., 'Student 0')][contains(., 'Default group')]" "xpath_element" should exist
     And "//tr[contains(., 'Student 1')][contains(., 'Default group')]" "xpath_element" should exist
     And "//tr[contains(., 'Student 2')][contains(., 'Default group')]" "xpath_element" should exist
@@ -54,7 +54,7 @@ Feature: Group assignment submissions
     And I add "Student 1 (student1@example.com)" user to "Group 1" group members
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View/grade all submissions"
+    And I follow "View all submissions"
     And "//tr[contains(., 'Student 0')][contains(., 'Group 1')]" "xpath_element" should exist
     And "//tr[contains(., 'Student 1')][contains(., 'Group 1')]" "xpath_element" should exist
     And I should not see "Student 2"
@@ -113,7 +113,7 @@ Feature: Group assignment submissions
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    When I follow "View/grade all submissions"
+    When I follow "View all submissions"
     Then "Student 1" row "Status" column of "generaltable" table should contain "Submitted for grading"
     And "Student 2" row "Status" column of "generaltable" table should contain "Submitted for grading"
     And "Student 3" row "Status" column of "generaltable" table should not contain "Submitted for grading"
@@ -130,7 +130,7 @@ Feature: Group assignment submissions
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View/grade all submissions"
+    And I follow "View all submissions"
     And "Student 1" row "Status" column of "generaltable" table should contain "Submitted for grading"
     And "Student 2" row "Status" column of "generaltable" table should contain "Submitted for grading"
     And "Student 3" row "Status" column of "generaltable" table should contain "Submitted for grading"

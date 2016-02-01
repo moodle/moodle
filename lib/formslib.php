@@ -278,7 +278,7 @@ abstract class moodleform {
      */
     function _process_submission($method) {
         $submission = array();
-        if (!empty($this->_ajaxformdata) && defined('AJAX_SCRIPT')) {
+        if (!empty($this->_ajaxformdata)) {
             $submission = $this->_ajaxformdata;
         } else if ($method == 'post') {
             if (!empty($_POST)) {

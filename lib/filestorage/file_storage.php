@@ -53,6 +53,9 @@ class file_storage {
     private $dirpermissions;
     /** @var int Permissions for new files */
     private $filepermissions;
+    /** @var array List of formats supported by unoconv */
+    private $unoconvformats;
+
 
     /**
      * Constructor - do not use directly use {@link get_file_storage()} call instead.
@@ -206,7 +209,7 @@ class file_storage {
             $this->unoconvformats = array_unique($this->unoconvformats);
         }
 
-        $sanitized = trim(strtolower($format));
+        $sanitized = trim(core_text::strtolower($format));
         return in_array($sanitized, $this->unoconvformats);
     }
 
@@ -226,7 +229,7 @@ class file_storage {
             return false;
         }
 
-        $fileextension = strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
+        $fileextension = core_text::strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
         if (!self::is_format_supported_by_unoconv($fileextension)) {
             return false;
         }
@@ -260,7 +263,6 @@ class file_storage {
         $output = null;
         $currentdir = getcwd();
         chdir($tmp);
-        $result = exec('env 1>&2', $output);
         $result = exec($cmd, $output);
         chdir($currentdir);
         if (!file_exists($newtmpfile)) {

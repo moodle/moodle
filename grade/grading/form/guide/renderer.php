@@ -651,7 +651,7 @@ class gradingform_guide_renderer extends plugin_renderer_base {
                 'name' => 'showmarkerdesc',
                 'value' => "true")+$checked1);
             $radio1 = html_writer::tag('label', $radio1);
-            $radio2 .= html_writer::tag('input', get_string('hidemarkerdesc', 'gradingform_guide'), array('type' => 'radio',
+            $radio2 = html_writer::tag('input', get_string('hidemarkerdesc', 'gradingform_guide'), array('type' => 'radio',
                 'name' => 'showmarkerdesc',
                 'value' => "false")+$checked2);
             $radio2 = html_writer::tag('label', $radio2);

@@ -28,8 +28,8 @@ Feature: Check that the assignment grade can not be input in a wrong format.
       | Description | Test assignment description |
       | Use marking workflow | Yes |
     When I follow "Test assignment name"
-    Then I follow "View/grade all submissions"
-    And I click on "Grade Student 1" "link" in the "Student 1" "table_row"
+    Then I follow "View all submissions"
+    And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "50,,6"
     And I press "Save changes"
     And I should see "The grade provided could not be understood: 50,,6"
@@ -58,8 +58,8 @@ Feature: Check that the assignment grade can not be input in a wrong format.
       | Description | Test assignment description |
       | Use marking workflow | Yes |
     When I follow "Test assignment name"
-    Then I follow "View/grade all submissions"
-    And I click on "Grade Student 1" "link" in the "Student 1" "table_row"
+    Then I follow "View all submissions"
+    And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "50..6"
     And I press "Save changes"
     And I should see "The grade provided could not be understood: 50..6"

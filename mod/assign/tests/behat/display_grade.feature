@@ -28,11 +28,14 @@ Feature: Check that the assignment grade can be updated correctly
       | Description | Test assignment description |
       | Use marking workflow | Yes |
     When I follow "Test assignment name"
-    Then I follow "View/grade all submissions"
-    And I click on "Grade Student 1" "link" in the "Student 1" "table_row"
+    Then I follow "View all submissions"
+    And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "50"
     And I press "Save changes"
-    And I press "Continue"
+    And I press "Ok"
+    And I click on "Edit settings" "link"
+    And I follow "Test assignment name"
+    And I follow "View all submissions"
     And "Student 1" row "Grade" column of "generaltable" table should contain "50.00"
 
   @javascript
@@ -61,9 +64,12 @@ Feature: Check that the assignment grade can be updated correctly
       | Students submit in groups | Yes |
       | Group mode | No groups |
     When I follow "Test assignment name"
-    Then I follow "View/grade all submissions"
-    And I click on "Grade Student 1" "link" in the "Student 1" "table_row"
+    Then I follow "View all submissions"
+    And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "50"
     And I press "Save changes"
-    And I press "Continue"
+    And I press "Ok"
+    And I click on "Edit settings" "link"
+    And I follow "Test assignment name"
+    And I follow "View all submissions"
     And "Student 1" row "Grade" column of "generaltable" table should contain "50.00"

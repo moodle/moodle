@@ -833,16 +833,12 @@ class assign_grading_table extends table_sql implements renderable {
         $gradingdisabled = $this->assignment->grading_disabled($row->id);
 
         if (!$this->is_downloading() && $this->hasgrade) {
-            $name = $this->assignment->fullname($row);
-            $icon = $this->output->pix_icon('gradefeedback',
-                                            get_string('gradeuser', 'assign', $name),
-                                            'mod_assign');
             $urlparams = array('id' => $this->assignment->get_course_module()->id,
-                               'rownum'=>$this->rownum,
-                               'action' => 'grade',
-                               'useridlistid' => $this->assignment->get_useridlist_key_id());
+                               'rownum'=> 0,
+                               'action' => 'grader',
+                               'userid' => $row->userid);
             $url = new moodle_url('/mod/assign/view.php', $urlparams);
-            $link = $this->output->action_link($url, $icon);
+            $link = '<a href="' . $url . '" class="btn btn-primary">' . get_string('grade') . '</a>';
             $grade .= $link . $separator;
         }
 

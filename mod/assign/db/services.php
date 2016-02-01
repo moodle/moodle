@@ -190,4 +190,24 @@ $functions = array(
             'capabilities'  => 'mod/assign:view',
             'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
+
+        'mod_assign_list_participants' => array(
+                'classname'     => 'mod_assign_external',
+                'methodname'    => 'list_participants',
+                'classpath'     => 'mod/assign/externallib.php',
+                'description'   => 'List the participants for a single assignment, with some summary info about their submissions.',
+                'type'          => 'read',
+                'ajax'          => true,
+                'capabilities'  => 'mod/assign:view, mod/assign:viewgrades'
+        ),
+
+        'mod_assign_submit_grading_form' => array(
+                'classname'     => 'mod_assign_external',
+                'methodname'    => 'submit_grading_form',
+                'classpath'     => 'mod/assign/externallib.php',
+                'description'   => 'Submit the grading form data via ajax',
+                'type'          => 'write',
+                'ajax'          => true,
+                'capabilities'  => 'mod/assign:grade'
+        ),
 );
