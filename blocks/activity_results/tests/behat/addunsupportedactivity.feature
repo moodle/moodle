@@ -35,6 +35,6 @@ Feature: The activity results block displays student scores
     When I follow "Test assignment"
     And I click on "Edit settings" "link" in the "Administration" "block"
     And I set the following fields to these values:
-      | id_modgrade_type | None |
+      | id_grade_modgrade_type | None |
     And I press "Save and return to course"
     Then I should see "Error: the activity selected uses a grading method that is not supported by this block." in the "Activity results" "block"
