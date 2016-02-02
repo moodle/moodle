@@ -313,8 +313,13 @@ if (!empty($frm->username)) {
     $focus = "username";
 }
 
+// IOMAD changes to display the instructions.
 if (!empty($CFG->registerauth) or is_enabled_auth('none') or !empty($CFG->auth_instructions)) {
-    $show_instructions = true;
+    if (!empty($CFG->local_iomad_signup_showinstructions)) {
+        $show_instructions = true;
+    } else {
+        $show_instructions = false;
+    }
 } else {
     $show_instructions = false;
 }

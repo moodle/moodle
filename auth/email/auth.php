@@ -105,6 +105,15 @@ class auth_plugin_email extends auth_plugin_base {
         // Trigger event.
         \core\event\user_created::create_from_userid($user->id)->trigger();
 
+        // IOMAD.
+        if (!empty($user->companyid)) {
+            require_once($CFG->dirroot.'/local/iomad/lib/company.php');
+            $company = new company($user->companyid);
+
+            // assign the user to the company.
+            $company->assign_user_to_company($user->id);
+        }
+
         if (! send_confirmation_email($user)) {
             print_error('auth_emailnoemail','auth_email');
         }

@@ -27,6 +27,13 @@ if ($hassiteconfig && !empty($USER->id)) {
         1)
     );
 
+    $settings->add(new admin_setting_configcheckbox(
+        'local_iomad_signup_showinstructions',
+        get_string('showinstructions', 'local_iomad_signup'),
+        get_string('showinstructions_help', 'local_iomad_signup'),
+        1)
+    );
+
     $siteauths = get_enabled_auth_plugins();
     $siteautharray = array();
     foreach ($siteauths as $siteauth) {
