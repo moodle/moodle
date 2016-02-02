@@ -97,7 +97,6 @@ $editoroptions = array(
 $data = file_prepare_standard_editor($data, 'description', $editoroptions, $systemcontext, 'tag', 'description', $data->id);
 
 $tagform = new tag_edit_form(null, array('editoroptions' => $editoroptions, 'tag' => $tag));
-$data->tagtype = ($data->tagtype === 'official') ? '1' : '0';
 $data->returnurl = $returnurl;
 
 $tagform->set_data($data);
@@ -109,7 +108,7 @@ if ($tagform->is_cancelled()) {
     $updatedata = array();
 
     if (has_capability('moodle/tag:manage', $systemcontext)) {
-        $updatedata['tagtype'] = empty($tagnew->tagtype) ? 'default' : 'official';
+        $updatedata['isstandard'] = empty($tagnew->isstandard) ? 0 : 1;
         $updatedata['rawname'] = $tagnew->rawname;
     }
 
@@ -118,7 +117,7 @@ if ($tagform->is_cancelled()) {
     $updatedata['description'] = $tagnew->description;
     $updatedata['descriptionformat'] = $tagnew->descriptionformat;
 
-    // Update name, description and official type.
+    // Update name, description and whether it is a standard tag.
     $tag->update($updatedata);
 
     // Updated related tags.

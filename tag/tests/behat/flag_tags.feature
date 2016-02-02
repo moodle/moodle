@@ -15,8 +15,8 @@ Feature: Users can flag tags and manager can reset flags
       | user     | course               | role    |
       | manager1 | Acceptance test site | manager |
     And the following "tags" exist:
-      | name         | tagtype  |
-      | Neverusedtag | official |
+      | name         | isstandard |
+      | Neverusedtag | 1          |
     And I log in as "admin"
     And I set the following system permissions of "Authenticated user" role:
       | capability                   | permission |

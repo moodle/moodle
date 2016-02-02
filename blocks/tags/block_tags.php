@@ -70,8 +70,8 @@ class block_tags extends block_base {
             $this->config->numberoftags = 80;
         }
 
-        if (empty($this->config->tagtype)) {
-            $this->config->tagtype = '';
+        if (empty($this->config->showstandard)) {
+            $this->config->showstandard = core_tag_tag::BOTH_STANDARD_AND_NOT;
         }
 
         if (empty($this->config->ctx)) {
@@ -102,7 +102,7 @@ class block_tags extends block_base {
         // Get a list of tags.
 
         $tagcloud = core_tag_collection::get_tag_cloud($this->config->tagcoll,
-                $this->config->tagtype,
+                $this->config->showstandard == core_tag_tag::STANDARD_ONLY,
                 $this->config->numberoftags,
                 'name', '', $this->page->context->id, $this->config->ctx, $this->config->rec);
         $this->content->text = $OUTPUT->render_from_template('core_tag/tagcloud', $tagcloud->export_for_template($OUTPUT));

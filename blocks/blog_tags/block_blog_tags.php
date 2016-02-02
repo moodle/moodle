@@ -121,7 +121,7 @@ class block_blog_tags extends block_base {
             $type = " AND (p.publishstate = 'site' or p.publishstate='public')";
         }
 
-        $sql  = "SELECT t.id, t.tagtype, t.rawname, t.name, COUNT(DISTINCT ti.id) AS ct
+        $sql  = "SELECT t.id, t.isstandard, t.rawname, t.name, COUNT(DISTINCT ti.id) AS ct
                    FROM {tag} t, {tag_instance} ti, {post} p, {blog_association} ba
                   WHERE t.id = ti.tagid AND p.id = ti.itemid
                         $type
@@ -136,7 +136,7 @@ class block_blog_tags extends block_base {
         }
 
         $sql .= "
-               GROUP BY t.id, t.tagtype, t.name, t.rawname
+               GROUP BY t.id, t.isstandard, t.name, t.rawname
                ORDER BY ct DESC, t.name ASC";
 
         if ($tags = $DB->get_records_sql($sql, null, 0, $this->config->numberoftags)) {
@@ -165,7 +165,7 @@ class block_blog_tags extends block_base {
                     $size = 20 - ( (int)((($currenttag - 1) / $totaltags) * 20) );
                 }
 
-                $tag->class = "$tag->tagtype s$size";
+                $tag->class = ($tag->isstandard ? "standardtag " : "") . "s$size";
                 $etags[] = $tag;
 
             }

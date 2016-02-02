@@ -13,11 +13,11 @@ Feature: Managers can create and manage tag collections
       | user     | course               | role    |
       | manager1 | Acceptance test site | manager |
     And the following "tags" exist:
-      | name | tagtype  |
-      | Tag0 | official  |
-      | Tag1 | official  |
-      | Tag2 | official  |
-      | Tag3 | official |
+      | name | isstandard |
+      | Tag0 | 1          |
+      | Tag1 | 1          |
+      | Tag2 | 1          |
+      | Tag3 | 1          |
     And I log in as "manager1"
     And I navigate to "Manage tags" node in "Site administration > Appearance"
     And I follow "Add tag collection"
@@ -104,9 +104,9 @@ Feature: Managers can create and manage tag collections
     And I should not see "Tag2"
     And I follow "Manage tags"
     And I follow "Default collection"
-    # Tag "Swimming" was not official and was moved completely.
+    # Tag "Swimming" was not standard and was moved completely.
     And I should not see "Swimming"
-    # Official tag was not removed.
+    # Standard tag was not removed.
     And I should see "Tag0"
     And I should see "Tag3"
     And I should see "Tag1"

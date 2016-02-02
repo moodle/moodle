@@ -18,8 +18,8 @@ Feature: Users can edit tags to add description or rename
       | manager1 | Acceptance test site | manager   |
       | editor1  | Acceptance test site | tageditor |
     And the following "tags" exist:
-      | name         | tagtype  |
-      | Neverusedtag | official |
+      | name         | isstandard |
+      | Neverusedtag | 1          |
 
   @javascript
   Scenario: User with tag editing capability can change tag description
@@ -36,7 +36,7 @@ Feature: Users can edit tags to add description or rename
     And I follow "Cat"
     And I follow "Edit this tag"
     And I should not see "Tag name"
-    And I should not see "Official"
+    And I should not see "Standard"
     And I set the following fields to these values:
       | Description | Description of tag 1 |
       | Related tags | Dog,  Turtle,Fish |
@@ -60,7 +60,7 @@ Feature: Users can edit tags to add description or rename
       | Tag name | Kitten |
       | Description | Description of tag 1 |
       | Related tags | Dog,  Turtle,Fish |
-      | Official | 0 |
+      | Standard | 0 |
     And I press "Update"
     Then "Kitten" "text" should exist in the ".breadcrumb-nav" "css_element"
     And "Description of tag 1" "text" should exist in the ".tag-description" "css_element"
@@ -110,7 +110,7 @@ Feature: Users can edit tags to add description or rename
       | Tag name | Kitten |
       | Description | Description of tag 1 |
       | Related tags | Dog,  Turtle,Fish |
-      | Official | 0 |
+      | Standard | 0 |
     And I press "Update"
     Then "Default collection" "link" should exist in the ".breadcrumb-nav" "css_element"
     And I follow "Kitten"

@@ -51,7 +51,9 @@ class core_tag_external extends external_api {
                             'description' => new external_value(PARAM_RAW, 'tag description', VALUE_OPTIONAL),
                             'descriptionformat' => new external_value(PARAM_INT, 'tag description format', VALUE_OPTIONAL),
                             'flag' => new external_value(PARAM_INT, 'flag', VALUE_OPTIONAL),
-                            'official' => new external_value(PARAM_INT, 'whether this flag is official', VALUE_OPTIONAL),
+                            'official' => new external_value(PARAM_INT,
+                                '(deprecated, use isstandard) whether this flag is standard', VALUE_OPTIONAL),
+                            'isstandard' => new external_value(PARAM_INT, 'whether this flag is standard', VALUE_OPTIONAL),
                         )
                     )
                 )
@@ -126,7 +128,8 @@ class core_tag_external extends external_api {
                 }
             }
             if (array_key_exists('official', $tag)) {
-                $tag['tagtype'] = $tag['official'] ? 'official' : 'default';
+                // Parameter 'official' deprecated and replaced with 'isstandard'.
+                $tag['isstandard'] = $tag['official'] ? 1 : 0;
                 unset($tag['official']);
             }
             if (isset($tag['flag'])) {
@@ -217,6 +220,7 @@ class core_tag_external extends external_api {
             $rv = $tagoutput->export_for_template($renderer);
             if (!$canmanage) {
                 if (!$canedit) {
+                    unset($rv->isstandard);
                     unset($rv->official);
                 }
                 unset($rv->flag);
@@ -245,9 +249,11 @@ class core_tag_external extends external_api {
                         'description' => new external_value(PARAM_RAW, 'tag description'),
                         'descriptionformat' => new external_format_value(PARAM_INT, 'tag description format'),
                         'flag' => new external_value(PARAM_INT, 'flag', VALUE_OPTIONAL),
-                        'official' => new external_value(PARAM_INT, 'whether this flag is official', VALUE_OPTIONAL),
+                        'official' => new external_value(PARAM_INT,
+                            'whether this flag is standard (deprecated, use isstandard)', VALUE_OPTIONAL),
+                        'isstandard' => new external_value(PARAM_INT, 'whether this flag is standard', VALUE_OPTIONAL),
                         'viewurl' => new external_value(PARAM_URL, 'URL to view'),
-                        'changetypeurl' => new external_value(PARAM_URL, 'URL to change type (official or not)', VALUE_OPTIONAL),
+                        'changetypeurl' => new external_value(PARAM_URL, 'URL to change type (standard or not)', VALUE_OPTIONAL),
                         'changeflagurl' => new external_value(PARAM_URL, 'URL to set or reset flag', VALUE_OPTIONAL),
                     ), 'information about one tag')
                 ),

@@ -843,10 +843,6 @@ EOD;
             $record['name'] = core_text::strtolower($record['name']);
         }
 
-        if (!isset($record['tagtype'])) {
-            $record['tagtype'] = 'default';
-        }
-
         if (!isset($record['tagcollid'])) {
             $record['tagcollid'] = core_tag_collection::get_default();
         }

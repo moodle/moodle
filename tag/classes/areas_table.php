@@ -49,6 +49,8 @@ class core_tag_areas_table extends html_table {
             get_string('component', 'tag'),
             get_string('tagareaenabled', 'core_tag'),
             get_string('tagcollection', 'tag'),
+            get_string('showstandard', 'tag') .
+                $OUTPUT->help_icon('showstandard', 'tag')
         );
 
         $this->data = array();
@@ -57,6 +59,12 @@ class core_tag_areas_table extends html_table {
         $tagareas = core_tag_area::get_areas();
         $tagcollections = core_tag_collection::get_collections_menu(true);
         $tagcollectionsall = core_tag_collection::get_collections_menu();
+
+        $standardchoices = array(
+            core_tag_tag::BOTH_STANDARD_AND_NOT => get_string('standardsuggest', 'tag'),
+            core_tag_tag::STANDARD_ONLY => get_string('standardforce', 'tag'),
+            core_tag_tag::HIDE_STANDARD => get_string('standardhide', 'tag')
+        );
 
         foreach ($tagareas as $itemtype => $it) {
             foreach ($it as $component => $record) {
@@ -79,12 +87,24 @@ class core_tag_areas_table extends html_table {
                 } else {
                     $collectionselect = $tagcollectionsall[$record->tagcollid];
                 }
+
+                if ($record->enabled) {
+                    $changeshowstandardurl = new moodle_url($baseurl, array('action' => 'areasetshowstandard'));
+                    $select = new single_select($changeshowstandardurl, 'showstandard', $standardchoices,
+                        $record->showstandard, null);
+                    $select->set_label(get_string('changeshowstandard', 'core_tag', $areaname), array('class' => 'accesshide'));
+                    $showstandardselect = $OUTPUT->render($select);
+                } else {
+                    $showstandardselect = $standardchoices[$record->showstandard];
+                }
+
                 $this->data[] = array(
                     $areaname,
                     ($record->component === 'core' || preg_match('/^core_/', $record->component)) ?
                         get_string('coresystem') : get_string('pluginname', $record->component),
                     $enabled,
-                    $collectionselect
+                    $collectionselect,
+                    $showstandardselect
                 );
                 $this->rowclasses[] = $record->enabled ? '' : 'dimmed_text';
             }

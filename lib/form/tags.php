@@ -18,7 +18,7 @@
 /**
  * Tag autocomplete field.
  *
- * Contains HTML class for editing tags, both official and personal.
+ * Contains HTML class for editing tags, both standard and not.
  *
  * @package   core_form
  * @copyright 2009 Tim Hunt
@@ -31,7 +31,7 @@ require_once($CFG->libdir . '/form/autocomplete.php');
 /**
  * Form field type for editing tags.
  *
- * HTML class for editing tags, both official and personal.
+ * HTML class for editing tags, both standard and not.
  *
  * @package   core_form
  * @copyright 2009 Tim Hunt
@@ -41,12 +41,14 @@ class MoodleQuickForm_tags extends MoodleQuickForm_autocomplete {
     /**
      * Inidcates that the user should be the usual interface, with the official
      * tags listed seprately, and a text box where they can type anything.
+     * @deprecated since 3.1
      * @var int
      */
     const DEFAULTUI = 'defaultui';
 
     /**
      * Indicates that the user should only be allowed to select official tags.
+     * @deprecated since 3.1
      * @var int
      */
     const ONLYOFFICIAL = 'onlyofficial';
@@ -54,14 +56,15 @@ class MoodleQuickForm_tags extends MoodleQuickForm_autocomplete {
     /**
      * Indicates that the user should just be given a text box to type in (they
      * can still type official tags though.
+     * @deprecated since 3.1
      * @var int
      */
     const NOOFFICIAL = 'noofficial';
 
     /**
-     * @var boolean $showingofficial Official tags shown? (if not, then don't show link to manage official tags).
+     * @var boolean $showstandard Standard tags suggested? (if not, then don't show link to manage standard tags).
      */
-    protected $showingofficial = false;
+    protected $showstandard = false;
 
     /**
      * Options passed when creating an element.
@@ -83,25 +86,33 @@ class MoodleQuickForm_tags extends MoodleQuickForm_autocomplete {
         if (!empty($options)) {
             // Only execute it when the element was created and $options has values set by user.
             // In onQuickFormEvent() we make sure that $options is not empty even if developer left it empty.
-            if (empty($options['display'])) {
-                $options['display'] = self::DEFAULTUI;
+            $showstandard = core_tag_tag::BOTH_STANDARD_AND_NOT;
+            if (isset($options['showstandard'])) {
+                $showstandard = $options['showstandard'];
+            } else if (isset($options['display'])) {
+                debugging('Option "display" is deprecated, each tag area can be configured to show standard tags or not ' .
+                    'by admin or manager. If it is necessary for the developer to override it, please use "showstandard" option',
+                    DEBUG_DEVELOPER);
+                if ($options['display'] === self::NOOFFICIAL) {
+                    $showstandard = core_tag_tag::HIDE_STANDARD;
+                } else if ($options['display'] === self::ONLYOFFICIAL) {
+                    $showstandard = core_tag_tag::STANDARD_ONLY;
+                }
+            } else if (!empty($options['component']) && !empty($options['itemtype'])) {
+                $showstandard = core_tag_area::get_showstandard($options['component'], $options['itemtype']);
             }
+
             $this->tagsoptions = $options;
 
-            $this->showingofficial = $options['display'] != self::NOOFFICIAL;
-
-            if ($this->showingofficial) {
-                $validoptions = $this->load_official_tags();
+            $this->showstandard = ($showstandard != core_tag_tag::HIDE_STANDARD);
+            if ($this->showstandard) {
+                $validoptions = $this->load_standard_tags();
             }
             // Option 'tags' allows us to type new tags.
-            if ($options['display'] == self::ONLYOFFICIAL) {
-                $attributes['tags'] = false;
-            } else {
-                $attributes['tags'] = true;
-            }
+            $attributes['tags'] = ($showstandard != core_tag_tag::STANDARD_ONLY);
             $attributes['multiple'] = 'multiple';
             $attributes['placeholder'] = get_string('entertags', 'tag');
-            $attributes['showsuggestions'] = $this->showingofficial;
+            $attributes['showsuggestions'] = $this->showstandard;
         }
 
         parent::__construct($elementName, $elementLabel, $validoptions, $attributes);
@@ -149,7 +160,7 @@ class MoodleQuickForm_tags extends MoodleQuickForm_autocomplete {
     }
 
     /**
-     * Finds the tag collection to use for official tag selector
+     * Finds the tag collection to use for standard tag selector
      *
      * @return int
      */
@@ -181,9 +192,9 @@ class MoodleQuickForm_tags extends MoodleQuickForm_autocomplete {
         global $OUTPUT;
 
         $managelink = '';
-        if (has_capability('moodle/tag:manage', context_system::instance()) && $this->showingofficial) {
+        if (has_capability('moodle/tag:manage', context_system::instance()) && $this->showstandard) {
             $url = new moodle_url('/tag/manage.php', array('tc' => $this->get_tag_collection()));
-            $managelink = ' ' . $OUTPUT->action_link($url, get_string('manageofficialtags', 'tag'));
+            $managelink = ' ' . $OUTPUT->action_link($url, get_string('managestandardtags', 'tag'));
         }
 
         return parent::toHTML() . $managelink;
@@ -205,16 +216,16 @@ class MoodleQuickForm_tags extends MoodleQuickForm_autocomplete {
     }
 
     /**
-     * Internal function to load official tags
+     * Internal function to load standard tags
      */
-    protected function load_official_tags() {
+    protected function load_standard_tags() {
         global $CFG, $DB;
         if (!$this->is_tagging_enabled()) {
             return array();
         }
         $namefield = empty($CFG->keeptagnamecase) ? 'name' : 'rawname';
         $tags = $DB->get_records_menu('tag',
-            array('tagtype' => 'official', 'tagcollid' => $this->get_tag_collection()),
+            array('isstandard' => 1, 'tagcollid' => $this->get_tag_collection()),
             $namefield, 'id,' . $namefield);
         return array_combine($tags, $tags);
     }

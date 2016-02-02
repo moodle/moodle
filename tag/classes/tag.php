@@ -47,7 +47,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read string $rawname
  * @property-read int $tagcollid
  * @property-read int $userid
- * @property-read string $tagtype "official" or "default"
+ * @property-read int $isstandard
  * @property-read string $description
  * @property-read int $descriptionformat
  * @property-read int $flag 0 if not flagged or positive integer if flagged
@@ -61,6 +61,18 @@ class core_tag_tag {
 
     /** @var stdClass data about the tag */
     protected $record = null;
+
+    /** @var int indicates that both standard and not standard tags can be used (or should be returned) */
+    const BOTH_STANDARD_AND_NOT = 0;
+
+    /** @var int indicates that only standard tags can be used (or must be returned) */
+    const STANDARD_ONLY = 1;
+
+    /** @var int indicates that only non-standard tags should be returned - this does not really have use cases, left for BC  */
+    const NOT_STANDARD_ONLY = -1;
+
+    /** @var int option to hide standard tags when editing item tags */
+    const HIDE_STANDARD = 2;
 
     /**
      * Constructor. Use functions get(), get_by_name(), etc.
@@ -143,15 +155,15 @@ class core_tag_tag {
      *
      * @param   int      $tagcollid
      * @param   string|array $tags     one tag, or an array of tags, to be created
-     * @param   bool     $isofficial type of tag to be created. An official tag is kept even if there are no records tagged with it.
+     * @param   bool     $isstandard type of tag to be created. A standard tag is kept even if there are no records tagged with it.
      * @return  array    tag objects indexed by their lowercase normalized names. Any boolean false in the array
      *                             indicates an error while adding the tag.
      */
-    protected static function add($tagcollid, $tags, $isofficial = false) {
+    protected static function add($tagcollid, $tags, $isstandard = false) {
         global $USER, $DB;
 
         $tagobject = new stdClass();
-        $tagobject->tagtype      = $isofficial ? 'official' : 'default';
+        $tagobject->isstandard   = $isstandard ? 1 : 0;
         $tagobject->userid       = $USER->id;
         $tagobject->timemodified = time();
         $tagobject->tagcollid    = $tagcollid;
@@ -319,17 +331,17 @@ class core_tag_tag {
      *
      * @param int $tagcollid
      * @param array $tags array of raw tag names, do not have to be normalised
-     * @param bool $createasofficial
+     * @param bool $isstandard create as standard tag (default false)
      * @return core_tag_tag[] array of tag objects indexed with lowercase normalised tag name
      */
-    public static function create_if_missing($tagcollid, $tags, $createasofficial = false) {
+    public static function create_if_missing($tagcollid, $tags, $isstandard = false) {
         $cleantags = self::normalize(array_filter(self::normalize($tags, false))); // Array rawname => normalised name .
 
         $result = static::get_by_name_bulk($tagcollid, $tags, '*');
         $existing = array_filter($result);
         $missing = array_diff_key(array_flip($cleantags), $existing); // Array normalised name => rawname.
         if ($missing) {
-            $newtags = static::add($tagcollid, array_values($missing), $createasofficial);
+            $newtags = static::add($tagcollid, array_values($missing), $isstandard);
             foreach ($newtags as $tag) {
                 $result[$tag->name] = $tag;
             }
@@ -412,7 +424,7 @@ class core_tag_tag {
     protected function delete_instance_as_record($taginstance, $fullobject = false) {
         global $DB;
 
-        $this->ensure_fields_exist(array('name', 'rawname', 'tagtype'), 'delete_instance_as_record');
+        $this->ensure_fields_exist(array('name', 'rawname', 'isstandard'), 'delete_instance_as_record');
 
         $DB->delete_records('tag_instance', array('id' => $taginstance->id));
 
@@ -426,7 +438,7 @@ class core_tag_tag {
         \core\event\tag_removed::create_from_tag_instance($taginstance, $this->name, $this->rawname, $fullobject)->trigger();
 
         // If there are no other instances of the tag then consider deleting the tag as well.
-        if ($this->tagtype === 'default') {
+        if (!$this->isstandard) {
             if (!$DB->record_exists('tag_instance', array('tagid' => $this->id))) {
                 self::delete_tags($this->id);
             }
@@ -436,7 +448,7 @@ class core_tag_tag {
     }
 
     /**
-     * Delete one instance of a tag.  If the last instance was deleted, it will also delete the tag, unless its type is 'official'.
+     * Delete one instance of a tag.  If the last instance was deleted, it will also delete the tag, unless it is standard.
      *
      * @param    string $component component responsible for tagging. For BC it can be empty but in this case the
      *                  query will be slow because DB index will not be used.
@@ -472,7 +484,7 @@ class core_tag_tag {
     public static function delete_instances($component, $itemtype = null, $contextid = null) {
         global $DB;
 
-        $sql = "SELECT ti.*, t.name, t.rawname, t.tagtype
+        $sql = "SELECT ti.*, t.name, t.rawname, t.isstandard
                   FROM {tag_instance} ti
                   JOIN {tag} t
                     ON ti.tagid = t.id
@@ -564,11 +576,12 @@ class core_tag_tag {
      *               query will be slow because DB index will not be used.
      * @param string $itemtype type of the tagged item
      * @param int $itemid
-     * @param null|bool $official - true - official only, false - non official only, null - any (default)
+     * @param int $standardonly wether to return only standard tags or any
      * @param int $tiuserid tag instance user id, only needed for tag areas with user tagging
      * @return core_tag_tag[] each object contains additional fields taginstanceid, taginstancecontextid and ordering
      */
-    public static function get_item_tags($component, $itemtype, $itemid, $official = null, $tiuserid = 0) {
+    public static function get_item_tags($component, $itemtype, $itemid, $standardonly = self::BOTH_STANDARD_AND_NOT,
+            $tiuserid = 0) {
         global $DB;
 
         if (static::is_enabled($component, $itemtype) === false) {
@@ -576,23 +589,24 @@ class core_tag_tag {
             return array();
         }
 
+        $standardonly = (int)$standardonly; // In case somebody passed bool.
+
         // Note: if the fields in this query are changed, you need to do the same changes in tag_get_correlated().
-        $sql = "SELECT ti.id AS taginstanceid, tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag,
+        $sql = "SELECT ti.id AS taginstanceid, tg.id, tg.isstandard, tg.name, tg.rawname, tg.flag,
                     tg.tagcollid, ti.ordering, ti.contextid AS taginstancecontextid
                   FROM {tag_instance} ti
                   JOIN {tag} tg ON tg.id = ti.tagid
                   WHERE ti.itemtype = :itemtype AND ti.itemid = :itemid ".
                 ($component ? "AND ti.component = :component " : "").
                 ($tiuserid ? "AND ti.tiuserid = :tiuserid " : "").
-                (($official === true) ? "AND tg.tagtype = :official " : "").
-                (($official === false) ? "AND tg.tagtype <> :official " : "").
+                (($standardonly == self::STANDARD_ONLY) ? "AND tg.isstandard = 1 " : "").
+                (($standardonly == self::NOT_STANDARD_ONLY) ? "AND tg.isstandard = 0 " : "").
                "ORDER BY ti.ordering ASC, ti.id";
 
         $params = array();
         $params['itemtype'] = $itemtype;
         $params['itemid'] = $itemid;
         $params['component'] = $component;
-        $params['official'] = 'official';
         $params['tiuserid'] = $tiuserid;
 
         $records = $DB->get_records_sql($sql, $params);
@@ -612,14 +626,15 @@ class core_tag_tag {
      *               query will be slow because DB index will not be used.
      * @param string $itemtype type of the tagged item
      * @param int $itemid
-     * @param null|bool $official - true - official only, false - non official only, null - any (default)
+     * @param int $standardonly wether to return only standard tags or any
      * @param int $tiuserid tag instance user id, only needed for tag areas with user tagging
      * @param bool $ashtml (default true) if true will return htmlspecialchars encoded tag names
      * @return string[] array of tags display names
      */
-    public static function get_item_tags_array($component, $itemtype, $itemid, $official = null, $tiuserid = 0, $ashtml = true) {
+    public static function get_item_tags_array($component, $itemtype, $itemid, $standardonly = self::BOTH_STANDARD_AND_NOT,
+            $tiuserid = 0, $ashtml = true) {
         $tags = array();
-        foreach (static::get_item_tags($component, $itemtype, $itemid, $official, $tiuserid) as $tag) {
+        foreach (static::get_item_tags($component, $itemtype, $itemid, $standardonly, $tiuserid) as $tag) {
             $tags[$tag->id] = $tag->get_display_name($ashtml);
         }
         return $tags;
@@ -663,7 +678,7 @@ class core_tag_tag {
             $tagobjects = array();
         }
 
-        $currenttags = static::get_item_tags($component, $itemtype, $itemid, null, $tiuserid);
+        $currenttags = static::get_item_tags($component, $itemtype, $itemid, self::BOTH_STANDARD_AND_NOT, $tiuserid);
 
         // For data coherence reasons, it's better to remove deleted tags
         // before adding new data: ordering could be duplicated.
@@ -855,14 +870,14 @@ class core_tag_tag {
     /**
      * Updates the information about the tag
      *
-     * @param array|stdClass $data data to update, may contain: tagtype, description, descriptionformat, rawname
+     * @param array|stdClass $data data to update, may contain: isstandard, description, descriptionformat, rawname
      * @return bool whether the tag was updated. False may be returned if: all new values match the existing,
-     *         or an invalid tagtype was supplied, or it was attempted to rename the tag to the name that is already used.
+     *         or it was attempted to rename the tag to the name that is already used.
      */
     public function update($data) {
         global $DB, $COURSE;
 
-        $allowedfields = array('tagtype', 'description', 'descriptionformat', 'rawname');
+        $allowedfields = array('isstandard', 'description', 'descriptionformat', 'rawname');
 
         $data = (array)$data;
         if ($extrafields = array_diff(array_keys($data), $allowedfields)) {
@@ -893,9 +908,8 @@ class core_tag_tag {
         }
 
         // Validate the tag type.
-        if (array_key_exists('tagtype', $data) && $data['tagtype'] !== 'official' && $data['tagtype'] !== 'default') {
-            debugging('Unrecognised tag type "'.$data['tagtype'].'" ignored when updating the tag', DEBUG_DEVELOPER);
-            unset($data['tagtype']);
+        if (array_key_exists('isstandard', $data)) {
+            $data['isstandard'] = $data['isstandard'] ? 1 : 0;
         }
 
         // Find only the attributes that need to be changed.
@@ -1075,7 +1089,7 @@ class core_tag_tag {
         list($query, $params) = $DB->get_in_or_equal($correlated);
 
         // This is (and has to) return the same fields as the query in core_tag_tag::get_item_tags().
-        $sql = "SELECT ti.id AS taginstanceid, tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag,
+        $sql = "SELECT ti.id AS taginstanceid, tg.id, tg.isstandard, tg.name, tg.rawname, tg.flag,
                 tg.tagcollid, ti.ordering, ti.contextid AS taginstancecontextid
               FROM {tag} tg
         INNER JOIN {tag_instance} ti ON tg.id = ti.tagid

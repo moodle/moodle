@@ -21,3 +21,9 @@ withselectedtags,core_tag
 tag:create,core_role
 categoriesanditems,core_grades
 taggedwith,core_tag
+officialtag,core_tag
+otags,core_tag
+othertags,core_tag
+tagtype,core_tag
+manageofficialtags,core_tag
+settypeofficial,core_tag

@@ -15,8 +15,8 @@ Feature: Tagging courses
       | Course 1  | c1        |
       | Course 2  | c2        |
     And the following "tags" exist:
-      | name         | tagtype  |
-      | Neverusedtag | official |
+      | name         | isstandard  |
+      | Neverusedtag | 1           |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | c1     | editingteacher |

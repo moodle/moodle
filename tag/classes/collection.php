@@ -320,7 +320,7 @@ class core_tag_collection {
     }
 
     /**
-     * Permanently deletes all non-official tags that no longer have any instances pointing to them
+     * Permanently deletes all non-standard tags that no longer have any instances pointing to them
      *
      * @param array $collections optional list of tag collections ids to cleanup
      */
@@ -329,9 +329,9 @@ class core_tag_collection {
 
         $params = array();
         $sql = "SELECT tg.id FROM {tag} tg LEFT OUTER JOIN {tag_instance} ti ON ti.tagid = tg.id
-                WHERE ti.id IS NULL AND tg.tagtype = 'default'";
+                WHERE ti.id IS NULL AND tg.isstandard = 0";
         if ($collections) {
-            list($sqlcoll, $params) = $DB->get_in_or_equal($collections);
+            list($sqlcoll, $params) = $DB->get_in_or_equal($collections, SQL_PARAMS_NAMED);
             $sql .= " AND tg.tagcollid " . $sqlcoll;
         }
         if ($unusedtags = $DB->get_fieldset_sql($sql, $params)) {
@@ -343,7 +343,7 @@ class core_tag_collection {
      * Returns the list of tags with number of items tagged
      *
      * @param int $tagcollid
-     * @param string $tagtype possible values 'official', 'default' or empty for any tag type
+     * @param null|bool $isstandard return only standard tags
      * @param int $limit maximum number of tags to retrieve, tags are sorted by the instance count
      *            descending here regardless of $sort parameter
      * @param string $sort sort order for display, default 'name' - tags will be sorted after they are retrieved
@@ -353,7 +353,7 @@ class core_tag_collection {
      * @param int $rec retrieve tag instances in the $ctx context and it's children (default 1)
      * @return \core_tag\output\tagcloud
      */
-    public static function get_tag_cloud($tagcollid, $tagtype = '', $limit = 150, $sort = 'name',
+    public static function get_tag_cloud($tagcollid, $isstandard = false, $limit = 150, $sort = 'name',
             $search = '', $fromctx = 0, $ctx = 0, $rec = 1) {
         global $DB;
 
@@ -362,9 +362,8 @@ class core_tag_collection {
         list($sql, $params) = $DB->get_in_or_equal($tagcollid ? array($tagcollid) :
             array_keys(self::get_collections(true)));
         $whereclause .= ' AND tg.tagcollid ' . $sql;
-        if (!empty($tagtype)) {
-            $whereclause .= ' AND tg.tagtype = ?';
-            $params[] = $tagtype;
+        if ($isstandard) {
+            $whereclause .= ' AND tg.isstandard = 1';
         }
         $context = $ctx ? context::instance_by_id($ctx) : context_system::instance();
         if ($rec && $context->contextlevel != CONTEXT_SYSTEM) {
@@ -380,10 +379,10 @@ class core_tag_collection {
             $params[] = '%' . core_text::strtolower($search) . '%';
         }
         $tagsincloud = $DB->get_records_sql(
-                "SELECT tg.id, tg.rawname, tg.name, tg.tagtype, COUNT(ti.id) AS count, tg.flag, tg.tagcollid
+                "SELECT tg.id, tg.rawname, tg.name, tg.isstandard, COUNT(ti.id) AS count, tg.flag, tg.tagcollid
                 $fromclause
                 $whereclause
-                GROUP BY tg.id, tg.rawname, tg.name, tg.flag, tg.tagtype, tg.tagcollid
+                GROUP BY tg.id, tg.rawname, tg.name, tg.flag, tg.isstandard, tg.tagcollid
                 ORDER BY count DESC, tg.name ASC",
             $params, 0, $limit);
 

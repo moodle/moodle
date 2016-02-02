@@ -464,7 +464,7 @@ function user_get_user_details($user, $course = null, array $userfields = array(
     }
 
     if (in_array('interests', $userfields)) {
-        $interests = core_tag_tag::get_item_tags_array('core', 'user', $user->id, null, 0, false);
+        $interests = core_tag_tag::get_item_tags_array('core', 'user', $user->id, core_tag_tag::BOTH_STANDARD_AND_NOT, 0, false);
         if ($interests) {
             $userdetails['interests'] = join(', ', $interests);
         }

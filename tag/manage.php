@@ -32,7 +32,7 @@ define('DEFAULT_PAGE_SIZE', 30);
 
 $tagschecked = optional_param_array('tagschecked', array(), PARAM_INT);
 $tagid       = optional_param('tagid', null, PARAM_INT);
-$tagtype     = optional_param('tagtype', null, PARAM_ALPHA);
+$isstandard  = optional_param('isstandard', null, PARAM_INT);
 $action      = optional_param('action', '', PARAM_ALPHA);
 $perpage     = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);
 $page        = optional_param('page', 0, PARAM_INT);
@@ -160,6 +160,17 @@ switch($action) {
         redirect($manageurl);
         break;
 
+    case 'areasetshowstandard':
+        if ($tagarea) {
+            require_sesskey();
+            if (($showstandard = optional_param('showstandard', null, PARAM_INT)) !== null) {
+                core_tag_area::update($tagarea, array('showstandard' => $showstandard));
+                redirect(new moodle_url($manageurl, array('notice' => 'changessaved')));
+            }
+        }
+        redirect($manageurl);
+        break;
+
     case 'delete':
         require_sesskey();
         if (!$tagschecked && $tagid) {
@@ -189,13 +200,14 @@ switch($action) {
 
     case 'changetype':
         require_sesskey();
-        if ($tagid && $tagobject->update(array('tagtype' => $tagtype))) {
+        if ($tagid && $tagobject->update(
+                array('isstandard' => $isstandard ? 1 : 0))) {
             redirect(new moodle_url($PAGE->url, array('notice' => 'typechanged')));
         }
         redirect($PAGE->url);
         break;
 
-    case 'addofficialtag':
+    case 'addstandardtag':
         require_sesskey();
         $tagobjects = null;
         if ($tagcoll) {
@@ -204,8 +216,8 @@ switch($action) {
             $tagobjects = core_tag_tag::create_if_missing($tagcoll->id, $newtags, true);
         }
         foreach ($tagobjects as $tagobject) {
-            if ($tagobject->tagtype !== 'official') {
-                $tagobject->update(array('tagtype' => 'official'));
+            if (!$tagobject->isstandard) {
+                $tagobject->update(array('isstandard' => 1));
             }
         }
         redirect(new moodle_url($PAGE->url, $tagobjects ? array('notice' => 'added') : null));
@@ -223,7 +235,7 @@ if (!$tagcoll) {
     $tagareastable = new core_tag_areas_table($manageurl);
     $colltable = new core_tag_collections_table($manageurl);
 
-    echo $OUTPUT->heading(get_string('tagcollections', 'core_tag'), 3);
+    echo $OUTPUT->heading(get_string('tagcollections', 'core_tag') . $OUTPUT->help_icon('tagcollection', 'tag'), 3);
     echo html_writer::table($colltable);
     $url = new moodle_url($manageurl, array('action' => 'colladd'));
     echo html_writer::div(html_writer::link($url, get_string('addtagcoll', 'tag')), 'mdl-right addtagcoll');
@@ -236,11 +248,12 @@ if (!$tagcoll) {
 }
 
 // Tag collection is specified. Manage tags in this collection.
+echo $OUTPUT->heading(core_tag_collection::display_name($tagcoll));
 
-// Small form to add an official tag.
+// Small form to add an standard tag.
 print('<form class="tag-addtags-form" method="post" action="'.$CFG->wwwroot.'/tag/manage.php">');
 print('<input type="hidden" name="tc" value="'.$tagcollid.'" />');
-print('<input type="hidden" name="action" value="addofficialtag" />');
+print('<input type="hidden" name="action" value="addstandardtag" />');
 print('<input type="hidden" name="perpage" value="'.$perpage.'" />');
 print('<input type="hidden" name="page" value="'.$page.'" />');
 print('<div class="tag-management-form generalbox"><label class="accesshide" for="id_otagsadd">' .

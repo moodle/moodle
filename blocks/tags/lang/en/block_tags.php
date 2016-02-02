@@ -26,11 +26,11 @@ $string['anycollection'] = 'Any';
 $string['anytype'] = 'All';
 $string['configtitle'] = 'Block title';
 $string['disabledtags'] = 'Tags are disabled';
-$string['defaultdisplay'] = 'Tag type to display';
-$string['officialonly'] = 'Only official';
+$string['defaultdisplay'] = 'Display tags';
 $string['pluginname'] = 'Tags';
 $string['recursivecontext'] = 'Include child contexts';
 $string['recursivecontext_help'] = 'If unchecked, tags of items in the context specified above will be displayed excluding underlying contexts, for example, you can search on course level only without searching inside course activities';
+$string['standardonly'] = 'Only standard';
 $string['tagcollection'] = 'Tag collection';
 $string['tagcollection_help'] = 'Select tag collection to display tags from. If you choose "Any" '
         . 'the tags from all collections except for those marked with * will be displayed';
