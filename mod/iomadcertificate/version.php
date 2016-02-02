@@ -24,10 +24,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
 
-$module->version   = 2015061800; // The current module version (Date: YYYYMMDDXX)
-$module->requires  = 2012120300; // Requires this Moodle version
-$module->cron      = 0; // Period for cron to check this module (secs)
-$module->component = 'mod_iomadcertificate';
+$plugin->version   = 2015061800; // The current module version (Date: YYYYMMDDXX)
+$plugin->requires  = 2012120300; // Requires this Moodle version
+$plugin->cron      = 0; // Period for cron to check this module (secs)
+$plugin->component = 'mod_iomadcertificate';
 
-$module->maturity  = MATURITY_STABLE;
-$module->release   = "Stable"; // User-friendly version number
+$plugin->maturity  = MATURITY_STABLE;
+$plugin->release   = "Stable"; // User-friendly version number

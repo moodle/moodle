@@ -17,3 +17,4 @@
 $plugin->version  = 2015012100;   // The (date) version of this plugin.
 $plugin->requires = 2010021900;   // Requires this Moodle version.
 $plugin->cron = 300;              // Minimum number of seconds between executions of the cron function.
+$plugin->component  = 'block_iomad_company_admin';

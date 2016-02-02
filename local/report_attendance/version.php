@@ -16,3 +16,4 @@
 
 $plugin->version  = 2011111700;
 $plugin->requires = 2010090501;
+$plugin->component  = 'local_report_attendance';

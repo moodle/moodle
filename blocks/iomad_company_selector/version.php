@@ -15,3 +15,4 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 $plugin->version = 2013030300;
+$plugin->component  = 'block_iomad_company_selector';

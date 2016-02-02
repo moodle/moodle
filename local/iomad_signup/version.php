@@ -14,5 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+$plugin->component  = 'local_iomad_signup';
 $plugin->version  = 2015012800;   // The (date) version of this plugin.
 $plugin->requires = 2013111800;   // Requires this Moodle version.

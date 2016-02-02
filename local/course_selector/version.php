@@ -17,3 +17,4 @@
 $plugin->version  = 2010121500;   // The (date) version of this plugin.
 $plugin->requires = 2010021900;   // Requires this Moodle version.
 
+$plugin->component  = 'local_course_selector';

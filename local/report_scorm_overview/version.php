@@ -16,3 +16,4 @@
 
 $plugin->version  = 2011102000;
 $plugin->requires = 2010090501;
+$plugin->component  = 'local_report_scorm_overview';
