@@ -78,6 +78,17 @@ class behat_form_select extends behat_form_field {
                 $afterfirstoption = true;
             }
         } else {
+            // If value is already set then don't set it again.
+            if ($this->field->getValue() == $value) {
+                return;
+            } else {
+                $opt = $this->field->find('named', array(
+                    'option', $this->field->getSession()->getSelectorsHandler()->xpathLiteral($value)
+                ));
+                if ($opt && ($this->field->getValue() == $opt->getValue())) {
+                    return;
+                }
+            }
             // This is a single select, let's pass the last one specified.
             $this->field->selectOption(end($options));
         }
