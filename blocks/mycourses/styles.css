@@ -1,3 +1,11 @@
 .block_course_overview {
     display:none;
 }
+
+html.yui3-js-enabled body#page-my-index.format-site.path-my.gecko.dir-ltr.lang-en.yui-skin-sam.yui3-skin-sam.www-sola3-co-uk--SOLA3System.pagelayout-mydashboard.course-1.context-1.has-region-content.used-region-content.has-region-side-pre.used-region-side-pre.has-region-side-post.used-region-side-post.layout-option-langmenu.jsenabled div#page.container-fluid header#page-header.clearfix div#page-navbar.clearfix div.breadcrumb-button div.singlebutton {
+    display: none;
+}
+
+div.breadcrumb-button {
+display: none;
+}

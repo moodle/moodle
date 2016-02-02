@@ -189,10 +189,10 @@ $select->formid = 'choosedepartment';
 echo html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_department_selector'));
 $fwselectoutput = html_writer::tag('div', $OUTPUT->render($select),
                                     array('id' => 'iomad_company_selector'));
-if (!(iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
-    or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))) {
-    print_error('nopermissions', 'error', '', 'edit/delete users');
-}
+//if (!(iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
+//    or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))) {
+//    print_error('nopermissions', 'error', '', 'edit/delete users');
+//}
 
 // Set up the filter form.
 $mform = new iomad_user_filter_form(null, array('companyid' => $companyid));
@@ -251,7 +251,7 @@ if ($sort == "name") {
 
 $dbsort = "";
 // Check if has capability edit all users.
-if (iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext)) {
+//if (iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext)) {
     // Check we havent looked and discounted everyone.
     if ((empty($idlist) && !$foundfields) || (!empty($idlist) && $foundfields)) {
         // Make sure we dont display site admins.
@@ -324,7 +324,8 @@ if (iomad::has_capability('block/iomad_company_admin:editallusers', $systemconte
         $userrecords = array();
     }
 
-} else if (iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
+//}
+//  if (iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
     // Check if has role edit company users.
 
     // Check we havent looked and discounted everyone.
@@ -382,9 +383,9 @@ if (iomad::has_capability('block/iomad_company_admin:editallusers', $systemconte
                 $sqlsearch .= " order by email $dir ";
                 $dbsort = " order by u.email $dir ";
             break;
-            case "access":
-                $sqlsearch .= " order by lastaccess $dir ";
-                $dbsort = " order by u.lastaccess $dir ";
+            case "lastaccess":
+                $sqlsearch .= " order by currentlogin $dir ";
+                $dbsort = " order by u.currentlogin $dir ";
             break;
             case "department":
                 $dbsort = " order by d.name $dir ";
@@ -395,7 +396,7 @@ if (iomad::has_capability('block/iomad_company_admin:editallusers', $systemconte
     } else {
         $userrecords = array();
     }
-}
+//}
 $userlist = "";
 if (!empty($userrecords)) {
     $userlist = " u.id in (". implode(',', array_values($userrecords)).") ";
@@ -413,14 +414,14 @@ if (!empty($userlist)) {
                                           u.middlename as middlename,
                                           u.city as city,
                                           u.country as country,
-                                          u.lastaccess as lastaccess,
+                                          u.currentlogin as lastaccess,
                                           u.suspended as suspended,
                                           d.name as departmentname
                                    FROM {user} u, {department} d, {company_users} cu
                                    WHERE u.deleted <> 1 AND $userlist
                                    AND cu.userid = u.id AND cu.departmentid = d.id
                                    AND cu.companyid = :companyid
-                                   $dbsort GROUP BY u.id, d.name", array('companyid' => $company->id), $page * $perpage, $perpage);
+                                   GROUP BY u.id, d.name $dbsort ", array('companyid' => $company->id), $page * $perpage, $perpage);
 } else {
     $users = array();
 }

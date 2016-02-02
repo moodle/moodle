@@ -60,7 +60,7 @@ class comprep{
     public static function participantsselectlist($courseid, $companyid ) {
         global $DB;
 
-        // Empty list.
+        // Empty list.-
         $participantselect = array(0 => get_string('select', 'local_report_completion'));
 
         // If companyid = 0 then nothing to do.

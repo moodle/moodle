@@ -168,10 +168,22 @@ class report_completion {
         // Are we also adding in historic data?
         if ($showhistoric) {
         // Populate it.
+            // get the current list of populated ids.
+            $idlistsql = "SELECT lit2.id FROM {local_iomad_track} lit2 JOIN {".$tempcomptablename."} tt2
+                          ON (lit2.courseid = tt2.courseid AND lit2.userid=tt2.userid AND lit2.timecompleted = tt2.timecompleted
+                          AND lit2.timestarted = tt2.timestarted AND lit2.finalscore = tt2.finalscore)";
+            if (!empty($courseid)) {
+            $idlistsql .= " AND lit2.courseid = ".$courseid;
+            } 
+            $idlist = implode(',', array_keys($DB->get_records_sql($idlistsql)));
+            
             $tempcreatesql = "INSERT INTO {".$tempcomptablename."} (userid, courseid, timeenrolled, timestarted, timecompleted, finalscore, certsource)
                               SELECT it.userid, it.courseid, it.timeenrolled, it.timestarted, it.timecompleted, it.finalscore, it.id
                               FROM {".$tempusertablename."} tut, {local_iomad_track} it
                               WHERE tut.userid = it.userid";
+            if (!empty($idlist)) {
+                $tempcreatesql .= " AND it.id NOT IN (".$idlist.")";
+            }
             if (!empty($courseid)) {
                 $tempcreatesql .= " AND it.courseid = ".$courseid;
             }
@@ -303,7 +315,7 @@ class report_completion {
         $countsql = "SELECT cc.id AS id ";
         $selectsql = "
                 SELECT
-                DISTINCT cc.id, 
+                cc.id, 
                 u.id AS uid,
                 u.firstname AS firstname,
                 u.lastname AS lastname,
@@ -336,7 +348,6 @@ class report_completion {
                 $user->result = $grade->finalgrade;
             }
         }*/
-
         $returnobj = new stdclass();
         $returnobj->users = $users;
         $returnobj->totalcount = $numusers;

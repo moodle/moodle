@@ -14,12 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+$string['actions'] = 'Actions';
 $string['blocktitle'] = 'User Reports';
 $string['certificate'] = 'Certificate';
+$string['clear'] = 'Clear';
+$string['clearconfirm'] = 'User will be removed from the course and all of their data will be deleted.  They will still have a license to restart the course.  Are you sure you want to do this?';
 $string['completed'] = 'Completed';
 $string['coursedetails'] = 'Full course report';
 $string['datecompleted'] = 'Date completed';
 $string['datestarted'] = 'Course allocated/started';
+$string['delete'] = 'Delete';
+$string['deleteconfirm'] = 'User will be removed from the course, all their data will be deleted and any licenses re-allocated. This cannot be undone. Are you sure?';
 $string['department'] = 'Department';
 $string['downloadcert'] = 'View certificate as PDF';
 $string['inprogress'] = 'In progress';

@@ -45,7 +45,7 @@ class block_mycourses_renderer extends plugin_renderer_base {
         // Not started courses listings.
         $returntext .= '<div class="mycourseslisting">';
         if (!empty($mycompletion->mynotstartedenrolled)) {
-            foreach ($mycompletion->mynotstartedenrolled as $notstarted) {
+            foreach ($mycompletion->mynotstartedenrolled as $mid => $notstarted) {
                 // Display the course info.
                 $coursecontext = context_course::instance($notstarted->courseid);
                 $summaryinfo = file_rewrite_pluginfile_urls($notstarted->coursesummary, 'pluginfile.php',$coursecontext->id,'course','summary',null);
@@ -58,7 +58,7 @@ class block_mycourses_renderer extends plugin_renderer_base {
             }
         }
         if (!empty($mycompletion->mynotstartedlicense)) {
-            foreach ($mycompletion->mynotstartedlicense as $notstarted) {
+            foreach ($mycompletion->mynotstartedlicense as $mid => $notstarted) {
                 // Display the course info.
                 $coursecontext = context_course::instance($notstarted->courseid);
                 $summaryinfo = file_rewrite_pluginfile_urls($notstarted->coursesummary, 'pluginfile.php',$coursecontext->id,'course','summary',null);

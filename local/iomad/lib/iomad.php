@@ -552,7 +552,7 @@ class iomad {
         global $DB, $CFG;
 
         if ($allcourse) {
-            $sqlsort = " GROUP BY co.id, u.id";
+            $sqlsort = " GROUP BY cc.id, co.id, u.id";
         } else {
             $sqlsort = " GROUP BY u.id, cc.timeenrolled, cc.timestarted, cc.timecompleted, d.name";
         }
@@ -632,6 +632,11 @@ class iomad {
             break;
             case "finalscore":
                 $sqlsort .= " ORDER BY gg.finalgrade $dir ";
+            break;
+            default:
+                if ($allcourse) {
+                    $sqlsort .= " ORDER BY co.id $dir ";
+                }
             break;
         }
 
@@ -927,7 +932,7 @@ class iomad {
         } else {
             $sqlsort = " GROUP BY cl.name, d.name, u.id";
         }
-         $sqlsearch = "u.id != '-1' and u.deleted = 0";
+        $sqlsearch = "u.id != '-1' and u.deleted = 0";
         $sqlsearch .= " AND u.id NOT IN (".$CFG->siteadmins.")";
 
         // Deal with suspended users.
@@ -1118,7 +1123,7 @@ class iomad {
                 u.firstname AS firstname,
                 u.lastname AS lastname,
                 u.email AS email,
-                u.lastaccess AS lastaccess,
+                u.currentlogin AS lastaccess,
                 co.shortname AS coursename,
                 co.id AS courseid,
                 cl.id AS licenseid,
@@ -1126,7 +1131,7 @@ class iomad {
                 d.name as department,
                 cl.name,
                 clu.isusing,
-                clu.issuedate,
+				clu.issuedate,
                 '0' as result ";
         $fromsql = " FROM {user} u, {companylicense_users} clu, {department} d, {company_users} du, {".$temptablename."} tt, {course} co, {companylicense} cl
 
@@ -1221,19 +1226,19 @@ class iomad {
 
         // Get the user details.
         $shortname = addslashes($course->shortname);
-        $countsql = "SELECT CONCAT(clu.id, u.id) AS id";
+        $countsql = "SELECT CONCAT(clu.id, u.id, clu.isusing) AS id";
         $selectsql = "SELECT
                 CONCAT(clu.id, u.id) AS id, 
                 u.id AS uid,
                 u.firstname AS firstname,
                 u.lastname AS lastname,
                 u.email AS email,
-                u.lastaccess AS lastaccess,
+                u.currentlogin AS lastaccess,
                 '{$shortname}' AS coursename,
                 '$courseid' AS courseid,
                 clu.licenseid AS licenseid,
                 clu.isusing AS isusing,
-                clu.issuedate AS issuedate,
+				clu.issuedate AS issuedate,
                 d.name AS department,
                 cl.name AS licensename ";
         $fromsql = " FROM {user} u, {companylicense_users} clu, {department} d, {company_users} du, {".$temptablename."} tt, {companylicense} cl
@@ -1430,6 +1435,4 @@ class iomad_company_filter_form extends moodleform {
 
         $this->add_action_buttons(false, get_string('companyfilter', 'local_iomad'));
     }
-
-
 }

@@ -44,7 +44,7 @@ class userrep {
 
         // Populate the temporary completion table.
         list($compdbman, $comptable) = self::populate_temporary_completion($tempcomptablename, $userid, $courseid, $showhistoric);
-                
+
         // Get gradebook details.
         $gbsql = "select gg.finalgrade as result from {grade_grades} gg, {grade_items} gi
                   WHERE gi.courseid=$courseid AND gi.itemtype='course' AND gg.userid=$userid
@@ -92,6 +92,7 @@ class userrep {
                                                            AND timecompleted = :timecompleted
                                                            LIMIT 1",
                                                            (array) $testcompletioninfo)) {
+
                     $u->certsource = null;
                     if (!empty($completioninfo->timeenrolled)) {
                         $u->timeenrolled = $completioninfo->timeenrolled;
@@ -110,7 +111,7 @@ class userrep {
                             $u->status = 'inprogress';
                             ++$inprogress;
                         }
-        
+
                     } else {
                         $u->timestarted = 0;
                         $u->status = 'notstarted';
@@ -122,28 +123,34 @@ class userrep {
                         $u->result = '';
                     }
                     $datum->completion->{$completioninfo->id} = $u;
-    
+
                     $data[$courseid] = $datum;
                 } else {
-                    $u->timeenrolled = 0;
-                    $u->timecompleted = 0;
-                    $u->timestarted = 0;
-                    $u->status = 'notstarted';
-                    $u->certsource = null;
-                    ++$notstarted;
-                    $datum->completion->$courseid = $u;
+                    // Does the user have a license for this course?
+                    if ($DB->get_record('companylicense_users', array('licensecourseid' => $courseid, 'userid' => $userid, 'isusing' => 0))) {
+                        $u->timeenrolled = 0;
+                        $u->timecompleted = 0;
+                        $u->timestarted = 0;
+                        $u->status = 'notstarted';
+                        $u->certsource = null;
+                        ++$notstarted;
+                        $datum->completion->$courseid = $u;
+                    }
                 }
             }
             $data[$courseid] = $datum;
         } else {
-            $u->timeenrolled = 0;
-            $u->timecompleted = 0;
-            $u->timestarted = 0;
-            $u->status = 'notstarted';
-            $u->certsource = null;
-            ++$notstarted;
-            $datum->completion->$courseid = $u;
-            $data[$courseid] = $datum;
+            // Does the user have a license for this course?
+            if ($DB->get_record('companylicense_users', array('licensecourseid' => $courseid, 'userid' => $userid, 'isusing' => 0))) {
+                $u->timeenrolled = 0;
+                $u->timecompleted = 0;
+                $u->timestarted = 0;
+                $u->status = 'notstarted';
+                $u->certsource = null;
+                ++$notstarted;
+                $datum->completion->$courseid = $u;
+                $data[$courseid] = $datum;
+            }
         }
         // Make return object.
         $returnobj = new stdclass();
@@ -156,7 +163,7 @@ class userrep {
         return $returnobj;
     }
 
-    /** 
+    /**
      * Get users into temporary table
      */
     private static function populate_temporary_completion($tempcomptablename, $userid, $courseid=0, $showhistoric=false) {
@@ -194,15 +201,6 @@ class userrep {
             $tempcreatesql .= " AND cc.course = ".$courseid;
         }
         $DB->execute($tempcreatesql, array('userid' => $userid, 'courseid' => $courseid));
-        if ($DB->count_records($tempcomptablename) == 0) {
-            $DB->insert_record($tempcomptablename, array('userid' => $userid,
-                                                         'courseid' => $courseid,
-                                                         'timeenrolled' => 0,
-                                                         'timestarted' => 0,
-                                                         'timecompleted' =>0,
-                                                         'finalscore' => 0,
-                                                         'certsource' => 0));
-        }
 
         // Are we also adding in historic data?
         if ($showhistoric) {
@@ -230,7 +228,7 @@ class userrep {
      * @param int userid
      * @param int courseid
      */
-    public static function delete_user($userid, $courseid) {
+    public static function delete_user($userid, $courseid, $action = '') {
         global $DB, $CFG;
 
         // Remove enrolments
@@ -249,6 +247,11 @@ class userrep {
                                                                           'criteriaid' => $compitem->id));
             }
         }
+        if ($modules = $DB->get_records_sql("SELECT id FROM {course_modules} WHERE course = :course AND completion != 0", array('course' => $courseid))) {
+            foreach ($modules as $module) {
+                $DB->delete_records('course_modules_completion', array('userid' => $userid, 'coursemoduleid' => $module->id));
+            }
+        }
 
         // Remove grades
         if ($items = $DB->get_records('grade_items', array('courseid' => $courseid))) {
@@ -256,14 +259,67 @@ class userrep {
                 $DB->delete_records('grade_grades', array('userid' => $userid, 'itemid' => $item->id));
             }
         }
-  
-        // Fix company licenses
-        if ($licenses = $DB->get_records('companylicense_users', array('licensecourseid' => $courseid, 'userid' =>$userid))) {
-            foreach ($licenses as $license) {
-                $license->isusing = 0;
-                $DB->update_record('companylicense_users', $license);
+
+        // Remove quiz entries.
+        if ($quizzes = $DB->get_records('quiz', array('course' => $courseid))) {
+            // We have quiz(zes) so clear them down.
+            foreach ($quizzes as $quiz) {
+                $DB->execute("DELETE FROM {quiz_attempts} WHERE quiz=:quiz AND userid = :userid", array('quiz' => $quiz->id, 'userid' => $userid));
+                $DB->execute("DELETE FROM {quiz_grades} WHERE quiz=:quiz AND userid = :userid", array('quiz' => $quiz->id, 'userid' => $userid));
+                $DB->execute("DELETE FROM {quiz_overrides} WHERE quiz=:quiz AND userid = :userid", array('quiz' => $quiz->id, 'userid' => $userid));
             }
         }
 
+        // Remove certificate info.
+        if ($certificates = $DB->get_records('iomadcertificate', array('course' => $courseid))) {
+            foreach ($certificates as $certificate) {
+                $DB->execute("DELETE FROM {iomadcertificate_issues} WHERE iomadcertificateid = :certid AND userid = :userid", array('certid' => $certificate->id, 'userid' => $userid));
+            }
+        }
+
+        // Remove feedback info.
+        if ($feedbacks = $DB->get_records('feedback', array('course' => $courseid))) {
+            foreach ($feedbacks as $feedback) {
+                $DB->execute("DELETE FROM {feedback_completed} WHERE feedback = :feedbackid AND userid = :userid", array('feedbackid' => $feedback->id, 'userid' => $userid));
+                $DB->execute("DELETE FROM {feedback_completedtmp} WHERE feedback = :feedbackid AND userid = :userid", array('feedbackid' => $feedback->id, 'userid' => $userid));
+                $DB->execute("DELETE FROM {feedback_tracking} WHERE feedback = :feedbackid AND userid = :userid", array('feedbackid' => $feedback->id, 'userid' => $userid));
+            }
+        }
+
+        // Remove lesson info.
+        if ($lessons = $DB->get_records('lesson', array('course' => $courseid))) {
+            foreach ($lessons as $lesson) {
+                $DB->execute("DELETE FROM {lesson_attempts} WHERE lessonid = :lessonid AND userid = :userid", array('lessonid' => $lesson->id, 'userid' => $userid));
+                $DB->execute("DELETE FROM {lesson_grades} WHERE lessonid = :lessonid AND userid = :userid", array('lessonid' => $lesson->id, 'userid' => $userid));
+                $DB->execute("DELETE FROM {lesson_branch} WHERE lessonid = :lessonid AND userid = :userid", array('lessonid' => $lesson->id, 'userid' => $userid));
+                $DB->execute("DELETE FROM {lesson_high_scores} WHERE lessonid = :lessonid AND userid = :userid", array('lessonid' => $lesson->id, 'userid' => $userid));
+                $DB->execute("DELETE FROM {lesson_timer} WHERE lessonid = :lessonid AND userid = :userid", array('lessonid' => $lesson->id, 'userid' => $userid));
+            }
+        }
+
+        // Fix company licenses
+        if ($licenses = $DB->get_records('companylicense_users', array('licensecourseid' => $courseid, 'userid' =>$userid, 'isusing' => 1))) {
+            $license = array_pop($licenses);
+            if ($action == 'delete') {
+                $DB->delete_records('companylicense_users', array('id' => $license->id));
+                // Fix the usagecount.
+                $licenserecord = $DB->get_record('companylicense', array('id' => $license->licenseid));
+                $licenserecord->used = $DB->count_records('companylicense_users', array('licenseid' => $license->licenseid));
+                $DB->update_record('companylicense', $licenserecord);
+            } else if ($action == 'clear') {
+                $newlicense = $license;
+                $license->timecompleted = time();
+                $DB->update_record('companylicense_users', $license);
+                $newlicense->isusing = 0;
+                $newlicense->issuedate = time();
+                $newlicense->timecompleted = null;
+                $licenserecord = $DB->get_record('companylicense', array('id' => $license->licenseid));
+                if ($licenserecord->used < $licenserecord->allocation) {
+                    $DB->insert_record('companylicense_users', (array) $newlicense);
+                    $licenserecord->used = $DB->count_records('companylicense_users', array('licenseid' => $license->licenseid));
+                    $DB->update_record('companylicense', $licenserecord);
+               }
+            }
+        }
     }
 }

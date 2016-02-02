@@ -25,8 +25,9 @@ $userid = required_param('userid', PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
 $dodownload = optional_param('dodownload', 0, PARAM_INT);
 $delete = optional_param('delete', 0, PARAM_INT);
+$action = optional_param('action', '', PARAM_CLEAN);
 $confirm = optional_param('confirm', 0, PARAM_INT);
-$showhistoric = optional_param('showhistoric', 0, PARAM_BOOL);
+$showhistoric = optional_param('showhistoric', 1, PARAM_BOOL);
 
 // Check permissions.
 require_login($SITE);
@@ -34,7 +35,7 @@ $context = context_system::instance();
 iomad::require_capability('local/report_completion:view', $context);
 
 // Set the companyid
-$companyid = iomad::get_my_companyid($systemcontext);
+$companyid = iomad::get_my_companyid($context);
 
 $linktext = get_string('user_detail_title', 'local_report_users');
 // Set the url.
@@ -66,9 +67,15 @@ if (empty($dodownload)) {
 
 
 // Get this list of courses the user is a member of.
+//$usercourses = enrol_get_users_courses($userid, true, null, 'visible DESC, sortorder ASC');
 $enrolcourses = enrol_get_users_courses($userid, true, null, 'visible DESC, sortorder ASC');
-$completioncourses = $DB->get_records_sql("SELECT courseid as id FROM {local_iomad_track} 
-                                           WHERE userid = :userid", array('userid' => $userid));
+if ($showhistoric) {
+    $completioncourses = $DB->get_records_sql("SELECT distinct courseid as id FROM {local_iomad_track} 
+                                               WHERE userid = :userid", array('userid' => $userid));
+} else {
+    $completioncourses = array();
+}
+
 $usercourses = array();
 foreach ($enrolcourses as $enrolcourse) {
     $usercourses[$enrolcourse->id] = $enrolcourse;
@@ -93,18 +100,23 @@ if ($delete) {
     $confirm = new moodle_url('/local/report_users/userdisplay.php', array(
         'userid' => $userid,
         'confirm' => $delete,
-        'courseid' => $courseid
+        'courseid' => $courseid,
+        'action' => $action
         ));
     $cancel = new moodle_url('/local/report_users/userdisplay.php', array(
         'userid' => $userid));
-    echo $OUTPUT->confirm(get_string('deleteconfirm', 'local_report_users'), $confirm, $cancel);
+    if ($action == 'delete') {
+        echo $OUTPUT->confirm(get_string('deleteconfirm', 'local_report_users'), $confirm, $cancel);
+    } else if ($action == 'clear') {
+        echo $OUTPUT->confirm(get_string('clearconfirm', 'local_report_users'), $confirm, $cancel);
+    }
     echo $OUTPUT->footer();
     die;
 }
 
 // Check for confirmed delete?
 if ($confirm) {
-   userrep::delete_user($userid, $courseid);
+   userrep::delete_user($userid, $courseid, $action);
    redirect(new moodle_url('/local/report_users/userdisplay.php', array(
         'userid' => $userid)));
 }
@@ -147,10 +159,10 @@ $compusertable->head = array(get_string('course', 'local_report_completion'),
                              get_string('finalscore', 'local_report_completion'));
 $compusertable->align = array('left', 'center', 'center', 'center', 'center', 'center');
 $compusertable->width = '95%';
-if ($hasiomadcertificate) {
-    $compusertable->head[] = get_string('certificate', 'local_report_users');
-    $compusertable->align[] = 'center';
-}
+//if ($hasiomadcertificate) {
+//    $compusertable->head[] = get_string('certificate', 'local_report_users');
+//    $compusertable->align[] = 'center';
+//}
 $compusertable->head[] = get_string('actions', 'local_report_users');
 $compusertable->align[] = 'center';
 
@@ -190,17 +202,17 @@ foreach ($usercourses as $usercourse) {
             }
             // Set the strings.
             if (!empty($usercompcourse->timestarted)) {
-                $starttime = date('Y-m-d', $usercompcourse->timestarted);
+                $starttime = date('d-m-Y', $usercompcourse->timestarted);
             } else {
                 $starttime = "";
             }
             if (!empty($usercompcourse->timeenrolled)) {
-                $enrolledtime = date('Y-m-d', $usercompcourse->timeenrolled);
+                $enrolledtime = date('d-m-Y', $usercompcourse->timeenrolled);
             } else {
                 $enrolledtime = "";
             }
             if (!empty($usercompcourse->timecompleted)) {
-                $completetime = date('Y-m-d', $usercompcourse->timecompleted);
+                $completetime = date('d-m-Y', $usercompcourse->timecompleted);
             } else {
                 $completetime = "";
             }
@@ -210,9 +222,17 @@ foreach ($usercourses as $usercourse) {
                     'userid' => $userid,
                     'delete' => $userid,
                     'courseid' => $usercourseid,
+                    'action' => 'delete'
                 ));
-            if (empty($usercompcourse->certsource)) {
-                $delaction = '<a class="btn btn-danger" href="'.$dellink.'">' . get_string('delete', 'local_report_users') . '</a>';
+            $clearlink = new moodle_url('/local/report_users/userdisplay.php', array(
+                    'userid' => $userid,
+                    'delete' => $userid,
+                    'courseid' => $usercourseid,
+                    'action' => 'clear'
+                ));
+            if (empty($usercompcourse->certsource) && has_capability('block/iomad_company_admin:company_add', $context)) {
+                $delaction = '<a class="btn btn-danger" href="'.$dellink.'">' . get_string('delete', 'local_report_users') . '</a>' .
+                              '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
             } else {
                 $delaction = '';
             }
@@ -270,7 +290,7 @@ foreach ($usercourses as $usercourse) {
     }
 }
 if (empty($dodownload)) {
-        if (!$showhistoric) {
+    /* if (!$showhistoric) {
         $historicuserslink = new moodle_url($baseurl, array('courseid' => $courseid,
                                                         'userid' => $userid,
                                                         'page' => $page,
@@ -284,7 +304,7 @@ if (empty($dodownload)) {
                                                         'showhistoric' => 0
                                                         ));
         echo $OUTPUT->single_button($historicuserslink, get_string("hidehistoricusers", 'local_report_completion'));
-    }
+    } */
 
     echo html_writer::table($compusertable);
 }

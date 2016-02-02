@@ -34,9 +34,9 @@ function mycourses_get_my_completion($datefrom = 0) {
     }
 
     $mycompletions = new stdclass();
-    $mycompleted = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.course as courseid, c.fullname as coursefullname, c.summary as coursesummary
-                                         FROM {course_completions} cc
-                                         JOIN {course} c ON (c.id = cc.course)
+    $mycompleted = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.courseid as courseid, cc.finalscore as finalgrade, c.fullname as coursefullname, c.summary as coursesummary
+                                         FROM {local_iomad_track} cc
+                                         JOIN {course} c ON (c.id = cc.courseid)
                                          WHERE cc.userid = :userid
                                          AND c.visible = 1
                                          AND cc.timecompleted > :datefrom",
@@ -49,18 +49,11 @@ function mycourses_get_my_completion($datefrom = 0) {
                                           WHERE cc.userid = :userid
                                           AND c.visible = 1
                                           AND cc.timecompleted IS NULL
-                                          AND cc.timestarted != 0",
+                                          AND cc.timeenrolled != 0",
                                           array('userid' => $USER->id));
-    $mynotstartedenrolled = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.course as courseid, c.fullname as coursefullname, c.summary as coursesummary
-                                          FROM {course_completions} cc
-                                          JOIN {course} c ON (c.id = cc.course)
-                                          JOIN {user_enrolments} ue ON (ue.userid = cc.userid)
-                                          JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = c.id)
-                                          WHERE cc.userid = :userid
-                                          AND c.visible = 1
-                                          AND cc.timecompleted IS NULL
-                                          AND cc.timestarted = 0",
-                                          array('userid' => $USER->id));
+
+    // We dont care about these.  If you have enrolled then you are started.
+    $mynotstartedenrolled = array();
 
     $mynotstartedlicense = $DB->get_records_sql("SELECT clu.id, clu.userid, clu.licensecourseid as courseid, c.fullname as coursefullname, c.summary as coursesummary
                                           FROM {companylicense_users} clu
@@ -72,14 +65,6 @@ function mycourses_get_my_completion($datefrom = 0) {
 
     // Deal with completed course scores and links for certificates.
     foreach ($mycompleted as $id => $completed) {
-        $gradeinfo = $DB->get_record_sql("SELECT * FROM {grade_grades}
-                                          WHERE userid = :userid
-                                          AND itemid = (
-                                            SELECT id FROM {grade_items}
-                                            WHERE courseid = :courseid
-                                            AND itemtype = 'course')",
-                                          array('userid' => $completed->userid,
-                                                'courseid' => $completed->courseid));
         // Deal with the iomadcertificate info.
         if ($hasiomadcertificate) {
             if ($iomadcertificateinfo = $DB->get_record('iomadcertificate',
@@ -98,14 +83,13 @@ function mycourses_get_my_completion($datefrom = 0) {
         } else {
             $certstring = get_string('nocerttodownload', 'block_mycourses');
         }
-        $mycompleted[$id]->finalgrade = $gradeinfo->finalgrade;
         $mycompleted[$id]->certificate = $certstring;
 
     }
 
     $mycompletions->mycompleted = $mycompleted;
     $mycompletions->myinprogress = $myinprogress;
-    $mycompletions->mynotstartedenrolled = $mynotstartedenrolled;
+    $mycompletions->mynotstartedenrolled = array();
     $mycompletions->mynotstartedlicense = $mynotstartedlicense;
 
     return $mycompletions;
@@ -124,9 +108,9 @@ function mycourses_get_my_archive($dateto = 0) {
     }
 
     $mycompletions = new stdclass();
-    $myarchive = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.course as courseid, c.fullname as coursefullname, c.summary as coursesummary
-                                       FROM {course_completions} cc
-                                       JOIN {course} c ON (c.id = cc.course)
+    $myarchive = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.courseid as courseid, cc.finalscore as finalgrade, c.fullname as coursefullname, c.summary as coursesummary
+                                       FROM {local_iomad_track} cc
+                                       JOIN {course} c ON (c.id = cc.courseid)
                                        WHERE cc.userid = :userid
                                        AND c.visible = 1
                                        AND cc.timecompleted <= :dateto",
@@ -134,26 +118,19 @@ function mycourses_get_my_archive($dateto = 0) {
 
     // Deal with completed course scores and links for certificates.
     foreach ($myarchive as $id => $archive) {
-        $gradeinfo = $DB->get_record_sql("SELECT * FROM {grade_grades}
-                                          WHERE userid = :userid
-                                          AND itemid = (
-                                            SELECT id FROM {grade_items}
-                                            WHERE courseid = :courseid
-                                            AND itemtype = 'course')",
-                                          array('userid' => $archive->userid,
-                                                'courseid' => $archive->courseid));
         // Deal with the iomadcertificate info.
         if ($hasiomadcertificate) {
             if ($iomadcertificateinfo = $DB->get_record('iomadcertificate',
                                                          array('course' => $archive->courseid))) {
-                $certcminfo = $DB->get_record('course_modules',
-                                               array('course' => $archive->courseid,
-                                                     'instance' => $iomadcertificateinfo->id,
-                                                     'module' => $certmodule->id));
-                $certstring = "<a href='".$CFG->wwwroot."/mod/iomadcertificate/view.php?id=".
-                              $certcminfo->id."&action=get&userid=".$USER->id."&sesskey=".
-                              sesskey()."'>".get_string('downloadcert', 'block_mycourses').
-                              "</a>";
+                // Get the certificate from the download files thing.
+                if ($traccertrec = $DB->get_record('local_iomad_track_certs', array('trackid' => $id))) {
+                    // create the file download link.
+                    $coursecontext = context_course::instance($archive->courseid);
+                    $certstring = "<a class=\"btn btn-info\" href='".
+                                   moodle_url::make_file_url('/pluginfile.php', '/'.$coursecontext->id.'/local_iomad_track/issue/'.$traccertrec->trackid.'/'.$traccertrec->filename) .
+                                  "'>" . get_string('downloadcert', 'block_mycourses').
+                                  "</a>";
+                }
             } else {
                 $certstring = get_string('nocerttodownload', 'block_mycourses');
             }
@@ -161,7 +138,6 @@ function mycourses_get_my_archive($dateto = 0) {
             $certstring = get_string('nocerttodownload', 'block_mycourses');
         }
 
-        $myarchive[$id]->finalgrade = $gradeinfo->finalgrade;
         $myarchive[$id]->certificate = $certstring;
 
     }
