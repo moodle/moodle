@@ -627,6 +627,26 @@ class api {
     }
 
     /**
+     * Logg the competency viewed event.
+     *
+     * @param competency|int $competencyorid The competency object or competency id
+     * @return bool
+     */
+    public static function competency_viewed($competencyorid) {
+        $competency = $competencyorid;
+        if (!is_object($competency)) {
+            $competency = new competency($competency);
+        }
+
+        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $competency->get_context())) {
+             throw new required_capability_exception($competency->get_context(), 'tool/lp:competencyread', 'nopermissions', '');
+        }
+
+        \tool_lp\event\competency_viewed::create_from_competency($competency)->trigger();
+        return true;
+    }
+
+    /**
      * Perform a search based on the provided filters and return a paginated list of records.
      *
      * Requires tool/lp:competencyread capability at the system context.

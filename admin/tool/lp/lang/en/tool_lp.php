@@ -99,6 +99,7 @@ $string['eventcompetencyframeworkcreated'] = 'Competency framework created.';
 $string['eventcompetencyframeworkdeleted'] = 'Competency framework deleted.';
 $string['eventcompetencyframeworkupdated'] = 'Competency framework updated.';
 $string['eventcompetencyframeworkviewed'] = 'Competency framework viewed.';
+$string['eventcompetencyviewed'] = 'Competency viewed.';
 $string['eventtemplatecreated'] = 'Template created.';
 $string['eventtemplatedeleted'] = 'Template deleted.';
 $string['eventtemplateupdated'] = 'Template updated.';

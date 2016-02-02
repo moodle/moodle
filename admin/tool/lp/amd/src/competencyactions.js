@@ -55,6 +55,8 @@ define(['jquery',
     var taxonomiesConstants;
     /** @type {Array} The rules modules. Values are object containing type, namd and amd. */
     var rulesModules;
+    /** @type {Number} the selected competency ID. */
+    var selectedCompetencyId = null;
 
     /**
      * Respond to choosing the "Add" menu item for the selected node in the tree.
@@ -610,6 +612,23 @@ define(['jquery',
     };
 
     /**
+     * Log the competency viewed event.
+     *
+     * @param  {Object} The competency.
+     * @method triggerCompetencyViewedEvent
+     */
+    var triggerCompetencyViewedEvent = function(competency) {
+        if (competency.id !== selectedCompetencyId) {
+            // Set the selected competency id.
+            selectedCompetencyId = competency.id;
+            ajax.call([{
+                    methodname: 'tool_lp_competency_viewed',
+                    args: { id: competency.id }
+            }]);
+        }
+    };
+
+    /**
      * Return if the level has a sub level.
      *
      * @param  {Number} level The level.
@@ -754,6 +773,8 @@ define(['jquery',
             actionMenu.show();
             $('[data-region="competencyactions"]').data('competency', competency);
             renderCompetencySummary(competency);
+            // Log Competency viewed event.
+            triggerCompetencyViewedEvent(competency);
         }
 
         strSelectedTaxonomy(level).then(function(str) {

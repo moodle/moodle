@@ -44,6 +44,19 @@ define(['jquery',
     };
 
     /**
+     * Log the competency viewed event.
+     *
+     * @param  {Number} The competency ID.
+     * @method triggerCompetencyViewedEvent
+     */
+    Competencydialogue.prototype.triggerCompetencyViewedEvent = function(competencyId) {
+        ajax.call([{
+                methodname: 'tool_lp_competency_viewed',
+                args: { id: competencyId }
+        }]);
+    };
+
+    /**
      * Callback on dialogue display, it apply enhance on competencies dialogue.
      *
      * @param {Dialogue} dialogue
@@ -71,6 +84,10 @@ define(['jquery',
             // Inner Html in the dialogue content.
             templates.render('tool_lp/competency_summary', data)
                 .done(function(html) {
+                    // Log competency viewed event.
+                    localthis.triggerCompetencyViewedEvent(competencyid);
+
+                    // Show the dialogue.
                     new Dialogue(
                         data.competency.shortname,
                         html,
@@ -92,6 +109,10 @@ define(['jquery',
         // Inner Html in the dialogue content.
         templates.render('tool_lp/competency_summary', dataSource)
             .done(function(html) {
+                // Log competency viewed event.
+                localthis.triggerCompetencyViewedEvent(dataSource.id);
+
+                // Show the dialogue.
                 new Dialogue(
                     dataSource.shortname,
                     html,

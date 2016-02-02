@@ -129,6 +129,15 @@ $functions = array(
         'capabilities' => 'tool/lp:competencyview',
         'ajax'         => true,
     ),
+    'tool_lp_competency_viewed' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'competency_viewed',
+        'classpath'    => '',
+        'description'  => 'Log event competency viewed',
+        'type'         => 'read',
+        'capabilities' => 'tool/lp:competencyread',
+        'ajax'         => true,
+    ),
     'tool_lp_delete_competency' => array(
         'classname'    => 'tool_lp\external',
         'methodname'   => 'delete_competency',
