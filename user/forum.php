@@ -47,7 +47,9 @@ if ($forumform->is_cancelled()) {
 
     $user->maildigest = $data->maildigest;
     $user->autosubscribe = $data->autosubscribe;
-    $user->trackforums = $data->trackforums;
+    if (!empty($CFG->forum_trackreadposts)) {
+        $user->trackforums = $data->trackforums;
+    }
 
     user_update_user($user, false, false);
 
@@ -57,7 +59,9 @@ if ($forumform->is_cancelled()) {
     if ($USER->id == $user->id) {
         $USER->maildigest = $data->maildigest;
         $USER->autosubscribe = $data->autosubscribe;
-        $USER->trackforums = $data->trackforums;
+        if (!empty($CFG->forum_trackreadposts)) {
+            $USER->trackforums = $data->trackforums;
+        }
     }
 
     redirect($redirect);
