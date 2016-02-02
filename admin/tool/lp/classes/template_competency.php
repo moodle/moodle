@@ -192,6 +192,18 @@ class template_competency extends persistent {
     }
 
     /**
+     * Remove the competencies in this template.
+     *
+     * @param int $templateid The template id
+     * @return boolen
+     */
+    public static function delete_by_templateid($templateid) {
+        global $DB;
+
+        return $DB->delete_records(self::TABLE, array('templateid' => $templateid));
+    }
+
+    /**
      * Hook to execute before validate.
      *
      * @return void

@@ -662,4 +662,14 @@ class plan extends persistent {
 
         return true;
     }
+
+    /**
+     * Checks if a template has user plan records.
+     *
+     * @param  int $templateid The template ID
+     * @return boolean
+     */
+    public static function has_records_for_template($templateid) {
+        return self::record_exists_select('templateid = ?', array($templateid));
+    }
 }

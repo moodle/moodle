@@ -606,7 +606,15 @@ $functions = array(
         'capabilities' => 'tool/lp:planmanage',
         'ajax'         => true,
     ),
-
+     'tool_lp_template_has_related_data' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'template_has_related_data',
+        'classpath'    => '',
+        'description'  => 'Check if a template has related data',
+        'type'         => 'read',
+        'capabilities' => 'tool/lp:templateread',
+        'ajax'         => true,
+    ),
     'tool_lp_get_scale_values' => array(
         'classname'    => 'tool_lp\external',
         'methodname'   => 'get_scale_values',

@@ -2709,4 +2709,105 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals(competency::OUTCOME_EVIDENCE, $c1b->get_ruleoutcome());
         $this->assertEquals(competency::OUTCOME_EVIDENCE, $c2->get_ruleoutcome());
     }
+
+    public function test_template_has_related_data() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $dg = $this->getDataGenerator();
+        $user = $dg->create_user();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $tpl1 = $lpg->create_template();
+        $tpl2 = $lpg->create_template();
+
+        // Create plans for first template.
+        $time = time();
+        $plan1 = $lpg->create_plan(array('templateid' => $tpl1->get_id(), 'userid' => $user->id,
+            'name' => 'Not good name', 'duedate' => $time + 3600, 'description' => 'Ahah', 'descriptionformat' => FORMAT_PLAIN));
+
+        $this->assertTrue(api::template_has_related_data($tpl1->get_id()));
+        $this->assertFalse(api::template_has_related_data($tpl2->get_id()));
+
+    }
+
+    public function test_delete_template_delete_plans() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $u1 = $dg->create_user();
+        $f = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f->get_id()));
+
+        $tpl = $lpg->create_template();
+
+        $tplc1 = $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $c1->get_id(),
+            'sortorder' => 1));
+        $tplc2 = $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $c2->get_id(),
+            'sortorder' => 2));
+
+        $p1 = $lpg->create_plan(array('templateid' => $tpl->get_id(), 'userid' => $u1->id));
+
+        // Check pre-test.
+        $this->assertTrue(tool_lp\template::record_exists($tpl->get_id()));
+        $this->assertEquals(2, \tool_lp\template_competency::count_competencies($tpl->get_id()));
+        $this->assertEquals(1, count(\tool_lp\plan::get_records(array('templateid' => $tpl->get_id()))));
+
+        $result = api::delete_template($tpl->get_id(), true);
+        $this->assertTrue($result);
+
+        // Check that the template does not exist anymore.
+        $this->assertFalse(tool_lp\template::record_exists($tpl->get_id()));
+
+        // Check that associated competencies are also deleted.
+        $this->assertEquals(0, \tool_lp\template_competency::count_competencies($tpl->get_id()));
+
+        // Check that associated plan are also deleted.
+        $this->assertEquals(0, count(\tool_lp\plan::get_records(array('templateid' => $tpl->get_id()))));
+    }
+
+    public function test_delete_template_unlink_plans() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $u1 = $dg->create_user();
+        $f = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f->get_id()));
+
+        $tpl = $lpg->create_template();
+
+        $tplc1 = $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $c1->get_id(),
+            'sortorder' => 1));
+        $tplc2 = $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $c2->get_id(),
+            'sortorder' => 2));
+
+        $p1 = $lpg->create_plan(array('templateid' => $tpl->get_id(), 'userid' => $u1->id));
+
+        // Check pre-test.
+        $this->assertTrue(tool_lp\template::record_exists($tpl->get_id()));
+        $this->assertEquals(2, \tool_lp\template_competency::count_competencies($tpl->get_id()));
+        $this->assertEquals(1, count(\tool_lp\plan::get_records(array('templateid' => $tpl->get_id()))));
+
+        $result = api::delete_template($tpl->get_id(), false);
+        $this->assertTrue($result);
+
+        // Check that the template does not exist anymore.
+        $this->assertFalse(tool_lp\template::record_exists($tpl->get_id()));
+
+        // Check that associated competencies are also deleted.
+        $this->assertEquals(0, \tool_lp\template_competency::count_competencies($tpl->get_id()));
+
+        // Check that associated plan still exist but unlink from template.
+        $plans = \tool_lp\plan::get_records(array('id' => $p1->get_id()));
+        $this->assertEquals(1, count($plans));
+        $this->assertEquals($plans[0]->get_origtemplateid(), $tpl->get_id());
+        $this->assertNull($plans[0]->get_templateid());
+    }
 }

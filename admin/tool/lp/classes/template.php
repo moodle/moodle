@@ -193,4 +193,13 @@ class template extends persistent {
         return true;
     }
 
+    /**
+     * Returns true when the template has user learning plans.
+     *
+     * @return boolean
+     */
+    public function has_plans() {
+        return plan::has_records_for_template($this->get_id());
+    }
+
 }

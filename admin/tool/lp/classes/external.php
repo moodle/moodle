@@ -1898,8 +1898,15 @@ class external extends external_api {
             VALUE_REQUIRED
         );
 
+        $deleteplans = new external_value(
+            PARAM_BOOL,
+            'Boolean to indicate if plans must be deleted',
+            VALUE_REQUIRED
+        );
+
         $params = array(
             'id' => $id,
+            'deleteplans' => $deleteplans
         );
         return new external_function_parameters($params);
     }
@@ -1908,18 +1915,20 @@ class external extends external_api {
      * Delete a learning plan template
      *
      * @param int $id The learning plan template id
+     * @param boolean $deleteplans True to delete the plans associated to template or false to unlink them
      * @return boolean
      */
-    public static function delete_template($id) {
+    public static function delete_template($id, $deleteplans = true) {
         $params = self::validate_parameters(self::delete_template_parameters(),
                                             array(
                                                 'id' => $id,
+                                                'deleteplans' => $deleteplans,
                                             ));
 
         $template = api::read_template($params['id']);
         self::validate_context($template->get_context());
 
-        return api::delete_template($params['id']);
+        return api::delete_template($params['id'], $params['deleteplans']);
     }
 
     /**
@@ -2833,6 +2842,50 @@ class external extends external_api {
      */
     public static function user_competency_stop_review_returns() {
         return new external_value(PARAM_BOOL, 'The success');
+    }
+
+    /**
+     * Returns description of template_has_related_data() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function template_has_related_data_parameters() {
+        $templateid = new external_value(
+            PARAM_INT,
+            'The template id',
+            VALUE_REQUIRED
+        );
+        $params = array(
+            'id' => $templateid,
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Check if template has related data.
+     *
+     * @param int $templateid Template id.
+     * @return boolean
+     */
+    public static function template_has_related_data($templateid) {
+        $params = self::validate_parameters(self::template_has_related_data_parameters(),
+                                            array(
+                                                'id' => $templateid,
+                                            ));
+
+        $template = api::read_template($params['id']);
+        self::validate_context($template->get_context());
+
+        return api::template_has_related_data($params['id']);
+    }
+
+    /**
+     * Returns description of template_has_related_data() result value.
+     *
+     * @return \external_description
+     */
+    public static function template_has_related_data_returns() {
+        return new external_value(PARAM_BOOL, 'True if the template has related data');
     }
 
     /**

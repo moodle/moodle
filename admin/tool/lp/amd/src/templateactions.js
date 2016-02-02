@@ -21,7 +21,8 @@
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'], function($, templates, ajax, notification, str) {
+define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str','tool_lp/actionselector'], 
+       function($, templates, ajax, notification, str, Actionselector) {
     // Private variables and functions.
 
     /** @var {Number} pagecontextid The id of the context */
@@ -29,6 +30,9 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
 
     /** @var {Number} templateid The id of the template */
     var templateid = 0;
+    
+    /** @var {Boolean} Action to apply to plans when deleting a template */
+    var deleteplans = true;
 
     /**
      * Callback to replace the dom element with the rendered template.
@@ -63,7 +67,8 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
         // We are chaining ajax requests here.
         var requests = ajax.call([{
             methodname: 'tool_lp_delete_template',
-            args: { id: templateid }
+            args: { id: templateid,
+                    deleteplans: deleteplans }
         }, {
             methodname: 'tool_lp_data_for_templates_manage_page',
             args: {
@@ -110,26 +115,60 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
 
         var id = $(this).attr('data-templateid');
         templateid = id;
+        deleteplans = true;
 
         var requests = ajax.call([{
             methodname: 'tool_lp_read_template',
             args: { id: templateid }
+        }, {
+            methodname: 'tool_lp_template_has_related_data',
+            args: { id: templateid }
         }]);
 
         requests[0].done(function(template) {
-            str.get_strings([
-                { key: 'confirm', component: 'moodle' },
-                { key: 'deletetemplate', component: 'tool_lp', param: template.shortname },
-                { key: 'delete', component: 'moodle' },
-                { key: 'cancel', component: 'moodle' }
-            ]).done(function (strings) {
-                notification.confirm(
-                    strings[0], // Confirm.
-                    strings[1], // Delete learning plan template X?
-                    strings[2], // Delete.
-                    strings[3], // Cancel.
-                    doDelete
-                );
+            requests[1].done(function(templatehasrelateddata) {
+                if (templatehasrelateddata) {
+                    str.get_strings([
+                        { key: 'deletetemplate', component: 'tool_lp', param: template.shortname },
+                        { key: 'deletetemplatewithplans', component: 'tool_lp' },
+                        { key: 'deleteplans', component: 'tool_lp' },
+                        { key: 'unlinkplanstemplate', component: 'tool_lp' },
+                        { key: 'confirm', component: 'moodle' },
+                        { key: 'cancel', component: 'moodle' }
+                    ]).done(function (strings) {
+                        var actions = [{'text': strings[2], 'value' : 'delete'}, 
+                                       {'text': strings[3], 'value' : 'unlink'}];
+                        var actionselector = new Actionselector(
+                                strings[0], // Title.
+                                strings[1], // Message
+                                actions, // Radio button options.
+                                strings[4], // Confirm.
+                                strings[5]); // Cancel.                             
+                        actionselector.display();
+                        actionselector.on('save', function(e, data) {
+                            if (data.action != 'delete') {
+                                deleteplans = false;
+                            }
+                            doDelete();
+                        });
+                    }).fail(notification.exception);
+                }
+                else {
+                    str.get_strings([
+                        { key: 'confirm', component: 'moodle' },
+                        { key: 'deletetemplate', component: 'tool_lp', param: template.shortname },
+                        { key: 'delete', component: 'moodle' },
+                        { key: 'cancel', component: 'moodle' }
+                    ]).done(function (strings) {
+                        notification.confirm(
+                        strings[0], // Confirm.
+                        strings[1], // Delete learning plan template X?
+                        strings[2], // Delete.
+                        strings[3], // Cancel.
+                        doDelete
+                        );
+                    }).fail(notification.exception);
+                }                
             }).fail(notification.exception);
         }).fail(notification.exception);
 

@@ -1136,9 +1136,10 @@ class api {
      * Requires tool/lp:templatemanage capability.
      *
      * @param int $id The record to delete.
+     * @param boolean $deleteplans True to delete plans associaated to template, false to unlink them.
      * @return boolean
      */
-    public static function delete_template($id) {
+    public static function delete_template($id, $deleteplans = true) {
         global $DB;
         $template = new template($id);
 
@@ -1157,6 +1158,22 @@ class api {
             if (!$success) {
                 break;
             }
+        }
+
+        // Still OK, delete or unlink the plans from the template.
+        if ($success) {
+            $plans = plan::get_records(array('templateid' => $template->get_id()));
+            foreach ($plans as $plan) {
+                $success = $deleteplans ? self::delete_plan($plan->get_id()) : self::unlink_plan_from_template($plan);
+                if (!$success) {
+                    break;
+                }
+            }
+        }
+
+        // Still OK, delete the template comptencies.
+        if ($success) {
+            $success = template_competency::delete_by_templateid($template->get_id());
         }
 
         // OK - all set.
@@ -2569,6 +2586,25 @@ class api {
 
         $uc->set_status(user_competency::STATUS_IDLE);
         return $uc->update();
+    }
+
+    /**
+     * Check if template has related data.
+     *
+     * @param int $templateid The id of the template to check.
+     * @return boolean
+     */
+    public static function template_has_related_data($templateid) {
+        // First we do a permissions check.
+        $template = new template($templateid);
+
+        if (!$template->can_read()) {
+            throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+        }
+
+        // OK - all set.
+        return $template->has_plans();
+
     }
 
     /**
