@@ -5434,6 +5434,33 @@ function get_mailer($action='get') {
 }
 
 /**
+ * A helper function to test for email diversion
+ *
+ * @param string $email
+ * @return bool Returns true if the email should be diverted
+ */
+function email_should_be_diverted($email) {
+    global $CFG;
+
+    if (empty($CFG->divertallemailsto)) {
+        return false;
+    }
+
+    if (empty($CFG->divertallemailsexcept)) {
+        return true;
+    }
+
+    $patterns = array_map('trim', explode(',', $CFG->divertallemailsexcept));
+    foreach ($patterns as $pattern) {
+        if (preg_match("/$pattern/", $email)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
  * Send an email to a specified user
  *
  * @param stdClass $user  A {@link $USER} object
@@ -5481,7 +5508,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         return true;
     }
 
-    if (!empty($CFG->divertallemailsto)) {
+    if (email_should_be_diverted($user->email)) {
         $subject = "[DIVERTED {$user->email}] $subject";
         $user = clone($user);
         $user->email = $CFG->divertallemailsto;
