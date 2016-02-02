@@ -35,6 +35,7 @@ $wantsremoteurl = optional_param('remoteurl', false, PARAM_BOOL);
 $url = new moodle_url('/auth/mnet/jump.php', array('token'=>$token, 'idp'=>$remotewwwroot, 'wantsurl'=>$wantsurl));
 if ($wantsremoteurl !== false) $url->param('remoteurl', $wantsremoteurl);
 $PAGE->set_url($url);
+$PAGE->set_context(context_system::instance());
 
 $site = get_site();
 
