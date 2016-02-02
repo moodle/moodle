@@ -88,15 +88,15 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group{
         $langscale = get_string('modgradetypescale', 'grades');
         $scaleselect = @MoodleQuickForm::createElement('select', 'modgrade_scale', $langscale, $scales, $attributes);
         $scaleselect->setHiddenLabel = false;
-        $scaleselect->_generateId();
-        $scaleselectid = $scaleselect->getAttribute('id');
+        $scaleselectid = $this->generate_modgrade_subelement_id('modgrade_scale');
+        $scaleselect->updateAttributes(array('id' => $scaleselectid));
 
         // Maximum grade textbox.
         $langmaxgrade = get_string('modgrademaxgrade', 'grades');
         $maxgrade = @MoodleQuickForm::createElement('text', 'modgrade_point', $langmaxgrade, array());
         $maxgrade->setHiddenLabel = false;
-        $maxgrade->_generateId();
-        $maxgradeid = $maxgrade->getAttribute('id');
+        $maxgradeid = $this->generate_modgrade_subelement_id('modgrade_point');
+        $maxgrade->updateAttributes(array('id' => $maxgradeid));
 
         // Grade type select box.
         $gradetype = array(
@@ -107,7 +107,8 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group{
         $langtype = get_string('modgradetype', 'grades');
         $typeselect = @MoodleQuickForm::createElement('select', 'modgrade_type', $langtype, $gradetype, $attributes, true);
         $typeselect->setHiddenLabel = false;
-        $typeselect->_generateId();
+        $typeselectid = $this->generate_modgrade_subelement_id('modgrade_type');
+        $typeselect->updateAttributes(array('id' => $typeselectid));
 
         // Add elements.
 
@@ -312,4 +313,17 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group{
         return parent::onQuickFormEvent($event, $arg, $caller);
     }
 
+    /**
+     * Generates the id attribute for the subelement of the modgrade group.
+     *
+     * Uses algorithm similar to what {@link HTML_QuickForm_element::_generateId()}
+     * does but takes the name of the wrapping modgrade group into account.
+     *
+     * @param string $subname the name of the HTML_QuickForm_element in this modgrade group
+     * @return string
+     */
+    protected function generate_modgrade_subelement_id($subname) {
+        $gid = str_replace(array('[', ']'), array('_', ''), $this->getName());
+        return clean_param('id_'.$gid.'_'.$subname, PARAM_ALPHANUMEXT);
+    }
 }
