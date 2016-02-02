@@ -169,6 +169,10 @@ class related_competency extends persistent {
     public static function get_multiple_relations($competencyids) {
         global $DB;
 
+        if (empty($competencyids)) {
+            return array();
+        }
+
         list($insql, $params) = $DB->get_in_or_equal($competencyids);
 
         $records = $DB->get_records_select(self::TABLE,

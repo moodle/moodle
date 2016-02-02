@@ -343,6 +343,13 @@ class tool_lp_api_testcase extends advanced_testcase {
         }
         $this->assertTrue($competency4duplicated->is_parent_of($competenciesidsrules));
 
+        // Test duplicate an empty framework.
+        $emptyfrm = $lpg->create_framework();
+        $emptyfrmduplicated = api::duplicate_framework($emptyfrm->get_id());
+        $this->assertEquals($emptyfrm->get_idnumber().'_1', $emptyfrmduplicated->get_idnumber());
+        $nbcomp = api::count_competencies(array('competencyframeworkid' => $emptyfrmduplicated->get_id()));
+        $this->assertEquals(0, $nbcomp);
+
     }
 
     /**

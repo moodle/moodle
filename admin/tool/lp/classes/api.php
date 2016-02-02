@@ -484,7 +484,7 @@ class api {
             $transaction->allow_commit();
 
         } catch (\Exception $e) {
-            $transaction->rollback(new moodle_exception('Error while duplicating the competency framework.'));
+            $transaction->rollback($e);
         }
 
         // Trigger a competency framework created event.
