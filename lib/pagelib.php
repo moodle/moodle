@@ -825,6 +825,29 @@ class moodle_page {
     }
 
     /**
+     * Switches from the regular requirements manager to the fragment requirements manager to
+     * capture all necessary JavaScript to display a chunk of HTML such as an mform. This is for use
+     * by the get_fragment() web service and not for use elsewhere.
+     */
+    public function start_collecting_javascript_requirements() {
+        global $CFG;
+        require_once($CFG->libdir.'/outputfragmentrequirementslib.php');
+
+        // Check that the requirements manager has not already been switched.
+        if (get_class($this->_requires) == 'fragment_requirements_manager') {
+            throw new coding_exception('JavaScript collection has already been started.');
+        }
+        // The header needs to have been called to flush out the generic JavaScript for the page. This allows only
+        // JavaScript for the fragment to be collected. _wherethemewasinitialised is set when header() is called.
+        if (!empty($this->_wherethemewasinitialised)) {
+            // Change the current requirements manager over to the fragment manager to capture JS.
+            $this->_requires = new fragment_requirements_manager();
+        } else {
+            throw new coding_exception('$OUTPUT->header() needs to be called before collecting JavaScript requirements.');
+        }
+    }
+
+    /**
      * Should the current user see this page in editing mode.
      * That is, are they allowed to edit this page, and are they currently in
      * editing mode.

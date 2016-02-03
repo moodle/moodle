@@ -1051,6 +1051,15 @@ $functions = array(
         'ajax'        => true,
     ),
 
+    'core_get_fragment' => array(
+        'classname'   => 'core_external',
+        'methodname'  => 'get_fragment',
+        'classpath'   => 'lib/external/externallib.php',
+        'description' => 'Return a fragment for inclusion, such as a JavaScript page.',
+        'type'        => 'read',
+        'ajax'        => true,
+    ),
+
 
     // === Calendar related functions ===
 
