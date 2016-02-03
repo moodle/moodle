@@ -189,10 +189,6 @@ abstract class moodleform {
             $this->_form->hardFreeze();
         }
 
-        // HACK to prevent browsers from automatically inserting the user's password into the wrong fields.
-        $element = $this->_form->addElement('hidden');
-        $element->setType('password');
-
         $this->definition();
 
         $this->_form->addElement('hidden', 'sesskey', null); // automatic sesskey protection
@@ -2666,6 +2662,8 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         $this->_collapseButtons = '';
         $formid = $form->getAttribute('id');
         parent::startForm($form);
+        // HACK to prevent browsers from automatically inserting the user's password into the wrong fields.
+        $this->_hiddenHtml .= prevent_form_autofill_password();
         if ($form->isFrozen()){
             $this->_formTemplate = "\n<div class=\"mform frozen\">\n{content}\n</div>";
         } else {
