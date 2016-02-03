@@ -302,6 +302,7 @@ $string['invalidcontext'] = 'Invalid context';
 $string['invalidcourse'] = 'Invalid course';
 $string['invalidcourseid'] = 'You are trying to use an invalid course ID';
 $string['invalidcourselevel'] = 'Incorrect context level';
+$string['invalidcourseformat'] = 'Invalid course format';
 $string['invalidcoursemodule'] = 'Invalid course module ID';
 $string['invalidcoursenameshort'] = 'Invalid short course name';
 $string['invaliddata'] = 'Data submitted is invalid';

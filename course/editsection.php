@@ -114,28 +114,7 @@ if ($mform->is_cancelled()){
             $data->availability = null;
         }
     }
-    $DB->update_record('course_sections', $data);
-    rebuild_course_cache($course->id, true);
-    if (isset($data->section)) {
-        // Usually edit form does not change relative section number but just in case.
-        $sectionnum = $data->section;
-    }
-    course_get_format($course->id)->update_section_format_options($data);
-
-    // Set section info, as this might not be present in form_data.
-    if (!isset($data->section))  {
-        $data->section = $sectionnum;
-    }
-    // Trigger an event for course section update.
-    $event = \core\event\course_section_updated::create(
-            array(
-                'objectid' => $data->id,
-                'courseid' => $course->id,
-                'context' => $context,
-                'other' => array('sectionnum' => $data->section)
-            )
-        );
-    $event->trigger();
+    course_update_section($course, $section, $data);
 
     $PAGE->navigation->clear_cache();
     redirect(course_get_url($course, $section, array('sr' => $sectionreturn)));

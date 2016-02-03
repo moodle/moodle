@@ -1030,6 +1030,76 @@ abstract class format_base {
 
         return true;
     }
+
+    /**
+     * Prepares the templateable object to display section name
+     *
+     * @param \section_info|\stdClass $section
+     * @param bool $linkifneeded
+     * @param bool $editable
+     * @param null|lang_string|string $edithint
+     * @param null|lang_string|string $editlabel
+     * @return \core\output\inplace_editable
+     */
+    public function inplace_editable_render_section_name($section, $linkifneeded = true,
+                                                         $editable = null, $edithint = null, $editlabel = null) {
+        global $USER, $CFG;
+        require_once($CFG->dirroot.'/course/lib.php');
+
+        if ($editable === null) {
+            $editable = !empty($USER->editing) && has_capability('moodle/course:update',
+                    context_course::instance($section->course));
+        }
+
+        $displayvalue = $title = get_section_name($section->course, $section);
+        if ($linkifneeded) {
+            // Display link under the section name if the course format setting is to display one section per page.
+            $url = course_get_url($section->course, $section->section, array('navigation' => true));
+            if ($url) {
+                $displayvalue = html_writer::link($url, $title);
+            }
+            $itemtype = 'sectionname';
+        } else {
+            // If $linkifneeded==false, we never display the link (this is used when rendering the section header).
+            // Itemtype 'sectionnamenl' (nl=no link) will tell the callback that link should not be rendered -
+            // there is no other way callback can know where we display the section name.
+            $itemtype = 'sectionnamenl';
+        }
+        if (empty($edithint)) {
+            $edithint = new lang_string('editsectionname');
+        }
+        if (empty($editlabel)) {
+            $editlabel = new lang_string('newsectionname', '', $title);
+        }
+
+        return new \core\output\inplace_editable('format_' . $this->format, $itemtype, $section->id, $editable,
+            $displayvalue, $section->name, $edithint, $editlabel);
+    }
+
+    /**
+     * Updates the value in the database and modifies this object respectively.
+     *
+     * ALWAYS check user permissions before performing an update! Throw exceptions if permissions are not sufficient
+     * or value is not legit.
+     *
+     * @param stdClass $section
+     * @param string $itemtype
+     * @param mixed $newvalue
+     * @return \core\output\inplace_editable
+     */
+    public function inplace_editable_update_section_name($section, $itemtype, $newvalue) {
+        if ($itemtype === 'sectionname' || $itemtype === 'sectionnamenl') {
+            require_login($section->course, false, null, true, true);
+            $context = context_course::instance($section->course);
+            require_capability('moodle/course:update', $context);
+
+            $newtitle = clean_param($newvalue, PARAM_TEXT);
+            if (strval($section->name) !== strval($newtitle)) {
+                course_update_section($section->course, $section, array('name' => $newtitle));
+            }
+            return $this->inplace_editable_render_section_name($section, ($itemtype === 'sectionname'), true);
+        }
+    }
 }
 
 /**
