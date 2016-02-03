@@ -23,6 +23,7 @@ Feature: Add images to Atto
     And the field "Width" matches value "204"
     And the field "Height" matches value "61"
     And I set the field "Auto size" to "1"
+    And I wait until the page is ready
     And I set the field "Width" to "2040"
     # Trigger blur on the width field.
     And I take focus off "Width" "field"
@@ -32,6 +33,7 @@ Feature: Add images to Atto
     And I take focus off "Height" "field"
     And the field "Width" matches value "204"
     And I set the field "Auto size" to "0"
+    And I wait until the page is ready
     And I set the field "Width" to "123"
     And I set the field "Height" to "456"
     # Trigger blur on the height field.
