@@ -49,9 +49,9 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates', 'core/log'
             this._args = { userid: this._userId, competencyid: this._competencyId, courseid: this._courseId };
             this._templateName = 'tool_lp/user_competency_summary_in_course';
         } else {
-            // TODO - add optional courseid support.
-            log.error('Plan id or course id is required.');
-            this._valid = false;
+            this._methodName = 'tool_lp_data_for_user_competency_summary';
+            this._args = { userid: this._userId, competencyid: this._competencyId };
+            this._templateName = 'tool_lp/user_competency_summary';
         }
     };
 

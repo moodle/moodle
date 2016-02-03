@@ -923,6 +923,42 @@ class api {
     }
 
     /**
+     * Get a user competency.
+     *
+     * @param int $userid The user ID.
+     * @param int $competencyid The competency ID.
+     * @return user_competency
+     */
+    public static function get_user_competency($userid, $competencyid) {
+        $existing = user_competency::get_multiple($userid, array($competencyid));
+        $uc = array_pop($existing);
+
+        if (!$uc) {
+            $uc = user_competency::create_relation($userid, $competencyid);
+            $uc->create();
+        }
+
+        if (!$uc->can_read()) {
+            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyview', 'nopermissions', '');
+        }
+        return $uc;
+    }
+
+    /**
+     * Get a user competency by ID.
+     *
+     * @param int $usercompetencyid The user competency ID.
+     * @return user_competency
+     */
+    public static function get_user_competency_by_id($usercompetencyid) {
+        $uc = new user_competency($usercompetencyid);
+        if (!$uc->can_read()) {
+            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyview', 'nopermissions', '');
+        }
+        return $uc;
+    }
+
+    /**
      * Get a user competency in a course.
      *
      * @param int $courseid The id of the course to check.
@@ -3652,6 +3688,57 @@ class api {
                 $event->get_url()
             );
         }
+    }
+
+    /**
+     * Manually grade a user competency.
+     *
+     * @param int $userid
+     * @param int $competencyid
+     * @param int $grade
+     * @param boolean $override
+     * @return array of \tool_lp\user_competency
+     */
+    public static function grade_competency($userid, $competencyid, $grade, $override) {
+        global $USER;
+
+        $uc = static::get_user_competency($userid, $competencyid);
+        $context = $uc->get_context();
+        if ($override) {
+            if (!user_competency::can_grade_user($uc->get_userid())) {
+                throw new required_capability_exception($context, 'tool/lp:competencygrade', 'nopermissions', '');
+            }
+        } else {
+            if (!user_competency::can_suggest_grade_user($uc->get_userid())) {
+                throw new required_capability_exception($context, 'tool/lp:competencysuggestgrade', 'nopermissions', '');
+            }
+        }
+
+        // Throws exception if competency not in plan.
+        $competency = $uc->get_competency();
+        $competencycontext = $competency->get_context();
+        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $competencycontext)) {
+            throw new required_capability_exception($competencycontext, 'tool/lp:competencyread', 'nopermissions', '');
+        }
+
+        $action = evidence::ACTION_OVERRIDE;
+        $desckey = 'evidence_manualoverride';
+        if (!$override) {
+            $action = evidence::ACTION_SUGGEST;
+            $desckey = 'evidence_manualsuggest';
+        }
+
+        return self::add_evidence($uc->get_userid(),
+                                  $competency,
+                                  $context->id,
+                                  $action,
+                                  $desckey,
+                                  'tool_lp',
+                                  null,
+                                  false,
+                                  null,
+                                  $grade,
+                                  $USER->id);
     }
 
     /**

@@ -773,6 +773,24 @@ $functions = array(
         'ajax'         => true,
     ),
 
+    'tool_lp_data_for_user_competency_summary' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'data_for_user_competency_summary',
+        'classpath'    => '',
+        'description'  => 'Load a summary of a user competency.',
+        'type'         => 'read',
+        'capabilities' => 'tool/lp:planview',
+        'ajax'         => true,
+    ),
+    'tool_lp_grade_competency' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'grade_competency',
+        'classpath'    => '',
+        'description'  => 'Grade a competency.',
+        'type'         => 'write',
+        'capabilities' => 'tool/lp:competencygrade',
+        'ajax'         => true,
+    ),
     'tool_lp_grade_competency_in_plan' => array(
         'classname'    => 'tool_lp\external',
         'methodname'   => 'grade_competency_in_plan',

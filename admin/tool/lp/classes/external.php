@@ -4637,6 +4637,86 @@ class external extends external_api {
         return new external_value(PARAM_BOOL, 'True if the update was successful');
     }
 
+
+    /**
+     * Returns description of external function parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function grade_competency_parameters() {
+        $userid = new external_value(
+            PARAM_INT,
+            'User ID',
+            VALUE_REQUIRED
+        );
+        $competencyid = new external_value(
+            PARAM_INT,
+            'Competency ID',
+            VALUE_REQUIRED
+        );
+        $grade = new external_value(
+            PARAM_INT,
+            'New grade',
+            VALUE_REQUIRED
+        );
+        $override = new external_value(
+            PARAM_BOOL,
+            'Override the grade, or just suggest it',
+            VALUE_REQUIRED
+        );
+
+        $params = array(
+            'userid' => $userid,
+            'competencyid' => $competencyid,
+            'grade' => $grade,
+            'override' => $override
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Grade a competency.
+     *
+     * @param int $userid The user ID.
+     * @param int $competencyid The competency id
+     * @param int $grade The new grade value
+     * @param bool $override Override the grade or only suggest it
+     * @return bool
+     */
+    public static function grade_competency($userid, $competencyid, $grade, $override) {
+        global $USER, $PAGE;
+        $params = self::validate_parameters(self::grade_competency_parameters(), array(
+            'userid' => $userid,
+            'competencyid' => $competencyid,
+            'grade' => $grade,
+            'override' => $override
+        ));
+
+        $uc = api::get_user_competency($params['userid'], $params['competencyid']);
+        self::validate_context($uc->get_context());
+
+        $output = $PAGE->get_renderer('tool_lp');
+        $evidence = api::grade_competency(
+                $uc->get_userid(),
+                $uc->get_competencyid(),
+                $params['grade'],
+                $params['override']
+        );
+
+        $scale = $uc->get_competency()->get_scale();
+        $exporter = new evidence_exporter($evidence, array('actionuser' => $USER, 'scale' => $scale));
+        return $exporter->export($output);
+    }
+
+    /**
+     * Returns description of external function result value.
+     *
+     * @return \external_value
+     */
+    public static function grade_competency_returns() {
+        return evidence_exporter::get_read_structure();
+    }
+
     /**
      * Returns description of grade_competency_in_plan() parameters.
      *
@@ -4717,6 +4797,60 @@ class external extends external_api {
      */
     public static function grade_competency_in_plan_returns() {
         return evidence_exporter::get_read_structure();
+    }
+
+    /**
+     * Returns description of external function.
+     *
+     * @return \external_function_parameters
+     */
+    public static function data_for_user_competency_summary_parameters() {
+        $userid = new external_value(
+            PARAM_INT,
+            'Data base record id for the user',
+            VALUE_REQUIRED
+        );
+        $competencyid = new external_value(
+            PARAM_INT,
+            'Data base record id for the competency',
+            VALUE_REQUIRED
+        );
+        $params = array(
+            'userid' => $userid,
+            'competencyid' => $competencyid,
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Data for user competency summary.
+     *
+     * @param int $userid The user ID
+     * @param int $competencyid The competency ID
+     * @return \stdClass
+     */
+    public static function data_for_user_competency_summary($userid, $competencyid) {
+        global $PAGE;
+        $params = self::validate_parameters(self::data_for_user_competency_summary_parameters(), array(
+            'userid' => $userid,
+            'competencyid' => $competencyid,
+        ));
+
+        $uc = api::get_user_competency($params['userid'], $params['competencyid']);
+        self::validate_context($uc->get_context());
+        $output = $PAGE->get_renderer('tool_lp');
+
+        $renderable = new \tool_lp\output\user_competency_summary($uc);
+        return $renderable->export_for_template($output);
+    }
+
+    /**
+     * Returns description of external function.
+     *
+     * @return \external_description
+     */
+    public static function data_for_user_competency_summary_returns() {
+        return user_competency_summary_exporter::get_read_structure();
     }
 
     /**

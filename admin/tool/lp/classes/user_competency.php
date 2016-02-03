@@ -518,7 +518,7 @@ class user_competency extends persistent {
 
         if (!empty($competenciesorids)) {
             $test = reset($competenciesorids);
-            if (is_int($test)) {
+            if (is_number($test)) {
                 $ids = $competenciesorids;
             } else {
                 $ids = array();

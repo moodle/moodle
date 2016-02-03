@@ -205,4 +205,15 @@ class renderer extends plugin_renderer_base {
         $data = $nav->export_for_template($this);
         return parent::render_from_template('tool_lp/user_competency_course_navigation', $data);
     }
+
+    /**
+     * Defer to template.
+     *
+     * @param user_competency_page $page
+     * @return string
+     */
+    public function render_user_competency_summary(user_competency_summary $page) {
+        $data = $page->export_for_template($this);
+        return parent::render_from_template('tool_lp/user_competency_summary', $data);
+    }
 }

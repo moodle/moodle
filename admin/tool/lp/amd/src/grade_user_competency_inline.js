@@ -60,8 +60,11 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/log'], function($, not
                 userid: this._userId
             };
         } else {
-            log.error('Plan id or course id is required.');
-            this._valid = false;
+            this._methodName = 'tool_lp_grade_competency';
+            this._args = {
+                userid: this._userId,
+                competencyid: this._competencyId
+            };
         }
     };
 
