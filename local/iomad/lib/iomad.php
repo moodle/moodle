@@ -554,7 +554,7 @@ class iomad {
         if ($allcourse) {
             $sqlsort = " GROUP BY cc.id, co.id, u.id";
         } else {
-            $sqlsort = " GROUP BY u.id, cc.timeenrolled, cc.timestarted, cc.timecompleted, d.name";
+            $sqlsort = " GROUP BY cc.id, u.id, cc.timeenrolled, cc.timestarted, cc.timecompleted, d.name";
         }
         if (!$nogrades) {
             $sqlsort .= ', cc.finalscore';
@@ -1250,12 +1250,13 @@ class iomad {
                     AND du.userid = u.id
                     AND d.id = du.departmentid
                     AND cl.id = clu.licenseid
-                    AND cl.expirydate > unix_timestamp()
+                    AND cl.expirydate > :timestamp
                     $showsuspendedsql
                     $showusedsql
                     $searchinfo->sqlsort ";
 
         $searchinfo->searchparams['courseid'] = $courseid;
+        $searchinfo->searchparams['timestamp'] = time();
         $users = $DB->get_records_sql($selectsql.$fromsql, $searchinfo->searchparams, $page * $perpage, $perpage);
         $countusers = $DB->get_records_sql($countsql.$fromsql, $searchinfo->searchparams);
         $numusers = count($countusers);

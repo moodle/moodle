@@ -128,7 +128,7 @@ class companyrep{
 
         echo "<ul class=\"iomad_user_list\">\n";
         foreach ($users as $user) {
-            if (!empty($usser->id) && !empty($user->email) && !empty($user->firstname) && !empty($user->lastname)) {
+            if (!empty($user->id) && !empty($user->email) && !empty($user->firstname) && !empty($user->lastname)) {
                 $link = "{$CFG->wwwroot}/user/view.php?id={$user->id}";
                 echo "<li><a href=\"$link\">".fullname( $user )."</a> ({$user->email})</li>\n";
             }
