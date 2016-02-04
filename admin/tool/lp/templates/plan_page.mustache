@@ -60,8 +60,10 @@
                 {{/plan.isunapproveallowed}}
 
             </dd>
-            <dt>{{#str}}duedate, tool_lp{{/str}}</dt>
-            <dd>{{plan.duedateformatted}}</dd>
+            {{#plan.duedate}}
+                <dt>{{#str}}duedate, tool_lp{{/str}}</dt>
+                <dd>{{plan.duedateformatted}}</dd>
+            {{/plan.duedate}}
             {{#plan.template}}
                 <dt>{{#str}}template, tool_lp{{/str}}</dt>
                 <dd>
