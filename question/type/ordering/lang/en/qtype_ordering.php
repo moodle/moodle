@@ -17,6 +17,7 @@ $string['pluginnamesummary'] = 'Put jumbled items into a meaningful order.';
 
 $string['absoluteposition'] = 'Absolute position';
 $string['addmoreanswers'] = 'Add {$a} more items';
+$string['allornothing'] = 'All or nothing';
 $string['answer'] = 'Item text';
 $string['answerheader'] = 'Draggable item {no}';
 $string['correctorder'] = 'The correct order for these items is as follows:';
@@ -24,6 +25,9 @@ $string['defaultquestionname'] = 'Drag the following items into the correct orde
 $string['gradedetails'] = 'Grade details';
 $string['gradingtype'] = 'Grading type';
 $string['gradingtype_help'] = 'Choose the type of grading calculation.
+
+**All or nothing**
+: If all items are in the correct position, then full marks are awarded. Otherwise, the score is zero.
 
 **Absolute position**
 : An item is considered correct if it is in the same position as in the correct answer. The highest possible score for the question is **the same as** the number of items displayed to the student.

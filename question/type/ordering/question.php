@@ -41,13 +41,14 @@ class qtype_ordering_question extends question_graded_automatically {
     const LAYOUT_VERTICAL   = 0;
     const LAYOUT_HORIZONTAL = 1;
 
-    const GRADING_ABSOLUTE_POSITION              = 0;
-    const GRADING_RELATIVE_NEXT_EXCLUDE_LAST     = 1;
-    const GRADING_RELATIVE_NEXT_INCLUDE_LAST     = 2;
-    const GRADING_RELATIVE_ONE_PREVIOUS_AND_NEXT = 3;
-    const GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT = 4;
-    const GRADING_LONGEST_ORDERED_SUBSET         = 5;
-    const GRADING_LONGEST_CONTIGUOUS_SUBSET      = 6;
+    const GRADING_ALL_OR_NOTHING                 = -1;
+    const GRADING_ABSOLUTE_POSITION              =  0;
+    const GRADING_RELATIVE_NEXT_EXCLUDE_LAST     =  1;
+    const GRADING_RELATIVE_NEXT_INCLUDE_LAST     =  2;
+    const GRADING_RELATIVE_ONE_PREVIOUS_AND_NEXT =  3;
+    const GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT =  4;
+    const GRADING_LONGEST_ORDERED_SUBSET         =  5;
+    const GRADING_LONGEST_CONTIGUOUS_SUBSET      =  6;
 
     /** fields from "qtype_ordering_options" */
     public $correctfeedback;
@@ -87,21 +88,21 @@ class qtype_ordering_question extends question_graded_automatically {
 
         // ensure consistency between "selecttype" and "selectcount"
         switch (true) {
-            case ($selecttype==0): $selectcount = $countanswers; break;
-            case ($selectcount==$countanswers): $selecttype = 0; break;
+            case ($selecttype==self::SELECT_ALL): $selectcount = $countanswers; break;
+            case ($selectcount==$countanswers): $selecttype = self::SELECT_ALL; break;
         }
 
         // extract answer ids
         switch ($selecttype) {
-            case 0: // all
+            case self::SELECT_ALL:
                 $answerids = array_keys($answers);
                 break;
 
-            case 1: // random subset
+            case self::SELECT_RANDOM:
                 $answerids = array_rand($answers, $selectcount);
                 break;
 
-            case 2: // contiguous subset
+            case self::SELECT_CONTIGUOUS:
                 $answerids = array_keys($answers);
                 $offset = mt_rand(0, $countanswers - $selectcount);
                 $answerids = array_slice($answerids, $offset, $selectcount, true);
@@ -172,6 +173,7 @@ class qtype_ordering_question extends question_graded_automatically {
         $options = $this->get_ordering_options();
         switch ($options->gradingtype) {
 
+            case self::GRADING_ALL_OR_NOTHING:
             case self::GRADING_ABSOLUTE_POSITION:
                 $correctresponse = $this->correctresponse;
                 $currentresponse = $this->currentresponse;
@@ -182,6 +184,9 @@ class qtype_ordering_question extends question_graded_automatically {
                         }
                     }
                     $countanswers++;
+                }
+                if ($options->gradingtype==self::GRADING_ALL_OR_NOTHING && $countcorrect < $countanswers) {
+                    $countcorrect = 0;
                 }
                 break;
 
@@ -472,6 +477,7 @@ class qtype_ordering_question extends question_graded_automatically {
     static public function get_grading_types($type=null) {
         $plugin = 'qtype_ordering';
         $types = array(
+            self::GRADING_ALL_OR_NOTHING                 => get_string('allornothing',               $plugin),
             self::GRADING_ABSOLUTE_POSITION              => get_string('absoluteposition',           $plugin),
             self::GRADING_RELATIVE_NEXT_EXCLUDE_LAST     => get_string('relativenextexcludelast',    $plugin),
             self::GRADING_RELATIVE_NEXT_INCLUDE_LAST     => get_string('relativenextincludelast',    $plugin),

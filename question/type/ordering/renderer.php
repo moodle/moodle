@@ -43,6 +43,8 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
     protected $currentinfo = null;
     protected $itemscores = array();
 
+    protected $all_correct = null;
+
     public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
         global $CFG, $DB;
 
@@ -275,6 +277,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         $gradingtype = $question->options->gradingtype;
         switch ($gradingtype) {
 
+            case qtype_ordering_question::GRADING_ALL_OR_NOTHING:
             case qtype_ordering_question::GRADING_ABSOLUTE_POSITION:
                 $this->correctinfo = $question->correctresponse;
                 $this->currentinfo = $question->currentresponse;
@@ -308,6 +311,13 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         }
     }
 
+    protected function is_all_correct() {
+        if ($this->all_correct===null) {
+            $this->all_correct = ($this->correctinfo==$this->currentinfo); // array comparison
+        }
+        return $this->all_correct;
+    }
+
     protected function get_ordering_item_score($question, $position, $answerid) {
 
         if (! isset($this->itemscores[$position])) {
@@ -327,6 +337,13 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
             $img      = '';   // icon to show correctness
 
             switch ($question->options->gradingtype) {
+
+                case qtype_ordering_question::GRADING_ALL_OR_NOTHING:
+                    if ($this->is_all_correct()) {
+                        $score = 1;
+                    }
+                    $maxscore = 1;
+                    break;
 
                 case qtype_ordering_question::GRADING_ABSOLUTE_POSITION:
                     if (isset($correctinfo[$position])) {

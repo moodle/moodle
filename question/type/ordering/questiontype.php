@@ -352,7 +352,8 @@ class qtype_ordering extends question_type {
                           'CONTIGUOUS|CONTIG)?';
         $layouttype  = '(?:HORIZONTAL|HORI|H|1|'.
                           'VERTICAL|VERT|V|0)?';
-        $gradingtype = '(?:ABSOLUTE_POSITION|'.
+        $gradingtype = '(?:ALL_OR_NOTHING|'.
+                          'ABSOLUTE_POSITION|'.
                           'ABSOLUTE|ABS|'.
                           'RELATIVE_NEXT_EXCLUDE_LAST|'.
                           'RELATIVE_NEXT_INCLUDE_LAST|'.
@@ -471,6 +472,9 @@ class qtype_ordering extends question_type {
         }
 
         switch ($question->options->gradingtype) {
+            case qtype_ordering_question::GRADING_ALL_OR_NOTHING:
+                $grading = 'ALL_OR_NOTHING';
+                break;
             case qtype_ordering_question::GRADING_ABSOLUTE_POSITION:
                 $grading = 'ABSOLUTE_POSITION';
                 break;
@@ -711,6 +715,9 @@ class qtype_ordering extends question_type {
 
         // set "gradingtype" from $grading
         switch (strtoupper($grading)) {
+            case 'ALL_OR_NOTHING':
+                $gradingtype = qtype_ordering_question::GRADING_ALL_OR_NOTHING;
+                break;
             case 'ABS':
             case 'ABSOLUTE':
             case 'ABSOLUTE_POSITION':
