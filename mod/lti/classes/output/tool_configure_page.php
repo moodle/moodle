@@ -30,7 +30,6 @@ use renderable;
 use templatable;
 use renderer_base;
 use stdClass;
-use core_plugin_manager;
 
 /**
  * Class containing data for tool_configure page
@@ -42,13 +41,18 @@ class tool_configure_page implements renderable, templatable {
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
+     * @param renderer_base $output The renderer
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
         $data = new stdClass();
 
-        $url = new moodle_url('/mod/lti/typessettings.php', array('sesskey' => sesskey()));
+        $url = new moodle_url('/mod/lti/typessettings.php', array('sesskey' => sesskey(), 'returnto' => 'toolconfigure'));
         $data->configuremanualurl = $url->out();
+        $url = new moodle_url('/admin/settings.php?section=modsettinglti');
+        $data->managetoolsurl = $url->out();
+        $url = new moodle_url('/mod/lti/toolproxies.php');
+        $data->managetoolproxiesurl = $url->out();
 
         return $data;
     }

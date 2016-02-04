@@ -21,7 +21,11 @@
     LTI module.
 
     Classes required for JS:
-    * none
+    * lead
+    * centered-menu
+    * well
+    * form-horizontal
+    * text-center
 
     Data attributes required for JS:
     * none
@@ -29,18 +33,14 @@
     Context variables required for this template:
     *
 
-    Example context (json):
-    {
-    }
-
 }}
 <div class="centered-menu">
     <div class="well">
         <form id="cartridge-registration-form" class="form-horizontal">
-            <p class="lead text-center">Enter your consumer key and shared secret</p>
-            <p class="text-center">or leave blank if you don't need them</p>
+            <p class="lead text-center">{{#str}} enterkeyandsecret, mod_lti {{/str}}</p>
+            <p class="text-center">{{#str}} leaveblank, mod_lti {{/str}}</p>
             <div class="control-group">
-                <label class="control-label" for="registration-key">Consumer Key</label>
+                <label class="control-label" for="registration-key">{{#str}} resourcekey_admin, mod_lti {{/str}}</label>
                 <div class="controls">
                     <input name="tool-key"
                         class="input-block-level"
@@ -49,7 +49,7 @@
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label" for="registration-secret">Shared Secret</label>
+                <label class="control-label" for="registration-secret">{{#str}} password_admin, mod_lti {{/str}}</label>
                 <div class="controls">
                     <input name="tool-secret"
                         class="input-block-level"
@@ -59,14 +59,14 @@
             </div>
             <div class="control-group">
                 <div class="controls">
-                    <button id="cartridge-registration-submit" type="button" class="btn btn-success">
-                        <span class="btn-text">Done</span>
+                    <button id="cartridge-registration-submit" type="submit" class="btn btn-success">
+                        <span class="btn-text">{{#str}} savechanges {{/str}}</span>
                         <div class="btn-loader">
                             {{> mod_lti/loader }}
                         </div>
                     </button>
-                    <button id="cartridge-registration-cancel" type="button" class="btn btn-danger">
-                        <span class="btn-text">Cancel</span>
+                    <button id="cartridge-registration-cancel" type="button" class="btn">
+                        <span class="btn-text">{{#str}} cancel {{/str}}</span>
                         <div class="btn-loader">
                             {{> mod_lti/loader }}
                         </div>

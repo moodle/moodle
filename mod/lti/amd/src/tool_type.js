@@ -18,7 +18,7 @@
  *
  * @module     mod_lti/tool_type
  * @class      tool_type
- * @package    core
+ * @package    mod_lti
  * @copyright  2015 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1
@@ -40,7 +40,7 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
         query: function(args) {
             var request = {
                 methodname: 'mod_lti_get_tool_types',
-                args: args
+                args: args || {}
             };
 
             var promise = ajax.call([request])[0];

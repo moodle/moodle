@@ -33,10 +33,13 @@
     }
 
 }}
-<h3>Tools</h3>
+<h3>{{#str}} tooltypes, mod_lti {{/str}}</h3>
 <div id="tool-list-loader-container">
     {{> mod_lti/loader }}
 </div>
+{{^tools}}
+<div id="tool-notools-text" class="container-fluid">{{#str}} no_lti_tools, mod_lti {{/str}}</div>
+{{/tools}}
 <div id="tool-card-container" class="container-fluid">
     {{#tools}}
         {{> mod_lti/tool_card }}

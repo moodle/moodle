@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This page allows the configuration of external tools that meet the
- * LTI specification.
+ * This page allows the configuration of external tools that meet the LTI specification.
  *
- * @package mod_lti
+ * @package    mod_lti
  * @copyright  2015 Ryan Wyllie <ryan@moodle.com>
  * @author     Ryan Wyllie
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,9 +27,6 @@ require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/mod/lti/lib.php');
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
-# TODO: Shouldn't these be auto loaded????
-require_once($CFG->dirroot.'/mod/lti/classes/output/tool_configure_page.php');
-require_once($CFG->dirroot.'/mod/lti/classes/output/renderer.php');
 
 $cartridgeurl = optional_param('cartridgeurl', '', PARAM_URL);
 
@@ -49,7 +45,11 @@ if ($cartridgeurl) {
 
 $pageurl = new moodle_url('/mod/lti/toolconfigure.php');
 $PAGE->set_url($pageurl);
-$PAGE->set_title("{$SITE->shortname}: " . get_string('toolregistration', 'lti'));
+$PAGE->set_title("{$SITE->shortname}: " . get_string('toolregistration', 'mod_lti'));
+$PAGE->requires->string_for_js('success', 'moodle');
+$PAGE->requires->string_for_js('error', 'moodle');
+$PAGE->requires->string_for_js('successfullycreatedtooltype', 'mod_lti');
+$PAGE->requires->string_for_js('failedtocreatetooltype', 'mod_lti');
 $output = $PAGE->get_renderer('mod_lti');
 
 echo $output->header();

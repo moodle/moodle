@@ -20,7 +20,7 @@
  *
  * @module     mod_lti/tool_configure_controller
  * @class      tool_configure_controller
- * @package    core
+ * @package    mod_lti
  * @copyright  2015 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1
@@ -34,13 +34,12 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
         EXTERNAL_REGISTRATION_PAGE_CONTAINER: '#external-registration-page-container',
         CARTRIDGE_REGISTRATION_CONTAINER: '#cartridge-registration-container',
         CARTRIDGE_REGISTRATION_FORM: '#cartridge-registration-form',
+        ADD_TOOL_FORM: '#add-tool-form',
         TOOL_LIST_CONTAINER: '#tool-list-container',
         TOOL_CREATE_BUTTON: '#tool-create-button',
         REGISTRATION_CHOICE_CONTAINER: '#registration-choice-container',
         TOOL_URL: '#tool-url'
     };
-
-    var REGISTRATION_ALERT_TIMEOUT = 5000;
 
     /**
      * Get the tool create button element.
@@ -161,6 +160,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
         hideRegistrationChoices();
         getExternalRegistrationContainer().removeClass('hidden');
         getExternalRegistrationContainer().find(SELECTORS.EXTERNAL_REGISTRATION_PAGE_CONTAINER).attr('data-registration-url', url);
+        screenReaderAnnounce(getExternalRegistrationContainer());
     };
 
     /**
@@ -175,6 +175,21 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
         hideRegistrationChoices();
         getCartridgeRegistrationContainer().removeClass('hidden');
         getCartridgeRegistrationContainer().find(SELECTORS.CARTRIDGE_REGISTRATION_FORM).attr('data-cartridge-url', url);
+        screenReaderAnnounce(getCartridgeRegistrationContainer());
+    };
+
+    /**
+     * JAWS does not notice visibility changes with aria-live.
+     * Remove and add the content back to force it to read it out.
+     * This function can be removed once JAWS supports visibility.
+     *
+     * @method screenReaderAnnounce
+     * @private
+     */
+    var screenReaderAnnounce = function(element) {
+        var childClones = element.children().clone(true, true);
+        element.empty();
+        element.append(childClones);
     };
 
     /**
@@ -195,6 +210,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
         hideExternalRegistration();
         hideCartridgeRegistration();
         getRegistrationChoiceContainer().removeClass('hidden');
+        screenReaderAnnounce(getRegistrationChoiceContainer());
     };
 
     /**
@@ -225,7 +241,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      * @return bool
      */
     var isRegistrationFeedbackVisible = function() {
-        return getRegistrationFeedbackContainer().hasClass('hidden') ? false : true;
+        return $.trim(getRegistrationFeedbackContainer().html());
     };
 
     /**
@@ -235,19 +251,14 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      * @private
      */
     var showRegistrationFeedback = function(data) {
-        hideExternalRegistration();
-        hideCartridgeRegistration();
-        hideRegistrationChoices();
-
         templates.render('mod_lti/registration_feedback', data).done(function(html) {
+            hideExternalRegistration();
+            hideCartridgeRegistration();
+            hideRegistrationChoices();
+
             var container = getRegistrationFeedbackContainer();
             container.append(html);
-            container.removeClass('hidden');
-
-            setTimeout(function() {
-                clearRegistrationFeedback();
-            }, REGISTRATION_ALERT_TIMEOUT);
-        });
+        }).fail(notification.exception);
     };
 
     /**
@@ -259,9 +270,30 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
     var clearRegistrationFeedback = function() {
         var container = getRegistrationFeedbackContainer();
         container.empty();
-        container.addClass('hidden');
 
         showRegistrationChoices();
+    };
+
+    /**
+     * Show the loading animation
+     *
+     * @method startLoading
+     * @private
+     * @param object jQuery object
+     */
+    var startLoading = function(element) {
+        element.addClass("loading");
+    };
+
+    /**
+     * Hide the loading animation
+     *
+     * @method stopLoading
+     * @private
+     * @param object jQuery object
+     */
+    var stopLoading = function(element) {
+        element.removeClass("loading");
     };
 
     /**
@@ -272,15 +304,15 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      */
     var reloadToolList = function() {
         var container = getToolListContainer();
-        container.addClass('loading');
+        startLoading(container);
 
         toolType.query().done(function(types) {
             templates.render('mod_lti/tool_list', {tools: types}).done(function(html, js) {
                 container.empty();
                 container.append(html);
                 templates.runTemplateJS(js);
-            });
-        }).always(function() { container.removeClass('loading'); });
+            }).fail(notification.exception);
+        }).fail(notification.exception).always(function() { stopLoading(container); });
     };
 
     /**
@@ -299,11 +331,11 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
         }
 
         var toolButton = getToolCreateButton();
-        toolButton.addClass("loading"); // TODO: Function for this.
+        startLoading(toolButton);
 
         var promise = toolType.isCartridge(url);
 
-        promise.always(function() { toolButton.removeClass("loading"); }); // TODO: Function for this.
+        promise.always(function() { stopLoading(toolButton); });
 
         promise.done(function(result) {
             if (result.iscartridge) {
@@ -316,6 +348,8 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
                 hideToolList();
             }
         });
+
+        promise.fail(notification.exception);
 
         return promise;
     };
@@ -352,18 +386,10 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
             showRegistrationFeedback(data);
         });
 
-        var toolButton = getToolCreateButton();
-        toolButton.click(function(e) {
+        var form = $(SELECTORS.ADD_TOOL_FORM);
+        form.submit(function(e) {
             e.preventDefault();
             addTool();
-        });
-        toolButton.keypress(function(e) {
-            if (!e.metaKey && !e.shiftKey && !e.altKey && !e.ctrlKey) {
-                if (e.keyCode == KEYS.ENTER || e.keyCode == KEYS.SPACE) {
-                    addTool();
-                    e.preventDefault();
-                }
-            }
         });
 
         var feedbackContainer = getRegistrationFeedbackContainer();

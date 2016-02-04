@@ -48,6 +48,13 @@ class renderer extends plugin_renderer_base {
         return parent::render_from_template('mod_lti/tool_configure', $data);
     }
 
+    /**
+     * Render the external registration return page
+     *
+     * @param tool_configure_page $page
+     *
+     * @return string html for the page
+     */
     public function render_external_registration_return_page($page) {
         return '';
     }

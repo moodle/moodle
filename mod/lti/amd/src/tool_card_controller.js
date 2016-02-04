@@ -21,7 +21,7 @@
  *
  * @module     mod_lti/tool_card_controller
  * @class      tool_card_controller
- * @package    core
+ * @package    mod_lti
  * @copyright  2015 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1
@@ -239,7 +239,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/t
             stopLoading(element);
             announceSuccess(element).done(function() {
                 element.remove();
-            });
+            }).fail(notification.exception);
         });
 
         promise.fail(function() { announceFailure(element); });
@@ -332,7 +332,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/t
             // Make sure the text is updated with the description from the
             // server, just in case the update didn't work.
             descriptionElement.text(type.description);
-        });
+        }).fail(notification.exception);
 
         // Probably need to handle failures better so that we can revert
         // the value in the input for the user.

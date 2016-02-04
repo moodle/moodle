@@ -29,15 +29,12 @@
     Context variables required for this template:
     *
 
-    Example context (json):
-    {
-    }
-
 }}
 <div id="tool-proxy-registration-form-container">
     <div class="registration-loading-container">
         {{> mod_lti/loader }}
-        <p>Loading...</p>
+        <p class="loading-text">{{#str}} loadinghelp, moodle {{/str}}</p>
+        <p id="registration-loading-failed" class="hidden">{{#str}} register_warning, mod_lti {{/str}}</p>
     </div>
     <iframe id="registration-page-iframe" name="registration-page-iframe" class="hidden">
     </iframe>
@@ -54,11 +51,12 @@
     require(['jquery'], function($) {
         var loadingContainer = $('#tool-proxy-registration-form-container .registration-loading-container');
         var iframe = $('#registration-page-iframe');
+        var timeout = setTimeout(function () {
+            var failedContainer = $('#registration-loading-failed');
+            failedContainer.removeClass('hidden');
+        }, 20000);
 
         iframe.load(function() {
-            //var contentHeight = iframe.contents().find('body').height();
-            //iframe.height(contentHeight);
-
             loadingContainer.addClass('hidden');
             iframe.removeClass('hidden');
         });

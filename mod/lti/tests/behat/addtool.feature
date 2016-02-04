@@ -1,5 +1,5 @@
 @mod @mod_lti
-Feature: Add tool types
+Feature: Add tools
   In order to provide activities for learners
   As a teacher
   I need to be able to add external tools to a course
@@ -15,12 +15,12 @@ Feature: Add tool types
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "admin"
-    And I navigate to "Manage external tool types" node in "Site administration > Plugins > Activity modules > LTI"
-    And I follow "Add external tool configuration"
+    And I navigate to "Manage tools" node in "Site administration > Plugins > Activity modules > LTI"
+    And I follow "Manage preconfigured tools"
+    And I follow "Add preconfigured tool"
     And I set the following fields to these values:
       | Tool name | Teaching Tool 1 |
-      | Show tool type when creating tool instances | 1 |
-    And I set the field "Tool base URL" to local url "/mod/lti/tests/fixtures/tool_provider.html"
+    And I set the field "Tool base URL/Cartridge URL" to local url "/mod/lti/tests/fixtures/tool_provider.html"
     And I press "Save changes"
     And I log out
 
@@ -34,4 +34,4 @@ Feature: Add tool types
       | Launch container | Embed |
     And I open "Test tool activity 1" actions menu
     And I follow "Edit settings" in the open menu
-    Then the field "External tool type" matches value "Teaching Tool 1"
+    Then the field "Preconfigured tool" matches value "Teaching Tool 1"

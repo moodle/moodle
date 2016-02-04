@@ -179,7 +179,7 @@ function xmldb_lti_upgrade($oldversion) {
     // Moodle v3.0.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2015120400) {
+    if ($oldversion < 2016041800) {
 
         // Define field description to be added to lti_types.
         $table = new xmldb_table('lti_types');
@@ -191,7 +191,7 @@ function xmldb_lti_upgrade($oldversion) {
         }
 
         // Lti savepoint reached.
-        upgrade_mod_savepoint(true, 2015120400, 'lti');
+        upgrade_mod_savepoint(true, 2016041800, 'lti');
     }
 
     return true;

@@ -29,14 +29,10 @@
     Context variables required for this template:
     *
 
-    Example context (json):
-    {
-    }
-
 }}
 <div id="external-registration-page-container">
     <button id="cancel-external-registration" class="btn btn-danger">
-        <span class="btn-text">Cancel</span>
+        <span class="btn-text">{{#str}} cancel {{/str}}</span>
         <div class="btn-loader">
             {{> mod_lti/loader }}
         </div>
@@ -47,9 +43,9 @@
 <div id="tool-type-capabilities-container" class="hidden">
     <div class="registration-loading-container">
         {{> mod_lti/loader }}
-        <p>Loading...</p>
+        <p>{{#str}} loading, admin {{/str}}</p>
     </div>
-    <div id="tool-type-capabilities-template-container"></div>
+    <div id="tool-type-capabilities-template-container" aria-live="polite"></div>
 </div>
 {{#js}}
     require(['mod_lti/external_registration'], function(registration) {

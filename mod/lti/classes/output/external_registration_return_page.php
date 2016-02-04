@@ -25,12 +25,10 @@ namespace mod_lti\output;
 
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
-use moodle_url;
 use renderable;
 use templatable;
 use renderer_base;
 use stdClass;
-use core_plugin_manager;
 
 /**
  * Class containing data for tool_configure page
@@ -43,7 +41,8 @@ class external_registration_return_page implements renderable, templatable {
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
-     * @return stdClass
+     * @param renderer_base $output The renderer
+     * @return stdClass Data to be used by the template
      */
     public function export_for_template(renderer_base $output) {
         return new stdClass();

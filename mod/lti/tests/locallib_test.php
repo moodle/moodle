@@ -292,4 +292,37 @@ class mod_lti_locallib_testcase extends advanced_testcase {
         $this->assertEquals(0, $config->lti_forcessl);
         $this->assertEquals(0, $type->forcessl);
     }
+
+    /**
+     * Tests lti_load_type_from_cartridge and lti_load_type_if_cartridge
+     */
+    public function test_lti_load_type_from_cartridge() {
+        $type = new stdClass();
+        $type->lti_toolurl = $this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml');
+
+        lti_load_type_if_cartridge($type);
+
+        $this->assertEquals('Example tool', $type->lti_typename);
+        $this->assertEquals('Example tool description', $type->lti_description);
+        $this->assertEquals('http://www.example.com/lti/provider.php', $type->lti_toolurl);
+        $this->assertEquals('http://download.moodle.org/unittest/test.jpg', $type->lti_icon);
+        $this->assertEquals('https://download.moodle.org/unittest/test.jpg', $type->lti_secureicon);
+    }
+
+    /**
+     * Tests lti_load_tool_from_cartridge and lti_load_tool_if_cartridge
+     */
+    public function test_lti_load_tool_from_cartridge() {
+        $lti = new stdClass();
+        $lti->toolurl = $this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml');
+
+        lti_load_tool_if_cartridge($lti);
+
+        $this->assertEquals('Example tool', $lti->name);
+        $this->assertEquals('Example tool description', $lti->intro);
+        $this->assertEquals('http://www.example.com/lti/provider.php', $lti->toolurl);
+        $this->assertEquals('https://www.example.com/lti/provider.php', $lti->securetoolurl);
+        $this->assertEquals('http://download.moodle.org/unittest/test.jpg', $lti->icon);
+        $this->assertEquals('https://download.moodle.org/unittest/test.jpg', $lti->secureicon);
+    }
 }

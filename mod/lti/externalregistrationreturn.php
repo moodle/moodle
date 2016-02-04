@@ -43,6 +43,6 @@ $PAGE->set_context($systemcontext);
 $PAGE->set_url($pageurl);
 $PAGE->set_pagelayout('maintenance');
 echo $OUTPUT->header();
-$params = array('message' => $msg, 'error' => $err, 'id' => $id, 'status' => $status);
+$params = array('message' => s($msg), 'error' => s($err), 'id' => $id, 'status' => s($status));
 $PAGE->requires->js_call_amd('mod_lti/external_registration_return', 'init', $params);
 echo $OUTPUT->footer();

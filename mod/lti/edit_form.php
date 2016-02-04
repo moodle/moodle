@@ -69,7 +69,7 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->addRule('lti_typename', null, 'required', null, 'client');
 
         $mform->addElement('text', 'lti_toolurl', get_string('toolurl', 'lti'), array('size' => '64'));
-        $mform->setType('lti_toolurl', PARAM_TEXT);
+        $mform->setType('lti_toolurl', PARAM_URL);
         $mform->addHelpButton('lti_toolurl', 'toolurl', 'lti');
 
         $mform->addElement('textarea', 'lti_description', get_string('tooldescription', 'lti'), array('rows' => 4, 'cols' => 60));
@@ -105,6 +105,7 @@ class mod_lti_edit_types_form extends moodleform{
         if (!$istool && !empty($this->_customdata->isadmin)) {
             $mform->addElement('checkbox', 'lti_coursevisible', '&nbsp;', ' ' . get_string('show_in_course', 'lti'));
             $mform->addHelpButton('lti_coursevisible', 'show_in_course', 'lti');
+            $mform->setDefault('lti_coursevisible', '1');
         } else {
             $mform->addElement('hidden', 'lti_coursevisible', '1');
         }
@@ -188,7 +189,7 @@ class mod_lti_edit_types_form extends moodleform{
                 $mform->addHelpButton('lti_organizationid', 'organizationid', 'lti');
 
                 $mform->addElement('text', 'lti_organizationurl', get_string('organizationurl', 'lti'));
-                $mform->setType('lti_organizationurl', PARAM_TEXT);
+                $mform->setType('lti_organizationurl', PARAM_URL);
                 $mform->addHelpButton('lti_organizationurl', 'organizationurl', 'lti');
             }
         }
