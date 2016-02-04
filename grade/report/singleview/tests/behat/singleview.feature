@@ -11,6 +11,7 @@ Feature: We can use Single view
     And the following "users" exist:
       | username | firstname | lastname | email | idnumber | alternatename |
       | teacher1 | Teacher | 1 | teacher1@example.com | t1 | fred |
+      | teacher2 | No edit | 1 | teacher2@example.com | t2 | nick |
       | student1 | Student | 1 | student1@example.com | s1 | james |
       | student2 | Student | 2 | student1@example.com | s2 | holly |
       | student3 | Student | 3 | student1@example.com | s3 | anna |
@@ -27,6 +28,7 @@ Feature: We can use Single view
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+      | teacher2 | C1 | teacher |
       | student1 | C1 | student |
       | student2 | C1 | student |
       | student3 | C1 | student |
@@ -44,6 +46,10 @@ Feature: We can use Single view
     And the following "grade items" exist:
       | itemname | course | gradetype |
       | Test grade item | C1 | Scale |
+    And the following "permission overrides" exist:
+      | capability                  | permission | role     | contextlevel  | reference |
+      | moodle/grade:edit           | Allow      | teacher  | Course        | C1        |
+      | gradereport/singleview:view | Allow      | teacher  | Course        | C1        |
     And I log in as "teacher1"
     And I follow "Course 1"
     And I navigate to "Grades" node in "Course administration"
@@ -89,6 +95,14 @@ Feature: We can use Single view
     And the following should exist in the "generaltable" table:
         | First name (Alternate name) Surname | Grade |
         | james (Student) 1 | Very good |
+    And I log out
+    And I log in as "teacher2"
+    And I follow "Course 1"
+    And I navigate to "Grades" node in "Course administration"
+    And I click on "Single view" "option"
+    And I click on "Student 4" "option"
+    And the "Exclude for Test assignment one" "checkbox" should be disabled
+    And the "Override for Test assignment one" "checkbox" should be enabled
 
   Scenario: Single view links work on grade report.
     Given I follow "Single view for Test assignment one"
