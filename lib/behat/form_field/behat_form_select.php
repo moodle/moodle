@@ -89,8 +89,15 @@ class behat_form_select extends behat_form_field {
                     return;
                 }
             }
-            // This is a single select, let's pass the last one specified.
-            $this->field->selectOption(end($options));
+
+            // If not running JS or not a singleselect then use selectOption.
+            // For singleselect only click event is enough.
+            if (!$this->running_javascript() ||
+                !($this->field->hasClass('singleselect') || $this->field->hasClass('urlselect'))) {
+
+                // This is a single select, let's pass the last one specified.
+                $this->field->selectOption(end($options));
+            }
         }
 
         // With JS disabled this is enough and we finish here.
