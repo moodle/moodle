@@ -315,4 +315,61 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
 
     }
 
+    /**
+     * Test get_subwikis.
+     */
+    public function test_get_subwikis() {
+
+        // Test invalid wiki id.
+        try {
+            mod_wiki_external::get_subwikis(0);
+            $this->fail('Exception expected due to invalid get_subwikis wiki id.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('incorrectwikiid', $e->errorcode);
+        }
+
+        // Test not-enrolled user.
+        $usernotenrolled = self::getDataGenerator()->create_user();
+        $this->setUser($usernotenrolled);
+        try {
+            mod_wiki_external::get_subwikis($this->wiki->id);
+            $this->fail('Exception expected due to not enrolled user.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Create what we expect to be returned. We only test a basic case because deep testing is already done
+        // in the tests for wiki_get_visible_subwikis.
+        $expectedsubwikis = array();
+        $expectedsubwiki = array(
+                'id' => $this->firstpage->subwikiid,
+                'wikiid' => $this->wiki->id,
+                'groupid' => 0,
+                'userid' => 0,
+                'canedit' => true
+            );
+        $expectedsubwikis[] = $expectedsubwiki;
+
+        $result = mod_wiki_external::get_subwikis($this->wiki->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwikis_returns(), $result);
+        $this->assertEquals($expectedsubwikis, $result['subwikis']);
+        $this->assertCount(0, $result['warnings']);
+
+        // Test user with no capabilities.
+        // We need a explicit prohibit since this capability is allowed for students by default.
+        assign_capability('mod/wiki:viewpage', CAP_PROHIBIT, $this->studentrole->id, $this->context->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        try {
+            mod_wiki_external::get_subwikis($this->wiki->id);
+            $this->fail('Exception expected due to missing capability.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+    }
+
 }
