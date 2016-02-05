@@ -39,6 +39,8 @@ information provided here is intended especially for developers.
   Note than you will need to bump the plugin version so moodle is aware that you removed the plugin's event handlers.
 * mforms validation functions are not available in the global JS namespace anymore, event listeners
   are assigned to fields and buttons through a self-contained JS function.
+* Added $CFG->urlrewriteclass option to config.php allowing clean / semantic urls to
+  be implemented in a plugin, eg local_cleanurls.
 
 === 3.0 ===
 
