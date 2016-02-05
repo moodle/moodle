@@ -8448,7 +8448,7 @@ function address_in_subnet($addr, $subnetstr) {
  */
 function mtrace($string, $eol="\n", $sleep=0) {
 
-    if (defined('STDOUT') and !PHPUNIT_TEST) {
+    if (defined('STDOUT') && !PHPUNIT_TEST && !defined('BEHAT_TEST')) {
         fwrite(STDOUT, $string.$eol);
     } else {
         echo $string . $eol;
