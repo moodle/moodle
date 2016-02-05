@@ -116,6 +116,9 @@ class comment_area_exporter extends exporter {
             'template' => array(
                 'type' => PARAM_RAW,
             ),
+            'canpostorhascomments' => array(
+                'type' => PARAM_BOOL
+            )
         );
     }
 
@@ -132,6 +135,7 @@ class comment_area_exporter extends exporter {
         $values['linktext'] = $this->comment->get_linktext();
         $values['notoggle'] = $this->comment->get_notoggle();
         $values['template'] = $this->comment->get_template();
+        $values['canpostorhascomments'] = $values['canpost'] || ($values['canview'] && $values['count'] > 0);
         return $values;
     }
 }

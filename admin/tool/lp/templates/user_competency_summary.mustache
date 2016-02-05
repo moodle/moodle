@@ -101,7 +101,9 @@
         {{/usercompetency}}
     </dl>
     {{#commentarea}}
-        {{>tool_lp/comment_area}}
+        {{#canpostorhascomments}}
+            {{>tool_lp/comment_area}}
+        {{/canpostorhascomments}}
     {{/commentarea}}
     <dl data-region="evidence-listing">
         <dt>{{#str}}evidence, tool_lp{{/str}}</dt>

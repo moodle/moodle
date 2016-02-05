@@ -1288,6 +1288,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $plan2->isrequestreviewallowed = false;
         $plan3->commentarea['canpost'] = true;
         $plan3->isrequestreviewallowed = false;
+        $plan1->commentarea['canpostorhascomments'] = true;
+        $plan2->commentarea['canpostorhascomments'] = true;
+        $plan3->commentarea['canpostorhascomments'] = true;
 
         $this->assertEquals((array)$plan1, external::read_plan($plan1->id));
         $this->assertEquals((array)$plan2, external::read_plan($plan2->id));

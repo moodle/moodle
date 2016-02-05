@@ -83,9 +83,11 @@
         </dl>
     </div>
     {{#plan.commentarea}}
-        <div data-region="comments">
-            {{>tool_lp/comment_area}}
-        </div>
+        {{#canpostorhascomments}}
+            <div data-region="comments">
+                {{>tool_lp/comment_area}}
+            </div>
+        {{/canpostorhascomments}}
     {{/plan.commentarea}}
     <div data-region="plan-competencies">
         <h3>{{#str}}learningplancompetencies, tool_lp{{/str}}</h3>
