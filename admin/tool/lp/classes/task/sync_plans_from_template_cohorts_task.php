@@ -52,7 +52,7 @@ class sync_plans_from_template_cohorts_task extends \core\task\scheduled_task {
      */
     public function execute() {
 
-        $missingplans = template_cohort::get_all_missing_plans();
+        $missingplans = template_cohort::get_all_missing_plans(self::get_last_run_time());
 
         foreach ($missingplans as $missingplan) {
             foreach ($missingplan['userids'] as $userid) {

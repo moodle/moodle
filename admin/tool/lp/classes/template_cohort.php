@@ -180,28 +180,36 @@ class template_cohort extends persistent {
      * Note that only cohorts associated with visible templates are considered,
      * as well as only templates with a due date in the future, or no due date.
      *
+     * @param int $lastruntime  The last time the Cohort ssync task ran.
      * @param bool $unlinkedaremissing When true, unlinked plans are considered as missing.
      * @return array( array(
      *                   'template' => \tool_lp\template,
      *                   'userids' => array
      *              ))
      */
-    public static function get_all_missing_plans($unlinkedaremissing = false) {
+    public static function get_all_missing_plans($lastruntime = 0, $unlinkedaremissing = false) {
         global $DB;
 
-        $skipsql = !$unlinkedaremissing ? '(t.id = p.templateid OR t.id = p.origtemplateid)' : 't.id = p.templateid';
+        $planwhereclause = " WHERE (p.id is NULL AND (cm.timeadded >= :lastruntime1 OR tc.timecreated >= :lastruntime3 OR t.timemodified >= :lastruntime4))";
 
-        $sql = "SELECT cm.userid, t.*
+        if ($unlinkedaremissing) {
+            $planwhereclause .= " OR (p.origtemplateid IS NOT NULL AND cm.timeadded < :lastruntime2)";
+        }
+
+        $sql = "SELECT " . $DB->sql_concat('cm.userid', 'tc.templateid') . " as uniqueid, cm.userid, t.*
                   FROM {cohort_members} cm
                   JOIN {" . self::TABLE . "} tc ON cm.cohortid = tc.cohortid
                   JOIN {" . template::TABLE . "} t
                     ON (tc.templateid = t.id AND t.visible = 1)
-                   AND (t.duedate = 0 OR t.duedate > :time)
-             LEFT JOIN {" . plan::TABLE . "} p ON (cm.userid = p.userid AND $skipsql)
-                 WHERE p.id IS NULL
+                   AND (t.duedate = 0 OR t.duedate > :time1)
+             LEFT JOIN {" . plan::TABLE . "} p ON (cm.userid = p.userid AND (t.id = p.templateid OR t.id = p.origtemplateid))
+                  $planwhereclause
               ORDER BY t.id";
 
-        $results = $DB->get_records_sql($sql, array('time' => time()));
+        $params = array('time1' => time(), 'time2' => time(),
+                        'lastruntime1' => $lastruntime, 'lastruntime2' => $lastruntime,
+                        'lastruntime3' => $lastruntime, 'lastruntime4' => $lastruntime);
+        $results = $DB->get_records_sql($sql, $params);
 
         $missingplans = array();
         foreach ($results as $usertemplate) {
@@ -212,6 +220,7 @@ class template_cohort extends persistent {
                 $missingplans[$usertemplate->id]['userids'][] = $userid;
             } else {
                 unset($usertemplate->userid);
+                unset($usertemplate->uniqueid);
                 $template = new template(0, $usertemplate);
                 $missingplans[$template->get_id()]['template'] = $template;
                 $missingplans[$template->get_id()]['userids'][] = $userid;

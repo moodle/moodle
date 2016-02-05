@@ -37,10 +37,19 @@ use tool_lp\plan;
 class tool_lp_task_testcase extends advanced_testcase {
 
     public function test_sync_plans_from_cohorts_task() {
+        global $DB;
+
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('tool_lp');
+
+        // Sql to simulate the execution in time.
+        $cmsql = "UPDATE {cohort_members} SET timeadded = :currenttime WHERE cohortid = :cohortid AND userid = :userid";
+        $tplsql = "UPDATE {tool_lp_template} SET timemodified = :currenttime WHERE id = :templateid";
+        $plansql = "UPDATE {tool_lp_plan} SET timemodified = :currenttime WHERE id = :planid";
+
+        $currenttime = time();
 
         $user1 = $dg->create_user();
         $user2 = $dg->create_user();
@@ -68,7 +77,9 @@ class tool_lp_task_testcase extends advanced_testcase {
         cohort_add_member($cohort->id, $user3->id);
         cohort_add_member($cohort->id, $user4->id);
 
+        $currenttime = $currenttime + 1;
         $task->execute();
+        $task->set_last_run_time($currenttime);
 
         $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
 
@@ -76,43 +87,73 @@ class tool_lp_task_testcase extends advanced_testcase {
         cohort_remove_member($cohort->id, $user3->id);
         cohort_remove_member($cohort->id, $user4->id);
 
+        $currenttime = $currenttime + 1;
         $task->execute();
+        $task->set_last_run_time($currenttime);
         $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
 
         // The template is now hidden, and I've added a user with a missing plan. Nothing should happen.
+        $currenttime = $currenttime + 1;
         $tpl->set_visible(false);
         $tpl->update();
+        $DB->execute($tplsql, array('currenttime' => $currenttime, 'templateid' => $tpl->get_id()));
+        $currenttime = $currenttime + 1;
         cohort_add_member($cohort->id, $user5->id);
+        $DB->execute($cmsql, array('currenttime' => $currenttime, 'cohortid' => $cohort->id, 'userid' => $user5->id));
         $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
         $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+        $currenttime = $currenttime + 1;
         $task->execute();
+        $task->set_last_run_time($currenttime);
         $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
         $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
 
         // Now I set the template as visible again, the plan is created.
+        $currenttime = $currenttime + 1;
         $tpl->set_visible(true);
         $tpl->update();
+        $DB->execute($tplsql, array('currenttime' => $currenttime, 'templateid' => $tpl->get_id()));
+        $currenttime = $currenttime + 1;
         $task->execute();
+        $task->set_last_run_time($currenttime);
         $this->assertTrue(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
         $this->assertEquals(5, plan::count_records(array('templateid' => $tpl->get_id())));
 
         // Let's unlink the plan and run the task again, it should not be recreated.
+        $currenttime = $currenttime + 1;
         $plan = plan::get_record(array('userid' => $user5->id, 'templateid' => $tpl->get_id()));
         \tool_lp\api::unlink_plan_from_template($plan);
+        $DB->execute($plansql, array('currenttime' => $currenttime, 'planid' => $plan->get_id()));
         $this->assertTrue(plan::record_exists_select('userid = ?', array($user5->id)));
         $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
         $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+        $currenttime = $currenttime + 1;
         $task->execute();
+        $task->set_last_run_time($currenttime);
         $this->assertTrue(plan::record_exists_select('userid = ?', array($user5->id)));
         $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
         $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
 
         // Adding users to cohort that already exist in plans.
+        $currenttime = $currenttime + 1;
         cohort_add_member($cohort->id, $user3->id);
         cohort_add_member($cohort->id, $user4->id);
+        $DB->execute($cmsql, array('currenttime' => $currenttime, 'cohortid' => $cohort->id, 'userid' => $user3->id));
+        $DB->execute($cmsql, array('currenttime' => $currenttime, 'cohortid' => $cohort->id, 'userid' => $user3->id));
 
+        $currenttime = $currenttime + 1;
         $task->execute();
+        $task->set_last_run_time($currenttime);
         $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+
+        // Test a user plan deleted will not be recreated
+        $currenttime = $currenttime + 1;
+        $plan = plan::get_record(array('userid' => $user4->id, 'templateid' => $tpl->get_id()));
+        \tool_lp\api::delete_plan($plan->get_id());
+        $currenttime = $currenttime + 1;
+        $task->execute();
+        $task->set_last_run_time($currenttime);
+        $this->assertEquals(3, plan::count_records(array('templateid' => $tpl->get_id())));
     }
 
     public function test_sync_plans_from_cohorts_with_templateduedate_task() {
