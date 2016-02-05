@@ -119,7 +119,7 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
         if (count($options->repositories) > 0) {
             $straddlink = get_string('choosealink', 'repository');
             $str .= <<<EOD
-<button id="filepicker-button-{$client_id}" class="visibleifjs">
+<button id="filepicker-button-js-{$client_id}" class="visibleifjs">
 $straddlink
 </button>
 EOD;

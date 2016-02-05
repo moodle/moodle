@@ -30,6 +30,7 @@ MDL-46467 - $mform->hardfreeze causes labels to loose their for HTML attribute
 MDL-52081 - made all constructors PHP7 compatible
 MDL-52826 - Remove onsubmit events pointing to the global validation functions and script
             tag moved after the HTML
+MDL-50484 - _getPersistantData() returns id with _persistant prefixed to element id.
 
 
 Pear

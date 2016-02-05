@@ -124,5 +124,4 @@ class MoodleQuickForm_text extends HTML_QuickForm_text{
     function getHelpButton(){
         return $this->_helpbutton;
     }
-
 }

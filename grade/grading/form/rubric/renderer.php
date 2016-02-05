@@ -450,6 +450,8 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
                     break;
                 default:
                     if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FROZEN && $value) {
+                        // Id should be different then the actual input added later.
+                        $attrs['id'] .= '_hidden';
                         $html .= html_writer::empty_tag('input', $attrs + array('type' => 'hidden', 'value' => $value));
                     }
                     // Display option as checkbox
@@ -461,6 +463,8 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
                     if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FROZEN || $mode == gradingform_rubric_controller::DISPLAY_PREVIEW) {
                         $attrs['disabled'] = 'disabled';
                         unset($attrs['name']);
+                        // Id should be different then the actual input added later.
+                        $attrs['id'] .= '_disabled';
                     }
                     $html .= html_writer::empty_tag('input', $attrs);
                     $html .= html_writer::tag('label', get_string($option, 'gradingform_rubric'), array('for' => $attrs['id']));

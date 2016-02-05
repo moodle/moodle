@@ -254,11 +254,18 @@ class HTML_QuickForm_element extends HTML_Common
             return '';
         } else {
             $id = $this->getAttribute('id');
+            if (isset($id)) {
+                // Id of persistant input is different then the actual input.
+                $id = array('id' => $id . '_persistant');
+            } else {
+                $id = array();
+            }
+
             return '<input' . $this->_getAttrString(array(
                        'type'  => 'hidden',
                        'name'  => $this->getName(),
                        'value' => $this->getValue()
-                   ) + (isset($id)? array('id' => $id): array())) . ' />';
+                   ) + $id) . ' />';
         }
     }
 
