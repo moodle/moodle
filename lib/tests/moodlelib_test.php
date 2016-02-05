@@ -3130,4 +3130,52 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame('', $result);
         $this->assertDebuggingCalled();
     }
+
+    /**
+     * Data provider for private ips.
+     */
+    public function data_private_ips() {
+        return array(
+            array('10.0.0.0'),
+            array('172.16.0.0'),
+            array('192.168.1.0'),
+            array('fdfe:dcba:9876:ffff:fdc6:c46b:bb8f:7d4c'),
+            array('fdc6:c46b:bb8f:7d4c:fdc6:c46b:bb8f:7d4c'),
+            array('fdc6:c46b:bb8f:7d4c:0000:8a2e:0370:7334'),
+            array('127.0.0.1'), // This has been buggy in past: https://bugs.php.net/bug.php?id=53150.
+        );
+    }
+
+    /**
+     * Checks ip_is_public returns false for private ips.
+     *
+     * @param string $ip the ipaddress to test
+     * @dataProvider data_private_ips
+     */
+    public function test_ip_is_public_private_ips($ip) {
+        $this->assertFalse(ip_is_public($ip));
+    }
+
+    /**
+     * Data provider for public ips.
+     */
+    public function data_public_ips() {
+        return array(
+            array('2400:cb00:2048:1::8d65:71b3'),
+            array('2400:6180:0:d0::1b:2001'),
+            array('141.101.113.179'),
+            array('123.45.67.178'),
+        );
+    }
+
+    /**
+     * Checks ip_is_public returns true for public ips.
+     *
+     * @param string $ip the ipaddress to test
+     * @dataProvider data_public_ips
+     */
+    public function test_ip_is_public_public_ips($ip) {
+        $this->assertTrue(ip_is_public($ip));
+    }
+
 }
