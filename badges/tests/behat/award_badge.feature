@@ -221,16 +221,13 @@ Feature: Award badges
     And I follow "Course 1"
     And I press "Mark as complete: Test assignment name"
     And I log out
-    And I log in as "admin"
-    # We can't wait for cron to happen, so the admin manually triggers it.
-    And I trigger cron
-    # The admin needs to trigger cron twice to see the completion status as completed.
-    # We wait more than 1 minute because of the next cron run scheduled time.
-    And I wait "61" seconds
-    And I trigger cron
-    # Finally the admin goes back to homepage to continue the user story.
-    And I am on site homepage
-    And I log out
+    # Completion cron won't mark the whole course completed unless the
+    # individual criteria was marked completed more than a second ago. So
+    # run it twice, first to mark the criteria and second for the course.
+    And I run the scheduled task "core\task\completion_regular_task"
+    And I wait "1" seconds
+    And I run the scheduled task "core\task\completion_regular_task"
+    # The student should now see their badge.
     And I log in as "student1"
     And I follow "Profile" in the user menu
     Then I should see "Course Badge"
