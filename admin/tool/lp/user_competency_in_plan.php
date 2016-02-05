@@ -39,15 +39,12 @@ $plan = \tool_lp\api::read_plan($planid);
 $url = new moodle_url('/admin/tool/lp/user_competency_in_plan.php', $params);
 $competency = new \tool_lp\competency($competencyid);
 $framework = $competency->get_framework();
-$subtitle = $competency->get_shortname();
 
-list($title, $subtitle) = \tool_lp\page_helper::setup_for_plan($userid, $url, $plan,
-        $subtitle);
+list($title, $subtitle) = \tool_lp\page_helper::setup_for_plan($userid, $url, $plan);
 
 $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
 echo $output->heading($title);
-echo $output->heading($subtitle, 3);
 
 $page = new \tool_lp\output\user_competency_summary_in_plan($competencyid, $planid);
 echo $output->render($page);

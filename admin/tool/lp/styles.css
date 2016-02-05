@@ -114,6 +114,13 @@
     width: 50px;
 }
 
+.competency-heading {
+    margin-bottom: 15px;
+}
+.competency-heading h4 {
+    margin: 0;
+}
+
 /** Styles required for menubar js */
 
 .tool-lp-menu {

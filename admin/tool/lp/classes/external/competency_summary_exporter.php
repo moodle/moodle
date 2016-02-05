@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 use context_course;
 use renderer_base;
 use stdClass;
+use \tool_lp\competency_framework;
 
 /**
  * Class for exporting competency data with additional related data.
@@ -69,6 +70,9 @@ class competency_summary_exporter extends exporter {
             ),
             'scaleconfiguration' => array(
                 'type' => PARAM_RAW
+            ),
+            'taxonomyterm' => array(
+                'type' => PARAM_TEXT
             )
         );
     }
@@ -108,6 +112,10 @@ class competency_summary_exporter extends exporter {
             $scaleconfiguration = $competency->get_scaleconfiguration();
         }
         $result->scaleconfiguration = $scaleconfiguration;
+
+        $level = $competency->get_level();
+        $taxonomy = $this->related['framework']->get_taxonomy($level);
+        $result->taxonomyterm = (string) (competency_framework::get_taxonomies_list()[$taxonomy]);
 
         return (array) $result;
     }

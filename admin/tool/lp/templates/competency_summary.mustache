@@ -1,10 +1,17 @@
-<p><strong>{{competency.shortname}} <em>{{competency.idnumber}}</em></strong></p>
-<p>{{{competency.description}}}</p>
+<div class='competency-heading'>
+    <h4>{{competency.shortname}}
+        <small>{{competency.idnumber}}</small>
+    </h4>
+    {{#framework}}
+        <div class='competency-origin'>
+            <p><small>{{framework.shortname}} - {{taxonomyterm}}</small>
+        </div>
+    {{/framework}}
+</div>
 
-{{#framework}}
-<p><strong>{{framework.shortname}}</strong></p>
-<p>{{{framework.description}}}</p>
-{{/framework}}
+{{#competency.description}}
+<p>{{{competency.description}}}</p>
+{{/competency.description}}
 
 {{#showrelatedcompetencies}}
     {{> tool_lp/related_competencies }}
