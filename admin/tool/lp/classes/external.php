@@ -4946,4 +4946,50 @@ class external extends external_api {
         return new external_value(PARAM_BOOL, 'True if the unlink was successful');
     }
 
+    /**
+     * Returns description of template_viewed() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function template_viewed_parameters() {
+        $id = new external_value(
+            PARAM_INT,
+            'Data base record id for the template',
+            VALUE_REQUIRED
+        );
+
+        $params = array(
+            'id' => $id,
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Log the template viewed event.
+     *
+     * @param int $id the template id
+     * @return array of warnings and status result
+     * @throws moodle_exception
+     */
+    public static function template_viewed($id) {
+        $params = self::validate_parameters(self::view_book_parameters(),
+                                            array(
+                                                'id' => $id
+                                            ));
+
+        $template = api::read_template($params['id']);
+        self::validate_context($template->get_context());
+
+        return api::template_viewed($params['id']);
+    }
+
+    /**
+     * Returns description of template_viewed() result value.
+     *
+     * @return \external_value
+     */
+    public static function template_viewed_returns() {
+        return new external_value(PARAM_BOOL, 'True if the log of the view was successful');
+    }
+
 }

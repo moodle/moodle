@@ -37,6 +37,9 @@ if (!$template->can_read()) {
     throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
 }
 
+// Trigger a template viewed event.
+\tool_lp\api::template_viewed($template);
+
 // Set up the page.
 $url = new moodle_url('/admin/tool/lp/templatecompetencies.php', array('templateid' => $template->get_id(),
     'pagecontextid' => $pagecontextid));

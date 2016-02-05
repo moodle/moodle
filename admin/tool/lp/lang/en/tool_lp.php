@@ -99,6 +99,7 @@ $string['eventcompetencyframeworkcreated'] = 'Competency framework created.';
 $string['eventcompetencyframeworkdeleted'] = 'Competency framework deleted.';
 $string['eventcompetencyframeworkupdated'] = 'Competency framework updated.';
 $string['eventcompetencyframeworkviewed'] = 'Competency framework viewed.';
+$string['eventtemplateviewed'] = 'Template viewed.';
 $string['evidence'] = 'Evidence';
 $string['evidence_competencyrule'] = 'The rule of the competency was met.';
 $string['evidence_coursecompleted'] = 'The course \'{$a}\' was completed.';

@@ -3496,4 +3496,29 @@ class api {
                                   $grade,
                                   $USER->id);
     }
+
+    /**
+     * Template event viewed.
+     *
+     * Requires tool/lp:templateread capability at the system context.
+     *
+     * @param mixed $templateorid The id or the template.
+     * @return boolean
+     */
+    public static function template_viewed($templateorid) {
+        $template = $templateorid;
+        if (!is_object($template)) {
+            $template = new template($template);
+        }
+
+        // First we do a permissions check.
+        if (!$template->can_read()) {
+             throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+        }
+
+        // Trigger a template viewed event.
+        \tool_lp\event\template_viewed::create_from_template($template)->trigger();
+
+        return true;
+    }
 }

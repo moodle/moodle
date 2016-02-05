@@ -149,4 +149,27 @@ class tool_lp_event_testcase extends advanced_testcase {
         $this->assertDebuggingNotCalled();
     }
 
+    /**
+     * Test the template viewed event.
+     *
+     */
+    public function test_template_viewed() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $template = $lpg->create_template();
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        api::template_viewed($template);
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\tool_lp\event\template_viewed', $event);
+        $this->assertEquals($template->get_id(), $event->objectid);
+        $this->assertEquals($template->get_contextid(), $event->contextid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
 }

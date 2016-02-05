@@ -818,5 +818,14 @@ $functions = array(
         'capabilities' => 'tool/lp:planmanage',
         'ajax'         => true,
     ),
+    'tool_lp_view_template' => array(
+        'classname'     => 'tool_lp\external',
+        'methodname'    => 'template_viewed',
+        'classpath'     => '',
+        'description'   => 'Log event template viewed',
+        'type'          => 'read',
+        'capabilities'  => 'tool/lp:templateread',
+        'ajax'          => true,
+    ),
 );
 
