@@ -724,6 +724,9 @@ table.quizreviewsummary td.cell {
 #page-mod-quiz-edit ul.slots li.section.only-has-one-slot li.activity .editing_delete {
     visibility: hidden;
 }
+#page-mod-quiz-edit ul.slots.only-one-section li.section.only-has-one-slot li.activity .editing_delete {
+    visibility: visible;
+}
 
 #page-mod-quiz-edit ul.slots li.section li.activity .question_dependency_wrapper {
     position: absolute;
