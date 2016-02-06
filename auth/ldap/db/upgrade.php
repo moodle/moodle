@@ -22,34 +22,19 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * @param int $oldversion the version we are upgrading from
  * @return bool result
  */
 function xmldb_auth_ldap_upgrade($oldversion) {
-
-    // Moodle v2.5.0 release upgrade line
-    // Put any upgrade step following this
-
-    // MDL-39323 New setting in 2.5, make sure it's defined.
-    if ($oldversion < 2013052100) {
-        if (get_config('start_tls', 'auth/ldap') === false) {
-            set_config('start_tls', 0, 'auth/ldap');
-        }
-        upgrade_plugin_savepoint(true, 2013052100, 'auth', 'ldap');
-    }
-
-    // Moodle v2.6.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v2.7.0 release upgrade line.
-    // Put any upgrade step following this.
+    global $CFG, $DB;
 
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
 
     if ($oldversion < 2014111001) {
-        global $DB;
         // From now on the default LDAP objectClass setting for AD has been changed, from 'user' to '(samaccounttype=805306368)'.
         if (is_enabled_auth('ldap')
                 && ($DB->get_field('config_plugins', 'value', array('name' => 'user_type', 'plugin' => 'auth/ldap')) === 'ad')

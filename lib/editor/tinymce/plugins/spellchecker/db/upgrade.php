@@ -25,30 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 function xmldb_tinymce_spellchecker_upgrade($oldversion) {
-    global $CFG, $DB;
-    require_once(__DIR__.'/upgradelib.php');
-
-    $dbman = $DB->get_manager();
-
-    if ($oldversion < 2012051800) {
-        tinymce_spellchecker_migrate_settings();
-        upgrade_plugin_savepoint(true, 2012051800, 'tinymce', 'spellchecker');
-    }
-
-
-    // Moodle v2.4.0 release upgrade line
-    // Put any upgrade step following this
-
-
-    // Moodle v2.5.0 release upgrade line.
-    // Put any upgrade step following this.
-
-
-    // Moodle v2.6.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v2.7.0 release upgrade line.
-    // Put any upgrade step following this.
+    global $CFG;
 
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
