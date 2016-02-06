@@ -703,10 +703,11 @@ class edit_renderer extends \plugin_renderer_base {
      * @param \stdClass $quiz the quiz settings from the database.
      * @param \stdClass $question data from the question and quiz_slots tables.
      * @param bool $label if true, show the preview question label after the icon
+     * @param int $variant which question variant to preview (optional).
      * @return string HTML to output.
      */
-    public function question_preview_icon($quiz, $question, $label = null) {
-        $url = quiz_question_preview_url($quiz, $question);
+    public function question_preview_icon($quiz, $question, $label = null, $variant = null) {
+        $url = quiz_question_preview_url($quiz, $question, $variant);
 
         // Do we want a label?
         $strpreviewlabel = '';
