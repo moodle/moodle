@@ -1,16 +1,20 @@
 This files describes API changes in the quiz code.
 
-=== 3.0.1 ===
-
-* quiz_attempt::question_print_comment_fields() has been removed. It was broken
-  since at least Moodle 2.0.
-
 
 === 3.0.3 ===
 
 * mod_quiz\output\edit_renderer::start_section_list now takes $structure as an
   argument. If you have overridden this method (it's hard to believe anyone ever
   would) you will need to update your renderer.
+
+* Several methods relating to preview links/buttons/urls have a new optional
+  argument to make the preview be of a particular variant.
+
+
+=== 3.0.1 ===
+
+* quiz_attempt::question_print_comment_fields() has been removed. It was broken
+  since at least Moodle 2.0.
 
 
 === 2.9 ===
