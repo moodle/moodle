@@ -219,15 +219,19 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
                     $scoredetails .= html_writer::end_tag('ol');
 
-                    // format gradedetails, e.g. 4 /6 = 67%
-                    if ($totalscore==0 || $totalmaxscore==0) {
-                        $gradedetails = 0;
+                    if ($totalmaxscore==0) {
+                        $scoredetails = ''; // ALL_OR_NOTHING
                     } else {
-                        $gradedetails = round(100 * $totalscore / $totalmaxscore, 0);
+                        // format gradedetails, e.g. 4 /6 = 67%
+                        if ($totalscore==0) {
+                            $gradedetails = 0;
+                        } else {
+                            $gradedetails = round(100 * $totalscore / $totalmaxscore, 0);
+                        }
+                        $gradedetails = "$totalscore / $totalmaxscore = $gradedetails%";
+                        $gradedetails = get_string('gradedetails', $plugin).': '.$gradedetails;
+                        $gradedetails = html_writer::tag('p', $gradedetails, array('class' => 'gradedetails'));
                     }
-                    $gradedetails = "$totalscore / $totalmaxscore = $gradedetails%";
-                    $gradedetails = get_string('gradedetails', $plugin).': '.$gradedetails;
-                    $gradedetails = html_writer::tag('p', $gradedetails, array('class' => 'gradedetails'));
                 }
             }
         }
@@ -311,13 +315,6 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         }
     }
 
-    protected function is_all_correct() {
-        if ($this->all_correct===null) {
-            $this->all_correct = ($this->correctinfo==$this->currentinfo); // array comparison
-        }
-        return $this->all_correct;
-    }
-
     protected function get_ordering_item_score($question, $position, $answerid) {
 
         if (! isset($this->itemscores[$position])) {
@@ -341,8 +338,8 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                 case qtype_ordering_question::GRADING_ALL_OR_NOTHING:
                     if ($this->is_all_correct()) {
                         $score = 1;
+                        $maxscore = 1;
                     }
-                    $maxscore = 1;
                     break;
 
                 case qtype_ordering_question::GRADING_ABSOLUTE_POSITION:
@@ -393,6 +390,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
             if ($maxscore===null) {
                 // an unscored item is either an illegal item
                 // or last item of RELATIVE_NEXT_EXCLUDE_LAST
+                // or an item in an incorrect ALL_OR_NOTHING
                 // or an item from an unrecognized grading type
                 $class = 'unscored';
             } else {
@@ -418,5 +416,13 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         }
 
         return $this->itemscores[$position];
+    }
+
+    protected function is_all_correct() {
+        if ($this->all_correct===null) {
+            // use "==" to determine if the two "info" arrays are identical
+            $this->all_correct = ($this->correctinfo==$this->currentinfo);
+        }
+        return $this->all_correct;
     }
 }
