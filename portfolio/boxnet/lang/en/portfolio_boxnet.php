@@ -23,9 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['apiv1migration_message_content'] = 'As part of the recent Moodle upgrade to 2.6, the Box portfolio plugin has been disabled. To re-enable it, you need to re-configure it as described in the documentation {$a->docsurl}.';
-$string['apiv1migration_message_small'] = 'This plugin has been disabled, as it requires configuration as described in the documentation Box APIv1 migration.';
-$string['apiv1migration_message_subject'] = 'Important information regarding Box portfolio plugin';
 $string['clientid'] = 'Client ID';
 $string['clientsecret'] = 'Client secret';
 $string['existingfolder'] = 'Existing folder to put file(s) into';
