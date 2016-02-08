@@ -12,6 +12,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/* jshint node: true, browser: false */
 
 /**
  * @copyright  2014 Andrew Nicols
@@ -26,8 +27,21 @@ module.exports = function(grunt) {
     var path = require('path'),
         fs = require('fs'),
         tasks = {},
-        cwd = process.env.PWD || process.cwd(),
-        inAMD = path.basename(cwd) == 'amd';
+        cwd = process.env.PWD || process.cwd();
+
+    // Windows users can't run grunt in a subdirectory, so allow them to set
+    // the root by passing --root=path/to/dir.
+    if (grunt.option('root')) {
+        var root = grunt.option('root');
+        if (grunt.file.exists(__dirname, root)) {
+            cwd = path.join(__dirname, root);
+            grunt.log.ok('Setting root to '+cwd);
+        } else {
+            grunt.fail.fatal('Setting root to '+root+' failed - path does not exist');
+        }
+    }
+
+    var inAMD = path.basename(cwd) == 'amd';
 
     // Project configuration.
     grunt.initConfig({
