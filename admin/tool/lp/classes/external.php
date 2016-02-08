@@ -4293,7 +4293,7 @@ class external extends external_api {
 
         // Check capability on system level.
         $syscontext = context_system::instance();
-        $hassystem = has_capability($capability, $syscontext);
+        $hassystem = has_capability($capability, $syscontext, $userid);
 
         $access = get_user_access_sitewide($userid);
         // Build up a list of level 2 contexts (candidates to be user context)
@@ -4307,6 +4307,25 @@ class external extends external_api {
                 unset($filtercontexts[$parts[2]]);
             }
         }
+
+        // Add all contexts in which a role may be overidden.
+        foreach ($access['rdef'] as $pathandroleid => $def) {
+            $matches = array();
+            if (!isset($def[$capability])) {
+                // The capability is not mentioned, we can ignore.
+                continue;
+            }
+
+            list($contextpath, $roleid) = explode(':', $pathandroleid, 2);
+            $parts = explode('/', $contextpath);
+            if (count($parts) != 3) {
+                // Only get potential user contexts, they only ever have 2 slashes /parentId/Id.
+                continue;
+            }
+
+            $filtercontexts[$parts[2]] = $parts[2];
+        }
+
         // No interesting contexts - return all or no results.
         if (empty($filtercontexts)) {
             if ($hassystem) {
@@ -4328,12 +4347,12 @@ class external extends external_api {
             // If allowed at system, search for exceptions prohibiting the capability at user context.
             $excludeusers = array();
             foreach ($interestingcontexts as $contextrecord) {
-                $userid = $contextrecord->ctxinstance;
+                $candidateuserid = $contextrecord->ctxinstance;
                 context_helper::preload_from_record($contextrecord);
-                $usercontext = context_user::instance($userid);
+                $usercontext = context_user::instance($candidateuserid);
                 // Has capability should use the data already preloaded.
-                if (!has_capability($capability, $usercontext)) {
-                    $excludeusers[$userid] = $userid;
+                if (!has_capability($capability, $usercontext, $userid)) {
+                    $excludeusers[$candidateuserid] = $candidateuserid;
                 }
             }
 
@@ -4347,12 +4366,12 @@ class external extends external_api {
             // If not allowed at system, search for exceptions allowing the capability at user context.
             $allowusers = array();
             foreach ($interestingcontexts as $contextrecord) {
-                $userid = $contextrecord->ctxinstance;
+                $candidateuserid = $contextrecord->ctxinstance;
                 context_helper::preload_from_record($contextrecord);
-                $usercontext = context_user::instance($userid);
+                $usercontext = context_user::instance($candidateuserid);
                 // Has capability should use the data already preloaded.
-                if (has_capability($capability, $usercontext)) {
-                    $allowusers[$userid] = $userid;
+                if (has_capability($capability, $usercontext, $userid)) {
+                    $allowusers[$candidateuserid] = $candidateuserid;
                 }
             }
 
