@@ -436,6 +436,7 @@ class assign_events_testcase extends mod_assign_base_testcase {
 
         $data = array(
             'grademodified_' . $this->students[0]->id => time(),
+            'gradeattempt_' . $this->students[0]->id => '',
             'quickgrade_' . $this->students[0]->id => '60.0',
             'quickgrade_' . $this->students[0]->id . '_workflowstate' => 'inmarking'
         );
@@ -565,8 +566,10 @@ class assign_events_testcase extends mod_assign_base_testcase {
         // Test process_save_quick_grades.
         $sink = $this->redirectEvents();
 
+        $grade = $assign->get_user_grade($this->students[0]->id, false);
         $data = array(
             'grademodified_' . $this->students[0]->id => time(),
+            'gradeattempt_' . $this->students[0]->id => $grade->attemptnumber,
             'quickgrade_' . $this->students[0]->id => '60.0'
         );
         $assign->testable_process_save_quick_grades($data);
