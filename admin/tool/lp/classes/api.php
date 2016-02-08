@@ -4200,6 +4200,13 @@ class api {
             $course = $DB->get_record('course', array('id' => $courseorid));
         }
         $context = context_course::instance($course->id);
+
+        // Check that we can view the user competency details in the course.
+        if (!user_competency::can_read_user_in_course($userid, $course->id)) {
+            throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
+        }
+
+        // Validate the permission to grade or suggest.
         if ($override) {
             if (!user_competency::can_grade_user_in_course($userid, $course->id)) {
                 throw new required_capability_exception($context, 'tool/lp:competencygrade', 'nopermissions', '');
@@ -4210,11 +4217,16 @@ class api {
             }
         }
 
-        // Throws exception if competency not in course.
+        // Check that competency is in course and visible to the current user.
         $competency = course_competency::get_competency($course->id, $competencyid);
         $competencycontext = $competency->get_context();
         if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $competencycontext)) {
-             throw new required_capability_exception($competencycontext, 'tool/lp:competencyread', 'nopermissions', '');
+            throw new required_capability_exception($competencycontext, 'tool/lp:competencyread', 'nopermissions', '');
+        }
+
+        // Check that the user is enrolled in the course, and is "gradable".
+        if (!is_enrolled($context, $userid, 'tool/lp:coursecompetencygradable')) {
+            throw new coding_exception('The competency may not be rated at this time.');
         }
 
         $action = evidence::ACTION_OVERRIDE;
