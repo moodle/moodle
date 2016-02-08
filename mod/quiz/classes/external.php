@@ -1555,4 +1555,77 @@ class mod_quiz_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for view_quiz.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function get_quiz_feedback_for_grade_parameters() {
+        return new external_function_parameters (
+            array(
+                'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
+                'grade' => new external_value(PARAM_FLOAT, 'the grade to check'),
+            )
+        );
+    }
+
+    /**
+     * Get the feedback text that should be show to a student who got the given grade in the given quiz.
+     *
+     * @param int $quizid quiz instance id
+     * @param float $grade the grade to check
+     * @return array of warnings and status result
+     * @since Moodle 3.1
+     * @throws moodle_exception
+     */
+    public static function get_quiz_feedback_for_grade($quizid, $grade) {
+        global $DB;
+
+        $params = array(
+            'quizid' => $quizid,
+            'grade' => $grade,
+        );
+        $params = self::validate_parameters(self::get_quiz_feedback_for_grade_parameters(), $params);
+        $warnings = array();
+
+        // Request and permission validation.
+        $quiz = $DB->get_record('quiz', array('id' => $params['quizid']), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($quiz, 'quiz');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        $result = array();
+        $result['feedbacktext'] = '';
+        $result['feedbacktextformat'] = FORMAT_MOODLE;
+
+        $feedback = quiz_feedback_record_for_grade($params['grade'], $quiz);
+        if (!empty($feedback->feedbacktext)) {
+            list($text, $format) = external_format_text($feedback->feedbacktext, $feedback->feedbacktextformat, $context->id,
+                                                        'mod_quiz', 'feedback', $feedback->id);
+            $result['feedbacktext'] = $text;
+            $result['feedbacktextformat'] = $format;
+        }
+
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_quiz_feedback_for_grade return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function get_quiz_feedback_for_grade_returns() {
+        return new external_single_structure(
+            array(
+                'feedbacktext' => new external_value(PARAM_RAW, 'the comment that corresponds to this grade (empty for none)'),
+                'feedbacktextformat' => new external_format_value('feedbacktext', VALUE_OPTIONAL),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }

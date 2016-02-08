@@ -155,4 +155,13 @@ $functions = array(
         'capabilities'  => 'mod/quiz:reviewmyattempts',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+
+    'mod_quiz_get_quiz_feedback_for_grade' => array(
+        'classname'     => 'mod_quiz_external',
+        'methodname'    => 'get_quiz_feedback_for_grade',
+        'description'   => 'Get the feedback text that should be show to a student who got the given grade in the given quiz.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/quiz:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

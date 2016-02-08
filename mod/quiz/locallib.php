@@ -545,6 +545,27 @@ function quiz_rescale_grade($rawgrade, $quiz, $format = true) {
 }
 
 /**
+ * Get the feedback object for this grade on this quiz.
+ *
+ * @param float $grade a grade on this quiz.
+ * @param object $quiz the quiz settings.
+ * @return false|stdClass the record object or false if there is not feedback for the given grade
+ * @since  Moodle 3.1
+ */
+function quiz_feedback_record_for_grade($grade, $quiz) {
+    global $DB;
+
+    // With CBM etc, it is possible to get -ve grades, which would then not match
+    // any feedback. Therefore, we replace -ve grades with 0.
+    $grade = max($grade, 0);
+
+    $feedback = $DB->get_record_select('quiz_feedback',
+            'quizid = ? AND mingrade <= ? AND ? < maxgrade', array($quiz->id, $grade, $grade));
+
+    return $feedback;
+}
+
+/**
  * Get the feedback text that should be show to a student who
  * got this grade on this quiz. The feedback is processed ready for diplay.
  *
@@ -554,18 +575,12 @@ function quiz_rescale_grade($rawgrade, $quiz, $format = true) {
  * @return string the comment that corresponds to this grade (empty string if there is not one.
  */
 function quiz_feedback_for_grade($grade, $quiz, $context) {
-    global $DB;
 
     if (is_null($grade)) {
         return '';
     }
 
-    // With CBM etc, it is possible to get -ve grades, which would then not match
-    // any feedback. Therefore, we replace -ve grades with 0.
-    $grade = max($grade, 0);
-
-    $feedback = $DB->get_record_select('quiz_feedback',
-            'quizid = ? AND mingrade <= ? AND ? < maxgrade', array($quiz->id, $grade, $grade));
+    $feedback = quiz_feedback_record_for_grade($grade, $quiz);
 
     if (empty($feedback->feedbacktext)) {
         return '';
