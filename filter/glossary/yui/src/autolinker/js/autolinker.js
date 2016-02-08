@@ -66,7 +66,6 @@ Y.extend(AUTOLINKER, Y.Base, {
             alertpanelid,
             definition,
             position;
-        var self = this;
         try {
             data = Y.JSON.parse(content);
             if (data.success){
@@ -81,7 +80,7 @@ Y.extend(AUTOLINKER, Y.Base, {
 
                     // Register alertpanel for stacking.
                     alertpanelid = '#moodle-dialogue-' + alertpanel.get('COUNT');
-                    alertpanel.on('complete', this._deletealertpanel(self.alertpanels, alertpanelid));
+                    alertpanel.on('complete', this._deletealertpanel, this, alertpanelid);
 
                     // We already have some windows opened, so set the right position...
                     if (!Y.Object.isEmpty(this.alertpanels)){
@@ -110,8 +109,8 @@ Y.extend(AUTOLINKER, Y.Base, {
         });
         return lastPosition;
     },
-    _deletealertpanel : function(alertpanels, alertpanelid) {
-        delete alertpanels[alertpanelid];
+    _deletealertpanel : function(ev, alertpanelid) {
+        delete this.alertpanels[alertpanelid];
     }
 }, {
     NAME : AUTOLINKERNAME,
