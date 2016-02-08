@@ -36,7 +36,7 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
   Scenario: Update the max grade for an assignment without rescaling existing grades
     Given I follow "Edit settings"
     And I expand all fieldsets
-    And I set the field "Maximum points" to "80"
+    And I set the field "Maximum grade" to "80"
     And I set the field "Rescale existing grades" to "No"
     When I press "Save and display"
     And I follow "View/grade all submissions"
@@ -45,7 +45,7 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
   Scenario: Update the max grade for an assignment rescaling existing grades
     Given I follow "Edit settings"
     And I expand all fieldsets
-    And I set the field "Maximum points" to "50"
+    And I set the field "Maximum grade" to "50"
     And I set the field "Rescale existing grades" to "Yes"
     When I press "Save and display"
     And I follow "View/grade all submissions"
@@ -54,13 +54,13 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
   Scenario: A rescale existing grades is not needed when keeping max grade unchanged
     Given I follow "Edit settings"
     And I expand all fieldsets
-    And I set the field "Maximum points" to "100"
+    And I set the field "Maximum grade" to "100"
     When I press "Save and display"
     Then I should not see "You must choose whether to rescale existing grades or not."
 
   Scenario: A rescale existing grades must be selected when max grade changes
     Given I follow "Edit settings"
     And I expand all fieldsets
-    And I set the field "Maximum points" to "50"
+    And I set the field "Maximum grade" to "50"
     When I press "Save and display"
     Then I should see "You must choose whether to rescale existing grades or not."

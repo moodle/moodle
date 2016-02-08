@@ -100,11 +100,13 @@ Feature: We can choose what min or max grade to use when aggregating grades.
       | Course total | -                 | 60.00  | 0–300 | 20.00 %    | -                            |
     And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I set the following settings for grade item "MI 1":
-      | Maximum grade          | 50.00 |
-      | Minimum grade          | 5.00 |
+      | Maximum grade           | 50.00 |
+      | Minimum grade           | 5.00  |
+      | Rescale existing grades | No    |
     And I set the following settings for grade item "MI 3":
-      | Maximum grade          | 50.00 |
-      | Minimum grade          | 5.00 |
+      | Maximum grade           | 50.00 |
+      | Minimum grade           | 5.00  |
+      | Rescale existing grades | No    |
     And I follow "User report"
     And I select "Student 1" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:
@@ -129,6 +131,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
     And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I set the following settings for grade item "MI 5":
       | Maximum grade          | 200.00 |
+      | Rescale existing grades | No    |
     And I follow "User report"
     And I select "Student 1" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:

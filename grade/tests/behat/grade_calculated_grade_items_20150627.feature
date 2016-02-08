@@ -146,6 +146,7 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
       | Course total | -                 | 112.50 | 0–200 | 56.25 %    | -                            |
     And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I set the following settings for grade item "calc item":
+      | Rescale existing grades | No |
       | Maximum grade | 40 |
     And I follow "Grader report"
     And I give the grade "65.00" to the user "Student 2" for the grade item "grade item 1"
