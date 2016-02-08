@@ -113,31 +113,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         }
 
         // Hack prefix to objectclass
-        if (empty($this->config->objectclass)) {
-            // Can't send empty filter
-            $this->config->objectclass = '(objectClass=*)';
-        } else if (stripos($this->config->objectclass, 'objectClass=') === 0) {
-            // Value is 'objectClass=some-string-here', so just add ()
-            // around the value (filter _must_ have them).
-            $this->config->objectclass = '('.$this->config->objectclass.')';
-        } else if (strpos($this->config->objectclass, '(') !== 0) {
-            // Value is 'some-string-not-starting-with-left-parentheses',
-            // which is assumed to be the objectClass matching value.
-            // So build a valid filter with it.
-            $this->config->objectclass = '(objectClass='.$this->config->objectclass.')';
-        } else {
-            // There is an additional possible value
-            // '(some-string-here)', that can be used to specify any
-            // valid filter string, to select subsets of users based
-            // on any criteria. For example, we could select the users
-            // whose objectClass is 'user' and have the
-            // 'enabledMoodleUser' attribute, with something like:
-            //
-            //   (&(objectClass=user)(enabledMoodleUser=1))
-            //
-            // In this particular case we don't need to do anything,
-            // so leave $this->config->objectclass as is.
-        }
+        $this->config->objectclass = ldap_normalise_objectclass($this->config->objectclass);
     }
 
     /**
