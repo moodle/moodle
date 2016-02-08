@@ -63,6 +63,11 @@ class mod_folder_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'showexpanded', get_string('showexpanded', 'folder'));
         $mform->addHelpButton('showexpanded', 'showexpanded', 'mod_folder');
         $mform->setDefault('showexpanded', $config->showexpanded);
+
+        // Adding option to enable downloading archive of folder.
+        $mform->addElement('advcheckbox', 'showdownloadfolder', get_string('showdownloadfolder', 'folder'));
+        $mform->addHelpButton('showdownloadfolder', 'showdownloadfolder', 'mod_folder');
+        $mform->setDefault('showdownloadfolder', true);
         //-------------------------------------------------------
         $this->standard_coursemodule_elements();
 

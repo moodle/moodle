@@ -25,6 +25,7 @@
 
 $string['contentheader'] = 'Content';
 $string['dnduploadmakefolder'] = 'Unzip files and create folder';
+$string['downloadfolder'] = 'Download folder';
 $string['eventfolderupdated'] = 'Folder updated';
 $string['folder:addinstance'] = 'Add a new folder';
 $string['folder:managefiles'] = 'Manage files in folder module';
@@ -50,5 +51,12 @@ Also note that participants view actions can not be logged in this case.';
 $string['displaypage'] = 'On a separate page';
 $string['displayinline'] = 'Inline on a course page';
 $string['noautocompletioninline'] = 'Automatic completion on viewing of activity can not be selected together with "Display inline" option';
+$string['showdownloadfolder'] = 'Show download folder button';
+$string['showdownloadfolder_help'] = 'If set to \'yes\', a button will be shown to allow users to download a zip archive containing all files.';
 $string['showexpanded'] = 'Show subfolders expanded';
 $string['showexpanded_help'] = 'If set to \'yes\', subfolders are shown expanded by default; otherwise they are shown collapsed.';
+$string['maxsizetodownload'] = 'Maximum folder download size (MB)';
+$string['maxsizetodownload_help'] = 'If set then users will not be able to downlod zip archives of folder where the total size is larger than this value.';
+
+
+
