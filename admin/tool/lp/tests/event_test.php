@@ -172,4 +172,88 @@ class tool_lp_event_testcase extends advanced_testcase {
         $this->assertDebuggingNotCalled();
     }
 
+    /**
+     * Test the template created event.
+     *
+     */
+    public function test_template_created() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        // Use DataGenerator to have a template record with the right format.
+        $record = $lpg->create_template()->to_record();
+        $record->id = 0;
+        $record->shortname = "New shortname";
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $template = api::create_template((object) $record);
+
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        $this->assertInstanceOf('\tool_lp\event\template_created', $event);
+        $this->assertEquals($template->get_id(), $event->objectid);
+        $this->assertEquals($template->get_contextid(), $event->contextid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the template deleted event.
+     *
+     */
+    public function test_template_deleted() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $template = $lpg->create_template();
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        api::delete_template($template->get_id());
+
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\tool_lp\event\template_deleted', $event);
+        $this->assertEquals($template->get_id(), $event->objectid);
+        $this->assertEquals($template->get_contextid(), $event->contextid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the template updated event.
+     *
+     */
+    public function test_template_updated() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $template = $lpg->create_template();
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $template->set_shortname('Shortname modified');
+        api::update_template($template->to_record());
+
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\tool_lp\event\template_updated', $event);
+        $this->assertEquals($template->get_id(), $event->objectid);
+        $this->assertEquals($template->get_contextid(), $event->contextid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
 }

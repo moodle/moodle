@@ -1137,7 +1137,11 @@ class api {
         }
 
         // OK - all set.
-        $id = $template->create();
+        $template = $template->create();
+
+        // Trigger a template created event.
+        \tool_lp\event\template_created::create_from_template($template)->trigger();
+
         return $template;
     }
 
@@ -1170,6 +1174,10 @@ class api {
         foreach ($competencies as $competency) {
             self::add_competency_to_template($duplicatedtemplate->get_id(), $competency->get_id());
         }
+
+        // Trigger a template created event.
+        \tool_lp\event\template_created::create_from_template($duplicatedtemplate)->trigger();
+
         return $duplicatedtemplate;
     }
 
@@ -1222,10 +1230,16 @@ class api {
 
         // OK - all set.
         if ($success) {
+            // Create a template deleted event.
+            $event = \tool_lp\event\template_deleted::create_from_template($template);
+
             $success = $template->delete();
         }
 
         if ($success) {
+            // Trigger a template deleted event.
+            $event->trigger();
+
             // Commit the transaction.
             $transaction->allow_commit();
         } else {
@@ -1278,6 +1292,9 @@ class api {
             $transaction->rollback(new moodle_exception('Error while updating the template.'));
             return $success;
         }
+
+        // Trigger a template updated event.
+        \tool_lp\event\template_updated::create_from_template($template)->trigger();
 
         if ($updateplans) {
             plan::update_multiple_from_template($template);
