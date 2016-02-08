@@ -1603,8 +1603,9 @@ class grade_report_grader extends grade_report {
         }
 
         $name = shorten_text($element['object']->get_name());
-        $courseheader = html_writer::tag('span', $name, array('id' => 'courseheader'));
-        $courseheader .= html_writer::label($showing, 'courseheader', false, array('class' => 'accesshide'));
+        $courseheaderid = 'courseheader_' . clean_param($name, PARAM_ALPHANUMEXT);
+        $courseheader = html_writer::tag('span', $name, array('id' => $courseheaderid));
+        $courseheader .= html_writer::label($showing, $courseheaderid, false, array('class' => 'accesshide'));
         $courseheader .= $icon;
 
         return $courseheader;
