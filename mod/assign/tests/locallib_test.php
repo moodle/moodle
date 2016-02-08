@@ -2329,5 +2329,75 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $this->assertTrue(in_array($this->extrastudents[0]->id, $allgroupmembers));
         $this->assertTrue(in_array($this->extrastudents[1]->id , $allgroupmembers));
     }
-}
 
+    /**
+     * Test the quicksave grades processor
+     */
+    public function test_process_save_quick_grades() {
+        $this->editingteachers[0]->ignoresesskey = true;
+        $this->setUser($this->editingteachers[0]);
+
+        $assign = $this->create_instance(array('attemptreopenmethod' => ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL));
+
+        // Initially grade the user.
+        $grade = $assign->get_user_grade($this->students[0]->id, false);
+        if (!$grade) {
+            $grade = new stdClass();
+            $grade->attemptnumber = '';
+            $grade->timemodified = '';
+        }
+        $data = array(
+            'grademodified_' . $this->students[0]->id => $grade->timemodified,
+            'gradeattempt_' . $this->students[0]->id => $grade->attemptnumber,
+            'quickgrade_' . $this->students[0]->id => '60.0'
+        );
+        $result = $assign->testable_process_save_quick_grades($data);
+        $this->assertContains(get_string('quickgradingchangessaved', 'assign'), $result);
+        $grade = $assign->get_user_grade($this->students[0]->id, false);
+        $this->assertEquals('60.0', $grade->grade);
+
+        // Attempt to grade with a past attempts grade info.
+        $assign->testable_process_add_attempt($this->students[0]->id);
+        $data = array(
+            'grademodified_' . $this->students[0]->id => $grade->timemodified,
+            'gradeattempt_' . $this->students[0]->id => $grade->attemptnumber,
+            'quickgrade_' . $this->students[0]->id => '50.0'
+        );
+        $result = $assign->testable_process_save_quick_grades($data);
+        $this->assertContains(get_string('errorrecordmodified', 'assign'), $result);
+        $grade = $assign->get_user_grade($this->students[0]->id, false);
+        $this->assertFalse($grade);
+
+        // Attempt to grade a the attempt.
+        $submission = $assign->get_user_submission($this->students[0]->id, false);
+        $data = array(
+            'grademodified_' . $this->students[0]->id => '',
+            'gradeattempt_' . $this->students[0]->id => $submission->attemptnumber,
+            'quickgrade_' . $this->students[0]->id => '40.0'
+        );
+        $result = $assign->testable_process_save_quick_grades($data);
+        $this->assertContains(get_string('quickgradingchangessaved', 'assign'), $result);
+        $grade = $assign->get_user_grade($this->students[0]->id, false);
+        $this->assertEquals('40.0', $grade->grade);
+
+        // Catch grade update conflicts.
+        // Save old data for later.
+        $pastdata = $data;
+        // Update the grade the 'good' way.
+        $data = array(
+            'grademodified_' . $this->students[0]->id => $grade->timemodified,
+            'gradeattempt_' . $this->students[0]->id => $grade->attemptnumber,
+            'quickgrade_' . $this->students[0]->id => '30.0'
+        );
+        $result = $assign->testable_process_save_quick_grades($data);
+        $this->assertContains(get_string('quickgradingchangessaved', 'assign'), $result);
+        $grade = $assign->get_user_grade($this->students[0]->id, false);
+        $this->assertEquals('30.0', $grade->grade);
+
+        // Now update using 'old' data. Should fail.
+        $result = $assign->testable_process_save_quick_grades($pastdata);
+        $this->assertContains(get_string('errorrecordmodified', 'assign'), $result);
+        $grade = $assign->get_user_grade($this->students[0]->id, false);
+        $this->assertEquals('30.0', $grade->grade);
+    }
+}
