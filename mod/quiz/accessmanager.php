@@ -539,4 +539,24 @@ class quiz_access_manager {
                     $this->attempt_must_be_in_popup(), $this->get_popup_options());
         }
     }
+
+    /**
+     * Run the preflight checks using the given data in all the rules supporting them.
+     *
+     * @param array $data passed data for validation
+     * @param array $files un-used, Moodle seems to not support it anymore
+     * @param int|null $attemptid the id of the current attempt, if there is one,
+     *      otherwise null.
+     * @return array of errors, empty array means no erros
+     * @since  Moodle 3.1
+     */
+    public function validate_preflight_check($data, $files, $attemptid) {
+        $errors = array();
+        foreach ($this->rules as $rule) {
+            if ($rule->is_preflight_check_required($attemptid)) {
+                $errors = $rule->validate_preflight_check($data, $files, $errors, $attemptid);
+            }
+        }
+        return $errors;
+    }
 }

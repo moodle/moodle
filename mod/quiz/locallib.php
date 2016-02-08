@@ -2151,5 +2151,126 @@ function quiz_view($quiz, $course, $cm, $context) {
     // Completion.
     $completion = new completion_info($course);
     $completion->set_module_viewed($cm);
+}
 
+/**
+ * Validate permissions for creating a new attempt and start a new preview attempt if required.
+ *
+ * @param  quiz $quizobj quiz object
+ * @param  quiz_access_manager $accessmanager quiz access manager
+ * @param  bool $forcenew whether was required to start a new preview attempt
+ * @param  int $page page to jump to in the attempt
+ * @param  bool $redirect whether to redirect or throw exceptions (for web or ws usage)
+ * @return array an array containing the attempt information, access error messages and the page to jump to in the attempt
+ * @throws moodle_quiz_exception
+ * @since Moodle 3.1
+ */
+function quiz_validate_new_attempt(quiz $quizobj, quiz_access_manager $accessmanager, $forcenew, $page, $redirect) {
+    global $DB, $USER;
+    $timenow = time();
+
+    if ($quizobj->is_preview_user() && $forcenew) {
+        $accessmanager->current_attempt_finished();
+    }
+
+    // Check capabilities.
+    if (!$quizobj->is_preview_user()) {
+        $quizobj->require_capability('mod/quiz:attempt');
+    }
+
+    // Check to see if a new preview was requested.
+    if ($quizobj->is_preview_user() && $forcenew) {
+        // To force the creation of a new preview, we mark the current attempt (if any)
+        // as finished. It will then automatically be deleted below.
+        $DB->set_field('quiz_attempts', 'state', quiz_attempt::FINISHED,
+                array('quiz' => $quizobj->get_quizid(), 'userid' => $USER->id));
+    }
+
+    // Look for an existing attempt.
+    $attempts = quiz_get_user_attempts($quizobj->get_quizid(), $USER->id, 'all', true);
+    $lastattempt = end($attempts);
+
+    $attemptnumber = null;
+    // If an in-progress attempt exists, check password then redirect to it.
+    if ($lastattempt && ($lastattempt->state == quiz_attempt::IN_PROGRESS ||
+            $lastattempt->state == quiz_attempt::OVERDUE)) {
+        $currentattemptid = $lastattempt->id;
+        $messages = $accessmanager->prevent_access();
+
+        // If the attempt is now overdue, deal with that.
+        $quizobj->create_attempt_object($lastattempt)->handle_if_time_expired($timenow, true);
+
+        // And, if the attempt is now no longer in progress, redirect to the appropriate place.
+        if ($lastattempt->state == quiz_attempt::ABANDONED || $lastattempt->state == quiz_attempt::FINISHED) {
+            if ($redirect) {
+                redirect($quizobj->review_url($lastattempt->id));
+            } else {
+                throw new moodle_quiz_exception($quizobj, 'attemptalreadyclosed');
+            }
+        }
+
+        // If the page number was not explicitly in the URL, go to the current page.
+        if ($page == -1) {
+            $page = $lastattempt->currentpage;
+        }
+
+    } else {
+        while ($lastattempt && $lastattempt->preview) {
+            $lastattempt = array_pop($attempts);
+        }
+
+        // Get number for the next or unfinished attempt.
+        if ($lastattempt) {
+            $attemptnumber = $lastattempt->attempt + 1;
+        } else {
+            $lastattempt = false;
+            $attemptnumber = 1;
+        }
+        $currentattemptid = null;
+
+        $messages = $accessmanager->prevent_access() +
+            $accessmanager->prevent_new_attempt(count($attempts), $lastattempt);
+
+        if ($page == -1) {
+            $page = 0;
+        }
+    }
+    return array($currentattemptid, $attemptnumber, $lastattempt, $messages, $page);
+}
+
+/**
+ * Prepare and start a new attempt deleting the previous preview attempts.
+ *
+ * @param  quiz $quizobj quiz object
+ * @param  int $attemptnumber the attempt number
+ * @param  object $lastattempt last attempt object
+ * @return object the new attempt
+ * @since  Moodle 3.1
+ */
+function quiz_prepare_and_start_new_attempt(quiz $quizobj, $attemptnumber, $lastattempt) {
+    global $DB, $USER;
+
+    // Delete any previous preview attempts belonging to this user.
+    quiz_delete_previews($quizobj->get_quiz(), $USER->id);
+
+    $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+    $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+
+    // Create the new attempt and initialize the question sessions
+    $timenow = time(); // Update time now, in case the server is running really slowly.
+    $attempt = quiz_create_attempt($quizobj, $attemptnumber, $lastattempt, $timenow, $quizobj->is_preview_user());
+
+    if (!($quizobj->get_quiz()->attemptonlast && $lastattempt)) {
+        $attempt = quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timenow);
+    } else {
+        $attempt = quiz_start_attempt_built_on_last($quba, $attempt, $lastattempt);
+    }
+
+    $transaction = $DB->start_delegated_transaction();
+
+    $attempt = quiz_attempt_save_started($quizobj, $quba, $attempt);
+
+    $transaction->allow_commit();
+
+    return $attempt;
 }
