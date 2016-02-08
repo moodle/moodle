@@ -34,6 +34,13 @@ class enrol_ldap_plugin extends enrol_plugin {
     protected $errorlogtag = '[ENROL LDAP] ';
 
     /**
+     * The object class to use when finding users.
+     *
+     * @var string $userobjectclass
+     */
+    protected $userobjectclass;
+
+    /**
      * Constructor for the plugin. In addition to calling the parent
      * constructor, we define and 'fix' some settings depending on the
      * real settings the admin defined.
@@ -59,6 +66,26 @@ class enrol_ldap_plugin extends enrol_plugin {
         unset($ldap_usertypes);
 
         $default = ldap_getdefaults();
+
+        // The objectclass in the defaults is for a user.
+        // This will be required later, but enrol_ldap uses 'objectclass' for its group objectclass.
+        // Save the normalised user objectclass for later.
+        $this->userobjectclass = $default['objectclass'][$this->get_config('user_type')];
+
+        if (empty($this->userobjectclass)) {
+            // Can't send empty filter.
+            $this->userobjectclass = '(objectClass=*)';
+        } else if (stripos($this->userobjectclass, 'objectClass=') === 0) {
+            // Value is 'objectClass=some-string-here', so just add ()
+            // around the value (filter _must_ have them).
+            $this->userobjectclass = '(' . $this->userobjectclass . ')';
+        } else if (stripos($this->userobjectclass, '(') !== 0) {
+            // Value is 'some-string-not-starting-with-left-parentheses',
+            // which is assumed to be the objectClass matching value.
+            // So build a valid filter with it.
+            $this->userobjectclass = '(objectClass=' . $this->userobjectclass . ')';
+        }
+
         // Remove the objectclass default, as the values specified there are for
         // users, and we are dealing with groups here.
         unset($default['objectclass']);
@@ -490,7 +517,7 @@ class enrol_ldap_plugin extends enrol_plugin {
                                 // as the idnumber does not match their dn and we get dn's from membership.
                                 $memberidnumbers = array();
                                 foreach ($ldapmembers as $ldapmember) {
-                                    $result = ldap_read($this->ldapconnection, $ldapmember, '(objectClass=*)',
+                                    $result = ldap_read($this->ldapconnection, $ldapmember, $this->userobjectclass,
                                                         array($this->config->idnumber_attribute));
                                     $entry = ldap_first_entry($this->ldapconnection, $result);
                                     $values = ldap_get_values($this->ldapconnection, $entry, $this->config->idnumber_attribute);
@@ -838,10 +865,9 @@ class enrol_ldap_plugin extends enrol_plugin {
         require_once($CFG->libdir.'/ldaplib.php');
 
         $ldap_contexts = explode(';', $this->get_config('user_contexts'));
-        $ldap_defaults = ldap_getdefaults();
 
         return ldap_find_userdn($this->ldapconnection, $userid, $ldap_contexts,
-                                '(objectClass='.$ldap_defaults['objectclass'][$this->get_config('user_type')].')',
+                                $this->userobjectclass,
                                 $this->get_config('idnumber_attribute'), $this->get_config('user_search_sub'));
     }
 
