@@ -101,7 +101,7 @@ class phpunit_util extends testing_util {
      * @return void
      */
     public static function reset_all_data($detectchanges = false) {
-        global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION;
+        global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION, $FULLME;
 
         // Stop any message redirection.
         self::stop_message_redirection();
@@ -164,6 +164,10 @@ class phpunit_util extends testing_util {
                 $warnings[] = 'Warning: unexpected change of $COURSE';
             }
 
+            if ($FULLME !== self::get_global_backup('FULLME')) {
+                $warnings[] = 'Warning: unexpected change of $FULLME';
+            }
+
             if (setlocale(LC_TIME, 0) !== $localename) {
                 $warnings[] = 'Warning: unexpected change of locale';
             }
@@ -184,6 +188,7 @@ class phpunit_util extends testing_util {
         $_SERVER = self::get_global_backup('_SERVER');
         $CFG = self::get_global_backup('CFG');
         $SITE = self::get_global_backup('SITE');
+        $FULLME = self::get_global_backup('FULLME');
         $_GET = array();
         $_POST = array();
         $_FILES = array();
@@ -299,13 +304,14 @@ class phpunit_util extends testing_util {
      * @return void
      */
     public static function bootstrap_init() {
-        global $CFG, $SITE, $DB;
+        global $CFG, $SITE, $DB, $FULLME;
 
         // backup the globals
         self::$globals['_SERVER'] = $_SERVER;
         self::$globals['CFG'] = clone($CFG);
         self::$globals['SITE'] = clone($SITE);
         self::$globals['DB'] = $DB;
+        self::$globals['FULLME'] = $FULLME;
 
         // refresh data in all tables, clear caches, etc.
         self::reset_all_data();
