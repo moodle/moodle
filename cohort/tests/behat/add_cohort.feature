@@ -56,3 +56,14 @@ Feature: Add cohorts of users
     And the "Current users" select box should contain "Third User (third@example.com)"
     And the "Current users" select box should contain "Forth User (forth@example.com)"
     And the "Current users" select box should not contain "First User (first@example.com)"
+
+  @javascript
+  Scenario: Edit cohort name in-place
+    When I follow "Cohorts"
+    And I click on "Edit cohort name" "link" in the "Test cohort name" "table_row"
+    And I set the field "New name for cohort Test cohort name" to "Students cohort"
+    And I press key "13" in the field "New name for cohort Test cohort name"
+    Then I should not see "Test cohort name"
+    And I should see "Students cohort"
+    And I follow "Cohorts"
+    And I should see "Students cohort"
