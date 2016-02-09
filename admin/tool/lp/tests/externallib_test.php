@@ -2860,10 +2860,11 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $uc = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c1->get_id()));
 
-        $evidence = external::grade_competency_in_plan($plan->get_id(), $c1->get_id(), 1, false);
+        $evidence = external::grade_competency_in_plan($plan->get_id(), $c1->get_id(), 1, false, 'Evil note');
 
         $this->assertEquals('The competency grade was manually suggested in the plan \'Evil\'.', $evidence->description);
         $this->assertEquals('A', $evidence->gradename);
+        $this->assertEquals('Evil note', $evidence->note);
         $evidence = external::grade_competency_in_plan($plan->get_id(), $c1->get_id(), 1, true);
 
         $this->assertEquals('The competency grade was manually set in the plan \'Evil\'.', $evidence->description);

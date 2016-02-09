@@ -1759,7 +1759,7 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         // Creating a standard evidence with more information.
         $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_LOG, 'invaliddata', 'error',
-            '$a', false, 'http://moodle.org', null, 2);
+            '$a', false, 'http://moodle.org', null, 2, 'The evidence of prior learning were reviewed.');
         $evidence->read();
         $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
         $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc->get_status());
@@ -1774,6 +1774,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals('http://moodle.org', $evidence->get_url());
         $this->assertSame(null, $evidence->get_grade());
         $this->assertEquals(2, $evidence->get_actionuserid());
+        $this->assertSame('The evidence of prior learning were reviewed.', $evidence->get_note());
 
         // Creating a standard evidence and send for review.
         $evidence = api::add_evidence($u1->id, $c2->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_LOG, 'invaliddata',

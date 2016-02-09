@@ -73,29 +73,15 @@
         </dd>
         <dt>{{#str}}rating, tool_lp{{/str}}</dt>
         <dd>{{gradename}}
-        {{#cangradeorsuggest}}
-        <p>
-        <form class="form-inline pull-left" id="grade-competency-form-{{uniqid}}">
-            <select></select>
-                <div class="btn-group">
-                {{#cangrade}}
-                    <button class="btn btn-primary" data-action="grade">{{#str}}rate, tool_lp{{/str}}</button>
-                {{/cangrade}}
-                {{#cansuggest}}
-                    <button class="btn btn-inverse" data-action="suggest">{{#str}}suggest, tool_lp{{/str}}</button>
-                {{/cansuggest}}
-                </div>
-
-        </form>
-        <br><br>
-        </p>
-        {{/cangradeorsuggest}}
+            {{#cangradeorsuggest}}
+                <buttn class="btn" id="rate_{{uniqid}}">{{#str}}rate, tool_lp{{/str}}</button>
+            {{/cangradeorsuggest}}
         </dd>
         {{#js}}
         require(['jquery', 'tool_lp/grade_user_competency_inline', 'tool_lp/user_competency_info'], function($, mod, info) {
             var scaleConfig = JSON.parse('{{{competency.scaleconfiguration}}}');
 
-            var inlineGrader = new mod('grade-competency-form-{{uniqid}}', scaleConfig, '{{competency.competency.id}}', '{{user.id}}', '', '{{course.id}}', '{{#str}}chooserating, tool_lp{{/str}}');
+            var inlineGrader = new mod('#rate_{{uniqid}}', scaleConfig, '{{competency.competency.id}}', '{{user.id}}', '', '{{course.id}}', '{{#str}}chooserating, tool_lp{{/str}}', {{cangrade}}, {{cansuggest}});
             var competencyElement = $('[data-region-id="{{uniqid}}"]');
             var infoReloader = new info(competencyElement, '{{competency.competency.id}}', '{{user.id}}', '', '{{course.id}}');
 

@@ -203,3 +203,10 @@ input[type="checkbox"].tool_lp_scale_proficient {
 .user-competency-course-navigation {
     width: 240px;
 }
+
+/** Competency grader */
+.competency-grader textarea {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}

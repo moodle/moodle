@@ -21,30 +21,49 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/notification', 'core/ajax', 'core/log'], function($, notification, ajax, log) {
+define(['jquery',
+        'core/notification',
+        'core/ajax',
+        'core/log',
+        'tool_lp/grade_dialogue',
+        'tool_lp/event_base',
+    ], function($, notification, ajax, log, GradeDialogue, EventBase) {
 
     /**
      * InlineEditor
      *
-     * @param {String} The id of the form element.
+     * @param {String} selector The selector to trigger the grading.
      * @param {Object} The scale config for this competency.
      * @param {Number} The id of the competency.
      * @param {Number} The id of the user.
      * @param {Number} The id of the plan.
      * @param {Number} The id of the course.
      * @param {String} Language string for choose a rating.
+     * @param {Boolean} canGrade Whether the user can grade.
+     * @param {Boolean} canSuggest Whether the user can suggest.
      */
-    var InlineEditor = function(formId, scaleConfig, competencyId, userId, planId, courseId, chooseStr) {
-        this._formId = formId;
+    var InlineEditor = function(selector, scaleConfig, competencyId, userId, planId, courseId, chooseStr, canGrade, canSuggest) {
+        EventBase.prototype.constructor.apply(this, []);
+
+        var trigger = $(selector);
+        if (!trigger.length) {
+            throw new Error('Could not find the trigger');
+        }
+
         this._scaleConfig = scaleConfig;
         this._competencyId = competencyId;
         this._userId = userId;
         this._planId = planId;
         this._courseId = courseId;
-        this._valid = true;
         this._chooseStr = chooseStr;
-        this._buildSelect();
-        this._addListeners();
+        this._canGrade = canGrade;
+        this._canSuggest = canSuggest;
+        this._setUp();
+
+        trigger.click(function(e) {
+            e.preventDefault();
+            this._dialogue.display();
+        }.bind(this));
 
         if (this._planId) {
             this._methodName = 'tool_lp_grade_competency_in_plan';
@@ -67,134 +86,61 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/log'], function($, not
             };
         }
     };
+    InlineEditor.prototype = Object.create(EventBase.prototype);
 
     /**
-     * Add all the options to the select.
+     * Setup.
      *
-     * @method _buildSelect
+     * @method _setUp
      */
-    InlineEditor.prototype._buildSelect = function() {
-        var i = 1;
+    InlineEditor.prototype._setUp = function() {
+        var options = [],
+            self = this;
 
-        var blankOption = $('<option></option>');
-        blankOption.text(this._chooseStr);
-        blankOption.attr('value', '');
-        $(document.getElementById(this._formId)).find('select').append(blankOption);
-        // The first item is the scaleid - we don't care about that.
-        for (i = 1; i < this._scaleConfig.length; i++) {
+        options.push({
+            value: '',
+            name: this._chooseStr
+        });
+
+        for (var i = 1; i < this._scaleConfig.length; i++) {
             var optionConfig = this._scaleConfig[i];
-            var optionEle = $('<option></option>');
-            optionEle.text(optionConfig.name);
-            optionEle.attr('value', optionConfig.id);
-
-            $(document.getElementById(this._formId)).find('select').append(optionEle);
+            options.push({
+                value: optionConfig.id,
+                name: optionConfig.name
+            });
         }
-    };
 
-    /**
-     * Handle grade button click
-     *
-     * @param {Event} event
-     * @method _handleGrade
-     */
-    InlineEditor.prototype._handleGrade = function(event) {
-        var currentthis = this;
-        var grade = $(document.getElementById(this._formId)).find('select').val();
-        event.preventDefault();
-        if (this._valid && grade) {
+        this._dialogue = new GradeDialogue(options, this._canGrade, this._canSuggest);
+        this._dialogue.on('rated', function(e, data) {
             var args = this._args;
-            args.grade = grade;
+            args.grade = data.rating;
+            args.note = data.note;
             args.override = true;
-
             ajax.call([{
                 methodname: this._methodName,
                 args: args,
                 done: function(evidence) {
-                    currentthis._trigger('competencyupdated', { args: args, evidence: evidence});
-                },
+                    this._trigger('competencyupdated', { args: args, evidence: evidence });
+                }.bind(self),
                 fail: notification.exception
             }]);
-        }
-    };
-
-    /**
-     * Handle suggest button click
-     *
-     * @param {Event} event
-     * @method _handleSuggest
-     */
-    InlineEditor.prototype._handleSuggest = function(event) {
-        var currentthis = this;
-        var grade = $(document.getElementById(this._formId)).find('select').val();
-        event.preventDefault();
-        if (this._valid && grade) {
+        }.bind(this));
+        this._dialogue.on('suggested', function(e, data) {
             var args = this._args;
-            args.grade = grade;
+            args.grade = data.rating;
+            args.note = data.note;
             args.override = false;
             ajax.call([{
                 methodname: this._methodName,
                 args: args,
                 done: function(evidence) {
-                    currentthis._trigger('competencyupdated', { args: args, evidence: evidence});
-                },
+                    this._trigger('competencyupdated', { args: args, evidence: evidence });
+                }.bind(self),
                 fail: notification.exception
             }]);
-        }
+        }.bind(this));
     };
 
-    /**
-     * Setup event listeners.
-     *
-     * @method _addListeners
-     */
-    InlineEditor.prototype._addListeners = function() {
-        var currentthis = this;
-        var form = $(document.getElementById(this._formId));
-        var gradebutton = form.find('[data-action="grade"]');
-        gradebutton.on('click', function(event) {
-            currentthis._handleGrade.call(currentthis, event);
-        });
-        var suggestbutton = form.find('[data-action="suggest"]');
-        suggestbutton.on('click', function(event) {
-            currentthis._handleSuggest.call(currentthis, event);
-        });
-    };
-
-    /**
-     * Trigger an event from this module.
-     *
-     * @param {String} eventname - Only 'competencyupdated' is supported
-     * @param {Object} arguments - Additional arguments for the event.
-     * @return InlineEditor for chaining
-     * @method _trigger
-     */
-    InlineEditor.prototype._trigger = function(eventname, data) {
-        if (eventname != 'competencyupdated') {
-            notification.exception('Invalid event name:' + eventname);
-        }
-        $(document.getElementById(this._formId)).trigger(eventname, data);
-        return this;
-    };
-
-    /**
-     * Attach a listener for events triggered from this module.
-     *
-     * @param {String} eventname - Only 'competencyupdated' is supported
-     * @param {Function} handler - Event handler to call when this event is triggered.
-     * @return InlineEditor for chaining
-     * @method on
-     */
-    InlineEditor.prototype.on = function(eventname, handler) {
-        if (eventname != 'competencyupdated') {
-            notification.exception('Invalid event name:' + eventname);
-        }
-        $(document.getElementById(this._formId)).on(eventname, handler);
-        return this;
-    };
-
-
-    /** @type {String} The id of the select element. */
-    InlineEditor.prototype._formId = null;
     /** @type {Object} The scale config for this competency. */
     InlineEditor.prototype._scaleConfig = null;
     /** @type {Number} The id of the competency. */
@@ -205,8 +151,12 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/log'], function($, not
     InlineEditor.prototype._planId = null;
     /** @type {Number} The id of the course. */
     InlineEditor.prototype._courseId = null;
-    /** @type {Boolean} Is this module valid. */
-    InlineEditor.prototype._valid = null;
+    /** @type {GradeDialogue} The grading dialogue. */
+    InlineEditor.prototype._dialogue = null;
+    /** @type {Boolean} Can grade. */
+    InlineEditor.prototype._canGrade = null;
+    /** @type {Boolean} Can suggest. */
+    InlineEditor.prototype._canSuggest = null;
 
     return /** @alias module:tool_lp/grade_user_competency_inline */ InlineEditor;
 

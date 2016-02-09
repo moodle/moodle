@@ -93,6 +93,11 @@ class evidence extends persistent {
                 'type' => PARAM_INT,
                 'default' => null,
                 'null' => NULL_ALLOWED
+            ),
+            'note' => array(
+                'type' => PARAM_NOTAGS,
+                'default' => null,
+                'null' => NULL_ALLOWED
             )
         );
     }

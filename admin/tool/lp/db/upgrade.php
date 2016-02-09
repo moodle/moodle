@@ -698,5 +698,20 @@ function xmldb_tool_lp_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015111041, 'tool', 'lp');
     }
 
+    if ($oldversion < 2016020900) {
+
+        // Define field note to be added to tool_lp_evidence.
+        $table = new xmldb_table('tool_lp_evidence');
+        $field = new xmldb_field('note', XMLDB_TYPE_TEXT, null, null, null, null, null, 'grade');
+
+        // Conditionally launch add field note.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2016020900, 'tool', 'lp');
+    }
+
     return true;
 }

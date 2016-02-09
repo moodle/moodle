@@ -4840,12 +4840,18 @@ class external extends external_api {
             'Override the grade, or just suggest it',
             VALUE_REQUIRED
         );
+        $note = new external_value(
+            PARAM_NOTAGS,
+            'A note to attach to the evidence',
+            VALUE_DEFAULT
+        );
 
         $params = array(
             'userid' => $userid,
             'competencyid' => $competencyid,
             'grade' => $grade,
-            'override' => $override
+            'override' => $override,
+            'note' => $note,
         );
         return new external_function_parameters($params);
     }
@@ -4857,15 +4863,17 @@ class external extends external_api {
      * @param int $competencyid The competency id
      * @param int $grade The new grade value
      * @param bool $override Override the grade or only suggest it
+     * @param string $note A note to attach to the evidence
      * @return bool
      */
-    public static function grade_competency($userid, $competencyid, $grade, $override) {
+    public static function grade_competency($userid, $competencyid, $grade, $override, $note = null) {
         global $USER, $PAGE;
         $params = self::validate_parameters(self::grade_competency_parameters(), array(
             'userid' => $userid,
             'competencyid' => $competencyid,
             'grade' => $grade,
-            'override' => $override
+            'override' => $override,
+            'note' => $note
         ));
 
         $uc = api::get_user_competency($params['userid'], $params['competencyid']);
@@ -4876,7 +4884,8 @@ class external extends external_api {
                 $uc->get_userid(),
                 $uc->get_competencyid(),
                 $params['grade'],
-                $params['override']
+                $params['override'],
+                $params['note']
         );
 
         $scale = $uc->get_competency()->get_scale();
@@ -4919,12 +4928,18 @@ class external extends external_api {
             'Override the grade, or just suggest it',
             VALUE_REQUIRED
         );
+        $note = new external_value(
+            PARAM_NOTAGS,
+            'A note to attach to the evidence',
+            VALUE_DEFAULT
+        );
 
         $params = array(
             'planid' => $planid,
             'competencyid' => $competencyid,
             'grade' => $grade,
-            'override' => $override
+            'override' => $override,
+            'note' => $note
         );
         return new external_function_parameters($params);
     }
@@ -4936,9 +4951,10 @@ class external extends external_api {
      * @param int $competencyid The competency id
      * @param int $grade The new grade value
      * @param bool $override Override the grade or only suggest it
+     * @param string $note A note to add to the evidence
      * @return bool
      */
-    public static function grade_competency_in_plan($planid, $competencyid, $grade, $override) {
+    public static function grade_competency_in_plan($planid, $competencyid, $grade, $override, $note = null) {
         global $USER, $PAGE;
 
         $params = self::validate_parameters(self::grade_competency_in_plan_parameters(),
@@ -4946,7 +4962,8 @@ class external extends external_api {
                                                 'planid' => $planid,
                                                 'competencyid' => $competencyid,
                                                 'grade' => $grade,
-                                                'override' => $override
+                                                'override' => $override,
+                                                'note' => $note
                                             ));
 
         $plan = new plan($params['planid']);
@@ -4958,7 +4975,8 @@ class external extends external_api {
                 $plan->get_id(),
                 $params['competencyid'],
                 $params['grade'],
-                $params['override']
+                $params['override'],
+                $params['note']
         );
         $competency = api::read_competency($params['competencyid']);
         $scale = $competency->get_scale();
@@ -5180,13 +5198,19 @@ class external extends external_api {
             'Override the grade, or just suggest it',
             VALUE_REQUIRED
         );
+        $note = new external_value(
+            PARAM_NOTAGS,
+            'A note to attach to the evidence',
+            VALUE_DEFAULT
+        );
 
         $params = array(
             'courseid' => $courseid,
             'userid' => $userid,
             'competencyid' => $competencyid,
             'grade' => $grade,
-            'override' => $override
+            'override' => $override,
+            'note' => $note,
         );
         return new external_function_parameters($params);
     }
@@ -5199,9 +5223,10 @@ class external extends external_api {
      * @param int $competencyid The competency id
      * @param int $grade The new grade value
      * @param bool $override Override the grade or only suggest it
+     * @param string $note A note to add to the evidence
      * @return bool
      */
-    public static function grade_competency_in_course($courseid, $userid, $competencyid, $grade, $override) {
+    public static function grade_competency_in_course($courseid, $userid, $competencyid, $grade, $override, $note = null) {
         global $USER, $PAGE, $DB;
 
         $params = self::validate_parameters(self::grade_competency_in_course_parameters(),
@@ -5210,7 +5235,8 @@ class external extends external_api {
                                                 'userid' => $userid,
                                                 'competencyid' => $competencyid,
                                                 'grade' => $grade,
-                                                'override' => $override
+                                                'override' => $override,
+                                                'note' => $note
                                             ));
 
         $course = $DB->get_record('course', array('id' => $params['courseid']));
@@ -5223,7 +5249,8 @@ class external extends external_api {
                 $params['userid'],
                 $params['competencyid'],
                 $params['grade'],
-                $params['override']
+                $params['override'],
+                $params['note']
         );
         $competency = api::read_competency($params['competencyid']);
         $scale = $competency->get_scale();
