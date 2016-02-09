@@ -171,7 +171,8 @@ class qtype_ordering_question extends question_graded_automatically {
         $countanswers = 0;
 
         $options = $this->get_ordering_options();
-        switch ($options->gradingtype) {
+        $gradingtype = $options->gradingtype;
+        switch ($gradingtype) {
 
             case self::GRADING_ALL_OR_NOTHING:
             case self::GRADING_ABSOLUTE_POSITION:
@@ -185,15 +186,15 @@ class qtype_ordering_question extends question_graded_automatically {
                     }
                     $countanswers++;
                 }
-                if ($options->gradingtype==self::GRADING_ALL_OR_NOTHING && $countcorrect < $countanswers) {
+                if ($gradingtype==self::GRADING_ALL_OR_NOTHING && $countcorrect < $countanswers) {
                     $countcorrect = 0;
                 }
                 break;
 
             case self::GRADING_RELATIVE_NEXT_EXCLUDE_LAST:
             case self::GRADING_RELATIVE_NEXT_INCLUDE_LAST:
-                $currentresponse = $this->get_next_answerids($this->currentresponse, ($options->gradingtype==2));
-                $correctresponse = $this->get_next_answerids($this->correctresponse, ($options->gradingtype==2));
+                $currentresponse = $this->get_next_answerids($this->currentresponse, ($gradingtype==self::GRADING_RELATIVE_NEXT_INCLUDE_LAST));
+                $correctresponse = $this->get_next_answerids($this->correctresponse, ($gradingtype==self::GRADING_RELATIVE_NEXT_INCLUDE_LAST));
                 foreach ($correctresponse as $thisanswerid => $nextanswerid) {
                     if (isset($currentresponse[$thisanswerid])) {
                         if ($currentresponse[$thisanswerid]==$nextanswerid) {
@@ -206,8 +207,8 @@ class qtype_ordering_question extends question_graded_automatically {
 
             case self::GRADING_RELATIVE_ONE_PREVIOUS_AND_NEXT:
             case self::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT:
-                $currentresponse = $this->get_previous_and_next_answerids($this->currentresponse, ($options->gradingtype==4));
-                $correctresponse = $this->get_previous_and_next_answerids($this->correctresponse, ($options->gradingtype==4));
+                $currentresponse = $this->get_previous_and_next_answerids($this->currentresponse, ($gradingtype==self::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT));
+                $correctresponse = $this->get_previous_and_next_answerids($this->correctresponse, ($gradingtype==self::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT));
                 foreach ($correctresponse as $thisanswerid => $answerids) {
                     if (isset($currentresponse[$thisanswerid])) {
                         $prev = $currentresponse[$thisanswerid]->prev;
@@ -224,7 +225,7 @@ class qtype_ordering_question extends question_graded_automatically {
 
             case self::GRADING_LONGEST_ORDERED_SUBSET:
             case self::GRADING_LONGEST_CONTIGUOUS_SUBSET:
-                $subset = $this->get_ordered_subset($options->gradingtype==5);
+                $subset = $this->get_ordered_subset($gradingtype==self::GRADING_LONGEST_CONTIGUOUS_SUBSET);
                 $countcorrect = count($subset);
                 $countanswers = count($this->currentresponse);
                 break;
