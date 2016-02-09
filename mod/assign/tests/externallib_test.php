@@ -1555,4 +1555,47 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
 
     }
 
+    /**
+     * Test subplugins availability
+     */
+    public function test_subplugins_availability() {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/mod/assign/adminlib.php');
+        $this->resetAfterTest(true);
+
+        // Hide assignment file submissiong plugin.
+        $pluginmanager = new assign_plugin_manager('assignsubmission');
+        $pluginmanager->hide_plugin('file');
+        $parameters = mod_assign_external::save_submission_parameters();
+
+        $this->assertTrue(!isset($parameters->keys['plugindata']->keys['files_filemanager']));
+
+        // Show it again and check that the value is returned as optional.
+        $pluginmanager->show_plugin('file');
+        $parameters = mod_assign_external::save_submission_parameters();
+        $this->assertTrue(isset($parameters->keys['plugindata']->keys['files_filemanager']));
+        $this->assertEquals(VALUE_OPTIONAL, $parameters->keys['plugindata']->keys['files_filemanager']->required);
+
+        // Hide feedback file submissiong plugin.
+        $pluginmanager = new assign_plugin_manager('assignfeedback');
+        $pluginmanager->hide_plugin('file');
+
+        $parameters = mod_assign_external::save_grade_parameters();
+
+        $this->assertTrue(!isset($parameters->keys['plugindata']->keys['files_filemanager']));
+
+        // Show it again and check that the value is returned as optional.
+        $pluginmanager->show_plugin('file');
+        $parameters = mod_assign_external::save_grade_parameters();
+
+        $this->assertTrue(isset($parameters->keys['plugindata']->keys['files_filemanager']));
+        $this->assertEquals(VALUE_OPTIONAL, $parameters->keys['plugindata']->keys['files_filemanager']->required);
+
+        // Check a different one.
+        $pluginmanager->show_plugin('comments');
+        $this->assertTrue(isset($parameters->keys['plugindata']->keys['assignfeedbackcomments_editor']));
+        $this->assertEquals(VALUE_OPTIONAL, $parameters->keys['plugindata']->keys['assignfeedbackcomments_editor']->required);
+    }
+
 }
