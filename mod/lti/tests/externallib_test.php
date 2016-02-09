@@ -209,11 +209,13 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         $contextcourse1 = context_course::instance($this->course->id);
         // Prohibit capability = mod:lti:view on Course1 for students.
         assign_capability('mod/lti:view', CAP_PROHIBIT, $this->studentrole->id, $contextcourse1->id);
+        // Empty all the caches that may be affected by this change.
         accesslib_clear_all_caches_for_unit_testing();
+        course_modinfo::clear_instance_cache();
 
         $ltis = mod_lti_external::get_ltis_by_courses(array($this->course->id));
         $ltis = external_api::clean_returnvalue(mod_lti_external::get_ltis_by_courses_returns(), $ltis);
-        $this->assertFalse(isset($ltis['ltis'][0]['intro']));
+        $this->assertCount(0, $ltis['ltis']);
     }
 
     /**
@@ -264,13 +266,15 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         // Test user with no capabilities.
         // We need a explicit prohibit since this capability is only defined in authenticated user and guest roles.
         assign_capability('mod/lti:view', CAP_PROHIBIT, $this->studentrole->id, $this->context->id);
+        // Empty all the caches that may be affected by this change.
         accesslib_clear_all_caches_for_unit_testing();
+        course_modinfo::clear_instance_cache();
 
         try {
             mod_lti_external::view_lti($this->lti->id);
             $this->fail('Exception expected due to missing capability.');
         } catch (moodle_exception $e) {
-            $this->assertEquals('nopermissions', $e->errorcode);
+            $this->assertEquals('requireloginerror', $e->errorcode);
         }
 
     }
