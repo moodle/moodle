@@ -2224,18 +2224,21 @@ function forum_get_unmailed_posts($starttime, $endtime, $now=null) {
         if (empty($now)) {
             $now = time();
         }
+        $selectsql = "AND (p.created >= :ptimestart OR d.timestart >= :pptimestart)";
+        $params['pptimestart'] = $starttime;
         $timedsql = "AND (d.timestart < :dtimestart AND (d.timeend = 0 OR d.timeend > :dtimeend))";
         $params['dtimestart'] = $now;
         $params['dtimeend'] = $now;
     } else {
         $timedsql = "";
+        $selectsql = "AND p.created >= :ptimestart";
     }
 
     return $DB->get_records_sql("SELECT p.*, d.course, d.forum
                                  FROM {forum_posts} p
                                  JOIN {forum_discussions} d ON d.id = p.discussion
                                  WHERE p.mailed = :mailed
-                                 AND p.created >= :ptimestart
+                                 $selectsql
                                  AND (p.created < :ptimeend OR p.mailnow = :mailnow)
                                  $timedsql
                                  ORDER BY p.modified ASC", $params);
