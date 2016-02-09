@@ -35,6 +35,9 @@ env:
     # Run unit tests on Postgres
     - DB=pgsql    PHPUNIT=true    INSTALL=false   CITEST=false
 
+    # Perform an upgrade test too.
+    - DB=pgsql    PHPUNIT=false   INSTALL=true   CITEST=false   UPGRADE=true
+
 matrix:
     # Enable fast finish.
     # This will fail the build if a single job fails (except those in allow_failures).
@@ -52,6 +55,10 @@ matrix:
 
         - env: DB=mysqli   PHPUNIT=true    INSTALL=false   CITEST=false
           php: 5.4
+
+        # Moodle 2.7 is not compatible with PHP 7 for the upgrade test.
+        - env: DB=pgsql    PHPUNIT=false   INSTALL=true   CITEST=false   UPGRADE=true
+          php: 7.0
 
 cache:
     directories:
@@ -172,4 +179,40 @@ script:
       if [ "$CITEST" = 'true' ];
       then
         bash local/ci/php_lint/php_lint.sh;
+      fi
+
+    ########################################################################
+    # Upgrade test
+    ########################################################################
+    - >
+      if [ "$UPGRADE" = 'true' ];
+      then
+        # We need the official upstream.
+        git remote add upstream https://github.com/moodle/moodle.git;
+
+        # Checkout 27 STABLE branch.
+        git fetch upstream MOODLE_27_STABLE;
+        git checkout MOODLE_27_STABLE;
+
+        # Perform the upgrade
+        php admin/cli/install_database.php --agree-license --adminpass=Password --adminemail=admin@example.com --fullname="Upgrade test" --shortname=Upgrade;
+
+        # Return to the previous commit
+        git checkout -;
+
+        # Perform the upgrade
+        php admin/cli/upgrade.php --non-interactive --allow-unstable ;
+
+        # The local_ci repository can be used to check upgrade savepoints.
+        git clone https://github.com/moodlehq/moodle-local_ci.git local/ci ;
+
+        cp local/ci/check_upgrade_savepoints/check_upgrade_savepoints.php ./check_upgrade_savepoints.php
+        result=`php check_upgrade_savepoints.php`;
+        # Check if there are problems
+        count=`echo "$result" | grep -P "ERROR|WARN" | wc -l` ;
+        if (($count > 0));
+        then
+          echo "$result"
+          exit 1 ;
+        fi
       fi
