@@ -2347,11 +2347,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $cm = get_coursemodule_from_instance('page', $page->id);
         // Add a link and list again.
         $ccm = api::add_competency_to_course_module($cm, $c->get_id());
-        $one = (object) array(
-            'id' => $cm->id,
-            'visible' => true
-        );
-        $expected = array($one);
+        $expected = array($cm->id);
         $result = api::list_course_modules_using_competency($c->get_id(), $course->id);
         $this->assertEquals($expected, $result);
 

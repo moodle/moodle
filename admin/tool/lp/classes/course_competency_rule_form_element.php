@@ -64,6 +64,9 @@ class tool_lp_course_competency_rule_form_element extends MoodleQuickForm_select
             $cmid = $options['cmid'];
 
             $current = \tool_lp\api::list_course_module_competencies_in_course_module($cmid);
+
+            // Note: We just pick the outcome set on the first course_module_competency - because in our UI are are
+            // forcing them to be all the same for each activity.
             if (!empty($current)) {
                 $one = array_pop($current);
                 $this->setValue($one->get_ruleoutcome());

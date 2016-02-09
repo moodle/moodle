@@ -1512,7 +1512,6 @@ class external extends external_api {
     }
 
     /**
-    /**
      * Returns description of list_course_module_competencies() parameters.
      *
      * @return \external_function_parameters
@@ -1543,8 +1542,7 @@ class external extends external_api {
                                                 'cmid' => $cmid
                                             ));
 
-        $cm = course_module_instance_from_id($params['cmid']);
-        $context = context_module::instance($cm->id);
+        $context = context_module::instance($params['cmid']);
         self::validate_context($context);
 
         $output = $PAGE->get_renderer('tool_lp');
@@ -1626,7 +1624,8 @@ class external extends external_api {
         $coursemodules = api::list_course_modules_using_competency($params['competencyid'], $params['courseid']);
         $result = array();
 
-        foreach ($coursemodules as $cmrecord) {
+        foreach ($coursemodules as $cmid) {
+            $cmrecord = get_coursemodule_from_id(null, $cmid);
             $context = context_module::instance($cmrecord->id);
             $exporter = new course_module_summary_exporter($cmrecord, array('context' => $context));
             $coursemodulesummary = $exporter->export($output);

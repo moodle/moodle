@@ -435,11 +435,15 @@ function tool_lp_coursemodule_standard_elements($formwrapper, $mform) {
 function tool_lp_coursemodule_edit_post_actions($data, $course) {
     $existing = \tool_lp\api::list_course_module_competencies_in_course_module($data->coursemodule);
 
-    $getid = function($value) { return $value->get_competencyid(); };
-    $existingids = array_map($getid, $existing);
+    $existingids = array();
+    foreach ($existing as $cmc) {
+        array_push($existingids, $cmc->get_competencyid());
+    }
 
-    $removed = array_diff($existingids, $data->competencies);
-    $added = array_diff($data->competencies, $existingids);
+    $newids = isset($data->competencies) ? $data->competencies : array();
+
+    $removed = array_diff($existingids, $newids);
+    $added = array_diff($newids, $existingids);
 
     foreach ($removed as $removedid) {
         \tool_lp\api::remove_competency_from_course_module($data->coursemodule, $removedid);
@@ -448,9 +452,13 @@ function tool_lp_coursemodule_edit_post_actions($data, $course) {
         \tool_lp\api::add_competency_to_course_module($data->coursemodule, $addedid);
     }
 
-    $current = \tool_lp\api::list_course_module_competencies_in_course_module($data->coursemodule);
-    // Now update the rules for each course_module_competency.
-    foreach ($current as $coursemodulecompetency) {
-        \tool_lp\api::set_course_module_competency_ruleoutcome($coursemodulecompetency, $data->competency_rule);
+    if (isset($data->competency_rule)) {
+        // Now update the rules for each course_module_competency.
+        $current = \tool_lp\api::list_course_module_competencies_in_course_module($data->coursemodule);
+        foreach ($current as $coursemodulecompetency) {
+            \tool_lp\api::set_course_module_competency_ruleoutcome($coursemodulecompetency, $data->competency_rule);
+        }
     }
+
+    return $data;
 }

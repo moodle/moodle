@@ -162,18 +162,18 @@ class course_module_competency extends persistent {
      * Return the module IDs and visible flags that include this competency in a single course.
      *
      * @param int $competencyid The competency id
-     * @return array containing cmid and visible.
+     * @return array of ints (cmids)
      */
     public static function list_course_modules($competencyid, $courseid) {
         global $DB;
 
-        $results = $DB->get_records_sql('SELECT coursemodules.id as id, coursemodules.visible as visible
+        $results = $DB->get_records_sql('SELECT coursemodules.id as id
                                            FROM {' . self::TABLE . '} modcomp
                                            JOIN {course_modules} coursemodules
                                              ON modcomp.cmid = coursemodules.id
                                           WHERE modcomp.competencyid = ? AND coursemodules.course = ?', array($competencyid, $courseid));
 
-        return $results;
+        return array_keys($results);
     }
 
     /**
@@ -210,10 +210,10 @@ class course_module_competency extends persistent {
                   FROM {' . competency::TABLE . '} comp
                   JOIN {' . self::TABLE . '} coursemodulecomp
                     ON coursemodulecomp.competencyid = comp.id
-                 WHERE coursemodulecomp.cmid = ?';
+                 WHERE coursemodulecomp.cmid = ?
+                 ORDER BY coursemodulecomp.sortorder ASC';
         $params = array($cmid);
 
-        $sql .= ' ORDER BY coursemodulecomp.sortorder ASC';
         $results = $DB->get_recordset_sql($sql, $params);
         $instances = array();
         foreach ($results as $result) {
@@ -268,29 +268,6 @@ class course_module_competency extends persistent {
     }
 
     /**
-     * Get the specified mod_competency in this course.
-     *
-     * @param int $cmid The course module id
-     * @param int $competencyid The competency id
-     * @return course_module_competency
-     */
-    public static function get_course_module_competency($cmid, $competencyid) {
-        global $DB;
-
-        $sql = 'SELECT crsmodcomp.*
-                  FROM {' . self::TABLE . '} crsmodcomp
-                 WHERE crsmodcomp.cmid = ? AND crsmodcomp.competencyid = ?';
-        $params = array($cmid, $competencyid);
-
-        $result = $DB->get_record_sql($sql, $params);
-        if (!$result) {
-            throw new coding_exception('The competency does not belong to this course module: ' . $competencyid . ', ' . $cmid);
-        }
-
-        return new course_module_competency(0, $result);
-    }
-
-    /**
      * List the course_module_competencies in this course module.
      *
      * @param int $cmid The course module id
@@ -303,10 +280,10 @@ class course_module_competency extends persistent {
                   FROM {' . self::TABLE . '} coursemodcomp
                   JOIN {' . competency::TABLE . '} comp
                     ON coursemodcomp.competencyid = comp.id
-                 WHERE coursemodcomp.cmid = ?';
+                 WHERE coursemodcomp.cmid = ?
+                 ORDER BY coursemodcomp.sortorder ASC';
         $params = array($cmid);
 
-        $sql .= ' ORDER BY coursemodcomp.sortorder ASC';
         $results = $DB->get_recordset_sql($sql, $params);
         $instances = array();
         foreach ($results as $result) {

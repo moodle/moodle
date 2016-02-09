@@ -65,8 +65,10 @@ class tool_lp_course_competencies_form_element extends MoodleQuickForm_autocompl
 
         if (!empty($options['cmid'])) {
             $current = \tool_lp\api::list_course_module_competencies_in_course_module($options['cmid']);
-            $getid = function($coursemodulecompetency) { return $coursemodulecompetency->get_competencyid(); };
-            $ids = array_map($getid, $current);
+            $ids = array();
+            foreach ($current as $coursemodulecompetency) {
+                array_push($ids, $coursemodulecompetency->get_competencyid());
+            }
             $this->setValue($ids);
         }
 

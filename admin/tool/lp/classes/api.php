@@ -46,6 +46,36 @@ use required_capability_exception;
 class api {
 
     /**
+     * Validate if current user have acces to the course_module if hidden.
+     *
+     * @param mixed $cmmixed The cm_info class, course module record or its ID.
+     * @param bool $throwexception Throw an exception or not.
+     * @return bool
+     */
+    protected static function validate_course_module($cmmixed, $throwexception = true) {
+        $cm = $cmmixed;
+        if (!is_object($cm)) {
+            $cmrecord = get_coursemodule_from_id(null, $cmmixed);
+            $modinfo = get_fast_modinfo($cmrecord->course);
+            $cm = $modinfo->get_cm($cmmixed);
+        } else if (!$cm instanceof cm_info) {
+            // Assume we got a course module record.
+            $modinfo = get_fast_modinfo($cm->course);
+            $cm = $modinfo->get_cm($cm->id);
+        }
+
+        if (!$cm->uservisible) {
+            if ($throwexception) {
+                throw new require_login_exception('Course module is hidden');
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Validate if current user have acces to the course if hidden.
      *
      * @param mixed $courseorid The course or it ID.
@@ -812,7 +842,7 @@ class api {
      *
      * @param int $competencyid The id of the competency to check.
      * @param int $courseid The id of the course to check.
-     * @return array[stdClass] Array of stdClass containing course module records.
+     * @return array[int] Array of course modules ids.
      */
     public static function list_course_modules_using_competency($competencyid, $courseid) {
 
@@ -828,8 +858,10 @@ class api {
         }
 
         $cmlist = course_module_competency::list_course_modules($competencyid, $courseid);
-        foreach ($cmlist as $id => $cm) {
-            array_push($result, $cm);
+        foreach ($cmlist as $cmid) {
+            if (self::validate_course_module($cmid, false)) {
+                array_push($result, $cmid);
+            }
         }
 
         return $result;
@@ -847,8 +879,8 @@ class api {
             $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
         }
 
-        // Check the user have access to the course.
-        self::validate_course($cm->course);
+        // Check the user have access to the course module.
+        self::validate_course_module($cm);
         $context = context_module::instance($cm->id);
 
         $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
@@ -857,7 +889,6 @@ class api {
         }
 
         $result = array();
-        self::validate_course($cm->course);
 
         $cmclist = course_module_competency::list_course_module_competencies($cm->id);
         foreach ($cmclist as $id => $cmc) {
@@ -1054,8 +1085,8 @@ class api {
             $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
         }
 
-        // Check the user have access to the course.
-        self::validate_course($cm->course);
+        // Check the user have access to the course module.
+        self::validate_course_module($cm);
         $context = context_module::instance($cm->id);
 
         $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
@@ -1261,8 +1292,8 @@ class api {
             $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
         }
 
-        // Check the user have access to the course.
-        self::validate_course($cm->course);
+        // Check the user have access to the course module.
+        self::validate_course_module($cm);
 
         // First we do a permissions check.
         $context = context_module::instance($cm->id);
@@ -1309,8 +1340,8 @@ class api {
         if (!is_object($cmorid)) {
             $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
         }
-        // Check the user have access to the course.
-        self::validate_course($cm->course);
+        // Check the user have access to the course module.
+        self::validate_course_module($cm);
 
         // First we do a permissions check.
         $context = context_module::instance($cm->id);
@@ -1322,10 +1353,9 @@ class api {
         $record->competencyid = $competencyid;
 
         $competency = new competency($competencyid);
-        $exists = course_module_competency::get_records(array('cmid' => $cm->id, 'competencyid' => $competencyid));
+        $exists = course_module_competency::get_record(array('cmid' => $cm->id, 'competencyid' => $competencyid));
         if ($exists) {
-            $coursemodulecompetency = array_pop($exists);
-            return $coursemodulecompetency->delete();
+            return $exists->delete();
         }
         return false;
     }
@@ -1345,8 +1375,8 @@ class api {
         if (!is_object($cmorid)) {
             $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
         }
-        // Check the user have access to the course.
-        self::validate_course($cm->course);
+        // Check the user have access to the course module.
+        self::validate_course_module($cm);
 
         // First we do a permissions check.
         $context = context_module::instance($cm->id);
@@ -1403,8 +1433,7 @@ class api {
 
         $cm = get_coursemodule_from_id('', $coursemodulecompetency->get_cmid(), 0, true, MUST_EXIST);
 
-        $courseid = $cm->course;
-        self::validate_course($courseid);
+        self::validate_course_module($cm);
         $context = context_module::instance($cm->id);
 
         require_capability('tool/lp:coursecompetencymanage', $context);
@@ -1473,10 +1502,14 @@ class api {
 
         $competency = new competency($competencyid);
         $coursecompetency = new course_competency();
-        $exists = $coursecompetency->get_records(array('courseid' => $courseid, 'competencyid' => $competencyid));
+        $exists = $coursecompetency->get_record(array('courseid' => $courseid, 'competencyid' => $competencyid));
         if ($exists) {
-            $competency = array_pop($exists);
-            return $competency->delete();
+            // Delete all course_module_competencies for this competency in this course.
+            $cmcs = course_module_competency::list_course_module_competencies($competencyid, $courseid);
+            foreach ($cmcs as $cmc) {
+                $cmc->delete();
+            }
+            return $exists->delete();
         }
         return false;
     }
