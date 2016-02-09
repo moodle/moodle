@@ -68,6 +68,7 @@
     z-index: 1;
 }
 
+.que.ddimageortext .dropzone:focus,
 .que.ddimageortext .dropzone.yui3-dd-drop-over.yui3-dd-drop-active-valid {
     border-color: #0a0;
     box-shadow: 0 0 5px 5px rgba(255, 255, 150, 1);
