@@ -8971,15 +8971,6 @@ function get_performance_info() {
 }
 
 /**
- * Legacy function.
- *
- * @todo Document this function linux people
- */
-function apd_get_profiling() {
-    return shell_exec('pprofp -u ' . ini_get('apd.dumpdir') . '/pprof.' . getmypid() . '.*');
-}
-
-/**
  * Delete directory or only its content
  *
  * @param string $dir directory path
