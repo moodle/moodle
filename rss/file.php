@@ -131,7 +131,7 @@ try {
     $autologinguest = true;
     $setwantsurltome = true;
     $preventredirect = true;
-    require_login($course, $autologinguest, $cm, $setwantsurltome, $preventredirect);
+    require_course_login($course, $autologinguest, $cm, $setwantsurltome, $preventredirect);
 } catch (Exception $e) {
     if (isguestuser()) {
         rss_error('rsserrorguest');
