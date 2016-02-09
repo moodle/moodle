@@ -18,13 +18,13 @@ Feature: Latest news block displays the course latest news
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    When I add a new topic to "News forum" forum with:
+    When I add a new topic to "Announcements" forum with:
       | Subject | Discussion One |
       | Message | Not important |
-    And I add a new topic to "News forum" forum with:
+    And I add a new topic to "Announcements" forum with:
       | Subject | Discussion Two |
       | Message | Not important |
-    And I add a new topic to "News forum" forum with:
+    And I add a new topic to "Announcements" forum with:
       | Subject | Discussion Three |
       | Message | Not important |
     And I follow "Course 1"
