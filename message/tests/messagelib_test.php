@@ -383,12 +383,13 @@ class core_message_messagelib_testcase extends advanced_testcase {
      */
     public function message_get_recent_conversations_provider() {
         return array(
-            array(
-                // Test that conversations with multiple contacts is correctly ordered.
+            'Test that conversations with messages contacts is correctly ordered.' => array(
                 'users' => array(
                     'user1',
                     'user2',
                     'user3',
+                ),
+                'contacts' => array(
                 ),
                 'messages' => array(
                     array(
@@ -465,11 +466,52 @@ class core_message_messagelib_testcase extends advanced_testcase {
                     ),
                 ),
             ),
-            array(
-                // Test conversations with a single user, where some messages are read and some are not.
+            'Test that users with contacts and messages to self work as expected' => array(
                 'users' => array(
                     'user1',
                     'user2',
+                    'user3',
+                ),
+                'contacts' => array(
+                    'user1' => array(
+                        'user2' => 0,
+                        'user3' => 0,
+                    ),
+                    'user2' => array(
+                        'user3' => 0,
+                    ),
+                ),
+                'messages' => array(
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user1',
+                        'state'         => 'unread',
+                        'subject'       => 'S1',
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user1',
+                        'state'         => 'unread',
+                        'subject'       => 'S2',
+                    ),
+                ),
+                'expectations' => array(
+                    'user1' => array(
+                        // User1 has conversed most recently with user1. The most recent message is S2.
+                        array(
+                            'messageposition'   => 0,
+                            'with'              => 'user1',
+                            'subject'           => 'S2',
+                        ),
+                    ),
+                ),
+            ),
+            'Test conversations with a single user, where some messages are read and some are not.' => array(
+                'users' => array(
+                    'user1',
+                    'user2',
+                ),
+                'contacts' => array(
                 ),
                 'messages' => array(
                     array(
@@ -518,14 +560,15 @@ class core_message_messagelib_testcase extends advanced_testcase {
                     ),
                 ),
             ),
-            array(
-                // Test conversations with a single user, where some messages are read and some are not, and messages
-                // are out of order.
-                // This can happen through a combination of factors including multi-master DB replication with messages
-                // read somehow (e.g. API).
+            'Test conversations with a single user, where some messages are read and some are not, and messages ' .
+            'are out of order' => array(
+            // This can happen through a combination of factors including multi-master DB replication with messages
+            // read somehow (e.g. API).
                 'users' => array(
                     'user1',
                     'user2',
+                ),
+                'contacts' => array(
                 ),
                 'messages' => array(
                     array(
@@ -584,13 +627,23 @@ class core_message_messagelib_testcase extends advanced_testcase {
      * @param array $messagesdata The list of messages to create.
      * @param array $expectations The list of expected outcomes.
      */
-    public function test_message_get_recent_conversations($usersdata, $messagesdata, $expectations) {
+    public function test_message_get_recent_conversations($usersdata, $contacts, $messagesdata, $expectations) {
         global $DB;
 
         // Create all of the users.
         $users = array();
         foreach ($usersdata as $username) {
             $users[$username] = $this->getDataGenerator()->create_user(array('username' => $username));
+        }
+
+        foreach ($contacts as $username => $contact) {
+            foreach ($contact as $contactname => $blocked) {
+                $record = new stdClass();
+                $record->userid     = $users[$username]->id;
+                $record->contactid  = $users[$contactname]->id;
+                $record->blocked    = $blocked;
+                $record->id = $DB->insert_record('message_contacts', $record);
+            }
         }
 
         $defaulttimecreated = time();
