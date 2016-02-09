@@ -294,4 +294,13 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
     public function is_configurable() {
         return false;
     }
+
+    /**
+     * Get file areas returns a list of areas this plugin stores files.
+     *
+     * @return array - An array of fileareas (keys) and descriptions (values)
+     */
+    public function get_file_areas() {
+        return array(document_services::FINAL_PDF_FILEAREA => $this->get_name());
+    }
 }
