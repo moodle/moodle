@@ -19,7 +19,7 @@ Feature: Managers can create courses
     And I log out
     When I log in as "teacher1"
     And I follow "Course 1"
-    Then "Latest news" "block" should exist
+    Then "Latest announcements" "block" should exist
     And I follow "Announcements"
     And "Add a new topic" "button" should exist
     And "Forced subscription" "link" should not exist
