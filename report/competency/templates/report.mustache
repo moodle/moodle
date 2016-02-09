@@ -1,8 +1,8 @@
-<div data-region="competency-breakdown-report" data-courseid="{{course.id}}" data-groupid="{{groupid}}" data-userid="{{user.id}}" data-onlyactive="{{onlyactive}}">
+<div data-region="competency-breakdown-report" data-courseid="{{course.id}}" data-userid="{{user.id}}">
 <div class="row-fluid">
 <span class="span6">
 <table class="table table-bordered">
-<summary><p>{{#str}}coursecompetencybreakdownsummary, report_competency{{/str}}</p></summary>
+<summary class="accesshide"><p>{{#str}}coursecompetencybreakdownsummary, report_competency{{/str}}</p></summary>
 <tr>
 <th scope="col">{{#str}}competency, report_competency{{/str}}</span></th>
 <th scope="col">{{#str}}rating, report_competency{{/str}}</span></th>
@@ -10,7 +10,7 @@
 {{#usercompetencies}}
 <tr>
 {{#competency}}
-<td><a href="#" data-action="competency-dialogue" data-id="{{competency.id}}">{{competency.shortname}} - {{competency.idnumber}}</a></td>
+<td><a href="#" data-action="competency-dialogue" data-id="{{competency.id}}">{{competency.shortname}} <em>{{competency.idnumber}}</em></a></td>
 {{/competency}}
 {{#usercompetency}}
 <td class="alert {{#proficiency}}alert-success{{/proficiency}}"

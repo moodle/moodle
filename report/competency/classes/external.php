@@ -62,21 +62,9 @@ class external extends external_api {
             'The user id',
             VALUE_REQUIRED
         );
-        $groupid = new external_value(
-            PARAM_INT,
-            'The group id',
-            VALUE_REQUIRED
-        );
-        $onlyactive = new external_value(
-            PARAM_BOOL,
-            'Only active users',
-            VALUE_REQUIRED
-        );
         $params = array(
             'courseid' => $courseid,
-            'userid' => $userid,
-            'groupid' => $groupid,
-            'onlyactive' => $onlyactive,
+            'userid' => $userid
         );
         return new external_function_parameters($params);
     }
@@ -85,20 +73,16 @@ class external extends external_api {
      * Loads the data required to render the report.
      *
      * @param int $courseid The course id
-     * @param int $groupid The group id
-     * @param boolean $onlyactive Only show active enrolments
      * @return \stdClass
      */
-    public static function data_for_report($courseid, $userid, $groupid, $onlyactive) {
+    public static function data_for_report($courseid, $userid) {
         global $PAGE;
 
         $params = self::validate_parameters(
             self::data_for_report_parameters(),
             array(
                 'courseid' => $courseid,
-                'userid' => $userid,
-                'groupid' => $groupid,
-                'onlyactive' => $onlyactive
+                'userid' => $userid
             )
         );
         $context = context_course::instance($params['courseid']);
@@ -107,7 +91,7 @@ class external extends external_api {
             throw new coding_exception('invaliduser');
         }
 
-        $renderable = new output\report($params['courseid'], $params['userid'], $params['groupid'], $params['onlyactive']);
+        $renderable = new output\report($params['courseid'], $params['userid']);
         $renderer = $PAGE->get_renderer('report_competency');
 
         $data = $renderable->export_for_template($renderer);
@@ -123,8 +107,6 @@ class external extends external_api {
     public static function data_for_report_returns() {
         return new external_single_structure(array (
             'courseid' => new external_value(PARAM_INT, 'Course id'),
-            'groupid' => new external_value(PARAM_INT, 'Group id'),
-            'onlyactive' => new external_value(PARAM_BOOL, 'Only include active enrolments'),
             'user' => user_summary_exporter::get_read_structure(),
             'course' => course_summary_exporter::get_read_structure(),
             'pluginbaseurl' => new external_value(PARAM_LOCALURL, 'Url to the tool_lp plugin folder on this Moodle site'),

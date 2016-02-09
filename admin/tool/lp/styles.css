@@ -202,8 +202,4 @@ input[type="checkbox"].tool_lp_scale_proficient {
 }
 .user-competency-course-navigation {
     width: 240px;
-    height: 80px;
-}
-.user-competency-course-navigation .form-autocomplete-selection {
-    display: none;
 }

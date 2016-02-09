@@ -33,43 +33,65 @@ if (isguestuser()) {
     throw new require_login_exception('Guests are not allowed here.');
 }
 
+$course = $DB->get_record('course', array('id' => $courseid));
+$context = context_course::instance($courseid);
+$currentgroup = groups_get_course_group($course, true);
 if (empty($userid)) {
-    $context = context_course::instance($courseid);
-    $gradable = get_enrolled_users($context, 'tool/lp:coursecompetencygradable', 0, 'u.id', null, 0, 1);
+    $gradable = get_enrolled_users($context, 'tool/lp:coursecompetencygradable', $currentgroup, 'u.id', null, 0, 1);
     if (empty($gradable)) {
-        print_error('noparticipants');
+        $userid = 0;
+    } else {
+        $userid = array_pop($gradable)->id;
     }
-    $userid = array_pop($gradable)->id;
+} else {
+    $gradable = get_enrolled_users($context, 'tool/lp:coursecompetencygradable', $currentgroup, 'u.id');
+    if (count($gradable) == 0) {
+        $userid = 0;
+    } else if (!in_array($userid, array_keys($gradable))) {
+        $userid = array_shift($gradable)->id;
+    }
 }
 
 $params = array('userid' => $userid, 'competencyid' => $competencyid, 'courseid' => $courseid);
-$course = $DB->get_record('course', array('id' => $courseid));
 $url = new moodle_url('/admin/tool/lp/user_competency_in_course.php', $params);
 
-$usercontext = context_user::instance($userid);
-$user = $DB->get_record('user', array('id' => $userid));
+if ($userid > 0) {
+    $usercontext = context_user::instance($userid);
+    $user = $DB->get_record('user', array('id' => $userid));
+}
 $competency = new \tool_lp\competency($competencyid);
 
 // Does a permissions check for us.
-$usercompetencies = \tool_lp\api::list_user_competencies_in_course($courseid, $userid);
+if ($userid > 0) {
+    $usercompetencies = \tool_lp\api::list_user_competencies_in_course($courseid, $userid);
+}
 $subtitle = $competency->get_shortname() . ' <em>' . $competency->get_idnumber() . '</em>';
 
 list($title, $subtitle) = \tool_lp\page_helper::setup_for_course($url, $course, $subtitle);
 
 $output = $PAGE->get_renderer('tool_lp');
-$userheading = array(
-    'heading' => fullname($user),
-    'user' => $user,
-    'usercontext' => $usercontext
-);
+if ($userid > 0) {
+    $userheading = array(
+        'heading' => fullname($user),
+        'user' => $user,
+        'usercontext' => $usercontext
+    );
+}
 echo $output->header();
-echo $OUTPUT->context_header($userheading, 3);
+if ($userid > 0) {
+    echo $OUTPUT->context_header($userheading, 3);
+}
 //echo $output->heading($title, 3);
 
 $baseurl = new moodle_url('/admin/tool/lp/user_competency_in_course.php');
 $nav = new \tool_lp\output\user_competency_course_navigation($userid, $competencyid, $courseid, $baseurl);
 echo $output->render($nav);
-$page = new \tool_lp\output\user_competency_summary_in_course($userid, $competencyid, $courseid);
-echo $output->render($page);
+if ($userid > 0) {
+    $page = new \tool_lp\output\user_competency_summary_in_course($userid, $competencyid, $courseid);
+    echo $output->render($page);
+} else {
+    echo $output->container('', 'clearfix');
+    echo $output->notify_problem(get_string('noparticipants', 'tool_lp'));
+}
 
 echo $output->footer();

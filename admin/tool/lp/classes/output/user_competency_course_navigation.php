@@ -82,11 +82,15 @@ class user_competency_course_navigation implements renderable, templatable {
         $data->competencyid = $this->competencyid;
         $data->courseid = $this->courseid;
         $data->baseurl = $this->baseurl;
+        $data->groupselector = '';
 
         if (has_capability('tool/lp:coursecompetencymanage', $context)) {
             $course = $DB->get_record('course', array('id' => $this->courseid));
-            $currentgroup = optional_param('group', null, PARAM_INT);
-            $select = groups_allgroups_course_menu($course, $PAGE->url, true, $currentgroup);
+            $currentgroup = groups_get_course_group($course, true);
+            if ($currentgroup !== false) {
+                $select = groups_allgroups_course_menu($course, $PAGE->url, true, $currentgroup);
+                $data->groupselector = $select;
+            }
             // Fetch showactive.
             $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
             $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
@@ -94,7 +98,6 @@ class user_competency_course_navigation implements renderable, templatable {
 
             // Fetch current active group.
             $groupmode = groups_get_course_groupmode($course);
-            $currentgroup = $SESSION->activegroup[$course->id][$groupmode][$course->defaultgroupingid];
 
             $users = get_enrolled_users($context, 'tool/lp:coursecompetencygradable', $currentgroup,
                                         'u.*', null, 0, 0, $showonlyactiveenrol);

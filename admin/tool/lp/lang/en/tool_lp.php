@@ -202,6 +202,7 @@ $string['nocompetencyselected'] = 'No competency selected';
 $string['nofiles'] = 'No files';
 $string['noevidence'] = 'No evidence';
 $string['nolinkedcourses'] = 'No courses are linked to this competency';
+$string['noparticipants'] = 'No participants found.';
 $string['noplanswerecreated'] = 'No plans were created.';
 $string['norelatedcompetencies'] = 'No other competencies have been related to this competency.';
 $string['notemplates'] = 'No learning plan templates have been created yet.';

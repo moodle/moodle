@@ -49,28 +49,18 @@ class report implements renderable, templatable {
     protected $context;
     /** @var int $courseid */
     protected $courseid;
-    /** @var int $groupid */
-    protected $groupid;
-    /** @var boolean $onlyactive */
-    protected $onlyactive;
     /** @var array $competencies */
     protected $competencies;
-    /** @var array $users */
-    protected $users;
 
     /**
      * Construct this renderable.
      *
      * @param int $courseid The course id
      * @param int $userid The user id
-     * @param int $groupid The group id
-     * @param bool $onlyactive Only show active (not suspended) students.
      */
-    public function __construct($courseid, $userid, $groupid, $onlyactive) {
+    public function __construct($courseid, $userid) {
         $this->courseid = $courseid;
-        $this->groupid = $groupid;
         $this->userid = $userid;
-        $this->onlyactive = $onlyactive;
         $this->context = context_course::instance($courseid);
     }
 
@@ -85,8 +75,6 @@ class report implements renderable, templatable {
 
         $data = new stdClass();
         $data->courseid = $this->courseid;
-        $data->groupid = $this->groupid;
-        $data->onlyactive = $this->onlyactive;
 
         $course = $DB->get_record('course', array('id' => $this->courseid));
         $coursecontext = context_course::instance($course->id);
