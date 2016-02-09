@@ -764,7 +764,7 @@ function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
                    ) messagesubset ON messagesubset.messageid = message.id
               JOIN {user} otheruser ON (message.useridfrom = :userid4 AND message.useridto = otheruser.id)
                 OR (message.useridto   = :userid5 AND message.useridfrom   = otheruser.id)
-         LEFT JOIN {message_contacts} contact ON contact.userid  = :userid3 AND contact.userid = otheruser.id
+         LEFT JOIN {message_contacts} contact ON contact.userid  = :userid3 AND contact.contactid = otheruser.id
              WHERE otheruser.deleted = 0 AND message.notification = 0
           ORDER BY message.timecreated DESC";
     $params = array(
