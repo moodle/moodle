@@ -490,7 +490,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
     public function get_external_parameters() {
         $editorparams = array('text' => new external_value(PARAM_RAW, 'The text for this feedback.'),
                               'format' => new external_value(PARAM_INT, 'The format for this feedback'));
-        $editorstructure = new external_single_structure($editorparams);
+        $editorstructure = new external_single_structure($editorparams, 'Editor structure', VALUE_OPTIONAL);
         return array('assignfeedbackcomments_editor' => $editorstructure);
     }
 

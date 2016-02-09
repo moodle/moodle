@@ -528,7 +528,8 @@ class assign_submission_file extends assign_submission_plugin {
         return array(
             'files_filemanager' => new external_value(
                 PARAM_INT,
-                'The id of a draft area containing files for this submission.'
+                'The id of a draft area containing files for this submission.',
+                VALUE_OPTIONAL
             )
         );
     }

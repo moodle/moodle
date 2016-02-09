@@ -618,7 +618,8 @@ class assign_feedback_file extends assign_feedback_plugin {
         return array(
             'files_filemanager' => new external_value(
                 PARAM_INT,
-                'The id of a draft area containing files for this feedback.'
+                'The id of a draft area containing files for this feedback.',
+                VALUE_OPTIONAL
             )
         );
     }
