@@ -98,13 +98,15 @@ class mod_page_external_testcase extends externallib_advanced_testcase {
         // Test user with no capabilities.
         // We need a explicit prohibit since this capability is only defined in authenticated user and guest roles.
         assign_capability('mod/page:view', CAP_PROHIBIT, $studentrole->id, $context->id);
+        // Empty all the caches that may be affected by this change.
         accesslib_clear_all_caches_for_unit_testing();
+        course_modinfo::clear_instance_cache();
 
         try {
             mod_page_external::view_page($page->id);
             $this->fail('Exception expected due to missing capability.');
         } catch (moodle_exception $e) {
-            $this->assertEquals('nopermissions', $e->errorcode);
+            $this->assertEquals('requireloginerror', $e->errorcode);
         }
 
     }
