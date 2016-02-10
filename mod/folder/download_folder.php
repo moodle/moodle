@@ -35,8 +35,7 @@ require_capability('mod/folder:view', $context);
 
 $folder = $DB->get_record('folder', array('id' => $cm->instance), '*', MUST_EXIST);
 
-$foldertree = new folder_tree($folder, $cm);
-$downloadable = folder_archive_available($folder, $foldertree);
+$downloadable = folder_archive_available($folder, $cm);
 if (!$downloadable) {
     print_error('cannotdownloaddir', 'repository');
 }

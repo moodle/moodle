@@ -67,7 +67,7 @@ class mod_folder_renderer extends plugin_renderer_base {
         // Do not append the edit button on the course page.
         if ($folder->display != FOLDER_DISPLAY_INLINE) {
             $containercontents = '';
-            $downloadable = folder_archive_available($folder, $foldertree);
+            $downloadable = folder_archive_available($folder, $cm);
 
             if ($downloadable) {
                 $containercontents .= $this->output->single_button(
