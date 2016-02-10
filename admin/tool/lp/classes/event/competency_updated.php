@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Competency viewed event.
+ * Competency updated event.
  *
  * @package    tool_lp
  * @copyright  2016 Issam Taboubi <issam.taboubi@umontreal.ca>
@@ -30,7 +30,7 @@ use tool_lp\competency;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Competency viewed event class.
+ * Competency updated event class.
  *
  *
  * @package    tool_lp
@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2016 Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class competency_viewed extends base {
+class competency_updated extends base {
 
     /**
      * Convenience method to instantiate the event.
@@ -63,7 +63,7 @@ class competency_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' viewed the competency with id '$this->objectid'";
+        return "The user with id '$this->userid' updated the competency with id '$this->objectid'";
     }
 
     /**
@@ -72,7 +72,7 @@ class competency_viewed extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventcompetencyviewed', 'tool_lp');
+        return get_string('eventcompetencyupdated', 'tool_lp');
     }
 
     /**
@@ -93,7 +93,7 @@ class competency_viewed extends base {
      * @return void
      */
     protected function init() {
-        $this->data['crud'] = 'r';
+        $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = competency::TABLE;
     }

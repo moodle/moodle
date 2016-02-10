@@ -281,4 +281,170 @@ class tool_lp_event_testcase extends advanced_testcase {
         $this->assertDebuggingNotCalled();
     }
 
+    /**
+     * Test the competency updated event.
+     *
+     */
+    public function test_competency_updated() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $f1 = $lpg->create_framework();
+        $competency = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c12 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1->get_id()));
+        $c13 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1->get_id()));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $competency->set_shortname('Shortname modified');
+        api::update_competency($competency->to_record());
+
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\tool_lp\event\competency_updated', $event);
+        $this->assertEquals($competency->get_id(), $event->objectid);
+        $this->assertEquals($competency->get_context()->id, $event->contextid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the competency created event.
+     *
+     */
+    public function test_competency_created() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $record = $c1->to_record();
+        $record->id = 0;
+        $record->idnumber = 'comp idnumber';
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        // Create competency should trigger a created event.
+        $competency = api::create_competency($record);
+
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        $this->assertInstanceOf('\tool_lp\event\competency_created', $event);
+        $this->assertEquals($competency->get_id(), $event->objectid);
+        $this->assertEquals($competency->get_context()->id, $event->contextid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the competency created event by duplicate framework.
+     *
+     */
+    public function test_competency_created_by_duplicateframework() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c12 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1->get_id()));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        // Create framework should trigger a created event for competencies.
+        api::duplicate_framework($f1->get_id());
+
+        // Get our event event.
+        $events = $sink->get_events();
+        $this->assertEquals(4, count($events));
+
+        $event = array_shift($events);
+        $this->assertInstanceOf('\tool_lp\event\competency_created', $event);
+
+        $event = array_shift($events);
+        $this->assertInstanceOf('\tool_lp\event\competency_created', $event);
+
+        $event = array_shift($events);
+        $this->assertInstanceOf('\tool_lp\event\competency_created', $event);
+
+        $event = array_shift($events);
+        $this->assertInstanceOf('\tool_lp\event\competency_framework_created', $event);
+    }
+
+    /**
+     * Test the competency deleted event.
+     *
+     */
+    public function test_competency_deleted() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c1id = $c1->get_id();
+        $contextid = $c1->get_context()->id;
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        // Delete competency should trigger a deleted event.
+        api::delete_competency($c1id);
+
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        $this->assertInstanceOf('\tool_lp\event\competency_deleted', $event);
+        $this->assertEquals($c1id, $event->objectid);
+        $this->assertEquals($contextid, $event->contextid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the competency deleted event by delete framework.
+     *
+     */
+    public function test_competency_deleted_by_deleteframework() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c12 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1->get_id()));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        // Delete framework should trigger a deleted event for competencies.
+        api::delete_framework($f1->get_id());
+
+        // Get our event event.
+        $events = $sink->get_events();
+        $this->assertEquals(4, count($events));
+
+        $event = array_shift($events);
+        $this->assertInstanceOf('\tool_lp\event\competency_framework_deleted', $event);
+
+        $event = array_shift($events);
+        $this->assertInstanceOf('\tool_lp\event\competency_deleted', $event);
+
+        $event = array_shift($events);
+        $this->assertInstanceOf('\tool_lp\event\competency_deleted', $event);
+
+        $event = array_shift($events);
+        $this->assertInstanceOf('\tool_lp\event\competency_deleted', $event);
+    }
+
 }

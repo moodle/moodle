@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Competency viewed event.
+ * Competency deleted event.
  *
  * @package    tool_lp
  * @copyright  2016 Issam Taboubi <issam.taboubi@umontreal.ca>
@@ -30,15 +30,14 @@ use tool_lp\competency;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Competency viewed event class.
- *
+ * Competency deleted event class.
  *
  * @package    tool_lp
  * @since      Moodle 3.1
  * @copyright  2016 Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class competency_viewed extends base {
+class competency_deleted extends base {
 
     /**
      * Convenience method to instantiate the event.
@@ -58,12 +57,30 @@ class competency_viewed extends base {
     }
 
     /**
+     * Instantiate events from competency ids.
+     *
+     * @param array $competencyids Array of competency ids.
+     * @param int $contextid The context id.
+     * @return self[] Array of events.
+     */
+    public static function create_multiple_from_competencyids($competencyids, $contextid) {
+        $events = array();
+        foreach ($competencyids as $id) {
+            $events[$id] = static::create(array(
+                'contextid' => $contextid,
+                'objectid' => $id
+            ));
+        }
+        return $events;
+    }
+
+    /**
      * Returns description of what happened.
      *
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' viewed the competency with id '$this->objectid'";
+        return "The user with id '$this->userid' deleted the competency with id '$this->objectid'";
     }
 
     /**
@@ -72,19 +89,7 @@ class competency_viewed extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventcompetencyviewed', 'tool_lp');
-    }
-
-    /**
-     * Get URL related to the action
-     *
-     * @return \moodle_url
-     */
-    public function get_url() {
-        return new \moodle_url('/admin/tool/lp/editcompetency.php', array(
-            'id' => $this->objectid,
-            'pagecontextid' => $this->contextid
-        ));
+        return get_string('eventcompetencydeleted', 'tool_lp');
     }
 
     /**
@@ -93,7 +98,7 @@ class competency_viewed extends base {
      * @return void
      */
     protected function init() {
-        $this->data['crud'] = 'r';
+        $this->data['crud'] = 'd';
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = competency::TABLE;
     }

@@ -27,24 +27,24 @@ require_once($CFG->libdir.'/adminlib.php');
 
 $title = get_string('competencies', 'tool_lp');
 $id = optional_param('id', 0, PARAM_INT);
-$competencyframeworkid = required_param('competencyframeworkid', PARAM_INT);
+$competencyframeworkid = optional_param('competencyframeworkid', 0, PARAM_INT);
 $pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to the context we came from.
 $parentid = optional_param('parentid', 0, PARAM_INT);
 
 require_login();
 $pagecontext = context::instance_by_id($pagecontextid);
 
-// Set up the page.
-$url = new moodle_url("/admin/tool/lp/editcompetency.php", array('id' => $id, 'competencyframeworkid' => $competencyframeworkid,
-    'parentid' => $parentid, 'pagecontextid' => $pagecontextid));
-$frameworksurl = new moodle_url('/admin/tool/lp/competencyframeworks.php', array('pagecontextid' => $pagecontextid));
-$frameworkurl = new moodle_url('/admin/tool/lp/competencies.php', array('competencyframeworkid' => $competencyframeworkid,
-    'pagecontextid' => $pagecontextid));
+if (empty($competencyframeworkid) && empty($id)) {
+    throw new coding_exception('Competencyframeworkid param is required');
+}
+if (!empty($competencyframeworkid)) {
+    $competencyframework = \tool_lp\api::read_framework($competencyframeworkid);
+}
 
 $competency = null;
-$competencyframework = \tool_lp\api::read_framework($competencyframeworkid);
 if (!empty($id)) {
     $competency = \tool_lp\api::read_competency($id);
+    $competencyframework = $competency->get_framework();
 }
 
 $parent = null;
@@ -60,6 +60,16 @@ if (empty($id)) {
 } else {
     $pagetitle = get_string('taxonomy_edit_' . $competencyframework->get_taxonomy($competency->get_level()), 'tool_lp');
 }
+
+// Set up the page.
+$url = new moodle_url("/admin/tool/lp/editcompetency.php", array(
+    'id' => $id,
+    'competencyframeworkid' => $competencyframework->get_id(),
+    'parentid' => $parentid, 'pagecontextid' => $pagecontextid)
+);
+$frameworksurl = new moodle_url('/admin/tool/lp/competencyframeworks.php', array('pagecontextid' => $pagecontextid));
+$frameworkurl = new moodle_url('/admin/tool/lp/competencies.php', array('competencyframeworkid' => $competencyframework->get_id(),
+    'pagecontextid' => $pagecontextid));
 
 $PAGE->navigation->override_active_url($frameworksurl);
 $PAGE->set_context($pagecontext);

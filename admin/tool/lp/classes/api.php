@@ -118,6 +118,8 @@ class api {
         $competency->set_sortorder(null);
         $competency->create();
 
+        \tool_lp\event\competency_created::create_from_competency($competency)->trigger();
+
         // Reset the rule of the parent.
         $parent = $competency->get_parent();
         if ($parent) {
@@ -143,7 +145,9 @@ class api {
         // First we do a permissions check.
         require_capability('tool/lp:competencymanage', $competency->get_context());
 
+        $events = array();
         $competencyids = array(intval($competency->get_id()));
+        $contextid = $competency->get_context()->id;
         $competencyids = array_merge(competency::get_descendants_ids($competency), $competencyids);
         if (!competency::can_all_be_deleted($competencyids)) {
             return false;
@@ -171,12 +175,20 @@ class api {
             // Delete competency evidences.
             user_evidence_competency::delete_by_competencyids($competencyids);
 
-            $transaction->allow_commit();
-            return true;
+            // Register the competencies deleted events.
+            $events = \tool_lp\event\competency_deleted::create_multiple_from_competencyids($competencyids, $contextid);
 
         } catch (\Exception $e) {
             $transaction->rollback($e);
         }
+
+        $transaction->allow_commit();
+        // Trigger events.
+        foreach ($events as $event) {
+            $event->trigger();
+        }
+
+        return true;
     }
 
     /**
@@ -216,8 +228,9 @@ class api {
         }
 
         // OK - all set.
-        $current->update();
+        $result = $current->update();
 
+        return $result;
     }
 
     /**
@@ -252,7 +265,9 @@ class api {
         }
 
         // OK - all set.
-        return $current->update();
+        $result = $current->update();
+
+        return $result;
     }
 
     /**
@@ -315,12 +330,12 @@ class api {
 
         // Do the actual move.
         $current->set_parentid($newparentid);
-        $current->update();
+        $result = $current->update();
 
         // All right, let's commit this.
         $transaction->allow_commit();
 
-        return true;
+        return $result;
     }
 
     /**
@@ -348,7 +363,12 @@ class api {
         require_capability('tool/lp:competencymanage', $competency->get_context());
 
         // OK - all set.
-        return $competency->update();
+        $result = $competency->update();
+
+        // Trigger the update event.
+        \tool_lp\event\competency_updated::create_from_competency($competency)->trigger();
+
+        return $result;
     }
 
     /**
@@ -563,7 +583,9 @@ class api {
         $framework = new competency_framework($id);
         require_capability('tool/lp:competencymanage', $framework->get_context());
 
+        $events = array();
         $competenciesid = competency::get_ids_by_frameworkid($id);
+        $contextid = $framework->get_contextid();
         if (!competency::can_all_be_deleted($competenciesid)) {
             return false;
         }
@@ -584,6 +606,9 @@ class api {
             $event = \tool_lp\event\competency_framework_deleted::create_from_framework($framework);
             $result = $framework->delete();
 
+            // Register the deleted events competencies.
+            $events = \tool_lp\event\competency_deleted::create_multiple_from_competencyids($competenciesid, $contextid);
+
         } catch (\Exception $e) {
             $transaction->rollback($e);
         }
@@ -593,6 +618,11 @@ class api {
 
         // If all operations are successfull then trigger the delete event.
         $event->trigger();
+
+        // Trigger deleted event competencies.
+        foreach ($events as $event) {
+            $event->trigger();
+        }
 
         return $result;
     }
@@ -3488,6 +3518,9 @@ class api {
                 $competency->set_id(0);
                 $competency->reset_rule();
                 $competency->create();
+
+                // Trigger the created event competency.
+                \tool_lp\event\competency_created::create_from_competency($competency)->trigger();
 
                 // Match the old id with the new one.
                 $matchids[$parentid] = $competency;
