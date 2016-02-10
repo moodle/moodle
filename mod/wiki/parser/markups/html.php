@@ -15,22 +15,38 @@ class html_parser extends nwiki_parser {
 
     protected $section_editing = true;
 
+    /** @var int Minimum level of the headers on the page (usually tinymce uses <h1> and atto <h3>)  */
+    protected $minheaderlevel = null;
+
     public function __construct() {
         parent::__construct();
         // The order is important, headers should be parsed before links.
         $this->tagrules = array(
             // Headers are considered tags here.
             'header' => array(
-                'expression' => "/<\s*h([1-$this->maxheaderdepth])\s*>(.+?)<\/h[1-$this->maxheaderdepth]>/is"
+                'expression' => "/<\s*h([1-6])\s*>(.+?)<\/h[1-6]>/is"
             ),
             'link' => $this->tagrules['link'],
             'url' => $this->tagrules['url']
         );
     }
 
+    /**
+     * Find minimum header level used on the page (<h1>, <h3>, ...)
+     *
+     * @param string $text
+     * @return int
+     */
+    protected function find_min_header_level($text) {
+        preg_match_all($this->tagrules['header']['expression'], $text, $matches);
+        $level = !empty($matches[1]) ? min($matches[1]) : 1;
+        return $level >= 3 ? 3 : 1;
+    }
+
     protected function before_parsing() {
         parent::before_parsing();
 
+        $this->minheaderlevel = $this->find_min_header_level($this->string);
         $this->rules($this->string);
     }
 
@@ -54,7 +70,9 @@ class html_parser extends nwiki_parser {
             $text .= "\n\n";
         }
 
-        $h1 = array("<\s*h1\s*>", "<\/h1>");
+        $minheaderlevel = $this->find_min_header_level($text);
+
+        $h1 = array("<\s*h{$minheaderlevel}\s*>", "<\/h{$minheaderlevel}>");
 
         $regex = "/(.*?)({$h1[0]}\s*".preg_quote($header, '/')."\s*{$h1[1]}.*?)((?:\n{$h1[0]}.*)|$)/is";
         preg_match($regex, $text, $match);
@@ -82,5 +100,32 @@ class html_parser extends nwiki_parser {
         }
 
         return $match[0];
+    }
+
+    /**
+     * Header generation
+     *
+     * @param string $text
+     * @param int $level
+     * @return string
+     */
+    protected function generate_header($text, $level) {
+        $text = trim($text);
+
+        $normlevel = $level - $this->minheaderlevel + 1;
+
+        if (!$this->pretty_print && $normlevel == 1) {
+            $text .= ' ' . parser_utils::h('a', '['.get_string('editsection', 'wiki').']',
+                    array('href' => "edit.php?pageid={$this->wiki_page_id}&section=" . urlencode($text),
+                        'class' => 'wiki_edit_section'));
+        }
+
+        if ($normlevel <= $this->maxheaderdepth) {
+            $this->toc[] = array($normlevel, $text);
+            $num = count($this->toc);
+            $text = parser_utils::h('a', "", array('name' => "toc-$num")) . $text;
+        }
+
+        return parser_utils::h('h' . $level, $text) . "\n\n";
     }
 }

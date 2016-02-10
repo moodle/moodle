@@ -228,7 +228,7 @@ abstract class wiki_markup_parser extends generic_parser {
                 }
                 break;
             default:
-                continue;
+                continue 2;
             }
             $number = "$currentsection[0]";
             if (!empty($currentsection[1])) {
