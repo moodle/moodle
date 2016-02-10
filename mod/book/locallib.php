@@ -224,6 +224,7 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
         foreach ($chapters as $ch) {
             $i++;
             $title = trim(format_string($ch->title, true, array('context'=>$context)));
+            $titleout = $title;
             if (!$ch->subchapter) {
 
                 if ($first) {
@@ -239,12 +240,13 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
                     $ns = 0;
                     if ($book->numbering == BOOK_NUM_NUMBERS) {
                         $title = "$nch $title";
+                        $titleout = $title;
                     }
                 } else {
                     if ($book->numbering == BOOK_NUM_NUMBERS) {
                         $title = "x $title";
                     }
-                    $title = html_writer::tag('span', $title, array('class' => 'dimmed_text'));
+                    $titleout = html_writer::tag('span', $title, array('class' => 'dimmed_text'));
                 }
             } else {
 
@@ -260,6 +262,7 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
                     $ns++;
                     if ($book->numbering == BOOK_NUM_NUMBERS) {
                         $title = "$nch.$ns $title";
+                        $titleout = $title;
                     }
                 } else {
                     if ($book->numbering == BOOK_NUM_NUMBERS) {
@@ -269,14 +272,15 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
                             $title = "x.x $title";
                         }
                     }
-                    $title = html_writer::tag('span', $title, array('class' => 'dimmed_text'));
+                    $titleout = html_writer::tag('span', $title, array('class' => 'dimmed_text'));
                 }
             }
 
             if ($ch->id == $chapter->id) {
-                $toc .= html_writer::tag('strong', $title);
+                $toc .= html_writer::tag('strong', $titleout);
             } else {
-                $toc .= html_writer::link(new moodle_url('view.php', array('id' => $cm->id, 'chapterid' => $ch->id)), $title, array('title' => s($title)));
+                $toc .= html_writer::link(new moodle_url('view.php', array('id' => $cm->id, 'chapterid' => $ch->id)), $titleout,
+                    array('title' => $title));
             }
 
             $toc .= html_writer::start_tag('div', array('class' => 'action-list'));
