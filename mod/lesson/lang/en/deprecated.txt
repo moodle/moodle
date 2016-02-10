@@ -2,6 +2,7 @@ essayemailmessage,mod_lesson
 lessonattempted,mod_lesson
 clicktopost,mod_lesson
 configmaxhighscores,mod_lesson
+configactionaftercorrectanswer,mod_lesson
 displayhighscores,mod_lesson
 entername,mod_lesson
 eventhighscoreadded,mod_lesson
