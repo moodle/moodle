@@ -3666,14 +3666,30 @@ class api {
             throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
         }
 
-        // TODO - handle archived plans.
-
         $usercompetency = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
         if (!$usercompetency) {
             return array();
         }
 
-        return evidence::get_records(array('usercompetencyid' => $usercompetency->get_id()), $sort, $order, $skip, $limit);
+        $plancompleted = false;
+        if ($planid != 0) {
+            $plan = new plan($planid);
+            if ($plan->get_status() == plan::STATUS_COMPLETE) {
+                $plancompleted = true;
+            }
+        }
+
+        if ($plancompleted) {
+            $select = 'usercompetencyid = :usercompetencyid AND timecreated <= :timecompeleted';
+            $params = array('usercompetencyid' => $usercompetency->get_id(), 'timecompeleted' => $plan->get_timemodified());
+            $orderby = $sort . ' ' . $order;
+            $evidences = evidence::get_records_select($select, $params, $orderby, '*', $skip, $limit);
+        } else {
+            $params = array('usercompetencyid' => $usercompetency->get_id());
+            $evidences = evidence::get_records($params, $sort, $order, $skip, $limit);
+        }
+
+        return $evidences;
     }
 
     /**

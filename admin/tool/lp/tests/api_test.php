@@ -3609,4 +3609,66 @@ class tool_lp_api_testcase extends advanced_testcase {
             $this->fail('Grading should not be allowed.');
         }
     }
+
+    /**
+     * Test list of evidences for plan completed and not completed.
+     */
+    public function test_list_evidence() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $currenttime = time();
+        $syscontext = context_system::instance();
+
+        // Create users.
+        $user = $dg->create_user();
+        $this->setUser($user);
+
+        // Create a framework and assign competencies.
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+
+        // Create 2 user plans and add competency to each plan.
+        $p1 = $lpg->create_plan(array('userid' => $user->id));
+        $p2 = $lpg->create_plan(array('userid' => $user->id));
+        $pc1 = $lpg->create_plan_competency(array('planid' => $p1->get_id(), 'competencyid' => $c1->get_id()));
+        $pc2 = $lpg->create_plan_competency(array('planid' => $p2->get_id(), 'competencyid' => $c1->get_id()));
+
+        // Create user competency. Add user_evidence and associate it to the user competency.
+        $uc = $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $c1->get_id()));
+        $ue = $lpg->create_user_evidence(array('userid' => $user->id));
+        $uec = $lpg->create_user_evidence_competency(array('userevidenceid' => $ue->get_id(), 'competencyid' => $c1->get_id()));
+        $e1 = $lpg->create_evidence(array('usercompetencyid' => $uc->get_id()));
+
+        // Check both plans as one evidence.
+        $this->assertEquals(1, count(api::list_evidence($user->id, $c1->get_id(), $p1->get_id())));
+        $this->assertEquals(1, count(api::list_evidence($user->id, $c1->get_id(), $p2->get_id())));
+
+        // Complete second plan.
+        $currenttime += 1;
+        $p2->set_status(plan::STATUS_COMPLETE);
+        $p2->update();
+        $plansql = "UPDATE {tool_lp_plan} SET timemodified = :currenttime WHERE id = :planid";
+        $DB->execute($plansql, array('currenttime' => $currenttime, 'planid' => $p2->get_id()));
+
+        // Add an other user evidence for the same competency.
+        $currenttime += 1;
+        $ue2 = $lpg->create_user_evidence(array('userid' => $user->id));
+        $uec2 = $lpg->create_user_evidence_competency(array('userevidenceid' => $ue2->get_id(), 'competencyid' => $c1->get_id()));
+        $e2 = $lpg->create_evidence(array('usercompetencyid' => $uc->get_id()));
+        $evidencesql = "UPDATE {tool_lp_evidence} SET timecreated = :currenttime WHERE id = :evidenceid";
+        $DB->execute($evidencesql, array('currenttime' => $currenttime, 'evidenceid' => $e2->get_id()));
+
+        // Check first plan which is not completed as all evidences.
+        $this->assertEquals(2, count(api::list_evidence($user->id, $c1->get_id(), $p1->get_id())));
+
+        // Check second plan completed before the new evidence as only the first evidence.
+        $listevidences = api::list_evidence($user->id, $c1->get_id(), $p2->get_id());
+        $this->assertEquals(1, count($listevidences));
+        $this->assertEquals($e1->get_id(), $listevidences[$e1->get_id()]->get_id());
+    }
 }

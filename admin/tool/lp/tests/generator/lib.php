@@ -36,6 +36,8 @@ use tool_lp\user_competency;
 use tool_lp\user_competency_plan;
 use tool_lp\plan_competency;
 use tool_lp\evidence;
+use tool_lp\user_evidence;
+use tool_lp\user_evidence_competency;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -60,6 +62,9 @@ class tool_lp_generator extends component_generator_base {
 
     /** @var int Number of created templates. */
     protected $templatecount = 0;
+
+    /** @var int Number of created user_evidence. */
+    protected $userevidencecount = 0;
 
     /** @var stdClass Scale that we might need. */
     protected $scale;
@@ -431,6 +436,58 @@ class tool_lp_generator extends component_generator_base {
         $cc->create();
 
         return $cc;
+    }
+
+    /**
+     * Create a new user_evidence.
+     *
+     * @param array|stdClass $record
+     * @return evidence
+     */
+    public function create_user_evidence($record = null) {
+        $this->userevidencecount++;
+        $i = $this->userevidencecount;
+        $record = (object) $record;
+
+        if (!isset($record->userid)) {
+            throw new coding_exception('The userid value is required.');
+        }
+        if (!isset($record->name)) {
+            $record->name = "Evidence $i name";
+        }
+        if (!isset($record->description)) {
+            $record->description = "Evidence $i description";
+        }
+        if (!isset($record->descriptionformat)) {
+            $record->descriptionformat = FORMAT_HTML;
+        }
+
+        $ue = new user_evidence(0, $record);
+        $ue->create();
+
+        return $ue;
+    }
+
+    /**
+     * Create a new user_evidence_comp.
+     *
+     * @param array|stdClass $record
+     * @return evidence
+     */
+    public function create_user_evidence_competency($record = null) {
+        $record = (object) $record;
+
+        if (!isset($record->userevidenceid)) {
+            throw new coding_exception('The userevidenceid value is required.');
+        }
+        if (!isset($record->competencyid)) {
+            throw new coding_exception('The competencyid value is required.');
+        }
+
+        $uec = new user_evidence_competency(0, $record);
+        $uec->create();
+
+        return $uec;
     }
 
 }
