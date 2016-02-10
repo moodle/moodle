@@ -170,7 +170,7 @@ class mnet_peer {
             $a['host'] = $this->wwwroot;
             $this->error[] = array('code' => 5, 'text' => get_string("nonmatchingcert", 'mnet', $a));
             return false;
-        } elseif ($credentials['subject']['CN'] != $this->wwwroot) {
+        } else if ($credentials['subject']['CN'] !== substr($this->wwwroot, 0, 64)) {
             $a['subject'] = $credentials['subject']['CN'];
             $a['host'] = $this->wwwroot;
             $this->error[] = array('code' => 4, 'text' => get_string("nonmatchingcert", 'mnet', $a));
