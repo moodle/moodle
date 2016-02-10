@@ -2849,18 +2849,21 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $forumgen = $this->getDataGenerator()->get_plugin_generator('mod_forum');
 
+        // Keep track of the start time of the test. Do not use time() after this point to prevent random failures.
+        $time = time();
+
         $record = new stdClass();
         $record->course = $course->id;
         $record->userid = $user->id;
         $record->forum = $forum->id;
         if (isset($discussiondata['timecreated'])) {
-            $record->timemodified = time() + $discussiondata['timecreated'];
+            $record->timemodified = $time + $discussiondata['timecreated'];
         }
         if (isset($discussiondata['timestart'])) {
-            $record->timestart = time() + $discussiondata['timestart'];
+            $record->timestart = $time + $discussiondata['timestart'];
         }
         if (isset($discussiondata['timeend'])) {
-            $record->timeend = time() + $discussiondata['timeend'];
+            $record->timeend = $time + $discussiondata['timeend'];
         }
         if (isset($discussiondata['mailed'])) {
             $record->mailed = $discussiondata['mailed'];
@@ -2869,7 +2872,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $discussion = $forumgen->create_discussion($record);
 
         // Fetch the unmailed posts.
-        $timenow   = time();
+        $timenow   = $time;
         $endtime   = $timenow - $CFG->maxeditingtime;
         $starttime = $endtime - 2 * DAYSECS;
 
@@ -2883,7 +2886,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $reply->discussion = $discussion->id;
         $reply->parent = $replyto->id;
         $reply->created = max($replyto->created, $endtime - 1);
-        $r = $forumgen->create_post($reply);
+        $forumgen->create_post($reply);
 
         $unmailed = forum_get_unmailed_posts($starttime, $endtime, $timenow);
         $this->assertCount($expectedreplycount, $unmailed);
