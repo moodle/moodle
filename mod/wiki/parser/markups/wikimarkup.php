@@ -178,16 +178,18 @@ abstract class wiki_markup_parser extends generic_parser {
      */
 
     protected function generate_header($text, $level) {
-        $text = trim($text);
+        $toctext = $text = trim($text);
 
         if (!$this->pretty_print && $level == 1) {
-            $text .= ' ' . parser_utils::h('a', '['.get_string('editsection', 'wiki').']',
-                array('href' => "edit.php?pageid={$this->wiki_page_id}&section=" . urlencode($text),
-                    'class' => 'wiki_edit_section'));
+            $editlink = '[' . get_string('editsection', 'wiki') . ']';
+            $url = array('href' => "edit.php?pageid={$this->wiki_page_id}&section=" . urlencode($text),
+                'class' => 'wiki_edit_section');
+            $text .= ' ' . parser_utils::h('a', $this->protect($editlink), $url);
+            $toctext .= ' ' . parser_utils::h('a', $editlink, $url);
         }
 
         if ($level <= $this->maxheaderdepth) {
-            $this->toc[] = array($level, $text);
+            $this->toc[] = array($level, $toctext);
             $num = count($this->toc);
             $text = parser_utils::h('a', "", array('name' => "toc-$num")) . $text;
         }
