@@ -722,7 +722,7 @@ function groups_get_possible_roles($context) {
  */
 function groups_get_potential_members($courseid, $roleid = null, $source = null,
                                       $orderby = 'lastname ASC, firstname ASC',
-                                      $notingroup = null, $onlyactiveenrolments = true) {
+                                      $notingroup = null, $onlyactiveenrolments = false) {
     global $DB;
 
     $context = context_course::instance($courseid);

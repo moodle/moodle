@@ -155,3 +155,20 @@ Feature: Automatic creation of groups
     When I set the field "Group/member count" to "11"
     And I press "Preview"
     Then I should see "Suspended student 11"
+
+  Scenario: Do not display 'Include only active enrolments' if user does not have the 'moodle/course:viewsuspendedusers' capability
+    Given I log out
+    And I log in as "admin"
+    And I set the following system permissions of "Teacher" role:
+      | capability | permission |
+      | moodle/course:viewsuspendedusers | Prevent |
+    And I log out
+    And I log in as "teacher1"
+    And I follow "Course 1"
+    And I expand "Users" node
+    And I follow "Groups"
+    When I press "Auto-create groups"
+    Then I should not see "Include only active enrolments"
+    And I set the field "Group/member count" to "11"
+    And I press "Preview"
+    And I should not see "Suspended Student 11"
