@@ -29,41 +29,36 @@ use moodle_url;
 
 
 /**
- * Class for exporting a course module summary from an stdClass.
+ * Class for exporting a course module summary from a cm_info class.
  *
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_module_summary_exporter extends exporter {
 
+    protected static function define_related() {
+        return array('cm' => 'cm_info');
+    }
+
     protected function get_other_values(renderer_base $output) {
         global $CFG;
 
-        require_once($CFG->libdir . '/modinfolib.php');
-
-        $cm = get_coursemodule_from_id(null, $this->data->id);
-        $fastmodinfo = get_fast_modinfo($cm->course)->cms[$cm->id];
+        $context = $this->related['cm']->context;
 
         return array(
-            'name' => $fastmodinfo->name,
-            'url' => $fastmodinfo->url->out(),
-            'iconurl' => $fastmodinfo->get_icon_url()->out()
+            'id' => $this->related['cm']->id,
+            'name' => external_format_string($this->related['cm']->name, $context->id),
+            'url' => $this->related['cm']->url->out(),
+            'iconurl' => $this->related['cm']->get_icon_url()->out()
         );
     }
 
-    public static function define_properties() {
+
+    public static function define_other_properties() {
         return array(
             'id' => array(
                 'type' => PARAM_INT,
             ),
-            'visible' => array(
-                'type' => PARAM_BOOL
-            )
-        );
-    }
-
-    public static function define_other_properties() {
-        return array(
             'name' => array(
                 'type' => PARAM_TEXT
             ),

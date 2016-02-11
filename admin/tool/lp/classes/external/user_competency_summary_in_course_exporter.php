@@ -78,9 +78,11 @@ class user_competency_summary_in_course_exporter extends exporter {
         $coursemodules = api::list_course_modules_using_competency($this->related['competency']->get_id(),
                                                                    $this->related['course']->id);
 
+        $fastmodinfo = get_fast_modinfo($this->related['course']->id);
         $exportedmodules = array();
         foreach ($coursemodules as $cm) {
-            $cmexporter = new course_module_summary_exporter($cm);
+            $cminfo = $fastmodinfo->cms[$cm];
+            $cmexporter = new course_module_summary_exporter(null, array('cm' => $cminfo));
             $exportedmodules[] = $cmexporter->export($output);
         }
         $result->coursemodules = $exportedmodules;

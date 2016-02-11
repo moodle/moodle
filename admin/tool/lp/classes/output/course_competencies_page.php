@@ -133,9 +133,11 @@ class course_competencies_page implements renderable, templatable {
 
             $coursemodules = api::list_course_modules_using_competency($competency->get_id(), $this->courseid);
 
+            $fastmodinfo = get_fast_modinfo($this->courseid);
             $exportedmodules = array();
-            foreach ($coursemodules as $cm) {
-                $cmexporter = new course_module_summary_exporter($cm);
+            foreach ($coursemodules as $cmid) {
+                $cminfo = $fastmodinfo->cms[$cmid];
+                $cmexporter = new course_module_summary_exporter(null, array('cm' => $cminfo));
                 $exportedmodules[] = $cmexporter->export($output);
             }
 

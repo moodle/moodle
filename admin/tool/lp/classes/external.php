@@ -1624,10 +1624,11 @@ class external extends external_api {
         $coursemodules = api::list_course_modules_using_competency($params['competencyid'], $params['courseid']);
         $result = array();
 
+        $fastmodinfo = get_fast_modinfo($cm->course);
+
         foreach ($coursemodules as $cmid) {
-            $cmrecord = get_coursemodule_from_id(null, $cmid);
-            $context = context_module::instance($cmrecord->id);
-            $exporter = new course_module_summary_exporter($cmrecord, array('context' => $context));
+            $cminfo = $fastmodinfo->cms[$cmid];
+            $exporter = new course_module_summary_exporter(null, array('cm' => $cminfo));
             $coursemodulesummary = $exporter->export($output);
 
             $result[] = $coursemodulesummary;
