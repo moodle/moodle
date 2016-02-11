@@ -95,7 +95,13 @@ if ($editform->is_cancelled()) {
     if ($data->groupid) {
         $source['groupid'] = $data->groupid;
     }
-    $users = groups_get_potential_members($data->courseid, $data->roleid, $source, $orderby, !empty($data->notingroup));
+
+    $onlyactive = true;
+    if (!$data->includeonlyactiveenrol && has_capability('moodle/course:viewsuspendedusers', $context)) {
+        $onlyactive = false;
+    }
+
+    $users = groups_get_potential_members($data->courseid, $data->roleid, $source, $orderby, !empty($data->notingroup), $onlyactive);
     $usercnt = count($users);
 
     if ($data->allocateby == 'random') {
