@@ -38,10 +38,6 @@ class editsection_form extends moodleform {
         $mform->addGroup($elementgroup, 'name_group', get_string('sectionname'), ' ', false);
         $mform->addGroupRule('name_group', array('name' => array(array(get_string('maximumchars', '', 255), 'maxlength', 255))));
 
-        // Add rule for name_group to make sure that the section name is not blank if 'Use default section name'
-        // checkbox is unchecked.
-        $mform->addRule('name_group', get_string('required'), 'required', null, 'client');
-
         $mform->setDefault('usedefaultname', true);
         $mform->setType('name', PARAM_TEXT);
         $mform->disabledIf('name','usedefaultname','checked');
@@ -102,7 +98,7 @@ class editsection_form extends moodleform {
         $editoroptions = $this->_customdata['editoroptions'];
         $default_values = file_prepare_standard_editor($default_values, 'summary', $editoroptions,
                 $editoroptions['context'], 'course', 'section', $default_values->id);
-        $default_values->usedefaultname = (is_null($default_values->name));
+        $default_values->usedefaultname = (strval($default_values->name) === '');
         parent::set_data($default_values);
     }
 
@@ -116,7 +112,8 @@ class editsection_form extends moodleform {
         $data = parent::get_data();
         if ($data !== null) {
             $editoroptions = $this->_customdata['editoroptions'];
-            if (!empty($data->usedefaultname)) {
+            // Set name as null if use default section name is checked or if it is an empty string.
+            if (!empty($data->usedefaultname) || strval($data->name) === '') {
                 $data->name = null;
             }
             $data = file_postupdate_standard_editor($data, 'summary', $editoroptions,
@@ -139,15 +136,6 @@ class editsection_form extends moodleform {
         // Availability: Check availability field does not have errors.
         if (!empty($CFG->enableavailability)) {
             \core_availability\frontend::report_validation_errors($data, $errors);
-        }
-
-        // Validate section name if 'Use default section name' is unchecked.
-        if (empty($data['usedefaultname'])) {
-            // Make sure the trimmed value of section name is not empty.
-            $trimmedname = trim($data['name']);
-            if (empty($trimmedname)) {
-                $errors['name_group'] = get_string('required');
-            }
         }
 
         return $errors;
