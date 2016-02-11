@@ -114,6 +114,7 @@ class data_field_url extends data_field_base {
                 if ($this->field->param3) {
                     // param3 defines whether this URL should open in a new window.
                     $attributes['target'] = '_blank';
+                    $attributes['rel'] = 'noreferrer';
                 }
 
                 if (empty($text)) {
