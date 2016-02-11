@@ -3473,4 +3473,140 @@ class tool_lp_api_testcase extends advanced_testcase {
         // Check if related conpetency relation is deleted.
         $this->assertEquals(0, count(\tool_lp\related_competency::get_multiple_relations(array($c2id))));
     }
+
+    public function test_grade_competency_in_course_permissions() {
+        $this->resetAfterTest();
+        $dg = $this->getDataGenerator();
+
+        $c1 = $dg->create_course();
+        $c2 = $dg->create_course();
+        $sysctx = context_system::instance();
+        $c1ctx = context_course::instance($c1->id);
+        $c2ctx = context_course::instance($c2->id);
+
+        $teacher1 = $dg->create_user();
+        $student1 = $dg->create_user();
+        $student2 = $dg->create_user();
+        $notstudent1 = $dg->create_user();
+
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $framework = $lpg->create_framework();
+        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $lpg->create_course_competency(array('courseid' => $c1->id, 'competencyid' => $comp1->get_id()));
+
+        $studentarch = get_archetype_roles('student');
+        $studentrole = array_shift($studentarch);
+
+        $gradablerole = $dg->create_role();
+        assign_capability('tool/lp:coursecompetencygradable', CAP_ALLOW, $gradablerole, $sysctx->id);
+
+        $notgradablerole = $dg->create_role();
+        assign_capability('tool/lp:coursecompetencygradable', CAP_PROHIBIT, $notgradablerole, $sysctx->id);
+
+        $canviewucrole = $dg->create_role();
+        assign_capability('tool/lp:usercompetencyview', CAP_ALLOW, $canviewucrole, $sysctx->id);
+
+        $cannotviewcomp = $dg->create_role();
+        assign_capability('tool/lp:competencyread', CAP_PROHIBIT, $cannotviewcomp, $sysctx->id);
+
+        $canmanagecomp = $dg->create_role();
+        assign_capability('tool/lp:competencymanage', CAP_ALLOW, $canmanagecomp, $sysctx->id);
+
+        $cangraderole = $dg->create_role();
+        assign_capability('tool/lp:competencygrade', CAP_ALLOW, $cangraderole, $sysctx->id);
+
+        $cansuggestrole = $dg->create_role();
+        assign_capability('tool/lp:competencysuggestgrade', CAP_ALLOW, $cansuggestrole, $sysctx->id);
+
+        // Enrol s1 and s2 as students in course 1.
+        $dg->enrol_user($student1->id, $c1->id, $studentrole->id);
+        $dg->enrol_user($student2->id, $c1->id, $studentrole->id);
+
+        // Mark the s2 as not being 'gradable'.
+        $dg->role_assign($notgradablerole, $student2->id, $c1ctx->id);
+
+        // Mark the 'non a student' as 'gradable' throughout the site.
+        $dg->role_assign($gradablerole, $notstudent1->id, $sysctx->id);
+
+        // From now we'll iterate over each permission.
+        accesslib_clear_all_caches_for_unit_testing();
+        $this->setUser($teacher1);
+
+        $this->assertExceptionWithGradeCompetencyInCourse('required_capability_exception', 'View a user competency',
+            $c1->id, $student1->id, $comp1->get_id());
+
+        // Give permission to view competencies.
+        $dg->role_assign($canviewucrole, $teacher1->id, $c1ctx->id);
+        accesslib_clear_all_caches_for_unit_testing();
+        $this->assertExceptionWithGradeCompetencyInCourse('required_capability_exception', 'Set competency grade',
+            $c1->id, $student1->id, $comp1->get_id());
+        $this->assertExceptionWithGradeCompetencyInCourse('required_capability_exception', 'Suggest competency grade',
+            $c1->id, $student1->id, $comp1->get_id(), 1, false);
+
+        // Give permission to suggest.
+        $dg->role_assign($cansuggestrole, $teacher1->id, $c1ctx->id);
+        accesslib_clear_all_caches_for_unit_testing();
+        $this->assertExceptionWithGradeCompetencyInCourse('required_capability_exception', 'Set competency grade',
+            $c1->id, $student1->id, $comp1->get_id());
+        $this->assertSuccessWithGradeCompetencyInCourse($c1->id, $student1->id, $comp1->get_id(), 1, false);
+
+        // Give permission to rate.
+        $dg->role_assign($cangraderole, $teacher1->id, $c1ctx->id);
+        accesslib_clear_all_caches_for_unit_testing();
+        $this->assertSuccessWithGradeCompetencyInCourse($c1->id, $student1->id, $comp1->get_id());
+
+        // Remove permssion to read competencies, this leads to error.
+        $dg->role_assign($cannotviewcomp, $teacher1->id, $sysctx->id);
+        accesslib_clear_all_caches_for_unit_testing();
+        $this->assertExceptionWithGradeCompetencyInCourse('required_capability_exception', 'View competency frameworks',
+            $c1->id, $student1->id, $comp1->get_id());
+        $this->assertExceptionWithGradeCompetencyInCourse('required_capability_exception', 'View competency frameworks',
+            $c1->id, $student1->id, $comp1->get_id(), 1, false);
+
+        // Give permssion to manage course competencies, this leads to success.
+        $dg->role_assign($canmanagecomp, $teacher1->id, $sysctx->id);
+        accesslib_clear_all_caches_for_unit_testing();
+        $this->assertSuccessWithGradeCompetencyInCourse($c1->id, $student1->id, $comp1->get_id());
+        $this->assertSuccessWithGradeCompetencyInCourse($c1->id, $student1->id, $comp1->get_id(), 1, false);
+
+        // Try to grade a user that is not gradable, lead to errors.
+        $this->assertExceptionWithGradeCompetencyInCourse('coding_exception', 'The competency may not be rated at this time.',
+            $c1->id, $student2->id, $comp1->get_id());
+
+        // Try to grade a competency not in the course.
+        $this->assertExceptionWithGradeCompetencyInCourse('coding_exception', 'The competency does not belong to this course',
+            $c1->id, $student1->id, $comp2->get_id());
+
+        // Try to grade a user that is not enrolled, even though they are 'gradable'.
+        $this->assertExceptionWithGradeCompetencyInCourse('coding_exception', 'The competency may not be rated at this time.',
+            $c1->id, $notstudent1->id, $comp1->get_id());
+    }
+
+    protected function assertSuccessWithGradeCompetencyInCourse($courseid, $userid, $compid, $grade = 1, $override = true) {
+        $beforecount = evidence::count_records();
+        api::grade_competency_in_course($courseid, $userid, $compid, $grade, $override);
+        $this->assertEquals($beforecount + 1, evidence::count_records());
+        $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $compid));
+        $records = evidence::get_records(array(), 'id', 'DESC', 0, 1);
+        $evidence = array_pop($records);
+        $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
+    }
+
+    protected function assertExceptionWithGradeCompetencyInCourse($exceptiontype, $exceptiontext, $courseid, $userid, $compid,
+            $grade = 1, $override = true) {
+
+        $raised = false;
+        try {
+            api::grade_competency_in_course($courseid, $userid, $compid, $grade, $override);
+        } catch (moodle_exception $e) {
+            $raised = true;
+            $this->assertInstanceOf($exceptiontype, $e);
+            $this->assertRegExp('@' . $exceptiontext . '@', $e->getMessage());
+        }
+
+        if (!$raised) {
+            $this->fail('Grading should not be allowed.');
+        }
+    }
 }
