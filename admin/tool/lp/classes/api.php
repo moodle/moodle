@@ -951,49 +951,6 @@ class api {
     }
 
     /**
-     * Get a single competency associated to a course.
-     *
-     * @param mixed $courseorid The course, or its ID.
-     * @param int $competencyid The competency id
-     * @return array( array(
-     *                   'competency' => \tool_lp\competency,
-     *                   'coursecompetency' => \tool_lp\course_competency
-     *              ))
-     */
-    public static function get_course_comptency($courseorid) {
-        $course = $courseorid;
-        if (!is_object($courseorid)) {
-            $course = get_course($courseorid);
-        }
-
-        // Check the user have access to the course.
-        self::validate_course($course);
-        $context = context_course::instance($course->id);
-        $onlyvisible = 1;
-
-        $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
-        if (!has_any_capability($capabilities, $context)) {
-            throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
-        }
-
-        $result = array();
-
-        // TODO We could improve the performance of this into one single query.
-        $coursecompetencies = course_competency::list_course_competencies($course->id, false);
-        $competencies = course_competency::list_competencies($course->id, false);
-
-        // Build the return values.
-        foreach ($coursecompetencies as $key => $coursecompetency) {
-            $result[] = array(
-                'competency' => $competencies[$coursecompetency->get_competencyid()],
-                'coursecompetency' => $coursecompetency
-            );
-        }
-
-        return $result;
-    }
-
-    /**
      * List the competencies associated to a course.
      *
      * @param mixed $courseorid The course, or its ID.
