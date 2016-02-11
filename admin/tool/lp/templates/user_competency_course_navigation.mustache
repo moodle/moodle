@@ -26,10 +26,10 @@
 </div>
 {{#js}}
 require(['core/form-autocomplete', 'tool_lp/user_competency_course_navigation'], function(autocomplete, nav) {
+    (new nav('#user-nav-{{uniqid}}', '#competency-nav-{{uniqid}}', '{{baseurl}}', {{userid}}, {{competencyid}}, {{courseid}}));
 {{#hasusers}}
     autocomplete.enhance('#user-nav-{{uniqid}}', false, false, '{{#str}}jumptouser, tool_lp{{/str}}');
 {{/hasusers}}
-    (new nav('#user-nav-{{uniqid}}', '#competency-nav-{{uniqid}}', '{{baseurl}}', {{userid}}, {{competencyid}}, {{courseid}}));
 {{#hascompetencies}}
     autocomplete.enhance('#competency-nav-{{uniqid}}', false, false, '{{#str}}jumptocompetency, tool_lp{{/str}}');
 {{/hascompetencies}}
