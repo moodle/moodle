@@ -406,6 +406,7 @@ class assign {
      * @return string - The page output.
      */
     public function view($action='') {
+        global $PAGE;
 
         $o = '';
         $mform = null;
@@ -529,6 +530,10 @@ class assign {
                               'useridlistid' => optional_param('useridlistid', $this->get_useridlist_key_id(), PARAM_ALPHANUM));
         $this->register_return_link($action, $returnparams);
 
+        // Include any page action as part of the body tag CSS id.
+        if (!empty($action)) {
+            $PAGE->set_pagetype('mod-assign-' . $action);
+        }
         // Now show the right view page.
         if ($action == 'redirect') {
             $nextpageurl = new moodle_url('/mod/assign/view.php', $nextpageparams);
