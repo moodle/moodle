@@ -4813,22 +4813,28 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
 }
 
 /**
- * Returns true if user created new discussion already
+ * Returns true if user created new discussion already.
  *
- * @global object
- * @global object
- * @param int $forumid
- * @param int $userid
+ * @param int $forumid  The forum to check for postings
+ * @param int $userid   The user to check for postings
+ * @param int $groupid  The group to restrict the check to
  * @return bool
  */
-function forum_user_has_posted_discussion($forumid, $userid) {
+function forum_user_has_posted_discussion($forumid, $userid, $groupid = null) {
     global $CFG, $DB;
 
     $sql = "SELECT 'x'
               FROM {forum_discussions} d, {forum_posts} p
-             WHERE d.forum = ? AND p.discussion = d.id AND p.parent = 0 and p.userid = ?";
+             WHERE d.forum = ? AND p.discussion = d.id AND p.parent = 0 AND p.userid = ?";
 
-    return $DB->record_exists_sql($sql, array($forumid, $userid));
+    $params = [$forumid, $userid];
+
+    if ($groupid) {
+        $sql .= " AND d.groupid = ?";
+        $params[] = $groupid;
+    }
+
+    return $DB->record_exists_sql($sql, $params);
 }
 
 /**
@@ -4944,7 +4950,7 @@ function forum_user_can_post_discussion($forum, $currentgroup=null, $unused=-1, 
     }
 
     if ($forum->type == 'eachuser') {
-        if (forum_user_has_posted_discussion($forum->id, $USER->id)) {
+        if (forum_user_has_posted_discussion($forum->id, $USER->id, $currentgroup)) {
             return false;
         }
     }
