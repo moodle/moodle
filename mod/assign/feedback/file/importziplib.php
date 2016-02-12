@@ -59,7 +59,7 @@ class assignfeedback_file_zip_importer {
             return false;
         }
 
-        preg_match('#.*_([0-9]{1,})_(.*)_(.*)_(.*)#i', $fileinfo->get_filepath().$fileinfo->get_filename(), $info);
+        $info = explode('_', $fileinfo->get_filepath() . $fileinfo->get_filename(), 5);
 
         if (count($info) < 5) {
             return false;
