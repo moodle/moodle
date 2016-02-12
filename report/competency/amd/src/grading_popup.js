@@ -67,6 +67,8 @@ define(['jquery', 'core/notification', 'core/str', 'core/ajax', 'core/log', 'cor
      */
     GradingPopup.prototype._contextLoaded = function(context) {
         var self = this;
+        // We have to display user info in popup.
+        context.displayuser = true;
         templates.render('tool_lp/user_competency_summary_in_course', context).done(function(html, js) {
             str.get_string('usercompetencysummary', 'report_competency').done(function(title) {
                 (new Dialogue(title, html, templates.runTemplateJS.bind(templates, js), self._refresh.bind(self), true));

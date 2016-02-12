@@ -60,6 +60,14 @@
         </p>
         </dd>
         {{#usercompetency}}
+        {{#displayuser}}
+        {{#user}}
+        <dt>{{#str}}user{{/str}}</dt>
+        <dd>
+            {{>tool_lp/user_summary}}
+        </dd>
+        {{/user}}
+        {{/displayuser}}
         <dt>{{#str}}reviewstatus, tool_lp{{/str}}</dt>
         <dd data-region="user-competency-status">{{statusname}}
 
@@ -85,7 +93,9 @@
 
             var inlineGrader = new mod('#rate_{{uniqid}}', scaleConfig, '{{competency.competency.id}}', '{{user.id}}', '', '{{course.id}}', '{{#str}}chooserating, tool_lp{{/str}}', {{cangrade}}, {{cansuggest}});
             var competencyElement = $('[data-region-id="{{uniqid}}"]');
-            var infoReloader = new info(competencyElement, '{{competency.competency.id}}', '{{user.id}}', '', '{{course.id}}');
+
+            var displayuser = ('{{displayuser}}' == 'true') ? true : false;
+            var infoReloader = new info(competencyElement, '{{competency.competency.id}}', '{{user.id}}', '', '{{course.id}}', displayuser);
 
             inlineGrader.on('competencyupdated', infoReloader.reload.bind(infoReloader));
         });

@@ -31,14 +31,16 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates', 'core/log'
      * @param {Number} The id of the user.
      * @param {Number} The id of the plan.
      * @param {Number} The id of the course.
+     * @param {Boolean} If we should display the user info.
      */
-    var Info = function(rootElement, competencyId, userId, planId, courseId) {
+    var Info = function(rootElement, competencyId, userId, planId, courseId, displayuser) {
         this._rootElement = rootElement;
         this._competencyId = competencyId;
         this._userId = userId;
         this._planId = planId;
         this._courseId = courseId;
         this._valid = true;
+        this._displayuser = (typeof displayuser !== 'undefined') ? displayuser : false;
 
         if (this._planId) {
             this._methodName = 'tool_lp_data_for_user_competency_summary_in_plan';
@@ -74,6 +76,10 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates', 'core/log'
         }]);
 
         promises[0].done(function(context) {
+            // Check if we should also the user info.
+            if (self._displayuser) {
+                context.displayuser = true;
+            }
             templates.render(self._templateName, context).done(function(html, js) {
                 templates.replaceNode(self._rootElement, html, js);
             }).fail(notification.exception);
@@ -98,6 +104,8 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates', 'core/log'
     Info.prototype._args = null;
     /** @type {String} The template to reload the fragment. */
     Info.prototype._templateName = null;
+    /** @type {Boolean} If we should display the user info? */
+    Info.prototype._displayuser = false;
 
     return /** @alias module:tool_lp/user_competency_info */ Info;
 
