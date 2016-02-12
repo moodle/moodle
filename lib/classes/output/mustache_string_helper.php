@@ -76,4 +76,3 @@ class mustache_string_helper {
         return get_string($key, $component, $a);
     }
 }
-
