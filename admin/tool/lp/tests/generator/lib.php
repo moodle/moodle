@@ -332,6 +332,10 @@ class tool_lp_generator extends component_generator_base {
             throw new coding_exception('The planid value is required.');
         }
 
+        if (!isset($record->sortorder)) {
+            $record->sortorder = 0;
+        }
+
         $usercompetencyplan = new user_competency_plan(0, $record);
         $usercompetencyplan->create();
 

@@ -713,5 +713,20 @@ function xmldb_tool_lp_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2016020900, 'tool', 'lp');
     }
 
+    if ($oldversion < 2016020901) {
+
+        // Define field note to be added to tool_lp_user_competency_plan.
+        $table = new xmldb_table('tool_lp_user_competency_plan');
+        $field = new xmldb_field('sortorder', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+        // Conditionally launch add field note.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2016020901, 'tool', 'lp');
+    }
+
     return true;
 }

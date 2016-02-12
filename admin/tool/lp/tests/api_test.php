@@ -1510,6 +1510,96 @@ class tool_lp_api_testcase extends advanced_testcase {
     }
 
     /**
+     * Test completing plan does not change the order of competencies.
+     */
+    public function test_complete_plan_doesnot_change_order() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $syscontext = context_system::instance();
+
+        // Create users and roles for the test.
+        $user = $dg->create_user();
+
+        // Create a framework and assign competencies.
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+
+        // Create two plans and assign competencies.
+        $plan = $lpg->create_plan(array('userid' => $user->id));
+
+        $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $c1->get_id()));
+        $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $c2->get_id()));
+        $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $c3->get_id()));
+
+        // Changing competencies order in plan competency.
+        api::reorder_plan_competency($plan->get_id(), $c1->get_id(), $c3->get_id());
+
+        $competencies = api::list_plan_competencies($plan);
+        $this->assertEquals($c2->get_id(), $competencies[0]->competency->get_id());
+        $this->assertEquals($c3->get_id(), $competencies[1]->competency->get_id());
+        $this->assertEquals($c1->get_id(), $competencies[2]->competency->get_id());
+
+        // Completing plan.
+        api::complete_plan($plan);
+
+        $competencies = api::list_plan_competencies($plan);
+
+        // Completing plan does not change order.
+        $this->assertEquals($c2->get_id(), $competencies[0]->competency->get_id());
+        $this->assertEquals($c3->get_id(), $competencies[1]->competency->get_id());
+        $this->assertEquals($c1->get_id(), $competencies[2]->competency->get_id());
+
+        // Testing plan based on template.
+        $template = $lpg->create_template();
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+
+        $lpg->create_template_competency(array(
+            'templateid' => $template->get_id(),
+            'competencyid' => $c1->get_id()
+        ));
+        $lpg->create_template_competency(array(
+            'templateid' => $template->get_id(),
+            'competencyid' => $c2->get_id()
+        ));
+        $lpg->create_template_competency(array(
+            'templateid' => $template->get_id(),
+            'competencyid' => $c3->get_id()
+        ));
+        // Reorder competencies in template.
+        api::reorder_template_competency($template->get_id(), $c1->get_id(), $c3->get_id());
+
+        // Create plan from template.
+        $plan = api::create_plan_from_template($template->get_id(), $user->id);
+
+        $competencies = api::list_plan_competencies($plan);
+
+        // Completing plan does not change order.
+        $this->assertEquals($c2->get_id(), $competencies[0]->competency->get_id());
+        $this->assertEquals($c3->get_id(), $competencies[1]->competency->get_id());
+        $this->assertEquals($c1->get_id(), $competencies[2]->competency->get_id());
+
+        // Completing plan.
+        api::complete_plan($plan);
+
+        $competencies = api::list_plan_competencies($plan);
+
+        // Completing plan does not change order.
+        $this->assertEquals($c2->get_id(), $competencies[0]->competency->get_id());
+        $this->assertEquals($c3->get_id(), $competencies[1]->competency->get_id());
+        $this->assertEquals($c1->get_id(), $competencies[2]->competency->get_id());
+    }
+
+    /**
      * Test remove plan and the managing of archived user competencies.
      */
     public function test_delete_plan_manage_archived_competencies() {
