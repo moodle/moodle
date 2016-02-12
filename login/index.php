@@ -37,6 +37,7 @@ redirect_if_major_upgrade_required();
 
 $testsession = optional_param('testsession', 0, PARAM_INT); // test session works properly
 $cancel      = optional_param('cancel', 0, PARAM_BOOL);      // redirect to frontpage, needed for loginhttps
+$anchor      = optional_param('anchor', '', PARAM_RAW);      // Used to restore hash anchor to wantsurl.
 
 if ($cancel) {
     redirect(new moodle_url('/'));
@@ -118,6 +119,15 @@ if ($user !== false or $frm !== false or $errormsg !== '') {
 
 } else {
     $frm = data_submitted();
+}
+
+// Restore the #anchor to the original wantsurl. Note that this
+// will only work for internal auth plugins, SSO plugins such as
+// SAML / CAS / OIDC will have to handle this correctly directly.
+if ($anchor && isset($SESSION->wantsurl) && strpos($SESSION->wantsurl, '#') === false) {
+    $wantsurl = new moodle_url($SESSION->wantsurl);
+    $wantsurl->set_anchor(substr($anchor, 1));
+    $SESSION->wantsurl = $wantsurl->out();
 }
 
 /// Check if the user has actually submitted login data to us
