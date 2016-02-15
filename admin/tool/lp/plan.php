@@ -42,4 +42,7 @@ echo $output->header();
 $page = new \tool_lp\output\plan_page($plan);
 echo $output->render($page);
 
+// Trigger viewed event.
+\tool_lp\api::plan_viewed($plan);
+
 echo $output->footer();

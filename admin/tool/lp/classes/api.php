@@ -2277,6 +2277,9 @@ class api {
         }
 
         $plan->create();
+
+        // Trigger created event.
+        \tool_lp\event\plan_created::create_from_plan($plan)->trigger();
         return $plan;
     }
 
@@ -2335,6 +2338,9 @@ class api {
         }
 
         $plan->create();
+
+        // Trigger created event.
+        \tool_lp\event\plan_created::create_from_plan($plan)->trigger();
         return $plan;
     }
 
@@ -2405,6 +2411,8 @@ class api {
             }
 
             $plan->create();
+            // Trigger created event.
+            \tool_lp\event\plan_created::create_from_plan($plan)->trigger();
             $created++;
         }
 
@@ -2461,6 +2469,9 @@ class api {
         $success = $plan->update();
         $transaction->allow_commit();
 
+        // Trigger updated event.
+        \tool_lp\event\plan_updated::create_from_plan($plan)->trigger();
+
         return $success;
     }
 
@@ -2503,6 +2514,9 @@ class api {
         $plan->from_record($record);
         $plan->update();
 
+        // Trigger updated event.
+        \tool_lp\event\plan_updated::create_from_plan($plan)->trigger();
+
         return $plan;
     }
 
@@ -2521,6 +2535,30 @@ class api {
         }
 
         return $plan;
+    }
+
+    /**
+     * Plan event viewed.
+     *
+     * @param mixed $planorid The id or the plan.
+     * @return boolean
+     */
+    public static function plan_viewed($planorid) {
+        $plan = $planorid;
+        if (!is_object($plan)) {
+            $plan = new plan($plan);
+        }
+
+        // First we do a permissions check.
+        if (!$plan->can_read()) {
+            $context = context_user::instance($plan->get_userid());
+            throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
+        }
+
+        // Trigger a template viewed event.
+        \tool_lp\event\plan_viewed::create_from_plan($plan)->trigger();
+
+        return true;
     }
 
     /**
@@ -2554,10 +2592,13 @@ class api {
         if ($plan->get_status() == plan::STATUS_COMPLETE) {
             self::remove_archived_user_competencies_in_plan($plan);
         }
-
+        $event = \tool_lp\event\plan_deleted::create_from_plan($plan);
         $success = $plan->delete();
 
         $transaction->allow_commit();
+
+        // Trigger deleted event.
+        $event->trigger();
 
         return $success;
     }
@@ -2588,7 +2629,12 @@ class api {
         }
 
         $plan->set_status(plan::STATUS_DRAFT);
-        return $plan->update();
+        $result = $plan->update();
+
+        // Trigger updated event.
+        \tool_lp\event\plan_updated::create_from_plan($plan)->trigger();
+
+        return $result;
     }
 
     /**
@@ -2617,7 +2663,12 @@ class api {
         }
 
         $plan->set_status(plan::STATUS_WAITING_FOR_REVIEW);
-        return $plan->update();
+        $result = $plan->update();
+
+        // Trigger updated event.
+        \tool_lp\event\plan_updated::create_from_plan($plan)->trigger();
+
+        return $result;
     }
 
     /**
@@ -2648,7 +2699,12 @@ class api {
 
         $plan->set_status(plan::STATUS_IN_REVIEW);
         $plan->set_reviewerid($USER->id);
-        return $plan->update();
+        $result = $plan->update();
+
+        // Trigger updated event.
+        \tool_lp\event\plan_updated::create_from_plan($plan)->trigger();
+
+        return $result;
     }
 
     /**
@@ -2678,7 +2734,12 @@ class api {
 
         $plan->set_status(plan::STATUS_DRAFT);
         $plan->set_reviewerid(null);
-        return $plan->update();
+        $result = $plan->update();
+
+        // Trigger updated event.
+        \tool_lp\event\plan_updated::create_from_plan($plan)->trigger();
+
+        return $result;
     }
 
     /**
@@ -2711,7 +2772,12 @@ class api {
 
         $plan->set_status(plan::STATUS_ACTIVE);
         $plan->set_reviewerid(null);
-        return $plan->update();
+        $result = $plan->update();
+
+        // Trigger updated event.
+        \tool_lp\event\plan_updated::create_from_plan($plan)->trigger();
+
+        return $result;
     }
 
     /**
@@ -2742,7 +2808,12 @@ class api {
         }
 
         $plan->set_status(plan::STATUS_DRAFT);
-        return $plan->update();
+        $result = $plan->update();
+
+        // Trigger updated event.
+        \tool_lp\event\plan_updated::create_from_plan($plan)->trigger();
+
+        return $result;
     }
 
     /**
@@ -2792,6 +2863,10 @@ class api {
         }
 
         $transaction->allow_commit();
+
+        // Trigger updated event.
+        \tool_lp\event\plan_updated::create_from_plan($plan)->trigger();
+
         return $success;
     }
 
@@ -2846,6 +2921,10 @@ class api {
         }
 
         $transaction->allow_commit();
+
+        // Trigger updated event.
+        \tool_lp\event\plan_updated::create_from_plan($plan)->trigger();
+
         return $success;
     }
 
