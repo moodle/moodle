@@ -37,7 +37,7 @@ Feature: Control the aggregation of the scales
     And I log out
 
   @javascript
-  Scenario Outline: Scales can be exluded from aggregation
+  Scenario Outline: Scales can be excluded from aggregation
     Given I log in as "teacher1"
     And I follow "Course 1"
     And I navigate to "Grades" node in "Course administration"

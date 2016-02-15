@@ -453,6 +453,11 @@ function can_update_moduleinfo($cm) {
 function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
     global $DB, $CFG;
 
+    $data = new stdClass();
+    if ($mform) {
+        $data = $mform->get_data();
+    }
+
     // Attempt to include module library before we make any changes to DB.
     include_modulelib($moduleinfo->modulename);
 
@@ -523,9 +528,44 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         $moduleinfo->introformat = $moduleinfo->introeditor['format'];
         unset($moduleinfo->introeditor);
     }
+    // Get the a copy of the grade_item before it is modified incase we need to scale the grades.
+    $oldgradeitem = null;
+    $newgradeitem = null;
+    if (!empty($data->grade_rescalegrades) && $data->grade_rescalegrades == 'yes') {
+        // Fetch the grade item before it is updated.
+        $oldgradeitem = grade_item::fetch(array('itemtype' => 'mod',
+                                                'itemmodule' => $moduleinfo->modulename,
+                                                'iteminstance' => $moduleinfo->instance,
+                                                'itemnumber' => 0,
+                                                'courseid' => $moduleinfo->course));
+    }
+
     $updateinstancefunction = $moduleinfo->modulename."_update_instance";
     if (!$updateinstancefunction($moduleinfo, $mform)) {
-        print_error('cannotupdatemod', '', course_get_url($course, $cw->section), $moduleinfo->modulename);
+        print_error('cannotupdatemod', '', course_get_url($course, $cm->section), $moduleinfo->modulename);
+    }
+
+    // This needs to happen AFTER the grademin/grademax have already been updated.
+    if (!empty($data->grade_rescalegrades) && $data->grade_rescalegrades == 'yes') {
+        // Get the grade_item after the update call the activity to scale the grades.
+        $newgradeitem = grade_item::fetch(array('itemtype' => 'mod',
+                                                'itemmodule' => $moduleinfo->modulename,
+                                                'iteminstance' => $moduleinfo->instance,
+                                                'itemnumber' => 0,
+                                                'courseid' => $moduleinfo->course));
+        if ($newgradeitem && $oldgradeitem->gradetype == GRADE_TYPE_VALUE && $newgradeitem->gradetype == GRADE_TYPE_VALUE) {
+            $params = array(
+                $course,
+                $cm,
+                $oldgradeitem->grademin,
+                $oldgradeitem->grademax,
+                $newgradeitem->grademin,
+                $newgradeitem->grademax
+            );
+            if (!component_callback('mod_' . $moduleinfo->modulename, 'rescale_activity_grades', $params)) {
+                print_error('cannotreprocessgrades', '', course_get_url($course, $cm->section), $moduleinfo->modulename);
+            }
+        }
     }
 
     // Make sure visibility is set correctly (in particular in calendar).

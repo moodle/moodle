@@ -123,6 +123,7 @@ $string['cannotreadfile'] = 'Cannot read file ({$a})';
 $string['cannotreadtmpfile'] = 'Error reading temporary file';
 $string['cannotreaduploadfile'] = 'Could not read uploaded file';
 $string['cannotremovefrommeta'] = 'Could not remove the selected course from this meta course!';
+$string['cannotreprocessgrades'] = 'Could not reprocess grades for this activity {$a}';
 $string['cannotresetguestpwd'] = 'You cannot reset the guest password';
 $string['cannotresetmail'] = 'Error resetting password and mailing you';
 $string['cannotresetthisrole'] = 'Cannot reset this role';

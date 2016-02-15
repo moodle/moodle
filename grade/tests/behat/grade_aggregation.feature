@@ -425,6 +425,7 @@ Feature: We can use calculated grade totals
     And I set the following settings for grade item "Manual item 2":
       | Extra credit  | 0   |
       | Maximum grade | 200 |
+      | Rescale existing grades | No |
     And I give the grade "21.00" to the user "Student 1" for the grade item "Manual item 2"
     And I press "Save changes"
     And I give the grade "20.00" to the user "Student 1" for the grade item "Manual item 2"
@@ -435,6 +436,7 @@ Feature: We can use calculated grade totals
     And I set the following settings for grade item "Manual item 2":
       | Extra credit  | 0   |
       | Maximum grade | 100 |
+      | Rescale existing grades | No |
     And I give the grade "21.00" to the user "Student 1" for the grade item "Manual item 2"
     And I press "Save changes"
     And I give the grade "20.00" to the user "Student 1" for the grade item "Manual item 2"

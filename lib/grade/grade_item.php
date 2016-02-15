@@ -355,6 +355,20 @@ class grade_item extends grade_object {
     }
 
     /**
+     * Check to see if there are any existing grades for this grade_item.
+     *
+     * @return boolean - true if there are valid grades for this grade_item.
+     */
+    public function has_grades() {
+        global $DB;
+
+        $count = $DB->count_records_select('grade_grades',
+                                           'itemid = :gradeitemid AND finalgrade IS NOT NULL',
+                                           array('gradeitemid' => $this->id));
+        return $count > 0;
+    }
+
+    /**
      * Finds and returns all grade_item instances based on params.
      *
      * @static
@@ -775,9 +789,9 @@ class grade_item extends grade_object {
             }
 
             // Standardise score to the new grade range
-            // NOTE: this is not compatible with current assignment grading
-            $isassignmentmodule = ($this->itemmodule == 'assignment') || ($this->itemmodule == 'assign');
-            if (!$isassignmentmodule && ($rawmin != $this->grademin or $rawmax != $this->grademax)) {
+            // NOTE: skip if the activity provides a manual rescaling option.
+            $manuallyrescale = (component_callback_exists('mod_' . $this->itemmodule, 'rescale_activity_grades') !== false);
+            if (!$manuallyrescale && ($rawmin != $this->grademin or $rawmax != $this->grademax)) {
                 $rawgrade = grade_grade::standardise_score($rawgrade, $rawmin, $rawmax, $this->grademin, $this->grademax);
             }
 
@@ -801,8 +815,10 @@ class grade_item extends grade_object {
             }
 
             // Convert scale if needed
-            // NOTE: this is not compatible with current assignment grading
-            if ($this->itemmodule != 'assignment' and ($rawmin != $this->grademin or $rawmax != $this->grademax)) {
+            // NOTE: skip if the activity provides a manual rescaling option.
+            $manuallyrescale = (component_callback_exists('mod_' . $this->itemmodule, 'rescale_activity_grades') !== false);
+            if (!$manuallyrescale && ($rawmin != $this->grademin or $rawmax != $this->grademax)) {
+                // This should never happen because scales are locked if they are in use.
                 $rawgrade = grade_grade::standardise_score($rawgrade, $rawmin, $rawmax, $this->grademin, $this->grademax);
             }
 
@@ -817,6 +833,60 @@ class grade_item extends grade_object {
             debugging("Unknown grade type");
             return null;
         }
+    }
+
+    /**
+     * Update the rawgrademax and rawgrademin for all grade_grades records for this item.
+     * Scale every rawgrade to maintain the percentage. This function should be called
+     * after the gradeitem has been updated to the new min and max values.
+     *
+     * @param float $oldgrademin The previous grade min value
+     * @param float $oldgrademax The previous grade max value
+     * @param float $newgrademin The new grade min value
+     * @param float $newgrademax The new grade max value
+     * @param string $source from where was the object inserted (mod/forum, manual, etc.)
+     * @return bool True on success
+     */
+    public function rescale_grades_keep_percentage($oldgrademin, $oldgrademax, $newgrademin, $newgrademax, $source = null) {
+        global $DB;
+
+        if (empty($this->id)) {
+            return false;
+        }
+
+        if ($oldgrademax <= $oldgrademin) {
+            // Grades cannot be scaled.
+            return false;
+        }
+        $scale = ($newgrademax - $newgrademin) / ($oldgrademax - $oldgrademin);
+        if (($newgrademax - $newgrademin) <= 1) {
+            // We would lose too much precision, lets bail.
+            return false;
+        }
+
+        $rs = $DB->get_recordset('grade_grades', array('itemid' => $this->id));
+
+        foreach ($rs as $graderecord) {
+            // For each record, create an object to work on.
+            $grade = new grade_grade($graderecord, false);
+            // Set this object in the item so it doesn't re-fetch it.
+            $grade->grade_item = $this;
+
+            // Updating the raw grade automatically updates the min/max.
+            if ($this->is_raw_used()) {
+                $rawgrade = (($grade->rawgrade - $oldgrademin) * $scale) + $newgrademin;
+                $this->update_raw_grade(false, $rawgrade, $source, false, FORMAT_MOODLE, null, null, null, $grade);
+            } else {
+                $finalgrade = (($grade->finalgrade - $oldgrademin) * $scale) + $newgrademin;
+                $this->update_final_grade($grade->userid, $finalgrade, $source);
+            }
+        }
+        $rs->close();
+
+        // Mark this item for regrading.
+        $this->force_regrading();
+
+        return true;
     }
 
     /**
@@ -1649,6 +1719,8 @@ class grade_item extends grade_object {
         $oldgrade->overridden     = $grade->overridden;
         $oldgrade->feedback       = $grade->feedback;
         $oldgrade->feedbackformat = $grade->feedbackformat;
+        $oldgrade->rawgrademin    = $grade->rawgrademin;
+        $oldgrade->rawgrademax    = $grade->rawgrademax;
 
         // MDL-31713 rawgramemin and max must be up to date so conditional access %'s works properly.
         $grade->rawgrademin = $this->grademin;
@@ -1687,6 +1759,8 @@ class grade_item extends grade_object {
         } else if (grade_floats_different($grade->finalgrade, $oldgrade->finalgrade)
                 or $grade->feedback       !== $oldgrade->feedback
                 or $grade->feedbackformat != $oldgrade->feedbackformat
+                or grade_floats_different($grade->rawgrademin, $oldgrade->rawgrademin)
+                or grade_floats_different($grade->rawgrademax, $oldgrade->rawgrademax)
                 or ($oldgrade->overridden == 0 and $grade->overridden > 0)) {
             $grade->timemodified = time(); // hack alert - date graded
             $result = $grade->update($source);
