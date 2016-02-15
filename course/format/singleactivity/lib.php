@@ -230,8 +230,16 @@ class format_singleactivity extends format_base {
         }
 
         // Make sure the current activity is in the 0-section.
+        $changed = false;
         if ($activity && $activity->sectionnum != 0) {
             moveto_module($activity, $modinfo->get_section_info(0));
+            $changed = true;
+        }
+        if ($activity && !$activity->visible) {
+            set_coursemodule_visible($activity->id, 1);
+            $changed = true;
+        }
+        if ($changed) {
             // Cache was reset so get modinfo again.
             $modinfo = get_fast_modinfo($this->courseid);
         }
