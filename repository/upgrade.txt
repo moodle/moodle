@@ -11,6 +11,9 @@ http://docs.moodle.org/dev/Repository_API
     - repository_googledocs_admin_upgrade_notification()
     - repository_boxnet_admin_upgrade_notification()
     - repository_alfresco_admin_security_key_notice()
+* The prepare_file() function will now return a file in a per-request directory which will
+  be automatically cleaned at the end of the request.
+  No modifications should be required as a result of this change.
 
 === 2.8 ===
 
