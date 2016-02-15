@@ -3,6 +3,19 @@ information provided here is intended especially for developers.
 
 === 3.1 ===
 
+* The following functions, previously used (exclusively) by upgrade steps are not available
+  anymore because of the upgrade cleanup performed for this version. See MDL-51580 for more info:
+    - upgrade_mysql_fix_unsigned_and_lob_columns()
+    - upgrade_course_completion_remove_duplicates()
+    - upgrade_save_orphaned_questions()
+    - upgrade_rename_old_backup_files_using_shortname()
+    - upgrade_mssql_nvarcharmax()
+    - upgrade_mssql_varbinarymax()
+    - upgrade_fix_missing_root_folders()
+    - upgrade_course_modules_sequences()
+    - upgrade_grade_item_fix_sortorder()
+    - upgrade_availability_item()
+
 * Plugins can extend the navigation for user by declaring the following callback:
   <frankenstyle>_extend_navigation_user(navigation_node $parentnode, stdClass $user,
                                         context_user $context, stdClass $course,

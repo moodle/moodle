@@ -22,27 +22,15 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Stub for upgrade code
  * @param int $oldversion
  * @return bool
  */
 function xmldb_assignfeedback_comments_upgrade($oldversion) {
-    // Do the upgrades.
-    // Moodle v2.3.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v2.4.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v2.5.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v2.6.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v2.7.0 release upgrade line.
-    // Put any upgrade step following this.
+    global $CFG;
 
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.

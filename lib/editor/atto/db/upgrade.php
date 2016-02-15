@@ -34,25 +34,6 @@ function xmldb_editor_atto_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2014032800) {
-        // Make Atto the default.
-        $currenteditors = $CFG->texteditors;
-        $neweditors = array();
-
-        $list = explode(',', $currenteditors);
-        array_push($neweditors, 'atto');
-        foreach ($list as $editor) {
-            if ($editor != 'atto') {
-                array_push($neweditors, $editor);
-            }
-        }
-
-        set_config('texteditors', implode(',', $neweditors));
-        upgrade_plugin_savepoint(true, 2014032800, 'editor', 'atto');
-    }
-
-    // Moodle v2.7.0 release upgrade line.
-    // Put any upgrade step following this.
     if ($oldversion < 2014081400) {
 
         // Define table editor_atto_autosave to be created.

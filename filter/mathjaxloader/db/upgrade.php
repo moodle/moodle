@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * @param int $oldversion the version we are upgrading from
  * @return bool result
@@ -30,9 +32,6 @@ function xmldb_filter_mathjaxloader_upgrade($oldversion) {
     global $CFG, $DB;
 
     $dbman = $DB->get_manager();
-
-    // Moodle v2.7.0 release upgrade line.
-    // Put any upgrade step following this.
 
     if ($oldversion < 2014081100) {
 

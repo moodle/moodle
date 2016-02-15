@@ -37,6 +37,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Handles upgrading instances of this block.
  *
@@ -44,31 +46,7 @@
  * @param object $block
  */
 function xmldb_block_completionstatus_upgrade($oldversion, $block) {
-    global $DB;
-
-    // Moodle v2.4.0 release upgrade line
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2012112901) {
-        // Get the instances of this block.
-        if ($blocks = $DB->get_records('block_instances', array('blockname' => 'completionstatus', 'pagetypepattern' => 'my-index'))) {
-            // Loop through and remove them from the My Moodle page.
-            foreach ($blocks as $block) {
-                blocks_delete_instance($block);
-            }
-        }
-        // Savepoint reached.
-        upgrade_block_savepoint(true, 2012112901, 'completionstatus');
-    }
-    // Moodle v2.5.0 release upgrade line.
-    // Put any upgrade step following this.
-
-
-    // Moodle v2.6.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v2.7.0 release upgrade line.
-    // Put any upgrade step following this.
+    global $CFG;
 
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.

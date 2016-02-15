@@ -3,6 +3,15 @@ information provided here is intended especially for developers. Full
 details of the repository API are available on Moodle docs:
 http://docs.moodle.org/dev/Repository_API
 
+=== 3.1 ===
+
+* The following functions, previously used (exclusively) by upgrade steps are not available
+  anymore because of the upgrade cleanup performed for this version. See MDL-51580 for more info:
+    - repository_picasa_admin_upgrade_notification()
+    - repository_googledocs_admin_upgrade_notification()
+    - repository_boxnet_admin_upgrade_notification()
+    - repository_alfresco_admin_security_key_notice()
+
 === 2.8 ===
 
 * Repositories working with Moodle files must replace serialize() with json_encode() in the
