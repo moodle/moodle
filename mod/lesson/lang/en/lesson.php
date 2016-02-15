@@ -103,14 +103,16 @@ $string['completionendreached_desc'] = 'Student must reach the end of lesson pag
 $string['completiontimespent'] = 'Student must do this activity at least for';
 $string['completiontimespentgroup'] = 'Require time spent';
 $string['conditionsfordependency'] = 'Condition(s) for the dependency';
-$string['configactionaftercorrectanswer'] = 'The default action to take after a correct answer';
+$string['configintro'] = 'The values set here define the default values that are used in the settings form when creating a new lesson activity. Settings specified as advanced are only shown when the \'Show more...\' link is clicked.';
 $string['configmaxanswers'] = 'Default maximum number of answers per page';
 $string['configmediaclose'] = 'Displays a close button as part of the popup generated for a linked media file';
 $string['configmediaheight'] = 'Sets the height of the popup displayed for a linked media file';
 $string['configmediawidth'] = 'Sets the width of the popup displayed for a linked media file';
+$string['configpassword_desc'] = 'Whether a password is required in order to access the lesson.';
 $string['configslideshowbgcolor'] = 'Background colour to for the slideshow if it is enabled';
 $string['configslideshowheight'] = 'Sets the height of the slideshow if it is enabled';
 $string['configslideshowwidth'] = 'Sets the width of the slideshow if it is enabled';
+$string['configtimelimit_desc'] = 'If a time limit is set, a warning is displayed at the beginning of the lesson and there is a countdown timer. If set to zero, then there is no time limit.';
 $string['confirmdelete'] = 'Delete page';
 $string['confirmdeletionofthispage'] = 'Confirm deletion of this page';
 $string['congratulations'] = 'Congratulations - end of lesson reached';
@@ -525,3 +527,5 @@ $string['topscorestitle'] = 'Top {$a} high scores';
 $string['viewhighscores'] = 'View high scores list';
 $string['youmadehighscore'] = 'You made it on the top {$a} high scores list.';
 
+// Deprecated since Moodle 3.1.
+$string['configactionaftercorrectanswer'] = 'The default action to take after a correct answer';
