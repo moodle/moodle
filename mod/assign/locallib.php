@@ -5991,6 +5991,17 @@ class assign {
 
         $this->update_submission($submission, $userid, true, $instance->teamsubmission);
 
+        if ($instance->teamsubmission && !$instance->requireallteammemberssubmit) {
+            $team = $this->get_submission_group_members($submission->groupid, true);
+
+            foreach ($team as $member) {
+                if ($member->id != $userid) {
+                    $membersubmission = clone($submission);
+                    $this->update_submission($membersubmission, $member->id, true, $instance->teamsubmission);
+                }
+            }
+        }
+
         // Logging.
         if (isset($data->submissionstatement) && ($userid == $USER->id)) {
             \mod_assign\event\statement_accepted::create_from_submission($this, $submission)->trigger();
