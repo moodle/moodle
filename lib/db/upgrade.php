@@ -4470,7 +4470,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015051102.03);
     }
 
-    if ($oldversion < 2015051102.07) {
+    if ($oldversion < 2015051104.07) {
         $root = $CFG->tempdir . '/download';
         if (is_dir($root)) {
             // Fetch each repository type - include all repos, not just enabled.
@@ -4485,7 +4485,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2015051102.07);
+        upgrade_main_savepoint(true, 2015051104.07);
     }
 
     return true;
