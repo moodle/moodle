@@ -1925,6 +1925,7 @@
       <INDEXES>
         <INDEX NAME="action" UNIQUE="false" FIELDS="action" COMMENT="insert/update/delete"/>
         <INDEX NAME="timemodified" UNIQUE="false" FIELDS="timemodified"/>
+        <INDEX NAME="userid-itemid-timemodified" UNIQUE="false" FIELDS="userid, itemid, timemodified" COMMENT="Improve history searching"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="grade_import_newitem" COMMENT="temporary table for storing new grade_item names from grade import">
