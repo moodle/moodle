@@ -3,6 +3,12 @@ information provided here is intended especially for developers. Full
 details of the repository API are available on Moodle docs:
 http://docs.moodle.org/dev/Repository_API
 
+=== 3.0.3 ===
+
+* The prepare_file() function will now return a file in a per-request directory which will
+  be automatically cleaned at the end of the request.
+  No modifications should be required as a result of this change.
+
 === 2.8 ===
 
 * Repositories working with Moodle files must replace serialize() with json_encode() in the
