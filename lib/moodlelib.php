@@ -5461,6 +5461,37 @@ function email_should_be_diverted($email) {
 }
 
 /**
+ * Generate a unique email Message-ID using the moodle domain and install path
+ *
+ * @param string $localpart An optional unique message id prefix.
+ * @return string The formatted ID ready for appending to the email headers.
+ */
+function generate_email_messageid($localpart = null) {
+    global $CFG;
+
+    $urlinfo = parse_url($CFG->wwwroot);
+    $base = '@' . $urlinfo['host'];
+
+    // If multiple moodles are on the same domain we want to tell them
+    // apart so we add the install path to the local part. This means
+    // that the id local part should never contain a / character so
+    // we can correctly parse the id to reassemble the wwwroot.
+    if (isset($urlinfo['path'])) {
+        $base = $urlinfo['path'] . $base;
+    }
+
+    if (empty($localpart)) {
+        $localpart = uniqid('', true);
+    }
+
+    // Because we may have an option /installpath suffix to the local part
+    // of the id we need to escape any / chars which are in the $localpart.
+    $localpart = str_replace('/', '%2F', $localpart);
+
+    return '<' . $localpart . $base . '>';
+}
+
+/**
  * Send an email to a specified user
  *
  * @param stdClass $user  A {@link $USER} object
@@ -5681,6 +5712,11 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
     $mail->Subject = $renderer->render_from_template('core/email_subject', $context);
     $mail->FromName = $renderer->render_from_template('core/email_fromname', $context);
     $messagetext = $renderer->render_from_template('core/email_text', $context);
+
+    // Autogenerate a MessageID if it's missing.
+    if (empty($mail->MessageID)) {
+        $mail->MessageID = generate_email_messageid();
+    }
 
     if ($messagehtml && !empty($user->mailformat) && $user->mailformat == 1) {
         // Don't ever send HTML to users who don't want it.
