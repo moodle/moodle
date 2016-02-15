@@ -475,6 +475,13 @@ class core_renderer extends renderer_base {
         }
 
         $output = '';
+
+        // Allow a url_rewrite plugin to setup any dynamic head content.
+        if (isset($CFG->urlrewriteclass) && !isset($CFG->upgraderunning)) {
+            $class = $CFG->urlrewriteclass;
+            $output .= $class::html_head_setup();
+        }
+
         $output .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' . "\n";
         $output .= '<meta name="keywords" content="moodle, ' . $this->page->title . '" />' . "\n";
         // This is only set by the {@link redirect()} method
