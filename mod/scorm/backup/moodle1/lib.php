@@ -60,6 +60,7 @@ class moodle1_mod_scorm_handler extends moodle1_mod_handler {
                         'forcecompleted' => 0,
                         'forcenewattempt' => 0,
                         'lastattemptlock' => 0,
+                        'masteryoverride' => 1,
                         'displayattemptstatus' => 1,
                         'displaycoursestructure' => 0,
                         'timeopen' => '0',
