@@ -76,7 +76,7 @@ class core_sessionlib_testcase extends advanced_testcase {
         $this->assertSame($PAGE->context, context_course::instance($SITE->id));
         $this->assertNotSame($adminsession, $SESSION);
         $this->assertObjectNotHasAttribute('test1', $SESSION);
-        $this->assertEmpty((array)$SESSION);
+        $this->assertCount(1, (array)$SESSION);
         $usersession1 = $SESSION;
         $SESSION->test2 = true;
         $this->assertSame($GLOBALS['SESSION'], $_SESSION['SESSION']);
@@ -99,7 +99,7 @@ class core_sessionlib_testcase extends advanced_testcase {
         $this->assertSame($PAGE->context, context_course::instance($SITE->id));
         $this->assertNotSame($adminsession, $SESSION);
         $this->assertNotSame($usersession1, $SESSION);
-        $this->assertEmpty((array)$SESSION);
+        $this->assertCount(1, (array)$SESSION);
         $usersession2 = $SESSION;
         $usersession2->test3 = true;
         $this->assertSame($GLOBALS['SESSION'], $_SESSION['SESSION']);
@@ -123,7 +123,7 @@ class core_sessionlib_testcase extends advanced_testcase {
         $this->assertSame($PAGE->context, context_course::instance($SITE->id));
         $this->assertNotSame($adminsession, $SESSION);
         $this->assertNotSame($usersession1, $SESSION);
-        $this->assertEmpty((array)$SESSION);
+        $this->assertCount(1, (array)$SESSION);
         $this->assertSame($GLOBALS['SESSION'], $_SESSION['SESSION']);
         $this->assertSame($GLOBALS['SESSION'], $SESSION);
         $this->assertSame($GLOBALS['USER'], $_SESSION['USER']);

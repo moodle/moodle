@@ -84,6 +84,16 @@ class notification implements \renderable, \templatable {
     protected $messagetype = self::NOTIFY_WARNING;
 
     /**
+     * @var bool $announce Whether this notification should be announced assertively to screen readers.
+     */
+    protected $announce = true;
+
+    /**
+     * @var bool $closebutton Whether this notification should inlcude a button to dismiss itself.
+     */
+    protected $closebutton = true;
+
+    /**
      * @var array $extraclasses A list of any extra classes that may be required.
      */
     protected $extraclasses = array();
@@ -112,6 +122,30 @@ class notification implements \renderable, \templatable {
     }
 
     /**
+     * Set whether this notification should be announced assertively to screen readers.
+     *
+     * @param bool $announce
+     * @return $this
+     */
+    public function set_announce($announce = false) {
+        $this->announce = (bool) $announce;
+
+        return $this;
+    }
+
+    /**
+     * Set whether this notification should include a button to disiss itself.
+     *
+     * @param bool $button
+     * @return $this
+     */
+    public function set_show_closebutton($button = false) {
+        $this->closebutton = (bool) $button;
+
+        return $this;
+    }
+
+    /**
      * Add any extra classes that this notification requires.
      *
      * @param array $classes
@@ -133,6 +167,8 @@ class notification implements \renderable, \templatable {
         return array(
             'message'       => clean_text($this->message),
             'extraclasses'  => implode(' ', $this->extraclasses),
+            'announce'      => $this->announce,
+            'closebutton'   => $this->closebutton,
         );
     }
 

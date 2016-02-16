@@ -407,4 +407,58 @@ class core_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of fetch_notifications() parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function fetch_notifications_parameters() {
+        return new external_function_parameters(
+            array(
+                'contextid' => new external_value(PARAM_INT, 'Context ID', VALUE_REQUIRED),
+            ));
+    }
+
+    /**
+     * Returns description of fetch_notifications() result value.
+     *
+     * @return external_description
+     * @since Moodle 3.1
+     */
+    public static function fetch_notifications_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'template'      => new external_value(PARAM_RAW, 'Name of the template'),
+                    'variables'     => new external_single_structure(array(
+                        'message'       => new external_value(PARAM_RAW, 'HTML content of the Notification'),
+                        'extraclasses'  => new external_value(PARAM_RAW, 'Extra classes to provide to the tmeplate'),
+                        'announce'      => new external_value(PARAM_RAW, 'Whether to announce'),
+                        'closebutton'   => new external_value(PARAM_RAW, 'Whether to close'),
+                    )),
+                )
+            )
+        );
+    }
+
+    /**
+     * Returns the list of notifications against the current session.
+     *
+     * @return array
+     * @since Moodle 3.1
+     */
+    public static function fetch_notifications($contextid) {
+        global $PAGE;
+
+        self::validate_parameters(self::fetch_notifications_parameters(), [
+                'contextid' => $contextid,
+            ]);
+
+        $context = \context::instance_by_id($contextid);
+        $PAGE->set_context($context);
+
+        return \core\notification::fetch_as_array($PAGE->get_renderer('core'));
+    }
 }

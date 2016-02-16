@@ -1032,7 +1032,7 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     public function footer() {
-        global $CFG, $DB;
+        global $CFG, $DB, $PAGE;
 
         $output = $this->container_end_all(true);
 
@@ -1057,6 +1057,7 @@ class core_renderer extends renderer_base {
         }
         $footer = str_replace($this->unique_performance_info_token, $performanceinfo, $footer);
 
+        $this->page->requires->js_call_amd('core/notification', 'init', array($PAGE->context->id, \core\notification::fetch_as_array($this)));
         $footer = str_replace($this->unique_end_html_token, $this->page->requires->get_end_code(), $footer);
 
         $this->page->set_state(moodle_page::STATE_DONE);
@@ -1086,22 +1087,37 @@ class core_renderer extends renderer_base {
      */
     public function course_content_header($onlyifnotcalledbefore = false) {
         global $CFG;
-        if ($this->page->course->id == SITEID) {
-            // return immediately and do not include /course/lib.php if not necessary
-            return '';
-        }
         static $functioncalled = false;
         if ($functioncalled && $onlyifnotcalledbefore) {
             // we have already output the content header
             return '';
         }
+
+        // Output any session notification.
+        $notifications = \core\notification::fetch();
+
+        $bodynotifications = '';
+        foreach ($notifications as $notification) {
+            $bodynotifications .= $this->render_from_template(
+                    $notification->get_template_name(),
+                    $notification->export_for_template($this)
+                );
+        }
+
+        $output = html_writer::span($bodynotifications, 'notifications', array('id' => 'user-notifications'));
+
+        if ($this->page->course->id == SITEID) {
+            // return immediately and do not include /course/lib.php if not necessary
+            return $output;
+        }
+
         require_once($CFG->dirroot.'/course/lib.php');
         $functioncalled = true;
         $courseformat = course_get_format($this->page->course);
         if (($obj = $courseformat->course_content_header()) !== null) {
-            return html_writer::div($courseformat->get_renderer($this->page)->render($obj), 'course-content-header');
+            $output .= html_writer::div($courseformat->get_renderer($this->page)->render($obj), 'course-content-header');
         }
-        return '';
+        return $output;
     }
 
     /**
@@ -2780,6 +2796,8 @@ EOD;
     /**
      * Output a notification (that is, a status message about something that has just happened).
      *
+     * Note: \core\notification::add() may be more suitable for your usage.
+     *
      * @param string $message The message to print out.
      * @param string $type    The type of notification. See constants on \core\output\notification.
      * @return string the HTML to output.
@@ -2848,7 +2866,7 @@ EOD;
      */
     public function notify_problem($message) {
         debugging(__FUNCTION__ . ' is deprecated.' .
-            'Please use notification() or \core\output\notification as required',
+            'Please use \core\notification::add, or \core\output\notification as required',
             DEBUG_DEVELOPER);
         $n = new \core\output\notification($message, \core\output\notification::NOTIFY_ERROR);
         return $this->render($n);
@@ -2865,7 +2883,7 @@ EOD;
      */
     public function notify_success($message) {
         debugging(__FUNCTION__ . ' is deprecated.' .
-            'Please use notification() or \core\output\notification as required',
+            'Please use \core\notification::add, or \core\output\notification as required',
             DEBUG_DEVELOPER);
         $n = new \core\output\notification($message, \core\output\notification::NOTIFY_SUCCESS);
         return $this->render($n);
@@ -2882,7 +2900,7 @@ EOD;
      */
     public function notify_message($message) {
         debugging(__FUNCTION__ . ' is deprecated.' .
-            'Please use notification() or \core\output\notification as required',
+            'Please use \core\notification::add, or \core\output\notification as required',
             DEBUG_DEVELOPER);
         $n = new \core\output\notification($message, \core\output\notification::NOTIFY_INFO);
         return $this->render($n);
@@ -2899,7 +2917,7 @@ EOD;
      */
     public function notify_redirect($message) {
         debugging(__FUNCTION__ . ' is deprecated.' .
-            'Please use notification() or \core\output\notification as required',
+            'Please use \core\notification::add, or \core\output\notification as required',
             DEBUG_DEVELOPER);
         $n = new \core\output\notification($message, \core\output\notification::NOTIFY_INFO);
         return $this->render($n);
