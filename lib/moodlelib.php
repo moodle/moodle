@@ -5480,7 +5480,7 @@ function email_should_be_diverted($email) {
 function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', $attachment = '', $attachname = '',
                        $usetrueaddress = true, $replyto = '', $replytoname = '', $wordwrapwidth = 79) {
 
-    global $CFG;
+    global $CFG, $PAGE, $SITE;
 
     if (empty($user) or empty($user->id)) {
         debugging('Can not send email to null user', DEBUG_DEVELOPER);
@@ -5598,8 +5598,6 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         $tempreplyto[] = array($replyto, $replytoname);
     }
 
-    $mail->Subject = substr($subject, 0, 900);
-
     $temprecipients[] = array($user->email, fullname($user));
 
     // Set word wrap.
@@ -5638,6 +5636,51 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
     if (!empty($from->priority)) {
         $mail->Priority = $from->priority;
     }
+
+    $renderer = $PAGE->get_renderer('core');
+    $context = array(
+        'sitefullname' => $SITE->fullname,
+        'siteshortname' => $SITE->shortname,
+        'sitewwwroot' => $CFG->wwwroot,
+        'subject' => $subject,
+        'to' => $user->email,
+        'toname' => fullname($user),
+        'from' => $mail->From,
+        'fromname' => $mail->FromName,
+    );
+    if (!empty($tempreplyto[0])) {
+        $context['replyto'] = $tempreplyto[0][0];
+        $context['replytoname'] = $tempreplyto[0][1];
+    }
+    if ($user->id > 0) {
+        $context['touserid'] = $user->id;
+        $context['tousername'] = $user->username;
+    }
+
+    if (!empty($user->mailformat) && $user->mailformat == 1) {
+        // Only process html templates if the user preferences allow html email.
+
+        if ($messagehtml) {
+            // If html has been given then pass it through the template.
+            $context['body'] = $messagehtml;
+            $messagehtml = $renderer->render_from_template('core/email_html', $context);
+
+        } else {
+            // If no html has been given, BUT there is an html wrapping template then
+            // auto convert the text to html and then wrap it.
+            $autohtml = trim(text_to_html($messagetext));
+            $context['body'] = $autohtml;
+            $temphtml = $renderer->render_from_template('core/email_html', $context);
+            if ($autohtml != $temphtml) {
+                $messagehtml = $temphtml;
+            }
+        }
+    }
+
+    $context['body'] = $messagetext;
+    $mail->Subject = $renderer->render_from_template('core/email_subject', $context);
+    $mail->FromName = $renderer->render_from_template('core/email_fromname', $context);
+    $messagetext = $renderer->render_from_template('core/email_text', $context);
 
     if ($messagehtml && !empty($user->mailformat) && $user->mailformat == 1) {
         // Don't ever send HTML to users who don't want it.
