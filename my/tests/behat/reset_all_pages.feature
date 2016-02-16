@@ -66,7 +66,7 @@ Feature: Reset all personalised pages to default
     And I log in as "admin"
     And I navigate to "Default Dashboard page" node in "Site administration > Appearance"
     When I press "Reset Dashboard for all users"
-    And I follow "Continue"
+    And I should see "All Dashboard pages have been reset to default."
     And I log out
 
     And I log in as "student1"
@@ -108,7 +108,7 @@ Feature: Reset all personalised pages to default
     And I log in as "admin"
     And I navigate to "Default profile page" node in "Site administration > Appearance"
     When I press "Reset profile for all users"
-    And I follow "Continue"
+    And I should see "All profile pages have been reset to default."
     And I log out
 
     And I log in as "student2"
