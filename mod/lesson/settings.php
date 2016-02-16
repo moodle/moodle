@@ -160,7 +160,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configselect_with_advanced('mod_lesson/customscoring',
         get_string('customscoring', 'lesson'), get_string('customscoring_help', 'lesson'),
-        array('value' => 0, 'adv' => true), $yesno));
+        array('value' => 1, 'adv' => true), $yesno));
 
     $settings->add(new admin_setting_configselect_with_advanced('mod_lesson/retakesallowed',
         get_string('retakesallowed', 'lesson'), get_string('retakesallowed_help', 'lesson'),
