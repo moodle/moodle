@@ -379,6 +379,26 @@ class forum_post implements \renderable {
     }
 
     /**
+     * ID number of the course that the forum is in.
+     *
+     * @return string
+     */
+    public function get_courseidnumber() {
+        return s($this->course->idnumber);
+    }
+
+    /**
+     * The full name of the course that the forum is in.
+     *
+     * @return string
+     */
+    public function get_coursefullname() {
+        return format_string($this->course->fullname, true, array(
+            'context' => \context_course::instance($this->course->id),
+        ));
+    }
+
+    /**
      * The name of the course that the forum is in.
      *
      * @return string
