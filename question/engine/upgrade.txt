@@ -1,5 +1,12 @@
 This files describes API changes for the core question engine.
 
+=== 3.1, 3.0.3, 2.9.5 ===
+
+1) The field question_display_options::$extrainfocontent is now displayed in the
+   outcomes (yellow) div by default. It used to be in the info div. If you have
+   overriden the question renderer, you may need to make a corresponding change.
+
+
 === 3.0, 2.9.2, 2.8.8 ===
 
 1) The extra internal PARAM constant question_attempt::PARAM_MARK should no

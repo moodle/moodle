@@ -144,7 +144,6 @@ class core_question_renderer extends plugin_renderer_base {
         $output .= $this->number($number);
         $output .= $this->status($qa, $behaviouroutput, $options);
         $output .= $this->mark_summary($qa, $behaviouroutput, $options);
-        $output .= $options->extrainfocontent;
         $output .= $this->question_flag($qa, $options->flags);
         $output .= $this->edit_question_link($qa, $options);
         return $output;
@@ -412,6 +411,8 @@ class core_question_renderer extends plugin_renderer_base {
                 $qtoutput->feedback($qa, $options), array('class' => 'feedback'));
         $output .= html_writer::nonempty_tag('div',
                 $behaviouroutput->feedback($qa, $options), array('class' => 'im-feedback'));
+        $output .= html_writer::nonempty_tag('div',
+                $options->extrainfocontent, array('class' => 'extra-feedback'));
         return $output;
     }
 
