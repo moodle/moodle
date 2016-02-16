@@ -804,10 +804,16 @@ function forum_cron() {
                     $data->viewfullnames = $userto->viewfullnames[$forum->id];
                 }
 
+                // Not all of these variables are used in the default language
+                // string but are made available to support custom subjects.
                 $a = new stdClass();
-                $a->courseshortname = $data->get_coursename();
-                $a->forumname = $cleanforumname;
                 $a->subject = $data->get_subject();
+                $a->forumname = $cleanforumname;
+                $a->sitefullname = format_string($site->fullname);
+                $a->siteshortname = format_string($site->shortname);
+                $a->courseidnumber = $data->get_courseidnumber();
+                $a->coursefullname = $data->get_coursefullname();
+                $a->courseshortname = $data->get_coursename();
                 $postsubject = html_to_text(get_string('postmailsubject', 'forum', $a), 0);
 
                 // Send the post now!
