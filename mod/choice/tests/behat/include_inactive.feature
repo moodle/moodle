@@ -24,7 +24,6 @@ Feature: Include responses from inactive users
     And I follow "Course 1"
     And I turn editing mode on
 
-  @javascript
   Scenario: Enable the choice include inactive option and check that responses from inactive students are visible
     Given I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice name |
@@ -83,7 +82,6 @@ Feature: Include responses from inactive users
     And I should see "Student 3"
     And I log out
 
-  @javascript
   Scenario: Disable the choice include inactive option and check that responses from inactive students are not visible
     Given I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice name |
