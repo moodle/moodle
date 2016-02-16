@@ -29,8 +29,11 @@
 
     Context variables required for this template:
     * message A cleaned string (use clean_text()) to display.
+    * extraclasses Additional classes to apply to the notification.
 
     Example context (json):
-    { "message": "Your pants are on fire!" }
+    { "message": "Your pants are on fire!", "extraclasses": "foo bar"}
 }}
-<div class="alert alert-success">{{{message}}}</div>
+<div class="alert alert-success alert-block fade in {{ extraclasses }}">
+    {{{ message }}}
+</div>

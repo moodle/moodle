@@ -15,11 +15,11 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/notification_problem
+    @template core/notification_info
 
     Moodle notification template.
 
-    The purpose of this template is to render a problem notification.
+    The purpose of this template is to render an info notification.
 
     Classes required for JS:
     * none
@@ -29,8 +29,11 @@
 
     Context variables required for this template:
     * message A cleaned string (use clean_text()) to display.
+    * extraclasses Additional classes to apply to the notification.
 
     Example context (json):
-    { "message": "Your pants are on fire!" }
+    { "message": "Your pants are on fire!", "extraclasses": "foo bar"}
 }}
-<div class="alert alert-error">{{{message}}}</div>
+<div class="alert alert-info alert-block fade in {{ extraclasses }}">
+    {{{ message }}}
+</div>

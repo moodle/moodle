@@ -6,6 +6,11 @@ information provided here is intended especially for theme designer.
 * A new search box for global search has been added to bootstrap and clean layout files, if
   your theme is overwriting columns1.php, columns2.php or columns3.php you will need to add a
   call to core_renderer::search_box to display it.
+* Notification templates have been renamed to better suit types of alert
+  rather than uses. The following changes have been made:
+  * notification_problem.mustache => notification_error.mustache
+  * notification_message          => notification_info
+  * notification_redirect         => notification_warning
 
 === 3.0 ===
 

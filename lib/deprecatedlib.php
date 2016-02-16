@@ -912,14 +912,14 @@ function print_container_end($return=false) {
  * @param bool $return whether to return an output string or echo now
  * @return string|bool Depending on $result
  */
-function notify($message, $classes = 'notifyproblem', $align = 'center', $return = false) {
+function notify($message, $classes = 'error', $align = 'center', $return = false) {
     global $OUTPUT;
 
     debugging('notify() is deprecated, please use $OUTPUT->notification() instead', DEBUG_DEVELOPER);
 
     if ($classes == 'green') {
-        debugging('Use of deprecated class name "green" in notify. Please change to "notifysuccess".', DEBUG_DEVELOPER);
-        $classes = 'notifysuccess'; // Backward compatible with old color system
+        debugging('Use of deprecated class name "green" in notify. Please change to "success".', DEBUG_DEVELOPER);
+        $classes = 'success'; // Backward compatible with old color system.
     }
 
     $output = $OUTPUT->notification($message, $classes);

@@ -2778,38 +2778,63 @@ EOD;
     }
 
     /**
-     * Output a notification (that is, a status message about something that has
-     * just happened).
+     * Output a notification (that is, a status message about something that has just happened).
      *
-     * @param string $message the message to print out
-     * @param string $classes normally 'notifyproblem' or 'notifysuccess'.
+     * @param string $message The message to print out.
+     * @param string $type    The type of notification. See constants on \core\output\notification.
      * @return string the HTML to output.
      */
-    public function notification($message, $classes = 'notifyproblem') {
+    public function notification($message, $type = null) {
+        $typemappings = [
+            // Valid types.
+            'success'           => \core\output\notification::NOTIFY_SUCCESS,
+            'info'              => \core\output\notification::NOTIFY_INFO,
+            'warning'           => \core\output\notification::NOTIFY_WARNING,
+            'error'             => \core\output\notification::NOTIFY_ERROR,
 
-        $classmappings = array(
-            'notifyproblem' => \core\output\notification::NOTIFY_PROBLEM,
-            'notifytiny' => \core\output\notification::NOTIFY_PROBLEM,
-            'notifysuccess' => \core\output\notification::NOTIFY_SUCCESS,
-            'notifymessage' => \core\output\notification::NOTIFY_MESSAGE,
-            'redirectmessage' => \core\output\notification::NOTIFY_REDIRECT
-        );
+            // Legacy types mapped to current types.
+            'notifyproblem'     => \core\output\notification::NOTIFY_ERROR,
+            'notifytiny'        => \core\output\notification::NOTIFY_ERROR,
+            'notifyerror'       => \core\output\notification::NOTIFY_ERROR,
+            'notifysuccess'     => \core\output\notification::NOTIFY_SUCCESS,
+            'notifymessage'     => \core\output\notification::NOTIFY_INFO,
+            'notifyredirect'    => \core\output\notification::NOTIFY_INFO,
+            'redirectmessage'   => \core\output\notification::NOTIFY_INFO,
+        ];
 
-        // Identify what type of notification this is.
-        $type = \core\output\notification::NOTIFY_PROBLEM;
-        $classarray = explode(' ', self::prepare_classes($classes));
-        if (count($classarray) > 0) {
-            foreach ($classarray as $class) {
-                if (isset($classmappings[$class])) {
-                    $type = $classmappings[$class];
-                    break;
+        $extraclasses = [];
+
+        if ($type) {
+            if (strpos($type, ' ') === false) {
+                // No spaces in the list of classes, therefore no need to loop over and determine the class.
+                if (isset($typemappings[$type])) {
+                    $type = $typemappings[$type];
+                } else {
+                    // The value provided did not match a known type. It must be an extra class.
+                    $extraclasses = [$type];
+                }
+            } else {
+                // Identify what type of notification this is.
+                $classarray = explode(' ', self::prepare_classes($type));
+
+                // Separate out the type of notification from the extra classes.
+                foreach ($classarray as $class) {
+                    if (isset($typemappings[$class])) {
+                        $type = $typemappings[$class];
+                    } else {
+                        $extraclasses[] = $class;
+                    }
                 }
             }
         }
 
-        $n = new \core\output\notification($message, $type);
-        return $this->render($n);
+        $notification = new \core\output\notification($message, $type);
+        if (count($extraclasses)) {
+            $notification->set_extra_classes($extraclasses);
+        }
 
+        // Return the rendered template.
+        return $this->render_from_template($notification->get_template_name(), $notification->export_for_template($this));
     }
 
     /**
@@ -2817,9 +2842,15 @@ EOD;
      *
      * @param string $message the message to print out
      * @return string HTML fragment.
+     * @deprecated since Moodle 3.1 MDL-30811 - please do not use this function any more.
+     * @todo MDL-53113 This will be removed in Moodle 3.5.
+     * @see \core\output\notification
      */
     public function notify_problem($message) {
-        $n = new \core\output\notification($message, \core\output\notification::NOTIFY_PROBLEM);
+        debugging(__FUNCTION__ . ' is deprecated.' .
+            'Please use notification() or \core\output\notification as required',
+            DEBUG_DEVELOPER);
+        $n = new \core\output\notification($message, \core\output\notification::NOTIFY_ERROR);
         return $this->render($n);
     }
 
@@ -2828,8 +2859,14 @@ EOD;
      *
      * @param string $message the message to print out
      * @return string HTML fragment.
+     * @deprecated since Moodle 3.1 MDL-30811 - please do not use this function any more.
+     * @todo MDL-53113 This will be removed in Moodle 3.5.
+     * @see \core\output\notification
      */
     public function notify_success($message) {
+        debugging(__FUNCTION__ . ' is deprecated.' .
+            'Please use notification() or \core\output\notification as required',
+            DEBUG_DEVELOPER);
         $n = new \core\output\notification($message, \core\output\notification::NOTIFY_SUCCESS);
         return $this->render($n);
     }
@@ -2839,9 +2876,15 @@ EOD;
      *
      * @param string $message the message to print out
      * @return string HTML fragment.
+     * @deprecated since Moodle 3.1 MDL-30811 - please do not use this function any more.
+     * @todo MDL-53113 This will be removed in Moodle 3.5.
+     * @see \core\output\notification
      */
     public function notify_message($message) {
-        $n = new \core\output\notification($message, \core\output\notification::NOTIFY_MESSAGE);
+        debugging(__FUNCTION__ . ' is deprecated.' .
+            'Please use notification() or \core\output\notification as required',
+            DEBUG_DEVELOPER);
+        $n = new \core\output\notification($message, \core\output\notification::NOTIFY_INFO);
         return $this->render($n);
     }
 
@@ -2850,9 +2893,15 @@ EOD;
      *
      * @param string $message the message to print out
      * @return string HTML fragment.
+     * @deprecated since Moodle 3.1 MDL-30811 - please do not use this function any more.
+     * @todo MDL-53113 This will be removed in Moodle 3.5.
+     * @see \core\output\notification
      */
     public function notify_redirect($message) {
-        $n = new \core\output\notification($message, \core\output\notification::NOTIFY_REDIRECT);
+        debugging(__FUNCTION__ . ' is deprecated.' .
+            'Please use notification() or \core\output\notification as required',
+            DEBUG_DEVELOPER);
+        $n = new \core\output\notification($message, \core\output\notification::NOTIFY_INFO);
         return $this->render($n);
     }
 
@@ -2864,30 +2913,7 @@ EOD;
      * @return string the HTML to output.
      */
     protected function render_notification(\core\output\notification $notification) {
-
-        $data = $notification->export_for_template($this);
-
-        $templatename = '';
-        switch($data->type) {
-            case \core\output\notification::NOTIFY_MESSAGE:
-                $templatename = 'core/notification_message';
-                break;
-            case \core\output\notification::NOTIFY_SUCCESS:
-                $templatename = 'core/notification_success';
-                break;
-            case \core\output\notification::NOTIFY_PROBLEM:
-                $templatename = 'core/notification_problem';
-                break;
-            case \core\output\notification::NOTIFY_REDIRECT:
-                $templatename = 'core/notification_redirect';
-                break;
-            default:
-                $templatename = 'core/notification_message';
-                break;
-        }
-
-        return self::render_from_template($templatename, $data);
-
+        return $this->render_from_template($notification->get_template_name(), $notification->export_for_template($this));
     }
 
     /**
@@ -4251,13 +4277,13 @@ class core_renderer_cli extends core_renderer {
     /**
      * Returns a template fragment representing a notification.
      *
-     * @param string $message The message to include
-     * @param string $classes A space-separated list of CSS classes
+     * @param string $message The message to print out.
+     * @param string $type    The type of notification. See constants on \core\output\notification.
      * @return string A template fragment for a notification
      */
-    public function notification($message, $classes = 'notifyproblem') {
+    public function notification($message, $type = null) {
         $message = clean_text($message);
-        if ($classes === 'notifysuccess') {
+        if ($type === 'notifysuccess' || $type === 'success') {
             return "++ $message ++\n";
         }
         return "!! $message !!\n";
@@ -4325,10 +4351,10 @@ class core_renderer_ajax extends core_renderer {
      * Used to display a notification.
      * For the AJAX notifications are discarded.
      *
-     * @param string $message
-     * @param string $classes
+     * @param string $message The message to print out.
+     * @param string $type    The type of notification. See constants on \core\output\notification.
      */
-    public function notification($message, $classes = 'notifyproblem') {}
+    public function notification($message, $type = null) {}
 
     /**
      * Used to display a redirection message.
