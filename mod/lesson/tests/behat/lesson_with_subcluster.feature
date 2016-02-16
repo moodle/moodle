@@ -20,7 +20,6 @@ Feature: In a lesson activity, students can see questions in random order and a 
     And I follow "Course 1"
     And I turn editing mode on
 
-  @javascript
   Scenario: Lesson with subcluster
     Given I add a "Lesson" to section "1" and I fill the form with:
       | Name | Lesson with subcluster |

@@ -23,7 +23,6 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
     And I follow "Course 1"
     And I turn editing mode on
 
-  @javascript
   Scenario: A completed lesson with only questions that allows multiple attempts
     Given I follow "Test lesson name"
     And I follow "Add a question page"
@@ -39,7 +38,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_response_editor_1 | Wrong |
       | id_jumpto_1 | This page |
     And I press "Save page"
-    And I set the field "qtype" to "Question"
+    And I select "Question" from the "qtype" singleselect
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
     And I set the following fields to these values:
@@ -69,10 +68,8 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
     And I should see "Congratulations - end of lesson reached"
     When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should see "You have lessons that are due"
-    And I click on ".collapsibleregioncaption" "css_element"
     And I should see "Completed, You can re-attempt this lesson"
 
-  @javascript
   Scenario: A completed lesson with only questions that does not allow multiple attempts
     Given  I follow "Test lesson name"
     And I navigate to "Edit settings" node in "Lesson administration"
@@ -92,7 +89,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_response_editor_1 | Wrong |
       | id_jumpto_1 | This page |
     And I press "Save page"
-    And I set the field "qtype" to "Question"
+    And I select "Question" from the "qtype" singleselect
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
     And I set the following fields to these values:
@@ -123,7 +120,6 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
     When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should not see "You have lessons that are due"
 
-  @javascript
   Scenario: A completed lesson with only content pages that allows multiple attempts
     Given I follow "Test lesson name"
     And I follow "Add a content page"
@@ -133,7 +129,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I set the field "qtype" to "Add a content page"
+    And I select "Add a content page" from the "qtype" singleselect
     And I set the following fields to these values:
       | Page title | Second page name |
       | Page contents | Second page contents |
@@ -152,10 +148,8 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
     And I press "End of lesson"
     When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should see "You have lessons that are due"
-    And I click on ".collapsibleregioncaption" "css_element"
     And I should see "Completed, You can re-attempt this lesson"
 
-  @javascript
   Scenario: A completed lesson with only content pages that does not allow multiple attempts
     Given I follow "Test lesson name"
     And I navigate to "Edit settings" node in "Lesson administration"
@@ -169,7 +163,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I set the field "qtype" to "Add a content page"
+    And I select "Add a content page" from the "qtype" singleselect
     And I set the following fields to these values:
       | Page title | Second page name |
       | Page contents | Second page contents |
@@ -189,7 +183,6 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
     When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should not see "You have lessons that are due"
 
-  @javascript
   Scenario: An incomplete lesson with only questions.
     Given I follow "Test lesson name"
     And I follow "Add a question page"
@@ -205,7 +198,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_response_editor_1 | Wrong |
       | id_jumpto_1 | This page |
     And I press "Save page"
-    And I set the field "qtype" to "Question"
+    And I select "Question" from the "qtype" singleselect
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
     And I set the following fields to these values:
@@ -229,10 +222,8 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
     And I press "Continue"
     When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should see "You have lessons that are due"
-    And I click on ".collapsibleregioncaption" "css_element"
     And I should see "Lesson has been started, but not yet completed"
 
-  @javascript
   Scenario: An incomplete lesson with only content pages.
     Given I follow "Test lesson name"
     And I follow "Add a content page"
@@ -242,7 +233,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I set the field "qtype" to "Add a content page"
+    And I select "Add a content page" from the "qtype" singleselect
     And I set the following fields to these values:
       | Page title | Second page name |
       | Page contents | Second page contents |
@@ -260,10 +251,8 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
     And I should see "Second page contents"
     When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should see "You have lessons that are due"
-    And I click on ".collapsibleregioncaption" "css_element"
     And I should see "Lesson has been started, but not yet completed"
 
-  @javascript
   Scenario: A lesson with only questions that has not been started.
     Given I follow "Test lesson name"
     And I follow "Add a question page"
@@ -279,7 +268,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_response_editor_1 | Wrong |
       | id_jumpto_1 | This page |
     And I press "Save page"
-    And I set the field "qtype" to "Question"
+    And I select "Question" from the "qtype" singleselect
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
     And I set the following fields to these values:
@@ -296,10 +285,8 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
     And I log in as "student1"
     When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should see "You have lessons that are due"
-    And I click on ".collapsibleregioncaption" "css_element"
     And I should see "No attempts have been made on this lesson"
 
-  @javascript
   Scenario: A lesson with only content pages that has not been started.
     Given I follow "Test lesson name"
     And I follow "Add a content page"
@@ -309,7 +296,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I set the field "qtype" to "Add a content page"
+    And I select "Add a content page" from the "qtype" singleselect
     And I set the following fields to these values:
       | Page title | Second page name |
       | Page contents | Second page contents |
@@ -322,7 +309,6 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
     And I log in as "student1"
     When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should see "You have lessons that are due"
-    And I click on ".collapsibleregioncaption" "css_element"
     And I should see "No attempts have been made on this lesson"
 
   Scenario: Viewing the status for multiple lessons in multiple courses
