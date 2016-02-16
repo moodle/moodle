@@ -60,12 +60,7 @@ foreach ($allcohorts as $c) {
 unset($allcohorts);
 
 if (count($cohorts) < 2) {
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('bulkadd', 'core_cohort'));
-    echo $OUTPUT->notification(get_string('bulknocohort', 'core_cohort'));
-    echo $OUTPUT->continue_button(new moodle_url('/admin/user/user_bulk.php'));
-    echo $OUTPUT->footer();
-    die;
+    redirect(new moodle_url('/admin/user/user_bulk.php'), get_string('bulknocohort', 'core_cohort'));
 }
 
 $countries = get_string_manager()->get_list_of_countries(true);

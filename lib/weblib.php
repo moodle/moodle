@@ -2599,12 +2599,16 @@ function notice ($message, $link='', $course=null) {
  * @param string $messagetype The type of notification to show the message in. See constants on \core\output\notification.
  * @throws moodle_exception
  */
-function redirect($url, $message='', $delay=-1, $messagetype = \core\output\notification::NOTIFY_INFO) {
+function redirect($url, $message='', $delay=null, $messagetype = \core\output\notification::NOTIFY_INFO) {
     global $OUTPUT, $PAGE, $CFG;
 
     if (CLI_SCRIPT or AJAX_SCRIPT) {
         // This is wrong - developers should not use redirect in these scripts but it should not be very likely.
         throw new moodle_exception('redirecterrordetected', 'error');
+    }
+
+    if ($delay === null) {
+        $delay = -1;
     }
 
     // Prevent debug errors - make sure context is properly initialised.
