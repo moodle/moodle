@@ -190,6 +190,103 @@ define(['jquery',
     };
 
     /**
+     * Delete the link between competency and course, template or plan. Reload the page.
+     *
+     * @method doDelete
+     * @param {int} deleteid The id of record to delete.
+     */
+    competencies.prototype.doDelete = function(deleteid) {
+        var localthis = this;
+        var requests = [],
+            pagerender = '',
+            pageregion = '';
+
+        // Delete the link and reload the page template.
+        if (localthis.itemtype == 'course') {
+            requests = ajax.call([
+                { methodname: 'tool_lp_remove_competency_from_course',
+                    args: { courseid: localthis.itemid, competencyid: deleteid } },
+                { methodname: 'tool_lp_data_for_course_competencies_page',
+                    args: { courseid: localthis.itemid } }
+            ]);
+            pagerender = 'tool_lp/course_competencies_page';
+            pageregion = 'coursecompetenciespage';
+        } else if (localthis.itemtype == 'template') {
+            requests = ajax.call([
+                { methodname: 'tool_lp_remove_competency_from_template',
+                    args: { templateid: localthis.itemid, competencyid: deleteid } },
+                { methodname: 'tool_lp_data_for_template_competencies_page',
+                    args: { templateid: localthis.itemid, pagecontext: { contextid: localthis.pageContextId } } }
+            ]);
+            pagerender = 'tool_lp/template_competencies_page';
+            pageregion = 'templatecompetenciespage';
+        } else if (localthis.itemtype == 'plan') {
+            requests = ajax.call([
+                { methodname: 'tool_lp_remove_competency_from_plan',
+                    args: { planid: localthis.itemid, competencyid: deleteid } },
+                { methodname: 'tool_lp_data_for_plan_page',
+                    args: { planid: localthis.itemid } }
+            ]);
+            pagerender = 'tool_lp/plan_page';
+            pageregion = 'plan-page';
+        }
+
+        requests[1].done(function(context) {
+            templates.render(pagerender, context).done(function(html, js) {
+                $('[data-region="' + pageregion + '"]').replaceWith(html);
+                templates.runTemplateJS(js);
+            }).fail(notification.exception);
+        }).fail(notification.exception);
+
+    };
+
+    /**
+     * Show a confirm dialogue before deleting a competency.
+     * 
+     * @method deleteHandler
+     * @param {int} deleteid The id of record to delete.
+     */
+    competencies.prototype.deleteHandler = function(deleteid) {
+        var localthis = this;
+        var requests = [];
+        var message;
+
+        if (localthis.itemtype == 'course') {
+            message = 'unlinkcompetencycourse';
+        } else if (localthis.itemtype == 'template') {
+            message = 'unlinkcompetencytemplate';
+        } else if (localthis.itemtype == 'plan') {
+            message = 'unlinkcompetencyplan';
+        } else {
+            return;
+        }
+
+        requests = ajax.call([{
+            methodname: 'tool_lp_read_competency',
+            args: { id: deleteid }
+        }]);
+
+        requests[0].done(function(competency) {
+            str.get_strings([
+                { key: 'confirm', component: 'moodle' },
+                { key: message, component: 'tool_lp', param: competency.shortname },
+                { key: 'confirm', component: 'moodle' },
+                { key: 'cancel', component: 'moodle' }
+            ]).done(function (strings) {
+                notification.confirm(
+                    strings[0], // Confirm.
+                    strings[1], // Unlink the competency X from the course?
+                    strings[2], // Confirm.
+                    strings[3], // Cancel.
+                    function() {
+                        localthis.doDelete(deleteid);
+                    }
+                );
+            }).fail(notification.exception);
+        }).fail(notification.exception);
+    };
+
+    /**
      * Register the javascript event handlers for this page.
      *
      * @method registerEvents
@@ -203,7 +300,7 @@ define(['jquery',
                 var requests = [];
                 var pagerender = 'tool_lp/course_competencies_page';
                 var pageregion = 'coursecompetenciespage';
-                var coursecompetencyid = $(e.target).data('id') ;
+                var coursecompetencyid = $(e.target).data('id');
                 var ruleoutcome = $(e.target).val();
                 requests = ajax.call([
                     { methodname: 'tool_lp_set_course_competency_ruleoutcome',
@@ -226,50 +323,10 @@ define(['jquery',
             localthis.pickCompetency();
         });
         $('[data-action="delete-competency-link"]').click(function(e) {
-            var requests = [],
-                pagerender = '',
-                pageregion = '';
-
             e.preventDefault();
 
             var deleteid = $(e.target).closest('[data-id]').data('id');
-
-            // Delete the link and reload the page template.
-            if (localthis.itemtype == 'course') {
-                requests = ajax.call([
-                    { methodname: 'tool_lp_remove_competency_from_course',
-                      args: { courseid: localthis.itemid, competencyid: deleteid } },
-                    { methodname: 'tool_lp_data_for_course_competencies_page',
-                      args: { courseid: localthis.itemid } }
-                ]);
-                pagerender = 'tool_lp/course_competencies_page';
-                pageregion = 'coursecompetenciespage';
-            } else if (localthis.itemtype == 'template') {
-                requests = ajax.call([
-                    { methodname: 'tool_lp_remove_competency_from_template',
-                        args: { templateid: localthis.itemid, competencyid: deleteid } },
-                    { methodname: 'tool_lp_data_for_template_competencies_page',
-                        args: { templateid: localthis.itemid, pagecontext: { contextid: localthis.pageContextId } } }
-                ]);
-                pagerender = 'tool_lp/template_competencies_page';
-                pageregion = 'templatecompetenciespage';
-            } else if (localthis.itemtype == 'plan') {
-                requests = ajax.call([
-                    { methodname: 'tool_lp_remove_competency_from_plan',
-                        args: { planid: localthis.itemid, competencyid: deleteid } },
-                    { methodname: 'tool_lp_data_for_plan_page',
-                        args: { planid: localthis.itemid } }
-                ]);
-                pagerender = 'tool_lp/plan_page';
-                pageregion = 'plan-page';
-            }
-
-            requests[1].done(function(context) {
-                templates.render(pagerender, context).done(function(html, js) {
-                    $('[data-region="' + pageregion + '"]').replaceWith(html);
-                    templates.runTemplateJS(js);
-                }).fail(notification.exception);
-            }).fail(notification.exception);
+            localthis.deleteHandler(deleteid);
         });
     };
 
