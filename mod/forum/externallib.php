@@ -39,7 +39,7 @@ class mod_forum_external extends external_api {
         return new external_function_parameters (
             array(
                 'courseids' => new external_multiple_structure(new external_value(PARAM_INT, 'course ID',
-                        '', VALUE_REQUIRED, '', NULL_NOT_ALLOWED), 'Array of Course IDs', VALUE_DEFAULT, array()),
+                        VALUE_REQUIRED, '', NULL_NOT_ALLOWED), 'Array of Course IDs', VALUE_DEFAULT, array()),
             )
         );
     }
@@ -156,7 +156,7 @@ class mod_forum_external extends external_api {
         return new external_function_parameters (
             array(
                 'forumids' => new external_multiple_structure(new external_value(PARAM_INT, 'forum ID',
-                        '', VALUE_REQUIRED, '', NULL_NOT_ALLOWED), 'Array of Forum IDs', VALUE_REQUIRED),
+                        VALUE_REQUIRED, '', NULL_NOT_ALLOWED), 'Array of Forum IDs', VALUE_REQUIRED),
                 'limitfrom' => new external_value(PARAM_INT, 'limit from', VALUE_DEFAULT, 0),
                 'limitnum' => new external_value(PARAM_INT, 'limit number', VALUE_DEFAULT, 0)
             )
