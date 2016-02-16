@@ -871,10 +871,13 @@ class core_renderer extends renderer_base {
      * @param boolean $debugdisableredirect this redirect has been disabled for
      *         debugging purposes. Display a message that explains, and don't
      *         trigger the redirect.
+     * @param string $messagetype The type of notification to show the message in.
+     *         See constants on \core\output\notification.
      * @return string The HTML to display to the user before dying, may contain
      *         meta refresh, javascript refresh, and may have set header redirects
      */
-    public function redirect_message($encodedurl, $message, $delay, $debugdisableredirect) {
+    public function redirect_message($encodedurl, $message, $delay, $debugdisableredirect,
+                                     $messagetype = \core\output\notification::NOTIFY_INFO) {
         global $CFG;
         $url = str_replace('&amp;', '&', $encodedurl);
 
@@ -905,7 +908,7 @@ class core_renderer extends renderer_base {
                 throw new coding_exception('You cannot redirect after the entire page has been generated');
                 break;
         }
-        $output .= $this->notification($message, 'redirectmessage');
+        $output .= $this->notification($message, $messagetype);
         $output .= '<div class="continuebutton">(<a href="'. $encodedurl .'">'. get_string('continue') .'</a>)</div>';
         if ($debugdisableredirect) {
             $output .= '<p><strong>'.get_string('erroroutput', 'error').'</strong></p>';
@@ -4383,8 +4386,11 @@ class core_renderer_ajax extends core_renderer {
      * @param string $message
      * @param int $delay
      * @param bool $debugdisableredirect
+     * @param string $messagetype The type of notification to show the message in.
+     *         See constants on \core\output\notification.
      */
-    public function redirect_message($encodedurl, $message, $delay, $debugdisableredirect) {}
+    public function redirect_message($encodedurl, $message, $delay, $debugdisableredirect,
+                                     $messagetype = \core\output\notification::NOTIFY_INFO) {}
 
     /**
      * Prepares the start of an AJAX output.

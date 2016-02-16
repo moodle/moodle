@@ -3,6 +3,10 @@ information provided here is intended especially for developers.
 
 === 3.1 ===
 
+* The redirect() function will now redirect immediately if output has not
+  already started. Messages will be displayed on the subsequent page using
+  session notifications. The type of message output can be configured using the
+  fourth parameter to redirect().
 * The specification of extra classes in the $OUTPUT->notification()
   function, and \core\output\notification renderable have been deprecated
   and will be removed in a future version.
