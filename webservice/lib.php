@@ -1580,6 +1580,12 @@ abstract class webservice_base_server extends webservice_server {
     /** @var mixed Function return value */
     protected $returns = null;
 
+    /** @var array List of methods and their information provided by the web service. */
+    protected $servicemethods;
+
+    /** @var  array List of struct classes generated for the web service methods. */
+    protected $servicestructs;
+
     /**
      * This method parses the request input, it needs to get:
      *  1/ user authentication - username+password or token
@@ -1778,6 +1784,317 @@ abstract class webservice_base_server extends webservice_server {
         // execute - yay!
         $this->returns = call_user_func_array(array($this->function->classname, $this->function->methodname), array_values($params));
     }
+
+    /**
+     * Load the virtual class needed for the web service.
+     *
+     * Initialises the virtual class that contains the web service functions that the user is allowed to use.
+     * The web service function will be available if the user:
+     * - is validly registered in the external_services_users table.
+     * - has the required capability.
+     * - meets the IP restriction requirement.
+     * This virtual class can be used by web service protocols such as SOAP, especially when generating WSDL.
+     * NOTE: The implementation of this method has been mostly copied from webservice_zend_server::init_server_class().
+     */
+    protected function init_service_class() {
+        global $USER, $DB;
+
+        // Initialise service methods and struct classes.
+        $this->servicemethods = array();
+        $this->servicestructs = array();
+
+        $params = array();
+        $wscond1 = '';
+        $wscond2 = '';
+        if ($this->restricted_serviceid) {
+            $params = array('sid1' => $this->restricted_serviceid, 'sid2' => $this->restricted_serviceid);
+            $wscond1 = 'AND s.id = :sid1';
+            $wscond2 = 'AND s.id = :sid2';
+        }
+
+        $sql = "SELECT s.*, NULL AS iprestriction
+                  FROM {external_services} s
+                  JOIN {external_services_functions} sf ON (sf.externalserviceid = s.id AND s.restrictedusers = 0)
+                 WHERE s.enabled = 1 $wscond1
+
+                 UNION
+
+                SELECT s.*, su.iprestriction
+                  FROM {external_services} s
+                  JOIN {external_services_functions} sf ON (sf.externalserviceid = s.id AND s.restrictedusers = 1)
+                  JOIN {external_services_users} su ON (su.externalserviceid = s.id AND su.userid = :userid)
+                 WHERE s.enabled = 1 AND (su.validuntil IS NULL OR su.validuntil < :now) $wscond2";
+        $params = array_merge($params, array('userid' => $USER->id, 'now' => time()));
+
+        $serviceids = array();
+        $remoteaddr = getremoteaddr();
+
+        // Query list of external services for the user.
+        $rs = $DB->get_recordset_sql($sql, $params);
+
+        // Check which service ID to include.
+        foreach ($rs as $service) {
+            if (isset($serviceids[$service->id])) {
+                continue; // Service already added.
+            }
+            if ($service->requiredcapability and !has_capability($service->requiredcapability, $this->restricted_context)) {
+                continue; // Cap required, sorry.
+            }
+            if ($service->iprestriction and !address_in_subnet($remoteaddr, $service->iprestriction)) {
+                continue; // Wrong request source ip, sorry.
+            }
+            $serviceids[$service->id] = $service->id;
+        }
+        $rs->close();
+
+        // Generate the virtual class name.
+        $classname = 'webservices_virtual_class_000000';
+        while (class_exists($classname)) {
+            $classname++;
+        }
+        $this->serviceclass = $classname;
+
+        // Get the list of all available external functions.
+        $wsmanager = new webservice();
+        $functions = $wsmanager->get_external_functions($serviceids);
+
+        // Generate code for the virtual methods for this web service.
+        $methods = '';
+        foreach ($functions as $function) {
+            $methods .= $this->get_virtual_method_code($function);
+        }
+
+        $code = <<<EOD
+/**
+ * Virtual class web services for user id $USER->id in context {$this->restricted_context->id}.
+ */
+class $classname {
+$methods
 }
+EOD;
+        // Load the virtual class definition into memory.
+        eval($code);
+    }
 
+    /**
+     * Generates a struct class.
+     *
+     * NOTE: The implementation of this method has been mostly copied from webservice_zend_server::generate_simple_struct_class().
+     * @param external_single_structure $structdesc The basis of the struct class to be generated.
+     * @return string The class name of the generated struct class.
+     */
+    protected function generate_simple_struct_class(external_single_structure $structdesc) {
+        global $USER;
 
+        $propeties = array();
+        $fields = array();
+        foreach ($structdesc->keys as $name => $fieldsdesc) {
+            $type = $this->get_phpdoc_type($fieldsdesc);
+            $propertytype = array('type' => $type);
+            if (empty($fieldsdesc->allownull) || $fieldsdesc->allownull == NULL_ALLOWED) {
+                $propertytype['nillable'] = true;
+            }
+            $propeties[$name] = $propertytype;
+            $fields[] = '    /** @var ' . $type . ' $' . $name . '*/';
+            $fields[] = '    public $' . $name .';';
+        }
+        $fieldsstr = implode("\n", $fields);
+
+        // We do this after the call to get_phpdoc_type() to avoid duplicate class creation.
+        $classname = 'webservices_struct_class_000000';
+        while (class_exists($classname)) {
+            $classname++;
+        }
+        $code = <<<EOD
+/**
+ * Virtual struct class for web services for user id $USER->id in context {$this->restricted_context->id}.
+ */
+class $classname {
+$fieldsstr
+}
+EOD;
+        // Load into memory.
+        eval($code);
+
+        // Prepare struct info.
+        $structinfo = new stdClass();
+        $structinfo->classname = $classname;
+        $structinfo->properties = $propeties;
+        // Add the struct info the the list of service struct classes.
+        $this->servicestructs[] = $structinfo;
+
+        return $classname;
+    }
+
+    /**
+     * Returns a virtual method code for a web service function.
+     *
+     * NOTE: The implementation of this method has been mostly copied from webservice_zend_server::get_virtual_method_code().
+     * @param stdClass $function a record from external_function
+     * @return string The PHP code of the virtual method.
+     * @throws coding_exception
+     * @throws moodle_exception
+     */
+    protected function get_virtual_method_code($function) {
+        $function = external_function_info($function);
+
+        // Parameters and their defaults for the method signature.
+        $paramanddefaults = array();
+        // Parameters for external lib call.
+        $params = array();
+        $paramdesc = array();
+        // The method's input parameters and their respective types.
+        $inputparams = array();
+        // The method's output parameters and their respective types.
+        $outputparams = array();
+
+        foreach ($function->parameters_desc->keys as $name => $keydesc) {
+            $param = '$' . $name;
+            $paramanddefault = $param;
+            if ($keydesc->required == VALUE_OPTIONAL) {
+                // It does not make sense to declare a parameter VALUE_OPTIONAL. VALUE_OPTIONAL is used only for array/object key.
+                throw new moodle_exception('erroroptionalparamarray', 'webservice', '', $name);
+            } else if ($keydesc->required == VALUE_DEFAULT) {
+                // Need to generate the default, if there is any.
+                if ($keydesc instanceof external_value) {
+                    if ($keydesc->default === null) {
+                        $paramanddefault .= ' = null';
+                    } else {
+                        switch ($keydesc->type) {
+                            case PARAM_BOOL:
+                                $default = (int)$keydesc->default;
+                                break;
+                            case PARAM_INT:
+                                $default = $keydesc->default;
+                                break;
+                            case PARAM_FLOAT;
+                                $default = $keydesc->default;
+                                break;
+                            default:
+                                $default = "'$keydesc->default'";
+                        }
+                        $paramanddefault .= " = $default";
+                    }
+                } else {
+                    // Accept empty array as default.
+                    if (isset($keydesc->default) && is_array($keydesc->default) && empty($keydesc->default)) {
+                        $paramanddefault .= ' = array()';
+                    } else {
+                        // For the moment we do not support default for other structure types.
+                        throw new moodle_exception('errornotemptydefaultparamarray', 'webservice', '', $name);
+                    }
+                }
+            }
+
+            $params[] = $param;
+            $paramanddefaults[] = $paramanddefault;
+            $type = $this->get_phpdoc_type($keydesc);
+            $inputparams[$name]['type'] = $type;
+
+            $paramdesc[] = '* @param ' . $type . ' $' . $name . ' ' . $keydesc->desc;
+        }
+        $paramanddefaults = implode(', ', $paramanddefaults);
+        $paramdescstr = implode("\n ", $paramdesc);
+
+        $serviceclassmethodbody = $this->service_class_method_body($function, $params);
+
+        if (empty($function->returns_desc)) {
+            $return = '* @return void';
+        } else {
+            $type = $this->get_phpdoc_type($function->returns_desc);
+            $outputparams['return']['type'] = $type;
+            $return = '* @return ' . $type . ' ' . $function->returns_desc->desc;
+        }
+
+        // Now create the virtual method that calls the ext implementation.
+        $code = <<<EOD
+/**
+ * $function->description.
+ *
+ $paramdescstr
+ $return
+ */
+public function $function->name($paramanddefaults) {
+$serviceclassmethodbody
+}
+EOD;
+
+        // Prepare the method information.
+        $methodinfo = new stdClass();
+        $methodinfo->name = $function->name;
+        $methodinfo->inputparams = $inputparams;
+        $methodinfo->outputparams = $outputparams;
+        $methodinfo->description = $function->description;
+        // Add the method information into the list of service methods.
+        $this->servicemethods[] = $methodinfo;
+
+        return $code;
+    }
+
+    /**
+     * Get the phpdoc type for an external_description object.
+     * external_value => int, double or string
+     * external_single_structure => object|struct, on-fly generated stdClass name.
+     * external_multiple_structure => array
+     *
+     * @param mixed $keydesc The type description.
+     * @return string The PHP doc type of the external_description object.
+     */
+    protected function get_phpdoc_type($keydesc) {
+        $type = null;
+        if ($keydesc instanceof external_value) {
+            switch ($keydesc->type) {
+                case PARAM_BOOL: // 0 or 1 only for now.
+                case PARAM_INT:
+                    $type = 'int';
+                    break;
+                case PARAM_FLOAT;
+                    $type = 'double';
+                    break;
+                default:
+                    $type = 'string';
+            }
+        } else if ($keydesc instanceof external_single_structure) {
+            $type = $this->generate_simple_struct_class($keydesc);
+        } else if ($keydesc instanceof external_multiple_structure) {
+            $type = 'array';
+        }
+
+        return $type;
+    }
+
+    /**
+     * Generates the method body of the virtual external function.
+     *
+     * NOTE: The implementation of this method has been mostly copied from webservice_zend_server::service_class_method_body().
+     * @param stdClass $function a record from external_function.
+     * @param array $params web service function parameters.
+     * @return string body of the method for $function ie. everything within the {} of the method declaration.
+     */
+    protected function service_class_method_body($function, $params) {
+        // Cast the param from object to array (validate_parameters except array only).
+        $castingcode = '';
+        $paramsstr = '';
+        if (!empty($params)) {
+            foreach ($params as $paramtocast) {
+                // Clean the parameter from any white space.
+                $paramtocast = trim($paramtocast);
+                $castingcode .= "    $paramtocast = json_decode(json_encode($paramtocast), true);\n";
+            }
+            $paramsstr = implode(', ', $params);
+        }
+
+        $descriptionmethod = $function->methodname . '_returns()';
+        $callforreturnvaluedesc = $function->classname . '::' . $descriptionmethod;
+
+        $methodbody = <<<EOD
+$castingcode
+    if ($callforreturnvaluedesc == null) {
+        $function->classname::$function->methodname($paramsstr);
+        return null;
+    }
+    return external_api::clean_returnvalue($callforreturnvaluedesc, $function->classname::$function->methodname($paramsstr));
+EOD;
+        return $methodbody;
+    }
+}
