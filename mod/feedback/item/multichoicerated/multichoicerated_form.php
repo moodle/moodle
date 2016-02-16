@@ -63,15 +63,15 @@ class feedback_multichoicerated_form extends feedback_item_form {
                            'hidenoselect',
                            get_string('hide_no_select_option', 'feedback'));
 
-        $mform->addElement('static',
-                           'hint',
-                           get_string('multichoice_values', 'feedback'),
-                           get_string('use_one_line_for_each_value', 'feedback'));
-
         $this->values = $mform->addElement('textarea',
                             'values',
-                            '',
+                            get_string('multichoice_values', 'feedback'),
                             'wrap="virtual" rows="10" cols="65"');
+
+        $mform->addElement('static',
+                            'hint',
+                            '',
+                            get_string('use_one_line_for_each_value', 'feedback'));
 
         parent::definition();
         $this->set_data($item);

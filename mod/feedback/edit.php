@@ -140,10 +140,6 @@ if (is_array($feedbackitems)) {
 $lastposition++;
 
 
-//The add_item-form
-$add_item_form = new feedback_edit_add_question_form('edit_item.php');
-$add_item_form->set_data(array('cmid'=>$id, 'position'=>$lastposition));
-
 //The use_template-form
 $use_template_form = new feedback_edit_use_template_form('use_templ.php');
 $use_template_form->set_feedbackdata(array('course' => $course));
@@ -237,7 +233,10 @@ if ($do_show == 'templates') {
 ///////////////////////////////////////////////////////////////////////////
 if ($do_show == 'edit') {
 
-    $add_item_form->display();
+    $select = new single_select(new moodle_url('/mod/feedback/edit_item.php', array('cmid' => $id, 'position' => $lastposition)),
+        'typ', feedback_load_feedback_items_options());
+    $select->label = get_string('add_item', 'mod_feedback');
+    echo $OUTPUT->render($select);
 
     if (is_array($feedbackitems)) {
         $itemnr = 0;

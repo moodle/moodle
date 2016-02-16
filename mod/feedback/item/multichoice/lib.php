@@ -244,7 +244,7 @@ class feedback_item_multichoice extends feedback_item_base {
                 $quotient = number_format(($val->quotient * 100), 2, $sep_dec, $sep_thous);
                 $str_quotient = '';
                 if ($val->quotient > 0) {
-                    $str_quotient = '&nbsp;('. $quotient . '&nbsp;%)';
+                    $str_quotient = ' ('. $quotient . ' %)';
                 }
                 echo '<tr>';
                 echo '<td align="left" valign="top">
@@ -252,7 +252,7 @@ class feedback_item_multichoice extends feedback_item_base {
                       </td>
                       <td align="left" style="width:'.FEEDBACK_MAX_PIX_LENGTH.';">
                         <img class="feedback_bar_image" alt="'.$intvalue.'" src="'.$pix.'" height="5" width="'.$pixwidth.'" />
-                        &nbsp;'.$val->answercount.$str_quotient.'
+                        '.$val->answercount.$str_quotient.'
                       </td>';
                 echo '</tr>';
             }
@@ -717,7 +717,7 @@ class feedback_item_multichoice extends feedback_item_base {
                 </span>
                 <span class="feedback_item_radiolabel_<?php echo $hv.'_'.$align;?>">
                     <label for="<?php echo $inputid;?>">
-                        <?php echo format_text($radio, FORMAT_HTML, array('noclean' => true, 'para' => false));?>&nbsp;
+                        <?php echo format_text($radio, FORMAT_HTML, array('noclean' => true, 'para' => false));?>
                     </label>
                 </span>
             </li>
