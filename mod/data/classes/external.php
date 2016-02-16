@@ -70,44 +70,19 @@ class mod_data_external extends external_api {
         $params = self::validate_parameters(self::get_databases_by_courses_parameters(), array('courseids' => $courseids));
         $warnings = array();
 
-        if (!empty($params['courseids'])) {
-            $courses = array();
-            $courseids = $params['courseids'];
-        } else {
-            $courses = enrol_get_my_courses();
-            $courseids = array_keys($courses);
+        $mycourses = array();
+        if (empty($params['courseids'])) {
+            $mycourses = enrol_get_my_courses();
+            $params['courseids'] = array_keys($mycourses);
         }
 
         // Array to store the databases to return.
         $arrdatabases = array();
 
         // Ensure there are courseids to loop through.
-        if (!empty($courseids)) {
-            // Array of the courses we are going to retrieve the databases from.
-            $dbcourses = array();
+        if (!empty($params['courseids'])) {
 
-            // Go through the courseids.
-            foreach ($courseids as $cid) {
-                // Check the user can function in this context.
-                try {
-                    $context = context_course::instance($cid);
-                    self::validate_context($context);
-
-                    // Check if this course was already loaded (by enrol_get_my_courses).
-                    if (!isset($courses[$cid])) {
-                        $courses[$cid] = get_course($cid);
-                    }
-                    $dbcourses[$cid] = $courses[$cid];
-
-                } catch (Exception $e) {
-                    $warnings[] = array(
-                        'item' => 'course',
-                        'itemid' => $cid,
-                        'warningcode' => '1',
-                        'message' => 'No access rights in course context '.$e->getMessage()
-                    );
-                }
-            }
+            list($dbcourses, $warnings) = external_util::validate_courses($params['courseids'], $mycourses);
 
             // Get the databases in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.
@@ -148,7 +123,7 @@ class mod_data_external extends external_api {
 
                 // Check additional permissions for returning optional private settings.
                 // I avoid intentionally to use can_[add|update]_moduleinfo.
-                if (has_capability('moodle/course:manageactivities', $context)) {
+                if (has_capability('moodle/course:manageactivities', $datacontext)) {
 
                     $additionalfields = array('maxentries', 'rssarticles', 'singletemplate', 'listtemplate',
                         'listtemplateheader', 'listtemplatefooter', 'addtemplate', 'rsstemplate', 'rsstitletemplate',
