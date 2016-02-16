@@ -595,9 +595,11 @@ class question_display_options {
 
     /**
      * @since 2.9
-     * @var string extra HTML to include in the info box of the question display.
-     * This is normally shown after the information about the question, and before
-     * any controls like the flag or the edit icon.
+     * @var string extra HTML to include at the end of the outcome (feedback) box
+     * of the question display.
+     *
+     * This field is now badly named. The place it included is was changed
+     * (for the better) but the name was left unchanged for backwards compatibility.
      */
     public $extrainfocontent = '';
 
