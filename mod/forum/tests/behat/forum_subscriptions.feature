@@ -71,7 +71,7 @@ Feature: A user can control their own subscription preferences for a forum
     Then I should see "Subscribe to this forum"
     And I should not see "Unsubscribe from this forum"
     And I follow "Subscribe to this forum"
-    And I follow "Continue"
+    And I should see "Student One will be notified of new posts in 'Test forum name'"
     And I should see "Unsubscribe from this forum"
     And I should not see "Subscribe to this forum"
 
@@ -91,6 +91,6 @@ Feature: A user can control their own subscription preferences for a forum
     Then I should see "Unsubscribe from this forum"
     And I should not see "Subscribe to this forum"
     And I follow "Unsubscribe from this forum"
-    And I follow "Continue"
+    And I should see "Student One will NOT be notified of new posts in 'Test forum name'"
     And I should see "Subscribe to this forum"
     And I should not see "Unsubscribe from this forum"

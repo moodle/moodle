@@ -174,8 +174,13 @@ foreach ($modinfo->get_instances_of('forum') as $forumid=>$cm) {
 // Do course wide subscribe/unsubscribe if requested
 if (!is_null($subscribe)) {
     if (isguestuser() or !$can_subscribe) {
-        // there should not be any links leading to this place, just redirect
-        redirect(new moodle_url('/mod/forum/index.php', array('id' => $id)), get_string('subscribeenrolledonly', 'forum'));
+        // There should not be any links leading to this place, just redirect.
+        redirect(
+                new moodle_url('/mod/forum/index.php', array('id' => $id)),
+                get_string('subscribeenrolledonly', 'forum'),
+                null,
+                \core\output\notification::NOTIFY_ERROR
+            );
     }
     // Can proceed now, the user is not guest and is enrolled
     foreach ($modinfo->get_instances_of('forum') as $forumid=>$cm) {
@@ -204,9 +209,19 @@ if (!is_null($subscribe)) {
     $returnto = forum_go_back_to(new moodle_url('/mod/forum/index.php', array('id' => $course->id)));
     $shortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
     if ($subscribe) {
-        redirect($returnto, get_string('nowallsubscribed', 'forum', $shortname), 1);
+        redirect(
+                $returnto,
+                get_string('nowallsubscribed', 'forum', $shortname),
+                null,
+                \core\output\notification::NOTIFY_SUCCESS
+            );
     } else {
-        redirect($returnto, get_string('nowallunsubscribed', 'forum', $shortname), 1);
+        redirect(
+                $returnto,
+                get_string('nowallunsubscribed', 'forum', $shortname),
+                null,
+                \core\output\notification::NOTIFY_SUCCESS
+            );
     }
 }
 
