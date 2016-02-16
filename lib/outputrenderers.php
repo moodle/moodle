@@ -4127,6 +4127,16 @@ EOD;
         $list = new \core_tag\output\taglist($tags, $label, $classes, $limit, $pagecontext);
         return $this->render_from_template('core_tag/taglist', $list->export_for_template($this));
     }
+
+    /**
+     * Renders element for inline editing of any value
+     *
+     * @param \core\output\inplace_editable $element
+     * @return string
+     */
+    public function render_inplace_editable(\core\output\inplace_editable $element) {
+        return $this->render_from_template('core/inplace_editable', $element->export_for_template($this));
+    }
 }
 
 /**

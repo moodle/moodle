@@ -146,4 +146,69 @@ class format_topics_testcase extends advanced_testcase {
             }
         }
     }
+
+    /**
+     * Test web service updating section name
+     */
+    public function test_update_inplace_editable() {
+        global $CFG, $DB, $PAGE;
+        require_once($CFG->dirroot . '/lib/external/externallib.php');
+
+        $this->resetAfterTest();
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $course = $this->getDataGenerator()->create_course(array('numsections' => 5, 'format' => 'topics'),
+            array('createsections' => true));
+        $section = $DB->get_record('course_sections', array('course' => $course->id, 'section' => 2));
+
+        // Call webservice without necessary permissions.
+        try {
+            core_external::update_inplace_editable('format_topics', 'sectionname', $section->id, 'New section name');
+            $this->fail('Exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('Course or activity not accessible. (Not enrolled)',
+                    $e->getMessage());
+        }
+
+        // Change to teacher and make sure that section name can be updated using web service update_inplace_editable().
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $teacherrole->id);
+
+        $res = core_external::update_inplace_editable('format_topics', 'sectionname', $section->id, 'New section name');
+        $res = external_api::clean_returnvalue(core_external::update_inplace_editable_returns(), $res);
+        $this->assertEquals('New section name', $res['value']);
+        $this->assertEquals('New section name', $DB->get_field('course_sections', 'name', array('id' => $section->id)));
+    }
+
+    /**
+     * Test callback updating section name
+     */
+    public function test_inplace_editable() {
+        global $DB, $PAGE;
+
+        $this->resetAfterTest();
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course(array('numsections' => 5, 'format' => 'topics'),
+            array('createsections' => true));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $teacherrole->id);
+        $this->setUser($user);
+
+        $section = $DB->get_record('course_sections', array('course' => $course->id, 'section' => 2));
+
+        // Call callback format_topics_inplace_editable() directly.
+        $tmpl = component_callback('format_topics', 'inplace_editable', array('sectionname', $section->id, 'Rename me again'));
+        $this->assertInstanceOf('core\output\inplace_editable', $tmpl);
+        $res = $tmpl->export_for_template($PAGE->get_renderer('core'));
+        $this->assertEquals('Rename me again', $res['value']);
+        $this->assertEquals('Rename me again', $DB->get_field('course_sections', 'name', array('id' => $section->id)));
+
+        // Try updating using callback from mismatching course format.
+        try {
+            $tmpl = component_callback('format_weeks', 'inplace_editable', array('sectionname', $section->id, 'New name'));
+            $this->fail('Exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertEquals(1, preg_match('/^Can not find data record in database/', $e->getMessage()));
+        }
+    }
 }

@@ -147,4 +147,38 @@ class core_tag_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($tag->id, $result['warnings'][0]['item']);
         $this->assertEquals('namesalreadybeeingused', $result['warnings'][0]['warningcode']);
     }
+
+    /**
+     * Test update_inplace_editable()
+     */
+    public function test_update_inplace_editable() {
+        global $CFG, $DB, $PAGE;
+        require_once($CFG->dirroot . '/lib/external/externallib.php');
+
+        $this->resetAfterTest(true);
+        $tag = $this->getDataGenerator()->create_tag();
+
+        // Call service for core_tag component without necessary permissions.
+        try {
+            core_external::update_inplace_editable('core_tag', 'tagname', $tag->id, 'new tag name');
+            $this->fail('Exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('Sorry, but you do not currently have permissions to do that (Manage all tags)',
+                    $e->getMessage());
+        }
+
+        // Change to admin user and make sure that tag name can be updated using web service update_inplace_editable().
+        $this->setAdminUser();
+        $res = core_external::update_inplace_editable('core_tag', 'tagname', $tag->id, 'New tag name');
+        $res = external_api::clean_returnvalue(core_external::update_inplace_editable_returns(), $res);
+        $this->assertEquals('New tag name', $res['value']);
+        $this->assertEquals('New tag name', $DB->get_field('tag', 'rawname', array('id' => $tag->id)));
+
+        // Call callback core_tag_inplace_editable() directly.
+        $tmpl = component_callback('core_tag', 'inplace_editable', array('tagname', $tag->id, 'Rename me again'));
+        $this->assertInstanceOf('core\output\inplace_editable', $tmpl);
+        $res = $tmpl->export_for_template($PAGE->get_renderer('core'));
+        $this->assertEquals('Rename me again', $res['value']);
+        $this->assertEquals('Rename me again', $DB->get_field('tag', 'rawname', array('id' => $tag->id)));
+    }
 }

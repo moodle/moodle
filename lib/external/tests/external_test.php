@@ -135,4 +135,27 @@ class core_external_testcase extends externallib_advanced_testcase {
             $this->assertSame($string['string'], $wsstrings[$string['stringid']]);
         }
     }
+
+    /**
+     * Test update_inplace_editable()
+     */
+    public function test_update_inplace_editable() {
+        $this->resetAfterTest(true);
+
+        // Call service for component that does not have inplace_editable callback.
+        try {
+            core_external::update_inplace_editable('tool_log', 'itemtype', 1, 'newvalue');
+            $this->fail('Exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('Error calling update processor', $e->getMessage());
+        }
+
+        // This is a very basic test for the return value of the external function.
+        // More detailed test for tag updating can be found in core_tag component.
+        $this->setAdminUser();
+        $tag = $this->getDataGenerator()->create_tag();
+        $res = core_external::update_inplace_editable('core_tag', 'tagname', $tag->id, 'new tag name');
+        $res = external_api::clean_returnvalue(core_external::update_inplace_editable_returns(), $res);
+        $this->assertEquals('new tag name', $res['value']);
+    }
 }

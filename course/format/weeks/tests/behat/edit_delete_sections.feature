@@ -57,6 +57,18 @@ Feature: Sections can be edited and deleted in weeks format
     Then I should see "This is the second week" in the "li#section-2" "css_element"
     And I should not see "8 May - 14 May" in the "li#section-2" "css_element"
 
+  @javascript
+  Scenario: Inline edit section name in weeks format
+    When I click on "Edit week name" "link" in the "li#section-1" "css_element"
+    And I set the field "New name for week 1 May - 7 May" to "Midterm evaluation"
+    And I press key "13" in the field "New name for week 1 May - 7 May"
+    Then I should not see "1 May - 7 May" in the "#region-main" "css_element"
+    And "New name for week" "field" should not exist
+    And I should see "Midterm evaluation" in the "li#section-1" "css_element"
+    And I follow "Course 1"
+    And I should not see "1 May - 7 May" in the "#region-main" "css_element"
+    And I should see "Midterm evaluation" in the "li#section-1" "css_element"
+
   Scenario: Deleting the last section in weeks format
     Given I should see "29 May - 4 June" in the "li#section-5" "css_element"
     When I delete section "5"

@@ -1198,37 +1198,10 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
 
     $resourcestotoggle = array();
     if ($section = $DB->get_record("course_sections", array("course"=>$courseid, "section"=>$sectionnumber))) {
-        $DB->set_field("course_sections", "visible", "$visibility", array("id"=>$section->id));
-
-        $event = \core\event\course_section_updated::create(array(
-            'context' => context_course::instance($courseid),
-            'objectid' => $section->id,
-            'other' => array(
-                'sectionnum' => $sectionnumber
-            )
-        ));
-        $event->add_record_snapshot('course_sections', $section);
-        $event->trigger();
-
-        if (!empty($section->sequence)) {
-            $modules = explode(",", $section->sequence);
-            foreach ($modules as $moduleid) {
-                if ($cm = get_coursemodule_from_id(null, $moduleid, $courseid)) {
-                    if ($visibility) {
-                        // As we unhide the section, we use the previously saved visibility stored in visibleold.
-                        set_coursemodule_visible($moduleid, $cm->visibleold);
-                    } else {
-                        // We hide the section, so we hide the module but we store the original state in visibleold.
-                        set_coursemodule_visible($moduleid, 0);
-                        $DB->set_field('course_modules', 'visibleold', $cm->visible, array('id' => $moduleid));
-                    }
-                    \core\event\course_module_updated::create_from_cm($cm)->trigger();
-                }
-            }
-        }
-        rebuild_course_cache($courseid, true);
+        course_update_section($courseid, $section, array('visible' => $visibility));
 
         // Determine which modules are visible for AJAX update
+        $modules = !empty($section->sequence) ? explode(',', $section->sequence) : array();
         if (!empty($modules)) {
             list($insql, $params) = $DB->get_in_or_equal($modules);
             $select = 'id ' . $insql . ' AND visible = ?';
@@ -1875,6 +1848,70 @@ function course_delete_section($course, $section, $forcedeleteifnotempty = true)
         $event->trigger();
     }
     return $result;
+}
+
+/**
+ * Updates the course section
+ *
+ * This function does not check permissions or clean values - this has to be done prior to calling it.
+ *
+ * @param int|stdClass $course
+ * @param stdClass $section record from course_sections table - it will be updated with the new values
+ * @param array|stdClass $data
+ */
+function course_update_section($course, $section, $data) {
+    global $DB;
+
+    $courseid = (is_object($course)) ? $course->id : (int)$course;
+
+    // Some fields can not be updated using this method.
+    $data = array_diff_key((array)$data, array('id', 'course', 'section', 'sequence'));
+    $changevisibility = (array_key_exists('visible', $data) && (bool)$data['visible'] != (bool)$section->visible);
+    if (array_key_exists('name', $data) && \core_text::strlen($data['name']) > 255) {
+        throw new moodle_exception('maximumchars', 'moodle', '', 255);
+    }
+
+    // Update record in the DB and course format options.
+    $data['id'] = $section->id;
+    $DB->update_record('course_sections', $data);
+    rebuild_course_cache($courseid, true);
+    course_get_format($courseid)->update_section_format_options($data);
+
+    // Update fields of the $section object.
+    foreach ($data as $key => $value) {
+        if (property_exists($section, $key)) {
+            $section->$key = $value;
+        }
+    }
+
+    // Trigger an event for course section update.
+    $event = \core\event\course_section_updated::create(
+        array(
+            'objectid' => $section->id,
+            'courseid' => $courseid,
+            'context' => context_course::instance($courseid),
+            'other' => array('sectionnum' => $section->section)
+        )
+    );
+    $event->trigger();
+
+    // If section visibility was changed, hide the modules in this section too.
+    if ($changevisibility && !empty($section->sequence)) {
+        $modules = explode(',', $section->sequence);
+        foreach ($modules as $moduleid) {
+            if ($cm = get_coursemodule_from_id(null, $moduleid, $courseid)) {
+                if ($data['visible']) {
+                    // As we unhide the section, we use the previously saved visibility stored in visibleold.
+                    set_coursemodule_visible($moduleid, $cm->visibleold);
+                } else {
+                    // We hide the section, so we hide the module but we store the original state in visibleold.
+                    set_coursemodule_visible($moduleid, 0);
+                    $DB->set_field('course_modules', 'visibleold', $cm->visible, array('id' => $moduleid));
+                }
+                \core\event\course_module_updated::create_from_cm($cm)->trigger();
+            }
+        }
+    }
 }
 
 /**

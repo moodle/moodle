@@ -153,7 +153,7 @@ Feature: Users can edit tags to add description or rename
     And I set the field "New name for tag Cat" to "Kitten"
     And I press key "13" in the field "New name for tag Cat"
     Then I should not see "Cat"
-    And "New name for tag" "field" should not be visible
+    And "New name for tag" "field" should not exist
     And I wait until "Kitten" "link" exists
     And I follow "Default collection"
     And I should see "Kitten"
@@ -163,8 +163,8 @@ Feature: Users can edit tags to add description or rename
     And I set the field "New name for tag Turtle" to "DOG"
     And I press key "13" in the field "New name for tag Turtle"
     And I should see "Tag names already being used"
-    And I press "Ok"
-    And "New name for tag" "field" should not be visible
+    And I press "Close"
+    And "New name for tag" "field" should not exist
     And I should see "Turtle"
     And I should see "Dog"
     And I should not see "DOG"
@@ -176,7 +176,7 @@ Feature: Users can edit tags to add description or rename
     And I click on "Edit tag name" "link" in the "Dog" "table_row"
     And I set the field "New name for tag Dog" to "Penguin"
     And I press key "27" in the field "New name for tag Dog"
-    And "New name for tag" "field" should not be visible
+    And "New name for tag" "field" should not exist
     And I should see "Turtle"
     And I should not see "Penguin"
     And I follow "Default collection"
