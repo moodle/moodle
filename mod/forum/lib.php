@@ -795,6 +795,9 @@ function forum_cron() {
                         $canreply
                     );
 
+                $userfrom->customheaders[] = sprintf('List-Unsubscribe: <%s>',
+                    $data->get_unsubscribediscussionlink());
+
                 if (!isset($userto->viewfullnames[$forum->id])) {
                     $data->viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext, $userto->id);
                 } else {
