@@ -936,6 +936,63 @@ class behat_general extends behat_base {
     }
 
     /**
+     * Runs a scheduled task immediately, given full class name.
+     *
+     * This is faster and more reliable than running cron (running cron won't
+     * work more than once in the same test, for instance). However it is
+     * a little less 'realistic'.
+     *
+     * While the task is running, we suppress mtrace output because it makes
+     * the Behat result look ugly.
+     *
+     * Note: Most of the code relating to running a task is based on
+     * admin/tool/task/cli/schedule_task.php.
+     *
+     * @Given /^I run the scheduled task "(?P<task_name>[^"]+)"$/
+     * @param string $taskname Name of task e.g. 'mod_whatever\task\do_something'
+     */
+    public function i_run_the_scheduled_task($taskname) {
+        $task = \core\task\manager::get_scheduled_task($taskname);
+        if (!$task) {
+            throw new DriverException('The "' . $taskname . '" scheduled task does not exist');
+        }
+
+        // Do setup for cron task.
+        raise_memory_limit(MEMORY_EXTRA);
+        cron_setup_user();
+
+        // Get lock.
+        $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+        if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10)) {
+            throw new DriverException('Unable to obtain core_cron lock for scheduled task');
+        }
+        if (!$lock = $cronlockfactory->get_lock('\\' . get_class($task), 10)) {
+            $cronlock->release();
+            throw new DriverException('Unable to obtain task lock for scheduled task');
+        }
+        $task->set_lock($lock);
+        if (!$task->is_blocking()) {
+            $cronlock->release();
+        } else {
+            $task->set_cron_lock($cronlock);
+        }
+
+        try {
+            // Discard task output as not appropriate for Behat output!
+            ob_start();
+            $task->execute();
+            ob_end_clean();
+
+            // Mark task complete.
+            \core\task\manager::scheduled_task_complete($task);
+        } catch (Exception $e) {
+            // Mark task failed and throw exception.
+            \core\task\manager::scheduled_task_failed($task);
+            throw new DriverException('The "' . $taskname . '" scheduled task failed', 0, $e);
+        }
+    }
+
+    /**
      * Checks that an element and selector type exists in another element and selector type on the current page.
      *
      * This step is for advanced users, use it if you don't find anything else suitable for what you need.
