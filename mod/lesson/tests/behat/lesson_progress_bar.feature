@@ -4,7 +4,6 @@ Feature: In a lesson activity, students can see their progress viewing a progres
   As a teacher
   I need to add pages and questions with links between them
 
-  @javascript
   Scenario: Student navigation with progress bar
     Given the following "users" exist:
       | username | firstname | lastname | email |
@@ -32,7 +31,7 @@ Feature: In a lesson activity, students can see their progress viewing a progres
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I set the field "qtype" to "Add a content page"
+    And I select "Add a content page" from the "qtype" singleselect
     And I set the following fields to these values:
       | Page title | Second page name |
       | Page contents | Second page contents |

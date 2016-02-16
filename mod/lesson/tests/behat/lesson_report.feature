@@ -27,7 +27,6 @@ Feature: In a lesson activity, teachers can review student attempts
     And I press "Save and return to course"
     And I follow "Test lesson name"
 
-  @javascript
   Scenario: View student attempts in a lesson containing both content and question pages
     Given I follow "Add a content page"
     And I set the following fields to these values:
@@ -36,7 +35,7 @@ Feature: In a lesson activity, teachers can review student attempts
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I set the field "qtype" to "Question"
+    And I select "Question" from the "qtype" singleselect
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
     And I set the following fields to these values:
@@ -49,7 +48,7 @@ Feature: In a lesson activity, teachers can review student attempts
       | id_response_editor_1 | Wrong |
       | id_jumpto_1 | This page |
     And I press "Save page"
-    And I set the field "qtype" to "Question"
+    And I select "Question" from the "qtype" singleselect
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
     And I set the following fields to these values:
@@ -62,7 +61,7 @@ Feature: In a lesson activity, teachers can review student attempts
       | id_response_editor_1 | Wrong |
       | id_jumpto_1 | This page |
     And I press "Save page"
-    And I set the field "qtype" to "Add a content page"
+    And I select "Add a content page" from the "qtype" singleselect
     And I set the following fields to these values:
       | Page title | Third page name |
       | Page contents | Third page contents |
@@ -71,7 +70,7 @@ Feature: In a lesson activity, teachers can review student attempts
       | id_answer_editor_1 | Next page |
       | id_jumpto_1 | Next page |
     And I press "Save page"
-    And I set the field "qtype" to "Add a content page"
+    And I select "Add a content page" from the "qtype" singleselect
     And I set the following fields to these values:
       | Page title | Second page name |
       | Page contents | Second page contents |
@@ -112,7 +111,6 @@ Feature: In a lesson activity, teachers can review student attempts
     And I should see "Average score"
     And I should see "Low score"
 
-  @javascript
   Scenario: View student attempts in a lesson containing only content pages
     Given I follow "Add a content page"
     And I set the following fields to these values:
@@ -121,7 +119,7 @@ Feature: In a lesson activity, teachers can review student attempts
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I set the field "qtype" to "Add a content page"
+    And I select "Add a content page" from the "qtype" singleselect
     And I set the following fields to these values:
       | Page title | Fourth page name |
       | Page contents | Fourth page contents |
@@ -130,7 +128,7 @@ Feature: In a lesson activity, teachers can review student attempts
       | id_answer_editor_1 | End of lesson |
       | id_jumpto_1 | End of lesson |
     And I press "Save page"
-    And I set the field "qtype" to "Add a content page"
+    And I select "Add a content page" from the "qtype" singleselect
     And I set the following fields to these values:
       | Page title | Third page name |
       | Page contents | Third page contents |
@@ -139,7 +137,7 @@ Feature: In a lesson activity, teachers can review student attempts
       | id_answer_editor_1 | Next page |
       | id_jumpto_1 | Next page |
     And I press "Save page"
-    And I set the field "qtype" to "Add a content page"
+    And I select "Add a content page" from the "qtype" singleselect
     And I set the following fields to these values:
       | Page title | Second page name |
       | Page contents | Second page contents |
