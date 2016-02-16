@@ -42,3 +42,4 @@ Por favor, utilice la opción Ayuda.';
 $string['cliyesnoprompt'] = 'escriba s (sí) o n (no)';
 $string['environmentrequireinstall'] = 'debe estar instalado/activado';
 $string['environmentrequireversion'] = 'versión {$a->needed} es obligatoria y está ejecutando {$a->current}';
+$string['upgradekeyset'] = 'Clave de actualización (dejar en blanco para no establecerla)';
