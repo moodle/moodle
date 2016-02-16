@@ -1,6 +1,11 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.1 ===
+
+* Old /mod/MODULENAME/pix/icon.gif and enrol/paypal/pix/icon.gif GIF icons have been removed. Please use pix_icon
+  renderable instead.
+
 === 3.0 ===
 
 * Dropped support for the $module in mod/xxx/version.php files (deprecated
