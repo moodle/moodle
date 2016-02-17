@@ -128,7 +128,7 @@ class filter_kaltura extends moodle_text_filter {
         $uri = str_replace(array('http://', 'https://', '.', '/'), array('https?://', 'https?://', '\.', '\/'), $uri);
 
         $search = '/<a\s[^>]*href="(https?:\/\/'.KALTURA_URI_TOKEN.')\/browseandembed\/index\/media\/entryid\/([\d]+_([a-z0-9]+))\/showDescription\/(true|false)\/showTitle\/(true|false)\/';
-        $search .= 'showTags\/(true|false)\/showDuration\/(true|false)\/showOwner\/(true|false)\/showUploadDate\/(true|false)\/playerSize\/([0-9]+)x([0-9]+)\/playerSkin\/([0-9]+)\/"[^>]*>([^>]*)<\/a>/is';
+        $search .= 'showTags\/(true|false)\/showDuration\/(true|false)\/showOwner\/(true|false)\/showUploadDate\/(true|false)\/(?:embedType\/oldEmbed\/)?playerSize\/([0-9]+)x([0-9]+)\/playerSkin\/([0-9]+)\/"[^>]*>([^>]*)<\/a>/is';
         $newtext = preg_replace_callback($search, 'filter_kaltura_callback', $newtext);
 
         if (empty($newtext) || $newtext === $text) {
