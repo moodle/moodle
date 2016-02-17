@@ -157,6 +157,128 @@ class file_storage {
     }
 
     /**
+     * Get converted document.
+     *
+     * Get an alternate version of the specified document, if it is possible to convert.
+     *
+     * @param stored_file $file the file we want to preview
+     * @param string $format The desired format - e.g. 'pdf'. Formats are specified by file extension.
+     * @return stored_file|bool false if unable to create the conversion, stored file otherwise
+     */
+    public function get_converted_document(stored_file $file, $format) {
+
+        $context = context_system::instance();
+        $path = '/' . $format . '/';
+        $conversion = $this->get_file($context->id, 'core', 'documentconversion', 0, $path, $file->get_contenthash());
+
+        if (!$conversion) {
+            $conversion = $this->create_converted_document($file, $format);
+            if (!$conversion) {
+                return false;
+            }
+        }
+
+        return $conversion;
+    }
+
+    /**
+     * Verify the format is supported.
+     *
+     * @param string $format The desired format - e.g. 'pdf'. Formats are specified by file extension.
+     * @return bool - True if the format is supported for input.
+     */
+    protected function is_input_format_supported_by_pandoc($format) {
+        $sanitized = trim(strtolower($format));
+        return in_array($sanitized, array('md', 'html', 'tex', 'docx', 'odt', 'epub', 'png', 'jpg', 'gif'));
+    }
+
+    /**
+     * Verify the format is supported.
+     *
+     * @param string $format The desired format - e.g. 'pdf'. Formats are specified by file extension.
+     * @return bool - True if the format is supported for output.
+     */
+    protected function is_output_format_supported_by_pandoc($format) {
+        $sanitized = trim(strtolower($format));
+        return in_array($sanitized, array('md', 'pdf', 'html', 'tex', 'docx', 'odt', 'odf', 'epub'));
+    }
+
+    /**
+     * Perform a file format conversion on the specified document.
+     *
+     * @param stored_file $file the file we want to preview
+     * @param string $format The desired format - e.g. 'pdf'. Formats are specified by file extension.
+     * @return stored_file|bool false if unable to create the conversion, stored file otherwise
+     */
+    protected function create_converted_document(stored_file $file, $format) {
+        global $CFG;
+
+        if (empty($CFG->pathtopandoc) || !is_executable(trim($CFG->pathtopandoc))) {
+            // No conversions are possible, sorry.
+            return false;
+        }
+
+        $fileextension = strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
+        if (!self::is_input_format_supported_by_pandoc($fileextension)) {
+            return false;
+        }
+
+        if (!self::is_output_format_supported_by_pandoc($format)) {
+            return false;
+        }
+
+        // Copy the file to the local tmp dir.
+        $tmp = make_request_directory();
+        $localfilename = $file->get_filename();
+        // Safety.
+        $localfilename = clean_param($localfilename, PARAM_FILE);
+
+        $filename = $tmp . '/' . $localfilename;
+        $file->copy_content_to($filename);
+
+        if (in_array($fileextension, array('gif', 'jpg', 'png'))) {
+            // We wrap images in a tiny html file - pandoc will generate documents from them.
+            $htmlwrapperfile = $tmp . '/wrapper.html';
+
+            file_put_contents($htmlwrapperfile, "<html><body><img src=\"$localfilename\"></body></html>");
+
+            $filename = $htmlwrapperfile;
+        }
+
+        $newtmpfile = pathinfo($filename, PATHINFO_FILENAME) . '.' . $format;
+
+        // Safety.
+        $newtmpfile = $tmp . '/' . clean_param($newtmpfile, PARAM_FILE);
+
+        $cmd = escapeshellcmd(trim($CFG->pathtopandoc)) . ' ' .
+               escapeshellarg('-o') . ' ' .
+               escapeshellarg($newtmpfile) . ' ' .
+               escapeshellarg($filename);
+
+        $e = file_exists($filename);
+        $output = null;
+        $currentdir = getcwd();
+        chdir($tmp);
+        $result = exec($cmd, $output);
+        chdir($currentdir);
+        if (!file_exists($newtmpfile)) {
+            return false;
+        }
+
+        $context = context_system::instance();
+        $record = array(
+            'contextid' => $context->id,
+            'component' => 'core',
+            'filearea'  => 'documentconversion',
+            'itemid'    => 0,
+            'filepath'  => '/' . $format . '/',
+            'filename'  => $file->get_contenthash(),
+        );
+
+        return $this->create_file_from_pathname($record, $newtmpfile);
+    }
+
+    /**
      * Returns an image file that represent the given stored file as a preview
      *
      * At the moment, only GIF, JPEG and PNG files are supported to have previews. In the
@@ -2270,6 +2392,26 @@ class file_storage {
                   FROM {files} p
              LEFT JOIN {files} o ON (p.filename = o.contenthash)
                  WHERE p.contextid = ? AND p.component = 'core' AND p.filearea = 'preview' AND p.itemid = 0
+                       AND o.id IS NULL";
+        $syscontext = context_system::instance();
+        $rs = $DB->get_recordset_sql($sql, array($syscontext->id));
+        foreach ($rs as $orphan) {
+            $file = $this->get_file_instance($orphan);
+            if (!$file->is_directory()) {
+                $file->delete();
+            }
+        }
+        $rs->close();
+        mtrace('done.');
+
+        // remove orphaned converted files (that is files in the core documentconversion filearea without
+        // the existing original file)
+        mtrace('Deleting orphaned document conversion files... ', '');
+        cron_trace_time_and_memory();
+        $sql = "SELECT p.*
+                  FROM {files} p
+             LEFT JOIN {files} o ON (p.filename = o.contenthash)
+                 WHERE p.contextid = ? AND p.component = 'core' AND p.filearea = 'documentconversion' AND p.itemid = 0
                        AND o.id IS NULL";
         $syscontext = context_system::instance();
         $rs = $DB->get_recordset_sql($sql, array($syscontext->id));

@@ -24,6 +24,8 @@
 
 namespace assignfeedback_editpdf;
 
+use DOMDocument;
+
 /**
  * Functions for generating the annotated pdf.
  *
@@ -40,6 +42,8 @@ class document_services {
     const FINAL_PDF_FILEAREA = 'download';
     /** File area for combined pdf */
     const COMBINED_PDF_FILEAREA = 'combined';
+    /** File area for importing html */
+    const IMPORT_HTML_FILEAREA = 'importhtml';
     /** File area for page images */
     const PAGE_IMAGE_FILEAREA = 'pages';
     /** File area for readonly page images */
@@ -85,6 +89,32 @@ class document_services {
     }
 
     /**
+     * Use a DOM parser to accurately replace images with their alt text.
+     * @param string $html
+     * @return string New html with no image tags.
+     */
+    protected static function strip_images($html) {
+        $dom = new DOMDocument();
+        $dom->loadHTML($html);
+        $images = $dom->getElementsByTagName('img');
+        $i = 0;
+
+        for ($i = ($images->length - 1); $i >= 0; $i--) {
+            $node = $images->item($i);
+
+            if ($node->hasAttribute('alt')) {
+                $replacement = ' [ ' . $node->getAttribute('alt') . ' ] ';
+            } else {
+                $replacement = ' ';
+            }
+
+            $text = $dom->createTextNode($replacement);
+            $node->parentNode->replaceChild($text, $node);
+        }
+        return $dom->saveHTML();
+    }
+
+    /**
      * This function will search for all files that can be converted
      * and concatinated into a PDF (1.4) - for any submission plugin
      * for this students attempt.
@@ -116,13 +146,38 @@ class document_services {
         if (!$submission) {
             return $files;
         }
+
+        $fs = get_file_storage();
         // Ask each plugin for it's list of files.
         foreach ($assignment->get_submission_plugins() as $plugin) {
             if ($plugin->is_enabled() && $plugin->is_visible()) {
                 $pluginfiles = $plugin->get_files($submission, $user);
                 foreach ($pluginfiles as $filename => $file) {
-                    if (($file instanceof \stored_file) && ($file->get_mimetype() === 'application/pdf')) {
-                        $files[$filename] = $file;
+                    if ($file instanceof \stored_file) {
+                        if ($file->get_mimetype() === 'application/pdf') {
+                            $files[$filename] = $file;
+                        } else if ($convertedfile = $fs->get_converted_document($file, 'pdf')) {
+                            $files[$filename] = $convertedfile;
+                        }
+                    } else {
+                        // Create a tmp stored_file from this html string.
+                        $file = reset($file);
+                        // Strip image tags, because they will not be resolvable.
+                        $file = self::strip_images($file);
+                        $record = new \stdClass();
+                        $record->contextid = $assignment->get_context()->id;
+                        $record->component = 'assignfeedback_editpdf';
+                        $record->filearea = self::IMPORT_HTML_FILEAREA;
+                        $record->itemid = $submission->id;
+                        $record->filepath = '/';
+                        $record->filename = $plugin->get_type() . '-' . $filename;
+
+                        $htmlfile = $fs->create_file_from_string($record, $file);
+                        $convertedfile = $fs->get_converted_document($htmlfile, 'pdf');
+                        $htmlfile->delete();
+                        if ($convertedfile) {
+                            $files[$filename] = $convertedfile;
+                        }
                     }
                 }
             }
