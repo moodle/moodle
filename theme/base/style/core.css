@@ -1642,6 +1642,14 @@ sup {vertical-align: super;}
     -webkit-box-shadow: inset 0px 0px 30px 0px #CCCCCC;
     -moz-box-shadow: inset 0px 0px 30px 0px #CCCCCC;
 }
+.jschooser .choosercontainer #chooseform .alloptions .option input[type=radio],
+.jschooser .choosercontainer #chooseform .alloptions .option .modicon {
+    display: inline-block;
+}
+.jschooser .choosercontainer #chooseform .alloptions .option .typename {
+    display: inline-block;
+    width: 65%;
+}
 .dir-rtl.jschooser .choosercontainer #chooseform .alloptions {
     max-width: 18.3em;
 }
