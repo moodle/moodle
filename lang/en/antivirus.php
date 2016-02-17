@@ -22,9 +22,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['actantivirushdr'] = 'Available antiviruses';
-$string['antiviruses'] = 'Antiviruses';
-$string['antivirussettings'] = 'Manage antiviruses';
+$string['actantivirushdr'] = 'Available antivirus plugins';
+$string['antiviruses'] = 'Antivirus plugins';
+$string['antivirussettings'] = 'Manage antivirus plugins';
 $string['configantivirusplugins'] = 'Please choose the antivirus plugins you wish to use and arrange them in order of being applied.';
 $string['emailsubject'] = '{$a} :: Antivirus notification';
 $string['virusfounduser'] = 'The file you have uploaded, {$a->filename}, has been scanned by a virus checker and found to be infected! Your file upload was NOT successful.';
