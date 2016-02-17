@@ -384,6 +384,9 @@ class qtype_numerical_answer extends question_answer {
 
             case 3: case 'geometric':
                 $quotient = 1 + abs($tolerance);
+                if ($this->answer < 0) {
+                    return array($this->answer * $quotient, $this->answer / $quotient);
+                }
                 return array($this->answer / $quotient, $this->answer * $quotient);
 
             default:

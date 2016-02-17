@@ -105,5 +105,15 @@ class answer_test extends \advanced_testcase {
         $this->assertTrue($answer->within_tolerance(7));
         $this->assertTrue($answer->within_tolerance(14));
         $this->assertFalse($answer->within_tolerance(14.01));
+
+        // Geometric tolerance, negative answer.
+        $answer = new qtype_numerical_answer(13, -7.0, 1.0, '', FORMAT_MOODLE, 1.0);
+        $answer->tolerancetype = 3;
+
+        $this->assertFalse($answer->within_tolerance(-3.49));
+        $this->assertTrue($answer->within_tolerance(-3.5));
+        $this->assertTrue($answer->within_tolerance(-7));
+        $this->assertTrue($answer->within_tolerance(-14));
+        $this->assertFalse($answer->within_tolerance(-14.01));
     }
 }
