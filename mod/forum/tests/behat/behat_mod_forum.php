@@ -40,7 +40,7 @@ use Behat\Behat\Context\Step\Given as Given,
 class behat_mod_forum extends behat_base {
 
     /**
-     * Adds a topic to the forum specified by it's name. Useful for the News forum and blog-style forums.
+     * Adds a topic to the forum specified by it's name. Useful for the Announcements and blog-style forums.
      *
      * @Given /^I add a new topic to "(?P<forum_name_string>(?:[^"]|\\")*)" forum with:$/
      * @param string $forumname

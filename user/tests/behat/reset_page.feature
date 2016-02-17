@@ -21,7 +21,7 @@ Feature: Reset my profile page to default
 
   Scenario: Add blocks to page and reset
     When I press "Customise this page"
-    And I add the "Latest news" block
+    And I add the "Latest announcements" block
     And I press "Reset page to default"
-    Then I should not see "Latest news"
+    Then I should not see "Latest announcements"
     And I should not see "Reset page to default"
