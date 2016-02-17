@@ -6605,37 +6605,45 @@ class admin_setting_manageantiviruses extends admin_setting {
         // Iterate through auth plugins and add to the display table.
         $updowncount = 1;
         $antiviruscount = count($activeantiviruses);
-        $url = "antiviruses.php?sesskey=" . sesskey();
+        $baseurl = new moodle_url('/admin/antiviruses.php', array('sesskey' => sesskey()));
         foreach ($antivirusesavailable as $antivirus => $name) {
             // Hide/show link.
             $class = '';
             if (in_array($antivirus, $activeantiviruses)) {
-                $hideshow = "<a href=\"$url&amp;action=disable&amp;antivirus=$antivirus\">";
-                $hideshow .= "<img src=\"" . $OUTPUT->pix_url('t/hide') . "\" class=\"iconsmall\" alt=\"disable\" /></a>";
+                $hideshowurl = $baseurl;
+                $hideshowurl->params(array('action' => 'disable', 'antivirus' => $antivirus));
+                $hideshowimg = html_writer::img($OUTPUT->pix_url('t/hide'), 'disable', array('class' => 'iconsmall'));
+                $hideshow = html_writer::link($hideshowurl, $hideshowimg);
                 $enabled = true;
                 $displayname = $name;
             } else {
-                $hideshow = "<a href=\"$url&amp;action=enable&amp;antivirus=$antivirus\">";
-                $hideshow .= "<img src=\"" . $OUTPUT->pix_url('t/show') . "\" class=\"iconsmall\" alt=\"enable\" /></a>";
+                $hideshowurl = $baseurl;
+                $hideshowurl->params(array('action' => 'enable', 'antivirus' => $antivirus));
+                $hideshowimg = html_writer::img($OUTPUT->pix_url('t/show'), 'enable', array('class' => 'iconsmall'));
+                $hideshow = html_writer::link($hideshowurl, $hideshowimg);
                 $enabled = false;
                 $displayname = $name;
                 $class = 'dimmed_text';
             }
 
-            // Up/down link (only if auth is enabled).
+            // Up/down link.
             $updown = '';
             if ($enabled) {
                 if ($updowncount > 1) {
-                    $updown .= "<a href=\"$url&amp;action=up&amp;antivirus=$antivirus\">";
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('t/up') . "\" alt=\"up\" class=\"iconsmall\" /></a>&nbsp;";
+                    $updownurl = $baseurl;
+                    $updownurl->params(array('action' => 'up', 'antivirus' => $antivirus));
+                    $updownimg = html_writer::img($OUTPUT->pix_url('t/up'), 'up', array('class' => 'iconsmall'));
+                    $updown = html_writer::link($updownurl, $updownimg);
                 } else {
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('spacer') . "\" class=\"iconsmall\" alt=\"\" />&nbsp;";
+                    $updown .= html_writer::img($OUTPUT->pix_url('spacer'), '', array('class' => 'iconsmall'));
                 }
                 if ($updowncount < $antiviruscount) {
-                    $updown .= "<a href=\"$url&amp;action=down&amp;antivirus=$antivirus\">";
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('t/down') . "\" alt=\"down\" class=\"iconsmall\" /></a>";
+                    $updownurl = $baseurl;
+                    $updownurl->params(array('action' => 'down', 'antivirus' => $antivirus));
+                    $updownimg = html_writer::img($OUTPUT->pix_url('t/down'), 'down', array('class' => 'iconsmall'));
+                    $updown = html_writer::link($updownurl, $updownimg);
                 } else {
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('spacer') . "\" class=\"iconsmall\" alt=\"\" />";
+                    $updown .= html_writer::img($OUTPUT->pix_url('spacer'), '', array('class' => 'iconsmall'));
                 }
                 ++ $updowncount;
             }
@@ -6643,7 +6651,7 @@ class admin_setting_manageantiviruses extends admin_setting {
             // Settings link.
             if (file_exists($CFG->dirroot.'/lib/antivirus/'.$antivirus.'/settings.php')) {
                 $eurl = new moodle_url('/admin/settings.php', array('section' => 'antivirussettings'.$antivirus));
-                $settings = "<a href='$eurl'>{$txt->settings}</a>";
+                $settings = html_writer::link($eurl, $txt->settings);
             } else {
                 $settings = '';
             }
@@ -6661,7 +6669,7 @@ class admin_setting_manageantiviruses extends admin_setting {
             $table->data[] = $row;
         }
         $return .= html_writer::table($table);
-        $return .= get_string('configantivirusplugins', 'antivirus').'<br />'.get_string('tablenosave', 'admin');
+        $return .= get_string('configantivirusplugins', 'antivirus') . html_writer::empty_tag('br') . get_string('tablenosave', 'admin');
         $return .= $OUTPUT->box_end();
         return highlight($query, $return);
     }
