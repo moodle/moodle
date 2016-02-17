@@ -2370,6 +2370,44 @@ class grade_tree extends grade_structure {
     }
 
     /**
+     * Determines whether the grade tree item can be displayed.
+     * This is particularly targeted for grade categories that have no total (None) when rendering the grade tree.
+     * It checks if the grade tree item is of type 'category', and makes sure that the category, or at least one of children,
+     * can be output.
+     *
+     * @param array $element The grade category element.
+     * @return bool True if the grade tree item can be displayed. False, otherwise.
+     */
+    public static function can_output_item($element) {
+        $canoutput = true;
+
+        if ($element['type'] === 'category') {
+            $object = $element['object'];
+            $category = grade_category::fetch(array('id' => $object->id));
+            // Category has total, we can output this.
+            if ($category->get_grade_item()->gradetype != GRADE_TYPE_NONE) {
+                return true;
+            }
+
+            // Category has no total and has no children, no need to output this.
+            if (empty($element['children'])) {
+                return false;
+            }
+
+            $canoutput = false;
+            // Loop over children and make sure at least one child can be output.
+            foreach ($element['children'] as $child) {
+                $canoutput = self::can_output_item($child);
+                if ($canoutput) {
+                    break;
+                }
+            }
+        }
+
+        return $canoutput;
+    }
+
+    /**
      * Static recursive helper - makes full tree (all leafes are at the same level)
      *
      * @param array &$element The seed of the recursion
@@ -2396,6 +2434,9 @@ class grade_tree extends grade_structure {
         $maxdepth = reset($chdepths);
         foreach ($chdepths as $chid=>$chd) {
             if ($chd == $maxdepth) {
+                continue;
+            }
+            if (!self::can_output_item($element['children'][$chid])) {
                 continue;
             }
             for ($i=0; $i < $maxdepth-$chd; $i++) {
@@ -2429,6 +2470,9 @@ class grade_tree extends grade_structure {
         }
         $count = 0;
         foreach ($element['children'] as $key=>$child) {
+            if (!self::can_output_item($child)) {
+                continue;
+            }
             $count += grade_tree::inject_colspans($element['children'][$key]);
         }
         $element['colspan'] = $count;
