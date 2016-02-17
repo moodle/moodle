@@ -73,7 +73,7 @@ class html_parser extends nwiki_parser {
 
         $h1 = array("<\s*h{$minheaderlevel}\s*>", "<\/h{$minheaderlevel}>");
 
-        $regex = "/(.*?)({$h1[0]}\s*".preg_quote($header, '/')."\s*{$h1[1]}.*?)((?:\n{$h1[0]}.*)|$)/is";
+        $regex = "/(.*?)({$h1[0]}\s*".preg_quote($header, '/')."\s*{$h1[1]}.*?)((?:{$h1[0]}.*)|$)/is";
         preg_match($regex, $text, $match);
 
         if (!empty($match)) {
