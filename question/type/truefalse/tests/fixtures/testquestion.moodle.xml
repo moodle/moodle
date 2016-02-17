@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+<!-- question: 0  -->
+  <question type="category">
+    <category>
+        <text>$course$/Test questions</text>
+
+    </category>
+  </question>
+
+<!-- question: 115000  -->
+  <question type="truefalse">
+    <name>
+      <text>true-false-001</text>
+    </name>
+    <questiontext format="html">
+      <text>The answer is true.</text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text>You should have selected true.</text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>1.0000000</penalty>
+    <hidden>0</hidden>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>true</text>
+      <feedback format="html">
+        <text>This is the right answer.</text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>false</text>
+      <feedback format="html">
+        <text>This is the wrong answer.</text>
+      </feedback>
+    </answer>
+  </question>
+
+</quiz>

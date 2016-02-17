@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+<!-- question: 0  -->
+  <question type="category">
+    <category>
+        <text>$course$/Test questions</text>
+
+    </category>
+  </question>
+
+<!-- question: 110000  -->
+  <question type="shortanswer">
+    <name>
+      <text>shortanswer-001</text>
+    </name>
+    <questiontext format="html">
+      <text>Name an amphibian: __________</text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text>Generalfeedback: frog or toad would have been OK.</text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.0000000</penalty>
+    <hidden>0</hidden>
+    <usecase>0</usecase>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>frog</text>
+      <feedback format="html">
+        <text>Frog is a very good answer.</text>
+      </feedback>
+    </answer>
+    <answer fraction="80" format="moodle_auto_format">
+      <text>toad</text>
+      <feedback format="html">
+        <text>Toad is an OK good answer.</text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>*</text>
+      <feedback format="html">
+        <text>That is a bad answer.</text>
+      </feedback>
+    </answer>
+  </question>
+
+</quiz>
