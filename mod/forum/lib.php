@@ -756,6 +756,11 @@ function forum_cron() {
                     $replyaddress = $messageinboundgenerator->generate($userto->id);
                 }
 
+                if (!empty($CFG->forum_enabletimedposts) && ($discussion->timestart > $post->modified)) {
+                    // Override the post->modified time with the discussion start for e-mails.
+                    $post->modified = $discussion->timestart;
+                }
+
                 $a = new stdClass();
                 $a->courseshortname = $shortname;
                 $a->forumname = $cleanforumname;
@@ -1088,6 +1093,11 @@ function forum_cron() {
                                 'X-Auto-Response-Suppress: All',
                                 'Auto-Submitted: auto-generated',
                             );
+
+                        if (!empty($CFG->forum_enabletimedposts) && ($discussion->timestart > $post->modified)) {
+                            // Override the post->modified time with the discussion start for e-mails.
+                            $post->modified = $discussion->timestart;
+                        }
 
                         $maildigest = forum_get_user_maildigest_bulk($digests, $userto, $forum->id);
                         if ($maildigest == 2) {
