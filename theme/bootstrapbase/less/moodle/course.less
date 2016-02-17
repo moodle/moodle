@@ -321,13 +321,19 @@
     .content > div,  /* All the divs but the activities which are in a UL. */
     .activity .activityinstance {
         opacity: .5;
-    }
-    .sectionname,
-    .activity .activityinstance {
         margin-left: 10px;
         margin-right: 10px;
     }
+    .content > div.visibleifjs {
+        &.addresourcemodchooser,
+        &.addresourcedropdown {
+            /* The add functionality should not be marginned */
+            margin-left: 0;
+            margin-right: 0;
+        }
+    }
 }
+
 .course-content ul.topics li.section .content,
 .course-content ul.weeks li.section .content {
     margin-right: 20px;
