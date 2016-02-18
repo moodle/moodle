@@ -18,7 +18,6 @@ Feature: Test creating an Essay question
     And I follow "Course 1"
     And I navigate to "Question bank" node in "Course administration"
 
-  @javascript
   Scenario: Create an Essay question with Response format set to 'HTML editor'
     When I add a "Essay" question filling the form with:
       | Question name            | essay-001                      |
@@ -27,7 +26,6 @@ Feature: Test creating an Essay question
       | Response format          | HTML editor                    |
     Then I should see "essay-001"
 
- @javascript
   Scenario: Create an Essay question with Response format set to 'HTML editor with the file picker'
     When I add a "Essay" question filling the form with:
       | Question name            | essay-002                      |

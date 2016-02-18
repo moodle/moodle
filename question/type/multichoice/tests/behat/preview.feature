@@ -25,8 +25,8 @@ Feature: Preview a Multiple choice question
     And I follow "Course 1"
     And I navigate to "Question bank" node in "Course administration"
 
-  @javascript
-  Scenario: Preview a question and submit a partially correct response.
+  @javascript @_switch_window
+  Scenario: Preview a Multiple choice question and submit a partially correct response.
     When I click on "Preview" "link" in the "Multi-choice-001" "table_row"
     And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
@@ -40,8 +40,8 @@ Feature: Preview a Multiple choice question
     And I should see "Parts, but only parts, of your response are correct."
     And I switch to the main window
 
-  @javascript
-  Scenario: Preview a question and submit a correct response.
+  @javascript @_switch_window
+  Scenario: Preview a Multiple choice question and submit a correct response.
     When I click on "Preview" "link" in the "Multi-choice-001" "table_row"
     And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
@@ -57,8 +57,8 @@ Feature: Preview a Multiple choice question
     And I should see "The correct answer is: One, Three"
     And I switch to the main window
 
-  @javascript
-  Scenario: Preview a question and submit a correct response.
+  @javascript @_switch_window
+  Scenario: Preview a Multiple choice question and submit a correct response.
     When I click on "Preview" "link" in the "Multi-choice-002" "table_row"
     And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"

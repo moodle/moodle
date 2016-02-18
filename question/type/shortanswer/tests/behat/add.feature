@@ -18,7 +18,6 @@ Feature: Test creating a Short answer question
     And I follow "Course 1"
     And I navigate to "Question bank" node in "Course administration"
 
-  @javascript
   Scenario: Create a Short answer question
     When I add a "Short answer" question filling the form with:
       | Question name        | shortanswer-001                           |

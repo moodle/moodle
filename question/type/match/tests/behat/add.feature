@@ -18,7 +18,6 @@ Feature: Test creating a Matching question
     And I follow "Course 1"
     And I navigate to "Question bank" node in "Course administration"
 
-  @javascript
   Scenario: Create a Matching question with 3 subquestions
     When I add a "Matching" question filling the form with:
       | Question name                      | match-001                                      |
