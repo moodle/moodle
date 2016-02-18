@@ -67,17 +67,21 @@ $repo->callback();
 // If Moodle is working on HTTPS mode, then we are not allowed to access
 // parent window, in this case, we need to alert user to refresh the repository
 // manually.
-$strhttpsbug = get_string('cannotaccessparentwin', 'repository');
+$strhttpsbug = json_encode(get_string('cannotaccessparentwin', 'repository'));
 $strrefreshnonjs = get_string('refreshnonjsfilepicker', 'repository');
 $js =<<<EOD
 <html>
 <head>
     <script type="text/javascript">
-    if(window.opener){
-        window.opener.M.core_filepicker.active_filepicker.list();
-        window.close();
-    } else {
-        alert("{$strhttpsbug }");
+    try {
+        if (window.opener) {
+            window.opener.M.core_filepicker.active_filepicker.list();
+            window.close();
+        } else {
+            throw new Error('Whoops!');
+        }
+    } catch (e) {
+        alert({$strhttpsbug});
     }
     </script>
 </head>
