@@ -26,7 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/backup/util/plan/backup_structure_step.class.php');
+require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+
 require_once($CFG->dirroot . '/backup/moodle2/backup_stepslib.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_activity_task.class.php');
 require_once($CFG->dirroot . '/mod/forum/backup/moodle2/backup_forum_activity_task.class.php');
