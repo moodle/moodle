@@ -36,6 +36,7 @@ $string['root'] = 'Root';
 $string['nosubdir'] = 'You need to create at least one folder inside the <b>{$a}</b> directory so you can select it here.';
 $string['pluginname_help'] = 'Create repository from local directory';
 $string['pluginname'] = 'File system';
+$string['searchresults'] = 'Search results';
 $string['enablecourseinstances'] = 'Allow admins to add a file system repository instance to a course (configurable only by admins)';
 $string['enableuserinstances'] = 'Allow admins to add a file system repository instance for personal use (configurable only by admins)';
 
