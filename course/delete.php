@@ -61,6 +61,8 @@ if ($delete === md5($course->timemodified)) {
 
     echo $OUTPUT->header();
     echo $OUTPUT->heading($strdeletingcourse);
+    // This might take a while. Raise the execution time limit.
+    core_php_time_limit::raise();
     // We do this here because it spits out feedback as it goes.
     delete_course($course);
     echo $OUTPUT->heading( get_string("deletedcourse", "", $courseshortname) );
