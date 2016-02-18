@@ -728,5 +728,20 @@ function xmldb_tool_lp_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2016020901, 'tool', 'lp');
     }
 
+    if ($oldversion < 2016020902) {
+
+        // Define index cmidcompetencyid to be added to tool_lp_module_competency.
+        $table = new xmldb_table('tool_lp_module_competency');
+        $index = new xmldb_index('cmidcompetencyid', XMLDB_INDEX_NOTUNIQUE, array('cmid', 'competencyid'));
+
+        // Conditionally launch add index cmidcompetencyid.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2016020902, 'tool', 'lp');
+    }
+
     return true;
 }

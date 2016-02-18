@@ -298,6 +298,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="cmidruleoutcome" UNIQUE="false" FIELDS="cmid, ruleoutcome" COMMENT="Index on cmid and outcome so we can quickly find what to do when an activity is completed."/>
+        <INDEX NAME="cmidcompetencyid" UNIQUE="false" FIELDS="cmid, competencyid"/>
       </INDEXES>
     </TABLE>
   </TABLES>
