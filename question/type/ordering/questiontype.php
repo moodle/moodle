@@ -669,7 +669,7 @@ class qtype_ordering extends question_type {
     public function set_layout_select_count_grading(&$question, $layout, $select, $count, $grading) {
 
         // set default values
-        $layouttype  = qtype_ordering_question::LAYOUT_HORIZONTAL;
+        $layouttype  = qtype_ordering_question::LAYOUT_VERTICAL;
         $selecttype  = qtype_ordering_question::SELECT_RANDOM;
         $selectcount = 3;
         $gradingtype = qtype_ordering_question::GRADING_RELATIVE_NEXT_EXCLUDE_LAST;
