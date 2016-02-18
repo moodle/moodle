@@ -18,7 +18,6 @@ Feature: Test creating a Multiple choice question
     And I follow "Course 1"
     And I navigate to "Question bank" node in "Course administration"
 
-  @javascript
   Scenario: Create a Multiple choice question with multiple response
     When I add a "Multiple choice" question filling the form with:
       | Question name            | Multi-choice-001                   |
@@ -39,7 +38,6 @@ Feature: Test creating a Multiple choice question
       | Hint 2                   | Second hint                        |
     Then I should see "Multi-choice-001"
 
-  @javascript
   Scenario: Create a Multiple choice question with single response
     When I add a "Multiple choice" question filling the form with:
       | Question name            | Multi-choice-002                       |

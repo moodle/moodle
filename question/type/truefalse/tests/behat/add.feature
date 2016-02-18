@@ -18,7 +18,6 @@ Feature: Test creating a True/False question
     And I follow "Course 1"
     And I navigate to "Question bank" node in "Course administration"
 
-  @javascript
   Scenario: Create a True/False question with Correct answer as False
     When I add a "True/False" question filling the form with:
       | Question name                      | true-false-001                             |
@@ -29,8 +28,7 @@ Feature: Test creating a True/False question
       | Feedback for the response 'True'.  | Well done!                                 |
       | Feedback for the response 'False'. | Read more about England.                   |
       Then I should see "true-false-001"
- 
-  @javascript
+
   Scenario: Create a True/False question with Correct answer as True
     When I add a "True/False" question filling the form with:
       | Question name                      | true-false-002                         |

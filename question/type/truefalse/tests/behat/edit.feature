@@ -24,7 +24,6 @@ Feature: Test editing a True/False question
     And I follow "Course 1"
     And I navigate to "Question bank" node in "Course administration"
 
-  @javascript
   Scenario: Edit a True/False question
     When I click on "Edit" "link" in the "true-false-001" "table_row"
     And I set the following fields to these values:

@@ -1,4 +1,4 @@
-@qtype @qtype_short asnswer
+@qtype @qtype_shortanswer
 Feature: Test duplicating a quiz containing a Short answer question
   As a teacher
   In order re-use my courses containing Short answer questions
