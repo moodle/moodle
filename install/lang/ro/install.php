@@ -43,6 +43,7 @@ $string['dbprefix'] = 'Prefix tabele';
 $string['dirroot'] = 'Director Moodle';
 $string['environmenthead'] = 'Se verifică mediul...';
 $string['installation'] = 'Instalare';
+$string['langdownloaderror'] = 'Din păcate, limba "{$a}" nu a putut fi descărcată. Procesul de instalare va continua în limba engleză.';
 $string['paths'] = 'Căi';
 $string['pathshead'] = 'Confirmare căi';
 $string['pathssubdirroot'] = '<p>Calea completă către directorul care conține codul Moodle .</p>';
