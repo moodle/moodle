@@ -25,7 +25,6 @@ Feature: Test editing a Multiple choice question
     And I follow "Course 1"
     And I navigate to "Question bank" node in "Course administration"
 
-  @javascript
   Scenario: Edit a Multiple choice question with multiple response (checkboxes)
     When I click on "Edit" "link" in the "Multiple choice for editing" "table_row"
     And I set the following fields to these values:
@@ -37,7 +36,6 @@ Feature: Test editing a Multiple choice question
     And I press "id_submitbutton"
     Then I should see "Edited Multiple choice name"
 
-  @javascript
   Scenario: Edit a Multiple choice question with single response (radio buttons)
     When I click on "Edit" "link" in the "Single choice for editing" "table_row"
     And I set the following fields to these values:

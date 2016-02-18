@@ -24,7 +24,6 @@ Feature: Test exporting Multiple choice questions
     And I log in as "teacher1"
     And I follow "Course 1"
 
-  @javascript
   Scenario: Export a Multiple choice question
     When I navigate to "Export" node in "Course administration > Question bank"
     And I set the field "id_format_xml" to "1"

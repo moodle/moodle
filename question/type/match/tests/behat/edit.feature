@@ -24,7 +24,7 @@ Feature: Test editing a Matching question
     And I follow "Course 1"
     And I navigate to "Question bank" node in "Course administration"
 
-  @javascript
+  @javascript @_switch_window
   Scenario: Edit a Matching question
     When I click on "Edit" "link" in the "Matching for editing" "table_row"
     And I set the following fields to these values:

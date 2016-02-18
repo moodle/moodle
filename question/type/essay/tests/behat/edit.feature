@@ -26,7 +26,6 @@ Feature: Test editing an Essay question
     And I follow "Course 1"
     And I navigate to "Question bank" node in "Course administration"
 
-  @javascript
   Scenario: Edit an Essay question
     When I click on "Edit" "link" in the "essay-001" "table_row"
     And I set the following fields to these values:

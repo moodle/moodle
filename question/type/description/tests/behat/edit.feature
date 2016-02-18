@@ -24,7 +24,6 @@ Feature: Test editing a Description question
     And I follow "Course 1"
     And I navigate to "Question bank" node in "Course administration"
 
-  @javascript
   Scenario: Edit a Description question
     When I click on "Edit" "link" in the "description-001" "table_row"
     And I set the following fields to these values:

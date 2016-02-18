@@ -24,8 +24,8 @@ Feature: Preview a Matching question
     And I follow "Course 1"
     And I navigate to "Question bank" node in "Course administration"
 
-  @javascript
-  Scenario: Preview a question and submit a correct response.
+  @javascript @_switch_window
+  Scenario: Preview a Matching question and submit a correct response.
     When I click on "Edit" "link" in the "matching-001" "table_row"
     And I set the following fields to these values:
       | Shuffle    | 0   |
@@ -42,8 +42,8 @@ Feature: Preview a Matching question
     And I should see "General feedback."
     And I switch to the main window
 
-  @javascript
-  Scenario: Preview a question and submit a partially correct response.
+  @javascript @_switch_window
+  Scenario: Preview a Matching question and submit a partially correct response.
     When I click on "Edit" "link" in the "matching-001" "table_row"
     And I set the following fields to these values:
       | Shuffle    | 0   |
@@ -60,8 +60,8 @@ Feature: Preview a Matching question
     And I should see "General feedback."
     And I switch to the main window
 
-  @javascript
-  Scenario: Preview a question and submit an incorrect response.
+  @javascript @_switch_window
+  Scenario: Preview a Matching question and submit an incorrect response.
     When I click on "Edit" "link" in the "matching-001" "table_row"
     And I set the following fields to these values:
       | Shuffle    | 0   |

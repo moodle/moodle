@@ -18,7 +18,6 @@ Feature: Test creating a Description question
     And I follow "Course 1"
     And I navigate to "Question bank" node in "Course administration"
 
-  @javascript
   Scenario: Create a Description question with Correct answer as False
     When I add a "Description" question filling the form with:
       | Question name                      | description-001                                                |

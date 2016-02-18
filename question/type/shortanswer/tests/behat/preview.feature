@@ -25,7 +25,7 @@ Feature: Preview a Short answer question
     And I navigate to "Question bank" node in "Course administration"
 
 
-  @javascript
+  @javascript @_switch_window
   Scenario: Preview a Short answer question with correct answer
     When I click on "Preview" "link" in the "shortanswer-001" "table_row"
     And I switch to "questionpreview" window
@@ -40,7 +40,7 @@ Feature: Preview a Short answer question
     And I should see "Generalfeedback: frog or toad would have been OK."
     And I should see "The correct answer is: frog"
 
-  @javascript
+  @javascript @_switch_window
   Scenario: Preview a Short answer question with almost correct answer
     When I click on "Preview" "link" in the "shortanswer-001" "table_row"
     And I switch to "questionpreview" window
@@ -55,7 +55,7 @@ Feature: Preview a Short answer question
     And I should see "Generalfeedback: frog or toad would have been OK."
     And I should see "The correct answer is: frog"
 
-  @javascript
+  @javascript @_switch_window
   Scenario: Preview a Short answer question with incorrect answer
     When I click on "Preview" "link" in the "shortanswer-001" "table_row"
     And I switch to "questionpreview" window

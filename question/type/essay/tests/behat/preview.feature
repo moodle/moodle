@@ -26,8 +26,8 @@ Feature: Preview Essay questions
     And I follow "Course 1"
     And I navigate to "Question bank" node in "Course administration"
 
-  @javascript
-  Scenario: Preview a question and submit a partially correct response.
+  @javascript @_switch_window
+  Scenario: Preview an Essay question and submit a partially correct response.
     When I click on "Preview" "link" in the "essay-001" "table_row"
     And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
@@ -35,8 +35,8 @@ Feature: Preview Essay questions
     And I should see "Please write a story about a frog."
     And I switch to the main window
 
-  @javascript
-  Scenario: Preview a question and submit a partially correct response.
+  @javascript @_switch_window
+  Scenario: Preview an Essay question and submit a partially correct response.
     When I click on "Preview" "link" in the "essay-002" "table_row"
     And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
@@ -44,9 +44,9 @@ Feature: Preview Essay questions
     And I should see "Please write a story about a frog."
     And I should see "You can drag and drop files here to add them."
     And I switch to the main window
-    
-  @javascript
-  Scenario: Preview a question and submit a partially correct response.
+
+  @javascript @_switch_window
+  Scenario: Preview an Essay question and submit a partially correct response.
     When I click on "Preview" "link" in the "essay-003" "table_row"
     And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
