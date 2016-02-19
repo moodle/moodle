@@ -2643,6 +2643,12 @@ class global_navigation extends navigation_node {
                     self::TYPE_SETTING, null, 'tags');
         }
 
+        // Search.
+        if (!empty($CFG->enableglobalsearch)) {
+            $node = $coursenode->add(get_string('search', 'search'), new moodle_url('/search/index.php'),
+                    self::TYPE_SETTING, null, 'search');
+        }
+
         if (isloggedin()) {
             // Calendar
             $calendarurl = new moodle_url('/calendar/view.php', array('view' => 'month'));

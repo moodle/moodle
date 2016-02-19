@@ -258,6 +258,14 @@ $definitions = array(
     'tags' => array(
         'mode' => cache_store::MODE_REQUEST,
         'simplekeys' => true,
-    )
+    ),
+
+    // Caches search results.
+    'search_results' => array(
+        'mode' => cache_store::MODE_SESSION,
+        'simplekeys' => true,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 3
+    ),
 
 );

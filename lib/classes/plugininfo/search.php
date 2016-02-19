@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,24 +15,40 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * MOODLE VERSION INFORMATION
- *
- * This file defines the current version of the core Moodle code being used.
- * This is compared against the values stored in the database to determine
- * whether upgrades should be performed (see lib/db/*.php)
+ * Defines classes used for plugin info.
  *
  * @package    core
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @copyright  2015 Daniel Neis
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core\plugininfo;
 
 defined('MOODLE_INTERNAL') || die();
 
-$version  = 2016021800.01;              // YYYYMMDD      = weekly release date of this DEV branch.
-                                        //         RR    = release increments - 00 in DEV branches.
-                                        //           .XX = incremental changes.
+/**
+ * Class for search plugins
+ *
+ * @package    core
+ * @copyright  2015 Daniel Neis
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class search extends base {
 
-$release  = '3.1dev (Build: 20160218)'; // Human-friendly version name
+    /**
+     * Is uninstall allowed or not.
+     *
+     * @return bool
+     */
+    public function is_uninstall_allowed() {
+        return true;
+    }
 
-$branch   = '31';                       // This version's branch.
-$maturity = MATURITY_ALPHA;             // This version's maturity level.
+    /**
+     * Returns the node name used in admin settings menu for this plugin settings (if applicable).
+     *
+     * @return null|string node name or null if plugin does not create settings node (default)
+     */
+    public function get_settings_section_name() {
+        return 'searchsetting' . $this->name;
+    }
+}

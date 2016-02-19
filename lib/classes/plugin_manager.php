@@ -1720,7 +1720,7 @@ class core_plugin_manager {
                 'blog_menu', 'blog_recent', 'blog_tags', 'calendar_month',
                 'calendar_upcoming', 'comments', 'community',
                 'completionstatus', 'course_list', 'course_overview',
-                'course_summary', 'feedback', 'glossary_random', 'html',
+                'course_summary', 'feedback', 'globalsearch', 'glossary_random', 'html',
                 'login', 'mentees', 'messages', 'mnet_hosts', 'myprofile',
                 'navigation', 'news_items', 'online_users', 'participants',
                 'private_files', 'quiz_results', 'recent_activity',
@@ -1862,8 +1862,8 @@ class core_plugin_manager {
 
             'report' => array(
                 'backups', 'completion', 'configlog', 'courseoverview', 'eventlist',
-                'log', 'loglive', 'outline', 'participation', 'progress', 'questioninstances', 'security', 'stats', 'performance',
-                'usersessions',
+                'log', 'loglive', 'outline', 'participation', 'progress', 'questioninstances', 'search',
+                'security', 'stats', 'performance', 'usersessions'
             ),
 
             'repository' => array(
@@ -1871,6 +1871,10 @@ class core_plugin_manager {
                 'flickr', 'flickr_public', 'googledocs', 'local', 'merlot',
                 'picasa', 'recent', 'skydrive', 's3', 'upload', 'url', 'user', 'webdav',
                 'wikimedia', 'youtube'
+            ),
+
+            'search' => array(
+                'solr'
             ),
 
             'scormreport' => array(

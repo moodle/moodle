@@ -170,6 +170,27 @@ function editors_head_setup() {
 }
 
 /**
+ * Converts editor text input in different formats to plain text.
+ *
+ * @param string $content The text as entered by the user
+ * @param int $contentformat FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN or FORMAT_MARKDOWN
+ * @return string Plain text.
+ */
+function editor_input_to_text($content, $contentformat) {
+
+    switch ($contentformat) {
+        case FORMAT_PLAIN:
+            return $content;
+        case FORMAT_MARKDOWN:
+            $html = markdown_to_html($content);
+            return html_to_text($html, 75, false);
+        default:
+            // FORMAT_HTML and FORMAT_MOODLE.
+            return html_to_text($content, 75, false);
+    }
+}
+
+/**
  * Base abstract text editor class.
  *
  * @copyright  2009 Petr Skoda {@link http://skodak.org}

@@ -9265,3 +9265,172 @@ class admin_setting_forcetimezone extends admin_setting_configselect {
         return true;
     }
 }
+
+
+/**
+ * Search setup steps info.
+ *
+ * @package core
+ * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_searchsetupinfo extends admin_setting {
+
+    /**
+     * Calls parent::__construct with specific arguments
+     */
+    public function __construct() {
+        $this->nosave = true;
+        parent::__construct('searchsetupinfo', '', '', '');
+    }
+
+    /**
+     * Always returns true, does nothing
+     *
+     * @return true
+     */
+    public function get_setting() {
+        return true;
+    }
+
+    /**
+     * Always returns true, does nothing
+     *
+     * @return true
+     */
+    public function get_defaultsetting() {
+        return true;
+    }
+
+    /**
+     * Always returns '', does not write anything
+     *
+     * @param array $data
+     * @return string Always returns ''
+     */
+    public function write_setting($data) {
+        // Do not write any setting.
+        return '';
+    }
+
+    /**
+     * Builds the HTML to display the control
+     *
+     * @param string $data Unused
+     * @param string $query
+     * @return string
+     */
+    public function output_html($data, $query='') {
+        global $CFG, $OUTPUT;
+
+        $return = '';
+        $brtag = html_writer::empty_tag('br');
+
+        // Available search areas.
+        $searchareas = \core_search\manager::get_search_areas_list();
+        $anyenabled = false;
+        $anyindexed = false;
+        foreach ($searchareas as $areaid => $searcharea) {
+            list($componentname, $varname) = $searcharea->get_config_var_name();
+            if (!$anyenabled) {
+                $anyenabled = get_config($componentname, 'enable' . $varname);
+            }
+            if (!$anyindexed) {
+                $anyindexed = get_config($componentname, $varname . '_indexingstart');
+            }
+            if ($anyenabled && $anyindexed) {
+                break;
+            }
+        }
+
+        $return .= $OUTPUT->heading(get_string('searchsetupinfo', 'admin'), 3, 'main');
+
+        $table = new html_table();
+        $table->head = array(get_string('step', 'search'), get_string('status'));
+        $table->colclasses = array('leftalign step', 'leftalign status');
+        $table->id = 'searchsetup';
+        $table->attributes['class'] = 'admintable generaltable';
+        $table->data = array();
+
+        $return .= $brtag . get_string('searchsetupdescription', 'search') . $brtag . $brtag;
+
+        // Enable global search.
+        $row = array();
+        $url = new moodle_url("/admin/search.php?query=enableglobalsearch");
+        $row[0] = '1. ' . html_writer::tag('a', get_string('enableglobalsearch', 'admin'),
+                        array('href' => $url));
+        $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+        if (\core_search\manager::is_global_search_enabled()) {
+            $status = html_writer::tag('span', get_string('yes'), array('class' => 'statusok'));
+        }
+        $row[1] = $status;
+        $table->data[] = $row;
+
+        // Select a search engine.
+        $row = array();
+        $url = new moodle_url('/admin/settings.php?section=manageglobalsearch#admin-searchengine');
+        $row[0] = '2. ' . html_writer::tag('a', get_string('selectsearchengine', 'admin'),
+                        array('href' => $url));
+
+        $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+        if (!empty($CFG->searchengine)) {
+            $status = html_writer::tag('span', get_string('pluginname', 'search_' . $CFG->searchengine),
+                array('class' => 'statusok'));
+
+        }
+        $row[1] = $status;
+        $table->data[] = $row;
+
+        // Available areas.
+        $row = array();
+        $url = new moodle_url('/admin/settings.php?section=manageglobalsearch#id_s_mod_assign_enablesearch_activity');
+        $row[0] = '3. ' . html_writer::tag('a', get_string('enablesearchareas', 'admin'),
+                        array('href' => $url));
+
+        $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+        if ($anyenabled) {
+            $status = html_writer::tag('span', get_string('yes'), array('class' => 'statusok'));
+
+        }
+        $row[1] = $status;
+        $table->data[] = $row;
+
+        // Setup search engine.
+        $row = array();
+        if (empty($CFG->searchengine)) {
+            $row[0] = '4. ' . get_string('setupsearchengine', 'admin');
+            $row[1] = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+        } else {
+            $url = new moodle_url('/admin/settings.php?section=search' . $CFG->searchengine);
+            $row[0] = '4. ' . html_writer::tag('a', get_string('setupsearchengine', 'admin'),
+                            array('href' => $url));
+            // Check the engine status.
+            $searchengine = \core_search\manager::search_engine_instance();
+            $serverstatus = $searchengine->is_server_ready();
+            if ($serverstatus === true) {
+                $status = html_writer::tag('span', get_string('yes'), array('class' => 'statusok'));
+            } else {
+                $status = html_writer::tag('span', $serverstatus, array('class' => 'statuscritical'));
+            }
+            $row[1] = $status;
+        }
+        $table->data[] = $row;
+
+        // Indexed data.
+        $row = array();
+        $url = new moodle_url('/report/search/index.php#searchindexform');
+        $row[0] = '5. ' . html_writer::tag('a', get_string('indexdata', 'admin'), array('href' => $url));
+        if ($anyindexed) {
+            $status = html_writer::tag('span', get_string('yes'), array('class' => 'statusok'));
+        } else {
+            $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+        }
+        $row[1] = $status;
+        $table->data[] = $row;
+
+        $return .= html_writer::table($table);
+
+        return highlight($query, $return);
+    }
+
+}

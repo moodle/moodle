@@ -457,6 +457,47 @@ foreach ($pages as $page) {
     $ADMIN->add('reportplugins', $page);
 }
 
+// Global Search engine plugins.
+$ADMIN->add('modules', new admin_category('searchplugins', new lang_string('search', 'admin')));
+$temp = new admin_settingpage('manageglobalsearch', new lang_string('globalsearchmanage', 'admin'));
+
+$pages = array();
+$engines = array();
+foreach (core_component::get_plugin_list('search') as $engine => $plugindir) {
+    $engines[$engine] = new lang_string('pluginname', 'search_' . $engine);
+    $settingspath = "$plugindir/settings.php";
+    if (file_exists($settingspath)) {
+        $settings = new admin_settingpage('search' . $engine,
+                new lang_string('pluginname', 'search_' . $engine), 'moodle/site:config');
+        include($settingspath);
+        if ($settings) {
+            $pages[] = $settings;
+        }
+    }
+}
+
+// Setup status.
+$temp->add(new admin_setting_searchsetupinfo());
+
+// Search engine selection.
+$temp->add(new admin_setting_heading('searchengineheading', new lang_string('searchengine', 'admin'), ''));
+$temp->add(new admin_setting_configselect('searchengine',
+                            new lang_string('selectsearchengine', 'admin'), '', 'solr', $engines));
+
+// Enable search areas.
+$temp->add(new admin_setting_heading('searchareasheading', new lang_string('availablesearchareas', 'admin'), ''));
+$searchareas = \core_search\manager::get_search_areas_list();
+foreach ($searchareas as $areaid => $searcharea) {
+    list($componentname, $varname) = $searcharea->get_config_var_name();
+    $temp->add(new admin_setting_configcheckbox($componentname . '/enable' . $varname, $searcharea->get_visible_name(true),
+        '', 1, 1, 0));
+}
+$ADMIN->add('searchplugins', $temp);
+
+foreach ($pages as $page) {
+    $ADMIN->add('searchplugins', $page);
+}
+
 /// Add all admin tools
 if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('tools', new lang_string('tools', 'admin')));
