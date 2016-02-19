@@ -371,6 +371,9 @@ function upgrade_stale_php_files_present() {
     global $CFG;
 
     $someexamplesofremovedfiles = array(
+        // Removed in 3.1.
+        '/repository/boxnet/migrationv1.php',
+        '/repository/boxnet/cli/migrationv1.php',
         // Removed in 3.0.
         '/mod/lti/grade.php',
         '/tag/coursetagslib.php',
