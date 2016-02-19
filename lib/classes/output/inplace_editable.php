@@ -95,6 +95,16 @@ class inplace_editable implements templatable, renderable {
     protected $editable = false;
 
     /**
+     * @var string type of the element - text, toggle or select
+     */
+    protected $type = 'text';
+
+    /**
+     * @var string options for the element, for example new value for the toggle or json-encoded list of options for select
+     */
+    protected $options = '';
+
+    /**
      * Constructor.
      *
      * @param string $component name of the component or plugin responsible for the updating of the value (must declare callback)
@@ -121,6 +131,61 @@ class inplace_editable implements templatable, renderable {
     }
 
     /**
+     * Sets the element type to be a toggle
+     *
+     * For toggle element $editlabel is not used.
+     * $displayvalue must be specified, it can have text or icons but can not contain html links.
+     *
+     * Toggle element can have two or more options.
+     *
+     * @param array $options toggle options as simple, non-associative array; defaults to array(0,1)
+     * @return self
+     */
+    public function set_type_toggle($options = null) {
+        if ($options === null) {
+            $options = array(0, 1);
+        }
+        $options = array_values($options);
+        $idx = array_search($this->value, $options, true);
+        if ($idx === false) {
+            throw new \coding_exception('Specified value must be one of the toggle options');
+        }
+        $nextvalue = ($idx < count($options) - 1) ? $idx + 1 : 0;
+
+        $this->type = 'toggle';
+        $this->options = (string)$nextvalue;
+        return $this;
+    }
+
+    /**
+     * Sets the element type to be a dropdown
+     *
+     * For select element specifying $displayvalue is optional, if null it will
+     * be assumed that $displayvalue = $options[$value].
+     * However displayvalue can still be specified if it needs icons and/or
+     * html links.
+     *
+     * If only one option specified, the element will not be editable.
+     *
+     * @param array $options associative array with dropdown options
+     * @return self
+     */
+    public function set_type_select($options) {
+        if (!array_key_exists($this->value, $options)) {
+            throw new \coding_exception('Options for select element must contain an option for the specified value');
+        }
+        if (count($options) < 2) {
+            $this->editable = false;
+        }
+        $this->type = 'select';
+        $this->options = json_encode($options);
+        if ($this->displayvalue === null) {
+            $this->displayvalue = $options[$this->value];
+        }
+        return $this;
+    }
+
+    /**
      * Export this data so it can be used as the context for a mustache template (core/inplace_editable).
      *
      * @param renderer_base $output typically, the renderer that's calling this function
@@ -141,6 +206,8 @@ class inplace_editable implements templatable, renderable {
             'value' => (string)$this->value,
             'edithint' => (string)$this->edithint,
             'editlabel' => (string)$this->editlabel,
+            'type' => $this->type,
+            'options' => $this->options,
         );
     }
 }

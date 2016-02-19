@@ -385,6 +385,7 @@ class core_external extends external_api {
         if (!$tmpl || !($tmpl instanceof \core\output\inplace_editable)) {
             throw new \moodle_exception('inplaceeditableerror');
         }
+        $PAGE->set_context(null); // To prevent warning if context was not set in the callback.
         return $tmpl->export_for_template($PAGE->get_renderer('core'));
     }
 
@@ -404,6 +405,8 @@ class core_external extends external_api {
                 'itemid' => new external_value(PARAM_RAW, 'identifier of the updated item', VALUE_OPTIONAL),
                 'edithint' => new external_value(PARAM_NOTAGS, 'hint for editing element', VALUE_OPTIONAL),
                 'editlabel' => new external_value(PARAM_NOTAGS, 'label for editing element', VALUE_OPTIONAL),
+                'type' => new external_value(PARAM_ALPHA, 'type of the element (text, toggle, select)', VALUE_OPTIONAL),
+                'options' => new external_value(PARAM_RAW, 'options of the element, format depends on type', VALUE_OPTIONAL),
             )
         );
     }

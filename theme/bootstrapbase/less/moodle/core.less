@@ -2455,6 +2455,11 @@ span.inplaceeditable.inplaceeditingon span.editinstructions {
 span.inplaceeditable .quickeditlink img {
     opacity: 0.2;
 }
+span.inplaceeditable a.quickeditlink {
+    color: inherit;
+    text-decoration: inherit;
+}
+span.inplaceeditable.inplaceeditable-toggle .quickeditlink img,
 span.inplaceeditable:hover .quickeditlink img,
 span.inplaceeditable .quickeditlink:focus img {
     opacity: 1;
@@ -2463,6 +2468,9 @@ span.inplaceeditable.inplaceeditingon input {
     width: 330px;
     height: 16px;
     vertical-align: text-bottom;
+    margin-bottom: 0;
+}
+span.inplaceeditable select {
     margin-bottom: 0;
 }
 h3.sectionname span.inplaceeditable.inplaceeditingon span.editinstructions {

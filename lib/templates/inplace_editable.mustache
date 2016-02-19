@@ -30,6 +30,8 @@
     * data-itemid
     * data-value
     * data-editlabel
+    * data-type
+    * data-options
 
     Context variables required for this template:
     * none
@@ -42,19 +44,21 @@
         "component" : "core_unknown",
         "itemtype" : "unknown",
         "edithint" : "Edit this",
-        "editlabel" : "New name for this"
+        "editlabel" : "New name for this",
+        "type" : "text",
+        "options" : ""
     }
 }}
 {{#component}}
-<span class="inplaceeditable" data-inplaceeditable="1" data-component="{{component}}" data-itemtype="{{itemtype}}" data-itemid="{{itemid}}"
-    data-value="{{value}}" data-editlabel="{{editlabel}}">
+<span class="inplaceeditable inplaceeditable-{{type}}" data-inplaceeditable="1" data-component="{{component}}" data-itemtype="{{itemtype}}" data-itemid="{{itemid}}"
+    data-value="{{value}}" data-editlabel="{{editlabel}}" data-type="{{type}}" data-options="{{options}}">
         {{{displayvalue}}}
         <a href="#" class="quickeditlink visibleifjs" data-inplaceeditablelink="1" title="{{edithint}}">
             {{#pix}}t/editstring,core,{{edithint}}{{/pix}}
         </a>
 </span>
 {{#js}}
-    require(['core/inplace_editable']);
+    require(['core/inplace_editable'], function(ie) { ie.init_inplace_editable(); });
 {{/js}}
 {{/component}}
 {{^component}}
