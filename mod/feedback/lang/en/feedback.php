@@ -242,6 +242,7 @@ $string['save_entries'] = 'Submit your answers';
 $string['save_item'] = 'Save question';
 $string['saving_failed'] = 'Saving failed';
 $string['saving_failed_because_missing_or_false_values'] = 'Saving failed because missing or false values';
+$string['search:activity'] = 'Feedback activities';
 $string['search_course'] = 'Search course';
 $string['searchcourses'] = 'Search courses';
 $string['searchcourses_help'] = 'Search for the code or name of the course(s) that you wish to associate with this feedback.';

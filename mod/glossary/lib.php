@@ -3895,3 +3895,30 @@ function glossary_get_entry_by_id($id) {
     }
     return array_pop($entries);
 }
+
+/**
+ * Checks if the current user can see the glossary entry.
+ *
+ * @since Moodle 3.1
+ * @param stdClass $entry
+ * @param cm_info  $cminfo
+ * @return bool
+ */
+function glossary_can_view_entry($entry, $cminfo) {
+    global $USER;
+
+    $cm = $cminfo->get_course_module_record();
+    $context = \context_module::instance($cm->id);
+
+    // Recheck uservisible although it should have already been checked in core_search.
+    if ($cminfo->uservisible === false) {
+        return false;
+    }
+
+    // Check approval.
+    if (empty($entry->approved) && $entry->userid != $USER->id && !has_capability('mod/glossary:approve', $context)) {
+        return false;
+    }
+
+    return true;
+}

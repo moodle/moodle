@@ -123,6 +123,7 @@ $string['repeatweekly'] = 'At the same time every week';
 $string['saidto'] = 'said to';
 $string['savemessages'] = 'Save past sessions';
 $string['seesession'] = 'See this session';
+$string['search:activity'] = 'Chat activities';
 $string['send'] = 'Send';
 $string['sending'] = 'Sending';
 $string['serverhost'] = 'Server name';

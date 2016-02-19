@@ -213,6 +213,7 @@ $string['return'] = 'Go back';
 $string['save'] = 'Save';
 $string['saving'] = 'Saving wiki page';
 $string['savingerror'] = 'Saving error';
+$string['search:activity'] = 'Wiki activities';
 $string['searchcontent'] = 'Search in page content';
 $string['searchresult'] = 'Search results:';
 $string['searchterms'] = 'Search terms';

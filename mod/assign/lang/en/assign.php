@@ -340,6 +340,7 @@ $string['savegradingresult'] = 'Grade';
 $string['saveallquickgradingchanges'] = 'Save all quick grading changes';
 $string['savenext'] = 'Save and show next';
 $string['scale'] = 'Scale';
+$string['search:activity'] = 'Assignment activities';
 $string['sendstudentnotificationsdefault'] = 'Default setting for "Notify students"';
 $string['sendstudentnotificationsdefault_help'] = 'Set the default value for the "Notify students" checkbox on the grading form.';
 $string['sendstudentnotifications'] = 'Notify students';

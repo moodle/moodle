@@ -401,9 +401,9 @@ class mod_glossary_external extends external_api {
 
         // Get and validate the glossary.
         $entry = $DB->get_record('glossary_entries', array('id' => $id), '*', MUST_EXIST);
-        list($glossary, $context) = self::validate_glossary($entry->glossaryid);
+        list($glossary, $context, $course, $cm) = self::validate_glossary($entry->glossaryid);
 
-        if (empty($entry->approved) && $entry->userid != $USER->id && !has_capability('mod/glossary:approve', $context)) {
+        if (!glossary_can_view_entry($entry, $cm)) {
             throw new invalid_parameter_exception('invalidentry');
         }
 

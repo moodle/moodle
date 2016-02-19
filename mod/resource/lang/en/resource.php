@@ -97,6 +97,7 @@ $string['resourcedetails_typedate'] = '{$a->type} {$a->date}';
 $string['resourcedetails_sizetypedate'] = '{$a->size} {$a->type} {$a->date}';
 $string['resource:exportresource'] = 'Export resource';
 $string['resource:view'] = 'View resource';
+$string['search:activity'] = 'Resource activities';
 $string['selectmainfile'] = 'Please select the main file by clicking the icon next to file name.';
 $string['showdate'] = 'Show upload/modified date';
 $string['showdate_desc'] = 'Display upload/modified date on course page?';

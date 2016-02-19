@@ -55,6 +55,7 @@ $string['editchapter'] = 'Edit chapter "{$a}"';
 $string['hidechapter'] = 'Hide chapter "{$a}"';
 $string['movechapterup'] = 'Move chapter up "{$a}"';
 $string['movechapterdown'] = 'Move chapter down "{$a}"';
+$string['search:activity'] = 'Book activities';
 $string['showchapter'] = 'Show chapter "{$a}"';
 $string['subchapter'] = 'Subchapter';
 $string['navimages'] = 'Images';

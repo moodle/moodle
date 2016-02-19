@@ -112,6 +112,7 @@ $string['responsesresultgraphheader'] = 'Graph display';
 $string['responsesto'] = 'Responses to {$a}';
 $string['results'] = 'Results';
 $string['savemychoice'] = 'Save my choice';
+$string['search:activity'] = 'Choice activities';
 $string['showpreview'] = 'Show preview';
 $string['showpreview_help'] = 'Allow students to preview the available options before the choice is opened for submission.';
 $string['showunanswered'] = 'Show column for unanswered';

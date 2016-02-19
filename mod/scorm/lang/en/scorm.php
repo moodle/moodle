@@ -354,6 +354,7 @@ $string['scormtype_help'] = 'This setting determines how the package is included
 $string['scorm:viewreport'] = 'View reports';
 $string['scorm:viewscores'] = 'View scores';
 $string['scrollbars'] = 'Allow the window to be scrolled';
+$string['search:activity'] = 'SCORM package activities';
 $string['selectall'] = 'Select all';
 $string['selectnone'] = 'Deselect all';
 $string['show'] = 'Show';

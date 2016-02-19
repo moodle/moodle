@@ -441,6 +441,7 @@ $string['savepage'] = 'Save page';
 $string['score'] = 'Score';
 $string['score_help'] = 'Score is only used when custom scoring is enabled. Each answer can then be given a numerical point value (positive or negative).';
 $string['scores'] = 'Scores';
+$string['search:activity'] = 'Lesson activities';
 $string['secondpluswrong'] = 'Not quite.  Would you like to try again?';
 $string['selectaqtype'] = 'Select a question type';
 $string['shortanswer'] = 'Short answer';
