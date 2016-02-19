@@ -50,8 +50,8 @@
         <tr class="drag-samenode" data-templateid="{{id}}">
             <td><a href="{{pluginbaseurl}}/templatecompetencies.php?templateid={{id}}&amp;pagecontextid={{pagecontextid}}">{{shortname}}</a></span> {{^visible}}{{#str}}hiddenhint, tool_lp{{/str}}{{/visible}}</td>
             <td>{{contextname}}</td>
-            <td><a href="{{pluginbaseurl}}/template_cohorts.php?id={{id}}&amp;pagecontextid={{pagecontextid}}">{{cohortscount}}</a></td>
-            <td><a href="{{pluginbaseurl}}/template_plans.php?id={{id}}&amp;pagecontextid={{pagecontextid}}">{{planscount}}</a></td>
+            <td><a class="template-cohorts" href="{{pluginbaseurl}}/template_cohorts.php?id={{id}}&amp;pagecontextid={{pagecontextid}}">{{cohortscount}}</a></td>
+            <td><a class="template-userplans" href="{{pluginbaseurl}}/template_plans.php?id={{id}}&amp;pagecontextid={{pagecontextid}}">{{planscount}}</a></td>
             <td>
             {{#canmanage}}
             <ul class="templateactions">

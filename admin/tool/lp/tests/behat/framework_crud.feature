@@ -45,8 +45,7 @@ Feature: Manage competency frameworks
       | Science Year-3 | sc-y-3 |
     And I follow "Competency Frameworks"
     And I should see "Science Year-3"
-    And I click on "Edit" "link"
-    And I click on "//ul//li//ul//li[@class='tool-lp-menu-item']//a[contains(.,'Edit')]" "xpath_element"
+    And I click on "Edit" of edit menu in the "Science Year-3" row
     And the field "Name" matches value "Science Year-3 "
     And I set the field "Name" to "Science Year-3 Edited"
     When I press "Save changes"
@@ -62,13 +61,13 @@ Feature: Manage competency frameworks
     And I follow "Competency Frameworks"
     And I should see "Science Year-4"
     And I should see "sc-y-4"
-    And I click on "Edit" "link"
-    And I click on "Delete" "link"
+    And I click on "Delete" of edit menu in the "Science Year-4" row
     And "Confirm" "dialogue" should be visible
     And "Delete" "button" should exist in the "Confirm" "dialogue"
     And "Cancel" "button" should exist in the "Confirm" "dialogue"
     And I click on "Cancel" "button"
-    And I click on "Delete" "link"
+    And I click on "Edit" "link" in the "Science Year-4" "table_row"
+    And I click on "Delete" of edit menu in the "Science Year-4" row
     And "Confirm" "dialogue" should be visible
     When I click on "Delete" "button"
     Then I should not see "Science Year-4"

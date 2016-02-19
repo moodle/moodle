@@ -27,6 +27,7 @@ require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
 
 use Behat\Gherkin\Node\TableNode as TableNode;
 use Behat\Behat\Exception\PendingException as PendingException;
+use tool_lp\competency_framework;
 
 /**
  * Step definition to generate database fixtures for learning plan system.
@@ -58,6 +59,14 @@ class behat_tool_lp_data_generators extends behat_base {
         'templates' => array(
             'datagenerator' => 'template',
             'required' => array()
+        ),
+        'plans' => array(
+            'datagenerator' => 'plan',
+            'required' => array('user')
+        ),
+        'competencies' => array(
+            'datagenerator' => 'competency',
+            'required' => array('framework')
         )
     );
 
@@ -131,6 +140,47 @@ class behat_tool_lp_data_generators extends behat_base {
                 throw new PendingException($elementname . ' data generator is not implemented');
             }
         }
+    }
+
+    /**
+     * Adapt creating competency from framework idnumber or frameworkid.
+     *
+     * @param array $data
+     * @return array
+     */
+    protected function preprocess_competency($data) {
+        if (isset($data['framework'])) {
+            $framework = competency_framework::get_record(array('idnumber' => $data['framework']));
+            if ($framework) {
+                $data['competencyframeworkid'] = $framework->get_id();
+            } else {
+                $framework = competency_framework::get_record(array('id' => $data['framework']));
+                if ($framework) {
+                    $data['competencyframeworkid'] = $framework->get_id();
+                } else {
+                    throw new Exception('Could not resolve framework with idnumber or id : "' . $data['category'] . '"');
+                }
+            }
+        }
+        unset($data['framework']);
+        return $data;
+    }
+
+    /**
+     * Adapt creating plan from user username.
+     *
+     * @param array $data
+     * @return array
+     */
+    protected function preprocess_plan($data) {
+        global $DB;
+
+        if (isset($data['user'])) {
+            $user = $DB->get_record('user', array('username' => $data['user']), '*', MUST_EXIST);
+            $data['userid'] = $user->id;
+        }
+        unset($data['user']);
+        return $data;
     }
 
 }
