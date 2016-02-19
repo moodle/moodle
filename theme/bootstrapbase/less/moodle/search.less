@@ -1,0 +1,58 @@
+.search-results .result {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.dir-rtl .search-results .result {
+    margin-right: 15px;
+    margin-left: 0;
+}
+
+.search-results .result .result-content {
+    margin: 7px 0;
+}
+
+.search-input-wrapper {
+    margin: 0 5px 0 2px;
+    overflow: hidden;
+    float: right;
+    height: 100%;
+    width: 16px;
+    transition: width 0.5s ease, left 0.5s ease;
+}
+
+.search-input-wrapper > div {
+    float: left;
+    margin: 9px 0 10px 0;
+}
+
+.dir-rtl .search-input-wrapper {
+    margin: 0 2px 0 5px;
+    float: left;
+}
+
+.dir-rtl .search-input-wrapper > div {
+    float: right;
+}
+
+.dir-rtl .search-input-wrapper > form {
+    margin: 7px 25px 7px 0;
+}
+
+.search-input-wrapper > form {
+    opacity: 0;
+    margin: 7px 0 7px 25px;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.search-input-wrapper > form > input {
+    margin: 0;
+}
+
+.search-input-wrapper form.expanded {
+    opacity: 1;
+}
+
+.search-input-wrapper.expanded {
+    width: 158px;
+}

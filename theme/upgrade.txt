@@ -1,6 +1,12 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 3.1 ===
+
+* A new search box for global search has been added to bootstrap and clean layout files, if
+  your theme is overwriting columns1.php, columns2.php or columns3.php you will need to add a
+  call to core_renderer::search_box to display it.
+
 === 3.0 ===
 
 * The renderer function core_availability_renderer::multiple_messages was changed to
