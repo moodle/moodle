@@ -269,6 +269,9 @@ class backup_module_structure_step extends backup_structure_step {
             'completion', 'completiongradeitemnumber', 'completionview', 'completionexpected',
             'availability', 'showdescription'));
 
+        $tags = new backup_nested_element('tags');
+        $tag = new backup_nested_element('tag', array('id'), array('name', 'rawname'));
+
         // attach format plugin structure to $module element, only one allowed
         $this->add_plugin_structure('format', $module, false);
 
@@ -279,6 +282,9 @@ class backup_module_structure_step extends backup_structure_step {
         // attach local plugin structure to $module, multiple allowed
         $this->add_plugin_structure('local', $module, true);
 
+        $module->add_child($tags);
+        $tags->add_child($tag);
+
         // Set the sources
         $concat = $DB->sql_concat("'mod_'", 'm.name');
         $module->set_source_sql("
@@ -288,6 +294,13 @@ class backup_module_structure_step extends backup_structure_step {
               JOIN {config_plugins} cp ON cp.plugin = $concat AND cp.name = 'version'
               JOIN {course_sections} s ON s.id = cm.section
              WHERE cm.id = ?", array(backup::VAR_MODID));
+
+        $tag->set_source_sql("SELECT t.id, t.name, t.rawname
+                                FROM {tag} t
+                                JOIN {tag_instance} ti ON ti.tagid = t.id
+                               WHERE ti.itemtype = 'course_modules'
+                                 AND ti.component = 'core'
+                                 AND ti.itemid = ?", array(backup::VAR_MODID));
 
         // Define annotations
         $module->annotate_ids('grouping', 'groupingid');

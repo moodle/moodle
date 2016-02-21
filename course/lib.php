@@ -1690,6 +1690,7 @@ function course_delete_module($cmid) {
 
     // Delete all tag instances associated with the instance of this module.
     core_tag_tag::delete_instances('mod_' . $modulename, null, $modcontext->id);
+    core_tag_tag::remove_all_item_tags('core', 'course_modules', $cm->id);
 
     // Delete the context.
     context_helper::delete_instance(CONTEXT_MODULE, $cm->id);

@@ -80,4 +80,8 @@ $tagareas = array(
         'itemtype' => 'blog_external', // External blogs.
         'component' => 'core',
     ),
+    array(
+        'itemtype' => 'course_modules', // Course modules.
+        'component' => 'core',
+    ),
 );
