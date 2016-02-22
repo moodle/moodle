@@ -130,5 +130,4 @@ class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox{
         }
         return $output;
     }
-
 }

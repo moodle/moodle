@@ -409,23 +409,27 @@ class lesson_display_answer_form_truefalse extends moodleform {
         $mform->setType('pageid', PARAM_INT);
 
         $i = 0;
+        $radiobuttons = array();
         foreach ($answers as $answer) {
-            $mform->addElement('html', '<div class="answeroption">');
             $ansid = 'answerid';
             if ($hasattempt) {
                 $ansid = 'answer_id';
             }
 
-            $mform->addElement('radio', $ansid, null, format_text($answer->answer, $answer->answerformat, $options), $answer->id, $disabled);
+            $radiobuttons[] = $mform->createElement('radio', $ansid, null,
+                format_text($answer->answer, $answer->answerformat, $options), $answer->id, $disabled);
+
             $mform->setType($ansid, PARAM_INT);
             if ($hasattempt && $answer->id == $USER->modattempts[$lessonid]->answerid) {
                 $mform->setDefault($ansid, $attempt->answerid);
                 $mform->addElement('hidden', 'answerid', $answer->id);
                 $mform->setType('answerid', PARAM_INT);
             }
-            $mform->addElement('html', '</div>');
             $i++;
         }
+
+        $radiogroup = $mform->addGroup($radiobuttons, $ansid, '', array(''), false);
+        $radiogroup->setAttributes(array('class' => 'answeroptiongroup'));
 
         if ($hasattempt) {
             $this->add_action_buttons(null, get_string("nextpage", "lesson"));

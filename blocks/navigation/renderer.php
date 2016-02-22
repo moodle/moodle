@@ -70,7 +70,8 @@ class block_navigation_renderer extends plugin_renderer_base {
 
         // Turn our navigation items into list items.
         $lis = array();
-        $number = 0;
+        // Set the number to be static for unique id's.
+        static $number = 0;
         foreach ($items as $item) {
             $number++;
             if (!$item->display && !$item->contains_active_node()) {
