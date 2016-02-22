@@ -287,6 +287,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
         $output .= $this->header();
         $output .= $this->maturity_info($maturity);
+        $output .= $this->legacy_log_store_writting_error();
         $output .= empty($CFG->disableupdatenotifications) ? $this->available_updates($availableupdates, $availableupdatesfetch) : '';
         $output .= $this->insecure_dataroot_warning($insecuredataroot);
         $output .= $this->display_errors_warning($errorsdisplayed);
@@ -1953,5 +1954,17 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->footer();
 
         return $output;
+    }
+
+    /**
+     * Check to see if writing to the deprecated legacy log store is enabled.
+     *
+     * @return string An error message if writing to the legacy log store is enabled.
+     */
+    protected function legacy_log_store_writting_error() {
+        $enabled = get_config('logstore_legacy', 'loglegacy');
+        if ($enabled) {
+            return $this->warning(get_string('legacylogginginuse'), 'error');
+        }
     }
 }
