@@ -52,6 +52,21 @@ abstract class scanner {
     }
 
     /**
+     * Config get method.
+     *
+     * @param string $property config property to get.
+     *
+     * @return mixed
+     * @throws \coding_exception
+     */
+    public function get_config($property) {
+        if (property_exists($this->config, $property)) {
+            return $this->config->$property;
+        }
+        throw new \coding_exception('Config property "' . $property . '" doesn\'t exist');
+    }
+
+    /**
      * Are the antivirus settings configured?
      *
      * @return bool True if plugin has been configured.
