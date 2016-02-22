@@ -3171,6 +3171,12 @@ function feedback_extend_settings_navigation(settings_navigation $settings,
                     new moodle_url('/mod/feedback/show_entries.php',
                                     array('id' => $PAGE->cm->id,
                                           'do_show' => 'showentries')));
+
+        if ($feedback->anonymous == FEEDBACK_ANONYMOUS_NO AND $feedback->course != SITEID) {
+            $feedbacknode->add(get_string('show_nonrespondents', 'feedback'),
+                        new moodle_url('/mod/feedback/show_nonrespondents.php',
+                                        array('id' => $PAGE->cm->id)));
+        }
     }
 }
 
