@@ -1799,6 +1799,7 @@ class quiz_attempt {
 
         $transaction = $DB->start_delegated_transaction();
 
+        // Choose the replacement question.
         $questiondata = $DB->get_record('question',
                 array('id' => $this->slots[$slot]->questionid));
         if ($questiondata->qtype != 'random') {
@@ -1813,7 +1814,11 @@ class quiz_attempt {
             }
         }
 
+        // Add the question to the usage. It is important we do this before we choose a variant.
         $newquestion = question_bank::load_question($newqusetionid);
+        $newslot = $this->quba->add_question_in_place_of_other($slot, $newquestion);
+
+        // Choose the variant.
         if ($newquestion->get_num_variants() == 1) {
             $variant = 1;
         } else {
@@ -1823,8 +1828,8 @@ class quiz_attempt {
                     $newquestion->get_variants_selection_seed());
         }
 
-        $newslot = $this->quba->add_question_in_place_of_other($slot, $newquestion);
-        $this->quba->start_question($slot);
+        // Start the question.
+        $this->quba->start_question($slot, $variant);
         $this->quba->set_max_mark($newslot, 0);
         $this->quba->set_question_attempt_metadata($newslot, 'originalslot', $slot);
         question_engine::save_questions_usage_by_activity($this->quba);
