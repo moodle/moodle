@@ -78,8 +78,26 @@ class behat_form_select extends behat_form_field {
                 $afterfirstoption = true;
             }
         } else {
-            // This is a single select, let's pass the last one specified.
-            $this->field->selectOption(end($options));
+            // If value is already set then don't set it again.
+            if ($this->field->getValue() == $value) {
+                return;
+            } else {
+                $opt = $this->field->find('named', array(
+                    'option', $this->field->getSession()->getSelectorsHandler()->xpathLiteral($value)
+                ));
+                if ($opt && ($this->field->getValue() == $opt->getValue())) {
+                    return;
+                }
+            }
+
+            // If not running JS or not a singleselect then use selectOption.
+            // For singleselect only click event is enough.
+            if (!$this->running_javascript() ||
+                !($this->field->hasClass('singleselect') || $this->field->hasClass('urlselect'))) {
+
+                // This is a single select, let's pass the last one specified.
+                $this->field->selectOption(end($options));
+            }
         }
 
         // With JS disabled this is enough and we finish here.
