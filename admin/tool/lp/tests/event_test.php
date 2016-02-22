@@ -499,7 +499,7 @@ class tool_lp_event_testcase extends advanced_testcase {
         $sink = $this->redirectEvents();
         api::create_plans_from_template_cohort($t1->get_id(), $c1->id);
         // Get our event event.
-        $plans = tool_lp\plan::get_records(array('templateid' => $t1->get_id()));
+        $plans = tool_lp\plan::get_records(array('templateid' => $t1->get_id()), 'id');
         $events = $sink->get_events();
         $this->assertCount(2, $events);
         $this->assertCount(2, $plans);
