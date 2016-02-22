@@ -38,7 +38,7 @@ class scanner extends \core\antivirus\scanner {
      * @return bool True if all necessary config settings been entered
      */
     public function is_configured() {
-        return !empty($this->config->pathtoclam);
+        return (bool)$this->get_config('pathtoclam');
     }
     /**
      * Scan file, throws exception in case of infected file.
@@ -73,7 +73,7 @@ class scanner extends \core\antivirus\scanner {
         } else {
             // Unknown problem.
             $this->message_admins($notice);
-            if ($this->config->clamfailureonupload === 'actlikevirus') {
+            if ($this->get_config('clamfailureonupload') === 'actlikevirus') {
                 if ($deleteinfected) {
                     unlink($file);
                 }
@@ -125,11 +125,11 @@ class scanner extends \core\antivirus\scanner {
      * @return array ($return, $notice) Execution return code and notification text.
      */
     public function scan_file_execute_commandline($file) {
-        $this->config->pathtoclam = trim($this->config->pathtoclam);
+        $pathtoclam = trim($this->get_config('pathtoclam'));
 
-        if (!file_exists($this->config->pathtoclam) or !is_executable($this->config->pathtoclam)) {
+        if (!file_exists($pathtoclam) or !is_executable($pathtoclam)) {
             // Misconfigured clam, notify admins.
-            $notice = get_string('invalidpathtoclam', 'antivirus_clamav', $this->config->pathtoclam);
+            $notice = get_string('invalidpathtoclam', 'antivirus_clamav', $pathtoclam);
             return array(-1, $notice);
         }
 
@@ -139,11 +139,11 @@ class scanner extends \core\antivirus\scanner {
         // To make clamdscan work, we use --fdpass parameter that passes the file
         // descriptor permissions to clamd, which allows it to scan given file
         // irrespective of directory and file permissions.
-        if (basename($this->config->pathtoclam) == 'clamdscan') {
+        if (basename($pathtoclam) == 'clamdscan') {
             $clamparam .= '--fdpass ';
         }
         // Execute scan.
-        $cmd = escapeshellcmd($this->config->pathtoclam).$clamparam.escapeshellarg($file);
+        $cmd = escapeshellcmd($pathtoclam).$clamparam.escapeshellarg($file);
         exec($cmd, $output, $return);
         $notice = '';
         if ($return > 1) {
