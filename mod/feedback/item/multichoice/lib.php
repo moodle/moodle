@@ -578,7 +578,7 @@ class feedback_item_multichoice extends feedback_item_base {
             return true;
         }
 
-        if (!isset($value) OR !is_array($value) OR $value[0] == '' OR $value[0] == 0) {
+        if (empty($value) OR !is_array($value) OR $value[0] == '' OR $value[0] == 0) {
             return false;
         }
 
