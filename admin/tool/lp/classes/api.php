@@ -1126,7 +1126,7 @@ class api {
         if ($found) {
             $uc = array_pop($existing);
         } else {
-            $uc = user_competency::create_relation($userid, $coursecompetency->get_id());
+            $uc = user_competency::create_relation($userid, $competency->get_id());
             $uc->create();
         }
 

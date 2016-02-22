@@ -3761,4 +3761,40 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals(1, count($listevidences));
         $this->assertEquals($e1->get_id(), $listevidences[$e1->get_id()]->get_id());
     }
+
+    /**
+     * Get a user competency in a course.
+     */
+    public function test_get_user_competency_in_course() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $this->setAdminUser();
+
+        $user = $dg->create_user();
+        $c1 = $dg->create_course();
+        $framework = $lpg->create_framework();
+        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $lpg->create_course_competency(array('competencyid' => $comp1->get_id(), 'courseid' => $c1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp2->get_id(), 'courseid' => $c1->id));
+
+        // Create a user competency for comp1.
+        $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $comp1->get_id(),
+                'proficiency' => true, 'grade' => 1 ));
+
+        // Test for competency already exist in user_competency.
+        $uc = api::get_user_competency_in_course($c1->id, $user->id, $comp1->get_id());
+        $this->assertEquals($comp1->get_id(), $uc->get_competencyid());
+        $this->assertEquals($user->id, $uc->get_userid());
+        $this->assertEquals(1, $uc->get_grade());
+        $this->assertEquals(true, $uc->get_proficiency());
+
+        // Test for competency does not exist in user_competency.
+        $uc2 = api::get_user_competency_in_course($c1->id, $user->id, $comp2->get_id());
+        $this->assertEquals($comp2->get_id(), $uc2->get_competencyid());
+        $this->assertEquals($user->id, $uc2->get_userid());
+        $this->assertEquals(null, $uc2->get_grade());
+        $this->assertEquals(null, $uc2->get_proficiency());
+    }
 }
