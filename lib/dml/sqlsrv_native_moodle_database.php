@@ -508,9 +508,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      */
     public function get_columns($table, $usecache = true) {
         if ($usecache) {
-            $properties = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
-            $cache = cache::make('core', 'databasemeta', $properties);
-            if ($data = $cache->get($table)) {
+            if ($data = $this->get_metacache()->get($table)) {
                 return $data;
             }
         }
@@ -606,7 +604,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
         $this->free_result($result);
 
         if ($usecache) {
-            $cache->set($table, $structure);
+            $this->get_metacache()->set($table, $structure);
         }
 
         return $structure;

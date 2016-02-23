@@ -325,6 +325,18 @@ abstract class moodle_database {
     }
 
     /**
+     * Handle the creation and caching of the databasemeta information for all databases.
+     *
+     * TODO MDL-53267 impelement caching of cache::make() results when it's safe to do so.
+     *
+     * @return cache_application The databasemeta cachestore to complete operations on.
+     */
+    protected function get_metacache() {
+        $properties = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
+        return cache::make('core', 'databasemeta', $properties);
+    }
+
+    /**
      * Attempt to create the database
      * @param string $dbhost The database host.
      * @param string $dbuser The database user to connect as.
@@ -1032,9 +1044,9 @@ abstract class moodle_database {
      */
     public function reset_caches() {
         $this->tables = null;
-        // Purge MUC as well
-        $identifiers = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
-        cache_helper::purge_by_definition('core', 'databasemeta', $identifiers);
+        // Purge MUC as well.
+        $this->get_metacache()->purge();
+        $this->metacache = null;
     }
 
     /**

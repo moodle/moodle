@@ -58,6 +58,7 @@ $definitions = array(
         'requireidentifiers' => array(
             'dbfamily'
         ),
+        'simpledata' => true, // This is a read only class, so leaving references in place is safe.
         'staticacceleration' => true,
         'staticaccelerationsize' => 15
     ),
