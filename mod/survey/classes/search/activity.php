@@ -34,4 +34,19 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class activity extends \core_search\area\base_activity {
+
+    /**
+     * Returns recordset containing required data for indexing activities.
+     *
+     * Overwritten to discard records with courseid = 0.
+     *
+     * @param int $modifiedfrom timestamp
+     * @return \moodle_recordset
+     */
+    public function get_recordset_by_timestamp($modifiedfrom = 0) {
+        global $DB;
+        $select = 'course != ? AND ' . static::MODIFIED_FIELD_NAME . ' >= ?';
+        return $DB->get_recordset_select($this->get_module_name(), $select, array(0, $modifiedfrom));
+    }
+
 }
