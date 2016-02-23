@@ -3575,6 +3575,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $c2ctx = context_course::instance($c2->id);
 
         $teacher1 = $dg->create_user();
+        $noneditingteacher = $dg->create_user();
         $student1 = $dg->create_user();
         $student2 = $dg->create_user();
         $notstudent1 = $dg->create_user();
@@ -3671,6 +3672,16 @@ class tool_lp_api_testcase extends advanced_testcase {
         // Try to grade a user that is not enrolled, even though they are 'gradable'.
         $this->assertExceptionWithGradeCompetencyInCourse('coding_exception', 'The competency may not be rated at this time.',
             $c1->id, $notstudent1->id, $comp1->get_id());
+
+        // Non-Editing teacher can suggest grade in user competency.
+        $dg->role_assign($canviewucrole, $noneditingteacher->id, $c1ctx->id);
+        $this->setUser($noneditingteacher);
+        accesslib_clear_all_caches_for_unit_testing();
+        $this->assertExceptionWithGradeCompetencyInCourse('required_capability_exception', 'Set competency grade',
+            $c1->id, $student1->id, $comp1->get_id());
+        // Give permission for non-editing teacher to suggest.
+        $dg->role_assign($cansuggestrole, $noneditingteacher->id, $c1ctx->id);
+        $this->assertSuccessWithGradeCompetencyInCourse($c1->id, $student1->id, $comp1->get_id(), 1, false);
     }
 
     protected function assertSuccessWithGradeCompetencyInCourse($courseid, $userid, $compid, $grade = 1, $override = true) {

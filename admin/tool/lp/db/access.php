@@ -48,7 +48,8 @@ $capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE, // And CONTEXT_USER.
         'archetypes' => array(
-            'teacher' => CAP_ALLOW
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW
         ),
     ),
     'tool/lp:competencygrade' => array(
@@ -182,7 +183,8 @@ $capabilities = array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_USER,     // And CONTEXT_COURSE.
         'archetypes' => array(
-            'editingteacher' => CAP_ALLOW
+            'editingteacher' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW
         )
     ),
     'tool/lp:usercompetencyrequestreview' => array(
