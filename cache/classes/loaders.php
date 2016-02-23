@@ -450,6 +450,13 @@ class cache implements cache_loader {
         // Create an array with the original keys and the found values. This will be what we return.
         $fullresult = array();
         foreach ($result as $key => $value) {
+            if (!is_scalar($value)) {
+                // If data is an object it will be a reference.
+                // If data is an array if may contain references.
+                // We want to break references so that the cache cannot be modified outside of itself.
+                // Call the function to unreference it (in the best way possible).
+                $value = $this->unref($value);
+            }
             $fullresult[$parsedkeys[$key]] = $value;
         }
         unset($result);
@@ -1922,6 +1929,12 @@ class cache_session extends cache {
             if ($value instanceof cache_cached_object) {
                 /* @var cache_cached_object $value */
                 $value = $value->restore_object();
+            } else if (!is_scalar($value)) {
+                // If data is an object it will be a reference.
+                // If data is an array if may contain references.
+                // We want to break references so that the cache cannot be modified outside of itself.
+                // Call the function to unreference it (in the best way possible).
+                $value = $this->unref($value);
             }
             $return[$key] = $value;
             if ($value === false) {
