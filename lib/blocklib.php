@@ -2041,6 +2041,15 @@ function blocks_name_allowed_in_format($name, $pageformat) {
 function blocks_delete_instance($instance, $nolongerused = false, $skipblockstables = false) {
     global $DB;
 
+    // Allow plugins to use this block before we completely delete it.
+    if ($pluginsfunction = get_plugins_with_function('pre_block_delete')) {
+        foreach ($pluginsfunction as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                $pluginfunction($instance);
+            }
+        }
+    }
+
     if ($block = block_instance($instance->blockname, $instance)) {
         $block->instance_delete();
     }

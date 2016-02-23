@@ -3928,6 +3928,15 @@ function delete_user(stdClass $user) {
         return false;
     }
 
+    // Allow plugins to use this user object before we completely delete it.
+    if ($pluginsfunction = get_plugins_with_function('pre_user_delete')) {
+        foreach ($pluginsfunction as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                $pluginfunction($user);
+            }
+        }
+    }
+
     // Keep user record before updating it, as we have to pass this to user_deleted event.
     $olduser = clone $user;
 
@@ -4675,6 +4684,15 @@ function delete_course($courseorid, $showfeedback = true) {
     // Frontpage course can not be deleted!!
     if ($courseid == SITEID) {
         return false;
+    }
+
+    // Allow plugins to use this course before we completely delete it.
+    if ($pluginsfunction = get_plugins_with_function('pre_course_delete')) {
+        foreach ($pluginsfunction as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                $pluginfunction($course);
+            }
+        }
     }
 
     // Make the course completely empty.
