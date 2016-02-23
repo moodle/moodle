@@ -19,6 +19,10 @@ This files describes API changes in the quiz code.
   argument. If you have overridden this method (it's hard to believe anyone ever
   would) you will need to update your renderer.
 
+* Several methods relating to preview links/buttons/urls have a new optional
+  argument to make the preview be of a particular variant.
+
+
 === 2.9 ===
 
 * There have been changes in classes/output/edit_renderer.php for MDL-40990.
