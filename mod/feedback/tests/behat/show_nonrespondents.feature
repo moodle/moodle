@@ -51,7 +51,7 @@ Feature: Show users who have not responded to the feedback survey
       | Access restrictions | Grouping: GX1                                     |
     And I follow "Frogs"
     And I follow "Edit questions"
-    And I set the field "id_typ" to "Short text answer"
+    And I set the field "Add question" to "Short text answer"
     And I set the following fields to these values:
       | Question | Y/N? |
     And I press "Save question"

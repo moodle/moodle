@@ -155,10 +155,8 @@ class feedback_item_textarea extends feedback_item_base {
             echo '</th></tr>';
             foreach ($values as $value) {
                 echo '<tr>';
-                echo '<td valign="top" align="left">';
+                echo '<td colspan="2" valign="top" align="left">';
                 echo '-&nbsp;&nbsp;';
-                echo '</td>';
-                echo '<td align="left" valign="top">';
                 echo str_replace("\n", '<br />', $value->value);
                 echo '</td>';
                 echo '</tr>';

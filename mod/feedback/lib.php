@@ -1418,7 +1418,6 @@ function feedback_load_feedback_items_options() {
         $feedback_options[$fn] = get_string($fn, 'feedback');
     }
     asort($feedback_options);
-    $feedback_options = array_merge( array(' ' => get_string('select')), $feedback_options );
     return $feedback_options;
 }
 

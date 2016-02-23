@@ -417,7 +417,7 @@ if ($feedback_can_submit) {
         //print the items
         if (is_array($feedbackitems)) {
             echo $OUTPUT->box_start('feedback_form');
-            echo '<form action="complete.php" class="mform" method="post" onsubmit=" ">';
+            echo '<form action="complete.php" class="feedback_complete" method="post">';
             echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
             echo $OUTPUT->box_start('feedback_anonymousinfo');
             switch ($feedback->anonymous) {
