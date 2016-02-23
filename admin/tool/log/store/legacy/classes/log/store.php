@@ -182,6 +182,8 @@ class store implements \tool_log\log\store, \core\log\sql_reader {
 
     /**
      * Legacy add_to_log() code.
+     * @deprecated since Moodle 3.1 MDL-45104 - Please use supported log stores such as "standard" or "external" instead.
+     * @todo MDL-52805 This will be removed in Moodle 3.3
      *
      * @param    int $courseid The course id
      * @param    string $module The module name  e.g. forum, journal, resource, course, user etc
