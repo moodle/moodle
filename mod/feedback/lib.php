@@ -2816,7 +2816,11 @@ function feedback_get_feedbacks_from_sitecourse_map($courseid) {
         }
     }
 
-    return array_merge($feedbacks1, $feedbacks2);
+    $feedbacks = array_merge($feedbacks1, $feedbacks2);
+    $modinfo = get_fast_modinfo(SITEID);
+    return array_filter($feedbacks, function($f) use ($modinfo) {
+        return ($cm = $modinfo->get_cm($f->cmid)) && $cm->uservisible;
+    });
 
 }
 
