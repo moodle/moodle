@@ -297,15 +297,12 @@ if ($feedback_can_submit) {
                                                            $courseid,
                                                            sesskey());
 
-    /// Print the main part of the page
-    ///////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////
+    // Print the main part of the page.
     $analysisurl = new moodle_url('/mod/feedback/analysis.php', array('id'=>$id));
     if ($courseid > 0) {
         $analysisurl->param('courseid', $courseid);
     }
-    echo $OUTPUT->heading(format_text($feedback->name));
+    echo $OUTPUT->heading(format_string($feedback->name));
 
     if ( (intval($feedback->publish_stats) == 1) AND
             ( has_capability('mod/feedback:viewanalysepage', $context)) AND
