@@ -530,13 +530,16 @@ class cache implements cache_loader {
             // Call the function to unreference it (in the best way possible).
             $data = $this->unref($data);
         }
+
+        if ($usestaticacceleration) {
+            $this->static_acceleration_set($key, $data);
+        }
+
         if ($this->has_a_ttl() && !$this->store_supports_native_ttl()) {
             $data = new cache_ttl_wrapper($data, $this->definition->get_ttl());
         }
         $parsedkey = $this->parse_key($key);
-        if ($usestaticacceleration) {
-            $this->static_acceleration_set($key, $data);
-        }
+
         return $this->store->set($parsedkey, $data);
     }
 
@@ -651,6 +654,9 @@ class cache implements cache_loader {
                 // Call the function to unreference it (in the best way possible).
                 $value = $this->unref($value);
             }
+            if ($usestaticaccelerationarray) {
+                $this->static_acceleration_set($key, $value);
+            }
             if ($simulatettl) {
                 $value = new cache_ttl_wrapper($value, $this->definition->get_ttl());
             }
@@ -658,9 +664,6 @@ class cache implements cache_loader {
                 'key' => $this->parse_key($key),
                 'value' => $value
             );
-            if ($usestaticaccelerationarray) {
-                $this->static_acceleration_set($key, $value);
-            }
         }
         $successfullyset = $this->store->set_many($data);
         if ($this->perfdebug && $successfullyset) {
@@ -991,10 +994,6 @@ class cache implements cache_loader {
         if (!$this->staticacceleration || !isset($this->staticaccelerationarray[$key])) {
             return false;
         }
-        if ($this->has_a_ttl() && $this->store_supports_native_ttl()) {
-             return !($this->staticaccelerationarray[$key] instanceof cache_ttl_wrapper &&
-                      $this->staticaccelerationarray[$key]->has_expired());
-        }
         return true;
     }
 
@@ -1022,16 +1021,6 @@ class cache implements cache_loader {
             $result = false;
         } else {
             $data = $this->staticaccelerationarray[$key]['data'];
-
-            // If it's a cache_ttl_wrapper, unpack first and then process the data as normal.
-            if ($this->has_a_ttl() && $data instanceof cache_ttl_wrapper) {
-                if ($data->has_expired()) {
-                    $this->static_acceleration_delete($key);
-                    $data = false;
-                } else {
-                    $data = $data->data;
-                }
-            }
 
             if ($data instanceof cache_cached_object) {
                 $result = $data->restore_object();
@@ -1095,24 +1084,13 @@ class cache implements cache_loader {
         // 2. A definition that says it's simpledata.  We trust it that it doesn't contain dangerous references.
         // 3. An object that handles dereferencing by itself.
         // Also take care of ttl_wrapping, we need to apply some different serialization rules in that case.
-        if ($this->has_a_ttl() && $data instanceof cache_ttl_wrapper) {
-            if (is_scalar($data->data) || $this->definition->uses_simple_data()
-                    || $data->data instanceof cache_cached_object) {
-                $this->staticaccelerationarray[$key]['serialized'] = false;
-            } else {
-                $data->data = serialize($data->data);
-                $this->staticaccelerationarray[$key]['serialized'] = true;
-            }
+        if (is_scalar($data) || $this->definition->uses_simple_data()
+                || $data instanceof cache_cached_object) {
             $this->staticaccelerationarray[$key]['data'] = $data;
+            $this->staticaccelerationarray[$key]['serialized'] = false;
         } else {
-            if (is_scalar($data) || $this->definition->uses_simple_data()
-                    || $data instanceof cache_cached_object) {
-                $this->staticaccelerationarray[$key]['data'] = $data;
-                $this->staticaccelerationarray[$key]['serialized'] = false;
-            } else {
-                $this->staticaccelerationarray[$key]['data'] = serialize($data);
-                $this->staticaccelerationarray[$key]['serialized'] = true;
-            }
+            $this->staticaccelerationarray[$key]['data'] = serialize($data);
+            $this->staticaccelerationarray[$key]['serialized'] = true;
         }
         if ($this->staticaccelerationsize !== false) {
             $this->staticaccelerationcount++;
