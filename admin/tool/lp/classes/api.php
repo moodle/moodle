@@ -3397,6 +3397,9 @@ class api {
             file_save_draft_area_files($draftitemid, $context->id, 'tool_lp', 'userevidence', $itemid, $fileareaoptions);
         }
 
+        // Trigger an evidence of prior learning created event.
+        \tool_lp\event\user_evidence_created::create_from_user_evidence($userevidence)->trigger();
+
         return $userevidence;
     }
 
@@ -3426,6 +3429,9 @@ class api {
             $itemid = $userevidence->get_id();
             file_save_draft_area_files($draftitemid, $context->id, 'tool_lp', 'userevidence', $itemid, $fileareaoptions);
         }
+
+        // Trigger an evidence of prior learning updated event.
+        \tool_lp\event\user_evidence_updated::create_from_user_evidence($userevidence)->trigger();
 
         return $userevidence;
     }
@@ -3457,6 +3463,10 @@ class api {
         foreach ($competencies as $competency) {
             static::delete_user_evidence_competency($userevidence, $competency->get_id());
         }
+
+        // Trigger an evidence of prior learning deleted event.
+        \tool_lp\event\user_evidence_deleted::create_from_user_evidence($userevidence)->trigger();
+
         $userevidence->set_id(0);       // Restore the object.
 
         return true;

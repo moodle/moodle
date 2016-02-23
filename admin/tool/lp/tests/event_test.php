@@ -670,4 +670,94 @@ class tool_lp_event_testcase extends advanced_testcase {
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
+
+    /**
+     * Test the evidence of prior learning created event.
+     *
+     */
+    public function test_user_evidence_created() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $user = $dg->create_user();
+        // Use DataGenerator to have a user_evidence record with the right format.
+        $record = $userevidence = $lpg->create_user_evidence(array('userid' => $user->id))->to_record();
+        $record->id = 0;
+        $record->name = "New name";
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $userevidence = api::create_user_evidence((object) $record);
+
+         // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        $this->assertInstanceOf('\tool_lp\event\user_evidence_created', $event);
+        $this->assertEquals($userevidence->get_id(), $event->objectid);
+        $this->assertEquals($userevidence->get_context()->id, $event->contextid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the evidence of prior learning  deleted event.
+     *
+     */
+    public function test_user_evidence_deleted() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $user = $dg->create_user();
+        $userevidence = $lpg->create_user_evidence(array('userid' => $user->id));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        api::delete_user_evidence($userevidence->get_id());
+
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\tool_lp\event\user_evidence_deleted', $event);
+        $this->assertEquals($userevidence->get_id(), $event->objectid);
+        $this->assertEquals($userevidence->get_context()->id, $event->contextid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the evidence of prior learning  updated event.
+     *
+     */
+    public function test_user_evidence_updated() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $user = $dg->create_user();
+        $userevidence = $lpg->create_user_evidence(array('userid' => $user->id));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $userevidence->set_name('Name modified');
+        api::update_user_evidence($userevidence->to_record());
+
+         // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\tool_lp\event\user_evidence_updated', $event);
+        $this->assertEquals($userevidence->get_id(), $event->objectid);
+        $this->assertEquals($userevidence->get_context()->id, $event->contextid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
 }
