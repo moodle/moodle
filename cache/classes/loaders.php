@@ -280,21 +280,17 @@ class cache implements cache_loader {
     public function get($key, $strictness = IGNORE_MISSING) {
         // 1. Parse the key.
         $parsedkey = $this->parse_key($key);
+
         // 2. Get it from the static acceleration array if we can (only when it is enabled and it has already been requested/set).
-        $result = false;
-        if ($this->use_static_acceleration()) {
+        $usesstaticacceleration = $this->use_static_acceleration();
+
+        if ($usesstaticacceleration) {
             $result = $this->static_acceleration_get($parsedkey);
-        }
-        if ($result !== false) {
-            if (!is_scalar($result)) {
-                // If data is an object it will be a reference.
-                // If data is an array if may contain references.
-                // We want to break references so that the cache cannot be modified outside of itself.
-                // Call the function to unreference it (in the best way possible).
-                $result = $this->unref($result);
+            if ($result !== false) {
+                return $result;
             }
-            return $result;
         }
+
         // 3. Get it from the store. Obviously wasn't in the static acceleration array.
         $result = $this->store->get($parsedkey);
         if ($result !== false) {
@@ -309,10 +305,11 @@ class cache implements cache_loader {
             if ($result instanceof cache_cached_object) {
                 $result = $result->restore_object();
             }
-            if ($this->use_static_acceleration()) {
+            if ($usesstaticacceleration) {
                 $this->static_acceleration_set($parsedkey, $result);
             }
         }
+
         // 4. Load if from the loader/datasource if we don't already have it.
         $setaftervalidation = false;
         if ($result === false) {
@@ -341,7 +338,7 @@ class cache implements cache_loader {
         }
         // 7. Make sure we don't pass back anything that could be a reference.
         //    We don't want people modifying the data in the cache.
-        if (!is_scalar($result)) {
+        if (!$this->store->supports_dereferencing_objects() && !is_scalar($result)) {
             // If data is an object it will be a reference.
             // If data is an array if may contain references.
             // We want to break references so that the cache cannot be modified outside of itself.
@@ -514,9 +511,11 @@ class cache implements cache_loader {
             // We have to let the loader do its own parsing of data as it may be unique.
             $this->loader->set($key, $data);
         }
+        $usestaticacceleration = $this->use_static_acceleration();
+
         if (is_object($data) && $data instanceof cacheable_object) {
             $data = new cache_cached_object($data);
-        } else if (!is_scalar($data)) {
+        } else if (!$this->store->supports_dereferencing_objects() && !is_scalar($data)) {
             // If data is an object it will be a reference.
             // If data is an array if may contain references.
             // We want to break references so that the cache cannot be modified outside of itself.
@@ -527,7 +526,7 @@ class cache implements cache_loader {
             $data = new cache_ttl_wrapper($data, $this->definition->get_ttl());
         }
         $parsedkey = $this->parse_key($key);
-        if ($this->use_static_acceleration()) {
+        if ($usestaticacceleration) {
             $this->static_acceleration_set($parsedkey, $data);
         }
         return $this->store->set($parsedkey, $data);
@@ -633,10 +632,11 @@ class cache implements cache_loader {
         $data = array();
         $simulatettl = $this->has_a_ttl() && !$this->store_supports_native_ttl();
         $usestaticaccelerationarray = $this->use_static_acceleration();
+        $needsdereferencing = !$this->store->supports_dereferencing_objects();
         foreach ($keyvaluearray as $key => $value) {
             if (is_object($value) && $value instanceof cacheable_object) {
                 $value = new cache_cached_object($value);
-            } else if (!is_scalar($value)) {
+            } else if ($needsdereferencing && !is_scalar($value)) {
                 // If data is an object it will be a reference.
                 // If data is an array if may contain references.
                 // We want to break references so that the cache cannot be modified outside of itself.
@@ -1014,34 +1014,35 @@ class cache implements cache_loader {
      * Returns the item from the static acceleration array if it exists there.
      *
      * @param string $key The parsed key
-     * @return mixed|false The data from the static acceleration array or false if it wasn't there.
+     * @return mixed|false Dereferenced data from the static acceleration array or false if it wasn't there.
      */
     protected function static_acceleration_get($key) {
         // This method of checking if an array was supplied is faster than is_array.
         if ($key === (array)$key) {
             $key = $key['key'];
         }
-        // This isset check is faster than array_key_exists but will return false
-        // for null values, meaning null values will come from backing store not
-        // the static acceleration array. We think this okay because null usage should be
-        // very rare (see comment in MDL-39472).
+
         if (!$this->staticacceleration || !isset($this->staticaccelerationarray[$key])) {
             $result = false;
         } else {
-            $data = $this->staticaccelerationarray[$key];
-            if (!$this->has_a_ttl() || !$data instanceof cache_ttl_wrapper) {
-                if ($data instanceof cache_cached_object) {
-                    $data = $data->restore_object();
+            $data = $this->staticaccelerationarray[$key]['data'];
+
+            // If it's a cache_ttl_wrapper, unpack first and then process the data as normal.
+            if ($this->has_a_ttl() && $data instanceof cache_ttl_wrapper) {
+                if ($data->has_expired()) {
+                    $this->static_acceleration_delete($key);
+                    $data = false;
+                } else {
+                    $data = $data->data;
                 }
-                $result = $data;
-            } else if ($data->has_expired()) {
-                $this->static_acceleration_delete($key);
-                $result = false;
+            }
+
+            if ($data instanceof cache_cached_object) {
+                $result = $data->restore_object();
+            } else if ($this->staticaccelerationarray[$key]['serialized']) {
+                $result = unserialize($data);
             } else {
-                if ($data instanceof cache_cached_object) {
-                    $data = $data->restore_object();
-                }
-                $result = $data->data;
+                $result = $data;
             }
         }
         if ($result) {
@@ -1096,7 +1097,31 @@ class cache implements cache_loader {
             $this->staticaccelerationcount--;
             unset($this->staticaccelerationkeys[$key]);
         }
-        $this->staticaccelerationarray[$key] = $data;
+
+        // We serialize anything that's not;
+        // 1. A known scalar safe value.
+        // 2. A definition that says it's simpledata.  We trust it that it doesn't contain dangerous references.
+        // 3. An object that handles dereferencing by itself.
+        // Also take care of ttl_wrapping, we need to apply some different serialization rules in that case.
+        if ($this->has_a_ttl() && $data instanceof cache_ttl_wrapper) {
+            if (is_scalar($data->data) || $this->definition->uses_simple_data()
+                    || $data->data instanceof cache_cached_object) {
+                $this->staticaccelerationarray[$key]['serialized'] = false;
+            } else {
+                $data->data = serialize($data->data);
+                $this->staticaccelerationarray[$key]['serialized'] = true;
+            }
+            $this->staticaccelerationarray[$key]['data'] = $data;
+        } else {
+            if (is_scalar($data) || $this->definition->uses_simple_data()
+                    || $data instanceof cache_cached_object) {
+                $this->staticaccelerationarray[$key]['data'] = $data;
+                $this->staticaccelerationarray[$key]['serialized'] = false;
+            } else {
+                $this->staticaccelerationarray[$key]['data'] = serialize($data);
+                $this->staticaccelerationarray[$key]['serialized'] = true;
+            }
+        }
         if ($this->staticaccelerationsize !== false) {
             $this->staticaccelerationcount++;
             $this->staticaccelerationkeys[$key] = $key;
@@ -1130,12 +1155,9 @@ class cache implements cache_loader {
      */
     protected function static_acceleration_delete($key) {
         unset($this->staticaccelerationarray[$key]);
-        if ($this->staticaccelerationsize !== false) {
-            $dropkey = array_search($key, $this->staticaccelerationkeys);
-            if ($dropkey) {
-                unset($this->staticaccelerationkeys[$dropkey]);
-                $this->staticaccelerationcount--;
-            }
+        if ($this->staticaccelerationsize !== false && isset($this->staticaccelerationkeys[$key])) {
+            unset($this->staticaccelerationkeys[$key]);
+            $this->staticaccelerationcount--;
         }
         return true;
     }
@@ -1813,7 +1835,7 @@ class cache_session extends cache {
         }
         // 6. Make sure we don't pass back anything that could be a reference.
         //    We don't want people modifying the data in the cache.
-        if (!is_scalar($result)) {
+        if (!$this->get_store()->supports_dereferencing_objects() && !is_scalar($result)) {
             // If data is an object it will be a reference.
             // If data is an array if may contain references.
             // We want to break references so that the cache cannot be modified outside of itself.
@@ -1853,7 +1875,7 @@ class cache_session extends cache {
         }
         if (is_object($data) && $data instanceof cacheable_object) {
             $data = new cache_cached_object($data);
-        } else if (!is_scalar($data)) {
+        } else if (!$this->get_store()->supports_dereferencing_objects() && !is_scalar($data)) {
             // If data is an object it will be a reference.
             // If data is an array if may contain references.
             // We want to break references so that the cache cannot be modified outside of itself.
@@ -1929,7 +1951,7 @@ class cache_session extends cache {
             if ($value instanceof cache_cached_object) {
                 /* @var cache_cached_object $value */
                 $value = $value->restore_object();
-            } else if (!is_scalar($value)) {
+            } else if (!$this->get_store()->supports_dereferencing_objects() && !is_scalar($value)) {
                 // If data is an object it will be a reference.
                 // If data is an array if may contain references.
                 // We want to break references so that the cache cannot be modified outside of itself.
@@ -2041,7 +2063,7 @@ class cache_session extends cache {
         foreach ($keyvaluearray as $key => $value) {
             if (is_object($value) && $value instanceof cacheable_object) {
                 $value = new cache_cached_object($value);
-            } else if (!is_scalar($value)) {
+            } else if (!$this->get_store()->supports_dereferencing_objects() && !is_scalar($value)) {
                 // If data is an object it will be a reference.
                 // If data is an array if may contain references.
                 // We want to break references so that the cache cannot be modified outside of itself.
