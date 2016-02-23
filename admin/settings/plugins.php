@@ -489,7 +489,7 @@ $temp->add(new admin_setting_heading('searchareasheading', new lang_string('avai
 $searchareas = \core_search\manager::get_search_areas_list();
 foreach ($searchareas as $areaid => $searcharea) {
     list($componentname, $varname) = $searcharea->get_config_var_name();
-    $temp->add(new admin_setting_configcheckbox($componentname . '/enable' . $varname, $searcharea->get_visible_name(true),
+    $temp->add(new admin_setting_configcheckbox($componentname . '/' . $varname . '_enabled', $searcharea->get_visible_name(true),
         '', 1, 1, 0));
 }
 $ADMIN->add('searchplugins', $temp);

@@ -144,6 +144,7 @@ abstract class base {
      *
      * It depends on whether it is a moodle subsystem or a plugin as plugin-related config should remain in their own scope.
      *
+     * @access private
      * @return string Config var path including the plugin (or component) and the varname
      */
     public function get_config_var_name() {
@@ -158,13 +159,30 @@ abstract class base {
     }
 
     /**
+     * Returns all the search area configuration.
+     *
+     * @return array
+     */
+    public function get_config() {
+        list($componentname, $varname) = $this->get_config_var_name();
+
+        $config = [];
+        $settingnames = array('_enabled', '_indexingstart', '_indexingend', '_lastindexrun', '_docsignored', '_docsprocessed', '_recordsprocessed');
+        foreach ($settingnames as $name) {
+            $config[$varname . $name] = get_config($componentname, $varname . $name);
+        }
+
+        return $config;
+    }
+
+    /**
      * Is the search component enabled by the system administrator?
      *
      * @return bool
      */
     public function is_enabled() {
         list($componentname, $varname) = $this->get_config_var_name();
-        return (bool)get_config($componentname, 'enable' . $varname);
+        return (bool)get_config($componentname, $varname . '_enabled');
     }
 
     /**
@@ -193,7 +211,7 @@ abstract class base {
      * Internally it should use \core_search\document to standarise the documents before sending them to the search engine.
      *
      * Search areas should send plain text to the search engine, use the following function to convert any user
-     * input data to plain text: {@link editor_input_to_text}
+     * input data to plain text: {@link content_to_text}
      *
      * @param \stdClass $record A record containing, at least, the indexed document id and a modified timestamp
      * @return \core_search\document

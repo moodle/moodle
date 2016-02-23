@@ -64,12 +64,12 @@ class activity extends \core_search\area\base_activity {
         // Prepare associative array with data from DB.
         $doc = \core_search\document_factory::instance($record->id, $this->componentname, $this->areaname);
         $doc->set('title', $record->name);
-        $doc->set('content', editor_input_to_text($record->content, $record->contentformat));
+        $doc->set('content', content_to_text($record->content, $record->contentformat));
         $doc->set('contextid', $context->id);
         $doc->set('type', \core_search\manager::TYPE_TEXT);
         $doc->set('courseid', $record->course);
         $doc->set('modified', $record->timemodified);
-        $doc->set('description1', editor_input_to_text($record->intro, $record->introformat));
+        $doc->set('description1', content_to_text($record->intro, $record->introformat));
 
         return $doc;
     }

@@ -2644,7 +2644,7 @@ class global_navigation extends navigation_node {
         }
 
         // Search.
-        if (!empty($CFG->enableglobalsearch)) {
+        if (!empty($CFG->enableglobalsearch) && has_capability('moodle/search:query', $sitecontext)) {
             $node = $coursenode->add(get_string('search', 'search'), new moodle_url('/search/index.php'),
                     self::TYPE_SETTING, null, 'search');
         }

@@ -30,8 +30,9 @@ $title = optional_param('title', '', PARAM_NOTAGS);
 $areaid = optional_param('areaid', false, PARAM_ALPHANUMEXT);
 // Moving timestart and timeend further down as they might come as an array if they come from the form.
 
+$context = context_system::instance();
 $pagetitle = get_string('globalsearch', 'search');
-$PAGE->set_context(context_system::instance());
+$PAGE->set_context($context);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($pagetitle);
@@ -39,6 +40,8 @@ $PAGE->set_heading($pagetitle);
 if (!empty($CFG->forcelogin)) {
     require_login();
 }
+
+require_capability('moodle/search:query', $context);
 
 $searchrenderer = $PAGE->get_renderer('core_search');
 

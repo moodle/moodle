@@ -1458,7 +1458,11 @@ class admin_settingpage implements part_of_admin_tree {
             return false;
         }
 
-        $this->settings->{$setting->name} = $setting;
+        $name = $setting->name;
+        if ($setting->plugin) {
+            $name = $setting->plugin . $name;
+        }
+        $this->settings->{$name} = $setting;
         return true;
     }
 
@@ -9333,7 +9337,7 @@ class admin_setting_searchsetupinfo extends admin_setting {
         foreach ($searchareas as $areaid => $searcharea) {
             list($componentname, $varname) = $searcharea->get_config_var_name();
             if (!$anyenabled) {
-                $anyenabled = get_config($componentname, 'enable' . $varname);
+                $anyenabled = get_config($componentname, $varname . '_enabled');
             }
             if (!$anyindexed) {
                 $anyindexed = get_config($componentname, $varname . '_indexingstart');
@@ -9383,7 +9387,7 @@ class admin_setting_searchsetupinfo extends admin_setting {
 
         // Available areas.
         $row = array();
-        $url = new moodle_url('/admin/settings.php?section=manageglobalsearch#id_s_mod_assign_enablesearch_activity');
+        $url = new moodle_url('/admin/settings.php?section=manageglobalsearch#admin-searchengine');
         $row[0] = '3. ' . html_writer::tag('a', get_string('enablesearchareas', 'admin'),
                         array('href' => $url));
 

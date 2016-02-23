@@ -31,6 +31,7 @@
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
+require_login(null, false);
 require_capability('moodle/site:config', context_system::instance());
 
 if (!\core_search\manager::is_global_search_enabled()) {
@@ -44,5 +45,5 @@ if ($CFG->searchengine !== 'solr') {
 $schema = new \search_solr\schema();
 $schema->setup();
 
-$url = new moodle_url('/admin/settings.php', array('section' => 'searchsolr'));
+$url = new moodle_url('/admin/settings.php', array('section' => 'manageglobalsearch'));
 redirect($url, get_string('setupok', 'search_solr'), 4);

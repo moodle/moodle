@@ -345,6 +345,7 @@ $string['role:switchroles'] = 'Switch to other roles';
 $string['roletoassign'] = 'Role to assign';
 $string['roletooverride'] = 'Role to override';
 $string['safeoverridenotice'] = 'Note: Capabilities with higher risks are locked because you are only allowed to override safe capabilities.';
+$string['search:query'] = 'Perform site-wide searches';
 $string['selectanotheruser'] = 'Select another user';
 $string['selectauser'] = 'Select a user';
 $string['selectrole'] = 'Select a role';

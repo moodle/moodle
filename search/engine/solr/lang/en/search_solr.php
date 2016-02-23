@@ -22,7 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addingfields'] = 'Adding Moodle fields to the schema';
 $string['connectionerror'] = 'The specified Solr server is not available or the specified index does not exist';
 $string['errorcreatingschema'] = 'Error creating the Solr schema: {$a}';
 $string['errorvalidatingschema'] = 'Error validating Solr schema, field {$a->fieldname} does not exist. Please <a href="{$a->setupurl}">follow this link</a> to setup the fields required by Moodle.';

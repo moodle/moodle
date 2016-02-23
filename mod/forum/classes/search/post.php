@@ -94,7 +94,7 @@ class post extends \core_search\area\base_mod {
         // Prepare associative array with data from DB.
         $doc = \core_search\document_factory::instance($record->id, $this->componentname, $this->areaname);
         $doc->set('title', $record->subject);
-        $doc->set('content', editor_input_to_text($record->message, $record->messageformat));
+        $doc->set('content', content_to_text($record->message, $record->messageformat));
         $doc->set('contextid', $context->id);
         $doc->set('type', \core_search\manager::TYPE_TEXT);
         $doc->set('courseid', $record->courseid);

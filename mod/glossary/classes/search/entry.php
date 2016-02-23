@@ -90,7 +90,7 @@ class entry extends \core_search\area\base_mod {
         // Prepare associative array with data from DB.
         $doc = \core_search\document_factory::instance($entry->id, $this->componentname, $this->areaname);
         $doc->set('title', $entry->concept);
-        $doc->set('content', editor_input_to_text($entry->definition, $entry->definitionformat));
+        $doc->set('content', content_to_text($entry->definition, $entry->definitionformat));
         $doc->set('contextid', $context->id);
         $doc->set('type', \core_search\manager::TYPE_TEXT);
         $doc->set('courseid', $entry->course);

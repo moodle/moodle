@@ -3133,7 +3133,7 @@ EOD;
         // Accessing $CFG directly as using \core_search::is_global_search_enabled would
         // result in an extra included file for each site, even the ones where global search
         // is disabled.
-        if (empty($CFG->enableglobalsearch)) {
+        if (empty($CFG->enableglobalsearch) || !has_capability('moodle/search:query', context_system::instance())) {
             return '';
         }
 
@@ -3153,7 +3153,7 @@ EOD;
         $inputattrs = array('type' => 'text', 'name' => 'q', 'placeholder' => get_string('search', 'search'),
             'size' => 13, 'tabindex' => -1, 'id' => 'id_q_' . $id);
 
-        $contents = html_writer::tag('label', get_string('search', 'search'),
+        $contents = html_writer::tag('label', get_string('enteryoursearchquery', 'search'),
             array('for' => 'id_q_' . $id, 'class' => 'accesshide')) . html_writer::tag('input', '', $inputattrs);
         $searchinput = html_writer::tag('form', $contents, $formattrs);
 

@@ -1915,6 +1915,27 @@ function html_to_text($html, $width = 75, $dolinks = true) {
 }
 
 /**
+ * Converts content introduced in an editor to plain text.
+ *
+ * @param string $content The text as entered by the user
+ * @param int $contentformat The text format: FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN or FORMAT_MARKDOWN
+ * @return string Plain text.
+ */
+function content_to_text($content, $contentformat) {
+
+    switch ($contentformat) {
+        case FORMAT_PLAIN:
+            return $content;
+        case FORMAT_MARKDOWN:
+            $html = markdown_to_html($content);
+            return html_to_text($html, 75, false);
+        default:
+            // FORMAT_HTML and FORMAT_MOODLE.
+            return html_to_text($content, 75, false);
+    }
+}
+
+/**
  * This function will highlight search words in a given string
  *
  * It cares about HTML and will not ruin links.  It's best to use

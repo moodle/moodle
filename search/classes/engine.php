@@ -299,6 +299,9 @@ abstract class engine {
     /**
      * Executes the query on the engine.
      *
+     * Implementations of this function should check user context array to limit the results to contexts where the
+     * user have access.
+     *
      * @param  stdClass $filters Query and filters to apply.
      * @param  array    $usercontexts Contexts where the user has access. True if the user can access all contexts.
      * @return \core_search\document[] Results or false if no results

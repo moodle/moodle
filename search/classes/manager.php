@@ -347,9 +347,7 @@ class manager {
 
         // Get the courses where the current user has access.
         $courses = enrol_get_my_courses(array('id', 'cacherev'));
-        if (isloggedin() || (isguestuser() && !$CFG->forcelogin)) {
-            $courses[SITEID] = get_course(SITEID);
-        }
+        $courses[SITEID] = get_course(SITEID);
         $site = \course_modinfo::instance(SITEID);
         foreach ($courses as $course) {
 
@@ -390,6 +388,9 @@ class manager {
 
     /**
      * Returns documents from the engine based on the data provided.
+     *
+     * This function does not perform any kind of security checking, the caller code
+     * should check that the current user have moodle/search:query capability.
      *
      * It might return the results from the cache instead.
      *
@@ -579,15 +580,15 @@ class manager {
         }
 
         foreach ($searchareas as $searcharea) {
+            list($componentname, $varname) = $searcharea->get_config_var_name();
+            $config = $searcharea->get_config();
 
-            list($areaid, $varname) = $searcharea->get_config_var_name();
-
-            set_config($varname . '_indexingstart', 0, $areaid);
-            set_config($varname . '_indexingend', 0, $areaid);
-            set_config($varname . '_lastindexrun', 0, $areaid);
-            set_config($varname . '_docsignored', 0, $areaid);
-            set_config($varname . '_docsprocessed', 0, $areaid);
-            set_config($varname . '_recordsprocessed', 0, $areaid);
+            foreach ($config as $key => $value) {
+                // We reset them all but the enable/disabled one.
+                if ($key !== $varname . '_enabled') {
+                    set_config($key, 0, $componentname);
+                }
+            }
         }
     }
 
