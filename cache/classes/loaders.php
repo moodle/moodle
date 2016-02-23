@@ -266,7 +266,7 @@ class cache implements cache_loader {
     public function set_identifiers(array $identifiers) {
         if ($this->definition->set_identifiers($identifiers)) {
             // As static acceleration uses input keys and not parsed keys
-            // if the identifiers are set.
+            // it much be cleared when the identifier set is changed.
             $this->staticaccelerationarray = array();
             if ($this->staticaccelerationsize !== false) {
                 $this->staticaccelerationkeys = array();
@@ -1083,7 +1083,6 @@ class cache implements cache_loader {
         // 1. A known scalar safe value.
         // 2. A definition that says it's simpledata.  We trust it that it doesn't contain dangerous references.
         // 3. An object that handles dereferencing by itself.
-        // Also take care of ttl_wrapping, we need to apply some different serialization rules in that case.
         if (is_scalar($data) || $this->definition->uses_simple_data()
                 || $data instanceof cache_cached_object) {
             $this->staticaccelerationarray[$key]['data'] = $data;

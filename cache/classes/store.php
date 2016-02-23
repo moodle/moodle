@@ -127,7 +127,7 @@ abstract class cache_store implements cache_store_interface {
     const IS_SEARCHABLE = 8;
 
     /**
-     * The cache store dereferences objects.@global
+     * The cache store dereferences objects.
      *
      * When set, loaders will assume that all data coming from this store has already had all references
      * resolved.  So even for complex object structures it will not try to remove references again.
