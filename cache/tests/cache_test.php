@@ -407,7 +407,7 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertEquals('pork', $var->subobj->subobj->key);
         $this->assertTrue($cache->delete('obj'));
 
-        // Death reference test... basicaly we don't want this to die.
+        // Death reference test... basically we don't want this to die.
         $obj = new stdClass;
         $obj->key = 'value';
         $obj->self =& $obj;
@@ -430,6 +430,32 @@ class core_cache_testcase extends advanced_testcase {
         $var2 = $cache->get('obj');
         $this->assertInstanceOf('stdClass', $var2);
         $this->assertEquals('value', $var2->key);
+
+        $this->assertTrue($cache->delete('obj'));
+
+        // Death reference test on get_many... basically we don't want this to die.
+        $obj = new stdClass;
+        $obj->key = 'value';
+        $obj->self =& $obj;
+        $this->assertEquals(1, $cache->set_many(array('obj' => $obj)));
+        $var = $cache->get_many(array('obj'));
+        $this->assertInstanceOf('stdClass', $var['obj']);
+        $this->assertEquals('value', $var['obj']->key);
+
+        // Reference test after retrieve.
+        $obj = new stdClass;
+        $obj->key = 'value';
+        $this->assertEquals(1, $cache->set_many(array('obj' => $obj)));
+
+        $var1 = $cache->get_many(array('obj'));
+        $this->assertInstanceOf('stdClass', $var1['obj']);
+        $this->assertEquals('value', $var1['obj']->key);
+        $var1['obj']->key = 'eulav';
+        $this->assertEquals('eulav', $var1['obj']->key);
+
+        $var2 = $cache->get_many(array('obj'));
+        $this->assertInstanceOf('stdClass', $var2['obj']);
+        $this->assertEquals('value', $var2['obj']->key);
 
         $this->assertTrue($cache->delete('obj'));
 
