@@ -68,6 +68,9 @@ class competency_summary_exporter extends exporter {
             'hasrelatedcompetencies' => array(
                 'type' => PARAM_BOOL
             ),
+            'scaleid' => array(
+                'type' => PARAM_INT
+            ),
             'scaleconfiguration' => array(
                 'type' => PARAM_RAW
             ),
@@ -108,10 +111,13 @@ class competency_summary_exporter extends exporter {
         $exporter = new competency_framework_exporter($this->related['framework']);
         $result->framework = $exporter->export($output);
         $scaleconfiguration = $this->related['framework']->get_scaleconfiguration();
+        $scaleid = $this->related['framework']->get_scaleid();
         if ($competency->get_scaleid()) {
             $scaleconfiguration = $competency->get_scaleconfiguration();
+            $scaleid = $competency->get_scaleid();
         }
         $result->scaleconfiguration = $scaleconfiguration;
+        $result->scaleid = $scaleid;
 
         $level = $competency->get_level();
         $taxonomy = $this->related['framework']->get_taxonomy($level);

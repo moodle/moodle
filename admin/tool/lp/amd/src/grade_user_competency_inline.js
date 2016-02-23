@@ -27,13 +27,14 @@ define(['jquery',
         'core/log',
         'tool_lp/grade_dialogue',
         'tool_lp/event_base',
-    ], function($, notification, ajax, log, GradeDialogue, EventBase) {
+        'tool_lp/scalevalues',
+    ], function($, notification, ajax, log, GradeDialogue, EventBase, ScaleValues) {
 
     /**
      * InlineEditor
      *
      * @param {String} selector The selector to trigger the grading.
-     * @param {Object} The scale config for this competency.
+     * @param {Number} The id of the scale for this competency.
      * @param {Number} The id of the competency.
      * @param {Number} The id of the user.
      * @param {Number} The id of the plan.
@@ -42,7 +43,7 @@ define(['jquery',
      * @param {Boolean} canGrade Whether the user can grade.
      * @param {Boolean} canSuggest Whether the user can suggest.
      */
-    var InlineEditor = function(selector, scaleConfig, competencyId, userId, planId, courseId, chooseStr, canGrade, canSuggest) {
+    var InlineEditor = function(selector, scaleId, competencyId, userId, planId, courseId, chooseStr, canGrade, canSuggest) {
         EventBase.prototype.constructor.apply(this, []);
 
         var trigger = $(selector);
@@ -50,7 +51,7 @@ define(['jquery',
             throw new Error('Could not find the trigger');
         }
 
-        this._scaleConfig = scaleConfig;
+        this._scaleId = scaleId;
         this._competencyId = competencyId;
         this._userId = userId;
         this._planId = planId;
@@ -97,52 +98,55 @@ define(['jquery',
         var options = [],
             self = this;
 
-        options.push({
-            value: '',
-            name: this._chooseStr
-        });
-
-        for (var i = 1; i < this._scaleConfig.length; i++) {
-            var optionConfig = this._scaleConfig[i];
+        var promise = ScaleValues.get_values(self._scaleId);
+        promise.done(function(scalevalues) {
             options.push({
-                value: optionConfig.id,
-                name: optionConfig.name
+                value: '',
+                name: self._chooseStr
             });
-        }
 
-        this._dialogue = new GradeDialogue(options, this._canGrade, this._canSuggest);
-        this._dialogue.on('rated', function(e, data) {
-            var args = this._args;
-            args.grade = data.rating;
-            args.note = data.note;
-            args.override = true;
-            ajax.call([{
-                methodname: this._methodName,
-                args: args,
-                done: function(evidence) {
-                    this._trigger('competencyupdated', { args: args, evidence: evidence });
-                }.bind(self),
-                fail: notification.exception
-            }]);
-        }.bind(this));
-        this._dialogue.on('suggested', function(e, data) {
-            var args = this._args;
-            args.grade = data.rating;
-            args.note = data.note;
-            args.override = false;
-            ajax.call([{
-                methodname: this._methodName,
-                args: args,
-                done: function(evidence) {
-                    this._trigger('competencyupdated', { args: args, evidence: evidence });
-                }.bind(self),
-                fail: notification.exception
-            }]);
-        }.bind(this));
+            for (var i = 0; i < scalevalues.length; i++) {
+                var optionConfig = scalevalues[i];
+                options.push({
+                    value: optionConfig.id,
+                    name: optionConfig.name
+                });
+            }
+
+            self._dialogue = new GradeDialogue(options, self._canGrade, self._canSuggest);
+            self._dialogue.on('rated', function(e, data) {
+                var args = self._args;
+                args.grade = data.rating;
+                args.note = data.note;
+                args.override = true;
+                ajax.call([{
+                    methodname: self._methodName,
+                    args: args,
+                    done: function(evidence) {
+                        self._trigger('competencyupdated', { args: args, evidence: evidence });
+                    }.bind(self),
+                    fail: notification.exception
+                }]);
+            }.bind(self));
+            self._dialogue.on('suggested', function(e, data) {
+                var args = self._args;
+                args.grade = data.rating;
+                args.note = data.note;
+                args.override = false;
+                ajax.call([{
+                    methodname: self._methodName,
+                    args: args,
+                    done: function(evidence) {
+                        self._trigger('competencyupdated', { args: args, evidence: evidence });
+                    }.bind(self),
+                    fail: notification.exception
+                }]);
+            }.bind(self));
+        }).fail(notification.exception);
     };
 
-    /** @type {Object} The scale config for this competency. */
-    InlineEditor.prototype._scaleConfig = null;
+    /** @type {Number} The scale id for this competency. */
+    InlineEditor.prototype._scaleId = null;
     /** @type {Number} The id of the competency. */
     InlineEditor.prototype._competencyId = null;
     /** @type {Number} The id of the user. */
@@ -151,6 +155,8 @@ define(['jquery',
     InlineEditor.prototype._planId = null;
     /** @type {Number} The id of the course. */
     InlineEditor.prototype._courseId = null;
+    /** @type {String} The text for Choose rating. */
+    InlineEditor.prototype._chooseStr = null;
     /** @type {GradeDialogue} The grading dialogue. */
     InlineEditor.prototype._dialogue = null;
     /** @type {Boolean} Can grade. */

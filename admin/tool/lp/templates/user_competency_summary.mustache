@@ -71,7 +71,6 @@
         </dd>
         {{#js}}
         require(['jquery', 'tool_lp/grade_user_competency_inline', 'tool_lp/user_competency_info', 'tool_lp/user_competency_workflow'], function($, mod, info, UserCompWorkflow) {
-            var scaleConfig = JSON.parse('{{{competency.scaleconfiguration}}}');
 
             var competencyElement = $('[data-region-id="{{uniqid}}"]');
             var infoReloader = new info(competencyElement, '{{competency.competency.id}}', '{{user.id}}');
@@ -81,7 +80,7 @@
             ucw.on('status-changed', infoReloader.reload.bind(infoReloader));
             ucw.on('error-occured', infoReloader.reload.bind(infoReloader));
 
-            var inlineGrader = new mod('#rate_{{uniqid}}', scaleConfig, '{{competency.competency.id}}', '{{user.id}}', '{{plan.id}}', '', '{{#str}}chooserating, tool_lp{{/str}}', {{cangrade}}, {{cansuggest}});
+            var inlineGrader = new mod('#rate_{{uniqid}}', '{{competency.scaleid}}', '{{competency.competency.id}}', '{{user.id}}', '{{plan.id}}', '', '{{#str}}chooserating, tool_lp{{/str}}', {{cangrade}}, {{cansuggest}});
             inlineGrader.on('competencyupdated', infoReloader.reload.bind(infoReloader));
         });
         {{/js}}

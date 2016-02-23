@@ -89,9 +89,8 @@
         </dd>
         {{#js}}
         require(['jquery', 'tool_lp/grade_user_competency_inline', 'tool_lp/user_competency_info'], function($, mod, info) {
-            var scaleConfig = JSON.parse('{{{competency.scaleconfiguration}}}');
 
-            var inlineGrader = new mod('#rate_{{uniqid}}', scaleConfig, '{{competency.competency.id}}', '{{user.id}}', '', '{{course.id}}', '{{#str}}chooserating, tool_lp{{/str}}', {{cangrade}}, {{cansuggest}});
+            var inlineGrader = new mod('#rate_{{uniqid}}', '{{competency.scaleid}}', '{{competency.competency.id}}', '{{user.id}}', '', '{{course.id}}', '{{#str}}chooserating, tool_lp{{/str}}', {{cangrade}}, {{cansuggest}});
             var competencyElement = $('[data-region-id="{{uniqid}}"]');
 
             var displayuser = ('{{displayuser}}' == 'true') ? true : false;
