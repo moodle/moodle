@@ -2346,6 +2346,194 @@ class tool_lp_api_testcase extends advanced_testcase {
         api::add_evidence($u1->id, $c5, $ctxid, evidence::ACTION_COMPLETE, 'commentincontext', 'core');
     }
 
+    /**
+     * Tests for the user_competency_course data when api::add_evidence() is invoked when
+     * suggesting a grade for a user competency in the system context.
+     */
+    public function test_add_evidence_for_user_competency_course_suggest_outside_course() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $syscontext = context_system::instance();
+
+        // Create a student.
+        $student = $dg->create_user();
+
+        // Create a competency for the course.
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $framework = $lpg->create_framework();
+        $comp = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+
+        // Add evidence.
+        api::add_evidence($student->id, $comp, $syscontext, evidence::ACTION_SUGGEST,
+            'commentincontext', 'core', null, false, null, 1);
+
+        // Query for user_competency_course data.
+        $filterparams = array(
+            'userid' => $student->id,
+            'competencyid' => $comp->get_id(),
+        );
+        $usercompcourse = \tool_lp\user_competency_course::get_record($filterparams);
+        // There should be no user_competency_course object when suggesting a grade outside the course context.
+        $this->assertFalse($usercompcourse);
+    }
+
+    /**
+     * Tests for the user_competency_course data when api::add_evidence() is invoked when
+     * grading a user competency in the system context.
+     */
+    public function test_add_evidence_for_user_competency_course_grade_outside_course() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $syscontext = context_system::instance();
+
+        // Create a student.
+        $student = $dg->create_user();
+
+        // Create a competency for the course.
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $framework = $lpg->create_framework();
+        $comp = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+
+        // Add evidence.
+        api::add_evidence($student->id, $comp, $syscontext, evidence::ACTION_OVERRIDE,
+            'commentincontext', 'core', null, false, null, 1);
+
+        // Query for user_competency_course data.
+        $filterparams = array(
+            'userid' => $student->id,
+            'competencyid' => $comp->get_id(),
+        );
+        $usercompcourse = \tool_lp\user_competency_course::get_record($filterparams);
+        // There should be no user_competency_course object created when grading.
+        $this->assertFalse($usercompcourse);
+    }
+
+    /**
+     * Tests for the user_competency_course data when api::add_evidence() is invoked when
+     * suggesting a grade for a user competency in a course.
+     */
+    public function test_add_evidence_for_user_competency_course_suggest_in_course() {
+        global $USER;
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+
+        // Create a course.
+        $course = $dg->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        // Create a student and enrol into the course.
+        $student = $dg->create_user();
+        $studentarch = get_archetype_roles('student');
+        $studentrole = array_shift($studentarch);
+        $dg->role_assign($studentrole->id, $student->id, $coursecontext->id);
+        $dg->enrol_user($student->id, $course->id, $studentrole->id);
+
+        // Create a competency for the course.
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $framework = $lpg->create_framework();
+        $comp = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $lpg->create_course_competency(array('courseid' => $course->id, 'competencyid' => $comp->get_id()));
+
+        // Add evidence.
+        $suggestedgrade = 3;
+        $evidence = api::add_evidence($student->id, $comp, $coursecontext, evidence::ACTION_SUGGEST,
+            'commentincontext', 'core', null, false, null, $suggestedgrade, $USER->id);
+
+        // Query for user_competency_course data.
+        $filterparams = array(
+            'userid' => $student->id,
+            'competencyid' => $comp->get_id(),
+            'courseid' => $course->id
+        );
+        $usercompcourse = \tool_lp\user_competency_course::get_record($filterparams);
+        // There should be a user_competency_course object when suggesting a grade.
+        $this->assertNotEmpty($usercompcourse);
+        $grade = $evidence->get_grade();
+        $this->assertEquals($grade, $usercompcourse->get_grade());
+        $this->assertEquals($suggestedgrade, $usercompcourse->get_grade());
+        $proficiency = $comp->get_proficiency_of_grade($grade);
+        $this->assertEquals($proficiency, $usercompcourse->get_proficiency());
+
+        // Add evidence again with a new suggested grade.
+        $suggestedgrade = 1;
+        $evidence = api::add_evidence($student->id, $comp, $coursecontext, evidence::ACTION_SUGGEST,
+            'commentincontext', 'core', null, false, null, $suggestedgrade, $USER->id);
+        // Get user competency course record.
+        $usercompcourse = \tool_lp\user_competency_course::get_record($filterparams);
+        // The grade/proficiency should have been updated.
+        $this->assertNotEmpty($usercompcourse);
+        $grade = $evidence->get_grade();
+        $this->assertEquals($grade, $usercompcourse->get_grade());
+        $this->assertEquals($suggestedgrade, $usercompcourse->get_grade());
+        $proficiency = $comp->get_proficiency_of_grade($grade);
+        $this->assertEquals($proficiency, $usercompcourse->get_proficiency());
+    }
+
+    /**
+     * Tests for the user_competency_course data when api::add_evidence() is invoked when
+     * grading a user competency in a course.
+     */
+    public function test_add_evidence_user_competency_course_grade_in_course() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+
+        // Create a course.
+        $course = $dg->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        // Create a student and enrol into the course.
+        $student = $dg->create_user();
+        $studentarch = get_archetype_roles('student');
+        $studentrole = array_shift($studentarch);
+        $dg->role_assign($studentrole->id, $student->id, $coursecontext->id);
+        $dg->enrol_user($student->id, $course->id, $studentrole->id);
+
+        // Create a competency for the course.
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $framework = $lpg->create_framework();
+        $comp = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $lpg->create_course_competency(array('courseid' => $course->id, 'competencyid' => $comp->get_id()));
+
+        // Add evidence.
+        api::add_evidence($student->id, $comp, $coursecontext, evidence::ACTION_OVERRIDE,
+            'commentincontext', 'core', null, false, null, 1, $USER->id);
+
+        // Query for user_competency_course data.
+        $filterparams = array(
+            'userid' => $student->id,
+            'competencyid' => $comp->get_id(),
+            'courseid' => $course->id
+        );
+        $usercompcourse = \tool_lp\user_competency_course::get_record($filterparams);
+        // There should be no user_competency_course object created when grading.
+        $this->assertFalse($usercompcourse);
+
+        // Add evidence that suggests a grade to the course.
+        $evidence = api::add_evidence($student->id, $comp, $coursecontext, evidence::ACTION_SUGGEST,
+            'commentincontext', 'core', null, false, null, 3, $USER->id);
+        // Get user competency course record.
+        $usercompcourse = \tool_lp\user_competency_course::get_record($filterparams);
+        // There should be a user_competency_course object when suggesting a grade.
+        $this->assertNotEmpty($usercompcourse);
+        $grade = $evidence->get_grade();
+        $this->assertEquals($grade, $usercompcourse->get_grade());
+        $this->assertEquals(3, $usercompcourse->get_grade());
+        $proficiency = $comp->get_proficiency_of_grade($grade);
+        $this->assertEquals($proficiency, $usercompcourse->get_proficiency());
+
+        // Confirm that the user competency's grade/proficiency has not been affected by the grade suggestion.
+        $usercompetencyparams = [
+            'userid' => $student->id,
+            'competencyid' => $comp->get_id(),
+        ];
+        $usercompetency = \tool_lp\user_competency::get_record($usercompetencyparams);
+        $this->assertNotEmpty($usercompetency);
+        $this->assertNotEquals($usercompcourse->get_grade(), $usercompetency->get_grade());
+        $this->assertNotEquals($usercompcourse->get_proficiency(), $usercompetency->get_proficiency());
+    }
+
     public function test_observe_course_completed() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();

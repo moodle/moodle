@@ -142,6 +142,7 @@ $string['evidence_manualsuggestinplan'] = 'The competency grade was manually sug
 $string['errorcannotsetduedateinthepast'] = 'The due date cannot be set in the past.';
 $string['errorcannotsetduedatetoosoon'] = 'The due date is too soon.';
 $string['errorcannotchangeapastduedate'] = 'The due date has passed, it cannot be changed.';
+$string['errorinvalidcourse'] = 'Invalid course.';
 $string['errornocompetency'] = '{$a} competency can not be found';
 $string['errorplanstatus'] = 'Learning plans \'{$a}\' status unknown';
 $string['errorscalealreadyused'] = 'The scale cannot be changed, it is already being used.';

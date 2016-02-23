@@ -4042,7 +4042,7 @@ class api {
      * Requires no capability because evidence can be added in many situations under any user.
      *
      * @param int $userid The user id for which evidence is added.
-     * @param int $competencyid The competency, or its id for which evidence is added.
+     * @param competency|int $competencyorid The competency, or its id for which evidence is added.
      * @param context|int $contextorid The context in which the evidence took place.
      * @param int $action The type of action to take on the competency. \tool_lp\evidence::ACTION_*.
      * @param string $descidentifier The strings identifier.
@@ -4056,6 +4056,9 @@ class api {
      *                          to keep track of all the evidence given by a certain person.
      * @param string $note A note to attach to the evidence.
      * @return evidence
+     * @throws coding_exception
+     * @throws invalid_persistent_exception
+     * @throws moodle_exception
      */
     public static function add_evidence($userid,
                                         $competencyorid,
@@ -4079,10 +4082,17 @@ class api {
             $competency = $competencyid;
             $competencyid = $competency->get_id();
         }
-        $contextid = is_object($contextorid) ? $contextorid->id : $contextorid;
+        $contextid = $contextorid;
+        $context = $contextorid;
+        if (is_object($contextorid)) {
+            $contextid = $contextorid->id;
+        } else {
+            $context = context::instance_by_id($contextorid);
+        }
         $setucgrade = false;
         $ucgrade = null;
         $ucproficiency = null;
+        $usercompetencycourse = null;
 
         // Fetch or create the user competency.
         $usercompetency = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
@@ -4133,6 +4143,35 @@ class api {
                 if ($grade === null) {
                     throw new coding_exception("The grade MUST be set when 'suggesting' an evidence. Or use ACTION_LOG instead.");
                 }
+
+                // Add user_competency_course record when in a course or module.
+                if (in_array($context->contextlevel, array(CONTEXT_COURSE, CONTEXT_MODULE))) {
+                    $coursecontext = $context->get_course_context();
+                    $courseid = $coursecontext->instanceid;
+                    $filterparams = array(
+                        'userid' => $userid,
+                        'competencyid' => $competencyid,
+                        'courseid' => $courseid
+                    );
+                    // Fetch or create user competency course.
+                    $usercompetencycourse = user_competency_course::get_record($filterparams);
+                    if (!$usercompetencycourse) {
+                        $usercompetencycourse = user_competency_course::create_relation($userid, $competencyid, $courseid);
+                        $usercompetencycourse->create();
+                    }
+                    // Get proficiency.
+                    $proficiency = $ucproficiency;
+                    if ($proficiency === null) {
+                        if (empty($competency)) {
+                            $competency = new competency($competencyid);
+                        }
+                        $proficiency = $competency->get_proficiency_of_grade($grade);
+                    }
+                    // Set grade.
+                    $usercompetencycourse->set_grade($grade);
+                    // Set proficiency.
+                    $usercompetencycourse->set_proficiency($proficiency);
+                }
                 break;
 
             // Simply logging an evidence.
@@ -4182,6 +4221,15 @@ class api {
             throw new invalid_persistent_exception($usercompetency->get_errors());
         } else if (!$evidence->is_valid()) {
             throw new invalid_persistent_exception($evidence->get_errors());
+        }
+
+        // Save the user_competency_course record.
+        if ($usercompetencycourse !== null) {
+            // Validate and update.
+            if (!$usercompetencycourse->is_valid()) {
+                throw new invalid_persistent_exception($usercompetencycourse->get_errors());
+            }
+            $usercompetencycourse->update();
         }
 
         // Finally save. Pheww!

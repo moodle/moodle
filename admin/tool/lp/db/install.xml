@@ -183,6 +183,25 @@
         <INDEX NAME="useridcompetency" UNIQUE="true" FIELDS="userid, competencyid"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="tool_lp_user_comp_course" COMMENT="User competencies in a course">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User associated to the competency."/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The course this competency is linked to."/>
+        <FIELD NAME="competencyid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Competency associated to the user."/>
+        <FIELD NAME="proficiency" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="Indicate if the competency is proficient not."/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The suggested grade assigned for the competency."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="useridcoursecomp" UNIQUE="true" FIELDS="userid, courseid, competencyid"/>
+      </INDEXES>
+    </TABLE>
     <TABLE NAME="tool_lp_user_competency_plan" COMMENT="User competencies plans">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
