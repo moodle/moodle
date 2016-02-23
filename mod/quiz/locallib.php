@@ -1230,11 +1230,12 @@ function quiz_attempt_state_name($state) {
  * @param int $cmid the course_module object for this quiz.
  * @param object $question the question.
  * @param string $returnurl url to return to after action is done.
+ * @param int $variant which question variant to preview (optional).
  * @return string html for a number of icons linked to action pages for a
  * question - preview and edit / view icons depending on user capabilities.
  */
-function quiz_question_action_icons($quiz, $cmid, $question, $returnurl) {
-    $html = quiz_question_preview_button($quiz, $question) . ' ' .
+function quiz_question_action_icons($quiz, $cmid, $question, $returnurl, $variant = null) {
+    $html = quiz_question_preview_button($quiz, $question, false, $variant) . ' ' .
             quiz_question_edit_button($cmid, $question, $returnurl);
     return $html;
 }
@@ -1291,9 +1292,10 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentafteric
 /**
  * @param object $quiz the quiz settings
  * @param object $question the question
+ * @param int $variant which question variant to preview (optional).
  * @return moodle_url to preview this question with the options from this quiz.
  */
-function quiz_question_preview_url($quiz, $question) {
+function quiz_question_preview_url($quiz, $question, $variant = null) {
     // Get the appropriate display options.
     $displayoptions = mod_quiz_display_options::make_from_quiz($quiz,
             mod_quiz_display_options::DURING);
@@ -1305,22 +1307,23 @@ function quiz_question_preview_url($quiz, $question) {
 
     // Work out the correcte preview URL.
     return question_preview_url($question->id, $quiz->preferredbehaviour,
-            $maxmark, $displayoptions);
+            $maxmark, $displayoptions, $variant);
 }
 
 /**
  * @param object $quiz the quiz settings
  * @param object $question the question
  * @param bool $label if true, show the preview question label after the icon
+ * @param int $variant which question variant to preview (optional).
  * @return the HTML for a preview question icon.
  */
-function quiz_question_preview_button($quiz, $question, $label = false) {
+function quiz_question_preview_button($quiz, $question, $label = false, $variant = null) {
     global $PAGE;
     if (!question_has_capability_on($question, 'use', $question->category)) {
         return '';
     }
 
-    return $PAGE->get_renderer('mod_quiz', 'edit')->question_preview_icon($quiz, $question, $label);
+    return $PAGE->get_renderer('mod_quiz', 'edit')->question_preview_icon($quiz, $question, $label, $variant);
 }
 
 /**
