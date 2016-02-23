@@ -1,0 +1,7 @@
+*** PLEASE DO NOT OPEN PULL REQUESTS VIA GITHUB ***
+
+The moodle.git repository at Github is just a mirror of the official repository. We do not accept pull requests at Github.
+
+See CONTRIBUTING.txt guidelines for how to contribute patches for Moodle. Thank you.
+
+--
