@@ -795,7 +795,7 @@ class gradingform_guide_instance extends gradingform_instance {
                     || $criterion['maxscore'] < $elementvalue['criteria'][$id]['score']
                     || !is_numeric($elementvalue['criteria'][$id]['score'])
                     || $elementvalue['criteria'][$id]['score'] < 0) {
-                $this->validationerrors[$id]['score'] =  $elementvalue['criteria'][$id]['score'];
+                $this->validationerrors[$id]['score'] = $elementvalue['criteria'][$id]['score'];
             }
         }
         if (!empty($this->validationerrors)) {
@@ -943,8 +943,13 @@ class gradingform_guide_instance extends gradingform_instance {
                     $a = new stdClass();
                     $a->criterianame = s($criteria[$id]['shortname']);
                     $a->maxscore = $criteria[$id]['maxscore'];
-                    $html .= html_writer::tag('div', get_string('err_scoreinvalid', 'gradingform_guide', $a),
+                    if ($this->validationerrors[$id]['score'] < 0) {
+                        $html .= html_writer::tag('div', get_string('err_scoreisnegative', 'gradingform_guide', $a),
                         array('class' => 'gradingform_guide-error'));
+                    } else {
+                        $html .= html_writer::tag('div', get_string('err_scoreinvalid', 'gradingform_guide', $a),
+                        array('class' => 'gradingform_guide-error'));
+                    }
                 }
             }
         }
