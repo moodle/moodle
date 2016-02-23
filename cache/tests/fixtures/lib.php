@@ -423,7 +423,6 @@ class cache_phpunit_application extends cache_application {
      * @return false|mixed
      */
     public function phpunit_static_acceleration_get($key) {
-        $key = $this->parse_key($key);
         return $this->static_acceleration_get($key);
     }
 }

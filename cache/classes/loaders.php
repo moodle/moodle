@@ -264,7 +264,15 @@ class cache implements cache_loader {
      * @param array $identifiers
      */
     public function set_identifiers(array $identifiers) {
-        $this->definition->set_identifiers($identifiers);
+        if ($this->definition->set_identifiers($identifiers)) {
+            // As static acceleration uses input keys and not parsed keys
+            // if the identifiers are set.
+            $this->staticaccelerationarray = array();
+            if ($this->staticaccelerationsize !== false) {
+                $this->staticaccelerationkeys = array();
+                $this->staticaccelerationcount = 0;
+            }
+        }
     }
 
     /**
@@ -278,18 +286,18 @@ class cache implements cache_loader {
      * @throws coding_exception
      */
     public function get($key, $strictness = IGNORE_MISSING) {
-        // 1. Parse the key.
-        $parsedkey = $this->parse_key($key);
-
-        // 2. Get it from the static acceleration array if we can (only when it is enabled and it has already been requested/set).
+        // 1. Get it from the static acceleration array if we can (only when it is enabled and it has already been requested/set).
         $usesstaticacceleration = $this->use_static_acceleration();
 
         if ($usesstaticacceleration) {
-            $result = $this->static_acceleration_get($parsedkey);
+            $result = $this->static_acceleration_get($key);
             if ($result !== false) {
                 return $result;
             }
         }
+
+        // 2. Parse the key.
+        $parsedkey = $this->parse_key($key);
 
         // 3. Get it from the store. Obviously wasn't in the static acceleration array.
         $result = $this->store->get($parsedkey);
@@ -306,7 +314,7 @@ class cache implements cache_loader {
                 $result = $result->restore_object();
             }
             if ($usesstaticacceleration) {
-                $this->static_acceleration_set($parsedkey, $result);
+                $this->static_acceleration_set($key, $result);
             }
         }
 
@@ -382,7 +390,7 @@ class cache implements cache_loader {
             $parsedkeys[$pkey] = $key;
             $keystofind[$pkey] = $key;
             if ($isusingpersist) {
-                $value = $this->static_acceleration_get($pkey);
+                $value = $this->static_acceleration_get($key);
                 if ($value !== false) {
                     $resultpersist[$pkey] = $value;
                     unset($keystofind[$pkey]);
@@ -406,7 +414,7 @@ class cache implements cache_loader {
                     $value = $value->restore_object();
                 }
                 if ($value !== false && $this->use_static_acceleration()) {
-                    $this->static_acceleration_set($key, $value);
+                    $this->static_acceleration_set($keystofind[$key], $value);
                 }
                 $resultstore[$key] = $value;
             }
@@ -527,7 +535,7 @@ class cache implements cache_loader {
         }
         $parsedkey = $this->parse_key($key);
         if ($usestaticacceleration) {
-            $this->static_acceleration_set($parsedkey, $data);
+            $this->static_acceleration_set($key, $data);
         }
         return $this->store->set($parsedkey, $data);
     }
@@ -651,7 +659,7 @@ class cache implements cache_loader {
                 'value' => $value
             );
             if ($usestaticaccelerationarray) {
-                $this->static_acceleration_set($data[$key]['key'], $value);
+                $this->static_acceleration_set($key, $value);
             }
         }
         $successfullyset = $this->store->set_many($data);
@@ -683,11 +691,12 @@ class cache implements cache_loader {
      * @return bool True if the cache has the requested key, false otherwise.
      */
     public function has($key, $tryloadifpossible = false) {
-        $parsedkey = $this->parse_key($key);
-        if ($this->static_acceleration_has($parsedkey)) {
+        if ($this->static_acceleration_has($key)) {
             // Hoorah, that was easy. It exists in the static acceleration array so we definitely have it.
             return true;
         }
+        $parsedkey = $this->parse_key($key);
+
         if ($this->has_a_ttl() && !$this->store_supports_native_ttl()) {
             // The data has a TTL and the store doesn't support it natively.
             // We must fetch the data and expect a ttl wrapper.
@@ -767,17 +776,13 @@ class cache implements cache_loader {
         }
 
         if ($this->use_static_acceleration()) {
-            $parsedkeys = array();
             foreach ($keys as $id => $key) {
-                $parsedkey = $this->parse_key($key);
-                if ($this->static_acceleration_has($parsedkey)) {
+                if ($this->static_acceleration_has($key)) {
                     return true;
                 }
-                $parsedkeys[] = $parsedkey;
             }
-        } else {
-            $parsedkeys = array_map(array($this, 'parse_key'), $keys);
         }
+        $parsedkeys = array_map(array($this, 'parse_key'), $keys);
         return $this->store->has_any($parsedkeys);
     }
 
@@ -790,12 +795,12 @@ class cache implements cache_loader {
      * @return bool True of success, false otherwise.
      */
     public function delete($key, $recurse = true) {
-        $parsedkey = $this->parse_key($key);
-        $this->static_acceleration_delete($parsedkey);
+        $this->static_acceleration_delete($key);
         if ($recurse && $this->loader !== false) {
             // Delete from the bottom of the stack first.
             $this->loader->delete($key, $recurse);
         }
+        $parsedkey = $this->parse_key($key);
         return $this->store->delete($parsedkey);
     }
 
@@ -808,16 +813,16 @@ class cache implements cache_loader {
      * @return int The number of items successfully deleted.
      */
     public function delete_many(array $keys, $recurse = true) {
-        $parsedkeys = array_map(array($this, 'parse_key'), $keys);
         if ($this->use_static_acceleration()) {
-            foreach ($parsedkeys as $parsedkey) {
-                $this->static_acceleration_delete($parsedkey);
+            foreach ($keys as $key) {
+                $this->static_acceleration_delete($key);
             }
         }
         if ($recurse && $this->loader !== false) {
             // Delete from the bottom of the stack first.
             $this->loader->delete_many($keys, $recurse);
         }
+        $parsedkeys = array_map(array($this, 'parse_key'), $keys);
         return $this->store->delete_many($parsedkeys);
     }
 
@@ -981,13 +986,9 @@ class cache implements cache_loader {
      * @return bool
      */
     protected function static_acceleration_has($key) {
-        // This method of checking if an array was supplied is faster than is_array.
-        if ($key === (array)$key) {
-            $key = $key['key'];
-        }
         // This could be written as a single line, however it has been split because the ttl check is faster than the instanceof
         // and has_expired calls.
-        if (!$this->staticacceleration || !array_key_exists($key, $this->staticaccelerationarray)) {
+        if (!$this->staticacceleration || !isset($this->staticaccelerationarray[$key])) {
             return false;
         }
         if ($this->has_a_ttl() && $this->store_supports_native_ttl()) {
@@ -1017,11 +1018,6 @@ class cache implements cache_loader {
      * @return mixed|false Dereferenced data from the static acceleration array or false if it wasn't there.
      */
     protected function static_acceleration_get($key) {
-        // This method of checking if an array was supplied is faster than is_array.
-        if ($key === (array)$key) {
-            $key = $key['key'];
-        }
-
         if (!$this->staticacceleration || !isset($this->staticaccelerationarray[$key])) {
             $result = false;
         } else {
@@ -1089,10 +1085,6 @@ class cache implements cache_loader {
      * @return bool
      */
     protected function static_acceleration_set($key, $data) {
-        // This method of checking if an array was supplied is faster than is_array.
-        if ($key === (array)$key) {
-            $key = $key['key'];
-        }
         if ($this->staticaccelerationsize !== false && isset($this->staticaccelerationkeys[$key])) {
             $this->staticaccelerationcount--;
             unset($this->staticaccelerationkeys[$key]);
