@@ -37,7 +37,7 @@ define(['jquery', 'core/ajax'], function($, ajax) {
 
             var deferred = $.Deferred();
 
-            if (!localCache[scaleid]) {
+            if (typeof localCache[scaleid] === 'undefined') {
                 ajax.call([{
                     methodname: 'tool_lp_get_scale_values',
                     args: {scaleid : scaleid},

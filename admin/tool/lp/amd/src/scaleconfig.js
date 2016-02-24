@@ -21,8 +21,8 @@
  * @copyright  2015 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/notification', 'core/templates', 'core/ajax', 'tool_lp/dialogue'],
-    function($, notification, templates, ajax, Dialogue) {
+define(['jquery', 'core/notification', 'core/templates', 'core/ajax', 'tool_lp/dialogue', 'tool_lp/scalevalues'],
+    function($, notification, templates, ajax, Dialogue, ModScaleValues) {
 
     /** @var {Array} scalevalues ID and name of the scales. */
     var scalevalues = null;
@@ -145,20 +145,10 @@ define(['jquery', 'core/notification', 'core/templates', 'core/ajax', 'tool_lp/d
      * @return {Promise} A deffered object with the scale values.
      */
     var getScaleValues = function(scaleid) {
-        var deferred = $.Deferred();
-        var promises = ajax.call([{
-            methodname: 'tool_lp_get_scale_values',
-            args: {
-               scaleid: scaleid
-            }
-        }]);
-        promises[0].done(function(result) {
-            scalevalues = result;
-            deferred.resolve(result);
-        }).fail(function(exception) {
-            deferred.reject(exception);
+        return ModScaleValues.get_values(scaleid).then(function(values) {
+            scalevalues = values;
+            return values;
         });
-        return deferred.promise();
     };
 
     /**
