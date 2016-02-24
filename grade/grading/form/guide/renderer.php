@@ -647,21 +647,25 @@ class gradingform_guide_renderer extends plugin_renderer_base {
                 $checked_s2 = $checked;
             }
 
-            $radio = html_writer::tag('input', get_string('showmarkerdesc', 'gradingform_guide'), array('type' => 'radio',
+            $radio1 = html_writer::tag('input', get_string('showmarkerdesc', 'gradingform_guide'), array('type' => 'radio',
                 'name' => 'showmarkerdesc',
                 'value' => "true")+$checked1);
-            $radio .= html_writer::tag('input', get_string('hidemarkerdesc', 'gradingform_guide'), array('type' => 'radio',
+            $radio1 = html_writer::tag('label', $radio1);
+            $radio2 .= html_writer::tag('input', get_string('hidemarkerdesc', 'gradingform_guide'), array('type' => 'radio',
                 'name' => 'showmarkerdesc',
                 'value' => "false")+$checked2);
-            $output .= html_writer::tag('div', $radio, array('class' => 'showmarkerdesc'));
+            $radio2 = html_writer::tag('label', $radio2);
+            $output .= html_writer::tag('div', $radio1 . $radio2, array('class' => 'showmarkerdesc'));
 
-            $radio = html_writer::tag('input', get_string('showstudentdesc', 'gradingform_guide'), array('type' => 'radio',
+            $radio1 = html_writer::tag('input', get_string('showstudentdesc', 'gradingform_guide'), array('type' => 'radio',
                 'name' => 'showstudentdesc',
                 'value' => "true")+$checked_s1);
-            $radio .= html_writer::tag('input', get_string('hidestudentdesc', 'gradingform_guide'), array('type' => 'radio',
+            $radio1 = html_writer::tag('label', $radio1);
+            $radio2 = html_writer::tag('input', get_string('hidestudentdesc', 'gradingform_guide'), array('type' => 'radio',
                 'name' => 'showstudentdesc',
                 'value' => "false")+$checked_s2);
-            $output .= html_writer::tag('div', $radio, array('class' => 'showstudentdesc'));
+            $radio2 = html_writer::tag('label', $radio2);
+            $output .= html_writer::tag('div', $radio1 . $radio2, array('class' => 'showstudentdesc'));
         }
         return $output;
     }
