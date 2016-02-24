@@ -26,6 +26,8 @@ namespace tool_recyclebin;
 
 defined('MOODLE_INTERNAL') || die();
 
+define('TOOL_RECYCLEBIN_COURSECAT_BIN_FILEAREA', 'recyclebin_coursecat');
+
 /**
  * Represents a category's recyclebin.
  *
@@ -33,14 +35,17 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class category extends recyclebin
-{
-    private $_categoryid;
+class category_bin extends base_bin {
+
+    /**
+     * @var int The category id.
+     */
+    protected $_categoryid;
 
     /**
      * Constructor.
      *
-     * @param int $categoryid Category ID.
+     * @param int $categoryid The category id.
      */
     public function __construct($categoryid) {
         $this->_categoryid = $categoryid;
@@ -48,15 +53,18 @@ class category extends recyclebin
 
     /**
      * Is this recyclebin enabled?
+     *
+     * @return bool true if enabled, false if not.
      */
     public static function is_enabled() {
-        return get_config('tool_recyclebin', 'enablecategory');
+        return get_config('tool_recyclebin', 'categorybinenable');
     }
 
     /**
      * Returns an item from the recycle bin.
      *
-     * @param $item int Item ID to retrieve.
+     * @param int $itemid Item ID to retrieve.
+     * @return \stdClass the item.
      */
     public function get_item($itemid) {
         global $DB;
@@ -72,12 +80,14 @@ class category extends recyclebin
 
     /**
      * Returns a list of items in the recycle bin for this course.
+     *
+     * @return array the list of items.
      */
     public function get_items() {
         global $DB;
 
         $items = $DB->get_records('tool_recyclebin_category', array(
-            'category' => $this->_categoryid
+            'categoryid' => $this->_categoryid
         ));
 
         foreach ($items as $item) {
@@ -90,9 +100,7 @@ class category extends recyclebin
     /**
      * Store a course in the recycle bin.
      *
-     * @param $course stdClass Course
-     * @throws \coding_exception
-     * @throws \invalid_dataroot_permissions
+     * @param \stdClass $course Course
      * @throws \moodle_exception
      */
     public function store_item($course) {
@@ -124,22 +132,26 @@ class category extends recyclebin
             throw new \moodle_exception('Failed to backup activity prior to deletion (invalid file).');
         }
 
-        // Make sure our backup dir exists.
-        $bindir = $CFG->dataroot . '/recyclebin';
-        if (!file_exists($bindir)) {
-            make_writable_directory($bindir);
-        }
-
         // Record the activity, get an ID.
-        $binid = $DB->insert_record('tool_recyclebin_category', array(
-            'category' => $course->category,
-            'shortname' => $course->shortname,
-            'fullname' => $course->fullname,
-            'deleted' => time()
-        ));
+        $item = new \stdClass();
+        $item->categoryid = $course->category;
+        $item->shortname = $course->shortname;
+        $item->fullname = $course->fullname;
+        $item->timecreated = time();
+        $binid = $DB->insert_record('tool_recyclebin_category', $item);
+
+        // Create the location we want to copy this file to.
+        $filerecord = array(
+            'contextid' => \context_coursecat::instance($course->category)->id,
+            'component' => 'tool_recyclebin',
+            'filearea' => TOOL_RECYCLEBIN_COURSECAT_BIN_FILEAREA,
+            'itemid' => $binid,
+            'timemodified' => time()
+        );
 
         // Move the file to our own special little place.
-        if (!$file->copy_content_to($bindir . '/course-' . $binid)) {
+        $fs = get_file_storage();
+        if (!$fs->create_file_from_storedfile($filerecord, $file)) {
             // Failed, cleanup first.
             $DB->delete_records('tool_recyclebin_category', array(
                 'id' => $binid
@@ -152,7 +164,7 @@ class category extends recyclebin
         $file->delete();
 
         // Fire event.
-        $event = \tool_recyclebin\event\course_stored::create(array(
+        $event = \tool_recyclebin\event\category_bin_item_created::create(array(
             'objectid' => $binid,
             'context' => \context_coursecat::instance($course->category)
         ));
@@ -162,19 +174,43 @@ class category extends recyclebin
     /**
      * Restore an item from the recycle bin.
      *
-     * @param stdClass $item The item database record
-     * @throws \Exception
-     * @throws \coding_exception
+     * @param \stdClass $item The item database record
      * @throws \moodle_exception
-     * @throws \restore_controller_exception
      */
     public function restore_item($item) {
-        global $CFG;
+        global $CFG, $OUTPUT, $PAGE;
 
         require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
         require_once($CFG->dirroot . '/course/lib.php');
 
         $user = get_admin();
+
+        // Grab the course category context.
+        $context = \context_coursecat::instance($this->_categoryid);
+
+        // Get the backup file.
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($context->id, 'tool_recyclebin', TOOL_RECYCLEBIN_COURSECAT_BIN_FILEAREA, $item->id,
+            'itemid, filepath, filename', false);
+
+        if (empty($files)) {
+            throw new \moodle_exception('Invalid recycle bin item!');
+        }
+
+        if (count($files) > 1) {
+            throw new \moodle_exception('Too many files found!');
+        }
+
+        // Get the backup file.
+        $file = reset($files);
+
+        // Get a temp directory name and create it.
+        $tempdir = \restore_controller::get_tempdir_name($context->id, $user->id);
+        $fulltempdir = make_temp_directory('/backup/' . $tempdir);
+
+        // Extract the backup to tmpdir.
+        $fb = get_file_packer('application/vnd.moodle.backup');
+        $fb->extract_to_pathname($file, $fulltempdir);
 
         // Build a course.
         $course = new \stdClass();
@@ -183,33 +219,15 @@ class category extends recyclebin
         $course->fullname = $item->fullname;
         $course->summary = '';
 
-        // TODO - Maybe handle non-unique shortnames, missing categories, etc?
-
         // Create a new course.
         $course = create_course($course);
         if (!$course) {
             throw new \moodle_exception("Could not create course to restore into.");
         }
 
-        // Get the pathname.
-        $source = $CFG->dataroot . '/recyclebin/course-' . $item->id;
-        if (!file_exists($source)) {
-            throw new \moodle_exception('Invalid recycle bin item!');
-        }
-
-        // Grab the course context.
-        $context = \context_coursecat::instance($this->_categoryid);
-
-        // Grab a tmpdir.
-        $tmpdir = \restore_controller::get_tempdir_name($context->id, $user->id);
-
-        // Extract the backup to tmpdir.
-        $fb = get_file_packer('application/vnd.moodle.backup');
-        $fb->extract_to_pathname($source, $CFG->tempdir . '/backup/' . $tmpdir . '/');
-
         // Define the import.
         $controller = new \restore_controller(
-            $tmpdir,
+            $tempdir,
             $course->id,
             \backup::INTERACTIVE_NO,
             \backup::MODE_GENERAL,
@@ -221,13 +239,20 @@ class category extends recyclebin
         if (!$controller->execute_precheck()) {
             $results = $controller->get_precheck_results();
 
-            if (isset($results['errors'])) {
-                debugging(var_export($results, true));
-                throw new \moodle_exception("Restore failed.");
-            }
+            // Check if errors have been found.
+            if (!empty($results['errors'])) {
+                // Delete the temporary file we created.
+                fulldelete($fulltempdir);
 
-            if (isset($results['warnings'])) {
-                debugging(var_export($results['warnings'], true));
+                // Delete the course we created.
+                delete_course($course, false);
+
+                echo $OUTPUT->header();
+                $backuprenderer = $PAGE->get_renderer('core', 'backup');
+                echo $backuprenderer->precheck_notices($results);
+                echo $OUTPUT->continue_button(new \moodle_url('/course/index.php', array('categoryid' => $this->_categoryid)));
+                echo $OUTPUT->footer();
+                exit();
             }
         }
 
@@ -235,7 +260,7 @@ class category extends recyclebin
         $controller->execute_plan();
 
         // Fire event.
-        $event = \tool_recyclebin\event\course_restored::create(array(
+        $event = \tool_recyclebin\event\category_bin_item_restored::create(array(
             'objectid' => $item->id,
             'context' => $context
         ));
@@ -243,67 +268,70 @@ class category extends recyclebin
         $event->trigger();
 
         // Cleanup.
-        $this->delete_item($item, true);
+        fulldelete($fulltempdir);
+        $this->delete_item($item);
     }
 
     /**
      * Delete an item from the recycle bin.
      *
-     * @param stdClass $item The item database record
-     * @param boolean $noevent Whether or not to fire a purged event.
+     * @param \stdClass $item The item database record
      * @throws \coding_exception
      */
-    public function delete_item($item, $noevent = false) {
-        global $CFG, $DB;
+    public function delete_item($item) {
+        global $DB;
 
-        // Delete the file.
-        unlink($CFG->dataroot . '/recyclebin/course-' . $item->id);
+        // Grab the course category context.
+        $context = \context_coursecat::instance($this->_categoryid);
+
+        // Delete the files.
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($context->id, 'tool_recyclebin', TOOL_RECYCLEBIN_COURSECAT_BIN_FILEAREA, $item->id);
+        foreach ($files as $file) {
+            $file->delete();
+        }
 
         // Delete the record.
         $DB->delete_records('tool_recyclebin_category', array(
             'id' => $item->id
         ));
 
-        if ($noevent) {
-            return;
-        }
-
         // Fire event.
-        $event = \tool_recyclebin\event\course_purged::create(array(
+        $event = \tool_recyclebin\event\category_bin_item_deleted::create(array(
             'objectid' => $item->id,
-            'context' => \context_coursecat::instance($item->category)
+            'context' => \context_coursecat::instance($item->categoryid)
         ));
         $event->add_record_snapshot('tool_recyclebin_category', $item);
         $event->trigger();
     }
 
     /**
-     * Can we view this item?
+     * Can we view items in this recycle bin?
      *
-     * @param stdClass $item The item database record
+     * @return bool returns true if they can view, false if not
      */
-    public function can_view($item) {
-        $context = \context_coursecat::instance($item->category);
-        return has_capability('tool/recyclebin:view_course', $context);
+    public function can_view() {
+        $context = \context_coursecat::instance($this->_categoryid);
+        return has_capability('tool/recyclebin:viewitems', $context);
     }
 
     /**
-     * Can we restore this?
+     * Can we restore items in this recycle bin?
      *
-     * @param stdClass $item The item database record
+     * @return bool returns true if they can restore, false if not
      */
-    public function can_restore($item) {
-        $context = \context_coursecat::instance($item->category);
-        return has_capability('tool/recyclebin:restore_course', $context);
+    public function can_restore() {
+        $context = \context_coursecat::instance($this->_categoryid);
+        return has_capability('tool/recyclebin:restoreitems', $context);
     }
 
     /**
-     * Can we delete this?
+     * Can we delete items in this recycle bin?
      *
-     * @param stdClass $item The item database record
+     * @return bool returns true if they can delete, false if not
      */
-    public function can_delete($item) {
-        $context = \context_coursecat::instance($item->category);
-        return has_capability('tool/recyclebin:delete_course', $context);
+    public function can_delete() {
+        $context = \context_coursecat::instance($this->_categoryid);
+        return has_capability('tool/recyclebin:deleteitems', $context);
     }
 }

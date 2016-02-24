@@ -16,9 +16,12 @@ Feature: Backup user data
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following config values are set as admin:
+      | coursebinenable | 1 | tool_recyclebin |
+      | autohide | 0 | tool_recyclebin |
 
   @javascript
-  Scenario: Delete and restore a quiz.
+  Scenario: Delete and restore a quiz with user data
     Given I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
@@ -33,8 +36,8 @@ Feature: Backup user data
       | Feedback for the response 'True'.  | So you think it is true                 |
       | Feedback for the response 'False'. | So you think it is false                |
     And I add a "True/False" question to the "Quiz 1" quiz with:
-      | Question name                      | TF2                          |
-      | Question text                      | Second question               |
+      | Question name                      | TF2                                     |
+      | Question text                      | Second question                         |
       | General feedback                   | Thank you, this is the general feedback |
       | Correct answer                     | False                                   |
       | Feedback for the response 'True'.  | So you think it is true                 |
@@ -46,20 +49,21 @@ Feature: Backup user data
     And I press "Attempt quiz now"
     And I click on "True" "radio" in the "First question" "question"
     And I click on "False" "radio" in the "Second question" "question"
-    And I press "Next"
+    And I press "Finish attempt"
     And I press "Submit all and finish"
     And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
-    Then I should see "5.00 out of 10.00"
-    Given I log out
+    And I should see "5.00 out of 10.00"
+    And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
     And I delete "Quiz 1" activity
     And I follow "Recycle bin"
+    And I should see "Quiz 1"
     And I follow "Restore"
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
-    And I follow "Grades"
+    When I navigate to "Grades" node in "Course administration"
     Then "Quiz 1" row "Grade" column of "user-grade" table should contain "5"
     And "Quiz 1" row "Percentage" column of "user-grade" table should contain "50"

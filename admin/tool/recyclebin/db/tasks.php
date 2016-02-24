@@ -24,7 +24,7 @@
 
 $tasks = array(
     array(
-        'classname' => 'tool_recyclebin\task\cleanup_activities',
+        'classname' => 'tool_recyclebin\task\cleanup_course_bin',
         'blocking' => 0,
         'minute' => '*/30',
         'hour' => '*',
@@ -33,7 +33,7 @@ $tasks = array(
         'month' => '*'
     ),
     array(
-        'classname' => 'tool_recyclebin\task\cleanup_courses',
+        'classname' => 'tool_recyclebin\task\cleanup_category_bin',
         'blocking' => 0,
         'minute' => '*/30',
         'hour' => '*',

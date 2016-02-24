@@ -31,24 +31,42 @@ $action = optional_param('action', null, PARAM_ALPHA);
 $context = context::instance_by_id($contextid, MUST_EXIST);
 $PAGE->set_context($context);
 
-$description = '';
-
 // We could be a course or a category.
 switch ($context->contextlevel) {
-    case \CONTEXT_COURSE:
+    case CONTEXT_COURSE:
         require_login($context->instanceid);
-        require_capability('tool/recyclebin:view_item', $context);
 
-        $recyclebin = new \tool_recyclebin\course($context->instanceid);
-        $description = get_string('description_course', 'tool_recyclebin');
+        $recyclebin = new \tool_recyclebin\course_bin($context->instanceid);
+        if (!$recyclebin->can_view()) {
+            throw new required_capability_exception($context, 'tool/recyclebin:viewitems', 'nopermissions', '');
+        }
+
+        $PAGE->set_pagelayout('incourse');
+        // Set the $PAGE heading - this is also the same as the h2 heading.
+        $heading = format_string($COURSE->fullname, true, array('context' => $context)) . ': ' .
+            get_string('pluginname', 'tool_recyclebin');
+        $PAGE->set_heading($heading);
+
+        // Get the expiry to use later.
+        $expiry = get_config('tool_recyclebin', 'coursebinexpiry');
     break;
 
-    case \CONTEXT_COURSECAT:
+    case CONTEXT_COURSECAT:
         require_login();
-        require_capability('tool/recyclebin:view_course', $context);
 
-        $recyclebin = new \tool_recyclebin\category($context->instanceid);
-        $description = get_string('description_coursecat', 'tool_recyclebin');
+        $recyclebin = new \tool_recyclebin\category_bin($context->instanceid);
+        if (!$recyclebin->can_view()) {
+            throw new required_capability_exception($context, 'tool/recyclebin:viewitems', 'nopermissions', '');
+        }
+
+        $PAGE->set_pagelayout('admin');
+        // Set the $PAGE heading.
+        $PAGE->set_heading($COURSE->fullname);
+        // The h2 heading on the page is going to be different than the $PAGE heading.
+        $heading = $context->get_context_name() . ': ' . get_string('pluginname', 'tool_recyclebin');
+
+        // Get the expiry to use later.
+        $expiry = get_config('tool_recyclebin', 'categorybinexpiry');
     break;
 
     default:
@@ -79,7 +97,7 @@ if (!empty($action)) {
     switch ($action) {
         // Restore it.
         case 'restore':
-            if ($recyclebin->can_restore($item)) {
+            if ($recyclebin->can_restore()) {
                 $recyclebin->restore_item($item);
                 redirect($PAGE->url, get_string('alertrestored', 'tool_recyclebin', $item), 2);
             } else {
@@ -89,7 +107,7 @@ if (!empty($action)) {
 
         // Delete it.
         case 'delete':
-            if ($recyclebin->can_delete($item)) {
+            if ($recyclebin->can_delete()) {
                 $recyclebin->delete_item($item);
                 redirect($PAGE->url, get_string('alertdeleted', 'tool_recyclebin', $item), 2);
             } else {
@@ -112,32 +130,31 @@ $goback .= html_writer::end_tag('div');
 
 // Output header.
 echo $OUTPUT->header();
-echo $OUTPUT->heading($PAGE->title);
+echo $OUTPUT->heading($heading);
 
 // Grab our items, check there is actually something to display.
 $items = $recyclebin->get_items();
 
 // Nothing to show? Bail out early.
 if (empty($items)) {
-    echo $OUTPUT->box(get_string('emptybin', 'tool_recyclebin'));
+    echo $OUTPUT->box(get_string('noitemsinbin', 'tool_recyclebin'));
     echo $goback;
     echo $OUTPUT->footer();
     die;
 }
 
 // Start with a description.
-$expiry = get_config('tool_recyclebin', 'expiry');
 if ($expiry > 0) {
-    $description .= ' ' . get_string('descriptionexpiry', 'tool_recyclebin', $expiry);
+    $expirydisplay = format_time($expiry);
+    echo '<div class=\'alert\'>' . get_string('deleteexpirywarning', 'tool_recyclebin', $expirydisplay) . '</div>';
 }
-echo $OUTPUT->box($description, 'generalbox descriptionbox');
 
 // Define columns and headers.
-$firstcolstr = $context->contextlevel == \CONTEXT_COURSE ? 'activity' : 'course';
+$firstcolstr = $context->contextlevel == CONTEXT_COURSE ? 'activity' : 'course';
 $columns = array($firstcolstr, 'date', 'restore', 'delete');
 $headers = array(
     get_string($firstcolstr),
-    get_string('deleted', 'tool_recyclebin'),
+    get_string('datedeleted', 'tool_recyclebin'),
     get_string('restore'),
     get_string('delete')
 );
@@ -145,6 +162,8 @@ $headers = array(
 // Define a table.
 $table = new flexible_table('recyclebin');
 $table->define_columns($columns);
+$table->column_style('restore', 'text-align', 'center');
+$table->column_style('delete', 'text-align', 'center');
 $table->define_headers($headers);
 $table->define_baseurl($PAGE->url);
 $table->set_attribute('id', 'recycle-bin-table');
@@ -152,18 +171,19 @@ $table->setup();
 
 // Cache a list of modules.
 $modules = null;
-if ($context->contextlevel == \CONTEXT_COURSE) {
+if ($context->contextlevel == CONTEXT_COURSE) {
     $modules = $DB->get_records('modules');
 }
 
 // Add all the items to the table.
 $showempty = false;
+$canrestore = $recyclebin->can_restore();
 foreach ($items as $item) {
     $row = array();
 
     // Build item name.
     $name = $item->name;
-    if ($context->contextlevel == \CONTEXT_COURSE) {
+    if ($context->contextlevel == CONTEXT_COURSE) {
         if (isset($modules[$item->module])) {
             $mod = $modules[$item->module];
             $modname = get_string('modulename', $mod->name);
@@ -172,11 +192,11 @@ foreach ($items as $item) {
     }
 
     $row[] = $name;
-    $row[] = userdate($item->deleted);
+    $row[] = userdate($item->timecreated);
 
     // Build restore link.
-    if ($recyclebin->can_restore($item) && ($context->contextlevel == \CONTEXT_COURSECAT || isset($modules[$item->module]))) {
-        $restoreurl = new \moodle_url($PAGE->url, array(
+    if ($canrestore && ($context->contextlevel == CONTEXT_COURSECAT || isset($modules[$item->module]))) {
+        $restoreurl = new moodle_url($PAGE->url, array(
             'contextid' => $contextid,
             'itemid' => $item->id,
             'action' => 'restore',
@@ -191,17 +211,16 @@ foreach ($items as $item) {
     }
 
     // Build delete link.
-    if ($recyclebin->can_delete($item)) {
+    if ($recyclebin->can_delete()) {
         $showempty = true;
-        $delete = new \moodle_url($PAGE->url, array(
+        $delete = new moodle_url($PAGE->url, array(
             'contextid' => $contextid,
             'itemid' => $item->id,
             'action' => 'delete',
             'sesskey' => sesskey()
         ));
-        $delete = $OUTPUT->action_icon($delete, new pix_icon('t/delete',
-                get_string('delete'), '', array('class' => 'iconsmall')), null,
-                array('class' => 'action-icon recycle-bin-delete'));
+        $deleteaction = new confirm_action(get_string('deleteconfirm', 'tool_recyclebin'));
+        $delete = $OUTPUT->action_icon($delete, new pix_icon('t/delete', get_string('delete')), $deleteaction);
 
         $row[] = $delete;
     } else {
@@ -217,22 +236,19 @@ $table->finish_output();
 
 // Empty recyclebin link.
 if ($showempty) {
-    $empty = new \moodle_url($PAGE->url, array(
+    $emptylink = new moodle_url($PAGE->url, array(
         'contextid' => $contextid,
         'action' => 'empty',
         'sesskey' => sesskey()
     ));
-
-    echo $OUTPUT->single_button($empty, get_string('empty', 'tool_recyclebin'), 'post', array(
-        'class' => 'singlebutton recycle-bin-delete-all'
-    ));
+    $emptyaction = new confirm_action(get_string('deleteallconfirm', 'tool_recyclebin'));
+    echo $OUTPUT->action_link($emptylink, get_string('deleteall', 'tool_recyclebin'), $emptyaction);
 }
 
 echo $goback;
 
 // Confirmation JS.
-$PAGE->requires->strings_for_js(array('emptyconfirm', 'deleteconfirm'), 'tool_recyclebin');
-$PAGE->requires->js_init_call('M.tool_recyclebin.init');
+$PAGE->requires->strings_for_js(array('deleteallconfirm', 'deleteconfirm'), 'tool_recyclebin');
 
 // Output footer.
 echo $OUTPUT->footer();

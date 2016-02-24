@@ -30,68 +30,38 @@ if ($hassiteconfig) {
     $settings = new admin_settingpage('tool_recyclebin', get_string('pluginname', 'tool_recyclebin'));
     $ADMIN->add('tools', $settings);
 
-    $lifetimes = array(
-        0    => new lang_string('neverdelete', 'tool_recyclebin'),
-        1000 => new lang_string('numdays', '', 1000),
-        365  => new lang_string('numdays', '', 365),
-        180  => new lang_string('numdays', '', 180),
-        150  => new lang_string('numdays', '', 150),
-        120  => new lang_string('numdays', '', 120),
-        90   => new lang_string('numdays', '', 90),
-        60   => new lang_string('numdays', '', 60),
-        35   => new lang_string('numdays', '', 35),
-        21   => new lang_string('numdays', '', 21),
-        14   => new lang_string('numdays', '', 14),
-        10   => new lang_string('numdays', '', 10),
-        5    => new lang_string('numdays', '', 5),
-        2    => new lang_string('numdays', '', 2)
-    );
-
     $settings->add(new admin_setting_configcheckbox(
-        'tool_recyclebin/enablecourse',
-        new lang_string('enablecourse', 'tool_recyclebin'),
-        new lang_string('enablecourse_desc', 'tool_recyclebin'),
+        'tool_recyclebin/coursebinenable',
+        new lang_string('coursebinenable', 'tool_recyclebin'),
+        '',
         1
     ));
 
-    $settings->add(new admin_setting_configselect(
-        'tool_recyclebin/expiry',
-        new lang_string('expiry', 'tool_recyclebin'),
-        new lang_string('expiry_desc', 'tool_recyclebin'),
-        0,
-        $lifetimes
+    $settings->add(new admin_setting_configduration(
+        'tool_recyclebin/coursebinexpiry',
+        new lang_string('coursebinexpiry', 'tool_recyclebin'),
+        new lang_string('coursebinexpiry_desc', 'tool_recyclebin'),
+        WEEKSECS
     ));
 
-
     $settings->add(new admin_setting_configcheckbox(
-        'tool_recyclebin/enablecategory',
-        new lang_string('enablecategory', 'tool_recyclebin'),
-        new lang_string('enablecategory_desc', 'tool_recyclebin'),
+        'tool_recyclebin/categorybinenable',
+        new lang_string('categorybinenable', 'tool_recyclebin'),
+        '',
         1
     ));
 
-    $settings->add(new admin_setting_configselect(
-        'tool_recyclebin/course_expiry',
-        new lang_string('course_expiry', 'tool_recyclebin'),
-        new lang_string('course_expiry_desc', 'tool_recyclebin'),
-        0,
-        $lifetimes
+    $settings->add(new admin_setting_configduration(
+        'tool_recyclebin/categorybinexpiry',
+        new lang_string('categorybinexpiry', 'tool_recyclebin'),
+        new lang_string('categorybinexpiry_desc', 'tool_recyclebin'),
+        WEEKSECS
     ));
-
-    unset($lifetimes);
 
     $settings->add(new admin_setting_configcheckbox(
         'tool_recyclebin/autohide',
         new lang_string('autohide', 'tool_recyclebin'),
         new lang_string('autohide_desc', 'tool_recyclebin'),
-        0
-    ));
-
-    $settings->add(new admin_setting_configmultiselect(
-        'tool_recyclebin/protectedmods',
-        new lang_string('protectedmods', 'tool_recyclebin'),
-        new lang_string('protectedmods_desc', 'tool_recyclebin'),
-        array(),
-        $DB->get_records_menu('modules', array('visible' => 1), 'name ASC', 'id, name')
+        1
     ));
 }

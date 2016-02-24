@@ -15,51 +15,52 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Recycle bin cron task.
+ * Recycle bin events.
  *
  * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_recyclebin\task;
+namespace tool_recyclebin\event;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
- * This task deletes expired category recyclebin items.
+ * Event class.
  *
  * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cleanup_courses extends \core\task\scheduled_task {
+class course_bin_item_deleted extends \core\event\base {
+
     /**
-     * Task name.
+     * Init method.
      */
-    public function get_name() {
-        return get_string('cleancategoryrecyclebin', 'tool_recyclebin');
+    protected function init() {
+        $this->data['objecttable'] = 'tool_recyclebin_course';
+        $this->data['crud'] = 'd';
+        $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
     /**
-     * Delete all expired items.
+     * Returns localised general event name.
+     *
+     * @return string
      */
-    public function execute() {
-        global $DB;
+    public static function get_name() {
+        return get_string('eventitemdeleted', 'tool_recyclebin');
+    }
 
-        // Delete courses.
-        $lifetime = get_config('tool_recyclebin', 'course_expiry');
-        if (!\tool_recyclebin\category::is_enabled() || $lifetime <= 0) {
-            return true;
-        }
-
-        $items = $DB->get_recordset_select('tool_recyclebin_category', 'deleted < ?', array(time() - (86400 * $lifetime)));
-        foreach ($items as $item) {
-            mtrace("[RecycleBin] Deleting course {$item->id}...");
-
-            $bin = new \tool_recyclebin\category($item->category);
-            $bin->delete_item($item);
-        }
-        $items->close();
-
-        return true;
+    /**
+     * Returns description of what happened.
+     *
+     * @return string
+     */
+    public function get_description() {
+        return get_string('eventitemdeleted_desc', 'tool_recyclebin', array(
+            'objectid' => $this->objectid
+        ));
     }
 }

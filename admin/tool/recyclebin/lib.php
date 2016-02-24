@@ -28,27 +28,28 @@ defined('MOODLE_INTERNAL') || die;
  * Adds a recycle bin link to the course admin menu.
  *
  * @param navigation_node $navigation The navigation node to extend
- * @param stdClass        $course     The course to object for the tool
- * @param context         $context    The context of the course
+ * @param stdClass $course The course to object for the tool
+ * @param context $context The context of the course
+ * @return void|null return null if we don't want to display the node.
  */
 function tool_recyclebin_extend_navigation_course($navigation, $course, $context) {
     global $PAGE;
 
-    $url = null;
-    $bin = null;
-    $settingnode = null;
-
     // Only add this settings item on non-site course pages.
-    if (!$PAGE->course || $PAGE->course->id == SITEID || !\tool_recyclebin\course::is_enabled()) {
+    if (!$PAGE->course || $PAGE->course->id == SITEID || !\tool_recyclebin\course_bin::is_enabled()) {
         return null;
     }
+
+    $coursebin = new \tool_recyclebin\course_bin($context->instanceid);
 
     // Check we can view the recycle bin.
-    if (!has_capability('tool/recyclebin:view_item', $context)) {
+    if (!$coursebin->can_view()) {
         return null;
     }
 
-    $bin = new \tool_recyclebin\course($context->instanceid);
+    $url = null;
+    $settingnode = null;
+
     $url = new moodle_url('/admin/tool/recyclebin/index.php', array(
         'contextid' => $context->id
     ));
@@ -56,7 +57,7 @@ function tool_recyclebin_extend_navigation_course($navigation, $course, $context
     // If we are set to auto-hide, check the number of items.
     $autohide = get_config('tool_recyclebin', 'autohide');
     if ($autohide) {
-        $items = $bin->get_items();
+        $items = $coursebin->get_items();
         if (empty($items)) {
             return null;
         }
@@ -71,7 +72,7 @@ function tool_recyclebin_extend_navigation_course($navigation, $course, $context
         navigation_node::NODETYPE_LEAF,
         'tool_recyclebin',
         'tool_recyclebin',
-        new pix_icon('e/cleanup_messy_code', $pluginname)
+        new pix_icon('trash', $pluginname, 'tool_recyclebin')
     );
 
     if ($PAGE->url->compare($url, URL_MATCH_BASE)) {
@@ -85,22 +86,28 @@ function tool_recyclebin_extend_navigation_course($navigation, $course, $context
  * Adds a recycle bin link to the course admin menu.
  *
  * @param navigation_node $navigation The navigation node to extend
- * @param context         $context    The context of the course
+ * @param context $context The context of the course
+ * @return void|null return null if we don't want to display the node.
  */
 function tool_recyclebin_extend_navigation_category_settings($navigation, $context) {
     global $PAGE;
 
-    $url = null;
-    $bin = null;
-    $settingnode = null;
-
-    // Check we can view the recycle bin.
-    if (!has_capability('tool/recyclebin:view_course', $context) || !\tool_recyclebin\category::is_enabled()) {
+    // Check if it is enabled.
+    if (!\tool_recyclebin\category_bin::is_enabled()) {
         return null;
     }
 
+    $categorybin = new \tool_recyclebin\category_bin($context->instanceid);
+
+    // Check we can view the recycle bin.
+    if (!$categorybin->can_view()) {
+        return null;
+    }
+
+    $url = null;
+    $settingnode = null;
+
     // Add a link to the category recyclebin.
-    $bin = new \tool_recyclebin\category($context->instanceid);
     $url = new moodle_url('/admin/tool/recyclebin/index.php', array(
         'contextid' => $context->id
     ));
@@ -108,7 +115,7 @@ function tool_recyclebin_extend_navigation_category_settings($navigation, $conte
     // If we are set to auto-hide, check the number of items.
     $autohide = get_config('tool_recyclebin', 'autohide');
     if ($autohide) {
-        $items = $bin->get_items();
+        $items = $categorybin->get_items();
         if (empty($items)) {
             return null;
         }
@@ -123,7 +130,7 @@ function tool_recyclebin_extend_navigation_category_settings($navigation, $conte
         navigation_node::NODETYPE_LEAF,
         'tool_recyclebin',
         'tool_recyclebin',
-        new pix_icon('e/cleanup_messy_code', $pluginname)
+        new pix_icon('trash', $pluginname, 'tool_recyclebin')
     );
 
     if ($PAGE->url->compare($url, URL_MATCH_BASE)) {
@@ -139,9 +146,9 @@ function tool_recyclebin_extend_navigation_category_settings($navigation, $conte
  * @param \stdClass $cm The course module record.
  */
 function tool_recyclebin_pre_course_module_delete($cm) {
-    if (\tool_recyclebin\course::is_enabled()) {
-        $recyclebin = new \tool_recyclebin\course($cm->course);
-        $recyclebin->store_item($cm);
+    if (\tool_recyclebin\course_bin::is_enabled()) {
+        $coursebin = new \tool_recyclebin\course_bin($cm->course);
+        $coursebin->store_item($cm);
     }
 }
 
@@ -151,8 +158,25 @@ function tool_recyclebin_pre_course_module_delete($cm) {
  * @param \stdClass $course The course record.
  */
 function tool_recyclebin_pre_course_delete($course) {
-    if (\tool_recyclebin\category::is_enabled()) {
-        $recyclebin = new \tool_recyclebin\category($course->category);
-        $recyclebin->store_item($course);
+    // Delete all the items in the course recycle bin, regardless if it enabled or not.
+    // It may have been enabled, then disabled later on, so may still have content.
+    $coursebin = new \tool_recyclebin\course_bin($course->id);
+    $coursebin->delete_all_items();
+
+    if (\tool_recyclebin\category_bin::is_enabled()) {
+        $categorybin = new \tool_recyclebin\category_bin($course->category);
+        $categorybin->store_item($course);
     }
+}
+
+/**
+ * Hook called before we delete a category.
+ *
+ * @param \stdClass $category The category record.
+ */
+function tool_recyclebin_pre_course_category_delete($category) {
+    // Delete all the items in the category recycle bin, regardless if it enabled or not.
+    // It may have been enabled, then disabled later on, so may still have content.
+    $categorybin = new \tool_recyclebin\category_bin($category->id);
+    $categorybin->delete_all_items();
 }

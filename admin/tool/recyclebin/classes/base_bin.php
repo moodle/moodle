@@ -33,8 +33,8 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class recyclebin
-{
+abstract class base_bin {
+
     /**
      * Is this recyclebin enabled?
      */
@@ -45,7 +45,7 @@ abstract class recyclebin
     /**
      * Returns an item from the recycle bin.
      *
-     * @param $item int Item ID to retrieve.
+     * @param int $itemid Item ID to retrieve.
      */
     public abstract function get_item($itemid);
 
@@ -57,32 +57,23 @@ abstract class recyclebin
     /**
      * Store an item in this recycle bin.
      *
-     * @param $item stdClass Item to store.
-     * @throws \coding_exception
-     * @throws \invalid_dataroot_permissions
-     * @throws \moodle_exception
+     * @param \stdClass $item Item to store.
      */
     public abstract function store_item($item);
 
     /**
      * Restore an item from the recycle bin.
      *
-     * @param stdClass $item The item database record
-     * @throws \Exception
-     * @throws \coding_exception
-     * @throws \moodle_exception
-     * @throws \restore_controller_exception
+     * @param \stdClass $item The item database record
      */
     public abstract function restore_item($item);
 
     /**
      * Delete an item from the recycle bin.
      *
-     * @param stdClass $item The item database record
-     * @param boolean $noevent Whether or not to fire a purged event.
-     * @throws \coding_exception
+     * @param \stdClass $item The item database record
      */
-    public abstract function delete_item($item, $noevent = false);
+    public abstract function delete_item($item);
 
     /**
      * Empty the recycle bin.
@@ -91,30 +82,24 @@ abstract class recyclebin
         // Cleanup all items.
         $items = $this->get_items();
         foreach ($items as $item) {
-            if ($this->can_delete($item)) {
+            if ($this->can_delete()) {
                 $this->delete_item($item);
             }
         }
     }
 
     /**
-     * Can we view this?
-     *
-     * @param stdClass $item The item database record
+     * Can we view items in this recycle bin?
      */
-    public abstract function can_view($item);
+    public abstract function can_view();
 
     /**
-     * Can we restore this?
-     *
-     * @param stdClass $item The item database record
+     * Can we restore items in this recycle bin?
      */
-    public abstract function can_restore($item);
+    public abstract function can_restore();
 
     /**
      * Can we delete this?
-     *
-     * @param stdClass $item The item database record
      */
-    public abstract function can_delete($item);
+    public abstract function can_delete();
 }
