@@ -51,9 +51,9 @@ class tool_recyclebin_course_tests extends \advanced_testcase
     }
 
     /**
-     * Run a bunch of tests to make sure we capture mods.
+     * Check that our hook is called when an activity is deleted.
      */
-    public function test_observer() {
+    public function test_hook() {
         global $DB;
 
         $this->assertEquals($this->before + 1, $DB->count_records('course_modules'));

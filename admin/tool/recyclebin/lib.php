@@ -132,3 +132,27 @@ function tool_recyclebin_extend_navigation_category_settings($navigation, $conte
 
     $navigation->add_node($node);
 }
+
+/**
+ * Hook called before we delete a course module.
+ *
+ * @param \stdClass $cm The course module record.
+ */
+function tool_recyclebin_pre_course_module_delete($cm) {
+    if (\tool_recyclebin\course::is_enabled()) {
+        $recyclebin = new \tool_recyclebin\course($cm->course);
+        $recyclebin->store_item($cm);
+    }
+}
+
+/**
+ * Hook called before we delete a course.
+ *
+ * @param \stdClass $course The course record.
+ */
+function tool_recyclebin_pre_course_delete($course) {
+    if (\tool_recyclebin\category::is_enabled()) {
+        $recyclebin = new \tool_recyclebin\category($course->category);
+        $recyclebin->store_item($course);
+    }
+}
