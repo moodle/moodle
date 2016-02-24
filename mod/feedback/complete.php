@@ -75,23 +75,22 @@ if ($gopage < 0 AND !$savevalues) {
     $gonextpage = $gopreviouspage = false;
 }
 
-if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-    print_error('invalidcoursemodule');
-}
-
-if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-    print_error('coursemisconf');
-}
-
-if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-    print_error('invalidcoursemodule');
-}
+list($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
+$feedback = $DB->get_record("feedback", array("id" => $cm->instance), '*', MUST_EXIST);
 
 $context = context_module::instance($cm->id);
 
 $feedback_complete_cap = false;
 
 if (has_capability('mod/feedback:complete', $context)) {
+    $feedback_complete_cap = true;
+}
+
+if (!empty($CFG->feedback_allowfullanonymous)
+        AND $course->id == SITEID
+        AND $feedback->anonymous == FEEDBACK_ANONYMOUS_YES
+        AND (!isloggedin() OR isguestuser())) {
+    // Guests are allowed to complete fully anonymous feedback without having 'mod/feedback:complete' capability.
     $feedback_complete_cap = true;
 }
 
@@ -110,19 +109,8 @@ if ($course->id == SITEID AND !has_capability('mod/feedback:edititems', $context
     }
 }
 
-if ($feedback->anonymous != FEEDBACK_ANONYMOUS_YES) {
-    if ($course->id == SITEID) {
-        require_login($course, true);
-    } else {
-        require_login($course, true, $cm);
-    }
-} else {
-    if ($course->id == SITEID) {
-        require_course_login($course, true);
-    } else {
-        require_course_login($course, true, $cm);
-    }
-}
+require_course_login($course, true, $cm);
+$PAGE->set_activity_record($feedback);
 
 //check whether the given courseid exists
 if ($courseid AND $courseid != SITEID) {
@@ -140,7 +128,9 @@ if (!$feedback_complete_cap) {
 
 // Mark activity viewed for completion-tracking
 $completion = new completion_info($course);
-$completion->set_module_viewed($cm);
+if (isloggedin() && !isguestuser()) {
+    $completion->set_module_viewed($cm);
+}
 
 /// Print the page header
 $strfeedbacks = get_string("modulenameplural", "feedback");
@@ -157,22 +147,6 @@ $PAGE->set_url('/mod/feedback/complete.php', $urlparams);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
 echo $OUTPUT->header();
-
-//ishidden check.
-//feedback in courses
-if ((empty($cm->visible) AND
-        !has_capability('moodle/course:viewhiddenactivities', $context)) AND
-        $course->id != SITEID) {
-    notice(get_string("activityiscurrentlyhidden"));
-}
-
-//ishidden check.
-//feedback on mainsite
-if ((empty($cm->visible) AND
-        !has_capability('moodle/course:viewhiddenactivities', $context)) AND
-        $courseid == SITEID) {
-    notice(get_string("activityiscurrentlyhidden"));
-}
 
 //check, if the feedback is open (timeopen, timeclose)
 $checktime = time();
@@ -207,7 +181,12 @@ if ($feedback_can_submit) {
         // Check if all required items have a value.
         if (feedback_check_values($startitempos, $lastitempos)) {
             $userid = $USER->id; //arb
-            if ($completedid = feedback_save_values($USER->id, true)) {
+            if (isloggedin() && !isguestuser()) {
+                $completedid = feedback_save_values($USER->id, true);
+            } else {
+                $completedid = feedback_save_guest_values(sesskey());
+            }
+            if ($completedid) {
                 if (!$gonextpage AND !$gopreviouspage) {
                     $preservevalues = false;// It can be stored.
                 }
@@ -260,17 +239,19 @@ if ($feedback_can_submit) {
                 } else {
                     feedback_send_email_anonym($cm, $feedback, $course, $userid);
                 }
-                //tracking the submit
-                $tracking = new stdClass();
-                $tracking->userid = $USER->id;
-                $tracking->feedback = $feedback->id;
-                $tracking->completed = $new_completed_id;
-                $DB->insert_record('feedback_tracking', $tracking);
+                if (isloggedin() && !isguestuser()) {
+                    // Tracking the submit.
+                    $tracking = new stdClass();
+                    $tracking->userid = $USER->id;
+                    $tracking->feedback = $feedback->id;
+                    $tracking->completed = $new_completed_id;
+                    $DB->insert_record('feedback_tracking', $tracking);
+                }
                 unset($SESSION->feedback->is_started);
 
                 // Update completion state
                 $completion = new completion_info($course);
-                if ($completion->is_enabled($cm) && $feedback->completionsubmit) {
+                if (isloggedin() && !isguestuser() && $completion->is_enabled($cm) && $feedback->completionsubmit) {
                     $completion->update_state($cm, COMPLETION_COMPLETE);
                 }
 
@@ -326,8 +307,10 @@ if ($feedback_can_submit) {
                 $feedbackcompletedtmp = feedback_set_tmp_values($feedbackcompleted);
             }
         }
-    } else {
+    } else if (isloggedin() && !isguestuser()) {
         $feedbackcompletedtmp = feedback_get_current_completed($feedback->id, true, $courseid);
+    } else {
+        $feedbackcompletedtmp = feedback_get_current_completed($feedback->id, true, $courseid, sesskey());
     }
 
     /// Print the main part of the page
@@ -339,19 +322,6 @@ if ($feedback_can_submit) {
         $analysisurl->param('courseid', $courseid);
     }
     echo $OUTPUT->heading(format_string($feedback->name));
-
-    if ( (intval($feedback->publish_stats) == 1) AND
-            ( has_capability('mod/feedback:viewanalysepage', $context)) AND
-            !( has_capability('mod/feedback:viewreports', $context)) ) {
-
-        $params = array('userid' => $USER->id, 'feedback' => $feedback->id);
-        if ($multiple_count = $DB->count_records('feedback_tracking', $params)) {
-            echo $OUTPUT->box_start('mdl-align');
-            echo '<a href="'.$analysisurl->out().'">';
-            echo get_string('completed_feedbacks', 'feedback').'</a>';
-            echo $OUTPUT->box_end();
-        }
-    }
 
     if (isset($savereturn) && $savereturn == 'saved') {
         if ($feedback->page_after_submit) {
@@ -376,11 +346,11 @@ if ($feedback_can_submit) {
             echo get_string('entries_saved', 'feedback');
             echo '</font></b>';
             echo '</p>';
-            if ( intval($feedback->publish_stats) == 1) {
-                echo '<p align="center"><a href="'.$analysisurl->out().'">';
-                echo get_string('completed_feedbacks', 'feedback').'</a>';
-                echo '</p>';
-            }
+        }
+        if (feedback_can_view_analysis($feedback, $context, $courseid)) {
+            echo '<p align="center"><a href="'.$analysisurl->out().'">';
+            echo get_string('completed_feedbacks', 'feedback').'</a>';
+            echo '</p>';
         }
 
         if ($feedback->site_after_submit) {
@@ -419,23 +389,24 @@ if ($feedback_can_submit) {
             echo $OUTPUT->box_start('feedback_form');
             echo '<form action="complete.php" class="feedback_complete" method="post">';
             echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-            echo $OUTPUT->box_start('feedback_anonymousinfo');
+            $anonymousmodeinfo = '';
             switch ($feedback->anonymous) {
                 case FEEDBACK_ANONYMOUS_YES:
                     echo '<input type="hidden" name="anonymous" value="1" />';
                     $inputvalue = 'value="'.FEEDBACK_ANONYMOUS_YES.'"';
                     echo '<input type="hidden" name="anonymous_response" '.$inputvalue.' />';
-                    echo get_string('mode', 'feedback').': '.get_string('anonymous', 'feedback');
+                    $anonymousmodeinfo = get_string('anonymous', 'feedback');
                     break;
                 case FEEDBACK_ANONYMOUS_NO:
                     echo '<input type="hidden" name="anonymous" value="0" />';
                     $inputvalue = 'value="'.FEEDBACK_ANONYMOUS_NO.'"';
                     echo '<input type="hidden" name="anonymous_response" '.$inputvalue.' />';
-                    echo get_string('mode', 'feedback').': ';
-                    echo get_string('non_anonymous', 'feedback');
+                    $anonymousmodeinfo = get_string('non_anonymous', 'feedback');
                     break;
             }
-            echo $OUTPUT->box_end();
+            if (isloggedin() && !isguestuser()) {
+                echo $OUTPUT->box(get_string('mode', 'feedback') . ': ' . $anonymousmodeinfo, 'feedback_anonymousinfo');
+            }
             //check, if there exists required-elements
             $params = array('feedback' => $feedback->id, 'required' => 1);
             $countreq = $DB->count_records('feedback_item', $params);
