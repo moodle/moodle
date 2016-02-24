@@ -165,7 +165,7 @@ echo '<input type="hidden" name="id" value="' . $courseid . '" />'."\n";
 
 echo html_writer::start_tag('div', array('class' => 'groupmanagementtable boxaligncenter'));
 echo html_writer::start_tag('div', array('class' => 'groups'));
-
+echo "<style>#groupeditform .groups, #groupeditform .members{min-width:178px;}.groups select,.members select{min-width:178px;}</style>";
 echo '<p><label for="groups"><span id="groupslabel">'.get_string('groups').':</span><span id="thegrouping">&nbsp;</span></label></p>'."\n";
 
 $onchange = 'M.core_group.membersCombo.refreshMembers();';
