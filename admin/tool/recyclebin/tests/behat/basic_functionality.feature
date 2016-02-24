@@ -1,4 +1,4 @@
-@local_recyclebin
+@tool @tool_recyclebin
 Feature: Basic recycle bin functionality
   As a teacher
   I want be able to recover deleted content

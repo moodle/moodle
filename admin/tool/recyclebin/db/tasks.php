@@ -17,14 +17,14 @@
 /**
  * Recycle bin tasks.
  *
- * @package    local_recyclebin
+ * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $tasks = array(
     array(
-        'classname' => 'local_recyclebin\task\cleanup_activities',
+        'classname' => 'tool_recyclebin\task\cleanup_activities',
         'blocking' => 0,
         'minute' => '*/30',
         'hour' => '*',
@@ -33,7 +33,7 @@ $tasks = array(
         'month' => '*'
     ),
     array(
-        'classname' => 'local_recyclebin\task\cleanup_courses',
+        'classname' => 'tool_recyclebin\task\cleanup_courses',
         'blocking' => 0,
         'minute' => '*/30',
         'hour' => '*',

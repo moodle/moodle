@@ -17,12 +17,12 @@
 /**
  * This page shows the contents of a recyclebin for a given course.
  *
- * @package    local_recyclebin
+ * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir . '/tablelib.php');
 
 $contextid = required_param('contextid', PARAM_INT);
@@ -37,33 +37,33 @@ $description = '';
 switch ($context->contextlevel) {
     case \CONTEXT_COURSE:
         require_login($context->instanceid);
-        require_capability('local/recyclebin:view_item', $context);
+        require_capability('tool/recyclebin:view_item', $context);
 
-        $recyclebin = new \local_recyclebin\course($context->instanceid);
-        $description = get_string('description_course', 'local_recyclebin');
+        $recyclebin = new \tool_recyclebin\course($context->instanceid);
+        $description = get_string('description_course', 'tool_recyclebin');
     break;
 
     case \CONTEXT_COURSECAT:
         require_login();
-        require_capability('local/recyclebin:view_course', $context);
+        require_capability('tool/recyclebin:view_course', $context);
 
-        $recyclebin = new \local_recyclebin\category($context->instanceid);
-        $description = get_string('description_coursecat', 'local_recyclebin');
+        $recyclebin = new \tool_recyclebin\category($context->instanceid);
+        $description = get_string('description_coursecat', 'tool_recyclebin');
     break;
 
     default:
-        print_error('invalidcontext', 'local_recyclebin');
+        print_error('invalidcontext', 'tool_recyclebin');
     break;
 }
 
 if (!$recyclebin::is_enabled()) {
-    print_error('notenabled', 'local_recyclebin');
+    print_error('notenabled', 'tool_recyclebin');
 }
 
-$PAGE->set_url('/local/recyclebin/index.php', array(
+$PAGE->set_url('/admin/tool/recyclebin/index.php', array(
     'contextid' => $contextid
 ));
-$PAGE->set_title(get_string('pluginname', 'local_recyclebin'));
+$PAGE->set_title(get_string('pluginname', 'tool_recyclebin'));
 
 // If we are doing anything, we need a sesskey!
 if (!empty($action)) {
@@ -81,7 +81,7 @@ if (!empty($action)) {
         case 'restore':
             if ($recyclebin->can_restore($item)) {
                 $recyclebin->restore_item($item);
-                redirect($PAGE->url, get_string('alertrestored', 'local_recyclebin', $item), 2);
+                redirect($PAGE->url, get_string('alertrestored', 'tool_recyclebin', $item), 2);
             } else {
                 print_error('nopermissions', 'error');
             }
@@ -91,7 +91,7 @@ if (!empty($action)) {
         case 'delete':
             if ($recyclebin->can_delete($item)) {
                 $recyclebin->delete_item($item);
-                redirect($PAGE->url, get_string('alertdeleted', 'local_recyclebin', $item), 2);
+                redirect($PAGE->url, get_string('alertdeleted', 'tool_recyclebin', $item), 2);
             } else {
                 print_error('nopermissions', 'error');
             }
@@ -100,7 +100,7 @@ if (!empty($action)) {
         // Empty it.
         case 'empty':
             $recyclebin->delete_all_items();
-            redirect($PAGE->url, get_string('alertemptied', 'local_recyclebin'), 2);
+            redirect($PAGE->url, get_string('alertemptied', 'tool_recyclebin'), 2);
         break;
     }
 }
@@ -119,16 +119,16 @@ $items = $recyclebin->get_items();
 
 // Nothing to show? Bail out early.
 if (empty($items)) {
-    echo $OUTPUT->box(get_string('emptybin', 'local_recyclebin'));
+    echo $OUTPUT->box(get_string('emptybin', 'tool_recyclebin'));
     echo $goback;
     echo $OUTPUT->footer();
     die;
 }
 
 // Start with a description.
-$expiry = get_config('local_recyclebin', 'expiry');
+$expiry = get_config('tool_recyclebin', 'expiry');
 if ($expiry > 0) {
-    $description .= ' ' . get_string('descriptionexpiry', 'local_recyclebin', $expiry);
+    $description .= ' ' . get_string('descriptionexpiry', 'tool_recyclebin', $expiry);
 }
 echo $OUTPUT->box($description, 'generalbox descriptionbox');
 
@@ -137,7 +137,7 @@ $firstcolstr = $context->contextlevel == \CONTEXT_COURSE ? 'activity' : 'course'
 $columns = array($firstcolstr, 'date', 'restore', 'delete');
 $headers = array(
     get_string($firstcolstr),
-    get_string('deleted', 'local_recyclebin'),
+    get_string('deleted', 'tool_recyclebin'),
     get_string('restore'),
     get_string('delete')
 );
@@ -223,7 +223,7 @@ if ($showempty) {
         'sesskey' => sesskey()
     ));
 
-    echo $OUTPUT->single_button($empty, get_string('empty', 'local_recyclebin'), 'post', array(
+    echo $OUTPUT->single_button($empty, get_string('empty', 'tool_recyclebin'), 'post', array(
         'class' => 'singlebutton recycle-bin-delete-all'
     ));
 }
@@ -231,8 +231,8 @@ if ($showempty) {
 echo $goback;
 
 // Confirmation JS.
-$PAGE->requires->strings_for_js(array('emptyconfirm', 'deleteconfirm'), 'local_recyclebin');
-$PAGE->requires->js_init_call('M.local_recyclebin.init');
+$PAGE->requires->strings_for_js(array('emptyconfirm', 'deleteconfirm'), 'tool_recyclebin');
+$PAGE->requires->js_init_call('M.tool_recyclebin.init');
 
 // Output footer.
 echo $OUTPUT->footer();

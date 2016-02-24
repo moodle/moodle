@@ -17,15 +17,13 @@
 /**
  * Defines the version.
  *
- * @package    local_recyclebin
+ * @package    tool_recyclebin
  * @copyright  2016 Skylar Kelty <S.Kelty@kent.ac.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2016022200;
-$plugin->component = 'local_recyclebin';
-$plugin->requires = 2014051200;
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = '3.3 (Build: 2016022200)';
+$plugin->version   = 2016022300; // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2015111000; // Requires this Moodle version.
+$plugin->component = 'tool_recyclebin'; // Full name of the plugin (used for diagnostics).

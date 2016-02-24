@@ -17,19 +17,19 @@
 /**
  * Recycle bin observers.
  *
- * @package    local_recyclebin
+ * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_recyclebin;
+namespace tool_recyclebin;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Main class for the recycle bin.
  *
- * @package    local_recyclebin
+ * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -43,8 +43,8 @@ class observer
      * @param \stdClass $course The course record.
      */
     public static function pre_course_delete($course) {
-        if (\local_recyclebin\category::is_enabled()) {
-            $recyclebin = new \local_recyclebin\category($course->category);
+        if (\tool_recyclebin\category::is_enabled()) {
+            $recyclebin = new \tool_recyclebin\category($course->category);
             $recyclebin->store_item($course);
         }
     }
@@ -57,8 +57,8 @@ class observer
      * @param \stdClass $cm The course module record.
      */
     public static function pre_cm_delete($cm) {
-        if (\local_recyclebin\course::is_enabled()) {
-            $recyclebin = new \local_recyclebin\course($cm->course);
+        if (\tool_recyclebin\course::is_enabled()) {
+            $recyclebin = new \tool_recyclebin\course($cm->course);
             $recyclebin->store_item($cm);
         }
     }

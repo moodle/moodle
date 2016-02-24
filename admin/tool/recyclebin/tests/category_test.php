@@ -17,7 +17,7 @@
 /**
  * Recycle bin tests.
  *
- * @package    local_recyclebin
+ * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,11 +27,11 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Recycle bin category tests.
  *
- * @package    local_recyclebin
+ * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_recyclebin_category_tests extends \advanced_testcase
+class tool_recyclebin_category_tests extends \advanced_testcase
 {
     /**
      * Setup for each test.
@@ -57,7 +57,7 @@ class local_recyclebin_category_tests extends \advanced_testcase
         $this->assertEquals($this->before, $DB->count_records('course'));
 
         // Try with the API.
-        $recyclebin = new \local_recyclebin\category($this->course->category);
+        $recyclebin = new \tool_recyclebin\category($this->course->category);
         $this->assertEquals(1, count($recyclebin->get_items()));
     }
 
@@ -70,7 +70,7 @@ class local_recyclebin_category_tests extends \advanced_testcase
         delete_course($this->course, false);
         $this->assertEquals($this->before, $DB->count_records('course'));
 
-        $recyclebin = new \local_recyclebin\category($this->course->category);
+        $recyclebin = new \tool_recyclebin\category($this->course->category);
         foreach ($recyclebin->get_items() as $item) {
             $recyclebin->restore_item($item);
         }
@@ -88,7 +88,7 @@ class local_recyclebin_category_tests extends \advanced_testcase
         delete_course($this->course, false);
         $this->assertEquals($this->before, $DB->count_records('course'));
 
-        $recyclebin = new \local_recyclebin\category($this->course->category);
+        $recyclebin = new \tool_recyclebin\category($this->course->category);
         foreach ($recyclebin->get_items() as $item) {
             $recyclebin->delete_item($item);
         }
@@ -103,19 +103,19 @@ class local_recyclebin_category_tests extends \advanced_testcase
     public function test_purge_task() {
         global $DB;
 
-        set_config('course_expiry', 1, 'local_recyclebin');
+        set_config('course_expiry', 1, 'tool_recyclebin');
 
         delete_course($this->course, false);
         $this->assertEquals($this->before, $DB->count_records('course'));
 
         // Set deleted date to the distant past.
-        $recyclebin = new \local_recyclebin\category($this->course->category);
+        $recyclebin = new \tool_recyclebin\category($this->course->category);
         foreach ($recyclebin->get_items() as $item) {
             $item->deleted = 1;
-            $DB->update_record('local_recyclebin_category', $item);
+            $DB->update_record('tool_recyclebin_category', $item);
         }
         // Execute cleanup task.
-        $task = new local_recyclebin\task\cleanup_courses();
+        $task = new tool_recyclebin\task\cleanup_courses();
         $task->execute();
 
         $this->assertEquals($this->before, $DB->count_records('course'));

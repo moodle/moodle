@@ -1,6 +1,6 @@
 // Added a confirmation dialogue when the empty recycle bin
 // button has been selected.
-M.local_recyclebin = {
+M.tool_recyclebin = {
     init: function (Y) {
         // Confirmation dialogue function.
         function confirmDialogue(e, str, callback) {
@@ -27,7 +27,7 @@ M.local_recyclebin = {
         Y.all('.recycle-bin-delete').each(function(node) {
             node.on('click', function(e) {
                 // Get some strings from the Recycle bin lang file.
-                var str = M.util.get_string('deleteconfirm', 'local_recyclebin');
+                var str = M.util.get_string('deleteconfirm', 'tool_recyclebin');
 
                 // Get the URL that leads to emptying the recycle bin.
                 var urldelete = this.get('href');
@@ -42,7 +42,7 @@ M.local_recyclebin = {
         // Find the "Delete All" button and perform an action when it is clicked.
         Y.one('.recycle-bin-delete-all input').on('click', function(e) {
             // Get some strings from the Recycle bin lang file.
-            var str = M.util.get_string('emptyconfirm', 'local_recyclebin');
+            var str = M.util.get_string('emptyconfirm', 'tool_recyclebin');
 
             // Show the dialogue.
             confirmDialogue(e, str, function() {

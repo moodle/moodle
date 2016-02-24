@@ -17,7 +17,7 @@
 /**
  * Local lib code
  *
- * @package    local_recyclebin
+ * @package    tool_recyclebin
  * @copyright  2015 Skylar Kelty <S.Kelty@kent.ac.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,59 +27,34 @@ defined('MOODLE_INTERNAL') || die;
 /**
  * Adds a recycle bin link to the course admin menu.
  *
- * @param  settings_navigation $nav     Nav menu
- * @param  context             $context Context of the menu
- * @return navigation_node              A new navigation mode to insert.
+ * @param navigation_node $navigation The navigation node to extend
+ * @param stdClass        $course     The course to object for the tool
+ * @param context         $context    The context of the course
  */
-function local_recyclebin_extend_settings_navigation(settings_navigation $nav, context $context) {
+function tool_recyclebin_extend_navigation_course($navigation, $course, $context) {
     global $PAGE;
 
     $url = null;
     $bin = null;
     $settingnode = null;
 
-    // What context are we in?
-    if ($context->contextlevel == \CONTEXT_COURSECAT) {
-        // Check we can view the recycle bin.
-        if (!has_capability('local/recyclebin:view_course', $context) || !\local_recyclebin\category::is_enabled()) {
-            return null;
-        }
-
-        // Add a link to the category recyclebin.
-        $bin = new \local_recyclebin\category($context->instanceid);
-        $url = new moodle_url('/local/recyclebin/index.php', array(
-            'contextid' => $context->id
-        ));
-
-        $settingnode = $nav->find('categorysettings', null);
-    } else {
-        // Only add this settings item on non-site course pages.
-        if (!$PAGE->course || $PAGE->course->id == SITEID || !\local_recyclebin\course::is_enabled()) {
-            return null;
-        }
-
-        // We might be in a mod page, etc.
-        $coursectx = \context_course::instance($PAGE->course->id);
-
-        // Check we can view the recycle bin.
-        if (!has_capability('local/recyclebin:view_item', $coursectx)) {
-            return null;
-        }
-
-        $bin = new \local_recyclebin\course($coursectx->instanceid);
-        $url = new moodle_url('/local/recyclebin/index.php', array(
-            'contextid' => $coursectx->id
-        ));
-
-        $settingnode = $nav->find('courseadmin', navigation_node::TYPE_COURSE);
+    // Only add this settings item on non-site course pages.
+    if (!$PAGE->course || $PAGE->course->id == SITEID || !\tool_recyclebin\course::is_enabled()) {
+        return null;
     }
 
-    if ($settingnode == null) {
-        return;
+    // Check we can view the recycle bin.
+    if (!has_capability('tool/recyclebin:view_item', $context)) {
+        return null;
     }
+
+    $bin = new \tool_recyclebin\course($context->instanceid);
+    $url = new moodle_url('/admin/tool/recyclebin/index.php', array(
+        'contextid' => $context->id
+    ));
 
     // If we are set to auto-hide, check the number of items.
-    $autohide = get_config('local_recyclebin', 'autohide');
+    $autohide = get_config('tool_recyclebin', 'autohide');
     if ($autohide) {
         $items = $bin->get_items();
         if (empty($items)) {
@@ -88,14 +63,14 @@ function local_recyclebin_extend_settings_navigation(settings_navigation $nav, c
     }
 
     // Add the recyclebin link.
-    $pluginname = get_string('pluginname', 'local_recyclebin');
+    $pluginname = get_string('pluginname', 'tool_recyclebin');
 
     $node = navigation_node::create(
         $pluginname,
         $url,
         navigation_node::NODETYPE_LEAF,
-        'local_recyclebin',
-        'local_recyclebin',
+        'tool_recyclebin',
+        'tool_recyclebin',
         new pix_icon('e/cleanup_messy_code', $pluginname)
     );
 
@@ -103,17 +78,57 @@ function local_recyclebin_extend_settings_navigation(settings_navigation $nav, c
         $node->make_active();
     }
 
-    $settingnode->add_node($node);
-
-    return $node;
+    $navigation->add_node($node);
 }
 
 /**
- * For pre-2.9 installations.
+ * Adds a recycle bin link to the course admin menu.
  *
- * @param settings_navigation $nav
- * @param context $context
+ * @param navigation_node $navigation The navigation node to extend
+ * @param context         $context    The context of the course
  */
-function local_recyclebin_extends_settings_navigation(settings_navigation $nav, context $context) {
-    local_recyclebin_extend_settings_navigation($nav, $context);
+function tool_recyclebin_extend_navigation_category_settings($navigation, $context) {
+    global $PAGE;
+
+    $url = null;
+    $bin = null;
+    $settingnode = null;
+
+    // Check we can view the recycle bin.
+    if (!has_capability('tool/recyclebin:view_course', $context) || !\tool_recyclebin\category::is_enabled()) {
+        return null;
+    }
+
+    // Add a link to the category recyclebin.
+    $bin = new \tool_recyclebin\category($context->instanceid);
+    $url = new moodle_url('/admin/tool/recyclebin/index.php', array(
+        'contextid' => $context->id
+    ));
+
+    // If we are set to auto-hide, check the number of items.
+    $autohide = get_config('tool_recyclebin', 'autohide');
+    if ($autohide) {
+        $items = $bin->get_items();
+        if (empty($items)) {
+            return null;
+        }
+    }
+
+    // Add the recyclebin link.
+    $pluginname = get_string('pluginname', 'tool_recyclebin');
+
+    $node = navigation_node::create(
+        $pluginname,
+        $url,
+        navigation_node::NODETYPE_LEAF,
+        'tool_recyclebin',
+        'tool_recyclebin',
+        new pix_icon('e/cleanup_messy_code', $pluginname)
+    );
+
+    if ($PAGE->url->compare($url, URL_MATCH_BASE)) {
+        $node->make_active();
+    }
+
+    $navigation->add_node($node);
 }

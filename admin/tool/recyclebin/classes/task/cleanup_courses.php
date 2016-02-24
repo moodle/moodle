@@ -17,17 +17,17 @@
 /**
  * Recycle bin cron task.
  *
- * @package    local_recyclebin
+ * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_recyclebin\task;
+namespace tool_recyclebin\task;
 
 /**
  * This task deletes expired category recyclebin items.
  *
- * @package    local_recyclebin
+ * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -36,7 +36,7 @@ class cleanup_courses extends \core\task\scheduled_task {
      * Task name.
      */
     public function get_name() {
-        return get_string('cleancategoryrecyclebin', 'local_recyclebin');
+        return get_string('cleancategoryrecyclebin', 'tool_recyclebin');
     }
 
     /**
@@ -46,16 +46,16 @@ class cleanup_courses extends \core\task\scheduled_task {
         global $DB;
 
         // Delete courses.
-        $lifetime = get_config('local_recyclebin', 'course_expiry');
-        if (!\local_recyclebin\category::is_enabled() || $lifetime <= 0) {
+        $lifetime = get_config('tool_recyclebin', 'course_expiry');
+        if (!\tool_recyclebin\category::is_enabled() || $lifetime <= 0) {
             return true;
         }
 
-        $items = $DB->get_recordset_select('local_recyclebin_category', 'deleted < ?', array(time() - (86400 * $lifetime)));
+        $items = $DB->get_recordset_select('tool_recyclebin_category', 'deleted < ?', array(time() - (86400 * $lifetime)));
         foreach ($items as $item) {
             mtrace("[RecycleBin] Deleting course {$item->id}...");
 
-            $bin = new \local_recyclebin\category($item->category);
+            $bin = new \tool_recyclebin\category($item->category);
             $bin->delete_item($item);
         }
         $items->close();

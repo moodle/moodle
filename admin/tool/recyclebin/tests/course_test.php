@@ -17,7 +17,7 @@
 /**
  * Recycle bin tests.
  *
- * @package    local_recyclebin
+ * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,11 +27,11 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Recycle bin course tests.
  *
- * @package    local_recyclebin
+ * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_recyclebin_course_tests extends \advanced_testcase
+class tool_recyclebin_course_tests extends \advanced_testcase
 {
     /**
      * Setup for each test.
@@ -57,16 +57,16 @@ class local_recyclebin_course_tests extends \advanced_testcase
         global $DB;
 
         $this->assertEquals($this->before + 1, $DB->count_records('course_modules'));
-        $this->assertEquals(0, $DB->count_records('local_recyclebin_course'));
+        $this->assertEquals(0, $DB->count_records('tool_recyclebin_course'));
 
         // Delete the CM.
         course_delete_module($this->instance->cmid);
 
         $this->assertEquals($this->before, $DB->count_records('course_modules'));
-        $this->assertEquals(1, $DB->count_records('local_recyclebin_course'));
+        $this->assertEquals(1, $DB->count_records('tool_recyclebin_course'));
 
         // Try with the API.
-        $recyclebin = new \local_recyclebin\course($this->course->id);
+        $recyclebin = new \tool_recyclebin\course($this->course->id);
         $this->assertEquals(1, count($recyclebin->get_items()));
     }
 
@@ -80,13 +80,13 @@ class local_recyclebin_course_tests extends \advanced_testcase
         course_delete_module($this->instance->cmid);
 
         // Try restoring.
-        $recyclebin = new \local_recyclebin\course($this->course->id);
+        $recyclebin = new \tool_recyclebin\course($this->course->id);
         foreach ($recyclebin->get_items() as $item) {
             $recyclebin->restore_item($item);
         }
 
         $this->assertEquals($this->before + 1, $DB->count_records('course_modules'));
-        $this->assertEquals(0, $DB->count_records('local_recyclebin_course'));
+        $this->assertEquals(0, $DB->count_records('tool_recyclebin_course'));
         $this->assertEquals(0, count($recyclebin->get_items()));
     }
 
@@ -100,13 +100,13 @@ class local_recyclebin_course_tests extends \advanced_testcase
         course_delete_module($this->instance->cmid);
 
         // Try purging.
-        $recyclebin = new \local_recyclebin\course($this->course->id);
+        $recyclebin = new \tool_recyclebin\course($this->course->id);
         foreach ($recyclebin->get_items() as $item) {
             $recyclebin->delete_item($item);
         }
 
         $this->assertEquals($this->before, $DB->count_records('course_modules'));
-        $this->assertEquals(0, $DB->count_records('local_recyclebin_course'));
+        $this->assertEquals(0, $DB->count_records('tool_recyclebin_course'));
         $this->assertEquals(0, count($recyclebin->get_items()));
     }
 
@@ -116,23 +116,23 @@ class local_recyclebin_course_tests extends \advanced_testcase
     public function test_purge_task() {
         global $DB;
 
-        set_config('expiry', 1, 'local_recyclebin');
+        set_config('expiry', 1, 'tool_recyclebin');
 
         // Delete the CM.
         course_delete_module($this->instance->cmid);
 
         // Set deleted date to the distant past.
-        $recyclebin = new \local_recyclebin\course($this->course->id);
+        $recyclebin = new \tool_recyclebin\course($this->course->id);
         foreach ($recyclebin->get_items() as $item) {
             $item->deleted = 1;
-            $DB->update_record('local_recyclebin_course', $item);
+            $DB->update_record('tool_recyclebin_course', $item);
         }
         // Execute cleanup task.
-        $task = new local_recyclebin\task\cleanup_activities();
+        $task = new tool_recyclebin\task\cleanup_activities();
         $task->execute();
 
         $this->assertEquals($this->before, $DB->count_records('course_modules'));
-        $this->assertEquals(0, $DB->count_records('local_recyclebin_course'));
+        $this->assertEquals(0, $DB->count_records('tool_recyclebin_course'));
         $this->assertEquals(0, count($recyclebin->get_items()));
     }
 }

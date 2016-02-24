@@ -1,4 +1,4 @@
-@local_recyclebin
+@tool @tool_recyclebin
 Feature: Description of recycle bin and expiry
     As a teacher
     I want to know what the recycle bin will do and how long contents last in the bin
@@ -27,7 +27,7 @@ Scenario: Description should show when the recycle bin will clean up files.
     Then I should not see "Contents will be permanently deleted"
     # Test changing expiry to something else.
     When the following config values are set as admin:
-        | expiry | 10 | local_recyclebin |
+        | expiry | 10 | tool_recyclebin |
     # Step "I reload the page" doesn't work outside of javascript.
     And I follow "Recycle bin"
     Then I should see "Contents will be permanently deleted after 10 days"

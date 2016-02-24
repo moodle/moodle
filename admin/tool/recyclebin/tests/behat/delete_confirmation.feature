@@ -1,4 +1,4 @@
-@local_recyclebin @javascript
+@tool @tool_recyclebin
 Feature: Delete confirmation
     As a teacher
     I want to be prompted before I permanently delete something
@@ -24,6 +24,7 @@ Background:
     And I delete "Test page" activity
     And I follow "Recycle bin"
 
+@javascript
 Scenario: Confirm single delete
     When I click on "Delete" "link"
     Then I should see "Are you sure you want to delete the selected item in the recycle bin?"
@@ -34,6 +35,7 @@ Scenario: Confirm single delete
     And I wait to be redirected
     Then I should see "There are no items in the recycle bin."
 
+@javascript
 Scenario: Confirm empty bin
     When I press "Empty recycle bin"
     Then I should see "Are you sure you want to delete all items in the recycle bin?"

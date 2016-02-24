@@ -17,19 +17,19 @@
 /**
  * The main interface for recycle bin methods.
  *
- * @package    local_recyclebin
+ * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_recyclebin;
+namespace tool_recyclebin;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Represents a recyclebin.
  *
- * @package    local_recyclebin
+ * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

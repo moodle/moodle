@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/recyclebin/db" VERSION="20150826" COMMENT="XMLDB file for Moodle local/recyclebin"
+<XMLDB PATH="tool/recyclebin/db" VERSION="20150826" COMMENT="XMLDB file for Moodle tool/recyclebin"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="local_recyclebin_course" COMMENT="A list of recycled course modules">
+    <TABLE NAME="tool_recyclebin_course" COMMENT="A list of recycled course modules">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -21,7 +21,7 @@
         <INDEX NAME="i_deleted" UNIQUE="false" FIELDS="deleted"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="local_recyclebin_category" COMMENT="A list of deleted courses we have stored up">
+    <TABLE NAME="tool_recyclebin_category" COMMENT="A list of deleted courses we have stored up">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="category" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>

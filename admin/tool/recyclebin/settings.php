@@ -17,7 +17,7 @@
 /**
  * Recycle bin settings.
  *
- * @package    local_recyclebin
+ * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,11 +27,11 @@ defined('MOODLE_INTERNAL') || die();
 global $PAGE;
 
 if ($hassiteconfig) {
-    $settings = new admin_settingpage('local_recyclebin', get_string('pluginname', 'local_recyclebin'));
-    $ADMIN->add('localplugins', $settings);
+    $settings = new admin_settingpage('tool_recyclebin', get_string('pluginname', 'tool_recyclebin'));
+    $ADMIN->add('tools', $settings);
 
     $lifetimes = array(
-        0    => new lang_string('neverdelete', 'local_recyclebin'),
+        0    => new lang_string('neverdelete', 'tool_recyclebin'),
         1000 => new lang_string('numdays', '', 1000),
         365  => new lang_string('numdays', '', 365),
         180  => new lang_string('numdays', '', 180),
@@ -48,32 +48,32 @@ if ($hassiteconfig) {
     );
 
     $settings->add(new admin_setting_configcheckbox(
-        'local_recyclebin/enablecourse',
-        new lang_string('enablecourse', 'local_recyclebin'),
-        new lang_string('enablecourse_desc', 'local_recyclebin'),
+        'tool_recyclebin/enablecourse',
+        new lang_string('enablecourse', 'tool_recyclebin'),
+        new lang_string('enablecourse_desc', 'tool_recyclebin'),
         1
     ));
 
     $settings->add(new admin_setting_configselect(
-        'local_recyclebin/expiry',
-        new lang_string('expiry', 'local_recyclebin'),
-        new lang_string('expiry_desc', 'local_recyclebin'),
+        'tool_recyclebin/expiry',
+        new lang_string('expiry', 'tool_recyclebin'),
+        new lang_string('expiry_desc', 'tool_recyclebin'),
         0,
         $lifetimes
     ));
 
 
     $settings->add(new admin_setting_configcheckbox(
-        'local_recyclebin/enablecategory',
-        new lang_string('enablecategory', 'local_recyclebin'),
-        new lang_string('enablecategory_desc', 'local_recyclebin'),
+        'tool_recyclebin/enablecategory',
+        new lang_string('enablecategory', 'tool_recyclebin'),
+        new lang_string('enablecategory_desc', 'tool_recyclebin'),
         1
     ));
 
     $settings->add(new admin_setting_configselect(
-        'local_recyclebin/course_expiry',
-        new lang_string('course_expiry', 'local_recyclebin'),
-        new lang_string('course_expiry_desc', 'local_recyclebin'),
+        'tool_recyclebin/course_expiry',
+        new lang_string('course_expiry', 'tool_recyclebin'),
+        new lang_string('course_expiry_desc', 'tool_recyclebin'),
         0,
         $lifetimes
     ));
@@ -81,16 +81,16 @@ if ($hassiteconfig) {
     unset($lifetimes);
 
     $settings->add(new admin_setting_configcheckbox(
-        'local_recyclebin/autohide',
-        new lang_string('autohide', 'local_recyclebin'),
-        new lang_string('autohide_desc', 'local_recyclebin'),
+        'tool_recyclebin/autohide',
+        new lang_string('autohide', 'tool_recyclebin'),
+        new lang_string('autohide_desc', 'tool_recyclebin'),
         0
     ));
 
     $settings->add(new admin_setting_configmultiselect(
-        'local_recyclebin/protectedmods',
-        new lang_string('protectedmods', 'local_recyclebin'),
-        new lang_string('protectedmods_desc', 'local_recyclebin'),
+        'tool_recyclebin/protectedmods',
+        new lang_string('protectedmods', 'tool_recyclebin'),
+        new lang_string('protectedmods_desc', 'tool_recyclebin'),
         array(),
         $DB->get_records_menu('modules', array('visible' => 1), 'name ASC', 'id, name')
     ));

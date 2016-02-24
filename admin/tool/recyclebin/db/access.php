@@ -17,7 +17,7 @@
 /**
  * Plugin capabilities.
  *
- * @package    local_recyclebin
+ * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
-    'local/recyclebin:view_item' => array(
+    'tool/recyclebin:view_item' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
@@ -35,7 +35,7 @@ $capabilities = array(
         )
     ),
 
-    'local/recyclebin:restore_item' => array(
+    'tool/recyclebin:restore_item' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
@@ -44,7 +44,7 @@ $capabilities = array(
         )
     ),
 
-    'local/recyclebin:delete_item' => array(
+    'tool/recyclebin:delete_item' => array(
         'captype' => 'write',
         'riskbitmask' => RISK_DATALOSS,
         'contextlevel' => CONTEXT_COURSE,
@@ -54,7 +54,7 @@ $capabilities = array(
         )
     ),
 
-    'local/recyclebin:view_course' => array(
+    'tool/recyclebin:view_course' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSECAT,
         'archetypes' => array(
@@ -62,7 +62,7 @@ $capabilities = array(
         )
     ),
 
-    'local/recyclebin:restore_course' => array(
+    'tool/recyclebin:restore_course' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSECAT,
         'archetypes' => array(
@@ -70,7 +70,7 @@ $capabilities = array(
         )
     ),
 
-    'local/recyclebin:delete_course' => array(
+    'tool/recyclebin:delete_course' => array(
         'captype' => 'write',
         'riskbitmask' => RISK_DATALOSS,
         'contextlevel' => CONTEXT_COURSECAT,
@@ -79,7 +79,7 @@ $capabilities = array(
         )
     ),
 
-    'local/recyclebin:delete_protected_item' => array(
+    'tool/recyclebin:delete_protected_item' => array(
         'captype' => 'write',
         'riskbitmask' => RISK_DATALOSS,
         'contextlevel' => CONTEXT_COURSE,

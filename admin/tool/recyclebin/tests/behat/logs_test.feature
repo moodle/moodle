@@ -1,4 +1,4 @@
-@local_recyclebin
+@tool @tool_recyclebin
 Feature: Recycle bin refinements
   As a teacher
   I want the log to reflect the recycle bin's actions
@@ -30,7 +30,7 @@ Feature: Recycle bin refinements
     And I wait to be redirected
     And I follow "C1"
     And I expand "Reports" node
-    And I follow "Logs"  
+    And I follow "Logs"
     And I click on "Get these logs" "link_or_button"
-    Then I should see "Item stored" 
+    Then I should see "Item stored"
     And I should see "Item purged"

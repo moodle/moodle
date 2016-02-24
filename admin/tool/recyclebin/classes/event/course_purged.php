@@ -17,19 +17,19 @@
 /**
  * Recycle bin events.
  *
- * @package    local_recyclebin
+ * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_recyclebin\event;
+namespace tool_recyclebin\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Event Class
  *
- * @package    local_recyclebin
+ * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,7 +39,7 @@ class course_purged extends \core\event\base
      * Init method.
      */
     protected function init() {
-        $this->data['objecttable'] = 'local_recyclebin_category';
+        $this->data['objecttable'] = 'tool_recyclebin_category';
         $this->data['crud'] = 'd';
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }
@@ -50,7 +50,7 @@ class course_purged extends \core\event\base
      * @return string
      */
     public static function get_name() {
-        return get_string('event_purged_name', 'local_recyclebin');
+        return get_string('event_purged_name', 'tool_recyclebin');
     }
 
     /**
@@ -59,7 +59,7 @@ class course_purged extends \core\event\base
      * @return string
      */
     public function get_description() {
-        return get_string('event_purged_description', 'local_recyclebin', array(
+        return get_string('event_purged_description', 'tool_recyclebin', array(
             'objectid' => $this->objectid
         ));
     }

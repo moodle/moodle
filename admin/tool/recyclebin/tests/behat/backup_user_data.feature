@@ -1,4 +1,4 @@
-@local_recyclebin
+@tool @tool_recyclebin
 Feature: Backup user data
   As a teacher
   I want user data to be backed up when I delete a course module

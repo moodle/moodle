@@ -17,19 +17,19 @@
 /**
  * The main interface for recycle bin methods.
  *
- * @package    local_recyclebin
+ * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_recyclebin;
+namespace tool_recyclebin;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Represents a category's recyclebin.
  *
- * @package    local_recyclebin
+ * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -50,7 +50,7 @@ class category extends recyclebin
      * Is this recyclebin enabled?
      */
     public static function is_enabled() {
-        return get_config('local_recyclebin', 'enablecategory');
+        return get_config('tool_recyclebin', 'enablecategory');
     }
 
     /**
@@ -61,7 +61,7 @@ class category extends recyclebin
     public function get_item($itemid) {
         global $DB;
 
-        $item = $DB->get_record('local_recyclebin_category', array(
+        $item = $DB->get_record('tool_recyclebin_category', array(
             'id' => $itemid
         ), '*', MUST_EXIST);
 
@@ -76,7 +76,7 @@ class category extends recyclebin
     public function get_items() {
         global $DB;
 
-        $items = $DB->get_records('local_recyclebin_category', array(
+        $items = $DB->get_records('tool_recyclebin_category', array(
             'category' => $this->_categoryid
         ));
 
@@ -131,7 +131,7 @@ class category extends recyclebin
         }
 
         // Record the activity, get an ID.
-        $binid = $DB->insert_record('local_recyclebin_category', array(
+        $binid = $DB->insert_record('tool_recyclebin_category', array(
             'category' => $course->category,
             'shortname' => $course->shortname,
             'fullname' => $course->fullname,
@@ -141,7 +141,7 @@ class category extends recyclebin
         // Move the file to our own special little place.
         if (!$file->copy_content_to($bindir . '/course-' . $binid)) {
             // Failed, cleanup first.
-            $DB->delete_records('local_recyclebin_category', array(
+            $DB->delete_records('tool_recyclebin_category', array(
                 'id' => $binid
             ));
 
@@ -152,7 +152,7 @@ class category extends recyclebin
         $file->delete();
 
         // Fire event.
-        $event = \local_recyclebin\event\course_stored::create(array(
+        $event = \tool_recyclebin\event\course_stored::create(array(
             'objectid' => $binid,
             'context' => \context_coursecat::instance($course->category)
         ));
@@ -235,11 +235,11 @@ class category extends recyclebin
         $controller->execute_plan();
 
         // Fire event.
-        $event = \local_recyclebin\event\course_restored::create(array(
+        $event = \tool_recyclebin\event\course_restored::create(array(
             'objectid' => $item->id,
             'context' => $context
         ));
-        $event->add_record_snapshot('local_recyclebin_category', $item);
+        $event->add_record_snapshot('tool_recyclebin_category', $item);
         $event->trigger();
 
         // Cleanup.
@@ -260,7 +260,7 @@ class category extends recyclebin
         unlink($CFG->dataroot . '/recyclebin/course-' . $item->id);
 
         // Delete the record.
-        $DB->delete_records('local_recyclebin_category', array(
+        $DB->delete_records('tool_recyclebin_category', array(
             'id' => $item->id
         ));
 
@@ -269,11 +269,11 @@ class category extends recyclebin
         }
 
         // Fire event.
-        $event = \local_recyclebin\event\course_purged::create(array(
+        $event = \tool_recyclebin\event\course_purged::create(array(
             'objectid' => $item->id,
             'context' => \context_coursecat::instance($item->category)
         ));
-        $event->add_record_snapshot('local_recyclebin_category', $item);
+        $event->add_record_snapshot('tool_recyclebin_category', $item);
         $event->trigger();
     }
 
@@ -284,7 +284,7 @@ class category extends recyclebin
      */
     public function can_view($item) {
         $context = \context_coursecat::instance($item->category);
-        return has_capability('local/recyclebin:view_course', $context);
+        return has_capability('tool/recyclebin:view_course', $context);
     }
 
     /**
@@ -294,7 +294,7 @@ class category extends recyclebin
      */
     public function can_restore($item) {
         $context = \context_coursecat::instance($item->category);
-        return has_capability('local/recyclebin:restore_course', $context);
+        return has_capability('tool/recyclebin:restore_course', $context);
     }
 
     /**
@@ -304,6 +304,6 @@ class category extends recyclebin
      */
     public function can_delete($item) {
         $context = \context_coursecat::instance($item->category);
-        return has_capability('local/recyclebin:delete_course', $context);
+        return has_capability('tool/recyclebin:delete_course', $context);
     }
 }
