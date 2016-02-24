@@ -19,18 +19,9 @@ Feature: Atto editor with customised toolbar
 
   @javascript
   Scenario: Confirm that both editors have different toolbars but still function
-    Given ".atto_link_button" "css_element" should exist in the ".normaldiv" "css_element"
+    Then ".atto_link_button" "css_element" should exist in the ".normaldiv" "css_element"
     And ".atto_link_button" "css_element" should not exist in the ".specialdiv" "css_element"
-
-    When I set the field "normaleditor" to "Frogs"
-    And I select the text in the "normaleditor" Atto editor
-    And I click on ".atto_bold_button_bold" "css_element" in the ".normaldiv" "css_element"
-
-    And I set the field "specialeditor" to "Zombies"
-    And I select the text in the "specialeditor" Atto editor
-    And I click on ".atto_italic_button_italic" "css_element" in the ".specialdiv" "css_element"
-
-    And I press "Submit and see the HTML"
-
-    Then I should see "<b>Frogs</b>"
-    And I should see "<i>Zombies</i>"
+    And ".atto_bold_button_bold" "css_element" should exist in the ".normaldiv" "css_element"
+    And ".atto_italic_button_italic" "css_element" should exist in the ".normaldiv" "css_element"
+    And ".atto_bold_button_bold" "css_element" should exist in the ".specialdiv" "css_element"
+    And ".atto_italic_button_italic" "css_element" should exist in the ".specialdiv" "css_element"
