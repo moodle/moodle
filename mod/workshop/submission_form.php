@@ -37,8 +37,6 @@ class workshop_submission_form extends moodleform {
         $contentopts    = $this->_customdata['contentopts'];
         $attachmentopts = $this->_customdata['attachmentopts'];
 
-        $this->attachmentopts = $attachmentopts;
-
         $mform->addElement('header', 'general', get_string('submission', 'workshop'));
 
         $mform->addElement('text', 'title', get_string('submissiontitle', 'workshop'));
@@ -90,42 +88,28 @@ class workshop_submission_form extends moodleform {
             }
         }
 
-        if (isset ($data['attachment_filemanager'])) {
-            $draftitemid = $data['attachment_filemanager'];
-
-            // If we have draft files, then make sure they are the correct ones.
-            if ($draftfiles = file_get_drafarea_files($draftitemid)) {
-
-                if (!$validfileextensions = workshop::get_array_of_file_extensions($this->attachmentopts['filetypes'])) {
-                    return $errors;
-                }
-                $wrongfileextensions = null;
-                $bigfiles = null;
-
-                // Check the size and type of each file.
-                foreach ($draftfiles->list as $file) {
-                    $a = new stdClass();
-                    $a->maxbytes = $this->attachmentopts['maxbytes'];
-                    $a->currentbytes = $file->size;
-                    $a->filename = $file->filename;
-                    $a->validfileextensions = implode(',', $validfileextensions);
-
-                    // Check whether the extension of uploaded file is in the list.
-                    $thisextension = substr(strrchr($file->filename, '.'), 1);
-                    if (!in_array($thisextension, $validfileextensions)) {
-                        $wrongfileextensions .= get_string('err_wrongfileextension', 'workshop', $a) . '<br/>';
+        if (isset($data['attachment_filemanager']) and isset($this->_customdata['workshop']->submissionfiletypes)) {
+            $whitelist = workshop::normalize_file_extensions($this->_customdata['workshop']->submissionfiletypes);
+            if ($whitelist) {
+                $draftfiles = file_get_drafarea_files($data['attachment_filemanager']);
+                if ($draftfiles) {
+                    $wrongfiles = array();
+                    foreach ($draftfiles->list as $file) {
+                        if (!workshop::is_allowed_file_type($file->filename, $whitelist)) {
+                            $wrongfiles[] = $file->filename;
+                        }
                     }
-
-                    // Check whether the file size exceeds the maximum submission attachment size.
-                    if ($file->size > $this->attachmentopts['maxbytes']) {
-                        $bigfiles .= get_string('err_maxbytes', 'workshop', $a) . '<br/>';
+                    if ($wrongfiles) {
+                        $a = array(
+                            'whitelist' => workshop::clean_file_extensions($whitelist),
+                            'wrongfiles' => implode(', ', $wrongfiles),
+                        );
+                        $errors['attachment_filemanager'] = get_string('err_wrongfileextension', 'mod_workshop', $a);
                     }
-                }
-                if ($bigfiles || $wrongfileextensions) {
-                    $errors['attachment_filemanager'] = $bigfiles . $wrongfileextensions;
                 }
             }
         }
+
         return $errors;
     }
 }

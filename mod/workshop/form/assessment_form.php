@@ -122,50 +122,38 @@ class workshop_assessment_form extends moodleform {
     }
 
     /**
-     * Validate incoming data.
+     * Validate assessment form data.
      *
      * @param array $data
      * @param array $files
      * @return array
      */
     public function validation($data, $files) {
+
         $errors = parent::validation($data, $files);
 
-        if (isset($data['feedbackauthorattachment_filemanager'])) {
-            $draftitemid = $data['feedbackauthorattachment_filemanager'];
-
-            // If we have draft files, then make sure they are the correct ones.
-            if ($draftfiles = file_get_drafarea_files($draftitemid)) {
-
-                if (!$validfileextensions = workshop::get_array_of_file_extensions($this->workshop->overallfeedbackfiletypes)) {
-                    return $errors;
-                }
-                $wrongfileextensions = null;
-                $bigfiles = null;
-
-                // Check the size of each file.
-                foreach ($draftfiles->list as $file) {
-                    $a = new stdClass();
-                    $a->maxbytes = $this->workshop->overallfeedbackmaxbytes;
-                    $a->currentbytes = $file->size;
-                    $a->filename = $file->filename;
-                    $a->validfileextensions = implode(',', $validfileextensions);
-
-                    // Check whether the extension of uploaded file is in the list.
-                    $thisextension = substr(strrchr($file->filename, '.'), 1);
-                    if (!in_array($thisextension, $validfileextensions)) {
-                        $wrongfileextensions .= get_string('err_wrongfileextension', 'workshop', $a) . '<br/>';
+        if (isset($data['feedbackauthorattachment_filemanager']) and isset($this->workshop->overallfeedbackfiletypes)) {
+            $whitelist = workshop::normalize_file_extensions($this->workshop->overallfeedbackfiletypes);
+            if ($whitelist) {
+                $draftfiles = file_get_drafarea_files($data['feedbackauthorattachment_filemanager']);
+                if ($draftfiles) {
+                    $wrongfiles = array();
+                    foreach ($draftfiles->list as $file) {
+                        if (!workshop::is_allowed_file_type($file->filename, $whitelist)) {
+                            $wrongfiles[] = $file->filename;
+                        }
                     }
-                    if ($file->size > $this->workshop->overallfeedbackmaxbytes) {
-                        $bigfiles .= get_string('err_maxbytes', 'workshop', $a) . '<br/>';
+                    if ($wrongfiles) {
+                        $a = array(
+                            'whitelist' => workshop::clean_file_extensions($whitelist),
+                            'wrongfiles' => implode(', ', $wrongfiles),
+                        );
+                        $errors['feedbackauthorattachment_filemanager'] = get_string('err_wrongfileextension', 'mod_workshop', $a);
                     }
-                }
-                if ($bigfiles || $wrongfileextensions) {
-                    $errors['feedbackauthorattachment_filemanager'] = $bigfiles . $wrongfileextensions;
                 }
             }
         }
+
         return $errors;
     }
-
 }

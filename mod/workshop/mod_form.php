@@ -361,19 +361,14 @@ class mod_workshop_mod_form extends moodleform_mod {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        // Check the input of submissionfiletypes field.
-        if ($data['submissionfiletypes']) {
-            $invalidextension = workshop::check_allowed_file_types($data['submissionfiletypes']);
-            if ($invalidextension) {
-                $errors['submissionfiletypes'] = $invalidextension;
-            }
-        }
-
-        // Check the input of overallfeedbackfiletypes field.
-        if ($data['overallfeedbackfiletypes']) {
-            $invalidextension = workshop::check_allowed_file_types($data['overallfeedbackfiletypes']);
-            if ($invalidextension) {
-                $errors['overallfeedbackfiletypes'] = $invalidextension;
+        // Validate lists of allowed extensions.
+        foreach (array('submissionfiletypes', 'overallfeedbackfiletypes') as $fieldname) {
+            if (isset($data[$fieldname])) {
+                $invalidextensions = workshop::invalid_file_extensions($data[$fieldname], array_keys(core_filetypes::get_types()));
+                if ($invalidextensions) {
+                    $errors[$fieldname] = get_string('err_unknownfileextension', 'mod_workshop',
+                        workshop::clean_file_extensions($invalidextensions));
+                }
             }
         }
 

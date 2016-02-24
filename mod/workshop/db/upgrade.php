@@ -49,27 +49,24 @@ function xmldb_workshop_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2016022200) {
-
-        // Define field submissionfiletypes to be added to workshop.
+        // Add field submissionfiletypes to the table workshop.
         $table = new xmldb_table('workshop');
         $field = new xmldb_field('submissionfiletypes', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'nattachments');
 
-        // Conditionally launch add field submissionfiletypes.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-        // Define field overallfeedbackfiletypes to be added to workshop.
+        // Add field overallfeedbackfiletypes to the table workshop.
         $field = new xmldb_field('overallfeedbackfiletypes',
                 XMLDB_TYPE_CHAR, '255', null, null, null, null, 'overallfeedbackfiles');
 
-        // Conditionally launch add field overallfeedbackfiletypes.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-        // Workshop savepoint reached.
         upgrade_mod_savepoint(true, 2016022200, 'workshop');
     }
+
     return true;
 }

@@ -418,37 +418,116 @@ class workshop {
     }
 
     /**
-     * Split a list of file extensions to an array
-     * @param string  $listofextensions
-     * @return array of extensions
+     * Converts the argument into an array (list) of file extensions.
+     *
+     * The list can be separated by whitespace, end of lines, commas colons and semicolons.
+     * Empty values are not returned. Values are converted to lowercase.
+     * Duplicates are removed. Glob evaluation is not supported.
+     *
+     * @param string|array $extensions list of file extensions
+     * @return array of strings
      */
-    public static function get_array_of_file_extensions($listofextensions) {
-        return preg_split("/[\s,;:\"']+/", strtolower($listofextensions), null, PREG_SPLIT_NO_EMPTY);
+    public static function normalize_file_extensions($extensions) {
+
+        if ($extensions === '') {
+            return array();
+        }
+
+        if (!is_array($extensions)) {
+            $extensions = preg_split('/[\s,;:"\']+/', $extensions, null, PREG_SPLIT_NO_EMPTY);
+        }
+
+        foreach ($extensions as $i => $extension) {
+            $extension = str_replace('*.', '', $extension);
+            $extension = strtolower($extension);
+            $extension = ltrim($extension, '.');
+            $extension = trim($extension);
+            $extensions[$i] = $extension;
+        }
+
+        foreach ($extensions as $i => $extension) {
+            if (strpos($extension, '*') !== false or strpos($extension, '?') !== false) {
+                unset($extensions[$i]);
+            }
+        }
+
+        $extensions = array_filter($extensions, 'strlen');
+        $extensions = array_keys(array_flip($extensions));
+
+        foreach ($extensions as $i => $extension) {
+            $extensions[$i] = '.'.$extension;
+        }
+
+        return $extensions;
     }
 
     /**
-     * Check allowed file types and return an error when invalid file extensions found in the list
+     * Cleans the user provided list of file extensions.
      *
-     * @param string $extensionlist
+     * @param string $extensions
+     * @return string
      */
-    public static function check_allowed_file_types($extensionlist) {
-        if (!$extensionlist) {
-            return '';
+    public static function clean_file_extensions($extensions) {
+
+        $extensions = self::normalize_file_extensions($extensions);
+
+        foreach ($extensions as $i => $extension) {
+            $extensions[$i] = ltrim($extension, '.');
         }
 
-        if ($extensions = self::get_array_of_file_extensions($extensionlist)) {
-            $coreextensions = array_keys(get_mimetypes_array());
-            foreach ($extensions as $ext) {
-                $ext = ltrim($ext, '.');
-                if (!$ext) {
-                    continue;
-                }
-                // Use strtolower(), because all extensions are in lower case.
-                if (!in_array($ext, $coreextensions)) {
-                    return get_string('err_notallowedfiletype', 'workshop', $ext);
-                }
+        return implode(', ', $extensions);
+    }
+
+    /**
+     * Check given file types and return invalid/unknown ones.
+     *
+     * Empty whitelist is interpretted as "any extension is valid".
+     *
+     * @param string|array $extensions list of file extensions
+     * @param string|array $whitelist list of valid extensions
+     * @return array list of invalid extensions not found in the whitelist
+     */
+    public static function invalid_file_extensions($extensions, $whitelist) {
+
+        $extensions = self::normalize_file_extensions($extensions);
+        $whitelist = self::normalize_file_extensions($whitelist);
+
+        if (empty($extensions) or empty($whitelist)) {
+            return array();
+        }
+
+        // Return those items from $extensions that are not present in $whitelist.
+        return array_keys(array_diff_key(array_flip($extensions), array_flip($whitelist)));
+    }
+
+    /**
+     * Is the file have allowed to be uploaded to the workshop?
+     *
+     * Empty whitelist is interpretted as "any file type is allowed" rather
+     * than "no file can be uploaded".
+     *
+     * @param string $filename the file name
+     * @param string|array $whitelist list of allowed file extensions
+     * @return false
+     */
+    public static function is_allowed_file_type($filename, $whitelist) {
+
+        $whitelist = self::normalize_file_extensions($whitelist);
+
+        if (empty($whitelist)) {
+            return true;
+        }
+
+        $haystack = strrev(trim(strtolower($filename)));
+
+        foreach ($whitelist as $extension) {
+            if (strpos($haystack, strrev($extension)) === 0) {
+                // The file name ends with the extension.
+                return true;
             }
         }
+
+        return false;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -2402,6 +2481,43 @@ class workshop {
     }
 
     /**
+     * Return the editor options for the submission content field.
+     *
+     * @return array
+     */
+    public function submission_content_options() {
+        return array(
+            'trusttext' => true,
+            'subdirs' => false,
+            'maxfiles' => $this->nattachments,
+            'maxbytes' => $this->maxbytes,
+            'context' => $this->context,
+            'return_types' => FILE_INTERNAL | FILE_EXTERNAL,
+          );
+    }
+
+    /**
+     * Return the filemanager options for the submission attachments field.
+     *
+     * @return array
+     */
+    public function submission_attachment_options() {
+
+        $options = array(
+            'subdirs' => true,
+            'maxfiles' => $this->nattachments,
+            'maxbytes' => $this->maxbytes,
+            'return_types' => FILE_INTERNAL,
+        );
+
+        if ($acceptedtypes = self::normalize_file_extensions($this->submissionfiletypes)) {
+            $options['accepted_types'] = $acceptedtypes;
+        }
+
+        return $options;
+    }
+
+    /**
      * Return the editor options for the overall feedback for the author.
      *
      * @return array
@@ -2410,7 +2526,6 @@ class workshop {
         return array(
             'subdirs' => 0,
             'maxbytes' => $this->overallfeedbackmaxbytes,
-            'filetypes' => $this->overallfeedbackfiletypes,
             'maxfiles' => $this->overallfeedbackfiles,
             'changeformat' => 1,
             'context' => $this->context,
@@ -2423,13 +2538,19 @@ class workshop {
      * @return array
      */
     public function overall_feedback_attachment_options() {
-        return array(
+
+        $options = array(
             'subdirs' => 1,
             'maxbytes' => $this->overallfeedbackmaxbytes,
-            'filetypes' => $this->overallfeedbackfiletypes,
             'maxfiles' => $this->overallfeedbackfiles,
             'return_types' => FILE_INTERNAL,
         );
+
+        if ($acceptedtypes = self::normalize_file_extensions($this->overallfeedbackfiletypes)) {
+            $options['accepted_types'] = $acceptedtypes;
+        }
+
+        return $options;
     }
 
     /**
