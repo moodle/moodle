@@ -92,6 +92,11 @@ class course extends recyclebin
 
         // Get more information.
         $modinfo = get_fast_modinfo($cm->course);
+
+        if (!isset($modinfo->cms[$cm->id])) {
+            return; // Can't continue without the module information.
+        }
+
         $cminfo = $modinfo->cms[$cm->id];
 
         // Check backup/restore support.
