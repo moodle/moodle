@@ -1,0 +1,4 @@
+3.0
+===
+
+ * local_recyclebin\Observer has been changed to local_recyclebin\observer (lower case). Please update the core hack.
