@@ -326,6 +326,86 @@ function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $item
 }
 
 /**
+ * Return true if the course needs regrading.
+ *
+ * @param int $courseid The course ID
+ * @return bool true if course grades need updating.
+ */
+function grade_needs_regrade_final_grades($courseid) {
+    $course_item = grade_item::fetch_course_item($courseid);
+    return $course_item->needsupdate;
+}
+
+/**
+ * Return true if the regrade process is likely to be time consuming and
+ * will therefore require the progress bar.
+ *
+ * @param int $courseid The course ID
+ * @return bool Whether the regrade process is likely to be time consuming
+ */
+function grade_needs_regrade_progress_bar($courseid) {
+    global $DB;
+    $grade_items = grade_item::fetch_all(array('courseid' => $courseid));
+
+    list($sql, $params) = $DB->get_in_or_equal(array_keys($grade_items), SQL_PARAMS_NAMED, 'gi');
+    $gradecount = $DB->count_records_select('grade_grades', 'itemid ' . $sql, $params);
+
+    // This figure may seem arbitrary, but after analysis it seems that 100 grade_grades can be calculated in ~= 0.5 seconds.
+    // Any longer than this and we want to show the progress bar.
+    return $gradecount > 100;
+}
+
+/**
+ * Check whether regarding of final grades is required and, if so, perform the regrade.
+ *
+ * If the regrade is expected to be time consuming (see grade_needs_regrade_progress_bar), then this
+ * function will output the progress bar, and redirect to the current PAGE->url after regrading
+ * completes. Otherwise the regrading will happen immediately and the page will be loaded as per
+ * normal.
+ *
+ * A callback may be specified, which is called if regrading has taken place.
+ * The callback may optionally return a URL which will be redirected to when the progress bar is present.
+ *
+ * @param stdClass $course The course to regrade
+ * @param callable $callback A function to call if regrading took place
+ * @return moodle_url The URL to redirect to if redirecting
+ */
+function grade_regrade_final_grades_if_required($course, callable $callback = null) {
+    global $PAGE, $OUTPUT;
+
+    if (!grade_needs_regrade_final_grades($course->id)) {
+        return false;
+    }
+
+    if (grade_needs_regrade_progress_bar($course->id)) {
+        $PAGE->set_heading($course->fullname);
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('recalculatinggrades', 'grades'));
+        $progress = new \core\progress\display(true);
+        grade_regrade_final_grades($course->id, null, null, $progress);
+
+        if ($callback) {
+            //
+            $url = call_user_func($callback);
+        }
+
+        if (empty($url)) {
+            $url = $PAGE->url;
+        }
+
+        echo $OUTPUT->continue_button($url);
+        echo $OUTPUT->footer();
+        die();
+    } else {
+        $result = grade_regrade_final_grades($course->id);
+        if ($callback) {
+            call_user_func($callback);
+        }
+        return $result;
+    }
+}
+
+/**
  * Returns grading information for given activity, optionally with user grades
  * Manual, course or category items can not be queried.
  *
@@ -1011,13 +1091,18 @@ function grade_recover_history_grades($userid, $courseid) {
  * @param int $courseid The course ID
  * @param int $userid If specified try to do a quick regrading of the grades of this user only
  * @param object $updated_item Optional grade item to be marked for regrading
+ * @param \core\progress\base $progress If provided, will be used to update progress on this long operation.
  * @return bool true if ok, array of errors if problems found. Grade item id => error message
  */
-function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null) {
+function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null, $progress=null) {
     // This may take a very long time.
     \core_php_time_limit::raise();
 
     $course_item = grade_item::fetch_course_item($courseid);
+
+    if ($progress == null) {
+        $progress = new \core\progress\none();
+    }
 
     if ($userid) {
         // one raw grade updated for one user
@@ -1072,6 +1157,18 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
         $depends_on[$gid] = $grade_items[$gid]->depends_on();
     }
 
+    $progresstotal = 0;
+    $progresscurrent = 0;
+
+    // This progress total might not be 100% accurate, because more things might get marked as needsupdate
+    // during the process.
+    foreach ($grade_items as $item) {
+        if ($item->needsupdate) {
+            $progresstotal++;
+        }
+    }
+    $progress->start_progress('regrade_course', $progresstotal);
+
     $errors = array();
     $finalids = array();
     $gids     = array_keys($grade_items);
@@ -1088,6 +1185,16 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
                 $finalids[] = $gid; // we can make it final - does not need update
                 continue;
             }
+            $thisprogress = $progresstotal;
+            foreach ($grade_items as $item) {
+                if ($item->needsupdate) {
+                    $thisprogress--;
+                }
+            }
+            // Clip between $progresscurrent and $progresstotal.
+            $thisprogress = max(min($thisprogress, $progresstotal), $progresscurrent);
+            $progress->progress($thisprogress);
+            $progresscurrent = $thisprogress;
 
             $doupdate = true;
             foreach ($depends_on[$gid] as $did) {
@@ -1131,6 +1238,7 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
             break; // Found error.
         }
     }
+    $progress->end_progress();
 
     if (count($errors) == 0) {
         if (empty($userid)) {

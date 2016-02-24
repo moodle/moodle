@@ -28,7 +28,7 @@ Feature: Site settings can be used to hide parts of the gradebook UI
     When I click on "Edit  assign Assignment1" "link"
     And I should see "Minimum grade"
     Then I navigate to "General settings" node in "Site administration > Grades"
-    And I click on "Show minimum grade" "checkbox"
+    And I set the field "Show minimum grade" to "0"
     And I press "Save changes"
     And I am on site homepage
     And I follow "Course 1"
@@ -40,7 +40,7 @@ Feature: Site settings can be used to hide parts of the gradebook UI
   Scenario: Hide calculation icons
     And "Edit calculation for   Course total" "link" should exist
     When I navigate to "Grader report" node in "Site administration > Grades > Report settings"
-    And I click on "Show calculations" "checkbox"
+    And I set the field "Show calculations" to "0"
     And I press "Save changes"
     And I am on site homepage
     And I follow "Course 1"
@@ -51,7 +51,7 @@ Feature: Site settings can be used to hide parts of the gradebook UI
   Scenario: Disable category overriding
     And "tr .course input[type='text']" "css_element" should exist
     Then I navigate to "Grade category settings" node in "Site administration > Grades"
-    And I click on "Allow category grades to be manually overridden" "checkbox"
+    And I set the field "Allow category grades to be manually overridden" to "0"
     And I press "Save changes"
     And I am on site homepage
     And I follow "Course 1"

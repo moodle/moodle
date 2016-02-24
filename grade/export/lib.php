@@ -699,8 +699,7 @@ class grade_export_update_buffer {
  * @param $courseid int The course being exported
  */
 function export_verify_grades($courseid) {
-    $regraderesult = grade_regrade_final_grades($courseid);
-    if (is_array($regraderesult)) {
-        throw new moodle_exception('gradecantregrade', 'error', '', implode(', ', array_unique($regraderesult)));
+    if (grade_needs_regrade_final_grades($courseid)) {
+        throw new moodle_exception('gradesneedregrading', 'grades');
     }
 }
