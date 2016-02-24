@@ -56,6 +56,7 @@ class plan_created extends base {
             'contextid'  => $plan->get_context()->id,
             'objectid' => $plan->get_id()
         ));
+        $event->add_record_snapshot(plan::TABLE, $plan->to_record());
         return $event;
     }
 

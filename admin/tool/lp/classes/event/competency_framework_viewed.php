@@ -53,6 +53,7 @@ class competency_framework_viewed extends base {
             'contextid' => $framework->get_contextid(),
             'objectid' => $framework->get_id()
         ));
+        $event->add_record_snapshot(competency_framework::TABLE, $framework->to_record());
         return $event;
     }
 

@@ -56,6 +56,7 @@ class template_viewed extends base {
             'contextid'  => $template->get_contextid(),
             'objectid' => $template->get_id()
         ));
+        $event->add_record_snapshot(template::TABLE, $template->to_record());
         return $event;
     }
 

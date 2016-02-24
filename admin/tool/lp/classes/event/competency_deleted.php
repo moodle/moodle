@@ -51,8 +51,9 @@ class competency_deleted extends base {
         }
         $event = static::create(array(
             'contextid' => $competency->get_context()->id,
-            'objectid' => $competency->get_id()
+            'objectid' => $competency->get_id(),
         ));
+        $event->add_record_snapshot(competency::TABLE, $competency->to_record());
         return $event;
     }
 
