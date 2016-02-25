@@ -42,7 +42,7 @@ $string['databasetypehead'] = 'Välj drivrutin för databasen';
 $string['dataroot'] = 'katalog för data';
 $string['dbprefix'] = 'Prefix för tabeller';
 $string['dirroot'] = 'Katalogen för Moodle';
-$string['environmenthead'] = 'Undersöker Din miljö...';
+$string['environmenthead'] = 'Undersöker din miljö...';
 $string['errorsinenvironment'] = 'Kontrollen av miljön misslyckades';
 $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'Språket "{$a}" gick tyvärr inte att ladda ner. Installationen kommer att fullföljas på engelska.';
@@ -67,7 +67,7 @@ $string['phpversionhelp'] = '<p>Moodle kräver minst PHP 4.3.0 eller 5.1.0 (det 
 <p>Du använder f n version {$a}</p>
 <p>Du måste uppgradera PHP eller flytta till en värd som har en nyare version av PHP! Om Du har 5.0.x så bör Du nedgradera till 4.4.x.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = 'Du ser detta eftersom Du framgångsrikt har installerat och börjat använda språkpaketet <strong>{$a->packname} {$a->packversion}</strong> på Din dator. Gratulerar!';
+$string['welcomep20'] = 'Du ser detta eftersom du framgångsrikt har installerat och börjat använda språkpaketet <strong>{$a->packname} {$a->packversion}</strong> på din dator. Gratulerar!';
 $string['welcomep30'] = 'I den här versionen av <strong>{$a->installername}</strong> ingår de applikationer som kan skapa en miljö som <strong>Moodle</strong> kan fungera i, nämligen:';
 $string['welcomep40'] = 'I paketet ingår även <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'Användningen av alla applikationerna i det här paketet regleras av deras respektive licenser. Det kompletta paketet <strong>{$a->installername}</strong>  är <a href="http://www.opensource.org/docs/definition_plain.html">Öppen källkod </a> och distribueras
