@@ -3291,6 +3291,98 @@ class api {
     }
 
     /**
+     * Log user competency viewed event.
+     *
+     * @param user_competency|int $usercompetencyorid The user competency object or user competency id
+     * @return bool
+     */
+    public static function user_competency_viewed($usercompetencyorid) {
+        $uc = $usercompetencyorid;
+        if (!is_object($uc)) {
+            $uc = new user_competency($uc);
+        }
+
+        if (!$uc || !$uc->can_read()) {
+            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyread', 'nopermissions', '');
+        }
+
+        \tool_lp\event\user_competency_viewed::create_from_user_competency_viewed($uc)->trigger();
+        return true;
+    }
+
+    /**
+     * Log user competency viewed in plan event.
+     *
+     * @param user_competency|int $usercompetencyorid The user competency object or user competency id
+     * @param int $planid The plan ID
+     * @return bool
+     */
+    public static function user_competency_viewed_in_plan($usercompetencyorid, $planid) {
+        $uc = $usercompetencyorid;
+        if (!is_object($uc)) {
+            $uc = new user_competency($uc);
+        }
+
+        if (!$uc || !$uc->can_read()) {
+            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyread', 'nopermissions', '');
+        }
+        $plan = new plan($planid);
+        if ($plan->get_status() == plan::STATUS_COMPLETE) {
+            throw new coding_exception('To log the user competency in completed plan use user_competency_plan_viewed method.');
+        }
+
+        \tool_lp\event\user_competency_viewed_in_plan::create_from_user_competency_viewed_in_plan($uc, $planid)->trigger();
+        return true;
+    }
+
+    /**
+     * Log user competency viewed in course event.
+     *
+     * @param user_competency|int $usercompetencyorid The user competency object or user competency id
+     * @param int $courseid The course ID
+     * @return bool
+     */
+    public static function user_competency_viewed_in_course($usercompetencyorid, $courseid) {
+        $uc = $usercompetencyorid;
+        if (!is_object($uc)) {
+            $uc = new user_competency($uc);
+        }
+
+        if (!$uc || !$uc->can_read()) {
+            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyread', 'nopermissions', '');
+        }
+        // Validate the course, this will throw an exception if not valid.
+        self::validate_course($courseid);
+
+        \tool_lp\event\user_competency_viewed_in_course::create_from_user_competency_viewed_in_course($uc, $courseid)->trigger();
+        return true;
+    }
+
+    /**
+     * Log user competency plan viewed event.
+     *
+     * @param user_competency_plan|int $usercompetencyplanorid The user competency plan object or user competency plan id
+     * @return bool
+     */
+    public static function user_competency_plan_viewed($usercompetencyplanorid) {
+        $ucp = $usercompetencyplanorid;
+        if (!is_object($ucp)) {
+            $ucp = new user_competency_plan($ucp);
+        }
+
+        if (!$ucp || !user_competency::can_read_user($ucp->get_userid())) {
+            throw new required_capability_exception($ucp->get_context(), 'tool/lp:usercompetencyread', 'nopermissions', '');
+        }
+        $plan = new plan($ucp->get_planid());
+        if ($plan->get_status() != plan::STATUS_COMPLETE) {
+            throw new coding_exception('To log the user competency in non-completed plan use user_competency_viewed_in_plan method.');
+        }
+
+        \tool_lp\event\user_competency_plan_viewed::create_from_user_competency_plan($ucp)->trigger();
+        return true;
+    }
+
+    /**
      * Check if template has related data.
      *
      * @param int $templateid The id of the template to check.

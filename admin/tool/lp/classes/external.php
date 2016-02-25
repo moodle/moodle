@@ -5180,6 +5180,227 @@ class external extends external_api {
     }
 
     /**
+     * Returns description of user_competency_viewed() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function user_competency_viewed_parameters() {
+        $usercompetencyid = new external_value(
+            PARAM_INT,
+            'The user competency id',
+            VALUE_REQUIRED
+        );
+        $params = array(
+            'usercompetencyid' => $usercompetencyid
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Log user competency viewed event.
+     *
+     * @param int $usercompetencyid The user competency ID.
+     * @return boolean
+     */
+    public static function user_competency_viewed($usercompetencyid) {
+        $params = self::validate_parameters(self::user_competency_viewed_parameters(),
+                                            array(
+                                                'usercompetencyid' => $usercompetencyid
+                                            ));
+
+        $uc = api::get_user_competency_by_id($params['usercompetencyid']);
+        $result = api::user_competency_viewed($uc);
+
+        return $result;
+    }
+
+    /**
+     * Returns description of user_competency_viewed() result value.
+     *
+     * @return \external_description
+     */
+    public static function user_competency_viewed_returns() {
+        return new external_value(PARAM_BOOL, 'True if the event user competency viewed was logged');
+    }
+
+    /**
+     * Returns description of user_competency_viewed_in_plan() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function user_competency_viewed_in_plan_parameters() {
+        $competencyid = new external_value(
+            PARAM_INT,
+            'The competency id',
+            VALUE_REQUIRED
+        );
+        $userid = new external_value(
+            PARAM_INT,
+            'The user id',
+            VALUE_REQUIRED
+        );
+        $planid = new external_value(
+            PARAM_INT,
+            'The plan id',
+            VALUE_REQUIRED
+        );
+        $params = array(
+            'competencyid' => $competencyid,
+            'userid' => $userid,
+            'planid' => $planid
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Log user competency viewed in plan event.
+     *
+     * @param int $competencyid The competency ID.
+     * @param int $userid The user ID.
+     * @param int $planid The plan ID.
+     * @return boolean
+     */
+    public static function user_competency_viewed_in_plan($competencyid, $userid, $planid) {
+        $params = self::validate_parameters(self::user_competency_viewed_in_plan_parameters(),
+                                            array(
+                                                'competencyid' => $competencyid,
+                                                'userid' => $userid,
+                                                'planid' => $planid
+                                            ));
+        $pl = api::get_plan_competency($params['planid'], $params['competencyid']);
+        $result = api::user_competency_viewed_in_plan($pl->usercompetency, $params['planid']);
+
+        return $result;
+    }
+
+    /**
+     * Returns description of user_competency_viewed_in_plan() result value.
+     *
+     * @return \external_description
+     */
+    public static function user_competency_viewed_in_plan_returns() {
+        return new external_value(PARAM_BOOL, 'True if the event user competency viewed in plan was logged');
+    }
+
+    /**
+     * Returns description of user_competency_viewed_in_course() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function user_competency_viewed_in_course_parameters() {
+        $competencyid = new external_value(
+            PARAM_INT,
+            'The competency id',
+            VALUE_REQUIRED
+        );
+        $userid = new external_value(
+            PARAM_INT,
+            'The user id',
+            VALUE_REQUIRED
+        );
+        $courseid = new external_value(
+            PARAM_INT,
+            'The course id',
+            VALUE_REQUIRED
+        );
+        $params = array(
+            'competencyid' => $competencyid,
+            'userid' => $userid,
+            'courseid' => $courseid
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Log user competency viewed in course event.
+     *
+     * @param int $competencyid The competency ID.
+     * @param int $userid The user ID.
+     * @param int $courseid The course ID.
+     * @return boolean
+     */
+    public static function user_competency_viewed_in_course($competencyid, $userid, $courseid) {
+        $params = self::validate_parameters(self::user_competency_viewed_in_course_parameters(),
+                                            array(
+                                                'competencyid' => $competencyid,
+                                                'userid' => $userid,
+                                                'courseid' => $courseid
+                                            ));
+        $uc = api::get_user_competency_in_course($params['courseid'], $params['userid'], $params['competencyid']);
+        $result = api::user_competency_viewed_in_course($uc, $params['courseid']);
+
+        return $result;
+    }
+
+    /**
+     * Returns description of user_competency_viewed_in_course() result value.
+     *
+     * @return \external_description
+     */
+    public static function user_competency_viewed_in_course_returns() {
+        return new external_value(PARAM_BOOL, 'True if the event user competency viewed in course was logged');
+    }
+
+    /**
+     * Returns description of user_competency_plan_viewed() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function user_competency_plan_viewed_parameters() {
+        $competencyid = new external_value(
+            PARAM_INT,
+            'The competency id',
+            VALUE_REQUIRED
+        );
+        $userid = new external_value(
+            PARAM_INT,
+            'The user id',
+            VALUE_REQUIRED
+        );
+        $planid = new external_value(
+            PARAM_INT,
+            'The plan id',
+            VALUE_REQUIRED
+        );
+        $params = array(
+            'competencyid' => $competencyid,
+            'userid' => $userid,
+            'planid' => $planid
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Log user competency plan viewed event.
+     *
+     * @param int $competencyid The competency ID.
+     * @param int $userid The user ID.
+     * @param int $planid The plan ID.
+     * @return boolean
+     */
+    public static function user_competency_plan_viewed($competencyid, $userid, $planid) {
+        $params = self::validate_parameters(self::user_competency_viewed_in_plan_parameters(),
+                                            array(
+                                                'competencyid' => $competencyid,
+                                                'userid' => $userid,
+                                                'planid' => $planid
+                                            ));
+        $pl = api::get_plan_competency($params['planid'], $params['competencyid']);
+        $result = api::user_competency_plan_viewed($pl->usercompetencyplan);
+
+        return $result;
+    }
+
+    /**
+     * Returns description of user_competency_plan_viewed() result value.
+     *
+     * @return \external_description
+     */
+    public static function user_competency_plan_viewed_returns() {
+        return new external_value(PARAM_BOOL, 'True if the event user competency plan viewed was logged');
+    }
+
+    /**
      * Returns description of grade_competency_in_course() parameters.
      *
      * @return \external_function_parameters

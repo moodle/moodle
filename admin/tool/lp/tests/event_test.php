@@ -760,4 +760,282 @@ class tool_lp_event_testcase extends advanced_testcase {
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
+
+    /**
+     * Test the user competency viewed event in plan.
+     *
+     */
+    public function test_user_competency_viewed_in_plan() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user = $dg->create_user();
+        $plan = $lpg->create_plan(array('userid' => $user->id));
+        $fr = $lpg->create_framework();
+        $c = $lpg->create_competency(array('competencyframeworkid' => $fr->get_id()));
+        $pc = $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $c->get_id()));
+        $uc = $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $c->get_id()));
+
+        // Can not log the event for user competency using completed plan.
+        api::complete_plan($plan);
+
+        try {
+            api::user_competency_viewed_in_plan($uc, $plan->get_id());
+            $this->fail('To log the user competency in completed plan '
+                    . 'use user_competency_plan_viewed method.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/To log the user competency in completed plan '
+                    . 'use user_competency_plan_viewed method./', $e->getMessage());
+        }
+
+        api::reopen_plan($plan);
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        api::user_competency_viewed_in_plan($uc, $plan->get_id());
+
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\tool_lp\event\user_competency_viewed_in_plan', $event);
+        $this->assertEquals($uc->get_id(), $event->objectid);
+        $this->assertEquals($uc->get_context()->id, $event->contextid);
+        $this->assertEquals($uc->get_userid(), $event->relateduserid);
+        $this->assertEquals($plan->get_id(), $event->other['planid']);
+        $this->assertEquals($c->get_id(), $event->other['competencyid']);
+
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+
+        // Test validation.
+        $params = array (
+            'objectid' => $uc->get_id(),
+            'contextid' => $uc->get_context()->id,
+            'other' => null
+        );
+
+        // Other value null.
+        try {
+            \tool_lp\event\user_competency_viewed_in_plan::create($params)->trigger();
+            $this->fail('The \'competencyid\' and \'planid\' values must be set.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp("/The 'competencyid' and 'planid' values must be set./", $e->getMessage());
+        }
+
+        $params['other']['anythingelse'] = '';
+        // Missing competencyid.
+        try {
+            \tool_lp\event\user_competency_viewed_in_plan::create($params)->trigger();
+            $this->fail('The \'competencyid\' value must be set.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp("/The 'competencyid' value must be set./", $e->getMessage());
+        }
+
+        $params['other']['competencyid'] = $c->get_id();
+        // Missing planid.
+        try {
+            \tool_lp\event\user_competency_viewed_in_plan::create($params)->trigger();
+            $this->fail('The \'planid\' value must be set.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp("/The 'planid' value must be set./", $e->getMessage());
+        }
+    }
+
+    /**
+     * Test the user competency viewed event in course.
+     *
+     */
+    public function test_user_competency_viewed_in_course() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user = $dg->create_user();
+        $course = $dg->create_course();
+        $fr = $lpg->create_framework();
+        $c = $lpg->create_competency(array('competencyframeworkid' => $fr->get_id()));
+        $pc = $lpg->create_course_competency(array('courseid' => $course->id, 'competencyid' => $c->get_id()));
+        $uc = $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $c->get_id()));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        api::user_competency_viewed_in_course($uc, $course->id);
+
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\tool_lp\event\user_competency_viewed_in_course', $event);
+        $this->assertEquals($uc->get_id(), $event->objectid);
+        $this->assertEquals(context_course::instance($course->id)->id, $event->contextid);
+        $this->assertEquals($uc->get_userid(), $event->relateduserid);
+        $this->assertEquals($course->id, $event->courseid);
+        $this->assertEquals($c->get_id(), $event->other['competencyid']);
+
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+
+        // Test validation.
+        $params = array (
+            'objectid' => $uc->get_id(),
+            'contextid' => $uc->get_context()->id,
+            'other' => null
+        );
+
+        // Missing courseid.
+        try {
+            \tool_lp\event\user_competency_viewed_in_course::create($params)->trigger();
+            $this->fail('The \'courseid\' value must be set.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp("/The 'courseid' value must be set./", $e->getMessage());
+        }
+
+        $params['contextid'] = context_course::instance($course->id)->id;
+        $params['courseid'] = $course->id;
+        // Missing competencyid.
+        try {
+            \tool_lp\event\user_competency_viewed_in_course::create($params)->trigger();
+            $this->fail('The \'competencyid\' value must be set.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp("/The 'competencyid' value must be set./", $e->getMessage());
+        }
+    }
+
+    /**
+     * Test the user competency plan viewed event.
+     *
+     */
+    public function test_user_competency_plan_viewed() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user = $dg->create_user();
+        $plan = $lpg->create_plan(array('userid' => $user->id));
+        $fr = $lpg->create_framework();
+        $c = $lpg->create_competency(array('competencyframeworkid' => $fr->get_id()));
+        $ucp = $lpg->create_user_competency_plan(array(
+            'userid' => $user->id,
+            'competencyid' => $c->get_id(),
+            'planid' => $plan->get_id()
+        ));
+
+        // Can not log the event for user competency using non completed plan.
+        try {
+            api::user_competency_plan_viewed($ucp);
+            $this->fail('To log the user competency in non-completed plan '
+                    . 'use user_competency_viewed_in_plan method.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/To log the user competency in non-completed plan '
+                    . 'use user_competency_viewed_in_plan method./', $e->getMessage());
+        }
+
+        // Complete the plan.
+        api::complete_plan($plan);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        api::user_competency_plan_viewed($ucp);
+
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\tool_lp\event\user_competency_plan_viewed', $event);
+        $this->assertEquals($ucp->get_id(), $event->objectid);
+        $this->assertEquals($ucp->get_context()->id, $event->contextid);
+        $this->assertEquals($ucp->get_userid(), $event->relateduserid);
+        $this->assertEquals($plan->get_id(), $event->other['planid']);
+        $this->assertEquals($c->get_id(), $event->other['competencyid']);
+
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+
+        // Test validation.
+        $params = array (
+            'objectid' => $ucp->get_id(),
+            'contextid' => $ucp->get_context()->id,
+            'other' => null
+        );
+
+        // Other value null.
+        try {
+            \tool_lp\event\user_competency_plan_viewed::create($params)->trigger();
+            $this->fail('The \'competencyid\' and \'planid\' values must be set.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp("/The 'competencyid' and 'planid' values must be set./", $e->getMessage());
+        }
+
+        $params['other']['anythingelse'] = '';
+        // Missing competencyid.
+        try {
+            \tool_lp\event\user_competency_plan_viewed::create($params)->trigger();
+            $this->fail('The \'competencyid\' value must be set.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp("/The 'competencyid' value must be set./", $e->getMessage());
+        }
+
+        $params['other']['competencyid'] = $c->get_id();
+        // Missing planid.
+        try {
+            \tool_lp\event\user_competency_plan_viewed::create($params)->trigger();
+            $this->fail('The \'planid\' value must be set.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp("/The 'planid' value must be set./", $e->getMessage());
+        }
+    }
+
+    /**
+     * Test the user competency viewed event.
+     *
+     */
+    public function test_user_competency_viewed() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user = $dg->create_user();
+        $fr = $lpg->create_framework();
+        $c = $lpg->create_competency(array('competencyframeworkid' => $fr->get_id()));
+        $uc = $lpg->create_user_competency(array(
+            'userid' => $user->id,
+            'competencyid' => $c->get_id()
+        ));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        api::user_competency_viewed($uc);
+
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\tool_lp\event\user_competency_viewed', $event);
+        $this->assertEquals($uc->get_id(), $event->objectid);
+        $this->assertEquals($uc->get_context()->id, $event->contextid);
+        $this->assertEquals($uc->get_userid(), $event->relateduserid);
+        $this->assertEquals($c->get_id(), $event->other['competencyid']);
+
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+
+        // Test validation.
+        $params = array (
+            'objectid' => $uc->get_id(),
+            'contextid' => $uc->get_context()->id
+        );
+
+        // Missing competencyid.
+        try {
+            \tool_lp\event\user_competency_viewed::create($params)->trigger();
+            $this->fail('The \'competencyid\' value must be set.');
+        } catch (coding_exception $e) {
+            $this->assertRegExp("/The 'competencyid' value must be set./", $e->getMessage());
+        }
+    }
 }

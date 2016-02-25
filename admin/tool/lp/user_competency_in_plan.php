@@ -48,5 +48,14 @@ echo $output->heading($title);
 
 $page = new \tool_lp\output\user_competency_summary_in_plan($competencyid, $planid);
 echo $output->render($page);
+// Trigger the viewed event.
+$pc = \tool_lp\api::get_plan_competency($plan, $competency->get_id());
+if ($plan->get_status() == \tool_lp\plan::STATUS_COMPLETE) {
+    $usercompetencyplan = $pc->usercompetencyplan;
+    \tool_lp\api::user_competency_plan_viewed($usercompetencyplan);
+} else {
+    $usercompetency = $pc->usercompetency;
+    \tool_lp\api::user_competency_viewed_in_plan($usercompetency, $plan->get_id());
+}
 
 echo $output->footer();

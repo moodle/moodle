@@ -89,6 +89,10 @@ echo $output->render($nav);
 if ($userid > 0) {
     $page = new \tool_lp\output\user_competency_summary_in_course($userid, $competencyid, $courseid);
     echo $output->render($page);
+
+    // Trigger the viewed event.
+    $uc = \tool_lp\api::get_user_competency_in_course($courseid, $userid, $competencyid);
+    \tool_lp\api::user_competency_viewed_in_course($uc, $courseid);
 } else {
     echo $output->container('', 'clearfix');
     echo $output->notify_problem(get_string('noparticipants', 'tool_lp'));

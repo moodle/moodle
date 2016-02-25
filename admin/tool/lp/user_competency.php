@@ -61,4 +61,7 @@ $PAGE->set_heading($compdata->shortname);
 echo $output->header();
 $page = new \tool_lp\output\user_competency_summary($uc);
 echo $output->render($page);
+// Trigger viewed event.
+\tool_lp\api::user_competency_viewed($uc);
+
 echo $output->footer();

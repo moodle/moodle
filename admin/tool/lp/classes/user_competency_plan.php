@@ -25,6 +25,7 @@ namespace tool_lp;
 defined('MOODLE_INTERNAL') || die();
 
 use lang_string;
+use context_user;
 
 /**
  * Class for loading/storing user_competency_plan from the DB.
@@ -77,6 +78,15 @@ class user_competency_plan extends persistent {
      */
     public function get_competency() {
         return new competency($this->get_competencyid());
+    }
+
+    /**
+     * Get the context.
+     *
+     * @return context The context.
+     */
+    public function get_context() {
+        return context_user::instance($this->get_userid());
     }
 
     /**
@@ -212,7 +222,7 @@ class user_competency_plan extends persistent {
 
         if (!empty($competenciesorids)) {
             $test = reset($competenciesorids);
-            if (is_int($test)) {
+            if (is_number($test)) {
                 $ids = $competenciesorids;
             } else {
                 $ids = array();
