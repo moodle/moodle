@@ -197,8 +197,8 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         // Create a list of frameworks.
         $framework1 = $lpg->create_framework(array(
-            'shortname' => 'shortname_a',
-            'idnumber' => 'idnumber_c',
+            'shortname' => 'shortname_alpha',
+            'idnumber' => 'idnumber_cinnamon',
             'description' => 'description',
             'descriptionformat' => FORMAT_HTML,
             'visible' => true,
@@ -206,8 +206,8 @@ class tool_lp_api_testcase extends advanced_testcase {
         ));
 
         $framework2 = $lpg->create_framework(array(
-            'shortname' => 'shortname_b',
-            'idnumber' => 'idnumber_a',
+            'shortname' => 'shortname_beetroot',
+            'idnumber' => 'idnumber_apple',
             'description' => 'description',
             'descriptionformat' => FORMAT_HTML,
             'visible' => true,
@@ -215,11 +215,11 @@ class tool_lp_api_testcase extends advanced_testcase {
         ));
 
         $framework3 = $lpg->create_framework(array(
-            'shortname' => 'shortname_c',
-            'idnumber' => 'idnumber_b',
+            'shortname' => 'shortname_crisps',
+            'idnumber' => 'idnumber_beer',
             'description' => 'description',
             'descriptionformat' => FORMAT_HTML,
-            'visible' => true,
+            'visible' => false,
             'contextid' => context_system::instance()->id
         ));
 
@@ -242,6 +242,38 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals($framework3->get_id(), $f->get_id());
         $f = (object) array_shift($result);
         $this->assertEquals($framework1->get_id(), $f->get_id());
+
+        // Repeat excluding the non-visible ones.
+        $result = api::list_frameworks('idnumber', 'ASC', null, 3, context_system::instance(), 'self', true);
+        $this->assertCount(2, $result);
+        $f = (object) array_shift($result);
+        $this->assertEquals($framework2->get_id(), $f->get_id());
+        $f = (object) array_shift($result);
+        $this->assertEquals($framework1->get_id(), $f->get_id());
+
+        // Search by query string, trying match on shortname.
+        $result = api::list_frameworks('idnumber', 'ASC', null, 3, context_system::instance(), 'self', false, 'crisp');
+        $this->assertCount(1, $result);
+        $f = (object) array_shift($result);
+        $this->assertEquals($framework3->get_id(), $f->get_id());
+
+        // Search by query string, trying match on shortname, but hidden.
+        $result = api::list_frameworks('idnumber', 'ASC', null, 3, context_system::instance(), 'self', true, 'crisp');
+        $this->assertCount(0, $result);
+
+        // Search by query string, trying match on ID number.
+        $result = api::list_frameworks('idnumber', 'ASC', null, 3, context_system::instance(), 'self', false, 'apple');
+        $this->assertCount(1, $result);
+        $f = (object) array_shift($result);
+        $this->assertEquals($framework2->get_id(), $f->get_id());
+
+        // Search by query string, trying match on both.
+        $result = api::list_frameworks('idnumber', 'ASC', null, 3, context_system::instance(), 'self', false, 'bee');
+        $this->assertCount(2, $result);
+        $f = (object) array_shift($result);
+        $this->assertEquals($framework2->get_id(), $f->get_id());
+        $f = (object) array_shift($result);
+        $this->assertEquals($framework3->get_id(), $f->get_id());
     }
 
     /**

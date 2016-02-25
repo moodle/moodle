@@ -723,9 +723,11 @@ class api {
      *                          - parents: All parents, grand parents, etc...
      *                          - self: Context passed only.
      * @param bool $onlyvisible If true return only visible frameworks
+     * @param string $query A string to use to filter down the frameworks.
      * @return array of competency_framework
      */
-    public static function list_frameworks($sort, $order, $skip, $limit, $context, $includes = 'children', $onlyvisible = false) {
+    public static function list_frameworks($sort, $order, $skip, $limit, $context, $includes = 'children',
+            $onlyvisible = false, $query = '') {
         global $DB;
 
         // Get all the relevant contexts.
@@ -742,6 +744,15 @@ class api {
         if ($onlyvisible) {
             $select .= " AND visible = :visible";
             $inparams['visible'] = 1;
+        }
+
+        if (!empty($query) || is_numeric($query)) {
+            $sqlnamelike = $DB->sql_like('shortname', ':namelike', false);
+            $sqlidnlike = $DB->sql_like('idnumber', ':idnlike', false);
+
+            $select .= " AND ($sqlnamelike OR $sqlidnlike) ";
+            $inparams['namelike'] = '%' . $DB->sql_like_escape($query) . '%';
+            $inparams['idnlike'] = '%' . $DB->sql_like_escape($query) . '%';
         }
 
         return competency_framework::get_records_select($select, $inparams, $sort . ' ' . $order, '*', $skip, $limit);

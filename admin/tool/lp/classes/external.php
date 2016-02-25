@@ -453,7 +453,7 @@ class external extends external_api {
             PARAM_ALPHANUMEXT,
             'Column to sort by.',
             VALUE_DEFAULT,
-            ''
+            'shortname'
         );
         $order = new external_value(
             PARAM_ALPHA,
@@ -485,6 +485,12 @@ class external extends external_api {
             VALUE_DEFAULT,
             false
         );
+        $query = new external_value(
+            PARAM_RAW,
+            'A query string to filter the results',
+            VALUE_DEFAULT,
+            ''
+        );
 
         $params = array(
             'sort' => $sort,
@@ -493,7 +499,8 @@ class external extends external_api {
             'limit' => $limit,
             'context' => self::get_context_parameters(),
             'includes' => $includes,
-            'onlyvisible' => $onlyvisible
+            'onlyvisible' => $onlyvisible,
+            'query' => $query,
         );
         return new external_function_parameters($params);
     }
@@ -509,12 +516,14 @@ class external extends external_api {
      * @param array $context
      * @param bool $includes
      * @param bool $onlyvisible
+     * @param string $query
      *
      * @return array
      * @throws \required_capability_exception
      * @throws invalid_parameter_exception
      */
-    public static function list_competency_frameworks($sort, $order, $skip, $limit, $context, $includes, $onlyvisible) {
+    public static function list_competency_frameworks($sort, $order, $skip, $limit, $context, $includes, $onlyvisible,
+            $query = '') {
         global $PAGE;
 
         $params = self::validate_parameters(self::list_competency_frameworks_parameters(),
@@ -525,7 +534,8 @@ class external extends external_api {
                                                 'limit' => $limit,
                                                 'context' => $context,
                                                 'includes' => $includes,
-                                                'onlyvisible' => $onlyvisible
+                                                'onlyvisible' => $onlyvisible,
+                                                'query' => $query,
                                             ));
 
         $context = self::get_context_from_params($params['context']);
@@ -542,7 +552,8 @@ class external extends external_api {
                                        $params['limit'],
                                        $context,
                                        $params['includes'],
-                                       $params['onlyvisible']);
+                                       $params['onlyvisible'],
+                                       $params['query']);
         $records = array();
         foreach ($results as $result) {
             $exporter = new competency_framework_exporter($result);

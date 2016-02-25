@@ -642,6 +642,59 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(true, $result->visible);
     }
 
+    public function list_competency_frameworks_with_query() {
+        $this->setUser($this->creator);
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $framework1 = $lpg->create_framework(array(
+            'shortname' => 'shortname_beetroot',
+            'idnumber' => 'idnumber_cinnamon',
+            'description' => 'description',
+            'descriptionformat' => FORMAT_HTML,
+            'visible' => true,
+            'contextid' => context_system::instance()->id
+        ));
+        $framework2 = $lpg->create_framework(array(
+            'shortname' => 'shortname_citrus',
+            'idnumber' => 'idnumber_beer',
+            'description' => 'description',
+            'descriptionformat' => FORMAT_HTML,
+            'visible' => true,
+            'contextid' => context_system::instance()->id
+        ));
+
+        // Search on both ID number and shortname.
+        $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
+            array('contextid' => context_system::instance()->id), 'self', false, 'bee');
+        $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
+        $this->assertCount(2, $result);
+        $f = (object) array_shift($result);
+        $this->assertEquals($framework1->get_id(), $f->get_id());
+        $f = (object) array_shift($result);
+        $this->assertEquals($framework2->get_id(), $f->get_id());
+
+        // Search on ID number.
+        $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
+            array('contextid' => context_system::instance()->id), 'self', false, 'beer');
+        $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
+        $this->assertCount(1, $result);
+        $f = (object) array_shift($result);
+        $this->assertEquals($framework2->get_id(), $f->get_id());
+
+        // Search on shortname.
+        $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
+            array('contextid' => context_system::instance()->id), 'self', false, 'cinnamon');
+        $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
+        $this->assertCount(1, $result);
+        $f = (object) array_shift($result);
+        $this->assertEquals($framework1->get_id(), $f->get_id());
+
+        // No match.
+        $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
+            array('contextid' => context_system::instance()->id), 'self', false, 'pwnd!');
+        $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
+        $this->assertCount(0, $result);
+    }
+
     /**
      * Test we can list and count competency frameworks with read permissions.
      */
