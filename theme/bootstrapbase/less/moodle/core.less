@@ -2476,3 +2476,23 @@ span.inplaceeditable select {
 h3.sectionname span.inplaceeditable.inplaceeditingon span.editinstructions {
     margin-top: -20px;
 }
+
+
+.jsenabled {
+    .inplaceeditable {
+        .quickediticon {
+            display: inline;
+        }
+        &.inplaceeditable-toggle {
+            .quickediticon {
+                display: none;
+            }
+        }
+    }
+}
+
+.inplaceeditable {
+    .quickediticon {
+        display: none;
+    }
+}

@@ -186,6 +186,21 @@ class inplace_editable implements templatable, renderable {
     }
 
     /**
+     * Whether the link should contain all of the content or not.
+     */
+    protected function get_linkeverything() {
+        if ($this->type === 'toggle') {
+            return true;
+        }
+
+        if (preg_match('#<a .*>.*</a>#', $this->displayvalue) === 1) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Export this data so it can be used as the context for a mustache template (core/inplace_editable).
      *
      * @param renderer_base $output typically, the renderer that's calling this function
@@ -208,6 +223,7 @@ class inplace_editable implements templatable, renderable {
             'editlabel' => (string)$this->editlabel,
             'type' => $this->type,
             'options' => $this->options,
+            'linkeverything' => $this->get_linkeverything() ? 1 : 0,
         );
     }
 }

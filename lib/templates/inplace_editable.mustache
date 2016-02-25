@@ -46,19 +46,21 @@
         "edithint" : "Edit this",
         "editlabel" : "New name for this",
         "type" : "text",
-        "options" : ""
+        "options" : "",
+        "linkeverything": 0
     }
 }}
 {{#component}}
 <span class="inplaceeditable inplaceeditable-{{type}}" data-inplaceeditable="1" data-component="{{component}}" data-itemtype="{{itemtype}}" data-itemid="{{itemid}}"
     data-value="{{value}}" data-editlabel="{{editlabel}}" data-type="{{type}}" data-options="{{options}}">
-        {{{displayvalue}}}
-        <a href="#" class="quickeditlink visibleifjs" data-inplaceeditablelink="1" title="{{edithint}}">
-            {{#pix}}t/editstring,core,{{edithint}}{{/pix}}
+        {{^ linkeverything }}{{{displayvalue}}}{{/ linkeverything }}
+        <a href="#" class="quickeditlink" data-inplaceeditablelink="1" title="{{edithint}}">
+            {{# linkeverything }}{{{displayvalue}}}{{/ linkeverything }}
+            <span class="quickediticon">{{#pix}}t/editstring,core,{{edithint}}{{/pix}}</span>
         </a>
 </span>
 {{#js}}
-    require(['core/inplace_editable'], function(ie) { ie.init_inplace_editable(); });
+    require(['core/inplace_editable']);
 {{/js}}
 {{/component}}
 {{^component}}
