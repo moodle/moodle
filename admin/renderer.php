@@ -1963,6 +1963,9 @@ class core_admin_renderer extends plugin_renderer_base {
      */
     protected function legacy_log_store_writing_error() {
         $enabled = get_config('logstore_legacy', 'loglegacy');
+        $plugins = explode(',', get_config('tool_log', 'enabled_stores'));
+        $enabled = $enabled && in_array('logstore_legacy', $plugins);
+
         if ($enabled) {
             return $this->warning(get_string('legacylogginginuse'));
         }
