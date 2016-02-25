@@ -112,6 +112,7 @@ $string['eventcompetencycreated'] = 'Competency created.';
 $string['eventcompetencydeleted'] = 'Competency deleted.';
 $string['eventcompetencyupdated'] = 'Competency updated.';
 $string['eventcompetencyviewed'] = 'Competency viewed.';
+$string['eventevidencecreated'] = 'Evidence created.';
 $string['eventplanapproved'] = 'Plan approved.';
 $string['eventplancompleted'] = 'Plan completed.';
 $string['eventplancreated'] = 'Plan created.';

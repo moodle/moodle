@@ -1295,4 +1295,163 @@ class tool_lp_event_testcase extends advanced_testcase {
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
+
+    /**
+     * Test evidence_created event.
+     */
+    public function test_evidence_created() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $syscontext = context_system::instance();
+
+        // Create a student.
+        $student = $dg->create_user();
+
+        // Create a competency for the course.
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $framework = $lpg->create_framework();
+        $comp = $lpg->create_competency(['competencyframeworkid' => $framework->get_id()]);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        // Add evidence.
+        $recommend = false;
+        $evidence = api::add_evidence($student->id, $comp, $syscontext, \tool_lp\evidence::ACTION_SUGGEST,
+            'commentincontext', 'core', null, $recommend, null, 1);
+
+        // Get event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\tool_lp\event\evidence_created', $event);
+        $this->assertEquals($evidence->get_contextid(), $event->contextid);
+        $this->assertEquals($evidence->get_id(), $event->objectid);
+        $this->assertEquals($evidence->get_actionuserid(), $event->userid);
+        $this->assertEquals($student->id, $event->relateduserid);
+        $this->assertEquals($evidence->get_usercompetencyid(), $event->other['usercompetencyid']);
+        $this->assertEquals($comp->get_id(), $event->other['competencyid']);
+        $this->assertEquals($evidence->get_action(), $event->other['action']);
+        $this->assertEquals($recommend, $event->other['recommend']);
+
+        // Test get_name().
+        $this->assertEquals(get_string('eventevidencecreated', 'tool_lp'), $event->get_name());
+
+        // Test get_description().
+        $description = "The user with id '$USER->id' created an evidence with id '{$evidence->get_id()}'.";
+        $this->assertEquals($description, $event->get_description());
+
+        // Test get_url().
+        $url = new moodle_url('/admin/tool/lp/user_competency.php', ['id' => $evidence->get_usercompetencyid()]);
+        $this->assertEquals($url, $event->get_url());
+
+        // Test get_objectid_mapping().
+        $this->assertEquals(\core\event\base::NOT_MAPPED, $event->get_objectid_mapping());
+
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test evidence_created event by linking an invalid user competency to an evidence.
+     */
+    public function test_evidence_created_with_invalid_user_competency() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $syscontext = context_system::instance();
+
+        // Create students.
+        $student = $dg->create_user();
+        $student2 = $dg->create_user();
+
+        // Create a competency for the course.
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $framework = $lpg->create_framework();
+        $comp = $lpg->create_competency(['competencyframeworkid' => $framework->get_id()]);
+
+        // Create a different user competency.
+        $otheruc = \tool_lp\user_competency::create_relation($student2->id, $comp->get_id());
+        $otheruc->create();
+
+        // Add evidence.
+        $recommend = false;
+        $evidence = api::add_evidence($student->id, $comp, $syscontext, \tool_lp\evidence::ACTION_SUGGEST,
+            'commentincontext', 'core', null, $recommend, null, 1);
+
+        // We expect this to fail and throw a coding exception.
+        $this->setExpectedException('coding_exception', 'The user competency linked with this evidence is invalid.');
+        \tool_lp\event\evidence_created::create_from_evidence($evidence, $otheruc, $recommend)->trigger();
+    }
+
+    /**
+     * Test creation of evidence_created event with missing data.
+     *
+     * These data are validated by \tool_lp\evidence_created::validate_data().
+     */
+    public function test_evidence_created_with_missing_data() {
+        $eventdata = [
+            'contextid'  => 1,
+            'objectid' => 1,
+            'userid' => 1
+        ];
+
+        // No relateduserid.
+        $errormsg = 'The \'relateduserid\' must be set.';
+        try {
+            \tool_lp\event\evidence_created::create($eventdata)->trigger();
+            $this->fail('Coding exception should have been thrown: ' . $errormsg);
+        } catch (coding_exception $e) {
+            $this->assertContains($errormsg, $e->getMessage());
+        }
+        $eventdata['relateduserid'] = 1;
+
+        // No other['usercompetencyid'].
+        $errormsg = 'The \'usercompetencyid\' data in \'other\' must be set.';
+        try {
+            \tool_lp\event\evidence_created::create($eventdata)->trigger();
+            $this->fail('Coding exception should have been thrown: ' . $errormsg);
+        } catch (coding_exception $e) {
+            $this->assertContains($errormsg, $e->getMessage());
+        }
+        $eventdata['other']['usercompetencyid'] = 1;
+
+        // No other['competencyid'].
+        $errormsg = 'The \'competencyid\' data in \'other\' must be set.';
+        try {
+            \tool_lp\event\evidence_created::create($eventdata)->trigger();
+            $this->fail('Coding exception should have been thrown: ' . $errormsg);
+        } catch (coding_exception $e) {
+            $this->assertContains($errormsg, $e->getMessage());
+        }
+        $eventdata['other']['competencyid'] = 1;
+
+
+        // No other['action'].
+        $errormsg = 'The \'action\' data in \'other\' must be set.';
+        try {
+            \tool_lp\event\evidence_created::create($eventdata)->trigger();
+            $this->fail('Coding exception should have been thrown: ' . $errormsg);
+        } catch (coding_exception $e) {
+            $this->assertContains($errormsg, $e->getMessage());
+        }
+        $eventdata['other']['action'] = 1;
+
+
+        // No other['recommend'].
+        $errormsg = 'The \'recommend\' data in \'other\' must be set.';
+        try {
+            \tool_lp\event\evidence_created::create($eventdata)->trigger();
+            $this->fail('Coding exception should have been thrown: ' . $errormsg);
+        } catch (coding_exception $e) {
+            $this->assertContains($errormsg, $e->getMessage());
+        }
+        $eventdata['other']['recommend'] = 1;
+
+        // Event should be triggered without any problems.
+        \tool_lp\event\evidence_created::create($eventdata)->trigger();
+    }
+
 }

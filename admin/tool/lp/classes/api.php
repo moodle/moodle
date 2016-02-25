@@ -4236,6 +4236,9 @@ class api {
         $usercompetency->update();
         $evidence->create();
 
+        // Trigger the evidence_created event.
+        \tool_lp\event\evidence_created::create_from_evidence($evidence, $usercompetency, $recommend)->trigger();
+
         // The competency was marked as completed, apply the rules.
         if ($wascompleted) {
             self::apply_competency_rules_from_usercompetency($usercompetency, $competency);
