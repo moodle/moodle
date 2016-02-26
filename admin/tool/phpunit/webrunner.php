@@ -24,7 +24,7 @@
 
 define('NO_OUTPUT_BUFFERING', true);
 
-require(dirname(__FILE__) . '/../../../config.php');
+require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $testpath  = optional_param('testpath', '', PARAM_PATH);

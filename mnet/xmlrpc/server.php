@@ -17,7 +17,7 @@ define('NO_MOODLE_COOKIES', true);
 
 define('MNET_SERVER', true);
 
-require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require(__DIR__.'/../../config.php');
 
 $mnet = get_mnet_environment();
 // Include MNET stuff:

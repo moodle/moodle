@@ -39,7 +39,7 @@ class core_string_manager_standard_testcase extends advanced_testcase {
     public function test_string_manager_instance() {
         $this->resetAfterTest();
 
-        $otherroot = dirname(__FILE__).'/fixtures/langtest';
+        $otherroot = __DIR__.'/fixtures/langtest';
         $stringman = testable_core_string_manager::instance($otherroot);
         $this->assertInstanceOf('core_string_manager', $stringman);
     }
@@ -47,7 +47,7 @@ class core_string_manager_standard_testcase extends advanced_testcase {
     public function test_get_language_dependencies() {
         $this->resetAfterTest();
 
-        $otherroot = dirname(__FILE__).'/fixtures/langtest';
+        $otherroot = __DIR__.'/fixtures/langtest';
         $stringman = testable_core_string_manager::instance($otherroot);
 
         // There is no parent language for 'en'.

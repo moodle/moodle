@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(dirname(__FILE__)).'/assessment_form.php');    // parent class definition
+require_once(__DIR__.'/../assessment_form.php');    // parent class definition
 
 /**
  * Class representing a form for assessing submissions by accumulative grading strategy

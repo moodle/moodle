@@ -21,7 +21,7 @@
  * @copyright  2006 Dan Stowell
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require(__DIR__.'/../../config.php');
 require_login(0, false);
 require_capability('moodle/site:config', context_system::instance());
 require_sesskey();

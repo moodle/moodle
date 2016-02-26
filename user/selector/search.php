@@ -24,7 +24,7 @@
 
 define('AJAX_SCRIPT', true);
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/user/selector/lib.php');
 
 $PAGE->set_context(context_system::instance());

@@ -55,7 +55,7 @@
  *
  *  Next, in foo.php, your file structure would resemble the following:
  * <code>
- *         require(dirname(dirname(dirname(__FILE__))).'/config.php');
+ *         require(__DIR__.'/../../config.php');
  *         require_once($CFG->libdir.'/adminlib.php');
  *         admin_externalpage_setup('foo');
  *         // functionality like processing form submissions goes here

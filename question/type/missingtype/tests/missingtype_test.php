@@ -27,9 +27,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once(dirname(__FILE__) . '/../../../engine/tests/helpers.php');
-require_once(dirname(__FILE__) . '/../../../behaviour/deferredfeedback/behaviour.php');
-require_once(dirname(__FILE__) . '/../question.php');
+require_once(__DIR__ . '/../../../engine/tests/helpers.php');
+require_once(__DIR__ . '/../../../behaviour/deferredfeedback/behaviour.php');
+require_once(__DIR__ . '/../question.php');
 
 
 /**

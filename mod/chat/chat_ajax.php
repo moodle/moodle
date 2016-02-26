@@ -16,8 +16,8 @@
 
 define('AJAX_SCRIPT', true);
 
-require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
-require_once(dirname(__FILE__) . '/lib.php');
+require(__DIR__.'/../../config.php');
+require_once(__DIR__ . '/lib.php');
 
 $action       = optional_param('action', '', PARAM_ALPHANUM);
 $beepid       = optional_param('beep', '', PARAM_RAW);

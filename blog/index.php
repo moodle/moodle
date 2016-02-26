@@ -20,7 +20,7 @@
  * if a blog id is specified then the latest entries from that blog are shown
  */
 
-require_once(dirname(dirname(__FILE__)).'/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot .'/blog/lib.php');
 require_once($CFG->dirroot .'/blog/locallib.php');
 require_once($CFG->dirroot .'/course/lib.php');

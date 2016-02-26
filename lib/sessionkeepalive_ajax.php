@@ -23,7 +23,7 @@
  */
 
 define('AJAX_SCRIPT', true);
-require_once(dirname(__DIR__) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 
 // Require the session key - want to make sure that this isn't called
 // maliciously to keep a session alive longer than intended.

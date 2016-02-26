@@ -23,8 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(__FILE__).'/locallib.php');
+require(__DIR__.'/../../config.php');
+require_once(__DIR__.'/locallib.php');
 
 $cmid       = required_param('cmid', PARAM_INT);            // course module
 $confirm    = optional_param('confirm', false, PARAM_BOOL); // confirmation

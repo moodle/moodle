@@ -25,7 +25,7 @@
  * @package filter_mediaplugin
  */
 
-require(dirname(__FILE__) . '/../../../config.php');
+require(__DIR__ . '/../../../config.php');
 require_once($CFG->dirroot . '/filter/mediaplugin/filter.php');
 
 // Only available to site admins.

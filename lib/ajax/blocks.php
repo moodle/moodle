@@ -23,7 +23,7 @@
  */
 
 define('AJAX_SCRIPT', true);
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(__DIR__ . '/../../config.php');
 
 // Initialise ALL common incoming parameters here, up front.
 $courseid = required_param('courseid', PARAM_INT);

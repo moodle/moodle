@@ -23,7 +23,7 @@
  */
 
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->libdir .'/simplepie/moodle_simplepie.php');
 

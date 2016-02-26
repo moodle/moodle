@@ -69,7 +69,7 @@ function workshop_supports($feature) {
  */
 function workshop_add_instance(stdclass $workshop) {
     global $CFG, $DB;
-    require_once(dirname(__FILE__) . '/locallib.php');
+    require_once(__DIR__ . '/locallib.php');
 
     $workshop->phase                 = workshop::PHASE_SETUP;
     $workshop->timecreated           = time();
@@ -147,7 +147,7 @@ function workshop_add_instance(stdclass $workshop) {
  */
 function workshop_update_instance(stdclass $workshop) {
     global $CFG, $DB;
-    require_once(dirname(__FILE__) . '/locallib.php');
+    require_once(__DIR__ . '/locallib.php');
 
     $workshop->timemodified          = time();
     $workshop->id                    = $workshop->instance;
@@ -366,7 +366,7 @@ function workshop_user_outline($course, $user, $mod, $workshop) {
  */
 function workshop_user_complete($course, $user, $mod, $workshop) {
     global $CFG, $DB, $OUTPUT;
-    require_once(dirname(__FILE__).'/locallib.php');
+    require_once(__DIR__.'/locallib.php');
     require_once($CFG->libdir.'/gradelib.php');
 
     $workshop   = new workshop($workshop, $mod, $course);

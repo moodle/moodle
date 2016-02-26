@@ -72,7 +72,7 @@ if (version_compare(phpversion(), "5.4.4") < 0) {
 }
 
 // Nothing to do if config.php does not exist
-$configfile = dirname(dirname(dirname(__FILE__))).'/config.php';
+$configfile = __DIR__.'/../../config.php';
 if (!file_exists($configfile)) {
     fwrite(STDERR, 'config.php does not exist, can not continue'); // do not localize
     fwrite(STDERR, "\n");

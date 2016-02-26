@@ -23,7 +23,7 @@
 
 define('NO_DEBUG_DISPLAY', true);
 
-require_once(dirname(__FILE__) . '/../../../../config.php');
+require_once(__DIR__ . '/../../../../config.php');
 require_once($CFG->libdir . '/graphlib.php');
 require_once($CFG->dirroot.'/mod/scorm/report/reportlib.php');
 require_once($CFG->dirroot.'/mod/scorm/locallib.php');

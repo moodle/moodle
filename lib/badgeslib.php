@@ -1005,7 +1005,7 @@ function print_badge_image(badge $badge, stdClass $context, $size = 'small') {
  */
 function badges_bake($hash, $badgeid, $userid = 0, $pathhash = false) {
     global $CFG, $USER;
-    require_once(dirname(dirname(__FILE__)) . '/badges/lib/bakerlib.php');
+    require_once(__DIR__ . '/../badges/lib/bakerlib.php');
 
     $badge = new badge($badgeid);
     $badge_context = $badge->get_context();
@@ -1066,7 +1066,7 @@ function badges_bake($hash, $badgeid, $userid = 0, $pathhash = false) {
  */
 function get_backpack_settings($userid, $refresh = false) {
     global $DB;
-    require_once(dirname(dirname(__FILE__)) . '/badges/lib/backpacklib.php');
+    require_once(__DIR__ . '/../badges/lib/backpacklib.php');
 
     // Try to get badges from cache first.
     $badgescache = cache::make('core', 'externalbadges');
