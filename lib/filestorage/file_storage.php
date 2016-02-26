@@ -187,21 +187,29 @@ class file_storage {
      * @param string $format The desired format - e.g. 'pdf'. Formats are specified by file extension.
      * @return bool - True if the format is supported for input.
      */
-    protected function is_input_format_supported_by_pandoc($format) {
+    protected function is_format_supported_by_unoconv($format) {
+        global $CFG;
+
+        if (!isset($this->unoconvformats)) {
+            // Ask unoconv for it's list of supported document formats.
+            $cmd = escapeshellcmd(trim($CFG->pathtounoconv)) . ' --show';
+            $pipes = array();
+            $pipesspec = array(2 => array('pipe', 'w'));
+            $proc = proc_open($cmd, $pipesspec, $pipes);
+            $programoutput = stream_get_contents($pipes[2]);
+            fclose($pipes[2]);
+            proc_close($proc);
+            $matches = array();
+            preg_match_all('/\[\.(.*)\]/', $programoutput, $matches);
+
+            $this->unoconvformats = $matches[1];
+            $this->unoconvformats = array_unique($this->unoconvformats);
+        }
+
         $sanitized = trim(strtolower($format));
-        return in_array($sanitized, array('md', 'html', 'tex', 'docx', 'odt', 'epub', 'png', 'jpg', 'gif'));
+        return in_array($sanitized, $this->unoconvformats);
     }
 
-    /**
-     * Verify the format is supported.
-     *
-     * @param string $format The desired format - e.g. 'pdf'. Formats are specified by file extension.
-     * @return bool - True if the format is supported for output.
-     */
-    protected function is_output_format_supported_by_pandoc($format) {
-        $sanitized = trim(strtolower($format));
-        return in_array($sanitized, array('md', 'pdf', 'html', 'tex', 'docx', 'odt', 'odf', 'epub'));
-    }
 
     /**
      * Perform a file format conversion on the specified document.
@@ -213,17 +221,17 @@ class file_storage {
     protected function create_converted_document(stored_file $file, $format) {
         global $CFG;
 
-        if (empty($CFG->pathtopandoc) || !is_executable(trim($CFG->pathtopandoc))) {
+        if (empty($CFG->pathtounoconv) || !is_executable(trim($CFG->pathtounoconv))) {
             // No conversions are possible, sorry.
             return false;
         }
 
         $fileextension = strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
-        if (!self::is_input_format_supported_by_pandoc($fileextension)) {
+        if (!self::is_format_supported_by_unoconv($fileextension)) {
             return false;
         }
 
-        if (!self::is_output_format_supported_by_pandoc($format)) {
+        if (!self::is_format_supported_by_unoconv($format)) {
             return false;
         }
 
@@ -236,21 +244,14 @@ class file_storage {
         $filename = $tmp . '/' . $localfilename;
         $file->copy_content_to($filename);
 
-        if (in_array($fileextension, array('gif', 'jpg', 'png'))) {
-            // We wrap images in a tiny html file - pandoc will generate documents from them.
-            $htmlwrapperfile = $tmp . '/wrapper.html';
-
-            file_put_contents($htmlwrapperfile, "<html><body><img src=\"$localfilename\"></body></html>");
-
-            $filename = $htmlwrapperfile;
-        }
-
         $newtmpfile = pathinfo($filename, PATHINFO_FILENAME) . '.' . $format;
 
         // Safety.
         $newtmpfile = $tmp . '/' . clean_param($newtmpfile, PARAM_FILE);
 
-        $cmd = escapeshellcmd(trim($CFG->pathtopandoc)) . ' ' .
+        $cmd = escapeshellcmd(trim($CFG->pathtounoconv)) . ' ' .
+               escapeshellarg('-f') . ' ' .
+               escapeshellarg($format) . ' ' .
                escapeshellarg('-o') . ' ' .
                escapeshellarg($newtmpfile) . ' ' .
                escapeshellarg($filename);
@@ -259,6 +260,7 @@ class file_storage {
         $output = null;
         $currentdir = getcwd();
         chdir($tmp);
+        $result = exec('env 1>&2', $output);
         $result = exec($cmd, $output);
         chdir($currentdir);
         if (!file_exists($newtmpfile)) {

@@ -838,11 +838,11 @@ $CFG->admin = 'admin';
 // (Development->Profiling) built into Moodle.
 //      $CFG->pathtodot = '';
 //
-// Path to pandoc.
-// Probably something like /usr/bin/pandoc. Used to convert between document formats.
-// It is recommended to install the latest stable release of pandoc.
-// Download packages for all platforms are available from http://pandoc.org/
-//      $CFG->pathtopandoc = '';
+// Path to unoconv.
+// Probably something like /usr/bin/unoconv. Used as a fallback to convert between document formats.
+// Unoconv is used convert between file formats supported by LibreOffice.
+// Use a recent version of unoconv ( >= 0.7 ), older versions have trouble running from a webserver.
+//      $CFG->pathtounoconv = '';
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

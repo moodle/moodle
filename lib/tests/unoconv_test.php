@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Test pandoc functionality.
+ * Test unoconv functionality.
  *
  * @package    core
  * @category   phpunit
@@ -27,14 +27,14 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * A set of tests for some of the pandoc functionality within Moodle.
+ * A set of tests for some of the unoconv functionality within Moodle.
  *
  * @package    core
  * @category   phpunit
  * @copyright  2016 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_pandoc_testcase extends advanced_testcase {
+class core_unoconv_testcase extends advanced_testcase {
 
     private $testfile1 = null;
     private $testfile2 = null;
@@ -51,7 +51,7 @@ class core_pandoc_testcase extends advanced_testcase {
             'filepath' => '/',
             'filename' => 'test.html'
         );
-        $teststring = file_get_contents($this->fixturepath . DIRECTORY_SEPARATOR . 'pandoc-source.html');
+        $teststring = file_get_contents($this->fixturepath . DIRECTORY_SEPARATOR . 'unoconv-source.html');
         $this->testfile1 = $fs->create_file_from_string($filerecord, $teststring);
 
         $filerecord = array(
@@ -62,7 +62,7 @@ class core_pandoc_testcase extends advanced_testcase {
             'filepath' => '/',
             'filename' => 'test.docx'
         );
-        $teststring = file_get_contents($this->fixturepath . DIRECTORY_SEPARATOR . 'pandoc-source.docx');
+        $teststring = file_get_contents($this->fixturepath . DIRECTORY_SEPARATOR . 'unoconv-source.docx');
         $this->testfile2 = $fs->create_file_from_string($filerecord, $teststring);
 
         $this->resetAfterTest();
@@ -71,16 +71,18 @@ class core_pandoc_testcase extends advanced_testcase {
     public function test_generate_pdf() {
         global $CFG;
 
-        if (empty($CFG->pathtopandoc) || !is_executable(trim($CFG->pathtopandoc))) {
+        if (empty($CFG->pathtounoconv) || !is_executable(trim($CFG->pathtounoconv))) {
             // No conversions are possible, sorry.
             return $this->markTestSkipped();
         }
         $fs = get_file_storage();
 
         $result = $fs->get_converted_document($this->testfile1, 'pdf');
+        $this->assertNotFalse($result);
         $this->assertSame($result->get_mimetype(), 'application/pdf');
         $this->assertGreaterThan(0, $result->get_filesize());
         $result = $fs->get_converted_document($this->testfile2, 'pdf');
+        $this->assertNotFalse($result);
         $this->assertSame($result->get_mimetype(), 'application/pdf');
         $this->assertGreaterThan(0, $result->get_filesize());
     }
@@ -88,16 +90,18 @@ class core_pandoc_testcase extends advanced_testcase {
     public function test_generate_markdown() {
         global $CFG;
 
-        if (empty($CFG->pathtopandoc) || !is_executable(trim($CFG->pathtopandoc))) {
+        if (empty($CFG->pathtounoconv) || !is_executable(trim($CFG->pathtounoconv))) {
             // No conversions are possible, sorry.
             return $this->markTestSkipped();
         }
         $fs = get_file_storage();
 
-        $result = $fs->get_converted_document($this->testfile1, 'md');
+        $result = $fs->get_converted_document($this->testfile1, 'txt');
+        $this->assertNotFalse($result);
         $this->assertSame($result->get_mimetype(), 'text/plain');
         $this->assertGreaterThan(0, $result->get_filesize());
-        $result = $fs->get_converted_document($this->testfile2, 'md');
+        $result = $fs->get_converted_document($this->testfile2, 'txt');
+        $this->assertNotFalse($result);
         $this->assertSame($result->get_mimetype(), 'text/plain');
         $this->assertGreaterThan(0, $result->get_filesize());
     }
