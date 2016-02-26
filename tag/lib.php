@@ -60,5 +60,9 @@ function core_tag_inplace_editable($itemtype, $itemid, $newvalue) {
         return \core_tag\output\tagareacollection::update($itemid, $newvalue);
     } else if ($itemtype === 'tagareashowstandard') {
         return \core_tag\output\tagareashowstandard::update($itemid, $newvalue);
+    } else if ($itemtype === 'tagcollname') {
+        return \core_tag\output\tagcollname::update($itemid, $newvalue);
+    } else if ($itemtype === 'tagcollsearchable') {
+        return \core_tag\output\tagcollsearchable::update($itemid, $newvalue);
     }
 }

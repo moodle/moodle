@@ -1,4 +1,4 @@
-@core @core_tag
+@core @core_tag @javascript
 Feature: Managers can create and manage tag collections
   In order to use tags effectively
   As a manager
@@ -23,7 +23,7 @@ Feature: Managers can create and manage tag collections
     And I follow "Add tag collection"
     And I set the following fields to these values:
       | Name | Hobbies |
-    And I press "Save changes"
+    And I press "Create"
 
   Scenario: Adding tag collections
     When I follow "Hobbies"
@@ -31,10 +31,9 @@ Feature: Managers can create and manage tag collections
     And I log out
 
   Scenario: Editing tag collections
-    When I follow "Edit tag collection Hobbies"
-    And I set the following fields to these values:
-      | Name | Newname |
-    And I press "Save changes"
+    When I click on "Edit tag collection name" "link" in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Hobbies')]" "xpath_element"
+    And I set the field "New name for tag collection Hobbies" to "Newname"
+    And I press key "13" in the field "New name for tag collection Hobbies"
     Then I should not see "Hobbies"
     And I should see "Newname"
     And I log out
@@ -43,7 +42,7 @@ Feature: Managers can create and manage tag collections
     When I follow "Add tag collection"
     And I set the following fields to these values:
       | Name | Blogging |
-    And I press "Save changes"
+    And I press "Create"
     Then "Blogging" "link" should appear after "Hobbies" "link"
     And I click on "Move up" "link" in the "Blogging" "table_row"
     And "Blogging" "link" should appear before "Hobbies" "link"
@@ -58,7 +57,6 @@ Feature: Managers can create and manage tag collections
     And I should not see "Hobbies"
     And I log out
 
-  @javascript
   Scenario: Assigning tag area to tag collection
     And I should see "User interests" in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Default collection')]" "xpath_element"
     And I should not see "User interests" in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Hobbies')]" "xpath_element"
@@ -69,15 +67,13 @@ Feature: Managers can create and manage tag collections
     And I should see "Hobbies" in the "//table[contains(@class,'tag-areas-table')]//tr[contains(.,'User interests')]" "xpath_element"
     And I log out
 
-  @javascript
   Scenario: Disabling tag areas
     When I click on "Disable" "link" in the "//table[contains(@class,'tag-areas-table')]//tr[contains(.,'User interests')]" "xpath_element"
-    And I should see "User interests" in the "table.tag-collections-table" "css_element"
+    And I should not see "User interests" in the "table.tag-collections-table" "css_element"
     And I click on "Enable" "link" in the "//table[contains(@class,'tag-areas-table')]//tr[contains(.,'User interests')]" "xpath_element"
     And I should see "User interests" in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Default collection')]" "xpath_element"
     And I log out
 
-  @javascript
   Scenario: Deleting non-empty tag collections
     When I click on "Change tag collection" "link" in the "//table[contains(@class,'tag-areas-table')]//tr[contains(.,'User interests')]" "xpath_element"
     And I set the field "Change tag collection of area User interests" to "Hobbies"
@@ -85,10 +81,9 @@ Feature: Managers can create and manage tag collections
     Then I should see "Are you sure you want to delete tag collection \"Hobbies\"?"
     And I press "Yes"
     And I should not see "Hobbies"
-    And "User interests" "text" should exist in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Default collection')]" "xpath_element"
+    And I should see "User interests" in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Default collection')]" "xpath_element"
     And I log out
 
-  @javascript
   Scenario: Moving tags when changing tag collections
     And I follow "Preferences" in the user menu
     And I follow "Edit profile"
@@ -115,23 +110,19 @@ Feature: Managers can create and manage tag collections
     And I should see "Tag2"
     And I log out
 
-  @javascript
   Scenario: Creating searchable and non-searchable tag collections
     And I follow "Add tag collection"
     And I set the following fields to these values:
       | Name | Hiddencoll |
       | Searchable | 0 |
-    And I press "Save changes"
+    And I press "Create"
     And "Yes" "text" should not exist in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Hiddencoll')]" "xpath_element"
     And I navigate to "Tags" node in "Site pages"
     Then the "Select tag collection" select box should contain "Default collection"
     And the "Select tag collection" select box should contain "Hobbies"
     And the "Select tag collection" select box should not contain "Hiddencoll"
     And I navigate to "Manage tags" node in "Site administration > Appearance"
-    And I click on "Edit" "link" in the "Hobbies" "table_row"
-    And I set the following fields to these values:
-      | Searchable | 0 |
-    And I press "Save changes"
+    And I click on "Change searchable" "link" in the "Hobbies" "table_row"
     And I navigate to "Tags" node in "Site pages"
     And "Select tag collection" "select" should not exist
     And I log out

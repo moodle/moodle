@@ -143,7 +143,7 @@ class core_tag_collection {
             return get_string($identifier, $component);
         }
         if (!empty($record->name)) {
-            return format_string($record->name, true, $syscontext);
+            return format_string($record->name, true, array('context' => $syscontext));
         } else if ($record->isdefault) {
             return get_string('defautltagcoll', 'tag');
         } else {
@@ -216,7 +216,7 @@ class core_tag_collection {
      * Updates the tag collection information
      *
      * @param stdClass $tagcoll existing record in DB table tag_coll
-     * @param stdClass $data data from form core_tag_collection_form
+     * @param stdClass $data data to update
      * @return bool wether the record was updated
      */
     public static function update($tagcoll, $data) {

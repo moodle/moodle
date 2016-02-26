@@ -35,6 +35,7 @@ class core_tag_collections_table extends html_table {
 
     /**
      * Constructor
+     * @global \core_renderer $OUTPUT
      * @param string|moodle_url $pageurl
      */
     public function __construct($pageurl) {
@@ -63,25 +64,23 @@ class core_tag_collections_table extends html_table {
                 // Move up.
                 if ($idx > 1) {
                     $url->param('action', 'collmoveup');
-                    $actions .= $OUTPUT->action_icon($url, new pix_icon('t/up', get_string('moveup')));
+                    $actions .= $OUTPUT->action_icon($url, new pix_icon('t/up', get_string('moveup')), null,
+                        array('class' => 'action-icon action_moveup'));
                 }
                 // Move down.
                 if ($idx < count($tagcolls) - 1) {
                     $url->param('action', 'collmovedown');
-                    $actions .= $OUTPUT->action_icon($url, new pix_icon('t/down', get_string('movedown')));
+                    $actions .= $OUTPUT->action_icon($url, new pix_icon('t/down', get_string('movedown')), null,
+                        array('class' => 'action-icon action_movedown'));
                 }
-            }
-            if (empty($tagcoll->component)) {
-                // Edit.
-                $url->param('action', 'colledit');
-                $actions .= $OUTPUT->action_icon($url, new pix_icon('t/edit', get_string('edittagcoll', 'tag', $name)));
             }
             if (!$tagcoll->isdefault && empty($tagcoll->component)) {
                 // Delete.
                 $url->param('action', 'colldelete');
-                $actions .= $OUTPUT->action_icon($url, new pix_icon('t/delete', get_string('delete')));
+                $actions .= $OUTPUT->action_icon('#', new pix_icon('t/delete', get_string('delete')), null,
+                        array('data-url' => $url, 'data-collname' => $name,
+                            'class' => 'action-icon action_delete'));
             }
-            $manageurl = new moodle_url('/tag/manage.php', array('tc' => $tagcoll->id));
             $component = '';
             if ($tagcoll->component) {
                 $component = ($tagcoll->component === 'core' || preg_match('/^core_/', $tagcoll->component)) ?
@@ -94,11 +93,13 @@ class core_tag_collections_table extends html_table {
                         (array_key_exists($key, $validareas) ? "" : "class=\"hidden\"") .
                         ">{$allareas[$key]}</li>";
             }, array_keys($allareas));
+            $displayname = new \core_tag\output\tagcollname($tagcoll);
+            $searchable = new \core_tag\output\tagcollsearchable($tagcoll);
             $this->data[] = array(
-                html_writer::link($manageurl, $name),
+                $displayname->render($OUTPUT),
                 $component,
                 "<ul data-collectionid=\"{$tagcoll->id}\">" . join('', $areaslist) . '</ul>',
-                $tagcoll->searchable ? get_string('yes') : '-',
+                $searchable->render($OUTPUT),
                 $actions);
             $idx++;
         }

@@ -36,7 +36,6 @@ $isstandard  = optional_param('isstandard', null, PARAM_INT);
 $action      = optional_param('action', '', PARAM_ALPHA);
 $perpage     = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);
 $page        = optional_param('page', 0, PARAM_INT);
-$notice      = optional_param('notice', '', PARAM_ALPHA);
 $tagcollid   = optional_param('tc', 0, PARAM_INT);
 $tagareaid   = optional_param('ta', null, PARAM_INT);
 
@@ -74,48 +73,18 @@ $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
 switch($action) {
 
     case 'colladd':
-    case 'colledit':
-        if ($action === 'colladd' || ($action === 'colledit' && $tagcoll && empty($tagcoll->component))) {
-            $form = new core_tag_collection_form($manageurl, $tagcoll);
-            if ($form->is_cancelled()) {
-                redirect($manageurl);
-            } else if ($data = $form->get_data()) {
-                if ($action === 'colladd') {
-                    core_tag_collection::create($data);
-                } else {
-                    core_tag_collection::update($tagcoll, $data);
-                }
-                redirect($manageurl);
-            } else {
-                $title = ($action === 'colladd') ?
-                        get_string('addtagcoll', 'tag') :
-                        get_string('edittagcoll', 'tag', core_tag_collection::display_name($tagcoll));
-                $PAGE->navbar->add($title);
-                echo $OUTPUT->header();
-                echo $OUTPUT->heading($title, 2);
-                $form->display();
-                echo $OUTPUT->footer();
-                exit;
-            }
-        }
+        require_sesskey();
+        $name = required_param('name', PARAM_NOTAGS);
+        $searchable = required_param('searchable', PARAM_BOOL);
+        core_tag_collection::create(array('name' => $name, 'searchable' => $searchable));
+        redirect($manageurl); // TODO message
         break;
 
     case 'colldelete':
-        $confirm = optional_param('confirm', false, PARAM_BOOL);
-        if (!$confirm) {
-            echo $OUTPUT->header();
-            $strconfirm = get_string('suredeletecoll', 'tag', core_tag_collection::display_name($tagcoll));
-            $params = array('tc' => $tagcoll->id, 'confirm' => 1, 'sesskey' => sesskey(), 'action' => 'colldelete');
-            $formcontinue = new single_button(new moodle_url($manageurl, $params), get_string('yes'));
-            $formcancel = new single_button($manageurl, get_string('no'), 'get');
-            echo $OUTPUT->confirm($strconfirm, $formcontinue, $formcancel);
-            echo $OUTPUT->footer();
-            die;
-        }
         if ($tagcoll && !$tagcoll->component) {
             require_sesskey();
             core_tag_collection::delete($tagcoll);
-            redirect(new moodle_url($manageurl, array('notice' => 'changessaved')));
+            \core\notification::success(get_string('changessaved', 'core_tag'));
         }
         redirect($manageurl);
         break;
@@ -124,7 +93,7 @@ switch($action) {
         if ($tagcoll) {
             require_sesskey();
             core_tag_collection::change_sortorder($tagcoll, -1);
-            redirect(new moodle_url($manageurl, array('notice' => 'changessaved')));
+            redirect($manageurl, get_string('changessaved', 'core_tag'), null, \core\output\notification::NOTIFY_SUCCESS);
         }
         redirect($manageurl);
         break;
@@ -133,7 +102,7 @@ switch($action) {
         if ($tagcoll) {
             require_sesskey();
             core_tag_collection::change_sortorder($tagcoll, 1);
-            redirect(new moodle_url($manageurl, array('notice' => 'changessaved')));
+            redirect($manageurl, get_string('changessaved', 'core_tag'), null, \core\output\notification::NOTIFY_SUCCESS);
         }
         redirect($manageurl);
         break;
@@ -144,14 +113,18 @@ switch($action) {
             $tagschecked = array($tagid);
         }
         core_tag_tag::delete_tags($tagschecked);
-        redirect(new moodle_url($PAGE->url, $tagschecked ? array('notice' => 'deleted') : null));
+        if ($tagschecked) {
+            redirect($PAGE->url, get_string('deleted', 'core_tag'), null, \core\output\notification::NOTIFY_SUCCESS);
+        } else {
+            redirect($PAGE->url);
+        }
         break;
 
     case 'setflag':
         require_sesskey();
         if ($tagid) {
             $tagobject->flag();
-            redirect(new moodle_url($PAGE->url, array('notice' => 'flagged')));
+            redirect($PAGE->url, get_string('flagged', 'core_tag'), null, \core\output\notification::NOTIFY_SUCCESS);
         }
         redirect($PAGE->url);
         break;
@@ -160,7 +133,7 @@ switch($action) {
         require_sesskey();
         if ($tagid) {
             $tagobject->reset_flag();
-            redirect(new moodle_url($PAGE->url, array('notice' => 'resetflag')));
+            redirect($PAGE->url, get_string('resetflag', 'core_tag'), null, \core\output\notification::NOTIFY_SUCCESS);
         }
         redirect($PAGE->url);
         break;
@@ -169,7 +142,7 @@ switch($action) {
         require_sesskey();
         if ($tagid && $tagobject->update(
                 array('isstandard' => $isstandard ? 1 : 0))) {
-            redirect(new moodle_url($PAGE->url, array('notice' => 'typechanged')));
+            redirect($PAGE->url, get_string('typechanged', 'core_tag'), null, \core\output\notification::NOTIFY_SUCCESS);
         }
         redirect($PAGE->url);
         break;
@@ -187,15 +160,12 @@ switch($action) {
                 $tagobject->update(array('isstandard' => 1));
             }
         }
-        redirect(new moodle_url($PAGE->url, $tagobjects ? array('notice' => 'added') : null));
+        redirect($PAGE->url, $tagobjects ? get_string('added', 'core_tag') : null,
+                null, \core\output\notification::NOTIFY_SUCCESS);
         break;
 }
 
 echo $OUTPUT->header();
-
-if ($notice && get_string_manager()->string_exists($notice, 'tag')) {
-    echo $OUTPUT->notification(get_string($notice, 'tag'), 'notifysuccess');
-}
 
 if (!$tagcoll) {
     // Tag collection is not specified. Display the overview of tag collections and tag areas.
@@ -205,7 +175,8 @@ if (!$tagcoll) {
     echo $OUTPUT->heading(get_string('tagcollections', 'core_tag') . $OUTPUT->help_icon('tagcollection', 'tag'), 3);
     echo html_writer::table($colltable);
     $url = new moodle_url($manageurl, array('action' => 'colladd'));
-    echo html_writer::div(html_writer::link($url, get_string('addtagcoll', 'tag')), 'mdl-right addtagcoll');
+    echo html_writer::div(html_writer::link('#', get_string('addtagcoll', 'tag'), array('data-url' => $url)),
+            'mdl-right addtagcoll');
 
     echo $OUTPUT->heading(get_string('tagareas', 'core_tag'), 3);
     echo html_writer::table($tagareastable);
