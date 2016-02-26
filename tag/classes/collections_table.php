@@ -87,10 +87,17 @@ class core_tag_collections_table extends html_table {
                 $component = ($tagcoll->component === 'core' || preg_match('/^core_/', $tagcoll->component)) ?
                     get_string('coresystem') : get_string('pluginname', $tagcoll->component);
             }
+            $allareas = core_tag_collection::get_areas_names(null, false);
+            $validareas = core_tag_collection::get_areas_names($tagcoll->id);
+            $areaslist = array_map(function($key) use ($allareas, $validareas) {
+                return "<li data-areaid=\"{$key}\" " .
+                        (array_key_exists($key, $validareas) ? "" : "class=\"hidden\"") .
+                        ">{$allareas[$key]}</li>";
+            }, array_keys($allareas));
             $this->data[] = array(
                 html_writer::link($manageurl, $name),
                 $component,
-                join(', ', core_tag_collection::get_areas_names($tagcoll->id)),
+                "<ul data-collectionid=\"{$tagcoll->id}\">" . join('', $areaslist) . '</ul>',
                 $tagcoll->searchable ? get_string('yes') : '-',
                 $actions);
             $idx++;

@@ -76,7 +76,7 @@ class core_tag_renderer extends plugin_renderer_base {
      */
     public function tag_index_page($tag, $entities, $tagareaid, $exclusivemode, $fromctx, $ctx, $rec, $page) {
         global $CFG, $OUTPUT;
-        $this->page->requires->js_call_amd('core/tag', 'init_tagindex_page');
+        $this->page->requires->js_call_amd('core/tag', 'initTagindexPage');
 
         $tagname = $tag->get_display_name();
         $systemcontext = context_system::instance();

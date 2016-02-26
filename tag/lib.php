@@ -44,6 +44,8 @@ function tag_page_type_list($pagetype, $parentcontext, $currentcontext) {
 /**
  * Implements callback inplace_editable() allowing to edit values in-place
  *
+ * @global moodle_database $DB
+ *
  * @param string $itemtype
  * @param int $itemid
  * @param mixed $newvalue
@@ -51,9 +53,12 @@ function tag_page_type_list($pagetype, $parentcontext, $currentcontext) {
  */
 function core_tag_inplace_editable($itemtype, $itemid, $newvalue) {
     if ($itemtype === 'tagname') {
-        require_capability('moodle/tag:manage', context_system::instance());
-        $tag = core_tag_tag::get($itemid, '*', MUST_EXIST);
-        $tag->update(array('rawname' => $newvalue));
-        return new \core_tag\output\tagname($tag);
+        return \core_tag\output\tagname::update($itemid, $newvalue);
+    } else if ($itemtype === 'tagareaenable') {
+        return \core_tag\output\tagareaenabled::update($itemid, $newvalue);
+    } else if ($itemtype === 'tagareacollection') {
+        return \core_tag\output\tagareacollection::update($itemid, $newvalue);
+    } else if ($itemtype === 'tagareashowstandard') {
+        return \core_tag\output\tagareashowstandard::update($itemid, $newvalue);
     }
 }

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains class core_tag\output\tagname
+ * Contains class core_tag\output\tagareaenabled
  *
  * @package   core_tag
  * @copyright 2016 Marina Glancy
@@ -25,32 +25,45 @@
 namespace core_tag\output;
 
 use context_system;
-use lang_string;
-use html_writer;
-use core_tag_tag;
 
 /**
- * Class to preapare a tag name for display.
+ * Class to display tag area enabled control
  *
  * @package   core_tag
  * @copyright 2016 Marina Glancy
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tagname extends \core\output\inplace_editable {
+class tagareaenabled extends \core\output\inplace_editable {
 
     /**
      * Constructor.
      *
-     * @param \stdClass|core_tag_tag $tag
+     * @param \stdClass $tagarea
      */
-    public function __construct($tag) {
+    public function __construct($tagarea) {
         $editable = has_capability('moodle/tag:manage', context_system::instance());
-        $edithint = new lang_string('editname', 'core_tag');
-        $editlabel = new lang_string('newnamefor', 'core_tag', $tag->rawname);
-        $value = $tag->rawname;
-        $displayvalue = html_writer::link(core_tag_tag::make_url($tag->tagcollid, $tag->rawname),
-            core_tag_tag::make_display_name($tag));
-        parent::__construct('core_tag', 'tagname', $tag->id, $editable, $displayvalue, $value, $edithint, $editlabel);
+        $value = $tagarea->enabled ? 1 : 0;
+
+        parent::__construct('core_tag', 'tagareaenable', $tagarea->id, $editable, '', $value);
+        $this->set_type_toggle();
+    }
+
+    /**
+     * Export this data so it can be used as the context for a mustache template.
+     *
+     * @param \renderer_base $output
+     * @return \stdClass
+     */
+    public function export_for_template(\renderer_base $output) {
+        if ($this->value) {
+            $this->edithint = get_string('disable');
+            $this->displayvalue = $output->pix_icon('i/hide', get_string('disable'));
+        } else {
+            $this->edithint = get_string('enable');
+            $this->displayvalue = $output->pix_icon('i/show', get_string('enable'));
+        }
+
+        return parent::export_for_template($output);
     }
 
     /**
@@ -61,9 +74,14 @@ class tagname extends \core\output\inplace_editable {
      * @return \self
      */
     public static function update($itemid, $newvalue) {
+        global $DB;
         require_capability('moodle/tag:manage', context_system::instance());
-        $tag = core_tag_tag::get($itemid, '*', MUST_EXIST);
-        $tag->update(array('rawname' => $newvalue));
-        return new self($tag);
+        $tagarea = $DB->get_record('tag_area', array('id' => $itemid), '*', MUST_EXIST);
+        $newvalue = $newvalue ? 1 : 0;
+        $data = array('enabled' => $newvalue);
+        \core_tag_area::update($tagarea, $data);
+        $tagarea->enabled = $newvalue;
+        $tmpl = new self($tagarea);
+        return $tmpl;
     }
 }

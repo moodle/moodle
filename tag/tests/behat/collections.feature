@@ -60,26 +60,27 @@ Feature: Managers can create and manage tag collections
 
   @javascript
   Scenario: Assigning tag area to tag collection
-    And "User interests" "text" should exist in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Default collection')]" "xpath_element"
-    And "User interests" "text" should not exist in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Hobbies')]" "xpath_element"
-    When I set the field "Change tag collection of area User interests" to "Hobbies"
-    Then "User interests" "text" should not exist in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Default collection')]" "xpath_element"
-    And "User interests" "text" should exist in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Hobbies')]" "xpath_element"
-    And the field "Change tag collection of area User interests" matches value "Hobbies"
+    And I should see "User interests" in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Default collection')]" "xpath_element"
+    And I should not see "User interests" in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Hobbies')]" "xpath_element"
+    When I click on "Change tag collection" "link" in the "//table[contains(@class,'tag-areas-table')]//tr[contains(.,'User interests')]" "xpath_element"
+    And I set the field "Change tag collection of area User interests" to "Hobbies"
+    Then I should not see "User interests" in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Default collection')]" "xpath_element"
+    And I should see "User interests" in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Hobbies')]" "xpath_element"
+    And I should see "Hobbies" in the "//table[contains(@class,'tag-areas-table')]//tr[contains(.,'User interests')]" "xpath_element"
     And I log out
 
+  @javascript
   Scenario: Disabling tag areas
-    And "Change tag collection of area User interests" "select" should exist
     When I click on "Disable" "link" in the "//table[contains(@class,'tag-areas-table')]//tr[contains(.,'User interests')]" "xpath_element"
-    Then "Change tag collection of area User interests" "select" should not exist
-    And "User interests" "text" should not exist in the "table.tag-collections-table" "css_element"
+    And I should see "User interests" in the "table.tag-collections-table" "css_element"
     And I click on "Enable" "link" in the "//table[contains(@class,'tag-areas-table')]//tr[contains(.,'User interests')]" "xpath_element"
-    And "User interests" "text" should exist in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Default collection')]" "xpath_element"
-    And "Change tag collection of area User interests" "select" should exist
+    And I should see "User interests" in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Default collection')]" "xpath_element"
     And I log out
 
+  @javascript
   Scenario: Deleting non-empty tag collections
-    When I set the field "Change tag collection of area User interests" to "Hobbies"
+    When I click on "Change tag collection" "link" in the "//table[contains(@class,'tag-areas-table')]//tr[contains(.,'User interests')]" "xpath_element"
+    And I set the field "Change tag collection of area User interests" to "Hobbies"
     And I click on "Delete" "link" in the "Hobbies" "table_row"
     Then I should see "Are you sure you want to delete tag collection \"Hobbies\"?"
     And I press "Yes"
@@ -95,7 +96,8 @@ Feature: Managers can create and manage tag collections
     And I set the field "List of interests" to "Swimming, Tag0, Tag3"
     And I press "Update profile"
     And I navigate to "Manage tags" node in "Site administration > Appearance"
-    When I set the field "Change tag collection of area User interests" to "Hobbies"
+    When I click on "Change tag collection" "link" in the "//table[contains(@class,'tag-areas-table')]//tr[contains(.,'User interests')]" "xpath_element"
+    And I set the field "Change tag collection of area User interests" to "Hobbies"
     And I follow "Hobbies"
     Then I should see "Swimming"
     And I should see "Tag0"

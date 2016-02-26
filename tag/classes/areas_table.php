@@ -69,34 +69,15 @@ class core_tag_areas_table extends html_table {
         foreach ($tagareas as $itemtype => $it) {
             foreach ($it as $component => $record) {
                 $areaname = core_tag_area::display_name($record->component, $record->itemtype);
-                $baseurl = new moodle_url($pageurl, array('ta' => $record->id, 'sesskey' => sesskey()));
-                if ($record->enabled) {
-                    $enableurl = new moodle_url($baseurl, array('action' => 'areadisable'));
-                    $enabled = html_writer::link($enableurl, $OUTPUT->pix_icon('i/hide', get_string('disable')));
-                } else {
-                    $enableurl = new moodle_url($baseurl, array('action' => 'areaenable'));
-                    $enabled = html_writer::link($enableurl, $OUTPUT->pix_icon('i/show', get_string('enable')));
-                }
 
-                if ($record->enabled && empty($record->locked) && count($tagcollections) > 1) {
-                    $changecollurl = new moodle_url($baseurl, array('action' => 'areasetcoll'));
+                $tmpl = new \core_tag\output\tagareaenabled($record);
+                $enabled = $OUTPUT->render_from_template('core/inplace_editable', $tmpl->export_for_template($OUTPUT));
 
-                    $select = new single_select($changecollurl, 'areacollid', $tagcollections, $record->tagcollid, null);
-                    $select->set_label(get_string('changetagcoll', 'core_tag', $areaname), array('class' => 'accesshide'));
-                    $collectionselect = $OUTPUT->render($select);
-                } else {
-                    $collectionselect = $tagcollectionsall[$record->tagcollid];
-                }
+                $tmpl = new \core_tag\output\tagareacollection($record);
+                $collectionselect = $OUTPUT->render_from_template('core/inplace_editable', $tmpl->export_for_template($OUTPUT));
 
-                if ($record->enabled) {
-                    $changeshowstandardurl = new moodle_url($baseurl, array('action' => 'areasetshowstandard'));
-                    $select = new single_select($changeshowstandardurl, 'showstandard', $standardchoices,
-                        $record->showstandard, null);
-                    $select->set_label(get_string('changeshowstandard', 'core_tag', $areaname), array('class' => 'accesshide'));
-                    $showstandardselect = $OUTPUT->render($select);
-                } else {
-                    $showstandardselect = $standardchoices[$record->showstandard];
-                }
+                $tmpl = new \core_tag\output\tagareashowstandard($record);
+                $showstandardselect = $OUTPUT->render_from_template('core/inplace_editable', $tmpl->export_for_template($OUTPUT));
 
                 $this->data[] = array(
                     $areaname,

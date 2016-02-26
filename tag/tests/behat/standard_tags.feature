@@ -114,6 +114,7 @@ Feature: Manager can add standard tags and change the tag type of existing tags
       | List of interests | Tag3 , Tag2 |
     And I press "Update profile"
     And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I click on "Change standard tag usage" "link" in the "//table[contains(@class,'tag-areas-table')]//tr[contains(.,'User interests')]" "xpath_element"
     And the field "Change showing standard tags in area User interests" matches value "Don't suggest"
     And I set the field "Change showing standard tags in area User interests" to "Suggest"
     And I follow "Profile" in the user menu
@@ -121,6 +122,7 @@ Feature: Manager can add standard tags and change the tag type of existing tags
     And I expand all fieldsets
     And I should see "Manage standard tags"
     And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I click on "Change standard tag usage" "link" in the "//table[contains(@class,'tag-areas-table')]//tr[contains(.,'User interests')]" "xpath_element"
     And the field "Change showing standard tags in area User interests" matches value "Suggest"
     And I set the field "Change showing standard tags in area User interests" to "Force"
     And I follow "Profile" in the user menu

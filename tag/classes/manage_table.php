@@ -99,7 +99,7 @@ class core_tag_manage_table extends table_sql {
 
         $this->collapsible(true);
 
-        $PAGE->requires->js_call_amd('core/tag', 'init_manage_page', array());
+        $PAGE->requires->js_call_amd('core/tag', 'initManagePage', array());
 
     }
 

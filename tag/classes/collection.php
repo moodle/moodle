@@ -174,12 +174,12 @@ class core_tag_collection {
      * @param int $tagcollid
      * @return array
      */
-    public static function get_areas_names($tagcollid) {
-        $allitemtypes = core_tag_area::get_areas($tagcollid, true);
+    public static function get_areas_names($tagcollid, $enabledonly = true) {
+        $allitemtypes = core_tag_area::get_areas($tagcollid, $enabledonly);
         $itemtypes = array();
         foreach ($allitemtypes as $itemtype => $it) {
             foreach ($it as $component => $v) {
-                $itemtypes[] = core_tag_area::display_name($component, $itemtype);
+                $itemtypes[$v->id] = core_tag_area::display_name($component, $itemtype);
             }
         }
         return $itemtypes;
