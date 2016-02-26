@@ -43,14 +43,12 @@ class tool_lp_course_competencies_form_element extends MoodleQuickForm_autocompl
     /**
      * Constructor
      *
-     * @TODO: Convert this to a real constructor when the PHP7 changes are merged.
-     *
      * @param string $elementName Element name
      * @param mixed $elementLabel Label(s) for an element
      * @param array $options Options to control the element's display
      * @param mixed $attributes Either a typical HTML attribute string or an associative array.
      */
-    function tool_lp_course_competencies_form_element($elementName=null, $elementLabel=null, $options=array(), $attributes=null) {
+    public function __construct($elementName=null, $elementLabel=null, $options=array(), $attributes=null) {
         global $OUTPUT;
 
         if ($elementName == null) {
