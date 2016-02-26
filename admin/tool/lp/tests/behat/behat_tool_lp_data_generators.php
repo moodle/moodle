@@ -67,6 +67,10 @@ class behat_tool_lp_data_generators extends behat_base {
         'competencies' => array(
             'datagenerator' => 'competency',
             'required' => array('framework')
+        ),
+        'userevidences' => array(
+            'datagenerator' => 'user_evidence',
+            'required' => array('user')
         )
     );
 
@@ -174,6 +178,23 @@ class behat_tool_lp_data_generators extends behat_base {
      */
     protected function preprocess_plan($data) {
         global $DB;
+
+        if (isset($data['user'])) {
+            $user = $DB->get_record('user', array('username' => $data['user']), '*', MUST_EXIST);
+            $data['userid'] = $user->id;
+        }
+        unset($data['user']);
+        return $data;
+    }
+
+    /**
+     * Adapt creating user_evidence from user username.
+     *
+     * @param array $data
+     * @return array
+     */
+    protected function preprocess_user_evidence($data) {
+                global $DB;
 
         if (isset($data['user'])) {
             $user = $DB->get_record('user', array('username' => $data['user']), '*', MUST_EXIST);
