@@ -141,7 +141,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
             $html .= $renderer->display_regrade_confirmation($this->getName(), $this->regradeconfirmation, $data['regrade']);
         }
         if ($this->validationerrors) {
-            $html .= html_writer::div($renderer->notification($this->validationerrors, 'error'), '', array('role' => 'alert'));
+            $html .= html_writer::div($renderer->notification($this->validationerrors), '', array('role' => 'alert'));
         }
         $html .= $renderer->display_rubric($data['criteria'], $data['options'], $mode, $this->getName());
         return $html;
