@@ -35,7 +35,6 @@ class core_tag_collections_table extends html_table {
 
     /**
      * Constructor
-     * @global \core_renderer $OUTPUT
      * @param string|moodle_url $pageurl
      */
     public function __construct($pageurl) {

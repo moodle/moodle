@@ -44,8 +44,6 @@ function tag_page_type_list($pagetype, $parentcontext, $currentcontext) {
 /**
  * Implements callback inplace_editable() allowing to edit values in-place
  *
- * @global moodle_database $DB
- *
  * @param string $itemtype
  * @param int $itemid
  * @param mixed $newvalue
@@ -64,5 +62,9 @@ function core_tag_inplace_editable($itemtype, $itemid, $newvalue) {
         return \core_tag\output\tagcollname::update($itemid, $newvalue);
     } else if ($itemtype === 'tagcollsearchable') {
         return \core_tag\output\tagcollsearchable::update($itemid, $newvalue);
+    } else if ($itemtype === 'tagflag') {
+        return \core_tag\output\tagflag::update($itemid, $newvalue);
+    } else if ($itemtype === 'tagisstandard') {
+        return \core_tag\output\tagisstandard::update($itemid, $newvalue);
     }
 }

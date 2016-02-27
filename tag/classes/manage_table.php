@@ -180,7 +180,7 @@ class core_tag_manage_table extends table_sql {
     public function col_name($tag) {
         global $OUTPUT;
         $tagoutput = new core_tag\output\tagname($tag);
-        return $OUTPUT->render_from_template('core/inplace_editable', $tagoutput->export_for_template($OUTPUT));
+        return $tagoutput->render($OUTPUT);
     }
 
     /**
@@ -191,8 +191,8 @@ class core_tag_manage_table extends table_sql {
      */
     public function col_flag($tag) {
         global $OUTPUT;
-        $tagoutput = new core_tag\output\tag($tag);
-        return $OUTPUT->render_from_template('core_tag/tagflag', $tagoutput->export_for_template($OUTPUT));
+        $tagoutput = new core_tag\output\tagflag($tag);
+        return $tagoutput->render($OUTPUT);
     }
 
     /**
@@ -226,8 +226,8 @@ class core_tag_manage_table extends table_sql {
      */
     public function col_isstandard($tag) {
         global $OUTPUT;
-        $tagoutput = new core_tag\output\tag($tag);
-        return $OUTPUT->render_from_template('core_tag/tagisstandard', $tagoutput->export_for_template($OUTPUT));
+        $tagoutput = new core_tag\output\tagisstandard($tag);
+        return $tagoutput->render($OUTPUT);
     }
 
     /**

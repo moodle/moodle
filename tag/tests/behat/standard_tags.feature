@@ -45,26 +45,8 @@ Feature: Manager can add standard tags and change the tag type of existing tags
     And "Remove from standard tags" "link" should exist in the "Tag5" "table_row"
     And I log out
 
-  Scenario: Changing tag type with javascript disabled
-    When I log in as "manager1"
-    And I navigate to "Manage tags" node in "Site administration > Appearance"
-    And I follow "Default collection"
-    And I click on "Make standard" "link" in the "Tag0" "table_row"
-    And I should see "Tag type changed"
-    And I click on "Make standard" "link" in the "Tag1" "table_row"
-    And I should see "Tag type changed"
-    And I click on "Remove from standard tags" "link" in the "Tag0" "table_row"
-    And I should see "Tag type changed"
-    And I click on "Remove from standard tags" "link" in the "Tag3" "table_row"
-    And I should see "Tag type changed"
-    Then "Make standard" "link" should exist in the "Tag0" "table_row"
-    And "Remove from standard tags" "link" should exist in the "Tag1" "table_row"
-    And "Make standard" "link" should exist in the "Tag2" "table_row"
-    And "Make standard" "link" should exist in the "Tag3" "table_row"
-    And I log out
-
   @javascript
-  Scenario: Changing tag type with javascript enabled
+  Scenario: Changing tag isstandard
     When I log in as "manager1"
     And I navigate to "Manage tags" node in "Site administration > Appearance"
     And I follow "Default collection"
@@ -87,7 +69,7 @@ Feature: Manager can add standard tags and change the tag type of existing tags
     And "Make standard" "link" should exist in the "Tag3" "table_row"
     And I log out
 
-  Scenario: Changing tag type in edit form
+  Scenario: Changing tag isstandard in edit form
     When I log in as "manager1"
     And I navigate to "Manage tags" node in "Site administration > Appearance"
     And I follow "Default collection"

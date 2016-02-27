@@ -94,17 +94,6 @@ class tag implements renderable, templatable {
         $url = core_tag_tag::make_url($r->tagcollid, $r->rawname);
         $r->viewurl = $url->out(false);
 
-        $manageurl = new moodle_url('/tag/manage.php', array('sesskey' => sesskey(),
-            'tagid' => $this->record->id));
-        $url = new moodle_url($manageurl);
-        $url->param('action', 'changetype');
-        $url->param('isstandard', $r->isstandard ? 0 : 1);
-        $r->changetypeurl = $url->out(false);
-
-        $url = new moodle_url($manageurl);
-        $url->param('action', $this->record->flag ? 'resetflag' : 'setflag');
-        $r->changeflagurl = $url->out(false);
-
         return $r;
     }
 }

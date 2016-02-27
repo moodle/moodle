@@ -77,7 +77,7 @@ switch($action) {
         $name = required_param('name', PARAM_NOTAGS);
         $searchable = required_param('searchable', PARAM_BOOL);
         core_tag_collection::create(array('name' => $name, 'searchable' => $searchable));
-        redirect($manageurl); // TODO message
+        redirect($manageurl);
         break;
 
     case 'colldelete':
@@ -120,36 +120,9 @@ switch($action) {
         }
         break;
 
-    case 'setflag':
-        require_sesskey();
-        if ($tagid) {
-            $tagobject->flag();
-            redirect($PAGE->url, get_string('flagged', 'core_tag'), null, \core\output\notification::NOTIFY_SUCCESS);
-        }
-        redirect($PAGE->url);
-        break;
-
-    case 'resetflag':
-        require_sesskey();
-        if ($tagid) {
-            $tagobject->reset_flag();
-            redirect($PAGE->url, get_string('resetflag', 'core_tag'), null, \core\output\notification::NOTIFY_SUCCESS);
-        }
-        redirect($PAGE->url);
-        break;
-
-    case 'changetype':
-        require_sesskey();
-        if ($tagid && $tagobject->update(
-                array('isstandard' => $isstandard ? 1 : 0))) {
-            redirect($PAGE->url, get_string('typechanged', 'core_tag'), null, \core\output\notification::NOTIFY_SUCCESS);
-        }
-        redirect($PAGE->url);
-        break;
-
     case 'addstandardtag':
         require_sesskey();
-        $tagobjects = null;
+        $tagobjects = array();
         if ($tagcoll) {
             $otagsadd = optional_param('otagsadd', '', PARAM_RAW);
             $newtags = preg_split('/\s*,\s*/', trim($otagsadd), -1, PREG_SPLIT_NO_EMPTY);
