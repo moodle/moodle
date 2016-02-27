@@ -898,7 +898,7 @@ class manager {
         $userfrom->customheaders[] = 'In-Reply-To: ' . $messageid;
 
         // The message will be sent from the intended user.
-        $eventdata->userfrom            = \core_user::get_noreply_user();
+        $eventdata->userfrom            = \core_user::get_support_user();
         $eventdata->userto              = $USER;
         $eventdata->subject             = $this->get_reply_subject($this->currentmessagedata->envelope->subject);
         $eventdata->fullmessage         = get_string('invalidrecipientdescription', 'tool_messageinbound', $this->currentmessagedata);
