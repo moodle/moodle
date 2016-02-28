@@ -309,6 +309,10 @@ class engine extends \core_search\engine {
             $result = $this->get_search_client()->addDocument($solrdoc, true, static::AUTOCOMMIT_WITHIN);
         } catch (\SolrClientException $e) {
             debugging('Solr client error adding document with id ' . $doc['id'] . ': ' . $e->getMessage(), DEBUG_DEVELOPER);
+        } catch (\SolrServerException $e) {
+            // We only use the first line of the message, as it's a fully java stacktrace behind it.
+            $msg = strtok($e->getMessage(), "\n");
+            debugging('Solr server error adding document with id ' . $doc['id'] . ': ' . $msg, DEBUG_DEVELOPER);
         }
     }
 
