@@ -533,14 +533,45 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
         $track->value = $value;
         $track->timemodified = time();
         $id = $DB->insert_record('scorm_scoes_track', $track);
+        $track->id = $id;
     }
 
+    // Trigger updating grades based on a given set of SCORM CMI elements.
+    $scorm = false;
     if (strstr($element, '.score.raw') ||
         (in_array($element, array('cmi.completion_status', 'cmi.core.lesson_status', 'cmi.success_status'))
          && in_array($track->value, array('completed', 'passed')))) {
         $scorm = $DB->get_record('scorm', array('id' => $scormid));
         include_once($CFG->dirroot.'/mod/scorm/lib.php');
         scorm_update_grades($scorm, $userid);
+    }
+
+    // Trigger CMI element events.
+    if (strstr($element, '.score.raw') ||
+        (in_array($element, array('cmi.completion_status', 'cmi.core.lesson_status', 'cmi.success_status'))
+        && in_array($track->value, array('completed', 'failed', 'passed')))) {
+        if (!$scorm) {
+            $scorm = $DB->get_record('scorm', array('id' => $scormid));
+        }
+        $cm = get_coursemodule_from_instance('scorm', $scormid);
+        $data = array(
+            'other' => array('attemptid' => $attempt, 'cmielement' => $element, 'cmivalue' => $track->value),
+            'objectid' => $scorm->id,
+            'context' => context_module::instance($cm->id),
+            'relateduserid' => $userid
+        );
+        if (strstr($element, '.score.raw')) {
+            // Create score submitted event.
+            $event = \mod_scorm\event\scoreraw_submitted::create($data);
+        } else {
+            // Create status submitted event.
+            $event = \mod_scorm\event\status_submitted::create($data);
+        }
+        // Trigger submitted event.
+        $event->add_record_snapshot('scorm_scoes_track', $track);
+        $event->add_record_snapshot('course_modules', $cm);
+        $event->add_record_snapshot('scorm', $scorm);
+        $event->trigger();
     }
 
     return $id;
