@@ -837,11 +837,20 @@ function groups_assign_grouping($groupingid, $groupid, $timeadded = null, $inval
     }
     $DB->insert_record('groupings_groups', $assign);
 
+    $courseid = $DB->get_field('groupings', 'courseid', array('id' => $groupingid));
     if ($invalidatecache) {
         // Invalidate the grouping cache for the course
-        $courseid = $DB->get_field('groupings', 'courseid', array('id' => $groupingid));
         cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($courseid));
     }
+
+    // Trigger event.
+    $params = array(
+        'context' => context_course::instance($courseid),
+        'objectid' => $groupingid,
+        'other' => array('groupid' => $groupid)
+    );
+    $event = \core\event\grouping_group_assigned::create($params);
+    $event->trigger();
 
     return true;
 }
@@ -858,11 +867,20 @@ function groups_unassign_grouping($groupingid, $groupid, $invalidatecache = true
     global $DB;
     $DB->delete_records('groupings_groups', array('groupingid'=>$groupingid, 'groupid'=>$groupid));
 
+    $courseid = $DB->get_field('groupings', 'courseid', array('id' => $groupingid));
     if ($invalidatecache) {
         // Invalidate the grouping cache for the course
-        $courseid = $DB->get_field('groupings', 'courseid', array('id' => $groupingid));
         cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($courseid));
     }
+
+    // Trigger event.
+    $params = array(
+        'context' => context_course::instance($courseid),
+        'objectid' => $groupingid,
+        'other' => array('groupid' => $groupid)
+    );
+    $event = \core\event\grouping_group_unassigned::create($params);
+    $event->trigger();
 
     return true;
 }
