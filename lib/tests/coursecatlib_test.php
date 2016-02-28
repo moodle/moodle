@@ -511,6 +511,16 @@ class core_coursecatlib_testcase extends advanced_testcase {
         $res = coursecat::search_courses(array('search' => 'Математика'));
         $this->assertEquals(array($c3->id, $c6->id), array_keys($res));
         $this->assertEquals(2, coursecat::search_courses_count(array('search' => 'Математика'), array()));
+
+        $this->setUser($this->getDataGenerator()->create_user());
+
+        // Add necessary capabilities.
+        $this->assign_capability('moodle/course:create', CAP_ALLOW, context_coursecat::instance($cat2->id));
+        // Do another search with restricted capabilities.
+        $reqcaps = array('moodle/course:create');
+        $res = coursecat::search_courses(array('search' => 'test'), array(), $reqcaps);
+        $this->assertEquals(array($c8->id, $c5->id), array_keys($res));
+        $this->assertEquals(2, coursecat::search_courses_count(array('search' => 'test'), array(), $reqcaps));
     }
 
     public function test_course_contacts() {
