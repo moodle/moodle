@@ -46,8 +46,7 @@ Feature: Enrolments are synchronised with meta courses
   Scenario: Add meta enrolment instance with groups
     When I follow "Course 3"
     And I navigate to "Enrolment methods" node in "Course administration > Users"
-    And I set the field "Add method" to "Course meta link"
-    And I press "Go"
+    And I select "Course meta link" from the "Add method" singleselect
     And I set the following fields to these values:
       | Link course  | Course 1      |
       | Add to group | Groupcourse 1 |
@@ -94,8 +93,7 @@ Feature: Enrolments are synchronised with meta courses
       | Link course  | Course 1      |
       | Add to group | Groupcourse 1 |
     And I press "Add method"
-    And I set the field "Add method" to "Course meta link"
-    And I press "Go"
+    And I select "Course meta link" from the "Add method" singleselect
     And I set the following fields to these values:
       | Link course  | Course 2      |
     And I press "Add method"
