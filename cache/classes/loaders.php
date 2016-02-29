@@ -1927,7 +1927,6 @@ class cache_session extends cache {
                 // Call the function to unreference it (in the best way possible).
                 $value = $this->unref($value);
             }
-                $fullresult[$parsedkeys[$key]] = $value;
             $return[$key] = $value;
             if ($value === false) {
                 $hasmissingkeys = true;
