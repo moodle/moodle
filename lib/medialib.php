@@ -1177,7 +1177,7 @@ class core_media_player_html5audio extends core_media_player {
         $fallback = core_media_player::PLACEHOLDER;
 
         return <<<OET
-<audio controls="true" $size class="mediaplugin mediaplugin_html5audio" preload="no" title="$title">
+<audio controls="true" $size class="mediaplugin mediaplugin_html5audio" preload="none" title="$title">
 $sources
 $fallback
 </audio>
