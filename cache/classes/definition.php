@@ -318,6 +318,7 @@ class cache_definition {
      * @var bool
      */
     protected $canuselocalstore = false;
+
     /**
      * The selected sharing option.
      * @var int One of self::SHARING_*

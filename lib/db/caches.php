@@ -37,7 +37,7 @@ $definitions = array(
         'simpledata' => true,
         'staticacceleration' => true,
         'staticaccelerationsize' => 30,
-        'canuselocalstore' => true
+        'canuselocalstore' => true,
     ),
 
     // Used to store cache of all available translations.
@@ -46,7 +46,7 @@ $definitions = array(
         'simplekeys' => true,
         'simpledata' => true,
         'staticacceleration' => true,
-        'canuselocalstore' => true
+        'canuselocalstore' => true,
     ),
 
     // Used to store database meta information.
@@ -93,7 +93,7 @@ $definitions = array(
     // cleaned text which is shareable.
     'htmlpurifier' => array(
         'mode' => cache_store::MODE_APPLICATION,
-        'canuselocalstore' => true
+        'canuselocalstore' => true,
     ),
 
     // Used to store data from the config + config_plugins table in the database.
@@ -206,7 +206,7 @@ $definitions = array(
     'coursemodinfo' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
-        'canuselocalstore' => true
+        'canuselocalstore' => true,
     ),
     // This is the session user selections cache.
     // It's a special cache that is used to record user selections that should persist for the lifetime of the session.
