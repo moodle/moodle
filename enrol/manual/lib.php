@@ -113,7 +113,6 @@ class enrol_manual_plugin extends enrol_plugin {
         return true;
     }
 
-
     /**
      * Returns edit icons for the page with list of instances.
      * @param stdClass $instance
@@ -122,23 +121,14 @@ class enrol_manual_plugin extends enrol_plugin {
     public function get_action_icons(stdClass $instance) {
         global $OUTPUT;
 
-        if ($instance->enrol !== 'manual') {
-            throw new coding_exception('invalid enrol instance!');
-        }
         $context = context_course::instance($instance->courseid);
 
         $icons = array();
-
         if (has_capability('enrol/manual:enrol', $context) or has_capability('enrol/manual:unenrol', $context)) {
             $managelink = new moodle_url("/enrol/manual/manage.php", array('enrolid'=>$instance->id));
             $icons[] = $OUTPUT->action_icon($managelink, new pix_icon('t/enrolusers', get_string('enrolusers', 'enrol_manual'), 'core', array('class'=>'iconsmall')));
         }
-        if (has_capability('enrol/manual:config', $context)) {
-            $urlparams = array('courseid' => $instance->courseid, 'type' => 'manual', 'id' => $instance->id);
-            $editlink = new moodle_url("/enrol/editinstance.php", $urlparams);
-            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core',
-                    array('class' => 'iconsmall')));
-        }
+        $icons = $icons + parent::get_action_icons($instance);
 
         return $icons;
     }

@@ -452,28 +452,4 @@ class enrol_meta_plugin extends enrol_plugin {
         return;
     }
 
-    /**
-     * Returns edit icons for the page with list of instances.
-     * @param stdClass $instance
-     * @return array
-     */
-    public function get_action_icons(stdClass $instance) {
-        global $OUTPUT;
-
-        if ($instance->enrol !== 'meta') {
-            throw new coding_exception('invalid enrol instance!');
-        }
-        $context = context_course::instance($instance->courseid);
-
-        $icons = array();
-
-        if (has_capability('enrol/meta:config', $context)) {
-            $editlink = new moodle_url("/enrol/editinstance.php",
-                array('courseid' => $instance->courseid, 'id' => $instance->id, 'type' => 'meta'));
-            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core',
-                array('class' => 'iconsmall')));
-        }
-
-        return $icons;
-    }
 }

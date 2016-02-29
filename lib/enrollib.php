@@ -1564,6 +1564,20 @@ abstract class enrol_plugin {
     }
 
     /**
+     * Return whether or not, given the current state, it is possible to edit an instance
+     * of this enrolment plugin in the course. Used by the standard editing UI
+     * to generate a link to the edit instance form if editing is allowed.
+     *
+     * @param stdClass $instance
+     * @return boolean
+     */
+    public function can_edit_instance($instance) {
+        $context = context_course::instance($instance->courseid);
+
+        return has_capability('enrol/' . $instance->enrol . ':config', $context);
+    }
+
+    /**
      * Returns link to page which may be used to add new instance of enrolment plugin in course.
      * @param int $courseid
      * @return moodle_url page url
@@ -1919,7 +1933,16 @@ abstract class enrol_plugin {
      * @return array
      */
     public function get_action_icons(stdClass $instance) {
-        return array();
+        global $OUTPUT;
+
+        $icons = array();
+        if ($this->use_standard_editing_ui()) {
+            $linkparams = array('courseid' => $instance->courseid, 'id' => $instance->id, 'type' => $instance->enrol);
+            $editlink = new moodle_url("/enrol/editinstance.php", $linkparams);
+            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core',
+                array('class' => 'iconsmall')));
+        }
+        return $icons;
     }
 
     /**

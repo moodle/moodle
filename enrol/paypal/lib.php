@@ -116,30 +116,6 @@ class enrol_paypal_plugin extends enrol_plugin {
     }
 
     /**
-     * Returns edit icons for the page with list of instances
-     * @param stdClass $instance
-     * @return array
-     */
-    public function get_action_icons(stdClass $instance) {
-        global $OUTPUT;
-
-        if ($instance->enrol !== 'paypal') {
-            throw new coding_exception('invalid enrol instance!');
-        }
-        $context = context_course::instance($instance->courseid);
-
-        $icons = array();
-
-        if (has_capability('enrol/paypal:config', $context)) {
-            $editlink = new moodle_url("/enrol/paypal/edit.php", array('courseid'=>$instance->courseid, 'id'=>$instance->id));
-            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core',
-                    array('class' => 'iconsmall')));
-        }
-
-        return $icons;
-    }
-
-    /**
      * Returns true if the user can add a new instance in this course.
      * @param int $courseid
      * @return boolean

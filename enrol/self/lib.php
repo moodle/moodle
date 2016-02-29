@@ -138,31 +138,6 @@ class enrol_self_plugin extends enrol_plugin {
     }
 
     /**
-     * Returns edit icons for the page with list of instances
-     * @param stdClass $instance
-     * @return array
-     */
-    public function get_action_icons(stdClass $instance) {
-        global $OUTPUT;
-
-        if ($instance->enrol !== 'self') {
-            throw new coding_exception('invalid enrol instance!');
-        }
-        $context = context_course::instance($instance->courseid);
-
-        $icons = array();
-
-        if (has_capability('enrol/self:config', $context)) {
-            $linkparams = array('courseid' => $instance->courseid, 'id' => $instance->id, 'type' => 'self');
-            $editlink = new moodle_url("/enrol/editinstance.php", $linkparams);
-            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core',
-                array('class' => 'iconsmall')));
-        }
-
-        return $icons;
-    }
-
-    /**
      * Return true if we can add a new instance to this course.
      *
      * @param int $courseid
