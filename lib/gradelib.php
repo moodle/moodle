@@ -1140,37 +1140,30 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null,
         }
     }
 
-    $grade_items = grade_item::fetch_all(array('courseid'=>$courseid));
-    $depends_on = array();
-
-    // first mark all category and calculated items as needing regrading
-    // this is slower, but 100% accurate
-    foreach ($grade_items as $gid=>$gitem) {
-        if (!empty($updated_item) and $updated_item->id == $gid) {
-            $grade_items[$gid]->needsupdate = 1;
-
-        } else if ($gitem->is_course_item() or $gitem->is_category_item() or $gitem->is_calculated()) {
-            $grade_items[$gid]->needsupdate = 1;
-        }
-
-        // construct depends_on lookup array
-        $depends_on[$gid] = $grade_items[$gid]->depends_on();
-    }
-
     $progresstotal = 0;
     $progresscurrent = 0;
 
-    // This progress total might not be 100% accurate, because more things might get marked as needsupdate
-    // during the process.
-    foreach ($grade_items as $item) {
-        if ($item->needsupdate) {
+    $grade_items = grade_item::fetch_all(array('courseid'=>$courseid));
+    $depends_on = array();
+
+    foreach ($grade_items as $gid=>$gitem) {
+        if ((!empty($updated_item) and $updated_item->id == $gid) ||
+                $gitem->is_course_item() || $gitem->is_category_item() || $gitem->is_calculated()) {
+            $grade_items[$gid]->needsupdate = 1;
+        }
+
+        // We load all dependencies of these items later we can discard some grade_items based on this.
+        if ($grade_items[$gid]->needsupdate) {
+            $depends_on[$gid] = $grade_items[$gid]->depends_on();
             $progresstotal++;
         }
     }
+
     $progress->start_progress('regrade_course', $progresstotal);
 
     $errors = array();
     $finalids = array();
+    $updatedids = array();
     $gids     = array_keys($grade_items);
     $failed = 0;
 
@@ -1196,28 +1189,51 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null,
             $progress->progress($thisprogress);
             $progresscurrent = $thisprogress;
 
-            $doupdate = true;
             foreach ($depends_on[$gid] as $did) {
                 if (!in_array($did, $finalids)) {
-                    $doupdate = false;
-                    continue; // this item depends on something that is not yet in finals array
+                    // This item depends on something that is not yet in finals array.
+                    continue 2;
+                }
+            }
+
+            // If $updated_item was specified we discard the grade items that do not depend on it or on any grade item that
+            // depend on $updated_item.
+            if (!empty($updated_item) && $gid != $updated_item->id && !in_array($updated_item->id, $depends_on[$gid])) {
+                // We need to ensure that non of this item dependencies has been updated.
+
+                $updateddependencies = false;
+                foreach ($depends_on[$gid] as $dependency) {
+                    if (in_array($dependency, $updatedids)) {
+                        $updateddependencies = true;
+                    }
+                }
+                if ($updateddependencies === false) {
+                    // No need to regrade it.
+                    $finalids[] = $gid;
+                    continue;
                 }
             }
 
             //oki - let's update, calculate or aggregate :-)
-            if ($doupdate) {
-                $result = $grade_items[$gid]->regrade_final_grades($userid);
+            $result = $grade_items[$gid]->regrade_final_grades($userid);
 
-                if ($result === true) {
+            if ($result === true) {
+
+                // We should only update the database if we regraded all users.
+                if (empty($userid)) {
                     $grade_items[$gid]->regrading_finished();
-                    $grade_items[$gid]->check_locktime(); // do the locktime item locking
-                    $count++;
-                    $finalids[] = $gid;
-
+                    // Do the locktime item locking.
+                    $grade_items[$gid]->check_locktime();
                 } else {
-                    $grade_items[$gid]->force_regrading();
-                    $errors[$gid] = $result;
+                    $grade_items[$gid]->needsupdate = 0;
                 }
+                $count++;
+                $finalids[] = $gid;
+                $updatedids[] = $gid;
+
+            } else {
+                $grade_items[$gid]->force_regrading();
+                $errors[$gid] = $result;
             }
         }
 
