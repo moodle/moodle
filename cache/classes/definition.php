@@ -766,13 +766,14 @@ class cache_definition {
      * Sets the identifiers for this definition, or updates them if they have already been set.
      *
      * @param array $identifiers
+     * @return bool false if no identifiers where changed, true otherwise.
      * @throws coding_exception
      */
     public function set_identifiers(array $identifiers = array()) {
         // If we are setting the exact same identifiers then just return as nothing really changed.
         // We don't care about order as cache::make will use the same definition order all the time.
         if ($identifiers === $this->identifiers) {
-            return;
+            return false;
         }
 
         foreach ($this->requireidentifiers as $identifier) {
@@ -791,6 +792,8 @@ class cache_definition {
         // Reset the key prefix's they need updating now.
         $this->keyprefixsingle = null;
         $this->keyprefixmulti = null;
+
+        return true;
     }
 
     /**

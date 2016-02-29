@@ -258,7 +258,7 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
      * @return int
      */
     public static function get_supported_features(array $configuration = array()) {
-        return self::SUPPORTS_NATIVE_TTL;
+        return self::SUPPORTS_NATIVE_TTL + self::DEREFERENCES_OBJECTS;
     }
 
     /**

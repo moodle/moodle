@@ -126,6 +126,14 @@ abstract class cache_store implements cache_store_interface {
      */
     const IS_SEARCHABLE = 8;
 
+    /**
+     * The cache store dereferences objects.
+     *
+     * When set, loaders will assume that all data coming from this store has already had all references
+     * resolved.  So even for complex object structures it will not try to remove references again.
+     */
+    const DEREFERENCES_OBJECTS = 16;
+
     // Constants for the modes of a cache store
 
     /**
@@ -332,6 +340,15 @@ abstract class cache_store implements cache_store_interface {
      */
     public function is_searchable() {
         return in_array('cache_is_searchable', class_implements($this));
+    }
+
+    /**
+     * Returns true if the store automatically dereferences objects.
+     *
+     * @return bool
+     */
+    public function supports_dereferencing_objects() {
+        return $this::get_supported_features() & self::DEREFERENCES_OBJECTS;
     }
 
     /**

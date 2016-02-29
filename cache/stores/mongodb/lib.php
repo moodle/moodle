@@ -175,7 +175,7 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
      * @return int
      */
     public static function get_supported_features(array $configuration = array()) {
-        $supports = self::SUPPORTS_DATA_GUARANTEE;
+        $supports = self::SUPPORTS_DATA_GUARANTEE + self::DEREFERENCES_OBJECTS;
         if (array_key_exists('extendedmode', $configuration) && $configuration['extendedmode']) {
             $supports += self::SUPPORTS_MULTIPLE_IDENTIFIERS;
         }
