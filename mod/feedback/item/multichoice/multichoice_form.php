@@ -63,6 +63,7 @@ class feedback_multichoice_form extends feedback_item_form {
         $mform->addElement('selectyesno',
                            'hidenoselect',
                            get_string('hide_no_select_option', 'feedback'));
+        $mform->disabledIf('hidenoselect', 'subtype', 'ne', 'r');
 
         $mform->addElement('textarea', 'values', get_string('multichoice_values', 'feedback'),
             'wrap="virtual" rows="10" cols="65"');
