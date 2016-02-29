@@ -118,61 +118,19 @@ class enrol_self_plugin extends enrol_plugin {
     }
 
     /**
-     * Sets up navigation entries.
+     * Return true if we can add a new instance to this course.
      *
-     * @param stdClass $instancesnode
-     * @param stdClass $instance
-     * @return void
-     */
-    public function add_course_navigation($instancesnode, stdClass $instance) {
-        if ($instance->enrol !== 'self') {
-             throw new coding_exception('Invalid enrol instance type!');
-        }
-
-        $context = context_course::instance($instance->courseid);
-        if (has_capability('enrol/self:config', $context)) {
-            $managelink = new moodle_url('/enrol/self/edit.php', array('courseid'=>$instance->courseid, 'id'=>$instance->id));
-            $instancesnode->add($this->get_instance_name($instance), $managelink, navigation_node::TYPE_SETTING);
-        }
-    }
-
-    /**
-     * Returns edit icons for the page with list of instances
-     * @param stdClass $instance
-     * @return array
-     */
-    public function get_action_icons(stdClass $instance) {
-        global $OUTPUT;
-
-        if ($instance->enrol !== 'self') {
-            throw new coding_exception('invalid enrol instance!');
-        }
-        $context = context_course::instance($instance->courseid);
-
-        $icons = array();
-
-        if (has_capability('enrol/self:config', $context)) {
-            $editlink = new moodle_url("/enrol/self/edit.php", array('courseid'=>$instance->courseid, 'id'=>$instance->id));
-            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core',
-                array('class' => 'iconsmall')));
-        }
-
-        return $icons;
-    }
-
-    /**
-     * Returns link to page which may be used to add new instance of enrolment plugin in course.
      * @param int $courseid
-     * @return moodle_url page url
+     * @return boolean
      */
-    public function get_newinstance_link($courseid) {
+    public function can_add_instance($courseid) {
         $context = context_course::instance($courseid, MUST_EXIST);
 
         if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/self:config', $context)) {
-            return NULL;
+            return false;
         }
-        // Multiple instances supported - different roles with different password.
-        return new moodle_url('/enrol/self/edit.php', array('courseid'=>$courseid));
+
+        return true;
     }
 
     /**
@@ -236,7 +194,7 @@ class enrol_self_plugin extends enrol_plugin {
 
         if (true === $enrolstatus) {
             // This user can self enrol using this instance.
-            $form = new enrol_self_enrol_form(NULL, $instance);
+            $form = new enrol_self_enrol_form(null, $instance);
             $instanceid = optional_param('instance', 0, PARAM_INT);
             if ($instance->id == $instanceid) {
                 if ($data = $form->get_data()) {
@@ -707,5 +665,358 @@ class enrol_self_plugin extends enrol_plugin {
         }
 
         return true;
+    }
+
+    /**
+     * Return an array of valid options for the status.
+     *
+     * @return array
+     */
+    protected function get_status_options() {
+        $options = array(ENROL_INSTANCE_ENABLED  => get_string('yes'),
+                         ENROL_INSTANCE_DISABLED => get_string('no'));
+        return $options;
+    }
+
+    /**
+     * Return an array of valid options for the newenrols property.
+     *
+     * @return array
+     */
+    protected function get_newenrols_options() {
+        $options = array(1 => get_string('yes'), 0 => get_string('no'));
+        return $options;
+    }
+
+    /**
+     * Return an array of valid options for the groupkey property.
+     *
+     * @return array
+     */
+    protected function get_groupkey_options() {
+        $options = array(1 => get_string('yes'), 0 => get_string('no'));
+        return $options;
+    }
+
+    /**
+     * Return an array of valid options for the expirynotify property.
+     *
+     * @return array
+     */
+    protected function get_expirynotify_options() {
+        $options = array(0 => get_string('no'),
+                         1 => get_string('expirynotifyenroller', 'core_enrol'),
+                         2 => get_string('expirynotifyall', 'core_enrol'));
+        return $options;
+    }
+
+    /**
+     * Return an array of valid options for the longtimenosee property.
+     *
+     * @return array
+     */
+    protected function get_longtimenosee_options() {
+        $options = array(0 => get_string('never'),
+                         1800 * 3600 * 24 => get_string('numdays', '', 1800),
+                         1000 * 3600 * 24 => get_string('numdays', '', 1000),
+                         365 * 3600 * 24 => get_string('numdays', '', 365),
+                         180 * 3600 * 24 => get_string('numdays', '', 180),
+                         150 * 3600 * 24 => get_string('numdays', '', 150),
+                         120 * 3600 * 24 => get_string('numdays', '', 120),
+                         90 * 3600 * 24 => get_string('numdays', '', 90),
+                         60 * 3600 * 24 => get_string('numdays', '', 60),
+                         30 * 3600 * 24 => get_string('numdays', '', 30),
+                         21 * 3600 * 24 => get_string('numdays', '', 21),
+                         14 * 3600 * 24 => get_string('numdays', '', 14),
+                         7 * 3600 * 24 => get_string('numdays', '', 7));
+        return $options;
+    }
+
+    /**
+     * Add elements to the edit instance form.
+     *
+     * @param stdClass $instance
+     * @param MoodleQuickForm $mform
+     * @param context $context
+     * @return bool
+     */
+    public function edit_instance_form($instance, MoodleQuickForm $mform, $context) {
+        global $CFG;
+
+        // Merge these two settings to one value for the single selection element.
+        if ($instance->notifyall and $instance->expirynotify) {
+            $instance->expirynotify = 2;
+        }
+        unset($instance->notifyall);
+
+        $nameattribs = array('size' => '20', 'maxlength' => '255');
+        $mform->addElement('text', 'name', get_string('custominstancename', 'enrol'), $nameattribs);
+        $mform->setType('name', PARAM_TEXT);
+        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'server');
+
+        $options = $this->get_status_options();
+        $mform->addElement('select', 'status', get_string('status', 'enrol_self'), $options);
+        $mform->addHelpButton('status', 'status', 'enrol_self');
+
+        $options = $this->get_newenrols_options();
+        $mform->addElement('select', 'customint6', get_string('newenrols', 'enrol_self'), $options);
+        $mform->addHelpButton('customint6', 'newenrols', 'enrol_self');
+        $mform->disabledIf('customint6', 'status', 'eq', ENROL_INSTANCE_DISABLED);
+
+        $passattribs = array('size' => '20', 'maxlength' => '50');
+        $mform->addElement('passwordunmask', 'password', get_string('password', 'enrol_self'), $passattribs);
+        $mform->addHelpButton('password', 'password', 'enrol_self');
+        if (empty($instance->id) and $this->get_config('requirepassword')) {
+            $mform->addRule('password', get_string('required'), 'required', null, 'client');
+        }
+        $mform->addRule('password', get_string('maximumchars', '', 50), 'maxlength', 50, 'server');
+
+        $options = $this->get_groupkey_options();
+        $mform->addElement('select', 'customint1', get_string('groupkey', 'enrol_self'), $options);
+        $mform->addHelpButton('customint1', 'groupkey', 'enrol_self');
+
+        $roles = $this->extend_assignable_roles($context, $instance->roleid);
+        $mform->addElement('select', 'roleid', get_string('role', 'enrol_self'), $roles);
+
+        $options = array('optional' => true, 'defaultunit' => 86400);
+        $mform->addElement('duration', 'enrolperiod', get_string('enrolperiod', 'enrol_self'), $options);
+        $mform->addHelpButton('enrolperiod', 'enrolperiod', 'enrol_self');
+
+        $options = $this->get_expirynotify_options();
+        $mform->addElement('select', 'expirynotify', get_string('expirynotify', 'core_enrol'), $options);
+        $mform->addHelpButton('expirynotify', 'expirynotify', 'core_enrol');
+
+        $options = array('optional' => false, 'defaultunit' => 86400);
+        $mform->addElement('duration', 'expirythreshold', get_string('expirythreshold', 'core_enrol'), $options);
+        $mform->addHelpButton('expirythreshold', 'expirythreshold', 'core_enrol');
+        $mform->disabledIf('expirythreshold', 'expirynotify', 'eq', 0);
+
+        $options = array('optional' => true);
+        $mform->addElement('date_time_selector', 'enrolstartdate', get_string('enrolstartdate', 'enrol_self'), $options);
+        $mform->setDefault('enrolstartdate', 0);
+        $mform->addHelpButton('enrolstartdate', 'enrolstartdate', 'enrol_self');
+
+        $options = array('optional' => true);
+        $mform->addElement('date_time_selector', 'enrolenddate', get_string('enrolenddate', 'enrol_self'), $options);
+        $mform->setDefault('enrolenddate', 0);
+        $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_self');
+
+        $options = $this->get_longtimenosee_options();
+        $mform->addElement('select', 'customint2', get_string('longtimenosee', 'enrol_self'), $options);
+        $mform->addHelpButton('customint2', 'longtimenosee', 'enrol_self');
+
+        $mform->addElement('text', 'customint3', get_string('maxenrolled', 'enrol_self'));
+        $mform->addHelpButton('customint3', 'maxenrolled', 'enrol_self');
+        $mform->setType('customint3', PARAM_INT);
+
+        require_once($CFG->dirroot.'/cohort/lib.php');
+
+        $cohorts = array(0 => get_string('no'));
+        $allcohorts = cohort_get_available_cohorts($context, 0, 0, 0);
+        if ($instance->customint5 && !isset($allcohorts[$instance->customint5])) {
+            $c = $DB->get_record('cohort',
+                                 array('id' => $instance->customint5),
+                                 'id, name, idnumber, contextid, visible',
+                                 IGNORE_MISSING);
+            if ($c) {
+                // Current cohort was not found because current user can not see it. Still keep it.
+                $allcohorts[$instance->customint5] = $c;
+            }
+        }
+        foreach ($allcohorts as $c) {
+            $cohorts[$c->id] = format_string($c->name, true, array('context' => context::instance_by_id($c->contextid)));
+            if ($c->idnumber) {
+                $cohorts[$c->id] .= ' ['.s($c->idnumber).']';
+            }
+        }
+        if ($instance->customint5 && !isset($allcohorts[$instance->customint5])) {
+            // Somebody deleted a cohort, better keep the wrong value so that random ppl can not enrol.
+            $cohorts[$instance->customint5] = get_string('unknowncohort', 'cohort', $instance->customint5);
+        }
+        if (count($cohorts) > 1) {
+            $mform->addElement('select', 'customint5', get_string('cohortonly', 'enrol_self'), $cohorts);
+            $mform->addHelpButton('customint5', 'cohortonly', 'enrol_self');
+        } else {
+            $mform->addElement('hidden', 'customint5');
+            $mform->setType('customint5', PARAM_INT);
+            $mform->setConstant('customint5', 0);
+        }
+
+        $mform->addElement('advcheckbox', 'customint4', get_string('sendcoursewelcomemessage', 'enrol_self'));
+        $mform->addHelpButton('customint4', 'sendcoursewelcomemessage', 'enrol_self');
+
+        $options = array('cols' => '60', 'rows' => '8');
+        $mform->addElement('textarea', 'customtext1', get_string('customwelcomemessage', 'enrol_self'), $options);
+        $mform->addHelpButton('customtext1', 'customwelcomemessage', 'enrol_self');
+
+        if (enrol_accessing_via_instance($instance)) {
+            $warntext = get_string('instanceeditselfwarningtext', 'core_enrol');
+            $mform->addElement('static', 'selfwarn', get_string('instanceeditselfwarning', 'core_enrol'), $warntext);
+        }
+    }
+
+    /**
+     * We are a good plugin and don't invent our own UI/validation code path.
+     *
+     * @return boolean
+     */
+    public function use_standard_editing_ui() {
+        return true;
+    }
+
+    /**
+     * Perform custom validation of the data used to edit the instance.
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @param object $instance The instance loaded from the DB
+     * @param context $context The context of the instance we are editing
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK.
+     * @return void
+     */
+    public function edit_instance_validation($data, $files, $instance, $context) {
+        $errors = array();
+
+        $checkpassword = false;
+
+        if ($instance->id) {
+            // Check the password if we are enabling the plugin again.
+            if (($instance->status == ENROL_INSTANCE_DISABLED) && ($data['status'] == ENROL_INSTANCE_ENABLED)) {
+                $checkpassword = true;
+            }
+
+            // Check the password if the instance is enabled and the password has changed.
+            if (($data['status'] == ENROL_INSTANCE_ENABLED) && ($instance->password !== $data['password'])) {
+                $checkpassword = true;
+            }
+        } else {
+            $checkpassword = true;
+        }
+
+        if ($checkpassword) {
+            $require = $this->get_config('requirepassword');
+            $policy  = $this->get_config('usepasswordpolicy');
+            if ($require and trim($data['password']) === '') {
+                $errors['password'] = get_string('required');
+            } else if (!empty($data['password']) && $policy) {
+                $errmsg = '';
+                if (!check_password_policy($data['password'], $errmsg)) {
+                    $errors['password'] = $errmsg;
+                }
+            }
+        }
+
+        if ($data['status'] == ENROL_INSTANCE_ENABLED) {
+            if (!empty($data['enrolenddate']) and $data['enrolenddate'] < $data['enrolstartdate']) {
+                $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_self');
+            }
+        }
+
+        if ($data['expirynotify'] > 0 and $data['expirythreshold'] < 86400) {
+            $errors['expirythreshold'] = get_string('errorthresholdlow', 'core_enrol');
+        }
+
+        // Now these ones are checked by quickforms, but we may be called by the upload enrolments tool, or a webservive.
+        if (core_text::strlen($data['name']) > 255) {
+            $errors['name'] = get_string('err_maxlength', 'form', 255);
+        }
+        $validstatus = array_keys($this->get_status_options());
+        $validnewenrols = array_keys($this->get_newenrols_options());
+        if (core_text::strlen($data['password']) > 50) {
+            $errors['name'] = get_string('err_maxlength', 'form', 50);
+        }
+        $validgroupkey = array_keys($this->get_groupkey_options());
+        $context = context_course::instance($instance->courseid);
+        $validroles = array_keys($this->extend_assignable_roles($context, $instance->roleid));
+        $validexpirynotify = array_keys($this->get_expirynotify_options());
+        $validlongtimenosee = array_keys($this->get_longtimenosee_options());
+        $tovalidate = array(
+            'enrolstartdate' => PARAM_INT,
+            'enrolenddate' => PARAM_INT,
+            'name' => PARAM_TEXT,
+            'customint1' => $validgroupkey,
+            'customint2' => $validlongtimenosee,
+            'customint3' => PARAM_INT,
+            'customint4' => PARAM_BOOL,
+            'customint5' => PARAM_INT,
+            'customint6' => $validnewenrols,
+            'status' => $validstatus,
+            'enrolperiod' => PARAM_INT,
+            'expirynotify' => $validexpirynotify,
+            'roleid' => $validroles
+        );
+        if ($data['expirynotify'] != 0) {
+            $tovalidate['expirythreshold'] = PARAM_INT;
+        }
+        $typeerrors = $this->validate_param_types($data, $tovalidate);
+        $errors = array_merge($errors, $typeerrors);
+
+        return $errors;
+    }
+
+    /**
+     * Add new instance of enrol plugin.
+     * @param object $course
+     * @param array $fields instance fields
+     * @return int id of new instance, null if can not be created
+     */
+    public function add_instance($course, array $fields = null) {
+        // In the form we are representing 2 db columns with one field.
+        if (!empty($fields) && !empty($fields['expirynotify'])) {
+            if ($fields['expirynotify'] == 2) {
+                $fields['expirynotify'] = 1;
+                $fields['notifyall'] = 1;
+            } else {
+                $fields['notifyall'] = 0;
+            }
+        }
+
+        return parent::add_instance($course, $fields);
+    }
+
+    /**
+     * Update instance of enrol plugin.
+     * @param stdClass $instance
+     * @param stdClass $data modified instance fields
+     * @return boolean
+     */
+    public function update_instance($instance, $data) {
+        // In the form we are representing 2 db columns with one field.
+        if ($data->expirynotify == 2) {
+            $data->expirynotify = 1;
+            $data->notifyall = 1;
+        } else {
+            $data->notifyall = 0;
+        }
+        // Keep previous/default value of disabled expirythreshold option.
+        if (!$data->expirynotify) {
+            $data->expirythreshold = $instance->expirythreshold;
+        }
+        // Add previous value of newenrols if disabled.
+        if (!isset($data->customint6)) {
+            $data->customint6 = $instance->customint6;
+        }
+
+        return parent::update_instance($instance, $data);
+    }
+
+    /**
+     * Gets a list of roles that this user can assign for the course as the default for self-enrolment.
+     *
+     * @param context $context the context.
+     * @param integer $defaultrole the id of the role that is set as the default for self-enrolment
+     * @return array index is the role id, value is the role name
+     */
+    public function extend_assignable_roles($context, $defaultrole) {
+        global $DB;
+
+        $roles = get_assignable_roles($context, ROLENAME_BOTH);
+        if (!isset($roles[$defaultrole])) {
+            if ($role = $DB->get_record('role', array('id' => $defaultrole))) {
+                $roles[$defaultrole] = role_get_name($role, $context, ROLENAME_BOTH);
+            }
+        }
+        return $roles;
     }
 }

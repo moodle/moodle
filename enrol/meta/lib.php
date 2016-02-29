@@ -64,17 +64,18 @@ class enrol_meta_plugin extends enrol_plugin {
     }
 
     /**
-     * Returns link to page which may be used to add new instance of enrolment plugin in course.
+     * Returns true if we can add a new instance to this course.
+     *
      * @param int $courseid
-     * @return moodle_url page url
+     * @return boolean
      */
-    public function get_newinstance_link($courseid) {
+    public function can_add_instance($courseid) {
         $context = context_course::instance($courseid, MUST_EXIST);
         if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/meta:config', $context)) {
-            return NULL;
+            return false;
         }
-        // multiple instances supported - multiple parent courses linked
-        return new moodle_url('/enrol/meta/addinstance.php', array('id'=>$courseid));
+        // Multiple instances supported - multiple parent courses linked.
+        return true;
     }
 
     /**
@@ -128,6 +129,56 @@ class enrol_meta_plugin extends enrol_plugin {
     }
 
     /**
+     * Add new instance of enrol plugin.
+     * @param object $course
+     * @param array $fields instance fields
+     * @return int id of new instance, null if can not be created
+     */
+    public function add_instance($course, array $fields = null) {
+        global $CFG;
+
+        require_once("$CFG->dirroot/enrol/meta/locallib.php");
+
+        if (!empty($fields['customint2']) && $fields['customint2'] == ENROL_META_CREATE_GROUP) {
+            $context = context_course::instance($course->id);
+            require_capability('moodle/course:managegroups', $context);
+            $groupid = enrol_meta_create_new_group($course->id, $fields['customint1']);
+            $fields['customint2'] = $groupid;
+        }
+
+        $result = parent::add_instance($course, $fields);
+
+        enrol_meta_sync($course->id);
+
+        return $result;
+    }
+
+    /**
+     * Update instance of enrol plugin.
+     * @param stdClass $instance
+     * @param stdClass $data modified instance fields
+     * @return boolean
+     */
+    public function update_instance($instance, $data) {
+        global $CFG;
+
+        require_once("$CFG->dirroot/enrol/meta/locallib.php");
+
+        if (!empty($data->customint2) && $data->customint2 == ENROL_META_CREATE_GROUP) {
+            $context = context_course::instance($instance->courseid);
+            require_capability('moodle/course:managegroups', $context);
+            $groupid = enrol_meta_create_new_group($instance->courseid, $data->customint1);
+            $data->customint2 = $groupid;
+        }
+
+        $result = parent::update_instance($instance, $data);
+
+        enrol_meta_sync($instance->courseid);
+
+        return $result;
+    }
+
+    /**
      * Update instance status
      *
      * @param stdClass $instance
@@ -175,6 +226,153 @@ class enrol_meta_plugin extends enrol_plugin {
         $context = context_course::instance($instance->courseid);
         return has_capability('enrol/meta:config', $context);
     }
+
+    /**
+     * We are a good plugin and don't invent our own UI/validation code path.
+     *
+     * @return boolean
+     */
+    public function use_standard_editing_ui() {
+        return true;
+    }
+
+    /**
+     * Return an array of valid options for the courses.
+     *
+     * @param stdClass $instance
+     * @param context $coursecontext
+     * @return array
+     */
+    protected function get_course_options($instance, $coursecontext) {
+        global $DB;
+
+        if ($instance->id) {
+            $where = 'WHERE c.id = :courseid';
+            $params = array('courseid' => $instance->customint1);
+            $existing = array();
+        } else {
+            $where = '';
+            $params = array();
+            $instanceparams = array('enrol' => 'meta', 'courseid' => $instance->courseid);
+            $existing = $DB->get_records('enrol', $instanceparams, '', 'customint1, id');
+        }
+
+        // TODO: this has to be done via ajax or else it will fail very badly on large sites!
+        $courses = array('' => get_string('choosedots'));
+        $select = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+        $join = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
+
+        $sortorder = 'c.' . $this->get_config('coursesort', 'sortorder') . ' ASC';
+
+        $sql = "SELECT c.id, c.fullname, c.shortname, c.visible $select FROM {course} c $join $where ORDER BY $sortorder";
+        $rs = $DB->get_recordset_sql($sql, array('contextlevel' => CONTEXT_COURSE) + $params);
+        foreach ($rs as $c) {
+            if ($c->id == SITEID or $c->id == $instance->courseid or isset($existing[$c->id])) {
+                continue;
+            }
+            context_helper::preload_from_record($c);
+            $coursecontext = context_course::instance($c->id);
+            if (!$c->visible and !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+                continue;
+            }
+            if (!has_capability('enrol/meta:selectaslinked', $coursecontext)) {
+                continue;
+            }
+            $courses[$c->id] = $coursecontext->get_context_name(false);
+        }
+        $rs->close();
+        return $courses;
+    }
+
+    /**
+     * Return an array of valid options for the groups.
+     *
+     * @param context $coursecontext
+     * @return array
+     */
+    protected function get_group_options($coursecontext) {
+        $groups = array(0 => get_string('none'));
+        $courseid = $coursecontext->instanceid;
+        if (has_capability('moodle/course:managegroups', $coursecontext)) {
+            $groups[ENROL_META_CREATE_GROUP] = get_string('creategroup', 'enrol_meta');
+        }
+        foreach (groups_get_all_groups($courseid) as $group) {
+            $groups[$group->id] = format_string($group->name, true, array('context' => $coursecontext));
+        }
+        return $groups;
+    }
+
+    /**
+     * Add elements to the edit instance form.
+     *
+     * @param stdClass $instance
+     * @param MoodleQuickForm $mform
+     * @param context $coursecontext
+     * @return bool
+     */
+    public function edit_instance_form($instance, MoodleQuickForm $mform, $coursecontext) {
+        global $DB;
+
+        $courses = $this->get_course_options($instance, $coursecontext);
+        $groups = $this->get_group_options($coursecontext);
+
+        $mform->addElement('select', 'customint1', get_string('linkedcourse', 'enrol_meta'), $courses);
+        $mform->addRule('customint1', get_string('required'), 'required', null, 'client');
+        if (!empty($instance->id)) {
+            $mform->freeze('customint1');
+        }
+
+        $mform->addElement('select', 'customint2', get_string('addgroup', 'enrol_meta'), $groups);
+    }
+
+    /**
+     * Perform custom validation of the data used to edit the instance.
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @param object $instance The instance loaded from the DB
+     * @param context $context The context of the instance we are editing
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK.
+     * @return void
+     */
+    public function edit_instance_validation($data, $files, $instance, $context) {
+        global $DB;
+        $errors = array();
+        $thiscourseid = $context->instanceid;
+        $c = false;
+
+        if (!empty($data['customint1'])) {
+            $c = $DB->get_record('course', array('id' => $data['customint1']));
+        }
+
+        if (!$c) {
+            $errors['customint1'] = get_string('required');
+        } else {
+            $coursecontext = context_course::instance($c->id);
+            $existing = $DB->get_records('enrol', array('enrol' => 'meta', 'courseid' => $thiscourseid), '', 'customint1, id');
+            if (!$c->visible and !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+                $errors['customint1'] = get_string('error');
+            } else if (!has_capability('enrol/meta:selectaslinked', $coursecontext)) {
+                $errors['customint1'] = get_string('error');
+            } else if ($c->id == SITEID or $c->id == $thiscourseid or isset($existing[$c->id])) {
+                $errors['customint1'] = get_string('error');
+            }
+        }
+
+        $validcourses = array_keys($this->get_course_options($instance, $context));
+        $validgroups = array_keys($this->get_group_options($context));
+
+        $tovalidate = array(
+            'customint1' => $validcourses,
+            'customint2' => $validgroups
+        );
+        $typeerrors = $this->validate_param_types($data, $tovalidate);
+        $errors = array_merge($errors, $typeerrors);
+
+        return $errors;
+    }
+
 
     /**
      * Restore instance and map settings.
@@ -254,28 +452,4 @@ class enrol_meta_plugin extends enrol_plugin {
         return;
     }
 
-    /**
-     * Returns edit icons for the page with list of instances.
-     * @param stdClass $instance
-     * @return array
-     */
-    public function get_action_icons(stdClass $instance) {
-        global $OUTPUT;
-
-        if ($instance->enrol !== 'meta') {
-            throw new coding_exception('invalid enrol instance!');
-        }
-        $context = context_course::instance($instance->courseid);
-
-        $icons = array();
-
-        if (has_capability('enrol/meta:config', $context)) {
-            $editlink = new moodle_url("/enrol/meta/addinstance.php",
-                array('id' => $instance->courseid, 'enrolid' => $instance->id));
-            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core',
-                array('class' => 'iconsmall')));
-        }
-
-        return $icons;
-    }
 }

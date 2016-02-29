@@ -15,40 +15,42 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Edit instance of enrol_guest.
+ * Adds new instance of an enrolment plugin to specified course or edits current instance.
  *
- * Adds new instance of enrol_guest to specified course
- * or edits current instance.
- *
- * @package    enrol_guest
- * @copyright  2015 Andrew Hancox <andrewdchancox@googlemail.com>
+ * @package    core_enrol
+ * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require('../../config.php');
+require('../config.php');
+require_once('editinstance_form.php');
 
 $courseid   = required_param('courseid', PARAM_INT);
+$type   = required_param('type', PARAM_COMPONENT);
 $instanceid = optional_param('id', 0, PARAM_INT);
 
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 $context = context_course::instance($course->id, MUST_EXIST);
 
-require_login($course);
-require_capability('enrol/guest:config', $context);
+$plugin = enrol_get_plugin($type);
+if (!$plugin) {
+    throw new moodle_exception('invaliddata', 'error');
+}
 
-$PAGE->set_url('/enrol/guest/edit.php', array('courseid' => $course->id, 'id' => $instanceid));
+require_login($course);
+require_capability('enrol/' . $type . ':config', $context);
+
+$PAGE->set_url('/enrol/editinstance.php', array('courseid' => $course->id, 'id' => $instanceid, 'type' => $type));
 $PAGE->set_pagelayout('admin');
 
 $return = new moodle_url('/enrol/instances.php', array('id' => $course->id));
-if (!enrol_is_enabled('guest')) {
+if (!enrol_is_enabled($type)) {
     redirect($return);
 }
 
-$plugin = enrol_get_plugin('guest');
-
 if ($instanceid) {
-    $conditions = array('courseid' => $course->id, 'enrol' => 'guest', 'id' => $instanceid);
-    $instance = $DB->get_record('enrol', $conditions, '*', MUST_EXIST);
+    $instance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => $type, 'id' => $instanceid), '*', MUST_EXIST);
+
 } else {
     require_capability('moodle/course:enrolconfig', $context);
     // No instance yet, we have to add new instance.
@@ -57,10 +59,10 @@ if ($instanceid) {
     $instance = (object)$plugin->get_instance_defaults();
     $instance->id       = null;
     $instance->courseid = $course->id;
+    $instance->status   = ENROL_INSTANCE_ENABLED; // Do not use default for automatically created instances here.
 }
 
-$mform = new \enrol_guest\enrol_guest_edit_form(null, array($instance, $plugin));
-$mform->set_data($instance);
+$mform = new enrol_instance_edit_form(null, array($instance, $plugin, $context, $type));
 
 if ($mform->is_cancelled()) {
     redirect($return);
@@ -68,22 +70,25 @@ if ($mform->is_cancelled()) {
 } else if ($data = $mform->get_data()) {
 
     if ($instance->id) {
-        $reset = ($instance->status != $data->status);
+        $reset = false;
+        if (isset($data->status)) {
+            $reset = ($instance->status != $data->status);
+        }
 
-        $instance->status         = $data->status;
-        $instance->password       = $data->password;
+        foreach ($data as $key => $value) {
+            $instance->$key = $value;
+        }
+
         $instance->timemodified   = time();
-        $DB->update_record('enrol', $instance);
+
+        $plugin->update_instance($instance, $data);
 
         if ($reset) {
             $context->mark_dirty();
         }
 
-        \core\event\enrol_instance_updated::create_from_record($instance)->trigger();
     } else {
-        $fields = array(
-            'status'          => $data->status,
-            'password'        => $data->password);
+        $fields = (array) $data;
         $plugin->add_instance($course, $fields);
     }
 
@@ -91,9 +96,9 @@ if ($mform->is_cancelled()) {
 }
 
 $PAGE->set_heading($course->fullname);
-$PAGE->set_title(get_string('pluginname', 'enrol_guest'));
+$PAGE->set_title(get_string('pluginname', 'enrol_' . $type));
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('pluginname', 'enrol_guest'));
+echo $OUTPUT->heading(get_string('pluginname', 'enrol_' . $type));
 $mform->display();
 echo $OUTPUT->footer();

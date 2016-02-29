@@ -1540,6 +1540,44 @@ abstract class enrol_plugin {
     }
 
     /**
+     * This returns false for backwards compatibility, but it is really recommended.
+     *
+     * @since Moodle 3.1
+     * @return boolean
+     */
+    public function use_standard_editing_ui() {
+        return false;
+    }
+
+    /**
+     * Return whether or not, given the current state, it is possible to add a new instance
+     * of this enrolment plugin to the course.
+     *
+     * Default implementation is just for backwards compatibility.
+     *
+     * @param int $courseid
+     * @return boolean
+     */
+    public function can_add_instance($courseid) {
+        $link = $this->get_newinstance_link($courseid);
+        return !empty($link);
+    }
+
+    /**
+     * Return whether or not, given the current state, it is possible to edit an instance
+     * of this enrolment plugin in the course. Used by the standard editing UI
+     * to generate a link to the edit instance form if editing is allowed.
+     *
+     * @param stdClass $instance
+     * @return boolean
+     */
+    public function can_edit_instance($instance) {
+        $context = context_course::instance($instance->courseid);
+
+        return has_capability('enrol/' . $instance->enrol . ':config', $context);
+    }
+
+    /**
      * Returns link to page which may be used to add new instance of enrolment plugin in course.
      * @param int $courseid
      * @return moodle_url page url
@@ -1646,6 +1684,36 @@ abstract class enrol_plugin {
     }
 
     /**
+     * Adds form elements to add/edit instance form.
+     *
+     * @since Moodle 3.1
+     * @param object $instance enrol instance or null if does not exist yet
+     * @param MoodleQuickForm $mform
+     * @param context $context
+     * @return void
+     */
+    public function edit_instance_form($instance, MoodleQuickForm $mform, $context) {
+        // Do nothing by default.
+    }
+
+    /**
+     * Perform custom validation of the data used to edit the instance.
+     *
+     * @since Moodle 3.1
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @param object $instance The instance data loaded from the DB.
+     * @param context $context The context of the instance we are editing
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK.
+     */
+    public function edit_instance_validation($data, $files, $instance, $context) {
+        // No errors by default.
+        debugging('enrol_plugin::edit_instance_validation() is missing. This plugin has no validation!', DEBUG_DEVELOPER);
+        return array();
+    }
+
+    /**
      * Validates course edit form data
      *
      * @param object $instance enrol instance or null if does not exist yet
@@ -1709,6 +1777,37 @@ abstract class enrol_plugin {
         \core\event\enrol_instance_created::create_from_record($instance)->trigger();
 
         return $instance->id;
+    }
+
+    /**
+     * Update instance of enrol plugin.
+     *
+     * @since Moodle 3.1
+     * @param stdClass $instance
+     * @param stdClass $data modified instance fields
+     * @return boolean
+     */
+    public function update_instance($instance, $data) {
+        global $DB;
+        $properties = array('status', 'name', 'password', 'customint1', 'customint2', 'customint3',
+                            'customint4', 'customint5', 'customint6', 'customint7', 'customint8',
+                            'customchar1', 'customchar2', 'customchar3', 'customdec1', 'customdec2',
+                            'customtext1', 'customtext2', 'customtext3', 'customtext4', 'roleid',
+                            'enrolperiod', 'expirynotify', 'notifyall', 'expirythreshold',
+                            'enrolstartdate', 'enrolenddate', 'cost', 'currency');
+
+        foreach ($properties as $key) {
+            if (isset($data->$key)) {
+                $instance->$key = $data->$key;
+            }
+        }
+        $instance->timemodified = time();
+
+        $update = $DB->update_record('enrol', $instance);
+        if ($update) {
+            \core\event\enrol_instance_updated::create_from_record($instance)->trigger();
+        }
+        return $update;
     }
 
     /**
@@ -1825,7 +1924,15 @@ abstract class enrol_plugin {
      * @return void
      */
     public function add_course_navigation($instancesnode, stdClass $instance) {
-        // usually adds manage users
+        if ($this->use_standard_editing_ui()) {
+            $context = context_course::instance($instance->courseid);
+            $cap = 'enrol/' . $instance->enrol . ':config';
+            if (has_capability($cap, $context)) {
+                $linkparams = array('courseid' => $instance->courseid, 'id' => $instance->id, 'type' => $instance->enrol);
+                $managelink = new moodle_url('/enrol/editinstance.php', $linkparams);
+                $instancesnode->add($this->get_instance_name($instance), $managelink, navigation_node::TYPE_SETTING);
+            }
+        }
     }
 
     /**
@@ -1834,7 +1941,16 @@ abstract class enrol_plugin {
      * @return array
      */
     public function get_action_icons(stdClass $instance) {
-        return array();
+        global $OUTPUT;
+
+        $icons = array();
+        if ($this->use_standard_editing_ui()) {
+            $linkparams = array('courseid' => $instance->courseid, 'id' => $instance->id, 'type' => $instance->enrol);
+            $editlink = new moodle_url("/enrol/editinstance.php", $linkparams);
+            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core',
+                array('class' => 'iconsmall')));
+        }
+        return $icons;
     }
 
     /**
@@ -2358,5 +2474,40 @@ abstract class enrol_plugin {
     public function restore_group_member($instance, $groupid, $userid) {
         // Implement if you want to restore protected group memberships,
         // usually this is not necessary because plugins should be able to recreate the memberships automatically.
+    }
+
+    /**
+     * Returns defaults for new instances.
+     * @since Moodle 3.1
+     * @return array
+     */
+    public function get_instance_defaults() {
+        return array();
+    }
+
+    /**
+     * Validate a list of parameter names and types.
+     * @since Moodle 3.1
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $rules array of ("fieldname"=>PARAM_X types - or "fieldname"=>array( list of valid options )
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK.
+     */
+    public function validate_param_types($data, $rules) {
+        $errors = array();
+        $invalidstr = get_string('invaliddata', 'error');
+        foreach ($rules as $fieldname => $rule) {
+            if (is_array($rule)) {
+                if (!in_array($data[$fieldname], $rule)) {
+                    $errors[$fieldname] = $invalidstr;
+                }
+            } else {
+                if ($data[$fieldname] != clean_param($data[$fieldname], $rule)) {
+                    $errors[$fieldname] = $invalidstr;
+                }
+            }
+        }
+        return $errors;
     }
 }

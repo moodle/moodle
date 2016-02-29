@@ -128,12 +128,15 @@ class enrol_meta_plugin_testcase extends advanced_testcase {
         $this->assertEquals(7, $DB->count_records('user_enrolments'));
         $this->assertEquals(6, $DB->count_records('role_assignments'));
 
+        // Disable the plugin to prevent add_instance from calling enrol_meta_sync.
+        $this->disable_plugin();
         $e1 = $metalplugin->add_instance($course3, array('customint1'=>$course1->id));
         $e2 = $metalplugin->add_instance($course3, array('customint1'=>$course2->id));
         $e3 = $metalplugin->add_instance($course4, array('customint1'=>$course2->id));
         $enrol1 = $DB->get_record('enrol', array('id'=>$e1));
         $enrol2 = $DB->get_record('enrol', array('id'=>$e2));
         $enrol3 = $DB->get_record('enrol', array('id'=>$e3));
+        $this->enable_plugin();
 
         enrol_meta_sync($course4->id, false);
         $this->assertEquals(9, $DB->count_records('user_enrolments'));
