@@ -190,9 +190,9 @@ class cachestore_dummy extends cache_store {
             foreach ($keyvaluearray as $pair) {
                 $this->store[$pair['key']] = $pair['value'];
             }
-            return count($keyvaluearray);
+
         }
-        return 0;
+        return count($keyvaluearray);
     }
 
     /**
