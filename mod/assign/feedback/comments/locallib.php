@@ -100,6 +100,29 @@ class assign_feedback_comments extends assign_feedback_plugin {
         return ($newvalue !== false) && ($newvalue != $commenttext);
     }
 
+    /**
+     * Has the comment feedback been modified?
+     *
+     * @param stdClass $grade The grade object.
+     * @param stdClass $data Data from the form submission.
+     * @return boolean True if the comment feedback has been modified, else false.
+     */
+    public function is_feedback_modified(stdClass $grade, stdClass $data) {
+        $commenttext = '';
+        if ($grade) {
+            $feedbackcomments = $this->get_feedback_comments($grade->id);
+            if ($feedbackcomments) {
+                $commenttext = $feedbackcomments->commenttext;
+            }
+        }
+
+        if ($commenttext == $data->assignfeedbackcomments_editor['text']) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 
     /**
      * Override to indicate a plugin supports quickgrading.
