@@ -78,27 +78,6 @@ class enrol_manual_plugin extends enrol_plugin {
     }
 
     /**
-     * Returns enrolment instance manage link.
-     *
-     * By defaults looks for manage.php file and tests for manage capability.
-     *
-     * @param navigation_node $instancesnode
-     * @param stdClass $instance
-     * @return moodle_url;
-     */
-    public function add_course_navigation($instancesnode, stdClass $instance) {
-        if ($instance->enrol !== 'manual') {
-             throw new coding_exception('Invalid enrol instance type!');
-        }
-
-        $context = context_course::instance($instance->courseid);
-        if (has_capability('enrol/manual:config', $context)) {
-            $managelink = new moodle_url('/enrol/editinstance.php', array('courseid' => $instance->courseid, 'type' => 'manual'));
-            $instancesnode->add($this->get_instance_name($instance), $managelink, navigation_node::TYPE_SETTING);
-        }
-    }
-
-    /**
      * Return true if we can add a new instance to this course.
      *
      * @param int $courseid

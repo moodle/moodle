@@ -118,26 +118,6 @@ class enrol_self_plugin extends enrol_plugin {
     }
 
     /**
-     * Sets up navigation entries.
-     *
-     * @param stdClass $instancesnode
-     * @param stdClass $instance
-     * @return void
-     */
-    public function add_course_navigation($instancesnode, stdClass $instance) {
-        if ($instance->enrol !== 'self') {
-             throw new coding_exception('Invalid enrol instance type!');
-        }
-
-        $context = context_course::instance($instance->courseid);
-        if (has_capability('enrol/self:config', $context)) {
-            $linkparams = array('courseid' => $instance->courseid, 'id' => $instance->id, 'type' => 'self');
-            $managelink = new moodle_url('/enrol/editinstance.php', $linkparams);
-            $instancesnode->add($this->get_instance_name($instance), $managelink, navigation_node::TYPE_SETTING);
-        }
-    }
-
-    /**
      * Return true if we can add a new instance to this course.
      *
      * @param int $courseid

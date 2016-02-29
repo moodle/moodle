@@ -97,25 +97,6 @@ class enrol_paypal_plugin extends enrol_plugin {
     }
 
     /**
-     * Sets up navigation entries.
-     *
-     * @param object $instance
-     * @return void
-     */
-    public function add_course_navigation($instancesnode, stdClass $instance) {
-        if ($instance->enrol !== 'paypal') {
-             throw new coding_exception('Invalid enrol instance type!');
-        }
-
-        $context = context_course::instance($instance->courseid);
-        if (has_capability('enrol/paypal:config', $context)) {
-            $params = array('courseid' => $instance->courseid, 'id' => $instance->id, 'type' => 'paypal');
-            $managelink = new moodle_url('/enrol/editinstance.php', $params);
-            $instancesnode->add($this->get_instance_name($instance), $managelink, navigation_node::TYPE_SETTING);
-        }
-    }
-
-    /**
      * Returns true if the user can add a new instance in this course.
      * @param int $courseid
      * @return boolean

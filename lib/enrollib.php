@@ -1924,7 +1924,15 @@ abstract class enrol_plugin {
      * @return void
      */
     public function add_course_navigation($instancesnode, stdClass $instance) {
-        // usually adds manage users
+        if ($this->use_standard_editing_ui()) {
+            $context = context_course::instance($instance->courseid);
+            $cap = 'enrol/' . $instance->enrol . ':config';
+            if (has_capability($cap, $context)) {
+                $linkparams = array('courseid' => $instance->courseid, 'id' => $instance->id, 'type' => $instance->enrol);
+                $managelink = new moodle_url('/enrol/editinstance.php', $linkparams);
+                $instancesnode->add($this->get_instance_name($instance), $managelink, navigation_node::TYPE_SETTING);
+            }
+        }
     }
 
     /**

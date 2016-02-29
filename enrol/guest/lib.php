@@ -85,51 +85,6 @@ class enrol_guest_plugin extends enrol_plugin {
     }
 
     /**
-     * Sets up navigation entries.
-     *
-     * @param stdClass $instancesnode
-     * @param stdClass $instance
-     * @return void
-     * @throws coding_exception
-     */
-    public function add_course_navigation($instancesnode, stdClass $instance) {
-        if ($instance->enrol !== 'guest') {
-             throw new coding_exception('Invalid enrol instance type!');
-        }
-
-        $context = context_course::instance($instance->courseid);
-        if (has_capability('enrol/guest:config', $context)) {
-            $managelink = new moodle_url('/enrol/guest/edit.php', array('courseid' => $instance->courseid, 'id' => $instance->id));
-            $instancesnode->add($this->get_instance_name($instance), $managelink, navigation_node::TYPE_SETTING);
-        }
-    }
-
-    /**
-     * Returns edit icons for the page with list of instances
-     * @param stdClass $instance
-     * @return array
-     * @throws coding_exception
-     */
-    public function get_action_icons(stdClass $instance) {
-        global $OUTPUT;
-
-        if ($instance->enrol !== 'guest') {
-            throw new coding_exception('invalid enrol instance!');
-        }
-        $context = context_course::instance($instance->courseid);
-
-        $icons = array();
-
-        if (has_capability('enrol/guest:config', $context)) {
-            $editlink = new moodle_url("/enrol/guest/edit.php", array('courseid' => $instance->courseid, 'id' => $instance->id));
-            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core',
-                array('class' => 'iconsmall')));
-        }
-
-        return $icons;
-    }
-
-    /**
      * Attempt to automatically gain temporary guest access to course,
      * calling code has to make sure the plugin and instance are active.
      *
@@ -161,24 +116,24 @@ class enrol_guest_plugin extends enrol_plugin {
     }
 
     /**
-     * Returns link to page which may be used to add new instance of enrolment plugin in course.
+     * Returns true if the current user can add a new instance of enrolment plugin in course.
      * @param int $courseid
-     * @return moodle_url page url
+     * @return boolean
      */
-    public function get_newinstance_link($courseid) {
+    public function can_add_instance($courseid) {
         global $DB;
 
         $context = context_course::instance($courseid, MUST_EXIST);
 
         if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/guest:config', $context)) {
-            return NULL;
+            return false;
         }
 
         if ($DB->record_exists('enrol', array('courseid'=>$courseid, 'enrol'=>'guest'))) {
-            return NULL;
+            return false;
         }
 
-        return new moodle_url('/enrol/guest/edit.php', array('courseid' => $courseid));
+        return true;
     }
 
     /**
@@ -420,4 +375,108 @@ class enrol_guest_plugin extends enrol_plugin {
         }
         return $instanceinfo;
     }
+
+    /**
+     * Return an array of valid options for the status.
+     *
+     * @return array
+     */
+    protected function get_status_options() {
+        $options = array(ENROL_INSTANCE_ENABLED  => get_string('yes'),
+                         ENROL_INSTANCE_DISABLED => get_string('no'));
+        return $options;
+    }
+
+    /**
+     * Add elements to the edit instance form.
+     *
+     * @param stdClass $instance
+     * @param MoodleQuickForm $mform
+     * @param context $context
+     * @return bool
+     */
+    public function edit_instance_form($instance, MoodleQuickForm $mform, $context) {
+        global $CFG;
+
+        $options = $this->get_status_options();
+        $mform->addElement('select', 'status', get_string('status', 'enrol_guest'), $options);
+        $mform->addHelpButton('status', 'status', 'enrol_guest');
+        $mform->setDefault('status', $this->get_config('status'));
+        $mform->setAdvanced('status', $this->get_config('status_adv'));
+
+        $mform->addElement('passwordunmask', 'password', get_string('password', 'enrol_guest'));
+        $mform->addHelpButton('password', 'password', 'enrol_guest');
+
+        // If we have a new instance and the password is required - make sure it is set. For existing
+        // instances we do not force the password to be required as it may have been set to empty before
+        // the password was required. We check in the validation function whether this check is required
+        // for existing instances.
+        if (empty($instance->id) && $this->get_config('requirepassword')) {
+            $mform->addRule('password', get_string('required'), 'required', null);
+        }
+    }
+
+    /**
+     * We are a good plugin and don't invent our own UI/validation code path.
+     *
+     * @return boolean
+     */
+    public function use_standard_editing_ui() {
+        return true;
+    }
+
+    /**
+     * Perform custom validation of the data used to edit the instance.
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @param object $instance The instance loaded from the DB
+     * @param context $context The context of the instance we are editing
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK.
+     * @return void
+     */
+    public function edit_instance_validation($data, $files, $instance, $context) {
+        $errors = array();
+
+        $checkpassword = false;
+
+        if ($data['id']) {
+            // Check the password if we are enabling the plugin again.
+            if (($instance->status == ENROL_INSTANCE_DISABLED) && ($data['status'] == ENROL_INSTANCE_ENABLED)) {
+                $checkpassword = true;
+            }
+
+            // Check the password if the instance is enabled and the password has changed.
+            if (($data['status'] == ENROL_INSTANCE_ENABLED) && ($instance->password !== $data['password'])) {
+                $checkpassword = true;
+            }
+        } else {
+            $checkpassword = true;
+        }
+
+        if ($checkpassword) {
+            $require = $this->get_config('requirepassword');
+            $policy  = $this->get_config('usepasswordpolicy');
+            if ($require && trim($data['password']) === '') {
+                $errors['password'] = get_string('required');
+            } else if (!empty($data['password']) && $policy) {
+                $errmsg = '';
+                if (!check_password_policy($data['password'], $errmsg)) {
+                    $errors['password'] = $errmsg;
+                }
+            }
+        }
+
+        $validstatus = array_keys($this->get_status_options());
+        $tovalidate = array(
+            'status' => $validstatus
+        );
+        $typeerrors = $this->validate_param_types($data, $tovalidate);
+        $errors = array_merge($errors, $typeerrors);
+
+        return $errors;
+    }
+
+
 }
