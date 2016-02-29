@@ -30,6 +30,16 @@ $string['allocation'] = 'Submission allocation';
 $string['allocationdone'] = 'Allocation done';
 $string['allocationerror'] = 'Allocation error';
 $string['allocationconfigured'] = 'Allocation configured';
+$string['allowedfiletypesforoverallfeedback'] = 'Feedback attachment allowed file types';
+$string['allowedfiletypesforoverallfeedback_help'] = 'Feedback attachment allowed file types can be restricted by entering a comma-separated list of file extensions, for example \'png, jpg, jpeg, gif\'. If the field is left empty, then all file types are allowed.
+
+Additional supported file extensions can be configured in the server administration';
+$string['allowedfiletypesforoverallfeedback_link'] = 'admin/tool/filetypes/index';
+$string['allowedfiletypesforsubmission'] = 'Submission attachment allowed file types';
+$string['allowedfiletypesforsubmission_help'] = 'Submission attachment allowed file types can be restricted by entering a comma-separated list of file extensions, for example `png, jpg, jpeg, gif`. If the field is left empty, then all file types are allowed.
+
+Additional supported file extensions can be configured in the server administration';
+$string['allowedfiletypesforsubmission_link'] = 'admin/tool/filetypes/index';
 $string['allsubmissions'] = 'All submissions ({$a})';
 $string['alreadygraded'] = 'Already graded';
 $string['areaconclusion'] = 'Conclusion text';
@@ -100,6 +110,8 @@ $string['editingsubmission'] = 'Editing submission';
 $string['editsubmission'] = 'Edit submission';
 $string['err_multiplesubmissions'] = 'While editing this form, another version of the submission has been saved. Multiple submissions per user are not allowed.';
 $string['err_removegrademappings'] = 'Unable to remove the unused grade mappings';
+$string['err_unknownfileextension'] = 'Unknown file extension: {$a}';
+$string['err_wrongfileextension'] = 'Some files ({$a->wrongfiles}) cannot be uploaded. Only file types {$a->whitelist} are allowed.';
 $string['evaluategradeswait'] = 'Please wait until the assessments are evaluated and the grades are calculated';
 $string['evaluation'] = 'Grading evaluation';
 $string['evaluationmethod'] = 'Grading evaluation method';

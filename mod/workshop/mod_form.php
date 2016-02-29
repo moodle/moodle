@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -65,7 +64,7 @@ class mod_workshop_mod_form extends moodleform_mod {
 
         // Workshop name
         $label = get_string('workshopname', 'workshop');
-        $mform->addElement('text', 'name', $label, array('size'=>'64'));
+        $mform->addElement('text', 'name', $label, array('size' => '64'));
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
         } else {
@@ -118,7 +117,7 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addRule('gradinggradepass', null, 'numeric', null, 'client');
 
         $options = array();
-        for ($i=5; $i>=0; $i--) {
+        for ($i = 5; $i >= 0; $i--) {
             $options[$i] = $i;
         }
         $label = get_string('gradedecimals', 'workshop');
@@ -133,16 +132,24 @@ class mod_workshop_mod_form extends moodleform_mod {
                             workshop::instruction_editors_options($this->context));
 
         $options = array();
-        for ($i=7; $i>=0; $i--) {
+        for ($i = 7; $i >= 0; $i--) {
             $options[$i] = $i;
         }
         $label = get_string('nattachments', 'workshop');
         $mform->addElement('select', 'nattachments', $label, $options);
         $mform->setDefault('nattachments', 1);
 
+        $label = get_string('allowedfiletypesforsubmission', 'workshop');
+        $mform->addElement('text', 'submissionfiletypes', $label, array('maxlength' => 255, 'size' => 64));
+        $mform->addHelpButton('submissionfiletypes', 'allowedfiletypesforsubmission', 'workshop');
+        $mform->setType('submissionfiletypes', PARAM_TEXT);
+        $mform->addRule('submissionfiletypes', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->disabledIf('submissionfiletypes', 'nattachments', 'eq', 0);
+
         $options = get_max_upload_sizes($CFG->maxbytes, $this->course->maxbytes, 0, $workshopconfig->maxbytes);
         $mform->addElement('select', 'maxbytes', get_string('maxbytes', 'workshop'), $options);
         $mform->setDefault('maxbytes', $workshopconfig->maxbytes);
+        $mform->disabledIf('maxbytes', 'nattachments', 'eq', 0);
 
         $label = get_string('latesubmissions', 'workshop');
         $text = get_string('latesubmissions_desc', 'workshop');
@@ -178,6 +185,13 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addElement('select', 'overallfeedbackfiles', get_string('overallfeedbackfiles', 'workshop'), $options);
         $mform->setDefault('overallfeedbackfiles', 0);
         $mform->disabledIf('overallfeedbackfiles', 'overallfeedbackmode', 'eq', 0);
+
+        $label = get_string('allowedfiletypesforoverallfeedback', 'workshop');
+        $mform->addElement('text', 'overallfeedbackfiletypes', $label, array('maxlength' => 255, 'size' => 64));
+        $mform->addHelpButton('overallfeedbackfiletypes', 'allowedfiletypesforoverallfeedback', 'workshop');
+        $mform->setType('overallfeedbackfiletypes', PARAM_TEXT);
+        $mform->addRule('overallfeedbackfiletypes', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->disabledIf('overallfeedbackfiletypes', 'overallfeedbackfiles', 'eq', 0);
 
         $options = get_max_upload_sizes($CFG->maxbytes, $this->course->maxbytes);
         $mform->addElement('select', 'overallfeedbackmaxbytes', get_string('overallfeedbackmaxbytes', 'workshop'), $options);
@@ -229,7 +243,7 @@ class mod_workshop_mod_form extends moodleform_mod {
 
         // Common module settings, Restrict availability, Activity completion etc. ----
         $features = array('groups' => true, 'groupings' => true,
-                'outcomes'=>true, 'gradecat'=>false, 'idnumber'=>false);
+                'outcomes' => true, 'gradecat' => false, 'idnumber' => false);
 
         $this->standard_coursemodule_elements();
 
@@ -346,6 +360,17 @@ class mod_workshop_mod_form extends moodleform_mod {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
+
+        // Validate lists of allowed extensions.
+        foreach (array('submissionfiletypes', 'overallfeedbackfiletypes') as $fieldname) {
+            if (isset($data[$fieldname])) {
+                $invalidextensions = workshop::invalid_file_extensions($data[$fieldname], array_keys(core_filetypes::get_types()));
+                if ($invalidextensions) {
+                    $errors[$fieldname] = get_string('err_unknownfileextension', 'mod_workshop',
+                        workshop::clean_file_extensions($invalidextensions));
+                }
+            }
+        }
 
         // check the phases borders are valid
         if ($data['submissionstart'] > 0 and $data['submissionend'] > 0 and $data['submissionstart'] >= $data['submissionend']) {

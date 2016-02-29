@@ -81,6 +81,14 @@ function workshop_add_instance(stdclass $workshop) {
     $workshop->phaseswitchassessment = (int)!empty($workshop->phaseswitchassessment);
     $workshop->evaluation            = 'best';
 
+    if (isset($workshop->submissionfiletypes)) {
+        $workshop->submissionfiletypes = workshop::clean_file_extensions($workshop->submissionfiletypes);
+    }
+
+    if (isset($workshop->overallfeedbackfiletypes)) {
+        $workshop->overallfeedbackfiletypes = workshop::clean_file_extensions($workshop->overallfeedbackfiletypes);
+    }
+
     // insert the new record so we get the id
     $workshop->id = $DB->insert_record('workshop', $workshop);
 
@@ -140,6 +148,14 @@ function workshop_update_instance(stdclass $workshop) {
     $workshop->useselfassessment     = (int)!empty($workshop->useselfassessment);
     $workshop->latesubmissions       = (int)!empty($workshop->latesubmissions);
     $workshop->phaseswitchassessment = (int)!empty($workshop->phaseswitchassessment);
+
+    if (isset($workshop->submissionfiletypes)) {
+        $workshop->submissionfiletypes = workshop::clean_file_extensions($workshop->submissionfiletypes);
+    }
+
+    if (isset($workshop->overallfeedbackfiletypes)) {
+        $workshop->overallfeedbackfiletypes = workshop::clean_file_extensions($workshop->overallfeedbackfiletypes);
+    }
 
     // todo - if the grading strategy is being changed, we may want to replace all aggregated peer grades with nulls
 

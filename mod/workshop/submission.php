@@ -183,25 +183,14 @@ if ($assess and $submission->id and !$isreviewer and $canallocate and $workshop-
 if ($edit) {
     require_once(dirname(__FILE__).'/submission_form.php');
 
-    $maxfiles       = $workshop->nattachments;
-    $maxbytes       = $workshop->maxbytes;
-    $contentopts    = array(
-                        'trusttext' => true,
-                        'subdirs'   => false,
-                        'maxfiles'  => $maxfiles,
-                        'maxbytes'  => $maxbytes,
-                        'context'   => $workshop->context,
-                        'return_types' => FILE_INTERNAL | FILE_EXTERNAL
-                      );
+    $submission = file_prepare_standard_editor($submission, 'content', $workshop->submission_content_options(),
+        $workshop->context, 'mod_workshop', 'submission_content', $submission->id);
 
-    $attachmentopts = array('subdirs' => true, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes, 'return_types' => FILE_INTERNAL);
-    $submission     = file_prepare_standard_editor($submission, 'content', $contentopts, $workshop->context,
-                                        'mod_workshop', 'submission_content', $submission->id);
-    $submission     = file_prepare_standard_filemanager($submission, 'attachment', $attachmentopts, $workshop->context,
-                                        'mod_workshop', 'submission_attachment', $submission->id);
+    $submission = file_prepare_standard_filemanager($submission, 'attachment', $workshop->submission_attachment_options(),
+        $workshop->context, 'mod_workshop', 'submission_attachment', $submission->id);
 
-    $mform          = new workshop_submission_form($PAGE->url, array('current' => $submission, 'workshop' => $workshop,
-                                                    'contentopts' => $contentopts, 'attachmentopts' => $attachmentopts));
+    $mform = new workshop_submission_form($PAGE->url, array('current' => $submission, 'workshop' => $workshop,
+        'contentopts' => $workshop->submission_content_options(), 'attachmentopts' => $workshop->submission_attachment_options()));
 
     if ($mform->is_cancelled()) {
         redirect($workshop->view_url());
@@ -254,11 +243,14 @@ if ($edit) {
             }
         }
         $params['objectid'] = $submission->id;
-        // save and relink embedded images and save attachments
-        $formdata = file_postupdate_standard_editor($formdata, 'content', $contentopts, $workshop->context,
-                                                      'mod_workshop', 'submission_content', $submission->id);
-        $formdata = file_postupdate_standard_filemanager($formdata, 'attachment', $attachmentopts, $workshop->context,
-                                                           'mod_workshop', 'submission_attachment', $submission->id);
+
+        // Save and relink embedded images and save attachments.
+        $formdata = file_postupdate_standard_editor($formdata, 'content', $workshop->submission_content_options(),
+            $workshop->context, 'mod_workshop', 'submission_content', $submission->id);
+
+        $formdata = file_postupdate_standard_filemanager($formdata, 'attachment', $workshop->submission_attachment_options(),
+            $workshop->context, 'mod_workshop', 'submission_attachment', $submission->id);
+
         if (empty($formdata->attachment)) {
             // explicit cast to zero integer
             $formdata->attachment = 0;
