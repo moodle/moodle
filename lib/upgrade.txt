@@ -3,6 +3,17 @@ information provided here is intended especially for developers.
 
 === 3.1 ===
 
+* The redirect() function will now redirect immediately if output has not
+  already started. Messages will be displayed on the subsequent page using
+  session notifications. The type of message output can be configured using the
+  fourth parameter to redirect().
+* The specification of extra classes in the $OUTPUT->notification()
+  function, and \core\output\notification renderable have been deprecated
+  and will be removed in a future version.
+  Notifications should use the levels found in \core\output\notification.
+* The constants for NOTIFY_PROBLEM, NOTIFY_REDIRECT, and NOTIFY_MESSAGE in
+  \core\output\notification have been deprecated in favour of NOTIFY_ERROR,
+  NOTIFY_WARNING, and NOTIFY_INFO respectively.
 * The following functions, previously used (exclusively) by upgrade steps are not available
   anymore because of the upgrade cleanup performed for this version. See MDL-51580 for more info:
     - upgrade_mysql_fix_unsigned_and_lob_columns()

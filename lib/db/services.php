@@ -1067,7 +1067,17 @@ $functions = array(
         'description' => 'Generic service to update title',
         'type'        => 'write',
         'loginrequired' => true,
-        'ajax'        => true
+        'ajax'        => true,
+    ),
+
+    'core_fetch_notifications' => array(
+        'classname'   => 'core_external',
+        'methodname'  => 'fetch_notifications',
+        'classpath'   => 'lib/external/externallib.php',
+        'description' => 'Return a list of notifications for the current session',
+        'type'        => 'read',
+        'loginrequired' => false,
+        'ajax'        => true,
     ),
 
     // === Calendar related functions ===

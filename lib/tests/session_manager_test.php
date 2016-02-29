@@ -59,7 +59,7 @@ class core_session_manager_testcase extends advanced_testcase {
         \core\session\manager::init_empty_session();
 
         $this->assertInstanceOf('stdClass', $SESSION);
-        $this->assertEmpty((array)$SESSION);
+        $this->assertCount(1, (array)$SESSION);
         $this->assertSame($GLOBALS['SESSION'], $_SESSION['SESSION']);
         $this->assertSame($GLOBALS['SESSION'], $SESSION);
 
@@ -149,7 +149,7 @@ class core_session_manager_testcase extends advanced_testcase {
         $this->assertEquals(0, $USER->id);
 
         $this->assertInstanceOf('stdClass', $SESSION);
-        $this->assertEmpty((array)$SESSION);
+        $this->assertCount(1, (array)$SESSION);
         $this->assertSame($GLOBALS['SESSION'], $_SESSION['SESSION']);
         $this->assertSame($GLOBALS['SESSION'], $SESSION);
 

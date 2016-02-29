@@ -740,11 +740,6 @@ if ($mform_post->is_cancelled()) {
             $DB->update_record("forum", $forum);
         }
 
-        $timemessage = 2;
-        if (!empty($message)) { // if we're printing stuff about the file upload
-            $timemessage = 4;
-        }
-
         if ($realpost->userid == $USER->id) {
             $message .= '<br />'.get_string("postupdated", "forum");
         } else {
@@ -752,9 +747,7 @@ if ($mform_post->is_cancelled()) {
             $message .= '<br />'.get_string("editedpostupdated", "forum", fullname($realuser));
         }
 
-        if ($subscribemessage = forum_post_subscription($fromform, $forum, $discussion)) {
-            $timemessage = 4;
-        }
+        $subscribemessage = forum_post_subscription($fromform, $forum, $discussion);
         if ($forum->type == 'single') {
             // Single discussion forums are an exception. We show
             // the forum itself since it only has one discussion
@@ -782,10 +775,12 @@ if ($mform_post->is_cancelled()) {
         $event->add_record_snapshot('forum_discussions', $discussion);
         $event->trigger();
 
-        redirect(forum_go_back_to($discussionurl), $message.$subscribemessage, $timemessage);
-
-        exit;
-
+        redirect(
+                forum_go_back_to($discussionurl),
+                $message . $subscribemessage,
+                null,
+                \core\output\notification::NOTIFY_SUCCESS
+            );
 
     } else if ($fromform->discussion) { // Adding a new post to an existing discussion
         // Before we add this we must check that the user will not exceed the blocking threshold.
@@ -796,18 +791,10 @@ if ($mform_post->is_cancelled()) {
         $addpost = $fromform;
         $addpost->forum=$forum->id;
         if ($fromform->id = forum_add_new_post($addpost, $mform_post, $message)) {
-            $timemessage = 2;
-            if (!empty($message)) { // if we're printing stuff about the file upload
-                $timemessage = 4;
-            }
-
-            if ($subscribemessage = forum_post_subscription($fromform, $forum, $discussion)) {
-                $timemessage = 4;
-            }
+            $subscribemessage = forum_post_subscription($fromform, $forum, $discussion);
 
             if (!empty($fromform->mailnow)) {
                 $message .= get_string("postmailnow", "forum");
-                $timemessage = 4;
             } else {
                 $message .= '<p>'.get_string("postaddedsuccess", "forum") . '</p>';
                 $message .= '<p>'.get_string("postaddedtimeleft", "forum", format_time($CFG->maxeditingtime)) . '</p>';
@@ -843,7 +830,12 @@ if ($mform_post->is_cancelled()) {
                 $completion->update_state($cm,COMPLETION_COMPLETE);
             }
 
-            redirect(forum_go_back_to($discussionurl), $message.$subscribemessage, $timemessage);
+            redirect(
+                    forum_go_back_to($discussionurl),
+                    $message . $subscribemessage,
+                    null,
+                    \core\output\notification::NOTIFY_SUCCESS
+                );
 
         } else {
             print_error("couldnotadd", "forum", $errordestination);
@@ -924,22 +916,14 @@ if ($mform_post->is_cancelled()) {
                 $event->add_record_snapshot('forum_discussions', $discussion);
                 $event->trigger();
 
-                $timemessage = 2;
-                if (!empty($message)) { // If we're printing stuff about the file upload.
-                    $timemessage = 4;
-                }
-
                 if ($fromform->mailnow) {
                     $message .= get_string("postmailnow", "forum");
-                    $timemessage = 4;
                 } else {
                     $message .= '<p>'.get_string("postaddedsuccess", "forum") . '</p>';
                     $message .= '<p>'.get_string("postaddedtimeleft", "forum", format_time($CFG->maxeditingtime)) . '</p>';
                 }
 
-                if ($subscribemessage = forum_post_subscription($fromform, $forum, $discussion)) {
-                    $timemessage = 6;
-                }
+                $subscribemessage = forum_post_subscription($fromform, $forum, $discussion);
             } else {
                 print_error("couldnotadd", "forum", $errordestination);
             }
@@ -953,7 +937,12 @@ if ($mform_post->is_cancelled()) {
         }
 
         // Redirect back to the discussion.
-        redirect(forum_go_back_to($redirectto->out()), $message . $subscribemessage, $timemessage);
+        redirect(
+                forum_go_back_to($redirectto->out()),
+                $message . $subscribemessage,
+                null,
+                \core\output\notification::NOTIFY_SUCCESS
+            );
     }
 }
 

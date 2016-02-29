@@ -2596,14 +2596,19 @@ function notice ($message, $link='', $course=null) {
  * @param moodle_url|string $url A moodle_url to redirect to. Strings are not to be trusted!
  * @param string $message The message to display to the user
  * @param int $delay The delay before redirecting
+ * @param string $messagetype The type of notification to show the message in. See constants on \core\output\notification.
  * @throws moodle_exception
  */
-function redirect($url, $message='', $delay=-1) {
+function redirect($url, $message='', $delay=null, $messagetype = \core\output\notification::NOTIFY_INFO) {
     global $OUTPUT, $PAGE, $CFG;
 
     if (CLI_SCRIPT or AJAX_SCRIPT) {
         // This is wrong - developers should not use redirect in these scripts but it should not be very likely.
         throw new moodle_exception('redirecterrordetected', 'error');
+    }
+
+    if ($delay === null) {
+        $delay = -1;
     }
 
     // Prevent debug errors - make sure context is properly initialised.
@@ -2696,10 +2701,18 @@ function redirect($url, $message='', $delay=-1) {
     $url = str_replace('&amp;', '&', $encodedurl);
 
     if (!empty($message)) {
-        if ($delay === -1 || !is_numeric($delay)) {
-            $delay = 3;
+        if (!$debugdisableredirect && !headers_sent()) {
+            // A message has been provided, and the headers have not yet been sent.
+            // Display the message as a notification on the subsequent page.
+            \core\notification::add($message, $messagetype);
+            $message = null;
+            $delay = 0;
+        } else {
+            if ($delay === -1 || !is_numeric($delay)) {
+                $delay = 3;
+            }
+            $message = clean_text($message);
         }
-        $message = clean_text($message);
     } else {
         $message = get_string('pageshouldredirect');
         $delay = 0;
@@ -2720,7 +2733,7 @@ function redirect($url, $message='', $delay=-1) {
     // Include a redirect message, even with a HTTP redirect, because that is recommended practice.
     if ($PAGE) {
         $CFG->docroot = false; // To prevent the link to moodle docs from being displayed on redirect page.
-        echo $OUTPUT->redirect_message($encodedurl, $message, $delay, $debugdisableredirect);
+        echo $OUTPUT->redirect_message($encodedurl, $message, $delay, $debugdisableredirect, $messagetype);
         exit;
     } else {
         echo bootstrap_renderer::early_redirect_message($encodedurl, $message, $delay);
