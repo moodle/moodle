@@ -743,5 +743,35 @@ function xmldb_tool_lp_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2016020902, 'tool', 'lp');
     }
 
+    if ($oldversion < 2016020909) {
+
+        // Define index cmidcompetencyid (unique) to be dropped form tool_lp_module_competency.
+        $table = new xmldb_table('tool_lp_module_competency');
+        $index = new xmldb_index('cmidcompetencyid', XMLDB_INDEX_NOTUNIQUE, array('cmid', 'competencyid'));
+
+        // Conditionally launch drop index cmidcompetencyid.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2016020909, 'tool', 'lp');
+    }
+
+    if ($oldversion < 2016020910) {
+
+        // Define index cmidcompetencyid (unique) to be added to tool_lp_module_competency.
+        $table = new xmldb_table('tool_lp_module_competency');
+        $index = new xmldb_index('cmidcompetencyid', XMLDB_INDEX_UNIQUE, array('cmid', 'competencyid'));
+
+        // Conditionally launch add index cmidcompetencyid.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2016020910, 'tool', 'lp');
+    }
+
     return true;
 }
