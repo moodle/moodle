@@ -329,5 +329,18 @@ class mod_feedback_events_testcase extends advanced_testcase {
             $this->assertContains("The 'anonymous' value must be set in other.", $e->getMessage());
         }
     }
+
+    /**
+     * Test that event observer is executed on course deletion and the templates are removed.
+     */
+    public function test_delete_course() {
+        global $DB;
+        $this->resetAfterTest();
+        feedback_save_as_template($this->eventfeedback, 'my template', 0);
+        $courseid = $this->eventcourse->id;
+        $this->assertNotEmpty($DB->get_records('feedback_template', array('course' => $courseid)));
+        delete_course($this->eventcourse, false);
+        $this->assertEmpty($DB->get_records('feedback_template', array('course' => $courseid)));
+    }
 }
 

@@ -2,6 +2,9 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 3.2 ===
+* Callback delete_course is deprecated and should be replaced with observer for event \core\event\course_content_deleted
+
 === 3.1 ===
 * Course format may use the inplace_editable template to allow quick editing of section names, see
   https://docs.moodle.org/dev/Inplace_editable and MDL-51802 for example implementation.

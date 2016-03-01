@@ -15,18 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Feedback version information
+ * Event observers supported by this module
  *
- * @package mod_feedback
- * @author     Andreas Grabs
+ * @package    mod_feedback
+ * @copyright  2016 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2016061300;       // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2016051900;    // Requires this Moodle version
-$plugin->component = 'mod_feedback';   // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 0;
+/**
+ * Event observers supported by this module
+ *
+ * @package    mod_feedback
+ * @copyright  2016 Marina Glancy
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class mod_feedback_observer {
 
-$feedback_version_intern = 1; //this version is used for restore older backups
+    /**
+     * Observer for the even course_content_deleted - delete all course templates.
+     *
+     * @param \core\event\course_content_deleted $event
+     */
+    public static function course_content_deleted(\core\event\course_content_deleted $event) {
+        global $DB;
+        // Delete all templates of given course.
+        $DB->delete_records('feedback_template', array('course' => $event->objectid));
+    }
+}
