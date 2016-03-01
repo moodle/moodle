@@ -204,13 +204,20 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
                 // The count is different so we have a modification.
                 return true;
             } else {
-                // Have a closer look and see if the draft files match the non draft files.
-                foreach ($nondraftannotations as $index => $ndannotation) {
-                    foreach ($ndannotation as $key => $value) {
-                        if ($key != 'id' && $value != $draftannotations[$index]->$key) {
-                            return true;
+                $matches = 0;
+                // Have a closer look and see if the draft files match all the non draft files.
+                foreach ($nondraftannotations as $ndannotation) {
+                    foreach ($draftannotations as $dannotation) {
+                        foreach ($ndannotation as $key => $value) {
+                            if ($key != 'id' && $value != $dannotation->{$key}) {
+                                continue 2;
+                            }
                         }
+                        $matches++;
                     }
+                }
+                if ($matches !== count($nondraftannotations)) {
+                    return true;
                 }
             }
             // Select all comments.
@@ -220,12 +227,19 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
                 return true;
             } else {
                 // Go for a closer inspection.
-                foreach ($nondraftcomments as $index => $ndcomment) {
-                    foreach ($ndcomment as $key => $value) {
-                        if ($key != 'id' && $value != $draftcomments[$index]->$key) {
-                            return true;
+                $matches = 0;
+                foreach ($nondraftcomments as $ndcomment) {
+                    foreach ($draftcomments as $dcomment) {
+                        foreach ($ndcomment as $key => $value) {
+                            if ($key != 'id' && $value != $dcomment->{$key}) {
+                                continue 2;
+                            }
                         }
+                        $matches++;
                     }
+                }
+                if ($matches !== count($nondraftcomments)) {
+                    return true;
                 }
             }
         }
