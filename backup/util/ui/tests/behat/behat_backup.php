@@ -172,8 +172,8 @@ class behat_backup extends behat_base {
             "/descendant::tr[contains(., $fromcourse)]" .
             "/descendant::input[@type='radio']";
         $radionode = $this->find('xpath', $xpath, $exception);
-        $radionode->check();
-        $radionode->click();
+        $radiofield = new behat_form_field($this->getSession(), $radionode);
+        $radiofield->set_value(1);
 
         $this->find_button(get_string('continue'))->press();
         $this->wait();
