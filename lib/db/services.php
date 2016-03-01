@@ -1314,6 +1314,7 @@ $services = array(
             'mod_wiki_get_wikis_by_courses',
             'mod_wiki_view_wiki',
             'mod_wiki_view_page',
+            'mod_wiki_get_subwikis',
             'mod_glossary_view_glossary',
             'mod_glossary_view_entry',
             'mod_glossary_get_entries_by_letter',
