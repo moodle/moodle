@@ -219,10 +219,13 @@ class rules extends \table_sql implements \renderable {
         if (has_capability('tool/monitor:subscribe', \context_system::instance())) {
             $options[0] = get_string('site');
         }
-        if ($courses = get_user_capability_course('tool/monitor:subscribe', null, true, 'fullname', $orderby)) {
+        if ($courses = get_user_capability_course('tool/monitor:subscribe', null, true, 'fullname, visible', $orderby)) {
             foreach ($courses as $course) {
-                $options[$course->id] = format_string($course->fullname, true,
-                    array('context' => \context_course::instance($course->id)));
+                $coursecontext = \context_course::instance($course->id);
+                if ($course->visible == true || has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+                    $options[$course->id] = format_string($course->fullname, true,
+                        array('context' => $coursecontext));
+                }
             }
         }
         $url = new \moodle_url('/admin/tool/monitor/index.php');
