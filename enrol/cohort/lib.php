@@ -103,6 +103,7 @@ class enrol_cohort_plugin extends enrol_plugin {
      * @return int id of new instance, null if can not be created
      */
     public function add_instance($course, array $fields = null) {
+        global $CFG;
 
         if (!empty($fields['customint2']) && $fields['customint2'] == COHORT_CREATE_GROUP) {
             // Create a new group for the cohort if requested.
@@ -112,7 +113,14 @@ class enrol_cohort_plugin extends enrol_plugin {
             $fields['customint2'] = $groupid;
         }
 
-        return parent::add_instance($course, $fields);
+        $result = parent::add_instance($course, $fields);
+
+        require_once("$CFG->dirroot/enrol/cohort/locallib.php");
+        $trace = new null_progress_trace();
+        enrol_cohort_sync($trace, $course->id);
+        $trace->finished();
+
+        return $result;
     }
 
     /**
@@ -141,7 +149,14 @@ class enrol_cohort_plugin extends enrol_plugin {
             $data->customint2 = $groupid;
         }
 
-        return parent::update_instance($instance, $data);
+        $result = parent::update_instance($instance, $data);
+
+        require_once("$CFG->dirroot/enrol/cohort/locallib.php");
+        $trace = new null_progress_trace();
+        enrol_cohort_sync($trace, $course->id);
+        $trace->finished();
+
+        return $result;
     }
 
     /**
