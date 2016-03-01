@@ -751,7 +751,7 @@ span.flagged-tag a,
 tr.flagged-tag a {color:#FF0000;}
 .tag-management-table td,
 .tag-management-table th {vertical-align: middle;padding: 4px;}
-.tag-management-table span.inplaceeditable.inplaceeditingon input {width: 150px;}
+.tag-management-table .inplaceeditable.inplaceeditingon input {width: 150px;}
 .tag_feed .media, .tag_feed .media-body {overflow: hidden;}
 .tag_feed.media-list .media .itemimage {float: left;}
 .dir-rtl .tag_feed.media-list .media .itemimage {float: right;}
@@ -2332,27 +2332,34 @@ body.lockscroll {
     display: inline-block;
 }
 
-span.inplaceeditable.inplaceeditingon {
+.inplaceeditable.inplaceeditingon {
     position: relative;
 }
-span.inplaceeditable.inplaceeditingon span.editinstructions {
+.inplaceeditable.inplaceeditingon .editinstructions {
     margin-top: -30px;
     font-weight: normal;
     margin-right: -300px;
     margin-left: 0;
 }
-.dir-rtl span.inplaceeditable.inplaceeditingon span.editinstructions {
+.dir-rtl .inplaceeditable.inplaceeditingon .editinstructions {
     margin-left: -300px;
     margin-right: 0;
 }
-span.inplaceeditable .quickeditlink img {
+.inplaceeditable .quickeditlink .quickediticon img {
     opacity: 0.2;
 }
-span.inplaceeditable:hover .quickeditlink img,
-span.inplaceeditable .quickeditlink:focus img {
+.inplaceeditable a.quickeditlink {
+    color: inherit;
+    text-decoration: inherit;
+}
+.inplaceeditable:hover .quickeditlink .quickediticon img,
+.inplaceeditable .quickeditlink:focus .quickediticon img {
     opacity: 1;
 }
-span.inplaceeditable.inplaceeditingon input {
+.inplaceeditable.inplaceeditable-toggle .quickediticon {
+    display: none;
+}
+.inplaceeditable.inplaceeditingon input {
     width: 330px;
     height: 16px;
     vertical-align: text-bottom;

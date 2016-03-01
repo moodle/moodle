@@ -30,6 +30,8 @@
     * data-itemid
     * data-value
     * data-editlabel
+    * data-type
+    * data-options
 
     Context variables required for this template:
     * none
@@ -42,15 +44,19 @@
         "component" : "core_unknown",
         "itemtype" : "unknown",
         "edithint" : "Edit this",
-        "editlabel" : "New name for this"
+        "editlabel" : "New name for this",
+        "type" : "text",
+        "options" : "",
+        "linkeverything": 0
     }
 }}
 {{#component}}
-<span class="inplaceeditable" data-inplaceeditable="1" data-component="{{component}}" data-itemtype="{{itemtype}}" data-itemid="{{itemid}}"
-    data-value="{{value}}" data-editlabel="{{editlabel}}">
-        {{{displayvalue}}}
-        <a href="#" class="quickeditlink visibleifjs" data-inplaceeditablelink="1" title="{{edithint}}">
-            {{#pix}}t/editstring,core,{{edithint}}{{/pix}}
+<span class="inplaceeditable inplaceeditable-{{type}}" data-inplaceeditable="1" data-component="{{component}}" data-itemtype="{{itemtype}}" data-itemid="{{itemid}}"
+    data-value="{{value}}" data-editlabel="{{editlabel}}" data-type="{{type}}" data-options="{{options}}">
+        {{^ linkeverything }}{{{displayvalue}}}{{/ linkeverything }}
+        <a href="#" class="quickeditlink" data-inplaceeditablelink="1" title="{{edithint}}">
+            {{# linkeverything }}{{{displayvalue}}}{{/ linkeverything }}
+            <span class="quickediticon visibleifjs">{{#pix}}t/editstring,core,{{edithint}}{{/pix}}</span>
         </a>
 </span>
 {{#js}}
