@@ -1185,72 +1185,14 @@ abstract class repository implements cacheable_object {
      * permissions of the file are not modified here!
      *
      * @static
+     * @deprecated since Moodle 3.0
      * @param string $thefile
      * @param string $filename name of the file
      * @param bool $deleteinfected
      */
     public static function antivir_scan_file($thefile, $filename, $deleteinfected) {
-        global $CFG;
-
-        if (!is_readable($thefile)) {
-            // this should not happen
-            return;
-        }
-
-        if (empty($CFG->runclamonupload) or empty($CFG->pathtoclam)) {
-            // clam not enabled
-            return;
-        }
-
-        $CFG->pathtoclam = trim($CFG->pathtoclam);
-
-        if (!file_exists($CFG->pathtoclam) or !is_executable($CFG->pathtoclam)) {
-            // misconfigured clam - use the old notification for now
-            require("$CFG->libdir/uploadlib.php");
-            $notice = get_string('clamlost', 'moodle', $CFG->pathtoclam);
-            clam_message_admins($notice);
-            return;
-        }
-
-        $clamparam = ' --stdout ';
-        // If we are dealing with clamdscan, clamd is likely run as a different user
-        // that might not have permissions to access your file.
-        // To make clamdscan work, we use --fdpass parameter that passes the file
-        // descriptor permissions to clamd, which allows it to scan given file
-        // irrespective of directory and file permissions.
-        if (basename($CFG->pathtoclam) == 'clamdscan') {
-            $clamparam .= '--fdpass ';
-        }
-        // execute test
-        $cmd = escapeshellcmd($CFG->pathtoclam).$clamparam.escapeshellarg($thefile);
-        exec($cmd, $output, $return);
-
-        if ($return == 0) {
-            // perfect, no problem found
-            return;
-
-        } else if ($return == 1) {
-            // infection found
-            if ($deleteinfected) {
-                unlink($thefile);
-            }
-            throw new moodle_exception('virusfounduser', 'moodle', '', array('filename'=>$filename));
-
-        } else {
-            //unknown problem
-            require("$CFG->libdir/uploadlib.php");
-            $notice = get_string('clamfailed', 'moodle', get_clam_error_code($return));
-            $notice .= "\n\n". implode("\n", $output);
-            clam_message_admins($notice);
-            if ($CFG->clamfailureonupload === 'actlikevirus') {
-                if ($deleteinfected) {
-                    unlink($thefile);
-                }
-                throw new moodle_exception('virusfounduser', 'moodle', '', array('filename'=>$filename));
-            } else {
-                return;
-            }
-        }
+        debugging('Please upgrade your code to use \core\antivirus\manager::scan_file instead', DEBUG_DEVELOPER);
+        \core\antivirus\manager::scan_file($thefile, $filename, $deleteinfected);
     }
 
     /**
@@ -1377,7 +1319,8 @@ abstract class repository implements cacheable_object {
         global $DB, $CFG, $USER, $OUTPUT;
 
         // scan for viruses if possible, throws exception if problem found
-        self::antivir_scan_file($thefile, $record->filename, empty($CFG->repository_no_delete)); //TODO: MDL-28637 this repository_no_delete is a bloody hack!
+        // TODO: MDL-28637 this repository_no_delete is a bloody hack!
+        \core\antivirus\manager::scan_file($thefile, $record->filename, empty($CFG->repository_no_delete));
 
         $fs = get_file_storage();
         // If file name being used.

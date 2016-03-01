@@ -1416,5 +1416,40 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016021501.00);
     }
 
+    if ($oldversion < 2016022500.01) {
+
+        // MDL-50887. Implement plugins infrastructure for antivirus and create ClamAV plugin.
+        // This routine moves core ClamAV configuration to plugin level.
+
+        // If clamav was configured and enabled, enable the plugin.
+        if (!empty($CFG->runclamonupload) && !empty($CFG->pathtoclam)) {
+            set_config('antiviruses', 'clamav');
+        } else {
+            set_config('antiviruses', '');
+        }
+
+        if (isset($CFG->runclamonupload)) {
+            // Just unset global configuration, we have already enabled the plugin
+            // which implies that ClamAV will be used for scanning uploaded files.
+            unset_config('runclamonupload');
+        }
+        // Move core ClamAV configuration settings to plugin.
+        if (isset($CFG->pathtoclam)) {
+            set_config('pathtoclam', $CFG->pathtoclam, 'antivirus_clamav');
+            unset_config('pathtoclam');
+        }
+        if (isset($CFG->quarantinedir)) {
+            set_config('quarantinedir', $CFG->quarantinedir, 'antivirus_clamav');
+            unset_config('quarantinedir');
+        }
+        if (isset($CFG->clamfailureonupload)) {
+            set_config('clamfailureonupload', $CFG->clamfailureonupload, 'antivirus_clamav');
+            unset_config('clamfailureonupload');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2016022500.01);
+    }
+
     return true;
 }

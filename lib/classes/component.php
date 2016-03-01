@@ -341,6 +341,7 @@ $cache = '.var_export($cache, true).';
         $info = array(
             'access'      => null,
             'admin'       => $CFG->dirroot.'/'.$CFG->admin,
+            'antivirus'   => $CFG->dirroot . '/lib/antivirus',
             'auth'        => $CFG->dirroot.'/auth',
             'availability' => $CFG->dirroot . '/availability',
             'backup'      => $CFG->dirroot.'/backup/util/ui',
@@ -417,6 +418,7 @@ $cache = '.var_export($cache, true).';
         global $CFG;
 
         $types = array(
+            'antivirus'     => $CFG->dirroot . '/lib/antivirus',
             'availability'  => $CFG->dirroot . '/availability/condition',
             'qtype'         => $CFG->dirroot.'/question/type',
             'mod'           => $CFG->dirroot.'/mod',

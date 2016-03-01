@@ -127,19 +127,4 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     }
     $temp->add(new admin_setting_configselect('notifyloginthreshold', new lang_string('notifyloginthreshold', 'admin'), new lang_string('confignotifyloginthreshold', 'admin'), '10', $options));
     $ADMIN->add('security', $temp);
-
-
-
-
-
-
-    // "antivirus" settingpage
-    $temp = new admin_settingpage('antivirus', new lang_string('antivirus', 'admin'));
-    $temp->add(new admin_setting_configcheckbox('runclamonupload', new lang_string('runclamavonupload', 'admin'), new lang_string('configrunclamavonupload', 'admin'), 0));
-    $temp->add(new admin_setting_configexecutable('pathtoclam', new lang_string('pathtoclam', 'admin'), new lang_string('configpathtoclam', 'admin'), ''));
-    $temp->add(new admin_setting_configdirectory('quarantinedir', new lang_string('quarantinedir', 'admin'), new lang_string('configquarantinedir', 'admin'), ''));
-    $temp->add(new admin_setting_configselect('clamfailureonupload', new lang_string('clamfailureonupload', 'admin'), new lang_string('configclamfailureonupload', 'admin'), 'donothing', array('donothing' => new lang_string('configclamdonothing', 'admin'),
-                                                                                                                                                                                      'actlikevirus' => new lang_string('configclamactlikevirus', 'admin'))));
-    $ADMIN->add('security', $temp);
-
 } // end of speedup

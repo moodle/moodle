@@ -622,9 +622,6 @@ class manager {
     private function process_message_part_attachment($messagedata, $partdata, $part, $filename) {
         global $CFG;
 
-        // For Antivirus, the repository/lib.php must be included as it is not autoloaded.
-        require_once($CFG->dirroot . '/repository/lib.php');
-
         // If a filename is present, assume that this part is an attachment.
         $attachment = new \stdClass();
         $attachment->filename       = $filename;
@@ -635,7 +632,7 @@ class manager {
         $attachment->contentid      = $partdata->getContentId();
         $attachment->filesize       = $messagedata->getBodyPartSize($part);
 
-        if (empty($CFG->runclamonupload) or empty($CFG->pathtoclam)) {
+        if (!empty($CFG->antiviruses)) {
             mtrace("--> Attempting virus scan of '{$attachment->filename}'");
 
             // Store the file on disk - it will need to be virus scanned first.
@@ -655,8 +652,8 @@ class manager {
 
             // Perform a virus scan now.
             try {
-                \repository::antivir_scan_file($filepath, $attachment->filename, true);
-            } catch (\moodle_exception $e) {
+                \core\antivirus\manager::scan_file($filepath, $attachment->filename, true);
+            } catch (\core\antivirus\scanner_exception $e) {
                 mtrace("--> A virus was found in the attachment '{$attachment->filename}'.");
                 $this->inform_attachment_virus();
                 return;
