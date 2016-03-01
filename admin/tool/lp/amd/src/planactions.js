@@ -26,8 +26,9 @@ define(['jquery',
         'core/ajax',
         'core/notification',
         'core/str',
-        'tool_lp/menubar'],
-        function($, templates, ajax, notification, str, Menubar) {
+        'tool_lp/menubar',
+        'tool_lp/dialogue'],
+        function($, templates, ajax, notification, str, Menubar, Dialogue) {
 
     /**
      * PlanActions class.
@@ -487,6 +488,34 @@ define(['jquery',
         this._doUnapprove(planData);
     };
 
+    /**
+     * Display list of linked courses on a modal dialogue.
+     *
+     * @param  {Event} e The event.
+     */
+    PlanActions.prototype._showLinkedCoursesHandler = function(e) {
+        e.preventDefault();
+
+        var competencyid = $(e.target).data('id');
+        var requests = ajax.call([{
+            methodname: 'tool_lp_list_courses_using_competency',
+            args: { id: competencyid }
+        }]);
+
+        requests[0].done(function(courses) {
+            var context = {
+                courses: courses
+            };
+            templates.render('tool_lp/linked_courses_summary', context).done(function(html) {
+                str.get_string('linkedcourses', 'tool_lp').done(function (linkedcourses) {
+                    new Dialogue(
+                        linkedcourses, // Title.
+                        html // The linked courses.
+                    );
+                }).fail(notification.exception);
+            }).fail(notification.exception);
+        }).fail(notification.exception);
+    };
 
     /**
      * Plan event handler.
@@ -563,6 +592,8 @@ define(['jquery',
         wrapper.find('[data-action="plan-stop-review"]').click(this._eventHandler.bind(this, 'stopReview'));
         wrapper.find('[data-action="plan-approve"]').click(this._eventHandler.bind(this, 'approve'));
         wrapper.find('[data-action="plan-unapprove"]').click(this._eventHandler.bind(this, 'unapprove'));
+
+        wrapper.find('[data-action="find-courses-link"]').click(this._showLinkedCoursesHandler.bind(this));
     };
 
     return PlanActions;
