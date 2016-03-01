@@ -1416,7 +1416,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016021501.00);
     }
 
-    if ($oldversion < 2016022500.01) {
+    if ($oldversion < 2016030103.00) {
 
         // MDL-50887. Implement plugins infrastructure for antivirus and create ClamAV plugin.
         // This routine moves core ClamAV configuration to plugin level.
@@ -1448,7 +1448,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2016022500.01);
+        upgrade_main_savepoint(true, 2016030103.00);
     }
 
     return true;
