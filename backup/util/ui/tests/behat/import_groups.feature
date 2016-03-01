@@ -28,7 +28,6 @@ Feature: Option to include groups and groupings when importing a course to anoth
     And I follow "Course 1"
     And I turn editing mode on
 
-  @javascript
   Scenario: Include groups and groupings when importing a course to another course
     When I import "Course 1" course into "Course 2" course using this options:
       | Initial | Include groups and groupings | 1 |
@@ -40,7 +39,6 @@ Feature: Option to include groups and groupings when importing a course to anoth
     And I should see "Grouping 1"
     And I should see "Grouping 2"
 
-  @javascript
   Scenario: Do not include groups and groupings when importing a course to another course
     When I import "Course 1" course into "Course 2" course using this options:
       | Initial | Include groups and groupings | 0 |
