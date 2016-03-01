@@ -141,7 +141,6 @@ Feature: Using the activity grade form element
       | Subject  | Discussion subject |
       | Message | Discussion message |
     And I press "Post to forum"
-    And I follow "Continue"
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
