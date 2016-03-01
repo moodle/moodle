@@ -305,6 +305,7 @@ class reply_handler extends \core\message\inbound\handler {
         $a = new \stdClass();
         $a->subject = $handlerresult->subject;
         $discussionurl = new \moodle_url('/mod/forum/discuss.php', array('d' => $handlerresult->discussion));
+        $discussionurl->set_anchor('p' . $handlerresult->id);
         $a->discussionurl = $discussionurl->out();
 
         $message = new \stdClass();
