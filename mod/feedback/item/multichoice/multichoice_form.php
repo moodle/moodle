@@ -105,6 +105,9 @@ class feedback_multichoice_form extends feedback_item_form {
         if (isset($item->horizontal) AND $item->horizontal == 1 AND $subtype != 'd') {
             $presentation .= FEEDBACK_MULTICHOICE_ADJUST_SEP.'1';
         }
+        if (!isset($item->hidenoselect)) {
+            $item->hidenoselect = 1;
+        }
 
         $item->presentation = $subtype.FEEDBACK_MULTICHOICE_TYPE_SEP.$presentation;
         return $item;
