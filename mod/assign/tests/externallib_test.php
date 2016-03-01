@@ -1489,12 +1489,11 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
     /**
      * Test view_grading_table
      */
-    public function test_view_grading_table() {
+    public function test_view_grading_table_invalid_instance() {
         global $DB;
 
         $this->resetAfterTest(true);
 
-        $this->setAdminUser();
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
         $assign = $this->getDataGenerator()->create_module('assign', array('course' => $course->id));
@@ -1502,24 +1501,49 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $cm = get_coursemodule_from_instance('assign', $assign->id);
 
         // Test invalid instance id.
-        try {
-            mod_assign_external::view_grading_table(0);
-            $this->fail('Exception expected due to invalid mod_assign instance id.');
-        } catch (moodle_exception $e) {
-            $this->assertEquals('invalidrecord', $e->errorcode);
-        }
+        $this->setExpectedExceptionRegexp('dml_missing_record_exception');
+        mod_assign_external::view_grading_table(0);
+    }
+
+    /**
+     * Test view_grading_table
+     */
+    public function test_view_grading_table_not_enrolled() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $assign = $this->getDataGenerator()->create_module('assign', array('course' => $course->id));
+        $context = context_module::instance($assign->cmid);
+        $cm = get_coursemodule_from_instance('assign', $assign->id);
 
         // Test not-enrolled user.
         $user = self::getDataGenerator()->create_user();
         $this->setUser($user);
-        try {
-            mod_assign_external::view_grading_table($assign->id);
-            $this->fail('Exception expected due to not enrolled user.');
-        } catch (moodle_exception $e) {
-            $this->assertEquals('requireloginerror', $e->errorcode);
-        }
+
+        $this->setExpectedException('require_login_exception');
+        mod_assign_external::view_grading_table($assign->id);
+    }
+
+    /**
+     * Test view_grading_table
+     */
+    public function test_view_grading_table_correct() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $assign = $this->getDataGenerator()->create_module('assign', array('course' => $course->id));
+        $context = context_module::instance($assign->cmid);
+        $cm = get_coursemodule_from_instance('assign', $assign->id);
 
         // Test user with full capabilities.
+        $user = self::getDataGenerator()->create_user();
+        $this->setUser($user);
         $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $teacherrole->id);
 
@@ -1540,21 +1564,37 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($moodleurl, $event->get_url());
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
+    }
+
+    /**
+     * Test view_grading_table
+     */
+    public function test_view_grading_table_without_capability() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $assign = $this->getDataGenerator()->create_module('assign', array('course' => $course->id));
+        $context = context_module::instance($assign->cmid);
+        $cm = get_coursemodule_from_instance('assign', $assign->id);
 
         // Test user with no capabilities.
+        $user = self::getDataGenerator()->create_user();
+        $this->setUser($user);
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $teacherrole->id);
+
         // We need a explicit prohibit since this capability is only defined in authenticated user and guest roles.
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
         assign_capability('mod/assign:view', CAP_PROHIBIT, $teacherrole->id, $context->id);
         // Empty all the caches that may be affected by this change.
         accesslib_clear_all_caches_for_unit_testing();
         course_modinfo::clear_instance_cache();
 
-        try {
-            mod_assign_external::view_grading_table($assign->id);
-            $this->fail('Exception expected due to missing view capability.');
-        } catch (moodle_exception $e) {
-            $this->assertEquals('requireloginerror', $e->errorcode);
-        }
-
+        $this->setExpectedException('require_login_exception', 'Course or activity not accessible. (Activity is hidden)');
+        mod_assign_external::view_grading_table($assign->id);
     }
 
     /**
