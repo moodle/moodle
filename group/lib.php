@@ -717,16 +717,17 @@ function groups_get_possible_roles($context) {
  * @param mixed $source restrict to cohort, grouping or group id
  * @param string $orderby The column to sort users by
  * @param int $notingroup restrict to users not in existing groups
+ * @param bool $onlyactiveenrolments restrict to users who have an active enrolment in the course
  * @return array An array of the users
  */
 function groups_get_potential_members($courseid, $roleid = null, $source = null,
                                       $orderby = 'lastname ASC, firstname ASC',
-                                      $notingroup = null) {
+                                      $notingroup = null, $onlyactiveenrolments = false) {
     global $DB;
 
     $context = context_course::instance($courseid);
 
-    list($esql, $params) = get_enrolled_sql($context);
+    list($esql, $params) = get_enrolled_sql($context, '', 0, $onlyactiveenrolments);
 
     $notingroupsql = "";
     if ($notingroup) {
