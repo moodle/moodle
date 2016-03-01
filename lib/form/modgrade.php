@@ -364,7 +364,9 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
                         return true;
                     }
                     // Check if we are changing the scale type when grades are present.
-                    if (isset($val['modgrade_type']) && $val['modgrade_type'] === 'scale') {
+                    // If modgrade_type is empty then use currentgradetype.
+                    $gradetype = isset($val['modgrade_type']) ? $val['modgrade_type'] : $this->currentgradetype;
+                    if ($gradetype === 'scale') {
                         if (isset($val['modgrade_scale']) && ($val['modgrade_scale'] !== $this->currentscaleid)) {
                             return false;
                         }
@@ -381,7 +383,9 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
                         return true;
                     }
                     // Check if we are changing the max grade if we are using ratings and there is a grade.
-                    if (isset($val['modgrade_type']) && $val['modgrade_type'] === 'point') {
+                    // If modgrade_type is empty then use currentgradetype.
+                    $gradetype = isset($val['modgrade_type']) ? $val['modgrade_type'] : $this->currentgradetype;
+                    if ($gradetype === 'point') {
                         if (isset($val['modgrade_point']) &&
                             grade_floats_different($this->currentgrade, $val['modgrade_point'])) {
                             return false;
@@ -391,21 +395,23 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
                 };
                 $checkmaxgrade = function($val) {
                     // Closure to validate a max points value. See the note above about scope if this confuses you.
-                    if (isset($val['modgrade_type']) && $val['modgrade_type'] === 'point') {
-                        if (!isset($val['modgrade_point'])) {
-                            return false;
+                    // If modgrade_type is empty then use currentgradetype.
+                    $gradetype = isset($val['modgrade_type']) ? $val['modgrade_type'] : $this->currentgradetype;
+                    if ($gradetype === 'point') {
+                        if (isset($val['modgrade_point'])) {
+                            return $this->validate_point($val['modgrade_point']);
                         }
-                        return $this->validate_point($val['modgrade_point']);
                     }
                     return true;
                 };
                 $checkvalidscale = function($val) {
                     // Closure to validate a scale value. See the note above about scope if this confuses you.
-                    if (isset($val['modgrade_type']) && $val['modgrade_type'] === 'scale') {
-                        if (!isset($val['modgrade_scale'])) {
-                            return false;
+                    // If modgrade_type is empty then use currentgradetype.
+                    $gradetype = isset($val['modgrade_type']) ? $val['modgrade_type'] : $this->currentgradetype;
+                    if ($gradetype === 'scale') {
+                        if (isset($val['modgrade_scale'])) {
+                            return $this->validate_scale($val['modgrade_scale']);
                         }
-                        return $this->validate_scale($val['modgrade_scale']);
                     }
                     return true;
                 };
@@ -416,7 +422,9 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
                         return true;
                     }
                     // Closure to validate a scale value. See the note above about scope if this confuses you.
-                    if (isset($val['modgrade_type']) && $val['modgrade_type'] === 'point') {
+                    // If modgrade_type is empty then use currentgradetype.
+                    $gradetype = isset($val['modgrade_type']) ? $val['modgrade_type'] : $this->currentgradetype;
+                    if ($gradetype === 'point' && isset($val['modgrade_point'])) {
                         // Work out if the value was actually changed in the form.
                         if (grade_floats_different($this->currentgrade, $val['modgrade_point'])) {
                             if (empty($val['modgrade_rescalegrades'])) {
