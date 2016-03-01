@@ -1884,7 +1884,7 @@ class core_plugin_manager {
             ),
 
             'search' => array(
-                'solr'
+                'simpledb', 'solr'
             ),
 
             'scormreport' => array(
