@@ -189,7 +189,7 @@ class mod_quiz_external extends external_api {
                                                                         within a quiz attempt.', VALUE_OPTIONAL),
                             'attempts' => new external_value(PARAM_INT, 'The maximum number of attempts a student is allowed.',
                                                                 VALUE_OPTIONAL),
-                            'attemptonlast' => new external_value(PARAM_INT, 'Whether subsequent attempts start from teh answer
+                            'attemptonlast' => new external_value(PARAM_INT, 'Whether subsequent attempts start from the answer
                                                                     to the previous attempt (1) or start blank (0).',
                                                                     VALUE_OPTIONAL),
                             'grademethod' => new external_value(PARAM_INT, 'One of the values QUIZ_GRADEHIGHEST, QUIZ_GRADEAVERAGE,
@@ -255,7 +255,7 @@ class mod_quiz_external extends external_api {
                             'completionattemptsexhausted' => new external_value(PARAM_INT, 'Mark quiz complete when the student has
                                                                                 exhausted the maximum number of attempts',
                                                                                 VALUE_OPTIONAL),
-                            'completionpass' => new external_value(PARAM_INT, 'Wheter to require passing grade', VALUE_OPTIONAL),
+                            'completionpass' => new external_value(PARAM_INT, 'Whether to require passing grade', VALUE_OPTIONAL),
                             'autosaveperiod' => new external_value(PARAM_INT, 'Auto-save delay', VALUE_OPTIONAL),
                             'hasfeedback' => new external_value(PARAM_INT, 'Whether the quiz has any non-blank feedback text',
                                                                 VALUE_OPTIONAL),
