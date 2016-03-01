@@ -155,4 +155,12 @@ $functions = array(
                 'capabilities'  => 'mod/assign:view, mod/assign:viewgrades'
         ),
 
+        'mod_assign_view_submission_status' => array(
+            'classname'     => 'mod_assign_external',
+            'methodname'    => 'view_submission_status',
+            'classpath'     => 'mod/assign/externallib.php',
+            'description'   => 'Trigger the submission status viewed event.',
+            'type'          => 'write',
+            'capabilities'  => 'mod/assign:view'
+        ),
 );
