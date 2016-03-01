@@ -272,4 +272,63 @@ class mod_quiz_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for view_quiz.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function view_quiz_parameters() {
+        return new external_function_parameters (
+            array(
+                'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
+            )
+        );
+    }
+
+    /**
+     * Trigger the course module viewed event and update the module completion status.
+     *
+     * @param int $quizid quiz instance id
+     * @return array of warnings and status result
+     * @since Moodle 3.1
+     * @throws moodle_exception
+     */
+    public static function view_quiz($quizid) {
+        global $DB;
+
+        $params = self::validate_parameters(self::view_quiz_parameters(), array('quizid' => $quizid));
+        $warnings = array();
+
+        // Request and permission validation.
+        $quiz = $DB->get_record('quiz', array('id' => $params['quizid']), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($quiz, 'quiz');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        // Trigger course_module_viewed event and completion.
+        quiz_view($quiz, $course, $cm, $context);
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the view_quiz return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function view_quiz_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }

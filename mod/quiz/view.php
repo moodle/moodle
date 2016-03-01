@@ -69,17 +69,8 @@ $accessmanager = new quiz_access_manager($quizobj, $timenow,
         has_capability('mod/quiz:ignoretimelimits', $context, null, false));
 $quiz = $quizobj->get_quiz();
 
-// Log this request.
-$params = array(
-    'objectid' => $quiz->id,
-    'context' => $context
-);
-$event = \mod_quiz\event\course_module_viewed::create($params);
-$event->add_record_snapshot('quiz', $quiz);
-$event->trigger();
-
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
+// Trigger course_module_viewed event and completion.
+quiz_view($quiz, $course, $cm, $context);
 
 // Initialize $PAGE, compute blocks.
 $PAGE->set_url('/mod/quiz/view.php', array('id' => $cm->id));
