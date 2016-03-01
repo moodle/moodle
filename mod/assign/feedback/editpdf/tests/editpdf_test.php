@@ -356,7 +356,7 @@ class assignfeedback_editpdf_testcase extends mod_assign_base_testcase {
         $annotation->type = 'rectangle';
         $annotation->colour = 'yellow';
 
-        page_editor::add_annotation($annotation);
+        $yellowannotationid = page_editor::add_annotation($annotation);
 
         // Add a comment as well.
         $comment = new comment();
@@ -391,7 +391,7 @@ class assignfeedback_editpdf_testcase extends mod_assign_base_testcase {
         page_editor::add_annotation($annotation);
 
         $annotations = page_editor::get_annotations($grade->id, 0, true);
-        page_editor::remove_annotation($annotations[1]->id);
+        page_editor::remove_annotation($yellowannotationid);
         $this->assertTrue($plugin->is_feedback_modified($grade, $data));
         $plugin->save($grade, $data);
 
