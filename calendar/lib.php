@@ -693,8 +693,8 @@ function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withdur
 
     $whereclause = '';
     $params = array();
-    // Quick test
-    if(is_bool($users) && is_bool($groups) && is_bool($courses)) {
+    // Quick test.
+    if (empty($users) && empty($groups) && empty($courses)) {
         return array();
     }
 
