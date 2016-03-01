@@ -120,6 +120,17 @@ span.unread {
     border-bottom: 1px solid #DDD;
 }
 
+/* Forumpost hash anchor target */
+.path-mod-forum :target + :before {
+    display: block;
+    width: 4px;
+    position: absolute;
+    background: #0070a8;
+    left: -1px;
+    top: -1px;
+    bottom: -1px;
+}
+
 /* Discussion navigation */
 .path-mod-forum .discussion-nav {
     margin: .5em 0;
