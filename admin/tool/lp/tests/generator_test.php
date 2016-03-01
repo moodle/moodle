@@ -26,6 +26,7 @@
 use tool_lp\competency;
 use tool_lp\competency_framework;
 use tool_lp\course_competency;
+use tool_lp\course_module_competency;
 use tool_lp\plan;
 use tool_lp\related_competency;
 use tool_lp\template;
@@ -232,6 +233,27 @@ class tool_lp_generator_testcase extends advanced_testcase {
         $rc = $lpg->create_course_competency(array('competencyid' => $c3->get_id(), 'courseid' => $course2->id));
         $this->assertEquals(1, course_competency::count_records(array('courseid' => $course2->id)));
         $this->assertInstanceOf('\tool_lp\course_competency', $rc);
+    }
+
+    public function test_create_course_module_competency() {
+        $this->resetAfterTest(true);
+
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $course1 = $this->getDataGenerator()->create_course();
+        $cm1 = $this->getDataGenerator()->create_module('forum', array('course' => $course1->id));
+        $cm2 = $this->getDataGenerator()->create_module('forum', array('course' => $course1->id));
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $this->assertEquals(0, course_module_competency::count_records());
+        $rc = $lpg->create_course_module_competency(array('competencyid' => $c1->get_id(), 'cmid' => $cm1->cmid));
+        $rc = $lpg->create_course_module_competency(array('competencyid' => $c2->get_id(), 'cmid' => $cm1->cmid));
+        $this->assertEquals(2, course_module_competency::count_records(array('cmid' => $cm1->cmid)));
+        $this->assertEquals(0, course_module_competency::count_records(array('cmid' => $cm2->cmid)));
+        $rc = $lpg->create_course_module_competency(array('competencyid' => $c3->get_id(), 'cmid' => $cm2->cmid));
+        $this->assertEquals(1, course_module_competency::count_records(array('cmid' => $cm2->cmid)));
+        $this->assertInstanceOf('\tool_lp\course_module_competency', $rc);
     }
 
 }
