@@ -54,11 +54,11 @@ $string['displayinline'] = 'Inline on a course page';
 $string['noautocompletioninline'] = 'Automatic completion on viewing of activity can not be selected together with "Display inline" option';
 $string['search:activity'] = 'Folder activities';
 $string['showdownloadfolder'] = 'Show download folder button';
-$string['showdownloadfolder_help'] = 'If set to \'yes\', a button will be shown to allow users to download a zip archive containing all files.';
+$string['showdownloadfolder_help'] = 'If set to \'yes\', a button will be displayed allowing the contents of the folder to be downloaded as a zip file.';
 $string['showexpanded'] = 'Show subfolders expanded';
 $string['showexpanded_help'] = 'If set to \'yes\', subfolders are shown expanded by default; otherwise they are shown collapsed.';
 $string['maxsizetodownload'] = 'Maximum folder download size (MB)';
-$string['maxsizetodownload_help'] = 'If set then users will not be able to downlod zip archives of folder where the total size is larger than this value.';
+$string['maxsizetodownload_help'] = 'The maximum size of folder that can be downloaded as a zip file. If set to zero, the folder size is unlimited.';
 
 
 
