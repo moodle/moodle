@@ -173,6 +173,11 @@ if ($options['install']) {
 
     // This is only displayed once for parallel install.
     if (empty($options['run'])) {
+        // Notify user that 2.5 profile has been converted to 3.5.
+        if (behat_config_manager::$autoprofileconversion) {
+            mtrace("2.5 behat profile detected, automatically converted to current 3.x format");
+        }
+
         $runtestscommand = behat_command::get_behat_command(true, !empty($options['run']));
 
         $runtestscommand .= ' --config ' . behat_config_manager::get_behat_cli_config_filepath();
