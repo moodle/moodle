@@ -327,7 +327,7 @@ class engine extends \core_search\engine {
      * @return void
      */
     public function optimize() {
-        $this->get_search_client()->optimize();
+        $this->get_search_client()->optimize(1, true, false);
     }
 
     /**
@@ -424,6 +424,7 @@ class engine extends \core_search\engine {
             'ssl_password' => !empty($this->config->ssl_keypassword) ? $this->config->ssl_keypassword : '',
             'ssl_cainfo' => !empty($this->config->ssl_cainfo) ? $this->config->ssl_cainfo : '',
             'ssl_capath' => !empty($this->config->ssl_capath) ? $this->config->ssl_capath : '',
+            'timeout' => !empty($this->config->server_timeout) ? $this->config->server_timeout : '30'
         );
 
         $this->client = new \SolrClient($options);
