@@ -2685,6 +2685,9 @@ class core_moodlelib_testcase extends advanced_testcase {
         }
     }
 
+    /**
+     * A data provider for testing email diversion
+     */
     public function diverted_emails_provider() {
         return array(
             'nodiverts' => array(
@@ -2737,7 +2740,14 @@ class core_moodlelib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test email diversion
+     *
      * @dataProvider diverted_emails_provider
+     *
+     * @param string $divertallemailsto An optional email address
+     * @param string $divertallemailsexcept An optional exclusion list
+     * @param array $addresses An array of test addresses
+     * @param boolean $expected Expected result
      */
     public function test_email_should_be_diverted($divertallemailsto, $divertallemailsexcept, $addresses, $expected) {
         global $CFG;
