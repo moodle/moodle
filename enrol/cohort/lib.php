@@ -155,7 +155,7 @@ class enrol_cohort_plugin extends enrol_plugin {
 
         require_once("$CFG->dirroot/enrol/cohort/locallib.php");
         $trace = new null_progress_trace();
-        enrol_cohort_sync($trace, $course->id);
+        enrol_cohort_sync($trace, $instance->courseid);
         $trace->finished();
 
         return $result;
