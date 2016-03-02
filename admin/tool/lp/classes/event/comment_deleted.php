@@ -15,16 +15,34 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version info
+ * Comment deleted event for tool_lp areas.
+ *
  *
  * @package    tool_lp
- * @copyright  2015 Damyon Wiese
+ * @copyright  2016 Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace tool_lp\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Comment deleted event class for tool_lp areas.
+ *
+ *
+ * @package    tool_lp
+ * @since      Moodle 3.1
+ * @copyright  2016 Issam Taboubi <issam.taboubi@umontreal.ca>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class comment_deleted extends \core\event\comment_deleted {
 
-$plugin->version   = 2016020914; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2014110400; // Requires this Moodle version.
-$plugin->component = 'tool_lp'; // Full name of the plugin (used for diagnostics).
+    /**
+     * Returns description of what happened.
+     *
+     * @return string
+     */
+    public function get_description() {
+        return "The user with id '$this->userid' deleted the comment with id '$this->objectid' from '$this->component'";
+    }
+}

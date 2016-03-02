@@ -24,6 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
+require_once($CFG->dirroot . '/comment/lib.php');
 
 use tool_lp\api;
 
@@ -535,87 +536,14 @@ class tool_lp_event_testcase extends advanced_testcase {
         $sink = $this->redirectEvents();
         $plan = api::update_plan($record);
         $this->assertEquals('Plan updated', $plan->get_name());
-        // Complete plan.
-        api::complete_plan($plan);
-        // Reopen plan.
-        api::reopen_plan($plan);
-        // Unapprove plan.
-        api::unapprove_plan($plan);
-        // Approve plan.
-        api::approve_plan($plan);
-        // Get our event event.
-        $events = $sink->get_events();
-        $this->assertCount(5, $events);
-        // Check that the event data is valid.
-        foreach ($events as $event) {
-            $this->assertInstanceOf('\tool_lp\event\plan_updated', $event);
-            $this->assertEquals($plan->get_id(), $event->objectid);
-            $this->assertEquals($plan->get_context()->id, $event->contextid);
-            $this->assertEventContextNotUsed($event);
-        }
-        $this->assertDebuggingNotCalled();
-    }
 
-    /**
-     * Test the plan updated event by unlink.
-     *
-     */
-    public function test_plan_updated_by_unlink() {
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-        $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
-        $user1 = $dg->create_user();
-        $t1 = $lpg->create_template();
-        $plan = $lpg->create_plan(array('userid' => $user1->id, 'templateid' => $t1->get_id()));
-        // Trigger and capture the event.
-        $sink = $this->redirectEvents();
-        $result = api::unlink_plan_from_template($plan);
-        $this->assertTrue($result);
         // Get our event event.
         $events = $sink->get_events();
         $event = reset($events);
-        // Check that the event data is valid.
         $this->assertInstanceOf('\tool_lp\event\plan_updated', $event);
         $this->assertEquals($plan->get_id(), $event->objectid);
         $this->assertEquals($plan->get_context()->id, $event->contextid);
         $this->assertEventContextNotUsed($event);
-        $this->assertDebuggingNotCalled();
-    }
-
-    /**
-     * Test the plan updated event by review.
-     *
-     */
-    public function test_plan_updated_by_review() {
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-        $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
-        $user1 = $dg->create_user();
-        $plan = $lpg->create_plan(array('userid' => $user1->id));
-        // Trigger and capture the event.
-        $sink = $this->redirectEvents();
-        $result = api::plan_request_review($plan);
-        $this->assertTrue($result);
-        $result = api::plan_start_review($plan);
-        $this->assertTrue($result);
-        $result = api::plan_stop_review($plan);
-        $this->assertTrue($result);
-        $result = api::plan_request_review($plan);
-        $this->assertTrue($result);
-        $result = api::plan_cancel_review_request($plan);
-        $this->assertTrue($result);
-        // Get our event event.
-        $events = $sink->get_events();
-        $this->assertCount(5, $events);
-        // Check that the event data is valid.
-        foreach ($events as $event) {
-            $this->assertInstanceOf('\tool_lp\event\plan_updated', $event);
-            $this->assertEquals($plan->get_id(), $event->objectid);
-            $this->assertEquals($plan->get_context()->id, $event->contextid);
-            $this->assertEventContextNotUsed($event);
-        }
         $this->assertDebuggingNotCalled();
     }
 
@@ -1037,5 +965,334 @@ class tool_lp_event_testcase extends advanced_testcase {
         } catch (coding_exception $e) {
             $this->assertRegExp("/The 'competencyid' value must be set./", $e->getMessage());
         }
+    }
+
+    /**
+     * Test the plan approved event.
+     *
+     */
+    public function test_plan_approved() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user1 = $dg->create_user();
+        $plan = $lpg->create_plan(array('userid' => $user1->id));
+        $planid = $plan->get_id();
+        $contextid = $plan->get_context()->id;
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $result = api::approve_plan($plan->get_id());
+        $this->assertTrue($result);
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+        $this->assertInstanceOf('\tool_lp\event\plan_approved', $event);
+        $this->assertEquals($planid, $event->objectid);
+        $this->assertEquals($contextid, $event->contextid);
+        $this->assertEquals($plan->get_userid(), $event->relateduserid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the plan unapproved event.
+     *
+     */
+    public function test_plan_unapproved() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user1 = $dg->create_user();
+        $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \tool_lp\plan::STATUS_ACTIVE));
+        $planid = $plan->get_id();
+        $contextid = $plan->get_context()->id;
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $result = api::unapprove_plan($plan->get_id());
+        $this->assertTrue($result);
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+        $this->assertInstanceOf('\tool_lp\event\plan_unapproved', $event);
+        $this->assertEquals($planid, $event->objectid);
+        $this->assertEquals($contextid, $event->contextid);
+        $this->assertEquals($plan->get_userid(), $event->relateduserid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the plan reopened event.
+     *
+     */
+    public function test_plan_reopened() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user1 = $dg->create_user();
+        $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \tool_lp\plan::STATUS_COMPLETE));
+        $planid = $plan->get_id();
+        $contextid = $plan->get_context()->id;
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $result = api::reopen_plan($plan->get_id());
+        $this->assertTrue($result);
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+        $this->assertInstanceOf('\tool_lp\event\plan_reopened', $event);
+        $this->assertEquals($planid, $event->objectid);
+        $this->assertEquals($contextid, $event->contextid);
+        $this->assertEquals($plan->get_userid(), $event->relateduserid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the plan completed event.
+     *
+     */
+    public function test_plan_completed() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user1 = $dg->create_user();
+        $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \tool_lp\plan::STATUS_ACTIVE));
+        $planid = $plan->get_id();
+        $contextid = $plan->get_context()->id;
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $result = api::complete_plan($plan->get_id());
+        $this->assertTrue($result);
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+        $this->assertInstanceOf('\tool_lp\event\plan_completed', $event);
+        $this->assertEquals($planid, $event->objectid);
+        $this->assertEquals($contextid, $event->contextid);
+        $this->assertEquals($plan->get_userid(), $event->relateduserid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the plan unlinked event.
+     *
+     */
+    public function test_plan_unlinked() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user1 = $dg->create_user();
+        $template = $lpg->create_template();
+        $plan = $lpg->create_plan(array(
+            'userid' => $user1->id,
+            'status' => \tool_lp\plan::STATUS_ACTIVE,
+            'templateid' => $template->get_id()
+        ));
+        $planid = $plan->get_id();
+        $contextid = $plan->get_context()->id;
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $result = api::unlink_plan_from_template($plan->get_id());
+        $this->assertTrue($result);
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+        $this->assertInstanceOf('\tool_lp\event\plan_unlinked', $event);
+        $this->assertEquals($planid, $event->objectid);
+        $this->assertEquals($contextid, $event->contextid);
+        $this->assertEquals($plan->get_userid(), $event->relateduserid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the plan review requested event.
+     *
+     */
+    public function test_plan_review_requested() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user1 = $dg->create_user();
+        $plan = $lpg->create_plan(array('userid' => $user1->id));
+        $planid = $plan->get_id();
+        $contextid = $plan->get_context()->id;
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $result = api::plan_request_review($plan->get_id());
+        $this->assertTrue($result);
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+        $this->assertInstanceOf('\tool_lp\event\plan_review_requested', $event);
+        $this->assertEquals($planid, $event->objectid);
+        $this->assertEquals($contextid, $event->contextid);
+        $this->assertEquals($plan->get_userid(), $event->relateduserid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the plan review request cancelled event.
+     *
+     */
+    public function test_plan_review_request_cancelled() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user1 = $dg->create_user();
+        $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \tool_lp\plan::STATUS_WAITING_FOR_REVIEW));
+        $planid = $plan->get_id();
+        $contextid = $plan->get_context()->id;
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $result = api::plan_cancel_review_request($plan->get_id());
+        $this->assertTrue($result);
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+        $this->assertInstanceOf('\tool_lp\event\plan_review_request_cancelled', $event);
+        $this->assertEquals($planid, $event->objectid);
+        $this->assertEquals($contextid, $event->contextid);
+        $this->assertEquals($plan->get_userid(), $event->relateduserid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the plan review started event.
+     *
+     */
+    public function test_plan_review_started() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user1 = $dg->create_user();
+        $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \tool_lp\plan::STATUS_WAITING_FOR_REVIEW));
+        $planid = $plan->get_id();
+        $contextid = $plan->get_context()->id;
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $result = api::plan_start_review($plan->get_id());
+        $this->assertTrue($result);
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+        $this->assertInstanceOf('\tool_lp\event\plan_review_started', $event);
+        $this->assertEquals($planid, $event->objectid);
+        $this->assertEquals($contextid, $event->contextid);
+        $this->assertEquals($plan->get_userid(), $event->relateduserid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the plan review stopped event.
+     *
+     */
+    public function test_plan_review_stopped() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user1 = $dg->create_user();
+        $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \tool_lp\plan::STATUS_IN_REVIEW));
+        $planid = $plan->get_id();
+        $contextid = $plan->get_context()->id;
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $result = api::plan_stop_review($plan->get_id());
+        $this->assertTrue($result);
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+        $this->assertInstanceOf('\tool_lp\event\plan_review_stopped', $event);
+        $this->assertEquals($planid, $event->objectid);
+        $this->assertEquals($contextid, $event->contextid);
+        $this->assertEquals($plan->get_userid(), $event->relateduserid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test plan comment created event.
+     */
+    public function test_plan_comment_created() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user = $dg->create_user();
+        $plan = $lpg->create_plan(array('userid' => $user->id));
+
+        $context = context_user::instance($user->id);
+        $cmt = new stdClass();
+        $cmt->context = $context;
+        $cmt->area = 'plan';
+        $cmt->itemid = $plan->get_id();
+        $cmt->component = 'tool_lp';
+        $cmt->showcount = 1;
+        $manager = new comment($cmt);
+
+        // Triggering and capturing the event.
+        $sink = $this->redirectEvents();
+        $manager->add("New comment for plan");
+        $events = $sink->get_events();
+        // Add comment will trigger 2 other events message_viewed and message_sent.
+        $this->assertCount(3, $events);
+        $event = $events[2];
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\tool_lp\event\comment_created', $event);
+        $this->assertEquals($context, $event->get_context());
+        $this->assertEquals($plan->get_id(), $event->other['itemid']);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test plan comment deleted event.
+     */
+    public function test_plan_comment_deleted() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user1 = $dg->create_user();
+        $plan = $lpg->create_plan(array('userid' => $user1->id));
+
+        $context = context_user::instance($user1->id);
+
+        $cmt = new stdClass();
+        $cmt->context = $context;
+        $cmt->area = 'plan';
+        $cmt->itemid = $plan->get_id();
+        $cmt->component = 'tool_lp';
+        $manager = new comment($cmt);
+        $newcomment = $manager->add("Comment to be deleted");
+
+        // Triggering and capturing the event.
+        $sink = $this->redirectEvents();
+        $manager->delete($newcomment->id);
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\tool_lp\event\comment_deleted', $event);
+        $this->assertEquals($context, $event->get_context());
+        $this->assertEquals($plan->get_id(), $event->other['itemid']);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
     }
 }

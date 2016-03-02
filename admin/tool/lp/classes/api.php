@@ -2563,8 +2563,8 @@ class api {
         $success = $plan->update();
         $transaction->allow_commit();
 
-        // Trigger updated event.
-        \tool_lp\event\plan_updated::create_from_plan($plan)->trigger();
+        // Trigger unlinked event.
+        \tool_lp\event\plan_unlinked::create_from_plan($plan)->trigger();
 
         return $success;
     }
@@ -2730,8 +2730,8 @@ class api {
         $plan->set_status(plan::STATUS_DRAFT);
         $result = $plan->update();
 
-        // Trigger updated event.
-        \tool_lp\event\plan_updated::create_from_plan($plan)->trigger();
+        // Trigger review request cancelled event.
+        \tool_lp\event\plan_review_request_cancelled::create_from_plan($plan)->trigger();
 
         return $result;
     }
@@ -2765,8 +2765,8 @@ class api {
         $plan->set_status(plan::STATUS_WAITING_FOR_REVIEW);
         $result = $plan->update();
 
-        // Trigger updated event.
-        \tool_lp\event\plan_updated::create_from_plan($plan)->trigger();
+        // Trigger review requested event.
+        \tool_lp\event\plan_review_requested::create_from_plan($plan)->trigger();
 
         return $result;
     }
@@ -2802,8 +2802,8 @@ class api {
         $plan->set_reviewerid($USER->id);
         $result = $plan->update();
 
-        // Trigger updated event.
-        \tool_lp\event\plan_updated::create_from_plan($plan)->trigger();
+        // Trigger review started event.
+        \tool_lp\event\plan_review_started::create_from_plan($plan)->trigger();
 
         return $result;
     }
@@ -2838,8 +2838,8 @@ class api {
         $plan->set_reviewerid(null);
         $result = $plan->update();
 
-        // Trigger updated event.
-        \tool_lp\event\plan_updated::create_from_plan($plan)->trigger();
+        // Trigger review stopped event.
+        \tool_lp\event\plan_review_stopped::create_from_plan($plan)->trigger();
 
         return $result;
     }
@@ -2877,8 +2877,8 @@ class api {
         $plan->set_reviewerid(null);
         $result = $plan->update();
 
-        // Trigger updated event.
-        \tool_lp\event\plan_updated::create_from_plan($plan)->trigger();
+        // Trigger approved event.
+        \tool_lp\event\plan_approved::create_from_plan($plan)->trigger();
 
         return $result;
     }
@@ -2914,8 +2914,8 @@ class api {
         $plan->set_status(plan::STATUS_DRAFT);
         $result = $plan->update();
 
-        // Trigger updated event.
-        \tool_lp\event\plan_updated::create_from_plan($plan)->trigger();
+        // Trigger unapproved event.
+        \tool_lp\event\plan_unapproved::create_from_plan($plan)->trigger();
 
         return $result;
     }
@@ -2970,7 +2970,7 @@ class api {
         $transaction->allow_commit();
 
         // Trigger updated event.
-        \tool_lp\event\plan_updated::create_from_plan($plan)->trigger();
+        \tool_lp\event\plan_completed::create_from_plan($plan)->trigger();
 
         return $success;
     }
@@ -3028,8 +3028,8 @@ class api {
 
         $transaction->allow_commit();
 
-        // Trigger updated event.
-        \tool_lp\event\plan_updated::create_from_plan($plan)->trigger();
+        // Trigger reopened event.
+        \tool_lp\event\plan_reopened::create_from_plan($plan)->trigger();
 
         return $success;
     }
