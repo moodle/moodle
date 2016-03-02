@@ -76,5 +76,4 @@ Feature: In a group assignment, teacher can annotate PDF files for all users
     And I log in as "student2"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View annotated PDF..."
-    And I should see "Annotate PDF"
+    And I should not see "View annotated PDF..."
