@@ -68,7 +68,7 @@ class behat_tool_lp_data_generators extends behat_base {
             'datagenerator' => 'competency',
             'required' => array('framework')
         ),
-        'userevidences' => array(
+        'userevidence' => array(
             'datagenerator' => 'user_evidence',
             'required' => array('user')
         )

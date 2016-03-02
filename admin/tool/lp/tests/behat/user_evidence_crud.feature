@@ -25,7 +25,7 @@ Feature: Manage evidence of prior learning
     And I should see "Evidence-1"
 
   Scenario: Read an evidence of prior learning
-    Given the following lp "userevidences" exist:
+    Given the following lp "userevidence" exist:
       | name | description | user |
       | Evidence-2 | Evidence-2 description | user1 |
     And I follow "Evidence of prior learning"
@@ -35,7 +35,7 @@ Feature: Manage evidence of prior learning
     Then I should see "Evidence-2"
 
   Scenario: Edit an evidence of prior learning
-    Given the following lp "userevidences" exist:
+    Given the following lp "userevidence" exist:
       | name | description | user |
       | Evidence-3 | Evidence-3 description | user1 |
     And I follow "Evidence of prior learning"
@@ -49,7 +49,7 @@ Feature: Manage evidence of prior learning
     And I should see "Evidence-3 Edited"
 
   Scenario: Delete an evidence of prior learning
-    Given the following lp "userevidences" exist:
+    Given the following lp "userevidence" exist:
       | name | description | user |
       | Evidence-4 | Evidence-4 description | user1 |
     And I follow "Evidence of prior learning"
@@ -66,7 +66,7 @@ Feature: Manage evidence of prior learning
     Given the following "users" exist:
       | username | firstname | lastname | email |
       |user2 | User | 2 | user2@example.com |
-    And the following lp "userevidences" exist:
+    And the following lp "userevidence" exist:
       | name | description | user |
       | Evidence-5 | Evidence-5 description | user1 |
       | Evidence-6 | Evidence-6 description | user2 |
