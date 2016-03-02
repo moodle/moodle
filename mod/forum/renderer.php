@@ -191,7 +191,7 @@ class mod_forum_renderer extends plugin_renderer_base {
      * @return string
      */
     public function render_forum_post_email(\mod_forum\output\forum_post_email $post) {
-        $data = $post->export_for_template($this);
+        $data = $post->export_for_template($this, $this->target === RENDERER_TARGET_TEXTEMAIL);
         return $this->render_from_template('mod_forum/' . $this->forum_post_template(), $data);
     }
 
