@@ -89,6 +89,8 @@ information provided here is intended especially for developers.
 * Added core_text::str_max_bytes() which safely truncates multi-byte strings to a maximum number of bytes.
 * Zend Framework has been removed completely.
 * Any plugin can report when a scale is being used with the callback function [pluginname]_scale_used_anywhere(int $scaleid).
+* Changes in file_rewrite_pluginfile_urls: Passing a new option reverse = true in the $options var will make the function to convert 
+  actual URLs in $text to encoded URLs in the @@PLUGINFILE@@ form.
 
 === 3.0 ===
 
