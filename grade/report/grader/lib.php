@@ -1101,7 +1101,7 @@ class grade_report_grader extends grade_report {
 
                     // If quickfeedback is on, print an input element
                     if ($showquickfeedback and $grade->is_editable()) {
-                        $feedbacklabel = $fullname . ' ' . $item->itemname;
+                        $feedbacklabel = $fullname . ' ' . $item->get_name(true);
                         $itemcell->text .= '<label class="accesshide" for="feedback_'.$userid.'_'.$item->id.'">'
                                       .get_string('useractivityfeedback', 'gradereport_grader', $feedbacklabel).'</label>';
                         $itemcell->text .= '<input class="quickfeedback" tabindex="' . $tabindices[$item->id]['feedback'].'" id="feedback_'.$userid.'_'.$item->id
