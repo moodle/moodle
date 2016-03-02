@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @property boolean $viewfullnames Whether to override fullname()
  */
-class forum_post implements \renderable {
+class forum_post implements \renderable, \templatable {
 
     /**
      * The course that the forum post is in.
@@ -137,7 +137,7 @@ class forum_post implements \renderable {
      * @param bool $plaintext Whethe the target is a plaintext target
      * @return stdClass Data ready for use in a mustache template
      */
-    public function export_for_template(\mod_forum_renderer $renderer, $plaintext = false) {
+    public function export_for_template(\renderer_base $renderer, $plaintext = false) {
         if ($plaintext) {
             return $this->export_for_template_text($renderer);
         } else {
