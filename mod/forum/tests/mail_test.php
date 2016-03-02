@@ -879,10 +879,8 @@ class mod_forum_mail_testcase extends advanced_testcase {
 
         // Single and double quotes everywhere.
         $newcase = $base;
-        $newcase['user']['lastname'] = 'Moodle\'';
-        // $newcase['user']['lastname'] = 'Moodle\'"'; // TODO: This breaks badly. See MDL-52136.
-        $newcase['course']['shortname'] = '101\'';
-        // $newcase['course']['shortname'] = '101\'"'; // TODO: This breaks badly. See MDL-52136.
+        $newcase['user']['lastname'] = 'Moodle\'"';
+        $newcase['course']['shortname'] = '101\'"';
         $newcase['forums'][0]['name'] = 'Moodle Forum\'"';
         $newcase['forums'][0]['forumposts'][0]['name'] = 'Hello Moodle\'"';
         $newcase['forums'][0]['forumposts'][0]['message'] = 'Welcome to Moodle\'"';
@@ -901,8 +899,8 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $newcase['forums'][0]['forumposts'][0]['name'] = 'Hello Moodle>';
         $newcase['forums'][0]['forumposts'][0]['message'] = 'Welcome to Moodle>';
         $newcase['expectations'][0]['contents'] = array(
-            'Attachment example.txt:', '~{\$a', '~&amp;gt;', 'Love Moodle>', '101&gt;', 'Moodle Forum&gt;',
-            'Hello Moodle&gt;', 'Welcome to Moodle>');
+            'Attachment example.txt:', '~{\$a', '~&amp;gt;', 'Love Moodle>', '101>', 'Moodle Forum>',
+            'Hello Moodle>', 'Welcome to Moodle>');
         $textcases['Text mail with gt and lt everywhere'] = array('data' => $newcase);
 
         // Ampersands everywhere. This case is completely borked because format_string()
@@ -914,8 +912,8 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $newcase['forums'][0]['forumposts'][0]['name'] = 'Hello Moodle&';
         $newcase['forums'][0]['forumposts'][0]['message'] = 'Welcome to Moodle&';
         $newcase['expectations'][0]['contents'] = array(
-            'Attachment example.txt:', '~{\$a', '~&amp;amp;', 'Love Moodle&', '101&amp;', 'Moodle Forum&amp;',
-            'Hello Moodle&amp;', 'Welcome to Moodle&');
+            'Attachment example.txt:', '~{\$a', '~&amp;amp;', 'Love Moodle&', '101&', 'Moodle Forum&',
+            'Hello Moodle&', 'Welcome to Moodle&');
         $textcases['Text mail with ampersands everywhere'] = array('data' => $newcase);
 
         // Now the html cases.
@@ -927,25 +925,23 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $htmlbase['expectations'][0]['contents'] = array(
             '~{\$a',
             '~&(amp|lt|gt|quot|\#039);(?!course)',
-            '<div class=3D"attachments">( *\n *)?<a href',
-            '<div class=3D"subject">\n.*Hello Moodle', '>Moodle Forum', '>Welcome.*Moodle', '>Love Moodle', '>1\d1');
+            '<div class="attachments">( *\n *)?<a href',
+            '<div class="subject">\n.*Hello Moodle', '>Moodle Forum', '>Welcome.*Moodle', '>Love Moodle', '>1\d1');
         $htmlcases['HTML mail without ampersands, quotes or lt/gt'] = array('data' => $htmlbase);
 
         // Single and double quotes, lt and gt, ampersands everywhere.
         $newcase = $htmlbase;
-        $newcase['user']['lastname'] = 'Moodle\'>&';
-        // $newcase['user']['lastname'] = 'Moodle\'">&'; // TODO: This breaks badly. See MDL-52136.
-        $newcase['course']['shortname'] = '101\'>&';
-        // $newcase['course']['shortname'] = '101\'">&'; // TODO: This breaks badly. See MDL-52136.
+        $newcase['user']['lastname'] = 'Moodle\'">&';
+        $newcase['course']['shortname'] = '101\'">&';
         $newcase['forums'][0]['name'] = 'Moodle Forum\'">&';
         $newcase['forums'][0]['forumposts'][0]['name'] = 'Hello Moodle\'">&';
         $newcase['forums'][0]['forumposts'][0]['message'] = 'Welcome to Moodle\'">&';
         $newcase['expectations'][0]['contents'] = array(
             '~{\$a',
             '~&amp;(amp|lt|gt|quot|\#039);',
-            '<div class=3D"attachments">( *\n *)?<a href',
-            '<div class=3D"subject">\n.*Hello Moodle\'"&gt;&amp;', '>Moodle Forum\'"&gt;&amp;',
-            '>Welcome.*Moodle\'"&gt;&amp;', '>Love Moodle&\#039;&gt;&amp;', '>1\d1\'&gt;&amp');
+            '<div class="attachments">( *\n *)?<a href',
+            '<div class="subject">\n.*Hello Moodle\'"&gt;&amp;', '>Moodle Forum\'"&gt;&amp;',
+            '>Welcome.*Moodle\'"&gt;&amp;', '>Love Moodle&\#039;&quot;&gt;&amp;', '>101\'"&gt;&amp');
         $htmlcases['HTML mail with quotes, gt, lt and ampersand  everywhere'] = array('data' => $newcase);
 
         return $textcases + $htmlcases;
@@ -1062,6 +1058,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
 
             // If we have found the expectation and have contents to match, let's do it.
             if (isset($foundexpectation) and isset($foundexpectation['contents'])) {
+                $mail->body = quoted_printable_decode($mail->body);
                 if (!is_array($foundexpectation['contents'])) { // Accept both string and array.
                     $foundexpectation['contents'] = array($foundexpectation['contents']);
                 }
@@ -1069,6 +1066,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
                     if (strpos($content, '~') !== 0) {
                         $this->assertRegexp('#' . $content . '#m', $mail->body);
                     } else {
+                        preg_match('#' . substr($content, 1) . '#m', $mail->body, $matches);
                         $this->assertNotRegexp('#' . substr($content, 1) . '#m', $mail->body);
                     }
                 }
