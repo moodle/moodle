@@ -84,11 +84,18 @@ class enrol_manual_plugin extends enrol_plugin {
      * @return boolean
      */
     public function can_add_instance($courseid) {
+        global $DB;
+
         $context = context_course::instance($courseid, MUST_EXIST);
         if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/manual:config', $context)) {
             return false;
         }
-        // Multiple instances supported - multiple parent courses linked.
+
+        if ($DB->record_exists('enrol', array('courseid'=>$courseid, 'enrol'=>'manual'))) {
+            // Multiple instances not supported.
+            return false;
+        }
+
         return true;
     }
 
@@ -107,7 +114,8 @@ class enrol_manual_plugin extends enrol_plugin {
             $managelink = new moodle_url("/enrol/manual/manage.php", array('enrolid'=>$instance->id));
             $icons[] = $OUTPUT->action_icon($managelink, new pix_icon('t/enrolusers', get_string('enrolusers', 'enrol_manual'), 'core', array('class'=>'iconsmall')));
         }
-        $icons = $icons + parent::get_action_icons($instance);
+        $parenticons = parent::get_action_icons($instance);
+        $icons = array_merge($icons, $parenticons);
 
         return $icons;
     }

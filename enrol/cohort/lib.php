@@ -130,6 +130,8 @@ class enrol_cohort_plugin extends enrol_plugin {
      * @return boolean
      */
     public function update_instance($instance, $data) {
+        global $CFG;
+
         // NOTE: no cohort changes here!!!
         $context = context_course::instance($instance->courseid);
         if ($data->roleid != $instance->roleid) {
