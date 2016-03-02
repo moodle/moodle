@@ -434,8 +434,75 @@ class behat_config_manager {
         if (!empty($CFG->behat_config)) {
             $config = self::merge_config($config, $CFG->behat_config);
         }
+        // Check for Moodle custom ones.
+        if (!empty($CFG->behat_profiles) && is_array($CFG->behat_profiles)) {
+            foreach ($CFG->behat_profiles as $profile => $values) {
+                $config = self::merge_config($config, self::get_behat_profile($profile, $values));
+            }
+        }
 
         return Symfony\Component\Yaml\Yaml::dump($config, 10, 2);
+    }
+
+    /**
+     * Parse $CFG->behat_profile and return the array with required config structure for behat.yml.
+     *
+     * $CFG->behat_profiles = array(
+     *     'profile' = array(
+     *         'browser' => 'firefox',
+     *         'tags' => '@javascript',
+     *         'wd_host' => 'http://127.0.0.1:4444/wd/hub',
+     *         'capabilities' => array(
+     *             'platform' => 'Linux',
+     *             'version' => 44
+     *         )
+     *     )
+     * );
+     *
+     * @param string $profile profile name
+     * @param array $values values for profile.
+     * @return array
+     */
+    protected static function get_behat_profile($profile, $values) {
+        // Values should be an array.
+        if (!is_array($values)) {
+            return array();
+        }
+
+        // Check suite values.
+        $behatprofilesuites = array();
+        // Fill tags information.
+        if (isset($values['tags'])) {
+            $behatprofilesuites = array(
+                'filters' => array(
+                    'tags' => $values['tags'],
+                )
+            );
+        }
+
+        // Selenium2 config values.
+        $behatprofileextension = array();
+        $seleniumconfig = array();
+        if (isset($values['browser'])) {
+            $seleniumconfig['browser'] = $values['browser'];
+        }
+        if (isset($values['wd_host'])) {
+            $seleniumconfig['wd_host'] = $values['wd_host'];
+        }
+        if (isset($values['capabilities'])) {
+            $seleniumconfig['capabilities'] = $values['capabilities'];
+        }
+        if (!empty($seleniumconfig)) {
+            $behatprofileextension = array(
+                'extensions' => array(
+                    'Behat\MinkExtension\Extension' => array(
+                        'selenium2' => $seleniumconfig,
+                    )
+                )
+            );
+        }
+
+        return array($profile => array_merge($behatprofilesuites, $behatprofileextension));
     }
 
     /**

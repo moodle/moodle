@@ -700,6 +700,20 @@ $CFG->admin = 'admin';
 //           )
 //       )
 //   );
+// You can also use the following config to override default Moodle configuration for Behat.
+// This config is limited to default suite and will be supported in later versions.
+// It will have precedence over $CFG->behat_config.
+// $CFG->behat_profiles = array(
+//     'phantomjs' => array(
+//         'browser' => 'phantomjs',
+//         'tags' => '~@_file_upload&&~@_alert&&~@_bug_phantomjs',
+//         'wd_host' => 'http://127.0.0.1:4443/wd/hub',
+//         'capabilities' => array(
+//             'platform' => 'Linux',
+//             'version' => 2.1
+//         )
+//     ),
+// );
 //
 // You can force the browser session (not user's sessions) to restart after N seconds. This could
 // be useful if you are using a cloud-based service with time restrictions in the browser side.
