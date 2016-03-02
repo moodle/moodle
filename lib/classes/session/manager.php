@@ -157,9 +157,8 @@ class manager {
     public static function init_empty_session() {
         global $CFG;
 
-        // Backup notifications. These should be preserved across session changes until the user fetches and clears them.
-        $notifications = [];
         if (isset($GLOBALS['SESSION']->notifications)) {
+            // Backup notifications. These should be preserved across session changes until the user fetches and clears them.
             $notifications = $GLOBALS['SESSION']->notifications;
         }
         $GLOBALS['SESSION'] = new \stdClass();
@@ -167,8 +166,10 @@ class manager {
         $GLOBALS['USER'] = new \stdClass();
         $GLOBALS['USER']->id = 0;
 
-        // Restore notifications.
-        $GLOBALS['SESSION']->notifications = $notifications;
+        if (!empty($notifications)) {
+            // Restore notifications.
+            $GLOBALS['SESSION']->notifications = $notifications;
+        }
         if (isset($CFG->mnet_localhost_id)) {
             $GLOBALS['USER']->mnethostid = $CFG->mnet_localhost_id;
         } else {
