@@ -2144,7 +2144,8 @@ class mod_assign_external extends external_api {
      * @since Moodle 3.1
      */
     public static function view_submission_status($assignid) {
-        global $DB;
+        global $DB, $CFG;
+        require_once("$CFG->dirroot/mod/assign/locallib.php");
 
         $warnings = array();
         $params = array(
