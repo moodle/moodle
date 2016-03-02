@@ -81,6 +81,9 @@ class notification {
 
         // Add the notification directly to the session.
         // This will either be fetched in the header, or by JS in the footer.
+        if (!isset($SESSION->notifications) || !array($SESSION->notifications)) {
+            $SESSION->notifications = [];
+        }
         $SESSION->notifications[] = (object) array(
             'message'   => $message,
             'type'      => $level,
@@ -100,7 +103,7 @@ class notification {
         }
 
         $notifications = $SESSION->notifications;
-        $SESSION->notifications = [];
+        unset($SESSION->notifications);
 
         $renderables = [];
         foreach ($notifications as $notification) {
