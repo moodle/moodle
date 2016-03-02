@@ -173,6 +173,7 @@ if ($options['install']) {
 
     // This is only displayed once for parallel install.
     if (empty($options['run'])) {
+
         $runtestscommand = behat_command::get_behat_command(true, !empty($options['run']));
 
         $runtestscommand .= ' --config ' . behat_config_manager::get_behat_cli_config_filepath();

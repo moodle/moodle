@@ -120,8 +120,8 @@ $tags = '';
 
 if ($options['profile']) {
     $profile = $options['profile'];
-    if (!isset($CFG->behat_config[$profile])) {
-        echo "Invalid profile passed: " . $profile;
+    if (!isset($CFG->behat_config[$profile]) && !isset($CFG->behat_profiles[$profile])) {
+        echo "Invalid profile passed: " . $profile . PHP_EOL;
         exit(1);
     }
     $extraopts[] = '--profile="' . $profile . '"';
