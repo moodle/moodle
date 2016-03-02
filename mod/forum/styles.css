@@ -123,6 +123,7 @@ span.unread {
 /* Forumpost hash anchor target */
 .path-mod-forum :target + :before {
     display: block;
+    content: '';
     width: 4px;
     position: absolute;
     background: #0070a8;
