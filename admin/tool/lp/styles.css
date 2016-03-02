@@ -4,7 +4,17 @@
 .path-admin-tool-lp [data-region="competencylinktree"] ul li {
     list-style-type: none;
 }
-
+.path-admin-tool-lp [data-region="templatestatistics"] .progresstext {
+    display: inline-block;
+    height: 40px;
+    vertical-align: top;
+}
+.path-admin-tool-lp [data-region="templatestatistics"] .progress {
+    width: 10em;
+    display: inline-block;
+    margin-left: 2em;
+    margin-right: 2em;
+}
 .path-admin-tool-lp [data-region="managecompetencies"] ul[data-enhance="tree"],
 .path-admin-tool-lp [data-region="plans"] ul[data-enhance="tree"],
 .path-admin-tool-lp [data-region="competencylinktree"] ul[data-enhance="linktree"],

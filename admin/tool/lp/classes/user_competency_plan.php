@@ -280,4 +280,64 @@ class user_competency_plan extends persistent {
         return self::record_exists_select("competencyid $insql", $params);
     }
 
+    /**
+     * Count the number of records matching a specific template, optionally filtered by proficient values.
+     *
+     * @param int $templateid
+     * @param mixed $proficiency - If true - filter by proficiency, if false filter by not proficient, if null - do not filter.
+     * @return int
+     */
+    public static function count_records_for_template($templateid, $proficiency=null) {
+        global $DB;
+
+        $params = array('templateid' => $templateid);
+        $sql = 'SELECT ' . " COUNT('x') " .
+                 'FROM {' . self::TABLE . '} ucp
+                  JOIN {' . plan::TABLE . '} p
+                    ON ucp.planid = p.id
+                 WHERE p.templateid = :templateid';
+        if ($proficiency === true) {
+            $sql .= ' AND ucp.proficiency = :proficiency';
+            $params['proficiency'] = true;
+        } else if ($proficiency === false) {
+            $sql .= ' AND (ucp.proficiency = :proficiency OR ucp.proficiency IS NULL)';
+            $params['proficiency'] = false;
+        }
+
+        return $DB->count_records_sql($sql, $params);
+    }
+
+    /**
+     * Get the list of competencies that were completed the least times (in completed plans) from a template.
+     *
+     * @param int $templateid
+     * @param int $skip The number of competencies to skip
+     * @param int $limit The max number of competencies to return
+     * @return competency[]
+     */
+    public static function get_least_proficient_competencies_for_template($templateid, $skip = 0, $limit = 0) {
+        global $DB;
+
+        $fields = competency::get_sql_fields('c');
+        $params = array('templateid' => $templateid, 'notproficient' => false);
+        $sql = 'SELECT ' . $fields . ', COUNT(c.id) AS timesnotproficient ' .
+                ' FROM {' . self::TABLE . '} ucp
+                  JOIN {' . plan::TABLE . '} p
+                    ON ucp.planid = p.id
+                  JOIN {' . competency::TABLE . '} c
+                    ON ucp.competencyid = c.id
+                 WHERE p.templateid = :templateid
+                    AND (ucp.proficiency = :notproficient OR ucp.proficiency IS NULL)
+                GROUP BY c.id
+                ORDER BY timesnotproficient DESC';
+
+        $results = $DB->get_records_sql($sql, $params, $skip, $limit);
+
+        $comps = array();
+        foreach ($results as $r) {
+            $c = competency::extract_record($r);
+            $comps[] = new competency(0, $c);
+        }
+        return $comps;
+    }
 }

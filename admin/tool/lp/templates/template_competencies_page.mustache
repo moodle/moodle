@@ -18,6 +18,21 @@
     Template competencies template.
 }}
 <div data-region="templatecompetenciespage">
+    {{#statistics}}
+        {{> tool_lp/template_statistics }}
+    {{/statistics}}
+    <div data-region="actions">
+        {{#canmanagecompetencyframeworks}}
+        <div class="pull-right">
+            <p><a href="{{manageurl}}">{{#str}}managecompetenciesandframeworks, tool_lp{{/str}}</a></p>
+        </div>
+        {{/canmanagecompetencyframeworks}}
+        {{#canmanagetemplatecompetencies}}
+        <p>
+            <button style="display: none">{{#str}}linktemplatecompetencies, tool_lp{{/str}}</button>
+        </p>
+        {{/canmanagetemplatecompetencies}}
+    </div>
     <div data-region="templatecompetencies">
         <div class="managecompetencies">
             <div class="drag-parentnode">
@@ -31,6 +46,7 @@
                         </div>
                         {{/canmanagetemplatecompetencies}}
                         {{#competency}}
+                        <a id="competency-info-link-{{competency.idnumber}}"></a>
                             {{> tool_lp/competency_summary }}
                         {{/competency}}
                         <strong>{{#str}}linkedcourseslist, tool_lp{{/str}}</strong>
@@ -54,16 +70,6 @@
             {{#str}}nocompetenciesintemplate, tool_lp{{/str}}
         </p>
         {{/competencies}}
-    </div>
-    <div data-region="actions">
-        <div class="pull-right">
-            {{#canmanagetemplatecompetencies}}
-            <button style="display: none">{{#str}}linktemplatecompetencies, tool_lp{{/str}}</button>
-            {{/canmanagetemplatecompetencies}}
-        </div>
-        {{#canmanagecompetencyframeworks}}
-        <p><a href="{{manageurl}}">{{#str}}managecompetenciesandframeworks, tool_lp{{/str}}</a></p>
-        {{/canmanagecompetencyframeworks}}
     </div>
 </div>
 {{#js}}

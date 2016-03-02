@@ -45,6 +45,7 @@ use grade_scale;
 use tool_lp\external\competency_framework_exporter;
 use tool_lp\external\competency_summary_exporter;
 use tool_lp\external\cohort_summary_exporter;
+use tool_lp\external\template_statistics_exporter;
 use tool_lp\external\user_summary_exporter;
 use tool_lp\external\user_competency_exporter;
 use tool_lp\external\user_competency_plan_exporter;
@@ -3203,6 +3204,7 @@ class external extends external_api {
                 competency_summary_exporter::get_read_structure()
             ),
             'manageurl' => new external_value(PARAM_LOCALURL, 'Url to the manage competencies page.'),
+            'statistics' => template_statistics_exporter::get_read_structure()
         ));
 
     }

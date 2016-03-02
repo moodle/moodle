@@ -33,6 +33,8 @@ use context_system;
 use moodle_url;
 use tool_lp\api;
 use tool_lp\external\competency_summary_exporter;
+use tool_lp\template_statistics;
+use tool_lp\external\template_statistics_exporter;
 
 /**
  * Class containing data for learning plan template competencies page
@@ -60,6 +62,9 @@ class template_competencies_page implements renderable, templatable {
     /** @var context $pagecontext The page context. */
     protected $pagecontext = null;
 
+    /** @var template_statistics $templatestatistics The generated summary statistics for this template. */
+    protected $templatestatistics = null;
+
     /**
      * Construct this renderable.
      *
@@ -68,6 +73,7 @@ class template_competencies_page implements renderable, templatable {
     public function __construct($templateid, context $pagecontext) {
         $this->pagecontext = $pagecontext;
         $this->templateid = $templateid;
+        $this->templatestatistics = new template_statistics($templateid);
         $this->competencies = api::list_competencies_in_template($templateid);
         $this->canmanagecompetencyframeworks = has_capability('tool/lp:competencymanage', $this->pagecontext);
         $this->canmanagetemplatecompetencies = has_capability('tool/lp:templatemanage', $this->pagecontext);
@@ -115,6 +121,9 @@ class template_competencies_page implements renderable, templatable {
         $data->canmanagecompetencyframeworks = $this->canmanagecompetencyframeworks;
         $data->canmanagetemplatecompetencies = $this->canmanagetemplatecompetencies;
         $data->manageurl = $this->manageurl->out(true);
+        $exporter = new template_statistics_exporter($this->templatestatistics);
+        $data->statistics = $exporter->export($output);
+        $data->showcompetencylinks = true;
 
         return $data;
     }

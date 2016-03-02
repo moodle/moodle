@@ -1989,41 +1989,66 @@ class api {
     /**
      * Count all the competencies in a learning plan template.
      *
-     * @param int $templateid The id of the template to check.
+     * @param  template|int $templateorid The template or its ID.
      * @return int
      */
-    public static function count_competencies_in_template($templateid) {
+    public static function count_competencies_in_template($templateorid) {
         static::require_enabled();
         // First we do a permissions check.
-        $template = new template($templateid);
-        $context = $template->get_context();
+        $template = $templateorid;
+        if (!is_object($template)) {
+            $template = new template($template);
+        }
 
         if (!$template->can_read()) {
             throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
         }
 
         // OK - all set.
-        return template_competency::count_competencies($templateid);
+        return template_competency::count_competencies($template->get_id());
+    }
+
+    /**
+     * Count all the competencies in a learning plan template with no linked courses.
+     *
+     * @param  template|int $templateorid The template or its ID.
+     * @return int
+     */
+    public static function count_competencies_in_template_with_no_courses($templateorid) {
+        // First we do a permissions check.
+        $template = $templateorid;
+        if (!is_object($template)) {
+            $template = new template($template);
+        }
+
+        if (!$template->can_read()) {
+            throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+        }
+
+        // OK - all set.
+        return template_competency::count_competencies_with_no_courses($template->get_id());
     }
 
     /**
      * List all the competencies in a template.
      *
-     * @param int $templateid The id of the template to check.
+     * @param  template|int $templateorid The template or its ID.
      * @return array of competencies
      */
-    public static function list_competencies_in_template($templateid) {
+    public static function list_competencies_in_template($templateorid) {
         static::require_enabled();
         // First we do a permissions check.
-        $template = new template($templateid);
-        $context = $template->get_context();
+        $template = $templateorid;
+        if (!is_object($template)) {
+            $template = new template($template);
+        }
 
         if (!$template->can_read()) {
             throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
         }
 
         // OK - all set.
-        return template_competency::list_competencies($templateid);
+        return template_competency::list_competencies($template->get_id());
     }
 
     /**
@@ -3516,7 +3541,6 @@ class api {
 
         // OK - all set.
         return $template->has_plans();
-
     }
 
     /**
@@ -4678,6 +4702,101 @@ class api {
             $event->trigger();
         }
         return $result;
+    }
+
+    /**
+     * Count the plans in the template, filtered by status.
+     *
+     * Requires tool/lp:templateread capability at the system context.
+     *
+     * @param mixed $templateorid The id or the template.
+     * @param int $status One of the plan status constants (or 0 for all plans).
+     * @return int
+     */
+    public static function count_plans_for_template($templateorid, $status = 0) {
+        $template = $templateorid;
+        if (!is_object($template)) {
+            $template = new template($template);
+        }
+
+        // First we do a permissions check.
+        if (!$template->can_read()) {
+             throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+        }
+
+        return plan::count_records_for_template($template->get_id(), $status);
+    }
+
+    /**
+     * Count the user-completency-plans in the template, optionally filtered by proficiency.
+     *
+     * Requires tool/lp:templateread capability at the system context.
+     *
+     * @param mixed $templateorid The id or the template.
+     * @param mixed $proficiency If true, filter by proficiency, if false filter by not proficient, if null - no filter.
+     * @return int
+     */
+    public static function count_user_competency_plans_for_template($templateorid, $proficiency = null) {
+        $template = $templateorid;
+        if (!is_object($template)) {
+            $template = new template($template);
+        }
+
+        // First we do a permissions check.
+        if (!$template->can_read()) {
+             throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+        }
+
+        return user_competency_plan::count_records_for_template($template->get_id(), $proficiency);
+    }
+
+    /**
+     * List the plans in the template, filtered by status.
+     *
+     * Requires tool/lp:templateread capability at the system context.
+     *
+     * @param mixed $templateorid The id or the template.
+     * @param int $status One of the plan status constants (or 0 for all plans).
+     * @param int $skip The number of records to skip
+     * @param int $limit The max number of records to return
+     * @return plan[]
+     */
+    public static function list_plans_for_template($templateorid, $status = 0, $skip = 0, $limit = 100) {
+        $template = $templateorid;
+        if (!is_object($template)) {
+            $template = new template($template);
+        }
+
+        // First we do a permissions check.
+        if (!$template->can_read()) {
+             throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+        }
+
+        return plan::get_records_for_template($template->get_id(), $status, $skip, $limit);
+    }
+
+    /**
+     * Get the most often not completed competency for this template.
+     *
+     * Requires tool/lp:templateread capability at the system context.
+     *
+     * @param mixed $templateorid The id or the template.
+     * @param int $skip The number of records to skip
+     * @param int $limit The max number of records to return
+     * @return competency[]
+     */
+    public static function get_least_proficient_competencies_for_template($templateorid, $skip = 0, $limit = 100) {
+        $template = $templateorid;
+        if (!is_object($template)) {
+            $template = new template($template);
+        }
+
+        // First we do a permissions check.
+        if (!$template->can_read()) {
+             throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+        }
+
+        return user_competency_plan::get_least_proficient_competencies_for_template($template->get_id(), $skip, $limit);
     }
 
     /**

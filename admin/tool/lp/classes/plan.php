@@ -671,4 +671,36 @@ class plan extends persistent {
     public static function has_records_for_template($templateid) {
         return self::record_exists_select('templateid = ?', array($templateid));
     }
+
+    /**
+     * Count the number of plans for a template, optionally filtering by status.
+     *
+     * @param  int $templateid The template ID
+     * @param  int $status The plan status. 0 means all statuses.
+     * @return int
+     */
+    public static function count_records_for_template($templateid, $status) {
+        $filters = array('templateid' => $templateid);
+        if ($status > 0) {
+            $filters['status'] = $status;
+        }
+        return self::count_records($filters);
+    }
+
+    /**
+     * Get the plans for a template, optionally filtering by status.
+     *
+     * @param  int $templateid The template ID
+     * @param  int $status The plan status. 0 means all statuses.
+     * @param  int $skip The number of plans to skip
+     * @param  int $limit The max number of plans to return
+     * @return int
+     */
+    public static function get_records_for_template($templateid, $status = 0, $skip = 0, $limit = 100) {
+        $filters = array('templateid' => $templateid);
+        if ($status > 0) {
+            $filters['status'] = $status;
+        }
+        return self::get_records($filters, $skip, $limit);
+    }
 }

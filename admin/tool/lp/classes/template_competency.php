@@ -139,6 +139,29 @@ class template_competency extends persistent {
     }
 
     /**
+     * Count the competencies in a template with no links to courses.
+     *
+     * @param int $templateid The template id
+     * @return int
+     */
+    public static function count_competencies_with_no_courses($templateid) {
+        global $DB;
+
+        $sql = 'SELECT COUNT(comp.id)
+                  FROM {' . self::TABLE . '} tplcomp
+                  JOIN {' . competency::TABLE . '} comp
+                    ON tplcomp.competencyid = comp.id
+                  LEFT JOIN {' . course_competency::TABLE . '} crscomp
+                    ON crscomp.competencyid = comp.id
+                 WHERE tplcomp.templateid = ? AND crscomp.id IS NULL';
+        $params = array($templateid);
+
+        $results = $DB->count_records_sql($sql, $params);
+
+        return $results;
+    }
+
+    /**
      * Get a single competency from the template (only if it is really in the template).
      *
      * @param int $templateid The template id

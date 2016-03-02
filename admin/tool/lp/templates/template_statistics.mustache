@@ -1,0 +1,102 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_lp/template_statistics
+
+    IDs required for JS:
+    * none
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+
+    See admin/tool/lp/classes/external/template_statistics_exporter
+
+    Example context (json):
+    {
+        linkedcompetencycount: 4,
+        competencycount: 8,
+        linkedcompetencypercentage: 50,
+        plancount: 40,
+        completedplancount: 30,
+        completedplanpercentage: 75,
+    }
+
+}}
+{{!
+    Template statistics template.
+}}
+{{#competencycount}}
+<div data-region="templatestatistics" class="well">
+    <div>
+        <div class="progresstext">
+            {{#str}}xcompetencieslinkedoutofy, tool_lp, { "x": "{{linkedcompetencycount}}", "y": "{{competencycount}}" } {{/str}}
+        </div>
+        <div class="progress">
+            <div class="bar" style="width: {{linkedcompetencypercentage}}%;">
+                {{linkedcompetencypercentage}} %
+            </div>
+        </div>
+    </div>
+    {{#plancount}}
+    <div>
+        <div class="progresstext">
+            {{#str}}xplanscompletedoutofy, tool_lp, { "x": "{{completedplancount}}", "y": "{{plancount}}" } {{/str}}
+        </div>
+        <div class="progress">
+            <div class="bar" style="width: {{completedplanpercentage}}%;">
+                {{completedplanpercentage}} %
+            </div>
+        </div>
+    </div>
+    {{/plancount}}
+    {{#usercompetencyplancount}}
+    <div>
+        <div class="progresstext">
+            {{#str}}averageproficiencyrate, tool_lp, {{proficientusercompetencyplanpercentage}} {{/str}}
+        </div>
+        <div class="progress">
+            <div class="bar" style="width: {{proficientusercompetencyplanpercentage}}%;">
+                {{proficientusercompetencyplanpercentage}} %
+            </div>
+        </div>
+    </div>
+    {{/usercompetencyplancount}}
+    {{#leastproficientcount}}
+    <div>
+        <div>
+            <p>{{#str}}competenciesmostoftennotproficient, tool_lp{{/str}}</p>
+        </div>
+        <div>
+            {{#leastproficient}}
+                {{#showcompetencylinks}}
+                <a href="#competency-info-link-{{idnumber}}">
+                {{/showcompetencylinks}}
+                <div><p>{{shortname}} <em>{{idnumber}}</em></p></div>
+                {{#showcompetencylinks}}
+                </a>
+                {{/showcompetencylinks}}
+            {{/leastproficient}}
+        </div>
+    </div>
+    {{/leastproficientcount}}
+</div>
+{{/competencycount}}

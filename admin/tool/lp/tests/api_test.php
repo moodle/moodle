@@ -4028,4 +4028,144 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals(null, $uc2->get_grade());
         $this->assertEquals(null, $uc2->get_proficiency());
     }
+
+    /**
+     * Test template statistics api functions.
+     */
+    public function test_template_statistics() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $this->setAdminUser();
+
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
+        $u4 = $dg->create_user();
+        $c1 = $dg->create_course();
+        $framework = $lpg->create_framework();
+
+        // Create 6 competencies.
+        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $comp3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $comp4 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $comp5 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $comp6 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+
+        // Link 5 out of 6 to a course.
+        $lpg->create_course_competency(array('competencyid' => $comp1->get_id(), 'courseid' => $c1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp2->get_id(), 'courseid' => $c1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp3->get_id(), 'courseid' => $c1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp4->get_id(), 'courseid' => $c1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp5->get_id(), 'courseid' => $c1->id));
+
+        // Put all 6 in a template.
+        $tpl = $this->getDataGenerator()->get_plugin_generator('tool_lp')->create_template();
+        $tplc1 = $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $comp1->get_id()));
+        $tplc2 = $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $comp2->get_id()));
+        $tplc3 = $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $comp3->get_id()));
+        $tplc4 = $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $comp4->get_id()));
+        $tplc5 = $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $comp5->get_id()));
+        $tplc6 = $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $comp6->get_id()));
+
+        // Create some plans from the template.
+        $p1 = $lpg->create_plan(array('templateid' => $tpl->get_id(), 'userid' => $u1->id));
+        $p2 = $lpg->create_plan(array('templateid' => $tpl->get_id(), 'userid' => $u2->id));
+        $p3 = $lpg->create_plan(array('templateid' => $tpl->get_id(), 'userid' => $u3->id));
+        $p4 = $lpg->create_plan(array('templateid' => $tpl->get_id(), 'userid' => $u4->id));
+
+        // Rate some competencies.
+        // User 1.
+        $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $comp1->get_id(),
+                'proficiency' => true, 'grade' => 1 ));
+        $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $comp2->get_id(),
+                'proficiency' => true, 'grade' => 1 ));
+        $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $comp3->get_id(),
+                'proficiency' => true, 'grade' => 1 ));
+        // User 2.
+        $lpg->create_user_competency(array('userid' => $u2->id, 'competencyid' => $comp1->get_id(),
+                'proficiency' => false, 'grade' => 1 ));
+        $lpg->create_user_competency(array('userid' => $u2->id, 'competencyid' => $comp2->get_id(),
+                'proficiency' => false, 'grade' => 1 ));
+        $lpg->create_user_competency(array('userid' => $u2->id, 'competencyid' => $comp3->get_id(),
+                'proficiency' => false, 'grade' => 1 ));
+        // User 3.
+        $lpg->create_user_competency(array('userid' => $u3->id, 'competencyid' => $comp2->get_id(),
+                'proficiency' => false, 'grade' => 1 ));
+        $lpg->create_user_competency(array('userid' => $u3->id, 'competencyid' => $comp3->get_id(),
+                'proficiency' => true, 'grade' => 1 ));
+        $lpg->create_user_competency(array('userid' => $u3->id, 'competencyid' => $comp4->get_id(),
+                'proficiency' => false, 'grade' => 1 ));
+        $lpg->create_user_competency(array('userid' => $u3->id, 'competencyid' => $comp5->get_id(),
+                'proficiency' => true, 'grade' => 1 ));
+        // User 4.
+        $lpg->create_user_competency(array('userid' => $u4->id, 'competencyid' => $comp3->get_id(),
+                'proficiency' => true, 'grade' => 1 ));
+        $lpg->create_user_competency(array('userid' => $u4->id, 'competencyid' => $comp5->get_id(),
+                'proficiency' => true, 'grade' => 1 ));
+
+        // Complete 3 out of 4 plans.
+        api::complete_plan($p1->get_id());
+        api::complete_plan($p2->get_id());
+        api::complete_plan($p3->get_id());
+
+        // OK we have enough data - lets call some API functions and check for expected results.
+
+        $result = api::count_competencies_in_template_with_no_courses($tpl->get_id());
+        $this->assertEquals(1, $result);
+
+        $result = api::count_plans_for_template($tpl->get_id());
+        $this->assertEquals(4, $result);
+
+        $result = api::count_plans_for_template($tpl->get_id(), plan::STATUS_COMPLETE);
+        $this->assertEquals(3, $result);
+
+        // This counts the records of competencies in completed plans for all users with a plan from this template.
+        $result = api::count_user_competency_plans_for_template($tpl->get_id());
+        // There should be 3 plans * 6 competencies.
+        $this->assertEquals(18, $result);
+
+        // This counts the records of proficient competencies in completed plans for all users with a plan from this template.
+        $result = api::count_user_competency_plans_for_template($tpl->get_id(), true);
+        // There should be 5.
+        $this->assertEquals(5, $result);
+
+        // This counts the records of not proficient competencies in completed plans for all users with a plan from this template.
+        $result = api::count_user_competency_plans_for_template($tpl->get_id(), false);
+        // There should be 13.
+        $this->assertEquals(13, $result);
+
+        // This lists the plans based on this template, optionally filtered by status.
+        $result = api::list_plans_for_template($tpl->get_id());
+
+        $this->assertEquals(4, count($result));
+        foreach ($result as $one) {
+            $this->assertInstanceOf('\tool_lp\plan', $one);
+        }
+        // This lists the plans based on this template, optionally filtered by status.
+        $result = api::list_plans_for_template($tpl->get_id(), plan::STATUS_COMPLETE);
+
+        $this->assertEquals(3, count($result));
+        foreach ($result as $one) {
+            $this->assertInstanceOf('\tool_lp\plan', $one);
+            $this->assertEquals(plan::STATUS_COMPLETE, $one->get_status());
+        }
+
+        $result = api::get_least_proficient_competencies_for_template($tpl->get_id(), 0, 2);
+
+        // Our times completed counts should look like this:
+        //   comp1 - 1
+        //   comp2 - 1
+        //   comp3 - 2
+        //   comp4 - 0
+        //   comp5 - 1
+        //   comp6 - 0
+        $this->assertEquals(2, count($result));
+        $leastarray = array($comp4->get_id(), $comp6->get_id());
+        foreach ($result as $one) {
+            $this->assertInstanceOf('\tool_lp\competency', $one);
+            $this->assertContains($one->get_id(), $leastarray);
+        }
+    }
 }
