@@ -304,7 +304,7 @@ class assign_submission_file extends assign_submission_plugin {
                                      false);
 
         foreach ($files as $file) {
-            $result[$file->get_filename()] = $file;
+            $result[$file->get_filepath().$file->get_filename()] = $file;
         }
         return $result;
     }

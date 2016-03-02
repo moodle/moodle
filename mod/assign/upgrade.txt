@@ -3,6 +3,8 @@ This files describes API changes in the assign code.
 === 3.1 ===
 * The feedback plugins now need to implement the is_feedback_modified() method. The default is to return true
   for backwards compatibiltiy.
+* When downloading all submissions as a zip each students' files are in a separate folder, are no longer renamed
+  and the folder structure is kept intact.
 
 === 3.0 ===
 * assign_submission_status renderable now requires $usergroups in its constructor
