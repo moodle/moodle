@@ -1080,6 +1080,28 @@ function external_update_descriptions($component) {
             $dbfunction->capabilities = $functioncapabilities;
             $update = true;
         }
+
+        if (isset($function['services']) and is_array($function['services'])) {
+            sort($function['services']);
+            $functionservices = implode(',', $function['services']);
+        } else {
+            // Force null values in the DB.
+            $functionservices = null;
+        }
+
+        if ($dbfunction->services != $functionservices) {
+            // Now, we need to check if services were removed, in that case we need to remove the function from them.
+            $servicesremoved = array_diff(explode(",", $dbfunction->services), explode(",", $functionservices));
+            foreach ($servicesremoved as $removedshortname) {
+                if ($externalserviceid = $DB->get_field('external_services', 'id', array("shortname" => $removedshortname))) {
+                    $DB->delete_records('external_services_functions', array('functionname' => $dbfunction->name,
+                                                                                'externalserviceid' => $externalserviceid));
+                }
+            }
+
+            $dbfunction->services = $functionservices;
+            $update = true;
+        }
         if ($update) {
             $DB->update_record('external_functions', $dbfunction);
         }
@@ -1092,6 +1114,15 @@ function external_update_descriptions($component) {
         $dbfunction->classpath  = empty($function['classpath']) ? null : $function['classpath'];
         $dbfunction->component  = $component;
         $dbfunction->capabilities = array_key_exists('capabilities', $function)?$function['capabilities']:'';
+
+        if (isset($function['services']) and is_array($function['services'])) {
+            sort($function['services']);
+            $dbfunction->services = implode(',', $function['services']);
+        } else {
+            // Force null values in the DB.
+            $dbfunction->services = null;
+        }
+
         $dbfunction->id = $DB->insert_record('external_functions', $dbfunction);
     }
     unset($functions);
@@ -1196,6 +1227,52 @@ function external_update_descriptions($component) {
             $newf->externalserviceid = $dbservice->id;
             $newf->functionname      = $fname;
             $DB->insert_record('external_services_functions', $newf);
+        }
+    }
+}
+
+/**
+ * Allow plugins to add external functions to other plugins or core services.
+ * This function is executed just after all the plugins have been updated.
+ */
+function external_update_services() {
+    global $DB;
+
+    // Look for external functions that want to be added in existing services.
+    $functions = $DB->get_records_select('external_functions', 'services IS NOT NULL');
+
+    $servicescache = array();
+    foreach ($functions as $function) {
+        // Prevent edge cases.
+        if (empty($function->services)) {
+            continue;
+        }
+        $services = explode(',', $function->services);
+
+        foreach ($services as $serviceshortname) {
+            // Get the service id by shortname.
+            if (!empty($servicescache[$serviceshortname])) {
+                $serviceid = $servicescache[$serviceshortname];
+            } else if ($service = $DB->get_record('external_services', array('shortname' => $serviceshortname))) {
+                // If the component is empty, it means that is not a built-in service.
+                // We don't allow functions to inject themselves in services created by an user in Moodle.
+                if (empty($service->component)) {
+                    continue;
+                }
+                $serviceid = $service->id;
+                $servicescache[$serviceshortname] = $serviceid;
+            } else {
+                // Service not found.
+                continue;
+            }
+            // Finally add the function to the service.
+            $newf = new stdClass();
+            $newf->externalserviceid = $serviceid;
+            $newf->functionname      = $function->name;
+
+            if (!$DB->record_exists('external_services_functions', (array)$newf)) {
+                $DB->insert_record('external_services_functions', $newf);
+            }
         }
     }
 }
@@ -1657,6 +1734,9 @@ function upgrade_noncore($verbose) {
         foreach ($plugintypes as $type=>$location) {
             upgrade_plugins($type, 'print_upgrade_part_start', 'print_upgrade_part_end', $verbose);
         }
+        // Upgrade services. This function gives plugins a chance to add functions to existing core or non-core services.
+        external_update_services();
+
         // Update cache definitions. Involves scanning each plugin for any changes.
         cache_helper::update_definitions();
         // Mark the site as upgraded.
