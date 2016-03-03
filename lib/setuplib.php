@@ -1327,26 +1327,23 @@ function get_real_size($size = 0) {
     if (!$size) {
         return 0;
     }
-    $scan = array();
-    $scan['GB'] = 1073741824;
-    $scan['Gb'] = 1073741824;
-    $scan['G'] = 1073741824;
-    $scan['MB'] = 1048576;
-    $scan['Mb'] = 1048576;
-    $scan['M'] = 1048576;
-    $scan['m'] = 1048576;
-    $scan['KB'] = 1024;
-    $scan['Kb'] = 1024;
-    $scan['K'] = 1024;
-    $scan['k'] = 1024;
 
-    while (list($key) = each($scan)) {
-        if ((strlen($size)>strlen($key))&&(substr($size, strlen($size) - strlen($key))==$key)) {
-            $size = substr($size, 0, strlen($size) - strlen($key)) * $scan[$key];
-            break;
-        }
+    static $binaryprefixes = array(
+        'K' => 1024,
+        'k' => 1024,
+        'M' => 1048576,
+        'm' => 1048576,
+        'G' => 1073741824,
+        'g' => 1073741824,
+        'T' => 1099511627776,
+        't' => 1099511627776,
+    );
+
+    if (preg_match('/^([0-9]+)([KMGT])/i', $size, $matches)) {
+        return $matches[1] * $binaryprefixes[$matches[2]];
     }
-    return $size;
+
+    return (int) $size;
 }
 
 /**
