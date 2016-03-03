@@ -474,7 +474,7 @@ class manager {
         // Unlimited time.
         \core_php_time_limit::raise();
 
-        $anyupdate = false;
+        $sumdocs = 0;
 
         $searchareas = $this->get_search_areas_list(true);
         foreach ($searchareas as $areaid => $searcharea) {
@@ -527,7 +527,7 @@ class manager {
             }
 
             if ($numdocs > 0) {
-                $anyupdate = true;
+                $sumdocs += $numdocs;
 
                 // Commit all remaining documents.
                 $this->engine->commit();
@@ -551,13 +551,15 @@ class manager {
             }
         }
 
-        if ($anyupdate) {
+        if ($sumdocs > 0) {
             $event = \core\event\search_indexed::create(
                     array('context' => \context_system::instance()));
             $event->trigger();
         }
 
-        return $anyupdate;
+        $this->engine->index_complete($sumdocs, $fullindex);
+
+        return (bool)$sumdocs;
     }
 
     /**

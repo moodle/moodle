@@ -230,6 +230,19 @@ abstract class engine {
     }
 
     /**
+     * Run any post indexing operations.
+     *
+     * Should be overwritten if the search engine needs to do any post index cleanup.
+     *
+     * @param int $numdocs The number of documents that were added to the index
+     * @param bool $fullindex True if a full index was performed
+     * @return void
+     */
+    public function index_complete($numdocs = 0, $fullindex = false) {
+        // Nothing by default.
+    }
+
+    /**
      * Optimizes the search engine.
      *
      * Should be overwritten if the search engine can optimize its contents.

@@ -29,6 +29,7 @@ $string['extensionerror'] = 'The Apache Solr PHP extension is not installed. Ple
 $string['missingconfig'] = 'Your Apache Solr server is not yet configured in Moodle.';
 $string['multivaluedfield'] = 'Field "{$a}" returned an array instead of a scalar, the field is probably defined in Solr with "Multivalued" to true, this means that Solr autocreated the field for you when you indexed data because you forgot to run search/engine/solr/cli/setup_schema.php. Please delete the current index, create a new one and run setup_schema.php before indexing data in Solr.';
 $string['nodatafromserver'] = 'No data from server';
+$string['optimizetask'] = 'Optimize Solr index';
 $string['pluginname'] = 'Solr';
 $string['schemafieldautocreated'] = 'Field "{$a}" already exists in Solr schema. You probably forgot to run this script before indexing data and fields were autocreated by Solr. Please delete the current index, create a new one and run setup_schema.php again before indexing data in Solr.';
 $string['searchinfo'] = 'Search queries';
