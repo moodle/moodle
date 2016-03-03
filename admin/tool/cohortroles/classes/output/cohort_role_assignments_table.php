@@ -114,7 +114,6 @@ class cohort_role_assignments_table extends table_sql {
             'cohortname' => get_string('cohort', 'cohort'),
             'rolename' => get_string('role'),
             'fullname' => get_string('name'),
-            'actions' => get_string('actions')
         );
 
         // Add headers for extra user fields.
@@ -127,7 +126,7 @@ class cohort_role_assignments_table extends table_sql {
         }
 
         // Add remaining headers.
-        $cols = array_merge($cols, array());
+        $cols = array_merge($cols, array('actions' => get_string('actions')));
 
         $this->define_columns(array_keys($cols));
         $this->define_headers(array_values($cols));
@@ -140,6 +139,7 @@ class cohort_role_assignments_table extends table_sql {
         $this->collapsible(false);
         $this->sortable(true, 'lastname', SORT_ASC);
         $this->pageable(true);
+        $this->no_sorting('actions');
     }
 
     /**
