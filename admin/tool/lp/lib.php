@@ -33,6 +33,10 @@ require_once($CFG->libdir . '/externallib.php');
  * @param context $coursecontext The context of the course
  */
 function tool_lp_extend_navigation_course($navigation, $course, $coursecontext) {
+    if (!\tool_lp\api::is_enabled()) {
+        return;
+    }
+
     // Just a link to course report.
     $title = get_string('coursecompetencies', 'tool_lp');
     $path = new moodle_url("/admin/tool/lp/coursecompetencies.php", array('courseid' => $course->id));
@@ -58,6 +62,10 @@ function tool_lp_extend_navigation_course($navigation, $course, $coursecontext) 
  * @param context_course $coursecontext The context of the course
  */
 function tool_lp_extend_navigation_user($navigation, $user, $usercontext, $course, $coursecontext) {
+    if (!\tool_lp\api::is_enabled()) {
+        return;
+    }
+
     if (\tool_lp\plan::can_read_user($user->id)) {
         $node = $navigation->add(get_string('learningplans', 'tool_lp'),
             new moodle_url('/admin/tool/lp/plans.php', array('userid' => $user->id)));
@@ -80,7 +88,9 @@ function tool_lp_extend_navigation_user($navigation, $user, $usercontext, $cours
  * @return bool
  */
 function tool_lp_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
-    if (!\tool_lp\plan::can_read_user($user->id)) {
+    if (!\tool_lp\api::is_enabled()) {
+        return false;
+    } else if (!\tool_lp\plan::can_read_user($user->id)) {
         return false;
     }
 
@@ -99,6 +109,10 @@ function tool_lp_myprofile_navigation(core_user\output\myprofile\tree $tree, $us
  * @param context $coursecategorycontext The context of the course category
  */
 function tool_lp_extend_navigation_category_settings($navigation, $coursecategorycontext) {
+    if (!\tool_lp\api::is_enabled()) {
+        return false;
+    }
+
     // We check permissions before renderring the links.
     $templatereadcapability = \tool_lp\template::can_read_context($coursecategorycontext);
     $competencymanagecapability = has_capability('tool/lp:competencymanage', $coursecategorycontext);
@@ -153,6 +167,10 @@ function tool_lp_extend_navigation_category_settings($navigation, $coursecategor
 function tool_lp_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
     global $CFG;
 
+    if (!\tool_lp\api::is_enabled()) {
+        return false;
+    }
+
     $fs = get_file_storage();
     $file = null;
 
@@ -182,6 +200,10 @@ function tool_lp_pluginfile($course, $cm, $context, $filearea, $args, $forcedown
  */
 function tool_lp_comment_add($comment, $params) {
     global $USER;
+
+    if (!\tool_lp\api::is_enabled()) {
+        return;
+    }
 
     if ($params->commentarea == 'user_competency') {
         $uc = new \tool_lp\user_competency($params->itemid);
@@ -360,6 +382,10 @@ function tool_lp_comment_add($comment, $params) {
  * @return array
  */
 function tool_lp_comment_permissions($params) {
+    if (!\tool_lp\api::is_enabled()) {
+        return array('post' => false, 'view' => false);
+    }
+
     if ($params->commentarea == 'user_competency') {
         $uc = new \tool_lp\user_competency($params->itemid);
         if ($uc->can_read()) {
@@ -382,6 +408,10 @@ function tool_lp_comment_permissions($params) {
  * @return bool
  */
 function tool_lp_comment_validate($params) {
+    if (!\tool_lp\api::is_enabled()) {
+        return false;
+    }
+
     if ($params->commentarea == 'user_competency') {
         if (!\tool_lp\user_competency::record_exists($params->itemid)) {
             return false;
@@ -404,6 +434,10 @@ function tool_lp_comment_validate($params) {
  */
 function tool_lp_coursemodule_standard_elements($formwrapper, $mform) {
     global $CFG, $COURSE;
+
+    if (!\tool_lp\api::is_enabled()) {
+        return;
+    }
 
     $mform->addElement('header', 'competenciessection', get_string('competencies', 'tool_lp'));
 
@@ -433,6 +467,10 @@ function tool_lp_coursemodule_standard_elements($formwrapper, $mform) {
  * @param stdClass $data Data from the form submission.
  */
 function tool_lp_coursemodule_edit_post_actions($data, $course) {
+    if (!\tool_lp\api::is_enabled()) {
+        return $data;
+    }
+
     $existing = \tool_lp\api::list_course_module_competencies_in_course_module($data->coursemodule);
 
     $existingids = array();

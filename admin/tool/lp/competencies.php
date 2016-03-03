@@ -30,6 +30,7 @@ $pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to th
 $search = optional_param('search', '', PARAM_RAW);
 
 require_login();
+\tool_lp\api::require_enabled();
 
 $pagecontext = context::instance_by_id($pagecontextid);
 $framework = \tool_lp\api::read_framework($id);

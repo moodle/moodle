@@ -39,6 +39,7 @@ if (!empty($id)) {
 
 // We check that we have the permission to edit this framework, in its own context.
 require_login(0, false);
+\tool_lp\api::require_enabled();
 require_capability('tool/lp:templatemanage', $context);
 
 // We keep the original context in the URLs, so that we remain in the same context.

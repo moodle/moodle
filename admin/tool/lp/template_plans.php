@@ -28,6 +28,7 @@ $id = required_param('id', PARAM_INT);
 $pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to the context we came from.
 
 require_login(0, false);
+\tool_lp\api::require_enabled();
 
 $template = \tool_lp\api::read_template($id);
 $context = $template->get_context();

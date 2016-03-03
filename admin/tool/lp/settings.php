@@ -25,22 +25,37 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-// Manage competency frameworks page.
-$temp = new admin_externalpage(
-    'toollpcompetencies',
-    get_string('competencyframeworks', 'tool_lp'),
-    new moodle_url('/admin/tool/lp/competencyframeworks.php', array('pagecontextid' => context_system::instance()->id)),
-    array('tool/lp:competencymanage')
-);
-$ADMIN->add('root', $temp, 'badges');
-// Manage learning plans page.
-$temp = new admin_externalpage(
-    'toollplearningplans',
-    get_string('learningplans', 'tool_lp'),
-    new moodle_url('/admin/tool/lp/learningplans.php', array('pagecontextid' => context_system::instance()->id)),
-    array('tool/lp:templatemanage')
-);
-$ADMIN->add('root', $temp, 'toollpcompetencies');
+$parentname = 'toollprootpage';
+$category = new admin_category($parentname, get_string('competencies', 'tool_lp'));
+$ADMIN->add('root', $category, 'badges');
 
-// No report settings.
-$settings = null;
+// If the plugin is enabled we add the pages.
+if (\tool_lp\api::is_enabled()) {
+
+    // Manage competency frameworks page.
+    $temp = new admin_externalpage(
+        'toollpcompetencies',
+        get_string('competencyframeworks', 'tool_lp'),
+        new moodle_url('/admin/tool/lp/competencyframeworks.php', array('pagecontextid' => context_system::instance()->id)),
+        array('tool/lp:competencymanage')
+    );
+    $ADMIN->add($parentname, $temp);
+
+    // Manage learning plans page.
+    $temp = new admin_externalpage(
+        'toollplearningplans',
+        get_string('learningplans', 'tool_lp'),
+        new moodle_url('/admin/tool/lp/learningplans.php', array('pagecontextid' => context_system::instance()->id)),
+        array('tool/lp:templatemanage')
+    );
+    $ADMIN->add($parentname, $temp);
+}
+
+// Settings.
+$settings = new admin_settingpage('toollpsettingspage', get_string('competenciessettings', 'tool_lp'), 'moodle/site:config', false);
+$ADMIN->add($parentname, $settings);
+if ($ADMIN->fulltree) {
+    $setting = new admin_setting_configcheckbox('tool_lp/enabled', get_string('enablecompetencies', 'tool_lp'),
+        get_string('enablecompetencies_desc', 'tool_lp'), 1);
+    $settings->add($setting);
+}

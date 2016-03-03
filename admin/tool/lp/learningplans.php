@@ -29,6 +29,7 @@ $pagecontextid = required_param('pagecontextid', PARAM_INT);
 $context = context::instance_by_id($pagecontextid);
 
 require_login(0, false);
+\tool_lp\api::require_enabled();
 if (!\tool_lp\template::can_read_context($context)) {
     throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
 }

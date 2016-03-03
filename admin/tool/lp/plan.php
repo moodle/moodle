@@ -30,6 +30,7 @@ require_login(null, false);
 if (isguestuser()) {
     throw new require_login_exception('Guests are not allowed here.');
 }
+\tool_lp\api::require_enabled();
 
 $plan = \tool_lp\api::read_plan($id);
 $url = new moodle_url('/admin/tool/lp/plan.php', array('id' => $id));

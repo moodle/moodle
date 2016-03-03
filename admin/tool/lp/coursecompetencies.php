@@ -28,7 +28,10 @@ $id = required_param('courseid', PARAM_INT);
 
 $params = array('id' => $id);
 $course = $DB->get_record('course', $params, '*', MUST_EXIST);
+
 require_login($course);
+\tool_lp\api::require_enabled();
+
 $context = context_course::instance($course->id);
 $urlparams = array('courseid' => $id);
 

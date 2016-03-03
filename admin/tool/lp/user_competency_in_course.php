@@ -32,6 +32,7 @@ require_login(null, false);
 if (isguestuser()) {
     throw new require_login_exception('Guests are not allowed here.');
 }
+\tool_lp\api::require_enabled();
 
 $course = $DB->get_record('course', array('id' => $courseid));
 $context = context_course::instance($courseid);

@@ -32,6 +32,7 @@ $pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to th
 $parentid = optional_param('parentid', 0, PARAM_INT);
 
 require_login();
+\tool_lp\api::require_enabled();
 $pagecontext = context::instance_by_id($pagecontextid);
 
 if (empty($competencyframeworkid) && empty($id)) {

@@ -51,6 +51,9 @@ class sync_plans_from_template_cohorts_task extends \core\task\scheduled_task {
      * Do the job.
      */
     public function execute() {
+        if (!api::is_enabled()) {
+            return;
+        }
 
         $missingplans = template_cohort::get_all_missing_plans(self::get_last_run_time());
 

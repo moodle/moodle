@@ -32,6 +32,7 @@ $url = new moodle_url("/admin/tool/lp/competencyframeworks.php");
 $url->param('pagecontextid', $pagecontextid);
 
 require_login();
+\tool_lp\api::require_enabled();
 require_capability('tool/lp:competencymanage', $context);
 
 $title = get_string('competencies', 'tool_lp');

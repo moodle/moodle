@@ -28,6 +28,7 @@ require_login(null, false);
 if (isguestuser()) {
     throw new require_login_exception('Guests are not allowed here.');
 }
+\tool_lp\api::require_enabled();
 
 $userid = optional_param('userid', $USER->id, PARAM_INT);
 

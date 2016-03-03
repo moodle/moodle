@@ -29,6 +29,9 @@ $userid = optional_param('userid', false, PARAM_INT);
 $id = optional_param('id', false, PARAM_INT);
 $returntype = optional_param('return', 'plans', PARAM_ALPHA);
 
+require_login(0, false);
+\tool_lp\api::require_enabled();
+
 $url = new moodle_url('/admin/tool/lp/editplan.php', array('id' => $id, 'userid' => $userid, 'return' => $returntype));
 
 $plan = null;
