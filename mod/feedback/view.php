@@ -69,7 +69,7 @@ if ($course->id == SITEID) {
     $PAGE->set_cm($cm, $course);
     $PAGE->set_pagelayout('incourse');
 }
-$PAGE->set_url('/mod/feedback/view.php', array('id'=>$cm->id, 'do_show'=>'view'));
+$PAGE->set_url('/mod/feedback/view.php', array('id' => $cm->id));
 $PAGE->set_title($feedback->name);
 $PAGE->set_heading($course->fullname);
 
@@ -136,13 +136,22 @@ echo $OUTPUT->heading(format_string($feedback->name) . $preview);
 // Print the tabs.
 require('tabs.php');
 
+// Show description.
+echo $OUTPUT->box_start('generalbox feedback_description');
+$options = (object)array('noclean' => true);
+echo format_module_intro('feedback', $feedback, $cm->id);
+echo $OUTPUT->box_end();
+
 //show some infos to the feedback
 if (has_capability('mod/feedback:edititems', $context)) {
+
+    echo $OUTPUT->heading(get_string('overview', 'feedback'), 3);
+
     //get the groupid
     $groupselect = groups_print_activity_menu($cm, $CFG->wwwroot.'/mod/feedback/view.php?id='.$cm->id, true);
     $mygroupid = groups_get_activity_group($cm);
 
-    echo $OUTPUT->box_start('boxaligncenter boxwidthwide');
+    echo $OUTPUT->box_start('boxaligncenter');
     echo $groupselect.'<div class="clearer">&nbsp;</div>';
     $completedscount = feedback_get_completeds_group_count($feedback, $mygroupid);
     echo $OUTPUT->box_start('feedback_info');
@@ -189,14 +198,6 @@ if (has_capability('mod/feedback:edititems', $context)) {
 }
 
 if (has_capability('mod/feedback:edititems', $context)) {
-    echo $OUTPUT->heading(get_string('description', 'feedback'), 3);
-}
-echo $OUTPUT->box_start('generalbox boxwidthwide');
-$options = (object)array('noclean'=>true);
-echo format_module_intro('feedback', $feedback, $cm->id);
-echo $OUTPUT->box_end();
-
-if (has_capability('mod/feedback:edititems', $context)) {
     require_once($CFG->libdir . '/filelib.php');
 
     $page_after_submit_output = file_rewrite_pluginfile_urls($feedback->page_after_submit,
@@ -207,7 +208,7 @@ if (has_capability('mod/feedback:edititems', $context)) {
                                                             0);
 
     echo $OUTPUT->heading(get_string("page_after_submit", "feedback"), 3);
-    echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
+    echo $OUTPUT->box_start('generalbox feedback_after_submit');
     echo format_text($page_after_submit_output,
                      $feedback->page_after_submitformat,
                      array('overflowdiv'=>true));
@@ -215,37 +216,22 @@ if (has_capability('mod/feedback:edititems', $context)) {
     echo $OUTPUT->box_end();
 }
 
-if ( (intval($feedback->publish_stats) == 1) AND
-                ( has_capability('mod/feedback:viewanalysepage', $context)) AND
-                !( has_capability('mod/feedback:viewreports', $context)) ) {
-
-    $params = array('userid'=>$USER->id, 'feedback'=>$feedback->id);
-    if ($multiple_count = $DB->count_records('feedback_tracking', $params)) {
-        $url_params = array('id'=>$id, 'courseid'=>$courseid);
-        $analysisurl = new moodle_url('/mod/feedback/analysis.php', $url_params);
-        echo '<div class="mdl-align"><a href="'.$analysisurl->out().'">';
-        echo get_string('completed_feedbacks', 'feedback').'</a>';
-        echo '</div>';
-    }
+if (!has_capability('mod/feedback:viewreports', $context) &&
+        feedback_can_view_analysis($feedback, $context, $courseid)) {
+    $analysisurl = new moodle_url('/mod/feedback/analysis.php', array('id' => $id));
+    echo '<div class="mdl-align"><a href="'.$analysisurl->out().'">';
+    echo get_string('completed_feedbacks', 'feedback').'</a>';
+    echo '</div>';
 }
 
 //####### mapcourse-start
-if (has_capability('mod/feedback:mapcourse', $context)) {
-    if ($feedback->course == SITEID) {
-        echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
-        echo '<div class="mdl-align">';
-        echo '<form action="mapcourse.php" method="get">';
-        echo '<fieldset>';
-        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        echo '<input type="hidden" name="id" value="'.$id.'" />';
-        echo '<button type="submit">'.get_string('mapcourses', 'feedback').'</button>';
-        echo $OUTPUT->help_icon('mapcourse', 'feedback');
-        echo '</fieldset>';
-        echo '</form>';
-        echo '<br />';
-        echo '</div>';
-        echo $OUTPUT->box_end();
-    }
+if (has_capability('mod/feedback:mapcourse', $context) && $feedback->course == SITEID) {
+    echo $OUTPUT->box_start('generalbox feedback_mapped_courses');
+    echo $OUTPUT->heading(get_string("mappedcourses", "feedback"), 3);
+    echo '<p>' . get_string('mapcourse_help', 'feedback') . '</p>';
+    $mapurl = new moodle_url('/mod/feedback/mapcourse.php', array('id' => $id));
+    echo '<p class="mdl-align">' . html_writer::link($mapurl, get_string('mapcourses', 'feedback')) . '</p>';
+    echo $OUTPUT->box_end();
 }
 //####### mapcourse-end
 

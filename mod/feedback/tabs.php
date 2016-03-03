@@ -43,7 +43,7 @@ if (!isset($current_tab)) {
     $current_tab = '';
 }
 
-$viewurl = new moodle_url('/mod/feedback/view.php', array('id'=>$usedid, 'do_show'=>'view'));
+$viewurl = new moodle_url('/mod/feedback/view.php', array('id' => $usedid));
 $row[] = new tabobject('view', $viewurl->out(), get_string('overview', 'feedback'));
 
 if (has_capability('mod/feedback:edititems', $context)) {
@@ -54,16 +54,21 @@ if (has_capability('mod/feedback:edititems', $context)) {
     $row[] = new tabobject('templates', $templateurl->out(), get_string('templates', 'feedback'));
 }
 
+if ($feedback->course == SITEID && has_capability('mod/feedback:mapcourse', $context)) {
+    $mapurl = new moodle_url('/mod/feedback/mapcourse.php', array('id' => $usedid));
+    $row[] = new tabobject('mapcourse', $mapurl->out(), get_string('mappedcourses', 'feedback'));
+}
+
 if (has_capability('mod/feedback:viewreports', $context)) {
     if ($feedback->course == SITEID) {
-        $url_params = array('id'=>$usedid, 'courseid'=>$courseid, 'do_show'=>'analysis');
+        $url_params = array('id' => $usedid, 'courseid' => $courseid);
         $analysisurl = new moodle_url('/mod/feedback/analysis_course.php', $url_params);
         $row[] = new tabobject('analysis',
                                 $analysisurl->out(),
                                 get_string('analysis', 'feedback'));
 
     } else {
-        $url_params = array('id'=>$usedid, 'courseid'=>$courseid, 'do_show'=>'analysis');
+        $url_params = array('id' => $usedid);
         $analysisurl = new moodle_url('/mod/feedback/analysis.php', $url_params);
         $row[] = new tabobject('analysis',
                                 $analysisurl->out(),

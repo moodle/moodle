@@ -1,1 +1,2 @@
 completed,mod_feedback
+mapcourses_help,mod_feedback

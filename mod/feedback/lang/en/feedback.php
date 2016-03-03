@@ -152,8 +152,6 @@ $string['mapcourse'] = 'Map feedback to courses';
 $string['mapcourse_help'] = 'By default, feedback forms created on your homepage are available site-wide
 and will appear in all courses using the feedback block. You can force the feedback form to appear by making it a sticky block or limit the courses in which a feedback form will appear by mapping it to specific courses.';
 $string['mapcourses'] = 'Map feedback to courses';
-$string['mapcourses_help'] = 'Once you have selected the relevant course(s) from your search,
-you can associate them with this feedback using map course(s). Multiple courses may be selected by holding down the Apple or Ctrl key whilst clicking on the course names. A course may be disassociated from a feedback at any time.';
 $string['mappedcourses'] = 'Mapped courses';
 $string['max_args_exceeded'] = 'Max 6 arguments can be handled, too many arguments for';
 $string['minimal'] = 'minimum';
@@ -291,3 +289,6 @@ $string['viewcompleted_help'] = 'You may view completed feedback forms, searchab
 Feedback responses may be exported to Excel.';
 // Deprecated since Moodle 3.0.
 $string['completed'] = 'completed';
+// Deprecated since Moodle 3.1.
+$string['mapcourses_help'] = 'Once you have selected the relevant course(s) from your search,
+you can associate them with this feedback using map course(s). Multiple courses may be selected by holding down the Apple or Ctrl key whilst clicking on the course names. A course may be disassociated from a feedback at any time.';
