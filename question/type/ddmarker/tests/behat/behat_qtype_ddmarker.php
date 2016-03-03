@@ -72,7 +72,7 @@ class behat_qtype_ddmarker extends behat_base {
         // Therefore to make it drag to the specified place, we have to add
         // a target div.
         $session = $this->getSession();
-        $session->evaluateScript("
+        $session->executeScript("
                 (function() {
                     if (document.getElementById('target-{$x}-{$y}')) {
                         return;

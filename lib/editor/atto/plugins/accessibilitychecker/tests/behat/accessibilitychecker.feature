@@ -15,14 +15,14 @@ Feature: Atto accessibility checker
     And I wait "2" seconds
     And I click on "Image" "button"
     And the field "Enter URL" matches value "/broken-image"
-    And I set the field "Describe this image" to "No more warning!"
+    And I set the field "Describe this image for someone who cannot see it" to "No more warning!"
     And I press "Save image"
     And I press "Accessibility checker"
     And I should see "Congratulations, no accessibility problems found!"
     And I click on ".moodle-dialogue-focused .closebutton" "css_element"
     And I select the text in the "Description" Atto editor
     And I click on "Image" "button"
-    And I set the field "Describe this image" to ""
+    And I set the field "Describe this image for someone who cannot see it" to ""
     And I set the field "Description not necessary" to "1"
     And I press "Save image"
     And I press "Accessibility checker"

@@ -288,7 +288,9 @@ class behat_filepicker extends behat_files {
             $field->set_value($value);
         }
 
-        $this->find_button(get_string('getfile', 'repository'))->click();
+        $selectfilebutton = $this->find_button(get_string('getfile', 'repository'));
+        $this->ensure_node_is_visible($selectfilebutton);
+        $selectfilebutton->click();
 
         // We wait for all the JS to finish as it is performing an action.
         $this->getSession()->wait(self::TIMEOUT, self::PAGE_READY_JS);
