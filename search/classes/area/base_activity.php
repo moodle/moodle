@@ -124,8 +124,8 @@ abstract class base_activity extends base_mod {
     public function check_access($id) {
         global $DB;
 
-        $activity = $this->get_activity($id);
         try {
+            $activity = $this->get_activity($id);
             $cminfo = $this->get_cm($this->get_module_name(), $activity->id, $activity->course);
             $cminfo->get_course_module_record();
         } catch (\dml_missing_record_exception $ex) {
