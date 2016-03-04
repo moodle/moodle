@@ -41,10 +41,6 @@ class engine extends \core_search\engine {
         // No need to implement.
     }
 
-    public function commit() {
-        // No need to implement.
-    }
-
     public function execute_query($data, $usercontexts) {
         // No need to implement.
     }
