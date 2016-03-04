@@ -166,8 +166,12 @@ $compusertable->width = '95%';
 $compusertable->head[] = get_string('actions', 'local_report_users');
 $compusertable->align[] = 'center';
 
+// Set that there is nothing found here first.
+$noresults = true;
+
 foreach ($usercourses as $usercourse) {
     if ($usercompletion[$usercourse->id] = userrep::get_completion($userid, $usercourse->id, $showhistoric) ) {
+        $noresults = true;
         $usercourseid = $usercourse->id;
 
         // Check if the course is also in progress.
@@ -230,7 +234,7 @@ foreach ($usercourses as $usercourse) {
                     'courseid' => $usercourseid,
                     'action' => 'clear'
                 ));
-            if (empty($usercompcourse->certsource) && has_capability('block/iomad_company_admin:company_add', $context)) {
+            if (empty($usercompcourse->certsource) && has_capability('block/iomad_company_admin:editusers', $context)) {
                 $delaction = '<a class="btn btn-danger" href="'.$dellink.'">' . get_string('delete', 'local_report_users') . '</a>' .
                               '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
             } else {
@@ -290,7 +294,7 @@ foreach ($usercourses as $usercourse) {
     }
 }
 if (empty($dodownload)) {
-    /* if (!$showhistoric) {
+    if (!$showhistoric) {
         $historicuserslink = new moodle_url($baseurl, array('courseid' => $courseid,
                                                         'userid' => $userid,
                                                         'page' => $page,
@@ -304,13 +308,21 @@ if (empty($dodownload)) {
                                                         'showhistoric' => 0
                                                         ));
         echo $OUTPUT->single_button($historicuserslink, get_string("hidehistoricusers", 'local_report_completion'));
-    } */
+    }
 
-    echo html_writer::table($compusertable);
+    // If we have anything show it.
+    if (!$noresults) {
+        echo html_writer::table($compusertable);
+    } else {
+        echo "</br><b>" . get_string('noresults') . "</b>";
+    }
 }
 
-if (!empty($courseid)) {
+if (!empty($courseid && !empty($usercompletion[$courseid]))) {
     if (empty($dodownload)) {
+        echo "usercompletion = <pre>";
+        print_r($usercompletion);
+        echo "</pre></br>";
         echo "<h3>".$usercompletion[$courseid]->data[$courseid]->coursename.
              " (<a href='".
              new moodle_url('/local/report_completion/index.php', array('courseid' => $courseid)).

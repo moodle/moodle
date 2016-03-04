@@ -650,3 +650,33 @@ class iomad_user_filter_form extends moodleform {
         $this->add_action_buttons(false, get_string('userfilter', 'local_iomad'));
     }
 }
+
+/**
+ * User Filter form used on the Iomad pages.
+ *
+ */
+class iomad_date_filter_form extends moodleform {
+    protected $params = array();
+
+    public function __construct($params) {
+        $this->params = $params;
+        parent::__construct();
+    }
+
+    public function definition() {
+        global $CFG, $DB, $USER, $SESSION;
+
+        $mform =& $this->_form;
+        foreach ($this->params as $param => $value) {
+            if ($param == 'compfrom' || $param == 'compto') {
+                continue;
+            }
+            $mform->addElement('hidden', $param, $value);
+            $mform->setType($param, PARAM_CLEAN);
+        }
+        $mform->addElement('date_selector', 'compfrom', get_string('compfrom', 'local_report_completion'));
+        $mform->addElement('date_selector', 'compto', get_string('compto', 'local_report_completion'));
+        $mform->setDefault('compfrom', 0);
+        $this->add_action_buttons(false, get_string('userfilter', 'local_iomad'));
+    }
+}

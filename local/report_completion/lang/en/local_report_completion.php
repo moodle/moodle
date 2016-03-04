@@ -73,3 +73,6 @@ $string['allusers'] = 'Show all users';
 $string['hidehistoricusers'] = 'Remove historic results';
 $string['historicusers'] = 'Include historic results';
 $string['historiccompletedusers'] = 'Historic completed';
+$string['timeexpires'] = 'Valid until';
+$string['compfrom'] = 'Start date';
+$string['compto'] = 'End date';

@@ -552,7 +552,7 @@ class iomad {
         global $DB, $CFG;
 
         if ($allcourse) {
-            $sqlsort = " GROUP BY cc.id, co.id, u.id";
+            $sqlsort = " GROUP BY cc.id, co.id, u.id, d.name";
         } else {
             $sqlsort = " GROUP BY cc.id, u.id, cc.timeenrolled, cc.timestarted, cc.timecompleted, d.name";
         }
@@ -924,13 +924,21 @@ class iomad {
      *
      * Return array();
      **/
-    public static function get_user_license_sqlsearch($params, $idlist='', $sort, $dir, $departmentid, $nogrades=false) {
+    public static function get_user_license_sqlsearch($params, $idlist='', $sort, $dir, $departmentid, $licenses=false) {
         global $DB, $CFG;
 
         if (!empty($params['courseid']) && $params['courseid'] == 1) {
-            $sqlsort = " GROUP BY co.id, cl.name, d.name, u.id";
+            if (!$licenses) {
+                $sqlsort = " GROUP BY co.id, cl.name, d.name, u.id";
+            } else {
+                $sqlsort = " GROUP BY co.id, cl.name, d.name, u.id, clu.id";
+            }
         } else {
-            $sqlsort = " GROUP BY cl.name, d.name, u.id";
+            if (!$licenses) {
+                $sqlsort = " GROUP BY cl.name, d.name, u.id";
+            } else {
+                $sqlsort = " GROUP BY cl.name, d.name, u.id, clu.id";
+            }
         }
         $sqlsearch = "u.id != '-1' and u.deleted = 0";
         $sqlsearch .= " AND u.id NOT IN (".$CFG->siteadmins.")";
