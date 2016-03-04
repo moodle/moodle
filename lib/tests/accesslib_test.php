@@ -1443,6 +1443,16 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertArrayHasKey($user1->id, $users);
         $this->assertArrayHasKey($user3->id, $users);
 
+        $users = get_role_users($teacherrole->id, $coursecontext, false, 'u.id, u.email');
+        $this->assertDebuggingCalled('get_role_users() adding u.lastname, u.firstname to the query result because they were required by $sort but missing in $fields');
+        $this->assertCount(2, $users);
+        $this->assertArrayHasKey($user1->id, $users);
+        $this->assertObjectHasAttribute('lastname', $users[$user1->id]);
+        $this->assertObjectHasAttribute('firstname', $users[$user1->id]);
+        $this->assertArrayHasKey($user3->id, $users);
+        $this->assertObjectHasAttribute('lastname', $users[$user3->id]);
+        $this->assertObjectHasAttribute('firstname', $users[$user3->id]);
+
         $users = get_role_users($teacherrole->id, $coursecontext, false, 'u.id, u.email, u.idnumber', 'u.idnumber', null, $group->id);
         $this->assertCount(1, $users);
         $this->assertArrayHasKey($user3->id, $users);

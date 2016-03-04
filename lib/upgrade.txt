@@ -3,6 +3,9 @@ information provided here is intended especially for developers.
 
 === 3.1 ===
 
+* The get_role_users() function will now add the $sort fields that are not part
+  of the requested fields to the query result and will throw a debugging message
+  with the added fields when that happens.
 * The core_user::fill_properties_cache() static method has been introduced to be a reference
   and allow standard user fields data validation. Right now only type validation is supported
   checking it against the parameter (PARAM_*) type of the target user field. MDL-52781 is
