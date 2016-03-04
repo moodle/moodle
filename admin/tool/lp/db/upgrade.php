@@ -804,5 +804,21 @@ function xmldb_tool_lp_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2016020912, 'tool', 'lp');
     }
 
+    if ($oldversion < 2016020913) {
+
+        // Changing type of field scaleconfiguration on table tool_lp_competency_framework to text.
+        $table = new xmldb_table('tool_lp_competency_framework');
+        $field = new xmldb_field('scaleconfiguration', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'scaleid');
+
+        // Launch change of type for field scaleconfiguration.
+        $dbman->change_field_type($table, $field);
+
+        // Launch change of nullability for field scaleconfiguration.
+        $dbman->change_field_notnull($table, $field);
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2016020913, 'tool', 'lp');
+    }
+
     return true;
 }

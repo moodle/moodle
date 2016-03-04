@@ -123,8 +123,12 @@ define(['jquery', 'core/notification', 'core/templates', 'core/ajax', 'tool_lp/d
             var proficient = 0;
             if ($('#tool_lp_scale_default_' + value.id).is(':checked')) { scaledefault = 1; }
             if ($('#tool_lp_scale_proficient_' + value.id).is(':checked')) { proficient = 1; }
+
+            if (!scaledefault && !proficient) {
+                return;
+            }
+
             data.push({
-                name: value.name,
                 id: value.id,
                 scaledefault: scaledefault,
                 proficient: proficient

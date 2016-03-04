@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/notification', 'core/ajax', 'core/templates', 'core/log'], function($, notification, ajax, templates, log) {
+define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function($, notification, ajax, templates) {
 
     /**
      * Info
