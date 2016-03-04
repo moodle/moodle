@@ -961,6 +961,7 @@ class mod_forum_external extends external_api {
                             'name' => new external_value(PARAM_ALPHANUM,
                                         'The allowed keys (value format) are:
                                         discussionsubscribe (bool); subscribe to the discussion?, default to true
+                                        itemid              (int); the draft file area id for inline attachments
                             '),
                             'value' => new external_value(PARAM_RAW, 'the value of the option,
                                                             this param is validated in the external function.'
@@ -995,13 +996,17 @@ class mod_forum_external extends external_api {
                                             ));
         // Validate options.
         $options = array(
-            'discussionsubscribe' => true
+            'discussionsubscribe' => true,
+            'itemid' => 0
         );
         foreach ($params['options'] as $option) {
             $name = trim($option['name']);
             switch ($name) {
                 case 'discussionsubscribe':
                     $value = clean_param($option['value'], PARAM_BOOL);
+                    break;
+                case 'itemid':
+                    $value = clean_param($option['value'], PARAM_INT);
                     break;
                 default:
                     throw new moodle_exception('errorinvalidparam', 'webservice', '', $name);
@@ -1041,7 +1046,7 @@ class mod_forum_external extends external_api {
         $post->message = $params['message'];
         $post->messageformat = FORMAT_HTML;   // Force formatting for now.
         $post->messagetrust = trusttext_trusted($context);
-        $post->itemid = 0;
+        $post->itemid = $options['itemid'];
 
         if ($postid = forum_add_new_post($post, null)) {
 
@@ -1117,6 +1122,7 @@ class mod_forum_external extends external_api {
                                         'The allowed keys (value format) are:
                                         discussionsubscribe (bool); subscribe to the discussion?, default to true
                                         discussionpinned    (bool); is the discussion pinned, default to false
+                                        itemid              (int); the draft file area id for inline attachments
                             '),
                             'value' => new external_value(PARAM_RAW, 'The value of the option,
                                                             This param is validated in the external function.'
@@ -1154,7 +1160,8 @@ class mod_forum_external extends external_api {
         // Validate options.
         $options = array(
             'discussionsubscribe' => true,
-            'discussionpinned' => false
+            'discussionpinned' => false,
+            'itemid' => 0
         );
         foreach ($params['options'] as $option) {
             $name = trim($option['name']);
@@ -1164,6 +1171,9 @@ class mod_forum_external extends external_api {
                     break;
                 case 'discussionpinned':
                     $value = clean_param($option['value'], PARAM_BOOL);
+                    break;
+                case 'itemid':
+                    $value = clean_param($option['value'], PARAM_INT);
                     break;
                 default:
                     throw new moodle_exception('errorinvalidparam', 'webservice', '', $name);
@@ -1209,7 +1219,7 @@ class mod_forum_external extends external_api {
         $discussion->message = $params['message'];
         $discussion->messageformat = FORMAT_HTML;   // Force formatting for now.
         $discussion->messagetrust = trusttext_trusted($context);
-        $discussion->itemid = 0;
+        $discussion->itemid = $options['itemid'];
         $discussion->groupid = $groupid;
         $discussion->mailnow = 0;
         $discussion->subject = $params['subject'];
