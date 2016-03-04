@@ -3315,7 +3315,11 @@ class api {
         }
 
         $uc->set_status(user_competency::STATUS_IDLE);
-        return $uc->update();
+        $result = $uc->update();
+        if ($result) {
+            \tool_lp\event\user_competency_review_request_cancelled::create_from_user_competency($uc)->trigger();
+        }
+        return $result;
     }
 
     /**
@@ -3342,7 +3346,11 @@ class api {
         }
 
         $uc->set_status(user_competency::STATUS_WAITING_FOR_REVIEW);
-        return $uc->update();
+        $result = $uc->update();
+        if ($result) {
+            \tool_lp\event\user_competency_review_requested::create_from_user_competency($uc)->trigger();
+        }
+        return $result;
     }
 
     /**
@@ -3368,7 +3376,11 @@ class api {
 
         $uc->set_status(user_competency::STATUS_IN_REVIEW);
         $uc->set_reviewerid($USER->id);
-        return $uc->update();
+        $result = $uc->update();
+        if ($result) {
+            \tool_lp\event\user_competency_review_started::create_from_user_competency($uc)->trigger();
+        }
+        return $result;
     }
 
     /**
@@ -3391,7 +3403,11 @@ class api {
         }
 
         $uc->set_status(user_competency::STATUS_IDLE);
-        return $uc->update();
+        $result = $uc->update();
+        if ($result) {
+            \tool_lp\event\user_competency_review_stopped::create_from_user_competency($uc)->trigger();
+        }
+        return $result;
     }
 
     /**
@@ -4493,7 +4509,7 @@ class api {
             $desckey = 'evidence_manualsuggest';
         }
 
-        return self::add_evidence($uc->get_userid(),
+        $result = self::add_evidence($uc->get_userid(),
                                   $competency,
                                   $context->id,
                                   $action,
@@ -4505,6 +4521,16 @@ class api {
                                   $grade,
                                   $USER->id,
                                   $note);
+        if ($result) {
+            $uc->read();
+            if ($action == evidence::ACTION_OVERRIDE) {
+                $event = \tool_lp\event\user_competency_grade_rated::create_from_user_competency($uc);
+            } else {
+                $event = \tool_lp\event\user_competency_grade_suggested::create_from_user_competency($uc, $grade);
+            }
+            $event->trigger();
+        }
+        return $result;
     }
 
     /**
@@ -4551,7 +4577,7 @@ class api {
             $desckey = 'evidence_manualsuggestinplan';
         }
 
-        return self::add_evidence($plan->get_userid(),
+        $result = self::add_evidence($plan->get_userid(),
                                   $competency,
                                   $context->id,
                                   $action,
@@ -4563,6 +4589,19 @@ class api {
                                   $grade,
                                   $USER->id,
                                   $note);
+        if ($result) {
+            $uc = static::get_user_competency($plan->get_userid(), $competency->get_id());
+            if ($action == evidence::ACTION_OVERRIDE) {
+                $event = \tool_lp\event\user_competency_grade_rated_in_plan::create_from_user_competency($uc, $plan->get_id());
+            } else {
+                $event = \tool_lp\event\user_competency_grade_suggested_in_plan::create_from_user_competency($uc,
+                    $plan->get_id(),
+                    $grade
+                );
+            }
+            $event->trigger();
+        }
+        return $result;
     }
 
     /**
@@ -4621,7 +4660,7 @@ class api {
             $desckey = 'evidence_manualsuggestincourse';
         }
 
-        return self::add_evidence($userid,
+        $result = self::add_evidence($userid,
                                   $competency,
                                   $context->id,
                                   $action,
@@ -4633,6 +4672,19 @@ class api {
                                   $grade,
                                   $USER->id,
                                   $note);
+        if ($result) {
+            $uc = static::get_user_competency($userid, $competency->get_id());
+            if ($action == evidence::ACTION_OVERRIDE) {
+                $event = \tool_lp\event\user_competency_grade_rated_in_course::create_from_user_competency($uc, $course->id);
+            } else {
+                $event = \tool_lp\event\user_competency_grade_suggested_in_course::create_from_user_competency($uc,
+                    $course->id,
+                    $grade
+                );
+            }
+            $event->trigger();
+        }
+        return $result;
     }
 
     /**
