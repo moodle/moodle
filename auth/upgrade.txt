@@ -1,6 +1,11 @@
 This files describes API changes in /auth/* - plugins,
 information provided here is intended especially for developers.
 
+=== 3.2 ===
+
+* New auth hook - pre_user_login_hook() - available, triggered right after the user object is created.
+  This can be used to modify the user object before any authentication errors are raised.
+
 === 3.0 ===
 
 * login_signup_form::signup_captcha_enabled() now calls is_captcha_enabled() from the current auth plugin instead of from auth_email
