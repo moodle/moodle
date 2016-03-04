@@ -1561,6 +1561,10 @@ class company {
     public static function check_valid_user($companyid, $userid, $deparmentid=0) {
         global $DB;
 
+        if (is_siteadmin($userid)) {
+            return true;
+        }
+
         if (!empty($departmentid) && $DB->get_record('company_users', array('departmentid' => $departmentid,
                                                                             'companyid' => $companyid,
                                                                             'userid' => $userid))) {
