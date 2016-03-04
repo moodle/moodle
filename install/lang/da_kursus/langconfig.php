@@ -30,5 +30,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['parentlanguage'] = 'dk';
+$string['parentlanguage'] = 'da';
 $string['thislanguage'] = 'Dansk (kursus)';
