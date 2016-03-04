@@ -33,7 +33,8 @@ $functions = array(
         'methodname'    => 'view_url',
         'description'   => 'Trigger the course module viewed event and update the module completion status.',
         'type'          => 'write',
-        'capabilities'  => 'mod/url:view'
+        'capabilities'  => 'mod/url:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 
 );

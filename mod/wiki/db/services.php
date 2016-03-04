@@ -32,7 +32,8 @@ $functions = array(
         'description'   => 'Returns a list of wiki instances in a provided set of courses, if ' .
                            'no courses are provided then all the wiki instances the user has access to will be returned.',
         'type'          => 'read',
-        'capabilities'  => 'mod/wiki:viewpage'
+        'capabilities'  => 'mod/wiki:viewpage',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 
     'mod_wiki_view_wiki' => array(
@@ -40,7 +41,8 @@ $functions = array(
         'methodname'    => 'view_wiki',
         'description'   => 'Trigger the course module viewed event and update the module completion status.',
         'type'          => 'write',
-        'capabilities'  => 'mod/wiki:viewpage'
+        'capabilities'  => 'mod/wiki:viewpage',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 
     'mod_wiki_view_page' => array(
@@ -48,7 +50,8 @@ $functions = array(
         'methodname'    => 'view_page',
         'description'   => 'Trigger the page viewed event and update the module completion status.',
         'type'          => 'write',
-        'capabilities'  => 'mod/wiki:viewpage'
+        'capabilities'  => 'mod/wiki:viewpage',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 
     'mod_wiki_get_subwikis' => array(
@@ -56,6 +59,7 @@ $functions = array(
         'methodname'    => 'get_subwikis',
         'description'   => 'Returns the list of subwikis the user can see in a specific wiki.',
         'type'          => 'read',
-        'capabilities'  => 'mod/wiki:viewpage'
+        'capabilities'  => 'mod/wiki:viewpage',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     )
 );

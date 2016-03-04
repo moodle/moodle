@@ -34,7 +34,8 @@ $functions = array(
         'description'   => 'Returns a list of quizzes in a provided list of courses,
                             if no list is provided all quizzes that the user can view will be returned.',
         'type'          => 'read',
-        'capabilities'  => 'mod/quiz:view'
+        'capabilities'  => 'mod/quiz:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 
     'mod_quiz_view_quiz' => array(
@@ -42,6 +43,7 @@ $functions = array(
         'methodname'    => 'view_quiz',
         'description'   => 'Trigger the course module viewed event and update the module completion status.',
         'type'          => 'write',
-        'capabilities'  => 'mod/quiz:view'
+        'capabilities'  => 'mod/quiz:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 );
