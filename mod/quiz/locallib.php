@@ -1435,6 +1435,11 @@ function quiz_get_combined_reviewoptions($quiz, $attempts) {
     $someoptions->marks = question_display_options::HIDDEN;
     $alloptions->marks = question_display_options::MARK_AND_MAX;
 
+    // This shouldn't happen, but we need to prevent reveal information.
+    if (empty($attempts)) {
+        return array($someoptions, $someoptions);
+    }
+
     foreach ($attempts as $attempt) {
         $attemptoptions = mod_quiz_display_options::make_from_quiz($quiz,
                 quiz_attempt_state($quiz, $attempt));
