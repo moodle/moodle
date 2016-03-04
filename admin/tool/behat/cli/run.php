@@ -226,22 +226,27 @@ $exitcodes = print_combined_run_output($processes, $stoponfail);
 $time = round(microtime(true) - $time, 1);
 echo "Finished in " . gmdate("G\h i\m s\s", $time) . PHP_EOL . PHP_EOL;
 
+ksort($exitcodes);
 
 // Print exit info from each run.
-$status = false;
+// Status bits contains pass/fail status of parallel runs.
+$status = 0;
+$processcounter = 0;
 foreach ($exitcodes as $exitcode) {
-    $status = (bool)$status || (bool)$exitcode;
+    if ($exitcode) {
+        $status |= (1 << $processcounter);
+    }
+    $processcounter++;
 }
 
 // Run finished. Show exit code and output from individual process.
 $verbose = empty($options['verbose']) ? false : true;
-$verbose = $verbose || $status;
+$verbose = $verbose || !empty($status);
 
 // Show exit code from each process, if any process failed.
 if ($verbose) {
     // Echo exit codes.
     echo "Exit codes for each behat run: " . PHP_EOL;
-    ksort($exitcodes);
     foreach ($exitcodes as $run => $exitcode) {
         echo $run . ": " . $exitcode . PHP_EOL;
     }
@@ -263,7 +268,7 @@ print_each_process_info($processes, $verbose);
 // Remove site symlink if necessary.
 behat_config_manager::drop_parallel_site_links();
 
-exit((int) $status);
+exit($status);
 
 /**
  * Signal handler for terminal exit.
