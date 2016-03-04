@@ -1196,25 +1196,40 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null,
                 }
             }
 
+            // If this grade item has no dependancy with any updated item at all, then remove it from being recalculated.
+
+            // When we get here, all of this grade item's decendents are marked as final so they would be marked as updated too
+            // if they would have been regraded. We don't need to regrade items which dependants (not only the direct ones
+            // but any dependant in the cascade) have not been updated.
+
             // If $updated_item was specified we discard the grade items that do not depend on it or on any grade item that
             // depend on $updated_item.
+
+            // Here we check to see if the direct decendants are marked as updated.
             if (!empty($updated_item) && $gid != $updated_item->id && !in_array($updated_item->id, $depends_on[$gid])) {
-                // We need to ensure that non of this item dependencies has been updated.
+
+                // We need to ensure that none of this item's dependencies have been updated.
+                // If we find that one of the direct decendants of this grade item is marked as updated then this
+                // grade item needs to be recalculated and marked as updated.
+                // Being marked as updated is done further down in the code.
 
                 $updateddependencies = false;
                 foreach ($depends_on[$gid] as $dependency) {
                     if (in_array($dependency, $updatedids)) {
                         $updateddependencies = true;
+                        break;
                     }
                 }
                 if ($updateddependencies === false) {
-                    // No need to regrade it.
+                    // If no direct descendants are marked as updated, then we don't need to update this grade item. We then mark it
+                    // as final.
+
                     $finalids[] = $gid;
                     continue;
                 }
             }
 
-            //oki - let's update, calculate or aggregate :-)
+            // Let's update, calculate or aggregate.
             $result = $grade_items[$gid]->regrade_final_grades($userid);
 
             if ($result === true) {
