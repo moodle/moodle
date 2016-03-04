@@ -188,8 +188,10 @@ function lti_delete_instance($id) {
     lti_grade_item_delete($basiclti);
 
     $ltitype = $DB->get_record('lti_types', array('id' => $basiclti->typeid));
-    $DB->delete_records('lti_tool_settings',
-        array('toolproxyid' => $ltitype->toolproxyid, 'course' => $basiclti->course, 'coursemoduleid' => $id));
+    if ($ltitype) {
+        $DB->delete_records('lti_tool_settings',
+            array('toolproxyid' => $ltitype->toolproxyid, 'course' => $basiclti->course, 'coursemoduleid' => $id));
+    }
 
     return $DB->delete_records("lti", array("id" => $basiclti->id));
 }
