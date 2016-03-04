@@ -447,16 +447,10 @@ class potential_department_user_selector extends user_selector_base {
         $countfields = 'SELECT COUNT(1)';
 
         $departmentusers = $this->get_department_user_ids();
-        if (count($departmentusers) > 0) {
-            $departmentuserids = $USER->id.','.implode(',', $departmentusers);
-            if ($departmentuserids != ',') {
-                $userfilter = " AND NOT u.id in ($departmentuserids) ";
-            } else {
-                $userfilter = "";
-            }
-        } else {
-            $userfilter = "";
-        }
+        // Add the ID of the current User to exclude them from the results
+        $departmentusers[] = $USER->id;
+        $userfilter = " AND NOT u.id in (" . implode(",",$departmentusers) . ") ";
+
         if ($this->roletype != 0) {
             // Dealing with management possibles could be from anywhere.
             $deptids = implode(',', array_keys($this->subdepartments));
