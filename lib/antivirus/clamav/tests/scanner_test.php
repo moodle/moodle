@@ -56,8 +56,11 @@ class antivirus_clamav_scanner_testcase extends advanced_testcase {
 
     public function test_scan_file_no_virus() {
         $antivirus = $this->getMockBuilder('\antivirus_clamav\scanner')
-                ->setMethods(array('scan_file_execute_commandline', 'message_admins'))
+                ->setMethods(array('scan_file_execute_commandline', 'message_admins', 'get_config'))
                 ->getMock();
+        // Initiate mock scanning with configuration setting to use commandline.
+        $configmap = array(array('runningmethod', 'commandline'));
+        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
 
         // Configure scan_file_execute_commandline method stub to behave
         // as if no virus has been found.
@@ -79,8 +82,11 @@ class antivirus_clamav_scanner_testcase extends advanced_testcase {
 
     public function test_scan_file_virus() {
         $antivirus = $this->getMockBuilder('\antivirus_clamav\scanner')
-                ->setMethods(array('scan_file_execute_commandline', 'message_admins'))
+                ->setMethods(array('scan_file_execute_commandline', 'message_admins', 'get_config'))
                 ->getMock();
+        // Initiate mock scanning with configuration setting to use commandline.
+        $configmap = array(array('runningmethod', 'commandline'));
+        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
 
         // Configure scan_file_execute_commandline method stub to behave
         // as if virus has been found.
@@ -121,8 +127,9 @@ class antivirus_clamav_scanner_testcase extends advanced_testcase {
         // Set expectation that message_admins is called.
         $antivirus->expects($this->atLeastOnce())->method('message_admins')->with($this->equalTo('someerror'));
 
-        // Initiate mock scanning with configuration setting to do nothing on scanning error.
-        $configmap = array(array('clamfailureonupload', 'donothing'));
+        // Initiate mock scanning with configuration setting to do nothing on
+        // scanning error and using commandline.
+        $configmap = array(array('clamfailureonupload', 'donothing'), array('runningmethod', 'commandline'));
         $antivirus->method('get_config')->will($this->returnValueMap($configmap));
 
         // Run mock scanning with deleting infected file.
@@ -148,8 +155,9 @@ class antivirus_clamav_scanner_testcase extends advanced_testcase {
         // Set expectation that message_admins is called.
         $antivirus->expects($this->atLeastOnce())->method('message_admins')->with($this->equalTo('someerror'));
 
-        // Initiate mock scanning with configuration setting to act like virus on scanning error.
-        $configmap = array(array('clamfailureonupload', 'actlikevirus'));
+        // Initiate mock scanning with configuration setting to act like virus on
+        // scanning error and using commandline.
+        $configmap = array(array('clamfailureonupload', 'actlikevirus'), array('runningmethod', 'commandline'));
         $antivirus->method('get_config')->will($this->returnValueMap($configmap));
 
         // Run mock scanning without deleting infected file.
