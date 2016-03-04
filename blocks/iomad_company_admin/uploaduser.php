@@ -46,7 +46,6 @@ $montharray = array('jan' => '01',
 $context = context_system::instance();
 require_login();
 
-
 define('UU_ADDNEW', 0);
 define('UU_ADDINC', 1);
 define('UU_ADD_UPDATE', 2);
@@ -116,7 +115,7 @@ $stremailduplicate          = get_string('useremailduplicate', 'error');
 $strinvalidpasswordpolicy   = get_string('invalidpasswordpolicy', 'error');
 $errorstr                   = get_string('error');
 
-$returnurl = $blockpage->get_relative_url();
+$returnurl = $CFG->wwwroot."/blocks/iomad_company_admin/uploaduser.php";
 $bulknurl  = $CFG->wwwroot.'/'.$CFG->admin.'/user/user_bulk.php';
 
 $today = time();
@@ -188,11 +187,16 @@ $mform->set_data(array('iid' => $iid,
                        'companyid' => $companyid));
 
 // If a file has been uploaded, then process it.
-if ($formdata = $mform->is_cancelled()) {
+if ($mform->is_cancelled()) {
     $cir->cleanup(true);
     redirect($returnurl);
 
 } else if ($formdata = $mform->get_data()) {
+    // Another cancelled check.
+    if ($formdata->cancel == 'Cancel') {
+        $cir->cleanup(true);
+        redirect($returnurl);
+    }
     // Print the header.
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('uploadusersresult', 'tool_uploaduser'));
