@@ -41,7 +41,6 @@ class approve_form extends moodleform {
 
         $selectarr = array();
         if ($results = approve_enroll_get_my_users()) {
-
             $mform->addElement('html', '<h2>'.get_string('approveuserstitle', 'block_iomad_approve_access').'</h2>');
 
             if (!$department) {

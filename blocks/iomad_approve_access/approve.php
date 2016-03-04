@@ -50,9 +50,9 @@ if (is_siteadmin($USER->id)) {
 } else {
     // What type of manager am I?
     if ($companyuser = $DB->get_record('company_users', array('userid' => $USER->id))) {
-        if ($companyuser->managertype == 2)) {
+        if ($companyuser->managertype == 2) {
             $approvaltype = 'manager';
-        } else if ($companyuser->managertype == 1)) {
+        } else if ($companyuser->managertype == 1) {
             $approvaltype = 'company';
         } else {
             $approvaltype = 'none';

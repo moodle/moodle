@@ -36,9 +36,9 @@ class block_iomad_approve_access extends block_base {
     }
 
     public function get_content() {
-        global $DB;
+        global $CFG, $DB;
 
-        require_once('lib.php');
+        require_once($CFG->dirroot . '/blocks/iomad_approve_access/lib.php');
         if ($this->content !== null) {
             return $this->content;
         }
