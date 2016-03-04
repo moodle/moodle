@@ -36,14 +36,10 @@ $dodownload = optional_param('dodownload', 0, PARAM_INTEGER);
 $userid = optional_param('userid', 0, PARAM_INTEGER);
 $usergrade = optional_param('usergrade', 0, PARAM_INTEGER);
 $current = optional_param('current', 0, PARAM_INTEGER);
-$chosen = optional_param('chosen', 0, PARAM_INTEGER);
+$chosen = optional_param('chosenevent', 0, PARAM_INTEGER);
 $action = optional_param('action', null, PARAM_ALPHA);
 $booking = optional_param('booking', null, PARAM_ALPHA);
 
-/*echo "$_POST = <pre>";
-print_r($_POST);
-die;
-*/
 if (! $cm = get_coursemodule_from_id('trainingevent', $id)) {
     print_error('invalidcoursemodule');
 }
@@ -68,6 +64,14 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         $company = new company($location->companyid);
         $parentlevel = company::get_company_parentnode($company->id);
         $companydepartment = $parentlevel->id;
+
+        if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+            $userhierarchylevel = $parentlevel->id;
+        } else {
+            $userlevel = company::get_userlevel($USER);
+            $userhierarchylevel = $userlevel->id;
+        }
+        $departmentid = $userhierarchylevel;
 
         // Get the CMID.
         $cmidinfo = $DB->get_record_sql("SELECT * FROM {course_modules}
@@ -227,7 +231,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                 }
             }
         }
-        if (!empty($chosen)) {
+        if (!empty($chosen) && $chosen != $event->id) {
             // We are moving a user to another event  check there is space.
             if (!$chosenevent = $DB->get_record('trainingevent', array('id' => $chosen))) {
                 print_error('chosen event is invalid');
@@ -509,18 +513,10 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
 
         // Are we sending out emails?
         if (!empty($publish)) {
-            if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
-                $userhierarchylevel = $parentlevel->id;
-            } else {
-                $userlevel = company::get_userlevel($USER);
-                $userhierarchylevel = $userlevel->id;
-            }
-            $departmentid = $userhierarchylevel;
-
             echo $OUTPUT->header();
 
             // Check the userid is valid.
-            if (!company::check_valid_user($companyid, $userid, $departmentid)) {
+            if (!company::check_valid_user($company->id, $USER->id, $departmentid)) {
                 print_error('invaliduserdepartment', 'block_iomad_company_management');
             }
 
@@ -583,7 +579,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
             echo $OUTPUT->header();
 
             // Check the userid is valid.
-            if (!company::check_valid_user($companyid, $userid, $departmentid)) {
+            if (!company::check_valid_user($company->id, $USER->id, $departmentid)) {
                 print_error('invaliduserdepartment', 'block_iomad_company_management');
             }
 
@@ -709,9 +705,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         if (has_capability('mod/trainingevent:add', $context)) {
                             $select = new single_select(new moodle_url('/mod/trainingevent/view.php',
                                                                        array('userid' => $user->id,
-                                                                             'id' => $event->id,
+                                                                             'id' => $id,
                                                                              'view' => 1)),
-                                                                       'chosen',
+                                                                       'chosenevent',
                                                                        $eventselect,
                                                                        $event->id);
                             $select->formid = 'chooseevent'.$user->id;
@@ -720,7 +716,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                 array('id' => 'iomad_event_selector'));
                             $removebutton = $OUTPUT->single_button(new moodle_url('view.php',
                                                                                   array('userid' => $user->id,
-                                                                                        'id' => $event->id,
+                                                                                        'id' => $id,
                                                                                         'action' => 'delete',
                                                                                         'view' => 1 )),
                                                                                   get_string("remove",

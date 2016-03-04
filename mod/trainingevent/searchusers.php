@@ -72,6 +72,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $eventid))) {
     print_error('invalid event ID');
 }
 
+if (!$cm = get_coursemodule_from_instance('trainingevent', $event->id, $event->course)) {
+    print_error('invalid coursemodule ID');
+}
 // Page stuff.
 $url = new moodle_url('/course/view.php', array('id' => $event->course));
 $context = context_course::instance($event->course);
@@ -83,11 +86,6 @@ $PAGE->set_heading($SITE->fullname);
 $baseurl  = new moodle_url('searchusers.php', array('eventid' => $eventid));
 echo $OUTPUT->header();
 
-// Check the department is valid.
-if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
-    print_error('invaliddepartment', 'block_iomad_company_admin');
-}   
-
 // Get the location information.
 $location = $DB->get_record('classroom', array('id' => $event->classroomid));
 
@@ -98,6 +96,11 @@ $attending = $DB->count_records('trainingevent_users', array('trainingeventid' =
 $company = new company($location->companyid);
 $parentlevel = company::get_company_parentnode($company->id);
 $companydepartment = $parentlevel->id;
+
+// Check the department is valid.
+if (!empty($departmentid) && !company::check_valid_department($company->id, $departmentid)) {
+    print_error('invaliddepartment', 'block_iomad_company_admin');
+}   
 
 if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
     $userhierarchylevel = $parentlevel->id;
@@ -206,11 +209,22 @@ if ($assignedusers = $DB->get_records('trainingevent_users', array('trainingeven
 }
 
 // Strip out no course users.
-$sqlsearch .= " AND id IN ( SELECT userid from {course_completions} WHERE course = " . $event->course . ") ";
+$sqlsearch .= " AND id IN (SELECT u.id FROM {user} u
+                           JOIN (SELECT DISTINCT eu2_u.id FROM {user} eu2_u
+                                 JOIN {user_enrolments} eu2_ue ON eu2_ue.userid = eu2_u.id
+                                 JOIN {enrol} eu2_e ON (eu2_e.id = eu2_ue.enrolid AND eu2_e.courseid = " . $event->course . ")
+                                 WHERE eu2_u.deleted = 0
+                                 AND eu2_ue.status = 0
+                                 AND eu2_e.status = 0
+                                 AND eu2_ue.timestart < " . time() . "
+                                 AND (eu2_ue.timeend = 0 OR eu2_ue.timeend > " . time() . ")) e
+                           ON e.id = u.id
+                           LEFT JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = " . $event->course . ")
+                           LEFT JOIN {context} ctx ON (ctx.instanceid = u.id AND ctx.contextlevel = " . $context->id ."))";
 
 // Get the user records.
-$userrecords = $DB->get_fieldset_select('user', 'id', $sqlsearch);
 $userlist = "";
+$userrecords = $DB->get_fieldset_select('user', 'id', $sqlsearch);
 foreach ($userrecords as $userrecord) {
     if ( !empty($userlist)) {
         $userlist .= " OR id=$userrecord ";
@@ -283,6 +297,7 @@ if (!$users) {
     $table->head = array (get_string('fullname'), get_string('email'), get_string('city'), get_string('country'), "");
     $table->align = array ("left", "left", "left", "left", "center");
     $table->width = "95%";
+
     foreach ($users as $user) {
         if ($user->username == 'guest') {
             continue; // Do not dispaly dummy new user and guest here.
@@ -290,7 +305,7 @@ if (!$users) {
 
         if (has_capability('mod/trainingevent:add', $context) && $attending < $location->capacity) {
             $enrolmentbutton = $OUTPUT->single_button(new moodle_url("/mod/trainingevent/view.php",
-                                                                      array('id' => $event->id,
+                                                                      array('id' => $cm->id,
                                                                             'chosenevent' => $event->id,
                                                                             'userid' => $user->id,
                                                                             'view' => 1,
