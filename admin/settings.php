@@ -20,7 +20,11 @@ $adminroot = admin_get_root(); // need all settings
 $settingspage = $adminroot->locate($section, true);
 
 if (empty($settingspage) or !($settingspage instanceof admin_settingpage)) {
-    print_error('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
+    if (moodle_needs_upgrading()) {
+        redirect(new moodle_url('/admin/index.php'));
+    } else {
+        print_error('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
+    }
     die;
 }
 
