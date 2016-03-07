@@ -25,7 +25,6 @@
 
 module.exports = function(grunt) {
     var path = require('path'),
-        fs = require('fs'),
         tasks = {},
         cwd = process.env.PWD || process.cwd();
 
@@ -43,27 +42,39 @@ module.exports = function(grunt) {
 
     var inAMD = path.basename(cwd) == 'amd';
 
+    // Globbing pattern for matching all AMD JS source files.
+    var amdSrc = [inAMD ? cwd + '/src/*.js' : '**/amd/src/*.js'];
+
+    /**
+     * Function to generate the destination for the uglify task
+     * (e.g. build/file.min.js). This function will be passed to
+     * the rename property of files array when building dynamically:
+     * http://gruntjs.com/configuring-tasks#building-the-files-object-dynamically
+     *
+     * @param {String} destPath the current destination
+     * @param {String} srcPath the  matched src path
+     * @return {String} The rewritten destination path.
+     */
+    var uglify_rename = function (destPath, srcPath) {
+        destPath = srcPath.replace('src', 'build');
+        destPath = destPath.replace('.js', '.min.js');
+        destPath = path.resolve(cwd, destPath);
+        return destPath;
+    };
+
     // Project configuration.
     grunt.initConfig({
         jshint: {
             options: {jshintrc: '.jshintrc'},
-            files: [inAMD ? cwd + '/src/*.js' : '**/amd/src/*.js']
+            amd: { src: amdSrc }
         },
         uglify: {
-            dynamic_mappings: {
-                files: grunt.file.expandMapping(
-                    ['**/src/*.js', '!**/node_modules/**'],
-                    '',
-                    {
-                        cwd: cwd,
-                        rename: function(destBase, destPath) {
-                            destPath = destPath.replace('src', 'build');
-                            destPath = destPath.replace('.js', '.min.js');
-                            destPath = path.resolve(cwd, destPath);
-                            return destPath;
-                        }
-                    }
-                )
+            amd: {
+                files: [{
+                    expand: true,
+                    src: amdSrc,
+                    rename: uglify_rename
+                }]
             }
         },
         less: {
@@ -76,53 +87,78 @@ module.exports = function(grunt) {
                     compress: true
                 }
            }
+        },
+        watch: {
+            options: {
+                nospawn: true // We need not to spawn so config can be changed dynamically.
+            },
+            amd: {
+                files: ['**/amd/src/**/*.js'],
+                tasks: ['amd']
+            },
+            bootstrapbase: {
+                files: ["theme/bootstrapbase/less/**/*.less"],
+                tasks: ["less:bootstrapbase"]
+            },
+            yui: {
+                files: ['**/yui/src/**/*.js'],
+                tasks: ['shifter']
+            },
+        },
+        shifter: {
+            options: {
+                recursive: true,
+                paths: [cwd]
+            }
         }
     });
 
+    /**
+     * Shifter task. Is configured with a path to a specific file or a directory,
+     * in the case of a specific file it will work out the right module to be built.
+     *
+     * Note that this task runs the invidiaul shifter jobs async (becase it spawns
+     * so be careful to to call done().
+     */
     tasks.shifter = function() {
-       var  exec = require('child_process').spawn,
+        var async = require('async'),
             done = this.async(),
-            args = [],
-            options = {
-                recursive: true,
-                watch: false,
-                walk: false,
-                module: false
-            },
-            shifter;
+            options = grunt.config('shifter.options');
 
+        // Run the shifter processes one at a time to avoid confusing output.
+        async.eachSeries(options.paths, function (src, filedone) {
+            var args = [];
             args.push( path.normalize(__dirname + '/node_modules/shifter/bin/shifter'));
-
-            // Determine the most appropriate options to run with based upon the current location.
-            if (path.basename(cwd) === 'src') {
-                // Detect whether we're in a src directory.
-                grunt.log.debug('In a src directory');
-                args.push('--walk');
-                options.walk = true;
-            } else if (path.basename(path.dirname(cwd)) === 'src') {
-                // Detect whether we're in a module directory.
-                grunt.log.debug('In a module directory');
-                options.module = true;
-            }
-
-            if (grunt.option('watch')) {
-                if (!options.walk && !options.module) {
-                    grunt.fail.fatal('Unable to watch unless in a src or module directory');
-                }
-
-                // It is not advisable to run with recursivity and watch - this
-                // leads to building the build directory in a race-like fashion.
-                grunt.log.debug('Detected a watch - disabling recursivity');
-                options.recursive = false;
-                args.push('--watch');
-            }
-
-            if (options.recursive) {
-                args.push('--recursive');
-            }
 
             // Always ignore the node_modules directory.
             args.push('--excludes', 'node_modules');
+
+            // Determine the most appropriate options to run with based upon the current location.
+            if (grunt.file.isMatch('**/yui/**/*.js', src)) {
+                // When passed a JS file, build our containing module (this happen with
+                // watch).
+                grunt.log.debug('Shifter passed a specific JS file');
+                src = path.dirname(path.dirname(src));
+                options.recursive = false;
+            } else if (grunt.file.isMatch('**/yui/src', src)) {
+                // When in a src directory --walk all modules.
+                grunt.log.debug('In a src directory');
+                args.push('--walk');
+                options.recursive = false;
+            } else if (grunt.file.isMatch('**/yui/src/*', src)) {
+                // When in module, only build our module.
+                grunt.log.debug('In a module directory');
+                options.recursive = false;
+            } else if (grunt.file.isMatch('**/yui/src/*/js', src)) {
+                // When in module src, only build our module.
+                grunt.log.debug('In a source directory');
+                src = path.dirname(src);
+                options.recursive = false;
+            }
+
+            if (grunt.option('watch')) {
+                grunt.fail.fatal('The --watch option has been removed, please use `grunt watch` instead');
+            }
 
             // Add the stderr option if appropriate
             if (grunt.option('verbose')) {
@@ -135,19 +171,17 @@ module.exports = function(grunt) {
 
             var execShifter = function() {
 
-                shifter = exec("node", args, {
-                    cwd: cwd,
-                    stdio: 'inherit',
-                    env: process.env
-                });
-
-                // Tidy up after exec.
-                shifter.on('exit', function (code) {
+                grunt.log.ok("Running shifter on " + src);
+                grunt.util.spawn({
+                    cmd: "node",
+                    args: args,
+                    opts: {cwd: src, stdio: 'inherit', env: process.env}
+                }, function (error, result, code) {
                     if (code) {
                         grunt.fail.fatal('Shifter failed with code: ' + code);
                     } else {
                         grunt.log.ok('Shifter build complete.');
-                        done();
+                        filedone();
                     }
                 });
             };
@@ -157,79 +191,15 @@ module.exports = function(grunt) {
                 execShifter();
             } else {
                 // Check that there are yui modules otherwise shifter ends with exit code 1.
-                var found = false;
-                var hasYuiModules = function(directory, callback) {
-                    fs.readdir(directory, function(err, files) {
-                        if (err) {
-                            return callback(err, null);
-                        }
-
-                        // If we already found a match there is no need to continue scanning.
-                        if (found === true) {
-                            return;
-                        }
-
-                        // We need to track the number of files to know when we return a result.
-                        var pending = files.length;
-
-                        // We first check files, so if there is a match we don't need further
-                        // async calls and we just return a true.
-                        for (var i = 0; i < files.length; i++) {
-                            if (files[i] === 'yui') {
-                                return callback(null, true);
-                            }
-                        }
-
-                        // Iterate through subdirs if there were no matches.
-                        files.forEach(function (file) {
-
-                            var p = path.join(directory, file);
-                            stat = fs.statSync(p);
-                            if (!stat.isDirectory()) {
-                                pending--;
-                            } else {
-
-                                // We defer the pending-1 until we scan the whole dir and subdirs.
-                                hasYuiModules(p, function(err, result) {
-                                    if (err) {
-                                        return callback(err);
-                                    }
-
-                                    if (result === true) {
-                                        // Once we get a true we notify the caller.
-                                        found = true;
-                                        return callback(null, true);
-                                    }
-
-                                    pending--;
-                                    if (pending === 0) {
-                                        // Notify the caller that the whole dir has been scaned and there are no matches.
-                                        return callback(null, false);
-                                    }
-                                });
-                            }
-
-                            // No subdirs here, otherwise the return would be deferred until all subdirs are scanned.
-                            if (pending === 0) {
-                                return callback(null, false);
-                            }
-                        });
-                    });
-                };
-
-                hasYuiModules(cwd, function(err, result) {
-                    if (err) {
-                        grunt.fail.fatal(err.message);
-                    }
-
-                    if (result === true) {
-                        execShifter();
-                    } else {
-                        grunt.log.ok('No YUI modules to build.');
-                        done();
-                    }
-                });
+                if (grunt.file.expand({cwd: src}, '**/yui/src/**/*.js').length > 0) {
+                    args.push('--recursive');
+                    execShifter();
+                } else {
+                    grunt.log.ok('No YUI modules to build.');
+                    filedone();
+                }
             }
+        }, done);
     };
 
     tasks.startup = function() {
@@ -246,11 +216,28 @@ module.exports = function(grunt) {
         }
     };
 
+    // On watch, we dynamically modify config to build only affected files. This
+    // method is slightly complicated to deal with multiple changed files at once (copied
+    // from the grunt-contrib-watch readme).
+    var changedFiles = Object.create(null);
+    var onChange = grunt.util._.debounce(function() {
+          var files = Object.keys(changedFiles);
+          grunt.config('jshint.amd.src', files);
+          grunt.config('uglify.amd.files', [{ expand: true, src: files, rename: uglify_rename }]);
+          grunt.config('shifter.options.paths', files);
+          changedFiles = Object.create(null);
+    }, 200);
+
+    grunt.event.on('watch', function(action, filepath) {
+          changedFiles[filepath] = action;
+          onChange();
+    });
 
     // Register NPM tasks.
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
     // Register JS tasks.
     grunt.registerTask('shifter', 'Run Shifter against the current directory', tasks.shifter);
