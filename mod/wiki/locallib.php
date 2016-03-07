@@ -1734,3 +1734,118 @@ function wiki_get_subwiki_by_group_and_user_with_validation($wiki, $groupid, $us
 
     return $subwiki;
 }
+
+/**
+ * Returns wiki pages tagged with a specified tag.
+ *
+ * This is a callback used by the tag area mod_wiki/wiki_pages to search for wiki pages
+ * tagged with a specific tag.
+ *
+ * @param core_tag_tag $tag
+ * @param bool $exclusivemode if set to true it means that no other entities tagged with this tag
+ *             are displayed on the page and the per-page limit may be bigger
+ * @param int $fromctx context id where the link was displayed, may be used by callbacks
+ *            to display items in the same context first
+ * @param int $ctx context id where to search for records
+ * @param bool $rec search in subcontexts as well
+ * @param int $page 0-based number of page being displayed
+ * @return \core_tag\output\tagindex
+ */
+function mod_wiki_get_tagged_pages($tag, $exclusivemode = false, $fromctx = 0, $ctx = 0, $rec = 1, $page = 0) {
+    global $OUTPUT;
+    $perpage = $exclusivemode ? 20 : 5;
+
+    // Build the SQL query.
+    $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
+    $query = "SELECT wp.id, wp.title, ws.userid, ws.wikiid, ws.id AS subwikiid, ws.groupid, w.wikimode,
+                    cm.id AS cmid, c.id AS courseid, c.shortname, c.fullname, $ctxselect
+                FROM {wiki_pages} wp
+                JOIN {wiki_subwikis} ws ON wp.subwikiid = ws.id
+                JOIN {wiki} w ON w.id = ws.wikiid
+                JOIN {modules} m ON m.name='wiki'
+                JOIN {course_modules} cm ON cm.module = m.id AND cm.instance = w.id
+                JOIN {tag_instance} tt ON wp.id = tt.itemid
+                JOIN {course} c ON cm.course = c.id
+                JOIN {context} ctx ON ctx.instanceid = cm.id AND ctx.contextlevel = :coursemodulecontextlevel
+               WHERE tt.itemtype = :itemtype AND tt.tagid = :tagid AND tt.component = :component
+                 AND wp.id %ITEMFILTER% AND c.id %COURSEFILTER%";
+
+    $params = array('itemtype' => 'wiki_pages', 'tagid' => $tag->id, 'component' => 'mod_wiki',
+        'coursemodulecontextlevel' => CONTEXT_MODULE);
+
+    if ($ctx) {
+        $context = $ctx ? context::instance_by_id($ctx) : context_system::instance();
+        $query .= $rec ? ' AND (ctx.id = :contextid OR ctx.path LIKE :path)' : ' AND ctx.id = :contextid';
+        $params['contextid'] = $context->id;
+        $params['path'] = $context->path.'/%';
+    }
+
+    $query .= " ORDER BY ";
+    if ($fromctx) {
+        // In order-clause specify that modules from inside "fromctx" context should be returned first.
+        $fromcontext = context::instance_by_id($fromctx);
+        $query .= ' (CASE WHEN ctx.id = :fromcontextid OR ctx.path LIKE :frompath THEN 0 ELSE 1 END),';
+        $params['fromcontextid'] = $fromcontext->id;
+        $params['frompath'] = $fromcontext->path.'/%';
+    }
+    $query .= ' c.sortorder, cm.id, wp.id';
+
+    $totalpages = $page + 1;
+
+    // Use core_tag_index_builder to build and filter the list of items.
+    $builder = new core_tag_index_builder('mod_wiki', 'wiki_pages', $query, $params, $page * $perpage, $perpage + 1);
+    while ($item = $builder->has_item_that_needs_access_check()) {
+        context_helper::preload_from_record($item);
+        $courseid = $item->courseid;
+        if (!$builder->can_access_course($courseid)) {
+            $builder->set_accessible($item, false);
+            continue;
+        }
+        $modinfo = get_fast_modinfo($builder->get_course($courseid));
+        // Set accessibility of this item and all other items in the same course.
+        $builder->walk(function ($taggeditem) use ($courseid, $modinfo, $builder) {
+            if ($taggeditem->courseid == $courseid) {
+                $accessible = false;
+                if (($cm = $modinfo->get_cm($taggeditem->cmid)) && $cm->uservisible) {
+                    $subwiki = (object)array('id' => $taggeditem->subwikiid, 'groupid' => $taggeditem->groupid,
+                        'userid' => $taggeditem->groupid, 'wikiid' => $taggeditem->wikiid);
+                    $wiki = (object)array('id' => $taggeditem->wikiid, 'wikimode' => $taggeditem->wikimode,
+                        'course' => $cm->course);
+                    $accessible = wiki_user_can_view($subwiki, $wiki);
+                }
+                $builder->set_accessible($taggeditem, $accessible);
+            }
+        });
+    }
+
+    $items = $builder->get_items();
+    if (count($items) > $perpage) {
+        $totalpages = $page + 2; // We don't need exact page count, just indicate that the next page exists.
+        array_pop($items);
+    }
+
+    // Build the display contents.
+    if ($items) {
+        $tagfeed = new core_tag\output\tagfeed();
+        foreach ($items as $item) {
+            context_helper::preload_from_record($item);
+            $modinfo = get_fast_modinfo($item->courseid);
+            $cm = $modinfo->get_cm($item->cmid);
+            $pageurl = new moodle_url('/mod/wiki/view.php', array('pageid' => $item->id));
+            $pagename = format_string($item->title, true, array('context' => context_module::instance($item->cmid)));
+            $pagename = html_writer::link($pageurl, $pagename);
+            $courseurl = course_get_url($item->courseid, $cm->sectionnum);
+            $cmname = html_writer::link($cm->url, $cm->get_formatted_name());
+            $coursename = format_string($item->fullname, true, array('context' => context_course::instance($item->courseid)));
+            $coursename = html_writer::link($courseurl, $coursename);
+            $icon = html_writer::link($pageurl, html_writer::empty_tag('img', array('src' => $cm->get_icon_url())));
+            $tagfeed->add($icon, $pagename, $cmname.'<br>'.$coursename);
+        }
+
+        $content = $OUTPUT->render_from_template('core_tag/tagfeed',
+                $tagfeed->export_for_template($OUTPUT));
+
+        return new core_tag\output\tagindex($tag, 'mod_wiki', 'wiki_pages', $content,
+                $exclusivemode, $fromctx, $ctx, $rec, $page, $totalpages);
+    }
+}
