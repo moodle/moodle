@@ -99,10 +99,6 @@ class manager {
     /**
      * Returns an initialised \core_search instance.
      *
-     * It requires global search to be enabled. Use \core_search\manager::is_global_search_enabled
-     * to verify it is enabled.
-     *
-     * @throws \moodle_exception
      * @throws \core_search\engine_exception
      * @return \core_search\manager
      */
@@ -112,10 +108,6 @@ class manager {
         // One per request, this should be purged during testing.
         if (static::$instance !== null) {
             return static::$instance;
-        }
-
-        if (!static::is_global_search_enabled()) {
-            throw new \moodle_exception('globalsearchdisabled', 'search');
         }
 
         if (!$engine = static::search_engine_instance()) {

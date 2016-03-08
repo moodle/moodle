@@ -34,14 +34,6 @@ require_once($CFG->libdir.'/adminlib.php');
 require_login(null, false);
 require_capability('moodle/site:config', context_system::instance());
 
-if (!\core_search\manager::is_global_search_enabled()) {
-    throw new moodle_exception('globalsearchdisabled', 'search');
-}
-
-if ($CFG->searchengine !== 'solr') {
-    throw new moodle_exception('solrnotselected', 'search_solr');
-}
-
 $schema = new \search_solr\schema();
 $schema->setup();
 

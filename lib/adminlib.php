@@ -9538,22 +9538,10 @@ class admin_setting_searchsetupinfo extends admin_setting {
 
         $return .= $brtag . get_string('searchsetupdescription', 'search') . $brtag . $brtag;
 
-        // Enable global search.
-        $row = array();
-        $url = new moodle_url("/admin/search.php?query=enableglobalsearch");
-        $row[0] = '1. ' . html_writer::tag('a', get_string('enableglobalsearch', 'admin'),
-                        array('href' => $url));
-        $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
-        if (\core_search\manager::is_global_search_enabled()) {
-            $status = html_writer::tag('span', get_string('yes'), array('class' => 'statusok'));
-        }
-        $row[1] = $status;
-        $table->data[] = $row;
-
         // Select a search engine.
         $row = array();
         $url = new moodle_url('/admin/settings.php?section=manageglobalsearch#admin-searchengine');
-        $row[0] = '2. ' . html_writer::tag('a', get_string('selectsearchengine', 'admin'),
+        $row[0] = '1. ' . html_writer::tag('a', get_string('selectsearchengine', 'admin'),
                         array('href' => $url));
 
         $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
@@ -9568,7 +9556,7 @@ class admin_setting_searchsetupinfo extends admin_setting {
         // Available areas.
         $row = array();
         $url = new moodle_url('/admin/settings.php?section=manageglobalsearch#admin-searchengine');
-        $row[0] = '3. ' . html_writer::tag('a', get_string('enablesearchareas', 'admin'),
+        $row[0] = '2. ' . html_writer::tag('a', get_string('enablesearchareas', 'admin'),
                         array('href' => $url));
 
         $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
@@ -9582,11 +9570,11 @@ class admin_setting_searchsetupinfo extends admin_setting {
         // Setup search engine.
         $row = array();
         if (empty($CFG->searchengine)) {
-            $row[0] = '4. ' . get_string('setupsearchengine', 'admin');
+            $row[0] = '3. ' . get_string('setupsearchengine', 'admin');
             $row[1] = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
         } else {
             $url = new moodle_url('/admin/settings.php?section=search' . $CFG->searchengine);
-            $row[0] = '4. ' . html_writer::tag('a', get_string('setupsearchengine', 'admin'),
+            $row[0] = '3. ' . html_writer::tag('a', get_string('setupsearchengine', 'admin'),
                             array('href' => $url));
             // Check the engine status.
             $searchengine = \core_search\manager::search_engine_instance();
@@ -9603,11 +9591,23 @@ class admin_setting_searchsetupinfo extends admin_setting {
         // Indexed data.
         $row = array();
         $url = new moodle_url('/report/search/index.php#searchindexform');
-        $row[0] = '5. ' . html_writer::tag('a', get_string('indexdata', 'admin'), array('href' => $url));
+        $row[0] = '4. ' . html_writer::tag('a', get_string('indexdata', 'admin'), array('href' => $url));
         if ($anyindexed) {
             $status = html_writer::tag('span', get_string('yes'), array('class' => 'statusok'));
         } else {
             $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+        }
+        $row[1] = $status;
+        $table->data[] = $row;
+
+        // Enable global search.
+        $row = array();
+        $url = new moodle_url("/admin/search.php?query=enableglobalsearch");
+        $row[0] = '5. ' . html_writer::tag('a', get_string('enableglobalsearch', 'admin'),
+                        array('href' => $url));
+        $status = html_writer::tag('span', get_string('no'), array('class' => 'statuscritical'));
+        if (\core_search\manager::is_global_search_enabled()) {
+            $status = html_writer::tag('span', get_string('yes'), array('class' => 'statusok'));
         }
         $row[1] = $status;
         $table->data[] = $row;

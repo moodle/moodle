@@ -37,8 +37,6 @@ echo $OUTPUT->heading($pagetitle);
 if (\core_search\manager::is_global_search_enabled() === false) {
     $renderer = $PAGE->get_renderer('core_search');
     echo $renderer->render_search_disabled();
-    echo $OUTPUT->footer();
-    exit;
 }
 
 $renderer = $PAGE->get_renderer('report_search');
