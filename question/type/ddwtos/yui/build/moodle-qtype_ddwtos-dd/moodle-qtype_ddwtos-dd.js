@@ -46,7 +46,7 @@ Y.extend(DDWTOS_DD, Y.Base, {
         if (!this.get('readonly')) {
             Y.later(500, this, this.position_drag_items, [pendingid, true]);
         } else {
-            Y.later(500, this, this.position_drag_items, [pendingid]);
+            Y.later(500, this, this.position_drag_items, [pendingid, 3]);
             Y.one('window').on('resize', function() {
                 this.position_drag_items(pendingid);
             }, this);
@@ -305,11 +305,22 @@ Y.extend(DDWTOS_DD, Y.Base, {
     remove_drag_from_drop : function (drop) {
         this.place_drag_in_drop(null, drop);
     },
+
+    /**
+     * Postition, or reposition, all the drag items.
+     * @param pendingid (optional) if given, then mark the js task complete after the
+     * items are all positioned.
+     * @param dotimeout (optional) if true, continually re-position the items so
+     * they stay in place. Else, if an integer, reposition this many times before stopping.
+     */
     position_drag_items : function (pendingid, dotimeout) {
        Y.all(this.selectors.drags()).each(this.position_drag_item, this);
        M.util.js_complete(pendingid);
-       if (dotimeout) {
-           Y.later(500, this, this.position_drag_items, [pendingid, true]);
+       if (dotimeout === true || dotimeout > 0) {
+           if (dotimeout !== true) {
+               dotimeout -= 1;
+           }
+           Y.later(500, this, this.position_drag_items, [pendingid, dotimeout]);
        }
     },
     position_drag_item : function (drag) {
