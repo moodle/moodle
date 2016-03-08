@@ -29,6 +29,9 @@
 .que.ddmarker div.ddarea, form.mform fieldset#id_previewareaheader div.ddarea {
     text-align: center;
 }
+form.mform fieldset#id_previewareaheader div.ddarea .markertexts {
+    min-height: 80px;
+}
 .que.ddmarker .dropbackground, form.mform fieldset#id_previewareaheader .dropbackground {
     margin: 0 auto;
 }
