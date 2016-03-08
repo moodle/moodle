@@ -38,49 +38,15 @@
         * evidence - array of evidence
         * commentarea - comment block
     * plan - plan summary record
-        * statusname - status name
-        * description - plan description
-        * isdraft - is draft
         * iscompleted - is completed
-        * duedateformatted - due date formatted
-        * url - url of the plan
-        * name - plan name
-        * template - template
 
     This template does not have an example context because it includes ajax functionality.
 }}
 {{#usercompetencysummary}}
 <div data-region="user-competency-full-info" data-node="user-competency" data-competencyid="{{usercompetency.competencyid}}" data-userid="{{usercompetency.userid}}" data-region-id="{{uniqid}}">
-<div data-region="plan-summary">
-    <div class="well">
-        <dt>{{#str}}status, tool_lp{{/str}}</dt>
-        <dd>
-            <span class="label pull-left 
-                {{#plan.iscompleted}}label-success{{/plan.iscompleted}}
-                {{^plan.iscompleted}}
-                    {{#plan.isdraft}}label-warning{{/plan.isdraft}}
-                    {{^plan.isdraft}}label-info{{/plan.isdraft}}
-                {{/plan.iscompleted}}">
-            {{plan.statusname}}
-            </span>
-        </dd>
-        {{#plan.duedate}}
-            <dt>{{#str}}duedate, tool_lp{{/str}}</dt>
-            <dd>{{plan.duedateformatted}}</dd>
-        {{/plan.duedate}}
-        {{#plan.template}}
-            <dt>{{#str}}template, tool_lp{{/str}}</dt>
-            <dd>{{plan.template.shortname}}</dd>
-        {{/plan.template}}
-        {{#description}}
-            <dt>{{#str}}description{{/str}}</dt>
-            <dd>{{{plan.description}}}</dd>
-        {{/description}}
-    </div>
-</div>
 {{#plan.iscompleted}}
 <div class="alert alert-info" role="alert">
-    {{#str}} usercompetencyfrozen, tool_lp, { "url": "{{plan.url}}", "name": "{{plan.name}}" } {{/str}}
+    {{#str}} usercompetencyfrozen, tool_lp {{/str}}
 </div>
 {{/plan.iscompleted}}
 <div data-region="competency-summary">
