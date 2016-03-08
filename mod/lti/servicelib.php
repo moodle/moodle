@@ -217,13 +217,10 @@ function lti_read_grade($ltiinstance, $userid) {
     if (!empty($ltigrade) && isset($grades) && isset($grades->items[0]) && is_array($grades->items[0]->grades)) {
         foreach ($grades->items[0]->grades as $agrade) {
             $grade = $agrade->grade;
-            $grade = $grade / $ltigrade;
-            break;
+            if (isset($grade)) {
+                return $grade / $ltigrade;
+            }
         }
-    }
-
-    if (isset($grade)) {
-        return $grade;
     }
 }
 
