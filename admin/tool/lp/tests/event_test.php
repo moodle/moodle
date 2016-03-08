@@ -1249,8 +1249,8 @@ class tool_lp_event_testcase extends advanced_testcase {
         $manager->add("New comment for plan");
         $events = $sink->get_events();
         // Add comment will trigger 2 other events message_viewed and message_sent.
-        $this->assertCount(3, $events);
-        $event = $events[2];
+        $this->assertCount(1, $events);
+        $event = array_pop($events);
 
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\tool_lp\event\comment_created', $event);
