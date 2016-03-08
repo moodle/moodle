@@ -1,5 +1,10 @@
 This files describes API changes in the lti code.
 
+=== 2.9.5 ===
+
+* When requesting a grade from the outcome service, and empty grade will now be returned as
+  an empty grade in accordance with the spec. Previously a grade of 0 would be returned.
+
 === 2.8 ===
 
 * Support for LTI 2 added, including extensible services implemented as ltiservice plugins.
