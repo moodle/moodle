@@ -38,6 +38,7 @@ $string['autonumbering_help'] = 'Enables or disables automated numbers for each 
 $string['average'] = 'Average';
 $string['bold'] = 'Bold';
 $string['cancel_moving'] = 'Cancel moving';
+$string['cannotaccess'] = 'You can only access this feedback from a course';
 $string['cannotmapfeedback'] = 'Database problem, unable to map feedback to course';
 $string['cannotsavetempl'] = 'saving templates is not allowed';
 $string['cannotunmap'] = 'Database problem, unable to unmap';
