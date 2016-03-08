@@ -125,17 +125,17 @@ function lti_view($instance) {
         $secret = $toolproxy->secret;
     } else {
         $toolproxy = null;
-        if (!empty($instance->resourcekey)) {
-            $key = $instance->resourcekey;
-        } else if (!empty($typeconfig['resourcekey'])) {
+        if (!empty($typeconfig['resourcekey'])) {
             $key = $typeconfig['resourcekey'];
+        } else if (!empty($instance->resourcekey)) {
+            $key = $instance->resourcekey;
         } else {
             $key = '';
         }
-        if (!empty($instance->password)) {
-            $secret = $instance->password;
-        } else if (!empty($typeconfig['password'])) {
+        if (!empty($typeconfig['password'])) {
             $secret = $typeconfig['password'];
+        } else if (!empty($instance->password)) {
+            $secret = $instance->password;
         } else {
             $secret = '';
         }
