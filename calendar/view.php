@@ -68,10 +68,10 @@ if (!empty($day) && !empty($mon) && !empty($year)) {
     if (checkdate($mon, $day, $year)) {
         $time = make_timestamp($year, $mon, $day);
     } else {
-        $time = time();
+        $time = mktime(0, 0, 0);
     }
 } else if (empty($time)) {
-    $time = time();
+    $time = mktime(0, 0, 0);
 }
 
 $url->param('time', $time);
