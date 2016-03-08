@@ -25,11 +25,18 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot.'/mod/assign/adminlib.php');
 
+$subtype = required_param('subtype', PARAM_PLUGIN);
+$action = optional_param('action', null, PARAM_PLUGIN);
+$plugin = optional_param('plugin', null, PARAM_PLUGIN);
+
+if (!empty($plugin)) {
+    require_sesskey();
+}
+
 // Create the class for this controller.
-$pluginmanager = new assign_plugin_manager(required_param('subtype', PARAM_PLUGIN));
+$pluginmanager = new assign_plugin_manager($subtype);
 
 $PAGE->set_context(context_system::instance());
 
 // Execute the controller.
-$pluginmanager->execute(optional_param('action', null, PARAM_PLUGIN),
-                        optional_param('plugin', null, PARAM_PLUGIN));
+$pluginmanager->execute($action, $plugin);
