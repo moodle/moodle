@@ -1,5 +1,10 @@
 This files describes API changes in the lti code.
 
+=== 3.0.3 ===
+
+* When requesting a grade from the outcome service, and empty grade will now be returned as
+  an empty grade in accordance with the spec. Previously a grade of 0 would be returned.
+
 === 3.0 ===
 
 * Function lti_view (locallib.php) was renamed to lti_launch_tool.
