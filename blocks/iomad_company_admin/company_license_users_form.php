@@ -304,6 +304,10 @@ $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
 $licenseid = optional_param('licenseid', 0, PARAM_INTEGER);
 $error = optional_param('error', 0, PARAM_INTEGER);
 $selectedcourses = optional_param_array('courses', array(), PARAM_INT);
+// if this is a single course then optional_param_array doesn't work.
+if( empty($selectedcourses) ){
+    $selectedcourses = optional_param('courses', array(), PARAM_INT);
+}
 
 $context = context_system::instance();
 require_login();
