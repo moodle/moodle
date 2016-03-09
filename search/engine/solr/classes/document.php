@@ -53,7 +53,7 @@ class document extends \core_search\document {
     public static function format_string_for_engine($string) {
         // 2^15 default. We could convert this to a setting as is possible to
         // change the max in solr.
-        return substr($string, 0, 32766);
+        return \core_text::str_max_bytes($string, 32766);
     }
 
     /**
