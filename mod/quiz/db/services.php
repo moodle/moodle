@@ -52,6 +52,7 @@ $functions = array(
         'methodname'    => 'get_user_attempts',
         'description'   => 'Return a list of attempts for the given quiz and user.',
         'type'          => 'read',
-        'capabilities'  => 'mod/quiz:view'
+        'capabilities'  => 'mod/quiz:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 );
