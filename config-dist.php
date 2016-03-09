@@ -563,6 +563,9 @@ $CFG->admin = 'admin';
 // Prevent theme caching
 // $CFG->themedesignermode = true; // NOT FOR PRODUCTION SERVERS!
 //
+// Enable verbose debug information during fetching of email messages from IMAP server.
+// $CFG->debugimap = true;
+//
 // Prevent JS caching
 // $CFG->cachejs = false; // NOT FOR PRODUCTION SERVERS!
 //
