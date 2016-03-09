@@ -30,7 +30,8 @@ $functions = array(
                 'methodname'  => 'get_grades',
                 'classpath'   => 'mod/assign/externallib.php',
                 'description' => 'Returns grades from the assignment',
-                'type'        => 'read'
+                'type'        => 'read',
+                'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 
         'mod_assign_get_assignments' => array(
@@ -38,7 +39,8 @@ $functions = array(
                 'methodname'  => 'get_assignments',
                 'classpath'   => 'mod/assign/externallib.php',
                 'description' => 'Returns the courses and assignments for the users capability',
-                'type'        => 'read'
+                'type'        => 'read',
+                'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 
         'mod_assign_get_submissions' => array(
@@ -46,7 +48,8 @@ $functions = array(
                 'methodname' => 'get_submissions',
                 'classpath' => 'mod/assign/externallib.php',
                 'description' => 'Returns the submissions for assignments',
-                'type' => 'read'
+                'type' => 'read',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 
         'mod_assign_get_user_flags' => array(
@@ -54,7 +57,8 @@ $functions = array(
                 'methodname' => 'get_user_flags',
                 'classpath' => 'mod/assign/externallib.php',
                 'description' => 'Returns the user flags for assignments',
-                'type' => 'read'
+                'type' => 'read',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 
         'mod_assign_set_user_flags' => array(
@@ -63,7 +67,8 @@ $functions = array(
                 'classpath'   => 'mod/assign/externallib.php',
                 'description' => 'Creates or updates user flags',
                 'type'        => 'write',
-                'capabilities'=> 'mod/assign:grade'
+                'capabilities'=> 'mod/assign:grade',
+                'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 
         'mod_assign_get_user_mappings' => array(
@@ -71,7 +76,8 @@ $functions = array(
                 'methodname' => 'get_user_mappings',
                 'classpath' => 'mod/assign/externallib.php',
                 'description' => 'Returns the blind marking mappings for assignments',
-                'type' => 'read'
+                'type' => 'read',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 
         'mod_assign_revert_submissions_to_draft' => array(
@@ -79,7 +85,8 @@ $functions = array(
                 'methodname' => 'revert_submissions_to_draft',
                 'classpath' => 'mod/assign/externallib.php',
                 'description' => 'Reverts the list of submissions to draft status',
-                'type' => 'write'
+                'type' => 'write',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 
         'mod_assign_lock_submissions' => array(
@@ -87,7 +94,8 @@ $functions = array(
                 'methodname' => 'lock_submissions',
                 'classpath' => 'mod/assign/externallib.php',
                 'description' => 'Prevent students from making changes to a list of submissions',
-                'type' => 'write'
+                'type' => 'write',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 
         'mod_assign_unlock_submissions' => array(
@@ -95,7 +103,8 @@ $functions = array(
                 'methodname' => 'unlock_submissions',
                 'classpath' => 'mod/assign/externallib.php',
                 'description' => 'Allow students to make changes to a list of submissions',
-                'type' => 'write'
+                'type' => 'write',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 
         'mod_assign_save_submission' => array(
@@ -103,7 +112,8 @@ $functions = array(
                 'methodname' => 'save_submission',
                 'classpath' => 'mod/assign/externallib.php',
                 'description' => 'Update the current students submission',
-                'type' => 'write'
+                'type' => 'write',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 
         'mod_assign_submit_for_grading' => array(
@@ -111,7 +121,8 @@ $functions = array(
                 'methodname' => 'submit_for_grading',
                 'classpath' => 'mod/assign/externallib.php',
                 'description' => 'Submit the current students assignment for grading',
-                'type' => 'write'
+                'type' => 'write',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 
         'mod_assign_save_grade' => array(
@@ -119,7 +130,8 @@ $functions = array(
                 'methodname' => 'save_grade',
                 'classpath' => 'mod/assign/externallib.php',
                 'description' => 'Save a grade update for a single student.',
-                'type' => 'write'
+                'type' => 'write',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 
         'mod_assign_save_grades' => array(
@@ -127,7 +139,8 @@ $functions = array(
                 'methodname' => 'save_grades',
                 'classpath' => 'mod/assign/externallib.php',
                 'description' => 'Save multiple grade updates for an assignment.',
-                'type' => 'write'
+                'type' => 'write',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 
         'mod_assign_save_user_extensions' => array(
@@ -135,7 +148,8 @@ $functions = array(
                 'methodname' => 'save_user_extensions',
                 'classpath' => 'mod/assign/externallib.php',
                 'description' => 'Save a list of assignment extensions',
-                'type' => 'write'
+                'type' => 'write',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 
         'mod_assign_reveal_identities' => array(
@@ -143,7 +157,8 @@ $functions = array(
                 'methodname' => 'reveal_identities',
                 'classpath' => 'mod/assign/externallib.php',
                 'description' => 'Reveal the identities for a blind marking assignment',
-                'type' => 'write'
+                'type' => 'write',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 
         'mod_assign_view_grading_table' => array(
@@ -152,7 +167,8 @@ $functions = array(
                 'classpath'     => 'mod/assign/externallib.php',
                 'description'   => 'Trigger the grading_table_viewed event.',
                 'type'          => 'write',
-                'capabilities'  => 'mod/assign:view, mod/assign:viewgrades'
+                'capabilities'  => 'mod/assign:view, mod/assign:viewgrades',
+                'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 
         'mod_assign_view_submission_status' => array(
@@ -161,6 +177,7 @@ $functions = array(
             'classpath'     => 'mod/assign/externallib.php',
             'description'   => 'Trigger the submission status viewed event.',
             'type'          => 'write',
-            'capabilities'  => 'mod/assign:view'
+            'capabilities'  => 'mod/assign:view',
+            'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 );

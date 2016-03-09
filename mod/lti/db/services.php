@@ -31,7 +31,8 @@ $functions = array(
         'methodname'    => 'get_tool_launch_data',
         'description'   => 'Return the launch data for a given external tool.',
         'type'          => 'read',
-        'capabilities'  => 'mod/lti:view'
+        'capabilities'  => 'mod/lti:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 
     'mod_lti_get_ltis_by_courses' => array(
@@ -40,7 +41,8 @@ $functions = array(
         'description'   => 'Returns a list of external tool instances in a provided set of courses, if
                             no courses are provided then all the external tool instances the user has access to will be returned.',
         'type'          => 'read',
-        'capabilities'  => 'mod/lti:view'
+        'capabilities'  => 'mod/lti:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 
     'mod_lti_view_lti' => array(
@@ -48,6 +50,7 @@ $functions = array(
         'methodname'    => 'view_lti',
         'description'   => 'Trigger the course module viewed event and update the module completion status.',
         'type'          => 'write',
-        'capabilities'  => 'mod/lti:view'
+        'capabilities'  => 'mod/lti:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 );

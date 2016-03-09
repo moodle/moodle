@@ -2535,6 +2535,7 @@
         <FIELD NAME="classpath" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="capabilities" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="all capabilities that are required to be run by the function (separated by comma)"/>
+        <FIELD NAME="services" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="all the services (by shortname) where this function must be included"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

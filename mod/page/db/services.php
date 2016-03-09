@@ -33,7 +33,8 @@ $functions = array(
         'methodname'    => 'view_page',
         'description'   => 'Simulate the view.php web interface page: trigger events, completion, etc...',
         'type'          => 'write',
-        'capabilities'  => 'mod/page:view'
+        'capabilities'  => 'mod/page:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 
 );

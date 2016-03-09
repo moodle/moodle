@@ -1451,5 +1451,18 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016030103.00);
     }
 
+    if ($oldversion < 2016030400.01) {
+        // Add the new services field.
+        $table = new xmldb_table('external_functions');
+        $field = new xmldb_field('services', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'capabilities');
+
+        // Conditionally launch add field services.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2016030400.01);
+    }
+
     return true;
 }
