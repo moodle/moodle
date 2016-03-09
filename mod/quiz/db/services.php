@@ -70,6 +70,7 @@ $functions = array(
         'methodname'    => 'get_combined_review_options',
         'description'   => 'Combines the review options from a number of different quiz attempts.',
         'type'          => 'read',
-        'capabilities'  => 'mod/quiz:view'
+        'capabilities'  => 'mod/quiz:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 );
