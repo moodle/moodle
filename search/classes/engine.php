@@ -230,6 +230,56 @@ abstract class engine {
     }
 
     /**
+     * Run any pre-indexing operations.
+     *
+     * Should be overwritten if the search engine needs to do any pre index preparation.
+     *
+     * @param bool $fullindex True if a full index will be performed
+     * @return void
+     */
+    public function index_starting($fullindex = false) {
+        // Nothing by default.
+    }
+
+    /**
+     * Run any post indexing operations.
+     *
+     * Should be overwritten if the search engine needs to do any post index cleanup.
+     *
+     * @param int $numdocs The number of documents that were added to the index
+     * @param bool $fullindex True if a full index was performed
+     * @return void
+     */
+    public function index_complete($numdocs = 0, $fullindex = false) {
+        // Nothing by default.
+    }
+
+    /**
+     * Do anything that may need to be done before an area is indexed.
+     *
+     * @param \core_search\area\base $searcharea The search area that was complete
+     * @param bool $fullindex True if a full index is being performed
+     * @return void
+     */
+    public function area_index_starting($searcharea, $fullindex = false) {
+        // Nothing by default.
+    }
+
+    /**
+     * Do any area cleanup needed, and do anything to confirm contents.
+     *
+     * Return false to prevent the search area completed time and stats from being updated.
+     *
+     * @param \core_search\area\base $searcharea The search area that was complete
+     * @param int $numdocs The number of documents that were added to the index
+     * @param bool $fullindex True if a full index is being performed
+     * @return bool True means that data is considered indexed
+     */
+    public function area_index_complete($searcharea, $numdocs = 0, $fullindex = false) {
+        return true;
+    }
+
+    /**
      * Optimizes the search engine.
      *
      * Should be overwritten if the search engine can optimize its contents.
@@ -288,13 +338,6 @@ abstract class engine {
      * @return void
      */
     abstract function add_document($doc);
-
-    /**
-     * Commits changes to the server.
-     *
-     * @return void
-     */
-    abstract function commit();
 
     /**
      * Executes the query on the engine.

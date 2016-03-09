@@ -466,7 +466,10 @@ class manager {
         // Unlimited time.
         \core_php_time_limit::raise();
 
-        $anyupdate = false;
+        // Notify the engine that an index starting.
+        $this->engine->index_starting($fullindex);
+
+        $sumdocs = 0;
 
         $searchareas = $this->get_search_areas_list(true);
         foreach ($searchareas as $areaid => $searcharea) {
@@ -474,6 +477,9 @@ class manager {
             if (CLI_SCRIPT && !PHPUNIT_TEST) {
                 mtrace('Processing ' . $searcharea->get_visible_name() . ' area');
             }
+
+            // Notify the engine that an area is starting.
+            $this->engine->area_index_starting($searcharea, $fullindex);
 
             $indexingstart = time();
 
@@ -518,38 +524,40 @@ class manager {
                 $numrecords++;
             }
 
-            if ($numdocs > 0) {
-                $anyupdate = true;
-
-                // Commit all remaining documents.
-                $this->engine->commit();
-
-                if (CLI_SCRIPT && !PHPUNIT_TEST) {
+            if (CLI_SCRIPT && !PHPUNIT_TEST) {
+                if ($numdocs > 0) {
                     mtrace('Processed ' . $numrecords . ' records containing ' . $numdocs . ' documents for ' .
-                        $searcharea->get_visible_name() . ' area. Commits completed.');
+                            $searcharea->get_visible_name() . ' area.');
+                } else  {
+                    mtrace('No new documents to index for ' . $searcharea->get_visible_name() . ' area.');
                 }
-            } else if (CLI_SCRIPT && !PHPUNIT_TEST) {
-                mtrace('No new documents to index for ' . $searcharea->get_visible_name() . ' area.');
             }
 
-            // Store last index run once documents have been commited to the search engine.
-            set_config($varname . '_indexingstart', $indexingstart, $componentconfigname);
-            set_config($varname . '_indexingend', time(), $componentconfigname);
-            set_config($varname . '_docsignored', $numdocsignored, $componentconfigname);
-            set_config($varname . '_docsprocessed', $numdocs, $componentconfigname);
-            set_config($varname . '_recordsprocessed', $numrecords, $componentconfigname);
-            if ($lastindexeddoc > 0) {
-                set_config($varname . '_lastindexrun', $lastindexeddoc, $componentconfigname);
+            // Notify the engine this area is complete, and only mark times if true.
+            if ($this->engine->area_index_complete($searcharea, $numdocs, $fullindex)) {
+                $sumdocs += $numdocs;
+
+                // Store last index run once documents have been commited to the search engine.
+                set_config($varname . '_indexingstart', $indexingstart, $componentconfigname);
+                set_config($varname . '_indexingend', time(), $componentconfigname);
+                set_config($varname . '_docsignored', $numdocsignored, $componentconfigname);
+                set_config($varname . '_docsprocessed', $numdocs, $componentconfigname);
+                set_config($varname . '_recordsprocessed', $numrecords, $componentconfigname);
+                if ($lastindexeddoc > 0) {
+                    set_config($varname . '_lastindexrun', $lastindexeddoc, $componentconfigname);
+                }
             }
         }
 
-        if ($anyupdate) {
+        if ($sumdocs > 0) {
             $event = \core\event\search_indexed::create(
                     array('context' => \context_system::instance()));
             $event->trigger();
         }
 
-        return $anyupdate;
+        $this->engine->index_complete($sumdocs, $fullindex);
+
+        return (bool)$sumdocs;
     }
 
     /**
@@ -598,7 +606,6 @@ class manager {
             $this->engine->delete();
             $this->reset_config();
         }
-        $this->engine->commit();
     }
 
     /**
@@ -608,7 +615,6 @@ class manager {
      */
     public function delete_index_by_id($id) {
         $this->engine->delete_by_id($id);
-        $this->engine->commit();
     }
 
     /**

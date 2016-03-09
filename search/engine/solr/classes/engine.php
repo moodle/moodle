@@ -317,8 +317,24 @@ class engine extends \core_search\engine {
      *
      * @return void
      */
-    public function commit() {
+    protected function commit() {
         $this->get_search_client()->commit();
+    }
+
+    /**
+     * Do any area cleanup needed, and do anything to confirm contents.
+     *
+     * Return false to prevent the search area completed time and stats from being updated.
+     *
+     * @param \core_search\area\base $searcharea The search area that was complete
+     * @param int $numdocs The number of documents that were added to the index
+     * @param bool $fullindex True if a full index is being performed
+     * @return bool True means that data is considered indexed
+     */
+    public function area_index_complete($searcharea, $numdocs = 0, $fullindex = false) {
+        $this->commit();
+
+        return true;
     }
 
     /**
@@ -338,6 +354,7 @@ class engine extends \core_search\engine {
      */
     public function delete_by_id($id) {
         $this->get_search_client()->deleteById($id);
+        $this->commit();
     }
 
     /**
@@ -352,6 +369,7 @@ class engine extends \core_search\engine {
         } else {
             $this->get_search_client()->deleteByQuery('*:*');
         }
+        $this->commit();
     }
 
     /**
