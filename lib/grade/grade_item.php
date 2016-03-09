@@ -369,6 +369,20 @@ class grade_item extends grade_object {
     }
 
     /**
+     * Check to see if there are existing overridden grades for this grade_item.
+     *
+     * @return boolean - true if there are overridden grades for this grade_item.
+     */
+    public function has_overridden_grades() {
+        global $DB;
+
+        $count = $DB->count_records_select('grade_grades',
+                                           'itemid = :gradeitemid AND finalgrade IS NOT NULL AND overridden > 0',
+                                           array('gradeitemid' => $this->id));
+        return $count > 0;
+    }
+
+    /**
      * Finds and returns all grade_item instances based on params.
      *
      * @static
@@ -872,13 +886,15 @@ class grade_item extends grade_object {
             // Set this object in the item so it doesn't re-fetch it.
             $grade->grade_item = $this;
 
-            // Updating the raw grade automatically updates the min/max.
-            if ($this->is_raw_used()) {
-                $rawgrade = (($grade->rawgrade - $oldgrademin) * $scale) + $newgrademin;
-                $this->update_raw_grade(false, $rawgrade, $source, false, FORMAT_MOODLE, null, null, null, $grade);
-            } else {
-                $finalgrade = (($grade->finalgrade - $oldgrademin) * $scale) + $newgrademin;
-                $this->update_final_grade($grade->userid, $finalgrade, $source);
+            if (!$this->is_category_item() || ($this->is_category_item() && $grade->is_overridden())) {
+                // Updating the raw grade automatically updates the min/max.
+                if ($this->is_raw_used()) {
+                    $rawgrade = (($grade->rawgrade - $oldgrademin) * $scale) + $newgrademin;
+                    $this->update_raw_grade(false, $rawgrade, $source, false, FORMAT_MOODLE, null, null, null, $grade);
+                } else {
+                    $finalgrade = (($grade->finalgrade - $oldgrademin) * $scale) + $newgrademin;
+                    $this->update_final_grade($grade->userid, $finalgrade, $source);
+                }
             }
         }
         $rs->close();

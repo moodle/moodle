@@ -477,6 +477,8 @@ $string['modgrade_help'] = 'Select the type of grading used for this activity. I
 $string['modgradecantchangegradetype'] = 'You cannot change the type, as grades already exist for this item.';
 $string['modgradecantchangegradetypemsg'] = 'Some grades have already been awarded, so the grade type cannot be changed. If you wish to change the maximum grade, you must first choose whether or not to rescale existing grades.';
 $string['modgradecantchangegradetyporscalemsg'] = 'Some grades have already been awarded, so the grade type and scale cannot be changed.';
+$string['modgradecategorycantchangegradetypemsg'] = 'This category has associated grade items which have been overridden. Therefore some grades have already been awarded, so the grade type cannot be changed. If you wish to change the maximum grade, you must first choose whether or not to rescale existing grades.';
+$string['modgradecategorycantchangegradetyporscalemsg'] = 'This category has associated grade items which have been overridden. Therefore some grades have already been awarded, so the grade type and scale cannot be changed.';
 $string['modgradecantchangescale'] = 'You cannot change the scale, as grades already exist for this item.';
 $string['modgradecantchangeratingmaxgrade'] = 'You cannot change the maximum grade when grades already exist for an activity with ratings.';
 $string['modgradedonotmodify'] = 'Do not modify existing grades';
@@ -489,6 +491,12 @@ $string['modgraderescalegrades_help'] = 'When changing the maximum grades on a g
 If this is set to \'Yes\', any existing grades will be rescaled so that the percentage grade remains the same.
 
 For example, if this option is set to \'Yes\', changing the maximum grade on an item from 10 to 20 would cause a grade of 6/10 (60%) to be rescaled to 12/20 (60%). With this option set to \'No\', the grade would change from 6/10 (60%) to 6/20 (30%), requiring manual adjustment of the grade items to ensure correct scores.';
+$string['modgradecategoryrescalegrades'] = 'Rescale overridden grades';
+$string['modgradecategoryrescalegrades_help'] = 'When changing the maximum grades on a gradebook item you need to specify whether or not this will cause existing percentage grades to change as well.
+
+If this is set to \'Yes\', any existing overridden grades will be rescaled so that the percentage grade remains the same.
+
+For example, if this option is set to \'Yes\', changing the maximum grade on an item from 10 to 20 would cause a grade of 6/10 (60%) to be rescaled to 12/20 (60%). With this option set to \'No\', the grade will remain unchanged, requiring manual adjustment of the grade items to ensure correct scores.';
 $string['modgradetype'] = 'Type';
 $string['modgradetypenone'] = 'None';
 $string['modgradetypepoint'] = 'Point';
