@@ -1733,7 +1733,7 @@ class moodle_page {
             $this->add_body_class('notloggedin');
         }
 
-        if (!empty($USER->editing)) {
+        if ($this->user_is_editing()) {
             $this->add_body_class('editing');
             if (optional_param('bui_moveid', false, PARAM_INT)) {
                 $this->add_body_class('blocks-moving');
