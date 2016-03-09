@@ -199,6 +199,10 @@ class core_test_generator_testcase extends advanced_testcase {
         $cm = get_coursemodule_from_instance('page', $page->id, $SITE->id, true);
         $this->assertEquals(3, $cm->sectionnum);
 
+        $page = $generator->create_module('page', array('course' => $SITE->id, 'tags' => 'Cat, Dog'));
+        $this->assertEquals(array('Cat', 'Dog'),
+            array_values(core_tag_tag::get_item_tags_array('core', 'course_modules', $page->cmid)));
+
         // Prepare environment to generate modules with all possible options.
 
         // Enable advanced functionality.

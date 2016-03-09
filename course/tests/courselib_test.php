@@ -1522,9 +1522,12 @@ class core_course_courselib_testcase extends advanced_testcase {
             case 'assign':
                 // Add some tags to this assignment.
                 core_tag_tag::set_item_tags('mod_assign', 'assign', $module->id, $modcontext, array('Tag 1', 'Tag 2', 'Tag 3'));
+                core_tag_tag::set_item_tags('core', 'course_modules', $module->cmid, $modcontext, array('Tag 3', 'Tag 4', 'Tag 5'));
 
                 // Confirm the tag instances were added.
-                $criteria = array('component' => 'mod_assign', 'contextid' => $modcontext->id);
+                $criteria = array('component' => 'mod_assign', 'itemtype' => 'assign', 'contextid' => $modcontext->id);
+                $this->assertEquals(3, $DB->count_records('tag_instance', $criteria));
+                $criteria = array('component' => 'core', 'itemtype' => 'course_modules', 'contextid' => $modcontext->id);
                 $this->assertEquals(3, $DB->count_records('tag_instance', $criteria));
 
                 // Verify event assignment event has been generated.
@@ -1564,6 +1567,9 @@ class core_course_courselib_testcase extends advanced_testcase {
 
                 // Verify the tag instances were deleted.
                 $criteria = array('component' => 'mod_assign', 'contextid' => $modcontext->id);
+                $this->assertEquals(0, $DB->count_records('tag_instance', $criteria));
+
+                $criteria = array('component' => 'core', 'itemtype' => 'course_modules', 'contextid' => $modcontext->id);
                 $this->assertEquals(0, $DB->count_records('tag_instance', $criteria));
                 break;
             case 'quiz':

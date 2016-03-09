@@ -151,6 +151,11 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
         $DB->set_field($moduleinfo->modulename, 'intro', $moduleinfo->intro, array('id'=>$moduleinfo->instance));
     }
 
+    // Add module tags.
+    if (core_tag_tag::is_enabled('core', 'course_modules') && isset($moduleinfo->tags)) {
+        core_tag_tag::set_item_tags('core', 'course_modules', $moduleinfo->coursemodule, $modcontext, $moduleinfo->tags);
+    }
+
     // Course_modules and course_sections each contain a reference to each other.
     // So we have to update one of them twice.
     $sectionid = course_add_cm_to_section($course, $moduleinfo->coursemodule, $moduleinfo->section);
@@ -576,6 +581,11 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
     if (isset($moduleinfo->cmidnumber)) { // Label.
         // Set cm idnumber - uniqueness is already verified by form validation.
         set_coursemodule_idnumber($moduleinfo->coursemodule, $moduleinfo->cmidnumber);
+    }
+
+    // Update module tags.
+    if (core_tag_tag::is_enabled('core', 'course_modules') && isset($moduleinfo->tags)) {
+        core_tag_tag::set_item_tags('core', 'course_modules', $moduleinfo->coursemodule, $modcontext, $moduleinfo->tags);
     }
 
     // Now that module is fully updated, also update completion data if required.
