@@ -1906,7 +1906,7 @@ function lti_should_log_request($rawbody) {
 }
 
 /**
- * Logs the request to a file in temp dir
+ * Logs the request to a file in temp dir.
  *
  * @param string $rawbody
  */
@@ -1927,7 +1927,7 @@ function lti_log_request($rawbody) {
 }
 
 /**
- * Log an LTI response
+ * Log an LTI response.
  *
  * @param string $responsexml The response XML
  * @param Exception $e If there was an exception, pass that too

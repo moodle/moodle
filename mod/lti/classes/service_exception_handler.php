@@ -92,7 +92,7 @@ class service_exception_handler {
     }
 
     /**
-     * Echo an exception message encapsulated in XML
+     * Echo an exception message encapsulated in XML.
      *
      * @param \Exception $exception The exception that was thrown
      */
