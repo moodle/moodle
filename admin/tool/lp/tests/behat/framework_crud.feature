@@ -7,7 +7,8 @@ Feature: Manage competency frameworks
   Background:
     Given I log in as "admin"
     And I am on site homepage
-    When I expand "Site administration" node
+    And I expand "Site administration" node
+    When I expand "Competencies" node
     Then I should see "Competency Frameworks"
 
   Scenario: Create a new framework

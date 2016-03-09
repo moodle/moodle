@@ -28,6 +28,7 @@ Feature: Manage plearning plan
       | Science template | science template description |
     And I follow "Home"
     And I expand "Site administration" node
+    And I expand "Competencies" node
     And I follow "Learning plans"
     And I click on ".template-userplans" "css_element" in the "Science template" "table_row"
     And I click on ".form-autocomplete-downarrow" "css_element"
@@ -54,6 +55,7 @@ Feature: Manage plearning plan
       | student-plan2 | COHORTPLAN |
     And I follow "Home"
     And I expand "Site administration" node
+    And I expand "Competencies" node
     And I follow "Learning plans"
     And I click on ".template-cohorts" "css_element" in the "Science template cohort" "table_row"
     And I click on ".form-autocomplete-downarrow" "css_element"

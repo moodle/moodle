@@ -7,7 +7,8 @@ Feature: Manage plearning plan templates
   Background:
     Given I log in as "admin"
     And I am on site homepage
-    When I expand "Site administration" node
+    And I expand "Site administration" node
+    When I expand "Competencies" node
     Then I should see "Learning plans"
 
   Scenario: Create a new learning plan template
