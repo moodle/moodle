@@ -1358,13 +1358,6 @@ class api {
             throw new coding_exception('Cannot add a competency to a module if it does not belong to the course');
         }
 
-        $competency = new competency($competencyid);
-
-        // Can not add a competency that belong to a hidden framework.
-        if ($competency->get_framework()->get_visible() == false) {
-            throw new coding_exception('A competency belonging to hidden framework can not be linked to course module');
-        }
-
         $record = new stdClass();
         $record->cmid = $cm->id;
         $record->competencyid = $competencyid;
