@@ -2135,7 +2135,11 @@ class core_course_external extends external_api {
                                                         (search, modulelist (only admins), blocklist (only admins), tagid)'),
                 'criteriavalue' => new external_value(PARAM_RAW, 'criteria value'),
                 'page'          => new external_value(PARAM_INT, 'page number (0 based)', VALUE_DEFAULT, 0),
-                'perpage'       => new external_value(PARAM_INT, 'items per page', VALUE_DEFAULT, 0)
+                'perpage'       => new external_value(PARAM_INT, 'items per page', VALUE_DEFAULT, 0),
+                'requiredcapabilities' => new external_multiple_structure(
+                    new external_value(PARAM_CAPABILITY, 'Capability string used to filter courses by permission'),
+                    VALUE_OPTIONAL
+                )
             )
         );
     }
@@ -2147,11 +2151,16 @@ class core_course_external extends external_api {
      * @param string $criteriavalue Criteria value
      * @param int $page             Page number (for pagination)
      * @param int $perpage          Items per page
+     * @param array $requiredcapabilities Optional list of required capabilities (used to filter the list).
      * @return array of course objects and warnings
      * @since Moodle 3.0
      * @throws moodle_exception
      */
-    public static function search_courses($criterianame, $criteriavalue, $page=0, $perpage=0) {
+    public static function search_courses($criterianame,
+                                          $criteriavalue,
+                                          $page=0,
+                                          $perpage=0,
+                                          $requiredcapabilities=array()) {
         global $CFG;
         require_once($CFG->libdir . '/coursecatlib.php');
 
@@ -2161,7 +2170,8 @@ class core_course_external extends external_api {
             'criterianame'  => $criterianame,
             'criteriavalue' => $criteriavalue,
             'page'          => $page,
-            'perpage'       => $perpage
+            'perpage'       => $perpage,
+            'requiredcapabilities' => $requiredcapabilities
         );
         $params = self::validate_parameters(self::search_courses_parameters(), $parameters);
 
@@ -2194,8 +2204,8 @@ class core_course_external extends external_api {
         }
 
         // Search the courses.
-        $courses = coursecat::search_courses($searchcriteria, $options);
-        $totalcount = coursecat::search_courses_count($searchcriteria);
+        $courses = coursecat::search_courses($searchcriteria, $options, $params['requiredcapabilities']);
+        $totalcount = coursecat::search_courses_count($searchcriteria, $options, $params['requiredcapabilities']);
 
         $finalcourses = array();
         $categoriescache = array();
@@ -2244,10 +2254,12 @@ class core_course_external extends external_api {
             list($summary, $summaryformat) =
                 external_format_text($course->summary, $course->summaryformat, $coursecontext->id, 'course', 'summary', null);
 
+            $displayname = get_course_display_name_for_list($course);
             $coursereturns = array();
             $coursereturns['id']                = $course->id;
-            $coursereturns['fullname']          = $course->get_formatted_fullname();
-            $coursereturns['shortname']         = $course->get_formatted_shortname();
+            $coursereturns['fullname']          = external_format_string($course->fullname, $coursecontext->id);
+            $coursereturns['displayname']       = external_format_string($displayname, $coursecontext->id);
+            $coursereturns['shortname']         = external_format_string($course->shortname, $coursecontext->id);
             $coursereturns['categoryid']        = $course->category;
             $coursereturns['categoryname']      = $category->name;
             $coursereturns['summary']           = $summary;
@@ -2281,6 +2293,7 @@ class core_course_external extends external_api {
                         array(
                             'id' => new external_value(PARAM_INT, 'course id'),
                             'fullname' => new external_value(PARAM_TEXT, 'course full name'),
+                            'displayname' => new external_value(PARAM_TEXT, 'course display name'),
                             'shortname' => new external_value(PARAM_TEXT, 'course short name'),
                             'categoryid' => new external_value(PARAM_INT, 'category id'),
                             'categoryname' => new external_value(PARAM_TEXT, 'category name'),
