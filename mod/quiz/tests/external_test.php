@@ -386,4 +386,66 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals('invalidparameter', $e->errorcode);
         }
     }
+
+    /**
+     * Test get_user_best_grade
+     */
+    public function test_get_user_best_grade() {
+        global $DB;
+
+        $this->setUser($this->student);
+
+        $result = mod_quiz_external::get_user_best_grade($this->quiz->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
+
+        // No grades yet.
+        $this->assertFalse($result['hasgrade']);
+        $this->assertTrue(!isset($result['grade']));
+
+        $grade = new stdClass();
+        $grade->quiz = $this->quiz->id;
+        $grade->userid = $this->student->id;
+        $grade->grade = 8.9;
+        $grade->timemodified = time();
+        $grade->id = $DB->insert_record('quiz_grades', $grade);
+
+        $result = mod_quiz_external::get_user_best_grade($this->quiz->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
+
+        // Now I have grades.
+        $this->assertTrue($result['hasgrade']);
+        $this->assertEquals(8.9, $result['grade']);
+
+        // We should not see other users grades.
+        $anotherstudent = self::getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($anotherstudent->id, $this->course->id, $this->studentrole->id, 'manual');
+
+        try {
+            mod_quiz_external::get_user_best_grade($this->quiz->id, $anotherstudent->id);
+            $this->fail('Exception expected due to missing capability.');
+        } catch (required_capability_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        // Teacher must be able to see student grades.
+        $this->setUser($this->teacher);
+
+        $result = mod_quiz_external::get_user_best_grade($this->quiz->id, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
+
+        $this->assertTrue($result['hasgrade']);
+        $this->assertEquals(8.9, $result['grade']);
+
+        // Invalid user.
+        try {
+            mod_quiz_external::get_user_best_grade($this->quiz->id, -1);
+            $this->fail('Exception expected due to missing capability.');
+        } catch (dml_missing_record_exception $e) {
+            $this->assertEquals('invaliduser', $e->errorcode);
+        }
+
+        // Remove the created data.
+        $DB->delete_records('quiz_grades', array('id' => $grade->id));
+
+    }
 }

@@ -447,4 +447,87 @@ class mod_quiz_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for get_user_best_grade.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function get_user_best_grade_parameters() {
+        return new external_function_parameters (
+            array(
+                'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
+                'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+    /**
+     * Get the best current grade for the given user on a quiz.
+     *
+     * @param int $quizid quiz instance id
+     * @param int $userid user id
+     * @return array of warnings and the grade information
+     * @since Moodle 3.1
+     */
+    public static function get_user_best_grade($quizid, $userid = 0) {
+        global $DB, $USER;
+
+        $warnings = array();
+
+        $params = array(
+            'quizid' => $quizid,
+            'userid' => $userid,
+        );
+        $params = self::validate_parameters(self::get_user_best_grade_parameters(), $params);
+
+        // Request and permission validation.
+        $quiz = $DB->get_record('quiz', array('id' => $params['quizid']), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($quiz, 'quiz');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        // Default value for userid.
+        if (empty($params['userid'])) {
+            $params['userid'] = $USER->id;
+        }
+
+        $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+        core_user::require_active_user($user);
+
+        // Extra checks so only users with permissions can view other users attempts.
+        if ($USER->id != $user->id) {
+            require_capability('mod/quiz:viewreports', $context);
+        }
+
+        $result = array();
+        $grade = quiz_get_best_grade($quiz, $user->id);
+
+        if ($grade === null) {
+            $result['hasgrade'] = false;
+        } else {
+            $result['hasgrade'] = true;
+            $result['grade'] = $grade;
+        }
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_user_best_grade return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function get_user_best_grade_returns() {
+        return new external_single_structure(
+            array(
+                'hasgrade' => new external_value(PARAM_BOOL, 'Whether the user has a grade on the given quiz.'),
+                'grade' => new external_value(PARAM_FLOAT, 'The grade (only if the user has a grade).', VALUE_OPTIONAL),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }
