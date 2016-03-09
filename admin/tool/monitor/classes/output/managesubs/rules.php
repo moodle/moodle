@@ -222,9 +222,8 @@ class rules extends \table_sql implements \renderable {
         if ($courses = get_user_capability_course('tool/monitor:subscribe', null, true, 'fullname, visible', $orderby)) {
             foreach ($courses as $course) {
                 $coursecontext = \context_course::instance($course->id);
-                if ($course->visible == true || has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
-                    $options[$course->id] = format_string($course->fullname, true,
-                        array('context' => $coursecontext));
+                if ($course->visible || has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+                    $options[$course->id] = format_string($course->fullname, true, array('context' => $coursecontext));
                 }
             }
         }
