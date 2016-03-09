@@ -331,4 +331,120 @@ class mod_quiz_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for get_user_attempts.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function get_user_attempts_parameters() {
+        return new external_function_parameters (
+            array(
+                'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
+                'userid' => new external_value(PARAM_INT, 'user id, empty for current user', VALUE_DEFAULT, 0),
+                'status' => new external_value(PARAM_ALPHA, 'quiz status: all, finished or unfinished', VALUE_DEFAULT, 'finished'),
+                'includepreviews' => new external_value(PARAM_BOOL, 'whether to include previews or not', VALUE_DEFAULT, false),
+
+            )
+        );
+    }
+
+    /**
+     * Return a list of attempts for the given quiz and user.
+     *
+     * @param int $quizid quiz instance id
+     * @param int $userid user id
+     * @param string $status quiz status: all, finished or unfinished
+     * @param bool $includepreviews whether to include previews or not
+     * @return array of warnings and the list of attempts
+     * @since Moodle 3.1
+     * @throws invalid_parameter_exception
+     */
+    public static function get_user_attempts($quizid, $userid = 0, $status = 'finished', $includepreviews = false) {
+        global $DB, $USER;
+
+        $warnings = array();
+
+        $params = array(
+            'quizid' => $quizid,
+            'userid' => $userid,
+            'status' => $status,
+            'includepreviews' => $includepreviews,
+        );
+        $params = self::validate_parameters(self::get_user_attempts_parameters(), $params);
+
+        // Request and permission validation.
+        $quiz = $DB->get_record('quiz', array('id' => $params['quizid']), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($quiz, 'quiz');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        if (!in_array($params['status'], array('all', 'finished', 'unfinished'))) {
+            throw new invalid_parameter_exception('Invalid status value');
+        }
+
+        // Default value for userid.
+        if (empty($params['userid'])) {
+            $params['userid'] = $USER->id;
+        }
+
+        $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+        core_user::require_active_user($user);
+
+        // Extra checks so only users with permissions can view other users attempts.
+        if ($USER->id != $user->id) {
+            require_capability('mod/quiz:viewreports', $context);
+        }
+
+        $attempts = quiz_get_user_attempts($quiz->id, $user->id, $params['status'], $params['includepreviews']);
+
+        $result = array();
+        $result['attempts'] = $attempts;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_user_attempts return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function get_user_attempts_returns() {
+        return new external_single_structure(
+            array(
+                'attempts' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'Attempt id.', VALUE_OPTIONAL),
+                            'quiz' => new external_value(PARAM_INT, 'Foreign key reference to the quiz that was attempted.',
+                                                            VALUE_OPTIONAL),
+                            'userid' => new external_value(PARAM_INT, 'Foreign key reference to the user whose attempt this is.',
+                                                            VALUE_OPTIONAL),
+                            'attempt' => new external_value(PARAM_INT, 'Sequentially numbers this students attempts at this quiz.',
+                                                            VALUE_OPTIONAL),
+                            'uniqueid' => new external_value(PARAM_INT, 'Foreign key reference to the question_usage that holds the
+                                                                details of the the question_attempts that make up this quiz
+                                                                attempt.', VALUE_OPTIONAL),
+                            'layout' => new external_value(PARAM_RAW, 'Attempt layout.', VALUE_OPTIONAL),
+                            'currentpage' => new external_value(PARAM_INT, 'Attempt current page.', VALUE_OPTIONAL),
+                            'preview' => new external_value(PARAM_INT, 'Whether is a preview attempt or not.', VALUE_OPTIONAL),
+                            'state' => new external_value(PARAM_ALPHA, 'The current state of the attempts. \'inprogress\',
+                                                            \'overdue\', \'finished\' or \'abandoned\'.', VALUE_OPTIONAL),
+                            'timestart' => new external_value(PARAM_INT, 'Time when the attempt was started.', VALUE_OPTIONAL),
+                            'timefinish' => new external_value(PARAM_INT, 'Time when the attempt was submitted.
+                                                                0 if the attempt has not been submitted yet.', VALUE_OPTIONAL),
+                            'timemodified' => new external_value(PARAM_INT, 'Last modified time.', VALUE_OPTIONAL),
+                            'timecheckstate' => new external_value(PARAM_INT, 'Next time quiz cron should check attempt for
+                                                                    state changes.  NULL means never check.', VALUE_OPTIONAL),
+                            'sumgrades' => new external_value(PARAM_FLOAT, 'Total marks for this attempt.', VALUE_OPTIONAL),
+                        )
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }

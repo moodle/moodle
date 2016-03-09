@@ -268,4 +268,122 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
 
     }
 
+    /**
+     * Test get_user_attempts
+     */
+    public function test_get_user_attempts() {
+
+        // Create a new quiz with attempts.
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $data = array('course' => $this->course->id,
+                      'sumgrades' => 1);
+        $quiz = $quizgenerator->create_instance($data);
+
+        // Create a couple of questions.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        $cat = $questiongenerator->create_question_category();
+        $question = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
+        quiz_add_quiz_question($question->id, $quiz);
+
+        $quizobj = quiz::create($quiz->id, $this->student->id);
+
+        // Set grade to pass.
+        $item = grade_item::fetch(array('courseid' => $this->course->id, 'itemtype' => 'mod',
+                                        'itemmodule' => 'quiz', 'iteminstance' => $quiz->id, 'outcomeid' => null));
+        $item->gradepass = 80;
+        $item->update();
+
+        // Start the passing attempt.
+        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+
+        $timenow = time();
+        $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $this->student->id);
+        quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
+        quiz_attempt_save_started($quizobj, $quba, $attempt);
+
+        // Process some responses from the student.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $tosubmit = array(1 => array('answer' => '3.14'));
+        $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
+
+        // Finish the attempt.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
+        $attemptobj->process_finish($timenow, false);
+
+        $this->setUser($this->student);
+        $result = mod_quiz_external::get_user_attempts($quiz->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
+
+        $this->assertCount(1, $result['attempts']);
+        $this->assertEquals($attempt->id, $result['attempts'][0]['id']);
+        $this->assertEquals($quiz->id, $result['attempts'][0]['quiz']);
+        $this->assertEquals($this->student->id, $result['attempts'][0]['userid']);
+        $this->assertEquals(1, $result['attempts'][0]['attempt']);
+
+        // Test filters. Only finished.
+        $result = mod_quiz_external::get_user_attempts($quiz->id, 0, 'finished', false);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
+
+        $this->assertCount(1, $result['attempts']);
+        $this->assertEquals($attempt->id, $result['attempts'][0]['id']);
+
+        // Test filters. All attempts.
+        $result = mod_quiz_external::get_user_attempts($quiz->id, 0, 'all', false);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
+
+        $this->assertCount(1, $result['attempts']);
+        $this->assertEquals($attempt->id, $result['attempts'][0]['id']);
+
+        // Test filters. Unfinished.
+        $result = mod_quiz_external::get_user_attempts($quiz->id, 0, 'unfinished', false);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
+
+        $this->assertCount(0, $result['attempts']);
+
+        // Start a new attempt, but not finish it.
+        $timenow = time();
+        $attempt = quiz_create_attempt($quizobj, 2, false, $timenow, false, $this->student->id);
+        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+
+        quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
+        quiz_attempt_save_started($quizobj, $quba, $attempt);
+
+        // Test filters. All attempts.
+        $result = mod_quiz_external::get_user_attempts($quiz->id, 0, 'all', false);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
+
+        $this->assertCount(2, $result['attempts']);
+
+        // Test filters. Unfinished.
+        $result = mod_quiz_external::get_user_attempts($quiz->id, 0, 'unfinished', false);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
+
+        $this->assertCount(1, $result['attempts']);
+
+        // Test manager can see user attempts.
+        $this->setUser($this->teacher);
+        $result = mod_quiz_external::get_user_attempts($quiz->id, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
+
+        $this->assertCount(1, $result['attempts']);
+        $this->assertEquals($this->student->id, $result['attempts'][0]['userid']);
+
+        $result = mod_quiz_external::get_user_attempts($quiz->id, $this->student->id, 'all');
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
+
+        $this->assertCount(2, $result['attempts']);
+        $this->assertEquals($this->student->id, $result['attempts'][0]['userid']);
+
+        // Invalid parameters.
+        try {
+            mod_quiz_external::get_user_attempts($quiz->id, $this->student->id, 'INVALID_PARAMETER');
+            $this->fail('Exception expected due to missing capability.');
+        } catch (invalid_parameter_exception $e) {
+            $this->assertEquals('invalidparameter', $e->errorcode);
+        }
+    }
 }
