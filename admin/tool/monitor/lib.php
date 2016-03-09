@@ -105,10 +105,9 @@ function tool_monitor_get_user_courses() {
     }
     if ($courses = get_user_capability_course('tool/monitor:subscribe', null, true, 'fullname, visible', $orderby)) {
         foreach ($courses as $course) {
-            if ($course->visible === true || has_capability('moodle/course:viewhiddencourses',
-                    context_course::instance($course->id))) {
-                $options[$course->id] = format_string($course->fullname, true,
-                    array('context' => context_course::instance($course->id)));
+            $coursectx = context_course::instance($course->id);
+            if ($course->visible || has_capability('moodle/course:viewhiddencourses', $coursectx)) {
+                $options[$course->id] = format_string($course->fullname, true, array('context' => $coursectx));
             }
         }
     }
