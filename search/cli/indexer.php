@@ -56,6 +56,17 @@ if (!\core_search\manager::is_global_search_enabled() && empty($options['force']
     cli_error('Global search is disabled. Use --force if you want to force an index while disabled');
 }
 
+if (!$searchengine = \core_search\manager::search_engine_instance()) {
+    cli_error(get_string('engineserverstatus', 'search'));
+}
+if (!$searchengine->is_installed()) {
+    cli_error('enginenotinstalled', 'search', $CFG->searchengine);
+}
+$serverstatus = $searchengine->is_server_ready();
+if ($serverstatus !== true) {
+    cli_error($serverstatus);
+}
+
 $globalsearch = \core_search\manager::instance();
 
 if (empty($options['reindex'])) {
