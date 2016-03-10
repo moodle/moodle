@@ -162,14 +162,14 @@ class company_managers_form extends moodleform {
                 if (!company::check_valid_user($this->selectedcompany, $adduser->id, $this->departmentid)) {
                     // The userid may still be valid, but only if we are assigning an external company manager
                     // require permissions, check roletype is manager & the userid is actually a manager in another company
-                    if (!iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance() && $roletype == 1 &&
+                    if (!iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance()) && $roletype == 1 &&
                         $DB->get_record_sql('SELECT id FROM {company_users}
                                              WHERE
                                              userid = :userid
                                              AND managertype = :roletype
                                              AND companyid != :companyid', array('userid' => $adduser->id,
                                                                                  'roletype' => 1,
-                                                                                 'companyid' => $this->selectedcompany)))) {
+                                                                                 'companyid' => $this->selectedcompany))) {
                         // We are not assigning an external company manager AND the userid is not valid for this company
                         print_error('invaliduserdepartment', 'block_iomad_company_management');
                     }
