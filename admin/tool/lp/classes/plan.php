@@ -198,7 +198,6 @@ class plan extends persistent {
         }
 
         $comment = new comment((object) array(
-            'client_id' => 'tool_lp_plan_' . $this->get_id(),
             'context' => $this->get_context(),
             'component' => 'tool_lp',
             'itemid' => $this->get_id(),
