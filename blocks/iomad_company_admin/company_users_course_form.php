@@ -156,7 +156,7 @@ class company_users_course_form extends moodleform {
                     $allow = true;
 
                     if ($allow) {
-                        company_user::enrol($this->user, array($addcourse->id), $this->selectedcourse);
+                        company_user::enrol($this->user, array($addcourse->id), $this->selectedcompany);
                         EmailTemplate::send('user_added_to_course', array('course' => $addcourse, 'user' => $this->user));
                     }
                 }
