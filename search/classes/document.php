@@ -120,6 +120,11 @@ class document implements \renderable, \templatable {
             'stored' => true,
             'indexed' => false
         ),
+        'owneruserid' => array(
+            'type' => 'int',
+            'stored' => true,
+            'indexed' => true
+        ),
         'modified' => array(
             'type' => 'tdate',
             'stored' => true,

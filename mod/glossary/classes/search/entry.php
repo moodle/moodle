@@ -95,6 +95,7 @@ class entry extends \core_search\area\base_mod {
         $doc->set('type', \core_search\manager::TYPE_TEXT);
         $doc->set('courseid', $entry->course);
         $doc->set('userid', $entry->userid);
+        $doc->set('owneruserid', \core_search\manager::NO_OWNER_ID);
         $doc->set('modified', $entry->timemodified);
 
         // Adding keywords as extra info.

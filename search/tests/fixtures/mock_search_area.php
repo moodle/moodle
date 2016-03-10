@@ -55,6 +55,7 @@ class role_capabilities extends \core_search\area\base {
         $doc->set('type', \core_search\manager::TYPE_TEXT);
         $doc->set('courseid', SITEID);
         $doc->set('userid', $USER->id);
+        $doc->set('owneruserid', \core_search\manager::NO_OWNER_ID);
         $doc->set('modified', time());
 
         return $doc;
