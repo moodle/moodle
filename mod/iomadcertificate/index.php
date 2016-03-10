@@ -56,7 +56,11 @@ $PAGE->set_title($striomadcertificates);
 $PAGE->set_heading($course->fullname);
 
 // Add the page view to the Moodle log
-add_to_log($course->id, 'iomadcertificate', 'view all', 'index.php?id='.$course->id, '');
+$event = \mod_iomadcertificate\event\course_module_instance_list_viewed::create(array(
+    'context' => context_course::instance($course->id)
+));
+$event->add_record_snapshot('course', $course);
+$event->trigger();
 
 // Get the iomadcertificates, if there are none display a notice
 if (!$iomadcertificates = get_all_instances_in_course('iomadcertificate', $course)) {

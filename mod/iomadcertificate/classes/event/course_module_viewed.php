@@ -16,18 +16,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Code fragment to define the version of the iomadcertificate module
+ * This page lists all the instances of iomadcertificate in a particular course
  *
  * @package    mod
  * @subpackage iomadcertificate
  * @copyright  Mark Nelson <markn@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version   = 2015111600; // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2015111600; // Requires this Moodle version
-$plugin->cron      = 0; // Period for cron to check this module (secs)
-$plugin->component = 'mod_iomadcertificate';
+namespace mod_iomadcertificate\event;
 
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = "Stable"; // User-friendly version number
+defined('MOODLE_INTERNAL') || die();
+
+class course_module_viewed extends \core\event\course_module_viewed {
+    protected function init() {
+        $this->data['objecttable'] = 'iomadcertificate';
+        parent::init();
+    }
+}

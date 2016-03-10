@@ -96,8 +96,6 @@ if (!$download) {
     $page = $perpage = 0;
 }
 
-add_to_log($course->id, 'iomadcertificate', 'view', "report.php?id=$cm->id", '$iomadcertificate->id', $cm->id);
-
 // Ensure there are issues to display, if not display notice
 if (!$users = iomadcertificate_get_issues($iomadcertificate->id, $DB->sql_fullname(), $groupmode, $cm, $page, $perpage)) {
     echo $OUTPUT->header();

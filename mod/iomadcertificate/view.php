@@ -66,7 +66,14 @@ $context = context_module::instance($cm->id);
 require_capability('mod/iomadcertificate:view', $context);
 
 // log update
-add_to_log($course->id, 'iomadcertificate', 'view', "view.php?id=$cm->id", $iomadcertificate->id, $cm->id);
+$event = \mod_iomadcertificate\event\course_module_viewed::create(array(
+    'objectid' => $certificate->id,
+    'context' => $context,
+));
+$event->add_record_snapshot('course', $course);
+$event->add_record_snapshot('certificate', $certificate);
+$event->trigger();
+
 $completion=new completion_info($course);
 $completion->set_module_viewed($cm);
 
@@ -141,8 +148,6 @@ if (empty($action)) { // Not displaying PDF
     }
     echo html_writer::tag('p', $str, array('style' => 'text-align:center'));
     $linkname = get_string('getiomadcertificate', 'iomadcertificate');
-    // Add to log, only if we are reissuing
-    add_to_log($course->id, 'iomadcertificate', 'view', "view.php?id=$cm->id", $iomadcertificate->id, $cm->id);
 
     $link = new moodle_url('/mod/iomadcertificate/view.php?id='.$cm->id.'&action=get');
     $button = new single_button($link, $linkname);
@@ -152,6 +157,11 @@ if (empty($action)) { // Not displaying PDF
     echo $OUTPUT->footer($course);
     exit;
 } else { // Output to pdf
+
+    // No debugging here, sorry.
+    $CFG->debugdisplay = 0;
+    @ini_set('display_errors', '0');
+    @ini_set('log_errors', '1');
 
     // Remove full-stop at the end if it exists, to avoid "..pdf" being created and being filtered by clean_filename
     $certname = rtrim($iomadcertificate->name, '.');
