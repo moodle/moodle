@@ -659,7 +659,7 @@ class iomad {
         global $DB;
 
         // Create a temporary table to hold the userids.
-        $temptablename = 'tmp_csum_users_'.time();
+        $temptablename = 'tmp_csum_users_'.uniqid();
         $dbman = $DB->get_manager();
 
         // Define table user to be created.
@@ -776,7 +776,7 @@ class iomad {
 
         $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
-        $temptablename = 'tmp_ccomp_users_'.time();
+        $temptablename = 'tmp_ccomp_users_'.uniqid();
         list($dbman, $table) = self::populate_temporary_users($temptablename, $searchinfo);
 
         // Deal with completion types.
@@ -850,7 +850,7 @@ class iomad {
         $completiondata = new stdclass();
 
         // Create a temporary table to hold the userids.
-        $temptablename = 'tmp_ccomp_users_'.time();
+        $temptablename = 'tmp_ccomp_users_'.uniqid();
         list($dbman, $table) = self::populate_temporary_users($temptablename, $searchinfo);
 
         // Deal with completion types.
@@ -1011,7 +1011,7 @@ class iomad {
         global $DB;
 
         // Create a temporary table to hold the userids.
-        $temptablename = 'tmp_clsum_users_'.time();
+        $temptablename = 'tmp_clsum_users_'.uniqid();
         $dbman = $DB->get_manager();
 
         // Define table user to be created.
@@ -1094,7 +1094,7 @@ class iomad {
         $completiondata = new stdclass();
 
         // Create a temporary table to hold the userids.
-        $temptablename = 'tmp_clcomp_users_'.time();
+        $temptablename = 'tmp_clcomp_users_'.uniqid();
         list($dbman, $table) = self::populate_temporary_users($temptablename, $searchinfo);
 
         // Deal with completion types.
@@ -1217,7 +1217,7 @@ class iomad {
 
         $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
-        $temptablename = 'tmp_clcomp_users_'.time();
+        $temptablename = 'tmp_clcomp_users_'.uniqid();
         list($dbman, $table) = self::populate_temporary_users($temptablename, $searchinfo);
 
         if (!$showsuspended) {

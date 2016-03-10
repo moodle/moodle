@@ -40,7 +40,7 @@ class userrep {
         $info = new completion_info( $course );
 
         // Set up the temporary table for all the completion information to go into.
-        $tempcomptablename = 'tmp_ccomp_comp_'.time();
+        $tempcomptablename = 'tmp_ccomp_comp_'.uniqid();
 
         // Populate the temporary completion table.
         list($compdbman, $comptable) = self::populate_temporary_completion($tempcomptablename, $userid, $courseid, $showhistoric);
