@@ -123,10 +123,10 @@ function get_basket_info() {
                                       WHERE EXISTS (SELECT id
                                                    FROM {invoice} i
                                                    WHERE i.id = :basketid
-                                                     AND i.status = "' . INVOICESTATUS_BASKET . '"
+                                                     AND i.status = :status
                                                      AND i.id = ii.invoiceid
                                                 )
-                                       ', array('basketid' => $SESSION->basketid));
+                                       ', array('basketid' => $SESSION->basketid, 'status' => INVOICESTATUS_BASKET));
     } else {
         return '<p>' . get_string('emptybasket', 'block_iomad_commerce') . '</p>';
     }

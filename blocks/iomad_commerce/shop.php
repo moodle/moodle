@@ -126,7 +126,8 @@ if (isset($SESSION->shopsearch)) {
 // Deal with company specific and shared courses.
 if (iomad::is_company_user()) {
     // Get the company courses and the company shared courses.
-    $company = company::get_company_byuserid($USER->id);
+    $companyid = iomad::get_my_companyid(context_system::instance());
+    $company = new company($companyid);
     $sharedsql = " AND ( c.id in ( select courseid from {company_course} where companyid= $company->id)
 	               or c.id in ( select courseid from {iomad_courses} where shared=1)
 	               or c.id in ( select courseid from {company_shared_courses} where companyid = $company->id)) ";
@@ -150,12 +151,12 @@ echo "<form method='get'><input type='text' name='q' value='$searchkey' /></form
 $sql = 'FROM {course_shopsettings} css
             INNER JOIN {course} c ON c.id = css.courseid ' . $sharedsql .'
             ' . $tagjoin . '
-            LEFT JOIN {course_shopblockprice} sbp ON c.id = sbp.courseid
+            LEFT JOIN {course_shopblockprice} sbp ON (c.id = sbp.courseid
                                                   AND sbp.id = (SELECT id FROM {course_shopblockprice}
-                                                  WHERE courseid = c.id ORDER BY price LIMIT 0,1 )
+                                                  WHERE courseid = c.id ORDER BY price LIMIT 1 ))
         WHERE css.enabled = 1
         ' . $tagwhere . $searchwhere . '
-        ORDER BY c.fullname';
+        GROUP BY c.id, sbp.id, css.id, c.fullname ORDER BY c.fullname';
 
 // Get the number of companies.
 $objectcount = $DB->count_records_sql( 'SELECT COUNT(*) ' . $sql, $sqlparams);

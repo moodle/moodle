@@ -49,6 +49,7 @@ class order_edit_form extends moodleform {
         $strrequired = get_string('required');
 
         $mform->addElement('hidden', 'id', $this->invoiceid);
+        $mform->setType('id', PARAM_INT);
 
         $mform->addElement('header', 'header', get_string('order', 'block_iomad_commerce'));
 

@@ -56,9 +56,9 @@ if (!empty($SESSION->basketid)) {
                                     EXISTS ( SELECT id
                                              FROM {invoice} i
                                              WHERE i.id = :basketid
-                                             AND i.status = "' . INVOICESTATUS_BASKET . '"
+                                             AND i.status = :status
                                              AND i.id = ii.invoiceid
-                                             )', array('basketid' => $SESSION->basketid, 'toberemoved' => $remove))) {
+                                             )', array('basketid' => $SESSION->basketid, 'status' => INVOICESTATUS_BASKET, 'toberemoved' => $remove))) {
             $DB->delete_records('invoiceitem', array('id' => $remove));
         }
     }

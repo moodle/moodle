@@ -46,7 +46,7 @@ if ($course = $DB->get_record_sql('SELECT css.*, c.*, sbp.*
                                    AND sbp.id =
                                     (SELECT id FROM {course_shopblockprice}
                                     WHERE courseid = c.id
-                                    ORDER BY price LIMIT 0, 1)
+                                    ORDER BY price LIMIT 1)
                                    WHERE css.enabled = 1
                                    AND c.id = :id', array('id' => $courseid))) {
     $PAGE->navbar->add($course->fullname);
