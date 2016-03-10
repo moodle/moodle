@@ -752,8 +752,9 @@ class potential_license_user_selector extends user_selector_base {
             $sql = "SELECT d.shortname FROM {department} d
                     INNER JOIN {company_users} cu ON cu.departmentid = d.id
                     WHERE
-                    cu.userid = $id";
-            if ($department = $DB->get_record_sql($sql)) {
+                    cu.userid = :userid
+                    AND cu.companyid = :companyid";
+            if ($department = $DB->get_record_sql($sql, array('userid'=> $id, 'companyid' => $this->companyid))) {
                 $licenseusers[$id]->email = $user->email." (".$department->shortname.")";
             }
         }
@@ -936,7 +937,7 @@ class current_license_user_selector extends user_selector_base {
             $userfilter = "";
         }
 
-        $fields      = 'SELECT clu.id as licenseid, ' . $this->required_fields_sql('u') . ', c.fullname, clu.isusing ';
+        $fields      = 'SELECT clu.id as licenseid, ' . $this->required_fields_sql('u') . ', u.email, c.fullname, clu.isusing ';
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM
