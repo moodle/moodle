@@ -157,6 +157,18 @@ abstract class persistent extends moodleform {
     }
 
     /**
+     * Filter out the foreign fields of the persistent.
+     *
+     * This can be overridden to filter out more complex fields.
+     *
+     * @param stdClass $data The data to filter the fields out of.
+     * @return stdClass.
+     */
+    protected function filter_data_for_persistent($data) {
+        return (object) array_diff_key((array) $data, array_flip((array) static::$foreignfields));
+    }
+
+    /**
      * Get the default data.
      *
      * This is the data that is prepopulated in the form at it loads, we automatically
@@ -248,7 +260,7 @@ abstract class persistent extends moodleform {
         $data = $this->get_submitted_data();
 
         // Only validate compatible fields.
-        $persistentdata = array_diff_key((array) $data, array_flip((array) static::$foreignfields));
+        $persistentdata = $this->filter_data_for_persistent($data);
         $persistent = $this->get_persistent();
         $persistent->from_record((object) $persistentdata);
         $errors = array_merge($errors, $persistent->get_errors());
