@@ -45,11 +45,14 @@ class core_recordset_walk_testcase extends advanced_testcase {
 
         $recordset = $DB->get_recordset('assign');
         $walker = new \core\dml\recordset_walk($recordset, array($this, 'simple_callback'));
-        $this->assertEquals(0, iterator_count($walker));
         $this->assertFalse($walker->valid());
+
+        $count = 0;
         foreach ($walker as $data) {
             // No error here.
+            $count++;
         }
+        $this->assertEquals(0, $count);
         $walker->close();
     }
 
@@ -65,11 +68,14 @@ class core_recordset_walk_testcase extends advanced_testcase {
         // Simple iteration.
         $recordset = $DB->get_recordset('assign');
         $walker = new \core\dml\recordset_walk($recordset, array($this, 'simple_callback'));
-        $this->assertEquals(10, iterator_count($walker));
+
+        $count = 0;
         foreach ($walker as $data) {
             // Checking that the callback is being executed on each iteration.
             $this->assertEquals($data->id . ' potatoes', $data->newfield);
+            $count++;
         }
+        $this->assertEquals(10, $count);
         // No exception if we double-close.
         $walker->close();
     }
@@ -85,17 +91,22 @@ class core_recordset_walk_testcase extends advanced_testcase {
 
         // Iteration with extra callback arguments.
         $recordset = $DB->get_recordset('assign');
+
         $walker = new \core\dml\recordset_walk(
             $recordset,
             array($this, 'extra_callback'),
             array('brown' => 'onions')
         );
-        $this->assertEquals(10, iterator_count($walker));
+
+        $count = 0;
         foreach ($walker as $data) {
             // Checking that the callback is being executed on each
             // iteration and the param is being passed.
             $this->assertEquals('onions', $data->brown);
+            $count++;
         }
+        $this->assertEquals(10, $count);
+
         $walker->close();
     }
 
@@ -105,7 +116,9 @@ class core_recordset_walk_testcase extends advanced_testcase {
      * @param stdClass $data
      * @return \Traversable
      */
-    public function simple_callback($data) {
+    public function simple_callback($data, $nothing = 'notpassed') {
+        // Confirm nothing was passed.
+        $this->assertEquals('notpassed', $nothing);
         $data->newfield = $data->id . ' potatoes';
         return $data;
     }
