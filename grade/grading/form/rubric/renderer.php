@@ -162,8 +162,20 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
                     'cols' => '10', 'rows' => '5',
                     'aria-label' => $remarklabeltext
                 );
+                 foreach($remarkparams as $key=> $value) {
+                    
+                      if ($value==$remarklabeltext){
+
+                          $gradeRemark.='Comment on grade';
+                          $remarklabeltext.=html_writer::($gradeRemark);
+                         $remarkparams['aria-label']=$remarklabeltext;
+                     }
+                      }
+                  
+                
                 $input = html_writer::tag('textarea', s($currentremark), $remarkparams);
                 $criteriontemplate .= html_writer::tag('td', $input, array('class' => 'remark'));
+            
             } else if ($mode == gradingform_rubric_controller::DISPLAY_EVAL_FROZEN) {
                 $criteriontemplate .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => '{NAME}[criteria][{CRITERION-id}][remark]', 'value' => $currentremark));
             }else if ($mode == gradingform_rubric_controller::DISPLAY_REVIEW || $mode == gradingform_rubric_controller::DISPLAY_VIEW) {
