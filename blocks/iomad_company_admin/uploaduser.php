@@ -193,7 +193,7 @@ if ($mform->is_cancelled()) {
 
 } else if ($formdata = $mform->get_data()) {
     // Another cancelled check.
-    if ($formdata->cancel == 'Cancel') {
+    if (!empty($formdata->cancel) && $formdata->cancel == 'Cancel') {
         $cir->cleanup(true);
         redirect($returnurl);
     }
