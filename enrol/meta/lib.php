@@ -323,11 +323,17 @@ class enrol_meta_plugin extends enrol_plugin {
         global $DB;
 
         $groups = $this->get_group_options($coursecontext);
+        $existing = $DB->get_records('enrol', array('enrol' => 'meta', 'courseid' => $coursecontext->instanceid), '', 'customint1, id');
+
+        $excludelist = array($coursecontext->instanceid);
+        foreach ($existing as $existinginstance) {
+            $excludelist[] = $existinginstance->customint1;
+        }
 
         $options = array(
             'requiredcapabilities' => array('enrol/meta:selectaslinked'),
             'multiple' => true,
-            'excludecourseid' => $coursecontext->instanceid
+            'exclude' => $excludelist
         );
         $mform->addElement('course', 'customint1', get_string('linkedcourse', 'enrol_meta'), $options);
         $mform->addRule('customint1', get_string('required'), 'required', null, 'client');
