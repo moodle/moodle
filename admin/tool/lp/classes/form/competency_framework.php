@@ -80,9 +80,10 @@ class competency_framework extends persistent {
 
         $mform->addElement('button', 'scaleconfigbutton', get_string('configurescale', 'tool_lp'));
         // Add js.
-        $PAGE->requires->js_call_amd('tool_lp/scaleconfig', 'init');
         $mform->addElement('hidden', 'scaleconfiguration', '', array('id' => 'tool_lp_scaleconfiguration'));
         $mform->setType('scaleconfiguration', PARAM_RAW);
+        $PAGE->requires->js_call_amd('tool_lp/scaleconfig', 'init', array('#id_scaleid',
+            '#tool_lp_scaleconfiguration', '#id_scaleconfigbutton'));
 
         $mform->addElement('selectyesno', 'visible',
                            get_string('visible', 'tool_lp'));

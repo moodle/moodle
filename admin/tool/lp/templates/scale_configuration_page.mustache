@@ -21,7 +21,7 @@
     * none
 
     Data attibutes required for JS:
-    * none
+    * data-field
 
     Context variables required for this template:
     * scales Array of id / name pairs.
@@ -47,8 +47,8 @@
         {{#scales}}
         <tr class="tool_lp_scale_config">
             <td>{{name}}</td>
-            <td><input type="radio" name="default" id="tool_lp_scale_default_{{id}}" class="tool_lp_scale_default"/></td>
-            <td><input type="checkbox" name="proficient" id="tool_lp_scale_proficient_{{id}}"
+            <td><input type="radio" name="default_{{uniqid}}" data-field="tool_lp_scale_default_{{id}}" class="tool_lp_scale_default"/></td>
+            <td><input type="checkbox" name="proficient" data-field="tool_lp_scale_proficient_{{id}}"
                        class="tool_lp_scale_proficient"/></td>
         </tr>
         {{/scales}}

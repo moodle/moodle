@@ -93,7 +93,8 @@ class competency extends persistent {
         $mform->setType('scaleconfiguration', PARAM_RAW);
 
         $scaleconfig = $mform->addElement('button', 'scaleconfigbutton', get_string('configurescale', 'tool_lp'));
-        $PAGE->requires->js_call_amd('tool_lp/scaleconfig', 'init');
+        $PAGE->requires->js_call_amd('tool_lp/scaleconfig', 'init', array('#id_scaleid',
+            '#tool_lp_scaleconfiguration', '#id_scaleconfigbutton'));
 
         if ($competency && $competency->has_user_competencies()) {
             // The scale is used so we "freeze" the element. Though, the javascript code for the scale
