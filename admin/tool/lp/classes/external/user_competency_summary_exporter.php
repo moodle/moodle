@@ -125,7 +125,8 @@ class user_competency_summary_exporter extends exporter {
         $result->evidence = array();
         if (count($this->related['evidence'])) {
             foreach ($this->related['evidence'] as $evidence) {
-                if (!empty($evidence->get_actionuserid())) {
+                $actionuserid = $evidence->get_actionuserid();
+                if (!empty($actionuserid)) {
                     $usercache[$evidence->get_actionuserid()] = true;
                 }
             }
