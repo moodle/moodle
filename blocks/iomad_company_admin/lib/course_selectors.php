@@ -736,6 +736,7 @@ class potential_user_course_selector extends course_selector_base {
         } else {
             $licensesql = "";
         }
+
         $fields      = 'SELECT ' . $this->required_fields_sql('c');
         $countfields = 'SELECT COUNT(1)';
 
@@ -753,7 +754,7 @@ class potential_user_course_selector extends course_selector_base {
 
         // Deal with shared courses.
         if ($this->shared) {
-            if ($this->licenses) {
+            if (!$this->licenses) {
                 $sharedsql = " FROM {course} c
                                INNER JOIN {iomad_courses} pc
                                ON c.id=pc.courseid
