@@ -527,7 +527,7 @@ if (!empty($userlist)) {
 } else {
     $users = array();
 }
-$usercount = count($userrecords);
+$usercount = count($users);
 
 echo $OUTPUT->heading("$usercount ".get_string('users'));
 
@@ -650,7 +650,8 @@ if (!$users) {
                                 $strlastaccess,
                                 $editbutton .
                                 $suspendbutton .
-                                $deletebutton . '<br />' .
+                                $deletebutton . '</br>' .
+                                $enrolmentbutton . '</br>' .
                                 $licensebutton);
         } else {
             $usercompany = $DB->get_record_sql("SELECT c.name FROM {company} c
@@ -666,7 +667,8 @@ if (!$users) {
                                     $strlastaccess,
                                     $editbutton .
                                     $suspendbutton .
-                                    $deletebutton . '<br />' .
+                                    $deletebutton . '</br>' .
+                                    $enrolmentbutton . '</br>' .
                                     $licensebutton);
         }
     }
@@ -726,6 +728,7 @@ function iomad_get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recor
     return $DB->get_records_sql("SELECT u.*, d.name, c.name
                                  FROM {user} u, {department} d, {company_users} cu, {company} c
                                  WHERE $select and cu.userid = u.id and d.id = cu.departmentid AND c.id = cu.companyid
+                                 AND cu.managertype = 0
                                  $sort", $params, $page, $recordsperpage);
 
 }
