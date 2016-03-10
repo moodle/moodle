@@ -4690,7 +4690,8 @@ class api {
                                   $USER->id,
                                   $note);
         if ($result) {
-            $uc = static::get_user_competency($userid, $competency->get_id());
+            $all = user_competency::get_multiple($userid, array($competency->get_id()));
+            $uc = reset($all);
             if ($action == evidence::ACTION_OVERRIDE) {
                 $event = \tool_lp\event\user_competency_grade_rated_in_course::create_from_user_competency($uc, $course->id);
             } else {

@@ -471,7 +471,9 @@ function tool_lp_coursemodule_edit_post_actions($data, $course) {
         return $data;
     }
 
-    $existing = \tool_lp\api::list_course_module_competencies_in_course_module($data->coursemodule);
+    // We bypass the API here and go direct to the persistent layer - because we don't want to do permission
+    // checks here - we need to load the real list of existing course module competencies.
+    $existing = \tool_lp\course_module_competency::list_course_module_competencies($data->coursemodule);
 
     $existingids = array();
     foreach ($existing as $cmc) {
