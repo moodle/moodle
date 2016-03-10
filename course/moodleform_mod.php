@@ -598,8 +598,6 @@ abstract class moodleform_mod extends moodleform {
         }
 
         // Populate module tags.
-        $categorycontext = context_coursecat::instance($COURSE->category);
-        $coursecontext = context_course::instance($COURSE->id);
         if (core_tag_tag::is_enabled('core', 'course_modules')) {
             $mform->addElement('header', 'tagshdr', get_string('tags', 'tag'));
             $mform->addElement('tags', 'tags', get_string('tags'), array('itemtype' => 'course_modules', 'component' => 'core'));
