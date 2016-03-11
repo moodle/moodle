@@ -164,4 +164,13 @@ $functions = array(
         'capabilities'  => 'mod/quiz:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+
+    'mod_quiz_get_quiz_access_information' => array(
+        'classname'     => 'mod_quiz_external',
+        'methodname'    => 'get_quiz_access_information',
+        'description'   => 'Return access information for a given quiz.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/quiz:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

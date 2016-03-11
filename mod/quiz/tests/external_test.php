@@ -1399,4 +1399,66 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(FORMAT_MOODLE, $result['feedbacktextformat']);
     }
 
+    /**
+     * Test get_quiz_access_information
+     */
+    public function test_get_quiz_access_information() {
+        global $DB;
+
+        // Create a new quiz.
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $data = array('course' => $this->course->id);
+        $quiz = $quizgenerator->create_instance($data);
+
+        $this->setUser($this->student);
+
+        // Default restrictions (none).
+        $result = mod_quiz_external::get_quiz_access_information($quiz->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_quiz_access_information_returns(), $result);
+
+        $expected = array(
+            'canattempt' => true,
+            'canmanage' => false,
+            'canpreview' => false,
+            'canreviewmyattempts' => true,
+            'canviewreports' => false,
+            'accessrules' => [],
+            // This rule is always used, even if the quiz has no open or close date.
+            'activerulenames' => ['quizaccess_openclosedate'],
+            'preventaccessreasons' => [],
+            'warnings' => []
+        );
+
+        $this->assertEquals($expected, $result);
+
+        // Now teacher, different privileges.
+        $this->setUser($this->teacher);
+        $result = mod_quiz_external::get_quiz_access_information($quiz->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_quiz_access_information_returns(), $result);
+
+        $expected['canmanage'] = true;
+        $expected['canpreview'] = true;
+        $expected['canviewreports'] = true;
+        $expected['canattempt'] = false;
+        $expected['canreviewmyattempts'] = false;
+
+        $this->assertEquals($expected, $result);
+
+        $this->setUser($this->student);
+        // Now add some restrictions.
+        $quiz->timeopen = time() + DAYSECS;
+        $quiz->timeclose = time() + WEEKSECS;
+        $quiz->password = '123456';
+        $DB->update_record('quiz', $quiz);
+
+        $result = mod_quiz_external::get_quiz_access_information($quiz->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_quiz_access_information_returns(), $result);
+
+        // Access limited by time and password.
+        $this->assertCount(3, $result['accessrules']);
+        // Two rule names, password and open/close date.
+        $this->assertCount(2, $result['activerulenames']);
+        $this->assertCount(1, $result['preventaccessreasons']);
+
+    }
 }
