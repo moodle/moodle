@@ -268,6 +268,7 @@ $string['switch_item_to_not_required'] = 'switch to: answer not required';
 $string['switch_item_to_required'] = 'switch to: answer required';
 $string['template'] = 'Template';
 $string['templates'] = 'Templates';
+$string['template_deleted'] = 'Template deleted';
 $string['template_saved'] = 'Template saved';
 $string['textarea'] = 'Longer text answer';
 $string['textarea_height'] = 'Number of lines';

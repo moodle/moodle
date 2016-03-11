@@ -97,6 +97,7 @@ $PAGE->set_title($feedback->name);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($feedback->name));
 /// print the tabs
+$current_tab = 'templates';
 require('tabs.php');
 
 /// Print the main part of the page
