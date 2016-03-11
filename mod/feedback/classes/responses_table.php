@@ -207,6 +207,19 @@ class mod_feedback_responses_table extends table_sql {
     }
 
     /**
+     * Defines columns
+     * @param array $columns an array of identifying names for columns. If
+     * columns are sorted then column names must correspond to a field in sql.
+     */
+    function define_columns($columns) {
+        parent::define_columns($columns);
+        foreach ($this->columns as $column => $column) {
+            // Automatically assign classes to columns.
+            $this->column_class[$column] = ' ' . $column;
+        }
+    }
+
+    /**
      * Displays the table
      */
     public function display() {

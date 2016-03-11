@@ -54,6 +54,7 @@ if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
 $context = context_module::instance($cm->id);
 
 require_login($course, true, $cm);
+$feedbackstructure = new mod_feedback_structure($feedback, $PAGE->cm, $coursefilter);
 
 require_capability('mod/feedback:viewreports', $context);
 
@@ -78,8 +79,8 @@ $fstring->anonymous_user = get_string('anonymous_user', 'feedback');
 ob_end_clean();
 
 //get the questions (item-names)
-$params = array('feedback' => $feedback->id, 'hasvalue' => 1);
-if (!$items = $DB->get_records('feedback_item', $params, 'position')) {
+$items = $feedbackstructure->get_items(true);
+if (!$items) {
     print_error('no_items_available_yet',
                 'feedback',
                 $CFG->wwwroot.'/mod/feedback/view.php?id='.$id);
@@ -139,7 +140,7 @@ $worksheet1->write_string($row_offset1, 0, userdate(time()), $xls_formats->head1
 //print the analysed sheet
 ////////////////////////////////////////////////////////////////////////
 //get the completeds
-$completedscount = feedback_get_completeds_group_count($feedback, $mygroupid, $coursefilter);
+$completedscount = $feedbackstructure->count_completed_responses($mygroupid);
 if ($completedscount > 0) {
     //write the count of completeds
     $row_offset1++;

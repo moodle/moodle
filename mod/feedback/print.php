@@ -34,10 +34,11 @@ list($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
 require_course_login($course, true, $cm);
 
 $feedback = $PAGE->activityrecord;
+$feedbackstructure = new mod_feedback_structure($feedback, $cm, $courseid);
 
-$PAGE->set_pagelayout('embedded');
+$PAGE->set_pagelayout('popup');
 
-/// Print the page header
+// Print the page header.
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
@@ -49,68 +50,20 @@ $PAGE->set_title($feedback->name);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
-/// Print the main part of the page
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-echo $OUTPUT->heading(format_text($feedback->name));
+// Print the main part of the page.
+echo $OUTPUT->heading(format_string($feedback->name));
 
 $continueurl = new moodle_url('/mod/feedback/view.php', array('id' => $id));
 if ($courseid) {
     $continueurl->param('courseid', $courseid);
 }
 
-$feedbackitems = $DB->get_records('feedback_item', array('feedback'=>$feedback->id), 'position');
-echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
+$form = new mod_feedback_complete_form(mod_feedback_complete_form::MODE_PRINT,
+        $feedbackstructure, 'feedback_print_form');
 echo $OUTPUT->continue_button($continueurl);
-if (is_array($feedbackitems)) {
-    $itemnr = 0;
-    $align = right_to_left() ? 'right' : 'left';
-
-    echo $OUTPUT->box_start('feedback_items printview');
-    //check, if there exists required-elements
-    $params = array('feedback'=>$feedback->id, 'required'=>1);
-    $countreq = $DB->count_records('feedback_item', $params);
-    if ($countreq > 0) {
-        echo '<div class="fdescription required">';
-        echo get_string('somefieldsrequired', 'form', '<img alt="'.get_string('requiredelement', 'form').
-            '" src="'.$OUTPUT->pix_url('req') .'" class="req" />');
-        echo '</div>';
-    }
-    //print the inserted items
-    $itempos = 0;
-    foreach ($feedbackitems as $feedbackitem) {
-        echo $OUTPUT->box_start('feedback_item_box_'.$align);
-        $itempos++;
-        //Items without value only are labels
-        if ($feedbackitem->hasvalue == 1 AND $feedback->autonumbering) {
-            $itemnr++;
-                echo $OUTPUT->box_start('feedback_item_number_'.$align);
-                echo $itemnr;
-                echo $OUTPUT->box_end();
-        }
-        echo $OUTPUT->box_start('box generalbox boxalign_'.$align);
-        if ($feedbackitem->typ != 'pagebreak') {
-            feedback_print_item_complete($feedbackitem, false, false);
-        } else {
-            echo $OUTPUT->box_start('feedback_pagebreak');
-            echo '<hr class="feedback_pagebreak" />';
-            echo $OUTPUT->box_end();
-        }
-        echo $OUTPUT->box_end();
-        echo $OUTPUT->box_end();
-    }
-    echo $OUTPUT->box_end();
-} else {
-    echo $OUTPUT->box(get_string('no_items_available_yet', 'feedback'),
-                    'generalbox boxaligncenter boxwidthwide');
-}
+$form->display();
 echo $OUTPUT->continue_button($continueurl);
-echo $OUTPUT->box_end();
-/// Finish the page
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
 
+// Finish the page.
 echo $OUTPUT->footer();
 

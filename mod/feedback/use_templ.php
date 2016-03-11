@@ -42,6 +42,7 @@ $context = context_module::instance($cm->id);
 require_login($course, true, $cm);
 
 $feedback = $PAGE->activityrecord;
+$feedbackstructure = new mod_feedback_structure($feedback, $cm, 0, $templateid);
 
 require_capability('mod/feedback:edititems', $context);
 
@@ -75,40 +76,9 @@ echo $OUTPUT->heading(get_string('confirmusetemplate', 'feedback'), 4);
 
 $mform->display();
 
-$templateitems = $DB->get_records('feedback_item', array('template'=>$templateid), 'position');
-if (is_array($templateitems)) {
-    $templateitems = array_values($templateitems);
-}
-
-if (is_array($templateitems)) {
-    $itemnr = 0;
-    $align = right_to_left() ? 'right' : 'left';
-    echo $OUTPUT->box_start('feedback_items');
-    foreach ($templateitems as $templateitem) {
-        echo $OUTPUT->box_start('feedback_item_box_'.$align);
-        if ($templateitem->hasvalue == 1 AND $feedback->autonumbering) {
-            $itemnr++;
-            echo $OUTPUT->box_start('feedback_item_number_'.$align);
-            echo $itemnr;
-            echo $OUTPUT->box_end();
-        }
-        echo $OUTPUT->box_start('box generalbox boxalign_'.$align);
-        if ($templateitem->typ != 'pagebreak') {
-            // echo '<div class="feedback_item_'.$align.'">';
-            feedback_print_item_preview($templateitem);
-        } else {
-            echo $OUTPUT->box_start('feedback_pagebreak');
-            echo get_string('pagebreak', 'feedback').'<hr class="feedback_pagebreak" />';
-            echo $OUTPUT->box_end();
-        }
-        echo $OUTPUT->box_end();
-        echo $OUTPUT->box_end();
-    }
-    echo $OUTPUT->box_end();
-} else {
-    echo $OUTPUT->box(get_string('no_items_available_at_this_template', 'feedback'),
-                    'generalbox boxaligncenter boxwidthwide');
-}
+$form = new mod_feedback_complete_form(mod_feedback_complete_form::MODE_VIEW_TEMPLATE,
+        $feedbackstructure, 'feedback_preview_form', ['templateid' => $templateid]);
+$form->display();
 
 echo $OUTPUT->footer();
 

@@ -24,47 +24,25 @@
 
 require_once("../../config.php");
 require_once("lib.php");
-require_once('delete_item_form.php');
 
-$id = required_param('id', PARAM_INT);
 $deleteitem = required_param('deleteitem', PARAM_INT);
+$item = $DB->get_record('feedback_item', array('id' => $deleteitem), '*', MUST_EXIST);
+list($course, $cm) = get_course_and_cm_from_instance($item->feedback, 'feedback');
 
-$PAGE->set_url('/mod/feedback/delete_item.php', array('id'=>$id, 'deleteitem'=>$deleteitem));
+$PAGE->set_url('/mod/feedback/delete_item.php', array('deleteitem' => $deleteitem));
 
-if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-    print_error('invalidcoursemodule');
-}
-
-if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-    print_error('coursemisconf');
-}
-
-if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-    print_error('invalidcoursemodule');
-}
-
+require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
-
-require_login($course, true, $cm);
-
 require_capability('mod/feedback:edititems', $context);
+$feedback = $PAGE->activityrecord;
 
-$mform = new mod_feedback_delete_item_form();
-$newformdata = array('id'=>$id,
-                    'deleteitem'=>$deleteitem,
-                    'confirmdelete'=>'1');
-$mform->set_data($newformdata);
-$formdata = $mform->get_data();
+$editurl = new moodle_url('/mod/feedback/edit.php', array('id' => $cm->id));
 
-if ($mform->is_cancelled()) {
-    redirect('edit.php?id='.$id);
+// Process item deletion.
+if (optional_param('confirm', 0, PARAM_BOOL) && confirm_sesskey()) {
+    feedback_delete_item($deleteitem);
+    redirect($editurl);
 }
-
-if (isset($formdata->confirmdelete) AND $formdata->confirmdelete == 1) {
-    feedback_delete_item($formdata->deleteitem);
-    redirect('edit.php?id=' . $id);
-}
-
 
 /// Print the page header
 $strfeedbacks = get_string("modulenameplural", "feedback");
@@ -81,9 +59,8 @@ echo $OUTPUT->header();
 ///////////////////////////////////////////////////////////////////////////
 echo $OUTPUT->heading(format_string($feedback->name));
 echo $OUTPUT->box_start('generalbox errorboxcontent boxaligncenter boxwidthnormal');
-echo html_writer::tag('p', get_string('confirmdeleteitem', 'feedback'), array('class' => 'bold'));
-print_string('relateditemsdeleted', 'feedback');
-$mform->display();
+$continueurl = new moodle_url($PAGE->url, array('confirm' => 1, 'sesskey' => sesskey()));
+echo $OUTPUT->confirm(get_string('confirmdeleteitem', 'feedback'), $continueurl, $editurl);
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();

@@ -49,25 +49,18 @@ if ($searchcourse !== '') {
 }
 $PAGE->set_url($url);
 
-if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-    print_error('invalidcoursemodule');
-}
-
-if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-    print_error('coursemisconf');
-}
-
-if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-    print_error('invalidcoursemodule');
-}
-
+list($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
 $context = context_module::instance($cm->id);
 
-require_login($course, true, $cm);
+require_course_login($course, true, $cm);
+
+$feedback = $PAGE->activityrecord;
 
 if (!($feedback->publish_stats OR has_capability('mod/feedback:viewreports', $context))) {
     print_error('error');
 }
+
+$feedbackstructure = new mod_feedback_structure($feedback, $PAGE->cm, $courseid);
 
 /// Print the page header
 $strfeedbacks = get_string("modulenameplural", "feedback");
@@ -96,14 +89,13 @@ if (has_capability('mod/feedback:viewreports', $context)) {
 //lstgroupid is the choosen id
 $mygroupid = false;
 //get completed feedbacks
-$completedscount = feedback_get_completeds_group_count($feedback, $mygroupid, $courseid);
+$completedcount = $feedbackstructure->count_completed_responses();
 
 //show the count
 echo '<b>'.get_string('completed_feedbacks', 'feedback').': '.$completedscount. '</b><br />';
 
-// get the items of the feedback
-$params = array('feedback' => $feedback->id, 'hasvalue' => 1);
-$items = $DB->get_records('feedback_item', $params, 'position');
+// Get the items of the feedback.
+$items = $feedbackstructure->get_items(true);
 //show the count
 if (is_array($items)) {
     echo '<b>'.get_string('questions', 'feedback').': ' .count($items). ' </b><hr />';
@@ -123,8 +115,6 @@ if ($courseitemfilter > 0) {
         echo '<div class="clearfix">';
         echo '<table>';
         echo '<tr><th>Course</th><th>Average</th></tr>';
-        $sep_dec = get_string('separator_decimal', 'feedback');
-        $sep_thous = get_string('separator_thousand', 'feedback');
 
         foreach ($courses as $c) {
             $coursecontext = context_course::instance($c->course_id);
@@ -133,7 +123,7 @@ if ($courseitemfilter > 0) {
             echo '<tr>';
             echo '<td>'.$shortname.'</td>';
             echo '<td align="right">';
-            echo number_format(($c->sumvalue / $c->countvalue), 2, $sep_dec, $sep_thous);
+            echo format_float(($c->sumvalue / $c->countvalue), 2);
             echo '</td>';
             echo '</tr>';
         }
@@ -182,23 +172,14 @@ if ($courseitemfilter > 0) {
 
     echo '</form>';
     echo '</div>';
-    echo '<hr />';
-    $itemnr = 0;
-    //print the items in an analysed form
+
+    // Print the items in an analysed form.
     foreach ($items as $item) {
-        if ($item->hasvalue == 0) {
-            continue;
-        }
-        echo '<table>';
-        //get the class from item-typ
+        echo '<table class="analysis">';
+        echo "<tr><td colspan=\"2\" class=\"analysis_separator\"><hr></td></tr>";
         $itemobj = feedback_get_item_class($item->typ);
-        $itemnr++;
-        if ($feedback->autonumbering) {
-            $printnr = $itemnr.'.';
-        } else {
-            $printnr = '';
-        }
-        $itemobj->print_analysed($item, $printnr, $mygroupid, $courseid);
+        $printnr = ($feedback->autonumbering && $item->itemnr) ? ($item->itemnr . '.') : '';
+        $itemobj->print_analysed($item, $printnr, $mygroupid, $feedbackstructure->get_courseid());
         if (preg_match('/rated$/i', $item->typ)) {
             $url = new moodle_url('/mod/feedback/analysis_course.php', array('id' => $id,
                 'courseitemfilter' => $item->id, 'courseitemfiltertyp' => $item->typ));
