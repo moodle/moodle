@@ -29,10 +29,10 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-require_once($CFG->dirroot . '/mod/wiki/lib.php');
+require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 
 /**
- * Wiki module external functions tests
+ * Question external functions tests
  *
  * @package    core_question
  * @category   external
@@ -48,10 +48,10 @@ class core_question_external_testcase extends externallib_advanced_testcase {
     public function setUp() {
         global $DB;
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         // Setup test data.
         $this->course = $this->getDataGenerator()->create_course();
-        $this->wiki = $this->getDataGenerator()->create_module('wiki', array('course' => $this->course->id));
 
         // Create users.
         $this->student = self::getDataGenerator()->create_user();
@@ -59,9 +59,6 @@ class core_question_external_testcase extends externallib_advanced_testcase {
         // Users enrolments.
         $this->studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $this->getDataGenerator()->enrol_user($this->student->id, $this->course->id, $this->studentrole->id, 'manual');
-
-        // Create first page.
-        $this->firstpage = $this->getDataGenerator()->get_plugin_generator('mod_wiki')->create_first_page($this->wiki);
     }
 
     /**
@@ -69,18 +66,40 @@ class core_question_external_testcase extends externallib_advanced_testcase {
      */
     public function test_core_question_update_flag() {
 
-        $question = test_question_maker::make_question('shortanswer');
-        $quba = question_engine::make_questions_usage_by_activity('test', context_system::instance());
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        // Create a question category.
+        $cat = $questiongenerator->create_question_category();
+
+        $quba = question_engine::make_questions_usage_by_activity('core_question_update_flag', context_system::instance());
+        $quba->set_preferred_behaviour('deferredfeedback');
+        $questiondata = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
+        $question = question_bank::load_question($questiondata->id);
         $slot = $quba->add_question($question);
-        $quba->start_all_questions();
         $qa = $quba->get_question_attempt($slot);
+
+        self::setUser($this->student);
+
+        $quba->start_all_questions();
+        question_engine::save_questions_usage_by_activity($quba);
 
         $qubaid = $quba->get_id();
         $questionid = $question->id;
-        $qaid = $qa->id;
+        $qaid = $qa->get_database_id();
         $checksum = md5($qubaid . "_" . $this->student->secret . "_" . $questionid . "_" . $qaid . "_" . $slot);
 
         $flag = core_question_external::update_flag($qubaid, $questionid, $qaid, $slot, $checksum, true);
         $this->assertTrue($flag['status']);
+
+        // Test invalid checksum.
+        try {
+            // Using random_string to force failing.
+            $checksum = md5($qubaid . "_" . random_string(11) . "_" . $questionid . "_" . $qaid . "_" . $slot);
+
+            core_question_external::update_flag($qubaid, $questionid, $qaid, $slot, $checksum, true);
+            $this->fail('Exception expected due to invalid checksum.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('errorsavingflags', $e->errorcode);
+        }
     }
 }
