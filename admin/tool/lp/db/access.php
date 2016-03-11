@@ -233,9 +233,8 @@ $capabilities = array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSECAT,
         'archetypes' => array(
-            'user' => CAP_ALLOW
         ),
-        'clonepermissionsfrom' => 'moodle/block:view'
+        'clonepermissionsfrom' => 'moodle/site:config'
     ),
     // User evidence.
     'tool/lp:userevidencemanage' => array(
