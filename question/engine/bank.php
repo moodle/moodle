@@ -426,6 +426,25 @@ abstract class question_bank {
         require_once($CFG->dirroot . '/question/engine/statisticslib.php');
         question_usage_statistics_cron();
     }
+
+    /**
+     * Return a list of the different question types present in the given categories.
+     *
+     * @param  array $categories a list of category ids
+     * @return array the list of question types in the categories
+     * @since  Moodle 3.1
+     */
+    public static function get_all_question_types_in_categories($categories) {
+        global $DB;
+
+        list($categorysql, $params) = $DB->get_in_or_equal($categories);
+        $sql = "SELECT DISTINCT q.qtype
+                FROM {question} q
+                WHERE q.category $categorysql";
+
+        $qtypes = $DB->get_fieldset_sql($sql, $params);
+        return $qtypes;
+    }
 }
 
 

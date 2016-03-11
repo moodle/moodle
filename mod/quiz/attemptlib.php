@@ -433,6 +433,57 @@ class quiz {
             throw new moodle_quiz_exception($this, 'questionnotloaded', $id);
         }
     }
+
+    /**
+     * Return all the question types used in this quiz.
+     *
+     * @param  boolean $includepotential if the quiz include random questions, setting this flag to true will make the function to
+     * return all the possible question types in the random questions category
+     * @return array a sorted array including the different question types
+     * @since  Moodle 3.1
+     */
+    public function get_all_question_types_used($includepotential = false) {
+        $questiontypes = array();
+
+        // To control if we need to look in categories for questions.
+        $qcategories = array();
+
+        // We must be careful with random questions, if we find a random question we must assume that the quiz may content
+        // any of the questions in the referenced category (or subcategories).
+        foreach ($this->get_questions() as $questiondata) {
+            if ($questiondata->qtype == 'random' and $includepotential) {
+                $includesubcategories = (bool) $questiondata->questiontext;
+                if (!isset($qcategories[$questiondata->category])) {
+                    $qcategories[$questiondata->category] = false;
+                }
+                if ($includesubcategories) {
+                    $qcategories[$questiondata->category] = true;
+                }
+            } else {
+                if (!in_array($questiondata->qtype, $questiontypes)) {
+                    $questiontypes[] = $questiondata->qtype;
+                }
+            }
+        }
+
+        if (!empty($qcategories)) {
+            // We have to look for all the question types in these categories.
+            $categoriestolook = array();
+            foreach ($qcategories as $cat => $includesubcats) {
+                if ($includesubcats) {
+                    $categoriestolook = array_merge($categoriestolook, question_categorylist($cat));
+                } else {
+                    $categoriestolook[] = $cat;
+                }
+            }
+            $questiontypesincategories = question_bank::get_all_question_types_in_categories($categoriestolook);
+            $questiontypes = array_merge($questiontypes, $questiontypesincategories);
+        }
+        $questiontypes = array_unique($questiontypes);
+        sort($questiontypes);
+
+        return $questiontypes;
+    }
 }
 
 
