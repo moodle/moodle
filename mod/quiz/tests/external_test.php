@@ -1546,4 +1546,46 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(get_string('nomoreattempts', 'quiz'), $result['preventnewattemptreasons'][0]);
 
     }
+
+    /**
+     * Test get_quiz_required_qtypes
+     */
+    public function test_get_quiz_required_qtypes() {
+        global $DB;
+
+        // Create a new quiz.
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $data = array('course' => $this->course->id);
+        $quiz = $quizgenerator->create_instance($data);
+
+        // Create some questions.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        $cat = $questiongenerator->create_question_category();
+        $question = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
+        quiz_add_quiz_question($question->id, $quiz);
+
+        $question = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
+        quiz_add_quiz_question($question->id, $quiz);
+
+        // Add new question types in the category (for the random one).
+        $question = $questiongenerator->create_question('truefalse', null, array('category' => $cat->id));
+        $question = $questiongenerator->create_question('essay', null, array('category' => $cat->id));
+
+        $question = $questiongenerator->create_question('random', null, array('category' => $cat->id));
+        quiz_add_quiz_question($question->id, $quiz);
+
+        $this->setUser($this->student);
+
+        $result = mod_quiz_external::get_quiz_required_qtypes($quiz->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_quiz_required_qtypes_returns(), $result);
+
+        $expected = array(
+            'questiontypes' => ['essay', 'numerical', 'random', 'shortanswer', 'truefalse'],
+            'warnings' => []
+        );
+
+        $this->assertEquals($expected, $result);
+
+    }
 }

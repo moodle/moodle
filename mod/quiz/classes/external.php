@@ -1808,4 +1808,66 @@ class mod_quiz_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for get_quiz_required_qtypes.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function get_quiz_required_qtypes_parameters() {
+        return new external_function_parameters (
+            array(
+                'quizid' => new external_value(PARAM_INT, 'quiz instance id')
+            )
+        );
+    }
+
+    /**
+     * Return the potential question types that would be required for a given quiz.
+     * Please note that for random question types we return the potential question types in the category choosen.
+     *
+     * @param int $quizid quiz instance id
+     * @return array of warnings and the access information
+     * @since Moodle 3.1
+     * @throws  moodle_quiz_exception
+     */
+    public static function get_quiz_required_qtypes($quizid) {
+        global $DB, $USER;
+
+        $warnings = array();
+
+        $params = array(
+            'quizid' => $quizid
+        );
+        $params = self::validate_parameters(self::get_quiz_required_qtypes_parameters(), $params);
+
+        list($quiz, $course, $cm, $context) = self::validate_quiz($params['quizid']);
+
+        $quizobj = quiz::create($cm->instance, $USER->id);
+        $quizobj->preload_questions();
+        $quizobj->load_questions();
+
+        // Question types used.
+        $result = array();
+        $result['questiontypes'] = $quizobj->get_all_question_types_used(true);
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_quiz_required_qtypes return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function get_quiz_required_qtypes_returns() {
+        return new external_single_structure(
+            array(
+                'questiontypes' => new external_multiple_structure(
+                                    new external_value(PARAM_PLUGIN, 'question type'), 'list of question types used in the quiz'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }
