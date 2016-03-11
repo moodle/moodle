@@ -28,7 +28,7 @@
 require_once(__DIR__ . '/../../behat/behat_base.php');
 
 use Behat\Mink\Exception\ExpectationException as ExpectationException,
-    Behat\Behat\Context\Step\Given as Given,
+    Moodle\BehatExtension\Context\Step\Given as Given,
     Behat\Gherkin\Node\TableNode as TableNode;
 
 /**

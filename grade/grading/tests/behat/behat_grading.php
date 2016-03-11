@@ -28,8 +28,8 @@
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
 use Behat\Gherkin\Node\TableNode as TableNode,
-    Behat\Behat\Context\Step\Given as Given,
-    Behat\Behat\Context\Step\When as When;
+    Moodle\BehatExtension\Context\Step\Given as Given,
+    Moodle\BehatExtension\Context\Step\When as When;
 
 /**
  * Generic grading methods step definitions.
@@ -93,7 +93,7 @@ class behat_grading extends behat_base {
 
         // Shortcut in case we already are in the grading page.
         $usergradetextliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($usergradetext);
-        if ($this->getSession()->getPage()->find('named', array('link', $usergradetextliteral))) {
+        if ($this->getSession()->getPage()->find('named_partial', array('link', $usergradetextliteral))) {
             return $gradeuserstep;
         }
 

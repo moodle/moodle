@@ -27,7 +27,7 @@
 
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
-use Behat\Behat\Context\Step\Given as Given,
+use Moodle\BehatExtension\Context\Step\Given as Given,
     Behat\Gherkin\Node\TableNode as TableNode,
     Behat\Mink\Exception\ExpectationException as ExpectationException,
     Behat\Mink\Exception\DriverException as DriverException,
@@ -97,7 +97,7 @@ class behat_course extends behat_base {
                     unset($rows[$key]);
                 }
             }
-            $table->setRows($rows);
+            $table = new TableNode($rows);
 
             // Adding a forced wait until editors are loaded as otherwise selenium sometimes tries clicks on the
             // format field when the editor is being rendered and the click misses the field coordinates.
@@ -585,7 +585,7 @@ class behat_course extends behat_base {
 
             // The 'Hide' button should be available.
             $nohideexception = new ExpectationException('"' . $activityname . '" don\'t have a "' . get_string('hide') . '" icon', $this->getSession());
-            $this->find('named', array('link', get_string('hide')), $nohideexception, $activitynode);
+            $this->find('named_partial', array('link', get_string('hide')), $nohideexception, $activitynode);
         }
     }
 
@@ -611,7 +611,7 @@ class behat_course extends behat_base {
 
             // Also 'Show' icon.
             $noshowexception = new ExpectationException('"' . $activityname . '" don\'t have a "' . get_string('show') . '" icon', $this->getSession());
-            $this->find('named', array('link', get_string('show')), $noshowexception, $activitynode);
+            $this->find('named_partial', array('link', get_string('show')), $noshowexception, $activitynode);
 
         } else {
 

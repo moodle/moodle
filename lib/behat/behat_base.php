@@ -102,6 +102,13 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      */
     protected function find($selector, $locator, $exception = false, $node = false, $timeout = false) {
 
+        // Throw exception, so dev knows it is not supported.
+        if ($selector === 'named') {
+            $exception = 'Using the "named" selector is deprecated as of 3.1. '
+                .' Use the "named_partial" or use the "named_exact" selector instead.';
+            throw new ExpectationException($exception, $this->getSession());
+        }
+
         // Returns the first match.
         $items = $this->find_all($selector, $locator, $exception, $node, $timeout);
         return count($items) ? reset($items) : null;
@@ -122,11 +129,18 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      */
     protected function find_all($selector, $locator, $exception = false, $node = false, $timeout = false) {
 
+        // Throw exception, so dev knows it is not supported.
+        if ($selector === 'named') {
+            $exception = 'Using the "named" selector is deprecated as of 3.1. '
+                .' Use the "named_partial" or use the "named_exact" selector instead.';
+            throw new ExpectationException($exception, $this->getSession());
+        }
+
         // Generic info.
         if (!$exception) {
 
             // With named selectors we can be more specific.
-            if ($selector == 'named') {
+            if (($selector == 'named_exact') || ($selector == 'named_partial')) {
                 $exceptiontype = $locator[0];
                 $exceptionlocator = $locator[1];
 
@@ -236,7 +250,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
 
         // Redirecting execution to the find method with the specified selector.
         // It will detect if it's pointing to an unexisting named selector.
-        return $this->find('named',
+        return $this->find('named_partial',
             array(
                 $cleanname,
                 $this->getSession()->getSelectorsHandler()->xpathLiteral($arguments[0])
@@ -636,5 +650,67 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                 $height = (int) $size[1];
         }
         $this->getSession()->getDriver()->resizeWindow($width, $height);
+    }
+
+    /**
+     * Waits for all the JS to be loaded.
+     *
+     * @throws \Exception
+     * @throws NoSuchWindow
+     * @throws UnknownError
+     * @return bool True or false depending whether all the JS is loaded or not.
+     */
+    public function wait_for_pending_js() {
+        // Waiting for JS is only valid for JS scenarios.
+        if (!$this->running_javascript()) {
+            return;
+        }
+
+        // We don't use behat_base::spin() here as we don't want to end up with an exception
+        // if the page & JSs don't finish loading properly.
+        for ($i = 0; $i < self::EXTENDED_TIMEOUT * 10; $i++) {
+            $pending = '';
+            try {
+                $jscode = '
+                    return function() {
+                        if (typeof M === "undefined") {
+                            if (document.readyState === "complete") {
+                                return "";
+                            } else {
+                                return "incomplete";
+                            }
+                        } else if (' . self::PAGE_READY_JS . ') {
+                            return "";
+                        } else {
+                            return M.util.pending_js.join(":");
+                        }
+                    }();';
+                $pending = $this->getSession()->evaluateScript($jscode);
+            } catch (NoSuchWindow $nsw) {
+                // We catch an exception here, in case we just closed the window we were interacting with.
+                // No javascript is running if there is no window right?
+                $pending = '';
+            } catch (UnknownError $e) {
+                // M is not defined when the window or the frame don't exist anymore.
+                if (strstr($e->getMessage(), 'M is not defined') != false) {
+                    $pending = '';
+                }
+            }
+
+            // If there are no pending JS we stop waiting.
+            if ($pending === '') {
+                return true;
+            }
+
+            // 0.1 seconds.
+            usleep(100000);
+        }
+
+        // Timeout waiting for JS to complete. It will be catched and forwarded to behat_hooks::i_look_for_exceptions().
+        // It is unlikely that Javascript code of a page or an AJAX request needs more than self::EXTENDED_TIMEOUT seconds
+        // to be loaded, although when pages contains Javascript errors M.util.js_complete() can not be executed, so the
+        // number of JS pending code and JS completed code will not match and we will reach this point.
+        throw new \Exception('Javascript code and/or AJAX requests are not ready after ' . self::EXTENDED_TIMEOUT .
+            ' seconds. There is a Javascript error or the code is extremely slow.');
     }
 }

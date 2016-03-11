@@ -26,8 +26,8 @@ Feature: In an assignment, teachers can edit a students submission inline
       | assignsubmission_onlinetext_enabled | 1 |
       | assignsubmission_file_enabled | 0 |
       | assignfeedback_comments_enabled | 1 |
-      | assignfeedback_comments_commentinline | 1 |
       | assignfeedback_file_enabled | 1 |
+      | assignfeedback_comments_commentinline | 1 |
     And I log out
     And I log in as "student1"
     And I follow "Course 1"

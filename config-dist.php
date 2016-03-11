@@ -673,18 +673,16 @@ $CFG->admin = 'admin';
 // params hierarchy. More info: http://docs.behat.org/guides/7.config.html
 // Example:
 //   $CFG->behat_config = array(
-//       'default' => array(
-//           'formatter' => array(
-//               'name' => 'pretty',
-//               'parameters' => array(
-//                   'decorated' => true,
-//                   'verbose' => false
-//               )
-//           )
-//       ),
 //       'Mac-Firefox' => array(
+//           'suites' => array (
+//               'default' => array(
+//                   'filters' => array(
+//                      'tags' => '~@_file_upload'
+//                   ),
+//               ),
+//           ),
 //           'extensions' => array(
-//               'Behat\MinkExtension\Extension' => array(
+//               'Behat\MinkExtension' => array(
 //                   'selenium2' => array(
 //                       'browser' => 'firefox',
 //                       'capabilities' => array(
@@ -697,7 +695,7 @@ $CFG->admin = 'admin';
 //       ),
 //       'Mac-Safari' => array(
 //           'extensions' => array(
-//               'Behat\MinkExtension\Extension' => array(
+//               'Behat\MinkExtension' => array(
 //                   'selenium2' => array(
 //                       'browser' => 'safari',
 //                       'capabilities' => array(
@@ -709,6 +707,20 @@ $CFG->admin = 'admin';
 //           )
 //       )
 //   );
+// You can also use the following config to override default Moodle configuration for Behat.
+// This config is limited to default suite and will be supported in later versions.
+// It will have precedence over $CFG->behat_config.
+// $CFG->behat_profiles = array(
+//     'phantomjs' => array(
+//         'browser' => 'phantomjs',
+//         'tags' => '~@_file_upload&&~@_alert&&~@_bug_phantomjs',
+//         'wd_host' => 'http://127.0.0.1:4443/wd/hub',
+//         'capabilities' => array(
+//             'platform' => 'Linux',
+//             'version' => 2.1
+//         )
+//     ),
+// );
 //
 // You can force the browser session (not user's sessions) to restart after N seconds. This could
 // be useful if you are using a cloud-based service with time restrictions in the browser side.

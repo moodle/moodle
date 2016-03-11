@@ -263,7 +263,7 @@ if (!$moving) {
 if (!$moving && count($grade_edit_tree->categories) > 1) {
     echo '<br /><br />';
     echo '<input type="hidden" name="bulkmove" value="0" id="bulkmoveinput" />';
-    $attributes = array('id'=>'menumoveafter', 'class' => 'ignoredirty');
+    $attributes = array('id'=>'menumoveafter', 'class' => 'ignoredirty singleselect');
     echo html_writer::label(get_string('moveselectedto', 'grades'), 'menumoveafter');
     echo html_writer::select($grade_edit_tree->categories, 'moveafter', '', array(''=>'choosedots'), $attributes);
     $OUTPUT->add_action_handler(new component_action('change', 'submit_bulk_move'), 'menumoveafter');

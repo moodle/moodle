@@ -31,8 +31,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
       | Required | yes |
       | Options | Required Checkbox Option 1 |
     And I follow "Fields"
-    And I set the field "newtype" to "Checkbox"
-    And I click on "Go" "button" in the ".fieldadd" "css_element"
+    And I select "Checkbox" from the "newtype" singleselect
     And I set the following fields to these values:
       | Field name | Required Two-Option Checkbox |
       | Field description | Required Two-Option Checkbox |
@@ -79,8 +78,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
       | Required | yes |
       | Options | Option 1 |
     And I follow "Fields"
-    And I set the field "newtype" to "Multimenu"
-    And I click on "Go" "button" in the ".fieldadd" "css_element"
+    And I select "Multimenu" from the "newtype" singleselect
     And I set the following fields to these values:
       | Field name | Required Two-Option Multimenu |
       | Field description | Required Two-Option Multimenu |

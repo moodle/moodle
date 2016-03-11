@@ -27,7 +27,7 @@
 
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
-use Behat\Behat\Context\Step\Given as Given;
+use Moodle\BehatExtension\Context\Step\Given as Given;
 
 /**
  * Choice activity definitions.
@@ -67,14 +67,24 @@ class behat_mod_choice extends behat_base {
      * @return array
      */
     public function I_choose_options_from_activity($option, $choiceactivity) {
-        // Escaping again the strings as backslashes have been removed by the automatic transformation.
-        $return = array(new Given('I follow "' . $this->escape($choiceactivity) . '"'));
+        // Get Behat general and forms contexts.
+        $behatgeneral = behat_context_helper::get('behat_general');
+        $behatforms = behat_context_helper::get('behat_forms');
+
+        // Go to choice activity.
+        $behatgeneral->click_link($this->escape($choiceactivity));
+
+        // Wait for page to be loaded.
+        $this->wait_for_pending_js();
+
+        // Set all options.
         $options = explode('","', trim($option, '"'));
         foreach ($options as $option) {
-            $return[] = new Given('I set the field "' . $this->escape($option) . '" to "1"');
+            $behatforms->i_set_the_field_to($this->escape($option), '1');
         }
-        $return[] = new Given('I press "' . get_string('savemychoice', 'choice') . '"');
-        return $return;
+
+        // Save choice.
+        $behatforms->press_button(get_string('savemychoice', 'choice'));
     }
 
 }

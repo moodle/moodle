@@ -27,7 +27,7 @@
 
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
-use Behat\Behat\Context\Step\Then;
+use Moodle\BehatExtension\Context\Step\Then;
 use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
 /**
@@ -61,6 +61,11 @@ class behat_groups extends behat_base {
         $groupoption = $this->find('xpath', $xpath);
         $fulloption = $groupoption->getText();
         $select->selectOption($fulloption);
+
+        // This is needed by some drivers to ensure relevant event is triggred and button is enabled.
+        $script = "Syn.trigger('change', {}, {{ELEMENT}})";
+        $this->getSession()->getDriver()->triggerSynScript($select->getXpath(), $script);
+        $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
 
         // Here we don't need to wait for the AJAX response.
         $this->find_button(get_string('adduserstogroup', 'group'))->click();

@@ -27,10 +27,10 @@
 
 require_once(__DIR__ . '/../../behat/behat_base.php');
 
-use Behat\Behat\Context\Step\Given as Given;
+use Moodle\BehatExtension\Context\Step\Given;
+use Moodle\BehatExtension\Context\Step\When;
 use Behat\Mink\Exception\ExpectationException as ExpectationException;
 use Behat\Mink\Exception\DriverException as DriverException;
-use Behat\Behat\Context\Step\When as When;
 
 /**
  * Steps definitions to navigate through the navigation tree nodes.
@@ -245,7 +245,8 @@ class behat_navigation extends behat_base {
             if ($parentnodes[0] === $siteadminstr) {
                 // We don't know if there if Site admin is already expanded so
                 // don't wait, it is non-JS and we already waited for the DOM.
-                if ($siteadminlink = $this->getSession()->getPage()->find('named', array('link', "'" . $siteadminstr . "'"))) {
+                $siteadminlink = $this->getSession()->getPage()->find('named_exact', array('link', "'" . $siteadminstr . "'"));
+                if ($siteadminlink) {
                     $siteadminlink->click();
                 }
             }
@@ -382,5 +383,36 @@ class behat_navigation extends behat_base {
                 $parentnode->getText() . '"', $this->getSession());
         }
         return $node;
+    }
+
+    /**
+     * Step to open the navigation bar if it is needed.
+     *
+     * The top log in and log out links are hidden when middle or small
+     * size windows (or devices) are used. This step returns a step definition
+     * clicking to expand the navbar if it is hidden.
+     *
+     * @Given /^I expand navigation bar$/
+     */
+    public function get_expand_navbar_step() {
+
+        // Checking if we need to click the navbar button to show the navigation menu, it
+        // is hidden by default when using clean theme and a medium or small screen size.
+
+        // The DOM and the JS should be all ready and loaded. Running without spinning
+        // as this is a widely used step and we can not spend time here trying to see
+        // a DOM node that is not always there (at the moment clean is not even the
+        // default theme...).
+        $navbuttonjs = "return (
+            Y.one('.btn-navbar') &&
+            Y.one('.btn-navbar').getComputedStyle('display') !== 'none'
+        )";
+
+        // Adding an extra click we need to show the 'Log in' link.
+        if (!$this->getSession()->getDriver()->evaluateScript($navbuttonjs)) {
+            return false;
+        }
+
+        return new Given('I click on ".btn-navbar" "css_element"');
     }
 }

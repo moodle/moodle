@@ -44,6 +44,7 @@ Feature: We can use calculated grade totals
     And I follow "Course 1"
     And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
+    And I change window size to "large"
     And I give the grade "60.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "20.00" to the user "Student 1" for the grade item "Test assignment two"
     And I give the grade "40.00" to the user "Student 1" for the grade item "Test assignment three"
@@ -58,6 +59,7 @@ Feature: We can use calculated grade totals
       | Hidden | 1 |
     And I set the following settings for grade item "Test assignment eight":
       | Hidden | 1 |
+    And I change window size to "medium"
     And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the field "Grade display type" to "Real (percentage)"
     And I press "Save changes"

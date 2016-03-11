@@ -54,14 +54,16 @@ class behat_mod_feedback extends behat_base {
         $additem = $this->escape(get_string('add_item', 'feedback'));
         $rv[] = new Given("I select \"{$questiontype}\" from the \"{$additem}\" singleselect");
 
-        $newdata = new TableNode();
         $rows = $questiondata->getRows();
+        $modifiedrows = array();
         foreach ($rows as $row) {
             foreach ($row as $key => $value) {
                 $row[$key] = preg_replace('|\\\\n|', "\n", $value);
             }
-            $newdata->addRow($row);
+            $modifiedrows[] = $row;
         }
+        $newdata = new TableNode($modifiedrows);
+
         $rv[] = new Given('I set the following fields to these values:', $newdata);
 
         $saveitem = $this->escape(get_string('save_item', 'feedback'));

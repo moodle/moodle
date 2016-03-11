@@ -43,6 +43,11 @@ require_once(__DIR__ . '/../../testing/classes/tests_finder.php');
 class behat_config_manager {
 
     /**
+     * @var bool Keep track of the automatic profile conversion. So we can notify user.
+     */
+    public static $autoprofileconversion = false;
+
+    /**
      * Updates a config file
      *
      * The tests runner and the steps definitions list uses different
@@ -397,45 +402,158 @@ class behat_config_manager {
             $CFG->behat_wwwroot = 'http://itwillnotbeused.com';
         }
 
-        $basedir = $CFG->dirroot . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'behat';
-
+        // Comments use black color, so failure path is not visible. Using color other then black/white is safer.
+        // https://github.com/Behat/Behat/pull/628.
         $config = array(
             'default' => array(
-                'paths' => array(
-                    'features' => $basedir . DIRECTORY_SEPARATOR . 'features',
-                    'bootstrap' => $basedir . DIRECTORY_SEPARATOR . 'features' . DIRECTORY_SEPARATOR . 'bootstrap',
+                'formatters' => array(
+                    'moodle_progress' => array(
+                        'output_styles' => array(
+                            'comment' => array('magenta'))
+                        )
                 ),
-                'context' => array(
-                    'class' => 'behat_init_context'
+                'suites' => array(
+                    'default' => array(
+                        'paths' => $features,
+                        'contexts' => array_keys($stepsdefinitions)
+                    )
                 ),
                 'extensions' => array(
-                    'Behat\MinkExtension\Extension' => array(
+                    'Behat\MinkExtension' => array(
                         'base_url' => $CFG->behat_wwwroot,
                         'goutte' => null,
                         'selenium2' => $selenium2wdhost
                     ),
-                    'Moodle\BehatExtension\Extension' => array(
-                        'formatters' => array(
-                            'moodle_progress' => 'Moodle\BehatExtension\Formatter\MoodleProgressFormatter',
-                            'moodle_list' => 'Moodle\BehatExtension\Formatter\MoodleListFormatter',
-                            'moodle_step_count' => 'Moodle\BehatExtension\Formatter\MoodleStepCountFormatter'
-                        ),
-                        'features' => $features,
+                    'Moodle\BehatExtension' => array(
+                        'moodledirroot' => $CFG->dirroot,
                         'steps_definitions' => $stepsdefinitions
                     )
-                ),
-                'formatter' => array(
-                    'name' => 'moodle_progress'
                 )
             )
         );
 
         // In case user defined overrides respect them over our default ones.
         if (!empty($CFG->behat_config)) {
-            $config = self::merge_config($config, $CFG->behat_config);
+            foreach ($CFG->behat_config as $profile => $values) {
+                $config = self::merge_config($config, self::merge_behat_config($profile, $values));
+            }
+        }
+        // Check for Moodle custom ones.
+        if (!empty($CFG->behat_profiles) && is_array($CFG->behat_profiles)) {
+            foreach ($CFG->behat_profiles as $profile => $values) {
+                $config = self::merge_config($config, self::get_behat_profile($profile, $values));
+            }
         }
 
         return Symfony\Component\Yaml\Yaml::dump($config, 10, 2);
+    }
+
+    /**
+     * Parse $CFG->behat_config and return the array with required config structure for behat.yml
+     *
+     * @param string $profile profile name
+     * @param array $values values for profile
+     * @return array
+     */
+    protected static function merge_behat_config($profile, $values) {
+        // Only add profile which are compatible with Behat 3.x
+        // Just check if any of Bheat 2.5 config is set. Not checking for 3.x as it might have some other configs
+        // Like : rerun_cache etc.
+        if (!isset($values['filters']['tags']) && !isset($values['extensions']['Behat\MinkExtension\Extension'])) {
+            return array($profile => $values);
+        }
+
+        // Parse 2.5 format and get related values.
+        $oldconfigvalues = array();
+        if (isset($values['extensions']['Behat\MinkExtension\Extension'])) {
+            $extensionvalues = $values['extensions']['Behat\MinkExtension\Extension'];
+            if (isset($extensionvalues['selenium2']['browser'])) {
+                $oldconfigvalues['browser'] = $extensionvalues['selenium2']['browser'];
+            }
+            if (isset($extensionvalues['selenium2']['wd_host'])) {
+                $oldconfigvalues['wd_host'] = $extensionvalues['selenium2']['wd_host'];
+            }
+            if (isset($extensionvalues['capabilities'])) {
+                $oldconfigvalues['capabilities'] = $extensionvalues['capabilities'];
+            }
+        }
+
+        if (isset($values['filters']['tags'])) {
+            $oldconfigvalues['tags'] = $values['filters']['tags'];
+        }
+
+        if (!empty($oldconfigvalues)) {
+            self::$autoprofileconversion = true;
+            return self::get_behat_profile($profile, $oldconfigvalues);
+        }
+
+        // If nothing set above then return empty array.
+        return array();
+    }
+
+    /**
+     * Parse $CFG->behat_profile and return the array with required config structure for behat.yml.
+     *
+     * $CFG->behat_profiles = array(
+     *     'profile' = array(
+     *         'browser' => 'firefox',
+     *         'tags' => '@javascript',
+     *         'wd_host' => 'http://127.0.0.1:4444/wd/hub',
+     *         'capabilities' => array(
+     *             'platform' => 'Linux',
+     *             'version' => 44
+     *         )
+     *     )
+     * );
+     *
+     * @param string $profile profile name
+     * @param array $values values for profile.
+     * @return array
+     */
+    protected static function get_behat_profile($profile, $values) {
+        // Values should be an array.
+        if (!is_array($values)) {
+            return array();
+        }
+
+        // Check suite values.
+        $behatprofilesuites = array();
+        // Fill tags information.
+        if (isset($values['tags'])) {
+            $behatprofilesuites = array(
+                'suites' => array(
+                    'default' => array(
+                        'filters' => array(
+                            'tags' => $values['tags'],
+                        )
+                    )
+                )
+            );
+        }
+
+        // Selenium2 config values.
+        $behatprofileextension = array();
+        $seleniumconfig = array();
+        if (isset($values['browser'])) {
+            $seleniumconfig['browser'] = $values['browser'];
+        }
+        if (isset($values['wd_host'])) {
+            $seleniumconfig['wd_host'] = $values['wd_host'];
+        }
+        if (isset($values['capabilities'])) {
+            $seleniumconfig['capabilities'] = $values['capabilities'];
+        }
+        if (!empty($seleniumconfig)) {
+            $behatprofileextension = array(
+                'extensions' => array(
+                    'Behat\MinkExtension' => array(
+                        'selenium2' => $seleniumconfig,
+                    )
+                )
+            );
+        }
+
+        return array($profile => array_merge($behatprofilesuites, $behatprofileextension));
     }
 
     /**
