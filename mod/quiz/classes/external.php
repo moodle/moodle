@@ -1701,4 +1701,111 @@ class mod_quiz_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for get_attempt_access_information.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function get_attempt_access_information_parameters() {
+        return new external_function_parameters (
+            array(
+                'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
+                'attemptid' => new external_value(PARAM_INT, 'attempt id, 0 for the user last attempt if exists', VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+    /**
+     * Return access information for a given attempt in a quiz.
+     *
+     * @param int $quizid quiz instance id
+     * @param int $attemptid attempt id, 0 for the user last attempt if exists
+     * @return array of warnings and the access information
+     * @since Moodle 3.1
+     * @throws  moodle_quiz_exception
+     */
+    public static function get_attempt_access_information($quizid, $attemptid = 0) {
+        global $DB, $USER;
+
+        $warnings = array();
+
+        $params = array(
+            'quizid' => $quizid,
+            'attemptid' => $attemptid,
+        );
+        $params = self::validate_parameters(self::get_attempt_access_information_parameters(), $params);
+
+        list($quiz, $course, $cm, $context) = self::validate_quiz($params['quizid']);
+
+        $attempttocheck = 0;
+        if (!empty($params['attemptid'])) {
+            $attemptobj = quiz_attempt::create($params['attemptid']);
+            if ($attemptobj->get_userid() != $USER->id) {
+                throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'notyourattempt');
+            }
+            $attempttocheck = $attemptobj->get_attempt();
+        }
+
+        // Access manager now.
+        $quizobj = quiz::create($cm->instance, $USER->id);
+        $ignoretimelimits = has_capability('mod/quiz:ignoretimelimits', $context, null, false);
+        $timenow = time();
+        $accessmanager = new quiz_access_manager($quizobj, $timenow, $ignoretimelimits);
+
+        $attempts = quiz_get_user_attempts($quiz->id, $USER->id, 'finished', true);
+        $lastfinishedattempt = end($attempts);
+        if ($unfinishedattempt = quiz_get_user_attempt_unfinished($quiz->id, $USER->id)) {
+            $attempts[] = $unfinishedattempt;
+
+            // Check if the attempt is now overdue. In that case the state will change.
+            $quizobj->create_attempt_object($unfinishedattempt)->handle_if_time_expired(time(), false);
+
+            if ($unfinishedattempt->state != quiz_attempt::IN_PROGRESS and $unfinishedattempt->state != quiz_attempt::OVERDUE) {
+                $lastfinishedattempt = $unfinishedattempt;
+            }
+        }
+        $numattempts = count($attempts);
+
+        if (!$attempttocheck) {
+            $attempttocheck = $unfinishedattempt ? $unfinishedattempt : $lastfinishedattempt;
+        }
+
+        $result = array();
+        $result['isfinished'] = $accessmanager->is_finished($numattempts, $lastfinishedattempt);
+        $result['preventnewattemptreasons'] = $accessmanager->prevent_new_attempt($numattempts, $lastfinishedattempt);
+
+        if ($attempttocheck) {
+            $endtime = $accessmanager->get_end_time($attempttocheck);
+            $result['endtime'] = ($endtime === false) ? 0 : $endtime;
+            $attemptid = $unfinishedattempt ? $unfinishedattempt->id : null;
+            $result['ispreflightcheckrequired'] = $accessmanager->is_preflight_check_required($attemptid);
+        }
+
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_attempt_access_information return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function get_attempt_access_information_returns() {
+        return new external_single_structure(
+            array(
+                'endtime' => new external_value(PARAM_INT, 'When the attempt must be submitted (determined by rules).',
+                                                VALUE_OPTIONAL),
+                'isfinished' => new external_value(PARAM_BOOL, 'Whether there is no way the user will ever be allowed to attempt.'),
+                'ispreflightcheckrequired' => new external_value(PARAM_BOOL, 'whether a check is required before the user
+                                                                    starts/continues his attempt.', VALUE_OPTIONAL),
+                'preventnewattemptreasons' => new external_multiple_structure(
+                                                new external_value(PARAM_TEXT, 'access restriction description'),
+                                                                    'list of reasons'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }
