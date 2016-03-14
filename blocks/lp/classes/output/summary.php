@@ -109,7 +109,7 @@ class summary implements renderable, templatable {
         $data = array(
             'hasplans' => !empty($this->plans),
             'hasactiveplans' => !empty($activeplans),
-            'hasmoreplans' => count($plans) > count($activeplans),
+            'hasmoreplans' => count($this->plans) > count($activeplans),
             'activeplans' => $activeplans,
 
             'compstoreview' => $compstoreview,
