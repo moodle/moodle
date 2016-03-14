@@ -4488,7 +4488,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015051104.07);
     }
 
-    if ($oldversion < 2015051104.12) {
+    if ($oldversion < 2015051105.01) {
         // This could take a long time. Unfortunately, no way to know how long, and no way to do progress, so setting for 1 hour.
         upgrade_set_timeout(3600);
 
@@ -4502,7 +4502,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2015051104.09);
+        upgrade_main_savepoint(true, 2015051105.01);
     }
 
     return true;
