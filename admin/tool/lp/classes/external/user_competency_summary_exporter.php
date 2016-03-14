@@ -141,8 +141,9 @@ class user_competency_summary_exporter extends exporter {
             }
 
             foreach ($this->related['evidence'] as $evidence) {
+                $actionuserid = $evidence->get_actionuserid();
                 $related = array('scale' => $scale);
-                $related['actionuser'] = !empty($evidence->get_actionuserid()) ? $usercache[$evidence->get_actionuserid()] : null;
+                $related['actionuser'] = !empty($actionuserid) ? $usercache[$actionuserid] : null;
                 $exporter = new evidence_exporter($evidence, $related);
                 $allevidence[] = $exporter->export($output);
             }
