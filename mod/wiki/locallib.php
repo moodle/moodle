@@ -506,10 +506,11 @@ function wiki_get_missing_or_empty_pages($swid) {
 /**
  * Get pages list in wiki
  * @param int $swid sub wiki id
+ * @param string $sort How to sort the pages. By default, title ASC.
  */
-function wiki_get_page_list($swid) {
+function wiki_get_page_list($swid, $sort = 'title ASC') {
     global $DB;
-    $records = $DB->get_records('wiki_pages', array('subwikiid' => $swid), 'title ASC');
+    $records = $DB->get_records('wiki_pages', array('subwikiid' => $swid), $sort);
     return $records;
 }
 

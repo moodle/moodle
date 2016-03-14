@@ -61,5 +61,13 @@ $functions = array(
         'type'          => 'read',
         'capabilities'  => 'mod/wiki:viewpage',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+    'mod_wiki_get_subwiki_pages' => array(
+        'classname'     => 'mod_wiki_external',
+        'methodname'    => 'get_subwiki_pages',
+        'description'   => 'Returns the list of pages for a specific subwiki.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/wiki:viewpage',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     )
 );
