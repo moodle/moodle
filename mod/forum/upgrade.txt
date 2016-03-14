@@ -1,6 +1,9 @@
 This files describes API changes in /mod/forum/*,
 information provided here is intended especially for developers.
 
+=== 3.1 ===
+ * The inteface to forum_get_email_message_id() has changed and no longer needs the $host argument.
+
 === 3.0 ===
  * External function get_forums_by_courses now returns and additional field "cancreatediscussions" that indicates if the user
    can create discussions in the forum.
