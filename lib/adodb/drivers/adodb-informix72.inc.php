@@ -1,6 +1,6 @@
 <?php
 /*
-@version   v5.20.1  06-Dec-2015
+@version   v5.20.3  01-Jan-2016
 @copyright (c) 2000-2013 John Lim. All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -378,7 +378,10 @@ class ADODB_informix72 extends ADOConnection {
 	function _close()
 	{
 		$this->lastQuery = false;
-		return ifx_close($this->_connectionID);
+		if($this->_connectionID) {
+			return ifx_close($this->_connectionID);
+		}
+		return true;
 	}
 }
 
@@ -490,7 +493,10 @@ class ADORecordset_informix72 extends ADORecordSet {
 		is running. All associated result memory for the specified result identifier will automatically be freed.	*/
 	function _close()
 	{
-		return ifx_free_result($this->_queryID);
+		if($this->_queryID) {
+			return ifx_free_result($this->_queryID);
+		}
+		return true;
 	}
 
 }
