@@ -71,14 +71,16 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
      * Test view_lti
      */
     public function test_get_tool_launch_data() {
-        global $USER;
+        global $USER, $SITE;
+
+        $SITE->summary = "This is a <b>long</b> front page summary with html, it should exceed more than seventy-five characters.";
 
         $result = mod_lti_external::get_tool_launch_data($this->lti->id);
         $result = external_api::clean_returnvalue(mod_lti_external::get_tool_launch_data_returns(), $result);
 
         // Basic test, the function returns what it's expected.
         self::assertEquals($this->lti->toolurl, $result['endpoint']);
-        self::assertCount(35, $result['parameters']);
+        self::assertCount(36, $result['parameters']);
 
         // Check some parameters.
         $parameters = array();
@@ -93,6 +95,8 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         self::assertEquals($USER->lastname, $parameters['lis_person_name_family']);
         self::assertEquals(fullname($USER), $parameters['lis_person_name_full']);
         self::assertEquals($USER->username, $parameters['ext_user_username']);
+        self::assertEquals("This is a LONG front page summary with html, it should exceed more than seventy-five characters.",
+                           $parameters['tool_consumer_instance_description']);
 
     }
 
