@@ -69,5 +69,14 @@ $functions = array(
         'type'          => 'read',
         'capabilities'  => 'mod/wiki:viewpage',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+
+    'mod_wiki_get_page_contents' => array(
+        'classname'     => 'mod_wiki_external',
+        'methodname'    => 'get_page_contents',
+        'description'   => 'Returns the contents of a page.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/wiki:viewpage',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     )
 );

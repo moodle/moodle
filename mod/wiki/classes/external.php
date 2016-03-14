@@ -594,4 +594,109 @@ class mod_wiki_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for get_page_contents.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function get_page_contents_parameters() {
+        return new external_function_parameters (
+            array(
+                'pageid' => new external_value(PARAM_INT, 'Page ID.')
+            )
+        );
+    }
+
+    /**
+     * Get a page contents.
+     *
+     * @param int $pageid The page ID.
+     * @return array of warnings and page data.
+     * @since Moodle 3.1
+     */
+    public static function get_page_contents($pageid) {
+
+        $params = self::validate_parameters(self::get_page_contents_parameters(),
+                                            array(
+                                                'pageid' => $pageid
+                                            )
+            );
+        $warnings = array();
+
+        // Get wiki page.
+        if (!$page = wiki_get_page($params['pageid'])) {
+            throw new moodle_exception('incorrectpageid', 'wiki');
+        }
+
+        // Get wiki instance.
+        if (!$wiki = wiki_get_wiki_from_pageid($params['pageid'])) {
+            throw new moodle_exception('incorrectwikiid', 'wiki');
+        }
+
+        // Permission validation.
+        $cm = get_coursemodule_from_instance('wiki', $wiki->id, $wiki->course);
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        // Check if user can view this wiki.
+        if (!$subwiki = wiki_get_subwiki($page->subwikiid)) {
+            throw new moodle_exception('incorrectsubwikiid', 'wiki');
+        }
+        if (!wiki_user_can_view($subwiki, $wiki)) {
+            throw new moodle_exception('cannotviewpage', 'wiki');
+        }
+
+        $returnedpage = array();
+        $returnedpage['id'] = $page->id;
+        $returnedpage['wikiid'] = $wiki->id;
+        $returnedpage['subwikiid'] = $page->subwikiid;
+        $returnedpage['groupid'] = $subwiki->groupid;
+        $returnedpage['userid'] = $subwiki->userid;
+        $returnedpage['title'] = $page->title;
+
+        // Refresh page cached content if needed.
+        if ($page->timerendered + WIKI_REFRESH_CACHE_TIME < time()) {
+            if ($content = wiki_refresh_cachedcontent($page)) {
+                $page = $content['page'];
+            }
+        }
+
+        list($returnedpage['cachedcontent'], $returnedpage['contentformat']) = external_format_text(
+                            $page->cachedcontent, FORMAT_HTML, $context->id, 'mod_wiki', 'attachments', $subwiki->id);
+        $returnedpage['caneditpage'] = wiki_user_can_edit($subwiki);
+
+        $result = array();
+        $result['page'] = $returnedpage;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_page_contents return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function get_page_contents_returns() {
+        return new external_single_structure(
+            array(
+                'page' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'Page ID.'),
+                        'wikiid' => new external_value(PARAM_INT, 'Page\'s wiki ID.'),
+                        'subwikiid' => new external_value(PARAM_INT, 'Page\'s subwiki ID.'),
+                        'groupid' => new external_value(PARAM_INT, 'Page\'s group ID.'),
+                        'userid' => new external_value(PARAM_INT, 'Page\'s user ID.'),
+                        'title' => new external_value(PARAM_RAW, 'Page title.'),
+                        'cachedcontent' => new external_value(PARAM_RAW, 'Page contents.'),
+                        'contentformat' => new external_format_value('cachedcontent', VALUE_OPTIONAL),
+                        'caneditpage' => new external_value(PARAM_BOOL, 'True if user can edit the page.')
+                    ), 'Page'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }
