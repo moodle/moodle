@@ -250,7 +250,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
                         $this->quba->get_field_prefix($this->slot) . 'sub3_answer', ''),
                 $this->get_contains_hidden_expectation(
                         $this->quba->get_field_prefix($this->slot) . 'sub4_answer', ''),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
                 $this->get_contains_hint_expectation('This is the first hint.'));
@@ -300,7 +300,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
                         $this->quba->get_field_prefix($this->slot) . 'sub3_answer', ''),
                 $this->get_contains_hidden_expectation(
                         $this->quba->get_field_prefix($this->slot) . 'sub4_answer', '1'),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_hint_expectation('This is the second hint.'));
 
         // Try again.
@@ -419,7 +419,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
                 $this->get_contains_select_expectation('sub2_answer', $choices, 1, false),
                 $this->get_contains_select_expectation('sub3_answer', $choices, 1, false),
                 $this->get_contains_select_expectation('sub4_answer', $choices, 1, false),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
                 new question_pattern_expectation('/Tries remaining: 2/'),
@@ -460,7 +460,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
                 $this->get_contains_select_expectation('sub2_answer', $choices, '1', false),
                 $this->get_contains_select_expectation('sub3_answer', $choices, '0', false),
                 $this->get_contains_select_expectation('sub4_answer', $choices, '1', false),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_does_not_contain_try_again_button_expectation(),
                 $this->get_contains_correct_expectation(),
                 new question_no_pattern_expectation('/class="control\b[^"]*\bpartiallycorrect"/'));

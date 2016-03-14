@@ -98,7 +98,7 @@ class qtype_calculated_walkthrough_test extends qbehaviour_walkthrough_test_base
         $this->check_current_mark(3);
         $this->check_current_output(
                 $this->get_contains_mark_summary(3),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_correct_expectation(),
                 $this->get_does_not_contain_validation_error_expectation(),
                 $this->get_no_hint_visible_expectation());

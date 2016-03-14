@@ -232,7 +232,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_mark(2);
         $this->check_current_output(
                 $this->get_contains_mark_summary(2),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_correct_expectation());
     }
 
@@ -310,7 +310,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_mark(0.8);
         $this->check_current_output(
                 $this->get_contains_mark_summary(0.8),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_correct_expectation(),
                 $this->get_does_not_contain_validation_error_expectation());
     }
@@ -393,7 +393,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_mark(4.00);
         $this->check_current_output(
                 $this->get_contains_mark_summary(4.00),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_incorrect_expectation(),
                 $this->get_does_not_contain_validation_error_expectation());
     }
@@ -475,7 +475,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_mark(0.66666667);
         $this->check_current_output(
                 $this->get_contains_mark_summary(0.67),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_incorrect_expectation(),
                 $this->get_does_not_contain_validation_error_expectation());
     }
@@ -532,7 +532,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_mark(1.0);
         $this->check_current_output(
                 $this->get_contains_mark_summary(1.0),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_correct_expectation(),
                 $this->get_does_not_contain_validation_error_expectation());
     }
@@ -646,7 +646,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_mark(1);
         $this->check_current_output(
                 $this->get_contains_mark_summary(1),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_incorrect_expectation(),
                 $this->get_does_not_contain_validation_error_expectation());
     }
@@ -749,7 +749,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_mark(0.9);
         $this->check_current_output(
                 $this->get_contains_mark_summary(0.9),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_incorrect_expectation(),
                 $this->get_does_not_contain_validation_error_expectation(),
                 $this->get_does_not_contain_disregarded_info_expectation());
@@ -848,7 +848,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_output_contains_text_input_with_class('sub1_answer', 'correct');
         $this->check_current_output(
                 $this->get_contains_mark_summary(8.00),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_correct_expectation(),
                 $this->get_does_not_contain_validation_error_expectation());
     }

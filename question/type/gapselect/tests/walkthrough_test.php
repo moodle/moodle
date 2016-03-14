@@ -95,7 +95,7 @@ class qtype_gapselect_walkthrough_test extends qbehaviour_walkthrough_test_base 
                                 array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), 2, false),
                 $this->get_contains_select_expectation('p3',
                                 array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 2, false),
-                        $this->get_contains_submit_button_expectation(false),
+                        $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
                 $this->get_contains_hint_expectation('This is the first hint'));
@@ -132,7 +132,7 @@ class qtype_gapselect_walkthrough_test extends qbehaviour_walkthrough_test_base 
                                 array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), 1, false),
                 $this->get_contains_select_expectation('p3',
                                 array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 1, false),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_correct_expectation(),
                 $this->get_no_hint_visible_expectation());
 
