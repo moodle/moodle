@@ -39,6 +39,7 @@ global $CFG;
 class tool_lp_lib_testcase extends advanced_testcase {
 
     public function test_comment_add_user_competency() {
+        global $DB;
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('tool_lp');
@@ -63,6 +64,9 @@ class tool_lp_lib_testcase extends advanced_testcase {
         $lpg->create_plan_competency(array('planid' => $p1->get_id(), 'competencyid' => $c2->get_id()));
         $p2 = $lpg->create_plan(array('userid' => $u1->id));
         $lpg->create_plan_competency(array('planid' => $p2->get_id(), 'competencyid' => $c2->get_id()));
+
+        $DB->set_field(plan::TABLE, 'timemodified', 1, array('id' => $p1->get_id()));   // Make plan 1 appear as old.
+        $p1->read();
 
         $uc1 = $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $c1->get_id(),
             'status' => user_competency::STATUS_IN_REVIEW, 'reviewerid' => $u2->id));
@@ -109,7 +113,7 @@ class tool_lp_lib_testcase extends advanced_testcase {
         $expectedurl = new moodle_url('/admin/tool/lp/user_competency_in_plan.php', array(
             'userid' => $u1->id,
             'competencyid' => $c2->get_id(),
-            'planid' => $p1->get_id()
+            'planid' => $p2->get_id()
         ));
         $this->assertEquals(core_user::get_noreply_user()->id, $message->useridfrom);
         $this->assertEquals($u1->id, $message->useridto);
