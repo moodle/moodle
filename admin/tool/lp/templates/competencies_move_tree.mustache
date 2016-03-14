@@ -30,7 +30,8 @@
 <label>{{#str}}selectcompetencymovetarget, tool_lp{{/str}}</label>
 
 <ul data-enhance="movetree" style="display: none;">
-    <li>{{framework.shortname}}
+    <li>
+        <span>{{framework.shortname}}</span>
         <ul>
             {{#competencies}}
                 {{> tool_lp/competencies_tree }}
