@@ -23,12 +23,11 @@ Feature: Manage competency frameworks
     And I should see "You must configure the scale by selecting default and proficient values"
     And "Configure scales" "button" should be visible
     And I press "Configure scales"
-    And I click on "#tool_lp_scale_default_1" "css_element"
-    And I click on "#tool_lp_scale_proficient_1" "css_element"
+    And I click on "//input[@data-field='tool_lp_scale_default_1']" "xpath_element"
+    And I click on "//input[@data-field='tool_lp_scale_proficient_1']" "xpath_element"
     And I click on "//input[@value='Close']" "xpath_element"
     When I press "Save changes"
     Then I should see "Competency framework created"
-    And I click on "Continue" "button"
     And I should see "Science Year-1"
 
   Scenario: Read a framework
@@ -51,7 +50,6 @@ Feature: Manage competency frameworks
     And I set the field "Name" to "Science Year-3 Edited"
     When I press "Save changes"
     Then I should see "Competency framework updated"
-    And I click on "Continue" "button"
     And I should see "Science Year-3 Edited"
     And I should see "sc-y-3"
 

@@ -65,28 +65,25 @@ $form = new \tool_lp\form\competency_framework($url->out(false), array('context'
 
 if ($form->is_cancelled()) {
     redirect($frameworksurl);
+} else if ($data = $form->get_data()) {
+    if (empty($data->id)) {
+        // Create new framework.
+        $data->contextid = $context->id;
+        $framework = \tool_lp\api::create_framework($data);
+        $frameworkmanageurl = new moodle_url('/admin/tool/lp/competencies.php', array(
+            'pagecontextid' => $pagecontextid,
+            'competencyframeworkid' => $framework->get_id()
+        ));
+        $messagesuccess = get_string('competencyframeworkcreated', 'tool_lp');
+        redirect($frameworkmanageurl, $messagesuccess, 0, \core\output\notification::NOTIFY_SUCCESS);
+    } else {
+        \tool_lp\api::update_framework($data);
+        $messagesuccess = get_string('competencyframeworkupdated', 'tool_lp');
+        redirect($frameworksurl, $messagesuccess, 0, \core\output\notification::NOTIFY_SUCCESS);
+    }
 }
 
 echo $output->header();
 echo $output->heading($pagetitle);
-
-$data = $form->get_data();
-if ($data) {
-    require_sesskey();
-    if (empty($data->id)) {
-        // Create new framework.
-        $data->contextid = $context->id;
-        \tool_lp\api::create_framework($data);
-        echo $output->notification(get_string('competencyframeworkcreated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button($frameworksurl);
-    } else {
-        \tool_lp\api::update_framework($data);
-        echo $output->notification(get_string('competencyframeworkupdated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button($frameworksurl);
-    }
-} else {
-    $form->display();
-}
-
-
+$form->display();
 echo $output->footer();
