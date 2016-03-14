@@ -133,7 +133,7 @@ class user_evidence_competency extends persistent {
 
     /**
      * Delete evidences using competencies.
-     * 
+     *
      * @param array $competencyids Array of competencies ids.
      * @return bool Return true if the delete was successful.
      */

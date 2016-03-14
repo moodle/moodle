@@ -465,6 +465,7 @@ function tool_lp_coursemodule_standard_elements($formwrapper, $mform) {
  * Hook the add/edit of the course module.
  *
  * @param stdClass $data Data from the form submission.
+ * @param stdClass $course The course.
  */
 function tool_lp_coursemodule_edit_post_actions($data, $course) {
     if (!\tool_lp\api::is_enabled()) {

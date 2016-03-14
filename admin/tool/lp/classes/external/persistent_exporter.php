@@ -53,7 +53,6 @@ abstract class persistent_exporter extends exporter {
         }
         $this->persistent = $persistent;
 
-
         if (method_exists($this->persistent, 'get_context') && !isset($this->related['context'])) {
             $this->related['context'] = $this->persistent->get_context();
         }

@@ -340,6 +340,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $result = $this->create_competency_framework(1, true);
             $this->fail('User cannot create a framework at system level.');
         } catch (required_capability_exception $e) {
+            // All good.
         }
     }
 
@@ -416,6 +417,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $result = (object) external_api::clean_returnvalue(external::read_competency_framework_returns(), $result);
             $this->fail('User cannot read a framework at system level.');
         } catch (required_capability_exception $e) {
+            // All good.
         }
     }
 
@@ -474,6 +476,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $result = external::read_competency_framework($insystem->id);
             $this->fail('Current user cannot should not be able to read the framework.');
         } catch (required_capability_exception $e) {
+            // All good.
         }
     }
 
@@ -513,6 +516,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $result = external_api::clean_returnvalue(external::delete_competency_framework_returns(), $result);
             $this->fail('Current user cannot should not be able to delete the framework.');
         } catch (required_capability_exception $e) {
+            // All good.
         }
     }
 
@@ -562,6 +566,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $result = $this->update_competency_framework($insystem->id, 4, true);
             $this->fail('Current user should not be able to update the framework.');
         } catch (required_capability_exception $e) {
+            // All good.
         }
     }
 
@@ -786,6 +791,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $competency = $this->create_competency(2, $insystem->id);
             $this->fail('User should not be able to create a competency in system context.');
         } catch (required_capability_exception $e) {
+            // All good.
         }
     }
 
@@ -862,6 +868,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             external::read_competency($insystem->id);
             $this->fail('User should not be able to read a competency in system context.');
         } catch (required_capability_exception $e) {
+            // All good.
         }
     }
 
@@ -920,6 +927,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             external::read_competency($insystem->id);
             $this->fail('User should not be able to read a competency in system context.');
         } catch (required_capability_exception $e) {
+            // All good.
         }
     }
 
@@ -960,6 +968,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $result = external::delete_competency($insystem->id);
             $this->fail('User should not be able to delete a competency in system context.');
         } catch (required_capability_exception $e) {
+            // All good.
         }
     }
 
@@ -1012,6 +1021,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $result = $this->update_competency($insystem->id, 3);
             $this->fail('User should not be able to update a competency in system context.');
         } catch (required_capability_exception $e) {
+            // All good.
         }
     }
 
@@ -1781,6 +1791,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $result = $this->create_template(1, true);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
+            // All good.
         }
 
         // A user without permission in a category.
@@ -1789,6 +1800,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $result = $this->create_template(1, false);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
+            // All good.
         }
 
         // A user with permissions in the system.
@@ -1809,6 +1821,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $result = $this->create_template(3, true);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
+            // All good.
         }
 
         $result = $this->create_template(3, false);
@@ -1843,11 +1856,13 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             external::read_template($systemplate->id);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
+            // All good.
         }
         try {
             external::read_template($cattemplate->id);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
+            // All good.
         }
 
         // User with permissions to read in a category.
@@ -1860,6 +1875,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             external::read_template($systemplate->id);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
+            // All good.
         }
 
         $result = external::read_template($cattemplate->id);
@@ -1920,12 +1936,14 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $this->update_template($systemplate->id, 3);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
+            // All good.
         }
 
         try {
             $this->update_template($cattemplate->id, 3);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
+            // All good.
         }
 
         // User with permissions to update in category.
@@ -1934,6 +1952,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $this->update_template($systemplate->id, 3);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
+            // All good.
         }
 
         $result = $this->update_template($cattemplate->id, 3);
@@ -1998,11 +2017,13 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             external::delete_template($sys1->id);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
+            // All good.
         }
         try {
             external::delete_template($cat1->id);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
+            // All good.
         }
 
         // User with category permissions.
@@ -2011,6 +2032,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             external::delete_template($sys1->id);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
+            // All good.
         }
 
         $result = external::delete_template($cat1->id);
@@ -2052,6 +2074,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             external::list_templates('id', 'ASC', 0, 10, array('contextid' => $syscontextid), 'children', false);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
+            // All good.
         }
 
         // User with category permissions.
@@ -2142,6 +2165,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             external::count_templates(array('contextid' => $syscontextid), 'children');
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
+            // All good.
         }
 
         // User with category permissions.
@@ -2985,6 +3009,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $result = external::search_cohorts("Cohortsearch", $syscontext, 'parents');
             $this->fail('Invalid permissions in system');
         } catch (required_capability_exception $e) {
+            // All good.
         }
 
         // A user without permission in a category.
@@ -2993,6 +3018,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $result = external::search_cohorts("Cohortsearch", $catcontext, 'parents');
             $this->fail('Invalid permissions in category');
         } catch (required_capability_exception $e) {
+            // All good.
         }
 
         // A user with permissions in the system.
@@ -3029,6 +3055,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $result = external::search_cohorts("Cohortsearch", $syscontext, 'invalid');
             $this->fail('Invalid parameter includes');
         } catch (coding_exception $e) {
+            // All good.
         }
     }
 

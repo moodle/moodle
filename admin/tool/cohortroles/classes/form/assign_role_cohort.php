@@ -39,6 +39,9 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class assign_role_cohort extends moodleform {
 
+    /**
+     * Form definition.
+     */
     public function definition() {
         global $OUTPUT;
 

@@ -110,6 +110,7 @@ class competency extends persistent {
     /**
      * Convert some fields.
      *
+     * @param stdClass $data
      * @return object
      */
     protected static function convert_fields(stdClass $data) {

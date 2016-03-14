@@ -45,7 +45,7 @@ class plan_deleted extends base {
 
     /**
      * Convenience method to instantiate the event.
-     * 
+     *
      * @param plan $plan The plan.
      * @return self
      */

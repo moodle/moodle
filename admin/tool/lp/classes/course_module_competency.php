@@ -136,6 +136,7 @@ class course_module_competency extends persistent {
     /**
      * Validate cmid ID.
      *
+     * @param int $data The CM ID.
      * @return true|lang_string
      */
     protected function validate_cmid($data) {
@@ -149,6 +150,7 @@ class course_module_competency extends persistent {
     /**
      * Validate competency ID.
      *
+     * @param int $data The competency ID.
      * @return true|lang_string
      */
     protected function validate_competencyid($data) {
@@ -162,6 +164,7 @@ class course_module_competency extends persistent {
      * Return the module IDs and visible flags that include this competency in a single course.
      *
      * @param int $competencyid The competency id
+     * @param int $courseid The course ID.
      * @return array of ints (cmids)
      */
     public static function list_course_modules($competencyid, $courseid) {
@@ -171,7 +174,8 @@ class course_module_competency extends persistent {
                                            FROM {' . self::TABLE . '} modcomp
                                            JOIN {course_modules} coursemodules
                                              ON modcomp.cmid = coursemodules.id
-                                          WHERE modcomp.competencyid = ? AND coursemodules.course = ?', array($competencyid, $courseid));
+                                          WHERE modcomp.competencyid = ? AND coursemodules.course = ?',
+                                          array($competencyid, $courseid));
 
         return array_keys($results);
     }

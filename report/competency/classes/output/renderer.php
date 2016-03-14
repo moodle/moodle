@@ -41,8 +41,7 @@ class renderer extends plugin_renderer_base {
     /**
      * Defer to template.
      *
-     * @param report $report
-     *
+     * @param report $page
      * @return string html for the page
      */
     public function render_report(report $page) {

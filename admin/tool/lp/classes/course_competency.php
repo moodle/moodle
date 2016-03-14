@@ -190,6 +190,7 @@ class course_competency extends persistent {
     /**
      * Validate course ID.
      *
+     * @param int $data The course ID.
      * @return true|lang_string
      */
     protected function validate_courseid($data) {
@@ -203,6 +204,7 @@ class course_competency extends persistent {
     /**
      * Validate competency ID.
      *
+     * @param int $data The competency ID.
      * @return true|lang_string
      */
     protected function validate_competencyid($data) {

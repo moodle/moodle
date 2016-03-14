@@ -190,7 +190,10 @@ class template_cohort extends persistent {
     public static function get_all_missing_plans($lastruntime = 0, $unlinkedaremissing = false) {
         global $DB;
 
-        $planwhereclause = " WHERE (p.id is NULL AND (cm.timeadded >= :lastruntime1 OR tc.timecreated >= :lastruntime3 OR t.timemodified >= :lastruntime4))";
+        $planwhereclause = " WHERE (p.id is NULL
+                               AND (cm.timeadded >= :lastruntime1
+                                OR tc.timecreated >= :lastruntime3
+                                OR t.timemodified >= :lastruntime4))";
 
         if ($unlinkedaremissing) {
             $planwhereclause .= " OR (p.origtemplateid IS NOT NULL AND cm.timeadded < :lastruntime2)";

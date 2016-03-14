@@ -58,7 +58,7 @@ class template_statistics {
     /**
      * Return the custom definition of the properties of this model.
      *
-     * @param int $template The template we want to generate statistics for.
+     * @param int $templateid The template we want to generate statistics for.
      */
     public function __construct($templateid) {
         $template = new template($templateid);

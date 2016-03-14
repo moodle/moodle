@@ -82,7 +82,7 @@ class framework_autocomplete extends MoodleQuickForm_autocomplete {
     /**
      * Set the value of this element.
      *
-     * @param  mixed string|array $value The value to set.
+     * @param  string|array $value The value to set.
      * @return boolean
      */
     public function setValue($value) {

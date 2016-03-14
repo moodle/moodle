@@ -69,6 +69,7 @@ class template_competencies_page implements renderable, templatable {
      * Construct this renderable.
      *
      * @param int $templateid The learning plan template id for this page.
+     * @param context $pagecontext The page context.
      */
     public function __construct($templateid, context $pagecontext) {
         $this->pagecontext = $pagecontext;

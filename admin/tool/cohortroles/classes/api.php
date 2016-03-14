@@ -110,7 +110,6 @@ class api {
      *
      * Requires moodle/role:manage capability at system context.
      *
-     * @param array $filters A list of filters to apply to the list.
      * @return int
      */
     public static function count_cohort_role_assignments() {

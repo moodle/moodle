@@ -99,7 +99,7 @@ class framework_processor {
      * Constructor.
      *
      * @param framework_mapper $mapper The mapper.
-     * @param \core\progress\base|null $progress The progress object.
+     * @param \core\progress\base $progress The progress object.
      */
     public function __construct(framework_mapper $mapper, \core\progress\base $progress = null) {
         $this->mapper = $mapper;

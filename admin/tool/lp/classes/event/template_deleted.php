@@ -45,7 +45,7 @@ class template_deleted extends base {
 
     /**
      * Convenience method to instantiate the event.
-     * 
+     *
      * @param template $template The template.
      * @return self
      */

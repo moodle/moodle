@@ -41,7 +41,7 @@ class renderer extends plugin_renderer_base {
     /**
      * Defer to template.
      *
-     * @param renderable $page
+     * @param migrate_framework_results $page
      * @return string
      */
     public function render_migrate_framework_results(migrate_framework_results $page) {

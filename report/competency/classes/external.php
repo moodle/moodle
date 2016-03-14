@@ -73,6 +73,7 @@ class external extends external_api {
      * Loads the data required to render the report.
      *
      * @param int $courseid The course id
+     * @param int $userid The user id
      * @return \stdClass
      */
     public static function data_for_report($courseid, $userid) {

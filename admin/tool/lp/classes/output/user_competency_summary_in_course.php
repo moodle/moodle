@@ -51,9 +51,9 @@ class user_competency_summary_in_course implements renderable, templatable {
     /**
      * Construct.
      *
-     * @param $userid
-     * @param $competencyid
-     * @param $courseid
+     * @param int $userid
+     * @param int $competencyid
+     * @param int $courseid
      */
     public function __construct($userid, $competencyid, $courseid) {
         $this->userid = $userid;
@@ -94,8 +94,8 @@ class user_competency_summary_in_course implements renderable, templatable {
 
         // Some adjustments specific to course.
         $data->usercompetencysummary->cangrade = user_competency::can_grade_user_in_course($this->userid, $this->courseid);
-        $data->usercompetencysummary->cansuggest =
-            user_competency::can_suggest_grade_user_in_course($this->userid, $this->courseid);
+        $data->usercompetencysummary->cansuggest = user_competency::can_suggest_grade_user_in_course($this->userid,
+            $this->courseid);
         $data->usercompetencysummary->cangradeorsuggest = $data->usercompetencysummary->cangrade
             || $data->usercompetencysummary->cansuggest;
 

@@ -42,10 +42,10 @@ abstract class persistent {
     /** The table name. */
     const TABLE = null;
 
-    /** The model data. */
+    /** @var array The model data. */
     private $data = array();
 
-    /** @var boolean The list of validation errors. */
+    /** @var array The list of validation errors. */
     private $errors = array();
 
     /** @var boolean If the data was already validated. */
@@ -70,7 +70,7 @@ abstract class persistent {
     /**
      * Magic method to capture getters and setters.
      *
-     * @param  string $name Callee.
+     * @param  string $method Callee.
      * @param  array $arguments List of arguments.
      * @return mixed
      */
@@ -121,6 +121,7 @@ abstract class persistent {
      * using $persistent->set('property_name', ''), the lengthy setters must be used.
      *
      * @param  string $property The property name.
+     * @param  mixed $value The value.
      * @return mixed
      */
     final protected function set($property, $value) {
@@ -187,7 +188,6 @@ abstract class persistent {
             'default' => 0,
             'type' => PARAM_INT
         );
-
 
         // List of reserved property names. Mostly because we have methods (getters/setters) which would confict with them.
         // Think about backwards compability before adding new ones here!
@@ -660,7 +660,7 @@ abstract class persistent {
     /**
      * Extract a record from a row of data.
      *
-     * Most likely used in combination with {@see self::get_sql_fields()}. This method is
+     * Most likely used in combination with {@link self::get_sql_fields()}. This method is
      * simple enough to be used by non-persistent classes, keep that in mind when modifying it.
      *
      * e.g. persistent::extract_record($row, 'user'); should work.
@@ -758,7 +758,7 @@ abstract class persistent {
      * Return the list of fields for use in a SELECT clause.
      *
      * Having the complete list of fields prefixed allows for multiple persistents to be fetched
-     * in a single query. Use {@see self::extract_record()} to extract the records from the query result.
+     * in a single query. Use {@link self::extract_record()} to extract the records from the query result.
      *
      * @param string $alias The alias used for the table.
      * @param string $prefix The prefix to use for each field, defaults to the table name followed by underscore.

@@ -47,8 +47,8 @@ class user_competency_summary_in_plan implements renderable, templatable {
     /**
      * Construct.
      *
-     * @param $competencyid
-     * @param $planid
+     * @param int $competencyid
+     * @param int $planid
      */
     public function __construct($competencyid, $planid) {
         $this->competencyid = $competencyid;

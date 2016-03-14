@@ -2173,7 +2173,7 @@ class api {
      * This silently ignores when the relation already existed.
      *
      * @param  template|int $templateorid The template or its ID.
-     * @param  stdClass|int $cohortid     The cohort ot its ID.
+     * @param  stdClass|int $cohortorid   The cohort ot its ID.
      * @return template_cohort
      */
     public static function create_template_cohort($templateorid, $cohortorid) {
@@ -2209,7 +2209,7 @@ class api {
      * Remove a relation between a template and a cohort.
      *
      * @param  template|int $templateorid The template or its ID.
-     * @param  stdClass|int $cohortid     The cohort ot its ID.
+     * @param  stdClass|int $cohortorid   The cohort ot its ID.
      * @return boolean True on success or when the relation did not exist.
      */
     public static function delete_template_cohort($templateorid, $cohortorid) {
@@ -2335,7 +2335,8 @@ class api {
         }
 
         // TODO MDL-52243 Use core function.
-        list($insql, $inparams) = external::filter_users_with_capability_on_user_context_sql('tool/lp:planreview', $userid, SQL_PARAMS_NAMED);
+        list($insql, $inparams) = external::filter_users_with_capability_on_user_context_sql('tool/lp:planreview',
+            $userid, SQL_PARAMS_NAMED);
         $sql .= " AND p.userid $insql";
         $params += $inparams;
 
@@ -3517,7 +3518,8 @@ class api {
         }
         $plan = new plan($ucp->get_planid());
         if ($plan->get_status() != plan::STATUS_COMPLETE) {
-            throw new coding_exception('To log the user competency in non-completed plan use user_competency_viewed_in_plan method.');
+            throw new coding_exception('To log the user competency in non-completed plan use '
+                . 'user_competency_viewed_in_plan method.');
         }
 
         \tool_lp\event\user_competency_plan_viewed::create_from_user_competency_plan($ucp)->trigger();
@@ -4210,7 +4212,8 @@ class api {
             // Simply logging an evidence.
             case evidence::ACTION_LOG:
                 if ($grade !== null) {
-                    throw new coding_exception("The grade MUST NOT be set when 'logging' an evidence. Or use ACTION_SUGGEST instead.");
+                    throw new coding_exception("The grade MUST NOT be set when 'logging' an evidence. "
+                        . "Or use ACTION_SUGGEST instead.");
                 }
                 break;
 
@@ -4290,7 +4293,7 @@ class api {
      * rules and if so will see if they match. When matched it will take the required
      * step to add evidence and trigger completion, etc...
      *
-     * @param  usercompetency  $usercompetency The user competency recently completed.
+     * @param  user_competency $usercompetency The user competency recently completed.
      * @param  competency|null $competency     The competency of the user competency, useful to avoid unnecessary read.
      * @return void
      */

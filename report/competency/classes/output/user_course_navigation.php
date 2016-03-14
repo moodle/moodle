@@ -33,7 +33,7 @@ use stdClass;
 /**
  * User course navigation class.
  *
- * @package    tool_lp
+ * @package    report_competency
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -51,9 +51,9 @@ class user_course_navigation implements renderable, templatable {
     /**
      * Construct.
      *
-     * @param $userid
-     * @param $courseid
-     * @param $baseurl
+     * @param int $userid
+     * @param int $courseid
+     * @param string $baseurl
      */
     public function __construct($userid, $courseid, $baseurl) {
         $this->userid = $userid;

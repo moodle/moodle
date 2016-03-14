@@ -46,7 +46,7 @@ class cohort_role_assignments_table extends table_sql {
      * Sets up the table.
      *
      * @param string $uniqueid Unique id of table.
-     * @param \tool_lp\template $template The template.
+     * @param moodle_url $url The base URL.
      */
     public function __construct($uniqueid, $url) {
         global $CFG;
@@ -70,10 +70,22 @@ class cohort_role_assignments_table extends table_sql {
         $this->define_table_configs();
     }
 
+    /**
+     * Role name column.
+     *
+     * @param array $data Row data.
+     * @return string
+     */
     protected function col_rolename($data) {
         return $this->rolenames[$data->roleid]->localname;
     }
 
+    /**
+     * Cohort name column.
+     *
+     * @param array $data Row data.
+     * @return string
+     */
     protected function col_cohortname($data) {
         global $OUTPUT;
 
@@ -93,6 +105,12 @@ class cohort_role_assignments_table extends table_sql {
         return $html;
     }
 
+    /**
+     * Actions column.
+     *
+     * @param array $data Row data.
+     * @return string
+     */
     protected function col_actions($data) {
         global $OUTPUT;
 

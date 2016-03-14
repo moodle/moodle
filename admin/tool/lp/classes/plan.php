@@ -232,8 +232,9 @@ class plan extends persistent {
     }
 
     /**
-     * Get a single competency from this plan
+     * Get a single competency from this plan.
      *
+     * @param int $competencyid The competency ID.
      * @return competency
      */
     public function get_competency($competencyid) {

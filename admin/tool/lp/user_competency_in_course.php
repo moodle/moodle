@@ -82,7 +82,6 @@ echo $output->header();
 if ($userid > 0) {
     echo $OUTPUT->context_header($userheading, 3);
 }
-//echo $output->heading($title, 3);
 
 $baseurl = new moodle_url('/admin/tool/lp/user_competency_in_course.php');
 $nav = new \tool_lp\output\user_competency_course_navigation($userid, $competencyid, $courseid, $baseurl);

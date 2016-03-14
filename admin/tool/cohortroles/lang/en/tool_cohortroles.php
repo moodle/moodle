@@ -17,7 +17,7 @@
 /**
  * Strings for component 'tool_userroles', language 'en'
  *
- * @package    tool_userroles
+ * @package    tool_cohortroles
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

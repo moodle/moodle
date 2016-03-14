@@ -147,10 +147,10 @@ class template_plans_table extends table_sql {
             $select = "$fields";
         }
 
-        $sql =  "SELECT $select
-                   FROM {" . \tool_lp\plan::TABLE . "} p
-                   JOIN {user} u ON u.id = p.userid
-                  WHERE p.templateid = :templateid";
+        $sql = "SELECT $select
+                  FROM {" . \tool_lp\plan::TABLE . "} p
+                  JOIN {user} u ON u.id = p.userid
+                 WHERE p.templateid = :templateid";
         $params = array('templateid' => $this->template->get_id());
 
         // Add order by if needed.

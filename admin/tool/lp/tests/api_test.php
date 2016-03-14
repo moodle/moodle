@@ -555,6 +555,7 @@ class tool_lp_api_testcase extends advanced_testcase {
             api::update_plan($record);
             $this->fail('A plan cannot be unlinked using api::update_plan()');
         } catch (coding_exception $e) {
+            // All good.
         }
 
         try {
@@ -564,6 +565,7 @@ class tool_lp_api_testcase extends advanced_testcase {
             api::update_plan($record);
             $this->fail('A plan cannot be moved to another template.');
         } catch (coding_exception $e) {
+            // All good.
         }
 
         try {
@@ -573,6 +575,7 @@ class tool_lp_api_testcase extends advanced_testcase {
             api::update_plan($record);
             $this->fail('A plan cannot be update to use a template.');
         } catch (coding_exception $e) {
+            // All good.
         }
     }
 
@@ -642,6 +645,7 @@ class tool_lp_api_testcase extends advanced_testcase {
             api::unlink_plan_from_template($plan3);
             $this->fail('We can not unlink completed plan.');
         } catch (coding_exception $e) {
+            // All good.
         }
 
         // Even the order remains.
@@ -816,6 +820,7 @@ class tool_lp_api_testcase extends advanced_testcase {
             api::add_competency_to_plan($plan->get_id(), $c4->get_id());
             $this->fail('We can not add competency to completed plan.');
         } catch (coding_exception $e) {
+            // All good.
         }
 
         // Check we can not remove competency to completed plan.
@@ -823,6 +828,7 @@ class tool_lp_api_testcase extends advanced_testcase {
             api::remove_competency_from_plan($plan->get_id(), $c3->get_id());
             $this->fail('We can not remove competency to completed plan.');
         } catch (coding_exception $e) {
+            // All good.
         }
 
         // Completing a plan that is completed throws an exception.
@@ -876,7 +882,13 @@ class tool_lp_api_testcase extends advanced_testcase {
      */
     public function test_plan_request_review() {
         $data = $this->setup_workflow_data();
-        extract($data);
+        $dg = $data['dg'];
+        $lpg = $data['lpg'];
+        $user = $data['user'];
+        $reviewer = $data['reviewer'];
+        $otheruser = $data['otheruser'];
+        $plan = $data['plan'];
+        $tplplan = $data['tplplan'];
 
         $this->assertEquals(plan::STATUS_DRAFT, $plan->get_status());
         $this->assertEquals(plan::STATUS_DRAFT, $tplplan->get_status());
@@ -968,7 +980,13 @@ class tool_lp_api_testcase extends advanced_testcase {
      */
     public function test_plan_cancel_review_request() {
         $data = $this->setup_workflow_data();
-        extract($data);
+        $dg = $data['dg'];
+        $lpg = $data['lpg'];
+        $user = $data['user'];
+        $reviewer = $data['reviewer'];
+        $otheruser = $data['otheruser'];
+        $plan = $data['plan'];
+        $tplplan = $data['tplplan'];
 
         // Set waiting for review.
         $tplplan->set_status(plan::STATUS_WAITING_FOR_REVIEW);
@@ -1063,7 +1081,13 @@ class tool_lp_api_testcase extends advanced_testcase {
      */
     public function test_plan_start_review() {
         $data = $this->setup_workflow_data();
-        extract($data);
+        $dg = $data['dg'];
+        $lpg = $data['lpg'];
+        $user = $data['user'];
+        $reviewer = $data['reviewer'];
+        $otheruser = $data['otheruser'];
+        $plan = $data['plan'];
+        $tplplan = $data['tplplan'];
 
         // Set waiting for review.
         $tplplan->set_status(plan::STATUS_WAITING_FOR_REVIEW);
@@ -1161,7 +1185,13 @@ class tool_lp_api_testcase extends advanced_testcase {
      */
     public function test_plan_stop_review() {
         $data = $this->setup_workflow_data();
-        extract($data);
+        $dg = $data['dg'];
+        $lpg = $data['lpg'];
+        $user = $data['user'];
+        $reviewer = $data['reviewer'];
+        $otheruser = $data['otheruser'];
+        $plan = $data['plan'];
+        $tplplan = $data['tplplan'];
 
         // Set waiting for review.
         $tplplan->set_status(plan::STATUS_IN_REVIEW);
@@ -1256,7 +1286,13 @@ class tool_lp_api_testcase extends advanced_testcase {
      */
     public function test_approve_plan() {
         $data = $this->setup_workflow_data();
-        extract($data);
+        $dg = $data['dg'];
+        $lpg = $data['lpg'];
+        $user = $data['user'];
+        $reviewer = $data['reviewer'];
+        $otheruser = $data['otheruser'];
+        $plan = $data['plan'];
+        $tplplan = $data['tplplan'];
 
         // Set waiting for review.
         $tplplan->set_status(plan::STATUS_IN_REVIEW);
@@ -1345,7 +1381,13 @@ class tool_lp_api_testcase extends advanced_testcase {
      */
     public function test_unapprove_plan() {
         $data = $this->setup_workflow_data();
-        extract($data);
+        $dg = $data['dg'];
+        $lpg = $data['lpg'];
+        $user = $data['user'];
+        $reviewer = $data['reviewer'];
+        $otheruser = $data['otheruser'];
+        $plan = $data['plan'];
+        $tplplan = $data['tplplan'];
 
         // Set waiting for review.
         $tplplan->set_status(plan::STATUS_ACTIVE);
@@ -1498,6 +1540,7 @@ class tool_lp_api_testcase extends advanced_testcase {
             $plan = api::update_plan($record);
             $this->fail('We cannot complete a plan using api::update_plan().');
         } catch (coding_exception $e) {
+            // All good.
         }
         api::complete_plan($plan);
 
@@ -1533,6 +1576,7 @@ class tool_lp_api_testcase extends advanced_testcase {
             api::update_plan($record);
             $this->fail('Completed plan can not be edited');
         } catch (coding_exception $e) {
+            // All good.
         }
 
         api::reopen_plan($record->id);
@@ -1907,8 +1951,8 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         // Trying to pass a grade should fail.
         try {
-            $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_LOG, 'invaliddata', 'error',
-                null, false, null, 1);
+            $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_LOG, 'invaliddata',
+                'error', null, false, null, 1);
             $this->fail('A grade can not be set');
         } catch (coding_exception $e) {
             $this->assertRegExp('/grade MUST NOT be set/', $e->getMessage());
@@ -1953,8 +1997,8 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         // Trying not to pass a grade should fail.
         try {
-            $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_SUGGEST, 'invaliddata', 'error',
-                false, null);
+            $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_SUGGEST, 'invaliddata',
+                'error', false, null);
             $this->fail('A grade must be set');
         } catch (coding_exception $e) {
             $this->assertRegExp('/grade MUST be set/', $e->getMessage());
@@ -2653,7 +2697,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals($expected, $result);
 
         $pagegenerator = $this->getDataGenerator()->get_plugin_generator('mod_page');
-        $page = $pagegenerator->create_instance(array('course'=>$course->id));
+        $page = $pagegenerator->create_instance(array('course' => $course->id));
 
         $cm = get_coursemodule_from_instance('page', $page->id);
         // Add a link and list again.
@@ -2977,7 +3021,17 @@ class tool_lp_api_testcase extends advanced_testcase {
     }
 
     public function test_moving_competency_reset_rules_updown() {
-        extract($this->setup_framework_for_reset_rules_tests());
+        $data = $this->setup_framework_for_reset_rules_tests();
+        $f1 = $data['f1'];
+        $c1 = $data['c1'];
+        $c1a = $data['c1a'];
+        $c1a1 = $data['c1a1'];
+        $c1a1a = $data['c1a1a'];
+        $c1b = $data['c1b'];
+        $c1b1 = $data['c1b1'];
+        $c1b1a = $data['c1b1a'];
+        $c2 = $data['c2'];
+        $c2a = $data['c2a'];
 
         // Moving up and down doesn't change anything.
         api::move_down_competency($c1a->get_id());
@@ -2997,7 +3051,17 @@ class tool_lp_api_testcase extends advanced_testcase {
     }
 
     public function test_moving_competency_reset_rules_parent() {
-        extract($this->setup_framework_for_reset_rules_tests());
+        $data = $this->setup_framework_for_reset_rules_tests();
+        $f1 = $data['f1'];
+        $c1 = $data['c1'];
+        $c1a = $data['c1a'];
+        $c1a1 = $data['c1a1'];
+        $c1a1a = $data['c1a1a'];
+        $c1b = $data['c1b'];
+        $c1b1 = $data['c1b1'];
+        $c1b1a = $data['c1b1a'];
+        $c2 = $data['c2'];
+        $c2a = $data['c2a'];
 
         // Moving out of parent will reset the parent, and the destination.
         api::set_parent_competency($c1a->get_id(), $c1b->get_id());
@@ -3014,7 +3078,17 @@ class tool_lp_api_testcase extends advanced_testcase {
     }
 
     public function test_moving_competency_reset_rules_totoplevel() {
-        extract($this->setup_framework_for_reset_rules_tests());
+        $data = $this->setup_framework_for_reset_rules_tests();
+        $f1 = $data['f1'];
+        $c1 = $data['c1'];
+        $c1a = $data['c1a'];
+        $c1a1 = $data['c1a1'];
+        $c1a1a = $data['c1a1a'];
+        $c1b = $data['c1b'];
+        $c1b1 = $data['c1b1'];
+        $c1b1a = $data['c1b1a'];
+        $c2 = $data['c2'];
+        $c2a = $data['c2a'];
 
         // Moving to top level only affects the initial parent.
         api::set_parent_competency($c1a1->get_id(), 0);
@@ -3031,7 +3105,17 @@ class tool_lp_api_testcase extends advanced_testcase {
     }
 
     public function test_moving_competency_reset_rules_fromtoplevel() {
-        extract($this->setup_framework_for_reset_rules_tests());
+        $data = $this->setup_framework_for_reset_rules_tests();
+        $f1 = $data['f1'];
+        $c1 = $data['c1'];
+        $c1a = $data['c1a'];
+        $c1a1 = $data['c1a1'];
+        $c1a1a = $data['c1a1a'];
+        $c1b = $data['c1b'];
+        $c1b1 = $data['c1b1'];
+        $c1b1a = $data['c1b1a'];
+        $c2 = $data['c2'];
+        $c2a = $data['c2a'];
 
         // Moving from top level only affects the destination parent.
         api::set_parent_competency($c2->get_id(), $c1a1->get_id());
@@ -3048,7 +3132,17 @@ class tool_lp_api_testcase extends advanced_testcase {
     }
 
     public function test_moving_competency_reset_rules_child() {
-        extract($this->setup_framework_for_reset_rules_tests());
+        $data = $this->setup_framework_for_reset_rules_tests();
+        $f1 = $data['f1'];
+        $c1 = $data['c1'];
+        $c1a = $data['c1a'];
+        $c1a1 = $data['c1a1'];
+        $c1a1a = $data['c1a1a'];
+        $c1b = $data['c1b'];
+        $c1b1 = $data['c1b1'];
+        $c1b1a = $data['c1b1a'];
+        $c2 = $data['c2'];
+        $c2a = $data['c2a'];
 
         // Moving to a child of self resets self, parent and destination.
         api::set_parent_competency($c1a->get_id(), $c1a1->get_id());
@@ -3065,7 +3159,17 @@ class tool_lp_api_testcase extends advanced_testcase {
     }
 
     public function test_create_competency_reset_rules() {
-        extract($this->setup_framework_for_reset_rules_tests());
+        $data = $this->setup_framework_for_reset_rules_tests();
+        $f1 = $data['f1'];
+        $c1 = $data['c1'];
+        $c1a = $data['c1a'];
+        $c1a1 = $data['c1a1'];
+        $c1a1a = $data['c1a1a'];
+        $c1b = $data['c1b'];
+        $c1b1 = $data['c1b1'];
+        $c1b1a = $data['c1b1a'];
+        $c2 = $data['c2'];
+        $c2a = $data['c2a'];
 
         // Adding a new competency resets the rule of its parent.
         api::create_competency((object) array('shortname' => 'A', 'parentid' => $c1->get_id(), 'idnumber' => 'A',
@@ -3083,7 +3187,17 @@ class tool_lp_api_testcase extends advanced_testcase {
     }
 
     public function test_delete_competency_reset_rules() {
-        extract($this->setup_framework_for_reset_rules_tests());
+        $data = $this->setup_framework_for_reset_rules_tests();
+        $f1 = $data['f1'];
+        $c1 = $data['c1'];
+        $c1a = $data['c1a'];
+        $c1a1 = $data['c1a1'];
+        $c1a1a = $data['c1a1a'];
+        $c1b = $data['c1b'];
+        $c1b1 = $data['c1b1'];
+        $c1b1a = $data['c1b1a'];
+        $c2 = $data['c2'];
+        $c2a = $data['c2a'];
 
         // Deleting a competency resets the rule of its parent.
         api::delete_competency($c1a->get_id());
@@ -3904,6 +4018,15 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertSuccessWithGradeCompetencyInCourse($c1->id, $student1->id, $comp1->get_id(), 1, false);
     }
 
+    /**
+     * Assert that a competency was graded in a course.
+     *
+     * @param int $courseid The course ID.
+     * @param int $userid The user ID.
+     * @param int $compid The competency ID.
+     * @param int $grade The grade.
+     * @param boolean $override Overridden flag.
+     */
     protected function assertSuccessWithGradeCompetencyInCourse($courseid, $userid, $compid, $grade = 1, $override = true) {
         $beforecount = evidence::count_records();
         api::grade_competency_in_course($courseid, $userid, $compid, $grade, $override);
@@ -3914,6 +4037,17 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
     }
 
+    /**
+     * Assert that grading a competency in course throws an exception.
+     *
+     * @param string $exceptiontype The exception type.
+     * @param string $exceptiontest The exceptiont text.
+     * @param int $courseid The course ID.
+     * @param int $userid The user ID.
+     * @param int $compid The competency ID.
+     * @param int $grade The grade.
+     * @param boolean $override Overridden flag.
+     */
     protected function assertExceptionWithGradeCompetencyInCourse($exceptiontype, $exceptiontext, $courseid, $userid, $compid,
             $grade = 1, $override = true) {
 
@@ -4155,12 +4289,14 @@ class tool_lp_api_testcase extends advanced_testcase {
         $result = api::get_least_proficient_competencies_for_template($tpl->get_id(), 0, 2);
 
         // Our times completed counts should look like this:
-        //   comp1 - 1
-        //   comp2 - 1
-        //   comp3 - 2
-        //   comp4 - 0
-        //   comp5 - 1
-        //   comp6 - 0
+        // - comp1 - 1
+        // - comp2 - 1
+        // - comp3 - 2
+        // - comp4 - 0
+        // - comp5 - 1
+        // - comp6 - 0
+        //
+        // And this is a fullstop to make CiBoT happy.
         $this->assertEquals(2, count($result));
         $leastarray = array($comp4->get_id(), $comp6->get_id());
         foreach ($result as $one) {

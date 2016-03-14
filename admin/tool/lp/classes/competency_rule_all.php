@@ -41,6 +41,7 @@ class competency_rule_all extends competency_rule {
     /**
      * Whether or not the rule is matched.
      *
+     * @param user_competency $usercompetency The user competency.
      * @return bool
      */
     public function matches(user_competency $usercompetency) {
@@ -73,6 +74,7 @@ class competency_rule_all extends competency_rule {
     /**
      * Validate the rule config.
      *
+     * @param string $value The value to validate.
      * @return bool
      */
     public function validate_config($value) {

@@ -46,6 +46,7 @@ class migrate_framework_results implements renderable, templatable {
 
     /** @var context The current page context. */
     protected $pagecontext;
+    /** @var framework_processor The processor. */
     protected $processor;
 
     /**

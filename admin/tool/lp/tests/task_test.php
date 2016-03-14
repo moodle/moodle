@@ -146,7 +146,7 @@ class tool_lp_task_testcase extends advanced_testcase {
         $task->set_last_run_time($currenttime);
         $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
 
-        // Test a user plan deleted will not be recreated
+        // Test a user plan deleted will not be recreated.
         $currenttime = $currenttime + 1;
         $plan = plan::get_record(array('userid' => $user4->id, 'templateid' => $tpl->get_id()));
         \tool_lp\api::delete_plan($plan->get_id());

@@ -140,10 +140,10 @@ class template_cohorts_table extends table_sql {
             $select = "$fields";
         }
 
-        $sql =  "SELECT $select
-                   FROM {" . \tool_lp\template_cohort::TABLE . "} tc
-                   JOIN {cohort} c ON c.id = tc.cohortid
-                  WHERE tc.templateid = :templateid";
+        $sql = "SELECT $select
+                  FROM {" . \tool_lp\template_cohort::TABLE . "} tc
+                  JOIN {cohort} c ON c.id = tc.cohortid
+                 WHERE tc.templateid = :templateid";
         $params = array('templateid' => $this->template->get_id());
 
         // Add order by if needed.

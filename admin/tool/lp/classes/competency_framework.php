@@ -379,6 +379,7 @@ class competency_framework extends persistent {
      * Extract the proficiency of a grade from a scale configuration.
      *
      * @param  string $config JSON encoded config.
+     * @param  int $grade The grade.
      * @return int Representing a boolean
      */
     public static function get_proficiency_of_grade_from_scale_configuration($config, $grade) {

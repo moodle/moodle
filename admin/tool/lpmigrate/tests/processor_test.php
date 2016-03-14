@@ -278,7 +278,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $this->assertModuleCompetencyNotMigrated($this->cms[$this->c2->id]['F1'], $this->f1comps['A3'], $this->f2comps['A3']);
     }
 
-    public function abc_test_course_start_date_from() {
+    public function test_course_start_date_from() {
         $this->setAdminUser();
 
         $mapper = new framework_mapper($this->f1->get_id(), $this->f2->get_id());
@@ -356,7 +356,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $this->assertRegexp('/competency already exists/', $warning['message']);
 
         $this->assertCourseCompetencyExists($this->c1, $this->f1comps['A1']);
-        $this->assertModuleCompetencyExists($this->c2, $this->f1comps['A2']);
+        $this->assertModuleCompetencyExists($this->cms[$this->c2->id]['F1'], $this->f1comps['A2']);
     }
 
     public function test_destination_competency_exists_remove_original() {
@@ -392,7 +392,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $this->assertEquals(array(), $processor->get_warnings());
 
         $this->assertCourseCompetencyNotExists($this->c1, $this->f1comps['A1']);
-        $this->assertModuleCompetencyNotExists($this->c2, $this->f1comps['A2']);
+        $this->assertModuleCompetencyNotExists($this->cms[$this->c2->id]['F1'], $this->f1comps['A2']);
     }
 
     public function test_permission_exception() {
@@ -478,16 +478,35 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $this->assertModuleCompetencyNotMigrated($this->cms[$this->c2->id]['F1'], $this->f1comps['A3'], $this->f2comps['A2']);
     }
 
+    /**
+     * Assert that the course competency exists.
+     *
+     * @param stdClass $course The course.
+     * @param competency $competency The competency.
+     */
     protected function assertCourseCompetencyExists($course, $competency) {
-        return course_competency::record_exists_select("courseid = :courseid AND competencyid = :competencyid",
-            array('courseid' => $course->id, 'competencyid' => $competency->get_id()));
+        $this->assertTrue(course_competency::record_exists_select("courseid = :courseid AND competencyid = :competencyid",
+            array('courseid' => $course->id, 'competencyid' => $competency->get_id())));
     }
 
+    /**
+     * Assert that the course competency does not exist.
+     *
+     * @param stdClass $course The course.
+     * @param competency $competency The competency.
+     */
     protected function assertCourseCompetencyNotExists($course, $competency) {
-        return !course_competency::record_exists_select("courseid = :courseid AND competencyid = :competencyid",
-            array('courseid' => $course->id, 'competencyid' => $competency->get_id()));
+        $this->assertFalse(course_competency::record_exists_select("courseid = :courseid AND competencyid = :competencyid",
+            array('courseid' => $course->id, 'competencyid' => $competency->get_id())));
     }
 
+    /**
+     * Assert that the course competency was migrated.
+     *
+     * @param stdClass $course The course.
+     * @param competency $compfrom The competency from.
+     * @param competency $compto The competency to.
+     */
     protected function assertCourseCompetencyMigrated($course, $compfrom, $compto) {
         $ccs = $this->ccs[$course->id];
 
@@ -506,6 +525,13 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $this->assertEquals($before->get_ruleoutcome(), $after->get_ruleoutcome());
     }
 
+    /**
+     * Assert that the course competency was not migrated.
+     *
+     * @param stdClass $course The course.
+     * @param competency $compfrom The competency from.
+     * @param competency $compto The competency to.
+     */
     protected function assertCourseCompetencyNotMigrated($course, $compfrom, $compto) {
         $ccs = $this->ccs[$course->id];
 
@@ -517,20 +543,39 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
 
         $this->assertEquals($before->get_id(), $after->get_id());
         $this->assertEquals($before->get_courseid(), $after->get_courseid());
-        // $this->assertEquals($before->get_sortorder(), $after->get_sortorder());
+        $this->assertEquals($before->get_sortorder(), $after->get_sortorder());
         $this->assertEquals($before->get_ruleoutcome(), $after->get_ruleoutcome());
     }
 
+    /**
+     * Assert that the course module competency exists.
+     *
+     * @param stdClass $cm The CM.
+     * @param competency $competency The competency.
+     */
     protected function assertModuleCompetencyExists($cm, $competency) {
-        return course_module_competency::record_exists_select("cmid = :cmid AND competencyid = :competencyid",
-            array('cmid' => $cm->id, 'competencyid' => $competency->get_id()));
+        $this->assertTrue(course_module_competency::record_exists_select("cmid = :cmid AND competencyid = :competencyid",
+            array('cmid' => $cm->cmid, 'competencyid' => $competency->get_id())));
     }
 
+    /**
+     * Assert that the course module competency does not exist.
+     *
+     * @param stdClass $cm The CM.
+     * @param competency $competency The competency.
+     */
     protected function assertModuleCompetencyNotExists($cm, $competency) {
-        return !course_module_competency::record_exists_select("cmid = :cmid AND competencyid = :competencyid",
-            array('cmid' => $cm->id, 'competencyid' => $competency->get_id()));
+        $this->assertFalse(course_module_competency::record_exists_select("cmid = :cmid AND competencyid = :competencyid",
+            array('cmid' => $cm->cmid, 'competencyid' => $competency->get_id())));
     }
 
+    /**
+     * Assert that the course module competency was migrated.
+     *
+     * @param stdClass $cm The CM.
+     * @param competency $compfrom The competency from.
+     * @param competency $compto The competency to.
+     */
     protected function assertModuleCompetencyMigrated($cm, $compfrom, $compto) {
         $cmcs = $this->cmcs[$cm->cmid];
 
@@ -549,6 +594,13 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $this->assertEquals($before->get_ruleoutcome(), $after->get_ruleoutcome());
     }
 
+    /**
+     * Assert that the course module competency was not migrated.
+     *
+     * @param stdClass $cm The CM.
+     * @param competency $compfrom The competency from.
+     * @param competency $compto The competency to.
+     */
     protected function assertModuleCompetencyNotMigrated($cm, $compfrom, $compto) {
         $cmcs = $this->cmcs[$cm->cmid];
 

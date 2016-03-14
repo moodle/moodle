@@ -55,9 +55,10 @@ class user_competency_course_navigation implements renderable, templatable {
     /**
      * Construct.
      *
-     * @param $userid
-     * @param $competencyid
-     * @param $courseid
+     * @param int $userid
+     * @param int $competencyid
+     * @param int $courseid
+     * @param string $baseurl
      */
     public function __construct($userid, $competencyid, $courseid, $baseurl) {
         $this->userid = $userid;

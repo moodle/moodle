@@ -90,18 +90,18 @@ class template_statistics_exporter extends exporter {
         }
         $linkedcompetencypercentage = 0;
         if ($this->data->competencycount > 0) {
-            $linkedcompetencypercentage = format_float(((float) $linkedcompetencycount /
-                                                        (float) $this->data->competencycount) * 100.0);
+            $linkedcompetencypercentage = format_float(
+                ((float) $linkedcompetencycount / (float) $this->data->competencycount) * 100.0);
         }
         $completedplanpercentage = 0;
         if ($this->data->plancount > 0) {
-            $completedplanpercentage = format_float(((float) $this->data->completedplancount /
-                                                     (float) $this->data->plancount) * 100.0);
+            $completedplanpercentage = format_float(
+                ((float) $this->data->completedplancount / (float) $this->data->plancount) * 100.0);
         }
         $proficientusercompetencyplanpercentage = 0;
         if ($this->data->usercompetencyplancount > 0) {
-            $proficientusercompetencyplanpercentage = format_float(((float) $this->data->proficientusercompetencyplancount /
-                                                                    (float) $this->data->usercompetencyplancount) * 100.0);
+            $proficientusercompetencyplanpercentage = format_float(
+                ((float) $this->data->proficientusercompetencyplancount / (float) $this->data->usercompetencyplancount) * 100.0);
         }
         $competencies = array();
         $contextcache = array();

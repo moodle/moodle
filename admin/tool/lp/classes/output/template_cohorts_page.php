@@ -34,6 +34,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 class template_cohorts_page implements \renderable {
 
+    /**
+     * Constructor.
+     * @param \tool_lp\template $template
+     * @param \moodle_url $url
+     */
     public function __construct(\tool_lp\template $template, \moodle_url $url) {
         $this->template = $template;
         $this->url = $url;

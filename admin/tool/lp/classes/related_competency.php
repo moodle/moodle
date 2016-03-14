@@ -57,6 +57,7 @@ class related_competency extends persistent {
     /**
      * Validate competency ID.
      *
+     * @param int $data The competency ID.
      * @return true|lang_string
      */
     protected function validate_competencyid($data) {
@@ -69,6 +70,7 @@ class related_competency extends persistent {
     /**
      * Validate related competency ID.
      *
+     * @param int $data The related competency ID.
      * @return true|lang_string
      */
     protected function validate_relatedcompetencyid($data) {

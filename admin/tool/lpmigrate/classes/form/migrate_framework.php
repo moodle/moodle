@@ -39,8 +39,13 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class migrate_framework extends \moodleform {
 
+    /** @var context The page context. */
     protected $pagecontext;
 
+    /**
+     * Constructor.
+     * @param \context $context The page context.
+     */
     public function __construct(\context $context) {
         $this->pagecontext = $context;
         parent::__construct();
@@ -66,11 +71,14 @@ class migrate_framework extends \moodleform {
         $mform->addHelpButton('to', 'migrateto', 'tool_lpmigrate');
 
         $mform->addElement('header', 'hdrcourses', get_string('courses'));
-        $mform->addElement('course', 'allowedcourses', get_string('limittothese', 'tool_lpmigrate'), array('showhidden' => true, 'multiple' => true));
+        $mform->addElement('course', 'allowedcourses', get_string('limittothese', 'tool_lpmigrate'),
+            array('showhidden' => true, 'multiple' => true));
         $mform->addHelpButton('allowedcourses', 'allowedcourses', 'tool_lpmigrate');
-        $mform->addElement('course', 'disallowedcourses', get_string('excludethese', 'tool_lpmigrate'), array('showhidden' => true, 'multiple' => true));
+        $mform->addElement('course', 'disallowedcourses', get_string('excludethese', 'tool_lpmigrate'),
+            array('showhidden' => true, 'multiple' => true));
         $mform->addHelpButton('disallowedcourses', 'disallowedcourses', 'tool_lpmigrate');
-        $mform->addElement('date_time_selector', 'coursestartdate', get_string('startdatefrom', 'tool_lpmigrate'), array('optional' => true));
+        $mform->addElement('date_time_selector', 'coursestartdate', get_string('startdatefrom', 'tool_lpmigrate'),
+            array('optional' => true));
         $mform->addHelpButton('coursestartdate', 'coursestartdate', 'tool_lpmigrate');
 
         $this->add_action_buttons(true, get_string('performmigration', 'tool_lpmigrate'));

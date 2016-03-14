@@ -55,6 +55,7 @@ class manage_templates_page implements renderable, templatable {
 
     /**
      * Construct this renderable.
+     * @param context $pagecontext
      */
     public function __construct(context $pagecontext) {
         $this->pagecontext = $pagecontext;

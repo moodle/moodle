@@ -47,7 +47,7 @@ if ($form->is_cancelled()) {
 
 } else if ($data = $form->get_data()) {
 
-    // Map competencies from both framework
+    // Map competencies from both framework.
     $mapper = new \tool_lpmigrate\framework_mapper($data->from, $data->to);
     $mapper->automap();
 

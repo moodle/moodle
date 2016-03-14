@@ -33,11 +33,19 @@ use tool_cohortroles\api;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cohort_role_sync extends scheduled_task {
+
+    /**
+     * Get name.
+     * @return string
+     */
     public function get_name() {
         // Shown in admin screens.
         return get_string('taskname', 'tool_cohortroles');
     }
 
+    /**
+     * Execute.
+     */
     public function execute() {
         mtrace('Sync cohort roles...');
         $result = api::sync_all_cohort_roles();

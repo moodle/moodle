@@ -17,7 +17,7 @@
 /**
  * This page lets users to manage site wide competencies.
  *
- * @package    tool_lp
+ * @package    report_competency
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

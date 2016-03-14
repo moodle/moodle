@@ -43,12 +43,21 @@ use templatable;
  */
 class summary implements renderable, templatable {
 
+    /** @var array Active plans. */
     protected $activeplans = array();
+    /** @var array Competencies to review. */
     protected $compstoreview = array();
+    /** @var array Plans to review. */
     protected $planstoreview = array();
+    /** @var array Plans. */
     protected $plans = array();
+    /** @var stdClass The user. */
     protected $user;
 
+    /**
+     * Constructor.
+     * @param stdClass $user The user.
+     */
     public function __construct($user = null) {
         global $USER;
         if (!$user) {

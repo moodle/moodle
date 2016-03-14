@@ -50,8 +50,7 @@ class user_competency_summary implements renderable, templatable {
      * Constructor.
      *
      * @param user_competency $usercompetency The user competency.
-     * @param competency $competency The competency.
-     * @param stdClass $user The user of the user competency.
+     * @param array $related Related objects.
      */
     public function __construct(user_competency $usercompetency, array $related = array()) {
         $this->usercompetency = $usercompetency;

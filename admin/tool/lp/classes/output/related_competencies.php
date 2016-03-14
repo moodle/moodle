@@ -41,7 +41,8 @@ use tool_lp\external\competency_exporter;
  */
 class related_competencies implements renderable, templatable {
 
-    var $relatedcompetencies = null;
+    /** @var array Related competencies. */
+    protected $relatedcompetencies = null;
 
     /**
      * Construct this renderable.

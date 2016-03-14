@@ -76,6 +76,7 @@ abstract class competency_rule {
     /**
      * Validate the rule config.
      *
+     * @param string $value The value to validate.
      * @return bool
      */
     abstract public function validate_config($value);

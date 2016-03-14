@@ -50,10 +50,9 @@ class page_helper {
      * echo $OUTPUT->heading($title);
      * echo $OUTPUT->heading($subtitle, 3);
      *
-     * @param  int $pagecontextid The page context ID.
      * @param  moodle_url $url The current page.
-     * @param  \stdClass $couse The course.
-     * @param  string $subpage The title of the subpage, if any.
+     * @param  stdClass $course The course.
+     * @param  string $subtitle The title of the subpage, if any.
      * @return array With the following:
      *               - Page title
      *               - Page sub title
@@ -100,7 +99,7 @@ class page_helper {
      * @param  int $pagecontextid The page context ID.
      * @param  moodle_url $url The current page.
      * @param  \tool_lp\template $template The template, if any.
-     * @param  string $subpage The title of the subpage, if any.
+     * @param  string $subtitle The title of the subpage, if any.
      * @return array With the following:
      *               - Page title
      *               - Page sub title

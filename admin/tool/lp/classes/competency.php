@@ -524,7 +524,7 @@ class competency extends persistent {
     protected function validate_parentid($value) {
 
         // Check that the parent exists. But only if we don't have it already, and we actually have a parent.
-        if (!empty($value) && !$this->newparent && !competency::record_exists($value)) {
+        if (!empty($value) && !$this->newparent && !self::record_exists($value)) {
             return new lang_string('invaliddata', 'error');
         }
 
@@ -602,7 +602,6 @@ class competency extends persistent {
     protected function validate_scaleid($value) {
         global $DB;
 
-        // We'll
         if ($value === null) {
             return true;
         }

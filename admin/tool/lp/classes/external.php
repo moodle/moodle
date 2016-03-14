@@ -509,7 +509,6 @@ class external extends external_api {
     /**
      * List the existing competency frameworks
      *
-     * @param string $filters
      * @param int $sort
      * @param string $order
      * @param string $skip
@@ -596,8 +595,9 @@ class external extends external_api {
     /**
      * Count the existing competency frameworks
      *
-     * @param string $filters Filters to use.
-     * @return boolean
+     * @param array $context
+     * @param string $includes
+     * @return int
      */
     public static function count_competency_frameworks($context, $includes) {
         $params = self::validate_parameters(self::count_competency_frameworks_parameters(),
@@ -2399,8 +2399,9 @@ class external extends external_api {
     /**
      * Count the existing learning plan templates
      *
-     * @param array $filters Filters to allow.
-     * @return boolean
+     * @param array $context
+     * @param string $includes
+     * @return int
      */
     public static function count_templates($context, $includes) {
         $params = self::validate_parameters(self::count_templates_parameters(),
@@ -2934,7 +2935,8 @@ class external extends external_api {
     /**
      * External function user_competency_cancel_review_request.
      *
-     * @param int $id The ID description.
+     * @param int $userid The user ID.
+     * @param int $competencyid The competency ID.
      * @return boolean
      */
     public static function user_competency_cancel_review_request($userid, $competencyid) {
@@ -3013,7 +3015,8 @@ class external extends external_api {
     /**
      * External function user_competency_start_review.
      *
-     * @param int $id The ID description.
+     * @param int $userid The user ID.
+     * @param int $competencyid The competency ID.
      * @return boolean
      */
     public static function user_competency_start_review($userid, $competencyid) {
@@ -3052,7 +3055,8 @@ class external extends external_api {
     /**
      * External function user_competency_stop_review.
      *
-     * @param int $id The ID description.
+     * @param int $userid The user ID.
+     * @param int $competencyid The competency ID.
      * @return boolean
      */
     public static function user_competency_stop_review($userid, $competencyid) {
@@ -4082,7 +4086,7 @@ class external extends external_api {
     /**
      * Loads the data required to render the user_evidence_page template.
      *
-     * @param int $userid User id.
+     * @param int $id User id.
      * @return boolean
      */
     public static function data_for_user_evidence_page($id) {
@@ -4442,11 +4446,11 @@ class external extends external_api {
      * Function used to return a list of users where the given user has a particular capability.
      * This is used e.g. to find all the users where someone is able to manage their learning plans,
      * it also would be useful for mentees etc.
-     * @param $capability String - The capability string we are filtering for. If '' is passed,
+     * @param string $capability - The capability string we are filtering for. If '' is passed,
      *                             an always matching filter is returned.
-     * @param $userid int - The user id we are using for the access checks. Defaults to current user.
-     * @param $type int - The type of named params to return (passed to $DB->get_in_or_equal).
-     * @param $prefix string - The type prefix for the db table (passed to $DB->get_in_or_equal).
+     * @param int $userid - The user id we are using for the access checks. Defaults to current user.
+     * @param int $type - The type of named params to return (passed to $DB->get_in_or_equal).
+     * @param string $prefix - The type prefix for the db table (passed to $DB->get_in_or_equal).
      * @return list($sql, $params) Same as $DB->get_in_or_equal().
      */
     public static function filter_users_with_capability_on_user_context_sql($capability,
@@ -4486,7 +4490,7 @@ class external extends external_api {
         $hassystem = has_capability($capability, $syscontext, $userid);
 
         $access = get_user_access_sitewide($userid);
-        // Build up a list of level 2 contexts (candidates to be user context)
+        // Build up a list of level 2 contexts (candidates to be user context).
         $filtercontexts = array();
         foreach ($access['ra'] as $path => $role) {
             $parts = explode('/', $path);
@@ -4582,6 +4586,9 @@ class external extends external_api {
      * Search users.
      *
      * @param string $query
+     * @param string $capability
+     * @param int $limitfrom
+     * @param int $limitnum
      * @return array
      */
     public static function search_users($query, $capability = '', $limitfrom = 0, $limitnum = 100) {
@@ -4703,6 +4710,8 @@ class external extends external_api {
      * TODO: MDL-52243 Move this function to cohorts/externallib.php
      *
      * @param string $query
+     * @param array $context
+     * @param string $includes
      * @param int $limitfrom
      * @param int $limitnum
      * @return array

@@ -37,8 +37,7 @@ use external_value;
 use external_format_value;
 
 /**
- * Generic exporter to take a stdClass and prepare it for return by webservice, or as the context
- * for a template.
+ * Generic exporter to take a stdClass and prepare it for return by webservice, or as the context for a template.
  *
  * templatable classes implementing export_for_template, should always use a standard exporter if it exists.
  * External functions should always use a standard exporter if it exists.
@@ -51,6 +50,7 @@ abstract class exporter {
     /** @var array $related List of related objects used to avoid DB queries. */
     protected $related = array();
 
+    /** @var stdClass|array The data of this exporter. */
     protected $data = null;
 
     /**
@@ -198,6 +198,7 @@ abstract class exporter {
      *
      * Note: These must be defined in {@link self::define_other_properties()}.
      *
+     * @param renderer_base $output The renderer.
      * @return array Keys are the property names, values are their values.
      */
     protected function get_other_values(renderer_base $output) {
@@ -421,6 +422,9 @@ abstract class exporter {
     /**
      * Returns the read structure from a set of properties (recursive).
      *
+     * @param array $properties The properties.
+     * @param int $required Whether is required.
+     * @param mixed $default The default value.
      * @return external_single_structure
      */
     final protected static function get_read_structure_from_properties($properties, $required = VALUE_REQUIRED, $default = null) {
