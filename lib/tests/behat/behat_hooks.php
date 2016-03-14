@@ -398,7 +398,7 @@ class behat_hooks extends behat_base {
      * @AfterScenario @_switch_window
      */
     public function after_scenario_switchwindow(AfterScenarioScope $event) {
-        for ($count = 0; $count < self::EXTENDED_TIMEOUT; $count) {
+        for ($count = 0; $count < self::EXTENDED_TIMEOUT; $count++) {
             try {
                 $this->getSession()->restart();
                 break;
