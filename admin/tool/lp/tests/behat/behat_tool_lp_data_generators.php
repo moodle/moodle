@@ -28,6 +28,7 @@ require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
 use Behat\Gherkin\Node\TableNode as TableNode;
 use Behat\Behat\Exception\PendingException as PendingException;
 use tool_lp\competency_framework;
+use tool_lp\plan;
 
 /**
  * Step definition to generate database fixtures for learning plan system.
@@ -192,6 +193,42 @@ class behat_tool_lp_data_generators extends behat_base {
             $data['userid'] = $user->id;
         }
         unset($data['user']);
+
+        if (isset($data['reviewer'])) {
+            if (is_number($data['reviewer'])) {
+                $data['reviewerid'] = $data['reviewer'];
+            } else {
+                $user = $DB->get_record('user', array('username' => $data['reviewer']), '*', MUST_EXIST);
+                $data['reviewerid'] = $user->id;
+            }
+            unset($data['reviewer']);
+        }
+
+        if (isset($data['status'])) {
+            switch ($data['status']) {
+                case 'draft':
+                    $status = plan::STATUS_DRAFT;
+                    break;
+                case 'in review':
+                    $status = plan::STATUS_IN_REVIEW;
+                    break;
+                case 'waiting for review':
+                    $status = plan::STATUS_WAITING_FOR_REVIEW;
+                    break;
+                case 'active':
+                    $status = plan::STATUS_ACTIVE;
+                    break;
+                case 'complete':
+                    $status = plan::STATUS_COMPLETE;
+                    break;
+                default:
+                    throw new Exception('Could not resolve plan status with: "' . $data['status'] . '"');
+                    break;
+            }
+
+            $data['status'] = $status;
+        }
+
         return $data;
     }
 
