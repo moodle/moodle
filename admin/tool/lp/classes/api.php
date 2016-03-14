@@ -4020,17 +4020,18 @@ class api {
             }
         }
 
+        $select = 'usercompetencyid = :usercompetencyid';
+        $params = array('usercompetencyid' => $usercompetency->get_id());
         if ($plancompleted) {
-            $select = 'usercompetencyid = :usercompetencyid AND timecreated <= :timecompeleted';
-            $params = array('usercompetencyid' => $usercompetency->get_id(), 'timecompeleted' => $plan->get_timemodified());
-            $orderby = $sort . ' ' . $order;
-            $evidences = evidence::get_records_select($select, $params, $orderby, '*', $skip, $limit);
-        } else {
-            $params = array('usercompetencyid' => $usercompetency->get_id());
-            $evidences = evidence::get_records($params, $sort, $order, $skip, $limit);
+            $select .= ' AND timecreated <= :timecompleted';
+            $params['timecompleted'] = $plan->get_timemodified();
         }
 
-        return $evidences;
+        $orderby = $sort . ' ' . $order;
+        $orderby .= !empty($orderby) ? ', id DESC' : 'id DESC'; // Prevent random ordering.
+
+        $evidence = evidence::get_records_select($select, $params, $orderby, '*', $skip, $limit);
+        return $evidence;
     }
 
     /**
