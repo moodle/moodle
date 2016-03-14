@@ -1763,6 +1763,7 @@ class grade_item extends grade_object {
             $grade->feedbackformat = $feedbackformat;
         }
 
+        $gradechanged = false;
         if (empty($grade->id)) {
             $grade->timecreated  = null;   // hack alert - date submitted - no submission yet
             $grade->timemodified = time(); // hack alert - date graded
@@ -1772,12 +1773,23 @@ class grade_item extends grade_object {
             if ($result && !is_null($grade->finalgrade)) {
                 \core\event\user_graded::create_from_grade($grade)->trigger();
             }
-        } else if (grade_floats_different($grade->finalgrade, $oldgrade->finalgrade)
-                or $grade->feedback       !== $oldgrade->feedback
-                or $grade->feedbackformat != $oldgrade->feedbackformat
-                or grade_floats_different($grade->rawgrademin, $oldgrade->rawgrademin)
-                or grade_floats_different($grade->rawgrademax, $oldgrade->rawgrademax)
-                or ($oldgrade->overridden == 0 and $grade->overridden > 0)) {
+            $gradechanged = true;
+        } else {
+            // Existing grade_grades.
+
+            if (grade_floats_different($grade->finalgrade, $oldgrade->finalgrade)
+                    or grade_floats_different($grade->rawgrademin, $oldgrade->rawgrademin)
+                    or grade_floats_different($grade->rawgrademax, $oldgrade->rawgrademax)
+                    or ($oldgrade->overridden == 0 and $grade->overridden > 0)) {
+                $gradechanged = true;
+            }
+
+            if ($grade->feedback === $oldgrade->feedback and $grade->feedbackformat == $oldgrade->feedbackformat and
+                    $gradechanged === false) {
+                // No grade nor feedback changed.
+                return $result;
+            }
+
             $grade->timemodified = time(); // hack alert - date graded
             $result = $grade->update($source);
 
@@ -1785,21 +1797,26 @@ class grade_item extends grade_object {
             if ($result && grade_floats_different($grade->finalgrade, $oldgrade->finalgrade)) {
                 \core\event\user_graded::create_from_grade($grade)->trigger();
             }
-        } else {
-            // no grade change
-            return $result;
         }
 
         if (!$result) {
-            // something went wrong - better force final grade recalculation
+            // Something went wrong - better force final grade recalculation.
             $this->force_regrading();
+            return $result;
+        }
 
-        } else if ($this->is_course_item() and !$this->needsupdate) {
+        // If we are not updating grades we don't need to recalculate the whole course.
+        if (!$gradechanged) {
+            return $result;
+        }
+
+        if ($this->is_course_item() and !$this->needsupdate) {
             if (grade_regrade_final_grades($this->courseid, $userid, $this) !== true) {
                 $this->force_regrading();
             }
 
         } else if (!$this->needsupdate) {
+
             $course_item = grade_item::fetch_course_item($this->courseid);
             if (!$course_item->needsupdate) {
                 if (grade_regrade_final_grades($this->courseid, $userid, $this) !== true) {
@@ -1927,6 +1944,7 @@ class grade_item extends grade_object {
         }
         // end of hack alert
 
+        $gradechanged = false;
         if (empty($grade->id)) {
             $result = (bool)$grade->insert($source);
 
@@ -1934,31 +1952,47 @@ class grade_item extends grade_object {
             if ($result && !is_null($grade->finalgrade)) {
                 \core\event\user_graded::create_from_grade($grade)->trigger();
             }
-        } else if (grade_floats_different($grade->finalgrade,  $oldgrade->finalgrade)
-                or grade_floats_different($grade->rawgrade,    $oldgrade->rawgrade)
-                or grade_floats_different($grade->rawgrademin, $oldgrade->rawgrademin)
-                or grade_floats_different($grade->rawgrademax, $oldgrade->rawgrademax)
-                or $grade->rawscaleid     != $oldgrade->rawscaleid
-                or $grade->feedback       !== $oldgrade->feedback
-                or $grade->feedbackformat != $oldgrade->feedbackformat
-                or $grade->timecreated    != $oldgrade->timecreated  // part of hack above
-                or $grade->timemodified   != $oldgrade->timemodified // part of hack above
-                ) {
+            $gradechanged = true;
+        } else {
+            // Existing grade_grades.
+
+            if (grade_floats_different($grade->finalgrade,  $oldgrade->finalgrade)
+                    or grade_floats_different($grade->rawgrade,    $oldgrade->rawgrade)
+                    or grade_floats_different($grade->rawgrademin, $oldgrade->rawgrademin)
+                    or grade_floats_different($grade->rawgrademax, $oldgrade->rawgrademax)
+                    or $grade->rawscaleid != $oldgrade->rawscaleid) {
+                $gradechanged = true;
+            }
+
+            // The timecreated and timemodified checking is part of the hack above.
+            if ($gradechanged === false and
+                    $grade->feedback === $oldgrade->feedback and
+                    $grade->feedbackformat == $oldgrade->feedbackformat and
+                    $grade->timecreated == $oldgrade->timecreated and
+                    $grade->timemodified == $oldgrade->timemodified) {
+                // No changes.
+                return $result;
+            }
             $result = $grade->update($source);
 
             // If the grade update was successful and the actual grade has changed then trigger a user_graded event.
             if ($result && grade_floats_different($grade->finalgrade, $oldgrade->finalgrade)) {
                 \core\event\user_graded::create_from_grade($grade)->trigger();
             }
-        } else {
-            return $result;
         }
 
         if (!$result) {
-            // something went wrong - better force final grade recalculation
+            // Something went wrong - better force final grade recalculation.
             $this->force_regrading();
+            return $result;
+        }
 
-        } else if (!$this->needsupdate) {
+        // If we are not updating grades we don't need to recalculate the whole course.
+        if (!$gradechanged) {
+            return $result;
+        }
+
+        if (!$this->needsupdate) {
             $course_item = grade_item::fetch_course_item($this->courseid);
             if (!$course_item->needsupdate) {
                 if (grade_regrade_final_grades($this->courseid, $userid, $this) !== true) {
