@@ -41,7 +41,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2016 onwards Matteo Scaramuccia
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cmielement_submitted extends \core\event\base {
+abstract class cmielement_submitted extends \core\event\base {
 
     /**
      * Init method.
