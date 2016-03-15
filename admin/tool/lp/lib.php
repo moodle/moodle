@@ -510,3 +510,13 @@ function tool_lp_coursemodule_edit_post_actions($data, $course) {
 
     return $data;
 }
+
+/**
+ * Reports whether a scale is being used in the plugin.
+ *
+ * @param int $scaleid The scale ID.
+ * @return bool
+ */
+function tool_lp_scale_used_anywhere($scaleid) {
+    return \tool_lp\api::is_scale_used_anywhere($scaleid);
+}

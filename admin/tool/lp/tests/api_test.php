@@ -4180,4 +4180,92 @@ class tool_lp_api_testcase extends advanced_testcase {
             $this->assertContains($one->get_id(), $leastarray);
         }
     }
+
+    public function test_is_scale_used_anywhere() {
+        $this->resetAfterTest();
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+
+        $scale1 = $dg->create_scale();
+        $scale2 = $dg->create_scale();
+        $scale3 = $dg->create_scale();
+        $scale4 = $dg->create_scale();
+
+        $this->assertFalse(api::is_scale_used_anywhere($scale1->id));
+        $this->assertFalse(api::is_scale_used_anywhere($scale2->id));
+        $this->assertFalse(api::is_scale_used_anywhere($scale3->id));
+        $this->assertFalse(api::is_scale_used_anywhere($scale4->id));
+
+        // Using scale 1 in a framework.
+        $f1 = $lpg->create_framework([
+            'scaleid' => $scale1->id,
+            'scaleconfiguration' => json_encode([
+                ['scaleid' => $scale1->id],
+                ['id' => 1, 'scaledefault' => 1, 'proficient' => 1]
+            ])
+        ]);
+        $this->assertTrue(api::is_scale_used_anywhere($scale1->id));
+        $this->assertFalse(api::is_scale_used_anywhere($scale2->id));
+        $this->assertFalse(api::is_scale_used_anywhere($scale3->id));
+        $this->assertFalse(api::is_scale_used_anywhere($scale4->id));
+
+        // Using scale 2 in a competency.
+        $f2 = $lpg->create_framework();
+        $c2 = $lpg->create_competency([
+            'competencyframeworkid' => $f2->get_id(),
+            'scaleid' => $scale2->id,
+            'scaleconfiguration' => json_encode([
+                ['scaleid' => $scale2->id],
+                ['id' => 1, 'scaledefault' => 1, 'proficient' => 1]
+            ])
+        ]);
+
+        $this->assertTrue(api::is_scale_used_anywhere($scale1->id));
+        $this->assertTrue(api::is_scale_used_anywhere($scale2->id));
+        $this->assertFalse(api::is_scale_used_anywhere($scale3->id));
+        $this->assertFalse(api::is_scale_used_anywhere($scale4->id));
+
+        // Using scale 3 in a framework, and scale 4 in a competency of that framework.
+        $f3 = $lpg->create_framework([
+            'scaleid' => $scale3->id,
+            'scaleconfiguration' => json_encode([
+                ['scaleid' => $scale3->id],
+                ['id' => 1, 'scaledefault' => 1, 'proficient' => 1]
+            ])
+        ]);
+        $c3 = $lpg->create_competency([
+            'competencyframeworkid' => $f3->get_id(),
+            'scaleid' => $scale4->id,
+            'scaleconfiguration' => json_encode([
+                ['scaleid' => $scale4->id],
+                ['id' => 1, 'scaledefault' => 1, 'proficient' => 1]
+            ])
+        ]);
+
+        $this->assertTrue(api::is_scale_used_anywhere($scale1->id));
+        $this->assertTrue(api::is_scale_used_anywhere($scale2->id));
+        $this->assertTrue(api::is_scale_used_anywhere($scale3->id));
+        $this->assertTrue(api::is_scale_used_anywhere($scale4->id));
+
+        // Multiple occurrences of the same scale (3, and 4).
+        $f4 = $lpg->create_framework([
+            'scaleid' => $scale3->id,
+            'scaleconfiguration' => json_encode([
+                ['scaleid' => $scale3->id],
+                ['id' => 1, 'scaledefault' => 1, 'proficient' => 1]
+            ])
+        ]);
+        $c4 = $lpg->create_competency([
+            'competencyframeworkid' => $f3->get_id(),
+            'scaleid' => $scale4->id,
+            'scaleconfiguration' => json_encode([
+                ['scaleid' => $scale4->id],
+                ['id' => 1, 'scaledefault' => 1, 'proficient' => 1]
+            ])
+        ]);
+        $this->assertTrue(api::is_scale_used_anywhere($scale1->id));
+        $this->assertTrue(api::is_scale_used_anywhere($scale2->id));
+        $this->assertTrue(api::is_scale_used_anywhere($scale3->id));
+        $this->assertTrue(api::is_scale_used_anywhere($scale4->id));
+    }
 }

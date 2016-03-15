@@ -67,6 +67,29 @@ class api {
     }
 
     /**
+     * Checks whether a scale is used anywhere in the plugin.
+     *
+     * This public API has two exceptions:
+     * - It MUST NOT perform any capability checks.
+     * - It MUST ignore whether competencies are enabled or not ({@link self::is_enabled()}).
+     *
+     * @param int $scaleid The scale ID.
+     * @return bool
+     */
+    public static function is_scale_used_anywhere($scaleid) {
+        global $DB;
+        $sql = "SELECT s.id
+                  FROM {scale} s
+             LEFT JOIN {" . competency_framework::TABLE ."} f
+                    ON f.scaleid = :scaleid1
+             LEFT JOIN {" . competency::TABLE ."} c
+                    ON c.scaleid = :scaleid2
+                 WHERE f.id IS NOT NULL
+                    OR c.id IS NOT NULL";
+        return $DB->record_exists_sql($sql, ['scaleid1' => $scaleid, 'scaleid2' => $scaleid]);
+    }
+
+    /**
      * Validate if current user have acces to the course_module if hidden.
      *
      * @param mixed $cmmixed The cm_info class, course module record or its ID.
