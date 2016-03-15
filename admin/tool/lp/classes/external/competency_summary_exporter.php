@@ -76,6 +76,9 @@ class competency_summary_exporter extends exporter {
             ),
             'taxonomyterm' => array(
                 'type' => PARAM_TEXT
+            ),
+            'comppath' => array(
+                'type' => competency_path_exporter::read_properties_definition(),
             )
         );
     }
@@ -122,6 +125,14 @@ class competency_summary_exporter extends exporter {
         $level = $competency->get_level();
         $taxonomy = $this->related['framework']->get_taxonomy($level);
         $result->taxonomyterm = (string) (competency_framework::get_taxonomies_list()[$taxonomy]);
+
+        // Competency path.
+        $exporter = new competency_path_exporter([
+            'ancestors' => $competency->get_ancestors(),
+            'framework' => $this->related['framework'],
+            'context' => $context
+        ]);
+        $result->comppath = $exporter->export($output);
 
         return (array) $result;
     }

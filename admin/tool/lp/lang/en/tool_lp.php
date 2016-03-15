@@ -265,6 +265,7 @@ $string['nouserevidence'] = 'No evidence of prior learning have been added yet.'
 $string['nouserplans'] = 'No learning plans have been created yet.';
 $string['oneplanwascreated'] = 'A plan was created';
 $string['outcome'] = 'Outcome';
+$string['path'] = 'Path:';
 $string['parentcompetency'] = 'Parent competency';
 $string['planapprove'] = 'Make active';
 $string['plancompleted'] = 'Plan completed';

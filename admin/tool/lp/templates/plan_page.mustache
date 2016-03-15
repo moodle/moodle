@@ -120,6 +120,10 @@
                         {{/plan.canbeedited}}
                         <a href="{{pluginbaseurl}}/user_competency_in_plan.php?competencyid={{competency.id}}&amp;userid={{plan.userid}}&amp;planid={{plan.id}}">{{competency.shortname}}</a>
                         <em>{{competency.idnumber}}</em>
+                        {{#comppath}}
+                            <br>
+                            <span class="pull-left">{{#str}}path, tool_lp{{/str}}</span>{{> tool_lp/competency_path }}
+                        {{/comppath}}
                     </td>
                     {{#plan.iscompleted}}
                         <td>{{usercompetencyplan.gradename}}</td>
@@ -178,10 +182,4 @@ require(['tool_lp/competencies', 'tool_lp/planactions', 'tool_lp/user_competency
     ucw.on('error-occured', planActions.refresh.bind(planActions, '[data-region="plan-summary"]'));
 });
 {{/js}}
-{{#js}}
-require(['tool_lp/competencydialogue'], function(Compdialogue) {
-    var competencydialogue = new Compdialogue({includerelated : true});
-    competencydialogue.watch('[data-region="plan-page"]');
 
-});
-{{/js}}

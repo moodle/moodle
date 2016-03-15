@@ -107,6 +107,7 @@ class template_competencies_page implements renderable, templatable {
 
             $courses = api::list_courses_using_competency($competency->get_id());
             $relatedcompetencies = api::list_related_competencies($competency->get_id());
+
             $related = array(
                 'competency' => $competency,
                 'linkedcourses' => $courses,

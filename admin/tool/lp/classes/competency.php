@@ -836,4 +836,22 @@ class competency extends persistent {
         return $DB->delete_records(self::TABLE, array('competencyframeworkid' => $id));
     }
 
+    /**
+     * Get competency ancestors.
+     *
+     * @return competency[] Return array of ancestors.
+     */
+    public function get_ancestors() {
+        global $DB;
+        $ancestors = array();
+        $ancestorsids = explode('/', trim($this->get_path(), '/'));
+        // Drop the root item from the array /0/.
+        array_shift($ancestorsids);
+        if (!empty($ancestorsids)) {
+            list($insql, $params) = $DB->get_in_or_equal($ancestorsids, SQL_PARAMS_NAMED);
+            $ancestors = self::get_records_select("id $insql", $params);
+        }
+        return $ancestors;
+    }
+
 }

@@ -44,6 +44,7 @@ use required_capability_exception;
 use grade_scale;
 use tool_lp\external\competency_framework_exporter;
 use tool_lp\external\competency_summary_exporter;
+use tool_lp\external\competency_path_exporter;
 use tool_lp\external\cohort_summary_exporter;
 use tool_lp\external\template_statistics_exporter;
 use tool_lp\external\user_summary_exporter;
@@ -1897,7 +1898,8 @@ class external extends external_api {
                         'value' => new external_value(PARAM_INT, 'The option value'),
                         'text' => new external_value(PARAM_NOTAGS, 'The name of the option'),
                         'selected' => new external_value(PARAM_BOOL, 'If this is the currently selected option'),
-                )))
+                ))),
+                'comppath' => competency_path_exporter::get_read_structure(),
             ))),
             'manageurl' => new external_value(PARAM_LOCALURL, 'Url to the manage competencies page.'),
         ));
@@ -3271,6 +3273,7 @@ class external extends external_api {
             'competencies' => new external_multiple_structure(
                 new external_single_structure(array(
                     'competency' => competency_exporter::get_read_structure(),
+                    'comppath' => competency_path_exporter::get_read_structure(),
                     'usercompetency' => $uc,
                     'usercompetencyplan' => $ucp
                 ))

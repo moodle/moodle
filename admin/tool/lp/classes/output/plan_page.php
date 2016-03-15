@@ -31,6 +31,7 @@ use moodle_url;
 use tool_lp\api;
 use tool_lp\plan;
 use tool_lp\external\competency_exporter;
+use tool_lp\external\competency_path_exporter;
 use tool_lp\external\plan_exporter;
 
 /**
@@ -101,10 +102,21 @@ class plan_page implements renderable, templatable {
             }
             $scale = $scales[$framework->get_scaleid()];
 
+            $context = $framework->get_context();
+
             // Prepare the data.
             $record = new stdClass();
             $exporter = new competency_exporter($comp, array('context' => $framework->get_context()));
             $record->competency = $exporter->export($output);
+
+            // Competency path.
+            $exporter = new competency_path_exporter([
+                'ancestors' => $comp->get_ancestors(),
+                'framework' => $framework,
+                'context' => $framework->get_context()
+            ]);
+            $record->comppath = $exporter->export($output);
+
             $exporter = new $ucexporter($usercomp, array('scale' => $scale));
             $record->$ucproperty = $exporter->export($output);
 
