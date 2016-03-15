@@ -599,6 +599,14 @@ table.quizreviewsummary td.cell {
 #page-mod-quiz-edit .section-heading .sectioninstance {
     position: relative;
 }
+#page-mod-quiz-edit .section-heading .instancesection {
+    white-space: nowrap;
+    max-width: 72%;
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    vertical-align: bottom;
+}
 #page-mod-quiz-edit .section-heading form {
     display: inline;
     position: relative;
