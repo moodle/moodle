@@ -179,7 +179,7 @@
     <location>jquery</location>
     <name>jQuery</name>
     <license>MIT</license>
-    <version>1.11.3</version>
+    <version>1.12.3</version>
     <licenseversion></licenseversion>
   </library>
   <library>
