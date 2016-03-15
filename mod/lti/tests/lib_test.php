@@ -89,4 +89,19 @@ class mod_lti_lib_testcase extends advanced_testcase {
         $this->assertEquals(1, $completiondata->completionstate);
 
     }
+
+    /**
+     * Test deleting LTI instance.
+     */
+    public function test_lti_delete_instance() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course(array());
+        $lti = $this->getDataGenerator()->create_module('lti', array('course' => $course->id));
+        $cm = get_coursemodule_from_instance('lti', $lti->id);
+
+        // Must not throw notices.
+        course_delete_module($cm->id);
+    }
 }
