@@ -25,22 +25,25 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
       | name       | scale                                  |
       | Test Scale | Disappointing,Good,Very good,Excellent |
     And the following "grade categories" exist:
-      | fullname | course |
-      | Grade Cat | C1 |
+      | fullname  | course |
+      | Grade Cat | C1     |
+    And the following "grade categories" exist:
+      | fullname  | course | gradecategory |
+      | Grade Sub Cat  | C1 | Grade Cat |
     And the following "grade items" exist:
       | itemname | course | locked | gradetype | gradecategory |
-      | Item 1 | C1 | 0 | value | Grade Cat |
+      | Item 1  | C1 | 0 | value | Grade Cat |
       | Item VU | C1 | 0 | value | Grade Cat |
       | Item VL | C1 | 1 | value | Grade Cat |
-      | Item TU | C1 | 0 | text | Grade Cat |
-      | Item TL | C1 | 1 | text | Grade Cat |
+      | Item TU | C1 | 0 | text  | Grade Cat |
+      | Item TL | C1 | 1 | text  | Grade Cat |
+      | Item 3  | C1 | 0 | value | Grade Cat |
+      | Calc Item  | C1 | 0 | value | Grade Cat     |
+      | Item VUSub | C1 | 0 | value | Grade Sub Cat |
     And the following "grade items" exist:
-      | itemname | course | locked | gradetype | scale | gradecategory |
-      | Item SU | C1 | 0 | scale | Test Scale | Grade Cat |
-      | Item SL | C1 | 1 | scale | Test Scale | Grade Cat |
-    And the following "grade items" exist:
-      | itemname | course | locked | gradetype | gradecategory |
-      | Item 3 | C1 | 0 | value | Grade Cat |
+      | itemname   | course | locked | gradetype | scale | gradecategory |
+      | Item SU    | C1 | 0 | scale | Test Scale | Grade Cat |
+      | Item SL    | C1 | 1 | scale | Test Scale | Grade Cat |
     And the following config values are set as admin:
       | grade_report_showaverages | 0 |
       | grade_report_enableajax | 1 |
@@ -71,7 +74,7 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     And I set the field "ajaxgrade" to "Very good"
     And I press key "13" in the field "ajaxgrade"
     And the following should exist in the "user-grades" table:
-      | -1-                | -4-      | -5-      | -9-       | -13-         |
+      | -1-                | -6-      | -7-      | -13-      | -16-         |
       | Student 2          | -        | 33.00    | -         | 33.00        |
       | Student 3          | 80.00    | 50.00    | Very good | 133.00       |
     And I click on student "Student 3" for grade item "Item VL"
@@ -89,14 +92,14 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     And I set the field "ajaxgrade" to "90"
     And I press key "13" in the field "ajaxgrade"
     And the following should exist in the "user-grades" table:
-      | -1-                | -13-      |
+      | -1-                | -16-      |
       | Student 1          | 90.00     |
     And I navigate to "Grader report" node in "Grade administration"
     And the following should exist in the "user-grades" table:
-      | -1-                | -4-      | -5-      | -9-       | -13-         |
-      | Student 1          | -        | -        | -         | 90.00        |
-      | Student 2          | -        | 33.00    | -         | 33.00        |
-      | Student 3          | 80.00    | 50.00    | Very good | 133.00       |
+      | -1-                | -6-   | -7-   | -13-      | -16-      |
+      | Student 1          | -     | -     | -         | 90.00     |
+      | Student 2          | -     | 33.00 | -         | 33.00     |
+      | Student 3          | 80.00 | 50.00 | Very good | 133.00    |
 
   @javascript
   Scenario: Use the grader report without editing, with AJAX and quick feedback on
@@ -126,8 +129,8 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     And I press key "13" in the field "ajaxfeedback"
     And I navigate to "Grader report" node in "Grade administration"
     And the following should exist in the "user-grades" table:
-      | -1-                | -5-      | -9-       | -13-         |
-      | Student 2          | 33.00    | Very good | 36.00        |
+      | -1-       | -7-   | -13-      | -16-  |
+      | Student 2 | 33.00 | Very good | 36.00 |
     And I click on student "Student 3" for grade item "Item TU"
     And the field "ajaxfeedback" matches value "Student 3 TU feedback"
     And I click on student "Student 2" for grade item "Item SU"
@@ -150,8 +153,8 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     And I should not see a grade field for "Student 3" and grade item "Course total"
     And I should not see a feedback field for "Student 3" and grade item "Course total"
     And the following should exist in the "user-grades" table:
-      | -1-                | -5-      | -13-    |
-      | Student 2          | 33.00    | 33.00   |
+      | -1-         | -7-      | -16-    |
+      | Student 2   | 33.00    | 33.00   |
 
   @javascript
   Scenario: Use the grader report with editing, with AJAX and quick feedback on, with category override
@@ -179,8 +182,8 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     And the grade for "Student 2" in grade item "Course total" should match "53.00"
     And I turn editing mode off
     And the following should exist in the "user-grades" table:
-      | -1-                | -4-      | -5-     | -9-       | -12-     | -13-    |
-      | Student 2          | 30.00    | 20.00   | Very good | 53.00    | 53.00   |
+      | -1-        | -6-      | -7-     | -13-      | -15-     | -16-    |
+      | Student 2  | 30.00    | 20.00   | Very good | 53.00    | 53.00   |
     And I click on student "Student 2" for grade item "Item 1"
     And the field "ajaxfeedback" matches value "Some feedback"
 
@@ -193,20 +196,41 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     And I follow "Course 1"
     And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
+    And I change window size to "large"
+    And I set "=[[i1]] + [[i3]] + [[gsc]]" calculation for grade item "Calc Item" with idnumbers:
+      | Item 1        | i1  |
+      | Item 3        | i3  |
+      | Grade Sub Cat | gsc |
     Then I should not see a grade field for "Student 2" and grade item "Course total"
     And I should not see a feedback field for "Student 2" and grade item "Course total"
     And I give the grade "20.00" to the user "Student 2" for the grade item "Item VU"
     And I click away from student "Student 2" and grade item "Item VU" value
+    And the following should exist in the "user-grades" table:
+      | -1-        | -15-   | -16-  |
+      | Student 2  | 20.00  | 20.00 |
     And I give the grade "30.00" to the user "Student 2" for the grade item "Item 1"
     And I click away from student "Student 2" and grade item "Item 1" value
+    And the following should exist in the "user-grades" table:
+      | -1-        | -15-  | -16-  |
+      | Student 2  | 80.00 | 80.00 |
+    And the field "Student 2 Calc Item grade" matches value "30.00"
+    And I give the grade "5.00" to the user "Student 2" for the grade item "Item 3"
+    And I click away from student "Student 2" and grade item "Item 3" value
+    And the following should exist in the "user-grades" table:
+      | -1-        | -15-  | -16- |
+      | Student 2  | 90.00 | 90.00 |
+    And the field "Student 2 Calc Item grade" matches value "35.00"
+    And I give the grade "10.00" to the user "Student 2" for the grade item "Item VUSub"
+    And I click away from student "Student 2" and grade item "Item VUSub" value
+    And the following should exist in the "user-grades" table:
+      | -1-        | -5-   | -15-   | -16-   |
+      | Student 2  | 10.00 | 110.00 | 110.00 |
+    And the field "Student 2 Calc Item grade" matches value "45.00"
     And I give the feedback "Some feedback" to the user "Student 2" for the grade item "Item 1"
     And I click away from student "Student 2" and grade item "Item 1" feedback
-    And the following should exist in the "user-grades" table:
-      | -1-                | -13-     |
-      | Student 2          | 50.00    |
     And I turn editing mode off
     And the following should exist in the "user-grades" table:
-      | -1-                | -4-      | -5-      | -13-         |
-      | Student 2          | 30.00    | 20.00    | 50.00        |
+      | -1-        | -4-   | -6-   | -7-   | -11- | -12-  | -15-   | -16-   |
+      | Student 2  | 10.00 | 30.00 | 20.00 | 5.00 | 45.00 | 110.00 | 110.00 |
     And I click on student "Student 2" for grade item "Item 1"
     And the field "ajaxfeedback" matches value "Some feedback"
