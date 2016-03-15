@@ -186,7 +186,7 @@
     <location>jquery</location>
     <name>jQuery Migrate</name>
     <license>MIT</license>
-    <version>1.2.1</version>
+    <version>1.4.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
