@@ -18,11 +18,10 @@ $ADMIN->add('server', $temp);
 
 // "supportcontact" settingpage
 $temp = new admin_settingpage('supportcontact', new lang_string('supportcontact','admin'));
-if (isloggedin()) {
-    global $USER;
-    $primaryadminemail = $USER->email;
-    $primaryadminname  = fullname($USER, true);
-
+$primaryadmin = get_admin();
+if ($primaryadmin) {
+    $primaryadminemail = $primaryadmin->email;
+    $primaryadminname  = fullname($primaryadmin, true);
 } else {
     // no defaults during installation - admin user must be created first
     $primaryadminemail = NULL;
