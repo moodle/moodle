@@ -70,21 +70,26 @@ class mod_folder_renderer extends plugin_renderer_base {
             $downloadable = folder_archive_available($folder, $cm);
 
             if ($downloadable) {
-                $containercontents .= $this->output->single_button(
+                $downloadbutton = $this->output->single_button(
                     new moodle_url('/mod/folder/download_folder.php', array('id' => $cm->id)),
                     get_string('downloadfolder', 'folder')
                 );
+
+                $output .= $this->output->container(
+                    $downloadbutton,
+                    'mdl-align folder-download-button');
             }
 
             if (has_capability('mod/folder:managefiles', $context)) {
-                $containercontents .= $this->output->single_button(
+                $editbutton = $this->output->single_button(
                     new moodle_url('/mod/folder/edit.php', array('id' => $cm->id)),
                     get_string('edit')
                 );
+
+                $output .= $this->output->container(
+                    $editbutton,
+                    'mdl-align folder-edit-button');
             }
-            $output .= $this->output->container(
-                $containercontents,
-                'mdl-align folder-edit-button');
         }
         return $output;
     }
