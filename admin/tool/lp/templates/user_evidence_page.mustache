@@ -59,26 +59,30 @@
             <thead>
                 <tr>
                     <th scope="col">{{#str}}shortname, tool_lp{{/str}}</th>
-                    {{#userevidence.canmanage}}
+                    <th scope="col">{{#str}}status, tool_lp{{/str}} / {{#str}}reviewer, tool_lp{{/str}}</th>
+                    {{#canmanage}}
                         <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
-                    {{/userevidence.canmanage}}
+                    {{/canmanage}}
                 </tr>
             </thead>
             <tbody>
-                {{#competencies}}
-                <tr data-id="{{id}}">
+                {{#usercompetencies}}
+                <tr data-id="{{competency.id}}">
                     <td>
-                        <a href="#" data-action="competency-dialogue" data-id="{{id}}">{{shortname}}</a>
+                        <a href="{{pluginbaseurl}}/user_competency.php?id={{usercompetency.id}}" data-id="{{usercompetency.id}}">{{competency.shortname}}</a>
+                    </td>
+                     <td>
+                        {{usercompetency.statusname}} {{#usercompetency.reviewer.fullname}} / {{usercompetency.reviewer.fullname}}{{/usercompetency.reviewer.fullname}}
                     </td>
                     {{#userevidence.canmanage}}
                         <td>
                             <div class="pull-left">
-                                <a href="#" data-action="delete-competency-link" data-id="{{id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
+                                <a href="#" data-action="delete-competency-link" data-id="{{competency.id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
                             </div>
                         </td>
                     {{/userevidence.canmanage}}
                 </tr>
-                {{/competencies}}
+                {{/usercompetencies}}
             </tbody>
         </table>
 

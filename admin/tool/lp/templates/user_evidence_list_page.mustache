@@ -39,8 +39,8 @@
     <thead>
         <tr>
             <th scope="col" width="20%">{{#str}}userevidencename, tool_lp{{/str}}</th>
-            <th scope="col">{{#str}}userevidenceummary, tool_lp{{/str}}</th>
-            <th scope="col">{{#str}}linkedcompetencies, tool_lp{{/str}}</th>
+            <th scope="col">{{#str}}userevidencesummary, tool_lp{{/str}}</th>
+            <th scope="col">{{#str}}linkedcompetencies, tool_lp{{/str}} ({{#str}}status, tool_lp{{/str}} / {{#str}}reviewer, tool_lp{{/str}})</th>
             {{#canmanage}}
                 <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
             {{/canmanage}}
@@ -71,11 +71,11 @@
                 {{/competencycount}}
                 {{#competencycount}}
                     <ul class="user-evidence-competencies">
-                    {{#competencies}}
+                    {{#usercompetencies}}
                         <li>
-                            {{shortname}} <small><em>{{idnumber}}</em></small>
+                            {{competency.shortname}} <small><em>{{competency.idnumber}}</em></small> ({{usercompetency.statusname}}{{#usercompetency.reviewer.fullname}} / {{usercompetency.reviewer.fullname}}{{/usercompetency.reviewer.fullname}})
                         </li>
-                    {{/competencies}}
+                    {{/usercompetencies}}
                     </ul>
                 {{/competencycount}}
             </td>
@@ -94,6 +94,11 @@
                         <li>
                             <a href="#" data-action="link-competency">
                                 {{#pix}}t/add{{/pix}} {{#str}}linkcompetencies, tool_lp{{/str}}
+                            </a>
+                        </li>
+                        <li>
+                            <a data-action="send-competencies-review" href="#">
+                                {{#pix}}t/edit{{/pix}} {{#str}}sendcompetenciestoreview, tool_lp{{/str}}
                             </a>
                         </li>
                         <li>

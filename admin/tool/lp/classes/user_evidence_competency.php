@@ -106,6 +106,33 @@ class user_evidence_competency extends persistent {
     }
 
     /**
+     * Get user competencies by user evidence ID.
+     *
+     * @param  int $userevidenceid The user evidence ID.
+     * @return user_competency[]
+     */
+    public static function get_user_competencies_by_userevidenceid($userevidenceid) {
+        global $DB;
+
+        $sql = "SELECT uc.*
+                  FROM {" . user_competency::TABLE . "} uc
+                  JOIN {" . self::TABLE . "} uec
+                    ON uc.competencyid = uec.competencyid
+                  JOIN {" . user_evidence::TABLE . "} ue
+                    ON uec.userevidenceid = ue.id
+                   AND uc.userid = ue.userid
+                   AND ue.id = ?";
+
+        $usercompetencies = array();
+        $records = $DB->get_recordset_sql($sql, array($userevidenceid));
+        foreach ($records as $record) {
+            $usercompetencies[] = new user_competency(0, $record);
+        }
+        $records->close();
+        return $usercompetencies;
+    }
+
+    /**
      * Get a relation.
      *
      * This does not perform any validation on the data passed. If the relation exists in the database

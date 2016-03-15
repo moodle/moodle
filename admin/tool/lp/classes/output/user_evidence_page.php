@@ -28,8 +28,7 @@ use renderable;
 use templatable;
 use stdClass;
 use tool_lp\api;
-use tool_lp\external\competency_exporter;
-use tool_lp\external\user_evidence_exporter;
+use tool_lp\external\user_evidence_summary_exporter;
 
 /**
  * User evidence page class.
@@ -64,12 +63,12 @@ class user_evidence_page implements renderable, templatable {
      */
     public function export_for_template(\renderer_base $output) {
         $data = new stdClass();
-        $evidenceexporter = new user_evidence_exporter($this->userevidence, array(
-            'context' => $this->context,
-            'competencies' => $this->userevidence->get_competencies()
-        ));
-        $data->userevidence = $evidenceexporter->export($output);
+
+        $userevidencesummaryexporter = new user_evidence_summary_exporter($this->userevidence, array(
+            'context' => $this->context));
+        $data->userevidence = $userevidencesummaryexporter->export($output);
         $data->pluginbaseurl = (new moodle_url('/admin/tool/lp'))->out(true);
+
         return $data;
     }
 }

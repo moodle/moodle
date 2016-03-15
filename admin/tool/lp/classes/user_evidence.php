@@ -104,6 +104,13 @@ class user_evidence extends persistent {
     }
 
     /**
+     * Get link user competencies.
+     */
+    public function get_user_competencies() {
+        return user_evidence_competency::get_user_competencies_by_userevidenceid($this->get_id());
+    }
+
+    /**
      * Return the files associated with this evidence.
      *
      * @return object[]

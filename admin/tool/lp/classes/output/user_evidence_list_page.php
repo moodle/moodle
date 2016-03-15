@@ -30,7 +30,7 @@ use stdClass;
 use single_button;
 use moodle_url;
 use tool_lp\api;
-use tool_lp\external\user_evidence_exporter;
+use tool_lp\external\user_evidence_summary_exporter;
 use tool_lp\user_evidence;
 use context_user;
 
@@ -93,12 +93,10 @@ class user_evidence_list_page implements renderable, templatable {
         $data->evidence = array();
         if ($this->evidence) {
             foreach ($this->evidence as $evidence) {
-                $evidenceexporter = new user_evidence_exporter($evidence, array(
-                    'context' => $this->context,
-                    'competencies' => $evidence->get_competencies()
+                $userevidencesummaryexporter = new user_evidence_summary_exporter($evidence, array(
+                    'context' => $this->context
                 ));
-                $record = $evidenceexporter->export($output);
-                $data->evidence[] = $record;
+                $data->evidence[] = $userevidencesummaryexporter->export($output);
             }
         }
 

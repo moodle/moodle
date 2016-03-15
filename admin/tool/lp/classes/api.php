@@ -3346,9 +3346,10 @@ class api {
      *
      * @param  int $userid       The user ID.
      * @param  int $competencyid The competency ID.
+     * @param  bool $onlyidle  Return exception if status is not idle.
      * @return bool
      */
-    public static function user_competency_request_review($userid, $competencyid) {
+    public static function user_competency_request_review($userid, $competencyid, $onlyidle = true) {
         static::require_enabled();
         $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
         if (!$uc) {
@@ -3359,7 +3360,11 @@ class api {
         if (!$uc->can_read()) {
             throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyread', 'nopermissions', '');
         } else if ($uc->get_status() != user_competency::STATUS_IDLE) {
-            throw new coding_exception('The competency can not be sent for review at this stage.');
+            if ($onlyidle) {
+                throw new coding_exception('The competency can not be sent for review at this stage.');
+            } else {
+                return true;
+            }
         } else if (!$uc->can_request_review()) {
             throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyrequestreview', 'nopermissions', '');
         }
@@ -3838,6 +3843,32 @@ class api {
         }
 
         return $success;
+    }
+
+    /**
+     * Send request review for user evidence competencies.
+     *
+     * @param  int $id The user evidence ID.
+     * @return bool
+     */
+    public static function request_review_of_user_evidence_linked_competencies($id) {
+        $onlyidle = false;
+        $userevidence = new user_evidence($id);
+        $context = $userevidence->get_context();
+        $userid = $userevidence->get_userid();
+
+        if (!$userevidence->can_manage()) {
+            throw new required_capability_exception($context, 'tool/lp:userevidencemanage', 'nopermissions', '');
+        }
+
+        $usercompetencies = user_evidence_competency::get_user_competencies_by_userevidenceid($id);
+        foreach ($usercompetencies as $usercompetency) {
+            if ($usercompetency->get_status() == user_competency::STATUS_IDLE) {
+                static::user_competency_request_review($userid, $usercompetency->get_competencyid());
+            }
+        }
+
+        return true;
     }
 
     /**

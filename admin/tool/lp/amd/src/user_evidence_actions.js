@@ -196,8 +196,9 @@ define(['jquery',
      *
      * @param {Object} evidenceData Evidence data from evidence node.
      * @param {Number} competencyIds The competency IDs.
+     * @param {Boolean} requestReview Send competencies to review.
      */
-    UserEvidenceActions.prototype._doCreateUserEvidenceCompetency = function(evidenceData, competencyIds) {
+    UserEvidenceActions.prototype._doCreateUserEvidenceCompetency = function(evidenceData, competencyIds, requestReview) {
         var self = this,
             calls = [];
 
@@ -209,6 +210,16 @@ define(['jquery',
                     competencyid: competencyId,
                 }
             });
+            if (requestReview) {
+                calls.push({
+                    methodname: 'tool_lp_user_competency_request_review',
+                    args: {
+                        userid: evidenceData.userid,
+                        competencyid: competencyId,
+                        checkstatus: false
+                    }
+                });
+            }
         });
 
         self._callAndRefresh(calls, evidenceData);
@@ -225,7 +236,7 @@ define(['jquery',
 
         picker.on('save', function(e, data) {
             var competencyIds = data.competencyIds;
-            self._doCreateUserEvidenceCompetency(evidenceData, competencyIds);
+            self._doCreateUserEvidenceCompetency(evidenceData, competencyIds, data.requestReview);
         }.bind(self));
 
         picker.display();
@@ -286,6 +297,66 @@ define(['jquery',
     };
 
     /**
+     * Send request review for user evidence competencies and reload the region.
+     *
+     * @param  {Object} evidenceData Evidence data from evidence node.
+     */
+    UserEvidenceActions.prototype._doReviewUserEvidenceCompetencies = function(evidenceData) {
+        var self = this,
+            calls = [{
+                methodname: 'tool_lp_request_review_of_user_evidence_linked_competencies',
+                args: { id: evidenceData.id }
+            }];
+        self._callAndRefresh(calls, evidenceData);
+    };
+
+    /**
+     * Send request review for user evidence competencies.
+     *
+     * @param  {Object} evidenceData Evidence data from evidence node.
+     */
+    UserEvidenceActions.prototype.reviewUserEvidenceCompetencies = function(evidenceData) {
+        var self = this,
+            requests;
+
+        requests = ajax.call([{
+            methodname: 'tool_lp_read_user_evidence',
+            args: { id: evidenceData.id }
+        }]);
+
+        requests[0].done(function(evidence) {
+            str.get_strings([
+                { key: 'confirm', component: 'moodle' },
+                { key: 'sendallcompetenciestoreview', component: 'tool_lp', param: evidence.name },
+                { key: 'confirm', component: 'moodle' },
+                { key: 'cancel', component: 'moodle' }
+            ]).done(function (strings) {
+                notification.confirm(
+                    strings[0], // Confirm.
+                    strings[1], // Send all competencies in review for X?
+                    strings[2], // Confirm.
+                    strings[3], // Cancel.
+                    function() {
+                        self._doReviewUserEvidenceCompetencies(evidenceData);
+                    }.bind(self)
+                );
+            }).fail(notification.exception);
+        }).fail(notification.exception);
+
+    };
+
+    /**
+     * Send request review for user evidence competencies handler.
+     *
+     * @param  {Event} e The event.
+     */
+    UserEvidenceActions.prototype._reviewUserEvidenceCompetenciesHandler = function(e) {
+        e.preventDefault();
+        var data = this._findEvidenceData($(e.target));
+        this.reviewUserEvidenceCompetencies(data);
+    };
+
+    /**
      * Find the evidence data from the evidence node.
      *
      * @param  {Node} node The node to search from.
@@ -317,6 +388,7 @@ define(['jquery',
         Menubar.enhance(selector, {
             '[data-action="user-evidence-delete"]': self._deleteEvidenceHandler.bind(self),
             '[data-action="link-competency"]': self._createUserEvidenceCompetencyHandler.bind(self),
+            '[data-action="send-competencies-review"]': self._reviewUserEvidenceCompetenciesHandler.bind(self),
         });
     };
 
@@ -333,6 +405,7 @@ define(['jquery',
         wrapper.find('[data-action="user-evidence-delete"]').click(self._deleteEvidenceHandler.bind(self));
         wrapper.find('[data-action="link-competency"]').click(self._createUserEvidenceCompetencyHandler.bind(self));
         wrapper.find('[data-action="delete-competency-link"]').click(self._deleteUserEvidenceCompetencyHandler.bind(self));
+        wrapper.find('[data-action="send-competencies-review"]').click(self._reviewUserEvidenceCompetenciesHandler.bind(self));
     };
 
     return /** @alias module:tool_lp/user_evidence_actions */ UserEvidenceActions;

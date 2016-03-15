@@ -890,5 +890,14 @@ $functions = array(
         'capabilities'  => 'tool/lp:templateread',
         'ajax'          => true,
     ),
+    'tool_lp_request_review_of_user_evidence_linked_competencies' => array(
+        'classname'     => 'tool_lp\external',
+        'methodname'    => 'request_review_of_user_evidence_linked_competencies',
+        'classpath'     => '',
+        'description'   => 'Send user evidence competencies in review',
+        'type'          => 'write',
+        'capabilities'  => 'tool/lp:userevidencemanageown',
+        'ajax'          => true,
+    ),
 );
 

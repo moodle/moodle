@@ -53,6 +53,7 @@ use tool_lp\external\user_competency_summary_exporter;
 use tool_lp\external\user_competency_summary_in_course_exporter;
 use tool_lp\external\user_competency_summary_in_plan_exporter;
 use tool_lp\external\user_evidence_exporter;
+use tool_lp\external\user_evidence_summary_exporter;
 use tool_lp\external\user_evidence_competency_exporter;
 use tool_lp\external\competency_exporter;
 use tool_lp\external\course_competency_exporter;
@@ -2940,7 +2941,7 @@ class external extends external_api {
      * @return boolean
      */
     public static function user_competency_cancel_review_request($userid, $competencyid) {
-        $params = self::validate_parameters(self::user_competency_request_review_parameters(), array(
+        $params = self::validate_parameters(self::user_competency_cancel_review_request_parameters(), array(
             'userid' => $userid,
             'competencyid' => $competencyid
         ));
@@ -2969,6 +2970,7 @@ class external extends external_api {
         return new external_function_parameters(array(
             'userid' => new external_value(PARAM_INT, 'The user ID'),
             'competencyid' => new external_value(PARAM_INT, 'The competency ID'),
+            'checkstatus' => new external_value(PARAM_BOOL, 'Check status request', VALUE_DEFAULT, true)
         ));
     }
 
@@ -2977,18 +2979,20 @@ class external extends external_api {
      *
      * @param int $userid The user ID.
      * @param int $competencyid The competency ID.
+     * @param boolean $checkstatus True to return exception when status is already in review.
      * @return boolean
      */
-    public static function user_competency_request_review($userid, $competencyid) {
+    public static function user_competency_request_review($userid, $competencyid, $checkstatus) {
         $params = self::validate_parameters(self::user_competency_request_review_parameters(), array(
             'userid' => $userid,
-            'competencyid' => $competencyid
+            'competencyid' => $competencyid,
+            'checkstatus' => $checkstatus,
         ));
 
         $context = context_user::instance($params['userid']);
         self::validate_context($context);
 
-        return api::user_competency_request_review($userid, $competencyid);
+        return api::user_competency_request_review($userid, $competencyid, $checkstatus);
     }
 
     /**
@@ -3020,7 +3024,7 @@ class external extends external_api {
      * @return boolean
      */
     public static function user_competency_start_review($userid, $competencyid) {
-        $params = self::validate_parameters(self::user_competency_request_review_parameters(), array(
+        $params = self::validate_parameters(self::user_competency_start_review_parameters(), array(
             'userid' => $userid,
             'competencyid' => $competencyid
         ));
@@ -3060,7 +3064,7 @@ class external extends external_api {
      * @return boolean
      */
     public static function user_competency_stop_review($userid, $competencyid) {
-        $params = self::validate_parameters(self::user_competency_request_review_parameters(), array(
+        $params = self::validate_parameters(self::user_competency_stop_review_parameters(), array(
             'userid' => $userid,
             'competencyid' => $competencyid
         ));
@@ -4063,9 +4067,7 @@ class external extends external_api {
             'canmanage' => new external_value(PARAM_BOOL, 'Can the current user manage the user\'s evidence'),
             'userid' => new external_value(PARAM_INT, 'The user ID'),
             'pluginbaseurl' => new external_value(PARAM_LOCALURL, 'Url to the tool_lp plugin folder on this Moodle site'),
-            'evidence' => new external_multiple_structure(
-                user_evidence_exporter::get_read_structure()
-            ),
+            'evidence' => new external_multiple_structure(user_evidence_summary_exporter::get_read_structure()),
             'navigation' => new external_multiple_structure(
                 new external_value(PARAM_RAW, 'HTML for a navigation item that should be on this page')
             ),
@@ -4109,8 +4111,8 @@ class external extends external_api {
      */
     public static function data_for_user_evidence_page_returns() {
         return new external_single_structure(array(
-            'userevidence' => user_evidence_exporter::get_read_structure(),
-            'pluginbaseurl' => new external_value(PARAM_LOCALURL, 'Url to the tool_lp plugin folder on this Moodle site'),
+            'userevidence' => user_evidence_summary_exporter::get_read_structure(),
+            'pluginbaseurl' => new external_value(PARAM_LOCALURL, 'Url to the tool_lp plugin folder on this Moodle site')
         ));
     }
 
@@ -4195,6 +4197,43 @@ class external extends external_api {
      */
     public static function delete_user_evidence_competency_returns() {
         return new external_value(PARAM_BOOL, 'True if the delete was successful');
+    }
+
+    /**
+     * Returns description of external function parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function request_review_of_user_evidence_linked_competencies_parameters() {
+        return new external_function_parameters(array(
+            'id' => new external_value(PARAM_INT, 'The user evidence ID.')
+        ));
+    }
+
+    /**
+     * Send user evidence competencies to review.
+     *
+     * @param int $id The user evidence id.
+     * @return boolean
+     */
+    public static function request_review_of_user_evidence_linked_competencies($id) {
+        $params = self::validate_parameters(self::request_review_of_user_evidence_linked_competencies_parameters(), array(
+            'id' => $id
+        ));
+
+        $userevidence = api::read_user_evidence($id);
+        self::validate_context($userevidence->get_context());
+
+        return api::request_review_of_user_evidence_linked_competencies($id);
+    }
+
+    /**
+     * Returns description of external function result value.
+     *
+     * @return \external_description
+     */
+    public static function request_review_of_user_evidence_linked_competencies_returns() {
+        return new external_value(PARAM_BOOL, 'True if all competencies were send to review');
     }
 
     /**

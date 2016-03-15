@@ -63,6 +63,8 @@ define(['jquery',
     Picker.prototype._singlePlan = false;
     /** @type {Number} The user the plans belongs to. */
     Picker.prototype._userId = null;
+    /** @type {Boolean} Whether user want to send competencies to review. */
+    Picker.prototype._requestReview = false;
 
     /**
      * Hook to executed after the view is rendered.
@@ -80,6 +82,12 @@ define(['jquery',
                 self._loadCompetencies().then(self._refresh.bind(self));
             }.bind(self));
         }
+
+        // Add listener for checkbox change.
+        self._find('[data-action="request-review"]').change(function(e) {
+            self._requestReview = $(e.target).is(":checked");
+            self._refresh.bind(self);
+        }.bind(self));
 
     };
 
@@ -235,6 +243,22 @@ define(['jquery',
             return Templates.render('tool_lp/competency_picker_user_plans', context);
         }.bind(self));
     };
+
+    /**
+     * Trigger an event.
+     *
+     * @param {String} type The type of event.
+     * @param {Object} The data to pass to the listeners.
+     * @method _reset
+     */
+    Picker.prototype._trigger = function(type, args) {
+        var self = this;
+
+        if (type === 'save') {
+            args.requestReview = self._requestReview;
+        }
+        return PickerBase.prototype._trigger.apply(self, arguments);
+     };
 
     return /** @alias module:tool_lp/competencypicker_user_plans */ Picker;
 
