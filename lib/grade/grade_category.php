@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once('grade_object.php');
+require_once(__DIR__ . '/grade_object.php');
 
 /**
  * grade_category is an object mapped to DB table {prefix}grade_categories
@@ -188,7 +188,22 @@ class grade_category extends grade_object {
      * @return grade_category The retrieved grade_category instance or false if none found.
      */
     public static function fetch($params) {
-        return grade_object::fetch_helper('grade_categories', 'grade_category', $params);
+        if ($records = self::retrieve_record_set($params)) {
+            return reset($records);
+        }
+
+        $record = grade_object::fetch_helper('grade_categories', 'grade_category', $params);
+
+        // We store it as an array to keep a key => result set interface in the cache, grade_object::fetch_helper is
+        // managing exceptions. We return only the first element though.
+        $records = false;
+        if ($record) {
+            $records = array($record->id => $record);
+        }
+
+        self::set_record_set($params, $records);
+
+        return $record;
     }
 
     /**
@@ -198,7 +213,14 @@ class grade_category extends grade_object {
      * @return array array of grade_category insatnces or false if none found.
      */
     public static function fetch_all($params) {
-        return grade_object::fetch_all_helper('grade_categories', 'grade_category', $params);
+        if ($records = self::retrieve_record_set($params)) {
+            return $records;
+        }
+
+        $records = grade_object::fetch_all_helper('grade_categories', 'grade_category', $params);
+        self::set_record_set($params, $records);
+
+        return $records;
     }
 
     /**
@@ -2603,5 +2625,69 @@ class grade_category extends grade_object {
         }
 
         return $defaultcoefficients;
+    }
+
+    /**
+     * Cleans the cache.
+     *
+     * We invalidate them all so it can be completely reloaded.
+     *
+     * Being conservative here, if there is a new grade_category we purge them, the important part
+     * is that this is not purged when there are no changes in grade_categories.
+     *
+     * @param bool $deleted
+     * @return void
+     */
+    protected function notify_changed($deleted) {
+        self::clean_record_set();
+    }
+
+    /**
+     * Generates a unique key per query.
+     *
+     * Not unique between grade_object children. self::retrieve_record_set and self::set_record_set will be in charge of
+     * selecting the appropriate cache.
+     *
+     * @param array $params An array of conditions like $fieldname => $fieldvalue
+     * @return string
+     */
+    protected static function generate_record_set_key($params) {
+        return sha1(json_encode($params));
+    }
+
+    /**
+     * Tries to retrieve a record set from the cache.
+     *
+     * @param array $params The query params
+     * @return grade_object[]|bool An array of grade_objects or false if not found.
+     */
+    protected static function retrieve_record_set($params) {
+        $cache = cache::make('core', 'grade_categories');
+        return $cache->get(self::generate_record_set_key($params));
+    }
+
+    /**
+     * Sets a result to the records cache, even if there were no results.
+     *
+     * @param string $params The query params
+     * @param grade_object[]|bool $records An array of grade_objects or false if there are no records matching the $key filters
+     * @return void
+     */
+    protected static function set_record_set($params, $records) {
+        $cache = cache::make('core', 'grade_categories');
+        return $cache->set(self::generate_record_set_key($params), $records);
+    }
+
+    /**
+     * Cleans the cache.
+     *
+     * Aggressive deletion to be conservative given the gradebook design.
+     * The key is based on the requested params, not easy nor worth to purge selectively.
+     *
+     * @return void
+     */
+    public static function clean_record_set() {
+        $cache = cache::make('core', 'grade_categories');
+        $cache->purge();
     }
 }
