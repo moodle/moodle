@@ -93,6 +93,7 @@ abstract class base_activity extends base_mod {
         $doc->set('contextid', $context->id);
         $doc->set('type', \core_search\manager::TYPE_TEXT);
         $doc->set('courseid', $record->course);
+        $doc->set('owneruserid', \core_search\manager::NO_OWNER_ID);
         $doc->set('modified', $record->{static::MODIFIED_FIELD_NAME});
 
         return $doc;

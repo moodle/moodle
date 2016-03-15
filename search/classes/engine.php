@@ -343,7 +343,7 @@ abstract class engine {
      * Executes the query on the engine.
      *
      * Implementations of this function should check user context array to limit the results to contexts where the
-     * user have access.
+     * user have access. They should also limit the owneruserid field to manger::NO_OWNER_ID or the current user's id.
      *
      * @param  stdClass $filters Query and filters to apply.
      * @param  array    $usercontexts Contexts where the user has access. True if the user can access all contexts.

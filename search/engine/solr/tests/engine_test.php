@@ -176,4 +176,80 @@ class search_solr_engine_testcase extends advanced_testcase {
         cache_helper::purge_by_definition('core', 'search_results');
         $this->assertCount(0, $this->search->search($querydata));
     }
+
+    public function test_alloweduserid() {
+        $engine = $this->search->get_engine();
+        $area = new core_mocksearch\search\role_capabilities();
+
+        // Get the first record for the recordset.
+        $recordset = $area->get_recordset_by_timestamp();
+        foreach ($recordset as $r) {
+            $record = $r;
+            break;
+        }
+        $recordset->close();
+
+        // Get the doc and insert the default doc.
+        $doc = $area->get_document($record);
+        $engine->add_document($doc->export_for_engine());
+
+        $users = array();
+        $users[] = $this->getDataGenerator()->create_user();
+        $users[] = $this->getDataGenerator()->create_user();
+        $users[] = $this->getDataGenerator()->create_user();
+
+        // Add a record that only user 100 can see.
+        $originalid = $doc->get('id');
+
+        // Now add a custom doc for each user.
+        foreach ($users as $user) {
+            $doc->set('id', $originalid.'-'.$user->id);
+            $doc->set('owneruserid', $user->id);
+            $engine->add_document($doc->export_for_engine());
+        }
+
+        $engine->commit();
+
+        $querydata = new stdClass();
+        $querydata->q = 'message';
+        $querydata->title = $doc->get('title');
+
+        // We are going to go through each user and see if they get the original and the owned doc.
+        foreach ($users as $user) {
+            $this->setUser($user);
+
+            $results = $this->search->search($querydata);
+            $this->assertCount(2, $results);
+
+            $owned = 0;
+            $notowned = 0;
+
+            // We don't know what order we will get the results in, so we are doing this.
+            foreach ($results as $result) {
+                $owneruserid = $result->get('owneruserid');
+                if (empty($owneruserid)) {
+                    $notowned++;
+                    $this->assertEquals(0, $owneruserid);
+                    $this->assertEquals($originalid, $result->get('id'));
+                } else {
+                    $owned++;
+                    $this->assertEquals($user->id, $owneruserid);
+                    $this->assertEquals($originalid.'-'.$user->id, $result->get('id'));
+                }
+            }
+
+            $this->assertEquals(1, $owned);
+            $this->assertEquals(1, $notowned);
+        }
+
+        // Now test a user with no owned results.
+        $otheruser = $this->getDataGenerator()->create_user();
+        $this->setUser($otheruser);
+
+        $results = $this->search->search($querydata);
+        $this->assertCount(1, $results);
+
+        $this->assertEquals(0, $results[0]->get('owneruserid'));
+        $this->assertEquals($originalid, $results[0]->get('id'));
+    }
 }

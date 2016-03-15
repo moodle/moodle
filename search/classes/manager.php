@@ -68,6 +68,11 @@ class manager {
     const DISPLAY_RESULTS_PER_PAGE = 10;
 
     /**
+     * @var int The id to be placed in owneruserid when there is no owner.
+     */
+    const NO_OWNER_ID = 0;
+
+    /**
      * @var \core_search\area\base[] Enabled search areas.
      */
     protected static $enabledsearchareas = null;
@@ -390,12 +395,13 @@ class manager {
      * @return \core_search\document[]
      */
     public function search(\stdClass $formdata) {
+        global $USER;
 
         $cache = \cache::make('core', 'search_results');
 
         // Generate a string from all query filters
         // Not including $areascontext here, being a user cache it is not needed.
-        $querykey = $this->generate_query_key($formdata);
+        $querykey = $this->generate_query_key($formdata, $USER->id);
 
         // Look for cached results before executing it.
         if ($results = $cache->get($querykey)) {
@@ -426,6 +432,7 @@ class manager {
      * @return string
      */
     protected function generate_query_key($formdata) {
+        global $USER;
 
         // Empty values by default (although q should always have a value).
         $fields = array('q', 'title', 'areaid', 'timestart', 'timeend', 'page');
@@ -441,7 +448,7 @@ class manager {
         // Although it is not likely, we prevent cache hits if available search areas change during the session.
         $enabledareas = implode('-', array_keys(static::get_search_areas_list(true)));
 
-        return md5($params->q . 'title=' . $params->title . 'areaid=' . $params->areaid .
+        return md5($params->q . 'userid=' . $USER->id . 'title=' . $params->title . 'areaid=' . $params->areaid .
             'timestart=' . $params->timestart . 'timeend=' . $params->timeend . 'page=' . $params->page .
             $enabledareas);
     }

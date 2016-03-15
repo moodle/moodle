@@ -64,11 +64,12 @@ class engine extends \core_search\engine {
      * Prepares a Solr query, applies filters and executes it returning its results.
      *
      * @throws \core_search\engine_exception
-     * @param  stdClass     $filters Containing query and filters.
-     * @param  array        $usercontexts Contexts where the user has access. True if the user can access all contexts.
+     * @param  stdClass  $filters Containing query and filters.
+     * @param  array     $usercontexts Contexts where the user has access. True if the user can access all contexts.
      * @return \core_search\document[] Results or false if no results
      */
     public function execute_query($filters, $usercontexts) {
+        global $USER;
 
         // Let's keep these changes internal.
         $data = clone $filters;
@@ -110,6 +111,9 @@ class engine extends \core_search\engine {
             // No cache.
             $query->addFilterQuery('{!cache=false}modified:[' . $data->timestart . ' TO ' . $data->timeend . ']');
         }
+
+        // Restrict to users who are supposed to be able to see a particular result.
+        $query->addFilterQuery('owneruserid:(' . \core_search\manager::NO_OWNER_ID . ' OR ' . $USER->id . ')');
 
         // And finally restrict it to the context where the user can access, we want this one cached.
         // If the user can access all contexts $usercontexts value is just true, we don't need to filter
@@ -224,6 +228,10 @@ class engine extends \core_search\engine {
      * @return array $results containing final results to be displayed.
      */
     public function query_response($queryresponse) {
+        global $USER;
+
+        $userid = $USER->id;
+        $noownerid = \core_search\manager::NO_OWNER_ID;
 
         $response = $queryresponse->getResponse();
         $numgranted = 0;
@@ -237,6 +245,12 @@ class engine extends \core_search\engine {
 
             // Iterate through the results checking its availability and whether they are available for the user or not.
             foreach ($docs as $key => $docdata) {
+                if ($docdata['owneruserid'] != $noownerid && $docdata['owneruserid'] != $userid) {
+                    // If owneruserid is set, no other user should be able to access this record.
+                    unset($docs[$key]);
+                    continue;
+                }
+
                 if (!$searcharea = $this->get_search_area($docdata->areaid)) {
                     unset($docs[$key]);
                     continue;
