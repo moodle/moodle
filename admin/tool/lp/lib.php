@@ -437,6 +437,8 @@ function tool_lp_coursemodule_standard_elements($formwrapper, $mform) {
 
     if (!\tool_lp\api::is_enabled()) {
         return;
+    } else if (!has_capability('tool/lp:coursecompetencymanage', $formwrapper->get_context())) {
+        return;
     }
 
     $mform->addElement('header', 'competenciessection', get_string('competencies', 'tool_lp'));
@@ -469,6 +471,11 @@ function tool_lp_coursemodule_standard_elements($formwrapper, $mform) {
  */
 function tool_lp_coursemodule_edit_post_actions($data, $course) {
     if (!\tool_lp\api::is_enabled()) {
+        return $data;
+    }
+
+    // It seems like the form did not contain any of the form fields, we can return.
+    if (!isset($data->competency_rule) && !isset($data->competencies)) {
         return $data;
     }
 
