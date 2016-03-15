@@ -337,6 +337,15 @@ abstract class moodle_database {
     }
 
     /**
+     * Handle the creation and caching of the temporary tables.
+     *
+     * @return cache_application The temp_tables cachestore to complete operations on.
+     */
+    protected function get_temp_tables_cache() {
+        return cache::make('core', 'temp_tables');
+    }
+
+    /**
      * Attempt to create the database
      * @param string $dbhost The database host.
      * @param string $dbuser The database user to connect as.
