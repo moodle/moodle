@@ -849,6 +849,9 @@ class auth_plugin_ldap extends auth_plugin_base {
                     }
                 }
             }
+            if ($this->config->suspended_attribute && $this->config->sync_suspended) {
+                $updatekeys[] = 'suspended';
+            }
             unset($all_keys); unset($key);
 
         } else {
@@ -931,6 +934,10 @@ class auth_plugin_ldap extends auth_plugin_base {
                 // get_userinfo_asobj() might have replaced $user->username with the value
                 // from the LDAP server (which can be mixed-case). Make sure it's lowercase
                 $user->username = trim(core_text::strtolower($user->username));
+                // It isn't possible to just rely on the configured suspension attribute since
+                // things like active directory use bit masks, other things using LDAP might
+                // do different stuff as well.
+                $user->suspended = $this->is_user_suspended($user);
                 if (empty($user->lang)) {
                     $user->lang = $CFG->lang;
                 }
@@ -1005,6 +1012,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             if (!empty($updatekeys)) {
                 $newuser = new stdClass();
                 $newuser->id = $userid;
+                $newuser->suspended = $this->is_user_suspended((object) $newinfo);
 
                 foreach ($updatekeys as $key) {
                     if (isset($newinfo[$key])) {
@@ -1504,6 +1512,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             }
         }
         $moodleattributes['username'] = core_text::strtolower(trim($this->config->user_attribute));
+        $moodleattributes['suspended'] = core_text::strtolower(trim($this->config->suspended_attribute));
         return $moodleattributes;
     }
 
@@ -1848,6 +1857,12 @@ class auth_plugin_ldap extends auth_plugin_base {
         if (!isset($config->user_attribute)) {
              $config->user_attribute = '';
         }
+        if (!isset($config->suspended_attribute)) {
+            $config->suspended_attribute = '';
+        }
+        if (!isset($config->sync_suspended)) {
+            $config->sync_suspended = false;
+        }
         if (!isset($config->search_sub)) {
              $config->search_sub = '';
         }
@@ -1944,6 +1959,8 @@ class auth_plugin_ldap extends auth_plugin_base {
         set_config('contexts', $config->contexts, $this->pluginconfig);
         set_config('user_type', core_text::strtolower(trim($config->user_type)), $this->pluginconfig);
         set_config('user_attribute', core_text::strtolower(trim($config->user_attribute)), $this->pluginconfig);
+        set_config('suspended_attribute', core_text::strtolower(trim($config->suspended_attribute)), $this->pluginconfig);
+        set_config('sync_suspended', $config->sync_suspended, $this->pluginconfig);
         set_config('search_sub', $config->search_sub, $this->pluginconfig);
         set_config('opt_deref', $config->opt_deref, $this->pluginconfig);
         set_config('preventpassindb', $config->preventpassindb, $this->pluginconfig);
@@ -2270,6 +2287,26 @@ class auth_plugin_ldap extends auth_plugin_base {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Check if a user is suspended. This function is intended to be used after calling
+     * get_userinfo_asobj. This is needed because LDAP doesn't have a notion of disabled
+     * users, however things like MS Active Directory support it and expose information
+     * through a field.
+     *
+     * @param object $user the user object returned by get_userinfo_asobj
+     * @return boolean
+     */
+    protected function is_user_suspended($user) {
+        if (!$this->config->suspended_attribute || !isset($user->suspended)) {
+            return false;
+        }
+        if ($this->config->suspended_attribute == 'useraccountcontrol' && $this->config->user_type == 'ad') {
+            return (bool)($user->suspended & AUTH_AD_ACCOUNTDISABLE);
+        }
+
+        return (bool)$user->suspended;
     }
 
 } // End of the class
