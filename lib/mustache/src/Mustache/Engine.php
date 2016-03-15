@@ -23,7 +23,7 @@
  */
 class Mustache_Engine
 {
-    const VERSION        = '2.9.0';
+    const VERSION        = '2.10.0';
     const SPEC_VERSION   = '1.1.2';
 
     const PRAGMA_FILTERS      = 'FILTERS';
