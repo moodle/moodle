@@ -1055,12 +1055,10 @@ abstract class moodle_database {
      */
     public function reset_caches($tablenames = null) {
         if (!empty($tablenames)) {
-            $temptablepurged = false;
             $dbmetapurged = false;
             foreach ($tablenames as $tablename) {
-                if ($temptablepurged === false && $this->temptables->is_temptable($tablename)) {
-                    $this->get_temp_tables_cache()->purge();
-                    $temptablepurged = true;
+                if ($this->temptables->is_temptable($tablename)) {
+                    $this->get_temp_tables_cache()->delete($tablename);
                 } else if ($dbmetapurged === false) {
                     $this->tables = null;
                     $this->get_metacache()->purge();
