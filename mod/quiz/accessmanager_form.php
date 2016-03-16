@@ -62,12 +62,9 @@ class mod_quiz_preflight_check_form extends moodleform {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        foreach ($this->_customdata['rules'] as $rule) {
-            if ($rule->is_preflight_check_required($this->_customdata['attemptid'])) {
-                $errors = $rule->validate_preflight_check($data, $files, $errors,
-                        $this->_customdata['attemptid']);
-            }
-        }
+        $timenow = time();
+        $accessmanager = $this->_customdata['quizobj']->get_access_manager($timenow);
+        $errors = array_merge($errors, $accessmanager->validate_preflight_check($data, $files, $this->_customdata['attemptid']));
 
         return $errors;
     }

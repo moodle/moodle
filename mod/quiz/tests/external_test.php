@@ -585,4 +585,121 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         }
     }
 
+    /**
+     * Test start_attempt
+     */
+    public function test_start_attempt() {
+        global $DB;
+
+        // Create a new quiz with attempts.
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $data = array('course' => $this->course->id,
+                      'sumgrades' => 1);
+        $quiz = $quizgenerator->create_instance($data);
+        $context = context_module::instance($quiz->cmid);
+
+        try {
+            mod_quiz_external::start_attempt($quiz->id);
+            $this->fail('Exception expected due to missing questions.');
+        } catch (moodle_quiz_exception $e) {
+            $this->assertEquals('noquestionsfound', $e->errorcode);
+        }
+
+        // Create a question.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        $cat = $questiongenerator->create_question_category();
+        $question = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
+        quiz_add_quiz_question($question->id, $quiz);
+
+        $quizobj = quiz::create($quiz->id, $this->student->id);
+
+        // Set grade to pass.
+        $item = grade_item::fetch(array('courseid' => $this->course->id, 'itemtype' => 'mod',
+                                        'itemmodule' => 'quiz', 'iteminstance' => $quiz->id, 'outcomeid' => null));
+        $item->gradepass = 80;
+        $item->update();
+
+        $this->setUser($this->student);
+
+        // Try to open attempt in closed quiz.
+        $quiz->timeopen = time() - WEEKSECS;
+        $quiz->timeclose = time() - DAYSECS;
+        $DB->update_record('quiz', $quiz);
+        $result = mod_quiz_external::start_attempt($quiz->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::start_attempt_returns(), $result);
+
+        $this->assertEquals([], $result['attempt']);
+        $this->assertCount(1, $result['warnings']);
+
+        // Now with a password.
+        $quiz->timeopen = 0;
+        $quiz->timeclose = 0;
+        $quiz->password = 'abc';
+        $DB->update_record('quiz', $quiz);
+
+        try {
+            mod_quiz_external::start_attempt($quiz->id, array(array("name" => "quizpassword", "value" => 'bad')));
+            $this->fail('Exception expected due to invalid passwod.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals(get_string('passworderror', 'quizaccess_password'), $e->errorcode);
+        }
+
+        // Now, try everything correct.
+        $result = mod_quiz_external::start_attempt($quiz->id, array(array("name" => "quizpassword", "value" => 'abc')));
+        $result = external_api::clean_returnvalue(mod_quiz_external::start_attempt_returns(), $result);
+
+        $this->assertEquals(1, $result['attempt']['attempt']);
+        $this->assertEquals($this->student->id, $result['attempt']['userid']);
+        $this->assertEquals($quiz->id, $result['attempt']['quiz']);
+        $this->assertCount(0, $result['warnings']);
+        $attemptid = $result['attempt']['id'];
+
+        // We are good, try to start a new attempt now.
+
+        try {
+            mod_quiz_external::start_attempt($quiz->id, array(array("name" => "quizpassword", "value" => 'abc')));
+            $this->fail('Exception expected due to attempt not finished.');
+        } catch (moodle_quiz_exception $e) {
+            $this->assertEquals('attemptstillinprogress', $e->errorcode);
+        }
+
+        // Finish the started attempt.
+
+        // Process some responses from the student.
+        $timenow = time();
+        $attemptobj = quiz_attempt::create($attemptid);
+        $tosubmit = array(1 => array('answer' => '3.14'));
+        $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
+
+        // Finish the attempt.
+        $attemptobj = quiz_attempt::create($attemptid);
+        $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
+        $attemptobj->process_finish($timenow, false);
+
+        // We should be able to start a new attempt.
+        $result = mod_quiz_external::start_attempt($quiz->id, array(array("name" => "quizpassword", "value" => 'abc')));
+        $result = external_api::clean_returnvalue(mod_quiz_external::start_attempt_returns(), $result);
+
+        $this->assertEquals(2, $result['attempt']['attempt']);
+        $this->assertEquals($this->student->id, $result['attempt']['userid']);
+        $this->assertEquals($quiz->id, $result['attempt']['quiz']);
+        $this->assertCount(0, $result['warnings']);
+
+        // Test user with no capabilities.
+        // We need a explicit prohibit since this capability is only defined in authenticated user and guest roles.
+        assign_capability('mod/quiz:attempt', CAP_PROHIBIT, $this->studentrole->id, $context->id);
+        // Empty all the caches that may be affected  by this change.
+        accesslib_clear_all_caches_for_unit_testing();
+        course_modinfo::clear_instance_cache();
+
+        try {
+            mod_quiz_external::start_attempt($quiz->id);
+            $this->fail('Exception expected due to missing capability.');
+        } catch (required_capability_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+    }
+
 }
