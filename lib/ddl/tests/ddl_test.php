@@ -199,6 +199,7 @@ class core_ddl_testcase extends database_driver_testcase {
      * Test behaviour of create_table()
      */
     public function test_create_table() {
+
         $DB = $this->tdb; // Do not use global $DB!
         $dbman = $this->tdb->get_manager();
 
@@ -289,8 +290,9 @@ class core_ddl_testcase extends database_driver_testcase {
             $this->assertInstanceOf('ddl_exception', $e);
         }
 
-        // Long table name names - the largest allowed.
-        $table = new xmldb_table('test_table0123456789_____xyz');
+        // Long table name names - the largest allowed by the configuration which exclude the prefix to ensure it's created.
+        $tablechars = str_repeat('a', xmldb_table::NAME_MAX_LENGTH);
+        $table = new xmldb_table($tablechars);
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '2');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -302,8 +304,9 @@ class core_ddl_testcase extends database_driver_testcase {
         $this->assertTrue($dbman->table_exists($table));
         $dbman->drop_table($table);
 
-        // Table name is too long.
-        $table = new xmldb_table('test_table0123456789_____xyz9');
+        // Table name is too long, ignoring any prefix size set.
+        $tablechars = str_repeat('a', xmldb_table::NAME_MAX_LENGTH + 1);
+        $table = new xmldb_table($tablechars);
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '2');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
