@@ -182,6 +182,11 @@ class company_managers_form extends moodleform {
                             if ($userrecord = $DB->get_record('company_users',
                                                                    array('companyid' => $this->selectedcompany,
                                                                          'userid' => $adduser->id))) {
+
+                                if ($departmentid != $userrecord->departmentid) {
+                                    $userrecord->departmentid = $departmentid;
+                                }
+
                                 if ($roletype == 1 && $userrecord->managertype == 0) {
                                     // Give them the company manager role.
                                     role_assign($companymanagerrole->id, $adduser->id, $this->context->id);
