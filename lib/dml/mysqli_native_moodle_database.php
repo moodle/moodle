@@ -576,10 +576,15 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return database_column_info[] array of database_column_info objects indexed with column names
      */
     public function get_columns($table, $usecache=true) {
-
         if ($usecache) {
-            if ($data = $this->get_metacache()->get($table)) {
-                return $data;
+            if ($this->temptables->is_temptable($table)) {
+                if ($data = $this->get_temp_tables_cache()->get($table)) {
+                    return $data;
+                }
+            } else {
+                if ($data = $this->get_metacache()->get($table)) {
+                    return $data;
+                }
             }
         }
 
@@ -684,7 +689,11 @@ class mysqli_native_moodle_database extends moodle_database {
         }
 
         if ($usecache) {
-            $this->get_metacache()->set($table, $structure);
+            if ($this->temptables->is_temptable($table)) {
+                $this->get_temp_tables_cache()->set($table, $structure);
+            } else {
+                $this->get_metacache()->set($table, $structure);
+            }
         }
 
         return $structure;
@@ -887,10 +896,11 @@ class mysqli_native_moodle_database extends moodle_database {
     /**
      * Do NOT use in code, to be used by database_manager only!
      * @param string|array $sql query
+     * @param array|null $tablenames an array of xmldb table names affected by this request.
      * @return bool true
      * @throws ddl_change_structure_exception A DDL specific exception is thrown for any errors.
      */
-    public function change_database_structure($sql) {
+    public function change_database_structure($sql, $tablenames = null) {
         $this->get_manager(); // Includes DDL exceptions classes ;-)
         if (is_array($sql)) {
             $sql = implode("\n;\n", $sql);
@@ -913,11 +923,11 @@ class mysqli_native_moodle_database extends moodle_database {
             while (@$this->mysqli->more_results()) {
                 @$this->mysqli->next_result();
             }
-            $this->reset_caches();
+            $this->reset_caches($tablenames);
             throw $e;
         }
 
-        $this->reset_caches();
+        $this->reset_caches($tablenames);
         return true;
     }
 

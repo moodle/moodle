@@ -63,6 +63,7 @@ $string['cachedef_search_results'] = 'Search results user data';
 $string['cachedef_grade_categories'] = 'Grade category queries';
 $string['cachedef_string'] = 'Language string cache';
 $string['cachedef_tags'] = 'Tags collections and areas';
+$string['cachedef_temp_tables'] = 'Temporary tables cache';
 $string['cachedef_userselections'] = 'Data used to persist user selections throughout Moodle';
 $string['cachedef_yuimodules'] = 'YUI Module definitions';
 $string['cachelock_file_default'] = 'Default file locking';

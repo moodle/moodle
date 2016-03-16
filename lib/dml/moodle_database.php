@@ -337,6 +337,15 @@ abstract class moodle_database {
     }
 
     /**
+     * Handle the creation and caching of the temporary tables.
+     *
+     * @return cache_application The temp_tables cachestore to complete operations on.
+     */
+    protected function get_temp_tables_cache() {
+        return cache::make('core', 'temp_tables');
+    }
+
+    /**
      * Attempt to create the database
      * @param string $dbhost The database host.
      * @param string $dbuser The database user to connect as.
@@ -1040,13 +1049,32 @@ abstract class moodle_database {
 
     /**
      * Resets the internal column details cache
+     *
+     * @param array|null $tablenames an array of xmldb table names affected by this request.
      * @return void
      */
-    public function reset_caches() {
-        $this->tables = null;
-        // Purge MUC as well.
-        $this->get_metacache()->purge();
-        $this->metacache = null;
+    public function reset_caches($tablenames = null) {
+        if (!empty($tablenames)) {
+            $temptablepurged = false;
+            $dbmetapurged = false;
+            foreach ($tablenames as $tablename) {
+                if ($temptablepurged === false && $this->temptables->is_temptable($tablename)) {
+                    $this->get_temp_tables_cache()->purge();
+                    $temptablepurged = true;
+                } else if ($dbmetapurged === false) {
+                    $this->tables = null;
+                    $this->get_metacache()->purge();
+                    $this->metacache = null;
+                    $dbmetapurged = true;
+                }
+            }
+        } else {
+            $this->get_temp_tables_cache()->purge();
+            $this->tables = null;
+            // Purge MUC as well.
+            $this->get_metacache()->purge();
+            $this->metacache = null;
+        }
     }
 
     /**
@@ -1115,10 +1143,11 @@ abstract class moodle_database {
     /**
      * Do NOT use in code, this is for use by database_manager only!
      * @param string|array $sql query or array of queries
+     * @param array|null $tablenames an array of xmldb table names affected by this request.
      * @return bool true
      * @throws ddl_change_structure_exception A DDL specific exception is thrown for any errors.
      */
-    public abstract function change_database_structure($sql);
+    public abstract function change_database_structure($sql, $tablenames = null);
 
     /**
      * Executes a general sql query. Should be used only when no other method suitable.

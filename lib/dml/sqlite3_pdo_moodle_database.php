@@ -201,8 +201,14 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
     public function get_columns($table, $usecache=true) {
 
         if ($usecache) {
-            if ($data = $this->get_metacache()->get($table)) {
-                return $data;
+            if ($this->temptables->is_temptable($table)) {
+                if ($data = $this->get_temp_tables_cache()->get($table)) {
+                    return $data;
+                }
+            } else {
+                if ($data = $this->get_metacache()->get($table)) {
+                    return $data;
+                }
             }
         }
 
@@ -298,7 +304,11 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
         }
 
         if ($usecache) {
-            $this->get_metacache()->set($table, $structure);
+            if ($this->temptables->is_temptable($table)) {
+                $this->get_temp_tables_cache()->set($table, $structure);
+            } else {
+                $this->get_metacache()->set($table, $structure);
+            }
         }
 
         return $structure;
