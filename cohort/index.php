@@ -132,8 +132,10 @@ foreach($cohorts['cohorts'] as $cohort) {
             $line[] = $cohortcontext->get_context_name(false);
         }
     }
-    $line[] = format_string($cohort->name);
-    $line[] = s($cohort->idnumber); // All idnumbers are plain text.
+    $tmpl = new \core_cohort\output\cohortname($cohort);
+    $line[] = $OUTPUT->render_from_template('core/inplace_editable', $tmpl->export_for_template($OUTPUT));
+    $tmpl = new \core_cohort\output\cohortidnumber($cohort);
+    $line[] = $OUTPUT->render_from_template('core/inplace_editable', $tmpl->export_for_template($OUTPUT));
     $line[] = format_text($cohort->description, $cohort->descriptionformat);
 
     $line[] = $DB->count_records('cohort_members', array('cohortid'=>$cohort->id));
