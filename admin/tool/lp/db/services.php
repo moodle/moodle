@@ -45,7 +45,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load a summary of a competency framework.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'tool/lp:competencyread',
         'ajax'         => true,
     ),
     'tool_lp_duplicate_competency_framework' => array(
@@ -81,7 +81,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load a list of a competency frameworks.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'tool/lp:competencyread',
         'ajax'         => true,
     ),
     'tool_lp_count_competency_frameworks' => array(
@@ -90,7 +90,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Count a list of a competency frameworks.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'tool/lp:competencyread',
         'ajax'         => true,
     ),
     'tool_lp_competency_framework_viewed' => array(
@@ -108,7 +108,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load the data for the competency frameworks manage page template',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'tool/lp:competencyread',
         'ajax'         => true,
     ),
     'tool_lp_create_competency' => array(
@@ -126,7 +126,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load a summary of a competency.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'tool/lp:competencyread',
         'ajax'         => true,
     ),
     'tool_lp_competency_viewed' => array(
@@ -162,7 +162,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load competency data for summary template.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'tool/lp:competencyread',
         'ajax'         => true,
     ),
     'tool_lp_list_competencies' => array(
@@ -171,7 +171,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load a list of a competencies.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'tool/lp:competencyread',
         'ajax'         => true,
     ),
     'tool_lp_list_competencies_in_template' => array(
@@ -180,7 +180,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load a list of a competencies for a given template.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'tool/lp:competencyread',
         'ajax'         => true,
     ),
     'tool_lp_count_competencies' => array(
@@ -189,7 +189,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Count a list of a competencies.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'tool/lp:competencyread',
         'ajax'         => true,
     ),
     'tool_lp_count_competencies_in_template' => array(
@@ -198,7 +198,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Count a list of a competencies for a given template.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'tool/lp:competencyread',
         'ajax'         => true,
     ),
     'tool_lp_search_competencies' => array(
@@ -207,7 +207,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Search a list of a competencies.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'tool/lp:competencyread',
         'ajax'         => true,
     ),
     'tool_lp_data_for_competencies_manage_page' => array(
@@ -216,7 +216,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load the data for the competencies manage page template',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'tool/lp:competencyread',
         'ajax'         => true,
     ),
     'tool_lp_set_parent_competency' => array(
@@ -387,7 +387,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load a summary of a learning plan template.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:templateview',
+        'capabilities' => 'tool/lp:templateread',
         'ajax'         => true,
     ),
     'tool_lp_delete_template' => array(
@@ -414,7 +414,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load a list of a learning plan templates.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:templateview',
+        'capabilities' => 'tool/lp:templateread',
         'ajax'         => true,
     ),
     'tool_lp_list_templates_using_competency' => array(
@@ -423,7 +423,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load a list of a learning plan templates for a given competency.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:templateview',
+        'capabilities' => 'tool/lp:templateread',
         'ajax'         => true,
     ),
     'tool_lp_count_templates' => array(
@@ -432,7 +432,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Count a list of a learning plan templates.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:templateview',
+        'capabilities' => 'tool/lp:templateread',
         'ajax'         => true,
     ),
     'tool_lp_count_templates_using_competency' => array(
@@ -441,7 +441,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Count a list of a learning plan templates for a given competency.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:templateview',
+        'capabilities' => 'tool/lp:templateread',
         'ajax'         => true,
     ),
     'tool_lp_data_for_templates_manage_page' => array(
@@ -450,7 +450,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load the data for the learning plan templates manage page template',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:templateview',
+        'capabilities' => 'tool/lp:templateread',
         'ajax'         => true,
     ),
     'tool_lp_create_plan' => array(
@@ -797,7 +797,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Log the user competency viewed event.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:usercompetencyread',
+        'capabilities' => 'tool/lp:usercompetencyview',
         'ajax'         => true,
     ),
     'tool_lp_user_competency_viewed_in_plan' => array(
@@ -806,7 +806,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Log the user competency viewed in plan event.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:usercompetencyread',
+        'capabilities' => 'tool/lp:usercompetencyview',
         'ajax'         => true,
     ),
     'tool_lp_user_competency_viewed_in_course' => array(
@@ -815,7 +815,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Log the user competency viewed in course event',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:usercompetencyread',
+        'capabilities' => 'tool/lp:usercompetencyview',
         'ajax'         => true,
     ),
     'tool_lp_user_competency_plan_viewed' => array(
@@ -824,7 +824,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Log the user competency plan viewed event.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:usercompetencyread',
+        'capabilities' => 'tool/lp:usercompetencyview',
         'ajax'         => true,
     ),
     'tool_lp_grade_competency' => array(
