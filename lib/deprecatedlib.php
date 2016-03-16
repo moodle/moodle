@@ -4408,3 +4408,77 @@ function get_clam_error_code($returncode) {
     $antivirus = \core\antivirus\manager::get_antivirus('clamav');
     return $antivirus->get_clam_error_code($returncode);
 }
+
+/**
+ * This function returns the number of activities using the given scale in the given course.
+ *
+ * @deprecated since Moodle 3.1
+ * @param int $courseid The course ID to check.
+ * @param int $scaleid The scale ID to check
+ * @return int
+ */
+function course_scale_used($courseid, $scaleid) {
+    global $CFG, $DB;
+
+    debugging('course_scale_used() is deprecated and never used, plugins must implement <modname>_scale_used_anywhere, '.
+        'all implementations of <modname>_scale_used are now ignored', DEBUG_DEVELOPER);
+
+    $return = 0;
+
+    if (!empty($scaleid)) {
+        if ($cms = get_course_mods($courseid)) {
+            foreach ($cms as $cm) {
+                // Check cm->name/lib.php exists.
+                if (file_exists($CFG->dirroot.'/mod/'.$cm->modname.'/lib.php')) {
+                    include_once($CFG->dirroot.'/mod/'.$cm->modname.'/lib.php');
+                    $functionname = $cm->modname.'_scale_used';
+                    if (function_exists($functionname)) {
+                        if ($functionname($cm->instance, $scaleid)) {
+                            $return++;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Check if any course grade item makes use of the scale.
+        $return += $DB->count_records('grade_items', array('courseid' => $courseid, 'scaleid' => $scaleid));
+
+        // Check if any outcome in the course makes use of the scale.
+        $return += $DB->count_records_sql("SELECT COUNT('x')
+                                             FROM {grade_outcomes_courses} goc,
+                                                  {grade_outcomes} go
+                                            WHERE go.id = goc.outcomeid
+                                                  AND go.scaleid = ? AND goc.courseid = ?",
+            array($scaleid, $courseid));
+    }
+    return $return;
+}
+
+/**
+ * This function returns the number of activities using scaleid in the entire site
+ *
+ * @deprecated since Moodle 3.1
+ * @param int $scaleid
+ * @param array $courses
+ * @return int
+ */
+function site_scale_used($scaleid, &$courses) {
+    $return = 0;
+
+    debugging('site_scale_used() is deprecated and never used, plugins must implement <modname>_scale_used_anywhere, '.
+        'all implementations of <modname>_scale_used are now ignored', DEBUG_DEVELOPER);
+
+    if (!is_array($courses) || count($courses) == 0) {
+        $courses = get_courses("all", false, "c.id, c.shortname");
+    }
+
+    if (!empty($scaleid)) {
+        if (is_array($courses) && count($courses) > 0) {
+            foreach ($courses as $course) {
+                $return += course_scale_used($course->id, $scaleid);
+            }
+        }
+    }
+    return $return;
+}

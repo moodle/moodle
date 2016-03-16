@@ -81,6 +81,7 @@ information provided here is intended especially for developers.
 * \repository::antivir_scan_file() has been deprecated, \core\antivirus\manager::scan_file() that
   applies antivirus plugins is replacing its functionality.
 * Added core_text::str_max_bytes() which safely truncates multi-byte strings to a maximum number of bytes.
+* Any plugin can report when a scale is being used with the callback function [pluginname]_scale_used_anywhere(int $scaleid).
 
 === 3.0 ===
 
