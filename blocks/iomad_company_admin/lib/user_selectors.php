@@ -972,7 +972,7 @@ class current_license_user_selector extends user_selector_base {
         foreach ($availableusers as $id => $rawuser) {
             $availableusers[$id]->email .= ' (' . $rawuser->fullname . ')';
             if (!empty($rawuser->isusing)) {
-                $availableusers[$id]->email = ' *' . $availableusers[$id]->email;
+                $availableusers[$id]->firstname = ' *' . $availableusers[$id]->email;
             }
         }
 //        $this->process_license_allocations($availableusers);
