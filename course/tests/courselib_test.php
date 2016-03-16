@@ -2779,4 +2779,34 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertNull($DB->get_field('course_modules', 'availability',
                 array('id' => $label->cmid)));
     }
+
+    /**
+     * Test update_inplace_editable()
+     */
+    public function test_update_module_name_inplace() {
+        global $CFG, $DB, $PAGE;
+        require_once($CFG->dirroot . '/lib/external/externallib.php');
+
+        $this->setUser($this->getDataGenerator()->create_user());
+
+        $this->resetAfterTest(true);
+        $course = $this->getDataGenerator()->create_course();
+        $forum = self::getDataGenerator()->create_module('forum', array('course' => $course->id, 'name' => 'forum name'));
+
+        // Call service for core_course component without necessary permissions.
+        try {
+            core_external::update_inplace_editable('core_course', 'activityname', $forum->cmid, 'New forum name');
+            $this->fail('Exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('Course or activity not accessible. (Not enrolled)',
+                $e->getMessage());
+        }
+
+        // Change to admin user and make sure that cm name can be updated using web service update_inplace_editable().
+        $this->setAdminUser();
+        $res = core_external::update_inplace_editable('core_course', 'activityname', $forum->cmid, 'New forum name');
+        $res = external_api::clean_returnvalue(core_external::update_inplace_editable_returns(), $res);
+        $this->assertEquals('New forum name', $res['value']);
+        $this->assertEquals('New forum name', $DB->get_field('forum', 'name', array('id' => $forum->id)));
+    }
 }

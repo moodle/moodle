@@ -1606,6 +1606,50 @@ function set_coursemodule_visible($id, $visible) {
 }
 
 /**
+ * Changes the course module name
+ *
+ * @param int $id course module id
+ * @param string $name new value for a name
+ * @return bool whether a change was made
+ */
+function set_coursemodule_name($id, $name) {
+    global $CFG, $DB;
+    require_once($CFG->libdir . '/gradelib.php');
+
+    $cm = get_coursemodule_from_id('', $id, 0, false, MUST_EXIST);
+
+    $module = new \stdClass();
+    $module->id = $cm->instance;
+
+    // Escape strings as they would be by mform.
+    if (!empty($CFG->formatstringstriptags)) {
+        $module->name = clean_param($name, PARAM_TEXT);
+    } else {
+        $module->name = clean_param($name, PARAM_CLEANHTML);
+    }
+    if ($module->name === $cm->name || strval($module->name) === '') {
+        return false;
+    }
+    if (\core_text::strlen($module->name) > 255) {
+        throw new \moodle_exception('maximumchars', 'moodle', '', 255);
+    }
+
+    $module->timemodified = time();
+    $DB->update_record($cm->modname, $module);
+    $cm->name = $module->name;
+    \core\event\course_module_updated::create_from_cm($cm)->trigger();
+    rebuild_course_cache($cm->course, true);
+
+    // Attempt to update the grade item if relevant.
+    $grademodule = $DB->get_record($cm->modname, array('id' => $cm->instance));
+    $grademodule->cmidnumber = $cm->idnumber;
+    $grademodule->modname = $cm->modname;
+    grade_update_mod_grades($grademodule);
+
+    return true;
+}
+
+/**
  * This function will handle the whole deletion process of a module. This includes calling
  * the modules delete_instance function, deleting files, events, grades, conditional data,
  * the data in the course_module and course_sections table and adding a module deletion
@@ -2239,53 +2283,6 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     }
 
     return $actions;
-}
-
-/**
- * Returns the rename action.
- *
- * @param cm_info $mod The module to produce editing buttons for
- * @param int $sr The section to link back to (used for creating the links)
- * @return The markup for the rename action, or an empty string if not available.
- */
-function course_get_cm_rename_action(cm_info $mod, $sr = null) {
-    global $COURSE, $OUTPUT;
-
-    static $str;
-    static $baseurl;
-
-    $modcontext = context_module::instance($mod->id);
-    $hasmanageactivities = has_capability('moodle/course:manageactivities', $modcontext);
-
-    if (!isset($str)) {
-        $str = get_strings(array('edittitle'));
-    }
-
-    if (!isset($baseurl)) {
-        $baseurl = new moodle_url('/course/mod.php', array('sesskey' => sesskey()));
-    }
-
-    if ($sr !== null) {
-        $baseurl->param('sr', $sr);
-    }
-
-    // AJAX edit title.
-    if ($mod->has_view() && $hasmanageactivities && course_ajax_enabled($COURSE) &&
-                (($mod->course == $COURSE->id) || ($mod->course == SITEID))) {
-        // we will not display link if we are on some other-course page (where we should not see this module anyway)
-        return html_writer::span(
-            html_writer::link(
-                new moodle_url($baseurl, array('update' => $mod->id)),
-                $OUTPUT->pix_icon('t/editstring', '', 'moodle', array('class' => 'iconsmall visibleifjs', 'title' => '')),
-                array(
-                    'class' => 'editing_title',
-                    'data-action' => 'edittitle',
-                    'title' => $str->edittitle,
-                )
-            )
-        );
-    }
-    return '';
 }
 
 /**
@@ -3896,4 +3893,18 @@ function course_get_tagged_courses($tag, $exclusivemode = false, $fromctx = 0, $
 
     return new core_tag\output\tagindex($tag, 'core', 'course', $content,
             $exclusivemode, $fromctx, $ctx, $rec, $page, $totalpages);
+}
+
+/**
+ * Implements callback inplace_editable() allowing to edit values in-place
+ *
+ * @param string $itemtype
+ * @param int $itemid
+ * @param mixed $newvalue
+ * @return \core\output\inplace_editable
+ */
+function core_course_inplace_editable($itemtype, $itemid, $newvalue) {
+    if ($itemtype === 'activityname') {
+        return \core_course\output\course_module_name::update($itemid, $newvalue);
+    }
 }

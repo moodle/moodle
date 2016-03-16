@@ -467,7 +467,7 @@ class behat_course extends behat_base {
                 foreach ($activities as $activity) {
                     // Dimmed.
                     $this->find('xpath', "//div[contains(concat(' ', normalize-space(@class), ' '), ' activityinstance ')]" .
-                        "/a[contains(concat(' ', normalize-space(@class), ' '), ' dimmed ')]", $dimmedexception, $activity);
+                        "//a[contains(concat(' ', normalize-space(@class), ' '), ' dimmed ')]", $dimmedexception, $activity);
                 }
             }
         } else {

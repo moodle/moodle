@@ -1228,6 +1228,7 @@ $string['never'] = 'Never';
 $string['neverdeletelogs'] = 'Never delete logs';
 $string['new'] = 'New';
 $string['newaccount'] = 'New account';
+$string['newactivityname'] = 'New name for activity {$a}';
 $string['newcourse'] = 'New course';
 $string['newpassword'] = 'New password';
 $string['newpassword_help'] = 'Enter a new password or leave blank to keep current password.';

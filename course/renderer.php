@@ -733,10 +733,34 @@ class core_course_renderer extends plugin_renderer_base {
      * @return string
      */
     public function course_section_cm_name(cm_info $mod, $displayoptions = array()) {
-        global $CFG;
+        if ((!$mod->uservisible && empty($mod->availableinfo)) || !$mod->url) {
+            // Nothing to be displayed to the user.
+            return '';
+        }
+
+        // Render element that allows to edit activity name inline. It calls {@link course_section_cm_name_title()}
+        // to get the display title of the activity.
+        $tmpl = new \core_course\output\course_module_name($mod, $this->page->user_is_editing(), $displayoptions);
+        return $this->output->render_from_template('core/inplace_editable', $tmpl->export_for_template($this->output));
+    }
+
+    /**
+     * Renders html to display a name with the link to the course module on a course page
+     *
+     * If module is unavailable for user but still needs to be displayed
+     * in the list, just the name is returned without a link
+     *
+     * Note, that for course modules that never have separate pages (i.e. labels)
+     * this function return an empty string
+     *
+     * @param cm_info $mod
+     * @param array $displayoptions
+     * @return string
+     */
+    public function course_section_cm_name_title(cm_info $mod, $displayoptions = array()) {
         $output = '';
         if (!$mod->uservisible && empty($mod->availableinfo)) {
-            // nothing to be displayed to the user
+            // Nothing to be displayed to the user.
             return $output;
         }
         $url = $mod->url;
@@ -984,10 +1008,6 @@ class core_course_renderer extends plugin_renderer_base {
             $output .= html_writer::start_tag('div', array('class' => 'activityinstance'));
             $output .= $cmname;
 
-
-            if ($this->page->user_is_editing()) {
-                $output .= ' ' . course_get_cm_rename_action($mod, $sectionreturn);
-            }
 
             // Module can put text after the link (e.g. forum unread)
             $output .= $mod->afterlink;
