@@ -502,9 +502,9 @@ function lti_build_standard_request($instance, $orgid, $islti2) {
     if (!empty($CFG->mod_lti_institution_name)) {
         $requestparams['tool_consumer_instance_name'] = $CFG->mod_lti_institution_name;
     } else {
-        $requestparams['tool_consumer_instance_name'] = get_site()->fullname;
+        $requestparams['tool_consumer_instance_name'] = get_site()->shortname;
     }
-    $requestparams['tool_consumer_instance_description'] = html_to_text(get_site()->summary, 0);
+    $requestparams['tool_consumer_instance_description'] = get_site()->fullname;
 
     return $requestparams;
 }

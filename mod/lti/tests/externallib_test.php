@@ -95,8 +95,8 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         self::assertEquals($USER->lastname, $parameters['lis_person_name_family']);
         self::assertEquals(fullname($USER), $parameters['lis_person_name_full']);
         self::assertEquals($USER->username, $parameters['ext_user_username']);
-        self::assertEquals("This is a LONG front page summary with html, it should exceed more than seventy-five characters.",
-                           $parameters['tool_consumer_instance_description']);
+        self::assertEquals("phpunit", $parameters['tool_consumer_instance_name']);
+        self::assertEquals("PHPUnit test site", $parameters['tool_consumer_instance_description']);
 
     }
 
