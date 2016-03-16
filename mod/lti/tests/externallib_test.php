@@ -73,8 +73,6 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
     public function test_get_tool_launch_data() {
         global $USER, $SITE;
 
-        $SITE->summary = "This is a <b>long</b> front page summary with html, it should exceed more than seventy-five characters.";
-
         $result = mod_lti_external::get_tool_launch_data($this->lti->id);
         $result = external_api::clean_returnvalue(mod_lti_external::get_tool_launch_data_returns(), $result);
 
