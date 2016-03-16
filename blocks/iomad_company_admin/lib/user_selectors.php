@@ -666,6 +666,7 @@ class potential_license_user_selector extends user_selector_base {
         $options['subdepartments'] = $this->subdepartments;
         $options['parentdepartmentid'] = $this->parentdepartmentid;
         $options['file']    = 'blocks/iomad_company_admin/lib.php';
+        $options['multiple']    = $this->multiple;
         return $options;
     }
 
