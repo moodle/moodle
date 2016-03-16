@@ -342,7 +342,9 @@ abstract class moodle_database {
      * @return cache_application The temp_tables cachestore to complete operations on.
      */
     protected function get_temp_tables_cache() {
-        return cache::make('core', 'temp_tables');
+        // Using connection data to prevent collisions when using the same temp table name with different db connections.
+        $properties = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
+        return cache::make('core', 'temp_tables', $properties);
     }
 
     /**
