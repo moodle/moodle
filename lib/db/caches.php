@@ -280,6 +280,7 @@ $definitions = array(
     // Store temporary tables information.
     'temp_tables' => array(
         'mode' => cache_store::MODE_REQUEST,
-        'simplekeys' => true
+        'simplekeys' => true,
+        'simpledata' => true
     )
 );
