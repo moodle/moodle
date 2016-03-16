@@ -554,7 +554,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
 </tr>
 <tr valign="top">
     <td align="right">
-        <label for="menusyncs_uspended"><?php print_string('auth_sync_suspended_key', 'auth') ?></label>
+        <label for="menusync_suspended"><?php print_string('auth_sync_suspended_key', 'auth') ?></label>
     </td>
     <td>
         <?php echo html_writer::select($yesno, 'sync_suspended', $config->sync_suspended, false); ?>
