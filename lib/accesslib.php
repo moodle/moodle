@@ -4213,6 +4213,8 @@ function get_role_users($roleid, context $context, $parent = false, $fields = ''
     $fieldsarray = preg_split('/,\s*/', $fields);
     $addedfields = array();
     foreach ($sortarray as $sortfield) {
+        // Throw away any additional arguments to the sort (e.g. ASC/DESC).
+        list ($sortfield) = explode(' ', $sortfield);
         if (!in_array($sortfield, $fieldsarray)) {
             $fieldsarray[] = $sortfield;
             $addedfields[] = $sortfield;
