@@ -208,7 +208,7 @@ class search_solr_engine_testcase extends advanced_testcase {
             $engine->add_document($doc->export_for_engine());
         }
 
-        $engine->commit();
+        $engine->area_index_complete($area->get_area_id());
 
         $querydata = new stdClass();
         $querydata->q = 'message';
