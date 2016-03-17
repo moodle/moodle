@@ -67,7 +67,7 @@ require_capability('mod/iomadcertificate:view', $context);
 
 // log update
 $event = \mod_iomadcertificate\event\course_module_viewed::create(array(
-    'objectid' => $certificate->id,
+    'objectid' => $iomadcertificate->id,
     'context' => $context,
 ));
 $event->add_record_snapshot('course', $course);
