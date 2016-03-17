@@ -23,6 +23,7 @@
  * - define('TEST_SEARCH_SOLR_INDEXNAME', 'unittest');
  *
  * Optional params:
+ * - define('TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING', 1);
  * - define('TEST_SEARCH_SOLR_USERNAME', '');
  * - define('TEST_SEARCH_SOLR_PASSWORD', '');
  * - define('TEST_SEARCH_SOLR_SSLCERT', '');
@@ -99,6 +100,14 @@ class search_solr_engine_testcase extends advanced_testcase {
             set_config('ssl_cainfo', TEST_SEARCH_SOLR_CAINFOCERT, 'search_solr');
         }
 
+        if (defined('TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING') && (TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING == 1)) {
+            set_config('fileindexing', 0, 'search_solr');
+        } else {
+            set_config('fileindexing', 1, 'search_solr');
+        }
+
+        // We are only test indexing small string files, so setting this as low as we can.
+        set_config('maxindexfilekb', 1, 'search_solr');
 
         // Inject search solr engine into the testable core search as we need to add the mock
         // search component to it.
@@ -274,5 +283,223 @@ class search_solr_engine_testcase extends advanced_testcase {
 
         $this->assertEquals(0, $results[0]->get('owneruserid'));
         $this->assertEquals($originalid, $results[0]->get('id'));
+    }
+
+    public function test_index_file() {
+        if (defined('TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING') && (TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING == 1)) {
+            $this->markTestSkipped('Solr file indexing not enabled.');
+            return;
+        }
+
+        // Very simple test.
+        $this->search->index();
+        $querydata = new stdClass();
+        $querydata->q = '"File contents"';
+
+        $this->assertCount(2, $this->search->search($querydata));
+    }
+
+    public function test_reindexing_files() {
+        if (defined('TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING') && (TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING == 1)) {
+            $this->markTestSkipped('Solr file indexing not enabled.');
+            return;
+        }
+
+        // Get engine and area to work with.
+        $engine = $this->search->get_engine();
+        $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'role_capabilities');
+        $area = \core_search\manager::get_search_area($areaid);
+
+        // Get a single record to make a doc from.
+        $recordset = $area->get_recordset_by_timestamp(0);
+        $record = $recordset->current();
+        $recordset->close();
+
+        $doc = $area->get_document($record);
+
+        // Now we are going to make some files.
+        $fs = get_file_storage();
+        $syscontext = \context_system::instance();
+
+        $files = array();
+        $filerecord = array(
+            'contextid' => $syscontext->id,
+            'component' => 'core',
+            'filearea'  => 'unittest',
+            'itemid'    => 0,
+            'filepath'  => '/',
+        );
+
+        // We make enough so that we pass the 500 files threashold. That is the boundary when getting files.
+        $boundary = 500;
+        $top = (int)($boundary * 1.1);
+        for ($i = 0; $i < $top; $i++) {
+            $filerecord['filename']  = 'searchfile'.$i;
+            $file = $fs->create_file_from_string($filerecord, 'Some FileContents'.$i);
+            $doc->add_stored_file($file);
+            $files[] = $file;
+        }
+
+        // Add the doc with lots of files, then commit.
+        $engine->add_document($doc, true);
+        $engine->area_index_complete($area->get_area_id());
+
+        // Indexes we are going to check. 0 means we will delete, 1 means we will keep.
+        $checkfiles = array(
+            0 => 0,                        // Check the begining of the set.
+            1 => 1,
+            2 => 0,
+            ($top - 3) => 0,               // Check the end of the set.
+            ($top - 2) => 1,
+            ($top - 1) => 0,
+            ($boundary - 2) => 0,          // Check at the boundary between fetch groups.
+            ($boundary - 1) => 0,
+            $boundary => 0,
+            ($boundary + 1) => 0,
+            ((int)($boundary * 0.5)) => 1, // Make sure we keep some middle ones.
+            ((int)($boundary * 1.05)) => 1
+        );
+
+        $querydata = new stdClass();
+
+        // First, check that all the files are currently there.
+        foreach ($checkfiles as $key => $unused) {
+            $querydata->q = 'FileContents'.$key;
+            $this->assertCount(1, $this->search->search($querydata));
+            $querydata->q = 'searchfile'.$key;
+            $this->assertCount(1, $this->search->search($querydata));
+        }
+
+        // Remove the files we want removed from the files array.
+        foreach ($checkfiles as $key => $keep) {
+            if (!$keep) {
+                unset($files[$key]);
+            }
+        }
+
+        // And make us a new file to add.
+        $filerecord['filename']  = 'searchfileNew';
+        $files[] = $fs->create_file_from_string($filerecord, 'Some FileContentsNew');
+        $checkfiles['New'] = 1;
+
+        $doc = $area->get_document($record);
+        foreach($files as $file) {
+            $doc->add_stored_file($file);
+        }
+
+        // Reindex the document with the changed files.
+        $engine->add_document($doc, true);
+        $engine->area_index_complete($area->get_area_id());
+        cache_helper::purge_by_definition('core', 'search_results');
+
+        // Go through our check array, and see if the file is there or not.
+        foreach ($checkfiles as $key => $keep) {
+            $querydata->q = 'FileContents'.$key;
+            $this->assertCount($keep, $this->search->search($querydata));
+            $querydata->q = 'searchfile'.$key;
+            $this->assertCount($keep, $this->search->search($querydata));
+        }
+
+        // Now check that we get one result when we search from something in all of them.
+        $querydata->q = 'Some';
+        $this->assertCount(1, $this->search->search($querydata));
+    }
+
+    public function test_index_filtered_file() {
+        if (defined('TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING') && (TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING == 1)) {
+            $this->markTestSkipped('Solr file indexing not enabled.');
+            return;
+        }
+
+        // Get engine and area to work with.
+        $engine = $this->search->get_engine();
+        $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'role_capabilities');
+        $area = \core_search\manager::get_search_area($areaid);
+
+        // Get a single record to make a doc from.
+        $recordset = $area->get_recordset_by_timestamp(0);
+        $record = $recordset->current();
+        $recordset->close();
+
+        $doc = $area->get_document($record);
+
+        // Now we are going to make some files.
+        $fs = get_file_storage();
+        $syscontext = \context_system::instance();
+
+        $files = array();
+        $filerecord = array(
+            'contextid' => $syscontext->id,
+            'component' => 'core',
+            'filearea'  => 'unittest',
+            'itemid'    => 0,
+            'filepath'  => '/',
+            'filename'  => 'largefile'
+        );
+
+        // We need to make a file greater than 1kB in size, which is the lowest filter size.
+        $contents = 'Some LargeFindContent to find.';
+        for ($i = 0; $i < 200; $i++) {
+            $contents .= ' The quick brown fox jumps over the lazy dog.';
+        }
+
+        $this->assertGreaterThan(1024, strlen($contents));
+
+        $file = $fs->create_file_from_string($filerecord, $contents);
+        $doc->add_stored_file($file);
+
+        $filerecord['filename'] = 'smallfile';
+        $file = $fs->create_file_from_string($filerecord, 'Some SmallFindContent to find.');
+        $doc->add_stored_file($file);
+
+        $engine->add_document($doc, true);
+        $engine->area_index_complete($area->get_area_id());
+
+        $querydata = new stdClass();
+        // We shouldn't be able to find the large file contents.
+        $querydata->q = 'LargeFindContent';
+        $this->assertCount(0, $this->search->search($querydata));
+
+        // But we should be able to find the filename.
+        $querydata->q = 'largefile';
+        $this->assertCount(1, $this->search->search($querydata));
+
+        // We should be able to find the small file contents.
+        $querydata->q = 'SmallFindContent';
+        $this->assertCount(1, $this->search->search($querydata));
+
+        // And we should be able to find the filename.
+        $querydata->q = 'smallfile';
+        $this->assertCount(1, $this->search->search($querydata));
+    }
+
+    public function test_delete_by_id() {
+        if (defined('TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING') && (TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING == 1)) {
+            $this->markTestSkipped('Solr file indexing not enabled.');
+            return;
+        }
+
+        // First get files in the index.
+        $this->search->index();
+        $engine = $this->search->get_engine();
+
+        $querydata = new stdClass();
+
+        // Then search to make sure they are there.
+        $querydata->q = '"File contents"';
+        $results = $this->search->search($querydata);
+        $this->assertCount(2, $results);
+
+        $first = reset($results);
+        $deleteid = $first->get('id');
+
+        $engine->delete_by_id($deleteid);
+        cache_helper::purge_by_definition('core', 'search_results');
+
+        // Check that we don't get a result for it anymore.
+        $results = $this->search->search($querydata);
+        $this->assertCount(1, $results);
+        $result = reset($results);
+        $this->assertNotEquals($deleteid, $result->get('id'));
     }
 }

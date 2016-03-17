@@ -88,7 +88,12 @@ class engine extends \core_search\engine {
         }
 
         $query = new \SolrQuery();
-        $this->set_query($query, $data->q);
+        $maxrows = \core_search\manager::MAX_RESULTS;
+        if ($this->file_indexing_enabled()) {
+            // When using file indexing and grouping, we are going to collapse results, so we want extra results.
+            $maxrows *= 2;
+        }
+        $this->set_query($query, $data->q, $maxrows);
         $this->add_fields($query);
 
         // Search filters applied, we don't cache these filters as we don't want to pollute the cache with tmp filters
@@ -140,7 +145,15 @@ class engine extends \core_search\engine {
         }
 
         try {
-            return $this->query_response($this->client->query($query));
+            if ($this->file_indexing_enabled()) {
+                // Now group records by solr_filegroupingid. Limit to 3 results per group.
+                $query->setGroup(true);
+                $query->setGroupLimit(3);
+                $query->addGroupField('solr_filegroupingid');
+                return $this->grouped_files_query_response($this->client->query($query));
+            } else {
+                return $this->query_response($this->client->query($query));
+            }
         } catch (\SolrClientException $ex) {
             debugging('Error executing the provided query: ' . $ex->getMessage(), DEBUG_DEVELOPER);
             $this->queryerror = $ex->getMessage();
@@ -156,9 +169,13 @@ class engine extends \core_search\engine {
     /**
      * Prepares a new query by setting the query, start offset and rows to return.
      * @param SolrQuery $query
-     * @param object $q Containing query and filters.
+     * @param object    $q Containing query and filters.
+     * @param null|int  $maxresults The number of results to limit. manager::MAX_RESULTS if not set.
      */
-    protected function set_query($query, $q) {
+    protected function set_query($query, $q, $maxresults = null) {
+        if (!is_numeric($maxresults)) {
+            $maxresults = \core_search\manager::MAX_RESULTS;
+        }
 
         // Set hightlighting.
         $query->setHighlight(true);
@@ -172,7 +189,7 @@ class engine extends \core_search\engine {
         $query->setQuery($q);
 
         // A reasonable max.
-        $query->setRows(\core_search\manager::MAX_RESULTS);
+        $query->setRows($maxresults);
     }
 
     /**
@@ -193,6 +210,11 @@ class engine extends \core_search\engine {
      * @param object $response containing results.
      */
     public function add_highlight_content($response) {
+        if (!isset($response->highlighting)) {
+            // There is no highlighting to add.
+            return;
+        }
+
         $highlightedobject = $response->highlighting;
         foreach ($response->response->docs as $doc) {
             $x = $doc->id;
@@ -292,6 +314,155 @@ class engine extends \core_search\engine {
     }
 
     /**
+     * Processes grouped file results into documents, with attached matching files.
+     *
+     * @param SolrQueryResponse $queryresponse The response returned from solr server
+     * @return array Final results to be displayed.
+     */
+    protected function grouped_files_query_response($queryresponse) {
+        $response = $queryresponse->getResponse();
+
+        // If we can't find the grouping, or there are no matches in the grouping, return empty.
+        if (!isset($response->grouped->solr_filegroupingid) || empty($response->grouped->solr_filegroupingid->matches)) {
+            return array();
+        }
+
+        $numgranted = 0;
+        $orderedids = array();
+        $completedocs = array();
+        $incompletedocs = array();
+
+        $highlightingobj = $response->highlighting;
+
+        // Each group represents a "master document".
+        $groups = $response->grouped->solr_filegroupingid->groups;
+        foreach ($groups as $group) {
+            $groupid = $group->groupValue;
+            $groupdocs = $group->doclist->docs;
+            $firstdoc = reset($groupdocs);
+
+            if (!$searcharea = $this->get_search_area($firstdoc->areaid)) {
+                // Well, this is a problem.
+                continue;
+            }
+
+            // Check for access.
+            $access = $searcharea->check_access($firstdoc->itemid);
+            switch ($access) {
+                case \core_search\manager::ACCESS_DELETED:
+                    // If deleted from Moodle, delete from index and then continue.
+                    $this->delete_by_id($firstdoc->id);
+                    continue 2;
+                    break;
+                case \core_search\manager::ACCESS_DENIED:
+                    // This means we should just skip for the current user.
+                    continue 2;
+                    break;
+            }
+            $numgranted++;
+
+            $maindoc = false;
+            $fileids = array();
+            // Seperate the main document and any files returned.
+            foreach ($groupdocs as $groupdoc) {
+                if ($groupdoc->id == $groupid) {
+                    $maindoc = $groupdoc;
+                } else if (isset($groupdoc->solr_fileid)) {
+                    $fileids[] = $groupdoc->solr_fileid;
+                }
+            }
+
+            // Store the id of this group, in order, for later merging.
+            $orderedids[] = $groupid;
+
+            if (!$maindoc) {
+                // We don't have the main doc, store what we know for later building.
+                $incompletedocs[$groupid] = $fileids;
+            } else {
+                if (isset($highlightingobj->$groupid)) {
+                    // Merge the highlighting for this doc.
+                    $this->merge_highlight_field_values($maindoc, $highlightingobj->$groupid);
+                }
+                $docdata = $this->standarize_solr_obj($maindoc);
+                $doc = $this->to_document($searcharea, $docdata);
+                // Now we need to attach the result files to the doc.
+                foreach ($fileids as $fileid) {
+                    $doc->add_stored_file($fileid);
+                }
+                $completedocs[$groupid] = $doc;
+            }
+
+            if ($numgranted >= \core_search\manager::MAX_RESULTS) {
+                // We have hit the max results, we will just ignore the rest.
+                break;
+            }
+        }
+
+        $incompletedocs = $this->get_missing_docs($incompletedocs);
+
+        $out = array();
+        // Now merge the complete and incomplete documents, in results order.
+        foreach ($orderedids as $docid) {
+            if (isset($completedocs[$docid])) {
+                $out[] = $completedocs[$docid];
+            } else if (isset($incompletedocs[$docid])) {
+                $out[] = $incompletedocs[$docid];
+            }
+        }
+
+        return $out;
+    }
+
+    /**
+     * Retreive any missing main documents and attach provided files.
+     *
+     * The missingdocs array should be an array, indexed by document id, of main documents we need to retrieve. The value
+     * associated to the key should be an array of stored_files or stored file ids to attach to the result document.
+     *
+     * Return array also indexed by document id.
+     *
+     * @param array() $missingdocs An array, indexed by document id, with arrays of files/ids to attach.
+     * @return document[]
+     */
+    protected function get_missing_docs($missingdocs) {
+        if (empty($missingdocs)) {
+            return array();
+        }
+
+        $docids = array_keys($missingdocs);
+
+        // Build a custom query that will get all the missing documents.
+        $query = new \SolrQuery();
+        $this->set_query($query, '*', count($docids));
+        $this->add_fields($query);
+        $query->addFilterQuery('{!cache=false}id:(' . implode(' OR ', $docids) . ')');
+
+        try {
+            $results = $this->query_response($this->get_search_client()->query($query));
+        } catch (\SolrClientException $ex) {
+            return array();
+        } catch (\SolrServerException $ex) {
+            return array();
+        }
+
+        $out = array();
+        foreach ($results as $result) {
+            $resultid = $result->get('id');
+            if (!isset($missingdocs[$resultid])) {
+                // We got a result we didn't expect. Skip it.
+                continue;
+            }
+            // Attach the files.
+            foreach ($missingdocs[$resultid] as $filedoc) {
+                $result->add_stored_file($filedoc);
+            }
+            $out[$resultid] = $result;
+        }
+
+        return $out;
+    }
+
+    /**
      * Returns a standard php array from a \SolrObject instance.
      *
      * @param \SolrObject $obj
@@ -321,8 +492,13 @@ class engine extends \core_search\engine {
     public function add_document($document, $fileindexing = false) {
         $docdata = $document->export_for_engine();
 
-        if (!$this->add_text_document($docdata)) {
+        if (!$this->add_solr_document($docdata)) {
             return false;
+        }
+
+        if ($fileindexing) {
+            // This will take care of updating all attached files in the index.
+            $this->process_document_files($document);
         }
 
         return true;
@@ -331,10 +507,10 @@ class engine extends \core_search\engine {
     /**
      * Adds a text document to the search engine.
      *
-     * @param array $filedoc
+     * @param array $doc
      * @return bool
      */
-    protected function add_text_document($doc) {
+    protected function add_solr_document($doc) {
         $solrdoc = new \SolrInputDocument();
         foreach ($doc as $field => $value) {
             $solrdoc->addField($field, $value);
@@ -352,6 +528,293 @@ class engine extends \core_search\engine {
         }
 
         return false;
+    }
+
+    /**
+     * Index files attached to the docuemnt, ensuring the index matches the current document files.
+     *
+     * For documents that aren't known to be new, we check the index for existing files.
+     * - New files we will add.
+     * - Existing and unchanged files we will skip.
+     * - File that are in the index but not on the document will be deleted from the index.
+     * - Files that have changed will be re-indexed.
+     *
+     * @param document $document
+     */
+    protected function process_document_files($document) {
+        if (!$this->file_indexing_enabled()) {
+            return;
+        }
+
+        // Maximum rows to process at a time.
+        $rows = 500;
+
+        // Get the attached files.
+        $files = $document->get_files();
+
+        // If this isn't a new document, we need to check the exiting indexed files.
+        if (!$document->get_is_new()) {
+            // We do this progressively, so we can handle lots of files cleanly.
+            list($numfound, $indexedfiles) = $this->get_indexed_files($document, 0, $rows);
+            $count = 0;
+            $idstodelete = array();
+
+            do {
+                // Go through each indexed file. We want to not index any stored and unchanged ones, delete any missing ones.
+                foreach ($indexedfiles as $indexedfile) {
+                    $fileid = $indexedfile->solr_fileid;
+
+                    if (isset($files[$fileid])) {
+                        // Check for changes that would mean we need to re-index the file. If so, just leave in $files.
+                        // Filelib does not guarantee time modified is updated, so we will check important values.
+                        if ($indexedfile->modified < $files[$fileid]->get_timemodified()) {
+                            continue;
+                        }
+                        if (strcmp($indexedfile->title, $files[$fileid]->get_filename()) !== 0) {
+                            continue;
+                        }
+                        if ($indexedfile->solr_filecontenthash != $files[$fileid]->get_contenthash()) {
+                            continue;
+                        }
+                        if ($indexedfile->solr_fileindexedcontent == document::INDEXED_FILE_FALSE &&
+                                $this->file_is_indexable($files[$fileid])) {
+                            // This means that the last time we indexed this file, filtering blocked it.
+                            // Current settings say it is indexable, so we will allow it to be indexed.
+                            continue;
+                        }
+
+                        // If the file is already indexed, we can just remove it from the files array and skip it.
+                        unset($files[$fileid]);
+                    } else {
+                        // This means we have found a file that is no longer attached, so we need to delete from the index.
+                        // We do it later, since this is progressive, and it could reorder results.
+                        $idstodelete[] = $indexedfile->id;
+                    }
+                }
+                $count += $rows;
+
+                if ($count < $numfound) {
+                    // If we haven't hit the total count yet, fetch the next batch.
+                    list($numfound, $indexedfiles) = $this->get_indexed_files($document, $count, $rows);
+                }
+
+            } while ($count < $numfound);
+
+            // Delete files that are no longer attached.
+            foreach ($idstodelete as $id) {
+                // We directly delete the item using the client, as the engine delete_by_id won't work on file docs.
+                $this->get_search_client()->deleteById($id);
+            }
+        }
+
+        // Now we can actually index all the remaining files.
+        foreach ($files as $file) {
+            $this->add_stored_file($document, $file);
+        }
+    }
+
+    /**
+     * Get the currently indexed files for a particular document, returns the total count, and a subset of files.
+     *
+     * @param document $document
+     * @param int      $start The row to start the results on. Zero indexed.
+     * @param int      $rows The number of rows to fetch
+     * @return array   A two element array, the first is the total number of availble results, the second is an array
+     *                 of documents for the current request.
+     */
+    protected function get_indexed_files($document, $start = 0, $rows = 500) {
+        // Build a custom query that will get any document files that are in our solr_filegroupingid.
+        $query = new \SolrQuery();
+
+        // We want to get all file records tied to a document.
+        // For efficiency, we are building our own, stripped down, query.
+        $query->setQuery('*');
+        $query->setRows($rows);
+        $query->setStart($start);
+        // We want a consistent sorting.
+        $query->addSortField('id');
+
+        // We only want the bare minimum of fields.
+        $query->addField('id');
+        $query->addField('modified');
+        $query->addField('title');
+        $query->addField('solr_fileid');
+        $query->addField('solr_filecontenthash');
+        $query->addField('solr_fileindexedcontent');
+
+        $query->addFilterQuery('{!cache=false}solr_filegroupingid:(' . $document->get('id') . ')');
+        $query->addFilterQuery('type:' . \core_search\manager::TYPE_FILE);
+
+        try {
+            $response = $this->get_search_client()->query($query);
+            $responsedoc = $response->getResponse();
+
+            if (empty($responsedoc->response->numFound)) {
+                return array(0, array());
+            }
+            $numfound = $responsedoc->response->numFound;
+
+            return array($numfound, $this->convert_file_results($responsedoc));
+        } catch (\SolrClientException $ex) {
+            debugging('Error executing the provided query: ' . $ex->getMessage(), DEBUG_DEVELOPER);
+            $this->queryerror = $ex->getMessage();
+            return array(0, array());
+        } catch (\SolrServerException $ex) {
+            debugging('Error executing the provided query: ' . $ex->getMessage(), DEBUG_DEVELOPER);
+            $this->queryerror = $ex->getMessage();
+            return array(0, array());
+        }
+    }
+
+    /**
+     * A very lightweight handler for getting information about already indexed files from a Solr response.
+     *
+     * @param SolrObject $responsedoc A Solr response document
+     * @return stdClass[] An array of objects that contain the basic information for file processing.
+     */
+    protected function convert_file_results($responsedoc) {
+        if (!$docs = $responsedoc->response->docs) {
+            return array();
+        }
+
+        $out = array();
+
+        foreach ($docs as $doc) {
+            // Copy the bare minimim needed info.
+            $result = new \stdClass();
+            $result->id = $doc->id;
+            $result->modified = document::import_time_from_engine($doc->modified);
+            $result->title = $doc->title;
+            $result->solr_fileid = $doc->solr_fileid;
+            $result->solr_filecontenthash = $doc->solr_filecontenthash;
+            $result->solr_fileindexedcontent = $doc->solr_fileindexedcontent;
+            $out[] = $result;
+        }
+
+        return $out;
+    }
+
+    /**
+     * Adds a file to the search engine.
+     *
+     * Notes about Solr and Tika indexing. We do not send the mime type, only the filename.
+     * Tika has much better content type detection than Moodle, and we will have many more doc failures
+     * if we try to send mime types.
+     *
+     * @param document $document
+     * @param \stored_file $storedfile
+     * @return void
+     */
+    protected function add_stored_file($document, $storedfile) {
+        $filedoc = $document->export_file_for_engine($storedfile);
+
+        if (!$this->file_is_indexable($storedfile)) {
+            // For files that we don't consider indexable, we will still place a reference in the search engine.
+            $filedoc['solr_fileindexedcontent'] = document::INDEXED_FILE_FALSE;
+            $this->add_solr_document($filedoc);
+            return;
+        }
+
+        $curl = $this->get_curl_object();
+
+        $url = $this->get_connection_url('/update/extract');
+
+        // This will prevent solr from automatically making fields for every tika output.
+        $url->param('uprefix', 'ignored_');
+
+        // These are common fields that matches the standard *_point dynamic field and causes an error.
+        $url->param('fmap.media_white_point', 'ignored_mwp');
+        $url->param('fmap.media_black_point', 'ignored_mbp');
+
+        // Copy each key to the url with literal.
+        // We place in a temp name then copy back to the true field, which prevents errors or Tika overwriting common field names.
+        foreach ($filedoc as $key => $value) {
+            // This will take any fields from tika that match our schema and discard them, so they don't overwrite ours.
+            $url->param('fmap.'.$key, 'ignored_'.$key);
+            // Place data in a tmp field.
+            $url->param('literal.mdltmp_'.$key, $value);
+            // Then move to the final field.
+            $url->param('fmap.mdltmp_'.$key, $key);
+        }
+
+        // This sets the true filename for Tika.
+        $url->param('resource.name', $storedfile->get_filename());
+
+        // A giant block of code that is really just error checking around the curl request.
+        try {
+            // Now actually do the request.
+            $result = $curl->post($url->out(false), array('myfile' => $storedfile));
+
+            $code = $curl->get_errno();
+            $info = $curl->get_info();
+
+            // Now error handling. It is just informational, since we aren't tracking per file/doc results.
+            if ($code != 0) {
+                // This means an internal cURL error occurred error is in result.
+                $message = 'Curl error '.$code.' while indexing file with document id '.$filedoc['id'].': '.$result.'.';
+                debugging($message, DEBUG_DEVELOPER);
+            } else if (isset($info['http_code']) && ($info['http_code'] !== 200)) {
+                // Unexpected HTTP response code.
+                $message = 'Error while indexing file with document id '.$filedoc['id'];
+                // Try to get error message out of msg or title if it exists.
+                if (preg_match('|<str [^>]*name="msg"[^>]*>(.*?)</str>|i', $result, $matches)) {
+                    $message .= ': '.$matches[1];
+                } else if (preg_match('|<title[^>]*>([^>]*)</title>|i', $result, $matches)) {
+                    $message .= ': '.$matches[1];
+                }
+                // This is a common error, happening whenever a file fails to index for any reason, so we will make it quieter.
+                if (CLI_SCRIPT && !PHPUNIT_TEST) {
+                    mtrace($message);
+                }
+            } else {
+                // Check for the expected status field.
+                if (preg_match('|<int [^>]*name="status"[^>]*>(\d*)</int>|i', $result, $matches)) {
+                    // Now check for the expected status of 0, if not, error.
+                    if ((int)$matches[1] !== 0) {
+                        $message = 'Unexpected Solr status code '.(int)$matches[1];
+                        $message .= ' while indexing file with document id '.$filedoc['id'].'.';
+                        debugging($message, DEBUG_DEVELOPER);
+                    } else {
+                        // The document was successfully indexed.
+                        return;
+                    }
+                } else {
+                    // We received an unprocessable response.
+                    $message = 'Unexpected Solr response while indexing file with document id '.$filedoc['id'].': ';
+                    $message .= strtok($result, "\n");
+                    debugging($message, DEBUG_DEVELOPER);
+                }
+            }
+        } catch (\Exception $e) {
+            // There was an error, but we are not tracking per-file success, so we just continue on.
+            debugging('Unknown exception while indexing file "'.$storedfile->get_filename().'".', DEBUG_DEVELOPER);
+        }
+
+        // If we get here, the document was not indexed due to an error. So we will index just the base info without the file.
+        $filedoc['solr_fileindexedcontent'] = document::INDEXED_FILE_ERROR;
+        $this->add_solr_document($filedoc);
+    }
+
+    /**
+     * Checks to see if a passed file is indexable.
+     *
+     * @param \stored_file $file The file to check
+     * @return bool True if the file can be indexed
+     */
+    protected function file_is_indexable($file) {
+        if (!empty($this->config->maxindexfilekb) && ($file->get_filesize() > ($this->config->maxindexfilekb * 1024))) {
+            // The file is too big to index.
+            return false;
+        }
+
+        $mime = $file->get_mimetype();
+
+        if ($mime == 'application/vnd.moodle.backup') {
+            // We don't index Moodle backup files. There is nothing usefully indexable in them.
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -380,6 +843,15 @@ class engine extends \core_search\engine {
     }
 
     /**
+     * Return true if file indexing is supported and enabled. False otherwise.
+     *
+     * @return bool
+     */
+    public function file_indexing_enabled() {
+        return (bool)$this->config->fileindexing;
+    }
+
+    /**
      * Defragments the index.
      *
      * @return void
@@ -395,7 +867,8 @@ class engine extends \core_search\engine {
      * @return void
      */
     public function delete_by_id($id) {
-        $this->get_search_client()->deleteById($id);
+        // We need to make sure we delete the item and all related files, which can be done with solr_filegroupingid.
+        $this->get_search_client()->deleteByQuery('solr_filegroupingid:' . $id);
         $this->commit();
     }
 
