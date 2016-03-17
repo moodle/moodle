@@ -118,5 +118,12 @@ function xmldb_local_iomad_settings_upgrade($oldversion) {
                                   array('certificateid', 'sequence', 'sequenceno'));
     }
 
+    if ($oldversion < 2016031700) {
+        // Change the default settings for extended username chars to be true.
+        $DB->execute("update {config} set value=1 where name='extendedusernamechars'");
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2016031700, 'local', 'iomad_settings');
+    }
     return $result;
 }

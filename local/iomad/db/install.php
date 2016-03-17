@@ -397,4 +397,7 @@ function xmldb_local_iomad_install() {
     set_config('defaultblocks_topics', $defblocks);
     set_config('defaultblocks_weeks', $defblocks);
 
+    // Change the default settings for extended username chars to be true.
+    $DB->execute("update {config} set value=1 where name='extendedusernamechars'");
+
 }
