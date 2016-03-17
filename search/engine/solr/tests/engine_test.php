@@ -25,6 +25,10 @@
  * Optional params:
  * - define('TEST_SEARCH_SOLR_USERNAME', '');
  * - define('TEST_SEARCH_SOLR_PASSWORD', '');
+ * - define('TEST_SEARCH_SOLR_SSLCERT', '');
+ * - define('TEST_SEARCH_SOLR_SSLKEY', '');
+ * - define('TEST_SEARCH_SOLR_KEYPASSWORD', '');
+ * - define('TEST_SEARCH_SOLR_CAINFOCERT', '');
  *
  * @package     core_search
  * @category    phpunit
@@ -71,12 +75,30 @@ class search_solr_engine_testcase extends advanced_testcase {
         set_config('indexname', TEST_SEARCH_SOLR_INDEXNAME, 'search_solr');
 
         if (defined('TEST_SEARCH_SOLR_USERNAME')) {
-            set_config('server_username', TEST_SEARCH_SOLR_USERNAME);
+            set_config('server_username', TEST_SEARCH_SOLR_USERNAME, 'search_solr');
         }
 
         if (defined('TEST_SEARCH_SOLR_PASSWORD')) {
-            set_config('server_password', TEST_SEARCH_SOLR_PASSWORD);
+            set_config('server_password', TEST_SEARCH_SOLR_PASSWORD, 'search_solr');
         }
+
+        if (defined('TEST_SEARCH_SOLR_SSLCERT')) {
+            set_config('secure', true, 'search_solr');
+            set_config('ssl_cert', TEST_SEARCH_SOLR_SSLCERT, 'search_solr');
+        }
+
+        if (defined('TEST_SEARCH_SOLR_SSLKEY')) {
+            set_config('ssl_key', TEST_SEARCH_SOLR_SSLKEY, 'search_solr');
+        }
+
+        if (defined('TEST_SEARCH_SOLR_KEYPASSWORD')) {
+            set_config('ssl_keypassword', TEST_SEARCH_SOLR_KEYPASSWORD, 'search_solr');
+        }
+
+        if (defined('TEST_SEARCH_SOLR_CAINFOCERT')) {
+            set_config('ssl_cainfo', TEST_SEARCH_SOLR_CAINFOCERT, 'search_solr');
+        }
+
 
         // Inject search solr engine into the testable core search as we need to add the mock
         // search component to it.
