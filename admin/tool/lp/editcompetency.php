@@ -88,23 +88,22 @@ if ($form->is_cancelled()) {
     redirect($frameworkurl);
 }
 
-echo $output->header();
-echo $output->heading($pagetitle);
-
 $data = $form->get_data();
 if ($data) {
     require_sesskey();
     if (empty($competency)) {
         \tool_lp\api::create_competency($data);
-        echo $output->notification(get_string('competencycreated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button($frameworkurl);
+        $returnmsg = get_string('competencycreated', 'tool_lp');
     } else {
         \tool_lp\api::update_competency($data);
-        echo $output->notification(get_string('competencyupdated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button($frameworkurl);
+        $returnmsg = get_string('competencyupdated', 'tool_lp');
     }
-} else {
-    $form->display();
+    redirect($frameworkurl, $returnmsg, null, \core\output\notification::NOTIFY_SUCCESS);
 }
+
+echo $output->header();
+echo $output->heading($pagetitle);
+
+$form->display();
 
 echo $output->footer();

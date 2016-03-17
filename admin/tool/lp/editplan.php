@@ -76,27 +76,27 @@ if ($form->is_cancelled()) {
     redirect($returnurl);
 }
 
+$data = $form->get_data();
+
+if ($data) {
+    require_sesskey();
+    if (empty($data->id)) {
+        $plan = \tool_lp\api::create_plan($data);
+        $returnurl = new moodle_url('/admin/tool/lp/plan.php', ['id' => $plan->get_id()]);
+        $returnmsg = get_string('plancreated', 'tool_lp');
+    } else {
+        \tool_lp\api::update_plan($data);
+        $returnmsg = get_string('planupdated', 'tool_lp');
+    }
+    redirect($returnurl, $returnmsg, null, \core\output\notification::NOTIFY_SUCCESS);
+}
+
 echo $output->header();
 echo $output->heading($title);
 if (!empty($subtitle)) {
     echo $output->heading($subtitle, 3);
 }
 
-$data = $form->get_data();
-
-if ($data) {
-    require_sesskey();
-    if (empty($data->id)) {
-        \tool_lp\api::create_plan($data);
-        echo $output->notification(get_string('plancreated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button($returnurl);
-    } else {
-        \tool_lp\api::update_plan($data);
-        echo $output->notification(get_string('planupdated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button($returnurl);
-    }
-} else {
-    $form->display();
-}
+$form->display();
 
 echo $output->footer();

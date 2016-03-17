@@ -20,7 +20,6 @@ Feature: Manage plearning plan templates
     And I set the field "Description" to "Here description of learning plan template"
     When I press "Save changes"
     Then I should see "Learning plan template created"
-    And I click on "Continue" "button"
     And I should see "Science template"
 
   Scenario: Read a learning plan template
@@ -44,7 +43,6 @@ Feature: Manage plearning plan templates
     And I set the field "Name" to "Science template Year-3 Edited"
     When I press "Save changes"
     Then I should see "Learning plan template updated"
-    And I click on "Continue" "button"
     And I should see "Science template Year-3 Edited"
 
   Scenario: Delete a learning plan template

@@ -59,6 +59,23 @@ if ($form->is_cancelled()) {
     redirect($returnurl);
 }
 
+$data = $form->get_data();
+if ($data) {
+    require_sesskey();
+    if (empty($data->id)) {
+        $template = \tool_lp\api::create_template($data);
+        $returnurl = new moodle_url('/admin/tool/lp/templatecompetencies.php', [
+            'templateid' => $template->get_id(),
+            'pagecontextid' => $pagecontextid
+        ]);
+        $returnmsg = get_string('templatecreated', 'tool_lp');
+    } else {
+        \tool_lp\api::update_template($data);
+        $returnmsg = get_string('templateupdated', 'tool_lp');
+    }
+    redirect($returnurl, $returnmsg, null, \core\output\notification::NOTIFY_SUCCESS);
+}
+
 $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
 echo $output->heading($title);
@@ -66,21 +83,6 @@ if (!empty($subtitle)) {
     echo $output->heading($subtitle, 3);
 }
 
-$data = $form->get_data();
-if ($data) {
-    require_sesskey();
-    if (empty($data->id)) {
-        \tool_lp\api::create_template($data);
-        echo $output->notification(get_string('templatecreated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button($returnurl);
-    } else {
-        \tool_lp\api::update_template($data);
-        echo $output->notification(get_string('templateupdated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button($returnurl);
-    }
-} else {
-    $form->display();
-}
-
+$form->display();
 
 echo $output->footer();

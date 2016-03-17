@@ -21,7 +21,6 @@ Feature: Manage evidence of prior learning
     And I set the field "Description" to "Evidence-1 description"
     And I press "Save changes"
     Then I should see "Evidence of prior learning created"
-    And I click on "Continue" "button"
     And I should see "Evidence-1"
 
   Scenario: Read an evidence of prior learning
@@ -45,7 +44,6 @@ Feature: Manage evidence of prior learning
     When I set the field "Name" to "Evidence-3 Edited"
     And I press "Save changes"
     Then I should see "Evidence of prior learning updated"
-    And I click on "Continue" "button"
     And I should see "Evidence-3 Edited"
 
   Scenario: Delete an evidence of prior learning

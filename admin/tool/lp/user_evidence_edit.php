@@ -92,14 +92,6 @@ $draftitemid = file_get_submitted_draft_itemid('files');
 file_prepare_draft_area($draftitemid, $context->id, 'tool_lp', 'userevidence', $itemid, $fileareaoptions);
 $form->set_data((object) array('files' => $draftitemid));
 
-// We're getting there...
-$output = $PAGE->get_renderer('tool_lp');
-echo $output->header();
-echo $output->heading($title);
-if (!empty($subtitle)) {
-    echo $output->heading($subtitle, 3);
-}
-
 // Hurray, the user has submitted the form! Everyone loves forms :)!
 if ($data = $form->get_data()) {
     require_sesskey();
@@ -108,16 +100,23 @@ if ($data = $form->get_data()) {
 
     if (empty($userevidence)) {
         $userevidence = \tool_lp\api::create_user_evidence($data, $draftitemid);
-        echo $output->notification(get_string('userevidencecreated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button($returnurl);
+        $returnurl = new moodle_url('/admin/tool/lp/user_evidence.php', ['id' => $userevidence->get_id()]);
+        $returnmsg = get_string('userevidencecreated', 'tool_lp');
     } else {
         \tool_lp\api::update_user_evidence($data, $draftitemid);
-        echo $output->notification(get_string('userevidenceupdated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button($returnurl);
+        $returnmsg = get_string('userevidenceupdated', 'tool_lp');
     }
-
-} else {
-    $form->display();
+    redirect($returnurl, $returnmsg, null, \core\output\notification::NOTIFY_SUCCESS);
 }
+
+// We're getting there...
+$output = $PAGE->get_renderer('tool_lp');
+echo $output->header();
+echo $output->heading($title);
+if (!empty($subtitle)) {
+    echo $output->heading($subtitle, 3);
+}
+
+$form->display();
 
 echo $output->footer();

@@ -19,7 +19,6 @@ Feature: Manage plearning plan
     And I set the field "Description" to "Here description of learning plan"
     When I press "Save changes"
     Then I should see "Learning plan created"
-    And I click on "Continue" "button"
     And I should see "Science plan"
 
   Scenario: Create a learning plan based on template
@@ -35,7 +34,6 @@ Feature: Manage plearning plan
     And I click on "Admin" item in the autocomplete list
     When I click on "Create plans" "button"
     Then I should see "A plan was created"
-    And I follow "Continue"
     And I should see "Admin User" in the "Science template" "table_row"
 
   Scenario: Create a learning plan from template cohort
@@ -62,7 +60,6 @@ Feature: Manage plearning plan
     And I click on "cohort plan" item in the autocomplete list
     When I click on "Add cohorts" "button"
     Then I should see "2 plans were created."
-    And I follow "Continue"
     And I follow "Learning plans"
     And I click on ".template-userplans" "css_element" in the "Science template cohort" "table_row"
     And I should see "Student 1"
@@ -116,7 +113,6 @@ Feature: Manage plearning plan
     And I set the field "Name" to "Science plan Year-3 Edited"
     When I press "Save changes"
     Then I should see "Learning plan updated"
-    And I click on "Continue" "button"
     And I should see "Science plan Year-3 Edited"
 
   Scenario: Delete a learning plan
