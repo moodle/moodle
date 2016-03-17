@@ -6245,8 +6245,6 @@ class assign {
         // Hidden params.
         $mform->addElement('hidden', 'id', $this->get_course_module()->id);
         $mform->setType('id', PARAM_INT);
-        $mform->addElement('hidden', 'userid', $userid);
-        $mform->setType('userid', PARAM_INT);
         $mform->addElement('hidden', 'rownum', $rownum);
         $mform->setType('rownum', PARAM_INT);
         $mform->setConstant('rownum', $rownum);
