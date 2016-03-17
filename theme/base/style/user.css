@@ -72,8 +72,12 @@
     width: 49%;
     float: left;
     text-align: left;
+    min-width: 175px;
 }
-
+#groupeditform .groups select,
+#groupeditform .members select {
+    min-width: 175px;
+}
 .dir-rtl #groupeditform .groups,
 .dir-rtl #groupeditform .members {
     float: right;
