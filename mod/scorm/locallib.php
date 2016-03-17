@@ -567,6 +567,13 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
             // Create status submitted event.
             $event = \mod_scorm\event\status_submitted::create($data);
         }
+        // Fix the missing track keys when the SCORM track record already exists, see $trackdata in datamodel.php.
+        // There, for performances reasons, columns are limited to: element, id, value, timemodified.
+        // Missing fields are: userid, scormid, scoid, attempt.
+        $track->userid = $userid;
+        $track->scormid = $scormid;
+        $track->scoid = $scoid;
+        $track->attempt = $attempt;
         // Trigger submitted event.
         $event->add_record_snapshot('scorm_scoes_track', $track);
         $event->add_record_snapshot('course_modules', $cm);
