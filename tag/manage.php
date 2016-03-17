@@ -38,6 +38,7 @@ $perpage     = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);
 $page        = optional_param('page', 0, PARAM_INT);
 $tagcollid   = optional_param('tc', 0, PARAM_INT);
 $tagareaid   = optional_param('ta', null, PARAM_INT);
+$filter      = optional_param('filter', '', PARAM_NOTAGS);
 
 $params = array();
 if ($perpage != DEFAULT_PAGE_SIZE) {
@@ -48,6 +49,9 @@ if ($page > 0) {
 }
 if ($tagcollid) {
     $params['tc'] = $tagcollid;
+}
+if ($filter !== '') {
+    $params['filter'] = $filter;
 }
 
 admin_externalpage_setup('managetags', '', $params, '', array('pagelayout' => 'report'));
@@ -163,8 +167,8 @@ switch($action) {
         require_sesskey();
         $tagobjects = array();
         if ($tagcoll) {
-            $otagsadd = optional_param('otagsadd', '', PARAM_RAW);
-            $newtags = preg_split('/\s*,\s*/', trim($otagsadd), -1, PREG_SPLIT_NO_EMPTY);
+            $tagslist = optional_param('tagslist', '', PARAM_RAW);
+            $newtags = preg_split('/\s*,\s*/', trim($tagslist), -1, PREG_SPLIT_NO_EMPTY);
             $tagobjects = core_tag_tag::create_if_missing($tagcoll->id, $newtags, true);
         }
         foreach ($tagobjects as $tagobject) {
@@ -202,20 +206,23 @@ if (!$tagcoll) {
 // Tag collection is specified. Manage tags in this collection.
 echo $OUTPUT->heading(core_tag_collection::display_name($tagcoll));
 
-// Small form to add an standard tag.
-print('<form class="tag-addtags-form" method="post" action="'.$CFG->wwwroot.'/tag/manage.php">');
-print('<input type="hidden" name="tc" value="'.$tagcollid.'" />');
-print('<input type="hidden" name="action" value="addstandardtag" />');
-print('<input type="hidden" name="perpage" value="'.$perpage.'" />');
-print('<input type="hidden" name="page" value="'.$page.'" />');
-print('<div class="tag-management-form generalbox"><label class="accesshide" for="id_otagsadd">' .
-        get_string('addotags', 'tag') .'</label>'.
-    '<input name="otagsadd" id="id_otagsadd" type="text" />'.
-    '<input type="hidden" name="sesskey" value="'.sesskey().'">'.
-    '<input name="addotags" value="'. get_string('addotags', 'tag') .
-        '" onclick="skipClientValidation = true;" id="id_addotags" type="submit" />'.
+// Form to filter tags.
+print('<form class="tag-filter-form" method="get" action="'.$CFG->wwwroot.'/tag/manage.php">');
+print('<div class="tag-management-form generalbox"><label class="accesshide" for="id_tagfilter">'. get_string('search') .'</label>'.
+    '<input type="hidden" name="tc" value="'.$tagcollid.'" />'.
+    '<input type="hidden" name="perpage" value="'.$perpage.'" />'.
+    '<input id="id_tagfilter" name="filter" type="text" value=' . s($filter) . '>'.
+    '<input value="'. s(get_string('search')) .'" type="submit"> '.
+    ($filter !== '' ? html_writer::link(new moodle_url($PAGE->url, array('filter' => null)),
+        get_string('resetfilter', 'tag'), array('class' => 'resetfilterlink')) : '').
     '</div>');
 print('</form>');
+
+// Link to add an standard tags.
+$img = $OUTPUT->pix_icon('t/add', '');
+echo '<div class="addstandardtags visibleifjs">' .
+    html_writer::link('#', $img . get_string('addotags', 'tag'), array('data-action' => 'addstandardtag')) .
+    '</div>';
 
 $table = new core_tag_manage_table($tagcollid);
 echo '<form class="tag-management-form" method="post" action="'.$CFG->wwwroot.'/tag/manage.php">';

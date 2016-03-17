@@ -54,8 +54,9 @@ class core_tag_manage_table extends table_sql {
 
         $perpage = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);
         $page = optional_param('page', 0, PARAM_INT);
+        $filter = optional_param('filter', '', PARAM_NOTAGS);
         $baseurl = new moodle_url('/tag/manage.php', array('tc' => $tagcollid,
-            'perpage' => $perpage, 'page' => $page));
+            'perpage' => $perpage, 'page' => $page, 'filter' => $filter));
 
         $tablecolumns = array('select', 'name', 'fullname', 'count', 'flag', 'timemodified', 'isstandard', 'controls');
         $tableheaders = array(get_string('select', 'tag'),
@@ -88,9 +89,9 @@ class core_tag_manage_table extends table_sql {
         $this->set_attribute('id', 'tag-management-list');
         $this->set_attribute('class', 'admintable generaltable tag-management-table');
 
-        $totalcount = "SELECT COUNT(id)
-            FROM {tag}
-            WHERE tagcollid = :tagcollid";
+        $totalcount = "SELECT COUNT(tg.id)
+            FROM {tag} tg
+            WHERE tg.tagcollid = :tagcollid";
         $params = array('tagcollid' => $this->tagcollid);
 
         $this->set_count_sql($totalcount, $params);
@@ -101,6 +102,19 @@ class core_tag_manage_table extends table_sql {
 
         $PAGE->requires->js_call_amd('core/tag', 'initManagePage', array());
 
+    }
+
+    /**
+     * @return string sql to add to where statement.
+     */
+    function get_sql_where() {
+        $filter = optional_param('filter', '', PARAM_NOTAGS);
+        list($wsql, $wparams) = parent::get_sql_where();
+        if ($filter !== '') {
+            $wsql .= ($wsql ? ' AND ' : '') . 'tg.name LIKE :tagfilter';
+            $wparams['tagfilter'] = '%' . $filter . '%';
+        }
+        return array($wsql, $wparams);
     }
 
     /**

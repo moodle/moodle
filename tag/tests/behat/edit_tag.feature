@@ -219,3 +219,20 @@ Feature: Users can edit tags to add description or rename
     # Even though Turtle was not standard but at least one of combined tags was (Neverusedtag). Now Turtle is also standard.
     And "Remove from standard tags" "link" should exist in the "Turtle" "table_row"
     And I log out
+
+  Scenario: Filtering tags
+    When I log in as "manager1"
+    And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I follow "Default collection"
+    And I should not see "Reset filter"
+    And I set the field "Search" to "t"
+    And I press "Search"
+    Then the field "Search" matches value "t"
+    And I should not see "Dog"
+    And I should see "Cat"
+    And I should see "Turtle"
+    And I follow "Reset filter"
+    And I should see "Dog"
+    And I should see "Cat"
+    And I should see "Turtle"
+    And I log out
