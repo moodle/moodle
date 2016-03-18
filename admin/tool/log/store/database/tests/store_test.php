@@ -52,8 +52,7 @@ class logstore_database_store_testcase extends advanced_testcase {
         $this->assertCount(0, $stores);
 
         // Fake the settings, we will abuse the standard plugin table here...
-        $parts = explode('_', get_class($DB));
-        set_config('dbdriver', $parts[1] . '/' . $parts[0], 'logstore_database');
+        set_config('dbdriver', $CFG->dblibrary . '/' . $CFG->dbtype, 'logstore_database');
         set_config('dbhost', $CFG->dbhost, 'logstore_database');
         set_config('dbuser', $CFG->dbuser, 'logstore_database');
         set_config('dbpass', $CFG->dbpass, 'logstore_database');
