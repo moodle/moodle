@@ -3188,7 +3188,8 @@ class external extends external_api {
         $context = self::get_context_from_params($params['pagecontext']);
         self::validate_context($context);
 
-        $renderable = new output\template_competencies_page($params['templateid'], $context);
+        $template = api::read_template($params['templateid']);
+        $renderable = new output\template_competencies_page($template, $context);
         $renderer = $PAGE->get_renderer('tool_lp');
 
         $data = $renderable->export_for_template($renderer);
@@ -3203,7 +3204,7 @@ class external extends external_api {
      */
     public static function data_for_template_competencies_page_returns() {
         return new external_single_structure(array (
-            'templateid' => new external_value(PARAM_INT, 'The current template id'),
+            'template' => template_exporter::get_read_structure(),
             'pagecontextid' => new external_value(PARAM_INT, 'Context ID'),
             'canmanagecompetencyframeworks' => new external_value(PARAM_BOOL, 'User can manage competency frameworks'),
             'canmanagetemplatecompetencies' => new external_value(PARAM_BOOL, 'User can manage learning plan templates'),
@@ -3211,6 +3212,7 @@ class external extends external_api {
                 competency_summary_exporter::get_read_structure()
             ),
             'manageurl' => new external_value(PARAM_LOCALURL, 'Url to the manage competencies page.'),
+            'pluginbaseurl' => new external_value(PARAM_LOCALURL, 'Base URL of the plugin.'),
             'statistics' => template_statistics_exporter::get_read_structure()
         ));
 

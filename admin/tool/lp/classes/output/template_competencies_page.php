@@ -33,7 +33,9 @@ use context_system;
 use moodle_url;
 use tool_lp\api;
 use tool_lp\external\competency_summary_exporter;
+use tool_lp\template;
 use tool_lp\template_statistics;
+use tool_lp\external\template_exporter;
 use tool_lp\external\template_statistics_exporter;
 
 /**
@@ -44,8 +46,8 @@ use tool_lp\external\template_statistics_exporter;
  */
 class template_competencies_page implements renderable, templatable {
 
-    /** @var int $templateid Template id for this page. */
-    protected $templateid = null;
+    /** @var template $template Template for this page. */
+    protected $template = null;
 
     /** @var \tool_lp\competency[] $competencies List of competencies. */
     protected $competencies = array();
@@ -68,14 +70,14 @@ class template_competencies_page implements renderable, templatable {
     /**
      * Construct this renderable.
      *
-     * @param int $templateid The learning plan template id for this page.
+     * @param template $template The learning plan template.
      * @param context $pagecontext The page context.
      */
-    public function __construct($templateid, context $pagecontext) {
+    public function __construct(template $template, context $pagecontext) {
         $this->pagecontext = $pagecontext;
-        $this->templateid = $templateid;
-        $this->templatestatistics = new template_statistics($templateid);
-        $this->competencies = api::list_competencies_in_template($templateid);
+        $this->template = $template;
+        $this->templatestatistics = new template_statistics($template->get_id());
+        $this->competencies = api::list_competencies_in_template($template);
         $this->canmanagecompetencyframeworks = has_capability('tool/lp:competencymanage', $this->pagecontext);
         $this->canmanagetemplatecompetencies = has_capability('tool/lp:templatemanage', $this->pagecontext);
         $this->manageurl = new moodle_url('/admin/tool/lp/competencyframeworks.php',
@@ -90,8 +92,8 @@ class template_competencies_page implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output) {
         $data = new stdClass();
+        $data->template = (new template_exporter($this->template))->export($output);
         $data->pagecontextid = $this->pagecontext->id;
-        $data->templateid = $this->templateid;
         $data->competencies = array();
         $contextcache = array();
         $frameworkcache = array();
@@ -120,6 +122,8 @@ class template_competencies_page implements renderable, templatable {
 
             array_push($data->competencies, $record);
         }
+
+        $data->pluginbaseurl = (new moodle_url('/admin/tool/lp'))->out(false);
         $data->canmanagecompetencyframeworks = $this->canmanagecompetencyframeworks;
         $data->canmanagetemplatecompetencies = $this->canmanagetemplatecompetencies;
         $data->manageurl = $this->manageurl->out(true);

@@ -18,6 +18,13 @@
     Template competencies template.
 }}
 <div data-region="templatecompetenciespage">
+    <h2>
+        {{template.shortname}}
+        {{#template.canmanage}}
+            <a href="{{pluginbaseurl}}/edittemplate.php?id={{template.id}}&amp;pagecontextid={{pagecontextid}}">{{#pix}}t/edit, core, {{#str}}edittemplate, tool_lp{{/str}}{{/pix}}</a>
+        {{/template.canmanage}}
+    </h2>
+    <h3>{{#str}}templatecompetencies, tool_lp{{/str}}</h3>
     {{#statistics}}
         {{> tool_lp/template_statistics }}
     {{/statistics}}
@@ -76,6 +83,6 @@
 </div>
 {{#js}}
 require(['tool_lp/competencies'], function(mod) {
-    (new mod({{templateid}}, 'template', {{pagecontextid}}));
+    (new mod({{template.id}}, 'template', {{pagecontextid}}));
 });
 {{/js}}

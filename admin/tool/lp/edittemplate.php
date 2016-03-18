@@ -26,6 +26,7 @@ require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $id = optional_param('id', 0, PARAM_INT);
+$returntype = optional_param('return', null, PARAM_ALPHA);
 $pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to where we can from.
 
 $template = null;
@@ -43,15 +44,21 @@ require_login(0, false);
 require_capability('tool/lp:templatemanage', $context);
 
 // We keep the original context in the URLs, so that we remain in the same context.
-$url = new moodle_url("/admin/tool/lp/edittemplate.php", array('id' => $id, 'pagecontextid' => $pagecontextid));
+$url = new moodle_url("/admin/tool/lp/edittemplate.php", [
+    'id' => $id,
+    'pagecontextid' => $pagecontextid,
+    'return' => $returntype
+]);
 
 if (empty($id)) {
     $pagetitle = get_string('addnewtemplate', 'tool_lp');
-    list($title, $subtitle, $returnurl) = \tool_lp\page_helper::setup_for_template($pagecontextid, $url, null, $pagetitle);
+    list($title, $subtitle, $returnurl) = \tool_lp\page_helper::setup_for_template($pagecontextid, $url, null, $pagetitle,
+        $returntype);
 } else {
     $template = \tool_lp\api::read_template($id);
     $pagetitle = get_string('edittemplate', 'tool_lp');
-    list($title, $subtitle, $returnurl) = \tool_lp\page_helper::setup_for_template($pagecontextid, $url, $template, $pagetitle);
+    list($title, $subtitle, $returnurl) = \tool_lp\page_helper::setup_for_template($pagecontextid, $url, $template,
+        $pagetitle, $returntype);
 }
 
 $form = new \tool_lp\form\template($url->out(false), array('persistent' => $template, 'context' => $context));

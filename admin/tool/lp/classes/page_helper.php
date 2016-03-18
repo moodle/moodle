@@ -100,12 +100,14 @@ class page_helper {
      * @param  moodle_url $url The current page.
      * @param  \tool_lp\template $template The template, if any.
      * @param  string $subtitle The title of the subpage, if any.
+     * @param  string $returntype The desired return page.
      * @return array With the following:
      *               - Page title
      *               - Page sub title
-     *               - Return URL (main templates page)
+     *               - Return URL
      */
-    public static function setup_for_template($pagecontextid, moodle_url $url, $template = null, $subtitle = '') {
+    public static function setup_for_template($pagecontextid, moodle_url $url, $template = null, $subtitle = '',
+            $returntype = null) {
         global $PAGE, $SITE;
 
         $pagecontext = context::instance_by_id($pagecontextid);
@@ -115,6 +117,18 @@ class page_helper {
         }
 
         $templatesurl = new moodle_url('/admin/tool/lp/learningplans.php', array('pagecontextid' => $pagecontextid));
+        $templateurl = null;
+        if ($template) {
+            $templateurl = new moodle_url('/admin/tool/lp/templatecompetencies.php', [
+                'templateid' => $template->get_id(),
+                'pagecontextid' => $pagecontextid
+            ]);
+        }
+
+        $returnurl = $templatesurl;
+        if ($returntype != 'templates' && $templateurl) {
+            $returnurl = $templateurl;
+        }
 
         $PAGE->navigation->override_active_url($templatesurl);
         $PAGE->set_context($pagecontext);
@@ -139,15 +153,17 @@ class page_helper {
         $PAGE->set_heading($heading);
 
         if (!empty($template)) {
-            $PAGE->navbar->add($title);
-            $PAGE->navbar->add($subtitle, $url);
+            $PAGE->navbar->add($title, $templateurl);
+            if (!empty($subtitle)) {
+                $PAGE->navbar->add($subtitle, $url);
+            }
 
         } else if (!empty($subtitle)) {
             // We're in a sub page without a specific template.
             $PAGE->navbar->add($subtitle, $url);
         }
 
-        return array($title, $subtitle, $templatesurl);
+        return array($title, $subtitle, $returnurl);
     }
 
     /**

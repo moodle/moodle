@@ -44,14 +44,11 @@ if (!$template->can_read()) {
 // Set up the page.
 $url = new moodle_url('/admin/tool/lp/templatecompetencies.php', array('templateid' => $template->get_id(),
     'pagecontextid' => $pagecontextid));
-list($title, $subtitle) = \tool_lp\page_helper::setup_for_template($pagecontextid, $url, $template,
-    get_string('templatecompetencies', 'tool_lp'));
+list($title, $subtitle) = \tool_lp\page_helper::setup_for_template($pagecontextid, $url, $template);
 
 // Display the page.
 $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
-echo $output->heading($title);
-echo $output->heading($subtitle, 3);
-$page = new \tool_lp\output\template_competencies_page($template->get_id(), $pagecontext);
+$page = new \tool_lp\output\template_competencies_page($template, $pagecontext);
 echo $output->render($page);
 echo $output->footer();
