@@ -27,8 +27,6 @@
 
 require_once(__DIR__ . '/../../behat/behat_base.php');
 
-use Moodle\BehatExtension\Context\Step\Given;
-use Moodle\BehatExtension\Context\Step\When;
 use Behat\Mink\Exception\ExpectationException as ExpectationException;
 use Behat\Mink\Exception\DriverException as DriverException;
 
@@ -147,23 +145,22 @@ class behat_navigation extends behat_base {
      * @Given /^I follow "(?P<nodetext_string>(?:[^"]|\\")*)" in the user menu$/
      *
      * @param string $nodetext
-     * @return bool|void
      */
     public function i_follow_in_the_user_menu($nodetext) {
-        $steps = array();
 
         if ($this->running_javascript()) {
             // The user menu must be expanded when JS is enabled.
             $xpath = "//div[@class='usermenu']//a[contains(concat(' ', @class, ' '), ' toggle-display ')]";
-            $steps[] = new When('I click on "'.$xpath.'" "xpath_element"');
+            $this->execute("behat_general::i_click_on", array($this->escape($xpath), "xpath_element"));
         }
 
         // Now select the link.
         // The CSS path is always present, with or without JS.
         $csspath = ".usermenu [data-rel='menu-content']";
-        $steps[] = new When('I click on "'.$nodetext.'" "link" in the "'.$csspath.'" "css_element"');
 
-        return $steps;
+        $this->execute('behat_general::i_click_on_in_the',
+            array($nodetext, "link", $csspath, "css_element")
+        );
     }
 
     /**
@@ -182,7 +179,10 @@ class behat_navigation extends behat_base {
         if (!$this->running_javascript()) {
             if ($nodetext === get_string('administrationsite')) {
                 // Administration menu is not loaded by default any more. Click the link to expand.
-                return new Given('I click on "'.$nodetext.'" "link" in the "'.get_string('administration').'" "block"');
+                $this->execute('behat_general::i_click_on_in_the',
+                    array($nodetext, "link", get_string('administration'), "block")
+                );
+                return true;
             }
             return true;
         }
@@ -413,6 +413,6 @@ class behat_navigation extends behat_base {
             return false;
         }
 
-        return new Given('I click on ".btn-navbar" "css_element"');
+        $this->execute('behat_general::i_click_on', array(".btn-navbar", "css_element"));
     }
 }

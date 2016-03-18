@@ -27,9 +27,7 @@
 
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
-use Moodle\BehatExtension\Context\Step\Given as Given,
-    Moodle\BehatExtension\Context\Step\When as When,
-    Behat\Gherkin\Node\TableNode as TableNode;
+use Behat\Gherkin\Node\TableNode as TableNode;
 /**
  * Database-related steps definitions.
  *
@@ -48,27 +46,22 @@ class behat_mod_data extends behat_base {
      * @param string $fieldtype
      * @param string $activityname
      * @param TableNode $fielddata
-     * @return Given[]
      */
     public function i_add_a_field_to_database_and_i_fill_the_form_with($fieldtype, $activityname, TableNode $fielddata) {
 
-        $steps = array(
-            new Given('I follow "' . $this->escape($activityname) . '"'),
-            new Given('I follow "' . get_string('fields', 'mod_data') . '"'),
-            new Given('I set the field "newtype" to "' . $this->escape($fieldtype) . '"')
-        );
+        $this->execute("behat_general::click_link", $this->escape($activityname));
+        $this->execute("behat_general::click_link", get_string('fields', 'mod_data'));
+
+        $this->execute('behat_forms::i_set_the_field_to', array('newtype', $this->escape($fieldtype)));
 
         if (!$this->running_javascript()) {
-            $steps[] = new Given('I click on "' . get_string('go') . '" "button" in the ".fieldadd" "css_element"');
+            $this->execute('behat_general::i_click_on_in_the',
+                array(get_string('go'), "button", ".fieldadd", "css_element")
+            );
         }
 
-        array_push(
-            $steps,
-            new Given('I set the following fields to these values:', $fielddata),
-            new Given('I press "' . get_string('add') . '"')
-        );
-
-        return $steps;
+        $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $fielddata);
+        $this->execute('behat_forms::press_button', get_string('add'));
     }
 
     /**
@@ -78,14 +71,12 @@ class behat_mod_data extends behat_base {
      *
      * @param string $activityname
      * @param TableNode $entrydata
-     * @return When[]
      */
     public function i_add_an_entry_to_database_with($activityname, TableNode $entrydata) {
 
-        return array(
-            new When('I follow "' . $this->escape($activityname) . '"'),
-            new When('I follow "' . get_string('add', 'mod_data') . '"'),
-            new When('I set the following fields to these values:', $entrydata),
-        );
+        $this->execute("behat_general::click_link", $this->escape($activityname));
+        $this->execute("behat_general::click_link", get_string('add', 'mod_data'));
+
+        $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $entrydata);
     }
 }

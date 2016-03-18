@@ -27,8 +27,7 @@
 
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
-use Behat\Behat\Context\Step\Given as Given,
-    Behat\Gherkin\Node\TableNode as TableNode,
+use Behat\Gherkin\Node\TableNode as TableNode,
     Behat\Mink\Exception\ExpectationException as ExpectationException;
 
 /**
@@ -49,10 +48,11 @@ class behat_mod_feedback extends behat_base {
      * @param TableNode $questiondata with data for filling the add question form
      */
     public function i_add_question_to_the_feedback_with($questiontype, TableNode $questiondata) {
-        $rv = array();
+
         $questiontype = $this->escape($questiontype);
         $additem = $this->escape(get_string('add_item', 'feedback'));
-        $rv[] = new Given("I select \"{$questiontype}\" from the \"{$additem}\" singleselect");
+
+        $this->execute('behat_forms::i_select_from_the_singleselect', array($questiontype, $additem));
 
         $rows = $questiondata->getRows();
         $modifiedrows = array();
@@ -64,12 +64,10 @@ class behat_mod_feedback extends behat_base {
         }
         $newdata = new TableNode($modifiedrows);
 
-        $rv[] = new Given('I set the following fields to these values:', $newdata);
+        $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $newdata);
 
         $saveitem = $this->escape(get_string('save_item', 'feedback'));
-        $rv[] = new Given("I press \"{$saveitem}\"");
-
-        return $rv;
+        $this->execute("behat_forms::press_button", $saveitem);
     }
 
     /**
@@ -84,14 +82,20 @@ class behat_mod_feedback extends behat_base {
         $coursename = $this->escape($coursename);
         $feedbackname = $this->escape($feedbackname);
         $completeform = $this->escape(get_string('complete_the_form', 'feedback'));
-        return [
-            new Given("I log in as \"$username\""),
-            new Given("I follow \"$coursename\""),
-            new Given("I follow \"$feedbackname\""),
-            new Given("I follow \"$completeform\""),
-            new Given("I set the following fields to these values:", $answers),
-            new Given("I press \"Submit your answers\""),
-            new Given("I log out")
-        ];
+
+        // Log in as user.
+        $this->execute('behat_auth::i_log_in_as', $username);
+
+        // Navigate to feedback complete form.
+        $this->execute('behat_general::click_link', $coursename);
+        $this->execute('behat_general::click_link', $feedbackname);
+        $this->execute('behat_general::click_link', $completeform);
+
+        // Fill form and submit.
+        $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $answers);
+        $this->execute("behat_forms::press_button", 'Submit your answers');
+
+        // Log out.
+        $this->execute('behat_auth::i_log_out');
     }
 }

@@ -27,8 +27,7 @@
 
 require_once(__DIR__ . '/behat_question_base.php');
 
-use Moodle\BehatExtension\Context\Step\Given as Given,
-    Behat\Gherkin\Node\TableNode as TableNode,
+use Behat\Gherkin\Node\TableNode as TableNode,
     Behat\Mink\Exception\ExpectationException as ExpectationException,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
@@ -48,14 +47,17 @@ class behat_question extends behat_question_base {
      * @Given /^I add a "(?P<question_type_name_string>(?:[^"]|\\")*)" question filling the form with:$/
      * @param string $questiontypename The question type name
      * @param TableNode $questiondata The data to fill the question type form.
-     * @return Given[] the steps.
      */
     public function i_add_a_question_filling_the_form_with($questiontypename, TableNode $questiondata) {
 
-        return array_merge(array(
-            new Given('I follow "' . get_string('questionbank', 'question') . '"'),
-            new Given('I press "' . get_string('createnewquestion', 'question') . '"'),
-                ), $this->finish_adding_question($questiontypename, $questiondata));
+        // Go to question bank.
+        $this->execute("behat_general::click_link", get_string('questionbank', 'question'));
+
+        // Click on create question.
+        $this->execute('behat_forms::press_button', get_string('createnewquestion', 'question'));
+
+        // Add question.
+        $this->finish_adding_question($questiontypename, $questiondata);
     }
 
     /**

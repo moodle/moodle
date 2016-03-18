@@ -27,8 +27,7 @@
 
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
-use Moodle\BehatExtension\Context\Step\Given as Given,
-    Behat\Gherkin\Node\TableNode as TableNode,
+use Behat\Gherkin\Node\TableNode as TableNode,
     Behat\Mink\Exception\ExpectationException as ExpectationException,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
@@ -48,15 +47,13 @@ class behat_question_base extends behat_base {
      *
      * @param string $questiontypename The question type name
      * @param TableNode $questiondata The data to fill the question type form
-     * @return Given[] the steps.
      */
     protected function finish_adding_question($questiontypename, TableNode $questiondata) {
 
-        return array(
-            new Given('I set the field "' . $this->escape($questiontypename) . '" to "1"'),
-            new Given('I click on ".submitbutton" "css_element"'),
-            new Given('I set the following fields to these values:', $questiondata),
-            new Given('I press "id_submitbutton"')
-        );
+        $this->execute('behat_forms::i_set_the_field_to', array($this->escape($questiontypename), 1));
+        $this->execute("behat_general::i_click_on", array('.submitbutton', "css_element"));
+
+        $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $questiondata);
+        $this->execute("behat_forms::press_button", 'id_submitbutton');
     }
 }

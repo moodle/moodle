@@ -27,8 +27,6 @@
 
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
-use Moodle\BehatExtension\Context\Step\Given as Given;
-
 /**
  * Steps definitions for cohort actions.
  *
@@ -48,13 +46,6 @@ class behat_cohort extends behat_base {
      */
     public function i_add_user_to_cohort_members($user, $cohortidnumber) {
 
-        $steps = array(
-            new Given('I click on "' . get_string('assign', 'cohort') . '" "link" in the "' . $this->escape($cohortidnumber) . '" "table_row"'),
-            new Given('I set the field "' . get_string('potusers', 'cohort') . '" to "' . $this->escape($user) . '"'),
-            new Given('I press "' . get_string('add') . '"'),
-            new Given('I press "' . get_string('backtocohorts', 'cohort') . '"')
-        );
-
         // If we are not in the cohorts management we should move there before anything else.
         if (!$this->getSession()->getPage()->find('css', 'input#cohort_search_q')) {
 
@@ -62,15 +53,23 @@ class behat_cohort extends behat_base {
             $parentnodes = get_string('administrationsite') . ' > ' .
                 get_string('users', 'admin') . ' > ' .
                 get_string('accounts', 'admin');
-            $steps = array_merge(
-                array(
-                    new Given('I am on homepage'),
-                    new Given('I navigate to "' . get_string('cohorts', 'cohort') . '" node in "' . $parentnodes . '"')
-                ),
-                $steps
+
+            $this->execute("behat_general::i_am_on_homepage");
+            $this->execute("behat_navigation::i_navigate_to_node_in",
+                array(get_string('cohorts', 'cohort'), $parentnodes)
             );
         }
 
-        return $steps;
+        $this->execute('behat_general::i_click_on_in_the',
+            array(get_string('assign', 'cohort'), "link", $this->escape($cohortidnumber), "table_row")
+        );
+
+        $this->execute("behat_forms::i_set_the_field_to",
+            array(get_string('potusers', 'cohort'), $this->escape($user))
+        );
+
+        $this->execute("behat_forms::press_button", get_string('add'));
+        $this->execute("behat_forms::press_button", get_string('backtocohorts', 'cohort'));
+
     }
 }

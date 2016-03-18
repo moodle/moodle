@@ -681,8 +681,10 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                             }
                         } else if (' . self::PAGE_READY_JS . ') {
                             return "";
-                        } else {
+                        } else if (typeof M.util !== "undefined") {
                             return M.util.pending_js.join(":");
+                        } else {
+                            return "incomplete"
                         }
                     }();';
                 $pending = $this->getSession()->evaluateScript($jscode);
@@ -712,5 +714,120 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
         // number of JS pending code and JS completed code will not match and we will reach this point.
         throw new \Exception('Javascript code and/or AJAX requests are not ready after ' . self::EXTENDED_TIMEOUT .
             ' seconds. There is a Javascript error or the code is extremely slow.');
+    }
+
+    /**
+     * Internal step definition to find exceptions, debugging() messages and PHP debug messages.
+     *
+     * Part of behat_hooks class as is part of the testing framework, is auto-executed
+     * after each step so no features will splicitly use it.
+     *
+     * @throws Exception Unknown type, depending on what we caught in the hook or basic \Exception.
+     * @see Moodle\BehatExtension\Tester\MoodleStepTester
+     */
+    public function look_for_exceptions() {
+        // Wrap in try in case we were interacting with a closed window.
+        try {
+
+            // Exceptions.
+            $exceptionsxpath = "//div[@data-rel='fatalerror']";
+            // Debugging messages.
+            $debuggingxpath = "//div[@data-rel='debugging']";
+            // PHP debug messages.
+            $phperrorxpath = "//div[@data-rel='phpdebugmessage']";
+            // Any other backtrace.
+            $othersxpath = "(//*[contains(., ': call to ')])[1]";
+
+            $xpaths = array($exceptionsxpath, $debuggingxpath, $phperrorxpath, $othersxpath);
+            $joinedxpath = implode(' | ', $xpaths);
+
+            // Joined xpath expression. Most of the time there will be no exceptions, so this pre-check
+            // is faster than to send the 4 xpath queries for each step.
+            if (!$this->getSession()->getDriver()->find($joinedxpath)) {
+                return;
+            }
+
+            // Exceptions.
+            if ($errormsg = $this->getSession()->getPage()->find('xpath', $exceptionsxpath)) {
+
+                // Getting the debugging info and the backtrace.
+                $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.alert-error');
+                // If errorinfoboxes is empty, try find notifytiny (original) class.
+                if (empty($errorinfoboxes)) {
+                    $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.notifytiny');
+                }
+                $errorinfo = $this->get_debug_text($errorinfoboxes[0]->getHtml()) . "\n" .
+                    $this->get_debug_text($errorinfoboxes[1]->getHtml());
+
+                $msg = "Moodle exception: " . $errormsg->getText() . "\n" . $errorinfo;
+                throw new \Exception(html_entity_decode($msg));
+            }
+
+            // Debugging messages.
+            if ($debuggingmessages = $this->getSession()->getPage()->findAll('xpath', $debuggingxpath)) {
+                $msgs = array();
+                foreach ($debuggingmessages as $debuggingmessage) {
+                    $msgs[] = $this->get_debug_text($debuggingmessage->getHtml());
+                }
+                $msg = "debugging() message/s found:\n" . implode("\n", $msgs);
+                throw new \Exception(html_entity_decode($msg));
+            }
+
+            // PHP debug messages.
+            if ($phpmessages = $this->getSession()->getPage()->findAll('xpath', $phperrorxpath)) {
+
+                $msgs = array();
+                foreach ($phpmessages as $phpmessage) {
+                    $msgs[] = $this->get_debug_text($phpmessage->getHtml());
+                }
+                $msg = "PHP debug message/s found:\n" . implode("\n", $msgs);
+                throw new \Exception(html_entity_decode($msg));
+            }
+
+            // Any other backtrace.
+            // First looking through xpath as it is faster than get and parse the whole page contents,
+            // we get the contents and look for matches once we found something to suspect that there is a backtrace.
+            if ($this->getSession()->getDriver()->find($othersxpath)) {
+                $backtracespattern = '/(line [0-9]* of [^:]*: call to [\->&;:a-zA-Z_\x7f-\xff][\->&;:a-zA-Z0-9_\x7f-\xff]*)/';
+                if (preg_match_all($backtracespattern, $this->getSession()->getPage()->getContent(), $backtraces)) {
+                    $msgs = array();
+                    foreach ($backtraces[0] as $backtrace) {
+                        $msgs[] = $backtrace . '()';
+                    }
+                    $msg = "Other backtraces found:\n" . implode("\n", $msgs);
+                    throw new \Exception(htmlentities($msg));
+                }
+            }
+
+        } catch (NoSuchWindow $e) {
+            // If we were interacting with a popup window it will not exists after closing it.
+        }
+    }
+
+    /**
+     * Helper function to execute api in a given context.
+     *
+     * @param string $contextapi context in which api is defined.
+     * @param array $params list of params to pass.
+     * @throws Exception
+     */
+    protected function execute($contextapi, $params = array()) {
+        if (!is_array($params)) {
+            $params = array($params);
+        }
+
+        // Get required context and execute the api.
+        $contextapi = explode("::", $contextapi);
+        $context = behat_context_helper::get($contextapi[0]);
+        call_user_func_array(array($context, $contextapi[1]), $params);
+
+        // NOTE: Wait for pending js and look for exception are not optional, as this might lead to unexpected results.
+        // Don't make them optional for performance reasons.
+
+        // Wait for pending js.
+        $this->wait_for_pending_js();
+
+        // Look for exceptions.
+        $this->look_for_exceptions();
     }
 }
