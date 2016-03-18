@@ -63,14 +63,23 @@ class template_statistics_exporter extends exporter {
             'linkedcompetencypercentage' => array(
                 'type' => PARAM_FLOAT
             ),
+            'linkedcompetencypercentageformatted' => array(
+                'type' => PARAM_RAW
+            ),
             'linkedcompetencycount' => array(
                 'type' => PARAM_INT
             ),
             'completedplanpercentage' => array(
                 'type' => PARAM_FLOAT
             ),
+            'completedplanpercentageformatted' => array(
+                'type' => PARAM_RAW
+            ),
             'proficientusercompetencyplanpercentage' => array(
                 'type' => PARAM_FLOAT
+            ),
+            'proficientusercompetencyplanpercentageformatted' => array(
+                'type' => PARAM_RAW
             ),
             'leastproficient' => array(
                 'type' => competency_exporter::read_properties_definition(),
@@ -89,19 +98,23 @@ class template_statistics_exporter extends exporter {
             $linkedcompetencycount = 0;
         }
         $linkedcompetencypercentage = 0;
+        $linkedcompetencypercentageformatted = '';
         if ($this->data->competencycount > 0) {
-            $linkedcompetencypercentage = format_float(
-                ((float) $linkedcompetencycount / (float) $this->data->competencycount) * 100.0);
+            $linkedcompetencypercentage = ((float) $linkedcompetencycount / (float) $this->data->competencycount) * 100.0;
+            $linkedcompetencypercentageformatted = format_float($linkedcompetencypercentage);
         }
         $completedplanpercentage = 0;
+        $completedplanpercentageformatted = '';
         if ($this->data->plancount > 0) {
-            $completedplanpercentage = format_float(
-                ((float) $this->data->completedplancount / (float) $this->data->plancount) * 100.0);
+            $completedplanpercentage = ((float) $this->data->completedplancount / (float) $this->data->plancount) * 100.0;
+            $completedplanpercentageformatted = format_float($completedplanpercentage);
         }
         $proficientusercompetencyplanpercentage = 0;
+        $proficientusercompetencyplanpercentageformatted = '';
         if ($this->data->usercompetencyplancount > 0) {
-            $proficientusercompetencyplanpercentage = format_float(
-                ((float) $this->data->proficientusercompetencyplancount / (float) $this->data->usercompetencyplancount) * 100.0);
+            $proficientusercompetencyplanpercentage = ((float) $this->data->proficientusercompetencyplancount /
+                    (float) $this->data->usercompetencyplancount) * 100.0;
+            $proficientusercompetencyplanpercentageformatted = format_float($proficientusercompetencyplanpercentage);
         }
         $competencies = array();
         $contextcache = array();
@@ -116,8 +129,11 @@ class template_statistics_exporter extends exporter {
         return array(
             'linkedcompetencycount' => $linkedcompetencycount,
             'linkedcompetencypercentage' => $linkedcompetencypercentage,
+            'linkedcompetencypercentageformatted' => $linkedcompetencypercentageformatted,
             'completedplanpercentage' => $completedplanpercentage,
+            'completedplanpercentageformatted' => $completedplanpercentageformatted,
             'proficientusercompetencyplanpercentage' => $proficientusercompetencyplanpercentage,
+            'proficientusercompetencyplanpercentageformatted' => $proficientusercompetencyplanpercentageformatted,
             'leastproficient' => $competencies,
             'leastproficientcount' => count($competencies)
         );

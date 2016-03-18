@@ -52,7 +52,7 @@
         </div>
         <div class="progress">
             <div class="bar" style="width: {{linkedcompetencypercentage}}%;">
-                {{linkedcompetencypercentage}} %
+                {{linkedcompetencypercentageformatted}} %
             </div>
         </div>
     </div>
@@ -63,7 +63,7 @@
         </div>
         <div class="progress">
             <div class="bar" style="width: {{completedplanpercentage}}%;">
-                {{completedplanpercentage}} %
+                {{completedplanpercentageformatted}} %
             </div>
         </div>
     </div>
@@ -71,11 +71,11 @@
     {{#usercompetencyplancount}}
     <div>
         <div class="progresstext">
-            {{#str}}averageproficiencyrate, tool_lp, {{proficientusercompetencyplanpercentage}} {{/str}}
+            {{#str}}averageproficiencyrate, tool_lp, {{proficientusercompetencyplanpercentageformatted}} {{/str}}
         </div>
         <div class="progress">
             <div class="bar" style="width: {{proficientusercompetencyplanpercentage}}%;">
-                {{proficientusercompetencyplanpercentage}} %
+                {{proficientusercompetencyplanpercentageformatted}} %
             </div>
         </div>
     </div>
