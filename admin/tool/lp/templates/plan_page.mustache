@@ -90,6 +90,14 @@
         {{/canpostorhascomments}}
     {{/plan.commentarea}}
     <div data-region="plan-competencies">
+        <div data-region="actions">
+            <div class="pull-right">
+                <!-- Button to add competencies to the plan -->
+                {{#plan.canbeedited}}
+                <button class="btn" data-action="add">{{#pix}}t/add{{/pix}} {{#str}}addcompetency, tool_lp{{/str}}</button>
+                {{/plan.canbeedited}}
+            </div>
+        </div>
         <h3>{{#str}}learningplancompetencies, tool_lp{{/str}}</h3>
         <table class="generaltable fullwidth managecompetencies">
             <thead>
@@ -155,17 +163,7 @@
                 {{/competencies}}
             </tbody>
         </table>
-
-        <div data-region="actions">
-            <div class="pull-right">
-                <!-- Button to add competencies to the plan -->
-                {{#plan.canbeedited}}
-                <button class="btn" data-action="add">{{#pix}}t/add{{/pix}} {{#str}}addcompetency, tool_lp{{/str}}</button>
-                {{/plan.canbeedited}}
-            </div>
-        </div>
     </div>
-
 </div>
 {{#js}}
 require(['tool_lp/competencies', 'tool_lp/planactions', 'tool_lp/user_competency_workflow'], function(mod, actionsMod, UserCompWorkflow) {

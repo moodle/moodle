@@ -32,6 +32,11 @@
     * navigation - array of strings containing buttons for navigation
 }}
 <div data-region="managetemplates">
+<div class="btn-group pull-right">
+    {{#navigation}}
+    {{{.}}}
+    {{/navigation}}
+</div>
 <table class="generaltable fullwidth managetemplates">
     <caption>{{#str}}listtemplatescaption, tool_lp{{/str}}</caption>
     <thead>
@@ -87,12 +92,6 @@
     {{#str}}notemplates, tool_lp{{/str}}
 </p>
 {{/templates}}
-
-<div class="btn-group pull-right">
-{{#navigation}}
-{{{.}}}
-{{/navigation}}
-</div>
 
 {{#js}}
 // Initialise the JS.

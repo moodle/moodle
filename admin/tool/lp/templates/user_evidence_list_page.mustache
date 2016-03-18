@@ -33,7 +33,11 @@
 }}
 
 <div data-region="user-evidence-list">
-
+<div class="btn-group pull-right">
+    {{#navigation}}
+        {{{.}}}
+    {{/navigation}}
+</div>
 <table class="generaltable fullwidth">
     <caption>{{#str}}listofevidence, tool_lp{{/str}}</caption>
     <thead>
@@ -119,12 +123,6 @@
 {{^evidence}}
     <p class="alert-info">{{#str}}nouserevidence, tool_lp{{/str}}</p>
 {{/evidence}}
-
-<div class="btn-group pull-right">
-    {{#navigation}}
-        {{{.}}}
-    {{/navigation}}
-</div>
 
 </div>
 

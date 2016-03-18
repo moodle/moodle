@@ -34,6 +34,11 @@
 }}
 
 <div data-region="plans">
+<div class="btn-group pull-right">
+    {{#navigation}}
+    {{{.}}}
+    {{/navigation}}
+</div>
 <table class="generaltable fullwidth">
     <caption>{{#str}}listplanscaption, tool_lp{{/str}}</caption>
     <thead>
@@ -149,11 +154,6 @@
 </p>
 {{/plans}}
 
-<div class="btn-group pull-right">
-{{#navigation}}
-{{{.}}}
-{{/navigation}}
-</div>
 {{#canreaduserevidence}}
 <div class="pull-left">
     <a href="{{pluginbaseurl}}/user_evidence_list.php?userid={{userid}}">{{#str}}userevidence, tool_lp{{/str}}</a>
