@@ -50,6 +50,8 @@ class plan extends persistent {
         $mform->setType('userid', PARAM_INT);
         $mform->setConstant('userid', $this->_customdata['userid']);
 
+        $mform->addElement('header', 'generalhdr', get_string('general'));
+
         $mform->addElement('text', 'name', get_string('planname', 'tool_lp'));
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
