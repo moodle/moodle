@@ -20,7 +20,7 @@ class Less_Parser{
 		'strictUnits'			=> false,			// whether units need to evaluate correctly
 		'strictMath'			=> false,			// whether math has to be within parenthesis
 		'relativeUrls'			=> true,			// option - whether to adjust URL's to be relative
-		'urlArgs'				=> array(),			// whether to add args into url tokens
+		'urlArgs'				=> '',				// whether to add args into url tokens
 		'numPrecision'			=> 8,
 
 		'import_dirs'			=> array(),
@@ -34,6 +34,8 @@ class Less_Parser{
 		'sourceMapBasepath'		=> null,
 		'sourceMapWriteTo'		=> null,
 		'sourceMapURL'			=> null,
+
+		'indentation' 			=> '  ',
 
 		'plugins'				=> array(),
 
@@ -87,7 +89,7 @@ class Less_Parser{
 		// mbstring.func_overload > 1 bugfix
 		// The encoding value must be set for each source file,
 		// therefore, to conserve resources and improve the speed of this design is taken here
-		if (ini_get('mbstring.func_overload')) {			
+		if (ini_get('mbstring.func_overload')) {
 			$this->mb_internal_encoding = ini_get('mbstring.internal_encoding');
 			@ini_set('mbstring.internal_encoding', 'ascii');
 		}
@@ -220,7 +222,7 @@ class Less_Parser{
 		@ini_set('precision',$precision);
 		setlocale(LC_NUMERIC, $locale);
 
-		// If you previously defined $this->mb_internal_encoding 
+		// If you previously defined $this->mb_internal_encoding
 		// is required to return the encoding as it was before
 		if ($this->mb_internal_encoding != '') {
 			@ini_set("mbstring.internal_encoding", $this->mb_internal_encoding);
@@ -1989,7 +1991,7 @@ class Less_Parser{
 	}
 
 	private function parseImportOption(){
-		$opt = $this->MatchReg('/\\G(less|css|multiple|once|inline|reference)/');
+		$opt = $this->MatchReg('/\\G(less|css|multiple|once|inline|reference|optional)/');
 		if( $opt ){
 			return $opt[1];
 		}
@@ -2623,5 +2625,3 @@ class Less_Parser{
 	}
 
 }
-
-

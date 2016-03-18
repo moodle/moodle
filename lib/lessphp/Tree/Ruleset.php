@@ -264,7 +264,7 @@ class Less_Tree_Ruleset extends Less_Tree{
 
 		$important_rules = array();
 		foreach($this->rules as $rule){
-			if( $rule instanceof Less_Tree_Rule || $rule instanceof Less_Tree_Ruleset ){
+			if( $rule instanceof Less_Tree_Rule || $rule instanceof Less_Tree_Ruleset || $rule instanceof Less_Tree_NameValue ){
 				$important_rules[] = $rule->makeImportant();
 			}else{
 				$important_rules[] = $rule;
@@ -365,8 +365,8 @@ class Less_Tree_Ruleset extends Less_Tree{
 		$tabRuleStr = $tabSetStr = '';
 		if( !Less_Parser::$options['compress'] ){
 			if( Less_Environment::$tabLevel ){
-				$tabRuleStr = "\n".str_repeat( '  ' , Less_Environment::$tabLevel );
-				$tabSetStr = "\n".str_repeat( '  ' , Less_Environment::$tabLevel-1 );
+				$tabRuleStr = "\n".str_repeat( Less_Parser::$options['indentation'] , Less_Environment::$tabLevel );
+				$tabSetStr = "\n".str_repeat( Less_Parser::$options['indentation'] , Less_Environment::$tabLevel-1 );
 			}else{
 				$tabSetStr = $tabRuleStr = "\n";
 			}
