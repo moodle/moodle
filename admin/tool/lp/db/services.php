@@ -899,5 +899,14 @@ $functions = array(
         'capabilities'  => 'tool/lp:userevidencemanageown',
         'ajax'          => true,
     ),
+    'tool_lp_update_course_competency_settings' => array(
+        'classname'     => 'tool_lp\external',
+        'methodname'    => 'update_course_competency_settings',
+        'classpath'     => '',
+        'description'   => 'Update the course competency settings',
+        'type'          => 'write',
+        'capabilities'  => 'tool/lp:coursecompetencyconfigure',
+        'ajax'          => true,
+    ),
 );
 

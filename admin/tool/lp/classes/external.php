@@ -1889,6 +1889,8 @@ class external extends external_api {
             'gradableuserid' => new external_value(PARAM_INT, 'Current user id, if the user is a gradable user.', VALUE_OPTIONAL),
             'canmanagecompetencyframeworks' => new external_value(PARAM_BOOL, 'User can manage competency frameworks'),
             'canmanagecoursecompetencies' => new external_value(PARAM_BOOL, 'User can manage linked course competencies'),
+            'canconfigurecoursecompetencies' => new external_value(PARAM_BOOL, 'User can configure course competency settings'),
+            'pushratingstouserplans' => new external_value(PARAM_BOOL, 'Couse competency setting pushratingstouserplans'),
             'competencies' => new external_multiple_structure(new external_single_structure(array(
                 'competency' => competency_exporter::get_read_structure(),
                 'coursecompetency' => course_competency_exporter::get_read_structure(),
@@ -5644,4 +5646,56 @@ class external extends external_api {
         return new external_value(PARAM_BOOL, 'True if the log of the view was successful');
     }
 
+    /**
+     * Returns description of update_course_competency_settings() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function update_course_competency_settings_parameters() {
+        $courseid = new external_value(
+            PARAM_INT,
+            'Course id for the course to update',
+            VALUE_REQUIRED
+        );
+        $pushratingstouserplans = new external_value(
+            PARAM_BOOL,
+            'New value of the setting',
+            VALUE_REQUIRED
+        );
+        $params = array(
+            'courseid' => $courseid,
+            'pushratingstouserplans' => $pushratingstouserplans,
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Update the course competency settings
+     *
+     * @param int $id the course id
+     * @param bool $pushratingstouserplans The new value of the setting
+     * @throws moodle_exception
+     */
+    public static function update_course_competency_settings($courseid, $pushratingstouserplans) {
+        $params = self::validate_parameters(self::update_course_competency_settings_parameters(),
+                                            array(
+                                                'courseid' => $courseid,
+                                                'pushratingstouserplans' => $pushratingstouserplans
+                                            ));
+
+        $context = context_course::instance($params['courseid']);
+        self::validate_context($context);
+        $result = api::update_course_competency_settings($params['courseid'], $params['pushratingstouserplans']);
+
+        return $result;
+    }
+
+    /**
+     * Returns description of update_course_competency_settings() result value.
+     *
+     * @return \external_value
+     */
+    public static function update_course_competency_settings_returns() {
+        return new external_value(PARAM_BOOL, 'True if the update was successful.');
+    }
 }

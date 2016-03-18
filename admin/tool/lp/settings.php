@@ -58,4 +58,7 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configcheckbox('tool_lp/enabled', get_string('enablecompetencies', 'tool_lp'),
         get_string('enablecompetencies_desc', 'tool_lp'), 1);
     $settings->add($setting);
+    $setting = new admin_setting_configcheckbox('tool_lp/pushcourseratingstouserplans', get_string('pushcourseratingstouserplans', 'tool_lp'),
+        get_string('pushcourseratingstouserplans_desc', 'tool_lp'), 1);
+    $settings->add($setting);
 }

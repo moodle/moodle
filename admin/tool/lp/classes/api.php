@@ -4855,4 +4855,56 @@ class api {
 
         return true;
     }
+
+    /**
+     * Get the competency settings for a course.
+     *
+     * Requires tool/lp:coursecompetencyread capability at the course context.
+     *
+     * @param int $courseid The course id
+     * @return course_competency_settings
+     */
+    public static function read_course_competency_settings($courseid) {
+        static::require_enabled();
+
+        // First we do a permissions check.
+        if (!course_competency_settings::can_read($courseid)) {
+            $context = context_course::instance($courseid);
+            throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
+        }
+
+        return course_competency_settings::get_course_settings($courseid);
+    }
+
+    /**
+     * Update the competency settings for a course.
+     *
+     * Requires tool/lp:coursecompetencyread capability at the course context.
+     *
+     * @param int $courseid The course id
+     * @param bool $pushratingstouserplans Push competency ratings to user plans immediately.
+     * @return bool
+     */
+    public static function update_course_competency_settings($courseid, $pushratingstouserplans) {
+        static::require_enabled();
+
+        // First we do a permissions check.
+        if (!course_competency_settings::can_update($courseid)) {
+            $context = context_course::instance($courseid);
+            throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
+        }
+
+        $exists = course_competency_settings::get_record(array('courseid' => $courseid));
+
+        // Now update or insert.
+        if ($exists) {
+            $settings = $exists;
+            $settings->set_pushratingstouserplans($pushratingstouserplans);
+            return $settings->update();
+        } else {
+            $data = (object) array('courseid' => $courseid, 'pushratingstouserplans' => $pushratingstouserplans);
+            $settings = new course_competency_settings(0, $data);
+            return !empty($settings->create());
+        }
+    }
 }

@@ -25,6 +25,23 @@
             {{/canmanagecoursecompetencies}}
         </div>
     </div>
+{{#canconfigurecoursecompetencies}}
+<div data-region="configurecoursecompetencies">
+    <p class="alert">
+{{#pushratingstouserplans}}
+    {{#str}}coursecompetencyratingsarepushedtouserplans, tool_lp{{/str}}
+{{/pushratingstouserplans}}
+{{^pushratingstouserplans}}
+    {{#str}}coursecompetencyratingsarenotpushedtouserplans, tool_lp{{/str}}
+{{/pushratingstouserplans}}
+    <a href="#"
+        data-action="configure-course-competency-settings"
+        data-courseid="{{courseid}}"
+        data-pushratingstouserplans="{{pushratingstouserplans}}"
+        >{{#pix}}t/edit, core, {{#str}}edit{{/str}}{{/pix}}</a>
+    </p>
+</div>
+{{/canconfigurecoursecompetencies}}
 <div data-region="coursecompetencies">
 <table class="generaltable fullwidth managecompetencies">
 <tbody class="drag-parentnode">
@@ -100,3 +117,10 @@ require(['tool_lp/competencies'], function(mod) {
     (new mod({{courseid}}, 'course', {{pagecontextid}}));
 });
 {{/js}}
+{{#canconfigurecoursecompetencies}}
+{{#js}}
+require(['tool_lp/course_competency_settings'], function(Mod) {
+    (new Mod('[data-action=configure-course-competency-settings]'));
+});
+{{/js}}
+{{/canconfigurecoursecompetencies}}

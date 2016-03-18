@@ -35,6 +35,7 @@ use tool_lp\user_competency;
 use tool_lp\user_competency_plan;
 use tool_lp\plan_competency;
 use tool_lp\template_competency;
+use tool_lp\course_competency_settings;
 
 /**
  * External learning plans webservice API tests.
@@ -118,12 +119,14 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         unassign_capability('tool/lp:templatemanage', $authrole->id);
         unassign_capability('tool/lp:templateview', $authrole->id);
         unassign_capability('moodle/cohort:manage', $authrole->id);
+        unassign_capability('tool/lp:coursecompetencyconfigure', $authrole->id);
 
         // Creating specific roles.
         $this->creatorrole = create_role('Creator role', 'creatorrole', 'learning plan creator role description');
         $this->userrole = create_role('User role', 'userrole', 'learning plan user role description');
 
         assign_capability('tool/lp:competencymanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('tool/lp:competencycompetencyconfigure', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:competencyview', CAP_ALLOW, $this->userrole, $syscontext->id);
         assign_capability('tool/lp:planmanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:planmanagedraft', CAP_ALLOW, $this->creatorrole, $syscontext->id);
@@ -3059,4 +3062,47 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         }
     }
 
+    /**
+     * Test update course competency settings.
+     */
+    public function test_update_course_competency_settings() {
+        $this->resetAfterTest(true);
+
+        $dg = $this->getDataGenerator();
+
+        $course = $dg->create_course();
+        $roleid = $dg->create_role();
+        $noobroleid = $dg->create_role();
+        $context = context_course::instance($course->id);
+        $compmanager = $this->getDataGenerator()->create_user();
+        $compnoob = $this->getDataGenerator()->create_user();
+
+        assign_capability('tool/lp:coursecompetencyconfigure', CAP_ALLOW, $roleid, $context->id, true);
+        assign_capability('tool/lp:coursecompetencyview', CAP_ALLOW, $roleid, $context->id, true);
+        assign_capability('tool/lp:coursecompetencyview', CAP_ALLOW, $noobroleid, $context->id, true);
+
+        role_assign($roleid, $compmanager->id, $context->id);
+        role_assign($noobroleid, $compnoob->id, $context->id);
+        $dg->enrol_user($compmanager->id, $course->id, $roleid);
+        $dg->enrol_user($compnoob->id, $course->id, $noobroleid);
+
+        $this->setUser($compmanager);
+
+        // Start the test.
+        $result = external::update_course_competency_settings($course->id, true);
+
+        $settings = course_competency_settings::get_course_settings($course->id);
+
+        $this->assertTrue((bool)$settings->get_pushratingstouserplans());
+        
+        $result = external::update_course_competency_settings($course->id, false);
+
+        $settings = course_competency_settings::get_course_settings($course->id);
+
+        $this->assertFalse((bool)$settings->get_pushratingstouserplans());
+        $this->setUser($compnoob);
+
+        $this->setExpectedException('required_capability_exception');
+        $result = external::update_course_competency_settings($course->id, true);
+    }
 }

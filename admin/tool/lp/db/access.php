@@ -44,14 +44,6 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' => 'moodle/block:view'
     ),
-    'tool/lp:competencysuggestgrade' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE, // And CONTEXT_USER.
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW
-        ),
-    ),
     'tool/lp:competencygrade' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE, // And CONTEXT_USER.
@@ -66,6 +58,14 @@ $capabilities = array(
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/site:backup'
+    ),
+    'tool/lp:coursecompetencyconfigure' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
             'manager' => CAP_ALLOW
         ),
         'clonepermissionsfrom' => 'moodle/site:backup'

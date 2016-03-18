@@ -32,6 +32,23 @@
         <INDEX NAME="ruleoutcome" UNIQUE="false" FIELDS="ruleoutcome"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="tool_lp_coursecompsettings" COMMENT="This table contains the course specific settings for competencies.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The course this setting is linked to."/>
+        <FIELD NAME="pushratingstouserplans" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="Does this course push ratings to user plans?"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The time this setting was created."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The time this setting was last modified."/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The user who last modified this setting"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="courseidlink" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" COMMENT="Course foreign key."/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseiduniq" UNIQUE="true" FIELDS="courseid"/>
+      </INDEXES>
+    </TABLE>
     <TABLE NAME="tool_lp_competency_framework" COMMENT="List of competency frameworks.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
