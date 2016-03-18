@@ -2691,7 +2691,6 @@ class grade_category extends grade_object {
      * @return void
      */
     public static function clean_record_set() {
-        $cache = cache::make('core', 'grade_categories');
-        $cache->purge();
+        cache_helper::purge_by_event('changesingradecategories');
     }
 }

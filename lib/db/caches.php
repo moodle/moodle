@@ -271,10 +271,13 @@ $definitions = array(
         'staticaccelerationsize' => 3
     ),
 
-    // Grade categories. Stored at request level as invalidation is very aggressive.
+    // Grade categories. Stored at session level as invalidation is very aggressive.
     'grade_categories' => array(
-        'mode' => cache_store::MODE_REQUEST,
+        'mode' => cache_store::MODE_SESSION,
         'simplekeys' => true,
+        'invalidationevents' => array(
+            'changesingradecategories',
+        )
     ),
 
     // Store temporary tables information.
