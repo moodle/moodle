@@ -184,7 +184,7 @@ class feedback_item_label extends feedback_item_base {
         if ($item->dependitem) {
             if ($dependitem = $DB->get_record('feedback_item', array('id'=>$item->dependitem))) {
                 echo ' <span class="feedback_depend">';
-                echo '('.$dependitem->label.'-&gt;'.$item->dependvalue.')';
+                echo '('.format_string($dependitem->label).'-&gt;'.$item->dependvalue.')';
                 echo '</span>';
             }
         }

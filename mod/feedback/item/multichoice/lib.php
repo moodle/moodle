@@ -231,7 +231,11 @@ class feedback_item_multichoice extends feedback_item_base {
         if ($analysed_item) {
             $itemname = $analysed_item[1];
             echo '<tr><th colspan="2" align="left">';
-            echo $itemnr.'&nbsp;('.$item->label.') '.$itemname;
+            echo $itemnr . ' ';
+            if (strval($item->label) !== '') {
+                echo '('. format_string($item->label).') ';
+            }
+            echo $itemname;
             echo '</th></tr>';
 
             $analysed_vals = $analysed_item[2];
@@ -320,12 +324,14 @@ class feedback_item_multichoice extends feedback_item_base {
         if ($info->subtype == 'd') {
             echo '<label for="'. $item->typ . '_' . $item->id .'">';
         }
-        echo '('.$item->label.') ';
+        if (strval($item->label) !== '') {
+            echo '('. format_string($item->label).') ';
+        }
         echo format_text($item->name . $requiredmark, FORMAT_HTML, array('noclean' => true, 'para' => false));
         if ($item->dependitem) {
             if ($dependitem = $DB->get_record('feedback_item', array('id'=>$item->dependitem))) {
                 echo ' <span class="feedback_depend">';
-                echo '('.$dependitem->label.'-&gt;'.$item->dependvalue.')';
+                echo '('.format_string($dependitem->label).'-&gt;'.$item->dependvalue.')';
                 echo '</span>';
             }
         }
@@ -425,7 +431,7 @@ class feedback_item_multichoice extends feedback_item_base {
         echo '<div class="feedback_item_label_'.$align.'">';
         if ($info->subtype == 'd') {
             echo '<label for="'. $inputname .'">';
-            echo format_text($item->name.$requiredmark, true, false, false);
+            echo format_text($item->name . $requiredmark, FORMAT_HTML, array('noclean' => true, 'para' => false));
             if ($highlightrequire AND $item->required AND (count($values) == 0 OR $values[0] == '' OR $values[0] == 0)) {
                 echo '<br class="error"><span id="id_error_'.$inputname.'" class="error"> '.get_string('err_required', 'form').
                     '</span><br id="id_error_break_'.$inputname.'" class="error" >';
@@ -536,7 +542,9 @@ class feedback_item_multichoice extends feedback_item_base {
 
         //print the question and label
         echo '<div class="feedback_item_label_'.$align.'">';
-        echo '('.$item->label.') ';
+        if (strval($item->label) !== '') {
+            echo '('. format_string($item->label).') ';
+        }
         echo format_text($item->name . $requiredmark, FORMAT_HTML, array('noclean' => true, 'para' => false));
         echo '</div>';
 
