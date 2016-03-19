@@ -29,8 +29,6 @@
     * usercompetencysummary - object containing:
         * showrelatedcompetencies - boolean
         * cangrade - boolean
-        * cansuggest - boolean
-        * cangradeorsuggest - boolean
         * competency - competency summary record
         * user - user record
         * usercompetency - user competency record
@@ -65,9 +63,9 @@
         </dd>
         <dt>{{#str}}rating, tool_lp{{/str}}</dt>
         <dd>{{gradename}}
-            {{#cangradeorsuggest}}
+            {{#cangrade}}
                 <buttn class="btn" id="rate_{{uniqid}}">{{#str}}rate, tool_lp{{/str}}</button>
-            {{/cangradeorsuggest}}
+            {{/cangrade}}
         </dd>
         {{#js}}
         require(['jquery', 'tool_lp/grade_user_competency_inline', 'tool_lp/user_competency_info', 'tool_lp/user_competency_workflow'], function($, mod, info, UserCompWorkflow) {
@@ -80,7 +78,7 @@
             ucw.on('status-changed', infoReloader.reload.bind(infoReloader));
             ucw.on('error-occured', infoReloader.reload.bind(infoReloader));
 
-            var inlineGrader = new mod('#rate_{{uniqid}}', '{{competency.scaleid}}', '{{competency.competency.id}}', '{{user.id}}', '{{plan.id}}', '', '{{#str}}chooserating, tool_lp{{/str}}', {{cangrade}}, {{cansuggest}});
+            var inlineGrader = new mod('#rate_{{uniqid}}', '{{competency.scaleid}}', '{{competency.competency.id}}', '{{user.id}}', '{{plan.id}}', '', '{{#str}}chooserating, tool_lp{{/str}}');
             inlineGrader.on('competencyupdated', infoReloader.reload.bind(infoReloader));
         });
         {{/js}}

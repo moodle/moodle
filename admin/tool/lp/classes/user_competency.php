@@ -444,30 +444,6 @@ class user_competency extends persistent {
     }
 
     /**
-     * Can the current user suggest a grade for a user's user competency?
-     *
-     * @param int $userid The user ID the competency belongs to.
-     * @return bool
-     */
-    public static function can_suggest_grade_user($userid) {
-        $suggestcap = 'tool/lp:competencysuggestgrade';
-        return has_capability($suggestcap, context_user::instance($userid));
-    }
-
-    /**
-     * Can the current user suggest a grade for a user's user competency in a course?
-     *
-     * @param int $userid The user ID the competency belongs to.
-     * @param int $courseid The course ID.
-     * @return bool
-     */
-    public static function can_suggest_grade_user_in_course($userid, $courseid) {
-        $suggestcap = 'tool/lp:competencysuggestgrade';
-        return has_capability($suggestcap, context_course::instance($courseid))
-            || static::can_suggest_grade_user($userid);
-    }
-
-    /**
      * Create a new user_competency object.
      *
      * Note, this is intended to be used to create a blank relation, for instance when

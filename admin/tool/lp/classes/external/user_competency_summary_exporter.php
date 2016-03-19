@@ -54,12 +54,6 @@ class user_competency_summary_exporter extends exporter {
             'cangrade' => array(
                 'type' => PARAM_BOOL
             ),
-            'cansuggest' => array(
-                'type' => PARAM_BOOL
-            ),
-            'cangradeorsuggest' => array(
-                'type' => PARAM_BOOL
-            ),
             'competency' => array(
                 'type' => competency_summary_exporter::read_properties_definition()
             ),
@@ -102,8 +96,6 @@ class user_competency_summary_exporter extends exporter {
 
         $context = context_user::instance($this->related['user']->id);
         $result->cangrade = user_competency::can_grade_user($this->related['user']->id);
-        $result->cansuggest = user_competency::can_suggest_grade_user($this->related['user']->id);
-        $result->cangradeorsuggest = $result->cangrade || $result->cansuggest;
         if ($this->related['user']) {
             $exporter = new user_summary_exporter($this->related['user']);
             $result->user = $exporter->export($output);

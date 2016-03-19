@@ -35,7 +35,7 @@ define(['jquery',
      * @param {String} selector - selector for the links to open the dialogue.
      */
     var settingsMod = function(selector) {
-        var links = $(selector).on('click', this.configureSettings.bind(this));
+        $(selector).on('click', this.configureSettings.bind(this));
     };
 
     /** @type {Dialogue} Reference to the dialogue that we opened. */

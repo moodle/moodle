@@ -32,20 +32,14 @@ define(['jquery',
     /**
      * Grade dialogue class.
      */
-    var Grade = function(ratingOptions, canGrade, canSuggest) {
+    var Grade = function(ratingOptions) {
         EventBase.prototype.constructor.apply(this, []);
         this._ratingOptions = ratingOptions;
-        this._canGrade = canGrade || false;
-        this._canSuggest = canSuggest || false;
     };
     Grade.prototype = Object.create(EventBase.prototype);
 
     /** @type {Dialogue} The dialogue. */
     Grade.prototype._popup = null;
-    /** @type {Boolean} Can grade. */
-    Grade.prototype._canGrade = false;
-    /** @type {Boolean} Can suggest. */
-    Grade.prototype._canSuggest = false;
     /** @type {Array} Array of objects containing, 'value', 'name' and optionally 'selected'. */
     Grade.prototype._ratingOptions = null;
 
@@ -58,7 +52,6 @@ define(['jquery',
      */
     Grade.prototype._afterRender = function() {
         var btnRate = this._find('[data-action="rate"]'),
-            btnSuggest = this._find('[data-action="suggest"]'),
             lstRating = this._find('[name="rating"]'),
             txtComment = this._find('[name="comment"]');
 
@@ -72,10 +65,8 @@ define(['jquery',
             var node = $(this);
             if (!node.val()) {
                 btnRate.prop('disabled', true);
-                btnSuggest.prop('disabled', true);
             } else {
                 btnRate.prop('disabled', false);
-                btnSuggest.prop('disabled', false);
             }
         }).change();
 
@@ -86,18 +77,6 @@ define(['jquery',
                 return;
             }
             this._trigger('rated', {
-                'rating': val,
-                'note': txtComment.val()
-            });
-            this.close();
-        }.bind(this));
-        btnSuggest.click(function(e) {
-            e.preventDefault();
-            var val = lstRating.val();
-            if (!val) {
-                return;
-            }
-            this._trigger('suggested', {
                 'rating': val,
                 'note': txtComment.val()
             });
@@ -155,7 +134,6 @@ define(['jquery',
     Grade.prototype._render = function() {
         var context = {
             cangrade: this._canGrade,
-            cansuggest: this._canSuggest,
             ratings: this._ratingOptions
         };
         return Templates.render('tool_lp/competency_grader', context);

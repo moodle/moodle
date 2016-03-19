@@ -40,10 +40,8 @@ define(['jquery',
      * @param {Number} The id of the plan.
      * @param {Number} The id of the course.
      * @param {String} Language string for choose a rating.
-     * @param {Boolean} canGrade Whether the user can grade.
-     * @param {Boolean} canSuggest Whether the user can suggest.
      */
-    var InlineEditor = function(selector, scaleId, competencyId, userId, planId, courseId, chooseStr, canGrade, canSuggest) {
+    var InlineEditor = function(selector, scaleId, competencyId, userId, planId, courseId, chooseStr) {
         EventBase.prototype.constructor.apply(this, []);
 
         var trigger = $(selector);
@@ -57,8 +55,6 @@ define(['jquery',
         this._planId = planId;
         this._courseId = courseId;
         this._chooseStr = chooseStr;
-        this._canGrade = canGrade;
-        this._canSuggest = canSuggest;
         this._setUp();
 
         trigger.click(function(e) {
@@ -113,26 +109,11 @@ define(['jquery',
                 });
             }
 
-            self._dialogue = new GradeDialogue(options, self._canGrade, self._canSuggest);
+            self._dialogue = new GradeDialogue(options);
             self._dialogue.on('rated', function(e, data) {
                 var args = self._args;
                 args.grade = data.rating;
                 args.note = data.note;
-                args.override = true;
-                ajax.call([{
-                    methodname: self._methodName,
-                    args: args,
-                    done: function(evidence) {
-                        self._trigger('competencyupdated', { args: args, evidence: evidence });
-                    }.bind(self),
-                    fail: notification.exception
-                }]);
-            }.bind(self));
-            self._dialogue.on('suggested', function(e, data) {
-                var args = self._args;
-                args.grade = data.rating;
-                args.note = data.note;
-                args.override = false;
                 ajax.call([{
                     methodname: self._methodName,
                     args: args,
@@ -159,10 +140,6 @@ define(['jquery',
     InlineEditor.prototype._chooseStr = null;
     /** @type {GradeDialogue} The grading dialogue. */
     InlineEditor.prototype._dialogue = null;
-    /** @type {Boolean} Can grade. */
-    InlineEditor.prototype._canGrade = null;
-    /** @type {Boolean} Can suggest. */
-    InlineEditor.prototype._canSuggest = null;
 
     return /** @alias module:tool_lp/grade_user_competency_inline */ InlineEditor;
 

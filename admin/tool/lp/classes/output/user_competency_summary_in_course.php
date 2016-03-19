@@ -94,10 +94,6 @@ class user_competency_summary_in_course implements renderable, templatable {
 
         // Some adjustments specific to course.
         $data->usercompetencysummary->cangrade = user_competency::can_grade_user_in_course($this->userid, $this->courseid);
-        $data->usercompetencysummary->cansuggest = user_competency::can_suggest_grade_user_in_course($this->userid,
-            $this->courseid);
-        $data->usercompetencysummary->cangradeorsuggest = $data->usercompetencysummary->cangrade
-            || $data->usercompetencysummary->cansuggest;
 
         return $data;
     }

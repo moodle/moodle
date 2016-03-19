@@ -16,12 +16,7 @@
         </div>
         <div data-region="footer">
             <div class="pull-right">
-                {{#cansuggest}}
-                    <input type="button" data-action="suggest" value="{{#str}}suggest, tool_lp{{/str}}" class="btn">
-                {{/cansuggest}}
-                {{#cangrade}}
-                    <input type="button" data-action="rate" value="{{#str}}rate, tool_lp{{/str}}" class="btn">
-                {{/cangrade}}
+                <input type="button" data-action="rate" value="{{#str}}rate, tool_lp{{/str}}" class="btn">
             </div>
             <div>
                 <button data-action="cancel" class="btn btn-link">{{#str}}cancel{{/str}}</button>

@@ -44,8 +44,6 @@ class evidence extends persistent {
 
     /** Action logging. */
     const ACTION_LOG = 0;
-    /** Action suggesting a rating. */
-    const ACTION_SUGGEST = 1;
     /** Action rating a competency when no rating is set. */
     const ACTION_COMPLETE = 2;
     /** Action rating a competency. */
@@ -66,7 +64,7 @@ class evidence extends persistent {
             ),
             'action' => array(
                 'type' => PARAM_INT,
-                'choices' => array(self::ACTION_LOG, self::ACTION_SUGGEST, self::ACTION_COMPLETE, self::ACTION_OVERRIDE)
+                'choices' => array(self::ACTION_LOG, self::ACTION_COMPLETE, self::ACTION_OVERRIDE)
             ),
             'actionuserid' => array(
                 'type' => PARAM_INT,
@@ -243,7 +241,7 @@ class evidence extends persistent {
         }
 
         $action = $this->get('action');
-        if ($value === null && in_array($action, array(self::ACTION_SUGGEST, self::ACTION_COMPLETE))) {
+        if ($value === null && $action === self::ACTION_COMPLETE) {
             return new lang_string('invalidgrade', 'tool_lp');
 
         } else if ($value !== null && $action == self::ACTION_LOG) {
