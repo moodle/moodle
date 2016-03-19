@@ -1440,7 +1440,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
     $getuserlastmodified = ($displayformat == 'header');
 
     $discussions = forum_get_discussions($cm, $sort, $fullpost, null, $maxdiscussions, $getuserlastmodified, $page, $perpage);
-    if (!$$discussions) {
+    if (!$discussions) {
         echo '<div class="forumnodiscuss">';
         if ($forum->type == 'news') {
             echo '('.get_string('nonews', 'forum').')';

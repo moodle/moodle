@@ -304,6 +304,10 @@ class mod_forum_generator extends testing_module_generator {
             $record['deleted'] = 0;
         }
 
+        if (!isset($record['privatereplyto'])) {
+            $record['privatereplyto'] = 0;
+        }
+
         $record = (object) $record;
 
         // Add the post.

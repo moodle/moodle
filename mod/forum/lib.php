@@ -813,6 +813,10 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
             }
         }
 
+        if (!forum_post_is_visible_privately($post, $cm)) {
+            continue;
+        }
+
         // Check that the user can see the discussion.
         if (forum_is_user_group_discussion($cm, $post->groupid)) {
             $printposts[] = $post;
@@ -1038,15 +1042,12 @@ function forum_get_post_full($postid) {
 /**
  * Gets all posts in discussion including top parent.
  *
- * @global object
- * @global object
- * @global object
- * @param int $discussionid
- * @param string $sort
- * @param bool $tracking does user track the forum?
- * @return array of posts
+ * @param   int     $discussionid   The Discussion to fetch.
+ * @param   string  $sort           The sorting to apply.
+ * @param   bool    $tracking       Whether the user tracks this forum.
+ * @return  array                   The posts in the discussion.
  */
-function forum_get_all_discussion_posts($discussionid, $sort, $tracking=false) {
+function forum_get_all_discussion_posts($discussionid, $sort, $tracking = false) {
     global $CFG, $DB, $USER;
 
     $tr_sel  = "";
@@ -1525,17 +1526,17 @@ function forum_get_firstpost_from_discussion($discussionid) {
 /**
  * Returns an array of counts of replies to each discussion
  *
- * @global object
- * @global object
- * @param int $forumid
- * @param string $forumsort
- * @param int $limit
- * @param int $page
- * @param int $perpage
- * @return array
+ * @param   int     $forumid
+ * @param   string  $forumsort
+ * @param   int     $limit
+ * @param   int     $page
+ * @param   int     $perpage
+ * @param   boolean $canseeprivatereplies   Whether the current user can see private replies.
+ * @return  array
  */
-function forum_count_discussion_replies($forumid, $forumsort="", $limit=-1, $page=-1, $perpage=0) {
-    global $CFG, $DB;
+function forum_count_discussion_replies($forumid, $forumsort = "", $limit = -1, $page = -1, $perpage = 0,
+                                        $canseeprivatereplies = false) {
+    global $CFG, $DB, $USER;
 
     if ($limit > 0) {
         $limitfrom = 0;
@@ -1559,21 +1560,33 @@ function forum_count_discussion_replies($forumid, $forumsort="", $limit=-1, $pag
         $groupby = str_replace('asc', '', $groupby);
     }
 
+    $params = ['forumid' => $forumid];
+
+    if (!$canseeprivatereplies) {
+        $privatewhere = ' AND (p.privatereplyto = :currentuser1 OR p.userid = :currentuser2 OR p.privatereplyto = 0)';
+        $params['currentuser1'] = $USER->id;
+        $params['currentuser2'] = $USER->id;
+    } else {
+        $privatewhere = '';
+    }
+
     if (($limitfrom == 0 and $limitnum == 0) or $forumsort == "") {
         $sql = "SELECT p.discussion, COUNT(p.id) AS replies, MAX(p.id) AS lastpostid
                   FROM {forum_posts} p
                        JOIN {forum_discussions} d ON p.discussion = d.id
-                 WHERE p.parent > 0 AND d.forum = ?
+                 WHERE p.parent > 0 AND d.forum = :forumid
+                       $privatewhere
               GROUP BY p.discussion";
-        return $DB->get_records_sql($sql, array($forumid));
+        return $DB->get_records_sql($sql, $params);
 
     } else {
         $sql = "SELECT p.discussion, (COUNT(p.id) - 1) AS replies, MAX(p.id) AS lastpostid
                   FROM {forum_posts} p
                        JOIN {forum_discussions} d ON p.discussion = d.id
-                 WHERE d.forum = ?
+                 WHERE d.forum = :forumid
+                       $privatewhere
               GROUP BY p.discussion $groupby $orderby";
-        return $DB->get_records_sql($sql, array($forumid), $limitfrom, $limitnum);
+        return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     }
 }
 
@@ -3093,10 +3106,25 @@ function forum_add_new_post($post, $mform, $unused = null) {
     $forum      = $DB->get_record('forum', array('id' => $discussion->forum));
     $cm         = get_coursemodule_from_instance('forum', $forum->id);
     $context    = context_module::instance($cm->id);
+    $privatereplyto = 0;
+
+    // Check whether private replies should be enabled for this post.
+    if ($post->parent) {
+        $parent = $DB->get_record('forum_posts', array('id' => $post->parent));
+
+        if (!empty($parent->privatereplyto)) {
+            throw new \coding_exception('It should not be possible to reply to a private reply');
+        }
+
+        if (!empty($post->isprivatereply) && forum_user_can_reply_privately($context, $parent)) {
+            $privatereplyto = $parent->userid;
+        }
+    }
 
     $post->created    = $post->modified = time();
     $post->mailed     = FORUM_MAILED_PENDING;
     $post->userid     = $USER->id;
+    $post->privatereplyto = $privatereplyto;
     $post->attachment = "";
     if (!isset($post->totalscore)) {
         $post->totalscore = 0;
@@ -3223,6 +3251,7 @@ function forum_add_discussion($discussion, $mform=null, $unused=null, $userid=nu
     $post = new stdClass();
     $post->discussion    = 0;
     $post->parent        = 0;
+    $post->privatereplyto = 0;
     $post->userid        = $userid;
     $post->created       = $timenow;
     $post->modified      = $timenow;
@@ -3986,6 +4015,10 @@ function forum_user_can_see_post($forum, $discussion, $post, $user = null, $cm =
     $canviewdiscussion = (isset($cm->cache) && !empty($cm->cache->caps['mod/forum:viewdiscussion']))
         || has_capability('mod/forum:viewdiscussion', $modcontext, $user->id);
     if (!$canviewdiscussion && !has_all_capabilities(array('moodle/user:viewdetails', 'moodle/user:readuserposts'), context_user::instance($post->userid))) {
+        return false;
+    }
+
+    if (!forum_post_is_visible_privately($post, $cm)) {
         return false;
     }
 
@@ -6540,4 +6573,45 @@ function mod_forum_get_completion_active_rule_descriptions($cm) {
         }
     }
     return $descriptions;
+}
+
+/**
+ * Check whether the forum post is a private reply visible to this user.
+ *
+ * @param   stdClass    $post   The post to check.
+ * @param   cm_info     $cm     The context module instance.
+ * @return  bool                Whether the post is visible in terms of private reply configuration.
+ */
+function forum_post_is_visible_privately($post, $cm) {
+    global $USER;
+
+    if (!empty($post->privatereplyto)) {
+        // Allow the user to see the private reply if:
+        // * they hold the permission;
+        // * they are the author; or
+        // * they are the intended recipient.
+        $cansee = false;
+        $cansee = $cansee || ($post->userid == $USER->id);
+        $cansee = $cansee || ($post->privatereplyto == $USER->id);
+        $cansee = $cansee || has_capability('mod/forum:readprivatereplies', context_module::instance($cm->id));
+        return $cansee;
+    }
+
+    return true;
+}
+
+/**
+ * Check whether the user can reply privately to the parent post.
+ *
+ * @param   \context_module $context
+ * @param   \stdClass   $parent
+ * @return  bool
+ */
+function forum_user_can_reply_privately(\context_module $context, \stdClass $parent) : bool {
+    if ($parent->privatereplyto) {
+        // You cannot reply privately to a post which is, itself, a private reply.
+        return false;
+    }
+
+    return has_capability('mod/forum:postprivatereply', $context);
 }

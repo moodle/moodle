@@ -89,6 +89,7 @@ class mod_forum_entities_discussion_summary_testcase extends advanced_testcase {
             false,
             0,
             false,
+            false,
             false
         );
 

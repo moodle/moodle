@@ -331,6 +331,56 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->send_notifications_and_assert($recipient, [$post]);
     }
 
+    /**
+     * Ensure that private replies are not sent to users with an automatic subscription unless they are an expected
+     * recipient.
+     */
+    public function test_automatic_with_private_reply() {
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', [
+                'course' => $course->id,
+                'forcesubscribe' => FORUM_INITIALSUBSCRIBE,
+            ]);
+
+        [$student, $otherstudent] = $this->helper_create_users($course, 2, 'student');
+        [$teacher, $otherteacher] = $this->helper_create_users($course, 2, 'teacher');
+
+        [$discussion, $post] = $this->helper_post_to_forum($forum, $student);
+        $reply = $this->helper_post_to_discussion($forum, $discussion, $teacher, [
+                'privatereplyto' => $student->id,
+            ]);
+
+        // The private reply is queued to all messages as reply visibility may change between queueing, and sending.
+        $expect = [
+            (object) [
+                'userid' => $student->id,
+                'messages' => 2,
+            ],
+            (object) [
+                'userid' => $otherstudent->id,
+                'messages' => 2,
+            ],
+            (object) [
+                'userid' => $teacher->id,
+                'messages' => 2,
+            ],
+            (object) [
+                'userid' => $otherteacher->id,
+                'messages' => 2,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        // The actual messages sent will respect private replies.
+        $this->send_notifications_and_assert($student, [$post, $reply]);
+        $this->send_notifications_and_assert($teacher, [$post, $reply]);
+        $this->send_notifications_and_assert($otherteacher, [$post, $reply]);
+        $this->send_notifications_and_assert($otherstudent, [$post]);
+    }
+
     public function test_optional() {
         $this->resetAfterTest(true);
 

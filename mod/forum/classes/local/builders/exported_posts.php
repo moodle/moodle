@@ -107,6 +107,9 @@ class exported_posts {
      * to load the additional resources as efficiently as possible but there is no way around some of
      * the additional overhead.
      *
+     * Note: Some posts will be removed as part of the build process according to capabilities.
+     * A one-to-one mapping should not be expected.
+     *
      * @param stdClass $user The user to export the posts for.
      * @param forum_entity[] $forums A list of all forums that each of the $discussions belong to
      * @param discussion_entity[] $discussions A list of all discussions that each of the $posts belong to

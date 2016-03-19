@@ -70,6 +70,7 @@ class post extends exporter {
             'type' => [
                 'export' => [
                     'type' => PARAM_URL,
+                    'description' => 'The URL used to export the attachment',
                     'optional' => true,
                     'default' => null,
                     'null' => NULL_ALLOWED
@@ -80,6 +81,7 @@ class post extends exporter {
             'type' => [
                 'plagiarism' => [
                     'type' => PARAM_RAW,
+                    'description' => 'The HTML source for the Plagiarism Response',
                     'optional' => true,
                     'default' => null,
                     'null' => NULL_ALLOWED
@@ -109,6 +111,7 @@ class post extends exporter {
                 'null' => NULL_ALLOWED
             ],
             'isdeleted' => ['type' => PARAM_BOOL],
+            'isprivatereply' => ['type' => PARAM_BOOL],
             'haswordcount' => ['type' => PARAM_BOOL],
             'wordcount' => [
                 'type' => PARAM_INT,
@@ -118,13 +121,41 @@ class post extends exporter {
             ],
             'capabilities' => [
                 'type' => [
-                    'view' => ['type' => PARAM_BOOL],
-                    'edit' => ['type' => PARAM_BOOL],
-                    'delete' => ['type' => PARAM_BOOL],
-                    'split' => ['type' => PARAM_BOOL],
-                    'reply' => ['type' => PARAM_BOOL],
-                    'export' => ['type' => PARAM_BOOL],
-                    'controlreadstatus' => ['type' => PARAM_BOOL]
+                    'view' => [
+                        'type' => PARAM_BOOL,
+                        'null' => NULL_ALLOWED,
+                        'description' => 'Whether the user can view the post',
+                    ],
+                    'edit' => [
+                        'type' => PARAM_BOOL,
+                        'null' => NULL_ALLOWED,
+                        'description' => 'Whether the user can edit the post',
+                    ],
+                    'delete' => [
+                        'type' => PARAM_BOOL,
+                        'null' => NULL_ALLOWED,
+                        'description' => 'Whether the user can delete the post',
+                    ],
+                    'split' => [
+                        'type' => PARAM_BOOL,
+                        'null' => NULL_ALLOWED,
+                        'description' => 'Whether the user can split the post',
+                    ],
+                    'reply' => [
+                        'type' => PARAM_BOOL,
+                        'null' => NULL_ALLOWED,
+                        'description' => 'Whether the user can reply to the post',
+                    ],
+                    'export' => [
+                        'type' => PARAM_BOOL,
+                        'null' => NULL_ALLOWED,
+                        'description' => 'Whether the user can export the post',
+                    ],
+                    'controlreadstatus' => [
+                        'type' => PARAM_BOOL,
+                        'null' => NULL_ALLOWED,
+                        'description' => 'Whether the user can control the read status of the post',
+                    ],
                 ]
             ],
             'urls' => [
@@ -133,60 +164,71 @@ class post extends exporter {
                 'null' => NULL_ALLOWED,
                 'type' => [
                     'view' => [
+                        'description' => 'The URL used to view the post',
                         'type' => PARAM_URL,
                         'optional' => true,
                         'default' => null,
                         'null' => NULL_ALLOWED
                     ],
                     'viewisolated' => [
+                        'description' => 'The URL used to view the post in isolation',
                         'type' => PARAM_URL,
                         'optional' => true,
                         'default' => null,
                         'null' => NULL_ALLOWED
                     ],
                     'viewparent' => [
+                        'description' => 'The URL used to view the parent of the post',
                         'type' => PARAM_URL,
                         'optional' => true,
                         'default' => null,
                         'null' => NULL_ALLOWED
                     ],
                     'edit' => [
+                        'description' => 'The URL used to edit the post',
                         'type' => PARAM_URL,
                         'optional' => true,
                         'default' => null,
                         'null' => NULL_ALLOWED
                     ],
                     'delete' => [
+                        'description' => 'The URL used to delete the post',
                         'type' => PARAM_URL,
                         'optional' => true,
                         'default' => null,
                         'null' => NULL_ALLOWED
                     ],
                     'split' => [
+                        'description' => 'The URL used to split the discussion ' .
+                            'with the selected post being the first post in the new discussion',
                         'type' => PARAM_URL,
                         'optional' => true,
                         'default' => null,
                         'null' => NULL_ALLOWED
                     ],
                     'reply' => [
+                        'description' => 'The URL used to reply to the post',
                         'type' => PARAM_URL,
                         'optional' => true,
                         'default' => null,
                         'null' => NULL_ALLOWED
                     ],
                     'export' => [
+                        'description' => 'The URL used to export the post',
                         'type' => PARAM_URL,
                         'optional' => true,
                         'default' => null,
                         'null' => NULL_ALLOWED
                     ],
                     'markasread' => [
+                        'description' => 'The URL used to mark the post as read',
                         'type' => PARAM_URL,
                         'optional' => true,
                         'default' => null,
                         'null' => NULL_ALLOWED
                     ],
                     'markasunread' => [
+                        'description' => 'The URL used to mark the post as unread',
                         'type' => PARAM_URL,
                         'optional' => true,
                         'default' => null,
@@ -210,14 +252,40 @@ class post extends exporter {
                 'null' => NULL_ALLOWED,
                 'multiple' => true,
                 'type' => [
-                    'id' => ['type' => PARAM_INT],
-                    'tagid' => ['type' => PARAM_INT],
-                    'isstandard' => ['type' => PARAM_BOOL],
-                    'displayname' => ['type' => PARAM_TEXT],
-                    'flag' => ['type' => PARAM_BOOL],
+                    'id' => [
+                        'type' => PARAM_INT,
+                        'description' => 'The ID of the Tag',
+                        'null' => NULL_NOT_ALLOWED,
+                    ],
+                    'tagid' => [
+                        'type' => PARAM_INT,
+                        'description' => 'The tagid',
+                        'null' => NULL_NOT_ALLOWED,
+                    ],
+                    'isstandard' => [
+                        'type' => PARAM_BOOL,
+                        'description' => 'Whether this is a standard tag',
+                        'null' => NULL_NOT_ALLOWED,
+                    ],
+                    'displayname' => [
+                        'type' => PARAM_TEXT,
+                        'description' => 'The display name of the tag',
+                        'null' => NULL_NOT_ALLOWED,
+                    ],
+                    'flag' => [
+                        'type' => PARAM_BOOL,
+                        'description' => 'Wehther this tag is flagged',
+                        'null' => NULL_NOT_ALLOWED,
+                    ],
                     'urls' => [
+                        'description' => 'URLs associated with the tag',
+                        'null' => NULL_NOT_ALLOWED,
                         'type' => [
-                            'view' => ['type' => PARAM_URL]
+                            'view' => [
+                                'type' => PARAM_URL,
+                                'description' => 'The URL to view the tag',
+                                'null' => NULL_NOT_ALLOWED,
+                            ],
                         ]
                     ]
                 ]
@@ -231,19 +299,22 @@ class post extends exporter {
                         'optional' => true,
                         'default' => null,
                         'null' => NULL_ALLOWED,
-                        'type' => PARAM_RAW
+                        'type' => PARAM_RAW,
+                        'description' => 'The HTML source to rate the post',
                     ],
                     'taglist' => [
                         'optional' => true,
                         'default' => null,
                         'null' => NULL_ALLOWED,
-                        'type' => PARAM_RAW
+                        'type' => PARAM_RAW,
+                        'description' => 'The HTML source to view the list of tags',
                     ],
                     'authorsubheading' => [
                         'optional' => true,
                         'default' => null,
                         'null' => NULL_ALLOWED,
-                        'type' => PARAM_RAW
+                        'type' => PARAM_RAW,
+                        'description' => 'The HTML source to view the author details',
                     ],
                 ]
             ]
@@ -269,6 +340,7 @@ class post extends exporter {
         $attachments = $this->related['attachments'];
         $includehtml = $this->related['includehtml'];
         $isdeleted = $post->is_deleted();
+        $isprivatereply = $post->is_private_reply();
         $hasrating = $rating != null;
         $hastags = !empty($tags);
         $discussionid = $post->get_discussion_id();
@@ -328,6 +400,7 @@ class post extends exporter {
             'timecreated' => $timecreated,
             'unread' => ($loadcontent && $readreceiptcollection) ? !$readreceiptcollection->has_user_read_post($user, $post) : null,
             'isdeleted' => $isdeleted,
+            'isprivatereply' => $isprivatereply,
             'haswordcount' => $forum->should_display_word_count(),
             'wordcount' => $forum->should_display_word_count() ? count_words($message) : null,
             'capabilities' => [

@@ -310,6 +310,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'userfullname' => fullname($user3),
             'userpictureurl' => '',
             'deleted' => false,
+            'isprivatereply' => false,
         );
 
         $expectedposts['posts'][] = array(
@@ -346,6 +347,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'userfullname' => fullname($user2),
             'userpictureurl' => '',
             'deleted' => false,
+            'isprivatereply' => false,
         );
 
         // Test a discussion with two additional posts (total 3 posts).
@@ -1300,5 +1302,99 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 $this->assertFalse($capvalue);
             }
         }
+    }
+
+    /**
+     * Test add_discussion_post
+     */
+    public function test_add_discussion_post_private() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        self::setAdminUser();
+
+        // Create course to add the module.
+        $course = self::getDataGenerator()->create_course();
+
+        // Standard forum.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $forum = self::getDataGenerator()->create_module('forum', $record);
+        $cm = get_coursemodule_from_id('forum', $forum->cmid, 0, false, MUST_EXIST);
+        $forumcontext = context_module::instance($forum->cmid);
+        $generator = self::getDataGenerator()->get_plugin_generator('mod_forum');
+
+        // Create an enrol users.
+        $student1 = self::getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($student1->id, $course->id, 'student');
+        $student2 = self::getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($student2->id, $course->id, 'student');
+        $teacher1 = self::getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($teacher1->id, $course->id, 'editingteacher');
+        $teacher2 = self::getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($teacher2->id, $course->id, 'editingteacher');
+
+        // Add a new discussion to the forum.
+        self::setUser($student1);
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->userid = $student1->id;
+        $record->forum = $forum->id;
+        $discussion = $generator->create_discussion($record);
+
+        // Have the teacher reply privately.
+        self::setUser($teacher1);
+        $post = mod_forum_external::add_discussion_post($discussion->firstpost, 'some subject', 'some text here...', [
+                [
+                    'name' => 'private',
+                    'value' => true,
+                ],
+            ]);
+        $post = external_api::clean_returnvalue(mod_forum_external::add_discussion_post_returns(), $post);
+        $privatereply = $DB->get_record('forum_posts', array('id' => $post['postid']));
+        $this->assertEquals($student1->id, $privatereply->privatereplyto);
+        // Bump the time of the private reply to ensure order.
+        $privatereply->created++;
+        $privatereply->modified = $privatereply->created;
+        $DB->update_record('forum_posts', $privatereply);
+
+        // The teacher will receive their private reply.
+        self::setUser($teacher1);
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion->id);
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        $this->assertEquals(2, count($posts['posts']));
+        $this->assertTrue($posts['posts'][0]['isprivatereply']);
+
+        // Another teacher on the course will also receive the private reply.
+        self::setUser($teacher2);
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion->id);
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        $this->assertEquals(2, count($posts['posts']));
+        $this->assertTrue($posts['posts'][0]['isprivatereply']);
+
+        // The student will receive the private reply.
+        self::setUser($student1);
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion->id);
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        $this->assertEquals(2, count($posts['posts']));
+        $this->assertTrue($posts['posts'][0]['isprivatereply']);
+
+        // Another student will not receive the private reply.
+        self::setUser($student2);
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion->id);
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        $this->assertEquals(1, count($posts['posts']));
+        $this->assertFalse($posts['posts'][0]['isprivatereply']);
+
+        // A user cannot reply to a private reply.
+        self::setUser($teacher2);
+        $this->expectException('coding_exception');
+        $post = mod_forum_external::add_discussion_post($privatereply->id, 'some subject', 'some text here...', [
+                'options' => [
+                    'name' => 'private',
+                    'value' => false,
+                ],
+            ]);
     }
 }

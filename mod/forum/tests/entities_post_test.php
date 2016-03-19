@@ -58,6 +58,7 @@ class mod_forum_entities_post_testcase extends advanced_testcase {
             false,
             0,
             false,
+            false,
             false
         );
 

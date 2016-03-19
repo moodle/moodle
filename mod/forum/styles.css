@@ -327,3 +327,7 @@ span.unread {
 .path-mod-forum article .nav .nav-link + .nav-link {
     border-left: 1px solid #ddd;
 }
+
+.privatereplyinfo {
+    font-size: 80%;
+}

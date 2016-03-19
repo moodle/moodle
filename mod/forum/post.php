@@ -98,6 +98,8 @@ require_login(0, false);   // Script is useless unless they're logged in.
 
 $entityfactory = mod_forum\local\container::get_entity_factory();
 $vaultfactory = mod_forum\local\container::get_vault_factory();
+$isprivatereply = false;
+$canreplyprivately = false;
 
 if (!empty($forum)) {      // User is starting a new discussion in a forum.
     if (! $forum = $DB->get_record("forum", array("id" => $forum))) {
@@ -215,6 +217,10 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum.
         print_error("activityiscurrentlyhidden");
     }
 
+    if (!empty($parent->privatereplyto)) {
+        print_error('cannotreplytoprivatereply', 'forum');
+    }
+
     // Load up the $post variable.
 
     $post = new stdClass();
@@ -225,6 +231,8 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum.
     $post->subject     = $parent->subject;
     $post->userid      = $USER->id;
     $post->message     = '';
+    $post->parentpostauthor = $parent->userid;
+    $canreplyprivately = forum_user_can_reply_privately($modcontext, $parent);
 
     $post->groupid = ($discussion->groupid == -1) ? 0 : $discussion->groupid;
 
@@ -275,12 +283,14 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum.
         print_error('cannoteditposts', 'forum');
     }
 
-
     // Load up the $post variable.
     $post->edit   = $edit;
     $post->course = $course->id;
     $post->forum  = $forum->id;
     $post->groupid = ($discussion->groupid == -1) ? 0 : $discussion->groupid;
+    if ($parent) {
+        $canreplyprivately = forum_user_can_reply_privately($modcontext, $parent);
+    }
 
     $post = trusttext_pre_edit($post, 'message', $modcontext);
 
@@ -411,7 +421,12 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum.
 
             if (empty($post->edit)) {
                 $postvault = $vaultfactory->get_post_vault();
-                $replies = $postvault->get_replies_to_post($postentity, 'created ASC');
+                $replies = $postvault->get_replies_to_post(
+                        $USER,
+                        $postentity,
+                        $capabilitymanager->can_view_any_private_reply($USER),
+                        'created ASC'
+                    );
                 $postentities = array_merge($postentities, $replies);
             }
 
@@ -591,16 +606,18 @@ if (!isset($forum->maxattachments)) {  // TODO - delete this once we add a field
 }
 
 $thresholdwarning = forum_check_throttling($forum, $cm);
-$mformpost = new mod_forum_post_form('post.php', array('course' => $course,
-    'cm' => $cm,
-    'coursecontext' => $coursecontext,
-    'modcontext' => $modcontext,
-    'forum' => $forum,
-    'post' => $post,
-    'subscribe' => \mod_forum\subscriptions::is_subscribed($USER->id, $forum,
-        null, $cm),
-    'thresholdwarning' => $thresholdwarning,
-    'edit' => $edit), 'post', '', array('id' => 'mformforum'));
+$mformpost = new mod_forum_post_form('post.php', [
+        'course' => $course,
+        'cm' => $cm,
+        'coursecontext' => $coursecontext,
+        'modcontext' => $modcontext,
+        'forum' => $forum,
+        'post' => $post,
+        'subscribe' => \mod_forum\subscriptions::is_subscribed($USER->id, $forum, null, $cm),
+        'thresholdwarning' => $thresholdwarning,
+        'edit' => $edit,
+        'canreplyprivately' => $canreplyprivately,
+    ], 'post', '', array('id' => 'mformforum'));
 
 $draftitemid = file_get_submitted_draft_itemid('attachments');
 $postid = empty($post->id) ? null : $post->id;
@@ -1074,7 +1091,12 @@ if (!empty($parent)) {
     if (empty($post->edit)) {
         if ($forum->type != 'qanda' || forum_user_can_see_discussion($forum, $discussion, $modcontext)) {
             $postvault = $vaultfactory->get_post_vault();
-            $replies = $postvault->get_replies_to_post($postentity, 'created ASC');
+            $replies = $postvault->get_replies_to_post(
+                    $USER,
+                    $postentity,
+                    $capabilitymanager->can_view_any_private_reply($USER),
+                    'created ASC'
+                );
             $postentities = array_merge($postentities, $replies);
         }
     }

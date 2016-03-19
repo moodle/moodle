@@ -32,6 +32,7 @@ use mod_forum\local\entities\post as post_entity;
 use mod_forum\local\factories\legacy_data_mapper as legacy_data_mapper_factory;
 use mod_forum\local\factories\exporter as exporter_factory;
 use mod_forum\local\factories\vault as vault_factory;
+use mod_forum\local\factories\manager as manager_factory;
 use rating_manager;
 use renderer_base;
 use stdClass;
@@ -67,6 +68,9 @@ class exported_discussion_summaries {
     /** @var vault_factory $vaultfactory Vault factory */
     private $vaultfactory;
 
+    /** @var manager_factory $managerfactory Manager factory */
+    private $managerfactory;
+
     /** @var rating_manager $ratingmanager Rating manager */
     private $ratingmanager;
 
@@ -84,12 +88,14 @@ class exported_discussion_summaries {
         legacy_data_mapper_factory $legacydatamapperfactory,
         exporter_factory $exporterfactory,
         vault_factory $vaultfactory,
+        manager_factory $managerfactory,
         rating_manager $ratingmanager
     ) {
         $this->renderer = $renderer;
         $this->legacydatamapperfactory = $legacydatamapperfactory;
         $this->exporterfactory = $exporterfactory;
         $this->vaultfactory = $vaultfactory;
+        $this->managerfactory = $managerfactory;
         $this->ratingmanager = $ratingmanager;
     }
 
@@ -108,16 +114,18 @@ class exported_discussion_summaries {
         forum_entity $forum,
         array $discussions
     ) : array {
+        $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
+        $canseeanyprivatereply = $capabilitymanager->can_view_any_private_reply($user);
 
         $discussionids = array_keys($discussions);
 
         $postvault = $this->vaultfactory->get_post_vault();
-        $posts = $postvault->get_from_discussion_ids($discussionids);
+        $posts = $postvault->get_from_discussion_ids($user, $discussionids, $canseeanyprivatereply);
         $groupsbyid = $this->get_groups_available_in_forum($forum);
         $groupsbyauthorid = $this->get_author_groups_from_posts($posts, $forum);
 
-        $replycounts = $postvault->get_reply_count_for_discussion_ids($discussionids);
-        $latestposts = $postvault->get_latest_post_id_for_discussion_ids($discussionids);
+        $replycounts = $postvault->get_reply_count_for_discussion_ids($user, $discussionids, $canseeanyprivatereply);
+        $latestposts = $postvault->get_latest_post_id_for_discussion_ids($user, $discussionids, $canseeanyprivatereply);
 
         $unreadcounts = [];
 
@@ -125,7 +133,7 @@ class exported_discussion_summaries {
         $forumrecord = $forumdatamapper->to_legacy_object($forum);
 
         if (forum_tp_can_track_forums($forumrecord)) {
-            $unreadcounts = $postvault->get_unread_count_for_discussion_ids($user, $discussionids);
+            $unreadcounts = $postvault->get_unread_count_for_discussion_ids($user, $discussionids, $canseeanyprivatereply);
         }
 
         $summaryexporter = $this->exporterfactory->get_discussion_summaries_exporter(

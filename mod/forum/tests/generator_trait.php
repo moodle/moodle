@@ -70,7 +70,7 @@ trait mod_forum_tests_generator_trait {
         // Retrieve the post which was created by create_discussion.
         $post = $DB->get_record('forum_posts', array('discussion' => $discussion->id));
 
-        return array($discussion, $post);
+        return [$discussion, $post];
     }
 
     /**
@@ -108,24 +108,26 @@ trait mod_forum_tests_generator_trait {
      * @param stdClass $forum The forum to post in
      * @param stdClass $discussion The discussion to post in
      * @param stdClass $author The author to post as
+     * @param array $options Additional options to pass to `create_post`
      * @return stdClass The forum post
      */
-    protected function helper_post_to_discussion($forum, $discussion, $author) {
+    protected function helper_post_to_discussion($forum, $discussion, $author, array $options = []) {
         global $DB;
 
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_forum');
 
         // Add a post to the discussion.
-        $record = new stdClass();
-        $record->course = $forum->course;
         $strre = get_string('re', 'forum');
-        $record->subject = $strre . ' ' . $discussion->subject;
-        $record->userid = $author->id;
-        $record->forum = $forum->id;
-        $record->discussion = $discussion->id;
-        $record->mailnow = 1;
+        $record = array_merge([
+            'course' => $forum->course,
+            'subject' => "{$strre} {$discussion->subject}",
+            'userid' => $author->id,
+            'forum' => $forum->id,
+            'discussion' => $discussion->id,
+            'mailnow' => 1,
+        ], $options);
 
-        $post = $generator->create_post($record);
+        $post = $generator->create_post((object) $record);
 
         return $post;
     }
@@ -135,25 +137,38 @@ trait mod_forum_tests_generator_trait {
      *
      * @param stdClass $parent The post being replied to
      * @param stdClass $author The author to post as
+     * @param array $options Additional options to pass to `create_post`
      * @return stdClass The forum post
      */
-    protected function helper_reply_to_post($parent, $author) {
+    protected function helper_reply_to_post($parent, $author, array $options = []) {
         global $DB;
 
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_forum');
 
         // Add a post to the discussion.
         $strre = get_string('re', 'forum');
-        $record = (object) [
+        $record = (object) array_merge([
             'discussion' => $parent->discussion,
             'parent' => $parent->id,
             'userid' => $author->id,
             'mailnow' => 1,
             'subject' => $strre . ' ' . $parent->subject,
-        ];
+        ], $options);
 
         $post = $generator->create_post($record);
 
         return $post;
+    }
+
+    /**
+     * Gets the role id from it's shortname.
+     *
+     * @param   string $roleshortname
+     * @return  int
+     */
+    protected function get_role_id($roleshortname) {
+        global $DB;
+
+        return $DB->get_field('role', 'id', ['shortname' => $roleshortname]);
     }
 }

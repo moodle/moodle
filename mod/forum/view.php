@@ -146,7 +146,12 @@ switch ($forum->get_type()) {
             $hasmultiplediscussions, $displaymode);
         $post = $postvault->get_from_id($discussion->get_first_post_id());
         $orderpostsby = $displaymode == FORUM_MODE_FLATNEWEST ? 'created DESC' : 'created ASC';
-        $replies = $postvault->get_replies_to_post($post, $orderpostsby);
+        $replies = $postvault->get_replies_to_post(
+                $USER,
+                $post,
+                $capabilitymanager->can_view_any_private_reply($USER),
+                $orderpostsby
+            );
         echo $discussionsrenderer->render($USER, $post, $replies);
         break;
     case 'blog':

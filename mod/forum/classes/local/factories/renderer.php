@@ -431,7 +431,7 @@ class renderer {
             $this->urlfactory,
             $template,
             $notifications,
-            function($discussions, $user, $forum) {
+            function($discussions, $user, $forum) use ($capabilitymanager) {
                 $exportedpostsbuilder = $this->builderfactory->get_exported_posts_builder();
                 $discussionentries = [];
                 $postentries = [];
@@ -449,7 +449,12 @@ class renderer {
                 );
 
                 $postvault = $this->vaultfactory->get_post_vault();
-                $discussionrepliescount = $postvault->get_reply_count_for_discussion_ids($discussionentriesids);
+                $canseeanyprivatereply = $capabilitymanager->can_view_any_private_reply($user);
+                $discussionrepliescount = $postvault->get_reply_count_for_discussion_ids(
+                        $user,
+                        $discussionentriesids,
+                        $canseeanyprivatereply
+                    );
 
                 array_walk($exportedposts['posts'], function($post) use ($discussionrepliescount) {
                     $post->discussionrepliescount = $discussionrepliescount[$post->discussionid] ?? 0;

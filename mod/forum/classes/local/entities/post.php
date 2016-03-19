@@ -65,6 +65,8 @@ class post {
     private $mailnow;
     /** @var bool $deleted Is the post deleted */
     private $deleted;
+    /** @var int $privatereplyto The user being privately replied to */
+    private $privatereplyto;
 
     /**
      * Constructor.
@@ -84,6 +86,7 @@ class post {
      * @param int $totalscore Total score
      * @param bool $mailnow Should this post be mailed immediately
      * @param bool $deleted Is the post deleted
+     * @param int $privatereplyto Which user this reply is intended for in a private reply situation
      */
     public function __construct(
         int $id,
@@ -100,7 +103,8 @@ class post {
         bool $hasattachments,
         int $totalscore,
         bool $mailnow,
-        bool $deleted
+        bool $deleted,
+        int $privatereplyto
     ) {
         $this->id = $id;
         $this->discussionid = $discussionid;
@@ -117,6 +121,7 @@ class post {
         $this->totalscore = $totalscore;
         $this->mailnow = $mailnow;
         $this->deleted = $deleted;
+        $this->privatereplyto = $privatereplyto;
     }
 
     /**
@@ -264,6 +269,25 @@ class post {
     }
 
     /**
+     * Is this post private?
+     *
+     * @return bool
+     */
+    public function is_private_reply() : bool {
+        return !empty($this->privatereplyto);
+    }
+
+    /**
+     * Get the id of the user that this post was intended for.
+     *
+     * @return int
+     */
+    public function get_private_reply_recipient_id() : int {
+        return $this->privatereplyto;
+    }
+
+
+    /**
      * Get the post's age in seconds.
      *
      * @return int
@@ -280,5 +304,15 @@ class post {
      */
     public function is_owned_by_user(stdClass $user) : bool {
         return $this->get_author_id() == $user->id;
+    }
+
+    /**
+     * Check if the given post is a private reply intended for the given user.
+     *
+     * @param stdClass $user The user to check.
+     * @return bool
+     */
+    public function is_private_reply_intended_for_user(stdClass $user) : bool {
+        return $this->get_private_reply_recipient_id() == $user->id;
     }
 }

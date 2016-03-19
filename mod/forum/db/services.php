@@ -37,6 +37,16 @@ $functions = array(
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 
+    'mod_forum_get_discussion_posts' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'get_discussion_posts',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Returns a list of forum posts for a discussion.',
+        'type' => 'read',
+        'capabilities' => 'mod/forum:viewdiscussion, mod/forum:viewqandawithoutposting',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+
     'mod_forum_get_forum_discussion_posts' => array(
         'classname' => 'mod_forum_external',
         'methodname' => 'get_forum_discussion_posts',

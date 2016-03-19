@@ -27,6 +27,7 @@ namespace mod_forum\local\exporters;
 defined('MOODLE_INTERNAL') || die();
 
 use mod_forum\local\entities\author as author_entity;
+use mod_forum\local\exporters\group as group_exporter;
 use core\external\exporter;
 use renderer_base;
 
@@ -81,31 +82,21 @@ class author extends exporter {
                 'null' => NULL_ALLOWED
             ],
             'groups' => [
+                'type' => group_exporter::read_properties_definition(),
                 'multiple' => true,
                 'optional' => true,
-                'type' => [
-                    'id' => ['type' => PARAM_INT],
-                    'urls' => [
-                        'type' => [
-                            'image' => [
-                                'type' => PARAM_URL,
-                                'optional' => true,
-                                'default' => null,
-                                'null' => NULL_ALLOWED
-                            ]
-                        ]
-                    ]
-                ]
             ],
             'urls' => [
                 'type' => [
                     'profile' => [
+                        'description' => 'The URL for the use profile page',
                         'type' => PARAM_URL,
                         'optional' => true,
                         'default' => null,
                         'null' => NULL_ALLOWED
                     ],
                     'profileimage' => [
+                        'description' => 'The URL for the use profile image',
                         'type' => PARAM_URL,
                         'optional' => true,
                         'default' => null,
