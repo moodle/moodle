@@ -708,6 +708,17 @@ class structure {
             $moveafterslotnumber = (int) $this->slots[$idmoveafter]->slot;
         }
 
+        // If the action came in as moving a slot to itself, normalise this to
+        // moving the slot to after the previous slot.
+        if ($moveafterslotnumber == $movingslotnumber) {
+            $moveafterslotnumber = $moveafterslotnumber - 1;
+        }
+
+        $followingslotnumber = $moveafterslotnumber + 1;
+        if ($followingslotnumber == $movingslotnumber) {
+            $followingslotnumber += 1;
+        }
+
         // Check the target page number is OK.
         if ($page == 0) {
             $page = 1;
@@ -716,14 +727,8 @@ class structure {
                 $page < 1) {
             throw new \coding_exception('The target page number is too small.');
         } else if (!$this->is_last_slot_in_quiz($moveafterslotnumber) &&
-                $page > $this->get_page_number_for_slot($moveafterslotnumber + 1)) {
+                $page > $this->get_page_number_for_slot($followingslotnumber)) {
             throw new \coding_exception('The target page number is too large.');
-        }
-
-        // If the action came in as moving a slot to itself, normalise this to
-        // moving the slot to after the previosu slot.
-        if ($moveafterslotnumber == $movingslotnumber) {
-            $moveafterslotnumber = $moveafterslotnumber - 1;
         }
 
         // Work out how things are being moved.
@@ -768,10 +773,12 @@ class structure {
                 $headingmoveafter = $movingslotnumber;
                 $headingmovebefore = $movingslotnumber + 2;
                 $headingmovedirection = -1;
-            } else {
+            } else if ($page < $movingslot->page) {
                 $headingmoveafter = $movingslotnumber - 1;
                 $headingmovebefore = $movingslotnumber + 1;
                 $headingmovedirection = 1;
+            } else {
+                return; // Nothing to do.
             }
         }
 
