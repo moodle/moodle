@@ -1280,6 +1280,7 @@ function get_scorm_default (&$userdata, $scorm, $scoid, $attempt, $mode) {
     $def['cmi.suspend_data'] = scorm_isset($userdata, 'cmi.suspend_data');
     $def['cmi.time_limit_action'] = scorm_isset($userdata, 'timelimitaction');
     $def['cmi.total_time'] = scorm_isset($userdata, 'cmi.total_time', 'PT0H0M0S');
+    $def['cmi.launch_data'] = scorm_isset($userdata, 'datafromlms');
 
     return $def;
 }
