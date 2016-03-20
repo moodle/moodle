@@ -19,21 +19,12 @@ require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
 
 class feedback_item_numeric extends feedback_item_base {
     protected $type = "numeric";
-    public $sep_dec, $sep_thous;
     private $commonparams;
     private $item_form;
     private $item;
 
     public function init() {
-        $this->sep_dec = get_string('separator_decimal', 'feedback');
-        if (substr($this->sep_dec, 0, 2) == '[[') {
-            $this->sep_dec = FEEDBACK_DECIMAL;
-        }
 
-        $this->sep_thous = get_string('separator_thousand', 'feedback');
-        if (substr($this->sep_thous, 0, 2) == '[[') {
-            $this->sep_thous = FEEDBACK_THOUSAND;
-        }
     }
 
     public function build_editform($item, $feedback, $cm) {
@@ -58,17 +49,13 @@ class feedback_item_numeric extends feedback_item_base {
 
         $range_from_to = explode('|', $item->presentation);
         if (isset($range_from_to[0]) AND is_numeric($range_from_to[0])) {
-            $range_from = str_replace(FEEDBACK_DECIMAL,
-                                $this->sep_dec,
-                                floatval($range_from_to[0]));
+            $range_from = $this->format_float($range_from_to[0]);
         } else {
             $range_from = '-';
         }
 
         if (isset($range_from_to[1]) AND is_numeric($range_from_to[1])) {
-            $range_to = str_replace(FEEDBACK_DECIMAL,
-                                $this->sep_dec,
-                                floatval($range_from_to[1]));
+            $range_to = $this->format_float($range_from_to[1]);
         } else {
             $range_to = '-';
         }
@@ -152,7 +139,7 @@ class feedback_item_numeric extends feedback_item_base {
                     $counter++;
                 }
             }
-            $avg = $counter > 0 ? $avg / $counter : 0;
+            $avg = $counter > 0 ? $avg / $counter : null;
             $analysed->data = $data;
             $analysed->avg = $avg;
         }
@@ -178,14 +165,14 @@ class feedback_item_numeric extends feedback_item_base {
 
             foreach ($values->data as $value) {
                 echo '<tr><td colspan="2" valign="top" align="left">';
-                echo '-&nbsp;&nbsp;'.number_format($value, 2, $this->sep_dec, $this->sep_thous);
+                echo '-&nbsp;&nbsp;'.$this->format_float($value);
                 echo '</td></tr>';
             }
 
             if (isset($values->avg)) {
-                $avg = number_format($values->avg, 2, $this->sep_dec, $this->sep_thous);
+                $avg = format_float($values->avg, 2);
             } else {
-                $avg = number_format(0, 2, $this->sep_dec, $this->sep_thous);
+                $avg = '-';
             }
             echo '<tr><td align="left" colspan="2"><b>';
             echo get_string('average', 'feedback').': '.$avg;
@@ -204,16 +191,23 @@ class feedback_item_numeric extends feedback_item_base {
         $data = $analysed_item->data;
         if (is_array($data)) {
 
-            //mittelwert anzeigen
+            // Export average.
             $worksheet->write_string($row_offset,
                                      2,
                                      get_string('average', 'feedback'),
                                      $xls_formats->value_bold);
 
-            $worksheet->write_number($row_offset + 1,
-                                     2,
-                                     $analysed_item->avg,
-                                     $xls_formats->value_bold);
+            if (isset($analysed_item->avg)) {
+                $worksheet->write_number($row_offset + 1,
+                                         2,
+                                         $analysed_item->avg,
+                                         $xls_formats->value_bold);
+            } else {
+                $worksheet->write_string($row_offset + 1,
+                                         2,
+                                         '',
+                                         $xls_formats->value_bold);
+            }
             $row_offset++;
         }
         $row_offset++;
@@ -241,14 +235,14 @@ class feedback_item_numeric extends feedback_item_base {
         if (isset($range_from_to[0]) AND is_numeric($range_from_to[0])) {
             $range_from = floatval($range_from_to[0]);
         } else {
-            $range_from = 0;
+            $range_from = '-';
         }
 
         //get the max-value
         if (isset($range_from_to[1]) AND is_numeric($range_from_to[1])) {
             $range_to = floatval($range_from_to[1]);
         } else {
-            $range_to = 0;
+            $range_to = '-';
         }
 
         $requiredmark = ($item->required == 1) ? $strrequiredmark : '';
@@ -270,17 +264,17 @@ class feedback_item_numeric extends feedback_item_base {
         switch(true) {
             case ($range_from === '-' AND is_numeric($range_to)):
                 echo ' ('.get_string('maximal', 'feedback').
-                        ': '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_to).')';
+                        ': '.$this->format_float($range_to).')';
                 break;
             case (is_numeric($range_from) AND $range_to === '-'):
                 echo ' ('.get_string('minimal', 'feedback').
-                        ': '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_from).')';
+                        ': '.$this->format_float($range_from).')';
                 break;
             case ($range_from === '-' AND $range_to === '-'):
                 break;
             default:
-                echo ' ('.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_from).
-                        ' - '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_to).')';
+                echo ' ('.$this->format_float($range_from).
+                        ' - '.$this->format_float($range_to).')';
                 break;
         }
         echo '</span>';
@@ -299,6 +293,22 @@ class feedback_item_numeric extends feedback_item_base {
 
         echo '</span>';
         echo '</div>';
+    }
+
+    /**
+     * Prints the float nicely in the localized format
+     *
+     * Similar to format_float() but automatically calculates the number of decimal places
+     *
+     * @param float $value The float to print
+     * @return string
+     */
+    protected function format_float($value) {
+        if (!is_numeric($value)) {
+            return null;
+        }
+        $decimal = is_int($value) ? 0 : strcspn(strrev($value), '.');
+        return format_float($value, $decimal);
     }
 
     /**
@@ -323,14 +333,14 @@ class feedback_item_numeric extends feedback_item_base {
         if (isset($range_from_to[0]) AND is_numeric($range_from_to[0])) {
             $range_from = floatval($range_from_to[0]);
         } else {
-            $range_from = 0;
+            $range_from = '-';
         }
 
         //get the max-value
         if (isset($range_from_to[1]) AND is_numeric($range_from_to[1])) {
             $range_to = floatval($range_from_to[1]);
         } else {
-            $range_to = 0;
+            $range_to = '-';
         }
 
         $requiredmark = ($item->required == 1) ? $strrequiredmark : '';
@@ -344,17 +354,17 @@ class feedback_item_numeric extends feedback_item_base {
         switch(true) {
             case ($range_from === '-' AND is_numeric($range_to)):
                 echo ' ('.get_string('maximal', 'feedback').
-                        ': '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_to).')';
+                        ': '.$this->format_float($range_to).')';
                 break;
             case (is_numeric($range_from) AND $range_to === '-'):
                 echo ' ('.get_string('minimal', 'feedback').
-                        ': '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_from).')';
+                        ': '.$this->format_float($range_from).')';
                 break;
             case ($range_from === '-' AND $range_to === '-'):
                 break;
             default:
-                echo ' ('.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_from).
-                        ' - '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_to).')';
+                echo ' ('.$this->format_float($range_from).
+                        ' - '.$this->format_float($range_to).')';
                 break;
         }
         echo '</span>';
@@ -399,13 +409,13 @@ class feedback_item_numeric extends feedback_item_base {
         if (isset($range_from_to[0]) AND is_numeric($range_from_to[0])) {
             $range_from = floatval($range_from_to[0]);
         } else {
-            $range_from = 0;
+            $range_from = '-';
         }
         //get the max-value
         if (isset($range_from_to[1]) AND is_numeric($range_from_to[1])) {
             $range_to = floatval($range_from_to[1]);
         } else {
-            $range_to = 0;
+            $range_to = '-';
         }
         $requiredmark = ($item->required == 1) ? $strrequiredmark : '';
 
@@ -416,17 +426,17 @@ class feedback_item_numeric extends feedback_item_base {
         switch(true) {
             case ($range_from === '-' AND is_numeric($range_to)):
                 echo ' ('.get_string('maximal', 'feedback').
-                    ': '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_to).')';
+                    ': '.$this->format_float($range_to).')';
                 break;
             case (is_numeric($range_from) AND $range_to === '-'):
                 echo ' ('.get_string('minimal', 'feedback').
-                    ': '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_from).')';
+                    ': '.$this->format_float($range_from).')';
                 break;
             case ($range_from === '-' AND $range_to === '-'):
                 break;
             default:
-                echo ' ('.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_from).
-                    ' - '.str_replace(FEEDBACK_DECIMAL, $this->sep_dec, $range_to).')';
+                echo ' ('.$this->format_float($range_from).
+                    ' - '.$this->format_float($range_to).')';
                 break;
         }
         echo '</div>';
@@ -435,7 +445,7 @@ class feedback_item_numeric extends feedback_item_base {
         echo '<div class="feedback_item_presentation_'.$align.'">';
         echo $OUTPUT->box_start('generalbox boxalign'.$align);
         if (is_numeric($value)) {
-            $str_num_value = number_format($value, 2, $this->sep_dec, $this->sep_thous);
+            $str_num_value = $this->format_float($value);
         } else {
             $str_num_value = '&nbsp;';
         }
@@ -445,7 +455,7 @@ class feedback_item_numeric extends feedback_item_base {
     }
 
     public function check_value($value, $item) {
-        $value = str_replace($this->sep_dec, FEEDBACK_DECIMAL, $value);
+        $value = unformat_float($value, true);
         //if the item is not required, so the check is true if no value is given
         if ((!isset($value) OR $value == '') AND $item->required != 1) {
             return true;
@@ -491,7 +501,7 @@ class feedback_item_numeric extends feedback_item_base {
     }
 
     public function create_value($data) {
-        $data = str_replace($this->sep_dec, FEEDBACK_DECIMAL, $data);
+        $data = unformat_float($data, true);
 
         if (is_numeric($data)) {
             $data = floatval($data);
@@ -512,14 +522,14 @@ class feedback_item_numeric extends feedback_item_base {
     }
 
     public function get_presentation($data) {
-        $num1 = str_replace($this->sep_dec, FEEDBACK_DECIMAL, $data->numericrangefrom);
+        $num1 = unformat_float($data->numericrangefrom, true);
         if (is_numeric($num1)) {
             $num1 = floatval($num1);
         } else {
             $num1 = '-';
         }
 
-        $num2 = str_replace($this->sep_dec, FEEDBACK_DECIMAL, $data->numericrangeto);
+        $num2 = unformat_float($data->numericrangeto, true);
         if (is_numeric($num2)) {
             $num2 = floatval($num2);
         } else {
@@ -546,11 +556,11 @@ class feedback_item_numeric extends feedback_item_base {
     }
 
     public function value_type() {
-        return PARAM_FLOAT;
+        return PARAM_TEXT;
     }
 
     public function clean_input_value($value) {
-        $value = str_replace($this->sep_dec, FEEDBACK_DECIMAL, $value);
+        $value = unformat_float($value, true);
         if (!is_numeric($value)) {
             if ($value == '') {
                 return null; //an empty string should be null
@@ -558,6 +568,6 @@ class feedback_item_numeric extends feedback_item_base {
                 return clean_param($value, PARAM_TEXT); //we have to know the value if it is wrong
             }
         }
-        return clean_param($value, $this->value_type());
+        return clean_param($value, PARAM_FLOAT);
     }
 }

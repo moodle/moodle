@@ -142,7 +142,7 @@ class feedback_item_info extends feedback_item_base {
         if (!isset($value->value)) {
             return '';
         }
-        return userdate($value->value);
+        return $item->presentation == 1 ? userdate($value->value) : $value->value;
     }
 
     public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {
