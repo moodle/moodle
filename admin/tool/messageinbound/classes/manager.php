@@ -60,6 +60,11 @@ class manager {
     const MESSAGE_DELETED = '\deleted';
 
     /**
+     * @var \string IMAP folder namespace.
+     */
+    protected $imapnamespace = null;
+
+    /**
      * @var \Horde_Imap_Client_Socket A reference to the IMAP client.
      */
     protected $client = null;
@@ -124,6 +129,25 @@ class manager {
             $this->client->close();
         }
         $this->client = null;
+    }
+
+    /**
+     * Get the confirmation folder imap name
+     *
+     * @return string
+     */
+    protected function get_confirmation_folder() {
+
+        if ($this->imapnamespace === null) {
+            if ($this->client->queryCapability('NAMESPACE')) {
+                $namespaces = $this->client->getNamespaces(array(), array('ob_return' => true));
+                $this->imapnamespace = $namespaces->getNamespace('INBOX');
+            } else {
+                $this->imapnamespace = '';
+            }
+        }
+
+        return $this->imapnamespace . self::CONFIRMATIONFOLDER;
     }
 
     /**
@@ -198,13 +222,13 @@ class manager {
         // When dealing with Inbound Message messages, we mark them as flagged and seen. Restrict the search to those criterion.
         $search->flag(self::MESSAGE_SEEN, true);
         $search->flag(self::MESSAGE_FLAGGED, true);
-        mtrace("Searching for a Seen, Flagged message in the folder '" . self::CONFIRMATIONFOLDER . "'");
+        mtrace("Searching for a Seen, Flagged message in the folder '" . $this->get_confirmation_folder() . "'");
 
         // Match the message ID.
         $search->headerText('message-id', $maildata->messageid);
         $search->headerText('to', $maildata->address);
 
-        $results = $this->client->search(self::CONFIRMATIONFOLDER, $search);
+        $results = $this->client->search($this->get_confirmation_folder(), $search);
 
         // Build the base query.
         $query = new \Horde_Imap_Client_Fetch_Query();
@@ -213,7 +237,7 @@ class manager {
 
 
         // Fetch the first message from the client.
-        $messages = $this->client->fetch(self::CONFIRMATIONFOLDER, $query, array('ids' => $results['match']));
+        $messages = $this->client->fetch($this->get_confirmation_folder(), $query, array('ids' => $results['match']));
         $this->addressmanager = new \core\message\inbound\address_manager();
         if ($message = $messages->first()) {
             mtrace("--> Found the message. Passing back to the pickup system.");
@@ -248,8 +272,8 @@ class manager {
 
         // Open the mailbox.
         mtrace("Searching for messages older than 24 hours in the '" .
-                self::CONFIRMATIONFOLDER . "' folder.");
-        $this->client->openMailbox(self::CONFIRMATIONFOLDER);
+                $this->get_confirmation_folder() . "' folder.");
+        $this->client->openMailbox($this->get_confirmation_folder());
 
         $mailbox = $this->get_mailbox();
 
@@ -746,9 +770,10 @@ class manager {
      * Ensure that all mailboxes exist.
      */
     private function ensure_mailboxes_exist() {
+
         $requiredmailboxes = array(
             self::MAILBOX,
-            self::CONFIRMATIONFOLDER,
+            $this->get_confirmation_folder(),
         );
 
         $existingmailboxes = $this->client->listMailboxes($requiredmailboxes);
@@ -866,7 +891,7 @@ class manager {
         }
 
         // Move the message into a new mailbox.
-        $this->client->copy(self::MAILBOX, self::CONFIRMATIONFOLDER, array(
+        $this->client->copy(self::MAILBOX, $this->get_confirmation_folder(), array(
                 'create'    => true,
                 'ids'       => $messageids,
                 'move'      => true,
