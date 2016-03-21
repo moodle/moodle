@@ -2014,12 +2014,10 @@ class tool_lp_api_testcase extends advanced_testcase {
         $u1ctx = context_user::instance($u1->id);
         $scale = $dg->create_scale(array('scale' => 'A,B,C,D'));
         $scaleconfig = array(array('scaleid' => $scale->id));
-        $scaleconfig[] = array('name' => 'A', 'id' => 1, 'scaledefault' => 0, 'proficient' => 0);
         $scaleconfig[] = array('name' => 'B', 'id' => 2, 'scaledefault' => 1, 'proficient' => 0);
         $scaleconfig[] = array('name' => 'C', 'id' => 3, 'scaledefault' => 0, 'proficient' => 1);
         $scaleconfig[] = array('name' => 'D', 'id' => 4, 'scaledefault' => 0, 'proficient' => 1);
         $c2scaleconfig = array(array('scaleid' => $scale->id));
-        $c2scaleconfig[] = array('name' => 'A', 'id' => 1, 'scaledefault' => 0, 'proficient' => 0);
         $c2scaleconfig[] = array('name' => 'B', 'id' => 2, 'scaledefault' => 0, 'proficient' => 1);
         $c2scaleconfig[] = array('name' => 'C', 'id' => 3, 'scaledefault' => 0, 'proficient' => 0);
         $c2scaleconfig[] = array('name' => 'D', 'id' => 4, 'scaledefault' => 1, 'proficient' => 1);
@@ -2785,9 +2783,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $scaleconfiguration1 = '[{"scaleid":"1"},{"name":"value1","id":1,"scaledefault":1,"proficient":0},' .
                 '{"name":"value2","id":2,"scaledefault":0,"proficient":1}]';
         $scaleconfiguration2 = '[{"scaleid":"2"},{"name":"value3","id":1,"scaledefault":1,"proficient":0},'
-                . '{"name":"value4","id":2,"scaledefault":0,"proficient":1},'
-                . '{"name":"value5","id":3,"scaledefault":0,"proficient":0},'
-                . '{"name":"value6","id":4,"scaledefault":0,"proficient":0}]';
+                . '{"name":"value4","id":2,"scaledefault":0,"proficient":1}]';
 
         // Create a framework with scale configuration1.
         $frm = array(

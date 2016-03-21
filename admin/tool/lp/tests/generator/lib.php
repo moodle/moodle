@@ -162,15 +162,21 @@ class tool_lp_generator extends component_generator_base {
             if (count($values) < 2) {
                 throw new coding_exception('Please provide the scale configuration for one-item scales.');
             }
-            $scaleconfig = array(array('scaleid' => $record->scaleid));
-            foreach ($values as $key => $value) {
-                $scaleconfig[] = array(
-                    'name' => $value['name'],
-                    'id' => $value['id'],
-                    'scaledefault' => $key == count($values) - 2 ? 1 : 0,       // Second to last is default.
-                    'proficient' => $key >= count($values) - 2 ? 1 : 0,       // Second to last and last are proficient.
-                );
-            }
+            $scaleconfig = array();
+            // Last item is proficient.
+            $item = array_pop($values);
+            array_unshift($scaleconfig, array(
+                'id' => $item['id'],
+                'proficient' => 1
+            ));
+            // Second-last item is default and proficient.
+            $item = array_pop($values);
+            array_unshift($scaleconfig, array(
+                'id' => $item['id'],
+                'scaledefault' => 1,
+                'proficient' => 1
+            ));
+            array_unshift($scaleconfig, array('scaleid' => $record->scaleid));
             $record->scaleconfiguration = json_encode($scaleconfig);
         }
         if (is_array($record->scaleconfiguration) || is_object($record->scaleconfiguration)) {

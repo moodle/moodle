@@ -397,7 +397,7 @@ class competency_framework extends persistent {
             }
         }
 
-        throw new coding_exception('Grade not found in configuration.');
+        return 0;
     }
 
     /**
