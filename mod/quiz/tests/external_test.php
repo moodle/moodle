@@ -1362,4 +1362,41 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
 
     }
 
+    /**
+     * Test get_quiz_feedback_for_grade
+     */
+    public function test_get_quiz_feedback_for_grade() {
+        global $DB;
+
+        // Add feedback to the quiz.
+        $feedback = new stdClass();
+        $feedback->quizid = $this->quiz->id;
+        $feedback->feedbacktext = 'Feedback text 1';
+        $feedback->feedbacktextformat = 1;
+        $feedback->mingrade = 49;
+        $feedback->maxgrade = 100;
+        $feedback->id = $DB->insert_record('quiz_feedback', $feedback);
+
+        $feedback->feedbacktext = 'Feedback text 2';
+        $feedback->feedbacktextformat = 1;
+        $feedback->mingrade = 30;
+        $feedback->maxgrade = 49;
+        $feedback->id = $DB->insert_record('quiz_feedback', $feedback);
+
+        $result = mod_quiz_external::get_quiz_feedback_for_grade($this->quiz->id, 50);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_quiz_feedback_for_grade_returns(), $result);
+        $this->assertEquals('Feedback text 1', $result['feedbacktext']);
+        $this->assertEquals(FORMAT_HTML, $result['feedbacktextformat']);
+
+        $result = mod_quiz_external::get_quiz_feedback_for_grade($this->quiz->id, 30);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_quiz_feedback_for_grade_returns(), $result);
+        $this->assertEquals('Feedback text 2', $result['feedbacktext']);
+        $this->assertEquals(FORMAT_HTML, $result['feedbacktextformat']);
+
+        $result = mod_quiz_external::get_quiz_feedback_for_grade($this->quiz->id, 10);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_quiz_feedback_for_grade_returns(), $result);
+        $this->assertEquals('', $result['feedbacktext']);
+        $this->assertEquals(FORMAT_MOODLE, $result['feedbacktextformat']);
+    }
+
 }
