@@ -8,7 +8,7 @@
 #
 # Original Markdown
 # Copyright (c) 2004-2006 John Gruber  
-# <http://daringfireball.net/projects/markdown/>
+# <https://daringfireball.net/projects/markdown/>
 #
 namespace Michelf;
 
@@ -32,6 +32,11 @@ class MarkdownExtra extends \Michelf\Markdown {
 	public $fn_link_class = "footnote-ref";
 	public $fn_backlink_class = "footnote-backref";
 
+	# Content to be displayed within footnote backlinks. The default is '↩';
+	# the U+FE0E on the end is a Unicode variant selector used to prevent iOS
+	# from displaying the arrow character as an emoji.
+	public $fn_backlink_html = '&#8617;&#xFE0E;';
+
 	# Class name for table cell alignment (%% replaced left/center/right)
 	# For instance: 'go-%%' becomes 'go-left' or 'go-right' or 'go-center'
 	# If empty, the align attribute is used instead of a class name.
@@ -42,7 +47,7 @@ class MarkdownExtra extends \Michelf\Markdown {
 	# Class attribute for code blocks goes on the `code` tag;
 	# setting this to true will put attributes on the `pre` tag instead.
 	public $code_attr_on_pre = false;
-	
+
 	# Predefined abbreviations.
 	public $predef_abbr = array();
 
@@ -131,11 +136,11 @@ class MarkdownExtra extends \Michelf\Markdown {
 	### Extra Attribute Parser ###
 
 	# Expression to use to catch attributes (includes the braces)
-	protected $id_class_attr_catch_re = '\{((?:[ ]*[#.a-z][-_:a-zA-Z0-9=]+){1,})[ ]*\}';
+	protected $id_class_attr_catch_re = '\{((?>[ ]*[#.a-z][-_:a-zA-Z0-9=]+){1,})[ ]*\}';
 	# Expression to use when parsing in a context when no capture is desired
-	protected $id_class_attr_nocatch_re = '\{(?:[ ]*[#.a-z][-_:a-zA-Z0-9=]+){1,}[ ]*\}';
+	protected $id_class_attr_nocatch_re = '\{(?>[ ]*[#.a-z][-_:a-zA-Z0-9=]+){1,}[ ]*\}';
 
-	protected function doExtraAttributes($tag_name, $attr, $defaultIdValue = null) {
+	protected function doExtraAttributes($tag_name, $attr, $defaultIdValue = null, $classes = array()) {
 	#
 	# Parse attributes caught by the $this->id_class_attr_catch_re expression
 	# and return the HTML-formatted list of attributes.
@@ -145,14 +150,13 @@ class MarkdownExtra extends \Michelf\Markdown {
 	# In addition, this method also supports supplying a default Id value,
 	# which will be used to populate the id attribute in case it was not
 	# overridden.
-		if (empty($attr) && !$defaultIdValue) return "";
+		if (empty($attr) && !$defaultIdValue && empty($classes)) return "";
 		
 		# Split on components
 		preg_match_all('/[#.a-z][-_:a-zA-Z0-9=]+/', $attr, $matches);
 		$elements = $matches[0];
 
 		# handle classes and ids (only first id taken into account)
-		$classes = array();
 		$attributes = array();
 		$id = false;
 		foreach ($elements as $element) {
@@ -349,12 +353,10 @@ class MarkdownExtra extends \Michelf\Markdown {
 					# Fenced code block marker
 					(?<= ^ | \n )
 					[ ]{0,'.($indent+3).'}(?:~{3,}|`{3,})
-									[ ]*
-					(?:
-					\.?[-_:a-zA-Z0-9]+ # standalone class name
-					|
-						'.$this->id_class_attr_nocatch_re.' # extra attributes
-					)?
+					[ ]*
+					(?: \.?[-_:a-zA-Z0-9]+ )? # standalone class name
+					[ ]*
+					(?: '.$this->id_class_attr_nocatch_re.' )? # extra attributes
 					[ ]*
 					(?= \n )
 				' : '' ). ' # End (if not is span).
@@ -410,7 +412,7 @@ class MarkdownExtra extends \Michelf\Markdown {
 			# Note: need to recheck the whole tag to disambiguate backtick
 			# fences from code spans
 			#
-			if (preg_match('{^\n?([ ]{0,'.($indent+3).'})(~{3,}|`{3,})[ ]*(?:\.?[-_:a-zA-Z0-9]+|'.$this->id_class_attr_nocatch_re.')?[ ]*\n?$}', $tag, $capture)) {
+			if (preg_match('{^\n?([ ]{0,'.($indent+3).'})(~{3,}|`{3,})[ ]*(?:\.?[-_:a-zA-Z0-9]+)?[ ]*(?:'.$this->id_class_attr_nocatch_re.')?[ ]*\n?$}', $tag, $capture)) {
 				# Fenced code block marker: find matching end marker.
 				$fence_indent = strlen($capture[1]); # use captured indent in re
 				$fence_re = $capture[2]; # use captured fence in re
@@ -1294,7 +1296,9 @@ class MarkdownExtra extends \Michelf\Markdown {
 				[ ]*
 				(?:
 					\.?([-_:a-zA-Z0-9]+) # 2: standalone class name
-				|
+				)?
+				[ ]*
+				(?:
 					'.$this->id_class_attr_catch_re.' # 3: Extra attributes
 				)?
 				[ ]* \n # Whitespace and newline following marker.
@@ -1318,17 +1322,23 @@ class MarkdownExtra extends \Michelf\Markdown {
 		$classname =& $matches[2];
 		$attrs     =& $matches[3];
 		$codeblock = $matches[4];
-		$codeblock = htmlspecialchars($codeblock, ENT_NOQUOTES);
+
+		if ($this->code_block_content_func) {
+			$codeblock = call_user_func($this->code_block_content_func, $codeblock, $classname);
+		} else {
+			$codeblock = htmlspecialchars($codeblock, ENT_NOQUOTES);
+		}
+
 		$codeblock = preg_replace_callback('/^\n+/',
 			array($this, '_doFencedCodeBlocks_newlines'), $codeblock);
 
+		$classes = array();
 		if ($classname != "") {
 			if ($classname{0} == '.')
 				$classname = substr($classname, 1);
-			$attr_str = ' class="'.$this->code_class_prefix.$classname.'"';
-		} else {
-			$attr_str = $this->doExtraAttributes($this->code_attr_on_pre ? "pre" : "code", $attrs);
+			$classes[] = $this->code_class_prefix.$classname;
 		}
+		$attr_str = $this->doExtraAttributes($this->code_attr_on_pre ? "pre" : "code", $attrs, null, $classes);
 		$pre_attr_str  = $this->code_attr_on_pre ? $attr_str : '';
 		$code_attr_str = $this->code_attr_on_pre ? '' : $attr_str;
 		$codeblock  = "<pre$pre_attr_str><code$code_attr_str>$codeblock</code></pre>";
@@ -1470,6 +1480,7 @@ class MarkdownExtra extends \Michelf\Markdown {
 				$title = $this->encodeAttribute($title);
 				$attr .= " title=\"$title\"";
 			}
+			$backlink_text = $this->fn_backlink_html;
 			$num = 0;
 			
 			while (!empty($this->footnotes_ordered)) {
@@ -1489,9 +1500,9 @@ class MarkdownExtra extends \Michelf\Markdown {
 				$note_id = $this->encodeAttribute($note_id);
 
 				# Prepare backlink, multiple backlinks if multiple references
-				$backlink = "<a href=\"#fnref:$note_id\"$attr>&#8617;</a>";
+				$backlink = "<a href=\"#fnref:$note_id\"$attr>$backlink_text</a>";
 				for ($ref_num = 2; $ref_num <= $ref_count; ++$ref_num) {
-					$backlink .= " <a href=\"#fnref$ref_num:$note_id\"$attr>&#8617;</a>";
+					$backlink .= " <a href=\"#fnref$ref_num:$note_id\"$attr>$backlink_text</a>";
 				}
 				# Add backlink to last paragraph; create new paragraph if needed.
 				if (preg_match('{</p>$}', $footnote)) {
