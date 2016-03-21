@@ -28,7 +28,7 @@ class report_completion {
         global $DB;
 
         // Create a temporary table to hold the userids.
-        $temptablename = 'tmp_csum_users_'.uniqid();
+        $temptablename = 'tmp_'.uniqid();
         $dbman = $DB->get_manager();
 
         // Define table user to be created.
@@ -210,11 +210,11 @@ class report_completion {
 
         $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
-        $temptablename = 'tmp_ccomp_users_'.uniqid();
+        $temptablename = 'tmp_'.uniqid();
         list($dbman, $table) = self::populate_temporary_users($temptablename, $searchinfo);
 
         // Set up the temporary table for all the completion information to go into.
-        $tempcomptablename = 'tmp_ccomp_comp_'.uniqid();
+        $tempcomptablename = 'tmp_'.uniqid();
 
         // Deal with completion types.
         if (!empty($completiontype)) {
@@ -290,11 +290,11 @@ class report_completion {
         $completiondata = new stdclass();
 
         // Create a temporary table to hold the userids.
-        $temptablename = 'tmp_ccomp_users_'.uniqid();
+        $temptablename = 'tmp_'.uniqid();
         list($dbman, $table) = self::populate_temporary_users($temptablename, $searchinfo);
 
         // Set up the temporary table for all the completion information to go into.
-        $tempcomptablename = 'tmp_ccomp_comp_'.uniqid();
+        $tempcomptablename = 'tmp_'.uniqid();
 
         // Deal with completion types.
         if (!empty($completiontype)) {
