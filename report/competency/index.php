@@ -64,6 +64,9 @@ $PAGE->set_pagelayout('incourse');
 $output = $PAGE->get_renderer('report_competency');
 
 echo $output->header();
+$baseurl = new moodle_url('/report/competency/index.php');
+$nav = new \report_competency\output\user_course_navigation($currentuser, $course->id, $baseurl);
+echo $output->render($nav);
 if ($currentuser > 0) {
     $user = core_user::get_user($currentuser);
     $usercontext = context_user::instance($currentuser);
@@ -76,9 +79,6 @@ if ($currentuser > 0) {
 }
 echo $output->heading($title, 3);
 
-$baseurl = new moodle_url('/report/competency/index.php');
-$nav = new \report_competency\output\user_course_navigation($currentuser, $course->id, $baseurl);
-echo $output->render($nav);
 if ($currentuser > 0) {
     $page = new \report_competency\output\report($course->id, $currentuser);
     echo $output->render($page);

@@ -42,7 +42,8 @@ class restore_tool_lp_plugin extends restore_tool_plugin {
      */
     protected function define_course_plugin_structure() {
         $paths = array(
-            new restore_path_element('course_competency', $this->get_pathfor('/course_competencies/competency'))
+            new restore_path_element('course_competency', $this->get_pathfor('/course_competencies/competency')),
+            new restore_path_element('course_competency_settings', $this->get_pathfor('/course_competency_settings'))
         );
         return $paths;
     }
@@ -57,6 +58,30 @@ class restore_tool_lp_plugin extends restore_tool_plugin {
             new restore_path_element('course_module_competency', $this->get_pathfor('/course_module_competencies/competency'))
         );
         return $paths;
+    }
+
+    /**
+     * Process a course competency settings.
+     *
+     * @param  array $data The data.
+     */
+    public function process_course_competency_settings($data) {
+        global $DB;
+
+        $data = (object) $data;
+        $courseid = $this->task->get_courseid();
+        $exists = \tool_lp\course_competency_settings::get_record(array('courseid' => $courseid));
+
+        // Now update or insert.
+        if ($exists) {
+            $settings = $exists;
+            $settings->set_pushratingstouserplans($data->pushratingstouserplans);
+            return $settings->update();
+        } else {
+            $data = (object) array('courseid' => $courseid, 'pushratingstouserplans' => $data->pushratingstouserplans);
+            $settings = new \tool_lp\course_competency_settings(0, $data);
+            return !empty($settings->create());
+        }
     }
 
     /**

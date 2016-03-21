@@ -49,6 +49,17 @@ class backup_tool_lp_plugin extends backup_tool_plugin {
         $coursecompetencies = new backup_nested_element('course_competencies');
         $pluginwrapper->add_child($coursecompetencies);
 
+        $coursecompetencysettings = new backup_nested_element('course_competency_settings',
+            array('id'), array('pushratingstouserplans'));
+
+        $pluginwrapper->add_child($coursecompetencysettings);
+
+        $sql = 'SELECT s.pushratingstouserplans
+                  FROM {' . \tool_lp\course_competency_settings::TABLE . '} s
+                 WHERE s.courseid = :courseid';
+        $coursecompetencysettings->set_source_sql($sql, array('courseid' => backup::VAR_COURSEID));
+
+
         $competency = new backup_nested_element('competency', null, array('idnumber', 'ruleoutcome',
             'sortorder', 'frameworkidnumber'));
         $coursecompetencies->add_child($competency);
@@ -94,7 +105,7 @@ class backup_tool_lp_plugin extends backup_tool_plugin {
     }
 
     /**
-     * Returns a condition for whether we include this report in the backup or not.
+     * Returns a condition for whether we include this plugin in the backup or not.
      *
      * @return array
      */
