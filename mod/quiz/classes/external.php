@@ -777,18 +777,17 @@ class mod_quiz_external extends external_api {
     /**
      * Utility function for validating a given attempt
      *
-     * @param  array $params Array of parameters including the attemptid and preflight data
+     * @param  array $params array of parameters including the attemptid and preflight data
+     * @param  bool $checkaccessrules whether to check the quiz access rules or not
+     * @param  bool $failifoverdue whether to return error if the attempt is overdue
      * @return  array containing the attempt object and access messages
      * @throws moodle_quiz_exception
      * @since  Moodle 3.1
      */
-    protected static function validate_attempt($params) {
+    protected static function validate_attempt($params, $checkaccessrules = true, $failifoverdue = true) {
         global $USER;
 
         $attemptobj = quiz_attempt::create($params['attemptid']);
-
-        // If the attempt is now overdue, or abandoned, deal with that.
-        $attemptobj->handle_if_time_expired(time(), true);
 
         $context = context_module::instance($attemptobj->get_cm()->id);
         self::validate_context($context);
@@ -804,19 +803,24 @@ class mod_quiz_external extends external_api {
             $attemptobj->require_capability('mod/quiz:attempt');
         }
 
+        // Check the access rules.
+        $accessmanager = $attemptobj->get_access_manager(time());
+        $messages = array();
+        if ($checkaccessrules) {
+            // If the attempt is now overdue, or abandoned, deal with that.
+            $attemptobj->handle_if_time_expired(time(), true);
+
+            $messages = $accessmanager->prevent_access();
+            if (!$ispreviewuser && $messages) {
+                throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'attempterror');
+            }
+        }
+
         // Attempt closed?.
         if ($attemptobj->is_finished()) {
             throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'attemptalreadyclosed');
-        } else if ($attemptobj->get_state() == quiz_attempt::OVERDUE) {
+        } else if ($failifoverdue && $attemptobj->get_state() == quiz_attempt::OVERDUE) {
             throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'stateoverdue');
-        }
-
-        // Check the access rules.
-        $accessmanager = $attemptobj->get_access_manager(time());
-
-        $messages = $accessmanager->prevent_access();
-        if (!$ispreviewuser && $messages) {
-            throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'attempterror');
         }
 
         // User submitted data (like the quiz password).
@@ -1049,7 +1053,7 @@ class mod_quiz_external extends external_api {
         );
         $params = self::validate_parameters(self::get_attempt_summary_parameters(), $params);
 
-        list($attemptobj, $messages) = self::validate_attempt($params);
+        list($attemptobj, $messages) = self::validate_attempt($params, true, false);
 
         $result = array();
         $result['warnings'] = $warnings;
@@ -1153,6 +1157,98 @@ class mod_quiz_external extends external_api {
         return new external_single_structure(
             array(
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for process_attempt.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function process_attempt_parameters() {
+        return new external_function_parameters (
+            array(
+                'attemptid' => new external_value(PARAM_INT, 'attempt id'),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ),
+                    'the data to be saved', VALUE_DEFAULT, array()
+                ),
+                'finishattempt' => new external_value(PARAM_BOOL, 'whether to finish or not the attempt', VALUE_DEFAULT, false),
+                'timeup' => new external_value(PARAM_BOOL, 'whether the WS was called by a timer when the time is up',
+                                                VALUE_DEFAULT, false),
+                'preflightdata' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, array()
+                )
+            )
+        );
+    }
+
+    /**
+     * Process responses during an attempt at a quiz and also deals with attempts finishing.
+     *
+     * @param int $attemptid attempt id
+     * @param array $data the data to be saved
+     * @param bool $finishattempt whether to finish or not the attempt
+     * @param bool $timeup whether the WS was called by a timer when the time is up
+     * @param array $preflightdata preflight required data (like passwords)
+     * @return array of warnings and the attempt state after the processing
+     * @since Moodle 3.1
+     */
+    public static function process_attempt($attemptid, $data, $finishattempt = false, $timeup = false, $preflightdata = array()) {
+
+        $warnings = array();
+
+        $params = array(
+            'attemptid' => $attemptid,
+            'data' => $data,
+            'finishattempt' => $finishattempt,
+            'timeup' => $timeup,
+            'preflightdata' => $preflightdata,
+        );
+        $params = self::validate_parameters(self::process_attempt_parameters(), $params);
+
+        // Do not check access manager rules.
+        list($attemptobj, $messages) = self::validate_attempt($params, false);
+
+        // Create the $_POST object required by the question engine.
+        $_POST = array();
+        foreach ($params['data'] as $element) {
+            $_POST[$element['name']] = $element['value'];
+        }
+        $timenow = time();
+        $finishattempt = $params['finishattempt'];
+        $timeup = $params['timeup'];
+
+        $result = array();
+        $result['state'] = $attemptobj->process_attempt($timenow, $finishattempt, $timeup, 0);
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the process_attempt return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function process_attempt_returns() {
+        return new external_single_structure(
+            array(
+                'state' => new external_value(PARAM_ALPHANUMEXT, 'state: the new attempt state:
+                                                                    inprogress, finished, overdue, abandoned'),
                 'warnings' => new external_warnings(),
             )
         );

@@ -44,10 +44,12 @@ class testable_mod_quiz_external extends mod_quiz_external {
      * Public accessor.
      *
      * @param  array $params Array of parameters including the attemptid and preflight data
+     * @param  bool $checkaccessrules whether to check the quiz access rules or not
+     * @param  bool $failifoverdue whether to return error if the attempt is overdue
      * @return  array containing the attempt object and access messages
      */
-    public static function validate_attempt($params) {
-        return parent::validate_attempt($params);
+    public static function validate_attempt($params, $checkaccessrules = true, $failifoverdue = true) {
+        return parent::validate_attempt($params, $checkaccessrules, $failifoverdue);
     }
 }
 
@@ -779,11 +781,16 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $quiz->timeopen = time() - WEEKSECS;
         $quiz->timeclose = time() - DAYSECS;
         $DB->update_record('quiz', $quiz);
+
+        // This should work, ommit access rules.
+        testable_mod_quiz_external::validate_attempt($params, false);
+
+        // Get a generic error because prior to checking the dates the attempt is closed.
         try {
             testable_mod_quiz_external::validate_attempt($params);
             $this->fail('Exception expected due to passed dates.');
         } catch (moodle_quiz_exception $e) {
-            $this->assertEquals('attemptalreadyclosed', $e->errorcode);
+            $this->assertEquals('attempterror', $e->errorcode);
         }
 
         // Finish the attempt.
@@ -791,7 +798,7 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $attemptobj->process_finish(time(), false);
 
         try {
-            testable_mod_quiz_external::validate_attempt($params);
+            testable_mod_quiz_external::validate_attempt($params, false);
             $this->fail('Exception expected due to attempt finished.');
         } catch (moodle_quiz_exception $e) {
             $this->assertEquals('attemptalreadyclosed', $e->errorcode);
@@ -1007,6 +1014,110 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         // Check it's marked as completed only the first one.
         $this->assertEquals('complete', $result['questions'][0]['state']);
         $this->assertEquals('complete', $result['questions'][1]['state']);
+
+    }
+
+    /**
+     * Test process_attempt
+     */
+    public function test_process_attempt() {
+        global $DB;
+
+        // Create a new quiz with two questions and one attempt started.
+        list($quiz, $context, $quizobj, $attempt, $attemptobj, $quba) = $this->create_quiz_with_questions(true);
+
+        // Response for slot 1.
+        $prefix = $quba->get_field_prefix(1);
+        $data = array(
+            array('name' => 'slots', 'value' => 1),
+            array('name' => $prefix . ':sequencecheck',
+                    'value' => $attemptobj->get_question_attempt(1)->get_sequence_check_count()),
+            array('name' => $prefix . 'answer', 'value' => 1),
+        );
+
+        $this->setUser($this->student);
+
+        $result = mod_quiz_external::process_attempt($attempt->id, $data);
+        $result = external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
+        $this->assertEquals(quiz_attempt::IN_PROGRESS, $result['state']);
+
+        // Now, get the summary.
+        $result = mod_quiz_external::get_attempt_summary($attempt->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
+
+        // Check it's marked as completed only the first one.
+        $this->assertEquals('complete', $result['questions'][0]['state']);
+        $this->assertEquals('todo', $result['questions'][1]['state']);
+        $this->assertEquals(1, $result['questions'][0]['number']);
+        $this->assertEquals(2, $result['questions'][1]['number']);
+        $this->assertFalse($result['questions'][0]['flagged']);
+        $this->assertFalse($result['questions'][1]['flagged']);
+        $this->assertEmpty($result['questions'][0]['mark']);
+        $this->assertEmpty($result['questions'][1]['mark']);
+
+        // Now, second slot.
+        $prefix = $quba->get_field_prefix(2);
+        $data = array(
+            array('name' => 'slots', 'value' => 2),
+            array('name' => $prefix . ':sequencecheck',
+                    'value' => $attemptobj->get_question_attempt(1)->get_sequence_check_count()),
+            array('name' => $prefix . 'answer', 'value' => 1),
+            array('name' => $prefix . ':flagged', 'value' => 1),
+        );
+
+        $result = mod_quiz_external::process_attempt($attempt->id, $data);
+        $result = external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
+        $this->assertEquals(quiz_attempt::IN_PROGRESS, $result['state']);
+
+        // Now, get the summary.
+        $result = mod_quiz_external::get_attempt_summary($attempt->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
+
+        // Check it's marked as completed only the first one.
+        $this->assertEquals('complete', $result['questions'][0]['state']);
+        $this->assertEquals('complete', $result['questions'][1]['state']);
+        $this->assertFalse($result['questions'][0]['flagged']);
+        $this->assertTrue($result['questions'][1]['flagged']);
+
+        // Finish the attempt.
+        $result = mod_quiz_external::process_attempt($attempt->id, array(), true);
+        $result = external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
+        $this->assertEquals(quiz_attempt::FINISHED, $result['state']);
+
+        // Start new attempt.
+        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+
+        $timenow = time();
+        $attempt = quiz_create_attempt($quizobj, 2, false, $timenow, false, $this->student->id);
+        quiz_start_new_attempt($quizobj, $quba, $attempt, 2, $timenow);
+        quiz_attempt_save_started($quizobj, $quba, $attempt);
+
+        // Force grace period, attempt going to overdue.
+        $quiz->timeclose = $timenow - 10;
+        $quiz->graceperiod = 60;
+        $quiz->overduehandling = 'graceperiod';
+        $DB->update_record('quiz', $quiz);
+
+        $result = mod_quiz_external::process_attempt($attempt->id, array());
+        $result = external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
+        $this->assertEquals(quiz_attempt::OVERDUE, $result['state']);
+
+        // New attempt.
+        $timenow = time();
+        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+        $attempt = quiz_create_attempt($quizobj, 3, 2, $timenow, false, $this->student->id);
+        quiz_start_new_attempt($quizobj, $quba, $attempt, 3, $timenow);
+        quiz_attempt_save_started($quizobj, $quba, $attempt);
+
+        // Force abandon.
+        $quiz->timeclose = $timenow - HOURSECS;
+        $DB->update_record('quiz', $quiz);
+
+        $result = mod_quiz_external::process_attempt($attempt->id, array());
+        $result = external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
+        $this->assertEquals(quiz_attempt::ABANDONED, $result['state']);
 
     }
 

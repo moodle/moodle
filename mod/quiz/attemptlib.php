@@ -2044,6 +2044,132 @@ class quiz_attempt {
             return $url;
         }
     }
+
+    /**
+     * Process responses during an attempt at a quiz.
+     *
+     * @param  int $timenow time when the processing started
+     * @param  bool $finishattempt whether to finish the attempt or not
+     * @param  bool $timeup true if form was submitted by timer
+     * @param  int $thispage current page number
+     * @return string the attempt state once the data has been processed
+     * @since  Moodle 3.1
+     * @throws  moodle_exception
+     */
+    public function process_attempt($timenow, $finishattempt, $timeup, $thispage) {
+        global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
+
+        // If there is only a very small amount of time left, there is no point trying
+        // to show the student another page of the quiz. Just finish now.
+        $graceperiodmin = null;
+        $accessmanager = $this->get_access_manager($timenow);
+        $timeclose = $accessmanager->get_end_time($this->get_attempt());
+
+        // Don't enforce timeclose for previews.
+        if ($this->is_preview()) {
+            $timeclose = false;
+        }
+        $toolate = false;
+        if ($timeclose !== false && $timenow > $timeclose - QUIZ_MIN_TIME_TO_CONTINUE) {
+            $timeup = true;
+            $graceperiodmin = get_config('quiz', 'graceperiodmin');
+            if ($timenow > $timeclose + $graceperiodmin) {
+                $toolate = true;
+            }
+        }
+
+        // If time is running out, trigger the appropriate action.
+        $becomingoverdue = false;
+        $becomingabandoned = false;
+        if ($timeup) {
+            if ($this->get_quiz()->overduehandling == 'graceperiod') {
+                if (is_null($graceperiodmin)) {
+                    $graceperiodmin = get_config('quiz', 'graceperiodmin');
+                }
+                if ($timenow > $timeclose + $this->get_quiz()->graceperiod + $graceperiodmin) {
+                    // Grace period has run out.
+                    $finishattempt = true;
+                    $becomingabandoned = true;
+                } else {
+                    $becomingoverdue = true;
+                }
+            } else {
+                $finishattempt = true;
+            }
+        }
+
+        // Don't log - we will end with a redirect to a page that is logged.
+
+        if (!$finishattempt) {
+            // Just process the responses for this page and go to the next page.
+            if (!$toolate) {
+                try {
+                    $this->process_submitted_actions($timenow, $becomingoverdue);
+
+                } catch (question_out_of_sequence_exception $e) {
+                    throw new moodle_exception('submissionoutofsequencefriendlymessage', 'question',
+                            $this->attempt_url(null, $thispage));
+
+                } catch (Exception $e) {
+                    // This sucks, if we display our own custom error message, there is no way
+                    // to display the original stack trace.
+                    $debuginfo = '';
+                    if (!empty($e->debuginfo)) {
+                        $debuginfo = $e->debuginfo;
+                    }
+                    throw new moodle_exception('errorprocessingresponses', 'question',
+                            $this->attempt_url(null, $thispage), $e->getMessage(), $debuginfo);
+                }
+
+                if (!$becomingoverdue) {
+                    foreach ($this->get_slots() as $slot) {
+                        if (optional_param('redoslot' . $slot, false, PARAM_BOOL)) {
+                            $this->process_redo_question($slot, $timenow);
+                        }
+                    }
+                }
+
+            } else {
+                // The student is too late.
+                $this->process_going_overdue($timenow, true);
+            }
+
+            $transaction->allow_commit();
+
+            return $becomingoverdue ? self::OVERDUE : self::IN_PROGRESS;
+        }
+
+        // Update the quiz attempt record.
+        try {
+            if ($becomingabandoned) {
+                $this->process_abandon($timenow, true);
+            } else {
+                $this->process_finish($timenow, !$toolate);
+            }
+
+        } catch (question_out_of_sequence_exception $e) {
+            throw new moodle_exception('submissionoutofsequencefriendlymessage', 'question',
+                    $this->attempt_url(null, $thispage));
+
+        } catch (Exception $e) {
+            // This sucks, if we display our own custom error message, there is no way
+            // to display the original stack trace.
+            $debuginfo = '';
+            if (!empty($e->debuginfo)) {
+                $debuginfo = $e->debuginfo;
+            }
+            throw new moodle_exception('errorprocessingresponses', 'question',
+                    $this->attempt_url(null, $thispage), $e->getMessage(), $debuginfo);
+        }
+
+        // Send the user to the review page.
+        $transaction->allow_commit();
+
+        return $becomingabandoned ? self::ABANDONED : self::FINISHED;
+    }
+
 }
 
 
