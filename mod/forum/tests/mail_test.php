@@ -184,6 +184,8 @@ class mod_forum_mail_testcase extends advanced_testcase {
         // Add a post to the discussion.
         $record = new stdClass();
         $record->course = $forum->course;
+        $strre = get_string('re', 'forum');
+        $record->subject = $strre . ' ' . $discussion->subject;
         $record->userid = $author->id;
         $record->forum = $forum->id;
         $record->discussion = $discussion->id;
@@ -832,6 +834,33 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $message = reset($messages);
         $this->assertEquals($author->id, $message->useridfrom);
         $this->assertEquals($expectedsubject, $message->subject);
+    }
+
+    /**
+     * Test inital email and reply email subjects
+     */
+    public function test_subjects() {
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_FORCESUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        list($author) = $this->helper_create_users($course, 1);
+        list($commenter) = $this->helper_create_users($course, 1);
+
+        $strre = get_string('re', 'forum');
+
+        // New posts should not have Re: in the subject.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
+        $messages = $this->helper_run_cron_check_count($post, 2);
+        $this->assertNotContains($strre, $messages[0]->subject);
+
+        // Replies should have Re: in the subject.
+        $reply = $this->helper_post_to_discussion($forum, $discussion, $commenter);
+        $messages = $this->helper_run_cron_check_count($reply, 2);
+        $this->assertContains($strre, $messages[0]->subject);
     }
 
     /**
