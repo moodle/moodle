@@ -54,7 +54,6 @@ $PAGE->set_title($title);
 $PAGE->set_heading($title);
 $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
-echo $output->heading($pagetitle);
 
 $page = new \tool_lp\output\manage_competencies_page($framework, $search, $pagecontext);
 echo $output->render($page);

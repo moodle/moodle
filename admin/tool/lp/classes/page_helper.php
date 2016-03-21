@@ -313,4 +313,64 @@ class page_helper {
 
         return array($title, $subtitle, $returnurl);
     }
+
+    /**
+     * Set-up a framework page.
+     *
+     * Example:
+     * list($pagetitle, $pagesubtitle, $url, $frameworksurl) = page_helper::setup_for_framework($id, $pagecontextid);
+     * echo $OUTPUT->heading($pagetitle);
+     * echo $OUTPUT->heading($pagesubtitle, 3);
+     *
+     * @param  int $id The framework ID.
+     * @param  int $pagecontextid The page context ID.
+     * @param  \tool_lp\competency_framework $framework The framework.
+     * @param  string $returntype The desired return page.
+     * @return array With the following:
+     *               - Page title
+     *               - Page sub title
+     *               - Page URL
+     *               - Page framework URL
+     */
+    public static function setup_for_framework($id, $pagecontextid, $framework = null, $returntype = null) {
+        global $PAGE;
+
+        // We keep the original context in the URLs, so that we remain in the same context.
+        $url = new moodle_url("/admin/tool/lp/editcompetencyframework.php", array('id' => $id, 'pagecontextid' => $pagecontextid));
+        if ($returntype) {
+            $url->param('return', $returntype);
+        }
+        $frameworksurl = new moodle_url('/admin/tool/lp/competencyframeworks.php', array('pagecontextid' => $pagecontextid));
+
+        $PAGE->navigation->override_active_url($frameworksurl);
+        $title = get_string('competencies', 'tool_lp');
+        if (empty($id)) {
+            $pagetitle = get_string('competencyframeworks', 'tool_lp');
+            $pagesubtitle = get_string('addnewcompetencyframework', 'tool_lp');
+
+            $url->remove_params(array('id'));
+            $PAGE->navbar->add($pagesubtitle, $url);
+        } else {
+            $pagetitle = $framework->get_shortname();
+            $pagesubtitle = get_string('editcompetencyframework', 'tool_lp');
+            if ($returntype == 'competencies') {
+                $frameworksurl = new moodle_url('/admin/tool/lp/competencies.php', array(
+                    'pagecontextid' => $pagecontextid,
+                    'competencyframeworkid' => $id
+                ));
+            } else {
+                $frameworksurl->param('competencyframeworkid', $id);
+            }
+
+            $PAGE->navbar->add($pagetitle, $frameworksurl);
+            $PAGE->navbar->add($pagesubtitle, $url);
+        }
+
+        $PAGE->set_context(context::instance_by_id($pagecontextid));
+        $PAGE->set_pagelayout('admin');
+        $PAGE->set_url($url);
+        $PAGE->set_title($title);
+        $PAGE->set_heading($title);
+        return array($pagetitle, $pagesubtitle, $url, $frameworksurl);
+    }
 }

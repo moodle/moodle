@@ -37,6 +37,7 @@ require_capability('tool/lp:competencymanage', $context);
 
 $title = get_string('competencies', 'tool_lp');
 $pagetitle = get_string('competencyframeworks', 'tool_lp');
+$pagesubtitle = get_string('listcompetencyframeworkscaption', 'tool_lp');
 
 // Set up the page.
 $PAGE->set_context($context);
@@ -46,7 +47,8 @@ $PAGE->set_title($title);
 $PAGE->set_heading($title);
 $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
-echo $output->heading($pagetitle);
+echo $output->heading($pagetitle, 2);
+echo $output->heading($pagesubtitle, 3);
 
 $page = new \tool_lp\output\manage_competency_frameworks_page($context);
 echo $output->render($page);

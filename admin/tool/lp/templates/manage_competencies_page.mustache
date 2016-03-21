@@ -31,7 +31,13 @@
     * canmanage - true if this user has permission to manage the competencies
 }}
 <div data-region="managecompetencies">
-
+<h2>
+    {{framework.shortname}}
+    {{#canmanage}}
+            <a href="{{pluginbaseurl}}/editcompetencyframework.php?id={{framework.id}}&pagecontextid={{pagecontextid}}&return=competencies">{{#pix}}t/edit, core, {{#str}}editcompetencyframework, tool_lp{{/str}}{{/pix}}</a>
+    {{/canmanage}}
+</h2>
+<h3>{{#str}}competencies, tool_lp{{/str}}</h3>
 <div class="row-fluid">
 <div class="span6">
 <p>

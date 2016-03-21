@@ -1169,7 +1169,8 @@ class external extends external_api {
             'canmanage' => new external_value(PARAM_BOOL, 'True if this user has permission to manage competency frameworks'),
             'pagecontextid' => new external_value(PARAM_INT, 'Context id for the framework'),
             'search' => new external_value(PARAM_RAW, 'Current search string'),
-            'rulesmodules' => new external_value(PARAM_RAW, 'JSON encoded data for rules')
+            'rulesmodules' => new external_value(PARAM_RAW, 'JSON encoded data for rules'),
+            'pluginbaseurl' => new external_value(PARAM_RAW, 'Plugin base url')
         ));
 
     }

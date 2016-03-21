@@ -95,6 +95,7 @@ class manage_competencies_page implements renderable, templatable {
         $data->canmanage = $this->canmanage;
         $data->search = $this->search;
         $data->pagecontextid = $this->pagecontext->id;
+        $data->pluginbaseurl = (new moodle_url('/admin/tool/lp'))->out(true);
 
         $rules = competency::get_available_rules();
         foreach ($rules as $type => $rule) {

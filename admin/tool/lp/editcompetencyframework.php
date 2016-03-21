@@ -26,6 +26,7 @@ require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $id = optional_param('id', 0, PARAM_INT);
+$returntype = optional_param('return', null, PARAM_TEXT);
 $pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to where we can from.
 
 $framework = null;
@@ -42,24 +43,9 @@ require_login();
 \tool_lp\api::require_enabled();
 require_capability('tool/lp:competencymanage', $context);
 
-// We keep the original context in the URLs, so that we remain in the same context.
-$url = new moodle_url("/admin/tool/lp/editcompetencyframework.php", array('id' => $id, 'pagecontextid' => $pagecontextid));
-$frameworksurl = new moodle_url('/admin/tool/lp/competencyframeworks.php', array('pagecontextid' => $pagecontextid));
-
-$title = get_string('competencies', 'tool_lp');
-if (empty($id)) {
-    $pagetitle = get_string('addnewcompetencyframework', 'tool_lp');
-} else {
-    $pagetitle = get_string('editcompetencyframework', 'tool_lp');
-}
-
-// Set up the page.
-$PAGE->navigation->override_active_url($frameworksurl);
-$PAGE->set_context(context::instance_by_id($pagecontextid));
-$PAGE->set_pagelayout('admin');
-$PAGE->set_url($url);
-$PAGE->set_title($title);
-$PAGE->set_heading($title);
+// Set up the framework page.
+list($pagetitle, $pagesubtitle, $url, $frameworksurl) = tool_lp\page_helper::setup_for_framework($id,
+        $pagecontextid, $framework, $returntype);
 $output = $PAGE->get_renderer('tool_lp');
 $form = new \tool_lp\form\competency_framework($url->out(false), array('context' => $context, 'persistent' => $framework));
 
@@ -84,6 +70,7 @@ if ($form->is_cancelled()) {
 }
 
 echo $output->header();
-echo $output->heading($pagetitle);
+echo $output->heading($pagetitle, 2);
+echo $output->heading($pagesubtitle, 3);
 $form->display();
 echo $output->footer();
