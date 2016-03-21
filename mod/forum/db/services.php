@@ -37,16 +37,6 @@ $functions = array(
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 
-    'mod_forum_get_forum_discussions' => array(
-        'classname' => 'mod_forum_external',
-        'methodname' => 'get_forum_discussions',
-        'classpath' => 'mod/forum/externallib.php',
-        'description' => 'DEPRECATED (use mod_forum_get_forum_discussions_paginated instead):
-                            Returns a list of forum discussions contained within a given set of forums.',
-        'type' => 'read',
-        'capabilities' => 'mod/forum:viewdiscussion, mod/forum:viewqandawithoutposting'
-    ),
-
     'mod_forum_get_forum_discussion_posts' => array(
         'classname' => 'mod_forum_external',
         'methodname' => 'get_forum_discussion_posts',

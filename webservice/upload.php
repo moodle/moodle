@@ -70,10 +70,10 @@ $context = context_user::instance($USER->id);
 // Allow allways to upload files to the draft area, no matter if the user can't manage his own files.
 // Files required by other webservices (like mod_assign ones) must be uploaded to the draft area.
 if ($filearea === 'private') {
-    require_capability('moodle/user:manageownfiles', $context);
+    throw new moodle_exception('privatefilesupload');
 }
 
-if ($filearea !== 'private' and $filearea !== 'draft') {
+if ($filearea !== 'draft') {
     // Do not dare to allow more areas here!
     throw new file_exception('error');
 }
@@ -136,24 +136,6 @@ if ($filearea == 'draft' && $itemid <= 0) {
 // Get any existing file size limits.
 $maxareabytes = FILE_AREA_MAX_BYTES_UNLIMITED;
 $maxupload = get_user_max_upload_file_size($context, $CFG->maxbytes);
-if ($filearea == 'private') {
-    // Private files area is limited by $CFG->userquota.
-    if (!has_capability('moodle/user:ignoreuserquota', $context)) {
-        $maxareabytes = $CFG->userquota;
-    }
-
-    // Count the size of all existing files in this area.
-    if ($maxareabytes > 0) {
-        $usedspace = 0;
-        $existingfiles = $fs->get_area_files($context->id, 'user', $filearea, false, 'id', false);
-        foreach ($existingfiles as $file) {
-            $usedspace += $file->get_filesize();
-        }
-        if ($totalsize > ($maxareabytes - $usedspace)) {
-            throw new file_exception('userquotalimit');
-        }
-    }
-}
 
 // Check the size of this upload.
 if ($maxupload !== USER_CAN_IGNORE_FILE_SIZE_LIMITS && $totalsize > $maxupload) {

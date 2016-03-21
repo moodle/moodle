@@ -2005,5 +2005,45 @@ function xmldb_main_upgrade($oldversion) {
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2016042100.00);
     }
+
+    if ($oldversion < 2016042600.01) {
+        $deprecatedwebservices = [
+            'moodle_course_create_courses',
+            'moodle_course_get_courses',
+            'moodle_enrol_get_enrolled_users',
+            'moodle_enrol_get_users_courses',
+            'moodle_enrol_manual_enrol_users',
+            'moodle_file_get_files',
+            'moodle_file_upload',
+            'moodle_group_add_groupmembers',
+            'moodle_group_create_groups',
+            'moodle_group_delete_groupmembers',
+            'moodle_group_delete_groups',
+            'moodle_group_get_course_groups',
+            'moodle_group_get_groupmembers',
+            'moodle_group_get_groups',
+            'moodle_message_send_instantmessages',
+            'moodle_notes_create_notes',
+            'moodle_role_assign',
+            'moodle_role_unassign',
+            'moodle_user_create_users',
+            'moodle_user_delete_users',
+            'moodle_user_get_course_participants_by_id',
+            'moodle_user_get_users_by_courseid',
+            'moodle_user_get_users_by_id',
+            'moodle_user_update_users',
+            'core_grade_get_definitions',
+            'core_user_get_users_by_id',
+            'moodle_webservice_get_siteinfo',
+            'mod_forum_get_forum_discussions'
+        ];
+
+        list($insql, $params) = $DB->get_in_or_equal($deprecatedwebservices);
+        $DB->delete_records_select('external_functions', "name $insql", $params);
+        $DB->delete_records_select('external_services_functions', "functionname $insql", $params);
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2016042600.01);
+    }
+
     return true;
 }
