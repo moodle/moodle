@@ -1696,6 +1696,15 @@ function course_delete_module($cmid) {
             "Cannot delete this module as the function {$modulename}_delete_instance is missing in mod/$modulename/lib.php.");
     }
 
+    // Allow plugins to use this course module before we completely delete it.
+    if ($pluginsfunction = get_plugins_with_function('pre_course_module_delete')) {
+        foreach ($pluginsfunction as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                $pluginfunction($cm);
+            }
+        }
+    }
+
     // Delete activity context questions and question categories.
     question_delete_activity($cm);
 
