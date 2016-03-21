@@ -68,7 +68,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      * Return user data for the provided token, compare with user_agent string.
      *
      * @param  string $token    The unique ID provided by remotehost.
-     * @param  string $UA       User Agent string.
+     * @param  string $useragent       User Agent string.
      * @return array  $userdata Array of user info for remote host
      */
     function user_authorise($token, $useragent) {
@@ -1031,7 +1031,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      *
      * @see process_new_icon()
      * @uses mnet_remote_client callable via MNet XML-RPC
-     * @param int $userid The id of the user
+     * @param int $username The id of the user
      * @return false|array false if user not found, empty array if no picture exists, array with data otherwise
      */
     function fetch_user_image($username) {
