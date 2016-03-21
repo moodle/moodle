@@ -133,8 +133,8 @@ have been fixed <strong><a href="http://third.url/view.php">last week</a></stron
      * Basic text formatting.
      */
     public function test_simple() {
-        $this->assertSame("_Hello_ WORLD!", html_to_text('<p><i>Hello</i> <b>world</b>!</p>'));
-        $this->assertSame("All the WORLD’S a stage.\n\n-- William Shakespeare", html_to_text('<p>All the <strong>world’s</strong> a stage.</p><p>-- William Shakespeare</p>'));
+        $this->assertSame("_Hello_ WORLD!\n", html_to_text('<p><i>Hello</i> <b>world</b>!</p>'));
+        $this->assertSame("All the WORLD’S a stage.\n\n-- William Shakespeare\n", html_to_text('<p>All the <strong>world’s</strong> a stage.</p><p>-- William Shakespeare</p>'));
         $this->assertSame("HELLO WORLD!\n\n", html_to_text('<h1>Hello world!</h1>'));
         $this->assertSame("Hello\nworld!", html_to_text('Hello<br />world!'));
     }

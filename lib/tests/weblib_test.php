@@ -88,9 +88,9 @@ class core_weblib_testcase extends advanced_testcase {
     }
 
     public function test_format_text_email() {
-        $this->assertSame("This is a TEST",
+        $this->assertSame("This is a TEST\n",
             format_text_email('<p>This is a <strong>test</strong></p>', FORMAT_HTML));
-        $this->assertSame("This is a TEST",
+        $this->assertSame("This is a TEST\n",
             format_text_email('<p class="frogs">This is a <strong class=\'fishes\'>test</strong></p>', FORMAT_HTML));
         $this->assertSame('& so is this',
             format_text_email('&amp; so is this', FORMAT_HTML));
