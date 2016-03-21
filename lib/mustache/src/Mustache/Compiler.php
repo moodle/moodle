@@ -328,7 +328,7 @@ class Mustache_Compiler
             $buffer = \'\';
             if (%s) {
                 $source = %s;
-                $result = call_user_func($value, $source, $this->lambdaHelper);
+                $result = call_user_func($value, $source, %s);
                 if (strpos($result, \'{{\') === false) {
                     $buffer .= $result;
                 } else {
@@ -370,15 +370,18 @@ class Mustache_Compiler
         $callable = $this->getCallable();
 
         if ($otag !== '{{' || $ctag !== '}}') {
-            $delims = ', ' . var_export(sprintf('{{= %s %s =}}', $otag, $ctag), true);
+            $delimTag = var_export(sprintf('{{= %s %s =}}', $otag, $ctag), true);
+            $helper = sprintf('$this->lambdaHelper->withDelimiters(%s)', $delimTag);
+            $delims = ', ' . $delimTag;
         } else {
+            $helper = '$this->lambdaHelper';
             $delims = '';
         }
 
         $key = ucfirst(md5($delims . "\n" . $source));
 
         if (!isset($this->sections[$key])) {
-            $this->sections[$key] = sprintf($this->prepare(self::SECTION), $key, $callable, $source, $delims, $this->walk($nodes, 2));
+            $this->sections[$key] = sprintf($this->prepare(self::SECTION), $key, $callable, $source, $helper, $delims, $this->walk($nodes, 2));
         }
 
         if ($arg === true) {
@@ -495,7 +498,7 @@ class Mustache_Compiler
     }
 
     const VARIABLE = '
-        $value = $this->resolveValue($context->%s(%s), $context, $indent);%s
+        $value = $this->resolveValue($context->%s(%s), $context);%s
         $buffer .= %s%s;
     ';
 
