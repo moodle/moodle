@@ -42,7 +42,6 @@ if ($ADMIN->fulltree) {
             $settings->add(new admin_setting_configtext('search_solr/server_password', new lang_string('solrauthpassword', 'search_solr'), '', '', PARAM_RAW));
             $settings->add(new admin_setting_configtext('search_solr/server_timeout', new lang_string('solrhttpconnectiontimeout', 'search_solr'), new lang_string('solrhttpconnectiontimeout_desc', 'search_solr'), 30, PARAM_INT));
             $settings->add(new admin_setting_configtext('search_solr/ssl_cert', new lang_string('solrsslcert', 'search_solr'), new lang_string('solrsslcert_desc', 'search_solr'), '', PARAM_RAW));
-            $settings->add(new admin_setting_configtext('search_solr/ssl_cert_only', new lang_string('solrsslcertonly', 'search_solr'), new lang_string('solrsslcertonly_desc', 'search_solr'), '', PARAM_RAW));
             $settings->add(new admin_setting_configtext('search_solr/ssl_key', new lang_string('solrsslkey', 'search_solr'), new lang_string('solrsslkey_desc', 'search_solr'), '', PARAM_RAW));
             $settings->add(new admin_setting_configtext('search_solr/ssl_keypassword', new lang_string('solrsslkeypassword', 'search_solr'), new lang_string('solrsslkeypassword_desc', 'search_solr'), '', PARAM_RAW));
             $settings->add(new admin_setting_configtext('search_solr/ssl_cainfo', new lang_string('solrsslcainfo', 'search_solr'), new lang_string('solrsslcainfo_desc', 'search_solr'), '', PARAM_RAW));

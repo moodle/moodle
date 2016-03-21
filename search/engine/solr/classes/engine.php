@@ -56,6 +56,11 @@ class engine extends \core_search\engine {
     protected $client = null;
 
     /**
+     * @var \curl Direct curl object.
+     */
+    protected $curl = null;
+
+    /**
      * @var array Fields that can be highlighted.
      */
     protected $highlightfields = array('content', 'description1', 'description2');
@@ -453,11 +458,10 @@ class engine extends \core_search\engine {
             'login'    => !empty($this->config->server_username) ? $this->config->server_username : '',
             'password' => !empty($this->config->server_password) ? $this->config->server_password : '',
             'port'     => !empty($this->config->server_port) ? $this->config->server_port : '',
-            'issecure' => !empty($this->config->secure) ? $this->config->secure : '',
+            'secure' => !empty($this->config->secure) ? true : false,
             'ssl_cert' => !empty($this->config->ssl_cert) ? $this->config->ssl_cert : '',
-            'ssl_cert_only' => !empty($this->config->ssl_cert_only) ? $this->config->ssl_cert_only : '',
             'ssl_key' => !empty($this->config->ssl_key) ? $this->config->ssl_key : '',
-            'ssl_password' => !empty($this->config->ssl_keypassword) ? $this->config->ssl_keypassword : '',
+            'ssl_keypassword' => !empty($this->config->ssl_keypassword) ? $this->config->ssl_keypassword : '',
             'ssl_cainfo' => !empty($this->config->ssl_cainfo) ? $this->config->ssl_cainfo : '',
             'ssl_capath' => !empty($this->config->ssl_capath) ? $this->config->ssl_capath : '',
             'timeout' => !empty($this->config->server_timeout) ? $this->config->server_timeout : '30'
@@ -470,5 +474,71 @@ class engine extends \core_search\engine {
         }
 
         return $this->client;
+    }
+
+    /**
+     * Returns a curl object for conntecting to solr.
+     *
+     * @return \curl
+     */
+    public function get_curl_object() {
+        if (!is_null($this->curl)) {
+            return $this->curl;
+        }
+
+        $this->curl = new \curl();
+
+        $options = array();
+        // Build the SSL options. Based on pecl-solr and general testing.
+        if (!empty($this->config->secure)) {
+            if (!empty($this->config->ssl_cert)) {
+                $options['CURLOPT_SSLCERT'] = $this->config->ssl_cert;
+                $options['CURLOPT_SSLCERTTYPE'] = 'PEM';
+            }
+
+            if (!empty($this->config->ssl_key)) {
+                $options['CURLOPT_SSLKEY'] = $this->config->ssl_key;
+                $options['CURLOPT_SSLKEYTYPE'] = 'PEM';
+            }
+
+            if (!empty($this->config->ssl_keypassword)) {
+                $options['CURLOPT_KEYPASSWD'] = $this->config->ssl_keypassword;
+            }
+
+            if (!empty($this->config->ssl_cainfo)) {
+                $options['CURLOPT_CAINFO'] = $this->config->ssl_cainfo;
+            }
+
+            if (!empty($this->config->ssl_capath)) {
+                $options['CURLOPT_CAPATH'] = $this->config->ssl_capath;
+            }
+        }
+
+        $this->curl->setopt($options);
+
+        if (!empty($this->config->server_username) && !empty($this->config->server_password)) {
+            $authorization = $this->config->server_username . ':' . $this->config->server_password;
+            $this->curl->setHeader('Authorization', 'Basic ' . base64_encode($authorization));
+        }
+
+        return $this->curl;
+    }
+
+    /**
+     * Return a Moodle url object for the server connection.
+     *
+     * @param string $path The solr path to append.
+     * @return \moodle_url
+     */
+    public function get_connection_url($path) {
+        // Must use the proper protocol, or SSL will fail.
+        $protocol = !empty($this->config->secure) ? 'https' : 'http';
+        $url = $protocol . '://' . rtrim($this->config->server_hostname, '/');
+        if (!empty($this->config->server_port)) {
+            $url .= ':' . $this->config->server_port;
+        }
+        $url .= '/solr/' . $this->config->indexname . '/' . ltrim($path, '/');
+
+        return new \moodle_url($url);
     }
 }

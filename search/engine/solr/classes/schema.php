@@ -52,16 +52,10 @@ class schema {
     protected $curl = null;
 
     /**
-     * The URL.
-     * @var string
+     * An engine instance.
+     * @var engine
      */
-    protected $url = null;
-
-    /**
-     * The schema URL.
-     * @var string
-     */
-    protected $schemaurl = null;
+    protected $engine = null;
 
     /**
      * Constructor.
@@ -78,23 +72,11 @@ class schema {
             throw new \moodle_exception('missingconfig', 'search_solr');
         }
 
-        $this->curl = new \curl();
+        $this->engine = new engine();
+        $this->curl = $this->engine->get_curl_object();
 
         // HTTP headers.
         $this->curl->setHeader('Content-type: application/json');
-        if (!empty($this->config->server_username) && !empty($this->config->server_password)) {
-            $authorization = $this->config->server_username . ':' . $this->config->server_password;
-            $this->curl->setHeader('Authorization', 'Basic ' . base64_encode($authorization));
-        }
-
-        $this->url = rtrim($this->config->server_hostname, '/');
-        if (!empty($this->config->server_port)) {
-            $this->url .= ':' . $this->config->server_port;
-        }
-        $this->url .= '/solr/' . $this->config->indexname;
-        $this->schemaurl = $this->url . '/schema';
-
-
     }
 
     /**
@@ -139,7 +121,8 @@ class schema {
     protected function check_index() {
 
         // Check that the server is available and the index exists.
-        $result = $this->curl->get($this->url . '/select?wt=json');
+        $url = $this->engine->get_connection_url('/select?wt=json');
+        $result = $this->curl->get($url);
         if ($this->curl->error) {
             throw new \moodle_exception('connectionerror', 'search_solr');
         }
@@ -167,6 +150,8 @@ class schema {
             $this->validate_fields($fields, false);
         }
 
+        $url = $this->engine->get_connection_url('/schema');
+
         // Add all fields.
         foreach ($fields as $fieldname => $data) {
 
@@ -183,7 +168,7 @@ class schema {
                     'indexed' => $data['indexed']
                 )
             );
-            $results = $this->curl->post($this->schemaurl, json_encode($params));
+            $results = $this->curl->post($url, json_encode($params));
 
             // We only validate if we are interested on it.
             if ($checkexisting) {
@@ -209,7 +194,8 @@ class schema {
         global $CFG;
 
         foreach ($fields as $fieldname => $data) {
-            $results = $this->curl->get($this->schemaurl . '/fields/' . $fieldname);
+            $url = $this->engine->get_connection_url('/schema/fields/' . $fieldname);
+            $results = $this->curl->get($url);
 
             if ($this->curl->error) {
                 throw new \moodle_exception('errorcreatingschema', 'search_solr', '', $this->curl->error);
