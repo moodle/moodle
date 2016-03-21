@@ -110,18 +110,20 @@ class html_parser extends nwiki_parser {
      * @return string
      */
     protected function generate_header($text, $level) {
-        $text = trim($text);
+        $toctext = $text = trim($text);
 
         $normlevel = $level - $this->minheaderlevel + 1;
 
         if (!$this->pretty_print && $normlevel == 1) {
-            $text .= ' ' . parser_utils::h('a', '['.get_string('editsection', 'wiki').']',
-                    array('href' => "edit.php?pageid={$this->wiki_page_id}&section=" . urlencode($text),
-                        'class' => 'wiki_edit_section'));
+            $editlink = '[' . get_string('editsection', 'wiki') . ']';
+            $url = array('href' => "edit.php?pageid={$this->wiki_page_id}&section=" . urlencode($text),
+                'class' => 'wiki_edit_section');
+            $text .= ' ' . parser_utils::h('a', $this->protect($editlink), $url);
+            $toctext .= ' ' . parser_utils::h('a', $editlink, $url);
         }
 
         if ($normlevel <= $this->maxheaderdepth) {
-            $this->toc[] = array($normlevel, $text);
+            $this->toc[] = array($normlevel, $toctext);
             $num = count($this->toc);
             $text = parser_utils::h('a', "", array('name' => "toc-$num")) . $text;
         }
