@@ -180,4 +180,14 @@ $functions = array(
             'capabilities'  => 'mod/assign:view',
             'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
+
+        'mod_assign_get_submission_status' => array(
+            'classname'     => 'mod_assign_external',
+            'methodname'    => 'get_submission_status',
+            'classpath'     => 'mod/assign/externallib.php',
+            'description'   => 'Returns information about an assignment submission status for a given user.',
+            'type'          => 'read',
+            'capabilities'  => 'mod/assign:view',
+            'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ),
 );

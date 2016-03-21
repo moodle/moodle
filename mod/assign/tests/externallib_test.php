@@ -365,16 +365,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, count($assignment['submissions']));
         $submission = $assignment['submissions'][0];
         $this->assertEquals($sid, $submission['id']);
-        $this->assertGreaterThanOrEqual(3, count($submission['plugins']));
-        $plugins = $submission['plugins'];
-        foreach ($plugins as $plugin) {
-            $foundonlinetext = false;
-            if ($plugin['type'] == 'onlinetext') {
-                $foundonlinetext = true;
-                break;
-            }
-        }
-        $this->assertTrue($foundonlinetext);
+        $this->assertCount(1, $submission['plugins']);
     }
 
     /**
@@ -1748,4 +1739,274 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         }
     }
 
+    /**
+     * Create a submission for testing the get_submission_status function.
+     * @param  boolean $submitforgrading whether to submit for grading the submission
+     * @return array an array containing all the required data for testing
+     */
+    private function create_submission_for_testing_status($submitforgrading = false) {
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
+
+        // Create a course and assignment and users.
+        $course = self::getDataGenerator()->create_course();
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $params = array(
+            'course' => $course->id,
+            'assignsubmission_file_maxfiles' => 1,
+            'assignsubmission_file_maxsizebytes' => 1024 * 1024,
+            'assignsubmission_onlinetext_enabled' => 1,
+            'assignsubmission_file_enabled' => 1,
+            'submissiondrafts' => 1,
+            'assignfeedback_file_enabled' => 1,
+            'assignfeedback_comments_enabled' => 1,
+            'attemptreopenmethod' => ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL,
+            'sendnotifications' => 0
+        );
+
+        set_config('submissionreceipts', 0, 'assign');
+
+        $instance = $generator->create_instance($params);
+        $cm = get_coursemodule_from_instance('assign', $instance->id);
+        $context = context_module::instance($cm->id);
+
+        $assign = new testable_assign($context, $cm, $course);
+
+        $student1 = self::getDataGenerator()->create_user();
+        $student2 = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student1->id, $course->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($student2->id, $course->id, $studentrole->id);
+        $teacher = self::getDataGenerator()->create_user();
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
+
+        $this->setUser($student1);
+
+        // Create a student1 with an online text submission.
+        // Simulate a submission.
+        $submission = $assign->get_user_submission($student1->id, true);
+
+        $data = new stdClass();
+        $data->onlinetext_editor = array('itemid' => file_get_unused_draft_itemid(),
+                                         'text' => 'Submission text',
+                                         'format' => FORMAT_MOODLE);
+
+        $draftidfile = file_get_unused_draft_itemid();
+        $usercontext = context_user::instance($student1->id);
+        $filerecord = array(
+            'contextid' => $usercontext->id,
+            'component' => 'user',
+            'filearea'  => 'draft',
+            'itemid'    => $draftidfile,
+            'filepath'  => '/',
+            'filename'  => 't.txt',
+        );
+        $fs = get_file_storage();
+        $fs->create_file_from_string($filerecord, 'text contents');
+
+        $data->files_filemanager = $draftidfile;
+
+        $notices = array();
+        $assign->save_submission($data, $notices);
+
+        if ($submitforgrading) {
+            // Now, submit the draft for grading.
+            $notices = array();
+
+            $data = new stdClass;
+            $data->userid = $student1->id;
+            $assign->submit_for_grading($data, $notices);
+        }
+
+        return array($assign, $instance, $student1, $student2, $teacher);
+    }
+
+    /**
+     * Test get_submission_status for a draft submission.
+     */
+    public function test_get_submission_status_in_draft_status() {
+        $this->resetAfterTest(true);
+
+        list($assign, $instance, $student1, $student2, $teacher) = $this->create_submission_for_testing_status();
+
+        $result = mod_assign_external::get_submission_status($assign->get_instance()->id);
+        // We expect debugging because of the $PAGE object, this won't happen in a normal WS request.
+        $this->assertDebuggingCalled();
+
+        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+
+        // The submission is now in draft mode.
+        $this->assertCount(0, $result['warnings']);
+        $this->assertFalse(isset($result['gradingsummary']));
+        $this->assertFalse(isset($result['feedback']));
+        $this->assertFalse(isset($result['previousattempts']));
+
+        $this->assertTrue($result['lastattempt']['submissionsenabled']);
+        $this->assertTrue($result['lastattempt']['canedit']);
+        $this->assertTrue($result['lastattempt']['cansubmit']);
+        $this->assertFalse($result['lastattempt']['locked']);
+        $this->assertFalse($result['lastattempt']['graded']);
+        $this->assertEmpty($result['lastattempt']['extensionduedate']);
+        $this->assertFalse($result['lastattempt']['blindmarking']);
+        $this->assertCount(0, $result['lastattempt']['submissiongroupmemberswhoneedtosubmit']);
+        $this->assertEquals('notgraded', $result['lastattempt']['gradingstatus']);
+
+        $this->assertEquals($student1->id, $result['lastattempt']['submission']['userid']);
+        $this->assertEquals(0, $result['lastattempt']['submission']['attemptnumber']);
+        $this->assertEquals('draft', $result['lastattempt']['submission']['status']);
+        $this->assertEquals(0, $result['lastattempt']['submission']['groupid']);
+        $this->assertEquals($assign->get_instance()->id, $result['lastattempt']['submission']['assignment']);
+        $this->assertEquals(1, $result['lastattempt']['submission']['latest']);
+        $this->assertEquals('Submission text', $result['lastattempt']['submission']['plugins'][0]['editorfields'][0]['text']);
+        $this->assertEquals('/t.txt', $result['lastattempt']['submission']['plugins'][1]['fileareas'][0]['files'][0]['filepath']);
+    }
+
+    /**
+     * Test get_submission_status for a submitted submission.
+     */
+    public function test_get_submission_status_in_submission_status() {
+        $this->resetAfterTest(true);
+
+        list($assign, $instance, $student1, $student2, $teacher) = $this->create_submission_for_testing_status(true);
+
+        $result = mod_assign_external::get_submission_status($assign->get_instance()->id);
+        // We expect debugging because of the $PAGE object, this won't happen in a normal WS request.
+        $this->assertDebuggingCalled();
+        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+
+        $this->assertCount(0, $result['warnings']);
+        $this->assertFalse(isset($result['gradingsummary']));
+        $this->assertFalse(isset($result['feedback']));
+        $this->assertFalse(isset($result['previousattempts']));
+
+        $this->assertTrue($result['lastattempt']['submissionsenabled']);
+        $this->assertFalse($result['lastattempt']['canedit']);
+        $this->assertFalse($result['lastattempt']['cansubmit']);
+        $this->assertFalse($result['lastattempt']['locked']);
+        $this->assertFalse($result['lastattempt']['graded']);
+        $this->assertEmpty($result['lastattempt']['extensionduedate']);
+        $this->assertFalse($result['lastattempt']['blindmarking']);
+        $this->assertCount(0, $result['lastattempt']['submissiongroupmemberswhoneedtosubmit']);
+        $this->assertEquals('notgraded', $result['lastattempt']['gradingstatus']);
+
+    }
+
+    /**
+     * Test get_submission_status using the teacher role.
+     */
+    public function test_get_submission_status_in_submission_status_for_teacher() {
+        $this->resetAfterTest(true);
+
+        list($assign, $instance, $student1, $student2, $teacher) = $this->create_submission_for_testing_status(true);
+
+        // Now, as teacher, see the grading summary.
+        $this->setUser($teacher);
+        $result = mod_assign_external::get_submission_status($assign->get_instance()->id);
+        // We expect debugging because of the $PAGE object, this won't happen in a normal WS request.
+        $this->assertDebuggingCalled();
+        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+
+        $this->assertCount(0, $result['warnings']);
+        $this->assertFalse(isset($result['lastattempt']));
+        $this->assertFalse(isset($result['feedback']));
+        $this->assertFalse(isset($result['previousattempts']));
+
+        $this->assertEquals(2, $result['gradingsummary']['participantcount']);
+        $this->assertEquals(0, $result['gradingsummary']['submissiondraftscount']);
+        $this->assertEquals(1, $result['gradingsummary']['submissionsenabled']);
+        $this->assertEquals(1, $result['gradingsummary']['submissionssubmittedcount']);
+        $this->assertEquals(1, $result['gradingsummary']['submissionsneedgradingcount']);
+        $this->assertFalse($result['gradingsummary']['warnofungroupedusers']);
+    }
+
+    /**
+     * Test get_submission_status for a reopened submission.
+     */
+    public function test_get_submission_status_in_reopened_status() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+
+        list($assign, $instance, $student1, $student2, $teacher) = $this->create_submission_for_testing_status(true);
+
+        $this->setUser($teacher);
+        // Grade and reopen.
+        $feedbackpluginparams = array();
+        $feedbackpluginparams['files_filemanager'] = file_get_unused_draft_itemid();
+        $feedbackeditorparams = array('text' => 'Yeeha!',
+                                        'format' => 1);
+        $feedbackpluginparams['assignfeedbackcomments_editor'] = $feedbackeditorparams;
+        $result = mod_assign_external::save_grade($instance->id,
+                                                  $student1->id,
+                                                  50.0,
+                                                  -1,
+                                                  false,
+                                                  'released',
+                                                  false,
+                                                  $feedbackpluginparams);
+        $USER->ignoresesskey = true;
+        $assign->testable_process_add_attempt($student1->id);
+
+        $this->setUser($student1);
+
+        $result = mod_assign_external::get_submission_status($assign->get_instance()->id);
+        // We expect debugging because of the $PAGE object, this won't happen in a normal WS request.
+        $this->assertDebuggingCalled();
+        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+
+        $this->assertCount(0, $result['warnings']);
+        $this->assertFalse(isset($result['gradingsummary']));
+
+        $this->assertTrue($result['lastattempt']['submissionsenabled']);
+        $this->assertTrue($result['lastattempt']['canedit']);
+        $this->assertFalse($result['lastattempt']['cansubmit']);
+        $this->assertFalse($result['lastattempt']['locked']);
+        $this->assertFalse($result['lastattempt']['graded']);
+        $this->assertEmpty($result['lastattempt']['extensionduedate']);
+        $this->assertFalse($result['lastattempt']['blindmarking']);
+        $this->assertCount(0, $result['lastattempt']['submissiongroupmemberswhoneedtosubmit']);
+        $this->assertEquals('notgraded', $result['lastattempt']['gradingstatus']);
+
+        // Check new attempt reopened.
+        $this->assertEquals($student1->id, $result['lastattempt']['submission']['userid']);
+        $this->assertEquals(1, $result['lastattempt']['submission']['attemptnumber']);
+        $this->assertEquals('reopened', $result['lastattempt']['submission']['status']);
+        $this->assertEquals(0, $result['lastattempt']['submission']['groupid']);
+        $this->assertEquals($assign->get_instance()->id, $result['lastattempt']['submission']['assignment']);
+        $this->assertEquals(1, $result['lastattempt']['submission']['latest']);
+        $this->assertCount(3, $result['lastattempt']['submission']['plugins']);
+
+        // Now see feedback and the attempts history (remember, is a submission reopened).
+        // Only 2 fields (no grade, no plugins data).
+        $this->assertCount(2, $result['feedback']);
+
+        // One previous attempt.
+        $this->assertCount(1, $result['previousattempts']);
+        $this->assertEquals(0, $result['previousattempts'][0]['attemptnumber']);
+        $this->assertEquals(50, $result['previousattempts'][0]['grade']['grade']);
+        $this->assertEquals($teacher->id, $result['previousattempts'][0]['grade']['grader']);
+        $this->assertEquals($student1->id, $result['previousattempts'][0]['grade']['userid']);
+        $this->assertEquals('Yeeha!', $result['previousattempts'][0]['feedbackplugins'][0]['editorfields'][0]['text']);
+        $submissionplugins = $result['previousattempts'][0]['submission']['plugins'];
+        $this->assertEquals('Submission text', $submissionplugins[0]['editorfields'][0]['text']);
+        $this->assertEquals('/t.txt', $submissionplugins[1]['fileareas'][0]['files'][0]['filepath']);
+    }
+
+    /**
+     * Test access control for get_submission_status.
+     */
+    public function test_get_submission_status_access_control() {
+        $this->resetAfterTest(true);
+
+        list($assign, $instance, $student1, $student2, $teacher) = $this->create_submission_for_testing_status();
+
+        $this->setUser($student2);
+
+        // Access control test.
+        $this->setExpectedException('required_capability_exception');
+        mod_assign_external::get_submission_status($assign->get_instance()->id, $student1->id);
+
+    }
 }
