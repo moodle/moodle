@@ -95,18 +95,7 @@ if ($autosaveperiod) {
 }
 
 // Log this page view.
-$params = array(
-    'objectid' => $attemptid,
-    'relateduserid' => $attemptobj->get_userid(),
-    'courseid' => $attemptobj->get_courseid(),
-    'context' => context_module::instance($attemptobj->get_cmid()),
-    'other' => array(
-        'quizid' => $attemptobj->get_quizid()
-    )
-);
-$event = \mod_quiz\event\attempt_viewed::create($params);
-$event->add_record_snapshot('quiz_attempts', $attemptobj->get_attempt());
-$event->trigger();
+$attemptobj->fire_attempt_viewed_event();
 
 // Get the list of questions needed by this page.
 $slots = $attemptobj->get_slots($page);
@@ -116,13 +105,9 @@ if (empty($slots)) {
     throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'noquestionsfound');
 }
 
-// Update attempt page.
-if ($attemptobj->get_currentpage() != $page) {
-    if ($attemptobj->get_navigation_method() == QUIZ_NAVMETHOD_SEQ && $attemptobj->get_currentpage() > $page) {
-        // Prevent out of sequence access.
-        redirect($attemptobj->start_attempt_url(null, $attemptobj->get_currentpage()));
-    }
-    $DB->set_field('quiz_attempts', 'currentpage', $page, array('id' => $attemptid));
+// Update attempt page, redirecting the user if $page is not valid.
+if (!$attemptobj->set_currentpage($page)) {
+    redirect($attemptobj->start_attempt_url(null, $attemptobj->get_currentpage()));
 }
 
 // Initialise the JavaScript.

@@ -93,15 +93,4 @@ $PAGE->set_heading($attemptobj->get_course()->fullname);
 echo $output->summary_page($attemptobj, $displayoptions);
 
 // Log this page view.
-$params = array(
-    'objectid' => $attemptobj->get_attemptid(),
-    'relateduserid' => $attemptobj->get_userid(),
-    'courseid' => $attemptobj->get_courseid(),
-    'context' => context_module::instance($attemptobj->get_cmid()),
-    'other' => array(
-        'quizid' => $attemptobj->get_quizid()
-    )
-);
-$event = \mod_quiz\event\attempt_summary_viewed::create($params);
-$event->add_record_snapshot('quiz_attempts', $attemptobj->get_attempt());
-$event->trigger();
+$attemptobj->fire_attempt_summary_viewed_event();

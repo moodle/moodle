@@ -845,12 +845,8 @@ class mod_quiz_external extends external_api {
             }
 
             // Prevent out of sequence access.
-            if ($attemptobj->get_currentpage() != $params['page']) {
-                if ($attemptobj->get_navigation_method() == QUIZ_NAVMETHOD_SEQ &&
-                        $attemptobj->get_currentpage() > $params['page']) {
-
-                    throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'Out of sequence access');
-                }
+            if (!$attemptobj->check_page_access($params['page'])) {
+                throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'Out of sequence access');
             }
 
             // Check slots.
@@ -1381,6 +1377,179 @@ class mod_quiz_external extends external_api {
                     )
                 ),
                 'questions' => new external_multiple_structure(self::question_structure()),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for view_attempt.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function view_attempt_parameters() {
+        return new external_function_parameters (
+            array(
+                'attemptid' => new external_value(PARAM_INT, 'attempt id'),
+                'page' => new external_value(PARAM_INT, 'page number'),
+            )
+        );
+    }
+
+    /**
+     * Trigger the attempt viewed event.
+     *
+     * @param int $attemptid attempt id
+     * @param int $page page number
+     * @return array of warnings and status result
+     * @since Moodle 3.1
+     */
+    public static function view_attempt($attemptid, $page) {
+
+        $warnings = array();
+
+        $params = array(
+            'attemptid' => $attemptid,
+            'page' => $page,
+        );
+        $params = self::validate_parameters(self::view_attempt_parameters(), $params);
+        list($attemptobj, $messages) = self::validate_attempt($params);
+
+        // Log action.
+        $attemptobj->fire_attempt_viewed_event();
+
+        // Update attempt page, throwing an exception if $page is not valid.
+        if (!$attemptobj->set_currentpage($params['page'])) {
+            throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'Out of sequence access');
+        }
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the view_attempt return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function view_attempt_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for view_attempt_summary.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function view_attempt_summary_parameters() {
+        return new external_function_parameters (
+            array(
+                'attemptid' => new external_value(PARAM_INT, 'attempt id'),
+            )
+        );
+    }
+
+    /**
+     * Trigger the attempt summary viewed event.
+     *
+     * @param int $attemptid attempt id
+     * @return array of warnings and status result
+     * @since Moodle 3.1
+     */
+    public static function view_attempt_summary($attemptid) {
+
+        $warnings = array();
+
+        $params = array(
+            'attemptid' => $attemptid,
+        );
+        $params = self::validate_parameters(self::view_attempt_summary_parameters(), $params);
+        list($attemptobj, $messages) = self::validate_attempt($params);
+
+        // Log action.
+        $attemptobj->fire_attempt_summary_viewed_event();
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the view_attempt_summary return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function view_attempt_summary_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for view_attempt_review.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function view_attempt_review_parameters() {
+        return new external_function_parameters (
+            array(
+                'attemptid' => new external_value(PARAM_INT, 'attempt id'),
+            )
+        );
+    }
+
+    /**
+     * Trigger the attempt reviewed event.
+     *
+     * @param int $attemptid attempt id
+     * @return array of warnings and status result
+     * @since Moodle 3.1
+     */
+    public static function view_attempt_review($attemptid) {
+
+        $warnings = array();
+
+        $params = array(
+            'attemptid' => $attemptid,
+        );
+        $params = self::validate_parameters(self::view_attempt_review_parameters(), $params);
+        list($attemptobj, $displayoptions) = self::validate_attempt_review($params);
+
+        // Log action.
+        $attemptobj->fire_attempt_reviewed_event();
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the view_attempt_review return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function view_attempt_review_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
                 'warnings' => new external_warnings(),
             )
         );
