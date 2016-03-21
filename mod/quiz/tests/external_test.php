@@ -764,21 +764,7 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($attempt->id, $result[0]->get_attempt()->id);
         $this->assertEquals([], $result[1]);
 
-        // Try to open attempt in closed quiz.
-        $quiz->timeopen = time() - WEEKSECS;
-        $quiz->timeclose = time() - DAYSECS;
-        $DB->update_record('quiz', $quiz);
-
-        try {
-            testable_mod_quiz_external::validate_attempt($params);
-            $this->fail('Exception expected due to passed dates.');
-        } catch (moodle_quiz_exception $e) {
-            $this->assertEquals('attempterror', $e->errorcode);
-        }
-
         // Page out of range.
-        $quiz->timeopen = 0;
-        $quiz->timeclose = 0;
         $DB->update_record('quiz', $quiz);
         $params['page'] = 4;
         try {
@@ -786,6 +772,18 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
             $this->fail('Exception expected due to page out of range.');
         } catch (moodle_quiz_exception $e) {
             $this->assertEquals('Invalid page number', $e->errorcode);
+        }
+
+        $params['page'] = 0;
+        // Try to open attempt in closed quiz.
+        $quiz->timeopen = time() - WEEKSECS;
+        $quiz->timeclose = time() - DAYSECS;
+        $DB->update_record('quiz', $quiz);
+        try {
+            testable_mod_quiz_external::validate_attempt($params);
+            $this->fail('Exception expected due to passed dates.');
+        } catch (moodle_quiz_exception $e) {
+            $this->assertEquals('attemptalreadyclosed', $e->errorcode);
         }
 
         // Finish the attempt.
@@ -909,6 +907,46 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
             }
         }
         $this->assertEquals(2, $found);
+
+    }
+
+    /**
+     * Test get_attempt_summary
+     */
+    public function test_get_attempt_summary() {
+
+        // Create a new quiz with one attempt started.
+        list($quiz, $context, $quizobj, $attempt, $attemptobj) = $this->create_quiz_with_questions(true);
+
+        $this->setUser($this->student);
+        $result = mod_quiz_external::get_attempt_summary($attempt->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
+
+        // Check the state, flagged and mark data is correct.
+        $this->assertEquals('todo', $result['questions'][0]['state']);
+        $this->assertEquals('todo', $result['questions'][1]['state']);
+        $this->assertEquals(1, $result['questions'][0]['number']);
+        $this->assertEquals(2, $result['questions'][1]['number']);
+        $this->assertFalse($result['questions'][0]['flagged']);
+        $this->assertFalse($result['questions'][1]['flagged']);
+        $this->assertEmpty($result['questions'][0]['mark']);
+        $this->assertEmpty($result['questions'][1]['mark']);
+
+        // Submit a response for the first question.
+        $tosubmit = array(1 => array('answer' => '3.14'));
+        $attemptobj->process_submitted_actions(time(), false, $tosubmit);
+        $result = mod_quiz_external::get_attempt_summary($attempt->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
+
+        // Check it's marked as completed only the first one.
+        $this->assertEquals('complete', $result['questions'][0]['state']);
+        $this->assertEquals('todo', $result['questions'][1]['state']);
+        $this->assertEquals(1, $result['questions'][0]['number']);
+        $this->assertEquals(2, $result['questions'][1]['number']);
+        $this->assertFalse($result['questions'][0]['flagged']);
+        $this->assertFalse($result['questions'][1]['flagged']);
+        $this->assertEmpty($result['questions'][0]['mark']);
+        $this->assertEmpty($result['questions'][1]['mark']);
 
     }
 
