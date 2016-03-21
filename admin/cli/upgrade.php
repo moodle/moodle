@@ -45,23 +45,21 @@ require_once($CFG->libdir.'/clilib.php');         // cli only functions
 require_once($CFG->libdir.'/environmentlib.php');
 
 // now get cli options
+$lang = isset($SESSION->lang) ? $SESSION->lang : $CFG->lang;
 list($options, $unrecognized) = cli_get_params(
     array(
         'non-interactive'   => false,
         'allow-unstable'    => false,
         'help'              => false,
-        'lang'              => 'en'
+        'lang'              => $lang
     ),
     array(
         'h' => 'help'
     )
 );
 
-global $SESSION;
 if ($options['lang']) {
     $SESSION->lang = $options['lang'];
-} else {
-    $SESSION->lang = 'en';
 }
 
 $interactive = empty($options['non-interactive']);
@@ -82,7 +80,9 @@ Options:
 --non-interactive     No interactive questions or confirmations
 --allow-unstable      Upgrade even if the version is not marked as stable yet,
                       required in non-interactive mode.
---lang=CODE           Set preferred language for CLI output, during upgrade process (default:en).
+--lang=CODE           Set preferred language for CLI output. Defaults to the
+                      site language if not set. Defaults to 'en' if the lang 
+                      parameter is invalid or not installed.
 -h, --help            Print out this help
 
 Example:
