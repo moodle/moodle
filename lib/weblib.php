@@ -3600,5 +3600,5 @@ function get_formatted_help_string($identifier, $component, $ajax = false, $a = 
  * @return string HTML to prevent password autofill
  */
 function prevent_form_autofill_password() {
-    return '<div class="hide"><input type="password" /></div>';
+    return '<div class="hide"><input type="text" /><input type="password" /></div>';
 }
