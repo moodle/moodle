@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use coding_exception;
 use context;
+use moodle_exception;
 use moodle_url;
 use core_user;
 use context_user;
@@ -372,5 +373,89 @@ class page_helper {
         $PAGE->set_title($title);
         $PAGE->set_heading($title);
         return array($pagetitle, $pagesubtitle, $url, $frameworksurl);
+    }
+
+    /**
+     * Set-up a competency page.
+     *
+     * Example:
+     * list($title, $subtitle) = page_helper::setup_for_competency($pagecontextid, $url, $competency, $pagetitle);
+     * echo $OUTPUT->heading($title);
+     * echo $OUTPUT->heading($subtitle, 3);
+     *
+     * @param  int $pagecontextid The page context ID.
+     * @param  moodle_url $url The current page.
+     * @param  \tool_lp\competency_framework $framework The competency framework.
+     * @param  \tool_lp\competency $competency The competency, if any.
+     * @param  \tool_lp\competency $parent The parent competency, if any.
+     * @return array With the following:
+     *               - Page title
+     *               - Page sub title
+     *               - Return URL (main competencies page)
+     * @throws coding_exception
+     */
+    public static function setup_for_competency($pagecontextid, moodle_url $url, $framework, $competency = null, $parent = null) {
+        global $PAGE, $SITE;
+
+        // Set page context.
+        $pagecontext = context::instance_by_id($pagecontextid);
+        $PAGE->set_context($pagecontext);
+
+        // Set page heading.
+        if ($pagecontext->contextlevel == CONTEXT_SYSTEM) {
+            $heading = $SITE->fullname;
+        } else if ($pagecontext->contextlevel == CONTEXT_COURSECAT) {
+            $heading = $pagecontext->get_context_name();
+        } else {
+            throw new coding_exception('Unexpected context!');
+        }
+        $PAGE->set_heading($heading);
+
+        // Set override active url.
+        $frameworksurl = new moodle_url('/admin/tool/lp/competencyframeworks.php', ['pagecontextid' => $pagecontextid]);
+        $PAGE->navigation->override_active_url($frameworksurl);
+
+        // Set return url.
+        $returnurloptions = [
+            'competencyframeworkid' => $framework->get_id(),
+            'pagecontextid' => $pagecontextid
+        ];
+        $returnurl = new moodle_url('/admin/tool/lp/competencies.php', $returnurloptions);
+        $PAGE->navbar->add($framework->get_shortname(), $returnurl);
+
+        // Set page layout.
+        $PAGE->set_pagelayout('admin');
+
+        if (empty($competency)) {
+            // Add mode.
+            $title = format_string($framework->get_shortname(), true, ['context' => $pagecontext]);
+
+            // Set the sub-title for add mode.
+            $level = $parent ? $parent->get_level() + 1 : 1;
+            $subtitle = get_string('taxonomy_add_' . $framework->get_taxonomy($level), 'tool_lp');
+
+        } else {
+            // Edit mode.
+            $title = format_string($competency->get_shortname(), true, ['context' => $competency->get_context()]);
+
+            // Add competency name to breadcrumbs, if available.
+            $PAGE->navbar->add($title);
+
+            // Set the sub-title for edit mode.
+            $subtitle = get_string('taxonomy_edit_' . $framework->get_taxonomy($competency->get_level()), 'tool_lp');
+        }
+
+        // Set page title.
+        $PAGE->set_title($title);
+
+        // Set page url.
+        $PAGE->set_url($url);
+
+        // Add editing mode link to breadcrumbs, if available.
+        if (!empty($subtitle)) {
+            $PAGE->navbar->add($subtitle, $url);
+        }
+
+        return [$title, $subtitle, $returnurl];
     }
 }
