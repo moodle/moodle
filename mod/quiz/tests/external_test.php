@@ -31,6 +31,27 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
+ * Silly class to access mod_quiz_external internal methods.
+ *
+ * @package mod_quiz
+ * @copyright 2016 Juan Leyva <juan@moodle.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since  Moodle 3.1
+ */
+class testable_mod_quiz_external extends mod_quiz_external {
+
+    /**
+     * Public accessor.
+     *
+     * @param  array $params Array of parameters including the attemptid and preflight data
+     * @return  array containing the attempt object and access messages
+     */
+    public static function validate_attempt($params) {
+        return parent::validate_attempt($params);
+    }
+}
+
+/**
  * Quiz module external functions tests
  *
  * @package    mod_quiz
@@ -64,6 +85,65 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $this->teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
         $this->getDataGenerator()->enrol_user($this->student->id, $this->course->id, $this->studentrole->id, 'manual');
         $this->getDataGenerator()->enrol_user($this->teacher->id, $this->course->id, $this->teacherrole->id, 'manual');
+    }
+
+    /**
+     * Create a quiz with questions including a started or finished attempt optionally
+     *
+     * @param  boolean $startattempt whether to start a new attempt
+     * @param  boolean $finishattempt whether to finish the new attempt
+     * @return array array containing the quiz, context and the attempt
+     */
+    private function create_quiz_with_questions($startattempt = false, $finishattempt = false) {
+
+        // Create a new quiz with attempts.
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $data = array('course' => $this->course->id,
+                      'sumgrades' => 1);
+        $quiz = $quizgenerator->create_instance($data);
+        $context = context_module::instance($quiz->cmid);
+
+        // Create a couple of questions.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        $cat = $questiongenerator->create_question_category();
+        $question = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
+        quiz_add_quiz_question($question->id, $quiz);
+        $question = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
+        quiz_add_quiz_question($question->id, $quiz);
+
+        $quizobj = quiz::create($quiz->id, $this->student->id);
+
+        // Set grade to pass.
+        $item = grade_item::fetch(array('courseid' => $this->course->id, 'itemtype' => 'mod',
+                                        'itemmodule' => 'quiz', 'iteminstance' => $quiz->id, 'outcomeid' => null));
+        $item->gradepass = 80;
+        $item->update();
+
+        if ($startattempt or $finishattempt) {
+            // Now, do one attempt.
+            $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+            $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+
+            $timenow = time();
+            $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $this->student->id);
+            quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
+            quiz_attempt_save_started($quizobj, $quba, $attempt);
+            $attemptobj = quiz_attempt::create($attempt->id);
+
+            if ($finishattempt) {
+                // Process some responses from the student.
+                $tosubmit = array(1 => array('answer' => '3.14'));
+                $attemptobj->process_submitted_actions(time(), false, $tosubmit);
+
+                // Finish the attempt.
+                $attemptobj->process_finish(time(), false);
+            }
+            return array($quiz, $context, $quizobj, $attempt, $attemptobj);
+        } else {
+            return array($quiz, $context, $quizobj);
+        }
+
     }
 
     /*
@@ -273,45 +353,8 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
      */
     public function test_get_user_attempts() {
 
-        // Create a new quiz with attempts.
-        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
-        $data = array('course' => $this->course->id,
-                      'sumgrades' => 1);
-        $quiz = $quizgenerator->create_instance($data);
-
-        // Create a couple of questions.
-        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-
-        $cat = $questiongenerator->create_question_category();
-        $question = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
-        quiz_add_quiz_question($question->id, $quiz);
-
-        $quizobj = quiz::create($quiz->id, $this->student->id);
-
-        // Set grade to pass.
-        $item = grade_item::fetch(array('courseid' => $this->course->id, 'itemtype' => 'mod',
-                                        'itemmodule' => 'quiz', 'iteminstance' => $quiz->id, 'outcomeid' => null));
-        $item->gradepass = 80;
-        $item->update();
-
-        // Start the passing attempt.
-        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
-        $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
-
-        $timenow = time();
-        $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $this->student->id);
-        quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
-        quiz_attempt_save_started($quizobj, $quba, $attempt);
-
-        // Process some responses from the student.
-        $attemptobj = quiz_attempt::create($attempt->id);
-        $tosubmit = array(1 => array('answer' => '3.14'));
-        $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
-
-        // Finish the attempt.
-        $attemptobj = quiz_attempt::create($attempt->id);
-        $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
-        $attemptobj->process_finish($timenow, false);
+        // Create a quiz with one attempt finished.
+        list($quiz, $context, $quizobj, $attempt, $attemptobj) = $this->create_quiz_with_questions(true, true);
 
         $this->setUser($this->student);
         $result = mod_quiz_external::get_user_attempts($quiz->id);
@@ -591,34 +634,8 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
     public function test_start_attempt() {
         global $DB;
 
-        // Create a new quiz with attempts.
-        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
-        $data = array('course' => $this->course->id,
-                      'sumgrades' => 1);
-        $quiz = $quizgenerator->create_instance($data);
-        $context = context_module::instance($quiz->cmid);
-
-        try {
-            mod_quiz_external::start_attempt($quiz->id);
-            $this->fail('Exception expected due to missing questions.');
-        } catch (moodle_quiz_exception $e) {
-            $this->assertEquals('noquestionsfound', $e->errorcode);
-        }
-
-        // Create a question.
-        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-
-        $cat = $questiongenerator->create_question_category();
-        $question = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
-        quiz_add_quiz_question($question->id, $quiz);
-
-        $quizobj = quiz::create($quiz->id, $this->student->id);
-
-        // Set grade to pass.
-        $item = grade_item::fetch(array('courseid' => $this->course->id, 'itemtype' => 'mod',
-                                        'itemmodule' => 'quiz', 'iteminstance' => $quiz->id, 'outcomeid' => null));
-        $item->gradepass = 80;
-        $item->update();
+        // Create a new quiz with questions.
+        list($quiz, $context, $quizobj) = $this->create_quiz_with_questions();
 
         $this->setUser($this->student);
 
@@ -699,6 +716,199 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         } catch (required_capability_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
+
+    }
+
+    /**
+     * Test validate_attempt
+     */
+    public function test_validate_attempt() {
+        global $DB;
+
+        // Create a new quiz with one attempt started.
+        list($quiz, $context, $quizobj, $attempt, $attemptobj) = $this->create_quiz_with_questions(true);
+
+        $this->setUser($this->student);
+
+        // Invalid attempt.
+        try {
+            $params = array('attemptid' => -1, 'page' => 0);
+            testable_mod_quiz_external::validate_attempt($params);
+            $this->fail('Exception expected due to invalid attempt id.');
+        } catch (dml_missing_record_exception $e) {
+            $this->assertEquals('invalidrecord', $e->errorcode);
+        }
+
+        // Test OK case.
+        $params = array('attemptid' => $attempt->id, 'page' => 0);
+        $result = testable_mod_quiz_external::validate_attempt($params);
+        $this->assertEquals($attempt->id, $result[0]->get_attempt()->id);
+        $this->assertEquals([], $result[1]);
+
+        // Test with preflight data.
+        $quiz->password = 'abc';
+        $DB->update_record('quiz', $quiz);
+
+        try {
+            $params = array('attemptid' => $attempt->id, 'page' => 0,
+                            'preflightdata' => array(array("name" => "quizpassword", "value" => 'bad')));
+            testable_mod_quiz_external::validate_attempt($params);
+            $this->fail('Exception expected due to invalid passwod.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals(get_string('passworderror', 'quizaccess_password'), $e->errorcode);
+        }
+
+        // Now, try everything correct.
+        $params['preflightdata'][0]['value'] = 'abc';
+        $result = testable_mod_quiz_external::validate_attempt($params);
+        $this->assertEquals($attempt->id, $result[0]->get_attempt()->id);
+        $this->assertEquals([], $result[1]);
+
+        // Try to open attempt in closed quiz.
+        $quiz->timeopen = time() - WEEKSECS;
+        $quiz->timeclose = time() - DAYSECS;
+        $DB->update_record('quiz', $quiz);
+
+        try {
+            testable_mod_quiz_external::validate_attempt($params);
+            $this->fail('Exception expected due to passed dates.');
+        } catch (moodle_quiz_exception $e) {
+            $this->assertEquals('attempterror', $e->errorcode);
+        }
+
+        // Page out of range.
+        $quiz->timeopen = 0;
+        $quiz->timeclose = 0;
+        $DB->update_record('quiz', $quiz);
+        $params['page'] = 4;
+        try {
+            testable_mod_quiz_external::validate_attempt($params);
+            $this->fail('Exception expected due to page out of range.');
+        } catch (moodle_quiz_exception $e) {
+            $this->assertEquals('Invalid page number', $e->errorcode);
+        }
+
+        // Finish the attempt.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj->process_finish(time(), false);
+
+        try {
+            testable_mod_quiz_external::validate_attempt($params);
+            $this->fail('Exception expected due to attempt finished.');
+        } catch (moodle_quiz_exception $e) {
+            $this->assertEquals('attemptalreadyclosed', $e->errorcode);
+        }
+
+        // Test user with no capabilities.
+        // We need a explicit prohibit since this capability is only defined in authenticated user and guest roles.
+        assign_capability('mod/quiz:attempt', CAP_PROHIBIT, $this->studentrole->id, $context->id);
+        // Empty all the caches that may be affected  by this change.
+        accesslib_clear_all_caches_for_unit_testing();
+        course_modinfo::clear_instance_cache();
+
+        try {
+            testable_mod_quiz_external::validate_attempt($params);
+            $this->fail('Exception expected due to missing permissions.');
+        } catch (required_capability_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        // Now try with a different user.
+        $this->setUser($this->teacher);
+
+        $params['page'] = 0;
+        try {
+            testable_mod_quiz_external::validate_attempt($params);
+            $this->fail('Exception expected due to not your attempt.');
+        } catch (moodle_quiz_exception $e) {
+            $this->assertEquals('notyourattempt', $e->errorcode);
+        }
+    }
+
+    /**
+     * Test get_attempt_data
+     */
+    public function test_get_attempt_data() {
+        global $DB;
+
+        // Create a new quiz with one attempt started.
+        list($quiz, $context, $quizobj, $attempt, $attemptobj) = $this->create_quiz_with_questions(true);
+
+        $quizobj = $attemptobj->get_quizobj();
+        $quizobj->preload_questions();
+        $quizobj->load_questions();
+        $questions = $quizobj->get_questions();
+
+        $this->setUser($this->student);
+
+        // We receive one question per page.
+        $result = mod_quiz_external::get_attempt_data($attempt->id, 0);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_data_returns(), $result);
+
+        $this->assertEquals($attempt, (object) $result['attempt']);
+        $this->assertEquals(1, $result['nextpage']);
+        $this->assertCount(0, $result['messages']);
+        $this->assertCount(1, $result['questions']);
+        $this->assertEquals(1, $result['questions'][0]['slot']);
+        $this->assertEquals(1, $result['questions'][0]['number']);
+        $this->assertEquals('numerical', $result['questions'][0]['type']);
+        $this->assertEquals('todo', $result['questions'][0]['state']);
+        $this->assertEquals(get_string('notyetanswered', 'question'), $result['questions'][0]['status']);
+        $this->assertFalse($result['questions'][0]['flagged']);
+        $this->assertEquals(0, $result['questions'][0]['page']);
+        $this->assertEmpty($result['questions'][0]['mark']);
+        $this->assertEquals(1, $result['questions'][0]['maxmark']);
+
+        // Now try the last page.
+        $result = mod_quiz_external::get_attempt_data($attempt->id, 1);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_data_returns(), $result);
+
+        $this->assertEquals($attempt, (object) $result['attempt']);
+        $this->assertEquals(-1, $result['nextpage']);
+        $this->assertCount(0, $result['messages']);
+        $this->assertCount(1, $result['questions']);
+        $this->assertEquals(2, $result['questions'][0]['slot']);
+        $this->assertEquals(2, $result['questions'][0]['number']);
+        $this->assertEquals('numerical', $result['questions'][0]['type']);
+        $this->assertEquals('todo', $result['questions'][0]['state']);
+        $this->assertEquals(get_string('notyetanswered', 'question'), $result['questions'][0]['status']);
+        $this->assertFalse($result['questions'][0]['flagged']);
+        $this->assertEquals(1, $result['questions'][0]['page']);
+
+        // Finish previous attempt.
+        $attemptobj->process_finish(time(), false);
+
+        // Change setting and expect two pages.
+        $quiz->questionsperpage = 4;
+        $DB->update_record('quiz', $quiz);
+        quiz_repaginate_questions($quiz->id, $quiz->questionsperpage);
+
+        // Start with new attempt with the new layout.
+        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+
+        $timenow = time();
+        $attempt = quiz_create_attempt($quizobj, 2, false, $timenow, false, $this->student->id);
+        quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
+        quiz_attempt_save_started($quizobj, $quba, $attempt);
+
+        // We receive two questions per page.
+        $result = mod_quiz_external::get_attempt_data($attempt->id, 0);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_data_returns(), $result);
+        $this->assertCount(2, $result['questions']);
+        $this->assertEquals(-1, $result['nextpage']);
+
+        // Check questions looks good.
+        $found = 0;
+        foreach ($questions as $question) {
+            foreach ($result['questions'] as $rquestion) {
+                if ($rquestion['slot'] == $question->slot) {
+                    $this->assertTrue(strpos($rquestion['html'], "qid=$question->id") !== false);
+                    $found++;
+                }
+            }
+        }
+        $this->assertEquals(2, $found);
 
     }
 
