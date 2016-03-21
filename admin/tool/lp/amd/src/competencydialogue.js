@@ -130,7 +130,7 @@ define(['jquery',
     Competencydialogue.prototype.clickEventHandler = function(e) {
 
         var compdialogue = e.data.compdialogue;
-        var competencyid = $(e.target).data('id');
+        var competencyid = $(e.currentTarget).data('id');
 
         // Show the dialogue box.
         compdialogue.showDialogue(competencyid);
