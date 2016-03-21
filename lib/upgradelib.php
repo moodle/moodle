@@ -1831,7 +1831,6 @@ function upgrade_plugin_mnet_functions($component) {
     }
 
     // reflect all the services we're publishing and save them
-    require_once($CFG->dirroot . '/lib/zend/Zend/Server/Reflection.php');
     static $cachedclasses = array(); // to store reflection information in
     foreach ($publishes as $service => $data) {
         $f = $data['filename'];
@@ -1864,8 +1863,8 @@ function upgrade_plugin_mnet_functions($component) {
                 $key = $dataobject->filename . '|' . $dataobject->classname;
                 if (!array_key_exists($key, $cachedclasses)) { // look to see if we've already got a reflection object
                     try {
-                        $cachedclasses[$key] = Zend_Server_Reflection::reflectClass($dataobject->classname);
-                    } catch (Zend_Server_Reflection_Exception $e) { // catch these and rethrow them to something more helpful
+                        $cachedclasses[$key] = new ReflectionClass($dataobject->classname);
+                    } catch (ReflectionException $e) { // catch these and rethrow them to something more helpful
                         throw new moodle_exception('installreflectionclasserror', 'mnet', '', (object)array('method' => $dataobject->functionname, 'class' => $dataobject->classname, 'error' => $e->getMessage()));
                     }
                 }
@@ -1873,27 +1872,20 @@ function upgrade_plugin_mnet_functions($component) {
                 if (!$r->hasMethod($dataobject->functionname)) {
                     throw new moodle_exception('installnosuchmethod', 'mnet', '', (object)array('method' => $dataobject->functionname, 'class' => $dataobject->classname));
                 }
-                // stupid workaround for zend not having a getMethod($name) function
-                $ms = $r->getMethods();
-                foreach ($ms as $m) {
-                    if ($m->getName() == $dataobject->functionname) {
-                        $functionreflect = $m;
-                        break;
-                    }
-                }
+                $functionreflect = $r->getMethod($dataobject->functionname);
                 $dataobject->static = (int)$functionreflect->isStatic();
             } else {
                 if (!function_exists($dataobject->functionname)) {
                     throw new moodle_exception('installnosuchfunction', 'mnet', '', (object)array('method' => $dataobject->functionname, 'file' => $dataobject->filename));
                 }
                 try {
-                    $functionreflect = Zend_Server_Reflection::reflectFunction($dataobject->functionname);
-                } catch (Zend_Server_Reflection_Exception $e) { // catch these and rethrow them to something more helpful
+                    $functionreflect = new ReflectionFunction($dataobject->functionname);
+                } catch (ReflectionException $e) { // catch these and rethrow them to something more helpful
                     throw new moodle_exception('installreflectionfunctionerror', 'mnet', '', (object)array('method' => $dataobject->functionname, '' => $dataobject->filename, 'error' => $e->getMessage()));
                 }
             }
             $dataobject->profile =  serialize(admin_mnet_method_profile($functionreflect));
-            $dataobject->help = $functionreflect->getDescription();
+            $dataobject->help = admin_mnet_method_get_help($functionreflect);
 
             if ($record_exists = $DB->get_record('mnet_rpc', array('xmlrpcpath'=>$dataobject->xmlrpcpath))) {
                 $dataobject->id      = $record_exists->id;
@@ -1971,31 +1963,74 @@ function upgrade_plugin_mnet_functions($component) {
 }
 
 /**
- * Given some sort of Zend Reflection function/method object, return a profile array, ready to be serialized and stored
+ * Given some sort of reflection function/method object, return a profile array, ready to be serialized and stored
  *
- * @param Zend_Server_Reflection_Function_Abstract $function can be any subclass of this object type
+ * @param ReflectionFunctionAbstract $function reflection function/method object from which to extract information
  *
- * @return array
+ * @return array associative array with function/method information
  */
-function admin_mnet_method_profile(Zend_Server_Reflection_Function_Abstract $function) {
-    $protos = $function->getPrototypes();
-    $proto = array_pop($protos);
-    $ret = $proto->getReturnValue();
-    $profile = array(
-        'parameters' =>  array(),
-        'return'     =>  array(
-            'type'        => $ret->getType(),
-            'description' => $ret->getDescription(),
-        ),
+function admin_mnet_method_profile(ReflectionFunctionAbstract $function) {
+    $commentlines = admin_mnet_method_get_docblock($function);
+    $getkey = function($key) use ($commentlines) {
+        return array_values(array_filter($commentlines, function($line) use ($key) {
+            return $line[0] == $key;
+        }));
+    };
+    $returnline = $getkey('@return');
+    return array (
+        'parameters' => array_map(function($line) {
+            return array(
+                'name' => trim($line[2], " \t\n\r\0\x0B$"),
+                'type' => $line[1],
+                'description' => $line[3]
+            );
+        }, $getkey('@param')),
+
+        'return' => array(
+            'type' => !empty($returnline[0][1]) ? $returnline[0][1] : 'void',
+            'description' => !empty($returnline[0][2]) ? $returnline[0][2] : ''
+        )
     );
-    foreach ($proto->getParameters() as $p) {
-        $profile['parameters'][] = array(
-            'name' => $p->getName(),
-            'type' => $p->getType(),
-            'description' => $p->getDescription(),
-        );
-    }
-    return $profile;
+}
+
+/**
+ * Given some sort of reflection function/method object, return an array of docblock lines, where each line is an array of
+ * keywords/descriptions
+ *
+ * @param ReflectionFunctionAbstract $function reflection function/method object from which to extract information
+ *
+ * @return array docblock converted in to an array
+ */
+function admin_mnet_method_get_docblock(ReflectionFunctionAbstract $function) {
+    return array_map(function($line) {
+        $text = trim($line, " \t\n\r\0\x0B*/");
+        if (strpos($text, '@param') === 0) {
+            return preg_split('/\s+/', $text, 4);
+        }
+
+        if (strpos($text, '@return') === 0) {
+            return preg_split('/\s+/', $text, 3);
+        }
+
+        return array($text);
+    }, explode("\n", $function->getDocComment()));
+}
+
+/**
+ * Given some sort of reflection function/method object, return just the help text
+ *
+ * @param ReflectionFunctionAbstract $function reflection function/method object from which to extract information
+ *
+ * @return string docblock help text
+ */
+function admin_mnet_method_get_help(ReflectionFunctionAbstract $function) {
+    $helplines = array_map(function($line) {
+        return implode(' ', $line);
+    }, array_values(array_filter(admin_mnet_method_get_docblock($function), function($line) {
+        return strpos($line[0], '@') !== 0 && !empty($line[0]);
+    })));
+
+    return implode("\n", $helplines);
 }
 
 /**
