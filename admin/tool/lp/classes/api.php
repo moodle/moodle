@@ -3346,10 +3346,9 @@ class api {
      *
      * @param  int $userid       The user ID.
      * @param  int $competencyid The competency ID.
-     * @param  bool $onlyidle  Return exception if status is not idle.
      * @return bool
      */
-    public static function user_competency_request_review($userid, $competencyid, $onlyidle = true) {
+    public static function user_competency_request_review($userid, $competencyid) {
         static::require_enabled();
         $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
         if (!$uc) {
@@ -3360,11 +3359,7 @@ class api {
         if (!$uc->can_read()) {
             throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyread', 'nopermissions', '');
         } else if ($uc->get_status() != user_competency::STATUS_IDLE) {
-            if ($onlyidle) {
-                throw new coding_exception('The competency can not be sent for review at this stage.');
-            } else {
-                return true;
-            }
+            throw new coding_exception('The competency can not be sent for review at this stage.');
         } else if (!$uc->can_request_review()) {
             throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyrequestreview', 'nopermissions', '');
         }

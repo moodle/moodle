@@ -198,7 +198,7 @@ define(['jquery',
      * @param {Number} competencyIds The competency IDs.
      * @param {Boolean} requestReview Send competencies to review.
      */
-    UserEvidenceActions.prototype._doCreateUserEvidenceCompetency = function(evidenceData, competencyIds, requestReview) {
+    UserEvidenceActions.prototype._doCreateUserEvidenceCompetency = function(evidenceData, competencyIds) {
         var self = this,
             calls = [];
 
@@ -210,16 +210,6 @@ define(['jquery',
                     competencyid: competencyId,
                 }
             });
-            if (requestReview) {
-                calls.push({
-                    methodname: 'tool_lp_user_competency_request_review',
-                    args: {
-                        userid: evidenceData.userid,
-                        competencyid: competencyId,
-                        checkstatus: false
-                    }
-                });
-            }
         });
 
         self._callAndRefresh(calls, evidenceData);

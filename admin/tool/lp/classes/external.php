@@ -2970,7 +2970,6 @@ class external extends external_api {
         return new external_function_parameters(array(
             'userid' => new external_value(PARAM_INT, 'The user ID'),
             'competencyid' => new external_value(PARAM_INT, 'The competency ID'),
-            'checkstatus' => new external_value(PARAM_BOOL, 'Check status request', VALUE_DEFAULT, true)
         ));
     }
 
@@ -2979,20 +2978,18 @@ class external extends external_api {
      *
      * @param int $userid The user ID.
      * @param int $competencyid The competency ID.
-     * @param boolean $checkstatus True to return exception when status is already in review.
      * @return boolean
      */
-    public static function user_competency_request_review($userid, $competencyid, $checkstatus) {
+    public static function user_competency_request_review($userid, $competencyid) {
         $params = self::validate_parameters(self::user_competency_request_review_parameters(), array(
             'userid' => $userid,
             'competencyid' => $competencyid,
-            'checkstatus' => $checkstatus,
         ));
 
         $context = context_user::instance($params['userid']);
         self::validate_context($context);
 
-        return api::user_competency_request_review($userid, $competencyid, $checkstatus);
+        return api::user_competency_request_review($userid, $competencyid);
     }
 
     /**
