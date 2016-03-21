@@ -194,4 +194,39 @@ class user_competency_course extends persistent {
 
         return true;
     }
+
+    /**
+     * Get multiple user_competency for a user.
+     *
+     * @param  int $userid
+     * @param  int $courseid
+     * @param  array  $competenciesorids Limit search to those competencies, or competency IDs.
+     * @return \tool_lp\user_competency_course[]
+     */
+    public static function get_multiple($userid, $courseid, array $competenciesorids = null) {
+        global $DB;
+
+        $params = array();
+        $params['userid'] = $userid;
+        $params['courseid'] = $courseid;
+        $sql = '1 = 1';
+
+        if (!empty($competenciesorids)) {
+            $test = reset($competenciesorids);
+            if (is_number($test)) {
+                $ids = $competenciesorids;
+            } else {
+                $ids = array();
+                foreach ($competenciesorids as $comp) {
+                    $ids[] = $comp->get_id();
+                }
+            }
+
+            list($insql, $inparams) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
+            $params += $inparams;
+            $sql = "competencyid $insql";
+        }
+
+        return self::get_records_select("userid = :userid AND courseid = :courseid AND $sql", $params);
+    }
 }

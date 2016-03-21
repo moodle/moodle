@@ -1550,7 +1550,6 @@ class tool_lp_event_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\tool_lp\event\evidence_created', $evidencecreatedevent);
         $this->assertInstanceOf('\tool_lp\event\user_competency_grade_rated_in_course', $event);
-        $this->assertEquals($uc->get_id(), $event->objectid);
         $this->assertEquals(context_course::instance($course->id)->id, $event->contextid);
         $this->assertEquals($course->id, $event->courseid);
         $this->assertEquals($uc->get_userid(), $event->relateduserid);

@@ -4724,9 +4724,9 @@ class api {
                                   $USER->id,
                                   $note);
         if ($result) {
-            $all = user_competency::get_multiple($userid, array($competency->get_id()));
+            $all = user_competency_course::get_multiple($userid, $course->id, array($competency->get_id()));
             $uc = reset($all);
-            $event = \tool_lp\event\user_competency_grade_rated_in_course::create_from_user_competency($uc, $course->id);
+            $event = \tool_lp\event\user_competency_grade_rated_in_course::create_from_user_competency_course($uc);
             $event->trigger();
         }
         return $result;
