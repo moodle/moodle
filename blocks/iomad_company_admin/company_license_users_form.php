@@ -369,7 +369,9 @@ if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', conte
             if ($license = $DB->get_records('companylicense',
                                              array('id' => $deptlicenseid->licenseid, 'companyid' => $companyid),
                                              null, 'id,name')) {
-                $licenselist[$license[$deptlicenseid->licenseid]->id]  = $license[$deptlicenseid->licenseid]->name;
+                if ($license->expirydate > time()) {
+                    $licenselist[$license[$deptlicenseid->licenseid]->id]  = $license[$deptlicenseid->licenseid]->name;
+                }
             }
         }
     }

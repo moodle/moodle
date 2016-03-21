@@ -297,8 +297,8 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
         // Display the license selctor.
         $licenses = $DB->get_records_sql_menu("SELECT id, name FROM {companylicense}
                                                WHERE companyid = :companyid
-                                               AND used < allocation",
-        array('companyid' => $companyid));
+                                               AND expirydate > :time",
+        array('companyid' => $companyid, 'time' => time()));
 
         if (count($licenses) == 0) {
             echo '<h3>' . get_string('editlicensestitle', 'block_iomad_company_admin') . '</h3>';
