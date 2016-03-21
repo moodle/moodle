@@ -18,6 +18,13 @@
     Course competencies template.
 }}
 <div data-region="coursecompetenciespage">
+    <div data-region="actions" class="clearfix">
+        <div class="pull-right">
+            {{#canmanagecoursecompetencies}}
+                <button disabled>{{#str}}addcoursecompetencies, tool_lp{{/str}}</button>
+            {{/canmanagecoursecompetencies}}
+        </div>
+    </div>
 <div data-region="coursecompetencies">
 <table class="generaltable fullwidth managecompetencies">
 <tbody class="drag-parentnode">
@@ -83,14 +90,9 @@
 {{/competencies}}
 </div>
 <div data-region="actions">
-<div class="pull-right">
-{{#canmanagecoursecompetencies}}
-<button style="display: none">{{#str}}linkcoursecompetencies, tool_lp{{/str}}</button>
-{{/canmanagecoursecompetencies}}
-</div>
-{{#canmanagecompetencyframeworks}}
-<p><a href="{{manageurl}}">{{#str}}managecompetenciesandframeworks, tool_lp{{/str}}</a></p>
-{{/canmanagecompetencyframeworks}}
+    {{#canmanagecompetencyframeworks}}
+        <p><a href="{{manageurl}}">{{#str}}managecompetenciesandframeworks, tool_lp{{/str}}</a></p>
+    {{/canmanagecompetencyframeworks}}
 </div>
 </div>
 {{#js}}

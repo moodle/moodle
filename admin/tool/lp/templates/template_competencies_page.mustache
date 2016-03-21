@@ -21,18 +21,13 @@
     {{#statistics}}
         {{> tool_lp/template_statistics }}
     {{/statistics}}
-    <div data-region="actions">
-        {{#canmanagecompetencyframeworks}}
+    {{#canmanagetemplatecompetencies}}
+    <div data-region="actions" class="clearfix">
         <div class="pull-right">
-            <p><a href="{{manageurl}}">{{#str}}managecompetenciesandframeworks, tool_lp{{/str}}</a></p>
+            <button disabled>{{#str}}addtemplatecompetencies, tool_lp{{/str}}</button>
         </div>
-        {{/canmanagecompetencyframeworks}}
-        {{#canmanagetemplatecompetencies}}
-        <p>
-            <button style="display: none">{{#str}}linktemplatecompetencies, tool_lp{{/str}}</button>
-        </p>
-        {{/canmanagetemplatecompetencies}}
     </div>
+    {{/canmanagetemplatecompetencies}}
     <div data-region="templatecompetencies">
         <div class="managecompetencies">
             <div class="drag-parentnode">
@@ -70,6 +65,13 @@
             {{#str}}nocompetenciesintemplate, tool_lp{{/str}}
         </p>
         {{/competencies}}
+    </div>
+    <div data-region="actions">
+        {{#canmanagecompetencyframeworks}}
+        <div>
+            <p><a href="{{manageurl}}">{{#str}}managecompetenciesandframeworks, tool_lp{{/str}}</a></p>
+        </div>
+        {{/canmanagecompetencyframeworks}}
     </div>
 </div>
 {{#js}}

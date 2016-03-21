@@ -42,7 +42,7 @@ define(['jquery',
         this.pageContextId = pagectxid;
         this.pickerInstance = null;
 
-        $('[data-region="actions"] button').show();
+        $('[data-region="actions"] button').prop('disabled', false);
         this.registerEvents();
         this.registerDragDrop();
     };
