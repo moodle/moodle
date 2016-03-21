@@ -99,7 +99,7 @@ if ($courseid != SITEID) {
         ), 2);
 }
 
-$modinfo = get_fast_modinfo($course);
+$modinfo = get_fast_modinfo($course, $user->id);
 $sections = $modinfo->get_section_info_all();
 $itemsprinted = false;
 
