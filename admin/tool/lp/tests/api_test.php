@@ -28,6 +28,7 @@ global $CFG;
 use tool_lp\api;
 use tool_lp\competency;
 use tool_lp\competency_framework;
+use tool_lp\course_competency_settings;
 use tool_lp\evidence;
 use tool_lp\user_competency;
 use tool_lp\plan;
@@ -2003,52 +2004,6 @@ class tool_lp_api_testcase extends advanced_testcase {
         }
     }
 
-    public function test_add_evidence_suggest() {
-        $this->resetAfterTest(true);
-        $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
-
-        $u1 = $dg->create_user();
-        $u1ctx = context_user::instance($u1->id);
-        $f1 = $lpg->create_framework();
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
-        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
-
-        // Creating an evidence with minimal information.
-        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_SUGGEST, 'invaliddata',
-            'error', null, false, null, 1, 2);
-        $evidence->read();
-        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
-        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc->get_status());
-        $this->assertSame(null, $uc->get_grade());    // We don't grade, we just suggest.
-        $this->assertSame(null, $uc->get_proficiency());
-        $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
-        $this->assertEquals($u1ctx->id, $evidence->get_contextid());
-        $this->assertEquals(\tool_lp\evidence::ACTION_SUGGEST, $evidence->get_action());
-        $this->assertEquals('invaliddata', $evidence->get_descidentifier());
-        $this->assertEquals('error', $evidence->get_desccomponent());
-        $this->assertSame(null, $evidence->get_desca());
-        $this->assertSame(null, $evidence->get_url());
-        $this->assertEquals(1, $evidence->get_grade());
-        $this->assertEquals(2, $evidence->get_actionuserid());
-
-        // Creating a standard evidence and send for review.
-        $evidence = api::add_evidence($u1->id, $c2->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_SUGGEST, 'invaliddata',
-            'error', null, true, null, 1, 2);
-        $evidence->read();
-        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c2->get_id()));
-        $this->assertEquals(\tool_lp\user_competency::STATUS_WAITING_FOR_REVIEW, $uc->get_status());
-
-        // Trying not to pass a grade should fail.
-        try {
-            $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_SUGGEST, 'invaliddata',
-                'error', false, null);
-            $this->fail('A grade must be set');
-        } catch (coding_exception $e) {
-            $this->assertRegExp('/grade MUST be set/', $e->getMessage());
-        }
-    }
-
     public function test_add_evidence_complete() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
@@ -2380,11 +2335,6 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertSame(null, $uc1a->get_proficiency());
         $this->assertFalse(user_competency::record_exists_select('userid = ? AND competencyid = ?', array($u1->id, $c1->get_id())));
 
-        api::add_evidence($u1->id, $c2a, $ctxid, evidence::ACTION_SUGGEST, 'commentincontext', 'core', null, false, null, 1);
-        $uc2a = user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c2a->get_id()));
-        $this->assertSame(null, $uc2a->get_proficiency());
-        $this->assertFalse(user_competency::record_exists_select('userid = ? AND competencyid = ?', array($u1->id, $c2->get_id())));
-
         // Now let's try complete a competency but the rule won't match (not all children are complete).
         // The parent (the thing with the rule) will be created but won't have any evidence attached, and not
         // not be marked as completed.
@@ -2434,37 +2384,6 @@ class tool_lp_api_testcase extends advanced_testcase {
 
     /**
      * Tests for the user_competency_course data when api::add_evidence() is invoked when
-     * suggesting a grade for a user competency in the system context.
-     */
-    public function test_add_evidence_for_user_competency_course_suggest_outside_course() {
-        $this->resetAfterTest(true);
-        $dg = $this->getDataGenerator();
-        $syscontext = context_system::instance();
-
-        // Create a student.
-        $student = $dg->create_user();
-
-        // Create a competency for the course.
-        $lpg = $dg->get_plugin_generator('tool_lp');
-        $framework = $lpg->create_framework();
-        $comp = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-
-        // Add evidence.
-        api::add_evidence($student->id, $comp, $syscontext, evidence::ACTION_SUGGEST,
-            'commentincontext', 'core', null, false, null, 1);
-
-        // Query for user_competency_course data.
-        $filterparams = array(
-            'userid' => $student->id,
-            'competencyid' => $comp->get_id(),
-        );
-        $usercompcourse = \tool_lp\user_competency_course::get_record($filterparams);
-        // There should be no user_competency_course object when suggesting a grade outside the course context.
-        $this->assertFalse($usercompcourse);
-    }
-
-    /**
-     * Tests for the user_competency_course data when api::add_evidence() is invoked when
      * grading a user competency in the system context.
      */
     public function test_add_evidence_for_user_competency_course_grade_outside_course() {
@@ -2496,67 +2415,6 @@ class tool_lp_api_testcase extends advanced_testcase {
 
     /**
      * Tests for the user_competency_course data when api::add_evidence() is invoked when
-     * suggesting a grade for a user competency in a course.
-     */
-    public function test_add_evidence_for_user_competency_course_suggest_in_course() {
-        global $USER;
-        $this->resetAfterTest(true);
-        $dg = $this->getDataGenerator();
-
-        // Create a course.
-        $course = $dg->create_course();
-        $coursecontext = context_course::instance($course->id);
-
-        // Create a student and enrol into the course.
-        $student = $dg->create_user();
-        $studentarch = get_archetype_roles('student');
-        $studentrole = array_shift($studentarch);
-        $dg->role_assign($studentrole->id, $student->id, $coursecontext->id);
-        $dg->enrol_user($student->id, $course->id, $studentrole->id);
-
-        // Create a competency for the course.
-        $lpg = $dg->get_plugin_generator('tool_lp');
-        $framework = $lpg->create_framework();
-        $comp = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $lpg->create_course_competency(array('courseid' => $course->id, 'competencyid' => $comp->get_id()));
-
-        // Add evidence.
-        $suggestedgrade = 3;
-        $evidence = api::add_evidence($student->id, $comp, $coursecontext, evidence::ACTION_SUGGEST,
-            'commentincontext', 'core', null, false, null, $suggestedgrade, $USER->id);
-
-        // Query for user_competency_course data.
-        $filterparams = array(
-            'userid' => $student->id,
-            'competencyid' => $comp->get_id(),
-            'courseid' => $course->id
-        );
-        $usercompcourse = \tool_lp\user_competency_course::get_record($filterparams);
-        // There should be a user_competency_course object when suggesting a grade.
-        $this->assertNotEmpty($usercompcourse);
-        $grade = $evidence->get_grade();
-        $this->assertEquals($grade, $usercompcourse->get_grade());
-        $this->assertEquals($suggestedgrade, $usercompcourse->get_grade());
-        $proficiency = $comp->get_proficiency_of_grade($grade);
-        $this->assertEquals($proficiency, $usercompcourse->get_proficiency());
-
-        // Add evidence again with a new suggested grade.
-        $suggestedgrade = 1;
-        $evidence = api::add_evidence($student->id, $comp, $coursecontext, evidence::ACTION_SUGGEST,
-            'commentincontext', 'core', null, false, null, $suggestedgrade, $USER->id);
-        // Get user competency course record.
-        $usercompcourse = \tool_lp\user_competency_course::get_record($filterparams);
-        // The grade/proficiency should have been updated.
-        $this->assertNotEmpty($usercompcourse);
-        $grade = $evidence->get_grade();
-        $this->assertEquals($grade, $usercompcourse->get_grade());
-        $this->assertEquals($suggestedgrade, $usercompcourse->get_grade());
-        $proficiency = $comp->get_proficiency_of_grade($grade);
-        $this->assertEquals($proficiency, $usercompcourse->get_proficiency());
-    }
-
-    /**
-     * Tests for the user_competency_course data when api::add_evidence() is invoked when
      * grading a user competency in a course.
      */
     public function test_add_evidence_user_competency_course_grade_in_course() {
@@ -2567,6 +2425,9 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         // Create a course.
         $course = $dg->create_course();
+        $record = array('courseid' => $course->id, 'pushratingstouserplans' => false);
+        $settings = new course_competency_settings(0, (object) $record);
+        $settings->create();
         $coursecontext = context_course::instance($course->id);
 
         // Create a student and enrol into the course.
@@ -2579,12 +2440,9 @@ class tool_lp_api_testcase extends advanced_testcase {
         // Create a competency for the course.
         $lpg = $dg->get_plugin_generator('tool_lp');
         $framework = $lpg->create_framework();
+        // Do not push ratings from course to user plans.
         $comp = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
         $lpg->create_course_competency(array('courseid' => $course->id, 'competencyid' => $comp->get_id()));
-
-        // Add evidence.
-        api::add_evidence($student->id, $comp, $coursecontext, evidence::ACTION_OVERRIDE,
-            'commentincontext', 'core', null, false, null, 1, $USER->id);
 
         // Query for user_competency_course data.
         $filterparams = array(
@@ -2592,16 +2450,13 @@ class tool_lp_api_testcase extends advanced_testcase {
             'competencyid' => $comp->get_id(),
             'courseid' => $course->id
         );
-        $usercompcourse = \tool_lp\user_competency_course::get_record($filterparams);
-        // There should be no user_competency_course object created when grading.
-        $this->assertFalse($usercompcourse);
 
-        // Add evidence that suggests a grade to the course.
-        $evidence = api::add_evidence($student->id, $comp, $coursecontext, evidence::ACTION_SUGGEST,
+        // Add evidence that sets a grade to the course.
+        $evidence = api::add_evidence($student->id, $comp, $coursecontext, evidence::ACTION_OVERRIDE,
             'commentincontext', 'core', null, false, null, 3, $USER->id);
         // Get user competency course record.
         $usercompcourse = \tool_lp\user_competency_course::get_record($filterparams);
-        // There should be a user_competency_course object when suggesting a grade.
+        // There should be a user_competency_course object when adding a grade.
         $this->assertNotEmpty($usercompcourse);
         $grade = $evidence->get_grade();
         $this->assertEquals($grade, $usercompcourse->get_grade());
@@ -2609,7 +2464,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $proficiency = $comp->get_proficiency_of_grade($grade);
         $this->assertEquals($proficiency, $usercompcourse->get_proficiency());
 
-        // Confirm that the user competency's grade/proficiency has not been affected by the grade suggestion.
+        // Confirm that the user competency's grade/proficiency has not been affected by the grade.
         $usercompetencyparams = [
             'userid' => $student->id,
             'competencyid' => $comp->get_id(),
@@ -3981,9 +3836,6 @@ class tool_lp_api_testcase extends advanced_testcase {
         $cangraderole = $dg->create_role();
         assign_capability('tool/lp:competencygrade', CAP_ALLOW, $cangraderole, $sysctx->id);
 
-        $cansuggestrole = $dg->create_role();
-        assign_capability('tool/lp:competencysuggestgrade', CAP_ALLOW, $cansuggestrole, $sysctx->id);
-
         // Enrol s1 and s2 as students in course 1.
         $dg->enrol_user($student1->id, $c1->id, $studentrole->id);
         $dg->enrol_user($student2->id, $c1->id, $studentrole->id);
@@ -4006,15 +3858,6 @@ class tool_lp_api_testcase extends advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
         $this->assertExceptionWithGradeCompetencyInCourse('required_capability_exception', 'Set competency grade',
             $c1->id, $student1->id, $comp1->get_id());
-        $this->assertExceptionWithGradeCompetencyInCourse('required_capability_exception', 'Suggest competency grade',
-            $c1->id, $student1->id, $comp1->get_id(), 1, false);
-
-        // Give permission to suggest.
-        $dg->role_assign($cansuggestrole, $teacher1->id, $c1ctx->id);
-        accesslib_clear_all_caches_for_unit_testing();
-        $this->assertExceptionWithGradeCompetencyInCourse('required_capability_exception', 'Set competency grade',
-            $c1->id, $student1->id, $comp1->get_id());
-        $this->assertSuccessWithGradeCompetencyInCourse($c1->id, $student1->id, $comp1->get_id(), 1, false);
 
         // Give permission to rate.
         $dg->role_assign($cangraderole, $teacher1->id, $c1ctx->id);
@@ -4026,14 +3869,11 @@ class tool_lp_api_testcase extends advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
         $this->assertExceptionWithGradeCompetencyInCourse('required_capability_exception', 'View competency frameworks',
             $c1->id, $student1->id, $comp1->get_id());
-        $this->assertExceptionWithGradeCompetencyInCourse('required_capability_exception', 'View competency frameworks',
-            $c1->id, $student1->id, $comp1->get_id(), 1, false);
 
         // Give permssion to manage course competencies, this leads to success.
         $dg->role_assign($canmanagecomp, $teacher1->id, $sysctx->id);
         accesslib_clear_all_caches_for_unit_testing();
         $this->assertSuccessWithGradeCompetencyInCourse($c1->id, $student1->id, $comp1->get_id());
-        $this->assertSuccessWithGradeCompetencyInCourse($c1->id, $student1->id, $comp1->get_id(), 1, false);
 
         // Try to grade a user that is not gradable, lead to errors.
         $this->assertExceptionWithGradeCompetencyInCourse('coding_exception', 'The competency may not be rated at this time.',
@@ -4047,15 +3887,13 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertExceptionWithGradeCompetencyInCourse('coding_exception', 'The competency may not be rated at this time.',
             $c1->id, $notstudent1->id, $comp1->get_id());
 
-        // Non-Editing teacher can suggest grade in user competency.
+       // Give permission for non-editing teacher to grade.
         $dg->role_assign($canviewucrole, $noneditingteacher->id, $c1ctx->id);
+        $dg->role_assign($cangraderole, $noneditingteacher->id, $c1ctx->id);
         $this->setUser($noneditingteacher);
+
         accesslib_clear_all_caches_for_unit_testing();
-        $this->assertExceptionWithGradeCompetencyInCourse('required_capability_exception', 'Set competency grade',
-            $c1->id, $student1->id, $comp1->get_id());
-        // Give permission for non-editing teacher to suggest.
-        $dg->role_assign($cansuggestrole, $noneditingteacher->id, $c1ctx->id);
-        $this->assertSuccessWithGradeCompetencyInCourse($c1->id, $student1->id, $comp1->get_id(), 1, false);
+        $this->assertSuccessWithGradeCompetencyInCourse($c1->id, $student1->id, $comp1->get_id());
     }
 
     /**
@@ -4065,11 +3903,10 @@ class tool_lp_api_testcase extends advanced_testcase {
      * @param int $userid The user ID.
      * @param int $compid The competency ID.
      * @param int $grade The grade.
-     * @param boolean $override Overridden flag.
      */
-    protected function assertSuccessWithGradeCompetencyInCourse($courseid, $userid, $compid, $grade = 1, $override = true) {
+    protected function assertSuccessWithGradeCompetencyInCourse($courseid, $userid, $compid, $grade = 1) {
         $beforecount = evidence::count_records();
-        api::grade_competency_in_course($courseid, $userid, $compid, $grade, $override);
+        api::grade_competency_in_course($courseid, $userid, $compid, $grade);
         $this->assertEquals($beforecount + 1, evidence::count_records());
         $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $compid));
         $records = evidence::get_records(array(), 'id', 'DESC', 0, 1);
@@ -4086,14 +3923,13 @@ class tool_lp_api_testcase extends advanced_testcase {
      * @param int $userid The user ID.
      * @param int $compid The competency ID.
      * @param int $grade The grade.
-     * @param boolean $override Overridden flag.
      */
     protected function assertExceptionWithGradeCompetencyInCourse($exceptiontype, $exceptiontext, $courseid, $userid, $compid,
-            $grade = 1, $override = true) {
+            $grade = 1) {
 
         $raised = false;
         try {
-            api::grade_competency_in_course($courseid, $userid, $compid, $grade, $override);
+            api::grade_competency_in_course($courseid, $userid, $compid, $grade);
         } catch (moodle_exception $e) {
             $raised = true;
             $this->assertInstanceOf($exceptiontype, $e);

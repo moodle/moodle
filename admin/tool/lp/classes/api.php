@@ -4168,6 +4168,16 @@ class api {
 
             // Completing a competency.
             case evidence::ACTION_COMPLETE:
+                // The logic here goes like this:
+                // if rating outside a course
+                //   set the default grade and proficiency ONLY if there is no current grade
+                // else we are in a course
+                //   set the defautl grade and proficiency in the course ONLY if there is no current grade in the course
+                //   then check the course settings to see if we should push the rating outside the course
+                //   if we should push it
+                //     push it only if the user_competency (outside the course) has no grade
+                // Done.
+
                 if ($grade !== null) {
                     throw new coding_exception("The grade MUST NOT be set with a 'completing' evidence.");
                 }
@@ -4178,12 +4188,51 @@ class api {
                 }
                 list($grade, $proficiency) = $competency->get_default_grade();
 
-                // When completing the competency we fetch the default grade from the competency. But we only mark
-                // the user competency when a grade has not been set yet. Complete is an action to use with automated systems.
-                if ($usercompetency->get_grade() === null) {
-                    $setucgrade = true;
-                    $ucgrade = $grade;
-                    $ucproficiency = $proficiency;
+                // Add user_competency_course record when in a course or module.
+                if (in_array($context->contextlevel, array(CONTEXT_COURSE, CONTEXT_MODULE))) {
+                    $coursecontext = $context->get_course_context();
+                    $courseid = $coursecontext->instanceid;
+                    $filterparams = array(
+                        'userid' => $userid,
+                        'competencyid' => $competencyid,
+                        'courseid' => $courseid
+                    );
+                    // Fetch or create user competency course.
+                    $usercompetencycourse = user_competency_course::get_record($filterparams);
+                    if (!$usercompetencycourse) {
+                        $usercompetencycourse = user_competency_course::create_relation($userid, $competencyid, $courseid);
+                        $usercompetencycourse->create();
+                    }
+                    // Only update the grade and proficiency if there is not already a grade.
+                    if ($usercompetencycourse->get_grade() === null) {
+                        // Set grade.
+                        $usercompetencycourse->set_grade($grade);
+                        // Set proficiency.
+                        $usercompetencycourse->set_proficiency($proficiency);
+                    }
+
+                    // Check the course settings to see if we should push to user plans.
+                    $coursesettings = course_competency_settings::get_course_settings($courseid);
+                    $setucgrade = $coursesettings->get_pushratingstouserplans();
+
+                    if ($setucgrade) {
+                        // Only push to user plans if there is not already a grade.
+                        if ($usercompetency->get_grade() !== null) {
+                            $setucgrade = false;
+                        } else {
+                            $ucgrade = $grade;
+                            $ucproficiency = $proficiency;
+                        }
+                    }
+                } else {
+
+                    // When completing the competency we fetch the default grade from the competency. But we only mark
+                    // the user competency when a grade has not been set yet. Complete is an action to use with automated systems.
+                    if ($usercompetency->get_grade() === null) {
+                        $setucgrade = true;
+                        $ucgrade = $grade;
+                        $ucproficiency = $proficiency;
+                    }
                 }
 
                 break;
@@ -4205,7 +4254,7 @@ class api {
                     $courseid = $coursecontext->instanceid;
                     $filterparams = array(
                         'userid' => $userid,
-                       'competencyid' => $competencyid,
+                        'competencyid' => $competencyid,
                         'courseid' => $courseid
                     );
                     // Fetch or create user competency course.
@@ -4839,7 +4888,7 @@ class api {
         // First we do a permissions check.
         if (!course_competency_settings::can_update($courseid)) {
             $context = context_course::instance($courseid);
-            throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:coursecompetencyconfigure', 'nopermissions', '');
         }
 
         $exists = course_competency_settings::get_record(array('courseid' => $courseid));

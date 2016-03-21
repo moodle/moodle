@@ -1320,7 +1320,7 @@ class tool_lp_event_testcase extends advanced_testcase {
 
         // Add evidence.
         $recommend = false;
-        $evidence = api::add_evidence($student->id, $comp, $syscontext, \tool_lp\evidence::ACTION_SUGGEST,
+        $evidence = api::add_evidence($student->id, $comp, $syscontext, \tool_lp\evidence::ACTION_OVERRIDE,
             'commentincontext', 'core', null, $recommend, null, 1);
 
         // Get event.
@@ -1379,7 +1379,7 @@ class tool_lp_event_testcase extends advanced_testcase {
 
         // Add evidence.
         $recommend = false;
-        $evidence = api::add_evidence($student->id, $comp, $syscontext, \tool_lp\evidence::ACTION_SUGGEST,
+        $evidence = api::add_evidence($student->id, $comp, $syscontext, \tool_lp\evidence::ACTION_OVERRIDE,
             'commentincontext', 'core', null, $recommend, null, 1);
 
         // We expect this to fail and throw a coding exception.
@@ -1503,55 +1503,6 @@ class tool_lp_event_testcase extends advanced_testcase {
     }
 
     /**
-     * Test the user competency grade suggested event.
-     *
-     */
-    public function test_user_competency_grade_suggested() {
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-        $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
-        $scale = $dg->create_scale(array('scale' => 'A,B,C,D'));
-        $scaleconfig = array(array('scaleid' => $scale->id));
-        $scaleconfig[] = array('name' => 'A', 'id' => 1, 'scaledefault' => 0, 'proficient' => 0);
-        $scaleconfig[] = array('name' => 'B', 'id' => 2, 'scaledefault' => 1, 'proficient' => 0);
-        $scaleconfig[] = array('name' => 'C', 'id' => 3, 'scaledefault' => 0, 'proficient' => 1);
-        $scaleconfig[] = array('name' => 'D', 'id' => 4, 'scaledefault' => 0, 'proficient' => 1);
-        $fr = $lpg->create_framework();
-        $c = $lpg->create_competency(array(
-            'competencyframeworkid' => $fr->get_id(),
-            'scaleid' => $scale->id,
-            'scaleconfiguration' => $scaleconfig
-        ));
-
-        $user = $dg->create_user();
-        $uc = $lpg->create_user_competency(array(
-            'userid' => $user->id,
-            'competencyid' => $c->get_id()));
-
-        // Trigger and capture the event.
-        $sink = $this->redirectEvents();
-        api::grade_competency($user->id, $c->get_id(), 4, false);
-
-        // Get our event event.
-        $events = $sink->get_events();
-        // Evidence created.
-        $this->assertCount(2, $events);
-        $evidencecreatedevent = $events[0];
-        $event = $events[1];
-
-        // Check that the event data is valid.
-        $this->assertInstanceOf('\tool_lp\event\evidence_created', $evidencecreatedevent);
-        $this->assertInstanceOf('\tool_lp\event\user_competency_grade_suggested', $event);
-        $this->assertEquals($uc->get_id(), $event->objectid);
-        $this->assertEquals($uc->get_context()->id, $event->contextid);
-        $this->assertEquals($uc->get_userid(), $event->relateduserid);
-        $this->assertEquals(4, $event->other['grade']);
-        $this->assertEventContextNotUsed($event);
-        $this->assertDebuggingNotCalled();
-    }
-
-    /**
      * Test the user competency grade rated in course event.
      *
      */
@@ -1610,64 +1561,6 @@ class tool_lp_event_testcase extends advanced_testcase {
     }
 
     /**
-     * Test the user competency grade suggested in course event.
-     *
-     */
-    public function test_user_competency_grade_suggested_in_course() {
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-        $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
-        $scale = $dg->create_scale(array('scale' => 'A,B,C,D'));
-        $course = $dg->create_course();
-        $user = $dg->create_user();
-        $studentarch = get_archetype_roles('student');
-        $studentrole = array_shift($studentarch);
-        $scaleconfig = array(array('scaleid' => $scale->id));
-        $scaleconfig[] = array('name' => 'A', 'id' => 1, 'scaledefault' => 0, 'proficient' => 0);
-        $scaleconfig[] = array('name' => 'B', 'id' => 2, 'scaledefault' => 1, 'proficient' => 0);
-        $scaleconfig[] = array('name' => 'C', 'id' => 3, 'scaledefault' => 0, 'proficient' => 1);
-        $scaleconfig[] = array('name' => 'D', 'id' => 4, 'scaledefault' => 0, 'proficient' => 1);
-        $fr = $lpg->create_framework();
-        $c = $lpg->create_competency(array(
-            'competencyframeworkid' => $fr->get_id(),
-            'scaleid' => $scale->id,
-            'scaleconfiguration' => $scaleconfig
-        ));
-        // Enrol the user as students in course.
-        $dg->enrol_user($user->id, $course->id, $studentrole->id);
-        $lpg->create_course_competency(array(
-            'courseid' => $course->id,
-            'competencyid' => $c->get_id()));
-        $uc = $lpg->create_user_competency(array(
-            'userid' => $user->id,
-            'competencyid' => $c->get_id()));
-
-        // Trigger and capture the event.
-        $sink = $this->redirectEvents();
-        api::grade_competency_in_course($course->id, $user->id, $c->get_id(), 3, false);
-
-        // Get our event event.
-        $events = $sink->get_events();
-        // Evidence created.
-        $this->assertCount(2, $events);
-        $evidencecreatedevent = $events[0];
-        $event = $events[1];
-
-        // Check that the event data is valid.
-        $this->assertInstanceOf('\tool_lp\event\evidence_created', $evidencecreatedevent);
-        $this->assertInstanceOf('\tool_lp\event\user_competency_grade_suggested_in_course', $event);
-        $this->assertEquals($uc->get_id(), $event->objectid);
-        $this->assertEquals(context_course::instance($course->id)->id, $event->contextid);
-        $this->assertEquals($course->id, $event->courseid);
-        $this->assertEquals($uc->get_userid(), $event->relateduserid);
-        $this->assertEquals($uc->get_competencyid(), $event->other['competencyid']);
-        $this->assertEquals(3, $event->other['grade']);
-        $this->assertEventContextNotUsed($event);
-        $this->assertDebuggingNotCalled();
-    }
-
-    /**
      * Test the user competency grade rated in plan event.
      *
      */
@@ -1714,57 +1607,6 @@ class tool_lp_event_testcase extends advanced_testcase {
         $this->assertEquals($uc->get_userid(), $event->relateduserid);
         $this->assertEquals($uc->get_competencyid(), $event->other['competencyid']);
         $this->assertEquals(3, $event->other['grade']);
-        $this->assertEventContextNotUsed($event);
-        $this->assertDebuggingNotCalled();
-    }
-
-    /**
-     * Test the user competency grade suggested in plan event.
-     *
-     */
-    public function test_user_competency_grade_suggested_in_plan() {
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-        $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
-        $scale = $dg->create_scale(array('scale' => 'A,B,C,D'));
-        $user = $dg->create_user();
-        $scaleconfig = array(array('scaleid' => $scale->id));
-        $scaleconfig[] = array('name' => 'A', 'id' => 1, 'scaledefault' => 0, 'proficient' => 0);
-        $scaleconfig[] = array('name' => 'B', 'id' => 2, 'scaledefault' => 1, 'proficient' => 0);
-        $scaleconfig[] = array('name' => 'C', 'id' => 3, 'scaledefault' => 0, 'proficient' => 1);
-        $scaleconfig[] = array('name' => 'D', 'id' => 4, 'scaledefault' => 0, 'proficient' => 1);
-        $plan = $lpg->create_plan(array('userid' => $user->id));
-        $fr = $lpg->create_framework();
-        $c = $lpg->create_competency(array(
-            'competencyframeworkid' => $fr->get_id(),
-            'scaleid' => $scale->id,
-            'scaleconfiguration' => $scaleconfig
-        ));
-        $pc = $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $c->get_id()));
-        $uc = $lpg->create_user_competency(array(
-            'userid' => $user->id,
-            'competencyid' => $c->get_id()));
-
-        // Trigger and capture the event.
-        $sink = $this->redirectEvents();
-        api::grade_competency_in_plan($plan->get_id(), $c->get_id(), 4, false);
-
-        // Get our event event.
-        $events = $sink->get_events();
-        // Evidence created.
-        $this->assertCount(2, $events);
-        $evidencecreatedevent = $events[0];
-        $event = $events[1];
-
-        // Check that the event data is valid.
-        $this->assertInstanceOf('\tool_lp\event\evidence_created', $evidencecreatedevent);
-        $this->assertInstanceOf('\tool_lp\event\user_competency_grade_suggested_in_plan', $event);
-        $this->assertEquals($uc->get_id(), $event->objectid);
-        $this->assertEquals($uc->get_context()->id, $event->contextid);
-        $this->assertEquals($uc->get_userid(), $event->relateduserid);
-        $this->assertEquals($uc->get_competencyid(), $event->other['competencyid']);
-        $this->assertEquals(4, $event->other['grade']);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
