@@ -4198,6 +4198,41 @@ class api {
                 if ($ucgrade !== null) {
                     $ucproficiency = $competency->get_proficiency_of_grade($ucgrade);
                 }
+
+                // Add user_competency_course record when in a course or module.
+                if (in_array($context->contextlevel, array(CONTEXT_COURSE, CONTEXT_MODULE))) {
+                    $coursecontext = $context->get_course_context();
+                    $courseid = $coursecontext->instanceid;
+                    $filterparams = array(
+                        'userid' => $userid,
+                       'competencyid' => $competencyid,
+                        'courseid' => $courseid
+                    );
+                    // Fetch or create user competency course.
+                    $usercompetencycourse = user_competency_course::get_record($filterparams);
+                    if (!$usercompetencycourse) {
+                        $usercompetencycourse = user_competency_course::create_relation($userid, $competencyid, $courseid);
+                        $usercompetencycourse->create();
+                    }
+                    // Get proficiency.
+                    $proficiency = $ucproficiency;
+                    if ($proficiency === null) {
+                        if (empty($competency)) {
+                            $competency = new competency($competencyid);
+                        }
+                        $proficiency = $competency->get_proficiency_of_grade($grade);
+                    }
+                    // Set grade.
+                    $usercompetencycourse->set_grade($grade);
+                    // Set proficiency.
+                    $usercompetencycourse->set_proficiency($proficiency);
+
+                    $coursesettings = course_competency_settings::get_course_settings($courseid);
+                    if (!$coursesettings->get_pushratingstouserplans()) {
+                        $setucgrade = false;
+                    }
+                }
+
                 break;
 
             // Simply logging an evidence.
@@ -4582,7 +4617,8 @@ class api {
     }
 
     /**
-     * Manually grade a user competency from the course page.
+     * Manually grade a user course competency from the course page. This may push the rating to the user competency
+     * if the course is configured this way.
      *
      * @param mixed $courseorid
      * @param int $userid
