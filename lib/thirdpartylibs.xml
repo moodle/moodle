@@ -197,13 +197,6 @@
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>zend</location>
-    <name>Zend Framework</name>
-    <license>BSD</license>
-    <version>1.12.16</version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
     <location>html2text.php</location>
     <name>HTML2Text</name>
     <license>GPL</license>

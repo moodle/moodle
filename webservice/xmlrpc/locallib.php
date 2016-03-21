@@ -196,39 +196,6 @@ class webservice_xmlrpc_server extends webservice_base_server {
 }
 
 /**
- * The Zend XMLRPC server but with a fault that return debuginfo.
- *
- * MDL-52209: Since Zend is being removed from Moodle, this class will be deprecated and eventually removed.
- * Please use webservice_xmlrpc_server instead.
- *
- * @package    webservice_xmlrpc
- * @copyright  2011 Jerome Mouneyrac
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.2
- * @deprecated since 3.1, see {@link webservice_xmlrpc_server}.
- */
-class moodle_zend_xmlrpc_server extends webservice_xmlrpc_server {
-
-    /**
-     * Raise an xmlrpc server fault.
-     *
-     * Moodle note: the difference with the Zend server is that we throw a plain PHP Exception
-     * with the debuginfo integrated to the exception message when DEBUG >= NORMAL.
-     *
-     * @param string|Exception $fault
-     * @param int $code
-     * @return Zend_XmlRpc_Server_Fault
-     * @deprecated since 3.1, see {@link webservice_xmlrpc_server::generate_error()}.
-     */
-    public function fault($fault = null, $code = 404) {
-        debugging('moodle_zend_xmlrpc_server::fault() is deprecated, please use ' .
-            'webservice_xmlrpc_server::generate_error() instead.', DEBUG_DEVELOPER);
-
-        return $this->generate_error($fault, $code);
-    }
-}
-
-/**
  * XML-RPC test client class
  *
  * @package    webservice_xmlrpc
