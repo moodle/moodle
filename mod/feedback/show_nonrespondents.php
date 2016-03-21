@@ -124,10 +124,10 @@ if ($action == 'sendmessage' AND has_capability('moodle/course:bulkmessaging', $
 ////////////////////////////////////////////////////////
 
 /// Print the page header
-$PAGE->navbar->add(get_string('show_nonrespondents', 'feedback'));
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
 echo $OUTPUT->header();
+echo $OUTPUT->heading(format_string($feedback->name));
 
 require('tabs.php');
 
