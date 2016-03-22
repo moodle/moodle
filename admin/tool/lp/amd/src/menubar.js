@@ -24,6 +24,12 @@
  */
 define(['jquery'], function($) {
 
+    /** @property {boolean}  Flag to indicate if we have already registered a click event handler for the document. */
+    var documentClickHandlerRegistered = false;
+
+    /** @property {boolean} Flag to indicate whether there's an active, open menu. */
+    var menuActive = false;
+
     /**
      * Close all open submenus anywhere in the page (there should only ever be one open at a time).
      *
@@ -31,6 +37,8 @@ define(['jquery'], function($) {
      */
     var closeAllSubMenus = function() {
         $('.tool-lp-menu .tool-lp-sub-menu').attr('aria-hidden', 'true');
+        // Every menu's closed at this point, so set the menu active flag to false.
+        menuActive = false;
     };
 
     /**
@@ -75,6 +83,8 @@ define(['jquery'], function($) {
         this.setOpenDirection();
         closeAllSubMenus();
         menu.attr('aria-hidden', 'false');
+        // Set menu active flag to true when a menu is opened.
+        menuActive = true;
     };
 
 
@@ -84,6 +94,19 @@ define(['jquery'], function($) {
      */
     Menubar.prototype.addEventListeners = function() {
         var currentThis = this;
+
+        // When clicking outside the menubar.
+        if (documentClickHandlerRegistered === false) {
+            $(document).click(function() {
+                // Check if a menu is opened.
+                if (menuActive) {
+                    // Close menu.
+                    closeAllSubMenus();
+                }
+            });
+            // Set this flag to true so that we won't need to add a document click handler for the other Menubar instances.
+            documentClickHandlerRegistered = true;
+        }
 
         // Hovers.
         this.subMenuItems.mouseenter(function() {
@@ -124,6 +147,8 @@ define(['jquery'], function($) {
      * @return boolean Returns false
      */
     Menubar.prototype.handleClick = function(item, e) {
+        e.stopPropagation();
+
         var parentUL = item.parent();
 
         if (parentUL.is('.tool-lp-menu')) {
@@ -133,10 +158,12 @@ define(['jquery'], function($) {
             } else {
                 item.children('ul').first().attr('aria-hidden', 'true');
             }
-            e.stopPropagation();
         } else {
             // Remove hover and focus styling.
             this.allItems.removeClass('menu-hover menu-focus');
+
+            // Clear the active item.
+            this.activeItem = null;
 
             // Close the menu.
             this.menuRoot.find('ul').not('.root-level').attr('aria-hidden','true');
@@ -162,7 +189,6 @@ define(['jquery'], function($) {
             if (!eventHandled && anchor.attr('href') !== '#') {
                 window.location.href = anchor.attr('href');
             }
-            return true;
         }
         return false;
     };
@@ -309,50 +335,8 @@ define(['jquery'], function($) {
             }
             case this.keys.enter:
             case this.keys.space: {
-
-                var parentUL = item.parent();
-
-                if (parentUL.is('.tool-lp-menu')) {
-                    // Open the child menu if it is closed.
-                    this.openSubMenu(item.children('ul').first());
-                } else {
-
-                    // Remove hover and focus styling.
-                    this.allItems.removeClass('menu-hover');
-                    this.allItems.removeClass('menu-focus');
-
-                    // Close the menu.
-                    this.menuRoot.find('ul').not('.tool-lp-menu').attr('aria-hidden','true');
-
-
-                    // Clear the active item.
-                    this.activeItem = null;
-                    // Call the handler.
-                    // Follow any link, or call the click handlers.
-                    var anchor = item.find('a').first();
-                    var clickEvent = new $.Event('click');
-                    clickEvent.target = anchor;
-                    var eventHandled = false;
-                    if (this.handlers) {
-                        $.each(this.handlers, function(selector, handler) {
-                            if (eventHandled) {
-                                return false;
-                            }
-                            if (item.find(selector).length > 0) {
-                                var callable = $.proxy(handler, anchor);
-                                // False means stop propogatting events.
-                                eventHandled = (callable(clickEvent) === false) || clickEvent.isDefaultPrevented();
-                            }
-                        });
-                    }
-                    if (!eventHandled) {
-                        window.location.href = anchor.attr('href');
-                    }
-                    return true;
-                }
-
-                e.stopPropagation();
-                return false;
+                // Trigger click handler.
+                return this.handleClick(item, e);
             }
 
             case this.keys.left: {

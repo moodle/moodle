@@ -54,7 +54,6 @@ Feature: Manage evidence of prior learning
     And I should see "List of evidence"
     And I click on "Delete" of edit menu in the "Evidence-4" row
     And I click on "Cancel" "button"
-    And I click on "Edit" "link" in the "Evidence-4" "table_row"
     And I click on "Delete" of edit menu in the "Evidence-4" row
     And "Confirm" "dialogue" should be visible
     When I click on "Delete" "button"

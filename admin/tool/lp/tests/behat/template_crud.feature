@@ -56,7 +56,6 @@ Feature: Manage plearning plan templates
     And "Delete" "button" should exist in the "Confirm" "dialogue"
     And "Cancel" "button" should exist in the "Confirm" "dialogue"
     And I click on "Cancel" "button"
-    And I click on "Edit" "link" in the "Science template Year-4" "table_row"
     And I click on "Delete" of edit menu in the "Science template Year-4" row
     And "Confirm" "dialogue" should be visible
     When I click on "Delete" "button"
