@@ -2145,13 +2145,7 @@ function profile_display_badges($userid, $courseid = 0) {
     require_once($CFG->dirroot . '/badges/renderer.php');
 
     debugging('profile_display_badges() is deprecated.', DEBUG_DEVELOPER);
-
-    // Determine context.
-    if (isloggedin()) {
-        $context = context_user::instance($USER->id);
-    } else {
-        $context = context_system::instance();
-    }
+    $context = context_user::instance($userid);
 
     if ($USER->id == $userid || has_capability('moodle/badges:viewotherbadges', $context)) {
         $records = badges_get_user_badges($userid, $courseid, null, null, null, true);
