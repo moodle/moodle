@@ -367,7 +367,38 @@ if (isloggedin() and !isguestuser()) {
     echo $OUTPUT->confirm(get_string('alreadyloggedin', 'error', fullname($USER)), $logout, $continue);
     echo $OUTPUT->box_end();
 } else {
-    include("index_form.html");
+    if ($show_instructions) {
+        $columns = 'twocolumns';
+    } else {
+        $columns = 'onecolumn';
+    }
+
+    // Prepare all objects needed for the login page mustache template.
+    $data = new stdClass;
+    $data->columns = $columns;
+    $data->_signuplink = ($CFG->registerauth == 'email') || !empty($CFG->registerauth);
+    $data->errormsg = $errormsg;
+    $data->errormsg_error_text = $OUTPUT->error_text($errormsg);
+    $data->httpswwwroot = $CFG->httpswwwroot;
+    $data->_loginpasswordautocomplete_empty = empty($CFG->loginpasswordautocomplete);
+    $data->_authloginviaemail_empty = empty($CFG->authloginviaemail);
+    $data->frm_username = p($frm->username);
+    $data->_rememberusername = (isset($CFG->rememberusername) and $CFG->rememberusername == 2);
+    $data->cookiesenabled_help_icon = $OUTPUT->help_icon('cookiesenabled');
+    $data->_guestloginbutton = $CFG->guestloginbutton and !isguestuser();
+    $data->_show_instructions = $show_instructions;
+    $data->_no_auth_enabled = is_enabled_auth('none');
+    $data->_registerauth_is_email = ($CFG->registerauth == 'email');
+    $data->_registerauth_not_empty = !empty($CFG->registerauth);
+    $data->_potentialidps_not_empty = !empty($potentialidps);
+    $data->potentialidps = $potentialidps;
+    $data->potentialidps = array();
+    foreach($potentialidps as $idp) {
+        $data->potentialidps[] = html_writer::link($idp['url']->out(), $OUTPUT->render($idp['icon'], $idp['name']) . $idp['name'], array('title' => $idp['name']));
+    }
+
+    echo $OUTPUT->render_from_template('core/login', $data);
+
     if ($errormsg) {
         $PAGE->requires->js_init_call('M.util.focus_login_error', null, true);
     } else if (!empty($CFG->loginpageautofocus)) {
