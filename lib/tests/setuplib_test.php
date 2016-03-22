@@ -466,4 +466,36 @@ class core_setuplib_testcase extends advanced_testcase {
         $this->assertDebuggingCalled("'object' class has been deprecated, please use stdClass instead.");
         $this->assertInstanceOf('stdClass', $obj);
     }
+
+    /**
+     * Data provider for test_get_real_size().
+     */
+    public function data_for_test_get_real_size() {
+        return array(
+            array('8KB', 8192),
+            array('8Kb', 8192),
+            array('8K', 8192),
+            array('8k', 8192),
+            array('50MB', 52428800),
+            array('50Mb', 52428800),
+            array('50M', 52428800),
+            array('50m', 52428800),
+            array('8Gb', 8589934592),
+            array('8GB', 8589934592),
+            array('8G', 8589934592),
+        );
+    }
+
+    /**
+     * Test the get_real_size() function.
+     *
+     * @dataProvider data_for_test_get_real_size
+     *
+     * @param string $input the input for get_real_size()
+     * @param int $expectedbytes the expected bytes
+     * @return array An array of arrays contain test data
+     */
+    public function test_get_real_size($input, $expectedbytes) {
+        $this->assertEquals($expectedbytes, get_real_size($input));
+    }
 }
