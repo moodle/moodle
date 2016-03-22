@@ -469,6 +469,8 @@ class core_setuplib_testcase extends advanced_testcase {
 
     /**
      * Data provider for test_get_real_size().
+     *
+     * @return array An array of arrays contain test data
      */
     public function data_for_test_get_real_size() {
         return array(
@@ -493,7 +495,6 @@ class core_setuplib_testcase extends advanced_testcase {
      *
      * @param string $input the input for get_real_size()
      * @param int $expectedbytes the expected bytes
-     * @return array An array of arrays contain test data
      */
     public function test_get_real_size($input, $expectedbytes) {
         $this->assertEquals($expectedbytes, get_real_size($input));
