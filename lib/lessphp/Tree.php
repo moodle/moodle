@@ -49,8 +49,8 @@ class Less_Tree{
 
 
 		// Non-compressed
-		$tabSetStr = "\n".str_repeat( '  ' , Less_Environment::$tabLevel-1 );
-		$tabRuleStr = $tabSetStr.'  ';
+		$tabSetStr = "\n".str_repeat( Less_Parser::$options['indentation'] , Less_Environment::$tabLevel-1 );
+		$tabRuleStr = $tabSetStr.Less_Parser::$options['indentation'];
 
 		$output->add( " {" );
 		for($i = 0; $i < $ruleCnt; $i++ ){
