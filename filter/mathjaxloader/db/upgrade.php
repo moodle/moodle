@@ -111,5 +111,25 @@ MathJax.Hub.Config({
     // Moodle v3.0.0 release upgrade line.
     // Put any upgrade step following this.
 
+    // Moodle v3.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2015111601) {
+
+        $httpurl = get_config('filter_mathjaxloader', 'httpurl');
+        // Don't change the config if it has been manually changed to something besides the default setting value.
+        if ($httpurl === "http://cdn.mathjax.org/mathjax/2.5-latest/MathJax.js") {
+            set_config('httpurl', 'http://cdn.mathjax.org/mathjax/2.6-latest/MathJax.js', 'filter_mathjaxloader');
+        }
+
+        $httpsurl = get_config('filter_mathjaxloader', 'httpsurl');
+        // Don't change the config if it has been manually changed to something besides the default setting value.
+        if ($httpsurl === "https://cdn.mathjax.org/mathjax/2.5-latest/MathJax.js") {
+            set_config('httpsurl', 'https://cdn.mathjax.org/mathjax/2.6-latest/MathJax.js', 'filter_mathjaxloader');
+        }
+
+        upgrade_plugin_savepoint(true, 2015111601, 'filter', 'mathjaxloader');
+    }
+
     return true;
 }
