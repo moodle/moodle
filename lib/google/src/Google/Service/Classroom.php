@@ -23,7 +23,7 @@
  *
  * <p>
  * For more information about this service, see the API
- * <a href="" target="_blank">Documentation</a>
+ * <a href="https://developers.google.com/classroom/" target="_blank">Documentation</a>
  * </p>
  *
  * @author Google, Inc.
@@ -443,12 +443,14 @@ class Google_Service_Classroom_Courses_Resource extends Google_Service_Resource
 {
 
   /**
-   * Creates a course. The user specified as the primary teacher in
-   * `primary_teacher_id` is the owner of the created course and added as a
-   * teacher. This method returns the following error codes: * `PERMISSION_DENIED`
-   * if the requesting user is not permitted to create courses. * `NOT_FOUND` if
-   * the primary teacher is not a valid user. * `ALREADY_EXISTS` if an alias was
-   * specified and already exists. (courses.create)
+   * Creates a course. The user specified in `ownerId` is the owner of the created
+   * course and added as a teacher. This method returns the following error codes:
+   * * `PERMISSION_DENIED` if the requesting user is not permitted to create
+   * courses or for access errors. * `NOT_FOUND` if the primary teacher is not a
+   * valid user. * `FAILED_PRECONDITION` if the course owner's account is disabled
+   * or for the following request errors: * UserGroupsMembershipLimitReached *
+   * `ALREADY_EXISTS` if an alias was specified in the `id` and already exists.
+   * (courses.create)
    *
    * @param Google_Course $postBody
    * @param array $optParams Optional parameters.
@@ -464,11 +466,11 @@ class Google_Service_Classroom_Courses_Resource extends Google_Service_Resource
   /**
    * Deletes a course. This method returns the following error codes: *
    * `PERMISSION_DENIED` if the requesting user is not permitted to delete the
-   * requested course. * `NOT_FOUND` if no course exists with the requested ID.
-   * (courses.delete)
+   * requested course or for access errors. * `NOT_FOUND` if no course exists with
+   * the requested ID. (courses.delete)
    *
-   * @param string $id Identifier of the course to delete. This may either be the
-   * Classroom-assigned identifier or an [alias][google.classroom.v1.CourseAlias].
+   * @param string $id Identifier of the course to delete. This identifier can be
+   * either the Classroom-assigned identifier or an alias.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Classroom_Empty
    */
@@ -482,11 +484,11 @@ class Google_Service_Classroom_Courses_Resource extends Google_Service_Resource
   /**
    * Returns a course. This method returns the following error codes: *
    * `PERMISSION_DENIED` if the requesting user is not permitted to access the
-   * requested course. * `NOT_FOUND` if no course exists with the requested ID.
-   * (courses.get)
+   * requested course or for access errors. * `NOT_FOUND` if no course exists with
+   * the requested ID. (courses.get)
    *
-   * @param string $id Identifier of the course to return. This may either be the
-   * Classroom-assigned identifier or an [alias][google.classroom.v1.CourseAlias].
+   * @param string $id Identifier of the course to return. This identifier can be
+   * either the Classroom-assigned identifier or an alias.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Classroom_Course
    */
@@ -500,27 +502,24 @@ class Google_Service_Classroom_Courses_Resource extends Google_Service_Resource
   /**
    * Returns a list of courses that the requesting user is permitted to view,
    * restricted to those that match the request. This method returns the following
-   * error codes: * `INVALID_ARGUMENT` if the query argument is malformed. *
-   * `NOT_FOUND` if any users specified in the query arguments do not exist.
-   * (courses.listCourses)
+   * error codes: * `PERMISSION_DENIED` for access errors. * `INVALID_ARGUMENT` if
+   * the query argument is malformed. * `NOT_FOUND` if any users specified in the
+   * query arguments do not exist. (courses.listCourses)
    *
    * @param array $optParams Optional parameters.
    *
    * @opt_param string teacherId Restricts returned courses to those having a
-   * teacher with the specified identifier, or an alias that identifies a teacher.
-   * The following aliases are supported: * the e-mail address of the user * the
-   * string literal `"me"`, indicating that the requesting user
-   * @opt_param string pageToken
-   * [nextPageToken][google.classroom.v1.ListCoursesResponse.next_page_token]
-   * value returned from a previous
-   * [list][google.classroom.v1.Courses.ListCourses] call, indicating that the
-   * subsequent page of results should be returned. The
-   * [list][google.classroom.v1.Courses.ListCourses] request must be identical to
-   * the one which resulted in this token.
+   * teacher with the specified identifier. The identifier can be one of the
+   * following: * the numeric identifier for the user * the email address of the
+   * user * the string literal `"me"`, indicating the requesting user
+   * @opt_param string pageToken nextPageToken value returned from a previous list
+   * call, indicating that the subsequent page of results should be returned. The
+   * list request must be otherwise identical to the one that resulted in this
+   * token.
    * @opt_param string studentId Restricts returned courses to those having a
-   * student with the specified identifier, or an alias that identifies a student.
-   * The following aliases are supported: * the e-mail address of the user * the
-   * string literal `"me"`, indicating that the requesting user
+   * student with the specified identifier. The identifier can be one of the
+   * following: * the numeric identifier for the user * the email address of the
+   * user * the string literal `"me"`, indicating the requesting user
    * @opt_param int pageSize Maximum number of items to return. Zero or
    * unspecified indicates that the server may assign a maximum. The server may
    * return fewer than the specified number of results.
@@ -534,22 +533,25 @@ class Google_Service_Classroom_Courses_Resource extends Google_Service_Resource
   }
 
   /**
-   * Updates one or more fields a course. This method returns the following error
-   * codes: * `PERMISSION_DENIED` if the requesting user is not permitted to
-   * modify the requested course. * `NOT_FOUND` if no course exists with the
-   * requested ID. * `INVALID_ARGUMENT` if invalid fields are specified in the
-   * update mask or if no update mask is supplied. (courses.patch)
+   * Updates one or more fields in a course. This method returns the following
+   * error codes: * `PERMISSION_DENIED` if the requesting user is not permitted to
+   * modify the requested course or for access errors. * `NOT_FOUND` if no course
+   * exists with the requested ID. * `INVALID_ARGUMENT` if invalid fields are
+   * specified in the update mask or if no update mask is supplied. *
+   * `FAILED_PRECONDITION` for the following request errors: * CourseNotModifiable
+   * (courses.patch)
    *
-   * @param string $id Identifier of the course to update. This may either be the
-   * Classroom-assigned identifier or an [alias][google.classroom.v1.CourseAlias].
+   * @param string $id Identifier of the course to update. This identifier can be
+   * either the Classroom-assigned identifier or an alias.
    * @param Google_Course $postBody
    * @param array $optParams Optional parameters.
    *
-   * @opt_param string updateMask Mask which identifies which fields on the course
+   * @opt_param string updateMask Mask that identifies which fields on the course
    * to update. This field is required to do an update. The update will fail if
-   * invalid fields are specified. Valid fields are listed below: * `name` *
+   * invalid fields are specified. The following fields are valid: * `name` *
    * `section` * `descriptionHeading` * `description` * `room` * `courseState`
-   * When set in a query parameter, this should be specified as `updateMask=,,...`
+   * When set in a query parameter, this field should be specified as
+   * `updateMask=,,...`
    * @return Google_Service_Classroom_Course
    */
   public function patch($id, Google_Service_Classroom_Course $postBody, $optParams = array())
@@ -562,11 +564,12 @@ class Google_Service_Classroom_Courses_Resource extends Google_Service_Resource
   /**
    * Updates a course. This method returns the following error codes: *
    * `PERMISSION_DENIED` if the requesting user is not permitted to modify the
-   * requested course. * `NOT_FOUND` if no course exists with the requested ID.
-   * (courses.update)
+   * requested course or for access errors. * `NOT_FOUND` if no course exists with
+   * the requested ID. * `FAILED_PRECONDITION` for the following request errors: *
+   * CourseNotModifiable (courses.update)
    *
-   * @param string $id Identifier of the course to update. This may either be the
-   * Classroom-assigned identifier or an [alias][google.classroom.v1.CourseAlias].
+   * @param string $id Identifier of the course to update. This identifier can be
+   * either the Classroom-assigned identifier or an alias.
    * @param Google_Course $postBody
    * @param array $optParams Optional parameters.
    * @return Google_Service_Classroom_Course
@@ -591,14 +594,13 @@ class Google_Service_Classroom_CoursesAliases_Resource extends Google_Service_Re
 {
 
   /**
-   * Creates an alias to a course. This method returns the following error codes:
+   * Creates an alias for a course. This method returns the following error codes:
    * * `PERMISSION_DENIED` if the requesting user is not permitted to create the
-   * alias. * `NOT_FOUND` if the course does not exist. * `ALREADY_EXISTS` if the
-   * alias already exists. (aliases.create)
+   * alias or for access errors. * `NOT_FOUND` if the course does not exist. *
+   * `ALREADY_EXISTS` if the alias already exists. (aliases.create)
    *
-   * @param string $courseId The identifier of the course to alias. This may
-   * either be the Classroom-assigned identifier or an
-   * [alias][google.classroom.v1.CourseAlias].
+   * @param string $courseId Identifier of the course to alias. This identifier
+   * can be either the Classroom-assigned identifier or an alias.
    * @param Google_CourseAlias $postBody
    * @param array $optParams Optional parameters.
    * @return Google_Service_Classroom_CourseAlias
@@ -613,13 +615,14 @@ class Google_Service_Classroom_CoursesAliases_Resource extends Google_Service_Re
   /**
    * Deletes an alias of a course. This method returns the following error codes:
    * * `PERMISSION_DENIED` if the requesting user is not permitted to remove the
-   * alias. * `NOT_FOUND` if the alias does not exist. (aliases.delete)
+   * alias or for access errors. * `NOT_FOUND` if the alias does not exist.
+   * (aliases.delete)
    *
-   * @param string $courseId The identifier of the course whose alias should be
-   * deleted. This may either be the Classroom-assigned identifier or an
-   * [alias][google.classroom.v1.CourseAlias].
-   * @param string $alias The alias to delete. This may not be the Classroom-
-   * assigned identifier.
+   * @param string $courseId Identifier of the course whose alias should be
+   * deleted. This identifier can be either the Classroom-assigned identifier or
+   * an alias.
+   * @param string $alias Alias to delete. This may not be the Classroom-assigned
+   * identifier.
    * @param array $optParams Optional parameters.
    * @return Google_Service_Classroom_Empty
    */
@@ -631,21 +634,19 @@ class Google_Service_Classroom_CoursesAliases_Resource extends Google_Service_Re
   }
 
   /**
-   * Lists the aliases of a course. This method returns the following error codes:
-   * * `PERMISSION_DENIED` if the requesting user is not permitted to access the
-   * course. * `NOT_FOUND` if the course does not exist.
-   * (aliases.listCoursesAliases)
+   * Returns a list of aliases for a course. This method returns the following
+   * error codes: * `PERMISSION_DENIED` if the requesting user is not permitted to
+   * access the course or for access errors. * `NOT_FOUND` if the course does not
+   * exist. (aliases.listCoursesAliases)
    *
-   * @param string $courseId The identifier of the course. This may either be the
-   * Classroom-assigned identifier or an [alias][google.classroom.v1.CourseAlias].
+   * @param string $courseId The identifier of the course. This identifier can be
+   * either the Classroom-assigned identifier or an alias.
    * @param array $optParams Optional parameters.
    *
-   * @opt_param string pageToken [nextPageToken][google.classroom.v1.ListCourseAli
-   * asesResponse.next_page_token] value returned from a previous
-   * [list][google.classroom.v1.Courses.ListCourseAliases] call, indicating that
-   * the subsequent page of results should be returned. The
-   * [list][google.classroom.v1.Courses.ListCourseAliases] request must be
-   * identical to the one which resulted in this token.
+   * @opt_param string pageToken nextPageToken value returned from a previous list
+   * call, indicating that the subsequent page of results should be returned. The
+   * list request must be otherwise identical to the one that resulted in this
+   * token.
    * @opt_param int pageSize Maximum number of items to return. Zero or
    * unspecified indicates that the server may assign a maximum. The server may
    * return fewer than the specified number of results.
@@ -672,19 +673,22 @@ class Google_Service_Classroom_CoursesStudents_Resource extends Google_Service_R
   /**
    * Adds a user as a student of a course. This method returns the following error
    * codes: * `PERMISSION_DENIED` if the requesting user is not permitted to
-   * create students in this course. * `NOT_FOUND` if the requested course ID does
-   * not exist. * `ALREADY_EXISTS` if the user is already a student or student in
-   * the course. (students.create)
+   * create students in this course or for access errors. * `NOT_FOUND` if the
+   * requested course ID does not exist. * `FAILED_PRECONDITION` if the requested
+   * user's account is disabled, for the following request errors: *
+   * CourseMemberLimitReached * CourseNotModifiable *
+   * UserGroupsMembershipLimitReached * `ALREADY_EXISTS` if the user is already a
+   * student or teacher in the course. (students.create)
    *
    * @param string $courseId Identifier of the course to create the student in.
-   * This may either be the Classroom-assigned identifier or an alias.
+   * This identifier can be either the Classroom-assigned identifier or an alias.
    * @param Google_Student $postBody
    * @param array $optParams Optional parameters.
    *
    * @opt_param string enrollmentCode Enrollment code of the course to create the
-   * student in. This is required if [userId][google.classroom.v1.Student.user_id]
-   * corresponds to the requesting user; this may be omitted if the requesting
-   * user has administrative permissions to create students for any user.
+   * student in. This code is required if userId corresponds to the requesting
+   * user; it may be omitted if the requesting user has administrative permissions
+   * to create students for any user.
    * @return Google_Service_Classroom_Student
    */
   public function create($courseId, Google_Service_Classroom_Student $postBody, $optParams = array())
@@ -697,15 +701,16 @@ class Google_Service_Classroom_CoursesStudents_Resource extends Google_Service_R
   /**
    * Deletes a student of a course. This method returns the following error codes:
    * * `PERMISSION_DENIED` if the requesting user is not permitted to delete
-   * students of this course. * `NOT_FOUND` if no student of this course has the
-   * requested ID or if the course does not exist. (students.delete)
+   * students of this course or for access errors. * `NOT_FOUND` if no student of
+   * this course has the requested ID or if the course does not exist.
+   * (students.delete)
    *
-   * @param string $courseId Unique identifier of the course. This may either be
-   * the Classroom-assigned identifier or an alias.
-   * @param string $userId Identifier of the student to delete, or an alias the
-   * identifies the user. The following aliases are supported: * the e-mail
-   * address of the user * the string literal `"me"`, indicating that the
-   * requesting user
+   * @param string $courseId Identifier of the course. This identifier can be
+   * either the Classroom-assigned identifier or an alias.
+   * @param string $userId Identifier of the student to delete. The identifier can
+   * be one of the following: * the numeric identifier for the user * the email
+   * address of the user * the string literal `"me"`, indicating the requesting
+   * user
    * @param array $optParams Optional parameters.
    * @return Google_Service_Classroom_Empty
    */
@@ -719,15 +724,16 @@ class Google_Service_Classroom_CoursesStudents_Resource extends Google_Service_R
   /**
    * Returns a student of a course. This method returns the following error codes:
    * * `PERMISSION_DENIED` if the requesting user is not permitted to view
-   * students of this course. * `NOT_FOUND` if no student of this course has the
-   * requested ID or if the course does not exist. (students.get)
+   * students of this course or for access errors. * `NOT_FOUND` if no student of
+   * this course has the requested ID or if the course does not exist.
+   * (students.get)
    *
-   * @param string $courseId Unique identifier of the course. This may either be
-   * the Classroom-assigned identifier or an alias.
-   * @param string $userId Identifier of the student to return, or an alias the
-   * identifies the user. The following aliases are supported: * the e-mail
-   * address of the user * the string literal `"me"`, indicating that the
-   * requesting user
+   * @param string $courseId Identifier of the course. This identifier can be
+   * either the Classroom-assigned identifier or an alias.
+   * @param string $userId Identifier of the student to return. The identifier can
+   * be one of the following: * the numeric identifier for the user * the email
+   * address of the user * the string literal `"me"`, indicating the requesting
+   * user
    * @param array $optParams Optional parameters.
    * @return Google_Service_Classroom_Student
    */
@@ -740,19 +746,18 @@ class Google_Service_Classroom_CoursesStudents_Resource extends Google_Service_R
 
   /**
    * Returns a list of students of this course that the requester is permitted to
-   * view. Fails with `NOT_FOUND` if the course does not exist.
+   * view. This method returns the following error codes: * `NOT_FOUND` if the
+   * course does not exist. * `PERMISSION_DENIED` for access errors.
    * (students.listCoursesStudents)
    *
-   * @param string $courseId Unique identifier of the course. This may either be
-   * the Classroom-assigned identifier or an alias.
+   * @param string $courseId Identifier of the course. This identifier can be
+   * either the Classroom-assigned identifier or an alias.
    * @param array $optParams Optional parameters.
    *
-   * @opt_param string pageToken
-   * [nextPageToken][google.classroom.v1.ListStudentsResponse.next_page_token]
-   * value returned from a previous [list][google.classroom.v1.Users.ListStudents]
+   * @opt_param string pageToken nextPageToken value returned from a previous list
    * call, indicating that the subsequent page of results should be returned. The
-   * [list][google.classroom.v1.Users.ListStudents] request must be identical to
-   * the one which resulted in this token.
+   * list request must be otherwise identical to the one that resulted in this
+   * token.
    * @opt_param int pageSize Maximum number of items to return. Zero means no
    * maximum. The server may return fewer than the specified number of results.
    * @return Google_Service_Classroom_ListStudentsResponse
@@ -778,12 +783,15 @@ class Google_Service_Classroom_CoursesTeachers_Resource extends Google_Service_R
   /**
    * Creates a teacher of a course. This method returns the following error codes:
    * * `PERMISSION_DENIED` if the requesting user is not permitted to create
-   * teachers in this course. * `NOT_FOUND` if the requested course ID does not
-   * exist. * `ALREADY_EXISTS` if the user is already a teacher or student in the
-   * course. (teachers.create)
+   * teachers in this course or for access errors. * `NOT_FOUND` if the requested
+   * course ID does not exist. * `FAILED_PRECONDITION` if the requested user's
+   * account is disabled, for the following request errors: *
+   * CourseMemberLimitReached * CourseNotModifiable * CourseTeacherLimitReached *
+   * UserGroupsMembershipLimitReached * `ALREADY_EXISTS` if the user is already a
+   * teacher or student in the course. (teachers.create)
    *
-   * @param string $courseId Unique identifier of the course. This may either be
-   * the Classroom-assigned identifier or an alias.
+   * @param string $courseId Identifier of the course. This identifier can be
+   * either the Classroom-assigned identifier or an alias.
    * @param Google_Teacher $postBody
    * @param array $optParams Optional parameters.
    * @return Google_Service_Classroom_Teacher
@@ -798,16 +806,17 @@ class Google_Service_Classroom_CoursesTeachers_Resource extends Google_Service_R
   /**
    * Deletes a teacher of a course. This method returns the following error codes:
    * * `PERMISSION_DENIED` if the requesting user is not permitted to delete
-   * teachers of this course. * `NOT_FOUND` if no teacher of this course has the
-   * requested ID or if the course does not exist. * `FAILED_PRECONDITION` if the
-   * requested ID belongs to the primary teacher of this course. (teachers.delete)
+   * teachers of this course or for access errors. * `NOT_FOUND` if no teacher of
+   * this course has the requested ID or if the course does not exist. *
+   * `FAILED_PRECONDITION` if the requested ID belongs to the primary teacher of
+   * this course. (teachers.delete)
    *
-   * @param string $courseId Unique identifier of the course. This may either be
-   * the Classroom-assigned identifier or an alias.
-   * @param string $userId Identifier of the teacher to delete, or an alias the
-   * identifies the user. the following aliases are supported: * the e-mail
-   * address of the user * the string literal `"me"`, indicating that the
-   * requesting user
+   * @param string $courseId Identifier of the course. This identifier can be
+   * either the Classroom-assigned identifier or an alias.
+   * @param string $userId Identifier of the teacher to delete. The identifier can
+   * be one of the following: * the numeric identifier for the user * the email
+   * address of the user * the string literal `"me"`, indicating the requesting
+   * user
    * @param array $optParams Optional parameters.
    * @return Google_Service_Classroom_Empty
    */
@@ -821,15 +830,16 @@ class Google_Service_Classroom_CoursesTeachers_Resource extends Google_Service_R
   /**
    * Returns a teacher of a course. This method returns the following error codes:
    * * `PERMISSION_DENIED` if the requesting user is not permitted to view
-   * teachers of this course. * `NOT_FOUND` if no teacher of this course has the
-   * requested ID or if the course does not exist. (teachers.get)
+   * teachers of this course or for access errors. * `NOT_FOUND` if no teacher of
+   * this course has the requested ID or if the course does not exist.
+   * (teachers.get)
    *
-   * @param string $courseId Unique identifier of the course. This may either be
-   * the Classroom-assigned identifier or an alias.
-   * @param string $userId Identifier of the teacher to return, or an alias the
-   * identifies the user. the following aliases are supported: * the e-mail
-   * address of the user * the string literal `"me"`, indicating that the
-   * requesting user
+   * @param string $courseId Identifier of the course. This identifier can be
+   * either the Classroom-assigned identifier or an alias.
+   * @param string $userId Identifier of the teacher to return. The identifier can
+   * be one of the following: * the numeric identifier for the user * the email
+   * address of the user * the string literal `"me"`, indicating the requesting
+   * user
    * @param array $optParams Optional parameters.
    * @return Google_Service_Classroom_Teacher
    */
@@ -842,19 +852,18 @@ class Google_Service_Classroom_CoursesTeachers_Resource extends Google_Service_R
 
   /**
    * Returns a list of teachers of this course that the requester is permitted to
-   * view. Fails with `NOT_FOUND` if the course does not exist.
+   * view. This method returns the following error codes: * `NOT_FOUND` if the
+   * course does not exist. * `PERMISSION_DENIED` for access errors.
    * (teachers.listCoursesTeachers)
    *
-   * @param string $courseId Unique identifier of the course. This may either be
-   * the Classroom-assigned identifier or an alias.
+   * @param string $courseId Identifier of the course. This identifier can be
+   * either the Classroom-assigned identifier or an alias.
    * @param array $optParams Optional parameters.
    *
-   * @opt_param string pageToken
-   * [nextPageToken][google.classroom.v1.ListTeachersResponse.next_page_token]
-   * value returned from a previous [list][google.classroom.v1.Users.ListTeachers]
+   * @opt_param string pageToken nextPageToken value returned from a previous list
    * call, indicating that the subsequent page of results should be returned. The
-   * [list][google.classroom.v1.Users.ListTeachers] request must be identical to
-   * the one which resulted in this token.
+   * list request must be otherwise identical to the one that resulted in this
+   * token.
    * @opt_param int pageSize Maximum number of items to return. Zero means no
    * maximum. The server may return fewer than the specified number of results.
    * @return Google_Service_Classroom_ListTeachersResponse
@@ -883,7 +892,10 @@ class Google_Service_Classroom_Invitations_Resource extends Google_Service_Resou
    * teachers or students (as appropriate) of the specified course. Only the
    * invited user may accept an invitation. This method returns the following
    * error codes: * `PERMISSION_DENIED` if the requesting user is not permitted to
-   * accept the requested invitation. * `NOT_FOUND` if no invitation exists with
+   * accept the requested invitation or for access errors. * `FAILED_PRECONDITION`
+   * for the following request errors: * CourseMemberLimitReached *
+   * CourseNotModifiable * CourseTeacherLimitReached *
+   * UserGroupsMembershipLimitReached * `NOT_FOUND` if no invitation exists with
    * the requested ID. (invitations.accept)
    *
    * @param string $id Identifier of the invitation to accept.
@@ -898,12 +910,15 @@ class Google_Service_Classroom_Invitations_Resource extends Google_Service_Resou
   }
 
   /**
-   * Creates a invitation. Only one invitation for a user and course may exist at
-   * a time. Delete and recreate an invitation to make changes. This method
+   * Creates an invitation. Only one invitation for a user and course may exist at
+   * a time. Delete and re-create an invitation to make changes. This method
    * returns the following error codes: * `PERMISSION_DENIED` if the requesting
-   * user is not permitted to create invitations for this course. * `NOT_FOUND` if
-   * the course or the user does not exist. * `ALREADY_EXISTS` if an invitation
-   * for the specified user and course already exists. (invitations.create)
+   * user is not permitted to create invitations for this course or for access
+   * errors. * `NOT_FOUND` if the course or the user does not exist. *
+   * `FAILED_PRECONDITION` if the requested user's account is disabled or if the
+   * user already has this role or a role with greater permissions. *
+   * `ALREADY_EXISTS` if an invitation for the specified user and course already
+   * exists. (invitations.create)
    *
    * @param Google_Invitation $postBody
    * @param array $optParams Optional parameters.
@@ -917,10 +932,10 @@ class Google_Service_Classroom_Invitations_Resource extends Google_Service_Resou
   }
 
   /**
-   * Deletes a invitation. This method returns the following error codes: *
+   * Deletes an invitation. This method returns the following error codes: *
    * `PERMISSION_DENIED` if the requesting user is not permitted to delete the
-   * requested invitation. * `NOT_FOUND` if no invitation exists with the
-   * requested ID. (invitations.delete)
+   * requested invitation or for access errors. * `NOT_FOUND` if no invitation
+   * exists with the requested ID. (invitations.delete)
    *
    * @param string $id Identifier of the invitation to delete.
    * @param array $optParams Optional parameters.
@@ -934,10 +949,10 @@ class Google_Service_Classroom_Invitations_Resource extends Google_Service_Resou
   }
 
   /**
-   * Returns a invitation. This method returns the following error codes: *
+   * Returns an invitation. This method returns the following error codes: *
    * `PERMISSION_DENIED` if the requesting user is not permitted to view the
-   * requested invitation. * `NOT_FOUND` if no invitation exists with the
-   * requested ID. (invitations.get)
+   * requested invitation or for access errors. * `NOT_FOUND` if no invitation
+   * exists with the requested ID. (invitations.get)
    *
    * @param string $id Identifier of the invitation to return.
    * @param array $optParams Optional parameters.
@@ -952,25 +967,24 @@ class Google_Service_Classroom_Invitations_Resource extends Google_Service_Resou
 
   /**
    * Returns a list of invitations that the requesting user is permitted to view,
-   * restricted to those that match the request. *Note:* At least one of `user_id`
-   * or `course_id` must be supplied. (invitations.listInvitations)
+   * restricted to those that match the list request. *Note:* At least one of
+   * `user_id` or `course_id` must be supplied. Both fields can be supplied. This
+   * method returns the following error codes: * `PERMISSION_DENIED` for access
+   * errors. (invitations.listInvitations)
    *
    * @param array $optParams Optional parameters.
    *
    * @opt_param string courseId Restricts returned invitations to those for a
    * course with the specified identifier.
-   * @opt_param string pageToken
-   * [nextPageToken][google.classroom.v1.ListInvitationsRespnse.next_page_token]
-   * value returned from a previous
-   * [list][google.classroom.v1.Users.ListInvitations] call, indicating that the
-   * subsequent page of results should be returned. The
-   * [list][google.classroom.v1.Users.ListInvitations] request must be identical
-   * to the one which resulted in this token.
+   * @opt_param string pageToken nextPageToken value returned from a previous list
+   * call, indicating that the subsequent page of results should be returned. The
+   * list request must be otherwise identical to the one that resulted in this
+   * token.
    * @opt_param string userId Restricts returned invitations to those for a
-   * specific user. This may be the unique identifier for the user or an alias.
-   * The supported aliases are: * the e-mail address of the user * the string
-   * literal `"me"`, indicating the requesting user
-   * @opt_param int pageSize The maximum number of items to return. Zero means no
+   * specific user. The identifier can be one of the following: * the numeric
+   * identifier for the user * the email address of the user * the string literal
+   * `"me"`, indicating the requesting user
+   * @opt_param int pageSize Maximum number of items to return. Zero means no
    * maximum. The server may return fewer than the specified number of results.
    * @return Google_Service_Classroom_ListInvitationsResponse
    */
@@ -996,10 +1010,11 @@ class Google_Service_Classroom_UserProfiles_Resource extends Google_Service_Reso
   /**
    * Returns a user profile. This method returns the following error codes: *
    * `PERMISSION_DENIED` if the requesting user is not permitted to access this
-   * user profile. * `NOT_FOUND` if the profile does not exist. (userProfiles.get)
+   * user profile or if no profile exists with the requested ID or for access
+   * errors. (userProfiles.get)
    *
-   * @param string $userId Identifier of the profile to return, or an alias the
-   * identifies the user. The following aliases are supported: * the e-mail
+   * @param string $userId Identifier of the profile to return. The identifier can
+   * be one of the following: * the numeric identifier for the user * the email
    * address of the user * the string literal `"me"`, indicating the requesting
    * user
    * @param array $optParams Optional parameters.

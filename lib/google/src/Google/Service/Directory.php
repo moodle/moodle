@@ -32,6 +32,12 @@
  */
 class Google_Service_Directory extends Google_Service
 {
+  /** View and manage customer related information. */
+  const ADMIN_DIRECTORY_CUSTOMER =
+      "https://www.googleapis.com/auth/admin.directory.customer";
+  /** View customer related information. */
+  const ADMIN_DIRECTORY_CUSTOMER_READONLY =
+      "https://www.googleapis.com/auth/admin.directory.customer.readonly";
   /** View and manage your Chrome OS devices' metadata. */
   const ADMIN_DIRECTORY_DEVICE_CHROMEOS =
       "https://www.googleapis.com/auth/admin.directory.device.chromeos";
@@ -47,6 +53,12 @@ class Google_Service_Directory extends Google_Service
   /** View your mobile devices' metadata. */
   const ADMIN_DIRECTORY_DEVICE_MOBILE_READONLY =
       "https://www.googleapis.com/auth/admin.directory.device.mobile.readonly";
+  /** View and manage the provisioning of domains for your customers. */
+  const ADMIN_DIRECTORY_DOMAIN =
+      "https://www.googleapis.com/auth/admin.directory.domain";
+  /** View domains related to your customers. */
+  const ADMIN_DIRECTORY_DOMAIN_READONLY =
+      "https://www.googleapis.com/auth/admin.directory.domain.readonly";
   /** View and manage the provisioning of groups on your domain. */
   const ADMIN_DIRECTORY_GROUP =
       "https://www.googleapis.com/auth/admin.directory.group";
@@ -68,6 +80,12 @@ class Google_Service_Directory extends Google_Service
   /** View organization units on your domain. */
   const ADMIN_DIRECTORY_ORGUNIT_READONLY =
       "https://www.googleapis.com/auth/admin.directory.orgunit.readonly";
+  /** Manage delegated admin roles for your domain. */
+  const ADMIN_DIRECTORY_ROLEMANAGEMENT =
+      "https://www.googleapis.com/auth/admin.directory.rolemanagement";
+  /** View delegated admin roles for your domain. */
+  const ADMIN_DIRECTORY_ROLEMANAGEMENT_READONLY =
+      "https://www.googleapis.com/auth/admin.directory.rolemanagement.readonly";
   /** View and manage the provisioning of users on your domain. */
   const ADMIN_DIRECTORY_USER =
       "https://www.googleapis.com/auth/admin.directory.user";
@@ -93,12 +111,18 @@ class Google_Service_Directory extends Google_Service
   public $asps;
   public $channels;
   public $chromeosdevices;
+  public $customers;
+  public $domainAliases;
+  public $domains;
   public $groups;
   public $groups_aliases;
   public $members;
   public $mobiledevices;
   public $notifications;
   public $orgunits;
+  public $privileges;
+  public $roleAssignments;
+  public $roles;
   public $schemas;
   public $tokens;
   public $users;
@@ -279,6 +303,170 @@ class Google_Service_Directory extends Google_Service
                 'projection' => array(
                   'location' => 'query',
                   'type' => 'string',
+                ),
+              ),
+            ),
+          )
+        )
+    );
+    $this->customers = new Google_Service_Directory_Customers_Resource(
+        $this,
+        $this->serviceName,
+        'customers',
+        array(
+          'methods' => array(
+            'get' => array(
+              'path' => 'customers/{customerKey}',
+              'httpMethod' => 'GET',
+              'parameters' => array(
+                'customerKey' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'patch' => array(
+              'path' => 'customers/{customerKey}',
+              'httpMethod' => 'PATCH',
+              'parameters' => array(
+                'customerKey' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'update' => array(
+              'path' => 'customers/{customerKey}',
+              'httpMethod' => 'PUT',
+              'parameters' => array(
+                'customerKey' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),
+          )
+        )
+    );
+    $this->domainAliases = new Google_Service_Directory_DomainAliases_Resource(
+        $this,
+        $this->serviceName,
+        'domainAliases',
+        array(
+          'methods' => array(
+            'delete' => array(
+              'path' => 'customer/{customer}/domainaliases/{domainAliasName}',
+              'httpMethod' => 'DELETE',
+              'parameters' => array(
+                'customer' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'domainAliasName' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'get' => array(
+              'path' => 'customer/{customer}/domainaliases/{domainAliasName}',
+              'httpMethod' => 'GET',
+              'parameters' => array(
+                'customer' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'domainAliasName' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'insert' => array(
+              'path' => 'customer/{customer}/domainaliases',
+              'httpMethod' => 'POST',
+              'parameters' => array(
+                'customer' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'list' => array(
+              'path' => 'customer/{customer}/domainaliases',
+              'httpMethod' => 'GET',
+              'parameters' => array(
+                'customer' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'parentDomainName' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+              ),
+            ),
+          )
+        )
+    );
+    $this->domains = new Google_Service_Directory_Domains_Resource(
+        $this,
+        $this->serviceName,
+        'domains',
+        array(
+          'methods' => array(
+            'delete' => array(
+              'path' => 'customer/{customer}/domains/{domainName}',
+              'httpMethod' => 'DELETE',
+              'parameters' => array(
+                'customer' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'domainName' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'get' => array(
+              'path' => 'customer/{customer}/domains/{domainName}',
+              'httpMethod' => 'GET',
+              'parameters' => array(
+                'customer' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'domainName' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'insert' => array(
+              'path' => 'customer/{customer}/domains',
+              'httpMethod' => 'POST',
+              'parameters' => array(
+                'customer' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'list' => array(
+              'path' => 'customer/{customer}/domains',
+              'httpMethod' => 'GET',
+              'parameters' => array(
+                'customer' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
                 ),
               ),
             ),
@@ -791,6 +979,200 @@ class Google_Service_Directory extends Google_Service
                   'location' => 'path',
                   'type' => 'string',
                   'repeated' => true,
+                  'required' => true,
+                ),
+              ),
+            ),
+          )
+        )
+    );
+    $this->privileges = new Google_Service_Directory_Privileges_Resource(
+        $this,
+        $this->serviceName,
+        'privileges',
+        array(
+          'methods' => array(
+            'list' => array(
+              'path' => 'customer/{customer}/roles/ALL/privileges',
+              'httpMethod' => 'GET',
+              'parameters' => array(
+                'customer' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),
+          )
+        )
+    );
+    $this->roleAssignments = new Google_Service_Directory_RoleAssignments_Resource(
+        $this,
+        $this->serviceName,
+        'roleAssignments',
+        array(
+          'methods' => array(
+            'delete' => array(
+              'path' => 'customer/{customer}/roleassignments/{roleAssignmentId}',
+              'httpMethod' => 'DELETE',
+              'parameters' => array(
+                'customer' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'roleAssignmentId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'get' => array(
+              'path' => 'customer/{customer}/roleassignments/{roleAssignmentId}',
+              'httpMethod' => 'GET',
+              'parameters' => array(
+                'customer' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'roleAssignmentId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'insert' => array(
+              'path' => 'customer/{customer}/roleassignments',
+              'httpMethod' => 'POST',
+              'parameters' => array(
+                'customer' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'list' => array(
+              'path' => 'customer/{customer}/roleassignments',
+              'httpMethod' => 'GET',
+              'parameters' => array(
+                'customer' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'pageToken' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+                'userKey' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+                'maxResults' => array(
+                  'location' => 'query',
+                  'type' => 'integer',
+                ),
+                'roleId' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+              ),
+            ),
+          )
+        )
+    );
+    $this->roles = new Google_Service_Directory_Roles_Resource(
+        $this,
+        $this->serviceName,
+        'roles',
+        array(
+          'methods' => array(
+            'delete' => array(
+              'path' => 'customer/{customer}/roles/{roleId}',
+              'httpMethod' => 'DELETE',
+              'parameters' => array(
+                'customer' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'roleId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'get' => array(
+              'path' => 'customer/{customer}/roles/{roleId}',
+              'httpMethod' => 'GET',
+              'parameters' => array(
+                'customer' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'roleId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'insert' => array(
+              'path' => 'customer/{customer}/roles',
+              'httpMethod' => 'POST',
+              'parameters' => array(
+                'customer' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'list' => array(
+              'path' => 'customer/{customer}/roles',
+              'httpMethod' => 'GET',
+              'parameters' => array(
+                'customer' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'pageToken' => array(
+                  'location' => 'query',
+                  'type' => 'string',
+                ),
+                'maxResults' => array(
+                  'location' => 'query',
+                  'type' => 'integer',
+                ),
+              ),
+            ),'patch' => array(
+              'path' => 'customer/{customer}/roles/{roleId}',
+              'httpMethod' => 'PATCH',
+              'parameters' => array(
+                'customer' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'roleId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+              ),
+            ),'update' => array(
+              'path' => 'customer/{customer}/roles/{roleId}',
+              'httpMethod' => 'PUT',
+              'parameters' => array(
+                'customer' => array(
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ),
+                'roleId' => array(
+                  'location' => 'path',
+                  'type' => 'string',
                   'required' => true,
                 ),
               ),
@@ -1465,6 +1847,205 @@ class Google_Service_Directory_Chromeosdevices_Resource extends Google_Service_R
 }
 
 /**
+ * The "customers" collection of methods.
+ * Typical usage is:
+ *  <code>
+ *   $adminService = new Google_Service_Directory(...);
+ *   $customers = $adminService->customers;
+ *  </code>
+ */
+class Google_Service_Directory_Customers_Resource extends Google_Service_Resource
+{
+
+  /**
+   * Retrives a customer. (customers.get)
+   *
+   * @param string $customerKey Id of the customer to be retrieved
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Directory_Customer
+   */
+  public function get($customerKey, $optParams = array())
+  {
+    $params = array('customerKey' => $customerKey);
+    $params = array_merge($params, $optParams);
+    return $this->call('get', array($params), "Google_Service_Directory_Customer");
+  }
+
+  /**
+   * Updates a customer. This method supports patch semantics. (customers.patch)
+   *
+   * @param string $customerKey Id of the customer to be updated
+   * @param Google_Customer $postBody
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Directory_Customer
+   */
+  public function patch($customerKey, Google_Service_Directory_Customer $postBody, $optParams = array())
+  {
+    $params = array('customerKey' => $customerKey, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('patch', array($params), "Google_Service_Directory_Customer");
+  }
+
+  /**
+   * Updates a customer. (customers.update)
+   *
+   * @param string $customerKey Id of the customer to be updated
+   * @param Google_Customer $postBody
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Directory_Customer
+   */
+  public function update($customerKey, Google_Service_Directory_Customer $postBody, $optParams = array())
+  {
+    $params = array('customerKey' => $customerKey, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('update', array($params), "Google_Service_Directory_Customer");
+  }
+}
+
+/**
+ * The "domainAliases" collection of methods.
+ * Typical usage is:
+ *  <code>
+ *   $adminService = new Google_Service_Directory(...);
+ *   $domainAliases = $adminService->domainAliases;
+ *  </code>
+ */
+class Google_Service_Directory_DomainAliases_Resource extends Google_Service_Resource
+{
+
+  /**
+   * Deletes a Domain Alias of the customer. (domainAliases.delete)
+   *
+   * @param string $customer Immutable id of the Google Apps account.
+   * @param string $domainAliasName Name of domain alias to be retrieved.
+   * @param array $optParams Optional parameters.
+   */
+  public function delete($customer, $domainAliasName, $optParams = array())
+  {
+    $params = array('customer' => $customer, 'domainAliasName' => $domainAliasName);
+    $params = array_merge($params, $optParams);
+    return $this->call('delete', array($params));
+  }
+
+  /**
+   * Retrieves a domain alias of the customer. (domainAliases.get)
+   *
+   * @param string $customer Immutable id of the Google Apps account.
+   * @param string $domainAliasName Name of domain alias to be retrieved.
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Directory_DomainAlias
+   */
+  public function get($customer, $domainAliasName, $optParams = array())
+  {
+    $params = array('customer' => $customer, 'domainAliasName' => $domainAliasName);
+    $params = array_merge($params, $optParams);
+    return $this->call('get', array($params), "Google_Service_Directory_DomainAlias");
+  }
+
+  /**
+   * Inserts a Domain alias of the customer. (domainAliases.insert)
+   *
+   * @param string $customer Immutable id of the Google Apps account.
+   * @param Google_DomainAlias $postBody
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Directory_DomainAlias
+   */
+  public function insert($customer, Google_Service_Directory_DomainAlias $postBody, $optParams = array())
+  {
+    $params = array('customer' => $customer, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('insert', array($params), "Google_Service_Directory_DomainAlias");
+  }
+
+  /**
+   * Lists the domain aliases of the customer. (domainAliases.listDomainAliases)
+   *
+   * @param string $customer Immutable id of the Google Apps account.
+   * @param array $optParams Optional parameters.
+   *
+   * @opt_param string parentDomainName Name of the parent domain for which domain
+   * aliases are to be fetched.
+   * @return Google_Service_Directory_DomainAliases
+   */
+  public function listDomainAliases($customer, $optParams = array())
+  {
+    $params = array('customer' => $customer);
+    $params = array_merge($params, $optParams);
+    return $this->call('list', array($params), "Google_Service_Directory_DomainAliases");
+  }
+}
+
+/**
+ * The "domains" collection of methods.
+ * Typical usage is:
+ *  <code>
+ *   $adminService = new Google_Service_Directory(...);
+ *   $domains = $adminService->domains;
+ *  </code>
+ */
+class Google_Service_Directory_Domains_Resource extends Google_Service_Resource
+{
+
+  /**
+   * Deletes a domain of the customer. (domains.delete)
+   *
+   * @param string $customer Immutable id of the Google Apps account.
+   * @param string $domainName Name of domain to be deleted
+   * @param array $optParams Optional parameters.
+   */
+  public function delete($customer, $domainName, $optParams = array())
+  {
+    $params = array('customer' => $customer, 'domainName' => $domainName);
+    $params = array_merge($params, $optParams);
+    return $this->call('delete', array($params));
+  }
+
+  /**
+   * Retrives a domain of the customer. (domains.get)
+   *
+   * @param string $customer Immutable id of the Google Apps account.
+   * @param string $domainName Name of domain to be retrieved
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Directory_Domains
+   */
+  public function get($customer, $domainName, $optParams = array())
+  {
+    $params = array('customer' => $customer, 'domainName' => $domainName);
+    $params = array_merge($params, $optParams);
+    return $this->call('get', array($params), "Google_Service_Directory_Domains");
+  }
+
+  /**
+   * Inserts a domain of the customer. (domains.insert)
+   *
+   * @param string $customer Immutable id of the Google Apps account.
+   * @param Google_Domains $postBody
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Directory_Domains
+   */
+  public function insert($customer, Google_Service_Directory_Domains $postBody, $optParams = array())
+  {
+    $params = array('customer' => $customer, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('insert', array($params), "Google_Service_Directory_Domains");
+  }
+
+  /**
+   * Lists the domains of the customer. (domains.listDomains)
+   *
+   * @param string $customer Immutable id of the Google Apps account.
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Directory_Domains2
+   */
+  public function listDomains($customer, $optParams = array())
+  {
+    $params = array('customer' => $customer);
+    $params = array_merge($params, $optParams);
+    return $this->call('list', array($params), "Google_Service_Directory_Domains2");
+  }
+}
+
+/**
  * The "groups" collection of methods.
  * Typical usage is:
  *  <code>
@@ -2027,6 +2608,217 @@ class Google_Service_Directory_Orgunits_Resource extends Google_Service_Resource
     $params = array('customerId' => $customerId, 'orgUnitPath' => $orgUnitPath, 'postBody' => $postBody);
     $params = array_merge($params, $optParams);
     return $this->call('update', array($params), "Google_Service_Directory_OrgUnit");
+  }
+}
+
+/**
+ * The "privileges" collection of methods.
+ * Typical usage is:
+ *  <code>
+ *   $adminService = new Google_Service_Directory(...);
+ *   $privileges = $adminService->privileges;
+ *  </code>
+ */
+class Google_Service_Directory_Privileges_Resource extends Google_Service_Resource
+{
+
+  /**
+   * Retrieves a paginated list of all privileges for a customer.
+   * (privileges.listPrivileges)
+   *
+   * @param string $customer Immutable ID of the Google Apps account.
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Directory_Privileges
+   */
+  public function listPrivileges($customer, $optParams = array())
+  {
+    $params = array('customer' => $customer);
+    $params = array_merge($params, $optParams);
+    return $this->call('list', array($params), "Google_Service_Directory_Privileges");
+  }
+}
+
+/**
+ * The "roleAssignments" collection of methods.
+ * Typical usage is:
+ *  <code>
+ *   $adminService = new Google_Service_Directory(...);
+ *   $roleAssignments = $adminService->roleAssignments;
+ *  </code>
+ */
+class Google_Service_Directory_RoleAssignments_Resource extends Google_Service_Resource
+{
+
+  /**
+   * Deletes a role assignment. (roleAssignments.delete)
+   *
+   * @param string $customer Immutable ID of the Google Apps account.
+   * @param string $roleAssignmentId Immutable ID of the role assignment.
+   * @param array $optParams Optional parameters.
+   */
+  public function delete($customer, $roleAssignmentId, $optParams = array())
+  {
+    $params = array('customer' => $customer, 'roleAssignmentId' => $roleAssignmentId);
+    $params = array_merge($params, $optParams);
+    return $this->call('delete', array($params));
+  }
+
+  /**
+   * Retrieve a role assignment. (roleAssignments.get)
+   *
+   * @param string $customer Immutable ID of the Google Apps account.
+   * @param string $roleAssignmentId Immutable ID of the role assignment.
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Directory_RoleAssignment
+   */
+  public function get($customer, $roleAssignmentId, $optParams = array())
+  {
+    $params = array('customer' => $customer, 'roleAssignmentId' => $roleAssignmentId);
+    $params = array_merge($params, $optParams);
+    return $this->call('get', array($params), "Google_Service_Directory_RoleAssignment");
+  }
+
+  /**
+   * Creates a role assignment. (roleAssignments.insert)
+   *
+   * @param string $customer Immutable ID of the Google Apps account.
+   * @param Google_RoleAssignment $postBody
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Directory_RoleAssignment
+   */
+  public function insert($customer, Google_Service_Directory_RoleAssignment $postBody, $optParams = array())
+  {
+    $params = array('customer' => $customer, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('insert', array($params), "Google_Service_Directory_RoleAssignment");
+  }
+
+  /**
+   * Retrieves a paginated list of all roleAssignments.
+   * (roleAssignments.listRoleAssignments)
+   *
+   * @param string $customer Immutable ID of the Google Apps account.
+   * @param array $optParams Optional parameters.
+   *
+   * @opt_param string pageToken Token to specify the next page in the list.
+   * @opt_param string userKey The user's primary email address, alias email
+   * address, or unique user ID. If included in the request, returns role
+   * assignments only for this user.
+   * @opt_param int maxResults Maximum number of results to return.
+   * @opt_param string roleId Immutable ID of a role. If included in the request,
+   * returns only role assignments containing this role ID.
+   * @return Google_Service_Directory_RoleAssignments
+   */
+  public function listRoleAssignments($customer, $optParams = array())
+  {
+    $params = array('customer' => $customer);
+    $params = array_merge($params, $optParams);
+    return $this->call('list', array($params), "Google_Service_Directory_RoleAssignments");
+  }
+}
+
+/**
+ * The "roles" collection of methods.
+ * Typical usage is:
+ *  <code>
+ *   $adminService = new Google_Service_Directory(...);
+ *   $roles = $adminService->roles;
+ *  </code>
+ */
+class Google_Service_Directory_Roles_Resource extends Google_Service_Resource
+{
+
+  /**
+   * Deletes a role. (roles.delete)
+   *
+   * @param string $customer Immutable ID of the Google Apps account.
+   * @param string $roleId Immutable ID of the role.
+   * @param array $optParams Optional parameters.
+   */
+  public function delete($customer, $roleId, $optParams = array())
+  {
+    $params = array('customer' => $customer, 'roleId' => $roleId);
+    $params = array_merge($params, $optParams);
+    return $this->call('delete', array($params));
+  }
+
+  /**
+   * Retrieves a role. (roles.get)
+   *
+   * @param string $customer Immutable ID of the Google Apps account.
+   * @param string $roleId Immutable ID of the role.
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Directory_Role
+   */
+  public function get($customer, $roleId, $optParams = array())
+  {
+    $params = array('customer' => $customer, 'roleId' => $roleId);
+    $params = array_merge($params, $optParams);
+    return $this->call('get', array($params), "Google_Service_Directory_Role");
+  }
+
+  /**
+   * Creates a role. (roles.insert)
+   *
+   * @param string $customer Immutable ID of the Google Apps account.
+   * @param Google_Role $postBody
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Directory_Role
+   */
+  public function insert($customer, Google_Service_Directory_Role $postBody, $optParams = array())
+  {
+    $params = array('customer' => $customer, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('insert', array($params), "Google_Service_Directory_Role");
+  }
+
+  /**
+   * Retrieves a paginated list of all the roles in a domain. (roles.listRoles)
+   *
+   * @param string $customer Immutable id of the Google Apps account.
+   * @param array $optParams Optional parameters.
+   *
+   * @opt_param string pageToken Token to specify the next page in the list.
+   * @opt_param int maxResults Maximum number of results to return.
+   * @return Google_Service_Directory_Roles
+   */
+  public function listRoles($customer, $optParams = array())
+  {
+    $params = array('customer' => $customer);
+    $params = array_merge($params, $optParams);
+    return $this->call('list', array($params), "Google_Service_Directory_Roles");
+  }
+
+  /**
+   * Updates a role. This method supports patch semantics. (roles.patch)
+   *
+   * @param string $customer Immutable ID of the Google Apps account.
+   * @param string $roleId Immutable ID of the role.
+   * @param Google_Role $postBody
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Directory_Role
+   */
+  public function patch($customer, $roleId, Google_Service_Directory_Role $postBody, $optParams = array())
+  {
+    $params = array('customer' => $customer, 'roleId' => $roleId, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('patch', array($params), "Google_Service_Directory_Role");
+  }
+
+  /**
+   * Updates a role. (roles.update)
+   *
+   * @param string $customer Immutable ID of the Google Apps account.
+   * @param string $roleId Immutable ID of the role.
+   * @param Google_Role $postBody
+   * @param array $optParams Optional parameters.
+   * @return Google_Service_Directory_Role
+   */
+  public function update($customer, $roleId, Google_Service_Directory_Role $postBody, $optParams = array())
+  {
+    $params = array('customer' => $customer, 'roleId' => $roleId, 'postBody' => $postBody);
+    $params = array_merge($params, $optParams);
+    return $this->call('update', array($params), "Google_Service_Directory_Role");
   }
 }
 
@@ -3231,6 +4023,394 @@ class Google_Service_Directory_ChromeOsDevices extends Google_Collection
   }
 }
 
+class Google_Service_Directory_Customer extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $alternateEmail;
+  public $customerCreationTime;
+  public $customerDomain;
+  public $etag;
+  public $id;
+  public $kind;
+  public $language;
+  public $phoneNumber;
+  protected $postalAddressType = 'Google_Service_Directory_CustomerPostalAddress';
+  protected $postalAddressDataType = '';
+
+
+  public function setAlternateEmail($alternateEmail)
+  {
+    $this->alternateEmail = $alternateEmail;
+  }
+  public function getAlternateEmail()
+  {
+    return $this->alternateEmail;
+  }
+  public function setCustomerCreationTime($customerCreationTime)
+  {
+    $this->customerCreationTime = $customerCreationTime;
+  }
+  public function getCustomerCreationTime()
+  {
+    return $this->customerCreationTime;
+  }
+  public function setCustomerDomain($customerDomain)
+  {
+    $this->customerDomain = $customerDomain;
+  }
+  public function getCustomerDomain()
+  {
+    return $this->customerDomain;
+  }
+  public function setEtag($etag)
+  {
+    $this->etag = $etag;
+  }
+  public function getEtag()
+  {
+    return $this->etag;
+  }
+  public function setId($id)
+  {
+    $this->id = $id;
+  }
+  public function getId()
+  {
+    return $this->id;
+  }
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
+  public function setLanguage($language)
+  {
+    $this->language = $language;
+  }
+  public function getLanguage()
+  {
+    return $this->language;
+  }
+  public function setPhoneNumber($phoneNumber)
+  {
+    $this->phoneNumber = $phoneNumber;
+  }
+  public function getPhoneNumber()
+  {
+    return $this->phoneNumber;
+  }
+  public function setPostalAddress(Google_Service_Directory_CustomerPostalAddress $postalAddress)
+  {
+    $this->postalAddress = $postalAddress;
+  }
+  public function getPostalAddress()
+  {
+    return $this->postalAddress;
+  }
+}
+
+class Google_Service_Directory_CustomerPostalAddress extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $addressLine1;
+  public $addressLine2;
+  public $addressLine3;
+  public $contactName;
+  public $countryCode;
+  public $locality;
+  public $organizationName;
+  public $postalCode;
+  public $region;
+
+
+  public function setAddressLine1($addressLine1)
+  {
+    $this->addressLine1 = $addressLine1;
+  }
+  public function getAddressLine1()
+  {
+    return $this->addressLine1;
+  }
+  public function setAddressLine2($addressLine2)
+  {
+    $this->addressLine2 = $addressLine2;
+  }
+  public function getAddressLine2()
+  {
+    return $this->addressLine2;
+  }
+  public function setAddressLine3($addressLine3)
+  {
+    $this->addressLine3 = $addressLine3;
+  }
+  public function getAddressLine3()
+  {
+    return $this->addressLine3;
+  }
+  public function setContactName($contactName)
+  {
+    $this->contactName = $contactName;
+  }
+  public function getContactName()
+  {
+    return $this->contactName;
+  }
+  public function setCountryCode($countryCode)
+  {
+    $this->countryCode = $countryCode;
+  }
+  public function getCountryCode()
+  {
+    return $this->countryCode;
+  }
+  public function setLocality($locality)
+  {
+    $this->locality = $locality;
+  }
+  public function getLocality()
+  {
+    return $this->locality;
+  }
+  public function setOrganizationName($organizationName)
+  {
+    $this->organizationName = $organizationName;
+  }
+  public function getOrganizationName()
+  {
+    return $this->organizationName;
+  }
+  public function setPostalCode($postalCode)
+  {
+    $this->postalCode = $postalCode;
+  }
+  public function getPostalCode()
+  {
+    return $this->postalCode;
+  }
+  public function setRegion($region)
+  {
+    $this->region = $region;
+  }
+  public function getRegion()
+  {
+    return $this->region;
+  }
+}
+
+class Google_Service_Directory_DomainAlias extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $creationTime;
+  public $domainAliasName;
+  public $etag;
+  public $kind;
+  public $parentDomainName;
+  public $verified;
+
+
+  public function setCreationTime($creationTime)
+  {
+    $this->creationTime = $creationTime;
+  }
+  public function getCreationTime()
+  {
+    return $this->creationTime;
+  }
+  public function setDomainAliasName($domainAliasName)
+  {
+    $this->domainAliasName = $domainAliasName;
+  }
+  public function getDomainAliasName()
+  {
+    return $this->domainAliasName;
+  }
+  public function setEtag($etag)
+  {
+    $this->etag = $etag;
+  }
+  public function getEtag()
+  {
+    return $this->etag;
+  }
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
+  public function setParentDomainName($parentDomainName)
+  {
+    $this->parentDomainName = $parentDomainName;
+  }
+  public function getParentDomainName()
+  {
+    return $this->parentDomainName;
+  }
+  public function setVerified($verified)
+  {
+    $this->verified = $verified;
+  }
+  public function getVerified()
+  {
+    return $this->verified;
+  }
+}
+
+class Google_Service_Directory_DomainAliases extends Google_Collection
+{
+  protected $collection_key = 'domainAliases';
+  protected $internal_gapi_mappings = array(
+  );
+  protected $domainAliasesType = 'Google_Service_Directory_DomainAlias';
+  protected $domainAliasesDataType = 'array';
+  public $etag;
+  public $kind;
+
+
+  public function setDomainAliases($domainAliases)
+  {
+    $this->domainAliases = $domainAliases;
+  }
+  public function getDomainAliases()
+  {
+    return $this->domainAliases;
+  }
+  public function setEtag($etag)
+  {
+    $this->etag = $etag;
+  }
+  public function getEtag()
+  {
+    return $this->etag;
+  }
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
+}
+
+class Google_Service_Directory_Domains extends Google_Collection
+{
+  protected $collection_key = 'domainAliases';
+  protected $internal_gapi_mappings = array(
+  );
+  public $creationTime;
+  protected $domainAliasesType = 'Google_Service_Directory_DomainAlias';
+  protected $domainAliasesDataType = 'array';
+  public $domainName;
+  public $etag;
+  public $isPrimary;
+  public $kind;
+  public $verified;
+
+
+  public function setCreationTime($creationTime)
+  {
+    $this->creationTime = $creationTime;
+  }
+  public function getCreationTime()
+  {
+    return $this->creationTime;
+  }
+  public function setDomainAliases($domainAliases)
+  {
+    $this->domainAliases = $domainAliases;
+  }
+  public function getDomainAliases()
+  {
+    return $this->domainAliases;
+  }
+  public function setDomainName($domainName)
+  {
+    $this->domainName = $domainName;
+  }
+  public function getDomainName()
+  {
+    return $this->domainName;
+  }
+  public function setEtag($etag)
+  {
+    $this->etag = $etag;
+  }
+  public function getEtag()
+  {
+    return $this->etag;
+  }
+  public function setIsPrimary($isPrimary)
+  {
+    $this->isPrimary = $isPrimary;
+  }
+  public function getIsPrimary()
+  {
+    return $this->isPrimary;
+  }
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
+  public function setVerified($verified)
+  {
+    $this->verified = $verified;
+  }
+  public function getVerified()
+  {
+    return $this->verified;
+  }
+}
+
+class Google_Service_Directory_Domains2 extends Google_Collection
+{
+  protected $collection_key = 'domains';
+  protected $internal_gapi_mappings = array(
+  );
+  protected $domainsType = 'Google_Service_Directory_Domains';
+  protected $domainsDataType = 'array';
+  public $etag;
+  public $kind;
+
+
+  public function setDomains($domains)
+  {
+    $this->domains = $domains;
+  }
+  public function getDomains()
+  {
+    return $this->domains;
+  }
+  public function setEtag($etag)
+  {
+    $this->etag = $etag;
+  }
+  public function getEtag()
+  {
+    return $this->etag;
+  }
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
+}
+
 class Google_Service_Directory_Group extends Google_Collection
 {
   protected $collection_key = 'nonEditableAliases';
@@ -3486,14 +4666,16 @@ class Google_Service_Directory_Members extends Google_Collection
 
 class Google_Service_Directory_MobileDevice extends Google_Collection
 {
-  protected $collection_key = 'name';
+  protected $collection_key = 'otherAccountsInfo';
   protected $internal_gapi_mappings = array(
   );
+  public $adbStatus;
   protected $applicationsType = 'Google_Service_Directory_MobileDeviceApplications';
   protected $applicationsDataType = 'array';
   public $basebandVersion;
   public $buildNumber;
   public $defaultLanguage;
+  public $developerOptionsStatus;
   public $deviceCompromisedStatus;
   public $deviceId;
   public $email;
@@ -3510,14 +4692,25 @@ class Google_Service_Directory_MobileDevice extends Google_Collection
   public $name;
   public $networkOperator;
   public $os;
+  public $otherAccountsInfo;
   public $resourceId;
   public $serialNumber;
   public $status;
+  public $supportsWorkProfile;
   public $type;
+  public $unknownSourcesStatus;
   public $userAgent;
   public $wifiMacAddress;
 
 
+  public function setAdbStatus($adbStatus)
+  {
+    $this->adbStatus = $adbStatus;
+  }
+  public function getAdbStatus()
+  {
+    return $this->adbStatus;
+  }
   public function setApplications($applications)
   {
     $this->applications = $applications;
@@ -3549,6 +4742,14 @@ class Google_Service_Directory_MobileDevice extends Google_Collection
   public function getDefaultLanguage()
   {
     return $this->defaultLanguage;
+  }
+  public function setDeveloperOptionsStatus($developerOptionsStatus)
+  {
+    $this->developerOptionsStatus = $developerOptionsStatus;
+  }
+  public function getDeveloperOptionsStatus()
+  {
+    return $this->developerOptionsStatus;
   }
   public function setDeviceCompromisedStatus($deviceCompromisedStatus)
   {
@@ -3678,6 +4879,14 @@ class Google_Service_Directory_MobileDevice extends Google_Collection
   {
     return $this->os;
   }
+  public function setOtherAccountsInfo($otherAccountsInfo)
+  {
+    $this->otherAccountsInfo = $otherAccountsInfo;
+  }
+  public function getOtherAccountsInfo()
+  {
+    return $this->otherAccountsInfo;
+  }
   public function setResourceId($resourceId)
   {
     $this->resourceId = $resourceId;
@@ -3702,6 +4911,14 @@ class Google_Service_Directory_MobileDevice extends Google_Collection
   {
     return $this->status;
   }
+  public function setSupportsWorkProfile($supportsWorkProfile)
+  {
+    $this->supportsWorkProfile = $supportsWorkProfile;
+  }
+  public function getSupportsWorkProfile()
+  {
+    return $this->supportsWorkProfile;
+  }
   public function setType($type)
   {
     $this->type = $type;
@@ -3709,6 +4926,14 @@ class Google_Service_Directory_MobileDevice extends Google_Collection
   public function getType()
   {
     return $this->type;
+  }
+  public function setUnknownSourcesStatus($unknownSourcesStatus)
+  {
+    $this->unknownSourcesStatus = $unknownSourcesStatus;
+  }
+  public function getUnknownSourcesStatus()
+  {
+    return $this->unknownSourcesStatus;
   }
   public function setUserAgent($userAgent)
   {
@@ -4103,6 +5328,387 @@ class Google_Service_Directory_OrgUnits extends Google_Collection
   public function getOrganizationUnits()
   {
     return $this->organizationUnits;
+  }
+}
+
+class Google_Service_Directory_Privilege extends Google_Collection
+{
+  protected $collection_key = 'childPrivileges';
+  protected $internal_gapi_mappings = array(
+  );
+  protected $childPrivilegesType = 'Google_Service_Directory_Privilege';
+  protected $childPrivilegesDataType = 'array';
+  public $etag;
+  public $isOuScopable;
+  public $kind;
+  public $privilegeName;
+  public $serviceId;
+  public $serviceName;
+
+
+  public function setChildPrivileges($childPrivileges)
+  {
+    $this->childPrivileges = $childPrivileges;
+  }
+  public function getChildPrivileges()
+  {
+    return $this->childPrivileges;
+  }
+  public function setEtag($etag)
+  {
+    $this->etag = $etag;
+  }
+  public function getEtag()
+  {
+    return $this->etag;
+  }
+  public function setIsOuScopable($isOuScopable)
+  {
+    $this->isOuScopable = $isOuScopable;
+  }
+  public function getIsOuScopable()
+  {
+    return $this->isOuScopable;
+  }
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
+  public function setPrivilegeName($privilegeName)
+  {
+    $this->privilegeName = $privilegeName;
+  }
+  public function getPrivilegeName()
+  {
+    return $this->privilegeName;
+  }
+  public function setServiceId($serviceId)
+  {
+    $this->serviceId = $serviceId;
+  }
+  public function getServiceId()
+  {
+    return $this->serviceId;
+  }
+  public function setServiceName($serviceName)
+  {
+    $this->serviceName = $serviceName;
+  }
+  public function getServiceName()
+  {
+    return $this->serviceName;
+  }
+}
+
+class Google_Service_Directory_Privileges extends Google_Collection
+{
+  protected $collection_key = 'items';
+  protected $internal_gapi_mappings = array(
+  );
+  public $etag;
+  protected $itemsType = 'Google_Service_Directory_Privilege';
+  protected $itemsDataType = 'array';
+  public $kind;
+
+
+  public function setEtag($etag)
+  {
+    $this->etag = $etag;
+  }
+  public function getEtag()
+  {
+    return $this->etag;
+  }
+  public function setItems($items)
+  {
+    $this->items = $items;
+  }
+  public function getItems()
+  {
+    return $this->items;
+  }
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
+}
+
+class Google_Service_Directory_Role extends Google_Collection
+{
+  protected $collection_key = 'rolePrivileges';
+  protected $internal_gapi_mappings = array(
+  );
+  public $etag;
+  public $isSuperAdminRole;
+  public $isSystemRole;
+  public $kind;
+  public $roleDescription;
+  public $roleId;
+  public $roleName;
+  protected $rolePrivilegesType = 'Google_Service_Directory_RoleRolePrivileges';
+  protected $rolePrivilegesDataType = 'array';
+
+
+  public function setEtag($etag)
+  {
+    $this->etag = $etag;
+  }
+  public function getEtag()
+  {
+    return $this->etag;
+  }
+  public function setIsSuperAdminRole($isSuperAdminRole)
+  {
+    $this->isSuperAdminRole = $isSuperAdminRole;
+  }
+  public function getIsSuperAdminRole()
+  {
+    return $this->isSuperAdminRole;
+  }
+  public function setIsSystemRole($isSystemRole)
+  {
+    $this->isSystemRole = $isSystemRole;
+  }
+  public function getIsSystemRole()
+  {
+    return $this->isSystemRole;
+  }
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
+  public function setRoleDescription($roleDescription)
+  {
+    $this->roleDescription = $roleDescription;
+  }
+  public function getRoleDescription()
+  {
+    return $this->roleDescription;
+  }
+  public function setRoleId($roleId)
+  {
+    $this->roleId = $roleId;
+  }
+  public function getRoleId()
+  {
+    return $this->roleId;
+  }
+  public function setRoleName($roleName)
+  {
+    $this->roleName = $roleName;
+  }
+  public function getRoleName()
+  {
+    return $this->roleName;
+  }
+  public function setRolePrivileges($rolePrivileges)
+  {
+    $this->rolePrivileges = $rolePrivileges;
+  }
+  public function getRolePrivileges()
+  {
+    return $this->rolePrivileges;
+  }
+}
+
+class Google_Service_Directory_RoleAssignment extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $assignedTo;
+  public $etag;
+  public $kind;
+  public $orgUnitId;
+  public $roleAssignmentId;
+  public $roleId;
+  public $scopeType;
+
+
+  public function setAssignedTo($assignedTo)
+  {
+    $this->assignedTo = $assignedTo;
+  }
+  public function getAssignedTo()
+  {
+    return $this->assignedTo;
+  }
+  public function setEtag($etag)
+  {
+    $this->etag = $etag;
+  }
+  public function getEtag()
+  {
+    return $this->etag;
+  }
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
+  public function setOrgUnitId($orgUnitId)
+  {
+    $this->orgUnitId = $orgUnitId;
+  }
+  public function getOrgUnitId()
+  {
+    return $this->orgUnitId;
+  }
+  public function setRoleAssignmentId($roleAssignmentId)
+  {
+    $this->roleAssignmentId = $roleAssignmentId;
+  }
+  public function getRoleAssignmentId()
+  {
+    return $this->roleAssignmentId;
+  }
+  public function setRoleId($roleId)
+  {
+    $this->roleId = $roleId;
+  }
+  public function getRoleId()
+  {
+    return $this->roleId;
+  }
+  public function setScopeType($scopeType)
+  {
+    $this->scopeType = $scopeType;
+  }
+  public function getScopeType()
+  {
+    return $this->scopeType;
+  }
+}
+
+class Google_Service_Directory_RoleAssignments extends Google_Collection
+{
+  protected $collection_key = 'items';
+  protected $internal_gapi_mappings = array(
+  );
+  public $etag;
+  protected $itemsType = 'Google_Service_Directory_RoleAssignment';
+  protected $itemsDataType = 'array';
+  public $kind;
+  public $nextPageToken;
+
+
+  public function setEtag($etag)
+  {
+    $this->etag = $etag;
+  }
+  public function getEtag()
+  {
+    return $this->etag;
+  }
+  public function setItems($items)
+  {
+    $this->items = $items;
+  }
+  public function getItems()
+  {
+    return $this->items;
+  }
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
+  public function setNextPageToken($nextPageToken)
+  {
+    $this->nextPageToken = $nextPageToken;
+  }
+  public function getNextPageToken()
+  {
+    return $this->nextPageToken;
+  }
+}
+
+class Google_Service_Directory_RoleRolePrivileges extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $privilegeName;
+  public $serviceId;
+
+
+  public function setPrivilegeName($privilegeName)
+  {
+    $this->privilegeName = $privilegeName;
+  }
+  public function getPrivilegeName()
+  {
+    return $this->privilegeName;
+  }
+  public function setServiceId($serviceId)
+  {
+    $this->serviceId = $serviceId;
+  }
+  public function getServiceId()
+  {
+    return $this->serviceId;
+  }
+}
+
+class Google_Service_Directory_Roles extends Google_Collection
+{
+  protected $collection_key = 'items';
+  protected $internal_gapi_mappings = array(
+  );
+  public $etag;
+  protected $itemsType = 'Google_Service_Directory_Role';
+  protected $itemsDataType = 'array';
+  public $kind;
+  public $nextPageToken;
+
+
+  public function setEtag($etag)
+  {
+    $this->etag = $etag;
+  }
+  public function getEtag()
+  {
+    return $this->etag;
+  }
+  public function setItems($items)
+  {
+    $this->items = $items;
+  }
+  public function getItems()
+  {
+    return $this->items;
+  }
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  public function getKind()
+  {
+    return $this->kind;
+  }
+  public function setNextPageToken($nextPageToken)
+  {
+    $this->nextPageToken = $nextPageToken;
+  }
+  public function getNextPageToken()
+  {
+    return $this->nextPageToken;
   }
 }
 

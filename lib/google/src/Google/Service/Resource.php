@@ -115,6 +115,9 @@ class Google_Service_Resource
             $this->convertToArrayAndStripNulls($parameters['postBody']);
       }
       $postBody = json_encode($parameters['postBody']);
+      if ($postBody === false && $parameters['postBody'] !== false) {
+        throw new Google_Exception("JSON encoding failed. Ensure all strings in the request are UTF-8 encoded.");
+      }
       unset($parameters['postBody']);
     }
 
@@ -131,8 +134,8 @@ class Google_Service_Resource
     }
 
     $method['parameters'] = array_merge(
-        $method['parameters'],
-        $this->stackParameters
+        $this->stackParameters,
+        $method['parameters']
     );
     foreach ($parameters as $key => $val) {
       if ($key != 'postBody' && ! isset($method['parameters'][$key])) {

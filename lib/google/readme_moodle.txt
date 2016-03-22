@@ -44,4 +44,4 @@ Repository: https://github.com/google/google-api-php-client
 Documentation: https://developers.google.com/api-client-library/php/
 Global documentation: https://developers.google.com
 
-Downloaded version: 1.1.5
+Downloaded version: 1.1.7
