@@ -62,19 +62,7 @@ if ($course->id == SITEID AND !$courseid) {
     $courseid = SITEID;
 }
 
-if ($feedback->anonymous != FEEDBACK_ANONYMOUS_YES) {
-    if ($course->id == SITEID) {
-        require_login($course, true);
-    } else {
-        require_login($course, true, $cm);
-    }
-} else {
-    if ($course->id == SITEID) {
-        require_course_login($course, true);
-    } else {
-        require_course_login($course, true, $cm);
-    }
-}
+require_course_login($course, true, $cm);
 
 if ($course->id == SITEID) {
     $PAGE->set_context($context);
@@ -131,19 +119,6 @@ $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 echo $OUTPUT->header();
 
-//ishidden check.
-//feedback in courses
-$cap_viewhiddenactivities = has_capability('moodle/course:viewhiddenactivities', $context);
-if ((empty($cm->visible) and !$cap_viewhiddenactivities) AND $course->id != SITEID) {
-    notice(get_string("activityiscurrentlyhidden"));
-}
-
-//ishidden check.
-//feedback on mainsite
-if ((empty($cm->visible) and !$cap_viewhiddenactivities) AND $courseid == SITEID) {
-    notice(get_string("activityiscurrentlyhidden"));
-}
-
 /// Print the main part of the page
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
@@ -151,6 +126,9 @@ if ((empty($cm->visible) and !$cap_viewhiddenactivities) AND $courseid == SITEID
 
 $previewimg = $OUTPUT->pix_icon('t/preview', get_string('preview'));
 $previewlnk = new moodle_url('/mod/feedback/print.php', array('id' => $id));
+if ($courseid) {
+    $previewlnk->param('courseid', $courseid);
+}
 $preview = html_writer::link($previewlnk, $previewimg);
 
 echo $OUTPUT->heading(format_string($feedback->name) . $preview);
@@ -296,14 +274,12 @@ if ($feedback_complete_cap) {
     if ($feedback_can_submit) {
         //if the user is not known so we cannot save the values temporarly
         if (!isloggedin() or isguestuser()) {
-            $completefile = 'complete_guest.php';
             $guestid = sesskey();
         } else {
-            $completefile = 'complete.php';
             $guestid = false;
         }
         $url_params = array('id'=>$id, 'courseid'=>$courseid, 'gopage'=>0);
-        $completeurl = new moodle_url('/mod/feedback/'.$completefile, $url_params);
+        $completeurl = new moodle_url('/mod/feedback/complete.php', $url_params);
 
         $feedbackcompletedtmp = feedback_get_current_completed($feedback->id, true, $courseid, $guestid);
         if ($feedbackcompletedtmp) {

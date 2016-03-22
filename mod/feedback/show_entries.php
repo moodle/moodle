@@ -277,7 +277,7 @@ if ($do_show == 'showentries') {
 
                     $feedback_completeds_count = $DB->count_records('feedback_completed', $params);
                     print_string('anonymous_entries', 'feedback');
-                    echo '&nbsp;('.$feedback_completeds_count.')';
+                    echo ' ('.$feedback_completeds_count.')';
                     ?>
                 </td>
                 <td align="right">

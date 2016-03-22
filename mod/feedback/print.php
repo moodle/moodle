@@ -26,26 +26,15 @@ require_once("../../config.php");
 require_once("lib.php");
 
 $id = required_param('id', PARAM_INT);
+$courseid = optional_param('courseid', false, PARAM_INT); // Course where this feedback is mapped to - used for return link.
 
 $PAGE->set_url('/mod/feedback/print.php', array('id'=>$id));
 
-if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-    print_error('invalidcoursemodule');
-}
+list($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
+require_course_login($course, true, $cm);
 
-if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-    print_error('coursemisconf');
-}
+$feedback = $PAGE->activityrecord;
 
-if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-    print_error('invalidcoursemodule');
-}
-
-$context = context_module::instance($cm->id);
-
-require_login($course, true, $cm);
-
-require_capability('mod/feedback:view', $context);
 $PAGE->set_pagelayout('embedded');
 
 /// Print the page header
@@ -66,9 +55,14 @@ echo $OUTPUT->header();
 ///////////////////////////////////////////////////////////////////////////
 echo $OUTPUT->heading(format_text($feedback->name));
 
+$continueurl = new moodle_url('/mod/feedback/view.php', array('id' => $id));
+if ($courseid) {
+    $continueurl->param('courseid', $courseid);
+}
+
 $feedbackitems = $DB->get_records('feedback_item', array('feedback'=>$feedback->id), 'position');
 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
-echo $OUTPUT->continue_button('view.php?id='.$id);
+echo $OUTPUT->continue_button($continueurl);
 if (is_array($feedbackitems)) {
     $itemnr = 0;
     $align = right_to_left() ? 'right' : 'left';
@@ -111,7 +105,7 @@ if (is_array($feedbackitems)) {
     echo $OUTPUT->box(get_string('no_items_available_yet', 'feedback'),
                     'generalbox boxaligncenter boxwidthwide');
 }
-echo $OUTPUT->continue_button('view.php?id='.$id);
+echo $OUTPUT->continue_button($continueurl);
 echo $OUTPUT->box_end();
 /// Finish the page
 ///////////////////////////////////////////////////////////////////////////

@@ -3220,3 +3220,29 @@ function feedback_ajax_saveitemorder($itemlist, $feedback) {
     }
     return $result;
 }
+
+/**
+ * Checks if current user is able to view feedback on this course.
+ *
+ * @param stdClass $feedback
+ * @param context_module $context
+ * @param int $courseid
+ * @return bool
+ */
+function feedback_can_view_analysis($feedback, $context, $courseid = false) {
+    if (has_capability('mod/feedback:viewreports', $context)) {
+        return true;
+    }
+
+    if (intval($feedback->publish_stats) != 1 ||
+            !has_capability('mod/feedback:viewanalysepage', $context)) {
+        return false;
+    }
+
+    if (!isloggedin() || isguestuser()) {
+        // There is no tracking for the guests, assume that they can view analysis if condition above is satisfied.
+        return $feedback->course == SITEID;
+    }
+
+    return feedback_is_already_submitted($feedback->id, $courseid);
+}

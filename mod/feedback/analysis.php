@@ -27,48 +27,19 @@ require_once("lib.php");
 
 $current_tab = 'analysis';
 
-$id = required_param('id', PARAM_INT);  //the POST dominated the GET
-$courseid = optional_param('courseid', false, PARAM_INT);
+$id = required_param('id', PARAM_INT);  // Course module id.
 
 $url = new moodle_url('/mod/feedback/analysis.php', array('id'=>$id));
-if ($courseid !== false) {
-    $url->param('courseid', $courseid);
-}
 $PAGE->set_url($url);
 
-if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-    print_error('invalidcoursemodule');
-}
+list($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
+require_course_login($course, true, $cm);
 
-if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-    print_error('coursemisconf');
-}
-
-if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-    print_error('invalidcoursemodule');
-}
+$feedback = $PAGE->activityrecord;
 
 $context = context_module::instance($cm->id);
 
-if ($course->id == SITEID) {
-    require_login($course, true);
-} else {
-    require_login($course, true, $cm);
-}
-
-//check whether the given courseid exists
-if ($courseid AND $courseid != SITEID) {
-    if ($course2 = $DB->get_record('course', array('id'=>$courseid))) {
-        require_course_login($course2); //this overwrites the object $course :-(
-        $course = $DB->get_record("course", array("id"=>$cm->course)); // the workaround
-    } else {
-        print_error('invalidcourseid');
-    }
-}
-
-if ( !( ((intval($feedback->publish_stats) == 1) AND
-        has_capability('mod/feedback:viewanalysepage', $context)) OR
-        has_capability('mod/feedback:viewreports', $context))) {
+if (!feedback_can_view_analysis($feedback, $context)) {
     print_error('error');
 }
 
