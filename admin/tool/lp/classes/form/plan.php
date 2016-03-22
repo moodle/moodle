@@ -78,6 +78,8 @@ class plan extends persistent {
             throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
         }
 
+        // Disable short forms.
+        $mform->setDisableShortforms();
         $this->add_action_buttons(true, get_string('savechanges', 'tool_lp'));
     }
 

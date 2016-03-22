@@ -70,6 +70,8 @@ class template extends persistent {
 
         $mform->addElement('static', 'context', get_string('context', 'core_role'));
         $mform->setDefault('context', $context->get_context_name());
+        // Disable short forms.
+        $mform->setDisableShortforms();
 
         $this->add_action_buttons(true, get_string('savechanges', 'tool_lp'));
 

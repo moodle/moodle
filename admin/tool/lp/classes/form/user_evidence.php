@@ -60,6 +60,8 @@ class user_evidence extends persistent {
 
         $mform->addElement('filemanager', 'files', get_string('userevidencefiles', 'tool_lp'), array(),
             $this->_customdata['fileareaoptions']);
+        // Disable short forms.
+        $mform->setDisableShortforms();
 
         $this->add_action_buttons();
     }

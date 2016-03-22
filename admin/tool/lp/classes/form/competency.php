@@ -104,6 +104,8 @@ class competency extends persistent {
             $mform->setConstant('scaleid', $competency->get_scaleid());
         }
 
+        // Disable short forms.
+        $mform->setDisableShortforms();
         $this->add_action_buttons(true, get_string('savechanges', 'tool_lp'));
     }
 
