@@ -45,13 +45,7 @@ function core_badges_myprofile_navigation(\core_user\output\myprofile\tree $tree
     // Add category. This node should appear after 'contact' so that administration block appears towards the end. Refer MDL-49928.
     $category = new core_user\output\myprofile\category('badges', get_string('badges', 'badges'), 'contact');
     $tree->add_category($category);
-
-    // Determine context.
-    if (isloggedin()) {
-        $context = context_user::instance($USER->id);
-    } else {
-        $context = context_system::instance();
-    }
+    $context = context_user::instance($user->id);
     $courseid = empty($course) ? 0 : $course->id;
 
     if ($USER->id == $user->id || has_capability('moodle/badges:viewotherbadges', $context)) {
