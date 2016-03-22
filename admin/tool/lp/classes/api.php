@@ -2191,9 +2191,9 @@ class api {
             $cohort = $DB->get_record('cohort', array('id' => $cohort), '*', MUST_EXIST);
         }
 
-        // Check that the user can at least view this cohort.
+        // Replicate logic in cohort_can_view_cohort() because we can't use it directly as we don't have a course context.
         $cohortcontext = context::instance_by_id($cohort->contextid);
-        if (!has_any_capability(array('moodle/cohort:manage', 'moodle/cohort:view'), $cohortcontext)) {
+        if (!$cohort->visible && !has_capability('moodle/cohort:view', $cohortcontext)) {
             throw new required_capability_exception($cohortcontext, 'moodle/cohort:view', 'nopermissions', '');
         }
 
@@ -2483,11 +2483,11 @@ class api {
             throw new coding_exception('A plan can not be created from a hidden template');
         }
 
-        // The user must be able to view the cohort.
+        // Replicate logic in cohort_can_view_cohort() because we can't use it directly as we don't have a course context.
         $cohort = $DB->get_record('cohort', array('id' => $cohortid), '*', MUST_EXIST);
-        $cohortctx = context::instance_by_id($cohort->contextid);
-        if (!has_any_capability(array('moodle/cohort:manage', 'moodle/cohort:view'), $cohortctx)) {
-            throw new required_capability_exception($cohortctx, 'tool/lp:templateread', 'nopermissions', '');
+        $cohortcontext = context::instance_by_id($cohort->contextid);
+        if (!$cohort->visible && !has_capability('moodle/cohort:view', $cohortcontext)) {
+            throw new required_capability_exception($cohortcontext, 'moodle/cohort:view', 'nopermissions', '');
         }
 
         // Convert the template to a plan.

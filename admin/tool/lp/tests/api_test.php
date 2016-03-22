@@ -1832,6 +1832,50 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals(0, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t2->get_id())));
     }
 
+    public function test_create_template_cohort_permissions() {
+        $this->resetAfterTest(true);
+
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $cat = $dg->create_category();
+        $catcontext = context_coursecat::instance($cat->id);
+        $syscontext = context_system::instance();
+
+        $user = $dg->create_user();
+        $role = $dg->create_role();
+        assign_capability('tool/lp:templatemanage', CAP_ALLOW, $role, $syscontext->id, true);
+        $dg->role_assign($role, $user->id, $syscontext->id);
+
+        $cohortrole = $dg->create_role();
+        assign_capability('moodle/cohort:view', CAP_ALLOW, $cohortrole, $syscontext->id, true);
+
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $c1 = $dg->create_cohort();
+        $c2 = $dg->create_cohort(array('visible' => 0, 'contextid' => $catcontext->id));
+        $t1 = $lpg->create_template();
+
+        $this->assertEquals(0, \tool_lp\template_cohort::count_records());
+
+        $this->setUser($user);
+        $result = api::create_template_cohort($t1, $c1);
+        $this->assertInstanceOf('tool_lp\\template_cohort', $result);
+
+        try {
+            $result = api::create_template_cohort($t1, $c2);
+            $this->fail('Permission required.');
+        } catch(required_capability_exception $e) {
+            // That's what should happen.
+        }
+
+        // Try again with the right permissions.
+        $dg->role_assign($cohortrole, $user->id, $catcontext->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $result = api::create_template_cohort($t1, $c2);
+        $this->assertInstanceOf('tool_lp\\template_cohort', $result);
+    }
+
     public function test_delete_template() {
         $this->resetAfterTest(true);
         $this->setAdminUser();
