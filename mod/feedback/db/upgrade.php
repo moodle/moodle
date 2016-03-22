@@ -57,5 +57,20 @@ function xmldb_feedback_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2016031600, 'feedback');
     }
 
+    if ($oldversion < 2016040100) {
+
+        // In order to keep the previous "Analysis" results unchanged,
+        // set all multiple-answer multiplechoice questions as "Do not analyse empty submits"="Yes"
+        // because prior to this date this setting did not work.
+
+        $sql = "UPDATE {feedback_item} SET options = " . $DB->sql_concat('?', 'options') .
+                " WHERE typ = ? AND presentation LIKE ? AND options NOT LIKE ?";
+        $params = array('i', 'multichoice', 'c%', '%i%');
+        $DB->execute($sql, $params);
+
+        // Feedback savepoint reached.
+        upgrade_mod_savepoint(true, 2016040100, 'feedback');
+    }
+
     return true;
 }
