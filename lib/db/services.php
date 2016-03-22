@@ -1186,6 +1186,15 @@ $functions = array(
         'ajax'        => true
     ),
 
+    // Question related functions.
+    'core_question_update_flag' => array(
+        'classname'     => 'core_question_external',
+        'methodname'    => 'update_flag',
+        'description'   => 'Update the flag state of a question attempt.',
+        'type'          => 'write',
+        'capabilities'  => 'moodle/question:flag',
+    ),
+
 );
 
 $services = array(
@@ -1252,6 +1261,7 @@ $services = array(
             'core_rating_get_item_ratings',
             'core_user_get_users_by_field',
             'core_user_add_user_private_files',
+            'core_question_update_flag'
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
