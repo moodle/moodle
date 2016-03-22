@@ -1,0 +1,153 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/login
+
+    Moodle template for the login page
+
+}}
+<div class="loginbox clearfix {{columns}}">
+    <div class="loginpanel">
+        {{#_signuplink}}
+            <div class="skiplinks">
+                <a class="skip" href="signup.php">{{#str}} tocreatenewaccount {{/str}}</a>
+            </div>
+        {{/_signuplink}}
+        <h2>{{#str}} login {{/str}}</h2>
+        <div class="subcontent loginsub">
+            {{#errormsg}}
+                <div class="loginerrors">
+                    <a href="#" id="loginerrormessage", class="accesshide">{{errormsg}}</a>
+                    {{{errormsg_error_text}}}
+                </div>
+            {{/errormsg}}
+            <form action="{{httpswwwroot}}/login/index.php" method="post" id="login" {{^_loginpasswordautocomplete_empty}}autocomplete="off"{{/_loginpasswordautocomplete_empty}}>
+                <div class="loginform">
+                    <div class="form-label">
+                        <label for="username">
+                            {{#_authloginviaemail_empty}}
+                                {{#str}} username {{/str}}
+                            {{/_authloginviaemail_empty}}
+                            {{^_authloginviaemail_empty}}
+                                {{#str}} usernameemail {{/str}}
+                            {{/_authloginviaemail_empty}}
+                        </label>
+                    </div>
+                    <div class="form-input">
+                        <input type="text" name="username" id="username" size="15" value="{{frm_username}}" />
+                    </div>
+                    <div class="clearer"><!-- --></div>
+                    <div class="form-label">
+                        <label for="password">{{#str}} password {{/str}}</label>
+                    </div>
+                    <div class="form-input">
+                        <input type="password" name="password" id="password" size="15" value="" {{autocomplete}} />
+                    </div>
+                </div>
+
+                <div class="clearer"><!-- --></div>
+                {{#_rememberusername}}
+                    <div class="rememberpass">
+                        <input type="checkbox" name="rememberusername" id="rememberusername" value="1" {{#frm_username}}checked="checked"{{/frm_username}} />
+                        <label for="rememberusername">{{#str}} rememberusername, admin {{/str}}</label>
+                    </div>
+                {{/_rememberusername}}
+                <div class="clearer"><!-- --></div>
+                <input id="anchor" type="hidden" name="anchor" value="" />
+                <script>document.getElementById('anchor').value = location.hash;</script>
+                <input type="submit" id="loginbtn" value="{{#str}} login {{/str}}" />
+                <div class="forgetpass">
+                    <a href="forgot_password.php">{{#str}} forgotten {{/str}}</a>
+                </div>
+            </form>
+
+            <div class="desc">
+                {{#str}} cookiesenabled {{/str}}
+                {{{cookiesenabled_help_icon}}}
+            </div>
+
+        </div>
+
+        {{#_guestloginbutton}}
+            <div class="subcontent guestsub">
+                <div class="desc">{{#str}} someallowguest {{/str}}</div>
+                <form action="index.php" method="post" id="guestlogin">
+                    <div class="guestform">
+                        <input type="hidden" name="username" value="guest" />
+                        <input type="hidden" name="password" value="guest" />
+                        <input type="submit" value="{{#str}} loginguest {{/str}}" />
+                    </div>
+                </form>
+            </div>
+        {{/_guestloginbutton}}
+
+    </div>
+
+    {{#_show_instructions}}
+        <div class="signuppanel">
+            <h2>{{#str}} firsttime {{/str}}</h2>
+            <div class="subcontent">
+                {{#_no_auth_enabled}} {{! instructions override the rest for security reasons }}
+                    {{#str}} loginstepsnone {{/str}}
+                {{/_no_auth_enabled}}
+                {{^_no_auth_enabled}}
+                    {{#_registerauth_is_email}}
+                        {{#auth_instructions}}
+                            {{{auth_instructions}}}
+                        {{/auth_instructions}}
+                        {{^auth_instructions}}
+                            {{#str}} loginsteps, , 'signup.php' {{/str}}
+                        {{/auth_instructions}}
+                        <div class="signupform">
+                            <form action="signup.php" method="get" id="signup">
+                                <div>
+                                    <input type="submit" value="{{#str}} startsignup {{/str}}" />
+                                </div>
+                            </form>
+                        </div>
+                    {{/_registerauth_is_email}}
+                    {{^_registerauth_is_email}}
+                        {{#_registerauth_not_empty}}
+                            {{{auth_instructions}}}
+                            <div class="signupform">
+                                <form action="signup.php" method="get" id="signup">
+                                    <div>
+                                        <input type="submit" value="{{#str}} startsignup {{/str}}" />
+                                    </div>
+                                </form>
+                            </div>
+                        {{/_registerauth_not_empty}}
+                        {{^_registerauth_not_empty}}
+                            {{{auth_instructions}}}
+                        {{/_registerauth_not_empty}}
+                    {{/_registerauth_is_email}}
+                {{/_no_auth_enabled}}
+            </div>
+        </div>
+    {{/_show_instructions}}
+
+    {{#_potentialidps_not_empty}}
+        <div class="subcontent potentialidps">
+            <h6>{{#str}} potentialidps, auth {{/str}}</h6>
+            <div class="potentialidplist">
+                {{#potentialidps}}
+                    <div class="potentialidp">{{{.}}}</div>
+                {{/potentialidps}}
+            </div>
+        </div>
+    {{/_potentialidps_not_empty}}
+</div>
