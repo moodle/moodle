@@ -3377,12 +3377,16 @@ EOD;
                                 array('class' => 'iconsmall')
                             ) . $value->title;
                         }
+
                         $al = new action_menu_link_secondary(
                             $value->url,
                             $pix,
                             $value->title,
                             array('class' => 'icon')
                         );
+                        if (!empty($value->titleidentifier)) {
+                            $al->attributes['data-title'] = $value->titleidentifier;
+                        }
                         $am->add($al);
                         break;
                 }
