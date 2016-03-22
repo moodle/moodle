@@ -39,48 +39,51 @@ Y.extend(LTISERVICE, Y.Base, {
      * @type {Object}
      */
     init : function(params) {
-        if (window.parent.document.getElementById('video_title')) {
-            Y.one(window.parent.document.getElementById('video_title')).setAttribute('value', params.title);
+        var documentElement = window.opener ? window.opener.parent.document : window.parent.document;
+        if (documentElement.getElementById('video_title')) {
+            Y.one(documentElement.getElementById('video_title')).setAttribute('value', params.title);
         }
 
-        if (window.parent.document.getElementById('entry_id')) {
-            Y.one(window.parent.document.getElementById('entry_id')).setAttribute('value', params.entryid);
+        if (documentElement.getElementById('entry_id')) {
+            Y.one(documentElement.getElementById('entry_id')).setAttribute('value', params.entryid);
         }
 
-        if (window.parent.document.getElementById('height')) {
-            Y.one(window.parent.document.getElementById('height')).setAttribute('value', params.height);
+        if (documentElement.getElementById('height')) {
+            Y.one(documentElement.getElementById('height')).setAttribute('value', params.height);
         }
 
-        if (window.parent.document.getElementById('width')) {
-            Y.one(window.parent.document.getElementById('width')).setAttribute('value', params.width);
+        if (documentElement.getElementById('width')) {
+            Y.one(documentElement.getElementById('width')).setAttribute('value', params.width);
         }
 
-        if (window.parent.document.getElementById('uiconf_id')) {
-            Y.one(window.parent.document.getElementById('uiconf_id')).setAttribute('value', '1');
+        if (documentElement.getElementById('uiconf_id')) {
+            Y.one(documentElement.getElementById('uiconf_id')).setAttribute('value', '1');
         }
 
-        if (window.parent.document.getElementById('widescreen')) {
-            Y.one(window.parent.document.getElementById('widescreen')).setAttribute('value', '1');
+        if (documentElement.getElementById('widescreen')) {
+            Y.one(documentElement.getElementById('widescreen')).setAttribute('value', '1');
         }
 
-        if (window.parent.document.getElementById('video_preview_frame')) {
-            Y.one(window.parent.document.getElementById('video_preview_frame')).setAttribute('src', decodeURIComponent(params.iframeurl));
-        } else if (window.parent.document.getElementById('contentframe')) {
-            Y.one(window.parent.document.getElementById('contentframe')).setAttribute('src', decodeURIComponent(params.iframeurl));
-            Y.one(window.parent.document.getElementById('contentframe')).setStyle('width', params.width + 'px');
-            Y.one(window.parent.document.getElementById('contentframe')).setStyle('height', params.height + 'px');
+        if (documentElement.getElementById('video_preview_frame')) {
+            Y.one(documentElement.getElementById('video_preview_frame')).setAttribute('src', decodeURIComponent(params.iframeurl));
+        } else if (documentElement.getElementById('contentframe')) {
+            Y.one(documentElement.getElementById('contentframe')).setAttribute('src', decodeURIComponent(params.iframeurl));
+            Y.one(documentElement.getElementById('contentframe')).setStyle('width', params.width + 'px');
+            Y.one(documentElement.getElementById('contentframe')).setStyle('height', params.height + 'px');
         }
 
         // This element must exist.
-        Y.one(window.parent.document.getElementById('source')).setAttribute('value', decodeURIComponent(params.iframeurl));
+        Y.one(documentElement.getElementById('source')).setAttribute('value', decodeURIComponent(params.iframeurl));
 
-        if (window.parent.document.getElementById('metadata')) {
-            Y.one(window.parent.document.getElementById('metadata')).setAttribute('value', params.metadata);
+        if (documentElement.getElementById('metadata')) {
+            Y.one(documentElement.getElementById('metadata')).setAttribute('value', params.metadata);
         }
 
-        if (window.parent.document.getElementById('closeltipanel')) {
-            Y.one(window.parent.document.getElementById('closeltipanel')).simulate('click');
+        if (documentElement.getElementById('closeltipanel')) {
+            Y.one(documentElement.getElementById('closeltipanel')).simulate('click');
         }
+
+        documentElement.body.dispatchEvent(documentElement.body.myEvent);
      }
 },
 {

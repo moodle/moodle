@@ -1,3 +1,5 @@
+YUI.add('moodle-local_kaltura-ltipanel', function (Y, NAME) {
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -32,30 +34,6 @@ var LTIPANEL = function() {
 
 Y.extend(LTIPANEL, Y.Base, {
     /**
-     * Contains the object tag needed to launch an LTI session.
-     * @property panelbodycontent
-     * @type {String}
-     * @default null
-     */
-     panelbodycontent: null,
-
-    /**
-     * Set to true if panel is visible, otherwise false.
-     * @property panelvisible
-     * @type {Boolean}
-     * @default null
-     */
-     panelvisible: false,
-
-    /**
-     * The panel object
-     * @property panel
-     * @type {Object}
-     * @default null
-     */
-     panel: null,
-
-    /**
      * The name of the initiating module.
      * @property modulename
      * @type {String}
@@ -87,7 +65,7 @@ Y.extend(LTIPANEL, Y.Base, {
         this.addvidbtnid = params.addvidbtnid;
 
         var addvideobtn = Y.one('#'+params.addvidbtnid);
-        addvideobtn.on('click', this.open_panel_callback, this, params.ltilaunchurl, params.height, params.width);
+        addvideobtn.on('click', this.open_bse_popup_callback, this, params.ltilaunchurl, params.height, params.width);
     },
 
     /**
@@ -95,61 +73,33 @@ Y.extend(LTIPANEL, Y.Base, {
      * @property e
      * @type {Object}
      */
-    open_panel_callback : function(e, url, height, width) {
-        var panelheight = parseInt(height, 10) + 45;
-        var panelwidth = parseInt(width, 10) + 23 + 'px';
+    open_bse_popup_callback : function(e, url, height, width) {
+        var w = 1200;
+        var h = 700;
+        var dualScreenLeft = window.screenLeft != undefined ? window.screenLeft : screen.left;
+        var dualScreenTop = window.screenTop != undefined ? window.screenTop : screen.top;
 
-        width = width+'px';
-        // Apply special width for mobile devices as requested by Kaltura.
-        if (Y.UA.ipod !== 0 || Y.UA.ipad !== 0 || Y.UA.iphone !== 0 || Y.UA.android !== 0 || Y.UA.mobile !== null) {
-            panelwidth = '80%';
-            width = '100%';
+        var width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+        var height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+
+        var left = ((width / 2) - (w / 2)) + dualScreenLeft;
+        var top = ((height / 2) - (h / 2)) + dualScreenTop;
+        var bsePopup = window.open(url, "Browse and Embed", 'scrollbars=no, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
+
+        if (window.focus) {
+            bsePopup.focus();
         }
 
-        var iframe = "<iframe id='panelcontentframe' height='"+height+"px' width='"+width+"' src='"+url+"'></iframe>";
-        this.panelbodycontent = iframe;
-        if (Y.UA.ipod !== 0 || Y.UA.ipad !== 0 || Y.UA.iphone !== 0) {
-            // This outer div will constrain the iframe from overlapping over its content region on iOS devices.
-            this.panelbodycontent = "<div id='panelcontentframecontainer'>"+iframe+"</div>";
-        }
-
-        // If the panel has not yet been initialized.
-        if (null === this.panel) {
-            this.panel = new Y.Panel({
-                srcNode : Y.Node.create('<div id="dialog" />'),
-                headerContent : '',
-                bodyContent : this.panelbodycontent,
-                width : panelwidth,
-                height : panelheight+"px",
-                zIndex : 6,
-                centered : true,
-                modal : true,
-                visible : false,
-                render : true,
-                hideOn : [
-                    {
-                        node : Y.one('input[id=closeltipanel]'),
-                        eventName : 'click'
-                    }
-                ]
-            });
-
-            this.panel.show();
-
-            // Listen to simulated click event send from local/kaltura/service.php
-            Y.one('input[id=closeltipanel]').on('click', this.lti_hide_panel_callback, this);
-
-            // // Listen to when the panel is made visible or hidden
-            this.panel.after('visibleChange', this.lti_panel_visible_change_callback, this);
-        } else {
-            this.panel.show();
-        }
+        document.body.bsePopup = bsePopup;
+        var entrySelectedEvent = new Event('entrySelected');
+        document.body.myEvent = entrySelectedEvent;
+        document.body.addEventListener('entrySelected', this.close_popup_callback.bind(this), false);
     },
 
     /**
      * Event handler callback for when a simulated click event is triggered on a specifc element.
      */
-    lti_hide_panel_callback : function() {
+    close_popup_callback : function() {
         // hide the thumbnail image.
         var imagenode = Y.one('img[id=video_thumbnail]');
         imagenode.setStyle('display', 'none');
@@ -165,6 +115,8 @@ Y.extend(LTIPANEL, Y.Base, {
         if (undefined !== element && ('kalvidres' === this.modulename || 'kalvidpres' === this.modulename)) {
             this.lti_panel_change_add_media_button_caption();
         }
+
+        document.body.bsePopup.close();
     },
 
     lti_panel_change_add_media_button_caption : function() {
@@ -174,21 +126,6 @@ Y.extend(LTIPANEL, Y.Base, {
             Y.one('#'+this.addvidbtnid).setAttribute('value', buttoncaption);
         }
     },
-
-    /**
-     * Event handler callback for when the panel is made hidden or visible.
-     */
-    lti_panel_visible_change_callback : function() {
-        this.panelvisible = this.panel.get('visible');
-
-        // If panel is visible, re-launch the LIT request so that the user sees the main page.  Instead of the last page they visited.  If the panel is not visible then
-        // set the content to an empty string; this prevents videos from the iframe from continuing to play after the panel was closed.
-        if (true === this.panelvisible) {
-            this.panel.set('bodyContent', this.panelbodycontent);
-        } else {
-            this.panel.set('bodyContent', '');
-        }
-    }
 },
 {
     NAME : 'moodle-local_kaltura-ltipanel',
@@ -223,46 +160,6 @@ var LTIPANELMEDIAASSIGNMENT = function() {
 
 Y.extend(LTIPANELMEDIAASSIGNMENT, Y.Base, {
     /**
-     * Contains the object tag needed to launch an LTI session.
-     * @property panelbodycontent
-     * @type {String}
-     * @default null
-     */
-     panelbodycontent: null,
-
-    /**
-     * Set to true if panel is visible, otherwise false.
-     * @property panelvisible
-     * @type {Boolean}
-     * @default null
-     */
-     panelvisible: false,
-
-    /**
-     * The panel object
-     * @property panel
-     * @type {Object}
-     * @default null
-     */
-     panel: null,
-
-    /**
-     * The panel height.
-     * @property panelheight
-     * @type {Integer}
-     * @default 0
-     */
-     panelheight: 0,
-
-    /**
-     * The panel width.
-     * @property panelwidth
-     * @type {Integer}
-     * @default 0
-     */
-     panelwidth: 0,
-
-    /**
      * Init function for the checkboxselection module
      * @property params
      * @type {Object}
@@ -274,7 +171,7 @@ Y.extend(LTIPANELMEDIAASSIGNMENT, Y.Base, {
         }
 
         var addvideobtn = Y.one('#'+params.addvidbtnid);
-        addvideobtn.on('click', this.open_panel_callback, this, params.ltilaunchurl, params.height, params.width);
+        addvideobtn.on('click', this.open_bse_popup_callback, this, params.ltilaunchurl, params.height, params.width);
     },
 
     /**
@@ -282,59 +179,30 @@ Y.extend(LTIPANELMEDIAASSIGNMENT, Y.Base, {
      * @property e
      * @type {Object}
      */
-    open_panel_callback : function(e, url, height, width) {
-        this.panelheight = parseInt(height, 10) + 45;
-        this.panelwidth = parseInt(width, 10) + 23;
+    open_bse_popup_callback: function(e, url, height, width) {
+        var w = 1200;
+        var h = 700;
+        var dualScreenLeft = window.screenLeft != undefined ? window.screenLeft : screen.left;
+        var dualScreenTop = window.screenTop != undefined ? window.screenTop : screen.top;
 
-        width += 'px';
+        var width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+        var height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
 
-        if (Y.UA.ipod !== 0 || Y.UA.ipad !== 0 || Y.UA.iphone !== 0 || Y.UA.android !== 0 || Y.UA.mobile !== null) {
-            this.panelwidth = '80%';
-            width = '100%';
+        var left = ((width / 2) - (w / 2)) + dualScreenLeft;
+        var top = ((height / 2) - (h / 2)) + dualScreenTop;
+        var bsePopup = window.open(url, "Browse and Embed", 'scrollbars=no, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
+
+        if (window.focus) {
+            bsePopup.focus();
         }
 
-        this.panelbodycontent = "<iframe id='panelcontentframe' height='"+height+"px' width='"+width+"' "+
-            "allowfullscreen='true' webkitallowfullscreen='true' mozallowfullscreen='true' src='"+url+"'></iframe>";
-
-
-        // If the panel has not yet been initialized.
-        if (null === this.panel) {
-            this.panel = new Y.Panel({
-                srcNode : Y.Node.create('<div id="dialog" />'),
-                headerContent : '',
-                bodyContent : this.panelbodycontent,
-                width : this.panelwidth+"px",
-                height : this.panelheight+"px",
-                zIndex : 6,
-                centered : true,
-                modal : true,
-                visible : false,
-                render : true,
-                hideOn : [
-                    {
-                        node : Y.one('input[id=closeltipanel]'),
-                        eventName : 'click'
-                    }
-                ]
-            });
-
-            this.panel.show();
-
-            // Listen to simulated click event send from local/kaltura/service.php
-            Y.one('input[id=closeltipanel]').on('click', this.lti_hide_panel_callback, this);
-
-            // Listen to when the panel is made visible or hidden
-            this.panel.after('visibleChange', this.lti_panel_visible_change_callback, this);
-        } else {
-            this.panel.show();
-        }
+        document.body.bsePopup = bsePopup;
+        var entrySelectedEvent = new Event('entrySelected');
+        document.body.myEvent = entrySelectedEvent;
+        document.body.addEventListener('entrySelected', this.close_popup_callback.bind(this));
     },
 
-    /**
-     * Event handler callback for when a simulated click event is triggered on a specifc element.
-     */
-    lti_hide_panel_callback : function() {
-        // Enable submit button
+    close_popup_callback: function() {
         Y.one('input[id=submit_video]').removeAttribute('disabled');
         // hide the thumbnail image.
         var imagenode = Y.one('img[id=video_thumbnail]');
@@ -345,25 +213,9 @@ Y.extend(LTIPANELMEDIAASSIGNMENT, Y.Base, {
         iframenode.setAttribute('height', Y.one('input[id=height]').getAttribute('value'));
         iframenode.setStyle('display', 'inline');
         Y.one('#id_add_video').set('value', M.util.get_string('replacevideo', 'kalvidassign'));
+        document.body.bsePopup.close();
     },
 
-    /**
-     * Event handler callback for when the panel is made hidden or visible.
-     */
-    lti_panel_visible_change_callback : function() {
-        this.panelvisible = this.panel.get('visible');
-
-        // If panel is visible, re-launch the LIT request so that the user sees the main page.  Instead of the last page they visited.  If the panel is not visible then
-        // set the content to an empty string; this prevents videos from the iframe from continuing to play after the panel was closed.
-        if (true === this.panelvisible) {
-            this.panel.set('bodyContent', this.panelbodycontent);
-            this.panel.set('height', this.panelheight);
-            this.panel.set('width', this.panelwidth);
-            this.panel.set('centered', true);
-        } else {
-            this.panel.set('bodyContent', '');
-        }
-    }
 },
 {
     NAME : 'moodle-local_kaltura-ltipanel',
@@ -430,7 +282,7 @@ Y.extend(LTISUBMISSIONREVIEW, Y.Base, {
             width = e.target.ancestor('div[name=media_submission]').get('childNodes').filter('input[name=width]').get('value');
         }
 
-        this.ltimediaassignment.open_panel_callback(null, source, height, width);
+        this.ltimediaassignment.open_bse_popup_callback(null, source, height, width);
     }
 },
 {
@@ -473,3 +325,6 @@ M.local_kaltura.initreviewsubmission = function() {
     var mediaassignment = new LTIPANELMEDIAASSIGNMENT(args);
     return new LTISUBMISSIONREVIEW(mediaassignment);
 };
+
+
+}, '@VERSION@', {"requires": ["base", "node", "panel", "node-event-simulate"]});

@@ -79,6 +79,7 @@ Y.extend(LTITINYMCEPANEL, Y.Base, {
 
         var content = '<iframe id="lti_view_element" height="'+iframeheight+'px" width="100%" src="'+url+'&amp;contextid='+this.contextid+'"></iframe>';
         Y.one('#'+iframeid).setContent(content);
+        Y.one('#lti_view_element').setStyle('border', '0');
     },
 
     /**
