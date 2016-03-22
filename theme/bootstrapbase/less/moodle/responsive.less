@@ -14,6 +14,21 @@
             float: right;
         }
     }
+
+}
+
+@media (min-width: (@navbarCollapseDesktopWidth) ) {
+
+    a[id]:empty::before,
+    a[name]:empty::before {
+        display: inline-block;
+        position: relative;
+        content: '';
+        padding-top: @navbarHeight;
+        margin-top: -@navbarHeight;
+        vertical-align: top;
+    }
+
 }
 
 @media (min-width: 980px) and (max-width: 1199px) {
