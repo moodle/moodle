@@ -177,7 +177,7 @@ class schema {
             $params = array(
                 'add-field' => array(
                     'name' => $fieldname,
-                    'type' => $data['type'],
+                    'type' => ($data['type'] === 'text' ? 'text_general' : $data['type']),
                     'stored' => $data['stored'],
                     'multiValued' => false,
                     'indexed' => $data['indexed']
@@ -242,7 +242,8 @@ class schema {
                         throw new \moodle_exception('errorcreatingschema', 'search_solr', '',
                             get_string('schemafieldautocreated', 'search_solr', $fieldname));
 
-                    } else if ($results->field->type !== $data['type'] ||
+                    } else if (($results->field->type !== $data['type'] &&
+                                ($data['type'] !== 'text' || $results->field->type !== 'text_general')) ||
                                 $results->field->multiValued !== false ||
                                 $results->field->indexed !== $data['indexed'] ||
                                 $results->field->stored !== $data['stored']) {

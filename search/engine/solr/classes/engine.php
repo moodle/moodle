@@ -46,9 +46,19 @@ class engine extends \core_search\engine {
     const AUTOCOMMIT_WITHIN = 15000;
 
     /**
-     * @var int Highlighting fragsize.
+     * Highlighting fragsize. Slightly larger than output size (500) to allow for ... appending.
      */
-    const FRAG_SIZE = 500;
+    const FRAG_SIZE = 510;
+
+    /**
+     * Marker for the start of a highlight.
+     */
+    const HIGHLIGHT_START = '@@HI_S@@';
+
+    /**
+     * Marker for the end of a highlight.
+     */
+    const HIGHLIGHT_END = '@@HI_E@@';
 
     /**
      * @var \SolrClient
@@ -58,7 +68,7 @@ class engine extends \core_search\engine {
     /**
      * @var array Fields that can be highlighted.
      */
-    protected $highlightfields = array('content', 'description1', 'description2');
+    protected $highlightfields = array('title', 'content', 'description1', 'description2');
 
     /**
      * Prepares a Solr query, applies filters and executes it returning its results.
@@ -161,8 +171,9 @@ class engine extends \core_search\engine {
             $query->addHighlightField($field);
         }
         $query->setHighlightFragsize(static::FRAG_SIZE);
-        $query->setHighlightSimplePre('__');
-        $query->setHighlightSimplePost('__');
+        $query->setHighlightSimplePre(self::HIGHLIGHT_START);
+        $query->setHighlightSimplePost(self::HIGHLIGHT_END);
+        $query->setHighlightMergeContiguous(true);
 
         $query->setQuery($q);
 

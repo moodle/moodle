@@ -91,12 +91,12 @@ class document implements \renderable, \templatable {
             'indexed' => true
         ),
         'title' => array(
-            'type' => 'string',
+            'type' => 'text',
             'stored' => true,
             'indexed' => true
         ),
         'content' => array(
-            'type' => 'string',
+            'type' => 'text',
             'stored' => true,
             'indexed' => true
         ),
@@ -148,12 +148,12 @@ class document implements \renderable, \templatable {
             'indexed' => false
         ),
         'description1' => array(
-            'type' => 'string',
+            'type' => 'text',
             'stored' => true,
             'indexed' => true
         ),
         'description2' => array(
-            'type' => 'string',
+            'type' => 'text',
             'stored' => true,
             'indexed' => true
         ),
@@ -306,6 +306,19 @@ class document implements \renderable, \templatable {
     }
 
     /**
+     * Formats a text value for the search engine.
+     *
+     * Search engines may overwrite this method to apply restrictions, like limiting the size.
+     * The default behaviour is just returning the string.
+     *
+     * @param string $text
+     * @return string
+     */
+    public static function format_text_for_engine($text) {
+        return $text;
+    }
+
+    /**
      * Returns a timestamp from the value stored in the search engine.
      *
      * By default it just returns a timestamp so any search engine could just store integers
@@ -411,9 +424,13 @@ class document implements \renderable, \templatable {
                 // Overwrite the timestamp with the engine dependant format.
                 $data[$fieldname] = static::format_time_for_engine($data[$fieldname]);
             } else if ($field['type'] === 'string') {
-                // Overwrite the timestamp with the engine dependant format.
+                // Overwrite the string with the engine dependant format.
                 $data[$fieldname] = static::format_string_for_engine($data[$fieldname]);
+            } else if ($field['type'] === 'text') {
+                // Overwrite the text with the engine dependant format.
+                $data[$fieldname] = static::format_text_for_engine($data[$fieldname]);
             }
+
         }
 
         foreach (static::$optionalfields as $fieldname => $field) {
@@ -424,8 +441,11 @@ class document implements \renderable, \templatable {
                 // Overwrite the timestamp with the engine dependant format.
                 $data[$fieldname] = static::format_time_for_engine($data[$fieldname]);
             } else if ($field['type'] === 'string') {
-                // Overwrite the timestamp with the engine dependant format.
+                // Overwrite the string with the engine dependant format.
                 $data[$fieldname] = static::format_string_for_engine($data[$fieldname]);
+            } else if ($field['type'] === 'text') {
+                // Overwrite the text with the engine dependant format.
+                $data[$fieldname] = static::format_text_for_engine($data[$fieldname]);
             }
         }
 
@@ -444,14 +464,14 @@ class document implements \renderable, \templatable {
      * @return array
      */
     public function export_for_template(\renderer_base $output) {
-
         list($componentname, $areaname) = \core_search\manager::extract_areaid_parts($this->get('areaid'));
 
+        $title = $this->is_set('title') ? $this->format_text($this->get('title')) : '';
         $data = [
             'courseurl' => new \moodle_url('/course/view.php?id=' . $this->get('courseid')),
             'coursefullname' => format_string($this->get('coursefullname'), true, array('context' => $this->get('contextid'))),
             'modified' => userdate($this->get('modified')),
-            'title' => format_string($this->get('title'), true, array('context' => $this->get('contextid'))),
+            'title' => ($title !== '') ? $title : get_string('notitle', 'search'),
             'docurl' => $this->get_doc_url(),
             'content' => $this->is_set('content') ? $this->format_text($this->get('content')) : null,
             'contexturl' => $this->get_context_url(),

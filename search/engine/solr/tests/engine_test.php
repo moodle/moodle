@@ -252,4 +252,27 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->assertEquals(0, $results[0]->get('owneruserid'));
         $this->assertEquals($originalid, $results[0]->get('id'));
     }
+
+    public function test_highlight() {
+        global $PAGE;
+
+        $this->search->index();
+
+        $querydata = new stdClass();
+        $querydata->q = 'message';
+
+        $results = $this->search->search($querydata);
+        $this->assertCount(2, $results);
+
+        $result = reset($results);
+
+        $regex = '|'.\search_solr\engine::HIGHLIGHT_START.'message'.\search_solr\engine::HIGHLIGHT_END.'|';
+        $this->assertRegExp($regex, $result->get('content'));
+
+        $searchrenderer = $PAGE->get_renderer('core_search');
+        $exported = $result->export_for_template($searchrenderer);
+
+        $regex = '|<span class="highlight">message</span>|';
+        $this->assertRegExp($regex, $exported['content']);
+    }
 }

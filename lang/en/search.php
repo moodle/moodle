@@ -67,6 +67,7 @@ $string['ittook'] = 'It took';
 $string['next'] = 'Next';
 $string['noindexmessage'] = 'Admin: There appears to be no search index. Please';
 $string['noresults'] = 'No results';
+$string['notitle'] = 'No title';
 $string['normalsearch'] = 'Normal search';
 $string['openedon'] = 'opened on';
 $string['optimize'] = 'Optimize';
