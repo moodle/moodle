@@ -538,6 +538,10 @@ $strall = get_string('all');
 $params['sort'] = $sort;
 $params['dir'] = $dir;
 
+// We don't want to be deleting when we are using the paging bar.
+$params['delete'] = '';
+$params['confirm'] = '';
+
 $baseurl = new moodle_url('editusers.php', $params);
 echo $OUTPUT->paging_bar($usercount, $page, $perpage, $baseurl);
 
