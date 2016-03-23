@@ -80,6 +80,7 @@ class core_tag_external extends external_api {
             throw new moodle_exception('tagsaredisabled', 'tag');
         }
 
+        $PAGE->set_context(null); // Ensure page context is set.
         $renderer = $PAGE->get_renderer('core');
         foreach ($tags['tags'] as $tag) {
             $tag = (array)$tag;
