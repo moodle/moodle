@@ -82,7 +82,8 @@ Options:
                       required in non-interactive mode.
 --lang=CODE           Set preferred language for CLI output. Defaults to the
                       site language if not set. Defaults to 'en' if the lang
-                      parameter is invalid or not installed.
+                      parameter is invalid or if the language pack is not
+                      installed.
 -h, --help            Print out this help
 
 Example:
