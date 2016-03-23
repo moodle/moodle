@@ -499,6 +499,49 @@ class core_navigationlib_testcase extends advanced_testcase {
 
         $this->assertFalse($node->exposed_in_alternative_role());
     }
+
+
+    public function test_navigation_node_collection_remove_with_no_type() {
+        $navigationnodecollection = new navigation_node_collection();
+        $this->setup_node();
+        $this->node->key = 100;
+
+        // Test it's empty
+        $this->assertEquals(0, count($navigationnodecollection->get_key_list()));
+
+        // Add a node
+        $navigationnodecollection->add($this->node);
+
+        // Test it's not empty
+        $this->assertEquals(1, count($navigationnodecollection->get_key_list()));
+
+        // Remove a node - passing key only!
+        $this->assertTrue($navigationnodecollection->remove(100));
+
+        // Test it's empty again!
+        $this->assertEquals(0, count($navigationnodecollection->get_key_list()));
+    }
+
+    public function test_navigation_node_collection_remove_with_type() {
+        $navigationnodecollection = new navigation_node_collection();
+        $this->setup_node();
+        $this->node->key = 100;
+
+        // Test it's empty
+        $this->assertEquals(0, count($navigationnodecollection->get_key_list()));
+
+        // Add a node
+        $navigationnodecollection->add($this->node);
+
+        // Test it's not empty
+        $this->assertEquals(1, count($navigationnodecollection->get_key_list()));
+
+        // Remove a node - passing type
+        $this->assertTrue($navigationnodecollection->remove(100, 1));
+
+        // Test it's empty again!
+        $this->assertEquals(0, count($navigationnodecollection->get_key_list()));
+    }
 }
 
 
