@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains class core_tag\output\tagname
+ * Contains class core_tag\output\tagcollname
  *
  * @package   core_tag
  * @copyright 2016 Marina Glancy
@@ -27,7 +27,8 @@ namespace core_tag\output;
 use context_system;
 use lang_string;
 use html_writer;
-use core_tag_tag;
+use core_tag_collection;
+use moodle_url;
 
 /**
  * Class to preapare a tag name for display.
@@ -36,21 +37,22 @@ use core_tag_tag;
  * @copyright 2016 Marina Glancy
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tagname extends \core\output\inplace_editable {
+class tagcollname extends \core\output\inplace_editable {
 
     /**
      * Constructor.
      *
-     * @param \stdClass|core_tag_tag $tag
+     * @param \stdClass $tagcoll
      */
-    public function __construct($tag) {
+    public function __construct($tagcoll) {
         $editable = has_capability('moodle/tag:manage', context_system::instance());
-        $edithint = new lang_string('editname', 'core_tag');
-        $editlabel = new lang_string('newnamefor', 'core_tag', $tag->rawname);
-        $value = $tag->rawname;
-        $displayvalue = html_writer::link(core_tag_tag::make_url($tag->tagcollid, $tag->rawname),
-            core_tag_tag::make_display_name($tag));
-        parent::__construct('core_tag', 'tagname', $tag->id, $editable, $displayvalue, $value, $edithint, $editlabel);
+        $edithint = new lang_string('editcollname', 'core_tag');
+        $value = $tagcoll->name;
+        $name = \core_tag_collection::display_name($tagcoll);
+        $editlabel = new lang_string('newcollnamefor', 'core_tag', $name);
+        $manageurl = new moodle_url('/tag/manage.php', array('tc' => $tagcoll->id));
+        $displayvalue = html_writer::link($manageurl, $name);
+        parent::__construct('core_tag', 'tagcollname', $tagcoll->id, $editable, $displayvalue, $value, $edithint, $editlabel);
     }
 
     /**
@@ -61,9 +63,10 @@ class tagname extends \core\output\inplace_editable {
      * @return \self
      */
     public static function update($itemid, $newvalue) {
+        global $DB;
         require_capability('moodle/tag:manage', context_system::instance());
-        $tag = core_tag_tag::get($itemid, '*', MUST_EXIST);
-        $tag->update(array('rawname' => $newvalue));
-        return new self($tag);
+        $tagcoll = $DB->get_record('tag_coll', array('id' => $itemid), '*', MUST_EXIST);
+        \core_tag_collection::update($tagcoll, array('name' => $newvalue));
+        return new self($tagcoll);
     }
 }

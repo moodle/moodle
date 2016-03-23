@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains class core_tag\output\tagname
+ * Contains class core_tag\output\tagflag
  *
  * @package   core_tag
  * @copyright 2016 Marina Glancy
@@ -25,18 +25,16 @@
 namespace core_tag\output;
 
 use context_system;
-use lang_string;
-use html_writer;
 use core_tag_tag;
 
 /**
- * Class to preapare a tag name for display.
+ * Class to display tag flag toggle
  *
  * @package   core_tag
  * @copyright 2016 Marina Glancy
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tagname extends \core\output\inplace_editable {
+class tagflag extends \core\output\inplace_editable {
 
     /**
      * Constructor.
@@ -45,12 +43,29 @@ class tagname extends \core\output\inplace_editable {
      */
     public function __construct($tag) {
         $editable = has_capability('moodle/tag:manage', context_system::instance());
-        $edithint = new lang_string('editname', 'core_tag');
-        $editlabel = new lang_string('newnamefor', 'core_tag', $tag->rawname);
-        $value = $tag->rawname;
-        $displayvalue = html_writer::link(core_tag_tag::make_url($tag->tagcollid, $tag->rawname),
-            core_tag_tag::make_display_name($tag));
-        parent::__construct('core_tag', 'tagname', $tag->id, $editable, $displayvalue, $value, $edithint, $editlabel);
+        $value = (int)$tag->flag;
+
+        parent::__construct('core_tag', 'tagflag', $tag->id, $editable, $value, $value);
+        $this->set_type_toggle(array(0, $value ? $value : 1));
+    }
+
+    /**
+     * Export this data so it can be used as the context for a mustache template.
+     *
+     * @param \renderer_base $output
+     * @return \stdClass
+     */
+    public function export_for_template(\renderer_base $output) {
+        if ($this->value) {
+            $this->edithint = get_string('resetflag', 'core_tag');
+            $this->displayvalue = $output->pix_icon('i/flagged', $this->edithint) .
+                " ({$this->value})";
+        } else {
+            $this->edithint = get_string('flagasinappropriate', 'core_tag');
+            $this->displayvalue = $output->pix_icon('i/unflagged', $this->edithint);
+        }
+
+        return parent::export_for_template($output);
     }
 
     /**
@@ -63,7 +78,12 @@ class tagname extends \core\output\inplace_editable {
     public static function update($itemid, $newvalue) {
         require_capability('moodle/tag:manage', context_system::instance());
         $tag = core_tag_tag::get($itemid, '*', MUST_EXIST);
-        $tag->update(array('rawname' => $newvalue));
+        $newvalue = (int)clean_param($newvalue, PARAM_BOOL);
+        if ($newvalue) {
+            $tag->flag();
+        } else {
+            $tag->reset_flag();
+        }
         return new self($tag);
     }
 }

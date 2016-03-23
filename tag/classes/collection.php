@@ -143,7 +143,7 @@ class core_tag_collection {
             return get_string($identifier, $component);
         }
         if (!empty($record->name)) {
-            return format_string($record->name, true, $syscontext);
+            return format_string($record->name, true, array('context' => $syscontext));
         } else if ($record->isdefault) {
             return get_string('defautltagcoll', 'tag');
         } else {
@@ -174,12 +174,12 @@ class core_tag_collection {
      * @param int $tagcollid
      * @return array
      */
-    public static function get_areas_names($tagcollid) {
-        $allitemtypes = core_tag_area::get_areas($tagcollid, true);
+    public static function get_areas_names($tagcollid, $enabledonly = true) {
+        $allitemtypes = core_tag_area::get_areas($tagcollid, $enabledonly);
         $itemtypes = array();
         foreach ($allitemtypes as $itemtype => $it) {
             foreach ($it as $component => $v) {
-                $itemtypes[] = core_tag_area::display_name($component, $itemtype);
+                $itemtypes[$v->id] = core_tag_area::display_name($component, $itemtype);
             }
         }
         return $itemtypes;
@@ -216,7 +216,7 @@ class core_tag_collection {
      * Updates the tag collection information
      *
      * @param stdClass $tagcoll existing record in DB table tag_coll
-     * @param stdClass $data data from form core_tag_collection_form
+     * @param stdClass $data data to update
      * @return bool wether the record was updated
      */
     public static function update($tagcoll, $data) {
