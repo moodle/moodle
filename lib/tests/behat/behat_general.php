@@ -540,7 +540,7 @@ class behat_general extends behat_base {
 
         // Looking for all the matching nodes without any other descendant matching the
         // same xpath (we are using contains(., ....).
-        $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
+        $xpathliteral = behat_context_helper::escape($text);
         $xpath = "/descendant-or-self::*[contains(., $xpathliteral)]" .
             "[count(descendant::*[contains(., $xpathliteral)]) = 0]";
 
@@ -590,7 +590,7 @@ class behat_general extends behat_base {
 
         // Looking for all the matching nodes without any other descendant matching the
         // same xpath (we are using contains(., ....).
-        $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
+        $xpathliteral = behat_context_helper::escape($text);
         $xpath = "/descendant-or-self::*[contains(., $xpathliteral)]" .
             "[count(descendant::*[contains(., $xpathliteral)]) = 0]";
 
@@ -648,7 +648,7 @@ class behat_general extends behat_base {
 
         // Looking for all the matching nodes without any other descendant matching the
         // same xpath (we are using contains(., ....).
-        $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
+        $xpathliteral = behat_context_helper::escape($text);
         $xpath = "/descendant-or-self::*[contains(., $xpathliteral)]" .
             "[count(descendant::*[contains(., $xpathliteral)]) = 0]";
 
@@ -702,7 +702,7 @@ class behat_general extends behat_base {
 
         // Looking for all the matching nodes without any other descendant matching the
         // same xpath (we are using contains(., ....).
-        $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
+        $xpathliteral = behat_context_helper::escape($text);
         $xpath = "/descendant-or-self::*[contains(., $xpathliteral)]" .
             "[count(descendant::*[contains(., $xpathliteral)]) = 0]";
 
@@ -1128,9 +1128,9 @@ class behat_general extends behat_base {
         $tablenode = $this->get_selected_node('table', $table);
         $tablexpath = $tablenode->getXpath();
 
-        $rowliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($row);
-        $valueliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($value);
-        $columnliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($column);
+        $rowliteral = behat_context_helper::escape($row);
+        $valueliteral = behat_context_helper::escape($value);
+        $columnliteral = behat_context_helper::escape($column);
 
         if (preg_match('/^-?(\d+)-?$/', $column, $columnasnumber)) {
             // Column indicated as a number, just use it as position of the column.

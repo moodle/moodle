@@ -157,7 +157,7 @@ XPATH
             $locator = $element;
         } else {
             // Named selectors uses arrays as locators including the type of named selector.
-            $locator = array($selectortype, $session->getSelectorsHandler()->xpathLiteral($element));
+            $locator = array($selectortype, behat_context_helper::escape($element));
             $selector = 'named_partial';
         }
 

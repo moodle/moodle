@@ -557,8 +557,8 @@ class behat_mod_quiz extends behat_question_base {
     public function i_should_see_question_in_section_in_the_quiz_navigation($questionnumber, $sectionheading) {
 
         // Using xpath literal to avoid quotes problems.
-        $questionnumberliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral('Question ' . $questionnumber);
-        $headingliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($sectionheading);
+        $questionnumberliteral = behat_context_helper::escape('Question ' . $questionnumber);
+        $headingliteral = behat_context_helper::escape($sectionheading);
 
         // Split in two checkings to give more feedback in case of exception.
         $exception = new ExpectationException('Question "' . $questionnumber . '" is not in section "' .

@@ -44,6 +44,12 @@ class behat_context_helper {
      */
     protected static $environment = null;
 
+
+    /**
+     * @var Escaper::escapeLiteral
+     */
+    protected static $escaper;
+
     /**
      * Sets the browser session.
      *
@@ -72,5 +78,18 @@ class behat_context_helper {
         }
 
         return $subcontext;
+    }
+
+    /**
+     * Translates string to XPath literal.
+     *
+     * @param string $label label to escape
+     * @return string escaped string.
+     */
+    public static function escape($label) {
+        if (empty(self::$escaper)) {
+            self::$escaper = new \Behat\Mink\Selector\Xpath\Escaper();
+        }
+        return self::$escaper->escapeLiteral($label);
     }
 }

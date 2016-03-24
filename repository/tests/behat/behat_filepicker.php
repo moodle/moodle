@@ -87,7 +87,7 @@ class behat_filepicker extends behat_files {
             $this->getSession()
         );
 
-        $folderliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($foldername);
+        $folderliteral = behat_context_helper::escape($foldername);
 
         // We look both in the pathbar and in the contents.
         try {

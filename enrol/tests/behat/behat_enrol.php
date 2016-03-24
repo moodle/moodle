@@ -91,7 +91,7 @@ class behat_enrol extends behat_base {
         if ($this->running_javascript()) {
 
             // We have a div here, not a tr.
-            $userliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($userfullname);
+            $userliteral = behat_context_helper::escape($userfullname);
             $userrowxpath = "//div[contains(concat(' ',normalize-space(@class),' '),' user ')][contains(., $userliteral)]";
 
             $this->execute('behat_general::i_click_on_in_the',

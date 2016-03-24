@@ -106,7 +106,7 @@ class behat_gradereport_grader extends behat_base {
             }
         } else {
             // If there isn't a form field, just search for contents.
-            $valueliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($value);
+            $valueliteral = behat_context_helper::escape($value);
 
             $xpath = $this->get_student_and_grade_cell_selector($student, $itemname);
             $xpath .= "[contains(normalize-space(.)," . $valueliteral . ")]";

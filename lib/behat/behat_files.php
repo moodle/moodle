@@ -72,7 +72,7 @@ class behat_files extends behat_base {
             );
         } else {
             // Gets the ffilemanager node specified by the locator which contains the filepicker container.
-            $filepickerelement = $this->getSession()->getSelectorsHandler()->xpathLiteral($filepickerelement);
+            $filepickerelement = behat_context_helper::escape($filepickerelement);
             $filepickercontainer = $this->find(
                 'xpath',
                 "//input[./@id = //label[normalize-space(.)=$filepickerelement]/@for]" .
@@ -133,7 +133,7 @@ class behat_files extends behat_base {
         $exception = new ExpectationException($exceptionmsg, $this->getSession());
 
         // Avoid quote-related problems.
-        $name = $this->getSession()->getSelectorsHandler()->xpathLiteral($name);
+        $name = behat_context_helper::escape($name);
 
         // Get a filepicker/filemanager element (folder or file).
         try {
@@ -205,7 +205,7 @@ class behat_files extends behat_base {
         $repoexception = new ExpectationException('The "' . $repositoryname . '" repository has not been found', $this->getSession());
 
         // Avoid problems with both double and single quotes in the same string.
-        $repositoryname = $this->getSession()->getSelectorsHandler()->xpathLiteral($repositoryname);
+        $repositoryname = behat_context_helper::escape($repositoryname);
 
         // Here we don't need to look inside the selected element because there can only be one modal window.
         $repositorylink = $this->find(

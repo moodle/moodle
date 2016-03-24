@@ -253,7 +253,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
         return $this->find('named_partial',
             array(
                 $cleanname,
-                $this->getSession()->getSelectorsHandler()->xpathLiteral($arguments[0])
+                behat_context_helper::escape($arguments[0])
             )
         );
     }
