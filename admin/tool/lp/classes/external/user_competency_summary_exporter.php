@@ -95,7 +95,6 @@ class user_competency_summary_exporter extends exporter {
         ));
         $result->competency = $exporter->export($output);
 
-        $context = context_user::instance($this->related['user']->id);
         $result->cangrade = user_competency::can_grade_user($this->related['user']->id);
         if ($this->related['user']) {
             $exporter = new user_summary_exporter($this->related['user']);

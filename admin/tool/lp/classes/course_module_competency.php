@@ -126,7 +126,7 @@ class course_module_competency extends persistent {
                 $strname = 'complete';
                 break;
             default:
-                throw new \moodle_exception('errorcompetencyrule', 'tool_lp', '', $rule);
+                throw new \moodle_exception('errorcompetencyrule', 'tool_lp', '', $ruleoutcome);
                 break;
         }
 
@@ -248,7 +248,7 @@ class course_module_competency extends persistent {
 
         $result = $DB->get_record_sql($sql, $params);
         if (!$result) {
-            throw new coding_exception('The competency does not belong to this course module: ' . $competencyid . ', ' . $cmid);
+            throw new \coding_exception('The competency does not belong to this course module: ' . $competencyid . ', ' . $cmid);
         }
 
         return new competency(0, $result);

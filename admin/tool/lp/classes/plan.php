@@ -194,7 +194,7 @@ class plan extends persistent {
         require_once($CFG->dirroot . '/comment/lib.php');
 
         if (!$this->get_id()) {
-            throw new coding_exception('The plan must exist.');
+            throw new \coding_exception('The plan must exist.');
         }
 
         $comment = new comment((object) array(
@@ -222,6 +222,7 @@ class plan extends persistent {
             $competencies = user_competency_plan::list_competencies($this->get_id(), $this->get_userid());
         } else if ($this->is_based_on_template()) {
             // Get the competencies from the template.
+            // FIXME: why are you passing a second param?
             $competencies = template_competency::list_competencies($this->get_templateid(), true);
         } else {
             // Get the competencies from the plan.
@@ -580,7 +581,7 @@ class plan extends persistent {
         global $DB;
         if (!$template->is_valid()) {
             // As we will bypass this model's validation we rely on the template being validated.
-            throw new coding_exception('The template must be validated before updating plans.');
+            throw new \coding_exception('The template must be validated before updating plans.');
         }
 
         $params = array(

@@ -57,12 +57,11 @@ class template_plans_table extends table_sql {
      * @param \tool_lp\template $template The template.
      */
     public function __construct($uniqueid, \tool_lp\template $template) {
-        global $CFG;
         parent::__construct($uniqueid);
 
         // This object should not be used without the right permissions.
         if (!$template->can_read()) {
-            throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
+            throw new \required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
         }
 
         // Set protected properties.

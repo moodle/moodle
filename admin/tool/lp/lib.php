@@ -72,6 +72,8 @@ function tool_lp_extend_navigation_user($navigation, $user, $usercontext, $cours
     }
 
     if (\tool_lp\user_evidence::can_read_user($user->id)) {
+        // FIXME: this should be in the above if statment, or fixed, don't rely on the
+        // first condition always being true.
         $node->add(get_string('userevidence', 'tool_lp'),
             new moodle_url('/admin/tool/lp/user_evidence_list.php', array('userid' => $user->id)));
     }

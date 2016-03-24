@@ -82,9 +82,7 @@ class competency extends persistent {
         $mform->setType('idnumber', PARAM_TEXT);
         $mform->addRule('idnumber', null, 'required', null, 'client');
 
-        $frameworkscale = $framework->get_scale();
         $scales = array(null => get_string('inheritfromframework', 'tool_lp')) + get_scales_menu();
-
         $scaleid = $mform->addElement('select', 'scaleid', get_string('scale', 'tool_lp'), $scales);
         $mform->setType('scaleid', PARAM_INT);
         $mform->addHelpButton('scaleid', 'scale', 'tool_lp');
@@ -92,7 +90,7 @@ class competency extends persistent {
         $mform->addElement('hidden', 'scaleconfiguration', '', array('id' => 'tool_lp_scaleconfiguration'));
         $mform->setType('scaleconfiguration', PARAM_RAW);
 
-        $scaleconfig = $mform->addElement('button', 'scaleconfigbutton', get_string('configurescale', 'tool_lp'));
+        $mform->addElement('button', 'scaleconfigbutton', get_string('configurescale', 'tool_lp'));
         $PAGE->requires->js_call_amd('tool_lp/scaleconfig', 'init', array('#id_scaleid',
             '#tool_lp_scaleconfiguration', '#id_scaleconfigbutton'));
 

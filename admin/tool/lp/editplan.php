@@ -79,7 +79,6 @@ if ($form->is_cancelled()) {
 $data = $form->get_data();
 
 if ($data) {
-    require_sesskey();
     if (empty($data->id)) {
         $plan = \tool_lp\api::create_plan($data);
         $returnurl = new moodle_url('/admin/tool/lp/plan.php', ['id' => $plan->get_id()]);

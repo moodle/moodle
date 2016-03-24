@@ -51,8 +51,6 @@ class tool_lp_course_competency_rule_form_element extends MoodleQuickForm_select
      * @param mixed $attributes Either a typical HTML attribute string or an associative array.
      */
     public function __construct($elementName=null, $elementLabel=null, $options=array(), $attributes=null) {
-        global $OUTPUT;
-
         if ($elementName == null) {
             // This is broken quickforms messing with the constructors.
             return;

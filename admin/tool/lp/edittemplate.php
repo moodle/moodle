@@ -68,7 +68,6 @@ if ($form->is_cancelled()) {
 
 $data = $form->get_data();
 if ($data) {
-    require_sesskey();
     if (empty($data->id)) {
         $template = \tool_lp\api::create_template($data);
         $returnurl = new moodle_url('/admin/tool/lp/templatecompetencies.php', [

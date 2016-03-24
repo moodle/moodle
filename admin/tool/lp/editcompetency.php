@@ -89,7 +89,6 @@ if ($form->is_cancelled()) {
 // Get form data.
 $data = $form->get_data();
 if ($data) {
-    require_sesskey();
     if (empty($competency)) {
         \tool_lp\api::create_competency($data);
         $returnmsg = get_string('competencycreated', 'tool_lp');

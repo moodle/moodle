@@ -180,7 +180,7 @@ class template_competency extends persistent {
 
         $result = $DB->get_record_sql($sql, $params);
         if (!$result) {
-            throw new coding_exception('The competency does not belong to this template: ' . $competencyid . ', ' . $templateid);
+            throw new \coding_exception('The competency does not belong to this template: ' . $competencyid . ', ' . $templateid);
         }
 
         return new competency(0, $result);
@@ -245,7 +245,7 @@ class template_competency extends persistent {
      */
     protected function validate_competencyid($value) {
         if (!competency::record_exists($value)) {
-            return new lang_string('invaliddata', 'error');
+            return new \lang_string('invaliddata', 'error');
         }
         return true;
     }
@@ -258,7 +258,7 @@ class template_competency extends persistent {
      */
     protected function validate_templateid($value) {
         if (!template::record_exists($value)) {
-            return new lang_string('invaliddata', 'error');
+            return new \lang_string('invaliddata', 'error');
         }
         return true;
     }

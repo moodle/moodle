@@ -52,7 +52,6 @@ class user_evidence extends persistent {
         $mform->addRule('name', null, 'required', null, 'client');
 
         $mform->addElement('editor', 'description', get_string('userevidencedescription', 'tool_lp'), array('rows' => 10));
-        // TODO MDL-52454 Make PARAM_RAW.
         $mform->setType('description', PARAM_RAW);
 
         $mform->addElement('url', 'url', get_string('userevidenceurl', 'tool_lp'), array(), array('usefilepicker' => false));

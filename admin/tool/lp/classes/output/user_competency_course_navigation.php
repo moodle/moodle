@@ -74,7 +74,7 @@ class user_competency_course_navigation implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
-        global $CFG, $DB, $SESSION, $PAGE;
+        global $CFG, $DB, $PAGE;
 
         $context = context_course::instance($this->courseid);
 
@@ -96,9 +96,6 @@ class user_competency_course_navigation implements renderable, templatable {
             $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
             $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
             $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $context);
-
-            // Fetch current active group.
-            $groupmode = groups_get_course_groupmode($course);
 
             $users = get_enrolled_users($context, 'tool/lp:coursecompetencygradable', $currentgroup,
                                         'u.*', null, 0, 0, $showonlyactiveenrol);

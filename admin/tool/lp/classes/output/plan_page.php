@@ -103,8 +103,6 @@ class plan_page implements renderable, templatable {
             }
             $scale = $scales[$framework->get_scaleid()];
 
-            $context = $framework->get_context();
-
             // Prepare the data.
             $record = new stdClass();
             $exporter = new competency_exporter($comp, array('context' => $framework->get_context()));

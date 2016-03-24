@@ -71,7 +71,7 @@ class user_competency_summary_in_plan implements renderable, templatable {
         $usercompetencyplan = $pc->usercompetencyplan;
 
         if (empty($competency)) {
-            throw new invalid_parameter_exception('Invalid params. The competency does not belong to the plan.');
+            throw new \invalid_parameter_exception('Invalid params. The competency does not belong to the plan.');
         }
 
         $relatedcompetencies = api::list_related_competencies($competency->get_id());

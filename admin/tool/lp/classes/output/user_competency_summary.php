@@ -64,8 +64,6 @@ class user_competency_summary implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
-        global $DB;
-
         if (!isset($related['user'])) {
             $related['user'] = core_user::get_user($this->usercompetency->get_userid());
         }

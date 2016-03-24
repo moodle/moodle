@@ -3895,7 +3895,6 @@ class api {
      * @return bool
      */
     public static function request_review_of_user_evidence_linked_competencies($id) {
-        $onlyidle = false;
         $userevidence = new user_evidence($id);
         $context = $userevidence->get_context();
         $userid = $userevidence->get_userid();

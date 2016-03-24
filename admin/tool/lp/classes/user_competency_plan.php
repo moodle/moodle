@@ -149,8 +149,6 @@ class user_competency_plan extends persistent {
      * @return true|lang_string
      */
     protected function validate_planid($value) {
-        global $DB;
-
         if (!plan::record_exists($value) ) {
             return new lang_string('invalidplan', 'tool_lp');
         }

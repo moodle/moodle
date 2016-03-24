@@ -25,7 +25,6 @@ namespace tool_lp\external;
 defined('MOODLE_INTERNAL') || die();
 
 use renderer_base;
-use moodle_url;
 
 
 /**
@@ -41,8 +40,6 @@ class course_module_summary_exporter extends exporter {
     }
 
     protected function get_other_values(renderer_base $output) {
-        global $CFG;
-
         $context = $this->related['cm']->context;
 
         return array(

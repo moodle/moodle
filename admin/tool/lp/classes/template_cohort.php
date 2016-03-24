@@ -79,7 +79,6 @@ class template_cohort extends persistent {
      * @return true|lang_string
      */
     protected function validate_templateid($value) {
-        global $DB;
         if (!template::record_exists($value)) {
             return new lang_string('invaliddata', 'error');
         }

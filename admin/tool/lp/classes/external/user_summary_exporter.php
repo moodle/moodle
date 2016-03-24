@@ -48,7 +48,6 @@ class user_summary_exporter extends exporter {
         $profileurl = (new moodle_url('/user/profile.php', array('id' => $this->data->id)))->out(false);
 
         $identityfields = array_flip(explode(',', $CFG->showuseridentity));
-        $identity = '';
         $data = $this->data;
         foreach ($identityfields as $field => $index) {
             if (!empty($data->$field)) {
