@@ -402,17 +402,6 @@ class manager {
     public function search(\stdClass $formdata) {
         global $USER;
 
-        $cache = \cache::make('core', 'search_results');
-
-        // Generate a string from all query filters
-        // Not including $areascontext here, being a user cache it is not needed.
-        $querykey = $this->generate_query_key($formdata, $USER->id);
-
-        // Look for cached results before executing it.
-        if ($results = $cache->get($querykey)) {
-            return $results;
-        }
-
         // Clears previous query errors.
         $this->engine->clear_query_error();
 
@@ -424,38 +413,7 @@ class manager {
             $docs = $this->engine->execute_query($formdata, $areascontexts);
         }
 
-        // Cache results.
-        $cache->set($querykey, $docs);
-
         return $docs;
-    }
-
-    /**
-     * We generate the key ourselves so MUC knows that it contains simplekeys.
-     *
-     * @param stdClass $formdata
-     * @return string
-     */
-    protected function generate_query_key($formdata) {
-        global $USER;
-
-        // Empty values by default (although q should always have a value).
-        $fields = array('q', 'title', 'areaid', 'timestart', 'timeend', 'page');
-
-        // Just in this function scope.
-        $params = clone $formdata;
-        foreach ($fields as $field) {
-            if (empty($params->{$field})) {
-                $params->{$field} = '';
-            }
-        }
-
-        // Although it is not likely, we prevent cache hits if available search areas change during the session.
-        $enabledareas = implode('-', array_keys(static::get_search_areas_list(true)));
-
-        return md5($params->q . 'userid=' . $USER->id . 'title=' . $params->title . 'areaid=' . $params->areaid .
-            'timestart=' . $params->timestart . 'timeend=' . $params->timeend . 'page=' . $params->page .
-            $enabledareas);
     }
 
     /**

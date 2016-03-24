@@ -199,7 +199,6 @@ class search_solr_engine_testcase extends advanced_testcase {
 
         $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'role_capabilities');
         $this->search->delete_index($areaid);
-        cache_helper::purge_by_definition('core', 'search_results');
         $this->assertCount(0, $this->search->search($querydata));
     }
 

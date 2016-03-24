@@ -64,10 +64,6 @@ if ($data = $mform->get_data()) {
 
         if (!empty($data->all) || $anydelete) {
             echo $OUTPUT->notification(get_string('deleted', 'report_search'), 'notifysuccess');
-
-            // Purge the cache.
-            $cache = \cache::make('core', 'search_results');
-            $cache->purge();
         }
     }
 
