@@ -35,7 +35,7 @@ $pagecontext = context::instance_by_id($pagecontextid);
 $template = \tool_lp\api::read_template($templateid);
 $context = $template->get_context();
 if (!$template->can_read()) {
-    throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
+    throw new required_capability_exception($context, 'tool/lp:templateview', 'nopermissions', '');
 }
 
 // Trigger a template viewed event.

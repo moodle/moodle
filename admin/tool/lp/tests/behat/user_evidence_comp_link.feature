@@ -54,6 +54,10 @@ Feature: Manage competencies linked to evidence of prior learning
       | userevidence | competency |
       | Test-Evidence | Test-Comp1 |
       | Test-Evidence | Test-Comp2 |
+    Given the following lp "usercompetencies" exist:
+      | user | competency |
+      | admin | Test-Comp1 |
+      | admin | Test-Comp2 |
     And I follow "Evidence of prior learning"
     And I should see "List of evidence"
     And I should see "Test-Evidence"

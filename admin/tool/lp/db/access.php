@@ -36,7 +36,7 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
-    'tool/lp:competencyread' => array(
+    'tool/lp:competencyview' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSECAT,
         'archetypes' => array(
@@ -78,7 +78,7 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' => 'moodle/course:isincompletionreports'
     ),
-    'tool/lp:coursecompetencyread' => array(
+    'tool/lp:coursecompetencyview' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
@@ -229,7 +229,7 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' => 'moodle/site:config'
     ),
-    'tool/lp:templateread' => array(
+    'tool/lp:templateview' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSECAT,
         'archetypes' => array(
@@ -252,7 +252,7 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' => 'moodle/block:view'
     ),
-    'tool/lp:userevidenceread' => array(
+    'tool/lp:userevidenceview' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_USER,
         'archetypes' => array(

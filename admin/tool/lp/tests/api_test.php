@@ -79,18 +79,18 @@ class tool_lp_api_testcase extends advanced_testcase {
         $sysctx = context_system::instance();
 
         $roleallow = create_role('Allow', 'allow', 'Allow read');
-        assign_capability('tool/lp:competencyread', CAP_ALLOW, $roleallow, $sysctx->id);
+        assign_capability('tool/lp:competencyview', CAP_ALLOW, $roleallow, $sysctx->id);
         role_assign($roleallow, $user->id, $sysctx->id);
 
         $roleprevent = create_role('Prevent', 'prevent', 'Prevent read');
-        assign_capability('tool/lp:competencyread', CAP_PROHIBIT, $roleprevent, $sysctx->id);
+        assign_capability('tool/lp:competencyview', CAP_PROHIBIT, $roleprevent, $sysctx->id);
         role_assign($roleprevent, $user->id, $cat2ctx->id);
 
         accesslib_clear_all_caches_for_unit_testing();
         $this->setUser($user);
-        $this->assertFalse(has_capability('tool/lp:competencyread', $cat2ctx));
+        $this->assertFalse(has_capability('tool/lp:competencyview', $cat2ctx));
 
-        $requiredcap = array('tool/lp:competencyread');
+        $requiredcap = array('tool/lp:competencyview');
 
         $expected = array();
         $this->assertEquals($expected, api::get_related_contexts($cat2ctx, 'self', $requiredcap));
@@ -140,18 +140,18 @@ class tool_lp_api_testcase extends advanced_testcase {
         $sysctx = context_system::instance();
 
         $roleallow = create_role('Allow', 'allow', 'Allow read');
-        assign_capability('tool/lp:templateread', CAP_ALLOW, $roleallow, $sysctx->id);
+        assign_capability('tool/lp:templateview', CAP_ALLOW, $roleallow, $sysctx->id);
         role_assign($roleallow, $user->id, $sysctx->id);
 
         $roleprevent = create_role('Prevent', 'prevent', 'Prevent read');
-        assign_capability('tool/lp:templateread', CAP_PROHIBIT, $roleprevent, $sysctx->id);
+        assign_capability('tool/lp:templateview', CAP_PROHIBIT, $roleprevent, $sysctx->id);
         role_assign($roleprevent, $user->id, $cat2ctx->id);
 
         accesslib_clear_all_caches_for_unit_testing();
         $this->setUser($user);
-        $this->assertFalse(has_capability('tool/lp:templateread', $cat2ctx));
+        $this->assertFalse(has_capability('tool/lp:templateview', $cat2ctx));
 
-        $requiredcap = array('tool/lp:templateread');
+        $requiredcap = array('tool/lp:templateview');
 
         $expected = array();
         $this->assertEquals($expected, api::get_related_contexts($cat2ctx, 'self', $requiredcap));
@@ -3973,7 +3973,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         assign_capability('tool/lp:usercompetencyview', CAP_ALLOW, $canviewucrole, $sysctx->id);
 
         $cannotviewcomp = $dg->create_role();
-        assign_capability('tool/lp:competencyread', CAP_PROHIBIT, $cannotviewcomp, $sysctx->id);
+        assign_capability('tool/lp:competencyview', CAP_PROHIBIT, $cannotviewcomp, $sysctx->id);
 
         $canmanagecomp = $dg->create_role();
         assign_capability('tool/lp:competencymanage', CAP_ALLOW, $canmanagecomp, $sysctx->id);

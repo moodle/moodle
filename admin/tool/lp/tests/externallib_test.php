@@ -107,7 +107,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         unassign_capability('tool/lp:competencygrade', $authrole->id);
         unassign_capability('tool/lp:competencysuggestgrade', $authrole->id);
         unassign_capability('tool/lp:competencymanage', $authrole->id);
-        unassign_capability('tool/lp:competencyread', $authrole->id);
+        unassign_capability('tool/lp:competencyview', $authrole->id);
         unassign_capability('tool/lp:planmanage', $authrole->id);
         unassign_capability('tool/lp:planmanagedraft', $authrole->id);
         unassign_capability('tool/lp:planmanageown', $authrole->id);
@@ -116,7 +116,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         unassign_capability('tool/lp:planviewown', $authrole->id);
         unassign_capability('tool/lp:planviewowndraft', $authrole->id);
         unassign_capability('tool/lp:templatemanage', $authrole->id);
-        unassign_capability('tool/lp:templateread', $authrole->id);
+        unassign_capability('tool/lp:templateview', $authrole->id);
         unassign_capability('moodle/cohort:manage', $authrole->id);
 
         // Creating specific roles.
@@ -124,7 +124,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->userrole = create_role('User role', 'userrole', 'learning plan user role description');
 
         assign_capability('tool/lp:competencymanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
-        assign_capability('tool/lp:competencyread', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('tool/lp:competencyview', CAP_ALLOW, $this->userrole, $syscontext->id);
         assign_capability('tool/lp:planmanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:planmanagedraft', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->creatorrole, $syscontext->id);
@@ -134,7 +134,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         assign_capability('tool/lp:competencygrade', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:competencysuggestgrade', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('moodle/cohort:manage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
-        assign_capability('tool/lp:templateread', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('tool/lp:templateview', CAP_ALLOW, $this->userrole, $syscontext->id);
         assign_capability('tool/lp:competencysuggestgrade', CAP_ALLOW, $this->userrole, $syscontext->id);
         assign_capability('tool/lp:planviewown', CAP_ALLOW, $this->userrole, $syscontext->id);
         assign_capability('tool/lp:planviewowndraft', CAP_ALLOW, $this->userrole, $syscontext->id);
@@ -1848,10 +1848,10 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $cattemplate = $this->create_template(2, false);
 
         // User without permissions to read in system.
-        assign_capability('tool/lp:templateread', CAP_PROHIBIT, $this->userrole, $syscontextid, true);
+        assign_capability('tool/lp:templateview', CAP_PROHIBIT, $this->userrole, $syscontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
         $this->setUser($this->user);
-        $this->assertFalse(has_capability('tool/lp:templateread', context_system::instance()));
+        $this->assertFalse(has_capability('tool/lp:templateview', context_system::instance()));
         try {
             external::read_template($systemplate->id);
             $this->fail('Invalid permissions');
@@ -1866,11 +1866,11 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         }
 
         // User with permissions to read in a category.
-        assign_capability('tool/lp:templateread', CAP_PREVENT, $this->userrole, $syscontextid, true);
-        assign_capability('tool/lp:templateread', CAP_ALLOW, $this->userrole, $catcontextid, true);
+        assign_capability('tool/lp:templateview', CAP_PREVENT, $this->userrole, $syscontextid, true);
+        assign_capability('tool/lp:templateview', CAP_ALLOW, $this->userrole, $catcontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
-        $this->assertFalse(has_capability('tool/lp:templateread', context_system::instance()));
-        $this->assertTrue(has_capability('tool/lp:templateread', context_coursecat::instance($this->category->id)));
+        $this->assertFalse(has_capability('tool/lp:templateview', context_system::instance()));
+        $this->assertTrue(has_capability('tool/lp:templateview', context_coursecat::instance($this->category->id)));
         try {
             external::read_template($systemplate->id);
             $this->fail('Invalid permissions');
@@ -1889,9 +1889,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(userdate(0), $result['duedateformatted']);
 
         // User with permissions to read in the system.
-        assign_capability('tool/lp:templateread', CAP_ALLOW, $this->userrole, $syscontextid, true);
+        assign_capability('tool/lp:templateview', CAP_ALLOW, $this->userrole, $syscontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
-        $this->assertTrue(has_capability('tool/lp:templateread', context_system::instance()));
+        $this->assertTrue(has_capability('tool/lp:templateview', context_system::instance()));
         $result = external::read_template($systemplate->id);
         $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($systemplate->id, $result['id']);
@@ -2068,7 +2068,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // User without permission.
         $this->setUser($this->user);
-        assign_capability('tool/lp:templateread', CAP_PROHIBIT, $this->userrole, $syscontextid, true);
+        assign_capability('tool/lp:templateview', CAP_PROHIBIT, $this->userrole, $syscontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
         try {
             external::list_templates('id', 'ASC', 0, 10, array('contextid' => $syscontextid), 'children', false);
@@ -2078,8 +2078,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         }
 
         // User with category permissions.
-        assign_capability('tool/lp:templateread', CAP_PREVENT, $this->userrole, $syscontextid, true);
-        assign_capability('tool/lp:templateread', CAP_ALLOW, $this->userrole, $catcontextid, true);
+        assign_capability('tool/lp:templateview', CAP_PREVENT, $this->userrole, $syscontextid, true);
+        assign_capability('tool/lp:templateview', CAP_ALLOW, $this->userrole, $catcontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
         $result = external::list_templates('id', 'ASC', 0, 10, array('contextid' => $syscontextid), 'children', false);
         $result = external_api::clean_returnvalue(external::list_templates_returns(), $result);
@@ -2088,7 +2088,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($cat2->id, $result[1]['id']);
 
         // User with system permissions.
-        assign_capability('tool/lp:templateread', CAP_ALLOW, $this->userrole, $syscontextid, true);
+        assign_capability('tool/lp:templateview', CAP_ALLOW, $this->userrole, $syscontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
         $result = external::list_templates('id', 'DESC', 0, 3, array('contextid' => $catcontextid), 'parents', false);
         $result = external_api::clean_returnvalue(external::list_templates_returns(), $result);
@@ -2159,7 +2159,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // User without permission.
         $this->setUser($this->user);
-        assign_capability('tool/lp:templateread', CAP_PROHIBIT, $this->userrole, $syscontextid, true);
+        assign_capability('tool/lp:templateview', CAP_PROHIBIT, $this->userrole, $syscontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
         try {
             external::count_templates(array('contextid' => $syscontextid), 'children');
@@ -2169,15 +2169,15 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         }
 
         // User with category permissions.
-        assign_capability('tool/lp:templateread', CAP_PREVENT, $this->userrole, $syscontextid, true);
-        assign_capability('tool/lp:templateread', CAP_ALLOW, $this->userrole, $catcontextid, true);
+        assign_capability('tool/lp:templateview', CAP_PREVENT, $this->userrole, $syscontextid, true);
+        assign_capability('tool/lp:templateview', CAP_ALLOW, $this->userrole, $catcontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
         $result = external::count_templates(array('contextid' => $syscontextid), 'children');
         $result = external_api::clean_returnvalue(external::count_templates_returns(), $result);
         $this->assertEquals(3, $result);
 
         // User with system permissions.
-        assign_capability('tool/lp:templateread', CAP_ALLOW, $this->userrole, $syscontextid, true);
+        assign_capability('tool/lp:templateview', CAP_ALLOW, $this->userrole, $syscontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
         $result = external::count_templates(array('contextid' => $catcontextid), 'parents');
         $result = external_api::clean_returnvalue(external::count_templates_returns(), $result);

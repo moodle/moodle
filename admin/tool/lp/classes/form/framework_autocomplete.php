@@ -106,7 +106,7 @@ class framework_autocomplete extends MoodleQuickForm_autocomplete {
         list($insql, $inparams) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED, 'param');
         $frameworks = competency_framework::get_records_select("id $insql", $inparams, 'shortname');
         foreach ($frameworks as $framework) {
-            if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $framework->get_context())) {
+            if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $framework->get_context())) {
                 continue;
             } else if ($this->onlyvisible && !$framework->get_visible()) {
                 continue;

@@ -37,7 +37,7 @@ $canmanagetemplate = $template->can_manage();
 $duedatereached = $template->get_duedate() > 0 && $template->get_duedate() < time();
 
 if (!$canreadtemplate) {
-    throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
+    throw new required_capability_exception($context, 'tool/lp:templateview', 'nopermissions', '');
 }
 
 // Set up the page.

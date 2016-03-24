@@ -401,7 +401,7 @@ class api {
     /**
      * Read a the details for a single competency and return a record.
      *
-     * Requires tool/lp:competencyread capability at the system context.
+     * Requires tool/lp:competencyview capability at the system context.
      *
      * @param int $id The id of the competency to read.
      * @param bool $includerelated Include related tags or not.
@@ -413,8 +413,8 @@ class api {
 
         // First we do a permissions check.
         $context = $competency->get_context();
-        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
+        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $context)) {
+             throw new required_capability_exception($context, 'tool/lp:competencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -431,7 +431,7 @@ class api {
     /**
      * Perform a text search based and return all results and their parents.
      *
-     * Requires tool/lp:competencyread capability at the framework context.
+     * Requires tool/lp:competencyview capability at the framework context.
      *
      * @param string $textsearch A string to search for.
      * @param int $competencyframeworkid The id of the framework to limit the search.
@@ -443,8 +443,8 @@ class api {
 
         // First we do a permissions check.
         $context = $framework->get_context();
-        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
+        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $context)) {
+             throw new required_capability_exception($context, 'tool/lp:competencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -455,7 +455,7 @@ class api {
     /**
      * Perform a search based on the provided filters and return a paginated list of records.
      *
-     * Requires tool/lp:competencyread capability at some context.
+     * Requires tool/lp:competencyview capability at some context.
      *
      * @param array $filters A list of filters to apply to the list.
      * @param string $sort The column to sort on
@@ -474,8 +474,8 @@ class api {
         }
 
         // First we do a permissions check.
-        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
+        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $context)) {
+             throw new required_capability_exception($context, 'tool/lp:competencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -485,7 +485,7 @@ class api {
     /**
      * Perform a search based on the provided filters and return a paginated list of records.
      *
-     * Requires tool/lp:competencyread capability at some context.
+     * Requires tool/lp:competencyview capability at some context.
      *
      * @param array $filters A list of filters to apply to the list.
      * @return int
@@ -500,8 +500,8 @@ class api {
         }
 
         // First we do a permissions check.
-        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
+        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $context)) {
+             throw new required_capability_exception($context, 'tool/lp:competencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -691,7 +691,7 @@ class api {
     /**
      * Read a the details for a single competency framework and return a record.
      *
-     * Requires tool/lp:competencyread capability at the system context.
+     * Requires tool/lp:competencyview capability at the system context.
      *
      * @param int $id The id of the framework to read.
      * @return competency_framework
@@ -699,8 +699,8 @@ class api {
     public static function read_framework($id) {
         static::require_enabled();
         $framework = new competency_framework($id);
-        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $framework->get_context())) {
-             throw new required_capability_exception($framework->get_context(), 'tool/lp:competencyread', 'nopermissions', '');
+        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $framework->get_context())) {
+             throw new required_capability_exception($framework->get_context(), 'tool/lp:competencyview', 'nopermissions', '');
         }
         return $framework;
     }
@@ -717,8 +717,8 @@ class api {
         if (!is_object($framework)) {
             $framework = new competency_framework($framework);
         }
-        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $framework->get_context())) {
-             throw new required_capability_exception($framework->get_context(), 'tool/lp:competencyread', 'nopermissions', '');
+        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $framework->get_context())) {
+             throw new required_capability_exception($framework->get_context(), 'tool/lp:competencyview', 'nopermissions', '');
         }
         \tool_lp\event\competency_framework_viewed::create_from_framework($framework)->trigger();
         return true;
@@ -737,8 +737,8 @@ class api {
             $competency = new competency($competency);
         }
 
-        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $competency->get_context())) {
-             throw new required_capability_exception($competency->get_context(), 'tool/lp:competencyread', 'nopermissions', '');
+        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $competency->get_context())) {
+             throw new required_capability_exception($competency->get_context(), 'tool/lp:competencyview', 'nopermissions', '');
         }
 
         \tool_lp\event\competency_viewed::create_from_competency($competency)->trigger();
@@ -748,7 +748,7 @@ class api {
     /**
      * Perform a search based on the provided filters and return a paginated list of records.
      *
-     * Requires tool/lp:competencyread capability at the system context.
+     * Requires tool/lp:competencyview capability at the system context.
      *
      * @param string $sort The column to sort on
      * @param string $order ('ASC' or 'DESC')
@@ -771,10 +771,10 @@ class api {
 
         // Get all the relevant contexts.
         $contexts = self::get_related_contexts($context, $includes,
-            array('tool/lp:competencyread', 'tool/lp:competencymanage'));
+            array('tool/lp:competencyview', 'tool/lp:competencymanage'));
 
         if (empty($contexts)) {
-            throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:competencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -800,7 +800,7 @@ class api {
     /**
      * Perform a search based on the provided filters and return a paginated list of records.
      *
-     * Requires tool/lp:competencyread capability at the system context.
+     * Requires tool/lp:competencyview capability at the system context.
      *
      * @param context $context The parent context of the frameworks.
      * @param string $includes Defines what other contexts to fetch frameworks from.
@@ -816,10 +816,10 @@ class api {
 
         // Get all the relevant contexts.
         $contexts = self::get_related_contexts($context, $includes,
-            array('tool/lp:competencyread', 'tool/lp:competencymanage'));
+            array('tool/lp:competencyview', 'tool/lp:competencymanage'));
 
         if (empty($contexts)) {
-            throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:competencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -909,7 +909,7 @@ class api {
             }
 
             $context = context_course::instance($course->id);
-            $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
+            $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
             if (!has_any_capability($capabilities, $context)) {
                 continue;
             }
@@ -936,9 +936,9 @@ class api {
         $coursecontext = context_course::instance($courseid);
 
         // We will not check each module - course permissions should be enough.
-        $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
+        $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
         if (!has_any_capability($capabilities, $coursecontext)) {
-            throw new required_capability_exception($coursecontext, 'tool/lp:coursecompetencyread', 'nopermissions', '');
+            throw new required_capability_exception($coursecontext, 'tool/lp:coursecompetencyview', 'nopermissions', '');
         }
 
         $cmlist = course_module_competency::list_course_modules($competencyid, $courseid);
@@ -968,9 +968,9 @@ class api {
         self::validate_course_module($cm);
         $context = context_module::instance($cm->id);
 
-        $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
+        $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
-            throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:coursecompetencyview', 'nopermissions', '');
         }
 
         $result = array();
@@ -999,7 +999,7 @@ class api {
         // Now check permissions on each course.
         foreach ($courses as $id => $course) {
             $context = context_course::instance($course->id);
-            $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
+            $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
             if (!has_any_capability($capabilities, $context)) {
                 unset($courses[$id]);
                 continue;
@@ -1028,9 +1028,9 @@ class api {
         // First we do a permissions check.
         $context = context_course::instance($courseid);
 
-        $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
+        $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
+             throw new required_capability_exception($context, 'tool/lp:coursecompetencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -1057,9 +1057,9 @@ class api {
         self::validate_course($course);
         $context = context_course::instance($course->id);
 
-        $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
+        $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
-            throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:coursecompetencyview', 'nopermissions', '');
         }
 
         $result = array();
@@ -1137,9 +1137,9 @@ class api {
         self::validate_course_module($cm);
         $context = context_module::instance($cm->id);
 
-        $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
+        $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
-            throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:coursecompetencyview', 'nopermissions', '');
         }
 
         $result = array();
@@ -1172,9 +1172,9 @@ class api {
         // First we do a permissions check.
         $context = context_course::instance($courseid);
 
-        $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
+        $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
-            throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:coursecompetencyview', 'nopermissions', '');
         } else if (!user_competency::can_read_user_in_course($userid, $courseid)) {
             throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
         }
@@ -1208,9 +1208,9 @@ class api {
         $context = context_course::instance($courseid);
         $onlyvisible = 1;
 
-        $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
+        $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
-            throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:coursecompetencyview', 'nopermissions', '');
         } else if (!user_competency::can_read_user_in_course($userid, $courseid)) {
             throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
         }
@@ -1836,7 +1836,7 @@ class api {
     /**
      * Read a the details for a single learning plan template and return a record.
      *
-     * Requires tool/lp:templateread capability at the system context.
+     * Requires tool/lp:templateview capability at the system context.
      *
      * @param int $id The id of the template to read.
      * @return template
@@ -1848,7 +1848,7 @@ class api {
 
         // First we do a permissions check.
         if (!$template->can_read()) {
-             throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+             throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -1858,7 +1858,7 @@ class api {
     /**
      * Perform a search based on the provided filters and return a paginated list of records.
      *
-     * Requires tool/lp:templateread capability at the system context.
+     * Requires tool/lp:templateview capability at the system context.
      *
      * @param string $sort The column to sort on
      * @param string $order ('ASC' or 'DESC')
@@ -1879,11 +1879,11 @@ class api {
 
         // Get all the relevant contexts.
         $contexts = self::get_related_contexts($context, $includes,
-            array('tool/lp:templateread', 'tool/lp:templatemanage'));
+            array('tool/lp:templateview', 'tool/lp:templatemanage'));
 
         // First we do a permissions check.
         if (empty($contexts)) {
-             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
+             throw new required_capability_exception($context, 'tool/lp:templateview', 'nopermissions', '');
         }
 
         // Make the order by.
@@ -1907,7 +1907,7 @@ class api {
     /**
      * Perform a search based on the provided filters and return how many results there are.
      *
-     * Requires tool/lp:templateread capability at the system context.
+     * Requires tool/lp:templateview capability at the system context.
      *
      * @param context $context The parent context of the frameworks.
      * @param string $includes Defines what other contexts to fetch frameworks from.
@@ -1923,10 +1923,10 @@ class api {
 
         // First we do a permissions check.
         $contexts = self::get_related_contexts($context, $includes,
-            array('tool/lp:templateread', 'tool/lp:templatemanage'));
+            array('tool/lp:templateview', 'tool/lp:templatemanage'));
 
         if (empty($contexts)) {
-             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
+             throw new required_capability_exception($context, 'tool/lp:templateview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -1947,9 +1947,9 @@ class api {
         $context = context_system::instance();
         $onlyvisible = 1;
 
-        $capabilities = array('tool/lp:templateread', 'tool/lp:templatemanage');
+        $capabilities = array('tool/lp:templateview', 'tool/lp:templatemanage');
         if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
+             throw new required_capability_exception($context, 'tool/lp:templateview', 'nopermissions', '');
         }
 
         if (has_capability('tool/lp:templatemanage', $context)) {
@@ -1972,9 +1972,9 @@ class api {
         $context = context_system::instance();
         $onlyvisible = 1;
 
-        $capabilities = array('tool/lp:templateread', 'tool/lp:templatemanage');
+        $capabilities = array('tool/lp:templateview', 'tool/lp:templatemanage');
         if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
+             throw new required_capability_exception($context, 'tool/lp:templateview', 'nopermissions', '');
         }
 
         if (has_capability('tool/lp:templatemanage', $context)) {
@@ -2001,7 +2001,7 @@ class api {
         }
 
         if (!$template->can_read()) {
-            throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+            throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -2022,7 +2022,7 @@ class api {
         }
 
         if (!$template->can_read()) {
-            throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+            throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -2044,7 +2044,7 @@ class api {
         }
 
         if (!$template->can_read()) {
-            throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+            throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -2409,7 +2409,7 @@ class api {
 
         // The user must be able to view the template to use it as a base for a plan.
         if (!$template->can_read()) {
-            throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+            throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
         }
         // Can not create plan from a hidden template.
         if ($template->get_visible() == false) {
@@ -2475,7 +2475,7 @@ class api {
 
         // The user must be able to view the template to use it as a base for a plan.
         if (!$template->can_read()) {
-            throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+            throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
         }
 
         // Can not create plan from a hidden template.
@@ -3326,7 +3326,7 @@ class api {
         $context = context_user::instance($userid);
         $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
         if (!$uc || !$uc->can_read()) {
-            throw new required_capability_exception($context, 'tool/lp:usercompetencyread', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
         } else if ($uc->get_status() != user_competency::STATUS_WAITING_FOR_REVIEW) {
             throw new coding_exception('The competency can not be cancel review request at this stage.');
         } else if (!$uc->can_request_review()) {
@@ -3357,7 +3357,7 @@ class api {
         }
 
         if (!$uc->can_read()) {
-            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyread', 'nopermissions', '');
+            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyview', 'nopermissions', '');
         } else if ($uc->get_status() != user_competency::STATUS_IDLE) {
             throw new coding_exception('The competency can not be sent for review at this stage.');
         } else if (!$uc->can_request_review()) {
@@ -3386,7 +3386,7 @@ class api {
         $context = context_user::instance($userid);
         $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
         if (!$uc || !$uc->can_read()) {
-            throw new required_capability_exception($context, 'tool/lp:usercompetencyread', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
         } else if ($uc->get_status() != user_competency::STATUS_WAITING_FOR_REVIEW) {
             throw new coding_exception('The competency review can not be started at this stage.');
         } else if (!$uc->can_review()) {
@@ -3414,7 +3414,7 @@ class api {
         $context = context_user::instance($userid);
         $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
         if (!$uc || !$uc->can_read()) {
-            throw new required_capability_exception($context, 'tool/lp:usercompetencyread', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
         } else if ($uc->get_status() != user_competency::STATUS_IN_REVIEW) {
             throw new coding_exception('The competency review can not be stopped at this stage.');
         } else if (!$uc->can_review()) {
@@ -3443,7 +3443,7 @@ class api {
         }
 
         if (!$uc || !$uc->can_read()) {
-            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyread', 'nopermissions', '');
+            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyview', 'nopermissions', '');
         }
 
         \tool_lp\event\user_competency_viewed::create_from_user_competency_viewed($uc)->trigger();
@@ -3465,7 +3465,7 @@ class api {
         }
 
         if (!$uc || !$uc->can_read()) {
-            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyread', 'nopermissions', '');
+            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyview', 'nopermissions', '');
         }
         $plan = new plan($planid);
         if ($plan->get_status() == plan::STATUS_COMPLETE) {
@@ -3491,7 +3491,7 @@ class api {
         }
 
         if (!$uc || !$uc->can_read()) {
-            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyread', 'nopermissions', '');
+            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyview', 'nopermissions', '');
         }
         // Validate the course, this will throw an exception if not valid.
         self::validate_course($courseid);
@@ -3514,7 +3514,7 @@ class api {
         }
 
         if (!$ucp || !user_competency::can_read_user($ucp->get_userid())) {
-            throw new required_capability_exception($ucp->get_context(), 'tool/lp:usercompetencyread', 'nopermissions', '');
+            throw new required_capability_exception($ucp->get_context(), 'tool/lp:usercompetencyview', 'nopermissions', '');
         }
         $plan = new plan($ucp->get_planid());
         if ($plan->get_status() != plan::STATUS_COMPLETE) {
@@ -3538,7 +3538,7 @@ class api {
         $template = new template($templateid);
 
         if (!$template->can_read()) {
-            throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+            throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -3555,8 +3555,8 @@ class api {
         static::require_enabled();
         $competency = new competency($competencyid);
 
-        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $competency->get_context())) {
-             throw new required_capability_exception($competency->get_context(), 'tool/lp:competencyread', 'nopermissions', '');
+        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $competency->get_context())) {
+             throw new required_capability_exception($competency->get_context(), 'tool/lp:competencyview', 'nopermissions', '');
         }
 
         return $competency->get_related_competencies();
@@ -3620,7 +3620,7 @@ class api {
 
         if (!$userevidence->can_read()) {
             $context = $userevidence->get_context();
-            throw new required_capability_exception($context, 'tool/lp:userevidenceread', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:userevidenceview', 'nopermissions', '');
         }
 
         return $userevidence;
@@ -3736,7 +3736,7 @@ class api {
         static::require_enabled();
         if (!user_evidence::can_read_user($userid)) {
             $context = context_user::instance($userid);
-            throw new required_capability_exception($context, 'tool/lp:userevidenceread', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:userevidenceview', 'nopermissions', '');
         }
 
         $evidence = user_evidence::get_records(array('userid' => $userid), 'name');
@@ -4545,8 +4545,8 @@ class api {
         // Throws exception if competency not in plan.
         $competency = $uc->get_competency();
         $competencycontext = $competency->get_context();
-        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $competencycontext)) {
-            throw new required_capability_exception($competencycontext, 'tool/lp:competencyread', 'nopermissions', '');
+        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $competencycontext)) {
+            throw new required_capability_exception($competencycontext, 'tool/lp:competencyview', 'nopermissions', '');
         }
 
         $action = evidence::ACTION_OVERRIDE;
@@ -4613,8 +4613,8 @@ class api {
         // Throws exception if competency not in plan.
         $competency = $plan->get_competency($competencyid);
         $competencycontext = $competency->get_context();
-        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $competencycontext)) {
-            throw new required_capability_exception($competencycontext, 'tool/lp:competencyread', 'nopermissions', '');
+        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $competencycontext)) {
+            throw new required_capability_exception($competencycontext, 'tool/lp:competencyview', 'nopermissions', '');
         }
 
         $action = evidence::ACTION_OVERRIDE;
@@ -4691,8 +4691,8 @@ class api {
         // Check that competency is in course and visible to the current user.
         $competency = course_competency::get_competency($course->id, $competencyid);
         $competencycontext = $competency->get_context();
-        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $competencycontext)) {
-            throw new required_capability_exception($competencycontext, 'tool/lp:competencyread', 'nopermissions', '');
+        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $competencycontext)) {
+            throw new required_capability_exception($competencycontext, 'tool/lp:competencyview', 'nopermissions', '');
         }
 
         // Check that the user is enrolled in the course, and is "gradable".
@@ -4738,7 +4738,7 @@ class api {
     /**
      * Count the plans in the template, filtered by status.
      *
-     * Requires tool/lp:templateread capability at the system context.
+     * Requires tool/lp:templateview capability at the system context.
      *
      * @param mixed $templateorid The id or the template.
      * @param int $status One of the plan status constants (or 0 for all plans).
@@ -4752,7 +4752,7 @@ class api {
 
         // First we do a permissions check.
         if (!$template->can_read()) {
-             throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+             throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
         }
 
         return plan::count_records_for_template($template->get_id(), $status);
@@ -4761,7 +4761,7 @@ class api {
     /**
      * Count the user-completency-plans in the template, optionally filtered by proficiency.
      *
-     * Requires tool/lp:templateread capability at the system context.
+     * Requires tool/lp:templateview capability at the system context.
      *
      * @param mixed $templateorid The id or the template.
      * @param mixed $proficiency If true, filter by proficiency, if false filter by not proficient, if null - no filter.
@@ -4775,7 +4775,7 @@ class api {
 
         // First we do a permissions check.
         if (!$template->can_read()) {
-             throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+             throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
         }
 
         return user_competency_plan::count_records_for_template($template->get_id(), $proficiency);
@@ -4784,7 +4784,7 @@ class api {
     /**
      * List the plans in the template, filtered by status.
      *
-     * Requires tool/lp:templateread capability at the system context.
+     * Requires tool/lp:templateview capability at the system context.
      *
      * @param mixed $templateorid The id or the template.
      * @param int $status One of the plan status constants (or 0 for all plans).
@@ -4800,7 +4800,7 @@ class api {
 
         // First we do a permissions check.
         if (!$template->can_read()) {
-             throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+             throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
         }
 
         return plan::get_records_for_template($template->get_id(), $status, $skip, $limit);
@@ -4809,7 +4809,7 @@ class api {
     /**
      * Get the most often not completed competency for this template.
      *
-     * Requires tool/lp:templateread capability at the system context.
+     * Requires tool/lp:templateview capability at the system context.
      *
      * @param mixed $templateorid The id or the template.
      * @param int $skip The number of records to skip
@@ -4824,7 +4824,7 @@ class api {
 
         // First we do a permissions check.
         if (!$template->can_read()) {
-             throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+             throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
         }
 
         return user_competency_plan::get_least_proficient_competencies_for_template($template->get_id(), $skip, $limit);
@@ -4833,7 +4833,7 @@ class api {
     /**
      * Template event viewed.
      *
-     * Requires tool/lp:templateread capability at the system context.
+     * Requires tool/lp:templateview capability at the system context.
      *
      * @param mixed $templateorid The id or the template.
      * @return boolean
@@ -4847,7 +4847,7 @@ class api {
 
         // First we do a permissions check.
         if (!$template->can_read()) {
-             throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+             throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
         }
 
         // Trigger a template viewed event.

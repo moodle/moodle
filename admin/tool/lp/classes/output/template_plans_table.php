@@ -62,7 +62,7 @@ class template_plans_table extends table_sql {
 
         // This object should not be used without the right permissions.
         if (!$template->can_read()) {
-            throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+            throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
         }
 
         // Set protected properties.

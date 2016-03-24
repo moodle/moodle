@@ -187,7 +187,7 @@ class user_evidence extends persistent {
     public static function can_read_user($evidenceuserid) {
         $context = context_user::instance($evidenceuserid);
 
-        $capabilities = array('tool/lp:userevidenceread');
+        $capabilities = array('tool/lp:userevidenceview');
 
         return has_any_capability($capabilities, $context) || self::can_manage_user($evidenceuserid);
     }

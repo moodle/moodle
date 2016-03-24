@@ -133,7 +133,7 @@ class template extends persistent {
      * @return bool
      */
     public static function can_read_context($context) {
-        return has_capability('tool/lp:templateread', $context) || self::can_manage_context($context);
+        return has_capability('tool/lp:templateview', $context) || self::can_manage_context($context);
     }
 
     /**
