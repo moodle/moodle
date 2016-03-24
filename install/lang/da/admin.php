@@ -40,3 +40,4 @@ $string['cliunknowoption'] = 'Ukendte options: {$a} Brug venligst --help option.
 $string['cliyesnoprompt'] = 'j (betyder ja) og n (betyder nej)';
 $string['environmentrequireinstall'] = 'skal være installeret og aktiveret';
 $string['environmentrequireversion'] = 'minimumskravet er version {$a->needed} og du kører {$a->current}';
+$string['upgradekeyset'] = 'Opgraderingsnøgle (efterlad blank for ikke at angive denne)';
