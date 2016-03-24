@@ -109,6 +109,8 @@ class manager {
     /**
      * Returns an initialised \core_search instance.
      *
+     * @see \core_search\engine::is_installed
+     * @see \core_search\engine::is_server_ready
      * @throws \core_search\engine_exception
      * @return \core_search\manager
      */

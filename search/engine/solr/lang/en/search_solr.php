@@ -32,11 +32,13 @@ $string['fileindexing_help'] = 'If your Solr install supports it, this feature a
 $string['fileindexsettings'] = 'File indexing settings';
 $string['maxindexfilekb'] = 'Maximum file size to index (kB)';
 $string['maxindexfilekb_help'] = 'Files larger than this number of kilobytes will be skipped for search indexing. 0 to index files of any size.';
+$string['minimumsolr4'] = 'Solr 4.0 is the minimum version required for Moodle';
 $string['missingconfig'] = 'Your Apache Solr server is not yet configured in Moodle.';
 $string['multivaluedfield'] = 'Field "{$a}" returned an array instead of a scalar, the field is probably defined in Solr with "Multivalued" to true, this means that Solr autocreated the field for you when you indexed data because you forgot to run search/engine/solr/cli/setup_schema.php. Please delete the current index, create a new one and run setup_schema.php before indexing data in Solr.';
 $string['nodatafromserver'] = 'No data from server';
 $string['pluginname'] = 'Solr';
 $string['schemafieldautocreated'] = 'Field "{$a}" already exists in Solr schema. You probably forgot to run this script before indexing data and fields were autocreated by Solr. Please delete the current index, create a new one and run setup_schema.php again before indexing data in Solr.';
+$string['schemasetupfromsolr5'] = 'Your Solr server version is lower than 5.0, this script can only set your schema if your Solr version is 5.0 or higher. You need to manually set the fields in your schema according to \\search_solr\\document::get_default_fields_definition()';
 $string['searchinfo'] = 'Search queries';
 $string['searchinfo_help'] = 'Features you can use while performing search queries:
 

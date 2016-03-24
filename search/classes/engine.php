@@ -79,8 +79,6 @@ abstract class engine {
      *
      * Search engine availability should be checked separately.
      *
-     * @see self::is_installed
-     * @see self::is_server_ready
      * @return void
      */
     public function __construct() {

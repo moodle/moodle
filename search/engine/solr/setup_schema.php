@@ -34,8 +34,24 @@ require_once($CFG->libdir.'/adminlib.php');
 require_login(null, false);
 require_capability('moodle/site:config', context_system::instance());
 
+$returnurl = new moodle_url('/admin/settings.php', array('section' => 'manageglobalsearch'));
+
 $schema = new \search_solr\schema();
+
+$status = $schema->can_setup_server();
+if ($status !== true) {
+
+    $PAGE->set_context(context_system::instance());
+    $PAGE->set_url(new moodle_url('/search/engine/solr/setup_schema.php'));
+
+    echo $OUTPUT->header();
+    echo $OUTPUT->notification($status, \core\output\notification::NOTIFY_ERROR);
+    echo $OUTPUT->box($OUTPUT->action_link($returnurl, get_string('continue')), 'generalbox centerpara');
+    echo $OUTPUT->footer();
+
+    exit(1);
+}
+
 $schema->setup();
 
-$url = new moodle_url('/admin/settings.php', array('section' => 'manageglobalsearch'));
-redirect($url, get_string('setupok', 'search_solr'), 4);
+redirect($returnurl, get_string('setupok', 'search_solr'), 4);
