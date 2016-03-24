@@ -27,7 +27,7 @@ require_once($CFG->libdir.'/adminlib.php');
 
 $userid = optional_param('userid', false, PARAM_INT);
 $id = optional_param('id', false, PARAM_INT);
-$returntype = optional_param('return', 'plans', PARAM_ALPHA);
+$returntype = optional_param('return', null, PARAM_ALPHA);
 
 require_login(0, false);
 \tool_lp\api::require_enabled();

@@ -202,7 +202,7 @@ class page_helper {
         }
 
         $returnurl = $plansurl;
-        if ($returntype == 'plan' && $planurl) {
+        if ($returntype != 'plans' && $planurl) {
             $returnurl = $planurl;
         }
 
