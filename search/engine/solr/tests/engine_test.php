@@ -213,7 +213,7 @@ class search_solr_engine_testcase extends advanced_testcase {
 
         // Get the doc and insert the default doc.
         $doc = $area->get_document($record);
-        $engine->add_document($doc->export_for_engine());
+        $engine->add_document($doc);
 
         $users = array();
         $users[] = $this->getDataGenerator()->create_user();
@@ -225,9 +225,10 @@ class search_solr_engine_testcase extends advanced_testcase {
 
         // Now add a custom doc for each user.
         foreach ($users as $user) {
+            $doc = $area->get_document($record);
             $doc->set('id', $originalid.'-'.$user->id);
             $doc->set('owneruserid', $user->id);
-            $engine->add_document($doc->export_for_engine());
+            $engine->add_document($doc);
         }
 
         $engine->area_index_complete($area->get_area_id());

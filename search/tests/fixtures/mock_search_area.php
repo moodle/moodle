@@ -44,7 +44,7 @@ class role_capabilities extends \core_search\area\base {
         return $DB->get_recordset_sql("SELECT id, contextid, roleid, capability FROM {role_capabilities} where timemodified >= ? and capability = ?", array($modifiedfrom, 'moodle/course:renameroles'));
     }
 
-    public function get_document($record) {
+    public function get_document($record, $options = array()) {
         global $USER;
 
         // Prepare associative array with data from DB.
@@ -52,13 +52,36 @@ class role_capabilities extends \core_search\area\base {
         $doc->set('title', $record->capability . ' roleid ' . $record->roleid);
         $doc->set('content', $record->capability . ' roleid ' . $record->roleid . ' message');
         $doc->set('contextid', $record->contextid);
-        $doc->set('type', \core_search\manager::TYPE_TEXT);
         $doc->set('courseid', SITEID);
         $doc->set('userid', $USER->id);
         $doc->set('owneruserid', \core_search\manager::NO_OWNER_ID);
         $doc->set('modified', time());
 
         return $doc;
+    }
+
+    public function attach_files($document) {
+        global $CFG;
+
+        // Add the searchable file fixture.
+        $syscontext = \context_system::instance();
+        $filerecord = array(
+            'contextid' => $syscontext->id,
+            'component' => 'core',
+            'filearea'  => 'unittest',
+            'itemid'    => 0,
+            'filepath'  => '/',
+            'filename'  => 'searchfile'.$document->get('itemid').'.txt',
+        );
+
+        $fs = get_file_storage();
+        $file = $fs->create_file_from_string($filerecord, 'File contents');
+
+        $document->add_stored_file($file);
+    }
+
+    public function uses_file_indexing() {
+        return true;
     }
 
     public function check_access($id) {

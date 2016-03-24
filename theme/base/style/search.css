@@ -12,3 +12,6 @@
     margin: 7px 0;
 }
 
+.search-results .result .filename {
+    font-style: italic;
+}

@@ -267,4 +267,107 @@ class mod_forum_search_testcase extends advanced_testcase {
         $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($discussion1reply1->id));
         $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($discussion2reply1->id));
     }
+
+    /**
+     * Test for post attachments.
+     *
+     * @return void
+     */
+    public function test_attach_files() {
+        global $DB;
+
+        $fs = get_file_storage();
+
+        // Returns the instance as long as the area is supported.
+        $searcharea = \core_search\manager::get_search_area($this->forumpostareaid);
+        $this->assertInstanceOf('\mod_forum\search\post', $searcharea);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $course1 = self::getDataGenerator()->create_course();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id, 'student');
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id, 'student');
+
+        $record = new stdClass();
+        $record->course = $course1->id;
+
+        $forum1 = self::getDataGenerator()->create_module('forum', $record);
+
+        // Create discussion1.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $record->userid = $user1->id;
+        $record->forum = $forum1->id;
+        $record->message = 'discussion';
+        $record->attachemt = 1;
+        $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        // Attach 2 file to the discussion post.
+        $post = $DB->get_record('forum_posts', array('discussion' => $discussion1->id));
+        $filerecord = array(
+            'contextid' => context_module::instance($forum1->cmid)->id,
+            'component' => 'mod_forum',
+            'filearea'  => 'attachment',
+            'itemid'    => $post->id,
+            'filepath'  => '/',
+            'filename'  => 'myfile1'
+        );
+        $file1 = $fs->create_file_from_string($filerecord, 'Some contents 1');
+        $filerecord['filename'] = 'myfile2';
+        $file2 = $fs->create_file_from_string($filerecord, 'Some contents 2');
+
+        // Create post1 in discussion1.
+        $record = new stdClass();
+        $record->discussion = $discussion1->id;
+        $record->parent = $discussion1->firstpost;
+        $record->userid = $user2->id;
+        $record->message = 'post2';
+        $record->attachemt = 1;
+        $discussion1reply1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+
+        $filerecord['itemid'] = $discussion1reply1->id;
+        $filerecord['filename'] = 'myfile3';
+        $file3 = $fs->create_file_from_string($filerecord, 'Some contents 3');
+
+        // Create post2 in discussion1.
+        $record = new stdClass();
+        $record->discussion = $discussion1->id;
+        $record->parent = $discussion1->firstpost;
+        $record->userid = $user2->id;
+        $record->message = 'post3';
+        $discussion1reply2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+
+        // Now get all the posts and see if they have the right files attached.
+        $searcharea = \core_search\manager::get_search_area($this->forumpostareaid);
+        $recordset = $searcharea->get_recordset_by_timestamp(0);
+        $nrecords = 0;
+        foreach ($recordset as $record) {
+            $doc = $searcharea->get_document($record);
+            $searcharea->attach_files($doc);
+            $files = $doc->get_files();
+            // Now check that each doc has the right files on it.
+            switch ($doc->get('itemid')) {
+                case ($post->id):
+                    $this->assertCount(2, $files);
+                    $this->assertEquals($file1->get_id(), $files[$file1->get_id()]->get_id());
+                    $this->assertEquals($file2->get_id(), $files[$file2->get_id()]->get_id());
+                    break;
+                case ($discussion1reply1->id):
+                    $this->assertCount(1, $files);
+                    $this->assertEquals($file3->get_id(), $files[$file3->get_id()]->get_id());
+                    break;
+                case ($discussion1reply2->id):
+                    $this->assertCount(0, $files);
+                    break;
+                default:
+                    $this->fail('Unexpected post returned');
+                    break;
+            }
+            $nrecords++;
+        }
+        $recordset->close();
+        $this->assertEquals(3, $nrecords);
+    }
 }

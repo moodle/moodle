@@ -65,7 +65,7 @@ class post extends \core_search\area\base_mod {
                   FROM {forum_posts} fp
                   JOIN {forum_discussions} fd ON fd.id = fp.discussion
                   JOIN {forum} f ON f.id = fd.forum
-                WHERE fp.modified >= ? ORDER BY fp.modified ASC';
+                 WHERE fp.modified >= ? ORDER BY fp.modified ASC';
         return $DB->get_recordset_sql($sql, array($modifiedfrom));
     }
 
@@ -73,9 +73,10 @@ class post extends \core_search\area\base_mod {
      * Returns the document associated with this post id.
      *
      * @param stdClass $record Post info.
+     * @param array    $options
      * @return \core_search\document
      */
-    public function get_document($record) {
+    public function get_document($record, $options = array()) {
 
         try {
             $cm = $this->get_cm('forum', $record->forumid, $record->courseid);
@@ -96,13 +97,60 @@ class post extends \core_search\area\base_mod {
         $doc->set('title', $record->subject);
         $doc->set('content', content_to_text($record->message, $record->messageformat));
         $doc->set('contextid', $context->id);
-        $doc->set('type', \core_search\manager::TYPE_TEXT);
         $doc->set('courseid', $record->courseid);
         $doc->set('userid', $record->userid);
         $doc->set('owneruserid', \core_search\manager::NO_OWNER_ID);
         $doc->set('modified', $record->modified);
 
+        // Check if this document should be considered new.
+        if (isset($options['lastindexedtime']) && ($options['lastindexedtime'] < $record->created)) {
+            // If the document was created after the last index time, it must be new.
+            $doc->set_is_new(true);
+        }
+
         return $doc;
+    }
+
+    /**
+     * Returns true if this area uses file indexing.
+     *
+     * @return bool
+     */
+    public function uses_file_indexing() {
+        return true;
+    }
+
+    /**
+     * Add the forum post attachments.
+     *
+     * @param document $document The current document
+     * @return null
+     */
+    public function attach_files($document) {
+        global $DB;
+
+        $postid = $document->get('itemid');
+
+        try {
+            $post = $this->get_post($postid);
+        } catch (\dml_missing_record_exception $e) {
+            unset($this->postsdata[$postid]);
+            debugging('Could not get record to attach files to '.$document->get('id'), DEBUG_DEVELOPER);
+            return;
+        }
+
+        // Because this is used during indexing, we don't want to cache posts. Would result in memory leak.
+        unset($this->postsdata[$postid]);
+
+        $cm = $this->get_cm('forum', $post->forum, $document->get('courseid'));
+        $context = \context_module::instance($cm->id);
+
+        // Get the files and attach them.
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($context->id, 'mod_forum', 'attachment', $postid, "filename", false);
+        foreach ($files as $file) {
+            $document->add_stored_file($file);
+        }
     }
 
     /**

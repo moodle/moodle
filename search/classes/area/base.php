@@ -186,6 +186,15 @@ abstract class base {
     }
 
     /**
+     * Returns true if this area uses file indexing.
+     *
+     * @return bool
+     */
+    public function uses_file_indexing() {
+        return false;
+    }
+
+    /**
      * Returns a recordset ordered by modification date ASC.
      *
      * Each record can include any data self::get_document might need but it must:
@@ -213,10 +222,25 @@ abstract class base {
      * Search areas should send plain text to the search engine, use the following function to convert any user
      * input data to plain text: {@link content_to_text}
      *
+     * Valid keys for the options array are:
+     *     indexfiles => File indexing is enabled if true.
+     *     lastindexedtime => The last time this area was indexed. 0 if never indexed.
+     *
      * @param \stdClass $record A record containing, at least, the indexed document id and a modified timestamp
+     * @param array     $options Options for document creation
      * @return \core_search\document
      */
-    abstract public function get_document($record);
+    abstract public function get_document($record, $options = array());
+
+    /**
+     * Add any files to the document that should be indexed.
+     *
+     * @param document $document The current document
+     * @return void
+     */
+    public function attach_files($document) {
+        return;
+    }
 
     /**
      * Can the current user see the document.
