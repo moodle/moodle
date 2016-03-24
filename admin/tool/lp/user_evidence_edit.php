@@ -32,7 +32,7 @@ if (isguestuser()) {
 
 $userid = optional_param('userid', $USER->id, PARAM_INT);
 $id = optional_param('id', null, PARAM_INT);
-$returntype = optional_param('return', 'list', PARAM_ALPHA);
+$returntype = optional_param('return', null, PARAM_ALPHA);
 
 $url = new moodle_url('/admin/tool/lp/user_evidence_edit.php', array('id' => $id, 'userid' => $userid, 'return' => $returntype));
 

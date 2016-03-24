@@ -276,7 +276,7 @@ class page_helper {
         }
 
         $returnurl = $evidencelisturl;
-        if ($returntype == 'evidence' && $evidenceurl) {
+        if ($returntype != 'list' && $evidenceurl) {
             $returnurl = $evidenceurl;
         }
 
