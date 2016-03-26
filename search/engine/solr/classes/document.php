@@ -72,6 +72,41 @@ class document extends \core_search\document {
      * @return int
      */
     protected function get_text_format() {
-        return FORMAT_MARKDOWN;
+        return FORMAT_HTML;
+    }
+
+    /**
+     * Formats a text string coming from the search engine.
+     *
+     * @param  string $text Text to format
+     * @return string HTML text to be renderer
+     */
+    protected function format_text($text) {
+        // Since we allow output for highlighting, we need to encode html entities.
+        // This ensures plaintext html chars don't become valid html.
+        $out = s($text);
+
+        $startcount = 0;
+        $endcount = 0;
+
+        // Remove end/start pairs that span a few common seperation characters. Allows us to highlight phrases instead of words.
+        $regex = '|'.engine::HIGHLIGHT_END.'([ .,-]{0,3})'.engine::HIGHLIGHT_START.'|';
+        $out = preg_replace($regex, '$1', $out);
+
+        // Now replace our start and end highlight markers.
+        $out = str_replace(engine::HIGHLIGHT_START, '<span class="highlight">', $out, $startcount);
+        $out = str_replace(engine::HIGHLIGHT_END, '</span>', $out, $endcount);
+
+        // This makes sure any highlight tags are balanced, incase truncation or the highlight text contained our markers.
+        while ($startcount > $endcount) {
+            $out .= '</span>';
+            $endcount++;
+        }
+        while ($startcount < $endcount) {
+            $out = '<span class="highlight">' . $out;
+            $endcount++;
+        }
+
+        return parent::format_text($out);
     }
 }
