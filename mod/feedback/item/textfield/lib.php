@@ -55,7 +55,7 @@ class feedback_item_textfield extends feedback_item_base {
             $itemsize = 30;
         }
 
-        $itemlength = isset($size_and_length[1]) ? $size_and_length[1] : 5;
+        $itemlength = isset($size_and_length[1]) ? $size_and_length[1] : 255;
 
         $item->itemsize = $itemsize;
         $item->itemmaxlength = $itemlength;
