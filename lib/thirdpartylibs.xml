@@ -204,7 +204,7 @@
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>html2text.php</location>
+    <location>html2text</location>
     <name>HTML2Text</name>
     <license>GPL</license>
     <version>3.0.0</version>
