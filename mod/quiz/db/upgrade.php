@@ -916,7 +916,7 @@ function xmldb_quiz_upgrade($oldversion) {
                 HAVING MIN(firstslot) > 1");
 
         if ($problemquizzes) {
-            $pbar = new progress_bar('upgradegroupmembersonly', 500, true);
+            $pbar = new progress_bar('upgradequizfirstsection', 500, true);
             $total = count($problemquizzes);
             $done = 0;
             foreach ($problemquizzes as $problemquiz) {
