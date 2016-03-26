@@ -826,8 +826,8 @@ function forum_cron() {
                 // MS Outlook / Office uses poorly documented and non standard headers, including
                 // Thread-Topic which overrides the Subject and shouldn't contain Re: or Fwd: etc.
                 $a->subject = $discussion->name;
-                $postsubject = html_to_text(get_string('postmailsubject', 'forum', $a), 0);
-                $userfrom->customheaders[] = "Thread-Topic: $postsubject";
+                $threadtopic = html_to_text(get_string('postmailsubject', 'forum', $a), 0);
+                $userfrom->customheaders[] = "Thread-Topic: $threadtopic";
                 $userfrom->customheaders[] = "Thread-Index: " . substr($rootid, 1, 28);
 
                 // Send the post now!
