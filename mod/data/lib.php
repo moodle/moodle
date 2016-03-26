@@ -3654,6 +3654,11 @@ function data_get_all_recordids($dataid, $selectdata = '', $params = null) {
  * @return array $recordids   An array of record ids.
  */
 function data_get_advance_search_ids($recordids, $searcharray, $dataid) {
+    // Check to see if we have any record IDs.
+    if (empty($recordids)) {
+        // Send back an empty search.
+        return array();
+    }
     $searchcriteria = array_keys($searcharray);
     // Loop through and reduce the IDs one search criteria at a time.
     foreach ($searchcriteria as $key) {

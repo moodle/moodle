@@ -189,6 +189,9 @@ class data_advanced_search_sql_test extends advanced_testcase {
      * extra parameters. $alias is the field alias used in the sql query and $commaid
      * is a comma seperated string of record IDs.
      *
+     * Test 3.1: This tests that if no recordids are provided (In a situation where a search is done on an empty database)
+     * That an empty array is returned.
+     *
      * Test 4: data_get_advanced_search_sql provides an array which contains an sql string to be used for displaying records
      * to the user when they use the advanced search criteria and the parameters that go with the sql statement. This test
      * takes that information and does a search on the database, returning a record.
@@ -216,6 +219,10 @@ class data_advanced_search_sql_test extends advanced_testcase {
         // Test 3
         $newrecordids = data_get_advance_search_ids($recordids, $this->recordsearcharray, $this->recorddata->id);
         $this->assertEquals($this->datarecordset, $newrecordids);
+
+        // Test 3.1
+        $resultrecordids = data_get_advance_search_ids(array(), $this->recordsearcharray, $this->recorddata->id);
+        $this->assertEmpty($resultrecordids);
 
         // Test 4
         $sortorder = 'ORDER BY r.timecreated ASC , r.id ASC';
