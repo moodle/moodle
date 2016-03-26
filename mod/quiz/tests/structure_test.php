@@ -515,7 +515,7 @@ class mod_quiz_structure_testcase extends advanced_testcase {
             ), $structure);
     }
 
-    public function test_move_slot_to_down_start_of_second_section() {
+    public function test_move_slot_down_to_start_of_second_section() {
         $quizobj = $this->create_test_quiz(array(
                 'Heading 1',
                 array('TF1', 1, 'truefalse'),
@@ -536,6 +536,63 @@ class mod_quiz_structure_testcase extends advanced_testcase {
                 'Heading 2',
                 array('TF2', 2, 'truefalse'),
                 array('TF3', 2, 'truefalse'),
+            ), $structure);
+    }
+
+    public function test_move_first_slot_down_to_start_of_page_2() {
+        $quizobj = $this->create_test_quiz(array(
+                'Heading 1',
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+            ));
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+
+        $idtomove = $structure->get_question_in_slot(1)->slotid;
+        $structure->move_slot($idtomove, 0, '2');
+
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+        $this->assert_quiz_layout(array(
+                'Heading 1',
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 1, 'truefalse'),
+            ), $structure);
+    }
+
+    public function test_move_first_slot_to_same_place_on_page_1() {
+        $quizobj = $this->create_test_quiz(array(
+                'Heading 1',
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+            ));
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+
+        $idtomove = $structure->get_question_in_slot(1)->slotid;
+        $structure->move_slot($idtomove, 0, '1');
+
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+        $this->assert_quiz_layout(array(
+                'Heading 1',
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+            ), $structure);
+    }
+
+    public function test_move_first_slot_to_before_page_1() {
+        $quizobj = $this->create_test_quiz(array(
+                'Heading 1',
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
+            ));
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+
+        $idtomove = $structure->get_question_in_slot(1)->slotid;
+        $structure->move_slot($idtomove, 0, '');
+
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+        $this->assert_quiz_layout(array(
+                'Heading 1',
+                array('TF1', 1, 'truefalse'),
+                array('TF2', 2, 'truefalse'),
             ), $structure);
     }
 
