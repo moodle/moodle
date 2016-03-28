@@ -945,6 +945,24 @@ class mod_forum_mail_testcase extends advanced_testcase {
             'Hello Moodle&', 'Welcome to Moodle&');
         $textcases['Text mail with ampersands everywhere'] = array('data' => $newcase);
 
+        // Text+image message i.e. @@PLUGINFILE@@ token handling.
+        $newcase = $base;
+        $newcase['forums'][0]['forumposts'][0]['name'] = 'Text and image';
+        $newcase['forums'][0]['forumposts'][0]['message'] = 'Welcome to Moodle, '
+            .'@@PLUGINFILE@@/Screen%20Shot%202016-03-22%20at%205.54.36%20AM%20%281%29.png !';
+        $newcase['expectations'][0]['subject'] = '.*101.*Text and image';
+        $newcase['expectations'][0]['contents'] = array(
+            '~{$a',
+            '~&(amp|lt|gt|quot|\#039);(?!course)',
+            'Attachment example.txt:\n' .
+            'http://www.example.com/moodle/pluginfile.php/\d*/mod_forum/attachment/\d*/example.txt\n',
+            'Text and image', 'Moodle Forum',
+            'Welcome to Moodle, *\n.*'
+                .'http://www.example.com/moodle/pluginfile.php/\d+/mod_forum/post/\d+/'
+                .'Screen%20Shot%202016-03-22%20at%205\.54\.36%20AM%20%281%29\.png *\n.*!',
+            'Love Moodle', '1\d1');
+        $textcases['Text mail with text+image message i.e. @@PLUGINFILE@@ token handling'] = array('data' => $newcase);
+
         // Now the html cases.
         $htmlcases = array();
 
@@ -972,6 +990,25 @@ class mod_forum_mail_testcase extends advanced_testcase {
             '<div class="subject">\n.*Hello Moodle\'"&gt;&amp;', '>Moodle Forum\'"&gt;&amp;',
             '>Welcome.*Moodle\'"&gt;&amp;', '>Love Moodle&\#039;&quot;&gt;&amp;', '>101\'"&gt;&amp');
         $htmlcases['HTML mail with quotes, gt, lt and ampersand  everywhere'] = array('data' => $newcase);
+
+        // Text+image message i.e. @@PLUGINFILE@@ token handling.
+        $newcase = $htmlbase;
+        $newcase['forums'][0]['forumposts'][0]['name'] = 'HTML text and image';
+        $newcase['forums'][0]['forumposts'][0]['message'] = '<p>Welcome to Moodle, '
+            .'<img src="@@PLUGINFILE@@/Screen%20Shot%202016-03-22%20at%205.54.36%20AM%20%281%29.png"'
+            .' alt="" width="200" height="393" class="img-responsive" />!</p>';
+        $newcase['expectations'][0]['subject'] = '.*101.*HTML text and image';
+        $newcase['expectations'][0]['contents'] = array(
+            '~{\$a',
+            '~&(amp|lt|gt|quot|\#039);(?!course)',
+            '<div class="attachments">( *\n *)?<a href',
+            '<div class="subject">\n.*HTML text and image', '>Moodle Forum',
+            '<p>Welcome to Moodle, '
+                .'<img src="http://www.example.com/moodle/pluginfile.php/\d+/mod_forum/post/\d+/'
+                .'Screen%20Shot%202016-03-22%20at%205\.54\.36%20AM%20%281%29\.png"'
+                .' alt="" width="200" height="393" class="img-responsive" />!</p>',
+            '>Love Moodle', '>1\d1');
+        $htmlcases['HTML mail with text+image message i.e. @@PLUGINFILE@@ token handling'] = array('data' => $newcase);
 
         return $textcases + $htmlcases;
     }

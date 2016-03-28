@@ -53,9 +53,12 @@ class renderer extends \mod_forum_renderer {
      * @return string
      */
     public function format_message_text($cm, $post) {
+        $message = file_rewrite_pluginfile_urls($post->message, 'pluginfile.php',
+            \context_module::instance($cm->id)->id,
+            'mod_forum', 'post', $post->id);
         $options = new \stdClass();
         $options->para = true;
-        return format_text($post->message, $post->messageformat, $options);
+        return format_text($message, $post->messageformat, $options);
     }
 
     /**
