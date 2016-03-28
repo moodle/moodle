@@ -204,17 +204,23 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
                     // format scoredetails, e.g. 1 /2 = 50%, for each item
                     foreach ($currentresponse as $position => $answerid) {
-                        $answer = $question->answers[$answerid];
-                        $score = $this->get_ordering_item_score($question, $position, $answerid);
-                        list($score, $maxscore, $fraction, $percent, $class, $img) = $score;
-                        if ($maxscore===null) {
-                            $score = get_string('noscore', $plugin);
+                        if (array_key_exists($answerid, $question->answers)) {
+                            $answer = $question->answers[$answerid];
+                            $score = $this->get_ordering_item_score($question, $position, $answerid);
+                            list($score, $maxscore, $fraction, $percent, $class, $img) = $score;
+                            if ($maxscore===null) {
+                                $score = get_string('noscore', $plugin);
+                            } else {
+                                $totalscore += $score;
+                                $totalmaxscore += $maxscore;
+                                $score = "$score / $maxscore = $percent%";
+                            }
+                            $scoredetails .= html_writer::tag('li', $score, $params);
                         } else {
-                            $totalscore += $score;
-                            $totalmaxscore += $maxscore;
-                            $score = "$score / $maxscore = $percent%";
+                            // Oops, the md5 key is not recognized !!
+                            // Maybe the password salt has changed
+                            // because we restored to a new server?
                         }
-                        $scoredetails .= html_writer::tag('li', $score, $params);
                     }
 
                     $scoredetails .= html_writer::end_tag('ol');

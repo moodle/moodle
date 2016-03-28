@@ -71,7 +71,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         $options = qtype_ordering_question::get_layout_types();
         $mform->addElement('select', $name, $label, $options);
         $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, 0);
+        $mform->setDefault($name, qtype_ordering_question::LAYOUT_VERTICAL);
 
         // selecttype
         $name = 'selecttype';
@@ -79,7 +79,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         $options = qtype_ordering_question::get_select_types();
         $mform->addElement('select', $name, $label, $options);
         $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, 0);
+        $mform->setDefault($name, qtype_ordering_question::SELECT_RANDOM);
 
         // selectcount
         $name = 'selectcount';
@@ -91,7 +91,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         $mform->addElement('select', $name, $label, $options);
         $mform->disabledIf($name, 'selecttype', 'eq', 0);
         $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, 0);
+        $mform->setDefault($name, 6);
 
         // gradingtype
         $name = 'gradingtype';
@@ -99,7 +99,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         $options = qtype_ordering_question::get_grading_types();
         $mform->addElement('select', $name, $label, $options);
         $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, 0);
+        $mform->setDefault($name, qtype_ordering_question::GRADING_ABSOLUTE_POSITION);
 
         // answers (=items)
         //     get_per_answer_fields()
@@ -303,7 +303,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         if (isset($question->options->selecttype)) {
             $question->selecttype = $question->options->selecttype;
         } else {
-            $question->selecttype = qtype_ordering_question::SELECT_ALL;
+            $question->selecttype = qtype_ordering_question::SELECT_RANDOM;
         }
 
         // selectcount
