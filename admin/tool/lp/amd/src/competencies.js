@@ -122,9 +122,13 @@ define(['jquery',
         var requests;
         var pagerender;
         var pageregion;
+        var pageContextIncludes;
 
         if (!self.pickerInstance) {
-            self.pickerInstance = new Picker(self.pageContextId, undefined, self.itemtype === 'course' ? 'parents' : undefined);
+            if (self.itemtype === 'template' || self.itemtype === 'course') {
+                pageContextIncludes = 'parents';
+            }
+            self.pickerInstance = new Picker(self.pageContextId, false, pageContextIncludes);
             self.pickerInstance.on('save', function(e, data) {
                 var compIds = data.competencyIds;
 
