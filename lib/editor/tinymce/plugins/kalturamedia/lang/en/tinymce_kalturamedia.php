@@ -26,3 +26,4 @@ $string['pluginname'] = 'Kaltura media';
 $string['kalturamedia:desc'] = 'Embed Kaltura Media';
 $string['kalturamedia:insertbtn'] = 'Insert media';
 $string['kalturamedia:cancelbtn'] = 'Cancel';
+$string['kalturamedia:bse'] = 'Browse and Embed';

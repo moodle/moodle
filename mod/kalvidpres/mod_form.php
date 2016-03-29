@@ -53,7 +53,7 @@ class mod_kalvidpres_mod_form extends moodleform_mod {
 
         $params = array(
             'addvidbtnid' => 'id_'.$this->addvideobutton,
-            'ltilaunchurl' => $url->out(),
+            'ltilaunchurl' => $url->out(false),
             'height' => KALTURA_PANEL_HEIGHT,
             'width' => KALTURA_PANEL_WIDTH,
             'modulename' => 'kalvidpres'

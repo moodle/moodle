@@ -28,9 +28,7 @@
 function atto_kalturamedia_strings_for_js() {
     global $PAGE;
 
-    $PAGE->requires->strings_for_js(array('popuptitle',
-                                          'embedbuttontext',),
-                                    'atto_kalturamedia');
+    $PAGE->requires->strings_for_js(array('popuptitle', 'embedbuttontext', 'browse_and_embed'), 'atto_kalturamedia');
 }
 
 function atto_kalturamedia_params_for_js($elementid, $options, $fpoptions) {

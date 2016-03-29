@@ -69,7 +69,7 @@ function tinymce_kalturamedia_preview_embed_form() {
         'name' => 'cancel',
         // Using the language string from the local plug-in.  TODO: figure out how to access the TinyMCE language strings.
         'value' => get_string('cancelbtn', 'local_kaltura'),
-        'onclick' => 'tinyMCEPopup.close();'
+        'onclick' => 'ed.newWindow.close();'
     );
     $cancelbutton = html_writer::empty_tag('input', $param);
     $cancelbuttondiv = html_writer::tag('div', $cancelbutton, array('style' => 'float: right'));

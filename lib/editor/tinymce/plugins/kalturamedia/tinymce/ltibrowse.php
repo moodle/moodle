@@ -34,6 +34,7 @@ require_login();
 $PAGE->set_pagelayout('popup');
 $PAGE->set_url('/editor/tinymce/plugins/kalturamedia/tinymce/ltilaunch.php');
 $PAGE->set_context(context_system::instance());
+$PAGE->requires->css('/lib/editor/tinymce/plugins/kalturamedia/tinymce/css/kalturaltipopup.css');
 
 echo $OUTPUT->header();
 
