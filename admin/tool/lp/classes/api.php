@@ -4212,7 +4212,7 @@ class api {
                     }
 
                     // Check the course settings to see if we should push to user plans.
-                    $coursesettings = course_competency_settings::get_course_settings($courseid);
+                    $coursesettings = course_competency_settings::get_by_courseid($courseid);
                     $setucgrade = $coursesettings->get_pushratingstouserplans();
 
                     if ($setucgrade) {
@@ -4276,7 +4276,7 @@ class api {
                     // Set proficiency.
                     $usercompetencycourse->set_proficiency($proficiency);
 
-                    $coursesettings = course_competency_settings::get_course_settings($courseid);
+                    $coursesettings = course_competency_settings::get_by_courseid($courseid);
                     if (!$coursesettings->get_pushratingstouserplans()) {
                         $setucgrade = false;
                     }
@@ -4872,7 +4872,7 @@ class api {
             throw new required_capability_exception($context, 'tool/lp:coursecompetencyview', 'nopermissions', '');
         }
 
-        return course_competency_settings::get_course_settings($courseid);
+        return course_competency_settings::get_by_courseid($courseid);
     }
 
     /**

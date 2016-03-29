@@ -76,21 +76,21 @@ class tool_lp_course_competency_settings_testcase extends advanced_testcase {
 
         set_config('pushcourseratingstouserplans', true, 'tool_lp');
 
-        $coursesettings = course_competency_settings::get_course_settings($c1->id);
+        $coursesettings = course_competency_settings::get_by_courseid($c1->id);
         $this->assertTrue((boolean)$coursesettings->get_pushratingstouserplans());
 
         set_config('pushcourseratingstouserplans', false, 'tool_lp');
 
-        $coursesettings = course_competency_settings::get_course_settings($c1->id);
+        $coursesettings = course_competency_settings::get_by_courseid($c1->id);
         $this->assertFalse((boolean)$coursesettings->get_pushratingstouserplans());
 
         api::update_course_competency_settings($c1->id, (object) array('pushratingstouserplans' => true));
-        $coursesettings = course_competency_settings::get_course_settings($c1->id);
+        $coursesettings = course_competency_settings::get_by_courseid($c1->id);
         $this->assertTrue((boolean)$coursesettings->get_pushratingstouserplans());
 
         set_config('pushcourseratingstouserplans', true, 'tool_lp');
         api::update_course_competency_settings($c1->id, (object) array('pushratingstouserplans' => false));
-        $coursesettings = course_competency_settings::get_course_settings($c1->id);
+        $coursesettings = course_competency_settings::get_by_courseid($c1->id);
         $this->assertFalse((boolean)$coursesettings->get_pushratingstouserplans());
 
         // Right now the setting is false.

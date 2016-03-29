@@ -61,7 +61,7 @@ class course_competency_settings extends persistent {
      * @param int $courseid The course id
      * @return course_competency_settings
      */
-    public static function get_course_settings($courseid) {
+    public static function get_by_courseid($courseid) {
         global $DB;
 
         $params = array(

@@ -3080,13 +3080,13 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         // Start the test.
         $result = external::update_course_competency_settings($course->id, array('pushratingstouserplans' => true));
 
-        $settings = course_competency_settings::get_course_settings($course->id);
+        $settings = course_competency_settings::get_by_courseid($course->id);
 
         $this->assertTrue((bool)$settings->get_pushratingstouserplans());
         
         $result = external::update_course_competency_settings($course->id, array('pushratingstouserplans' => false));
 
-        $settings = course_competency_settings::get_course_settings($course->id);
+        $settings = course_competency_settings::get_by_courseid($course->id);
 
         $this->assertFalse((bool)$settings->get_pushratingstouserplans());
         $this->setUser($compnoob);
