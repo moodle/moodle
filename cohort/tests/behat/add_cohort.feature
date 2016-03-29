@@ -21,7 +21,6 @@ Feature: Add cohorts of users
       | Description | Test cohort description |
     And I press "Save changes"
 
-  @javascript
   Scenario: Add a cohort
     When I follow "Cohorts"
     Then I should see "Test cohort name"
@@ -29,7 +28,6 @@ Feature: Add cohorts of users
     And I should see "Test cohort description"
     And I should see "Created manually"
 
-  @javascript
   Scenario: Add users to a cohort selecting them from the system users list
     When I add "First User (first@example.com)" user to "333" cohort members
     And I add "Second User (second@example.com)" user to "333" cohort members
@@ -39,7 +37,6 @@ Feature: Add cohorts of users
     And the "Current users" select box should contain "Second User (second@example.com)"
     And the "Current users" select box should not contain "Forth User (forth@example.com)"
 
-  @javascript
   Scenario: Add users to a cohort using a bulk user action
     When I follow "Bulk user actions"
     And I set the field "Available" to "Third User"
