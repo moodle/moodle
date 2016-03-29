@@ -4856,7 +4856,7 @@ class api {
     /**
      * Get the competency settings for a course.
      *
-     * Requires tool/lp:coursecompetencyread capability at the course context.
+     * Requires tool/lp:coursecompetencyview capability at the course context.
      *
      * @param int $courseid The course id
      * @return course_competency_settings
@@ -4865,9 +4865,9 @@ class api {
         static::require_enabled();
 
         // First we do a permissions check.
-        if (!course_competency_settings::can_read($courseid)) {
+        if (!course_competency_settings::can_view($courseid)) {
             $context = context_course::instance($courseid);
-            throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:coursecompetencyview', 'nopermissions', '');
         }
 
         return course_competency_settings::get_course_settings($courseid);
@@ -4876,7 +4876,7 @@ class api {
     /**
      * Update the competency settings for a course.
      *
-     * Requires tool/lp:coursecompetencyread capability at the course context.
+     * Requires tool/lp:coursecompetencyconfigure capability at the course context.
      *
      * @param int $courseid The course id
      * @param bool $pushratingstouserplans Push competency ratings to user plans immediately.

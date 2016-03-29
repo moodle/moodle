@@ -79,15 +79,15 @@ class course_competency_settings extends persistent {
     }
 
     /**
-     * Can the current user change competency settings for this course.
+     * Can the current user view competency settings for this course.
      *
      * @param int $data The course ID.
      * @return bool
      */
-    public static function can_read($courseid) {
+    public static function can_view($courseid) {
         $context = context_course::instance($courseid);
 
-        $capabilities = array('tool/lp:coursecompetencyread');
+        $capabilities = array('tool/lp:coursecompetencyview');
 
         return has_any_capability($capabilities, $context);
     }
