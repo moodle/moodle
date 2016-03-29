@@ -250,7 +250,7 @@ class course_modinfo {
         $modnames = get_module_types_names($plural);
         $modnamesused = array();
         foreach ($this->get_cms() as $cmid => $mod) {
-            if (isset($modnames[$mod->modname]) && $mod->uservisible) {
+            if (!isset($modnamesused[$mod->modname]) && isset($modnames[$mod->modname]) && $mod->uservisible) {
                 $modnamesused[$mod->modname] = $modnames[$mod->modname];
             }
         }
