@@ -63,13 +63,12 @@ abstract class base_mod extends base {
      * @return \cm_info
      */
     protected function get_cm($modulename, $instanceid, $courseid) {
-
         $modinfo = get_fast_modinfo($courseid);
 
         // Hopefully not many, they are indexed by cmid.
         $instances = $modinfo->get_instances_of($modulename);
         foreach ($instances as $cminfo) {
-            if ($cminfo->instance === $instanceid) {
+            if ($cminfo->instance == $instanceid) {
                 return $cminfo;
             }
         }

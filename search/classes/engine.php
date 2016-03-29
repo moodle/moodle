@@ -314,6 +314,15 @@ abstract class engine {
     }
 
     /**
+     * Return true if file indexing is supported and enabled. False otherwise.
+     *
+     * @return bool
+     */
+    public function file_indexing_enabled() {
+        return false;
+    }
+
+    /**
      * Clears the current query error value.
      *
      * @return void
@@ -334,10 +343,11 @@ abstract class engine {
     /**
      * Adds a document to the search engine.
      *
-     * @param array $doc
-     * @return void
+     * @param document $document
+     * @param bool     $fileindexing True if file indexing is to be used
+     * @return bool    False if the file was skipped or failed, true on success
      */
-    abstract function add_document($doc);
+    abstract function add_document($document, $fileindexing = false);
 
     /**
      * Executes the query on the engine.

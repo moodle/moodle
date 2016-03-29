@@ -37,7 +37,7 @@ class engine extends \core_search\engine {
         return true;
     }
 
-    public function add_document($doc) {
+    public function add_document($document, $fileindexing = false) {
         // No need to implement.
     }
 

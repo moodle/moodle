@@ -34,4 +34,31 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class activity extends \core_search\area\base_activity {
+    /**
+     * Returns true if this area uses file indexing.
+     *
+     * @return bool
+     */
+    public function uses_file_indexing() {
+        return true;
+    }
+
+    /**
+     * Add all the folder files to the index.
+     *
+     * @param document $document The current document
+     * @return null
+     */
+    public function attach_files($document) {
+        $fs = get_file_storage();
+
+        $cm = $this->get_cm($this->get_module_name(), $document->get('itemid'), $document->get('courseid'));
+        $context = \context_module::instance($cm->id);
+
+        $files = $fs->get_area_files($context->id, 'mod_folder', 'content', 0, 'sortorder DESC, id ASC', false);
+
+        foreach ($files as $file) {
+            $document->add_stored_file($file);
+        }
+    }
 }

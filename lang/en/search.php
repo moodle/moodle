@@ -64,6 +64,8 @@ $string['incourse'] = 'in course {$a}';
 $string['index'] = 'Index';
 $string['invalidindexerror'] = 'Index directory either contains an invalid index, or nothing at all.';
 $string['ittook'] = 'It took';
+$string['matchingfile'] = 'Matched from file <span class="filename">{$a}</span>';
+$string['matchingfiles'] = 'Matched from files:';
 $string['next'] = 'Next';
 $string['noindexmessage'] = 'Admin: There appears to be no search index. Please';
 $string['noresults'] = 'No results';

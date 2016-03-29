@@ -44,6 +44,11 @@ abstract class base_activity extends base_mod {
     const MODIFIED_FIELD_NAME = 'timemodified';
 
     /**
+     * Activities with a time created field can overwrite this constant.
+     */
+    const CREATED_FIELD_NAME = '';
+
+    /**
      * The context levels the search area is working on.
      * @var array
      */
@@ -68,9 +73,10 @@ abstract class base_activity extends base_mod {
      * default ones, or to fill description optional fields with extra stuff.
      *
      * @param stdClass $record
+     * @param array    $options
      * @return \core_search\document
      */
-    public function get_document($record) {
+    public function get_document($record, $options = array()) {
 
         try {
             $cm = $this->get_cm($this->get_module_name(), $record->id, $record->course);
@@ -91,10 +97,18 @@ abstract class base_activity extends base_mod {
         $doc->set('title', $record->name);
         $doc->set('content', content_to_text($record->intro, $record->introformat));
         $doc->set('contextid', $context->id);
-        $doc->set('type', \core_search\manager::TYPE_TEXT);
         $doc->set('courseid', $record->course);
         $doc->set('owneruserid', \core_search\manager::NO_OWNER_ID);
         $doc->set('modified', $record->{static::MODIFIED_FIELD_NAME});
+
+        // Check if this document should be considered new.
+        if (isset($options['lastindexedtime'])) {
+            $createdfield = static::CREATED_FIELD_NAME;
+            if (!empty($createdfield) && ($options['lastindexedtime'] < $record->{$createdfield})) {
+                // If the document was created after the last index time, it must be new.
+                $doc->set_is_new(true);
+            }
+        }
 
         return $doc;
     }

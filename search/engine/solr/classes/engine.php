@@ -325,11 +325,27 @@ class engine extends \core_search\engine {
      *
      * This does not commit to the search engine.
      *
-     * @param array $doc
-     * @return void
+     * @param document $document
+     * @param bool     $fileindexing True if file indexing is to be used
+     * @return bool
      */
-    public function add_document($doc) {
+    public function add_document($document, $fileindexing = false) {
+        $docdata = $document->export_for_engine();
 
+        if (!$this->add_text_document($docdata)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Adds a text document to the search engine.
+     *
+     * @param array $filedoc
+     * @return bool
+     */
+    protected function add_text_document($doc) {
         $solrdoc = new \SolrInputDocument();
         foreach ($doc as $field => $value) {
             $solrdoc->addField($field, $value);
@@ -337,6 +353,7 @@ class engine extends \core_search\engine {
 
         try {
             $result = $this->get_search_client()->addDocument($solrdoc, true, static::AUTOCOMMIT_WITHIN);
+            return true;
         } catch (\SolrClientException $e) {
             debugging('Solr client error adding document with id ' . $doc['id'] . ': ' . $e->getMessage(), DEBUG_DEVELOPER);
         } catch (\SolrServerException $e) {
@@ -344,6 +361,8 @@ class engine extends \core_search\engine {
             $msg = strtok($e->getMessage(), "\n");
             debugging('Solr server error adding document with id ' . $doc['id'] . ': ' . $msg, DEBUG_DEVELOPER);
         }
+
+        return false;
     }
 
     /**
