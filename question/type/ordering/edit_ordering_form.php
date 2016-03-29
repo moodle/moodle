@@ -71,7 +71,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         $options = qtype_ordering_question::get_layout_types();
         $mform->addElement('select', $name, $label, $options);
         $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, qtype_ordering_question::LAYOUT_VERTICAL);
+        $mform->setDefault($name, $this->get_default_value($name, 0)); // 0 = VERTICAL
 
         // selecttype
         $name = 'selecttype';
@@ -79,7 +79,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         $options = qtype_ordering_question::get_select_types();
         $mform->addElement('select', $name, $label, $options);
         $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, qtype_ordering_question::SELECT_RANDOM);
+        $mform->setDefault($name, $this->get_default_value($name, 0)); // 0 = ALL
 
         // selectcount
         $name = 'selectcount';
@@ -99,7 +99,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         $options = qtype_ordering_question::get_grading_types();
         $mform->addElement('select', $name, $label, $options);
         $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, qtype_ordering_question::GRADING_ABSOLUTE_POSITION);
+        $mform->setDefault($name, $this->get_default_value($name, 0)); // 0 = ABSOLUTE
 
         // answers (=items)
         //     get_per_answer_fields()
@@ -292,32 +292,19 @@ class qtype_ordering_edit_form extends question_edit_form {
             $question->fraction[$i] = ($i + 1);
         }
 
-        // layouttype
-        if (isset($question->options->layouttype)) {
-            $question->layouttype = $question->options->layouttype;
-        } else {
-            $question->layouttype = qtype_ordering_question::LAYOUT_VERTICAL;
-        }
-
-        // selecttype
-        if (isset($question->options->selecttype)) {
-            $question->selecttype = $question->options->selecttype;
-        } else {
-            $question->selecttype = qtype_ordering_question::SELECT_RANDOM;
-        }
-
-        // selectcount
-        if (isset($question->options->selectcount)) {
-            $question->selectcount = $question->options->selectcount;
-        } else {
-            $question->selectcount = max(3, count($question->answer));
-        }
-
-        // gradingtype
-        if (isset($question->options->gradingtype)) {
-            $question->gradingtype = $question->options->gradingtype;
-        } else {
-            $question->gradingtype = qtype_ordering_question::GRADING_ABSOLUTE_POSITION;
+        $names = array(
+            // $name => $default value
+            'layouttype'  => 0, // VERTICAL
+            'selecttype'  => 0, // ALL
+            'selectcount' => 0, // ALL
+            'gradingtype' => 0, // ABSOLUTE
+        );
+        foreach ($names as $name => $default) {
+            if (isset($question->options->$name)) {
+                $question->$name = $question->options->$name;
+            } else {
+                $question->$name = $this->get_default_value($name, $default);
+            }
         }
 
         return $question;
@@ -341,6 +328,16 @@ class qtype_ordering_edit_form extends question_edit_form {
         switch ($answercount) {
             case 0: $errors['answer[0]'] = get_string('notenoughanswers', $plugin, 2);
             case 1: $errors['answer[1]'] = get_string('notenoughanswers', $plugin, 2);
+        }
+
+        // if adding a new ordering question, update defaults
+        if (empty($errors) && empty($data['id'])) {
+            $fields = array('layouttype', 'selecttype', 'selectcount', 'gradingtype');
+            foreach ($fields as $field) {
+                if (array_key_exists($field, $data)) {
+                    $this->set_default_value($field, $data[$field]);
+                }
+            }
         }
 
         return $errors;
@@ -407,6 +404,28 @@ class qtype_ordering_edit_form extends question_edit_form {
             }
         }
         return $question;
+    }
+
+    /**
+     * get_default_value
+     *
+     * @param $name
+     * @param $default (optional, default = null)
+     * @return default value for field with this $name
+     */
+    protected function get_default_value($name, $default=null) {
+        return get_user_preferences("qtype_ordering_$name", $default);
+    }
+
+    /**
+     * get_default_value
+     *
+     * @param $name
+     * @param $default (optional, default = null)
+     * @return default value for field with this $name
+     */
+    protected function set_default_value($name, $value) {
+        return set_user_preferences(array("qtype_ordering_$name" => $value));
     }
 
     /**

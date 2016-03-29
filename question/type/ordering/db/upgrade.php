@@ -185,6 +185,28 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, $newversion, 'qtype', 'ordering');
     }
 
+    $newversion = 2016032947;
+    if ($oldversion < $newversion) {
+        if ($dbman->table_exists('reader_question_instances')) {
+            $select = 'rqi.question, COUNT(*) AS countquestion';
+            $from   = '{reader_question_instances} rqi '.
+                      'LEFT JOIN {question} q ON rqi.question = q.id';
+            $where  = 'q.qtype = ?';
+            $group  = 'rqi.question';
+            $params = array('ordering');
+            if ($questions = $DB->get_records_sql("SELECT $select FROM $from WHERE $where GROUP BY $group", $params)) {
+                $questions = array_keys($questions);
+                list($select, $params) = $DB->get_in_or_equal($questions);
+                $select = "questionid $select";
+                $table = 'qtype_ordering_options';
+                $DB->set_field_select($table, 'layouttype',  0, $select, $params); // VERTICAL
+                $DB->set_field_select($table, 'selecttype',  1, $select, $params); // RANDOM
+                $DB->set_field_select($table, 'selectcount', 6, $select, $params); // 6
+                $DB->set_field_select($table, 'gradingtype', 1, $select, $params); // RELATIVE
+            }
+        }
+    }
+
     return true;
 }
 
