@@ -37,7 +37,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 function xmldb_feedback_upgrade($oldversion) {
-    global $CFG;
+    global $CFG, $DB;
 
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
@@ -47,6 +47,15 @@ function xmldb_feedback_upgrade($oldversion) {
 
     // Moodle v3.0.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2016031600) {
+        // Remove labels from all 'captcha' and 'label' items.
+        $DB->execute('UPDATE {feedback_item} SET label = ? WHERE typ = ? OR typ = ?',
+                array('', 'captcha', 'label'));
+
+        // Data savepoint reached.
+        upgrade_mod_savepoint(true, 2016031600, 'feedback');
+    }
 
     return true;
 }

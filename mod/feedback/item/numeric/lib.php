@@ -173,7 +173,11 @@ class feedback_item_numeric extends feedback_item_base {
 
         if (isset($values->data) AND is_array($values->data)) {
             echo '<tr><th colspan="2" align="left">';
-            echo $itemnr.'&nbsp;('.$item->label.') '.$item->name;
+            echo $itemnr . ' ';
+            if (strval($item->label) !== '') {
+                echo '('. format_string($item->label).') ';
+            }
+            echo format_text($item->name, FORMAT_HTML, array('noclean' => true, 'para' => false));
             echo '</th></tr>';
 
             foreach ($values->data as $value) {
@@ -256,13 +260,15 @@ class feedback_item_numeric extends feedback_item_base {
         $inputname = $item->typ . '_' . $item->id;
         echo '<div class="feedback_item_label_'.$align.'">';
         echo '<label for="'. $inputname .'">';
-        echo '('.$item->label.') ';
-        echo format_text($item->name . $requiredmark, true, false, false);
+        if (strval($item->label) !== '') {
+            echo '('. format_string($item->label).') ';
+        }
+        echo format_text($item->name . $requiredmark, FORMAT_HTML, array('noclean' => true, 'para' => false));
         if ($item->dependitem) {
             $params = array('id'=>$item->dependitem);
             if ($dependitem = $DB->get_record('feedback_item', $params)) {
                 echo ' <span class="feedback_depend">';
-                echo '('.$dependitem->label.'-&gt;'.$item->dependvalue.')';
+                echo '('.format_string($dependitem->label).'-&gt;'.$item->dependvalue.')';
                 echo '</span>';
             }
         }
@@ -339,7 +345,7 @@ class feedback_item_numeric extends feedback_item_base {
         $inputname = $item->typ . '_' . $item->id;
         echo '<div class="feedback_item_label_'.$align.'">';
         echo '<label for="'. $inputname .'">';
-        echo format_text($item->name . $requiredmark, true, false, false);
+        echo format_text($item->name . $requiredmark, FORMAT_HTML, array('noclean' => true, 'para' => false));
         echo '<span class="feedback_item_numinfo">';
         switch(true) {
             case ($range_from === '-' AND is_numeric($range_to)):
@@ -411,8 +417,10 @@ class feedback_item_numeric extends feedback_item_base {
 
         //print the question and label
         echo '<div class="feedback_item_label_'.$align.'">';
-        echo '('.$item->label.') ';
-        echo format_text($item->name . $requiredmark, true, false, false);
+        if (strval($item->label) !== '') {
+            echo '('. format_string($item->label).') ';
+        }
+        echo format_text($item->name . $requiredmark, FORMAT_HTML, array('noclean' => true, 'para' => false));
         switch(true) {
             case ($range_from === '-' AND is_numeric($range_to)):
                 echo ' ('.get_string('maximal', 'feedback').

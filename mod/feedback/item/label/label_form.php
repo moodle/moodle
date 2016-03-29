@@ -35,7 +35,7 @@ class feedback_label_form extends feedback_item_form {
         $mform->setType('required', PARAM_INT);
         $mform->addElement('hidden', 'name', 'label');
         $mform->setType('template', PARAM_ALPHA);
-        $mform->addElement('hidden', 'label', '-');
+        $mform->addElement('hidden', 'label', '');
         $mform->setType('label', PARAM_ALPHA);
 
         $mform->addElement('header', 'general', get_string($this->type, 'feedback'));
