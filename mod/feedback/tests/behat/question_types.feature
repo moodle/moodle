@@ -62,6 +62,7 @@ Feature: Test creating different types of feedback questions
     And I add a "Numeric answer" question to the feedback with:
       | Question               | this is a numeric answer |
       | Label                  | numeric                  |
+      | Range from             | 0                        |
       | Range to               | 100                      |
     And I add a "Short text answer" question to the feedback with:
       | Question               | this is a short text answer |
@@ -124,8 +125,8 @@ Feature: Test creating different types of feedback questions
     And I should see "1 (50.00 %)" in the "option l (1):" "table_row"
     And I should see "1 (50.00 %)" in the "option m (5):" "table_row"
     And I should see "Average: 3.00" in the "(multichoice4)" "table"
-    And I should see "35.00" in the "(numeric)" "table"
-    And I should see "71.00" in the "(numeric)" "table"
+    And I should see "35" in the "(numeric)" "table"
+    And I should see "71" in the "(numeric)" "table"
     And I should see "Average: 53.00" in the "(numeric)" "table"
     And I should see "no way" in the "(shorttext)" "table"
     And I should see "hello" in the "(shorttext)" "table"

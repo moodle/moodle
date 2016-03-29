@@ -156,7 +156,8 @@ $string['mapcourses_help'] = 'Once you have selected the relevant course(s) from
 you can associate them with this feedback using map course(s). Multiple courses may be selected by holding down the Apple or Ctrl key whilst clicking on the course names. A course may be disassociated from a feedback at any time.';
 $string['mappedcourses'] = 'Mapped courses';
 $string['max_args_exceeded'] = 'Max 6 arguments can be handled, too many arguments for';
-$string['maximal'] = 'maximal';
+$string['minimal'] = 'minimum';
+$string['maximal'] = 'maximum';
 $string['messageprovider:message'] = 'Feedback reminder';
 $string['messageprovider:submission'] = 'Feedback notifications';
 $string['mode'] = 'Mode';
