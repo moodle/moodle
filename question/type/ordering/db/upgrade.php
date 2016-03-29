@@ -201,8 +201,9 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
                 $table = 'qtype_ordering_options';
                 $DB->set_field_select($table, 'layouttype',  0, $select, $params); // VERTICAL
                 $DB->set_field_select($table, 'selecttype',  1, $select, $params); // RANDOM
-                $DB->set_field_select($table, 'selectcount', 6, $select, $params); // 6
                 $DB->set_field_select($table, 'gradingtype', 1, $select, $params); // RELATIVE
+                // Note don't set selectcount to 6, because
+                // Ordering questions for some low level books use 4
             }
         }
     }
