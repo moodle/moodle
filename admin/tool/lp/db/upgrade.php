@@ -847,9 +847,7 @@ function xmldb_tool_lp_upgrade($oldversion) {
 
         // Adding keys to table tool_lp_coursecompsettings.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-        // Adding indexes to table tool_lp_coursecompsettings.
-        $table->add_index('courseiduniq', XMLDB_INDEX_UNIQUE, array('courseid'));
+        $table->add_key('courseidlink', XMLDB_KEY_FOREIGN_UNIQUE, array('courseid'), 'course', array('id'));
 
         // Conditionally launch create table for tool_lp_coursecompsettings.
         if (!$dbman->table_exists($table)) {
