@@ -29,3 +29,4 @@ require_once($CFG->dirroot.'/local/kaltura/locallib.php');
 $string['pluginname'] = 'Kaltura Media';
 $string['popuptitle'] = 'Select Media';
 $string['embedbuttontext'] = 'Embed';
+$string['browse_and_embed'] = 'Browse and Embed';
