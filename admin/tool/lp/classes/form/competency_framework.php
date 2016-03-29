@@ -70,11 +70,12 @@ class competency_framework extends persistent {
         $scaleid = $mform->addElement('select', 'scaleid', get_string('scale', 'tool_lp'), $scales);
         $mform->setType('scaleid', PARAM_INT);
         $mform->addHelpButton('scaleid', 'scale', 'tool_lp');
+        $mform->addRule('scaleid', null, 'required', null, 'client');
         if ($framework && $framework->has_user_competencies()) {
             // The scale is used so we "freeze" the element. Though, the javascript code for the scale
             // configuration requires this field so we only disable it. It is fine as setting the value
             // as a constant will ensure that nobody can change it. And it's validated in the persistent anyway.
-            $scaleid->updateAttributes(array('disabled' => 'disabled'));
+            $scaleid->updateAttributes(array('readonly' => 'readonly'));
             $mform->setConstant('scaleid', $framework->get_scaleid());
         }
 
