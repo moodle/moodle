@@ -241,7 +241,7 @@ class evidence extends persistent {
         }
 
         $action = $this->get('action');
-        if ($value === null && $action === self::ACTION_COMPLETE) {
+        if ($value === null && $action == self::ACTION_COMPLETE) {
             return new lang_string('invalidgrade', 'tool_lp');
 
         } else if ($value !== null && $action == self::ACTION_LOG) {

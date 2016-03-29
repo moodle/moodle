@@ -196,7 +196,7 @@ class user_competency_course extends persistent {
     }
 
     /**
-     * Get multiple user_competency for a user.
+     * Get multiple user_competency_course for a user.
      *
      * @param  int $userid
      * @param  int $courseid
