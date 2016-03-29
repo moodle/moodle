@@ -128,7 +128,7 @@ class document implements \renderable, \templatable {
         'courseid' => array(
             'type' => 'int',
             'stored' => true,
-            'indexed' => false
+            'indexed' => true
         ),
         'owneruserid' => array(
             'type' => 'int',
@@ -155,7 +155,7 @@ class document implements \renderable, \templatable {
         'userid' => array(
             'type' => 'int',
             'stored' => true,
-            'indexed' => false
+            'indexed' => true
         ),
         'description1' => array(
             'type' => 'text',
