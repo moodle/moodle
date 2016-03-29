@@ -185,7 +185,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
             'cmi.interactions.n.result':{'pattern':CMIIndex, 'format':CMIResult, 'mod':'rw'},
             'cmi.interactions.n.latency':{'pattern':CMIIndex, 'format':CMITimespan, 'mod':'rw'},
             'cmi.interactions.n.description':{'pattern':CMIIndex, 'format':CMILangString250, 'mod':'rw'},
-            'cmi.launch_data':{'defaultvalue':def[scoid]['cmi.exit'], 'mod':'r'},
+            'cmi.launch_data':{'defaultvalue':def[scoid]['cmi.launch_data'], 'mod':'r'},
             'cmi.learner_id':{'defaultvalue':def[scoid]['cmi.learner_id'], 'mod':'r'},
             'cmi.learner_name':{'defaultvalue':def[scoid]['cmi.learner_name'], 'mod':'r'},
             'cmi.learner_preference._children':{'defaultvalue':student_preference_children, 'mod':'r'},
