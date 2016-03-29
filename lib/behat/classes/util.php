@@ -138,20 +138,42 @@ class behat_util extends testing_util {
     }
 
     /**
-     * Checks if $CFG->behat_wwwroot is available
+     * Checks if $CFG->behat_wwwroot is available and using same versions for cli and web.
      *
-     * @return bool
+     * @return void
      */
-    public static function is_server_running() {
+    public static function check_server_status() {
         global $CFG;
 
-        $request = new curl();
-        $request->get($CFG->behat_wwwroot);
+        $url = $CFG->behat_wwwroot . '/admin/tool/behat/tests/behat/fixtures/environment.php';
 
-        if ($request->get_errno() === 0) {
-            return true;
+        // Get web versions used by behat site.
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        if (empty($result)) {
+
+            behat_error (BEHAT_EXITCODE_REQUIREMENT, $CFG->behat_wwwroot . ' is not available, ensure you specified ' .
+                'correct url and that the server is set up and started.' . PHP_EOL . ' More info in ' .
+                behat_command::DOCS_URL . '#Running_tests' . PHP_EOL);
         }
-        return false;
+
+        // Check if cli version is same as web version.
+        $result = json_decode($result, true);
+        $clienv = self::get_environment();
+        if ($result != $clienv) {
+            $output = 'Differences decteted between cli and webserver...'.PHP_EOL;
+            foreach ($result as $key => $version) {
+                if ($clienv[$key] != $version) {
+                    $output .= ' ' . $key . ': ' . PHP_EOL;
+                    $output .= ' - web server: ' . $version . PHP_EOL;
+                    $output .= ' - cli: ' . $clienv[$key] . PHP_EOL;
+                }
+            }
+            echo $output;
+        }
     }
 
     /**

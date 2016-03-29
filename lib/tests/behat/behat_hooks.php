@@ -139,11 +139,8 @@ class behat_hooks extends behat_base {
         // If not done, then it can return apache error, while running tests.
         behat_util::reset_all_data();
 
-        if (!behat_util::is_server_running()) {
-            throw new Exception($CFG->behat_wwwroot .
-                ' is not available, ensure you specified correct url and that the server is set up and started.' .
-                ' More info in ' . behat_command::DOCS_URL . '#Running_tests');
-        }
+        // Check if server is running and using same version for cli and apache.
+        behat_util::check_server_status();
 
         // Prevents using outdated data, upgrade script would start and tests would fail.
         if (!behat_util::is_test_data_updated()) {
