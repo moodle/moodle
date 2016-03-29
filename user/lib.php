@@ -685,11 +685,13 @@ function user_convert_text_to_menu_items($text, $page) {
             if (clean_param($namebits[0], PARAM_STRINGID) !== '') {
                 // Treat this as a language string.
                 $child->title = get_string($namebits[0], $namebits[1]);
+                $child->titleidentifier = implode(',', $namebits);
             }
         }
         if (empty($child->title)) {
             // Use it as is, don't even clean it.
             $child->title = $bits[0];
+            $child->titleidentifier = str_replace(" ", "-", $bits[0]);
         }
 
         // URL processing.
@@ -839,6 +841,7 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
     $myhome->itemtype = 'link';
     $myhome->url = new moodle_url('/my/');
     $myhome->title = get_string('mymoodle', 'admin');
+    $myhome->titleidentifier = 'mymoodle,admin';
     $myhome->pix = "i/course";
     $returnobject->navitems[] = $myhome;
 
@@ -847,6 +850,7 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
     $myprofile->itemtype = 'link';
     $myprofile->url = new moodle_url('/user/profile.php', array('id' => $user->id));
     $myprofile->title = get_string('profile');
+    $myprofile->titleidentifier = 'profile,moodle';
     $myprofile->pix = "i/user";
     $returnobject->navitems[] = $myprofile;
 
@@ -867,6 +871,7 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
             ));
             $rolereturn->pix = "a/logout";
             $rolereturn->title = get_string('switchrolereturn');
+            $rolereturn->titleidentifier = 'switchrolereturn,moodle';
             $lastobj = $rolereturn;
 
             $returnobject->metadata['asotherrole'] = true;
@@ -897,6 +902,7 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
         ));
         $userrevert->pix = "a/logout";
         $userrevert->title = get_string('logout');
+        $userrevert->titleidentifier = 'logout,moodle';
         $lastobj = $userrevert;
 
         $buildlogout = false;
@@ -909,6 +915,7 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
         $logout->url = new moodle_url('/login/logout.php', array('sesskey' => sesskey()));
         $logout->pix = "a/logout";
         $logout->title = get_string('logout');
+        $logout->titleidentifier = 'logout,moodle';
         $lastobj = $logout;
     }
 
