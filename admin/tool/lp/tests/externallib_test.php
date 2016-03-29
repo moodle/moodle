@@ -3078,13 +3078,13 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->setUser($compmanager);
 
         // Start the test.
-        $result = external::update_course_competency_settings($course->id, true);
+        $result = external::update_course_competency_settings($course->id, array('pushratingstouserplans' => true));
 
         $settings = course_competency_settings::get_course_settings($course->id);
 
         $this->assertTrue((bool)$settings->get_pushratingstouserplans());
         
-        $result = external::update_course_competency_settings($course->id, false);
+        $result = external::update_course_competency_settings($course->id, array('pushratingstouserplans' => false));
 
         $settings = course_competency_settings::get_course_settings($course->id);
 
@@ -3092,6 +3092,6 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->setUser($compnoob);
 
         $this->setExpectedException('required_capability_exception');
-        $result = external::update_course_competency_settings($course->id, true);
+        $result = external::update_course_competency_settings($course->id, array('pushratingstouserplans' => true));
     }
 }

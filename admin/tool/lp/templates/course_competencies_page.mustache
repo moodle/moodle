@@ -26,19 +26,19 @@
         </div>
     </div>
 <div data-region="configurecoursecompetencies">
-{{#pushratingstouserplans}}
+{{#settings.pushratingstouserplans}}
     <p class="alert">
     {{#str}}coursecompetencyratingsarepushedtouserplans, tool_lp{{/str}}
-{{/pushratingstouserplans}}
-{{^pushratingstouserplans}}
+{{/settings.pushratingstouserplans}}
+{{^settings.pushratingstouserplans}}
     <p class="alert alert-info">
     {{#str}}coursecompetencyratingsarenotpushedtouserplans, tool_lp{{/str}}
-{{/pushratingstouserplans}}
+{{/settings.pushratingstouserplans}}
 {{#canconfigurecoursecompetencies}}
     <a href="#"
         data-action="configure-course-competency-settings"
         data-courseid="{{courseid}}"
-        data-pushratingstouserplans="{{pushratingstouserplans}}"
+        data-pushratingstouserplans="{{settings.pushratingstouserplans}}"
         >{{#pix}}t/edit, core, {{#str}}edit{{/str}}{{/pix}}</a>
     </p>
 {{/canconfigurecoursecompetencies}}

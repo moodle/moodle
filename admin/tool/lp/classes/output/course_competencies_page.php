@@ -175,7 +175,8 @@ class course_competencies_page implements renderable, templatable {
         $data->canmanagecompetencyframeworks = $this->canmanagecompetencyframeworks;
         $data->canmanagecoursecompetencies = $this->canmanagecoursecompetencies;
         $data->canconfigurecoursecompetencies = $this->canconfigurecoursecompetencies;
-        $data->pushratingstouserplans = $this->coursecompetencysettings->get_pushratingstouserplans();
+        $data->settings = array();
+        $data->settings['pushratingstouserplans'] = $this->coursecompetencysettings->get_pushratingstouserplans();
         $data->manageurl = null;
         if ($this->canmanagecompetencyframeworks) {
             $data->manageurl = $this->manageurl->out(true);

@@ -4666,7 +4666,9 @@ class api {
     }
 
     /**
-     * Manually grade a user course competency from the course page. This may push the rating to the user competency
+     * Manually grade a user course competency from the course page.
+     *
+     * This may push the rating to the user competency
      * if the course is configured this way.
      *
      * @param mixed $courseorid
@@ -4879,11 +4881,16 @@ class api {
      * Requires tool/lp:coursecompetencyconfigure capability at the course context.
      *
      * @param int $courseid The course id
-     * @param bool $pushratingstouserplans Push competency ratings to user plans immediately.
+     * @param stdClass $settings List of settings. The only valid setting ATM is pushratginstouserplans (boolean).
      * @return bool
      */
-    public static function update_course_competency_settings($courseid, $pushratingstouserplans) {
+    public static function update_course_competency_settings($courseid, $settings) {
         static::require_enabled();
+
+        $settings = (object) $settings;
+
+        // Get all the valid settings.
+        $pushratingstouserplans = isset($settings->pushratingstouserplans) ? $settings->pushratingstouserplans : false;
 
         // First we do a permissions check.
         if (!course_competency_settings::can_update($courseid)) {

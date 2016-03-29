@@ -52,7 +52,7 @@ define(['jquery',
         var currentValue = $(e.target).closest('a').data('pushratingstouserplans');
         var context = {
             courseid: courseid,
-            pushratingstouserplans: currentValue
+            settings: { pushratingstouserplans: currentValue }
         };
         e.preventDefault();
 
@@ -112,10 +112,11 @@ define(['jquery',
 
         var newValue = this._find('input[name="pushratingstouserplans"]:checked').val();
         var courseId = this._find('input[name="courseid"]').val();
+        var settings = { pushratingstouserplans: newValue };
 
         ajax.call([
             { methodname: 'tool_lp_update_course_competency_settings',
-              args: { courseid: courseId, pushratingstouserplans: newValue } }
+              args: { courseid: courseId, settings: settings } }
         ])[0].done(function() {
             this.refreshCourseCompetenciesPage();
         }.bind(this)).fail(notification.exception);

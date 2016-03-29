@@ -3,11 +3,11 @@
     <fieldset>
         <p>{{#str}}coursecompetencyratingsquestion, tool_lp{{/str}}</p>
         <label><input type="radio" value="0" name="pushratingstouserplans"
-                {{^pushratingstouserplans}}checked{{/pushratingstouserplans}}>
+                {{^settings.pushratingstouserplans}}checked{{/settings.pushratingstouserplans}}>
             {{#str}}ratingaffectsonlycourse, tool_lp{{/str}}
         </label>
         <label><input type="radio" value="1" name="pushratingstouserplans"
-                {{#pushratingstouserplans}}checked{{/pushratingstouserplans}}>
+                {{#settings.pushratingstouserplans}}checked{{/settings.pushratingstouserplans}}>
             {{#str}}ratingaffectsuserplans, tool_lp{{/str}}
         </label>
 

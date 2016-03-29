@@ -84,12 +84,12 @@ class tool_lp_course_competency_settings_testcase extends advanced_testcase {
         $coursesettings = course_competency_settings::get_course_settings($c1->id);
         $this->assertFalse((boolean)$coursesettings->get_pushratingstouserplans());
 
-        api::update_course_competency_settings($c1->id, true);
+        api::update_course_competency_settings($c1->id, (object) array('pushratingstouserplans' => true));
         $coursesettings = course_competency_settings::get_course_settings($c1->id);
         $this->assertTrue((boolean)$coursesettings->get_pushratingstouserplans());
 
         set_config('pushcourseratingstouserplans', true, 'tool_lp');
-        api::update_course_competency_settings($c1->id, false);
+        api::update_course_competency_settings($c1->id, (object) array('pushratingstouserplans' => false));
         $coursesettings = course_competency_settings::get_course_settings($c1->id);
         $this->assertFalse((boolean)$coursesettings->get_pushratingstouserplans());
 
@@ -106,7 +106,7 @@ class tool_lp_course_competency_settings_testcase extends advanced_testcase {
         $this->assertEmpty($usercomp->get_grade());
         $this->assertEquals(1, $usercompcourse->get_grade());
 
-        api::update_course_competency_settings($c1->id, true);
+        api::update_course_competency_settings($c1->id, (object) array('pushratingstouserplans' => true));
         api::grade_competency_in_course($c1->id, $u1->id, $comp1->get_id(), 2, 'Note 2');
         $filterparams = array(
             'userid' => $u1->id,
@@ -121,7 +121,7 @@ class tool_lp_course_competency_settings_testcase extends advanced_testcase {
 
         $this->setUser($u3);
         $this->setExpectedException('required_capability_exception');
-        api::update_course_competency_settings($c1->id, false);
+        api::update_course_competency_settings($c1->id, (object) array('pushratingstouserplans' => false));
     }
 
 }

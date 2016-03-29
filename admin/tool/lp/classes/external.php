@@ -1890,7 +1890,9 @@ class external extends external_api {
             'canmanagecompetencyframeworks' => new external_value(PARAM_BOOL, 'User can manage competency frameworks'),
             'canmanagecoursecompetencies' => new external_value(PARAM_BOOL, 'User can manage linked course competencies'),
             'canconfigurecoursecompetencies' => new external_value(PARAM_BOOL, 'User can configure course competency settings'),
-            'pushratingstouserplans' => new external_value(PARAM_BOOL, 'Couse competency setting pushratingstouserplans'),
+            'settings' => new external_single_structure(array(
+                'pushratingstouserplans' => new external_value(PARAM_BOOL, 'Couse competency setting pushratingstouserplans'),
+            )),
             'competencies' => new external_multiple_structure(new external_single_structure(array(
                 'competency' => competency_exporter::get_read_structure(),
                 'coursecompetency' => course_competency_exporter::get_read_structure(),
@@ -5635,9 +5637,12 @@ class external extends external_api {
             'New value of the setting',
             VALUE_REQUIRED
         );
+        $settings = new external_single_structure(array(
+            'pushratingstouserplans' => $pushratingstouserplans
+        ));
         $params = array(
             'courseid' => $courseid,
-            'pushratingstouserplans' => $pushratingstouserplans,
+            'settings' => $settings,
         );
         return new external_function_parameters($params);
     }
@@ -5646,19 +5651,19 @@ class external extends external_api {
      * Update the course competency settings
      *
      * @param int $id the course id
-     * @param bool $pushratingstouserplans The new value of the setting
+     * @param stdClass $settings The list of settings (currently only pushratingstouserplans).
      * @throws moodle_exception
      */
-    public static function update_course_competency_settings($courseid, $pushratingstouserplans) {
+    public static function update_course_competency_settings($courseid, $settings) {
         $params = self::validate_parameters(self::update_course_competency_settings_parameters(),
                                             array(
                                                 'courseid' => $courseid,
-                                                'pushratingstouserplans' => $pushratingstouserplans
+                                                'settings' => $settings
                                             ));
 
         $context = context_course::instance($params['courseid']);
         self::validate_context($context);
-        $result = api::update_course_competency_settings($params['courseid'], $params['pushratingstouserplans']);
+        $result = api::update_course_competency_settings($params['courseid'], $params['settings']);
 
         return $result;
     }
