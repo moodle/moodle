@@ -8,6 +8,7 @@ information provided here is intended especially for developers.
   checking it against the parameter (PARAM_*) type of the target user field. MDL-52781 is
   going to add support to null/not null and choices validation, replacing the existing code to
   validate the user fields in different places in a common way.
+* behat_util::is_server_running() is removed, please use behat_util::check_server_status() instead.
 
 === 2.9.2 ===
 
