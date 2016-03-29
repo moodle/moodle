@@ -62,6 +62,7 @@ class mod_kalvidres_mod_form extends moodleform_mod {
         $PAGE->requires->yui_module('moodle-local_kaltura-ltipanel', 'M.local_kaltura.init', array($params), null, true);
         // Make replace media language string available to the YUI modules
         $PAGE->requires->string_for_js('replace_video', 'kalvidres');
+        $PAGE->requires->string_for_js('browse_and_embed', 'local_kaltura');
 
         // Require a YUI module to make the object tag be as large as possible.
         $params = array(
