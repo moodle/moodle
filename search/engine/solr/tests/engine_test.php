@@ -23,7 +23,6 @@
  * - define('TEST_SEARCH_SOLR_INDEXNAME', 'unittest');
  *
  * Optional params:
- * - define('TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING', 1);
  * - define('TEST_SEARCH_SOLR_USERNAME', '');
  * - define('TEST_SEARCH_SOLR_PASSWORD', '');
  * - define('TEST_SEARCH_SOLR_SSLCERT', '');
@@ -100,11 +99,7 @@ class search_solr_engine_testcase extends advanced_testcase {
             set_config('ssl_cainfo', TEST_SEARCH_SOLR_CAINFOCERT, 'search_solr');
         }
 
-        if (defined('TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING') && (TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING == 1)) {
-            set_config('fileindexing', 0, 'search_solr');
-        } else {
-            set_config('fileindexing', 1, 'search_solr');
-        }
+        set_config('fileindexing', 1, 'search_solr');
 
         // We are only test indexing small string files, so setting this as low as we can.
         set_config('maxindexfilekb', 1, 'search_solr');
@@ -309,11 +304,6 @@ class search_solr_engine_testcase extends advanced_testcase {
     }
 
     public function test_index_file() {
-        if (defined('TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING') && (TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING == 1)) {
-            $this->markTestSkipped('Solr file indexing not enabled.');
-            return;
-        }
-
         // Very simple test.
         $this->search->index();
         $querydata = new stdClass();
@@ -323,11 +313,6 @@ class search_solr_engine_testcase extends advanced_testcase {
     }
 
     public function test_reindexing_files() {
-        if (defined('TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING') && (TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING == 1)) {
-            $this->markTestSkipped('Solr file indexing not enabled.');
-            return;
-        }
-
         // Get engine and area to work with.
         $engine = $this->search->get_engine();
         $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'role_capabilities');
@@ -429,11 +414,6 @@ class search_solr_engine_testcase extends advanced_testcase {
     }
 
     public function test_index_filtered_file() {
-        if (defined('TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING') && (TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING == 1)) {
-            $this->markTestSkipped('Solr file indexing not enabled.');
-            return;
-        }
-
         // Get engine and area to work with.
         $engine = $this->search->get_engine();
         $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'role_capabilities');
@@ -497,11 +477,6 @@ class search_solr_engine_testcase extends advanced_testcase {
     }
 
     public function test_delete_by_id() {
-        if (defined('TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING') && (TEST_SEARCH_SOLR_DISABLE_FILE_INDEXING == 1)) {
-            $this->markTestSkipped('Solr file indexing not enabled.');
-            return;
-        }
-
         // First get files in the index.
         $this->search->index();
         $engine = $this->search->get_engine();
