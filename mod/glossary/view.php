@@ -322,7 +322,7 @@ if ($showcommonelements) {
     }
 /// End glossary controls
 //        print_box_end(); /// glossarycontrol
-    echo '</div>';
+    echo '</div><br />';
 
 //        print_box('&nbsp;', 'clearer');
 }
