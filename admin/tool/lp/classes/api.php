@@ -4893,7 +4893,7 @@ class api {
         $pushratingstouserplans = isset($settings->pushratingstouserplans) ? $settings->pushratingstouserplans : false;
 
         // First we do a permissions check.
-        if (!course_competency_settings::can_update($courseid)) {
+        if (!course_competency_settings::can_update_course($courseid)) {
             $context = context_course::instance($courseid);
             throw new required_capability_exception($context, 'tool/lp:coursecompetencyconfigure', 'nopermissions', '');
         }

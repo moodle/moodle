@@ -98,12 +98,21 @@ class course_competency_settings extends persistent {
      * @param int $data The course ID.
      * @return bool
      */
-    public static function can_update($courseid) {
+    public static function can_update_course($courseid) {
         $context = context_course::instance($courseid);
 
         $capabilities = array('tool/lp:coursecompetencyconfigure');
 
         return has_any_capability($capabilities, $context);
+    }
+
+    /**
+     * Can the current user change competency settings for this course.
+     *
+     * @return bool
+     */
+    public function can_update() {
+        return static::can_update_course($this->get_courseid());
     }
 
     /**
