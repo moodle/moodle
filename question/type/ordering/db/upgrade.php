@@ -185,7 +185,7 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, $newversion, 'qtype', 'ordering');
     }
 
-    $newversion = 2016032947;
+    $newversion = 2016032949;
     if ($oldversion < $newversion) {
         if ($dbman->table_exists('reader_question_instances')) {
             $select = 'rqi.question, COUNT(*) AS countquestion';
@@ -202,8 +202,12 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
                 $DB->set_field_select($table, 'layouttype',  0, $select, $params); // VERTICAL
                 $DB->set_field_select($table, 'selecttype',  1, $select, $params); // RANDOM
                 $DB->set_field_select($table, 'gradingtype', 1, $select, $params); // RELATIVE
-                // Note don't set selectcount to 6, because
-                // Ordering questions for some low level books use 4
+
+                // for selectcount, we only fix the value, if it is zero (=ALL)
+                // because Ordering questions for some low level books use 4
+                $select .= ' AND selectcount = ?';
+                $params[] = 0;
+                $DB->set_field_select($table, 'selectcount', 6, $select, $params); // 6
             }
         }
     }
