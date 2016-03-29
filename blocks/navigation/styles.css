@@ -49,6 +49,7 @@
 .block_navigation .block_tree .tree_item.hasicon .item-content-wrap {
     display: inline-block;
     white-space: normal;
+    width: calc(100% - 21px);
 }
 
 .block_navigation .block_tree ul {
