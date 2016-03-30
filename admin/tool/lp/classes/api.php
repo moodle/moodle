@@ -3490,9 +3490,14 @@ class api {
             $uc = new user_competency($uc);
         }
 
-        if (!$uc || !$uc->can_read()) {
-            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyview', 'nopermissions', '');
+        $coursecontext = context_course::instance($courseid);
+        $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
+        if (!has_any_capability($capabilities, $coursecontext)) {
+            throw new required_capability_exception($context, 'tool/lp:coursecompetencyview', 'nopermissions', '');
+        } else if (!user_competency::can_read_user_in_course($uc->get_userid(), $courseid)) {
+            throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
         }
+
         // Validate the course, this will throw an exception if not valid.
         self::validate_course($courseid);
 
