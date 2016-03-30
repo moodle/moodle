@@ -45,6 +45,7 @@ use grade_scale;
 use tool_lp\external\competency_framework_exporter;
 use tool_lp\external\competency_summary_exporter;
 use tool_lp\external\competency_path_exporter;
+use tool_lp\external\course_competency_settings_exporter;
 use tool_lp\external\cohort_summary_exporter;
 use tool_lp\external\template_statistics_exporter;
 use tool_lp\external\user_summary_exporter;
@@ -1890,9 +1891,7 @@ class external extends external_api {
             'canmanagecompetencyframeworks' => new external_value(PARAM_BOOL, 'User can manage competency frameworks'),
             'canmanagecoursecompetencies' => new external_value(PARAM_BOOL, 'User can manage linked course competencies'),
             'canconfigurecoursecompetencies' => new external_value(PARAM_BOOL, 'User can configure course competency settings'),
-            'settings' => new external_single_structure(array(
-                'pushratingstouserplans' => new external_value(PARAM_BOOL, 'Couse competency setting pushratingstouserplans'),
-            )),
+            'settings' => course_competency_settings_exporter::get_read_structure(),
             'competencies' => new external_multiple_structure(new external_single_structure(array(
                 'competency' => competency_exporter::get_read_structure(),
                 'coursecompetency' => course_competency_exporter::get_read_structure(),
