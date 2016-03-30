@@ -1,0 +1,6 @@
+This files describes API changes in auth_mnet code.
+
+=== 3.1 ===
+
+* Users now are created through user_create_user function which, apart from inserting the user in the database and generating
+  a user_created event, it checks the password against the site policy (if there is a password).
