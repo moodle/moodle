@@ -70,8 +70,8 @@ class search_solr_engine_testcase extends advanced_testcase {
             $this->markTestSkipped('Solr extension test server not set.');
         }
 
-        set_config('hostname', TEST_SEARCH_SOLR_HOSTNAME, 'search_solr');
-        set_config('port', TEST_SEARCH_SOLR_PORT, 'search_solr');
+        set_config('server_hostname', TEST_SEARCH_SOLR_HOSTNAME, 'search_solr');
+        set_config('server_port', TEST_SEARCH_SOLR_PORT, 'search_solr');
         set_config('indexname', TEST_SEARCH_SOLR_INDEXNAME, 'search_solr');
 
         if (defined('TEST_SEARCH_SOLR_USERNAME')) {
