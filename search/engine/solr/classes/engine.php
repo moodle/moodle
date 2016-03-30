@@ -66,6 +66,11 @@ class engine extends \core_search\engine {
     protected $client = null;
 
     /**
+     * @var bool True if we should reuse SolrClients, false if not.
+     */
+    protected $cacheclient = true;
+
+    /**
      * @var \curl Direct curl object.
      */
     protected $curl = null;
@@ -74,6 +79,21 @@ class engine extends \core_search\engine {
      * @var array Fields that can be highlighted.
      */
     protected $highlightfields = array('title', 'content', 'description1', 'description2');
+
+    /**
+     * Initialises the search engine configuration.
+     *
+     * @return void
+     */
+    public function __construct() {
+        parent::__construct();
+
+        $curlversion = curl_version();
+        if (isset($curlversion['version']) && stripos($curlversion['version'], '7.35.') === 0) {
+            // There is a flaw with curl 7.35.0 that causes problems with client reuse.
+            $this->cacheclient = false;
+        }
+    }
 
     /**
      * Prepares a Solr query, applies filters and executes it returning its results.
@@ -90,7 +110,7 @@ class engine extends \core_search\engine {
         $data = clone $filters;
 
         // If there is any problem we trigger the exception as soon as possible.
-        $this->client = $this->get_search_client();
+        $client = $this->get_search_client();
 
         $serverstatus = $this->is_server_ready();
         if ($serverstatus !== true) {
@@ -160,9 +180,9 @@ class engine extends \core_search\engine {
                 $query->setGroup(true);
                 $query->setGroupLimit(3);
                 $query->addGroupField('solr_filegroupingid');
-                return $this->grouped_files_query_response($this->client->query($query));
+                return $this->grouped_files_query_response($client->query($query));
             } else {
-                return $this->query_response($this->client->query($query));
+                return $this->query_response($client->query($query));
             }
         } catch (\SolrClientException $ex) {
             debugging('Error executing the provided query: ' . $ex->getMessage(), DEBUG_DEVELOPER);
@@ -909,12 +929,12 @@ class engine extends \core_search\engine {
             return 'No solr configuration found';
         }
 
-        if (!$this->client = $this->get_search_client(false)) {
+        if (!$client = $this->get_search_client(false)) {
             return get_string('engineserverstatus', 'search');
         }
 
         try {
-            @$this->client->ping();
+            @$client->ping();
         } catch (\SolrClientException $ex) {
             return 'Solr client error: ' . $ex->getMessage();
         } catch (\SolrServerException $ex) {
@@ -944,6 +964,8 @@ class engine extends \core_search\engine {
     /**
      * Returns the solr client instance.
      *
+     * We don't reuse SolrClient if we are on libcurl 7.35.0, due to a bug in that version of curl.
+     *
      * @throws \core_search\engine_exception
      * @param bool $triggerexception
      * @return \SolrClient
@@ -970,13 +992,17 @@ class engine extends \core_search\engine {
             'timeout' => !empty($this->config->server_timeout) ? $this->config->server_timeout : '30'
         );
 
-        $this->client = new \SolrClient($options);
+        $client = new \SolrClient($options);
 
-        if ($this->client === false && $triggerexception) {
+        if ($client === false && $triggerexception) {
             throw new \core_search\engine_exception('engineserverstatus', 'search');
         }
 
-        return $this->client;
+        if ($this->cacheclient) {
+            $this->client = $client;
+        }
+
+        return $client;
     }
 
     /**
