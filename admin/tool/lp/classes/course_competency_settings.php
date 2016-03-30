@@ -51,6 +51,7 @@ class course_competency_settings extends persistent {
             ),
             'pushratingstouserplans' => array(
                 'type' => PARAM_BOOL,
+                'default' => get_config('tool_lp', 'pushcourseratingstouserplans')
             ),
         );
     }
@@ -71,8 +72,6 @@ class course_competency_settings extends persistent {
         $settings = new static(null, (object) $params);
         if ($record = $DB->get_record(self::TABLE, $params)) {
             $settings->from_record($record);
-        } else {
-            $settings->set_pushratingstouserplans(get_config('tool_lp', 'pushcourseratingstouserplans'));
         }
 
         return $settings;
@@ -84,7 +83,7 @@ class course_competency_settings extends persistent {
      * @param int $data The course ID.
      * @return bool
      */
-    public static function can_view($courseid) {
+    public static function can_read($courseid) {
         $context = context_course::instance($courseid);
 
         $capabilities = array('tool/lp:coursecompetencyview');
@@ -98,7 +97,7 @@ class course_competency_settings extends persistent {
      * @param int $data The course ID.
      * @return bool
      */
-    public static function can_update_course($courseid) {
+    public static function can_manage_course($courseid) {
         $context = context_course::instance($courseid);
 
         $capabilities = array('tool/lp:coursecompetencyconfigure');
@@ -111,8 +110,8 @@ class course_competency_settings extends persistent {
      *
      * @return bool
      */
-    public function can_update() {
-        return static::can_update_course($this->get_courseid());
+    public function can_manage() {
+        return static::can_manage_course($this->get_courseid());
     }
 
     /**

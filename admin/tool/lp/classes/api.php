@@ -4867,7 +4867,7 @@ class api {
         static::require_enabled();
 
         // First we do a permissions check.
-        if (!course_competency_settings::can_view($courseid)) {
+        if (!course_competency_settings::can_read($courseid)) {
             $context = context_course::instance($courseid);
             throw new required_capability_exception($context, 'tool/lp:coursecompetencyview', 'nopermissions', '');
         }
@@ -4893,7 +4893,7 @@ class api {
         $pushratingstouserplans = isset($settings->pushratingstouserplans) ? $settings->pushratingstouserplans : false;
 
         // First we do a permissions check.
-        if (!course_competency_settings::can_update_course($courseid)) {
+        if (!course_competency_settings::can_manage_course($courseid)) {
             $context = context_course::instance($courseid);
             throw new required_capability_exception($context, 'tool/lp:coursecompetencyconfigure', 'nopermissions', '');
         }
