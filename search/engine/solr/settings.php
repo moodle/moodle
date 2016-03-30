@@ -31,8 +31,8 @@ if ($ADMIN->fulltree) {
             $settings->add(new admin_setting_heading('search_solr_settings', '', get_string('extensionerror', 'search_solr')));
 
         } else {
-            $settings->add(new admin_setting_configtext('search_solr/server_hostname', new lang_string('solrserverhostname', 'search_solr'), new lang_string('solrserverhostname_desc', 'search_solr'), '127.0.0.1', PARAM_TEXT));
-            $settings->add(new admin_setting_configtext('search_solr/indexname', new lang_string('solrindexname', 'search_solr'), '', '', PARAM_TEXT));
+            $settings->add(new admin_setting_configtext('search_solr/server_hostname', new lang_string('solrserverhostname', 'search_solr'), new lang_string('solrserverhostname_desc', 'search_solr'), '127.0.0.1', PARAM_HOST));
+            $settings->add(new admin_setting_configtext('search_solr/indexname', new lang_string('solrindexname', 'search_solr'), '', '', PARAM_ALPHANUMEXT));
             $settings->add(new admin_setting_configcheckbox('search_solr/secure', new lang_string('solrsecuremode', 'search_solr'), '', 0, 1, 0));
 
             $secure = get_config('search_solr', 'secure');
