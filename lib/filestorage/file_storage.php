@@ -2408,8 +2408,8 @@ class file_storage {
         $rs->close();
         mtrace('done.');
 
-        // remove orphaned converted files (that is files in the core documentconversion filearea without
-        // the existing original file)
+        // Remove orphaned converted files (that is files in the core documentconversion filearea without
+        // the existing original file).
         mtrace('Deleting orphaned document conversion files... ', '');
         cron_trace_time_and_memory();
         $sql = "SELECT p.*

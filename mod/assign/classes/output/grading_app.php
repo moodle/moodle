@@ -42,17 +42,17 @@ use stdClass;
 class grading_app implements templatable, renderable {
 
     /**
-     * The initial user id.
+     * @var $userid - The initial user id.
      */
     public $userid = 0;
 
     /**
-     * The initial group id.
+     * @var $groupid - The initial group id.
      */
     public $groupid = 0;
 
     /**
-     * The assignment instance.
+     * @var $assignment - The assignment instance.
      */
     public $assignment = null;
 

@@ -955,7 +955,7 @@
 }
 .path-mod-assign [data-region="grade-panel"] .mform .fitem .fcheckbox > span,
 .path-mod-assign [data-region="grade-panel"] .mform .fitem .fradio > span,
-.path-mod-assign [data-region="grade-panel"] .mform .fitem .fgroup > span,
+.path-mod-assign [data-region="grade-panel"] .mform .fitem .fgroup > span {
     margin-top: 4px;
 }
 .path-mod-assign [data-region="grade-panel"] .mform .femptylabel .fitemtitle {

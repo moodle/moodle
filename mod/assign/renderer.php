@@ -337,10 +337,10 @@ class mod_assign_renderer extends plugin_renderer_base {
         // Link to the grading page.
         $o .= '<center>';
         $o .= $this->output->container_start('submissionlinks btn-group');
-        $urlparams = array('id' => $summary->coursemoduleid, 'action'=>'grading');
+        $urlparams = array('id' => $summary->coursemoduleid, 'action' => 'grading');
         $url = new moodle_url('/mod/assign/view.php', $urlparams);
         $o .= '<a href="' . $url . '" class="btn">' . get_string('viewgrading', 'mod_assign') . '</a>';
-        $urlparams = array('id' => $summary->coursemoduleid, 'action'=>'grader');
+        $urlparams = array('id' => $summary->coursemoduleid, 'action' => 'grader');
         $url = new moodle_url('/mod/assign/view.php', $urlparams);
         $o .= '<a href="' . $url . '" class="btn btn-primary">' . get_string('grade') . '</a>';
         $o .= $this->output->container_end();
@@ -478,7 +478,7 @@ class mod_assign_renderer extends plugin_renderer_base {
                 $members = $status->submissiongroupmemberswhoneedtosubmit;
                 $userslist = array();
                 foreach ($members as $member) {
-                    $urlparams = array('id' => $member->id, 'course'=>$status->courseid);
+                    $urlparams = array('id' => $member->id, 'course' => $status->courseid);
                     $url = new moodle_url('/user/view.php', $urlparams);
                     if ($status->view == assign_submission_status::GRADER_VIEW && $status->blindmarking) {
                         $userslist[] = $member->alias;
@@ -1456,7 +1456,7 @@ class mod_assign_renderer extends plugin_renderer_base {
     /**
      * Defer to template..
      *
-     * @param grading_app - All the data to render the grading app.
+     * @param grading_app $app - All the data to render the grading app.
      */
     public function render_grading_app(grading_app $app) {
         $context = $app->export_for_template($this);

@@ -29,7 +29,9 @@ use context_module;
 use assign;
 
 /**
- * Simple task to run the grade cron.
+ * Simple task to convert submissions to pdf in the background.
+ * @copyright  2016 Damyon Wiese
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class convert_submissions extends scheduled_task {
 

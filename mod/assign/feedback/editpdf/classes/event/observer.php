@@ -24,7 +24,9 @@
 namespace assignfeedback_editpdf\event;
 
 /**
- * Simple task to run the grade cron.
+ * An event observer.
+ * @copyright  2016 Damyon Wiese
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class observer {
 

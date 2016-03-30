@@ -834,7 +834,7 @@ class assign_grading_table extends table_sql implements renderable {
 
         if (!$this->is_downloading() && $this->hasgrade) {
             $urlparams = array('id' => $this->assignment->get_course_module()->id,
-                               'rownum'=> 0,
+                               'rownum' => 0,
                                'action' => 'grader',
                                'userid' => $row->userid);
             $url = new moodle_url('/mod/assign/view.php', $urlparams);

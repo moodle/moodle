@@ -65,7 +65,5 @@ function xmldb_assignfeedback_editpdf_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2016021600, 'assignfeedback', 'editpdf');
     }
 
-
-
     return true;
 }

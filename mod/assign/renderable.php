@@ -634,8 +634,8 @@ class assign_attempt_history_chooser implements renderable, templatable {
                 $submissionsummary = get_string('nosubmission', 'assign');
             }
 
-            $attemptsummaryparams = array('attemptnumber'=>$submission->attemptnumber+1,
-                                          'submissionsummary'=>$submissionsummary);
+            $attemptsummaryparams = array('attemptnumber' => $submission->attemptnumber + 1,
+                                          'submissionsummary' => $submissionsummary);
             $submission->attemptsummary = get_string('attemptheading', 'assign', $attemptsummaryparams);
             $submission->statussummary = get_string('submissionstatus_' . $submission->status, 'assign');
 

@@ -1537,9 +1537,11 @@ class mod_assign_external extends external_api {
         require_once($CFG->dirroot . '/mod/assign/gradeform.php');
 
         $params = self::validate_parameters(self::submit_grading_form_parameters(),
-                                            array('assignmentid' => $assignmentid,
-                                                  'userid' => $userid,
-                                                  'jsonformdata' => $jsonformdata));
+                                            array(
+                                                'assignmentid' => $assignmentid,
+                                                'userid' => $userid,
+                                                'jsonformdata' => $jsonformdata
+                                            ));
 
         $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
         $context = context_module::instance($cm->id);
@@ -1554,10 +1556,12 @@ class mod_assign_external extends external_api {
 
         $warnings = array();
 
-        $options = array('userid'=>$params['userid'],
-                         'attemptnumber'=>$data['attemptnumber'],
-                         'rownum'=>0,
-                         'gradingpanel' => true);
+        $options = array(
+            'userid' => $params['userid'],
+            'attemptnumber' => $data['attemptnumber'],
+            'rownum' => 0,
+            'gradingpanel' => true
+        );
 
         $customdata = (object) $data;
         $formparams = array($assignment, $customdata, $options);
@@ -2582,7 +2586,7 @@ class mod_assign_external extends external_api {
                 'filter' => new external_value(PARAM_RAW, 'search string to filter the results'),
                 'skip' => new external_value(PARAM_INT, 'number of records to skip', VALUE_DEFAULT, 0),
                 'limit' => new external_value(PARAM_INT, 'maximum number of records to return', VALUE_DEFAULT, 0),
-                'onlyids' => new external_value(PARAM_BOOL, 'Do not return all user fields - only the id and flags (requiresgrading etc)', VALUE_DEFAULT, false),
+                'onlyids' => new external_value(PARAM_BOOL, 'Do not return all user fields', VALUE_DEFAULT, false),
             )
         );
     }

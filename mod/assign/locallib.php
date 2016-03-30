@@ -1426,7 +1426,6 @@ class assign {
      * If this is a group assignment, group info is also returned.
      *
      * @param int $currentgroup
-     * @param bool $idsonly
      * @return array List of user records with extra fields 'submitted', 'notsubmitted', 'requiregrading', 'groupid', 'groupname'
      */
     public function list_participants_with_filter_status_and_group($currentgroup) {
@@ -3250,17 +3249,17 @@ class assign {
         $allsubmissions = $this->get_all_submissions($userid);
 
         if ($attemptnumber != -1 && ($attemptnumber + 1) != count($allsubmissions)) {
-            $params = array('attemptnumber'=>$attemptnumber + 1,
-                            'totalattempts'=>count($allsubmissions));
+            $params = array('attemptnumber' => $attemptnumber + 1,
+                            'totalattempts' => count($allsubmissions));
             $message = get_string('editingpreviousfeedbackwarning', 'assign', $params);
             $o .= $this->get_renderer()->notification($message);
         }
 
-        $pagination = array('rownum'=>$rownum,
-                            'useridlistid'=>0,
-                            'last'=>$last,
-                            'userid'=>$userid,
-                            'attemptnumber'=>$attemptnumber,
+        $pagination = array('rownum' => $rownum,
+                            'useridlistid' => 0,
+                            'last' => $last,
+                            'userid' => $userid,
+                            'attemptnumber' => $attemptnumber,
                             'gradingpanel' => true);
 
         if (!empty($args['formdata'])) {
@@ -3272,7 +3271,7 @@ class assign {
                                            $formparams,
                                            'post',
                                            '',
-                                           array('class'=>'gradeform'));
+                                           array('class' => 'gradeform'));
 
         if (!empty($args['formdata'])) {
             // If we were passed form data - we want the form to check the data
@@ -6735,7 +6734,7 @@ class assign {
 
         if (!$gradingpanel) {
 
-            $buttonarray=array();
+            $buttonarray = array();
             $name = get_string('savechanges', 'assign');
             $buttonarray[] = $mform->createElement('submit', 'savegrade', $name);
             if (!$last) {
@@ -6745,7 +6744,7 @@ class assign {
             $buttonarray[] = $mform->createElement('cancel', 'cancelbutton', get_string('cancel'));
             $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
             $mform->closeHeaderBefore('buttonar');
-            $buttonarray=array();
+            $buttonarray = array();
 
             if ($rownum > 0) {
                 $name = get_string('previous', 'assign');

@@ -18,7 +18,6 @@
  * Test unoconv functionality.
  *
  * @package    core
- * @category   phpunit
  * @copyright  2016 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,13 +29,14 @@ defined('MOODLE_INTERNAL') || die();
  * A set of tests for some of the unoconv functionality within Moodle.
  *
  * @package    core
- * @category   phpunit
  * @copyright  2016 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_unoconv_testcase extends advanced_testcase {
 
+    /** @var $testfile1 */
     private $testfile1 = null;
+    /** @var $testfile2 */
     private $testfile2 = null;
 
     public function setUp() {
