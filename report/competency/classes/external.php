@@ -116,7 +116,8 @@ class external extends external_api {
                     'usercompetency' => user_competency_exporter::get_read_structure(),
                     'competency' => competency_summary_exporter::get_read_structure()
                 ))
-            )
+            ),
+            'pushratingstouserplans' => new external_value(PARAM_BOOL, 'True if rating is push to user plans')
         ));
     }
 
