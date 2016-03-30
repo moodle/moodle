@@ -122,7 +122,7 @@ function tool_lp_extend_navigation_category_settings($navigation, $coursecategor
 
     // The link to the learning plan page.
     if ($templatereadcapability) {
-        $title = get_string('learningplans', 'tool_lp');
+        $title = get_string('templates', 'tool_lp');
         $path = new moodle_url("/admin/tool/lp/learningplans.php", array('pagecontextid' => $coursecategorycontext->id));
         $settingsnode = navigation_node::create($title,
                                                 $path,

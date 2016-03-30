@@ -44,7 +44,7 @@ if (\tool_lp\api::is_enabled()) {
     // Manage learning plans page.
     $temp = new admin_externalpage(
         'toollplearningplans',
-        get_string('learningplans', 'tool_lp'),
+        get_string('templates', 'tool_lp'),
         new moodle_url('/admin/tool/lp/learningplans.php', array('pagecontextid' => context_system::instance()->id)),
         array('tool/lp:templatemanage')
     );
