@@ -4,11 +4,13 @@
 .path-admin-tool-lp [data-region="competencylinktree"] ul li {
     list-style-type: none;
 }
+.path-admin-tool-lp [data-region="coursecompetencystatistics"] .progresstext,
 .path-admin-tool-lp [data-region="templatestatistics"] .progresstext {
     display: inline-block;
     height: 40px;
     vertical-align: top;
 }
+.path-admin-tool-lp [data-region="coursecompetencystatistics"] .progress,
 .path-admin-tool-lp [data-region="templatestatistics"] .progress {
     width: 10em;
     display: inline-block;

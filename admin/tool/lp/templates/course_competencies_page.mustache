@@ -43,6 +43,9 @@
     </p>
 {{/canconfigurecoursecompetencies}}
 </div>
+{{#statistics}}
+{{> tool_lp/course_competency_statistics }}
+{{/statistics}}
 <div data-region="coursecompetencies">
 <table class="generaltable fullwidth managecompetencies">
 <tbody class="drag-parentnode">
@@ -59,6 +62,7 @@
         {{/canmanagecoursecompetencies}}
         {{#competency}}
             <a href="{{pluginbaseurl}}user_competency_in_course.php?courseid={{courseid}}&competencyid={{competency.id}}&userid={{gradableuserid}}"
+                   id="competency-info-link-{{competency.id}}"
                    title="{{#str}}viewdetails, tool_lp{{/str}}">
                 <p><strong>{{competency.shortname}} <em>{{competency.idnumber}}</em></strong></p>
             </a>

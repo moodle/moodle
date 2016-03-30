@@ -59,6 +59,7 @@ use tool_lp\external\user_evidence_summary_exporter;
 use tool_lp\external\user_evidence_competency_exporter;
 use tool_lp\external\competency_exporter;
 use tool_lp\external\course_competency_exporter;
+use tool_lp\external\course_competency_statistics_exporter;
 use tool_lp\external\course_summary_exporter;
 use tool_lp\external\course_module_summary_exporter;
 use tool_lp\external\plan_exporter;
@@ -1892,6 +1893,7 @@ class external extends external_api {
             'canmanagecoursecompetencies' => new external_value(PARAM_BOOL, 'User can manage linked course competencies'),
             'canconfigurecoursecompetencies' => new external_value(PARAM_BOOL, 'User can configure course competency settings'),
             'settings' => course_competency_settings_exporter::get_read_structure(),
+            'statistics' => course_competency_statistics_exporter::get_read_structure(),
             'competencies' => new external_multiple_structure(new external_single_structure(array(
                 'competency' => competency_exporter::get_read_structure(),
                 'coursecompetency' => course_competency_exporter::get_read_structure(),

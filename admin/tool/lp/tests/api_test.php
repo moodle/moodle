@@ -4040,6 +4040,96 @@ class tool_lp_api_testcase extends advanced_testcase {
     }
 
     /**
+     * Test course statistics api functions.
+     */
+    public function test_course_statistics() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $this->setAdminUser();
+
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
+        $u4 = $dg->create_user();
+        $c1 = $dg->create_course();
+        $framework = $lpg->create_framework();
+        // Enrol students in the course.
+        $studentarch = get_archetype_roles('student');
+        $studentrole = array_shift($studentarch);
+        $coursecontext = context_course::instance($c1->id);
+        $dg->role_assign($studentrole->id, $u1->id, $coursecontext->id);
+        $dg->enrol_user($u1->id, $c1->id, $studentrole->id);
+        $dg->role_assign($studentrole->id, $u2->id, $coursecontext->id);
+        $dg->enrol_user($u2->id, $c1->id, $studentrole->id);
+        $dg->role_assign($studentrole->id, $u3->id, $coursecontext->id);
+        $dg->enrol_user($u3->id, $c1->id, $studentrole->id);
+        $dg->role_assign($studentrole->id, $u4->id, $coursecontext->id);
+        $dg->enrol_user($u4->id, $c1->id, $studentrole->id);
+
+        // Create 6 competencies.
+        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $comp3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $comp4 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $comp5 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $comp6 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+
+        // Link 6 out of 6 to a course.
+        $lpg->create_course_competency(array('competencyid' => $comp1->get_id(), 'courseid' => $c1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp2->get_id(), 'courseid' => $c1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp3->get_id(), 'courseid' => $c1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp4->get_id(), 'courseid' => $c1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp5->get_id(), 'courseid' => $c1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp6->get_id(), 'courseid' => $c1->id));
+
+        // Rate some competencies.
+        // User 1.
+        api::grade_competency_in_course($c1, $u1->id, $comp1->get_id(), 4, 'Unit test');
+        api::grade_competency_in_course($c1, $u1->id, $comp2->get_id(), 4, 'Unit test');
+        api::grade_competency_in_course($c1, $u1->id, $comp3->get_id(), 4, 'Unit test');
+        api::grade_competency_in_course($c1, $u1->id, $comp4->get_id(), 4, 'Unit test');
+        // User 2.
+        api::grade_competency_in_course($c1, $u2->id, $comp1->get_id(), 1, 'Unit test');
+        api::grade_competency_in_course($c1, $u2->id, $comp2->get_id(), 1, 'Unit test');
+        api::grade_competency_in_course($c1, $u2->id, $comp3->get_id(), 1, 'Unit test');
+        api::grade_competency_in_course($c1, $u2->id, $comp4->get_id(), 1, 'Unit test');
+        // User 3.
+        api::grade_competency_in_course($c1, $u3->id, $comp1->get_id(), 3, 'Unit test');
+        api::grade_competency_in_course($c1, $u3->id, $comp2->get_id(), 3, 'Unit test');
+        // User 4.
+        api::grade_competency_in_course($c1, $u4->id, $comp1->get_id(), 2, 'Unit test');
+        api::grade_competency_in_course($c1, $u4->id, $comp2->get_id(), 2, 'Unit test');
+
+        // OK we have enough data - lets call some API functions and check for expected results.
+
+        $result = api::count_proficient_competencies_in_course_for_user($c1->id, $u1->id);
+        $this->assertEquals(4, $result);
+        $result = api::count_proficient_competencies_in_course_for_user($c1->id, $u2->id);
+        $this->assertEquals(0, $result);
+        $result = api::count_proficient_competencies_in_course_for_user($c1->id, $u3->id);
+        $this->assertEquals(2, $result);
+        $result = api::count_proficient_competencies_in_course_for_user($c1->id, $u4->id);
+        $this->assertEquals(0, $result);
+
+        $result = api::get_least_proficient_competencies_for_course($c1->id, 0, 2);
+        // We should get 5 and 6 in repeatable order.
+        $valid = false;
+        if (($comp5->get_id() == $result[0]->get_id()) || ($comp6->get_id() == $result[0]->get_id())) {
+            $valid = true;
+        }
+        $this->assertTrue($valid);
+        $valid = false;
+        if (($comp5->get_id() == $result[1]->get_id()) || ($comp6->get_id() == $result[1]->get_id())) {
+            $valid = true;
+        }
+        $this->assertTrue($valid);
+        $expected = $result[1]->get_id();
+        $result = api::get_least_proficient_competencies_for_course($c1->id, 1, 1);
+        $this->assertEquals($result[0]->get_id(), $expected);
+    }
+
+    /**
      * Test template statistics api functions.
      */
     public function test_template_statistics() {

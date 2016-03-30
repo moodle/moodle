@@ -229,4 +229,60 @@ class user_competency_course extends persistent {
 
         return self::get_records_select("userid = :userid AND courseid = :courseid AND $sql", $params);
     }
+
+    /**
+     * Count the proficient competencies in this course for one user.
+     *
+     * @param int $courseid The course id
+     * @param int $userid The user id
+     * @return int
+     */
+    public static function count_proficient_competencies($courseid, $userid) {
+        global $DB;
+
+        $sql = 'SELECT COUNT(comp.id)
+                  FROM {' . self::TABLE . '} usercoursecomp
+                  JOIN {' . competency::TABLE . '} comp
+                    ON usercoursecomp.competencyid = comp.id
+                 WHERE usercoursecomp.courseid = ? AND usercoursecomp.userid = ? AND usercoursecomp.proficiency = ?';
+        $params = array($courseid, $userid, true);
+
+        $results = $DB->count_records_sql($sql, $params);
+
+        return $results;
+    }
+
+    /**
+     * Get the list of competencies that were completed the least times in a course.
+     *
+     * @param int $courseid
+     * @param int $skip The number of competencies to skip
+     * @param int $limit The max number of competencies to return
+     * @return competency[]
+     */
+    public static function get_least_proficient_competencies_for_course($courseid, $skip = 0, $limit = 0) {
+        global $DB;
+
+        $fields = competency::get_sql_fields('c');
+        $params = array('courseid' => $courseid);
+        $sql = 'SELECT ' . $fields . ', SUM(COALESCE(ucc.proficiency, 0)) AS timesproficient ' .
+                ' FROM {' . competency::TABLE . '} c
+                  JOIN {' . course_competency::TABLE . '} cc
+                    ON c.id = cc.competencyid
+                  LEFT JOIN {' . user_competency_course::TABLE . '} ucc
+                    ON ucc.competencyid = c.id AND ucc.courseid = cc.courseid
+                 WHERE cc.courseid = :courseid
+                GROUP BY c.id
+                ORDER BY timesproficient ASC, c.id DESC';
+
+        $results = $DB->get_records_sql($sql, $params, $skip, $limit);
+        $a = $DB->get_records_sql('SELECT * from {' . user_competency_course::TABLE . '}');
+
+        $comps = array();
+        foreach ($results as $r) {
+            $c = competency::extract_record($r);
+            $comps[] = new competency(0, $c);
+        }
+        return $comps;
+    }
 }

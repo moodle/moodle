@@ -1038,6 +1038,30 @@ class api {
     }
 
     /**
+     * Count the proficient competencies in a course for one user.
+     *
+     * @param int $courseid The id of the course to check.
+     * @param int $userid The id of the user to check.
+     * @return int
+     */
+    public static function count_proficient_competencies_in_course_for_user($courseid, $userid) {
+        static::require_enabled();
+        // Check the user have access to the course.
+        self::validate_course($courseid);
+
+        // First we do a permissions check.
+        $context = context_course::instance($courseid);
+
+        $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
+        if (!has_any_capability($capabilities, $context)) {
+             throw new required_capability_exception($context, 'tool/lp:coursecompetencyview', 'nopermissions', '');
+        }
+
+        // OK - all set.
+        return user_competency_course::count_proficient_competencies($courseid, $userid);
+    }
+
+    /**
      * Count all the competencies in a course.
      *
      * @param int $courseid The id of the course to check.
@@ -4772,6 +4796,7 @@ class api {
      * @return int
      */
     public static function count_plans_for_template($templateorid, $status = 0) {
+        static::require_enabled();
         $template = $templateorid;
         if (!is_object($template)) {
             $template = new template($template);
@@ -4795,6 +4820,7 @@ class api {
      * @return int
      */
     public static function count_user_competency_plans_for_template($templateorid, $proficiency = null) {
+        static::require_enabled();
         $template = $templateorid;
         if (!is_object($template)) {
             $template = new template($template);
@@ -4834,6 +4860,27 @@ class api {
     }
 
     /**
+     * Get the most often not completed competency for this course.
+     *
+     * Requires tool/lp:coursecompetencyview capability at the course context.
+     *
+     * @param int $courseid The course id
+     * @param int $skip The number of records to skip
+     * @param int $limit The max number of records to return
+     * @return competency[]
+     */
+    public static function get_least_proficient_competencies_for_course($courseid, $skip = 0, $limit = 100) {
+        static::require_enabled();
+        $coursecontext = context_course::instance($courseid);
+
+        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $coursecontext)) {
+            throw new required_capability_exception($coursecontext, 'tool/lp:competencyview', 'nopermissions', '');
+        }
+
+        return user_competency_course::get_least_proficient_competencies_for_course($courseid, $skip, $limit);
+    }
+
+    /**
      * Get the most often not completed competency for this template.
      *
      * Requires tool/lp:templateview capability at the system context.
@@ -4844,6 +4891,7 @@ class api {
      * @return competency[]
      */
     public static function get_least_proficient_competencies_for_template($templateorid, $skip = 0, $limit = 100) {
+        static::require_enabled();
         $template = $templateorid;
         if (!is_object($template)) {
             $template = new template($template);

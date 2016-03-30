@@ -33,10 +33,12 @@ use context_system;
 use context_course;
 use tool_lp\api;
 use tool_lp\course_competency;
+use tool_lp\course_competency_statistics;
 use tool_lp\competency;
 use tool_lp\external\competency_exporter;
 use tool_lp\external\competency_path_exporter;
 use tool_lp\external\course_competency_exporter;
+use tool_lp\external\course_competency_statistics_exporter;
 use tool_lp\external\course_competency_settings_exporter;
 use tool_lp\external\course_module_summary_exporter;
 use tool_lp\external\user_competency_exporter;
@@ -78,6 +80,7 @@ class course_competencies_page implements renderable, templatable {
         $this->canmanagecoursecompetencies = has_capability('tool/lp:coursecompetencymanage', $this->context);
         $this->canconfigurecoursecompetencies = has_capability('tool/lp:coursecompetencyconfigure', $this->context);
         $this->coursecompetencysettings = api::read_course_competency_settings($courseid);
+        $this->coursecompetencystatistics = new course_competency_statistics($courseid);
 
         // Check the lowest level in which the user can manage the competencies.
         $this->manageurl = null;
@@ -178,6 +181,9 @@ class course_competencies_page implements renderable, templatable {
         $data->canconfigurecoursecompetencies = $this->canconfigurecoursecompetencies;
         $exporter = new course_competency_settings_exporter($this->coursecompetencysettings);
         $data->settings = $exporter->export($output);
+        $related = array('context' => $this->context);
+        $exporter = new course_competency_statistics_exporter($this->coursecompetencystatistics, $related);
+        $data->statistics = $exporter->export($output);
         $data->manageurl = null;
         if ($this->canmanagecompetencyframeworks) {
             $data->manageurl = $this->manageurl->out(true);
