@@ -45,6 +45,7 @@ $string['cancelreviewrequest'] = 'Cancel review request';
 $string['cannotaddrules'] = 'This competency cannot be configured.';
 $string['cannotcreateuserplanswhentemplateduedateispassed'] = 'New user plans can not be created: this template\'s due date has, or is about to, expire.';
 $string['cannotcreateuserplanswhentemplatehidden'] = 'New user plans can not be created while this template is hidden.';
+$string['category'] = 'Category';
 $string['chooserating'] = 'Choose a rating...';
 $string['cohortssyncedtotemplate'] = 'Cohorts synced to this template';
 $string['competencies'] = 'Competencies';

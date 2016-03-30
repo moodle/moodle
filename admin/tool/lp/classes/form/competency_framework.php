@@ -91,8 +91,8 @@ class competency_framework extends persistent {
         $mform->setDefault('visible', true);
         $mform->addHelpButton('visible', 'visible', 'tool_lp');
 
-        $mform->addElement('static', 'context', get_string('context', 'core_role'));
-        $mform->setDefault('context', $context->get_context_name());
+        $mform->addElement('static', 'context', get_string('category', 'tool_lp'));
+        $mform->setDefault('context', $context->get_context_name(false));
 
         $mform->addElement('header', 'taxonomyhdr', get_string('taxonomies', 'tool_lp'));
         $taxonomies = \tool_lp\competency_framework::get_taxonomies_list();

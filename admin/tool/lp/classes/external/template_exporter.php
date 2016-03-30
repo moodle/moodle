@@ -42,13 +42,15 @@ class template_exporter extends persistent_exporter {
     }
 
     protected function get_other_values(renderer_base $output) {
+        $context = $this->persistent->get_context();
         return array(
             'duedateformatted' => userdate($this->persistent->get_duedate()),
             'cohortscount' => template_cohort::count_records(array('templateid' => $this->persistent->get_id())),
             'planscount' => plan::count_records(array('templateid' => $this->persistent->get_id())),
             'canmanage' => $this->persistent->can_manage(),
             'canread' => $this->persistent->can_read(),
-            'contextname' => $this->persistent->get_context()->get_context_name()
+            'contextname' => $context->get_context_name(),
+            'contextnamenoprefix' => $context->get_context_name(false)
         );
     }
 
@@ -70,6 +72,9 @@ class template_exporter extends persistent_exporter {
                 'type' => PARAM_BOOL
             ),
             'contextname' => array(
+                'type' => PARAM_TEXT,
+            ),
+            'contextnamenoprefix' => array(
                 'type' => PARAM_TEXT,
             )
         );

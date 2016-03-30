@@ -52,10 +52,12 @@ class competency_framework_exporter extends persistent_exporter {
      */
     protected function get_other_values(renderer_base $output) {
         $filters = array('competencyframeworkid' => $this->persistent->get_id());
+        $context = $this->persistent->get_context();
         return array(
-            'canmanage' => has_capability('tool/lp:competencymanage', $this->persistent->get_context()),
+            'canmanage' => has_capability('tool/lp:competencymanage', $context),
             'competenciescount' => api::count_competencies($filters),
-            'contextname' => $this->persistent->get_context()->get_context_name()
+            'contextname' => $context->get_context_name(),
+            'contextnamenoprefix' => $context->get_context_name(false)
         );
     }
 
@@ -73,6 +75,9 @@ class competency_framework_exporter extends persistent_exporter {
                 'type' => PARAM_INT
             ),
             'contextname' => array(
+                'type' => PARAM_TEXT
+            ),
+            'contextnamenoprefix' => array(
                 'type' => PARAM_TEXT
             )
         );

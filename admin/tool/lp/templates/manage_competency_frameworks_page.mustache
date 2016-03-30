@@ -44,7 +44,7 @@
         <tr>
             <th scope="col">{{#str}}competencyframeworkname, tool_lp{{/str}}</th>
             <th scope="col">{{#str}}competencies, tool_lp{{/str}}</th>
-            <th scope="col">{{#str}}context, core_role{{/str}}</th>
+            <th scope="col">{{#str}}category, tool_lp{{/str}}</th>
             <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
         </tr>
     </thead>
@@ -53,7 +53,7 @@
         <tr class="drag-samenode" data-frameworkid="{{id}}">
             <td><span class="drag-handlecontainer"></span><span><a href="{{pluginbaseurl}}/competencies.php?competencyframeworkid={{id}}&amp;pagecontextid={{pagecontextid}}">{{shortname}} ({{idnumber}})</a></span> {{^visible}}{{#str}}hiddenhint, tool_lp{{/str}}{{/visible}}</td>
             <td>{{competenciescount}}</td>
-            <td>{{contextname}}</td>
+            <td>{{contextnamenoprefix}}</td>
             <td>
             {{#canmanage}}
             <ul title="{{#str}}edit{{/str}}" class="competencyframeworkactions">

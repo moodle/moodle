@@ -68,8 +68,8 @@ class template extends persistent {
         $mform->setDefault('visible', true);
         $mform->addHelpButton('visible', 'visible', 'tool_lp');
 
-        $mform->addElement('static', 'context', get_string('context', 'core_role'));
-        $mform->setDefault('context', $context->get_context_name());
+        $mform->addElement('static', 'context', get_string('category', 'tool_lp'));
+        $mform->setDefault('context', $context->get_context_name(false));
         // Disable short forms.
         $mform->setDisableShortforms();
 
