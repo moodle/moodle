@@ -100,6 +100,7 @@ class manager {
             'password' => $CFG->messageinbound_hostpass,
             'hostspec' => $CFG->messageinbound_host,
             'secure'   => $CFG->messageinbound_hostssl,
+            'debug'    => empty($CFG->debugimap) ? null : fopen('php://stderr', 'w'),
         );
 
         $this->client = new \Horde_Imap_Client_Socket($configuration);
