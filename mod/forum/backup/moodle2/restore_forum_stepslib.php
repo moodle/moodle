@@ -224,7 +224,7 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
         $forumrec = $DB->get_record('forum', array('id' => $forumid));
         if ($forumrec->type == 'single' && !$DB->record_exists('forum_discussions', array('forum' => $forumid))) {
             // Create single discussion/lead post from forum data
-            $sd = new stdclass();
+            $sd = new stdClass();
             $sd->course   = $forumrec->course;
             $sd->forum    = $forumrec->id;
             $sd->name     = $forumrec->name;
@@ -240,7 +240,7 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
             $fs = get_file_storage();
             $files = $fs->get_area_files($this->task->get_contextid(), 'mod_forum', 'intro');
             foreach ($files as $file) {
-                $newfilerecord = new stdclass();
+                $newfilerecord = new stdClass();
                 $newfilerecord->filearea = 'post';
                 $newfilerecord->itemid   = $DB->get_field('forum_discussions', 'firstpost', array('id' => $sdid));
                 $fs->create_file_from_storedfile($newfilerecord, $file);
