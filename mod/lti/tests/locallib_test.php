@@ -264,4 +264,32 @@ class mod_lti_locallib_testcase extends advanced_testcase {
 
         $this->assertEquals($ncount, $rncount, 'All newline characters should be a combination of \r\n');
     }
+
+    /**
+     * Tests lti_prepare_type_for_save's handling of the "Force SSL" configuration.
+     */
+    public function test_lti_prepare_type_for_save_forcessl() {
+        $type = new stdClass();
+        $config = new stdClass();
+
+        // Try when the forcessl config property is not set.
+        lti_prepare_type_for_save($type, $config);
+        $this->assertObjectHasAttribute('lti_forcessl', $config);
+        $this->assertEquals(0, $config->lti_forcessl);
+        $this->assertEquals(0, $type->forcessl);
+
+        // Try when forcessl config property is set.
+        $config->lti_forcessl = 1;
+        lti_prepare_type_for_save($type, $config);
+        $this->assertObjectHasAttribute('lti_forcessl', $config);
+        $this->assertEquals(1, $config->lti_forcessl);
+        $this->assertEquals(1, $type->forcessl);
+
+        // Try when forcessl config property is set to 0.
+        $config->lti_forcessl = 0;
+        lti_prepare_type_for_save($type, $config);
+        $this->assertObjectHasAttribute('lti_forcessl', $config);
+        $this->assertEquals(0, $config->lti_forcessl);
+        $this->assertEquals(0, $type->forcessl);
+    }
 }
