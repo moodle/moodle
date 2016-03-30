@@ -39,6 +39,7 @@ if (empty($CFG->messaging)) {
     throw new moodle_exception('disabled', 'core_message');
 }
 
+$PAGE->set_context(null);
 require_sesskey();
 $action = optional_param('action', null, PARAM_ALPHA);
 $response = null;
