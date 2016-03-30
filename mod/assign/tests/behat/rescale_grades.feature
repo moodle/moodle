@@ -1,4 +1,4 @@
-@mod @mod_assign
+@mod @mod_assign @bug
 Feature: Check that the assignment grade can be rescaled when the max grade is changed
   In order to ensure that the percentages are not affected by changes to the max grade
   As a teacher
@@ -26,7 +26,7 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
       | Assignment name | Test assignment name |
       | Description | Test assignment description |
     And I follow "Test assignment name"
-    And I follow "View/grade all submissions"
+    And I follow "View all submissions"
     And I click on "Grade Student 1" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "40"
     And I press "Save changes"
@@ -39,7 +39,7 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
     And I set the field "Maximum grade" to "80"
     And I set the field "Rescale existing grades" to "No"
     When I press "Save and display"
-    And I follow "View/grade all submissions"
+    And I follow "View all submissions"
     Then "Student 1" row "Grade" column of "generaltable" table should contain "40.00"
 
   Scenario: Update the max grade for an assignment rescaling existing grades
@@ -48,7 +48,7 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
     And I set the field "Maximum grade" to "50"
     And I set the field "Rescale existing grades" to "Yes"
     When I press "Save and display"
-    And I follow "View/grade all submissions"
+    And I follow "View all submissions"
     Then "Student 1" row "Grade" column of "generaltable" table should contain "20.00"
 
   Scenario: A rescale existing grades is not needed when keeping max grade unchanged
