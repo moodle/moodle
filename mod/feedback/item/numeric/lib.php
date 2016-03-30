@@ -313,7 +313,7 @@ class feedback_item_numeric extends feedback_item_base {
         if (!is_numeric($value)) {
             return null;
         }
-        $decimal = is_int($value) ? 0 : strcspn(strrev($value), '.');
+        $decimal = is_int($value) ? 0 : strlen(substr(strrchr($value, '.'), 1));
         return format_float($value, $decimal);
     }
 
