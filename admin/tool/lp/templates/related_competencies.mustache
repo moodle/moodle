@@ -22,3 +22,9 @@
     {{#str}}nocrossreferencedcompetencies, tool_lp{{/str}}
 {{/relatedcompetencies}}
 </div>
+{{#js}}
+require(['tool_lp/competencydialogue'], function(Compdialogue) {
+    var competencydialogue = new Compdialogue({includerelated : true});
+    competencydialogue.watch('[data-region="relatedcompetencies"]');
+});
+{{/js}}
