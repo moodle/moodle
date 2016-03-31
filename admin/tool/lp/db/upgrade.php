@@ -832,7 +832,7 @@ function xmldb_tool_lp_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2016020917, 'tool', 'lp');
     }
 
-    if ($oldversion < 2016020919) {
+    if ($oldversion < 2016020923) {
 
         // Define table tool_lp_coursecompsettings to be created.
         $table = new xmldb_table('tool_lp_coursecompsettings');
@@ -855,7 +855,7 @@ function xmldb_tool_lp_upgrade($oldversion) {
         }
 
         // Lp savepoint reached.
-        upgrade_plugin_savepoint(true, 2016020919, 'tool', 'lp');
+        upgrade_plugin_savepoint(true, 2016020923, 'tool', 'lp');
     }
 
 
