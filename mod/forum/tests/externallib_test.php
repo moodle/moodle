@@ -782,7 +782,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
      * Test add_discussion_post
      */
     public function test_add_discussion_post() {
-        global $CFG, $USER;
+        global $CFG;
 
         $this->resetAfterTest(true);
 
@@ -838,16 +838,17 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         }
         $this->assertTrue($tested);
 
-        // Test inline attachment in post
+        // Test inline and regular attachment in post
         // Create a file in a draft area for inline attachments.
         $draftidinlineattach = file_get_unused_draft_itemid();
+        $draftidattach = file_get_unused_draft_itemid();
         self::setUser($user);
         $usercontext = context_user::instance($user->id);
         $filepath = '/';
         $filearea = 'draft';
         $component = 'user';
         $filenameimg = 'shouldbeanimage.txt';
-        $filerecord = array(
+        $filerecordinline = array(
             'contextid' => $usercontext->id,
             'component' => $component,
             'filearea'  => $filearea,
@@ -856,9 +857,17 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'filename'  => $filenameimg,
         );
         $fs = get_file_storage();
-        $fs->create_file_from_string($filerecord, 'image contents (not really)');
 
-        $options = array(array('name' => 'itemid', 'value' => $draftidinlineattach));
+        // Create a file in a draft area for regular attachments.
+        $filerecordattach = $filerecordinline;
+        $attachfilename = 'attachment.txt';
+        $filerecordattach['filename'] = $attachfilename;
+        $filerecordattach['itemid'] = $draftidattach;
+        $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
+        $fs->create_file_from_string($filerecordattach, 'simple text attachment');
+
+        $options = array(array('name' => 'itemid', 'value' => $draftidinlineattach),
+                         array('name' => 'attachmentsid', 'value' => $draftidattach));
         $dummytext = 'Here is an inline image: <img src="' . $CFG->wwwroot
                      . "/draftfile.php/{$usercontext->id}/user/draft/{$draftidinlineattach}/{$filenameimg}"
                      . '" alt="inlineimage">.';
@@ -874,9 +883,12 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         foreach ($posts['posts'] as $thispost) {
             if ($createdpost['postid'] == $thispost['id']) {
                 $this->assertEquals($createdpost['postid'], $thispost['id']);
-                $this->assertNotContains('draftfile.php', $thispost['message']);
+                $this->assertEquals($thispost['attachment'], 1, "There should be a non-inline attachment");
+                $this->assertCount(1, $thispost['attachments'], "There should be 1 attachment");
+                $this->assertEquals($thispost['attachments'][0]['filename'], $attachfilename, "There should be 1 attachment");
                 $this->assertContains('pluginfile.php', $thispost['message']);
                 $postfound = true;
+                break;
             }
         }
 
@@ -954,9 +966,15 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(3, $discussions['discussions']);
         $this->assertEquals($discussion2pinned['discussionid'], $discussions['discussions'][0]['discussion']);
 
-        // Test inline attachment in new discussion
+        // Test inline and regular attachment in new discussion
         // Create a file in a draft area for inline attachments.
+
+        $fs = get_file_storage();
+
+
         $draftidinlineattach = file_get_unused_draft_itemid();
+        $draftidattach = file_get_unused_draft_itemid();
+
         $usercontext = context_user::instance($USER->id);
         $filepath = '/';
         $filearea = 'draft';
@@ -970,13 +988,22 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'filepath'  => $filepath,
             'filename'  => $filenameimg,
         );
-        $fs = get_file_storage();
+
+
+        // Create a file in a draft area for regular attachments.
+        $filerecordattach = $filerecord;
+        $attachfilename = 'attachment.txt';
+        $filerecordattach['filename'] = $attachfilename;
+        $filerecordattach['itemid'] = $draftidattach;
         $fs->create_file_from_string($filerecord, 'image contents (not really)');
+        $fs->create_file_from_string($filerecordattach, 'simple text attachment');
+
         $dummytext = 'Here is an inline image: <img src="' . $CFG->wwwroot .
                     "/draftfile.php/{$usercontext->id}/user/draft/{$draftidinlineattach}/{$filenameimg}" .
                     '" alt="inlineimage">.';
 
-        $options = array(array('name' => 'itemid', 'value' => $draftidinlineattach));
+        $options = array(array('name' => 'itemid', 'value' => $draftidinlineattach),
+                         array('name' => 'attachmentsid', 'value' => $draftidattach));
         $createddiscussion = mod_forum_external::add_discussion($forum->id, 'the inline attachment subject',
                                                                 $dummytext, -1, $options);
         $createddiscussion = external_api::clean_returnvalue(mod_forum_external::add_discussion_returns(), $createddiscussion);
@@ -990,9 +1017,13 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $postfound = false;
         foreach ($discussions['discussions'] as $thisdiscussion) {
             if ($createddiscussion['discussionid'] == $thisdiscussion['discussion']) {
+                $this->assertEquals($thisdiscussion['attachment'], 1, "There should be a non-inline attachment");
+                $this->assertCount(1, $thisdiscussion['attachments'], "There should be 1 attachment");
+                $this->assertEquals($thisdiscussion['attachments'][0]['filename'], $attachfilename, "There should be 1 attachment");
                 $this->assertNotContains('draftfile.php', $thisdiscussion['message']);
                 $this->assertContains('pluginfile.php', $thisdiscussion['message']);
                 $postfound = true;
+                break;
             }
         }
 

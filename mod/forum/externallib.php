@@ -962,6 +962,7 @@ class mod_forum_external extends external_api {
                                         'The allowed keys (value format) are:
                                         discussionsubscribe (bool); subscribe to the discussion?, default to true
                                         itemid              (int); the draft file area id for inline attachments
+                                        attachmentsid       (int); the draft file area id for attachments
                             '),
                             'value' => new external_value(PARAM_RAW, 'the value of the option,
                                                             this param is validated in the external function.'
@@ -997,7 +998,8 @@ class mod_forum_external extends external_api {
         // Validate options.
         $options = array(
             'discussionsubscribe' => true,
-            'itemid' => 0
+            'itemid' => 0,
+            'attachmentsid' => null
         );
         foreach ($params['options'] as $option) {
             $name = trim($option['name']);
@@ -1006,6 +1008,9 @@ class mod_forum_external extends external_api {
                     $value = clean_param($option['value'], PARAM_BOOL);
                     break;
                 case 'itemid':
+                    $value = clean_param($option['value'], PARAM_INT);
+                    break;
+                case 'attachmentsid':
                     $value = clean_param($option['value'], PARAM_INT);
                     break;
                 default:
@@ -1047,8 +1052,9 @@ class mod_forum_external extends external_api {
         $post->messageformat = FORMAT_HTML;   // Force formatting for now.
         $post->messagetrust = trusttext_trusted($context);
         $post->itemid = $options['itemid'];
-
-        if ($postid = forum_add_new_post($post, null)) {
+        $post->attachments   = $options['attachmentsid'];
+        $fakemform = $post->attachments;
+        if ($postid = forum_add_new_post($post, $fakemform)) {
 
             $post->id = $postid;
 
@@ -1123,6 +1129,7 @@ class mod_forum_external extends external_api {
                                         discussionsubscribe (bool); subscribe to the discussion?, default to true
                                         discussionpinned    (bool); is the discussion pinned, default to false
                                         itemid              (int); the draft file area id for inline attachments
+                                        attachmentsid       (int); the draft file area id for attachments
                             '),
                             'value' => new external_value(PARAM_RAW, 'The value of the option,
                                                             This param is validated in the external function.'
@@ -1161,7 +1168,8 @@ class mod_forum_external extends external_api {
         $options = array(
             'discussionsubscribe' => true,
             'discussionpinned' => false,
-            'itemid' => 0
+            'itemid' => 0,
+            'attachmentsid' => null
         );
         foreach ($params['options'] as $option) {
             $name = trim($option['name']);
@@ -1173,6 +1181,9 @@ class mod_forum_external extends external_api {
                     $value = clean_param($option['value'], PARAM_BOOL);
                     break;
                 case 'itemid':
+                    $value = clean_param($option['value'], PARAM_INT);
+                    break;
+                case 'attachmentsid':
                     $value = clean_param($option['value'], PARAM_INT);
                     break;
                 default:
@@ -1226,13 +1237,15 @@ class mod_forum_external extends external_api {
         $discussion->name = $discussion->subject;
         $discussion->timestart = 0;
         $discussion->timeend = 0;
+        $discussion->attachments = $options['attachmentsid'];
+
         if (has_capability('mod/forum:pindiscussions', $context) && $options['discussionpinned']) {
             $discussion->pinned = FORUM_DISCUSSION_PINNED;
         } else {
             $discussion->pinned = FORUM_DISCUSSION_UNPINNED;
         }
-
-        if ($discussionid = forum_add_discussion($discussion)) {
+        $fakemform = $options['attachmentsid'];
+        if ($discussionid = forum_add_discussion($discussion, $fakemform)) {
 
             $discussion->id = $discussionid;
 
