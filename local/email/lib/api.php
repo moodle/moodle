@@ -166,7 +166,7 @@ class EmailTemplate {
         }
         // Check if we are an admin with a company set.
         if (!empty($SESSION->currenteditingcompany)) {
-            $this->company = new company($SESSION->currenteditingcompany);
+            $this->company = $DB->get_record('company', array('id' => $SESSION->currenteditingcompany));
             // Otherwise use the creating users company.
         } else {
             $this->company = $DB->get_record_sql("SELECT * FROM {company}
