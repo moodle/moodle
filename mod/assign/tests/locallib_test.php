@@ -119,6 +119,54 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
     }
 
     /**
+     * Data provider for test_get_assign_perpage
+     *
+     * @return array Provider data
+     */
+    public function get_assign_perpage_provider() {
+        return array(
+            array(
+                'maxperpage' => -1,
+                'userprefs' => array(
+                    -1 => -1,
+                    10 => 10,
+                    20 => 20,
+                    50 => 50,
+                ),
+            ),
+            array(
+                'maxperpage' => 15,
+                'userprefs' => array(
+                    -1 => 15,
+                    10 => 10,
+                    20 => 15,
+                    50 => 15,
+                ),
+            ),
+        );
+    }
+
+    /**
+     * Test maxperpage
+     *
+     * @dataProvider get_assign_perpage_provider
+     * @param integer $maxperpage site config value
+     * @param array $userprefs Array of user preferences and expected page sizes
+     */
+    public function test_get_assign_perpage($maxperpage, $userprefs) {
+
+        $this->setUser($this->editingteachers[0]);
+        $assign = $this->create_instance();
+        set_config('maxperpage', $maxperpage, 'assign');
+        set_user_preference('assign_perpage', null);
+        $this->assertEquals(10, $assign->get_assign_perpage());
+        foreach ($userprefs as $pref => $perpage) {
+            set_user_preference('assign_perpage', $pref);
+            $this->assertEquals($perpage, $assign->get_assign_perpage());
+        }
+    }
+
+    /**
      * Test submissions with extension date.
      */
     public function test_gradingtable_extension_due_date() {

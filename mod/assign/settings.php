@@ -70,6 +70,21 @@ if ($ADMIN->fulltree) {
                                                     $description,
                                                     $default));
 
+    $name = new lang_string('maxperpage', 'mod_assign');
+    $options = array(
+        -1 => get_string('unlimitedpages', 'mod_assign'),
+        10 => 10,
+        20 => 20,
+        50 => 50,
+        100 => 100,
+    );
+    $description = new lang_string('maxperpage_help', 'mod_assign');
+    $settings->add(new admin_setting_configselect('assign/maxperpage',
+                                                    $name,
+                                                    $description,
+                                                    -1,
+                                                    $options));
+
     $name = new lang_string('defaultsettings', 'mod_assign');
     $description = new lang_string('defaultsettings_help', 'mod_assign');
     $settings->add(new admin_setting_heading('defaultsettings', $name, $description));
