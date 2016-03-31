@@ -34,6 +34,7 @@ $string['admindirname'] = 'Admin-mappe';
 $string['availablelangs'] = 'Tilgængelige sprogpakker';
 $string['chooselanguagehead'] = 'Vælg et sprog';
 $string['chooselanguagesub'] = 'Vælg et sprog til brug under installationen. Dette sprog vil også blive brugt som standardsprog på webstedet, men det kan altid ændres til et andet sprog.';
+$string['clialreadyconfigured'] = 'Konfigurationsfilen config.php eksisterer allerede. Benyt venigst admin/cli/install_database.php til at installere Moodle for dette site.';
 $string['clialreadyinstalled'] = 'Filen config.php eksisterer allerede, brug venligst admin/cli/upgrade.php hvis du ønsker at opgradere dette websted.';
 $string['cliinstallheader'] = 'Moodle {$a} kommandolinje-installationsprogram';
 $string['databasehost'] = 'Databasevært';
