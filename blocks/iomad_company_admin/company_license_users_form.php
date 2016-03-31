@@ -362,6 +362,11 @@ if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', conte
 } else {
     $userlevel = company::get_userlevel($USER);
     $userhierarchylevel = $userlevel->id;
+    if (iomad::has_capability('block/iomad_company_admin:edit_licenses', context_system::instance())) {
+        $alllicenses = true;
+    } else {
+        $allliceses = false;
+    }
     $licenses = company::get_recursive_departments_licenses($userhierarchylevel);
     if (!empty($licenses)) {
         foreach ($licenses as $deptlicenseid) {
@@ -369,7 +374,7 @@ if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', conte
             if ($license = $DB->get_records('companylicense',
                                              array('id' => $deptlicenseid->licenseid, 'companyid' => $companyid),
                                              null, 'id,name,expirydate')) {
-                if ($license[$deptlicenseid->licenseid]->expirydate > time()) {
+                if ($alllicenses || $license[$deptlicenseid->licenseid]->expirydate > time()) {
                     $licenselist[$license[$deptlicenseid->licenseid]->id]  = $license[$deptlicenseid->licenseid]->name;
                 }
             }

@@ -295,10 +295,36 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
     if ($companyid > 0) {
         $coursesform->process();
         // Display the license selctor.
-        $licenses = $DB->get_records_sql_menu("SELECT id, name FROM {companylicense}
-                                               WHERE companyid = :companyid
-                                               AND expirydate > :time",
-        array('companyid' => $companyid, 'time' => time()));
+        $licenselist = array();
+        if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', context_system::instance())) {
+            $parentlevel = company::get_company_parentnode($companyid);
+            $userhierarchylevel = $parentlevel->id;
+            // Get all the licenses.
+            $licenses = $DB->get_records('companylicense', array('companyid' => $companyid), null, 'id,name,expirydate');
+            foreach ($licenses as $license) {
+                if ($license->expirydate > time()) {
+                    $licenselist[$license->id] = $license->name;
+                } else {
+                    $licenselist[$license->id] = $license->name." (expired)";
+                }
+            }
+        } else {
+            $userlevel = company::get_userlevel($USER);
+            $userhierarchylevel = $userlevel->id;
+            $licenses = company::get_recursive_departments_licenses($userhierarchylevel);
+            if (!empty($licenses)) {
+                foreach ($licenses as $deptlicenseid) {
+                    // Get the license record.
+                    if ($license = $DB->get_records('companylicense',
+                                                     array('id' => $deptlicenseid->licenseid, 'companyid' => $companyid),
+                                                     null, 'id,name,expirydate')) {
+                        if ($license[$deptlicenseid->licenseid]->expirydate > time()) {
+                            $licenselist[$license[$deptlicenseid->licenseid]->id]  = $license[$deptlicenseid->licenseid]->name;
+                        }
+                    }
+                }
+            }
+        }
 
         if (count($licenses) == 0) {
             echo '<h3>' . get_string('editlicensestitle', 'block_iomad_company_admin') . '</h3>';
