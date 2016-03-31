@@ -3285,7 +3285,11 @@ class external extends external_api {
                     'usercompetency' => $uc,
                     'usercompetencyplan' => $ucp
                 ))
-            )
+            ),
+            'competencycount' => new external_value(PARAM_INT, 'Count of competencies'),
+            'proficientcompetencycount' => new external_value(PARAM_INT, 'Count of proficientcompetencies'),
+            'proficientcompetencypercentage' => new external_value(PARAM_FLOAT, 'Percentage of competencies proficient'),
+            'proficientcompetencypercentageformatted' => new external_value(PARAM_RAW, 'Displayable percentage'),
         ));
     }
 

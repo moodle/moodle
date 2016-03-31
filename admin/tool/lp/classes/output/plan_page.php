@@ -82,6 +82,7 @@ class plan_page implements renderable, templatable {
         }
 
         $pclist = api::list_plan_competencies($this->plan);
+        $proficientcount = 0;
         foreach ($pclist as $pc) {
             $comp = $pc->competency;
             $usercomp = $pc->$ucproperty;
@@ -121,7 +122,18 @@ class plan_page implements renderable, templatable {
             $record->$ucproperty = $exporter->export($output);
 
             $data->competencies[] = $record;
+            if ($usercomp->get_proficiency()) {
+                $proficientcount++;
+            }
         }
+        $data->competencycount = count($data->competencies);
+        $data->proficientcompetencycount = $proficientcount;
+        if ($data->competencycount) {
+            $data->proficientcompetencypercentage = ((float) $proficientcount / (float) $data->competencycount) * 100.0;
+        } else {
+            $data->proficientcompetencypercentage = 0.0;
+        }
+        $data->proficientcompetencypercentageformatted = format_float($data->proficientcompetencypercentage);
         return $data;
     }
 }
