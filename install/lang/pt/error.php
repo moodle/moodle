@@ -44,7 +44,7 @@ $string['dmlexceptiononinstall'] = '<p>Ocorreu um erro de base de dados [{$a->er
 $string['downloadedfilecheckfailed'] = 'A verificação do ficheiro descarregado falhou.';
 $string['invalidmd5'] = 'A variável de verificação está errada - tente novamente.';
 $string['missingrequiredfield'] = 'Um dos campos obrigatórios está em falta';
-$string['remotedownloaderror'] = 'O descarregamento do componente para o servidor falhou. Verifique as configurações do proxy. A instalação da extensão cURL do PHP é muito recomendada.<br /><br />Terá de fazer manualmente o descarregamento do ficheiro <a href="{$a->url}">{$a->url}</a>, copiá-lo para a pasta "{$a->dest}" no seu servidor e descompactá-lo';
+$string['remotedownloaderror'] = 'Não foi possível descarregar o componente para o servidor. Verifique as configurações do proxy. A instalação da extensão cURL do PHP é muito recomendada.<br /><br />Terá de descarregar manualmente o ficheiro <a href="{$a->url}">{$a->url}</a>, copiá-lo para a pasta "{$a->dest}" no seu servidor e descompactá-lo';
 $string['wrongdestpath'] = 'Caminho de destino errado';
 $string['wrongsourcebase'] = 'Base do URL de origem errada';
 $string['wrongzipfilename'] = 'Nome de ficheiro ZIP errado';
