@@ -97,7 +97,7 @@ $blockpage->display_header();
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
     print_error('invaliddepartment', 'block_iomad_company_admin');
-}   
+}
 
 // Get the associated department id.
 $company = new company($companyid);
@@ -440,6 +440,9 @@ flush();
 if (!$users) {
     $match = array();
     echo $OUTPUT->heading(get_string('nousersfound'));
+
+    echo "<p><a class='btn' href='" . new moodle_url('/blocks/iomad_company_admin/company_user_create_form.php') . "'>" .
+         get_string('createuser', 'block_iomad_company_admin') . "</a></p>";
 
     $table = null;
 
