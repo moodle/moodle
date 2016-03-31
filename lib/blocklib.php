@@ -271,6 +271,9 @@ class block_manager {
      * @return boolean true if this region exists on this page.
      */
     public function is_known_region($region) {
+        if (empty($region)) {
+            return false;
+        }
         return array_key_exists($region, $this->regions);
     }
 
