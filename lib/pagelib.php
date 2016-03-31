@@ -1103,10 +1103,16 @@ class moodle_page {
      * @param string $pagelayout the page layout this is. For example 'popup', 'home'.
      */
     public function set_pagelayout($pagelayout) {
-        // Uncomment this to debug theme pagelayout issues like missing blocks.
-        // if (!empty($this->_wherethemewasinitialised) && $pagelayout != $this->_pagelayout)
-        //     debugging('Page layout has already been set and cannot be changed.', DEBUG_DEVELOPER);
-        $this->_pagelayout = $pagelayout;
+        global $SESSION;
+
+        if (!empty($SESSION->forcepagelayout)) {
+            $this->_pagelayout = $SESSION->forcepagelayout;
+        } else {
+            // Uncomment this to debug theme pagelayout issues like missing blocks.
+            // if (!empty($this->_wherethemewasinitialised) && $pagelayout != $this->_pagelayout)
+            //     debugging('Page layout has already been set and cannot be changed.', DEBUG_DEVELOPER);
+            $this->_pagelayout = $pagelayout;
+        }
     }
 
     /**
