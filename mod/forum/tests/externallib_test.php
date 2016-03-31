@@ -866,7 +866,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
         $fs->create_file_from_string($filerecordattach, 'simple text attachment');
 
-        $options = array(array('name' => 'itemid', 'value' => $draftidinlineattach),
+        $options = array(array('name' => 'inlineattachmentsid', 'value' => $draftidinlineattach),
                          array('name' => 'attachmentsid', 'value' => $draftidattach));
         $dummytext = 'Here is an inline image: <img src="' . $CFG->wwwroot
                      . "/draftfile.php/{$usercontext->id}/user/draft/{$draftidinlineattach}/{$filenameimg}"
@@ -971,7 +971,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
 
         $fs = get_file_storage();
 
-
         $draftidinlineattach = file_get_unused_draft_itemid();
         $draftidattach = file_get_unused_draft_itemid();
 
@@ -989,7 +988,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'filename'  => $filenameimg,
         );
 
-
         // Create a file in a draft area for regular attachments.
         $filerecordattach = $filerecord;
         $attachfilename = 'attachment.txt';
@@ -1002,7 +1000,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                     "/draftfile.php/{$usercontext->id}/user/draft/{$draftidinlineattach}/{$filenameimg}" .
                     '" alt="inlineimage">.';
 
-        $options = array(array('name' => 'itemid', 'value' => $draftidinlineattach),
+        $options = array(array('name' => 'inlineattachmentsid', 'value' => $draftidinlineattach),
                          array('name' => 'attachmentsid', 'value' => $draftidattach));
         $createddiscussion = mod_forum_external::add_discussion($forum->id, 'the inline attachment subject',
                                                                 $dummytext, -1, $options);
