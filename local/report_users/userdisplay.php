@@ -167,11 +167,11 @@ $compusertable->head[] = get_string('actions', 'local_report_users');
 $compusertable->align[] = 'center';
 
 // Set that there is nothing found here first.
-$noresults = true;
+$results = false;
 
 foreach ($usercourses as $usercourse) {
     if ($usercompletion[$usercourse->id] = userrep::get_completion($userid, $usercourse->id, $showhistoric) ) {
-        $noresults = true;
+        $results = true;
         $usercourseid = $usercourse->id;
 
         // Check if the course is also in progress.
@@ -273,6 +273,7 @@ foreach ($usercourses as $usercourse) {
                         $certstring = get_string('nocerttodownload', 'local_report_users');
                     }
                 } else {
+                    $certstring = "";
                 }
                 $compusertable->data[] = array($coursestring,
                                                $statusstring,
@@ -311,7 +312,7 @@ if (empty($dodownload)) {
     }
 
     // If we have anything show it.
-    if (!$noresults) {
+    if ($results) {
         echo html_writer::table($compusertable);
     } else {
         echo "</br><b>" . get_string('noresults') . "</b>";
@@ -320,9 +321,6 @@ if (empty($dodownload)) {
 
 if (!empty($courseid && !empty($usercompletion[$courseid]))) {
     if (empty($dodownload)) {
-        echo "usercompletion = <pre>";
-        print_r($usercompletion);
-        echo "</pre></br>";
         echo "<h3>".$usercompletion[$courseid]->data[$courseid]->coursename.
              " (<a href='".
              new moodle_url('/local/report_completion/index.php', array('courseid' => $courseid)).

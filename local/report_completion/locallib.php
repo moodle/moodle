@@ -78,7 +78,11 @@ class report_completion {
                                                    WHERE
                                                    cc.course = :course AND
                                                    cc.timestarted = 0", array('course' => $course->courseid));
-            $courseobj->numstarted = $courseobj->numenrolled;
+            $courseobj->numstarted = $DB->count_records_sql("SELECT COUNT(cc.id) FROM {course_completions} cc
+                                                   JOIN {".$temptablename."} tt ON (cc.userid = tt.userid)
+                                                   WHERE
+                                                   cc.course = :course AND
+                                                   cc.timestarted != 0", array('course' => $course->courseid));
             $courseobj->numcompleted = $DB->count_records_sql("SELECT COUNT(cc.id) FROM {course_completions} cc
                                                    JOIN {".$temptablename."} tt ON (cc.userid = tt.userid)
                                                    WHERE
@@ -155,7 +159,7 @@ class report_completion {
         $tempcreatesql = "INSERT INTO {".$tempcomptablename."} (userid, courseid, timeenrolled, timestarted, timecompleted, finalscore, certsource)
                           SELECT cc.userid, cc.course, cc.timeenrolled, cc.timestarted, cc.timecompleted, gg.finalgrade, 0
                           FROM {".$tempusertablename."} tut, {course_completions} cc LEFT JOIN {grade_grades} gg ON (gg.userid = cc.userid)
-                          INNER JOIN {grade_items} gi
+                          LEFT JOIN {grade_items} gi
                           ON (cc.course = gi.courseid
                           AND gg.itemid = gi.id
                           AND gi.itemtype = 'course')

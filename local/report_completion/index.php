@@ -173,7 +173,7 @@ $selectparams['courseid'] = 0;
 $selecturl = new moodle_url('/local/report_completion/index.php', $selectparams);
 $subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
 $select = new single_select($selecturl, 'departmentid', $subhierarchieslist, $departmentid);
-$select->label = get_string('department', 'block_iomad_company_admin');
+$select->label = get_string('department', 'block_iomad_company_admin') . "&nbsp";
 $select->formid = 'choosedepartment';
 $fwselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_department_selector'));
 
@@ -185,7 +185,7 @@ $completiontypelist = array('0' => get_string('all'),
                             '2' => get_string('inprogressusers', 'local_report_completion'),
                             '3' => get_string('completedusers', 'local_report_completion'));
 $select = new single_select($selecturl, 'completiontype', $completiontypelist, $completiontype);
-$select->label = get_string('choosecompletiontype', 'block_iomad_company_admin');
+$select->label = get_string('choosecompletiontype', 'block_iomad_company_admin') . "&nbsp";
 $select->formid = 'choosecompletiontype';
 $completiontypeselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_completiontype_selector'));
 
@@ -679,7 +679,7 @@ if (empty($charttype)) {
     
         if (empty($idlist['0'])) {
             foreach ($coursedata as $userid => $user) {
-                if (empty($user->timeenrolled)) {
+                if (empty($user->timestarted)) {
                     $statusstring = get_string('notstarted', 'local_report_completion');
                 } else {
                     $statusstring = get_string('started', 'local_report_completion');
@@ -692,30 +692,30 @@ if (empty($charttype)) {
                 if (!empty($user->timestarted)) {
                     $starttime = date('d-m-y', $user->timestarted);
                 } else {
-                    $starttime = date('d-m-y', $user->timeenrolled);
+                    $starttime = "-";
                 }
                 if (!empty($user->timeenrolled)) {
                     $enrolledtime = date('d-m-y', $user->timeenrolled);
                 } else {
-                    $enrolledtime = "";
+                    $enrolledtime = "-";
                 }
                 if (!empty($user->timecompleted)) {
                     $completetime = date('d-m-y', $user->timecompleted);
                 } else {
-                    $completetime = "";
+                    $completetime = "-";
                 }
     
                 if ($showexpiry && !empty($user->timecompleted)) {
                     $expirytime = date('Y-m-d', $user->timecompleted + ($iomadcourseinfo->validlength * 24 * 60 * 60) );
                 } else {
-                    $expirytime = "";
+                    $expirytime = "-";
                 }
 
                 // Score information.
                 if (!empty($user->result)) {
                     $scorestring = round($user->result, 0)."%";
                 } else {
-                    $scorestring = "0%";
+                    $scorestring = "-";
                 }
     
                 $user->fullname = $user->firstname . ' ' . $user->lastname;
@@ -736,12 +736,7 @@ if (empty($charttype)) {
                             if ($traccertrec = $DB->get_record('local_iomad_track_certs', array('trackid' => $user->certsource))) {
                                 // create the file download link.
                                 $coursecontext = context_course::instance($courseid);
-/*                                $fs = get_file_storage();
-                                $file = $fs->get_file($coursecontext->id, 'local_iomad_track', 'issue', $usercompcourse->completion->certsource, '/', $traccertrec->filename); 
-echo "file = <pre>";
-print_r($file);
-echo "</pre></br>";
-*/                                $certtabledata = "<a class=\"btn btn-info\" href='".
+                                $certtabledata = "<a class=\"btn btn-info\" href='".
                                               /*moodle_url::make_pluginfile_url($coursecontext->id,
                                                                                'local_iomad_track',
                                                                                'issue',
