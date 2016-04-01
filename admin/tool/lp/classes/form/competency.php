@@ -36,17 +36,19 @@ use stdClass;
  */
 class competency extends persistent {
 
+    /** @var core_competency\competency persistent class for form */
     protected static $persistentclass = 'core_competency\\competency';
 
     /**
      * Define the form - called by parent constructor
      */
     public function definition() {
-        global $PAGE;
+        global $PAGE, $OUTPUT;
 
         $mform = $this->_form;
         $framework = $this->_customdata['competencyframework'];
         $parent = $this->_customdata['parent'];
+        $pagecontextid = $this->_customdata['pagecontextid'];
         $competency = $this->get_persistent();
 
         $mform->addElement('hidden', 'competencyframeworkid');
@@ -59,15 +61,35 @@ class competency extends persistent {
                            'frameworkdesc',
                            get_string('competencyframework', 'tool_lp'),
                            s($framework->get_shortname()));
-        if ($parent) {
-            $mform->addElement('hidden', 'parentid');
-            $mform->setType('parentid', PARAM_INT);
-            $mform->setConstant('parentid', $parent->get_id());
 
-            $mform->addElement('static',
-                               'parentdesc',
-                               get_string('taxonomy_parent_' . $framework->get_taxonomy($parent->get_level()), 'tool_lp'),
-                               s($parent->get_shortname()));
+        $mform->addElement('hidden', 'parentid', '', array('id' => 'tool_lp_parentcompetency'));
+
+        $mform->setType('parentid', PARAM_INT);
+        $mform->setConstant('parentid', ($parent) ? $parent->get_id() : 0);
+        $parentlevel = ($parent) ? $parent->get_level() : 0;
+        $parentname = ($parent) ? $parent->get_shortname() : get_string('competencyframeworkroot', 'tool_lp');
+        $parentlabel = ($competency->get_id()) ?
+            get_string('taxonomy_parent_' . $framework->get_taxonomy($parentlevel), 'tool_lp') :
+            get_string('parentcompetency', 'tool_lp');
+        $editaction = '';
+        if (!$competency->get_id()) {
+            $icon = $OUTPUT->pix_icon('t/editstring', get_string('parentcompetency_edit', 'tool_lp'));
+            $editaction = $OUTPUT->action_link('#', $icon, null, array('id' => 'id_parentcompetencybutton'));
+        }
+
+        $mform->addElement('static',
+                           'parentdesc',
+                           $parentlabel,
+                           "<span id='id_parentdesc'>$parentname</span>&nbsp;".$editaction);
+        // Set the picker competency when adding new competency.
+        if (!$competency->get_id()) {
+            // Call the parentcompetency_form init to initialize the competency picker for parent competency.
+            $PAGE->requires->js_call_amd('tool_lp/parentcompetency_form', 'init', array('#id_parentcompetencybutton',
+                '#tool_lp_parentcompetency',
+                '#id_parentdesc',
+                $framework->get_id(),
+                \core_competency\competency_framework::get_taxonomies_max_level(),
+                $pagecontextid));
         }
 
         $mform->addElement('text', 'shortname',

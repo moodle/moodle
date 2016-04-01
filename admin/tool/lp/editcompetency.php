@@ -77,7 +77,8 @@ list($title, $subtitle, $returnurl) = \tool_lp\page_helper::setup_for_competency
 $formoptions = [
     'competencyframework' => $competencyframework,
     'parent' => $parent,
-    'persistent' => $competency
+    'persistent' => $competency,
+    'pagecontextid' => $pagecontextid
 ];
 $form = new \tool_lp\form\competency($url->out(false), $formoptions);
 
