@@ -34,6 +34,7 @@ use tool_lp\template;
 use tool_lp\template_cohort;
 use tool_lp\template_competency;
 use tool_lp\user_competency;
+use tool_lp\user_competency_course;
 use tool_lp\user_competency_plan;
 use tool_lp\plan_competency;
 use tool_lp\evidence;
@@ -317,6 +318,32 @@ class tool_lp_generator extends component_generator_base {
         $plan->create();
 
         return $plan;
+    }
+
+    /**
+     * Create a new user competency course.
+     *
+     * @param array|stdClass $record
+     * @return user_competency_course
+     */
+    public function create_user_competency_course($record = null) {
+        $record = (object) $record;
+
+        if (!isset($record->userid)) {
+            throw new coding_exception('The userid value is required.');
+        }
+        if (!isset($record->competencyid)) {
+            throw new coding_exception('The competencyid value is required.');
+        }
+
+        if (!isset($record->courseid)) {
+            throw new coding_exception('The courseid value is required.');
+        }
+
+        $usercompetencycourse = new user_competency_course(0, $record);
+        $usercompetencycourse->create();
+
+        return $usercompetencycourse;
     }
 
     /**

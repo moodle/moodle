@@ -42,6 +42,7 @@ use tool_lp\external\course_competency_statistics_exporter;
 use tool_lp\external\course_competency_settings_exporter;
 use tool_lp\external\course_module_summary_exporter;
 use tool_lp\external\user_competency_exporter;
+use tool_lp\external\user_competency_course_exporter;
 
 /**
  * Class containing data for course competencies page
@@ -114,7 +115,7 @@ class course_competencies_page implements renderable, templatable {
 
         $gradable = is_enrolled($this->context, $USER, 'tool/lp:coursecompetencygradable');
         if ($gradable) {
-            $usercompetencies = api::list_user_competencies_in_course($this->courseid, $USER->id);
+            $usercompetencycourses = api::list_user_competencies_in_course($this->courseid, $USER->id);
             $data->gradableuserid = $USER->id;
         }
 
@@ -162,15 +163,18 @@ class course_competencies_page implements renderable, templatable {
                 'comppath' => $pathexporter->export($output)
             );
             if ($gradable) {
-                $foundusercompetency = false;
-                foreach ($usercompetencies as $usercompetency) {
-                    if ($usercompetency->get_competencyid() == $competency->get_id()) {
-                        $foundusercompetency = $usercompetency;
+                $foundusercompetencycourse = false;
+                foreach ($usercompetencycourses as $usercompetencycourse) {
+                    if ($usercompetencycourse->get_competencyid() == $competency->get_id()) {
+                        $foundusercompetencycourse = $usercompetencycourse;
                     }
                 }
-                if ($foundusercompetency) {
-                    $exporter = new user_competency_exporter($foundusercompetency, array('scale' => $competency->get_scale()));
-                    $onerow['usercompetency'] = $exporter->export($output);
+                if ($foundusercompetencycourse) {
+                    $related = array(
+                        'scale' => $competency->get_scale()
+                    );
+                    $exporter = new user_competency_course_exporter($foundusercompetencycourse, $related);
+                    $onerow['usercompetencycourse'] = $exporter->export($output);
                 }
             }
             array_push($data->competencies, $onerow);

@@ -71,11 +71,11 @@
         {{#comppath}}
             <span class="pull-left">{{#str}}path, tool_lp{{/str}}&nbsp;</span>{{> tool_lp/competency_path }}
         {{/comppath}}
-        {{#usercompetency}}
+        {{#usercompetencycourse}}
             {{#grade}}
             <span class="label {{^proficiency}}label-important{{/proficiency}}">{{gradename}}</span>
             {{/grade}}
-        {{/usercompetency}}
+        {{/usercompetencycourse}}
         {{#canmanagecoursecompetencies}}
         <div data-region="coursecompetency-ruleoutcome">
             <label>

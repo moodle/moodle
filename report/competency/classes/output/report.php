@@ -26,7 +26,7 @@ namespace report_competency\output;
 use context_course;
 use tool_lp\external\competency_summary_exporter;
 use tool_lp\external\course_summary_exporter;
-use tool_lp\external\user_competency_exporter;
+use tool_lp\external\user_competency_course_exporter;
 use tool_lp\external\user_summary_exporter;
 use tool_lp\user_competency;
 use renderable;
@@ -94,13 +94,13 @@ class report implements renderable, templatable {
         $data->user = $exporter->export($output);
         $data->usercompetencies = array();
         $coursecompetencies = api::list_course_competencies($this->courseid);
-        $usercompetencies = api::list_user_competencies_in_course($this->courseid, $user->id);
+        $usercompetencycourses = api::list_user_competencies_in_course($this->courseid, $user->id);
 
-        foreach ($usercompetencies as $usercompetency) {
+        foreach ($usercompetencycourses as $usercompetencycourse) {
             $onerow = new stdClass();
             $competency = null;
             foreach ($coursecompetencies as $coursecompetency) {
-                if ($coursecompetency['competency']->get_id() == $usercompetency->get_competencyid()) {
+                if ($coursecompetency['competency']->get_id() == $usercompetencycourse->get_competencyid()) {
                     $competency = $coursecompetency['competency'];
                     break;
                 }
@@ -127,9 +127,9 @@ class report implements renderable, templatable {
             }
             $scale = $scalecache[$competency->get_scaleid()];
 
-            $exporter = new user_competency_exporter($usercompetency, array('scale' => $scale));
+            $exporter = new user_competency_course_exporter($usercompetencycourse, array('scale' => $scale));
             $record = $exporter->export($output);
-            $onerow->usercompetency = $record;
+            $onerow->usercompetencycourse = $record;
             $exporter = new competency_summary_exporter(null, array('competency' => $competency,
                                                                     'framework' => $framework,
                                                                     'context' => $framework->get_context(),

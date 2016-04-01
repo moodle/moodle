@@ -785,11 +785,12 @@ class tool_lp_event_testcase extends advanced_testcase {
         $fr = $lpg->create_framework();
         $c = $lpg->create_competency(array('competencyframeworkid' => $fr->get_id()));
         $pc = $lpg->create_course_competency(array('courseid' => $course->id, 'competencyid' => $c->get_id()));
-        $uc = $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $c->get_id()));
+        $params = array('userid' => $user->id, 'competencyid' => $c->get_id(), 'courseid' => $course->id);
+        $ucc = $lpg->create_user_competency_course($params);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        api::user_competency_viewed_in_course($uc, $course->id);
+        api::user_competency_viewed_in_course($ucc);
 
         // Get our event event.
         $events = $sink->get_events();
@@ -797,9 +798,9 @@ class tool_lp_event_testcase extends advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\tool_lp\event\user_competency_viewed_in_course', $event);
-        $this->assertEquals($uc->get_id(), $event->objectid);
+        $this->assertEquals($ucc->get_id(), $event->objectid);
         $this->assertEquals(context_course::instance($course->id)->id, $event->contextid);
-        $this->assertEquals($uc->get_userid(), $event->relateduserid);
+        $this->assertEquals($ucc->get_userid(), $event->relateduserid);
         $this->assertEquals($course->id, $event->courseid);
         $this->assertEquals($c->get_id(), $event->other['competencyid']);
 
@@ -808,8 +809,8 @@ class tool_lp_event_testcase extends advanced_testcase {
 
         // Test validation.
         $params = array (
-            'objectid' => $uc->get_id(),
-            'contextid' => $uc->get_context()->id,
+            'objectid' => $ucc->get_id(),
+            'contextid' => $ucc->get_context()->id,
             'other' => null
         );
 

@@ -1212,7 +1212,7 @@ class api {
      * @param int $courseid The id of the course to check.
      * @param int $userid The id of the course to check.
      * @param int $competencyid The id of the competency.
-     * @return user_competency
+     * @return user_competency_course
      */
     public static function get_user_competency_in_course($courseid, $userid, $competencyid) {
         static::require_enabled();
@@ -1229,17 +1229,17 @@ class api {
         // This will throw an exception if the competency does not belong to the course.
         $competency = course_competency::get_competency($courseid, $competencyid);
 
-        $existing = user_competency::get_multiple($userid, array($competencyid));
+        $params = array('courseid' => $courseid, 'userid' => $userid, 'competencyid' => $competencyid);
+        $exists = user_competency_course::get_record($params);
         // Create missing.
-        $found = count($existing);
-        if ($found) {
-            $uc = array_pop($existing);
+        if ($exists) {
+            $ucc = $exists;
         } else {
-            $uc = user_competency::create_relation($userid, $competency->get_id());
-            $uc->create();
+            $ucc = user_competency_course::create_relation($userid, $competency->get_id(), $courseid);
+            $ucc->create();
         }
 
-        return $uc;
+        return $ucc;
     }
 
     /**
@@ -1247,7 +1247,7 @@ class api {
      *
      * @param int $courseid The id of the course to check.
      * @param int $userid The id of the course to check.
-     * @return array of competencies
+     * @return array of user_competency_course objects
      */
     public static function list_user_competencies_in_course($courseid, $userid) {
         static::require_enabled();
@@ -1265,28 +1265,28 @@ class api {
         // OK - all set.
         $competencylist = course_competency::list_competencies($courseid, false);
 
-        $existing = user_competency::get_multiple($userid, $competencylist);
+        $existing = user_competency_course::get_multiple($userid, $courseid, $competencylist);
         // Create missing.
-        $orderedusercompetencies = array();
+        $orderedusercompetencycourses = array();
 
         $somemissing = false;
         foreach ($competencylist as $coursecompetency) {
             $found = false;
-            foreach ($existing as $usercompetency) {
-                if ($usercompetency->get_competencyid() == $coursecompetency->get_id()) {
+            foreach ($existing as $usercompetencycourse) {
+                if ($usercompetencycourse->get_competencyid() == $coursecompetency->get_id()) {
                     $found = true;
-                    $orderedusercompetencies[$usercompetency->get_id()] = $usercompetency;
+                    $orderedusercompetencycourses[$usercompetencycourse->get_id()] = $usercompetencycourse;
                     break;
                 }
             }
             if (!$found) {
-                $uc = user_competency::create_relation($userid, $coursecompetency->get_id());
-                $uc->create();
-                $orderedusercompetencies[$uc->get_id()] = $uc;
+                $ucc = user_competency_course::create_relation($userid, $coursecompetency->get_id(), $courseid);
+                $ucc->create();
+                $orderedusercompetencycourses[$ucc->get_id()] = $ucc;
             }
         }
 
-        return $orderedusercompetencies;
+        return $orderedusercompetencycourses;
     }
 
     /**
@@ -3530,25 +3530,21 @@ class api {
      * @param int $courseid The course ID
      * @return bool
      */
-    public static function user_competency_viewed_in_course($usercompetencyorid, $courseid) {
+    public static function user_competency_viewed_in_course($usercoursecompetencyorid) {
         static::require_enabled();
-        $uc = $usercompetencyorid;
-        if (!is_object($uc)) {
-            $uc = new user_competency($uc);
+        $ucc = $usercoursecompetencyorid;
+        if (!is_object($ucc)) {
+            $ucc = new user_competency_course($ucc);
         }
 
-        $coursecontext = context_course::instance($courseid);
-        $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
-        if (!has_any_capability($capabilities, $coursecontext)) {
-            throw new required_capability_exception($context, 'tool/lp:coursecompetencyview', 'nopermissions', '');
-        } else if (!user_competency::can_read_user_in_course($uc->get_userid(), $courseid)) {
-            throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
+        if (!$ucc || !user_competency::can_read_user_in_course($ucc->get_userid(), $ucc->get_courseid())) {
+            throw new required_capability_exception($ucc->get_context(), 'tool/lp:usercompetencyview', 'nopermissions', '');
         }
 
         // Validate the course, this will throw an exception if not valid.
-        self::validate_course($courseid);
+        self::validate_course($ucc->get_courseid());
 
-        \tool_lp\event\user_competency_viewed_in_course::create_from_user_competency_viewed_in_course($uc, $courseid)->trigger();
+        \tool_lp\event\user_competency_viewed_in_course::create_from_user_competency_viewed_in_course($ucc)->trigger();
         return true;
     }
 

@@ -64,7 +64,7 @@ $competency = new \tool_lp\competency($competencyid);
 
 // Does a permissions check for us.
 if ($userid > 0) {
-    $usercompetencies = \tool_lp\api::list_user_competencies_in_course($courseid, $userid);
+    $usercompetencycourses = \tool_lp\api::list_user_competencies_in_course($courseid, $userid);
 }
 $subtitle = $competency->get_shortname() . ' <em>' . $competency->get_idnumber() . '</em>';
 

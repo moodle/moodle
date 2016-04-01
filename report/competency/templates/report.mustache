@@ -34,7 +34,7 @@
                 </a>
             </td>
             {{/competency}}
-            {{#usercompetency}}
+            {{#usercompetencycourse}}
             <td class="alert {{#proficiency}}alert-success{{/proficiency}}"
                 data-user-competency="true"
                 data-userid="{{user.id}}"
@@ -42,7 +42,7 @@
                 data-courseid="{{course.id}}">
                 {{> report_competency/user_competency_summary}}
             </td>
-            {{/usercompetency}}
+            {{/usercompetencycourse}}
         </tr>
         {{/usercompetencies}}
     </table>

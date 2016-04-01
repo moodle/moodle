@@ -82,6 +82,7 @@ class user_competency_summary_exporter extends exporter {
     protected function get_other_values(renderer_base $output) {
         global $DB;
         $result = new stdClass();
+
         $result->showrelatedcompetencies = true;
 
         $competency = $this->related['competency'];

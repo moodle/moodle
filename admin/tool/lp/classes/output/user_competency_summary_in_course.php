@@ -70,9 +70,9 @@ class user_competency_summary_in_course implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         global $DB;
 
-        $usercompetency = api::get_user_competency_in_course($this->courseid, $this->userid, $this->competencyid);
-        $competency = $usercompetency->get_competency();
-        if (empty($usercompetency) || empty($competency)) {
+        $usercompetencycourse = api::get_user_competency_in_course($this->courseid, $this->userid, $this->competencyid);
+        $competency = $usercompetencycourse->get_competency();
+        if (empty($usercompetencycourse) || empty($competency)) {
             throw new invalid_parameter_exception('Invalid params. The competency does not belong to the course.');
         }
 
@@ -83,17 +83,15 @@ class user_competency_summary_in_course implements renderable, templatable {
 
         $params = array(
             'competency' => $competency,
-            'usercompetency' => $usercompetency,
+            'usercompetencycourse' => $usercompetencycourse,
             'evidence' => $evidence,
             'user' => $user,
             'course' => $course,
+            'scale' => $competency->get_scale(),
             'relatedcompetencies' => $relatedcompetencies
         );
         $exporter = new user_competency_summary_in_course_exporter(null, $params);
         $data = $exporter->export($output);
-
-        // Some adjustments specific to course.
-        $data->usercompetencysummary->cangrade = user_competency::can_grade_user_in_course($this->userid, $this->courseid);
 
         return $data;
     }

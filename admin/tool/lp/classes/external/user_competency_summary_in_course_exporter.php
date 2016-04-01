@@ -42,14 +42,27 @@ class user_competency_summary_in_course_exporter extends exporter {
                      'relatedcompetencies' => '\\tool_lp\\competency[]',
                      'user' => '\\stdClass',
                      'course' => '\\stdClass',
-                     'usercompetency' => '\\tool_lp\\user_competency?',
-                     'evidence' => '\\tool_lp\\evidence[]');
+                     'usercompetencycourse' => '\\tool_lp\\user_competency_course?',
+                     'evidence' => '\\tool_lp\\evidence[]',
+                     'scale' => '\\grade_scale');
     }
 
     protected static function define_other_properties() {
         return array(
             'usercompetencysummary' => array(
                 'type' => user_competency_summary_exporter::read_properties_definition()
+            ),
+            'proficiency' => array(
+                'type' => PARAM_BOOL,
+            ),
+            'proficiencyname' => array(
+                'type' => PARAM_TEXT
+            ),
+            'grade' => array(
+                'type' => PARAM_INT
+            ),
+            'gradename' => array(
+                'type' => PARAM_TEXT
             ),
             'course' => array(
                 'type' => course_summary_exporter::read_properties_definition(),
@@ -64,12 +77,23 @@ class user_competency_summary_in_course_exporter extends exporter {
     protected function get_other_values(renderer_base $output) {
         // Arrays are copy on assign.
         $related = $this->related;
+        $result = new stdClass();
         // Remove course from related as it is not wanted by the user_competency_summary_exporter.
         unset($related['course']);
         $related['usercompetencyplan'] = null;
+        $related['usercompetency'] = null;
         $exporter = new user_competency_summary_exporter(null, $related);
-        $result = new stdClass();
         $result->usercompetencysummary = $exporter->export($output);
+
+        $result->gradename = '-';
+        if ($this->related['usercompetencycourse']) {
+            $result->proficiency = $this->related['usercompetencycourse']->get_proficiency();
+            $result->proficiencyname = $result->proficiency ? get_string('yes') : get_string('no');
+            $result->grade = $this->related['usercompetencycourse']->get_grade();
+            if ($result->grade) {
+                $result->gradename = $this->related['scale']->scale_items[$result->grade - 1];
+            }
+        }
 
         $context = context_course::instance($this->related['course']->id);
         $exporter = new course_summary_exporter($this->related['course'], array('context' => $context));

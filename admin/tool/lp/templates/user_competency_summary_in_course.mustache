@@ -57,7 +57,6 @@
         </ul>
         </p>
         </dd>
-        {{#usercompetency}}
         {{#displayuser}}
         {{#user}}
         <dt>{{#str}}user{{/str}}</dt>
@@ -66,13 +65,6 @@
         </dd>
         {{/user}}
         {{/displayuser}}
-        <dt>{{#str}}reviewstatus, tool_lp{{/str}}</dt>
-        <dd data-region="user-competency-status">{{statusname}}
-
-            {{#isstatusinreview}}
-                - {{reviewer.fullname}}
-            {{/isstatusinreview}}
-        </dd>
         <dt>{{#str}}proficient, tool_lp{{/str}}</dt>
         <dd>
             <span class="label{{^proficiency}} label-important{{/proficiency}} pull-left">
@@ -98,21 +90,6 @@
         });
 
         {{/js}}
-        {{/usercompetency}}
-        {{#usercompetencyplan}}
-        <dd>{{gradename}} - {{#str}}plancompleted, tool_lp{{/str}}</dd>
-        {{#cangrade}}
-            {{$gradeform}}
-                <!-- Grading a user competency is specific to the context you are in. -->
-            {{/gradeform}}
-        {{/cangrade}}
-        <dt>{{#str}}proficient, tool_lp{{/str}}</dt>
-        <dd>
-            <span class="label{{^proficiency}} label-important{{/proficiency}} pull-left">
-                {{proficiencyname}}
-            </span>
-        </dd>
-        {{/usercompetencyplan}}
     </dl>
     {{#commentarea}}
         {{#canpostorhascomments}}

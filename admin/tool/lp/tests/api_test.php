@@ -4014,6 +4014,14 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         $user = $dg->create_user();
         $c1 = $dg->create_course();
+
+        // Enrol the user so they can be rated in the course.
+        $studentarch = get_archetype_roles('student');
+        $studentrole = array_shift($studentarch);
+        $coursecontext = context_course::instance($c1->id);
+        $dg->role_assign($studentrole->id, $user->id, $coursecontext->id);
+        $dg->enrol_user($user->id, $c1->id, $studentrole->id);
+
         $framework = $lpg->create_framework();
         $comp1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
         $comp2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
@@ -4021,14 +4029,13 @@ class tool_lp_api_testcase extends advanced_testcase {
         $lpg->create_course_competency(array('competencyid' => $comp2->get_id(), 'courseid' => $c1->id));
 
         // Create a user competency for comp1.
-        $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $comp1->get_id(),
-                'proficiency' => true, 'grade' => 1 ));
+        api::grade_competency_in_course($c1, $user->id, $comp1->get_id(), 3, 'Unit test');
 
         // Test for competency already exist in user_competency.
         $uc = api::get_user_competency_in_course($c1->id, $user->id, $comp1->get_id());
         $this->assertEquals($comp1->get_id(), $uc->get_competencyid());
         $this->assertEquals($user->id, $uc->get_userid());
-        $this->assertEquals(1, $uc->get_grade());
+        $this->assertEquals(3, $uc->get_grade());
         $this->assertEquals(true, $uc->get_proficiency());
 
         // Test for competency does not exist in user_competency.

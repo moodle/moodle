@@ -1882,8 +1882,8 @@ class external extends external_api {
      * @return \external_description
      */
     public static function data_for_course_competencies_page_returns() {
-        $uc = user_competency_exporter::get_read_structure();
-        $uc->required = VALUE_OPTIONAL;
+        $ucc = user_competency_course_exporter::get_read_structure();
+        $ucc->required = VALUE_OPTIONAL;
 
         return new external_single_structure(array (
             'courseid' => new external_value(PARAM_INT, 'The current course id'),
@@ -1898,7 +1898,7 @@ class external extends external_api {
                 'competency' => competency_exporter::get_read_structure(),
                 'coursecompetency' => course_competency_exporter::get_read_structure(),
                 'coursemodules' => new external_multiple_structure(course_module_summary_exporter::get_read_structure()),
-                'usercompetency' => $uc,
+                'usercompetencycourse' => $ucc,
                 'ruleoutcomeoptions' => new external_multiple_structure(
                     new external_single_structure(array(
                         'value' => new external_value(PARAM_INT, 'The option value'),
@@ -5366,8 +5366,8 @@ class external extends external_api {
                                                 'userid' => $userid,
                                                 'courseid' => $courseid
                                             ));
-        $uc = api::get_user_competency_in_course($params['courseid'], $params['userid'], $params['competencyid']);
-        $result = api::user_competency_viewed_in_course($uc, $params['courseid']);
+        $ucc = api::get_user_competency_in_course($params['courseid'], $params['userid'], $params['competencyid']);
+        $result = api::user_competency_viewed_in_course($ucc);
 
         return $result;
     }

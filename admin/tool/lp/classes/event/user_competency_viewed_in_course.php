@@ -25,7 +25,7 @@
 namespace tool_lp\event;
 
 use core\event\base;
-use tool_lp\user_competency;
+use tool_lp\user_competency_course;
 use context_course;
 defined('MOODLE_INTERNAL') || die();
 
@@ -48,27 +48,26 @@ class user_competency_viewed_in_course extends base {
     /**
      * Convenience method to instantiate the event in course.
      *
-     * @param user_competency $usercompetency The user competency.
-     * @param int $courseid The course ID
+     * @param user_competency_course $usercompetencycourse The user competency for the course.
      * @return self
      */
-    public static function create_from_user_competency_viewed_in_course(user_competency $usercompetency, $courseid) {
-        if (!$usercompetency->get_id()) {
-            throw new \coding_exception('The user competency ID must be set.');
+    public static function create_from_user_competency_viewed_in_course(user_competency_course $usercompetencycourse) {
+        if (!$usercompetencycourse->get_id()) {
+            throw new \coding_exception('The user competency course ID must be set.');
         }
         $params = array(
-            'objectid' => $usercompetency->get_id(),
-            'relateduserid' => $usercompetency->get_userid(),
+            'objectid' => $usercompetencycourse->get_id(),
+            'relateduserid' => $usercompetencycourse->get_userid(),
             'other' => array(
-                'competencyid' => $usercompetency->get_competencyid()
+                'competencyid' => $usercompetencycourse->get_competencyid()
             )
         );
-        $coursecontext = context_course::instance($courseid);
+        $coursecontext = context_course::instance($usercompetencycourse->get_courseid());
         $params['contextid'] = $coursecontext->id;
-        $params['courseid'] = $courseid;
+        $params['courseid'] = $usercompetencycourse->get_courseid();
 
         $event = static::create($params);
-        $event->add_record_snapshot(user_competency::TABLE, $usercompetency->to_record());
+        $event->add_record_snapshot(user_competency_course::TABLE, $usercompetencycourse->to_record());
         return $event;
     }
 
@@ -78,7 +77,7 @@ class user_competency_viewed_in_course extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' viewed the user competency with id '$this->objectid' "
+        return "The user with id '$this->userid' viewed the user course competency with id '$this->objectid' "
                 . "in course with id '$this->courseid'";
     }
 
@@ -112,7 +111,7 @@ class user_competency_viewed_in_course extends base {
     protected function init() {
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
-        $this->data['objecttable'] = user_competency::TABLE;
+        $this->data['objecttable'] = user_competency_course::TABLE;
     }
 
     /**
