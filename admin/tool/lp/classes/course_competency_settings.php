@@ -51,7 +51,9 @@ class course_competency_settings extends persistent {
             ),
             'pushratingstouserplans' => array(
                 'type' => PARAM_BOOL,
-                'default' => get_config('tool_lp', 'pushcourseratingstouserplans')
+                'default' => function() {
+                    return get_config('tool_lp', 'pushcourseratingstouserplans');
+                }
             ),
         );
     }

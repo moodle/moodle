@@ -140,7 +140,14 @@ abstract class persistent {
      *
      * Each property MUST be listed here.
      *
-     * Example:
+     * The result of this method is cached internally for the whole request.
+     *
+     * The 'default' value can be a Closure when its value may change during a single request.
+     * For example if the default value is based on a $CFG property, then it should be wrapped in a closure
+     * to avoid running into scenarios where the true value of $CFG is not reflected in the definition.
+     * Do not abuse closures as they obviously add some overhead.
+     *
+     * Examples:
      *
      * array(
      *     'property_name' => array(
@@ -149,6 +156,15 @@ abstract class persistent {
      *         'null' => NULL_ALLOWED,              // Defaults to NULL_NOT_ALLOWED. Takes NULL_NOW_ALLOWED or NULL_ALLOWED.
      *         'type' => PARAM_TYPE,                // Mandatory.
      *         'choices' => array(1, 2, 3)          // An array of accepted values.
+     *     )
+     * )
+     *
+     * array(
+     *     'dynamic_property_name' => array(
+     *         'default' => function() {
+     *             return $CFG->something;
+     *         },
+     *         'type' => PARAM_INT,
      *     )
      * )
      *
@@ -254,7 +270,11 @@ abstract class persistent {
         if (!isset($properties[$property]['default'])) {
             return null;
         }
-        return $properties[$property]['default'];
+        $value = $properties[$property]['default'];
+        if ($value instanceof \Closure) {
+            return $value();
+        }
+        return $value;
     }
 
     /**
