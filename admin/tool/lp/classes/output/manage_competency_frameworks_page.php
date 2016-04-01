@@ -33,6 +33,7 @@ use moodle_url;
 use context;
 use context_system;
 use tool_lp\api;
+use tool_lp\competency_framework;
 use tool_lp\external\competency_framework_exporter;
 
 /**
@@ -66,12 +67,14 @@ class manage_competency_frameworks_page implements renderable, templatable {
     public function __construct(context $pagecontext) {
         $this->pagecontext = $pagecontext;
 
-        $addpage = new single_button(
-            new moodle_url('/admin/tool/lp/editcompetencyframework.php', array('pagecontextid' => $this->pagecontext->id)),
-            get_string('addnewcompetencyframework', 'tool_lp'),
-            'get'
-        );
-        $this->navigation[] = $addpage;
+        if (competency_framework::can_manage_context($this->pagecontext)) {
+            $addpage = new single_button(
+                new moodle_url('/admin/tool/lp/editcompetencyframework.php', array('pagecontextid' => $this->pagecontext->id)),
+                get_string('addnewcompetencyframework', 'tool_lp'),
+                'get'
+            );
+            $this->navigation[] = $addpage;
+        }
 
         $this->competencyframeworks = api::list_frameworks('shortname', 'ASC', 0, 0, $this->pagecontext);
     }

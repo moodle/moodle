@@ -471,4 +471,43 @@ class competency_framework extends persistent {
         // Return the uniq idnumber.
         return $currentidnumber;
     }
+
+    /**
+     * Whether or not the current user can manage the framework.
+     *
+     * @return bool
+     */
+    public function can_manage() {
+        return self::can_manage_context($this->get_context());
+    }
+
+    /**
+     * Whether or not the current user can manage the framework.
+     *
+     * @param  context $context
+     * @return bool
+     */
+    public static function can_manage_context($context) {
+        return has_capability('tool/lp:competencymanage', $context);
+    }
+
+    /**
+     * Whether or not the current user can read the framework.
+     *
+     * @return bool
+     */
+    public function can_read() {
+        return self::can_read_context($this->get_context());
+    }
+
+    /**
+     * Whether or not the current user can read the framework.
+     *
+     * @param  context $context
+     * @return bool
+     */
+    public static function can_read_context($context) {
+        return has_capability('tool/lp:competencyview', $context) || self::can_manage_context($context);
+    }
+
 }

@@ -40,6 +40,9 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'too
     /** @var {String} currentNodeId - The data-id of the current node in the tree. */
     var currentNodeId = '';
 
+     /** @var {Boolean} competencyFramworkCanManage - Can manage the competencies framework */
+    var competencyFramworkCanManage = false;
+
     /**
      * Build a tree from the flat list of competencies.
      * @param {Object} parent The parent competency.
@@ -96,6 +99,7 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'too
                 }
                 var context = {
                     shortname: competencyFrameworkShortName,
+                    canmanage: competencyFramworkCanManage,
                     competencies: children
                 };
                 templates.render('tool_lp/competencies_tree_root', context).done(function(html, js) {
@@ -127,7 +131,6 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'too
         currentNodeId = node.attr('data-id');
     };
 
-
     return /** @alias module:tool_lp/competencytree */ {
         // Public variables and functions.
         /**
@@ -137,10 +140,12 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'too
          * @param {String} shortname The framework shortname
          * @param {String} search The current search string
          * @param {String} selector The selector for the tree div
+         * @param {Boolean} canmanage Can manage the competencies
          */
-        init: function(id, shortname, search, selector) {
+        init: function(id, shortname, search, selector, canmanage) {
             competencyFrameworkId = id;
             competencyFrameworkShortName = shortname;
+            competencyFramworkCanManage = canmanage;
             treeSelector = selector;
             loadCompetencies(search).fail(notification.exception);
 

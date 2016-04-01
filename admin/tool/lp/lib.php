@@ -115,8 +115,8 @@ function tool_lp_extend_navigation_category_settings($navigation, $coursecategor
 
     // We check permissions before renderring the links.
     $templatereadcapability = \tool_lp\template::can_read_context($coursecategorycontext);
-    $competencymanagecapability = has_capability('tool/lp:competencymanage', $coursecategorycontext);
-    if (!$templatereadcapability && !$competencymanagecapability) {
+    $competencyreadcapability = \tool_lp\competency_framework::can_read_context($coursecategorycontext);
+    if (!$templatereadcapability && !$competencyreadcapability) {
         return false;
     }
 
@@ -136,7 +136,7 @@ function tool_lp_extend_navigation_category_settings($navigation, $coursecategor
     }
 
     // The link to the competency frameworks page.
-    if ($competencymanagecapability) {
+    if ($competencyreadcapability) {
         $title = get_string('competencyframeworks', 'tool_lp');
         $path = new moodle_url("/admin/tool/lp/competencyframeworks.php", array('pagecontextid' => $coursecategorycontext->id));
         $settingsnode = navigation_node::create($title,

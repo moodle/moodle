@@ -35,7 +35,10 @@ require_login();
 $pagecontext = context::instance_by_id($pagecontextid);
 $framework = \tool_lp\api::read_framework($id);
 $context = $framework->get_context();
-require_capability('tool/lp:competencymanage', $context);
+
+if (!\tool_lp\competency_framework::can_read_context($context)) {
+    throw new required_capability_exception($context, 'tool/lp:competencyview', 'nopermissions', '');
+}
 
 $title = get_string('competencies', 'tool_lp');
 $pagetitle = get_string('competenciesforframework', 'tool_lp', $framework->get_shortname());
