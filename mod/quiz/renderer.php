@@ -632,6 +632,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
                 $cell->header = true;
                 $cell->colspan = $tablewidth;
                 $table->data[] = array($cell);
+                $table->rowclasses[] = 'quizsummaryheading';
             }
 
             // Don't display information items.
