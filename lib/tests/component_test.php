@@ -31,10 +31,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 class core_component_testcase extends advanced_testcase {
 
-    // To be changed if number of subsystems increases/decreases,
-    // this is defined here to annoy devs that try to add more without any thinking,
-    // always verify that it does not collide with any existing add-on modules and subplugins!!!
-    const SUBSYSTEMCOUNT = 64;
+    /**
+     * To be changed if number of subsystems increases/decreases,
+     * this is defined here to annoy devs that try to add more without any thinking,
+     * always verify that it does not collide with any existing add-on modules and subplugins!!!
+     */
+    const SUBSYSTEMCOUNT = 65;
 
     public function test_get_core_subsystems() {
         global $CFG;

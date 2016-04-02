@@ -187,6 +187,11 @@ if ($hassiteconfig) {
         $plugin->load_settings($ADMIN, 'filtersettings', $hassiteconfig);
     }
 
+    // Data format settings.
+    $ADMIN->add('modules', new admin_category('dataformatsettings', new lang_string('dataformats')));
+    $temp = new admin_settingpage('managedataformats', new lang_string('managedataformats'));
+    $temp->add(new admin_setting_managedataformats());
+    $ADMIN->add('dataformatsettings', $temp);
 
     //== Portfolio settings ==
     require_once($CFG->libdir. '/portfoliolib.php');

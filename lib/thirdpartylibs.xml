@@ -269,4 +269,10 @@
     <license>GPL</license>
     <version>1.6.3</version>
   </library>
+  <library>
+    <location>spout</location>
+    <name>Spout</name>
+    <license>GPL</license>
+    <version>2.3.0</version>
+  </library>
 </libraries>
