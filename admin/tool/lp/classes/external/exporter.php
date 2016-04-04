@@ -122,8 +122,7 @@ abstract class exporter {
         $othervalues = $this->get_other_values($output);
         if (array_intersect_key($values, $othervalues)) {
             // Attempt to replace a standard property.
-            //FIXME: property is not defined.
-            throw new coding_exception('Cannot override a standard property value: ' . $property);
+            throw new coding_exception('Cannot override a standard property value.');
         }
         $values += $othervalues;
         $record = (object) $values;

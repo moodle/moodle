@@ -98,9 +98,6 @@ class template_cohorts_table extends table_sql {
      * Setup the headers for the table.
      */
     protected function define_table_columns() {
-        // FIXME: Should we use these?
-        $extrafields = get_extra_user_fields($this->context);
-
         // Define headers and columns.
         $cols = array(
             'name' => get_string('name', 'cohort'),

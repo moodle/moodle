@@ -1627,11 +1627,10 @@ class external extends external_api {
     public static function list_course_modules_using_competency($competencyid, $courseid) {
         global $PAGE;
 
-        $params = self::validate_parameters(self::list_course_modules_using_competency_parameters(),
-                                            array(
-                                                'competencyid' => $competencyid,
-                                                'courseid' => $courseid,
-                                            ));
+        $params = self::validate_parameters(self::list_course_modules_using_competency_parameters(), array(
+            'competencyid' => $competencyid,
+            'courseid' => $courseid,
+        ));
 
         $coursecontext = context_course::instance($params['courseid']);
         self::validate_context($coursecontext);
@@ -1641,8 +1640,7 @@ class external extends external_api {
         $coursemodules = api::list_course_modules_using_competency($params['competencyid'], $params['courseid']);
         $result = array();
 
-        // FIXME: Test this code and find it broken.
-        $fastmodinfo = get_fast_modinfo($cm->course);
+        $fastmodinfo = get_fast_modinfo($params['courseid']);
 
         foreach ($coursemodules as $cmid) {
             $cminfo = $fastmodinfo->cms[$cmid];

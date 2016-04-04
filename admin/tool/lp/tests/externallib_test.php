@@ -3083,7 +3083,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $settings = course_competency_settings::get_by_courseid($course->id);
 
         $this->assertTrue((bool)$settings->get_pushratingstouserplans());
-        
+
         $result = external::update_course_competency_settings($course->id, array('pushratingstouserplans' => false));
 
         $settings = course_competency_settings::get_by_courseid($course->id);
@@ -3093,5 +3093,25 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $this->setExpectedException('required_capability_exception');
         $result = external::update_course_competency_settings($course->id, array('pushratingstouserplans' => true));
+    }
+
+    public function test_list_course_modules_using_competency() {
+        $this->setAdminUser();
+
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+
+        $course = $dg->create_course();
+        $cm1 = $dg->create_module('assign', array('course' => $course->id));
+
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $lpg->create_course_competency(array('courseid' => $course->id, 'competencyid' => $c1->get_id()));
+        $lpg->create_course_module_competency(array('cmid' => $cm1->cmid, 'competencyid' => $c1->get_id()));
+
+        $result = external::list_course_modules_using_competency($c1->get_id(), $course->id);
+        $result = external_api::clean_returnvalue(external::list_course_modules_using_competency_returns(), $result);
+        $this->assertCount(1, $result);
+        $this->assertEquals($cm1->cmid, $result[0]['id']);
     }
 }
