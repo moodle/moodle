@@ -47,34 +47,15 @@ class behat_auth extends behat_base {
      * @Given /^I log in as "(?P<username_string>(?:[^"]|\\")*)"$/
      */
     public function i_log_in_as($username) {
+        // Visit login page.
+        $this->getSession()->visit($this->locate_path('login/index.php'));
 
-        // Running this step using the API rather than a chained step because
-        // we need to see if the 'Log in' link is available or we need to click
-        // the dropdown to expand the navigation bar before.
-        $this->getSession()->visit($this->locate_path('/'));
+        // Enter username and password.
+        $this->execute('behat_forms::i_set_the_field_to', array('Username', $this->escape($username)));
+        $this->execute('behat_forms::i_set_the_field_to', array('Password', $this->escape($username)));
 
-        // Generic steps (we will prefix them later expanding the navigation dropdown if necessary).
-        $steps = array(
-            new Given('I click on "' . get_string('login') . '" "link" in the ".logininfo" "css_element"'),
-            new Given('I set the field "' . get_string('username') . '" to "' . $this->escape($username) . '"'),
-            new Given('I set the field "' . get_string('password') . '" to "'. $this->escape($username) . '"'),
-            new Given('I press "' . get_string('login') . '"')
-        );
-
-        // If Javascript is disabled we have enough with these steps.
-        if (!$this->running_javascript()) {
-            return $steps;
-        }
-
-        // Wait for the homepage to be ready.
-        $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
-
-        // If it is needed, it expands the navigation bar with the 'Log in' link.
-        if ($clicknavbar = $this->get_expand_navbar_step()) {
-            array_unshift($steps, $clicknavbar);
-        }
-
-        return $steps;
+        // Press log in button, no need to check for exceptions as it will checked after this step execution.
+        $this->execute('behat_forms::press_button', get_string('login'));
     }
 
     /**
@@ -83,53 +64,16 @@ class behat_auth extends behat_base {
      * @Given /^I log out$/
      */
     public function i_log_out() {
-
-        $steps = array(new When('I follow "' . get_string('logout') . '"'));
-
-        // No need to check anything else if we run without JS.
-        if (!$this->running_javascript()) {
-            return $steps;
-        }
-
         // There is no longer any need to worry about whether the navigation
         // bar needs to be expanded; user_menu now lives outside the
         // hamburger.
-
-        // However, the user menu *always* needs to be expanded.
-        $xpath = "//div[@class='usermenu']//a[contains(concat(' ', @class, ' '), ' toggle-display ')]";
-        array_unshift($steps, new When('I click on "'.$xpath.'" "xpath_element"'));
-
-        return $steps;
-    }
-
-    /**
-     * Returns a step to open the navigation bar if it is needed.
-     *
-     * The top log in and log out links are hidden when middle or small
-     * size windows (or devices) are used. This step returns a step definition
-     * clicking to expand the navbar if it is hidden.
-     *
-     * @return Given|bool A step definition or false if there is no need to show the navbar.
-     */
-    protected function get_expand_navbar_step() {
-
-        // Checking if we need to click the navbar button to show the navigation menu, it
-        // is hidden by default when using clean theme and a medium or small screen size.
-
-        // The DOM and the JS should be all ready and loaded. Running without spinning
-        // as this is a widely used step and we can not spend time here trying to see
-        // a DOM node that is not always there (at the moment clean is not even the
-        // default theme...).
-        $navbuttonjs = "return (
-            Y.one('.btn-navbar') &&
-            Y.one('.btn-navbar').getComputedStyle('display') !== 'none'
-        )";
-
-        // Adding an extra click we need to show the 'Log in' link.
-        if (!$this->getSession()->getDriver()->evaluateScript($navbuttonjs)) {
-            return false;
+        // However, the user menu *always* needs to be expanded. if running JS.
+        if ($this->running_javascript()) {
+            $xpath = "//div[@class='usermenu']//a[contains(concat(' ', @class, ' '), ' toggle-display ')]";
+            $this->execute('behat_general::i_click_on', array($xpath, "xpath_element"));
         }
-
-        return new Given('I click on ".btn-navbar" "css_element"');
+        // No need to check for exceptions as it will checked after this step execution.
+        $this->execute('behat_general::click_link', get_string('logout'));
     }
+
 }
