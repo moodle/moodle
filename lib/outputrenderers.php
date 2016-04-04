@@ -3000,7 +3000,7 @@ EOD;
             }
 
             if (!empty($pagingbar->lastlink)) {
-                $output .= ' ...' . $pagingbar->lastlink . ' ';
+                $output .= ' ... ' . $pagingbar->lastlink . ' ';
             }
 
             if (!empty($pagingbar->nextlink)) {
