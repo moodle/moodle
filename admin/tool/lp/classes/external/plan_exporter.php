@@ -38,11 +38,11 @@ use moodle_url;
 class plan_exporter extends persistent_exporter {
 
     protected static function define_class() {
-        return 'tool_lp\\plan';
+        return 'core_competency\\plan';
     }
 
     protected static function define_related() {
-        return array('template' => 'tool_lp\\template?');
+        return array('template' => 'core_competency\\template?');
     }
 
     protected function get_other_values(renderer_base $output) {

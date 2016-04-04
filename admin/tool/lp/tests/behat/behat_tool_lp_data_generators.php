@@ -27,8 +27,10 @@ require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
 
 use Behat\Gherkin\Node\TableNode as TableNode;
 use Behat\Behat\Exception\PendingException as PendingException;
-use tool_lp\competency_framework;
-use tool_lp\plan;
+use core_competency\competency;
+use core_competency\competency_framework;
+use core_competency\plan;
+use core_competency\user_evidence;
 
 /**
  * Step definition to generate database fixtures for learning plan system.
@@ -267,13 +269,13 @@ class behat_tool_lp_data_generators extends behat_base {
         global $DB;
 
         if (isset($data['plan'])) {
-            $plan = $DB->get_record('tool_lp_plan', array('name' => $data['plan']), '*', MUST_EXIST);
+            $plan = $DB->get_record(plan::TABLE, array('name' => $data['plan']), '*', MUST_EXIST);
             $data['planid'] = $plan->id;
         }
         unset($data['plan']);
 
         if (isset($data['competency'])) {
-            $competency = $DB->get_record('tool_lp_competency', array('shortname' => $data['competency']), '*', MUST_EXIST);
+            $competency = $DB->get_record(competency::TABLE, array('shortname' => $data['competency']), '*', MUST_EXIST);
             $data['competencyid'] = $competency->id;
         }
         unset($data['competency']);
@@ -290,13 +292,13 @@ class behat_tool_lp_data_generators extends behat_base {
         global $DB;
 
         if (isset($data['userevidence'])) {
-            $userevidence = $DB->get_record('tool_lp_user_evidence', array('name' => $data['userevidence']), '*', MUST_EXIST);
+            $userevidence = $DB->get_record(user_evidence::TABLE, array('name' => $data['userevidence']), '*', MUST_EXIST);
             $data['userevidenceid'] = $userevidence->id;
         }
         unset($data['userevidence']);
 
         if (isset($data['competency'])) {
-            $competency = $DB->get_record('tool_lp_competency', array('shortname' => $data['competency']), '*', MUST_EXIST);
+            $competency = $DB->get_record(competency::TABLE, array('shortname' => $data['competency']), '*', MUST_EXIST);
             $data['competencyid'] = $competency->id;
         }
         unset($data['competency']);
@@ -319,7 +321,7 @@ class behat_tool_lp_data_generators extends behat_base {
         unset($data['user']);
 
         if (isset($data['competency'])) {
-            $competency = $DB->get_record('tool_lp_competency', array('shortname' => $data['competency']), '*', MUST_EXIST);
+            $competency = $DB->get_record(competency::TABLE, array('shortname' => $data['competency']), '*', MUST_EXIST);
             $data['competencyid'] = $competency->id;
         }
         unset($data['competency']);
@@ -343,13 +345,13 @@ class behat_tool_lp_data_generators extends behat_base {
         unset($data['user']);
 
         if (isset($data['competency'])) {
-            $competency = $DB->get_record('tool_lp_competency', array('shortname' => $data['competency']), '*', MUST_EXIST);
+            $competency = $DB->get_record(competency::TABLE, array('shortname' => $data['competency']), '*', MUST_EXIST);
             $data['competencyid'] = $competency->id;
         }
         unset($data['competency']);
 
         if (isset($data['plan'])) {
-            $plan = $DB->get_record('tool_lp_plan', array('name' => $data['plan']), '*', MUST_EXIST);
+            $plan = $DB->get_record(plan::TABLE, array('name' => $data['plan']), '*', MUST_EXIST);
             $data['planid'] = $plan->id;
         }
         unset($data['plan']);

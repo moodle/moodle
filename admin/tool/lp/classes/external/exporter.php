@@ -249,7 +249,7 @@ abstract class exporter {
      * export of the persistent data.
      *
      * The format of the array returned by this method has to match the structure
-     * defined in {@link \tool_lp\persistent::define_properties()}. The display properties
+     * defined in {@link \core_competency\persistent::define_properties()}. The display properties
      * can however do some more fancy things. They can define 'multiple' => true to wrap
      * values in an external_multiple_structure automatically - or they can define the
      * type as a nested array of more properties in order to generate a nested
@@ -289,7 +289,7 @@ abstract class exporter {
      * Return the list of properties.
      *
      * The format of the array returned by this method has to match the structure
-     * defined in {@link \tool_lp\persistent::define_properties()}.
+     * defined in {@link \core_competency\persistent::define_properties()}.
      *
      * @return array
      */

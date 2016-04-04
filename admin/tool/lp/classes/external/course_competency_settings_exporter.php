@@ -33,7 +33,7 @@ namespace tool_lp\external;
 class course_competency_settings_exporter extends persistent_exporter {
 
     protected static function define_class() {
-        return 'tool_lp\\course_competency_settings';
+        return 'core_competency\\course_competency_settings';
     }
 
 }

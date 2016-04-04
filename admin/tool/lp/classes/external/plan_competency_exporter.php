@@ -33,6 +33,6 @@ defined('MOODLE_INTERNAL') || die();
 class plan_competency_exporter extends persistent_exporter {
 
     protected static function define_class() {
-        return 'tool_lp\\plan_competency';
+        return 'core_competency\\plan_competency';
     }
 }

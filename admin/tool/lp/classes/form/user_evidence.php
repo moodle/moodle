@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class user_evidence extends persistent {
 
-    protected static $persistentclass = 'tool_lp\\user_evidence';
+    protected static $persistentclass = 'core_competency\\user_evidence';
 
     protected static $foreignfields = array('files');
 

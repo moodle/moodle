@@ -17,21 +17,21 @@
 /**
  * Template cohort persistent.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_lp;
+namespace core_competency;
 defined('MOODLE_INTERNAL') || die();
 
 use lang_string;
-use tool_lp\template;
+use core_competency\template;
 
 /**
  * Template cohort persistent.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -182,7 +182,7 @@ class template_cohort extends persistent {
      * @param int $lastruntime  The last time the Cohort ssync task ran.
      * @param bool $unlinkedaremissing When true, unlinked plans are considered as missing.
      * @return array( array(
-     *                   'template' => \tool_lp\template,
+     *                   'template' => \core_competency\template,
      *                   'userids' => array
      *              ))
      */

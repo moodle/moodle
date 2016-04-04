@@ -24,7 +24,7 @@
 namespace tool_lp\event;
 
 use core\event\base;
-use tool_lp\user_evidence;
+use core_competency\user_evidence;
 
 defined('MOODLE_INTERNAL') || die();
 

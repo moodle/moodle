@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
-use tool_lp\plan;
+use core_competency\plan;
 
 /**
  * Plan persistent testcase.
@@ -60,19 +60,19 @@ class tool_lp_plan_testcase extends advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         $this->setUser($u1);
-        $this->assertTrue(\tool_lp\plan::can_manage_user($u1->id));
-        $this->assertTrue(\tool_lp\plan::can_manage_user($u2->id));
-        $this->assertTrue(\tool_lp\plan::can_manage_user($u3->id));
+        $this->assertTrue(\core_competency\plan::can_manage_user($u1->id));
+        $this->assertTrue(\core_competency\plan::can_manage_user($u2->id));
+        $this->assertTrue(\core_competency\plan::can_manage_user($u3->id));
 
         $this->setUser($u2);
-        $this->assertFalse(\tool_lp\plan::can_manage_user($u1->id));
-        $this->assertTrue(\tool_lp\plan::can_manage_user($u2->id));
-        $this->assertFalse(\tool_lp\plan::can_manage_user($u3->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user($u1->id));
+        $this->assertTrue(\core_competency\plan::can_manage_user($u2->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user($u3->id));
 
         $this->setUser($u3);
-        $this->assertFalse(\tool_lp\plan::can_manage_user($u1->id));
-        $this->assertTrue(\tool_lp\plan::can_manage_user($u2->id));
-        $this->assertFalse(\tool_lp\plan::can_manage_user($u3->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user($u1->id));
+        $this->assertTrue(\core_competency\plan::can_manage_user($u2->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user($u3->id));
     }
 
     public function test_can_manage_user_draft() {
@@ -109,39 +109,39 @@ class tool_lp_plan_testcase extends advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         $this->setUser($u1);
-        $this->assertFalse(\tool_lp\plan::can_manage_user_draft($u1->id));
-        $this->assertFalse(\tool_lp\plan::can_manage_user_draft($u2->id));
-        $this->assertFalse(\tool_lp\plan::can_manage_user_draft($u3->id));
-        $this->assertFalse(\tool_lp\plan::can_manage_user_draft($u4->id));
-        $this->assertFalse(\tool_lp\plan::can_manage_user_draft($u5->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u1->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u2->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u3->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u4->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u5->id));
 
         $this->setUser($u2);
-        $this->assertFalse(\tool_lp\plan::can_manage_user_draft($u1->id));
-        $this->assertFalse(\tool_lp\plan::can_manage_user_draft($u2->id));
-        $this->assertFalse(\tool_lp\plan::can_manage_user_draft($u3->id));
-        $this->assertFalse(\tool_lp\plan::can_manage_user_draft($u4->id));
-        $this->assertFalse(\tool_lp\plan::can_manage_user_draft($u5->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u1->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u2->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u3->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u4->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u5->id));
 
         $this->setUser($u3);
-        $this->assertTrue(\tool_lp\plan::can_manage_user_draft($u1->id));
-        $this->assertTrue(\tool_lp\plan::can_manage_user_draft($u2->id));
-        $this->assertTrue(\tool_lp\plan::can_manage_user_draft($u3->id));
-        $this->assertTrue(\tool_lp\plan::can_manage_user_draft($u4->id));
-        $this->assertTrue(\tool_lp\plan::can_manage_user_draft($u5->id));
+        $this->assertTrue(\core_competency\plan::can_manage_user_draft($u1->id));
+        $this->assertTrue(\core_competency\plan::can_manage_user_draft($u2->id));
+        $this->assertTrue(\core_competency\plan::can_manage_user_draft($u3->id));
+        $this->assertTrue(\core_competency\plan::can_manage_user_draft($u4->id));
+        $this->assertTrue(\core_competency\plan::can_manage_user_draft($u5->id));
 
         $this->setUser($u4);
-        $this->assertFalse(\tool_lp\plan::can_manage_user_draft($u1->id));
-        $this->assertTrue(\tool_lp\plan::can_manage_user_draft($u2->id));
-        $this->assertFalse(\tool_lp\plan::can_manage_user_draft($u3->id));
-        $this->assertFalse(\tool_lp\plan::can_manage_user_draft($u4->id));
-        $this->assertFalse(\tool_lp\plan::can_manage_user_draft($u5->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u1->id));
+        $this->assertTrue(\core_competency\plan::can_manage_user_draft($u2->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u3->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u4->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u5->id));
 
         $this->setUser($u5);
-        $this->assertFalse(\tool_lp\plan::can_manage_user_draft($u1->id));
-        $this->assertFalse(\tool_lp\plan::can_manage_user_draft($u2->id));
-        $this->assertFalse(\tool_lp\plan::can_manage_user_draft($u3->id));
-        $this->assertFalse(\tool_lp\plan::can_manage_user_draft($u4->id));
-        $this->assertTrue(\tool_lp\plan::can_manage_user_draft($u5->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u1->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u2->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u3->id));
+        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u4->id));
+        $this->assertTrue(\core_competency\plan::can_manage_user_draft($u5->id));
     }
 
     public function test_can_read_user() {
@@ -168,19 +168,19 @@ class tool_lp_plan_testcase extends advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         $this->setUser($u1);
-        $this->assertTrue(\tool_lp\plan::can_read_user($u1->id));
-        $this->assertTrue(\tool_lp\plan::can_read_user($u2->id));
-        $this->assertTrue(\tool_lp\plan::can_read_user($u3->id));
+        $this->assertTrue(\core_competency\plan::can_read_user($u1->id));
+        $this->assertTrue(\core_competency\plan::can_read_user($u2->id));
+        $this->assertTrue(\core_competency\plan::can_read_user($u3->id));
 
         $this->setUser($u2);
-        $this->assertFalse(\tool_lp\plan::can_read_user($u1->id));
-        $this->assertTrue(\tool_lp\plan::can_read_user($u2->id));
-        $this->assertFalse(\tool_lp\plan::can_read_user($u3->id));
+        $this->assertFalse(\core_competency\plan::can_read_user($u1->id));
+        $this->assertTrue(\core_competency\plan::can_read_user($u2->id));
+        $this->assertFalse(\core_competency\plan::can_read_user($u3->id));
 
         $this->setUser($u3);
-        $this->assertFalse(\tool_lp\plan::can_read_user($u1->id));
-        $this->assertTrue(\tool_lp\plan::can_read_user($u2->id));
-        $this->assertTrue(\tool_lp\plan::can_read_user($u3->id));    // Due to the default capability.
+        $this->assertFalse(\core_competency\plan::can_read_user($u1->id));
+        $this->assertTrue(\core_competency\plan::can_read_user($u2->id));
+        $this->assertTrue(\core_competency\plan::can_read_user($u3->id));    // Due to the default capability.
     }
 
     public function test_can_read_user_draft() {
@@ -218,39 +218,39 @@ class tool_lp_plan_testcase extends advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         $this->setUser($u1);
-        $this->assertFalse(\tool_lp\plan::can_read_user_draft($u1->id));
-        $this->assertFalse(\tool_lp\plan::can_read_user_draft($u2->id));
-        $this->assertFalse(\tool_lp\plan::can_read_user_draft($u3->id));
-        $this->assertFalse(\tool_lp\plan::can_read_user_draft($u4->id));
-        $this->assertFalse(\tool_lp\plan::can_read_user_draft($u5->id));
+        $this->assertFalse(\core_competency\plan::can_read_user_draft($u1->id));
+        $this->assertFalse(\core_competency\plan::can_read_user_draft($u2->id));
+        $this->assertFalse(\core_competency\plan::can_read_user_draft($u3->id));
+        $this->assertFalse(\core_competency\plan::can_read_user_draft($u4->id));
+        $this->assertFalse(\core_competency\plan::can_read_user_draft($u5->id));
 
         $this->setUser($u2);
-        $this->assertFalse(\tool_lp\plan::can_read_user_draft($u1->id));
-        $this->assertFalse(\tool_lp\plan::can_read_user_draft($u2->id));
-        $this->assertFalse(\tool_lp\plan::can_read_user_draft($u3->id));
-        $this->assertFalse(\tool_lp\plan::can_read_user_draft($u4->id));
-        $this->assertFalse(\tool_lp\plan::can_read_user_draft($u5->id));
+        $this->assertFalse(\core_competency\plan::can_read_user_draft($u1->id));
+        $this->assertFalse(\core_competency\plan::can_read_user_draft($u2->id));
+        $this->assertFalse(\core_competency\plan::can_read_user_draft($u3->id));
+        $this->assertFalse(\core_competency\plan::can_read_user_draft($u4->id));
+        $this->assertFalse(\core_competency\plan::can_read_user_draft($u5->id));
 
         $this->setUser($u3);
-        $this->assertTrue(\tool_lp\plan::can_read_user_draft($u1->id));
-        $this->assertTrue(\tool_lp\plan::can_read_user_draft($u2->id));
-        $this->assertTrue(\tool_lp\plan::can_read_user_draft($u3->id));
-        $this->assertTrue(\tool_lp\plan::can_read_user_draft($u4->id));
-        $this->assertTrue(\tool_lp\plan::can_read_user_draft($u5->id));
+        $this->assertTrue(\core_competency\plan::can_read_user_draft($u1->id));
+        $this->assertTrue(\core_competency\plan::can_read_user_draft($u2->id));
+        $this->assertTrue(\core_competency\plan::can_read_user_draft($u3->id));
+        $this->assertTrue(\core_competency\plan::can_read_user_draft($u4->id));
+        $this->assertTrue(\core_competency\plan::can_read_user_draft($u5->id));
 
         $this->setUser($u4);
-        $this->assertFalse(\tool_lp\plan::can_read_user_draft($u1->id));
-        $this->assertTrue(\tool_lp\plan::can_read_user_draft($u2->id));
-        $this->assertFalse(\tool_lp\plan::can_read_user_draft($u3->id));
-        $this->assertFalse(\tool_lp\plan::can_read_user_draft($u4->id));
-        $this->assertFalse(\tool_lp\plan::can_read_user_draft($u5->id));
+        $this->assertFalse(\core_competency\plan::can_read_user_draft($u1->id));
+        $this->assertTrue(\core_competency\plan::can_read_user_draft($u2->id));
+        $this->assertFalse(\core_competency\plan::can_read_user_draft($u3->id));
+        $this->assertFalse(\core_competency\plan::can_read_user_draft($u4->id));
+        $this->assertFalse(\core_competency\plan::can_read_user_draft($u5->id));
 
         $this->setUser($u5);
-        $this->assertFalse(\tool_lp\plan::can_read_user_draft($u1->id));
-        $this->assertFalse(\tool_lp\plan::can_read_user_draft($u2->id));
-        $this->assertFalse(\tool_lp\plan::can_read_user_draft($u3->id));
-        $this->assertFalse(\tool_lp\plan::can_read_user_draft($u4->id));
-        $this->assertTrue(\tool_lp\plan::can_read_user_draft($u5->id));
+        $this->assertFalse(\core_competency\plan::can_read_user_draft($u1->id));
+        $this->assertFalse(\core_competency\plan::can_read_user_draft($u2->id));
+        $this->assertFalse(\core_competency\plan::can_read_user_draft($u3->id));
+        $this->assertFalse(\core_competency\plan::can_read_user_draft($u4->id));
+        $this->assertTrue(\core_competency\plan::can_read_user_draft($u5->id));
     }
 
     public function test_validate_duedate() {
@@ -262,15 +262,15 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $user = $dg->create_user();
 
         $record = array('userid' => $user->id,
-                        'status' => tool_lp\plan::STATUS_DRAFT,
+                        'status' => core_competency\plan::STATUS_DRAFT,
                         'duedate' => time() - 8000);
 
         // Ignore duedate validation on create/update draft plan.
         $plan = $lpg->create_plan($record);
-        $this->assertInstanceOf('\tool_lp\plan', $plan);
+        $this->assertInstanceOf('\core_competency\plan', $plan);
 
         // Passing from draft to active.
-        $plan->set_status(tool_lp\plan::STATUS_ACTIVE);
+        $plan->set_status(core_competency\plan::STATUS_ACTIVE);
 
         // Draft to active with duedate in the past.
         $expected = array(
@@ -293,7 +293,7 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $this->assertEquals($expected, $plan->validate());
 
         // Draft to active: past date => future date (pass).
-        $plan->set_duedate(time() + tool_lp\plan::DUEDATE_THRESHOLD + 10);
+        $plan->set_duedate(time() + core_competency\plan::DUEDATE_THRESHOLD + 10);
         $this->assertEquals(true, $plan->validate());
 
         // Draft to active: past date => unset date (pass).
@@ -335,7 +335,7 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $this->assertEquals($expected, $plan->validate());
 
         // Active to active: unset date => future date (pass).
-        $plan->set_duedate(time() + tool_lp\plan::DUEDATE_THRESHOLD + 10);
+        $plan->set_duedate(time() + core_competency\plan::DUEDATE_THRESHOLD + 10);
         $this->assertEquals(true, $plan->validate());
 
         // Updating active plan with future date.
@@ -364,50 +364,50 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $this->assertEquals($expected, $plan->validate());
 
         // Active to active: future date => future date (pass).
-        $plan->set_duedate(time() + tool_lp\plan::DUEDATE_THRESHOLD + 10);
+        $plan->set_duedate(time() + core_competency\plan::DUEDATE_THRESHOLD + 10);
         $this->assertEquals(true, $plan->validate());
 
         // Completing plan: with due date in the past.
         $record = $plan->to_record();
-        $record->status = tool_lp\plan::STATUS_ACTIVE;
+        $record->status = core_competency\plan::STATUS_ACTIVE;
         $record->duedate = time() - 200;
-        $DB->update_record(tool_lp\plan::TABLE, $record);
+        $DB->update_record(core_competency\plan::TABLE, $record);
 
         $success = tool_lp\api::complete_plan($plan->get_id());
         $this->assertTrue($success);
 
         // Completing plan: with due date too soon (pass).
         $record = $plan->to_record();
-        $record->status = tool_lp\plan::STATUS_ACTIVE;
+        $record->status = core_competency\plan::STATUS_ACTIVE;
         $record->duedate = time() + 200;
-        $DB->update_record(tool_lp\plan::TABLE, $record);
+        $DB->update_record(core_competency\plan::TABLE, $record);
 
         $success = tool_lp\api::complete_plan($plan->get_id());
         $this->assertTrue($success);
 
         // Completing plan: with due date in the future (pass).
         $record = $plan->to_record();
-        $record->status = tool_lp\plan::STATUS_ACTIVE;
-        $record->duedate = time() + tool_lp\plan::DUEDATE_THRESHOLD + 10;
-        $DB->update_record(tool_lp\plan::TABLE, $record);
+        $record->status = core_competency\plan::STATUS_ACTIVE;
+        $record->duedate = time() + core_competency\plan::DUEDATE_THRESHOLD + 10;
+        $DB->update_record(core_competency\plan::TABLE, $record);
 
         $success = tool_lp\api::complete_plan($plan->get_id());
         $this->assertTrue($success);
 
         // Completing plan: with due date unset (pass).
         $record = $plan->to_record();
-        $record->status = tool_lp\plan::STATUS_ACTIVE;
+        $record->status = core_competency\plan::STATUS_ACTIVE;
         $record->duedate = 0;
-        $DB->update_record(tool_lp\plan::TABLE, $record);
+        $DB->update_record(core_competency\plan::TABLE, $record);
 
         $success = tool_lp\api::complete_plan($plan->get_id());
         $this->assertTrue($success);
 
         // Reopening plan: with due date in the past => duedate unset.
         $record = $plan->to_record();
-        $record->status = tool_lp\plan::STATUS_COMPLETE;
+        $record->status = core_competency\plan::STATUS_COMPLETE;
         $record->duedate = time() - 200;
-        $DB->update_record(tool_lp\plan::TABLE, $record);
+        $DB->update_record(core_competency\plan::TABLE, $record);
 
         $success = tool_lp\api::reopen_plan($plan->get_id());
         $this->assertTrue($success);
@@ -416,9 +416,9 @@ class tool_lp_plan_testcase extends advanced_testcase {
 
         // Reopening plan: with due date too soon => duedate unset.
         $record = $plan->to_record();
-        $record->status = tool_lp\plan::STATUS_COMPLETE;
+        $record->status = core_competency\plan::STATUS_COMPLETE;
         $record->duedate = time() + 100;
-        $DB->update_record(tool_lp\plan::TABLE, $record);
+        $DB->update_record(core_competency\plan::TABLE, $record);
 
         $success = tool_lp\api::reopen_plan($plan->get_id());
         $this->assertTrue($success);
@@ -427,17 +427,17 @@ class tool_lp_plan_testcase extends advanced_testcase {
 
         // Reopening plan: with due date in the future => duedate unchanged.
         $record = $plan->to_record();
-        $record->status = tool_lp\plan::STATUS_COMPLETE;
-        $record->duedate = time() + tool_lp\plan::DUEDATE_THRESHOLD + 10;
-        $DB->update_record(tool_lp\plan::TABLE, $record);
+        $record->status = core_competency\plan::STATUS_COMPLETE;
+        $record->duedate = time() + core_competency\plan::DUEDATE_THRESHOLD + 10;
+        $DB->update_record(core_competency\plan::TABLE, $record);
 
         $success = tool_lp\api::reopen_plan($plan->get_id());
         $this->assertTrue($success);
         $plan->read();
 
         // Check that the due date has not changed, but allow for PHP Unit latency.
-        $this->assertTrue($plan->get_duedate() >= time() + tool_lp\plan::DUEDATE_THRESHOLD + 10);
-        $this->assertTrue($plan->get_duedate() <= time() + tool_lp\plan::DUEDATE_THRESHOLD + 15);
+        $this->assertTrue($plan->get_duedate() >= time() + core_competency\plan::DUEDATE_THRESHOLD + 10);
+        $this->assertTrue($plan->get_duedate() <= time() + core_competency\plan::DUEDATE_THRESHOLD + 15);
 
     }
 }

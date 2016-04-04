@@ -60,7 +60,7 @@ if ($userid > 0) {
     $usercontext = context_user::instance($userid);
     $user = $DB->get_record('user', array('id' => $userid));
 }
-$competency = new \tool_lp\competency($competencyid);
+$competency = new \core_competency\competency($competencyid);
 
 // Does a permissions check for us.
 if ($userid > 0) {

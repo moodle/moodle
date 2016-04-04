@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
-use tool_lp\template;
+use core_competency\template;
 
 /**
  * Template persistent testcase.

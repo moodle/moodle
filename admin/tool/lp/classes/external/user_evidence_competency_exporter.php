@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
 class user_evidence_competency_exporter extends persistent_exporter {
 
     protected static function define_class() {
-        return 'tool_lp\\user_evidence_competency';
+        return 'core_competency\\user_evidence_competency';
     }
 
 }

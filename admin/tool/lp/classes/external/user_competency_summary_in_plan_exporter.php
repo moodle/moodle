@@ -37,13 +37,13 @@ class user_competency_summary_in_plan_exporter extends exporter {
 
     protected static function define_related() {
         // We cache the context so it does not need to be retrieved from the framework every time.
-        return array('competency' => '\\tool_lp\\competency',
-                     'relatedcompetencies' => '\\tool_lp\\competency[]',
+        return array('competency' => '\\core_competency\\competency',
+                     'relatedcompetencies' => '\\core_competency\\competency[]',
                      'user' => '\\stdClass',
-                     'plan' => '\\tool_lp\\plan',
-                     'usercompetency' => '\\tool_lp\\user_competency?',
-                     'usercompetencyplan' => '\\tool_lp\\user_competency_plan?',
-                     'evidence' => '\\tool_lp\\evidence[]');
+                     'plan' => '\\core_competency\\plan',
+                     'usercompetency' => '\\core_competency\\user_competency?',
+                     'usercompetencyplan' => '\\core_competency\\user_competency_plan?',
+                     'evidence' => '\\core_competency\\evidence[]');
     }
 
     protected static function define_other_properties() {

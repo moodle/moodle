@@ -500,7 +500,7 @@ class tool_lp_event_testcase extends advanced_testcase {
         $sink = $this->redirectEvents();
         api::create_plans_from_template_cohort($t1->get_id(), $c1->id);
         // Get our event event.
-        $plans = tool_lp\plan::get_records(array('templateid' => $t1->get_id()), 'id');
+        $plans = core_competency\plan::get_records(array('templateid' => $t1->get_id()), 'id');
         $events = $sink->get_events();
         $this->assertCount(2, $events);
         $this->assertCount(2, $plans);
@@ -1006,7 +1006,7 @@ class tool_lp_event_testcase extends advanced_testcase {
         $dg = $this->getDataGenerator();
         $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
         $user1 = $dg->create_user();
-        $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \tool_lp\plan::STATUS_ACTIVE));
+        $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \core_competency\plan::STATUS_ACTIVE));
         $planid = $plan->get_id();
         $contextid = $plan->get_context()->id;
         // Trigger and capture the event.
@@ -1034,7 +1034,7 @@ class tool_lp_event_testcase extends advanced_testcase {
         $dg = $this->getDataGenerator();
         $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
         $user1 = $dg->create_user();
-        $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \tool_lp\plan::STATUS_COMPLETE));
+        $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \core_competency\plan::STATUS_COMPLETE));
         $planid = $plan->get_id();
         $contextid = $plan->get_context()->id;
         // Trigger and capture the event.
@@ -1062,7 +1062,7 @@ class tool_lp_event_testcase extends advanced_testcase {
         $dg = $this->getDataGenerator();
         $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
         $user1 = $dg->create_user();
-        $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \tool_lp\plan::STATUS_ACTIVE));
+        $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \core_competency\plan::STATUS_ACTIVE));
         $planid = $plan->get_id();
         $contextid = $plan->get_context()->id;
         // Trigger and capture the event.
@@ -1093,7 +1093,7 @@ class tool_lp_event_testcase extends advanced_testcase {
         $template = $lpg->create_template();
         $plan = $lpg->create_plan(array(
             'userid' => $user1->id,
-            'status' => \tool_lp\plan::STATUS_ACTIVE,
+            'status' => \core_competency\plan::STATUS_ACTIVE,
             'templateid' => $template->get_id()
         ));
         $planid = $plan->get_id();
@@ -1151,7 +1151,7 @@ class tool_lp_event_testcase extends advanced_testcase {
         $dg = $this->getDataGenerator();
         $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
         $user1 = $dg->create_user();
-        $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \tool_lp\plan::STATUS_WAITING_FOR_REVIEW));
+        $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \core_competency\plan::STATUS_WAITING_FOR_REVIEW));
         $planid = $plan->get_id();
         $contextid = $plan->get_context()->id;
         // Trigger and capture the event.
@@ -1179,7 +1179,7 @@ class tool_lp_event_testcase extends advanced_testcase {
         $dg = $this->getDataGenerator();
         $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
         $user1 = $dg->create_user();
-        $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \tool_lp\plan::STATUS_WAITING_FOR_REVIEW));
+        $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \core_competency\plan::STATUS_WAITING_FOR_REVIEW));
         $planid = $plan->get_id();
         $contextid = $plan->get_context()->id;
         // Trigger and capture the event.
@@ -1207,7 +1207,7 @@ class tool_lp_event_testcase extends advanced_testcase {
         $dg = $this->getDataGenerator();
         $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
         $user1 = $dg->create_user();
-        $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \tool_lp\plan::STATUS_IN_REVIEW));
+        $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \core_competency\plan::STATUS_IN_REVIEW));
         $planid = $plan->get_id();
         $contextid = $plan->get_context()->id;
         // Trigger and capture the event.
@@ -1321,7 +1321,7 @@ class tool_lp_event_testcase extends advanced_testcase {
 
         // Add evidence.
         $recommend = false;
-        $evidence = api::add_evidence($student->id, $comp, $syscontext, \tool_lp\evidence::ACTION_OVERRIDE,
+        $evidence = api::add_evidence($student->id, $comp, $syscontext, \core_competency\evidence::ACTION_OVERRIDE,
             'commentincontext', 'core', null, $recommend, null, 1);
 
         // Get event.
@@ -1375,12 +1375,12 @@ class tool_lp_event_testcase extends advanced_testcase {
         $comp = $lpg->create_competency(['competencyframeworkid' => $framework->get_id()]);
 
         // Create a different user competency.
-        $otheruc = \tool_lp\user_competency::create_relation($student2->id, $comp->get_id());
+        $otheruc = \core_competency\user_competency::create_relation($student2->id, $comp->get_id());
         $otheruc->create();
 
         // Add evidence.
         $recommend = false;
-        $evidence = api::add_evidence($student->id, $comp, $syscontext, \tool_lp\evidence::ACTION_OVERRIDE,
+        $evidence = api::add_evidence($student->id, $comp, $syscontext, \core_competency\evidence::ACTION_OVERRIDE,
             'commentincontext', 'core', null, $recommend, null, 1);
 
         // We expect this to fail and throw a coding exception.
@@ -1391,7 +1391,7 @@ class tool_lp_event_testcase extends advanced_testcase {
     /**
      * Test creation of evidence_created event with missing data.
      *
-     * These data are validated by \tool_lp\evidence_created::validate_data().
+     * These data are validated by \core_competency\evidence_created::validate_data().
      */
     public function test_evidence_created_with_missing_data() {
         $eventdata = [

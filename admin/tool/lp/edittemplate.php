@@ -32,7 +32,7 @@ $pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to wh
 $template = null;
 if (!empty($id)) {
     // Always use the context from the framework when it exists.
-    $template = new \tool_lp\template($id);
+    $template = new \core_competency\template($id);
     $context = $template->get_context();
 } else {
     $context = context::instance_by_id($pagecontextid);

@@ -31,7 +31,7 @@ use single_button;
 use moodle_url;
 use tool_lp\api;
 use tool_lp\external\user_evidence_summary_exporter;
-use tool_lp\user_evidence;
+use core_competency\user_evidence;
 use context_user;
 
 /**

@@ -57,7 +57,7 @@ $customdata = array('userid' => $userid, 'context' => $PAGE->context, 'persisten
 
 // User can create plan if he can_manage_user with active/complete status
 // or if he can_manage_user_draft with draft status.
-$cancreate = \tool_lp\plan::can_manage_user_draft($userid) || \tool_lp\plan::can_manage_user($userid);
+$cancreate = \core_competency\plan::can_manage_user_draft($userid) || \core_competency\plan::can_manage_user($userid);
 
 // If editing plan, check if user has permissions to edit it.
 if ($plan != null) {

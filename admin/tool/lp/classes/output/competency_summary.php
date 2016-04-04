@@ -39,13 +39,13 @@ use tool_lp\external\competency_summary_exporter;
  */
 class competency_summary implements renderable, templatable {
 
-    /** @var \tool_lp\competency_framework $framework This competency framework. */
+    /** @var \core_competency\competency_framework $framework This competency framework. */
     protected $framework = null;
 
-    /** @var \tool_lp\competency $competency. */
+    /** @var \core_competency\competency $competency. */
     protected $competency = null;
 
-    /** @var \tool_lp\competency[] $relatedcompetencies List of competencies. */
+    /** @var \core_competency\competency[] $relatedcompetencies List of competencies. */
     protected $relatedcompetencies = array();
 
     /** @var course[] $courses List of courses. */
@@ -54,8 +54,8 @@ class competency_summary implements renderable, templatable {
     /**
      * Construct this renderable.
      *
-     * @param \tool_lp\competency $competency Competency persistent.
-     * @param \tool_lp\competency_framework $framework framework persistent.
+     * @param \core_competency\competency $competency Competency persistent.
+     * @param \core_competency\competency_framework $framework framework persistent.
      * @param boolean $includerelated Include or not related competencies.
      * @param boolean $includecourses Include or not competency courses.
      */

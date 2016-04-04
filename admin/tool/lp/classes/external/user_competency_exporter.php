@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 use core_user;
 use renderer_base;
 use stdClass;
-use tool_lp\user_competency;
+use core_competency\user_competency;
 
 /**
  * Class for exporting user competency data.
@@ -38,7 +38,7 @@ use tool_lp\user_competency;
 class user_competency_exporter extends persistent_exporter {
 
     protected static function define_class() {
-        return 'tool_lp\\user_competency';
+        return 'core_competency\\user_competency';
     }
 
     protected static function define_related() {

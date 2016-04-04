@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 use tool_lp\api;
-use tool_lp\plan;
+use core_competency\plan;
 
 /**
  * Task tests.
@@ -46,8 +46,8 @@ class tool_lp_task_testcase extends advanced_testcase {
 
         // Sql to simulate the execution in time.
         $cmsql = "UPDATE {cohort_members} SET timeadded = :currenttime WHERE cohortid = :cohortid AND userid = :userid";
-        $tplsql = "UPDATE {" . \tool_lp\template::TABLE . "} SET timemodified = :currenttime WHERE id = :templateid";
-        $plansql = "UPDATE {" . \tool_lp\plan::TABLE . "} SET timemodified = :currenttime WHERE id = :planid";
+        $tplsql = "UPDATE {" . \core_competency\template::TABLE . "} SET timemodified = :currenttime WHERE id = :templateid";
+        $plansql = "UPDATE {" . \core_competency\plan::TABLE . "} SET timemodified = :currenttime WHERE id = :planid";
 
         $currenttime = time();
 
@@ -255,22 +255,22 @@ class tool_lp_task_testcase extends advanced_testcase {
 
         // Creating plans from template cohort.
         $task->execute();
-        $this->assertEquals(1, \tool_lp\plan::count_records());
+        $this->assertEquals(1, \core_competency\plan::count_records());
 
         // Now add another user, but this time the template will be expired.
         cohort_add_member($cohort->id, $user2->id);
         $record = $tpl->to_record();
         $record->duedate = time() - 10000;
-        $DB->update_record(\tool_lp\template::TABLE, $record);
+        $DB->update_record(\core_competency\template::TABLE, $record);
         $tpl->read();
         $task->execute();
-        $this->assertEquals(1, \tool_lp\plan::count_records()); // Still only one plan.
+        $this->assertEquals(1, \core_competency\plan::count_records()); // Still only one plan.
 
         // Pretend it wasn't expired.
         $tpl->set_duedate(time() + 100);
         $tpl->update();
         $task->execute();
-        $this->assertEquals(2, \tool_lp\plan::count_records()); // Now there is two.
+        $this->assertEquals(2, \core_competency\plan::count_records()); // Now there is two.
     }
 
     public function test_complete_plans_task() {
@@ -283,9 +283,9 @@ class tool_lp_task_testcase extends advanced_testcase {
         $user = $dg->create_user();
 
         $up1 = $lpg->create_plan(array('userid' => $user->id,
-                                        'status' => \tool_lp\plan::STATUS_DRAFT));
+                                        'status' => \core_competency\plan::STATUS_DRAFT));
         $up2 = $lpg->create_plan(array('userid' => $user->id,
-                                        'status' => \tool_lp\plan::STATUS_ACTIVE));
+                                        'status' => \core_competency\plan::STATUS_ACTIVE));
         // Set duedate in the past.
         $date = new \DateTime('yesterday');
         $record1 = $up1->to_record();
@@ -303,12 +303,12 @@ class tool_lp_task_testcase extends advanced_testcase {
         $task->execute();
 
         $plandraft = api::read_plan($up1->get_id());
-        $this->assertEquals(\tool_lp\plan::STATUS_DRAFT, $plandraft->get_status());
+        $this->assertEquals(\core_competency\plan::STATUS_DRAFT, $plandraft->get_status());
 
         // Test that active plan can be completed on running task.
         $task->execute();
 
         $planactive = api::read_plan($up2->get_id());
-        $this->assertEquals(\tool_lp\plan::STATUS_COMPLETE, $planactive->get_status());
+        $this->assertEquals(\core_competency\plan::STATUS_COMPLETE, $planactive->get_status());
     }
 }

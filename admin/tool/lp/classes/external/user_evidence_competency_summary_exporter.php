@@ -35,8 +35,8 @@ use renderer_base;
 class user_evidence_competency_summary_exporter extends exporter {
 
     protected static function define_related() {
-        return array('competency' => '\\tool_lp\\competency',
-                     'usercompetency' => '\\tool_lp\\user_competency',
+        return array('competency' => '\\core_competency\\competency',
+                     'usercompetency' => '\\core_competency\\user_competency',
                      'scale' => 'grade_scale',
                      'context' => '\\context'
                     );

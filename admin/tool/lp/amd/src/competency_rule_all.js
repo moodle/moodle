@@ -42,7 +42,7 @@ define(['jquery',
      * @method getType
      */
     Rule.prototype.getType = function() {
-        return 'tool_lp\\competency_rule_all';
+        return 'core_competency\\competency_rule_all';
     };
 
     /**

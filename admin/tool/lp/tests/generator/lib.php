@@ -23,23 +23,23 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use tool_lp\competency;
-use tool_lp\competency_framework;
-use tool_lp\course_competency;
-use tool_lp\course_module_competency;
+use core_competency\competency;
+use core_competency\competency_framework;
+use core_competency\course_competency;
+use core_competency\course_module_competency;
 use tool_lp\external;
-use tool_lp\plan;
-use tool_lp\related_competency;
-use tool_lp\template;
-use tool_lp\template_cohort;
-use tool_lp\template_competency;
-use tool_lp\user_competency;
-use tool_lp\user_competency_course;
-use tool_lp\user_competency_plan;
-use tool_lp\plan_competency;
-use tool_lp\evidence;
-use tool_lp\user_evidence;
-use tool_lp\user_evidence_competency;
+use core_competency\plan;
+use core_competency\related_competency;
+use core_competency\template;
+use core_competency\template_cohort;
+use core_competency\template_competency;
+use core_competency\user_competency;
+use core_competency\user_competency_course;
+use core_competency\user_competency_plan;
+use core_competency\plan_competency;
+use core_competency\evidence;
+use core_competency\user_evidence;
+use core_competency\user_evidence_competency;
 
 defined('MOODLE_INTERNAL') || die();
 

@@ -32,9 +32,9 @@ use moodle_url;
 use context_system;
 use context_course;
 use tool_lp\api;
-use tool_lp\course_competency;
-use tool_lp\course_competency_statistics;
-use tool_lp\competency;
+use core_competency\course_competency;
+use core_competency\course_competency_statistics;
+use core_competency\competency;
 use tool_lp\external\competency_exporter;
 use tool_lp\external\competency_path_exporter;
 use tool_lp\external\course_competency_exporter;
@@ -58,7 +58,7 @@ class course_competencies_page implements renderable, templatable {
     /** @var context $context The context for this page. */
     protected $context = null;
 
-    /** @var \tool_lp\course_competency[] $competencies List of competencies. */
+    /** @var \core_competency\course_competency[] $competencies List of competencies. */
     protected $coursecompetencylist = array();
 
     /** @var bool $canmanagecompetencyframeworks Can the current user manage competency frameworks. */

@@ -23,19 +23,19 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use tool_lp\competency;
-use tool_lp\competency_framework;
-use tool_lp\course_competency;
-use tool_lp\course_module_competency;
-use tool_lp\plan;
-use tool_lp\related_competency;
-use tool_lp\template;
-use tool_lp\template_cohort;
-use tool_lp\template_competency;
-use tool_lp\user_competency;
-use tool_lp\user_competency_plan;
-use tool_lp\plan_competency;
-use tool_lp\evidence;
+use core_competency\competency;
+use core_competency\competency_framework;
+use core_competency\course_competency;
+use core_competency\course_module_competency;
+use core_competency\plan;
+use core_competency\related_competency;
+use core_competency\template;
+use core_competency\template_cohort;
+use core_competency\template_competency;
+use core_competency\user_competency;
+use core_competency\user_competency_plan;
+use core_competency\plan_competency;
+use core_competency\evidence;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -57,7 +57,7 @@ class tool_lp_generator_testcase extends advanced_testcase {
         $framework = $lpg->create_framework();
         $framework = $lpg->create_framework();
         $this->assertEquals(2, competency_framework::count_records());
-        $this->assertInstanceOf('\tool_lp\competency_framework', $framework);
+        $this->assertInstanceOf('\core_competency\competency_framework', $framework);
     }
 
     public function test_create_competency() {
@@ -69,7 +69,7 @@ class tool_lp_generator_testcase extends advanced_testcase {
         $competency = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
         $competency = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
         $this->assertEquals(2, competency::count_records());
-        $this->assertInstanceOf('\tool_lp\competency', $competency);
+        $this->assertInstanceOf('\core_competency\competency', $competency);
     }
 
     public function test_create_related_competency() {
@@ -84,7 +84,7 @@ class tool_lp_generator_testcase extends advanced_testcase {
         $rc = $lpg->create_related_competency(array('competencyid' => $c1->get_id(), 'relatedcompetencyid' => $c2->get_id()));
         $rc = $lpg->create_related_competency(array('competencyid' => $c2->get_id(), 'relatedcompetencyid' => $c3->get_id()));
         $this->assertEquals(2, related_competency::count_records());
-        $this->assertInstanceOf('\tool_lp\related_competency', $rc);
+        $this->assertInstanceOf('\core_competency\related_competency', $rc);
     }
 
     public function test_create_plan() {
@@ -95,7 +95,7 @@ class tool_lp_generator_testcase extends advanced_testcase {
         $this->assertEquals(0, plan::count_records());
         $plan = $lpg->create_plan(array('userid' => $user->id));
         $this->assertEquals(1, plan::count_records());
-        $this->assertInstanceOf('\tool_lp\plan', $plan);
+        $this->assertInstanceOf('\core_competency\plan', $plan);
     }
 
     public function test_create_user_competency() {
@@ -111,7 +111,7 @@ class tool_lp_generator_testcase extends advanced_testcase {
         $rc = $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $c1->get_id()));
         $rc = $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $c2->get_id()));
         $this->assertEquals(2, user_competency::count_records());
-        $this->assertInstanceOf('\tool_lp\user_competency', $rc);
+        $this->assertInstanceOf('\core_competency\user_competency', $rc);
     }
 
     public function test_create_user_competency_plan() {
@@ -135,7 +135,7 @@ class tool_lp_generator_testcase extends advanced_testcase {
                                                      'planid' => $plan->get_id()
                                                 ));
         $this->assertEquals(2, user_competency_plan::count_records());
-        $this->assertInstanceOf('\tool_lp\user_competency_plan', $ucp);
+        $this->assertInstanceOf('\core_competency\user_competency_plan', $ucp);
     }
 
     public function test_create_template() {
@@ -146,7 +146,7 @@ class tool_lp_generator_testcase extends advanced_testcase {
         $template = $lpg->create_template();
         $template = $lpg->create_template();
         $this->assertEquals(2, template::count_records());
-        $this->assertInstanceOf('\tool_lp\template', $template);
+        $this->assertInstanceOf('\core_competency\template', $template);
     }
 
     public function test_create_template_competency() {
@@ -161,7 +161,7 @@ class tool_lp_generator_testcase extends advanced_testcase {
         $relation = $lpg->create_template_competency(array('competencyid' => $c1->get_id(), 'templateid' => $template->get_id()));
         $relation = $lpg->create_template_competency(array('competencyid' => $c2->get_id(), 'templateid' => $template->get_id()));
         $this->assertEquals(2, template_competency::count_records());
-        $this->assertInstanceOf('\tool_lp\template_competency', $relation);
+        $this->assertInstanceOf('\core_competency\template_competency', $relation);
     }
 
     public function test_create_plan_competency() {
@@ -179,8 +179,8 @@ class tool_lp_generator_testcase extends advanced_testcase {
         $pc2 = $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $c2->get_id()));
 
         $this->assertEquals(2, plan_competency::count_records());
-        $this->assertInstanceOf('\tool_lp\plan_competency', $pc1);
-        $this->assertInstanceOf('\tool_lp\plan_competency', $pc2);
+        $this->assertInstanceOf('\core_competency\plan_competency', $pc1);
+        $this->assertInstanceOf('\core_competency\plan_competency', $pc2);
         $this->assertEquals($plan->get_id(), $pc1->get_planid());
     }
 
@@ -196,7 +196,7 @@ class tool_lp_generator_testcase extends advanced_testcase {
         $this->assertEquals(1, template_cohort::count_records());
         $tc = $lpg->create_template_cohort(array('templateid' => $t1->get_id(), 'cohortid' => $c2->id));
         $this->assertEquals(2, template_cohort::count_records());
-        $this->assertInstanceOf('\tool_lp\template_cohort', $tc);
+        $this->assertInstanceOf('\core_competency\template_cohort', $tc);
     }
 
     public function test_create_evidence() {
@@ -212,7 +212,7 @@ class tool_lp_generator_testcase extends advanced_testcase {
         $e = $lpg->create_evidence(array('usercompetencyid' => $rc1->get_id()));
         $e = $lpg->create_evidence(array('usercompetencyid' => $rc2->get_id()));
         $this->assertEquals(2, evidence::count_records());
-        $this->assertInstanceOf('\tool_lp\evidence', $e);
+        $this->assertInstanceOf('\core_competency\evidence', $e);
     }
 
     public function test_create_course_competency() {
@@ -232,7 +232,7 @@ class tool_lp_generator_testcase extends advanced_testcase {
         $this->assertEquals(0, course_competency::count_records(array('courseid' => $course2->id)));
         $rc = $lpg->create_course_competency(array('competencyid' => $c3->get_id(), 'courseid' => $course2->id));
         $this->assertEquals(1, course_competency::count_records(array('courseid' => $course2->id)));
-        $this->assertInstanceOf('\tool_lp\course_competency', $rc);
+        $this->assertInstanceOf('\core_competency\course_competency', $rc);
     }
 
     public function test_create_course_module_competency() {
@@ -253,7 +253,7 @@ class tool_lp_generator_testcase extends advanced_testcase {
         $this->assertEquals(0, course_module_competency::count_records(array('cmid' => $cm2->cmid)));
         $rc = $lpg->create_course_module_competency(array('competencyid' => $c3->get_id(), 'cmid' => $cm2->cmid));
         $this->assertEquals(1, course_module_competency::count_records(array('cmid' => $cm2->cmid)));
-        $this->assertInstanceOf('\tool_lp\course_module_competency', $rc);
+        $this->assertInstanceOf('\core_competency\course_module_competency', $rc);
     }
 
 }

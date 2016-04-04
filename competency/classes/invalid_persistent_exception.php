@@ -17,19 +17,19 @@
 /**
  * Invalid persistent exception.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_lp;
+namespace core_competency;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Invalid persistent exception class.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -40,7 +40,7 @@ class invalid_persistent_exception extends \moodle_exception {
         foreach ($errors as $key => $message) {
             $debuginfo[] = "$key: $message";
         }
-        parent::__construct('invalidpersistent', 'tool_lp', null, null, implode(' - ', $debuginfo));
+        parent::__construct('invalidpersistent', 'core_competency', null, null, implode(' - ', $debuginfo));
     }
 
 }

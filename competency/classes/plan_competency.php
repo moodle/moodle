@@ -17,11 +17,11 @@
 /**
  * Class for plan_competency persistence.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_lp;
+namespace core_competency;
 defined('MOODLE_INTERNAL') || die();
 
 use lang_string;

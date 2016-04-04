@@ -38,12 +38,12 @@ class user_competency_summary_in_course_exporter extends exporter {
 
     protected static function define_related() {
         // We cache the context so it does not need to be retrieved from the framework every time.
-        return array('competency' => '\\tool_lp\\competency',
-                     'relatedcompetencies' => '\\tool_lp\\competency[]',
+        return array('competency' => '\\core_competency\\competency',
+                     'relatedcompetencies' => '\\core_competency\\competency[]',
                      'user' => '\\stdClass',
                      'course' => '\\stdClass',
-                     'usercompetencycourse' => '\\tool_lp\\user_competency_course?',
-                     'evidence' => '\\tool_lp\\evidence[]',
+                     'usercompetencycourse' => '\\core_competency\\user_competency_course?',
+                     'evidence' => '\\core_competency\\evidence[]',
                      'scale' => '\\grade_scale');
     }
 

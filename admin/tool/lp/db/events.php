@@ -28,10 +28,10 @@ defined('MOODLE_INTERNAL') || die();
 $observers = array(
     array(
         'eventname'   => '\\core\\event\\course_completed',
-        'callback'    => '\\tool_lp\\api::observe_course_completed',
+        'callback'    => '\\core_competency\\api::observe_course_completed',
     ),
     array(
         'eventname'   => '\\core\\event\\course_module_completion_updated',
-        'callback'    => '\\tool_lp\\api::observe_course_module_completion_updated',
+        'callback'    => '\\core_competency\\api::observe_course_module_completion_updated',
     ),
 );

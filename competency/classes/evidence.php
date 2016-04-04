@@ -17,12 +17,12 @@
 /**
  * Evidence persistent file.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_lp;
+namespace core_competency;
 defined('MOODLE_INTERNAL') || die();
 
 use coding_exception;
@@ -34,7 +34,7 @@ use stdClass;
 /**
  * Evidence persistent class.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -401,7 +401,7 @@ class tool_lp_persistent_testcase extends advanced_testcase {
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_lp_testable_persistent extends \tool_lp\persistent {
+class tool_lp_testable_persistent extends \core_competency\persistent {
 
     const TABLE = 'competency';
 

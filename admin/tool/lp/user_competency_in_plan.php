@@ -38,7 +38,7 @@ $params = array('userid' => $userid, 'competencyid' => $competencyid);
 $params['planid'] = $planid;
 $plan = \tool_lp\api::read_plan($planid);
 $url = new moodle_url('/admin/tool/lp/user_competency_in_plan.php', $params);
-$competency = new \tool_lp\competency($competencyid);
+$competency = new \core_competency\competency($competencyid);
 $framework = $competency->get_framework();
 
 list($title, $subtitle) = \tool_lp\page_helper::setup_for_plan($userid, $url, $plan);
@@ -51,7 +51,7 @@ $page = new \tool_lp\output\user_competency_summary_in_plan($competencyid, $plan
 echo $output->render($page);
 // Trigger the viewed event.
 $pc = \tool_lp\api::get_plan_competency($plan, $competency->get_id());
-if ($plan->get_status() == \tool_lp\plan::STATUS_COMPLETE) {
+if ($plan->get_status() == \core_competency\plan::STATUS_COMPLETE) {
     $usercompetencyplan = $pc->usercompetencyplan;
     \tool_lp\api::user_competency_plan_viewed($usercompetencyplan);
 } else {

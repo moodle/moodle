@@ -36,7 +36,7 @@ use renderer_base;
 class user_evidence_exporter extends persistent_exporter {
 
     protected static function define_class() {
-        return 'tool_lp\\user_evidence';
+        return 'core_competency\\user_evidence';
     }
 
     protected static function define_other_properties() {
@@ -70,7 +70,7 @@ class user_evidence_exporter extends persistent_exporter {
     protected static function define_related() {
         return array(
             'context' => 'context',
-            'competencies' => 'tool_lp\\competency[]'
+            'competencies' => 'core_competency\\competency[]'
         );
     }
 

@@ -29,7 +29,7 @@ global $CFG;
 
 use tool_lp\api;
 use tool_lp\external\competency_exporter;
-use tool_lp\course_module_competency;
+use core_competency\course_module_competency;
 
 require_once($CFG->libdir . '/form/select.php');
 

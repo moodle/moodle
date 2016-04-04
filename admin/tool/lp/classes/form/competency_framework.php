@@ -36,7 +36,7 @@ use stdClass;
  */
 class competency_framework extends persistent {
 
-    protected static $persistentclass = 'tool_lp\\competency_framework';
+    protected static $persistentclass = 'core_competency\\competency_framework';
 
     /**
      * Define the form - called by parent constructor
@@ -95,11 +95,11 @@ class competency_framework extends persistent {
         $mform->setDefault('context', $context->get_context_name(false));
 
         $mform->addElement('header', 'taxonomyhdr', get_string('taxonomies', 'tool_lp'));
-        $taxonomies = \tool_lp\competency_framework::get_taxonomies_list();
+        $taxonomies = \core_competency\competency_framework::get_taxonomies_list();
         $taxdefaults = array();
-        for ($i = 1; $i <= \tool_lp\competency_framework::get_taxonomies_max_level(); $i++) {
+        for ($i = 1; $i <= \core_competency\competency_framework::get_taxonomies_max_level(); $i++) {
             $mform->addElement('select', "taxonomies[$i]", get_string('levela', 'tool_lp', $i), $taxonomies);
-            $taxdefaults[$i] = \tool_lp\competency_framework::TAXONOMY_COMPETENCY;
+            $taxdefaults[$i] = \core_competency\competency_framework::TAXONOMY_COMPETENCY;
         }
         // Not using taxonomies[n] here or it would takes precedence over set_data(array('taxonomies' => ...)).
         $mform->setDefault('taxonomies', $taxdefaults);

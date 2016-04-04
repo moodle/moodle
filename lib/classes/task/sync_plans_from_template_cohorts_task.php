@@ -26,7 +26,7 @@ namespace core\task;
 defined('MOODLE_INTERNAL') || die();
 
 use tool_lp\api;
-use tool_lp\template_cohort;
+use core_competency\template_cohort;
 
 /**
  * Synchronise plans from template cohorts.

@@ -17,12 +17,12 @@
 /**
  * Competency rule base.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_lp;
+namespace core_competency;
 defined('MOODLE_INTERNAL') || die();
 
 use coding_exception;
@@ -33,7 +33,7 @@ use coding_exception;
  * Rules are attached to a competency and then tested against a user competency
  * to determine whether or not it matches.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -51,8 +51,8 @@ class competency_path_exporter extends exporter {
      */
     protected static function define_related() {
         return [
-            'ancestors' => 'tool_lp\\competency[]',
-            'framework' => 'tool_lp\\competency_framework',
+            'ancestors' => 'core_competency\\competency[]',
+            'framework' => 'core_competency\\competency_framework',
             'context' => 'context'
         ];
     }

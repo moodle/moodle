@@ -41,7 +41,7 @@ class competency_framework_exporter extends persistent_exporter {
      * @return string
      */
     protected static function define_class() {
-        return 'tool_lp\\competency_framework';
+        return 'core_competency\\competency_framework';
     }
 
     /**

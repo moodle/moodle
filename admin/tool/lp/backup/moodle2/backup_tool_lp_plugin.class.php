@@ -55,7 +55,7 @@ class backup_tool_lp_plugin extends backup_tool_plugin {
         $pluginwrapper->add_child($coursecompetencysettings);
 
         $sql = 'SELECT s.pushratingstouserplans
-                  FROM {' . \tool_lp\course_competency_settings::TABLE . '} s
+                  FROM {' . \core_competency\course_competency_settings::TABLE . '} s
                  WHERE s.courseid = :courseid';
         $coursecompetencysettings->set_source_sql($sql, array('courseid' => backup::VAR_COURSEID));
 
@@ -65,9 +65,9 @@ class backup_tool_lp_plugin extends backup_tool_plugin {
         $coursecompetencies->add_child($competency);
 
         $sql = 'SELECT c.idnumber, cc.ruleoutcome, cc.sortorder, f.idnumber AS frameworkidnumber
-                  FROM {' . \tool_lp\course_competency::TABLE . '} cc
-                  JOIN {' . \tool_lp\competency::TABLE . '} c ON c.id = cc.competencyid
-                  JOIN {' . \tool_lp\competency_framework::TABLE . '} f ON f.id = c.competencyframeworkid
+                  FROM {' . \core_competency\course_competency::TABLE . '} cc
+                  JOIN {' . \core_competency\competency::TABLE . '} c ON c.id = cc.competencyid
+                  JOIN {' . \core_competency\competency_framework::TABLE . '} f ON f.id = c.competencyframeworkid
                  WHERE cc.courseid = :courseid
               ORDER BY cc.sortorder';
         $competency->set_source_sql($sql, array('courseid' => backup::VAR_COURSEID));
@@ -94,9 +94,9 @@ class backup_tool_lp_plugin extends backup_tool_plugin {
         $coursecompetencies->add_child($competency);
 
         $sql = 'SELECT c.idnumber, cmc.ruleoutcome, cmc.sortorder, f.idnumber AS frameworkidnumber
-                  FROM {' . \tool_lp\course_module_competency::TABLE . '} cmc
-                  JOIN {' . \tool_lp\competency::TABLE . '} c ON c.id = cmc.competencyid
-                  JOIN {' . \tool_lp\competency_framework::TABLE . '} f ON f.id = c.competencyframeworkid
+                  FROM {' . \core_competency\course_module_competency::TABLE . '} cmc
+                  JOIN {' . \core_competency\competency::TABLE . '} c ON c.id = cmc.competencyid
+                  JOIN {' . \core_competency\competency_framework::TABLE . '} f ON f.id = c.competencyframeworkid
                  WHERE cmc.cmid = :coursemoduleid
               ORDER BY cmc.sortorder';
         $competency->set_source_sql($sql, array('coursemoduleid' => backup::VAR_MODID));
@@ -111,7 +111,7 @@ class backup_tool_lp_plugin extends backup_tool_plugin {
      */
     protected function get_include_condition() {
         $result = '';
-        if (\tool_lp\course_competency::record_exists_select('courseid = ?', array($this->task->get_courseid()))) {
+        if (\core_competency\course_competency::record_exists_select('courseid = ?', array($this->task->get_courseid()))) {
             $result = 'include';
         };
         return array('sqlparam' => $result);

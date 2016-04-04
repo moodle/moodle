@@ -30,7 +30,7 @@ require_once($CFG->libdir . '/tablelib.php');
 use html_writer;
 use moodle_url;
 use table_sql;
-use tool_lp\template;
+use core_competency\template;
 
 /**
  * Template cohorts table class.
@@ -47,16 +47,16 @@ class template_cohorts_table extends table_sql {
     /** @var context The context. */
     protected $context;
 
-    /** @var \tool_lp\template The template. */
+    /** @var \core_competency\template The template. */
     protected $template;
 
     /**
      * Sets up the table.
      *
      * @param string $uniqueid Unique id of table.
-     * @param \tool_lp\template $template The template.
+     * @param \core_competency\template $template The template.
      */
-    public function __construct($uniqueid, \tool_lp\template $template) {
+    public function __construct($uniqueid, \core_competency\template $template) {
         parent::__construct($uniqueid);
 
          // This object should not be used without the right permissions.
@@ -138,7 +138,7 @@ class template_cohorts_table extends table_sql {
         }
 
         $sql = "SELECT $select
-                  FROM {" . \tool_lp\template_cohort::TABLE . "} tc
+                  FROM {" . \core_competency\template_cohort::TABLE . "} tc
                   JOIN {cohort} c ON c.id = tc.cohortid
                  WHERE tc.templateid = :templateid";
         $params = array('templateid' => $this->template->get_id());

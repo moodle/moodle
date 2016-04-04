@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class template extends persistent {
 
-    protected static $persistentclass = 'tool_lp\\template';
+    protected static $persistentclass = 'core_competency\\template';
 
     /**
      * Define the form - called by parent constructor

@@ -24,8 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-use tool_lp\plan;
-use tool_lp\user_competency;
+use core_competency\plan;
+use core_competency\user_competency;
 
 global $CFG;
 

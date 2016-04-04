@@ -25,9 +25,9 @@
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
-use tool_lp\course_competency;
+use core_competency\course_competency;
 use tool_lp\api;
-use tool_lp\course_competency_settings;
+use core_competency\course_competency_settings;
 
 /**
  * This test ensures that the course competency settings are applied and work correctly.
@@ -99,8 +99,8 @@ class tool_lp_course_competency_settings_testcase extends advanced_testcase {
             'userid' => $u1->id,
             'competencyid' => $comp1->get_id(),
         );
-        $usercompcourse = \tool_lp\user_competency_course::get_record($filterparams);
-        $usercomp = \tool_lp\user_competency::get_record($filterparams);
+        $usercompcourse = \core_competency\user_competency_course::get_record($filterparams);
+        $usercomp = \core_competency\user_competency::get_record($filterparams);
 
         // No grade in plan - only a grade in the course.
         $this->assertEmpty($usercomp->get_grade());
@@ -112,8 +112,8 @@ class tool_lp_course_competency_settings_testcase extends advanced_testcase {
             'userid' => $u1->id,
             'competencyid' => $comp1->get_id(),
         );
-        $usercompcourse = \tool_lp\user_competency_course::get_record($filterparams);
-        $usercomp = \tool_lp\user_competency::get_record($filterparams);
+        $usercompcourse = \core_competency\user_competency_course::get_record($filterparams);
+        $usercomp = \core_competency\user_competency::get_record($filterparams);
 
         // Updated grade in plan - updated grade in the course.
         $this->assertEquals(2, $usercomp->get_grade());

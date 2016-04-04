@@ -70,7 +70,7 @@ class restore_tool_lp_plugin extends restore_tool_plugin {
 
         $data = (object) $data;
         $courseid = $this->task->get_courseid();
-        $exists = \tool_lp\course_competency_settings::get_record(array('courseid' => $courseid));
+        $exists = \core_competency\course_competency_settings::get_record(array('courseid' => $courseid));
 
         // Now update or insert.
         if ($exists) {
@@ -79,7 +79,7 @@ class restore_tool_lp_plugin extends restore_tool_plugin {
             return $settings->update();
         } else {
             $data = (object) array('courseid' => $courseid, 'pushratingstouserplans' => $data->pushratingstouserplans);
-            $settings = new \tool_lp\course_competency_settings(0, $data);
+            $settings = new \core_competency\course_competency_settings(0, $data);
             return !empty($settings->create());
         }
     }
@@ -93,11 +93,11 @@ class restore_tool_lp_plugin extends restore_tool_plugin {
         $data = (object) $data;
 
         // Mapping the competency by ID numbers.
-        $framework = \tool_lp\competency_framework::get_record(array('idnumber' => $data->frameworkidnumber));
+        $framework = \core_competency\competency_framework::get_record(array('idnumber' => $data->frameworkidnumber));
         if (!$framework) {
             return;
         }
-        $competency = \tool_lp\competency::get_record(array('idnumber' => $data->idnumber,
+        $competency = \core_competency\competency::get_record(array('idnumber' => $data->idnumber,
             'competencyframeworkid' => $framework->get_id()));
         if (!$competency) {
             return;
@@ -108,13 +108,13 @@ class restore_tool_lp_plugin extends restore_tool_plugin {
             'courseid' => $this->task->get_courseid()
         );
         $query = 'competencyid = :competencyid AND courseid = :courseid';
-        $existing = \tool_lp\course_competency::record_exists_select($query, $params);
+        $existing = \core_competency\course_competency::record_exists_select($query, $params);
 
         if (!$existing) {
             // Sortorder is ignored by precaution, anyway we should walk through the records in the right order.
             $record = (object) $params;
             $record->ruleoutcome = $data->ruleoutcome;
-            $coursecompetency = new \tool_lp\course_competency(0, $record);
+            $coursecompetency = new \core_competency\course_competency(0, $record);
             $coursecompetency->create();
         }
 
@@ -129,11 +129,11 @@ class restore_tool_lp_plugin extends restore_tool_plugin {
         $data = (object) $data;
 
         // Mapping the competency by ID numbers.
-        $framework = \tool_lp\competency_framework::get_record(array('idnumber' => $data->frameworkidnumber));
+        $framework = \core_competency\competency_framework::get_record(array('idnumber' => $data->frameworkidnumber));
         if (!$framework) {
             return;
         }
-        $competency = \tool_lp\competency::get_record(array('idnumber' => $data->idnumber,
+        $competency = \core_competency\competency::get_record(array('idnumber' => $data->idnumber,
             'competencyframeworkid' => $framework->get_id()));
         if (!$competency) {
             return;
@@ -144,13 +144,13 @@ class restore_tool_lp_plugin extends restore_tool_plugin {
             'cmid' => $this->task->get_moduleid()
         );
         $query = 'competencyid = :competencyid AND cmid = :cmid';
-        $existing = \tool_lp\course_module_competency::record_exists_select($query, $params);
+        $existing = \core_competency\course_module_competency::record_exists_select($query, $params);
 
         if (!$existing) {
             // Sortorder is ignored by precaution, anyway we should walk through the records in the right order.
             $record = (object) $params;
             $record->ruleoutcome = $data->ruleoutcome;
-            $coursemodulecompetency = new \tool_lp\course_module_competency(0, $record);
+            $coursemodulecompetency = new \core_competency\course_module_competency(0, $record);
             $coursemodulecompetency->create();
         }
 

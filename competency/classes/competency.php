@@ -17,11 +17,11 @@
 /**
  * Class for loading/storing competencies from the DB.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_lp;
+namespace core_competency;
 defined('MOODLE_INTERNAL') || die();
 
 use coding_exception;
@@ -294,7 +294,7 @@ class competency extends persistent {
     public function get_rule_object() {
         $rule = $this->get_ruletype();
 
-        if (!$rule || !is_subclass_of($rule, 'tool_lp\\competency_rule')) {
+        if (!$rule || !is_subclass_of($rule, 'core_competency\\competency_rule')) {
             // Double check that the rule is extending the right class to avoid bad surprises.
             return null;
         }
@@ -555,7 +555,7 @@ class competency extends persistent {
             return true;
         }
 
-        if (!class_exists($value) || !is_subclass_of($value, '\tool_lp\competency_rule')) {
+        if (!class_exists($value) || !is_subclass_of($value, 'core_competency\\competency_rule')) {
             return new lang_string('invaliddata', 'error');
         }
 
@@ -629,7 +629,7 @@ class competency extends persistent {
     /**
      * Validate the scale configuration.
      *
-     * This logic is adapted from {@link \tool_lp\competency_framework::validate_scaleconfiguration()}.
+     * This logic is adapted from {@link \core_competency\competency_framework::validate_scaleconfiguration()}.
      *
      * @param  string $value The scale configuration.
      * @return bool|lang_string
@@ -691,8 +691,8 @@ class competency extends persistent {
     public static function get_available_rules() {
         // Fully qualified class names without leading slashes because get_class() does not add them either.
         $rules = array(
-            'tool_lp\\competency_rule_all' => (object) array(),
-            'tool_lp\\competency_rule_points' => (object) array(),
+            'core_competency\\competency_rule_all' => (object) array(),
+            'core_competency\\competency_rule_points' => (object) array(),
         );
         foreach ($rules as $class => $rule) {
             $rule->name = $class::get_name();

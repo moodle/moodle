@@ -27,10 +27,10 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
-use tool_lp\user_competency;
-use tool_lp\competency;
-use tool_lp\competency_rule_all;
-use tool_lp\competency_rule_points;
+use core_competency\user_competency;
+use core_competency\competency;
+use core_competency\competency_rule_all;
+use core_competency\competency_rule_points;
 
 /**
  * Competency rule testcase.
@@ -51,19 +51,19 @@ class tool_lp_competency_rule_testcase extends externallib_advanced_testcase {
         // Set up the framework and competencies.
         $framework = $lpg->create_framework();
         $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(),
-            'ruletype' => 'tool_lp\competency_rule_all'));
+            'ruletype' => 'core_competency\competency_rule_all'));
         $c11 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c1->get_id(),
-            'ruletype' => 'tool_lp\competency_rule_all'));
+            'ruletype' => 'core_competency\competency_rule_all'));
         $c111 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c11->get_id(),
-            'ruletype' => 'tool_lp\competency_rule_all'));
+            'ruletype' => 'core_competency\competency_rule_all'));
         $c112 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c11->get_id(),
-            'ruletype' => 'tool_lp\competency_rule_all'));
+            'ruletype' => 'core_competency\competency_rule_all'));
         $c12 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c1->get_id(),
-            'ruletype' => 'tool_lp\competency_rule_all'));
+            'ruletype' => 'core_competency\competency_rule_all'));
         $c13 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c1->get_id(),
-            'ruletype' => 'tool_lp\competency_rule_all'));
+            'ruletype' => 'core_competency\competency_rule_all'));
         $c131 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c13->get_id(),
-            'ruletype' => 'tool_lp\competency_rule_all'));
+            'ruletype' => 'core_competency\competency_rule_all'));
 
         // Create some user competency records.
         $uc1 = $lpg->create_user_competency(array('competencyid' => $c1->get_id(), 'userid' => $u1->id));
@@ -106,7 +106,7 @@ class tool_lp_competency_rule_testcase extends externallib_advanced_testcase {
         $c4 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
         $cx = $lpg->create_competency(array('competencyframeworkid' => $framework2->get_id()));
 
-        $c1->set_ruletype('tool_lp\competency_rule_points');
+        $c1->set_ruletype('core_competency\competency_rule_points');
         $rule = new competency_rule_points($c1);
 
         // Invalid config.
@@ -233,7 +233,7 @@ class tool_lp_competency_rule_testcase extends externallib_advanced_testcase {
         // Set up the framework and competencies.
         $framework = $lpg->create_framework();
         $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $c1->set_ruletype('tool_lp\competency_rule_points');
+        $c1->set_ruletype('core_competency\competency_rule_points');
         $comprule = new competency_rule_points($c1);
         $c11 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c1->get_id()));
         $c12 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c1->get_id()));

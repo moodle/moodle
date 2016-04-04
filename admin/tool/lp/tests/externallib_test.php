@@ -29,14 +29,15 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 use tool_lp\api;
 use tool_lp\external;
-use tool_lp\plan;
-use tool_lp\related_competency;
-use tool_lp\user_competency;
-use tool_lp\user_competency_plan;
-use tool_lp\plan_competency;
-use tool_lp\template;
-use tool_lp\template_competency;
-use tool_lp\course_competency_settings;
+use core_competency\invalid_persistent_exception;
+use core_competency\plan;
+use core_competency\related_competency;
+use core_competency\user_competency;
+use core_competency\user_competency_plan;
+use core_competency\plan_competency;
+use core_competency\template;
+use core_competency\template_competency;
+use core_competency\course_competency_settings;
 
 /**
  * External learning plans webservice API tests.
@@ -590,14 +591,14 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         // Changing the framework where the scale is not used.
         $result = $this->update_competency_framework($f1->get_id(), 3, true);
 
-        $f1 = new \tool_lp\competency_framework($f1->get_id());
+        $f1 = new \core_competency\competency_framework($f1->get_id());
         $this->assertEquals(3, $f1->get_scaleid());
 
         // Changing the framework where the scale is used.
         try {
             $result = $this->update_competency_framework($f2->get_id(), 4, true);
             $this->fail('The scale cannot be changed once used.');
-        } catch (\tool_lp\invalid_persistent_exception $e) {
+        } catch (\core_competency\invalid_persistent_exception $e) {
             $this->assertRegexp('/scaleid/', $e->getMessage());
         }
     }
@@ -2260,7 +2261,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         try {
             external::add_related_competency($competency1->get_id(), $competency4->get_id());
             $this->fail('Exception expected due mis-use of shared competencies');
-        } catch (tool_lp\invalid_persistent_exception $e) {
+        } catch (invalid_persistent_exception $e) {
             // Yay!
         }
 
@@ -2369,7 +2370,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->setUser($usermanage);
         $plan = array (
             'userid' => $usermanage->id,
-            'status' => \tool_lp\plan::STATUS_ACTIVE
+            'status' => \core_competency\plan::STATUS_ACTIVE
         );
         $pl1 = $lpg->create_plan($plan);
         $framework = $lpg->create_framework();
@@ -2382,7 +2383,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $template = $lpg->create_template();
         $plan = array (
             'userid' => $usermanage->id,
-            'status' => \tool_lp\plan::STATUS_ACTIVE,
+            'status' => \core_competency\plan::STATUS_ACTIVE,
             'templateid' => $template->get_id()
         );
         $pl2 = $lpg->create_plan($plan);
@@ -2431,7 +2432,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->setUser($usermanage);
         $plan = array (
             'userid' => $usermanage->id,
-            'status' => \tool_lp\plan::STATUS_ACTIVE
+            'status' => \core_competency\plan::STATUS_ACTIVE
         );
         $pl1 = $lpg->create_plan($plan);
         $framework = $lpg->create_framework();
@@ -2476,7 +2477,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->setUser($usermanage);
         $plan = array (
             'userid' => $usermanage->id,
-            'status' => \tool_lp\plan::STATUS_ACTIVE
+            'status' => \core_competency\plan::STATUS_ACTIVE
         );
         $pl1 = $lpg->create_plan($plan);
         $framework = $lpg->create_framework();

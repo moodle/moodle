@@ -85,7 +85,7 @@ abstract class persistent extends moodleform {
             $attributes = null, $editable = true) {
         if (empty(static::$persistentclass)) {
             throw new coding_exception('Static property $persistentclass must be set.');
-        } else if (!is_subclass_of(static::$persistentclass, 'tool_lp\\persistent')) {
+        } else if (!is_subclass_of(static::$persistentclass, 'core_competency\\persistent')) {
             throw new coding_exception('Static property $persistentclass is not valid.');
         } else if (!array_key_exists('persistent', $customdata)) {
             throw new coding_exception('The custom data \'persistent\' key must be set, even if it is null.');

@@ -15,13 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Abstract class for tool_lp objects saved to the DB.
+ * Abstract class for core_competency objects saved to the DB.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_lp;
+namespace core_competency;
 defined('MOODLE_INTERNAL') || die();
 
 use coding_exception;
@@ -32,7 +32,7 @@ use stdClass;
 use renderer_base;
 
 /**
- * Abstract class for tool_lp objects saved to the DB.
+ * Abstract class for core_competency objects saved to the DB.
  *
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -691,7 +691,7 @@ abstract class persistent {
      */
     public static function extract_record($row, $prefix = null) {
         if ($prefix === null) {
-            $prefix = static::TABLE . '_';
+            $prefix = str_replace('_', '', static::TABLE) . '_';
         }
         $prefixlength = strlen($prefix);
 
@@ -715,7 +715,7 @@ abstract class persistent {
      * @param int $skip Limitstart.
      * @param int $limit Number of rows to return.
      *
-     * @return \tool_lp\persistent[]
+     * @return \core_competency\persistent[]
      */
     public static function get_records($filters = array(), $sort = '', $order = 'ASC', $skip = 0, $limit = 0) {
         global $DB;
@@ -739,7 +739,7 @@ abstract class persistent {
      * Load a single record.
      *
      * @param array $filters Filters to apply.
-     * @return false|\tool_lp\persistent
+     * @return false|\core_competency\persistent
      */
     public static function get_record($filters = array()) {
         global $DB;
@@ -757,7 +757,7 @@ abstract class persistent {
      * @param string $fields
      * @param int $limitfrom
      * @param int $limitnum
-     * @return \tool_lp\persistent[]
+     * @return \core_competency\persistent[]
      */
     public static function get_records_select($select, $params = null, $sort = '', $fields = '*', $limitfrom = 0, $limitnum = 0) {
         global $DB;
@@ -788,7 +788,7 @@ abstract class persistent {
         $fields = array();
 
         if ($prefix === null) {
-            $prefix = static::TABLE . '_';
+            $prefix = str_replace('_', '', static::TABLE) . '_';
         }
 
         // Get the properties and move ID to the top.

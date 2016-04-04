@@ -17,12 +17,12 @@
 /**
  * User evidence persistent.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_lp;
+namespace core_competency;
 defined('MOODLE_INTERNAL') || die();
 
 use context_user;
@@ -31,7 +31,7 @@ use lang_string;
 /**
  * User evidence persistent class.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -117,7 +117,7 @@ class user_evidence extends persistent {
      */
     public function get_files() {
         $fs = get_file_storage();
-        $files = $fs->get_area_files($this->get_context()->id, 'tool_lp', 'userevidence', $this->get_id(), 'filename', false);
+        $files = $fs->get_area_files($this->get_context()->id, 'core_competency', 'userevidence', $this->get_id(), 'filename', false);
         return $files;
     }
 
@@ -132,7 +132,7 @@ class user_evidence extends persistent {
             return true;
         }
         if (!preg_match('@^https?://.+@', $value)) {
-            return new lang_string('invalidurl', 'tool_lp');
+            return new lang_string('invalidurl', 'core_competency');
         }
         return true;
     }

@@ -26,8 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 use moodle_url;
 use renderer_base;
-use tool_lp\plan;
-use tool_lp\template_cohort;
+use core_competency\plan;
+use core_competency\template_cohort;
 
 /**
  * Class for exporting template data.
@@ -38,7 +38,7 @@ use tool_lp\template_cohort;
 class template_exporter extends persistent_exporter {
 
     protected static function define_class() {
-        return 'tool_lp\\template';
+        return 'core_competency\\template';
     }
 
     protected function get_other_values(renderer_base $output) {

@@ -72,7 +72,7 @@ if ($userevidence != null) {
     }
     $customdata['evidence'] = $userevidence;
 
-} else if (!\tool_lp\user_evidence::can_manage_user($userid)) {
+} else if (!\core_competency\user_evidence::can_manage_user($userid)) {
     throw new required_capability_exception($context, 'moodle/competency:userevidencemanage', 'nopermissions', '');
 }
 

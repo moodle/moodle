@@ -32,8 +32,8 @@ use stdClass;
 use moodle_url;
 use context_system;
 use tool_lp\api;
-use tool_lp\competency;
-use tool_lp\competency_framework;
+use core_competency\competency;
+use core_competency\competency_framework;
 use tool_lp\external\competency_framework_exporter;
 
 /**
@@ -44,10 +44,10 @@ use tool_lp\external\competency_framework_exporter;
  */
 class manage_competencies_page implements renderable, templatable {
 
-    /** @var \tool_lp\competency_framework $framework This competency framework. */
+    /** @var \core_competency\competency_framework $framework This competency framework. */
     protected $framework = null;
 
-    /** @var \tool_lp\competency[] $competencies List of competencies. */
+    /** @var \core_competency\competency[] $competencies List of competencies. */
     protected $competencies = array();
 
     /** @var string $search Text to search for. */
@@ -65,7 +65,7 @@ class manage_competencies_page implements renderable, templatable {
     /**
      * Construct this renderable.
      *
-     * @param \tool_lp\competency_framework $framework Competency framework.
+     * @param \core_competency\competency_framework $framework Competency framework.
      * @param string $search Search string.
      * @param context $pagecontext The page context.
      */

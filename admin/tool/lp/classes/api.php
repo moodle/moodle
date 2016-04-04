@@ -36,6 +36,23 @@ use require_login_exception;
 use moodle_exception;
 use moodle_url;
 use required_capability_exception;
+use \core_competency\competency;
+use \core_competency\competency_framework;
+use \core_competency\course_competency;
+use \core_competency\course_competency_settings;
+use \core_competency\course_module_competency;
+use \core_competency\evidence;
+use \core_competency\plan;
+use \core_competency\plan_competency;
+use \core_competency\related_competency;
+use \core_competency\template;
+use \core_competency\template_cohort;
+use \core_competency\template_competency;
+use \core_competency\user_competency;
+use \core_competency\user_competency_course;
+use \core_competency\user_competency_plan;
+use \core_competency\user_evidence;
+use \core_competency\user_evidence_competency;
 
 /**
  * Class for doing things with competency frameworks.
@@ -1089,8 +1106,8 @@ class api {
      *
      * @param mixed $courseorid The course, or its ID.
      * @return array( array(
-     *                   'competency' => \tool_lp\competency,
-     *                   'coursecompetency' => \tool_lp\course_competency
+     *                   'competency' => \core_competency\competency,
+     *                   'coursecompetency' => \core_competency\course_competency
      *              ))
      */
     public static function list_course_competencies($courseorid) {
@@ -1169,8 +1186,8 @@ class api {
      *
      * @param mixed $cmorid The course module, or its ID.
      * @return array( array(
-     *                   'competency' => \tool_lp\competency,
-     *                   'coursemodulecompetency' => \tool_lp\course_module_competency
+     *                   'competency' => \core_competency\competency,
+     *                   'coursemodulecompetency' => \core_competency\course_module_competency
      *              ))
      */
     public static function list_course_module_competencies($cmorid) {
@@ -2286,7 +2303,7 @@ class api {
      * Lists user plans.
      *
      * @param int $userid
-     * @return \tool_lp\plan[]
+     * @return \core_competency\plan[]
      */
     public static function list_user_plans($userid) {
         global $DB, $USER;
@@ -2415,7 +2432,7 @@ class api {
      * Creates a learning plan based on the provided data.
      *
      * @param stdClass $record
-     * @return \tool_lp\plan
+     * @return \core_competency\plan
      */
     public static function create_plan(stdClass $record) {
         global $USER;
@@ -2445,7 +2462,7 @@ class api {
      *
      * @param  mixed $templateorid The template object or ID.
      * @param  int $userid
-     * @return false|\tool_lp\plan Returns false when the plan already exists.
+     * @return false|\core_competency\plan Returns false when the plan already exists.
      */
     public static function create_plan_from_template($templateorid, $userid) {
         static::require_enabled();
@@ -2581,7 +2598,7 @@ class api {
     /**
      * Unlink a plan from its template.
      *
-     * @param  \tool_lp\plan|int $planorid The plan or its ID.
+     * @param  \core_competency\plan|int $planorid The plan or its ID.
      * @return bool
      */
     public static function unlink_plan_from_template($planorid) {
@@ -2639,7 +2656,7 @@ class api {
      * Updates a plan.
      *
      * @param stdClass $record
-     * @return \tool_lp\plan
+     * @return \core_competency\plan
      */
     public static function update_plan(stdClass $record) {
         static::require_enabled();
@@ -2685,7 +2702,7 @@ class api {
      * Returns a plan data.
      *
      * @param int $id
-     * @return \tool_lp\plan
+     * @return \core_competency\plan
      */
     public static function read_plan($id) {
         static::require_enabled();
@@ -3106,9 +3123,9 @@ class api {
      * @param  int $planorid The plan, or its ID.
      * @param  int $competencyid The competency id.
      * @return (object) array(
-     *                      'competency' => \tool_lp\competency,
-     *                      'usercompetency' => \tool_lp\user_competency
-     *                      'usercompetencyplan' => \tool_lp\user_competency_plan
+     *                      'competency' => \core_competency\competency,
+     *                      'usercompetency' => \core_competency\user_competency
+     *                      'usercompetencyplan' => \core_competency\user_competency_plan
      *                  )
      *         The values of of keys usercompetency and usercompetencyplan cannot be defined at the same time.
      */
@@ -3163,9 +3180,9 @@ class api {
      *
      * @param  int $planorid The plan, or its ID.
      * @return array((object) array(
-     *                            'competency' => \tool_lp\competency,
-     *                            'usercompetency' => \tool_lp\user_competency
-     *                            'usercompetencyplan' => \tool_lp\user_competency_plan
+     *                            'competency' => \core_competency\competency,
+     *                            'usercompetency' => \core_competency\user_competency
+     *                            'usercompetencyplan' => \core_competency\user_competency_plan
      *                        ))
      *         The values of of keys usercompetency and usercompetencyplan cannot be defined at the same time.
      */
@@ -4063,8 +4080,8 @@ class api {
      * @param string $order The ordering of the sorting.
      * @param int $skip Number of records to skip.
      * @param int $limit Number of records to return.
-     * @return \tool_lp\evidence[]
-     * @return array of \tool_lp\evidence
+     * @return \core_competency\evidence[]
+     * @return array of \core_competency\evidence
      */
     public static function list_evidence($userid = 0,
                                          $competencyid = 0,
@@ -4117,7 +4134,7 @@ class api {
      * @param string $order The ordering of the sorting.
      * @param int $skip Number of records to skip.
      * @param int $limit Number of records to return.
-     * @return \tool_lp\evidence[]
+     * @return \core_competency\evidence[]
      */
     public static function list_evidence_in_course($userid = 0,
                                                    $courseid = 0,
@@ -4153,7 +4170,7 @@ class api {
      * @param int $userid The user id for which evidence is added.
      * @param competency|int $competencyorid The competency, or its id for which evidence is added.
      * @param context|int $contextorid The context in which the evidence took place.
-     * @param int $action The type of action to take on the competency. \tool_lp\evidence::ACTION_*.
+     * @param int $action The type of action to take on the competency. \core_competency\evidence::ACTION_*.
      * @param string $descidentifier The strings identifier.
      * @param string $desccomponent The strings component.
      * @param mixed $desca Any arguments the string requires.
@@ -4448,6 +4465,7 @@ class api {
             return;
         }
 
+
         // Fetch or create the user competency for the parent.
         $userid = $usercompetency->get_userid();
         $parentuc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $parent->get_id()));
@@ -4455,6 +4473,7 @@ class api {
             $parentuc = user_competency::create_relation($userid, $parent->get_id());
             $parentuc->create();
         }
+
 
         // Does the rule match?
         if (!$rule->matches($parentuc)) {
@@ -4617,7 +4636,7 @@ class api {
      * @param int $competencyid
      * @param int $grade
      * @param string $note A note to attach to the evidence
-     * @return array of \tool_lp\user_competency
+     * @return array of \core_competency\user_competency
      */
     public static function grade_competency($userid, $competencyid, $grade, $note = null) {
         global $USER;
@@ -4666,7 +4685,7 @@ class api {
      * @param int $competencyid
      * @param int $grade
      * @param string $note A note to attach to the evidence
-     * @return array of \tool_lp\user_competency
+     * @return array of \core_competency\user_competency
      */
     public static function grade_competency_in_plan($planorid, $competencyid, $grade, $note = null) {
         global $USER;
@@ -4723,7 +4742,7 @@ class api {
      * @param int $competencyid
      * @param int $grade
      * @param string $note A note to attach to the evidence
-     * @return array of \tool_lp\user_competency
+     * @return array of \core_competency\user_competency
      */
     public static function grade_competency_in_course($courseorid, $userid, $competencyid, $grade, $note = null) {
         global $USER, $DB;

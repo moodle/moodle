@@ -36,7 +36,7 @@ use stdClass;
  */
 class competency extends persistent {
 
-    protected static $persistentclass = 'tool_lp\\competency';
+    protected static $persistentclass = 'core_competency\\competency';
 
     /**
      * Define the form - called by parent constructor

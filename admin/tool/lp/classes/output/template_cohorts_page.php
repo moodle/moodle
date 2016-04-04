@@ -36,10 +36,10 @@ class template_cohorts_page implements \renderable {
 
     /**
      * Constructor.
-     * @param \tool_lp\template $template
+     * @param \core_competency\template $template
      * @param \moodle_url $url
      */
-    public function __construct(\tool_lp\template $template, \moodle_url $url) {
+    public function __construct(\core_competency\template $template, \moodle_url $url) {
         $this->template = $template;
         $this->url = $url;
         $this->table = new template_cohorts_table('tplcohorts', $template);

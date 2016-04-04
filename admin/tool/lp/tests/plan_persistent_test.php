@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 use tool_lp\api;
-use tool_lp\plan;
+use core_competency\plan;
 
 /**
  * Plan persistent testcase.

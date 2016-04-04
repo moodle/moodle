@@ -36,7 +36,7 @@ $pagecontext = context::instance_by_id($pagecontextid);
 $framework = \tool_lp\api::read_framework($id);
 $context = $framework->get_context();
 
-if (!\tool_lp\competency_framework::can_read_context($context)) {
+if (!\core_competency\competency_framework::can_read_context($context)) {
     throw new required_capability_exception($context, 'moodle/competency:competencyview', 'nopermissions', '');
 }
 

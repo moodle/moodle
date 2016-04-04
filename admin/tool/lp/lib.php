@@ -66,11 +66,11 @@ function tool_lp_extend_navigation_user($navigation, $user, $usercontext, $cours
         return;
     }
 
-    if (\tool_lp\plan::can_read_user($user->id)) {
+    if (\core_competency\plan::can_read_user($user->id)) {
         $node = $navigation->add(get_string('learningplans', 'tool_lp'),
             new moodle_url('/admin/tool/lp/plans.php', array('userid' => $user->id)));
 
-        if (\tool_lp\user_evidence::can_read_user($user->id)) {
+        if (\core_competency\user_evidence::can_read_user($user->id)) {
             $node->add(get_string('userevidence', 'tool_lp'),
                 new moodle_url('/admin/tool/lp/user_evidence_list.php', array('userid' => $user->id)));
         }
@@ -91,7 +91,7 @@ function tool_lp_extend_navigation_user($navigation, $user, $usercontext, $cours
 function tool_lp_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
     if (!\tool_lp\api::is_enabled()) {
         return false;
-    } else if (!\tool_lp\plan::can_read_user($user->id)) {
+    } else if (!\core_competency\plan::can_read_user($user->id)) {
         return false;
     }
 
@@ -115,8 +115,8 @@ function tool_lp_extend_navigation_category_settings($navigation, $coursecategor
     }
 
     // We check permissions before renderring the links.
-    $templatereadcapability = \tool_lp\template::can_read_context($coursecategorycontext);
-    $competencyreadcapability = \tool_lp\competency_framework::can_read_context($coursecategorycontext);
+    $templatereadcapability = \core_competency\template::can_read_context($coursecategorycontext);
+    $competencyreadcapability = \core_competency\competency_framework::can_read_context($coursecategorycontext);
     if (!$templatereadcapability && !$competencyreadcapability) {
         return false;
     }
@@ -180,7 +180,7 @@ function tool_lp_pluginfile($course, $cm, $context, $filearea, $args, $forcedown
     $filepath = $args ? '/' .implode('/', $args) . '/' : '/';
 
     if ($filearea == 'userevidence' && $context->contextlevel == CONTEXT_USER) {
-        if (\tool_lp\user_evidence::can_read_user($context->instanceid)) {
+        if (\core_competency\user_evidence::can_read_user($context->instanceid)) {
             $file = $fs->get_file($context->id, 'tool_lp', $filearea, $itemid, $filepath, $filename);
         }
     }
@@ -207,7 +207,7 @@ function tool_lp_comment_add($comment, $params) {
     }
 
     if ($params->commentarea == 'user_competency') {
-        $uc = new \tool_lp\user_competency($params->itemid);
+        $uc = new \core_competency\user_competency($params->itemid);
 
         // Message both the user and the reviewer, except when they are the author of the message.
         $recipients = array($uc->get_userid());
@@ -234,7 +234,7 @@ function tool_lp_comment_add($comment, $params) {
         $plan = null;
         $plans = $uc->get_plans();
         foreach ($plans as $candidate) {
-            if ($candidate->get_status() == \tool_lp\plan::STATUS_ACTIVE) {
+            if ($candidate->get_status() == \core_competency\plan::STATUS_ACTIVE) {
                 $plan = $candidate;
                 break;
 
@@ -305,7 +305,7 @@ function tool_lp_comment_add($comment, $params) {
         }
 
     } else if ($params->commentarea == 'plan') {
-        $plan = new \tool_lp\plan($params->itemid);
+        $plan = new \core_competency\plan($params->itemid);
 
         // Message both the user and the reviewer, except when they are the author of the message.
         $recipients = array($plan->get_userid());
@@ -388,12 +388,12 @@ function tool_lp_comment_permissions($params) {
     }
 
     if ($params->commentarea == 'user_competency') {
-        $uc = new \tool_lp\user_competency($params->itemid);
+        $uc = new \core_competency\user_competency($params->itemid);
         if ($uc->can_read()) {
             return array('post' => $uc->can_comment(), 'view' => $uc->can_read_comments());
         }
     } else if ($params->commentarea == 'plan') {
-        $plan = new \tool_lp\plan($params->itemid);
+        $plan = new \core_competency\plan($params->itemid);
         if ($plan->can_read()) {
             return array('post' => $plan->can_comment(), 'view' => $plan->can_read_comments());
         }
@@ -414,12 +414,12 @@ function tool_lp_comment_validate($params) {
     }
 
     if ($params->commentarea == 'user_competency') {
-        if (!\tool_lp\user_competency::record_exists($params->itemid)) {
+        if (!\core_competency\user_competency::record_exists($params->itemid)) {
             return false;
         }
         return true;
     } else if ($params->commentarea == 'plan') {
-        if (!\tool_lp\plan::record_exists($params->itemid)) {
+        if (!\core_competency\plan::record_exists($params->itemid)) {
             return false;
         }
         return true;
@@ -482,7 +482,7 @@ function tool_lp_coursemodule_edit_post_actions($data, $course) {
 
     // We bypass the API here and go direct to the persistent layer - because we don't want to do permission
     // checks here - we need to load the real list of existing course module competencies.
-    $existing = \tool_lp\course_module_competency::list_course_module_competencies($data->coursemodule);
+    $existing = \core_competency\course_module_competency::list_course_module_competencies($data->coursemodule);
 
     $existingids = array();
     foreach ($existing as $cmc) {

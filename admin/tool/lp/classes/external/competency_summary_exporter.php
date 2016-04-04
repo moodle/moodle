@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 use context_course;
 use renderer_base;
 use stdClass;
-use \tool_lp\competency_framework;
+use \core_competency\competency_framework;
 
 /**
  * Class for exporting competency data with additional related data.
@@ -40,10 +40,10 @@ class competency_summary_exporter extends exporter {
     protected static function define_related() {
         // We cache the context so it does not need to be retrieved from the framework every time.
         return array('context' => '\\context',
-                     'competency' => '\\tool_lp\\competency',
-                     'framework' => '\\tool_lp\\competency_framework',
+                     'competency' => '\\core_competency\\competency',
+                     'framework' => '\\core_competency\\competency_framework',
                      'linkedcourses' => '\\stdClass[]',
-                     'relatedcompetencies' => '\\tool_lp\\competency[]');
+                     'relatedcompetencies' => '\\core_competency\\competency[]');
     }
 
     protected static function define_other_properties() {

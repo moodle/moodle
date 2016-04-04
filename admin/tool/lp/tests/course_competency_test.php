@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
-use tool_lp\course_competency;
+use core_competency\course_competency;
 
 /**
  * Course competency persistent testcase.

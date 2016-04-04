@@ -17,11 +17,11 @@
 /**
  * Class for user_competency_course persistence.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2016 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_lp;
+namespace core_competency;
 defined('MOODLE_INTERNAL') || die();
 
 use context_course;
@@ -95,7 +95,7 @@ class user_competency_course extends persistent {
      * @param  int $userid The user ID.
      * @param  int $competencyid The competency ID.
      * @param  int $courseid The course ID.
-     * @return \tool_lp\user_competency_course
+     * @return \core_competency\user_competency_course
      */
     public static function create_relation($userid, $competencyid, $courseid) {
         $data = new \stdClass();
@@ -131,7 +131,7 @@ class user_competency_course extends persistent {
      */
     protected function validate_competencyid($value) {
         if (!competency::record_exists($value)) {
-            return new lang_string('errornocompetency', 'tool_lp', $value);
+            return new lang_string('errornocompetency', 'core_competency', $value);
         }
 
         return true;
@@ -145,7 +145,7 @@ class user_competency_course extends persistent {
      */
     protected function validate_courseid($value) {
         if (!context_course::instance($value, IGNORE_MISSING)) {
-            return new lang_string('errorinvalidcourse', 'tool_lp', $value);
+            return new lang_string('errorinvalidcourse', 'core_competency', $value);
         }
 
         return true;
@@ -181,14 +181,14 @@ class user_competency_course extends persistent {
     protected function validate_grade($value) {
         if ($value !== null) {
             if ($value <= 0) {
-                return new lang_string('invalidgrade', 'tool_lp');
+                return new lang_string('invalidgrade', 'core_competency');
             }
 
             // TODO MDL-52243 Use a core method to validate the grade_scale item.
             // Check if grade exist in the scale item values.
             $competency = $this->get_competency();
             if (!array_key_exists($value - 1 , $competency->get_scale()->scale_items)) {
-                return new lang_string('invalidgrade', 'tool_lp');
+                return new lang_string('invalidgrade', 'core_competency');
             }
         }
 
@@ -201,7 +201,7 @@ class user_competency_course extends persistent {
      * @param  int $userid
      * @param  int $courseid
      * @param  array  $competenciesorids Limit search to those competencies, or competency IDs.
-     * @return \tool_lp\user_competency_course[]
+     * @return \core_competency\user_competency_course[]
      */
     public static function get_multiple($userid, $courseid, array $competenciesorids = null) {
         global $DB;

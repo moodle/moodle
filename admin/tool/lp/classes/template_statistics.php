@@ -25,6 +25,10 @@
 namespace tool_lp;
 defined('MOODLE_INTERNAL') || die();
 
+use core_competency\api;
+use core_competency\plan;
+use core_competency\template;
+
 /**
  * Template statistics class.
  *

@@ -68,7 +68,7 @@ if ($canmanagetemplate && ($data = $form->get_data()) && !empty($data->cohorts))
         if ($template->get_visible() && $i < $maxtocreate && !$duedatereached) {
 
             // Only create a few plans right now.
-            $tocreate = \tool_lp\template_cohort::get_missing_plans($template->get_id(), $cohortid);
+            $tocreate = \core_competency\template_cohort::get_missing_plans($template->get_id(), $cohortid);
             if ($i + count($tocreate) <= $maxtocreate) {
                 $i += \tool_lp\api::create_plans_from_template_cohort($template, $cohortid);
             } else {

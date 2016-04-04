@@ -33,7 +33,7 @@ use moodle_url;
 use context;
 use context_system;
 use tool_lp\api;
-use tool_lp\competency_framework;
+use core_competency\competency_framework;
 use tool_lp\external\competency_framework_exporter;
 
 /**

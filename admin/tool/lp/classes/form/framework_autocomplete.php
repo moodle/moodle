@@ -27,7 +27,7 @@ namespace tool_lp\form;
 
 use coding_exception;
 use MoodleQuickForm_autocomplete;
-use \tool_lp\competency_framework;
+use \core_competency\competency_framework;
 
 global $CFG;
 require_once($CFG->libdir . '/form/autocomplete.php');

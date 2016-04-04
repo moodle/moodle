@@ -30,7 +30,7 @@ $context = context::instance_by_id($pagecontextid);
 
 require_login(0, false);
 \tool_lp\api::require_enabled();
-if (!\tool_lp\template::can_read_context($context)) {
+if (!\core_competency\template::can_read_context($context)) {
     throw new required_capability_exception($context, 'moodle/competency:templateview', 'nopermissions', '');
 }
 

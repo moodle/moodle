@@ -26,7 +26,7 @@ namespace core\task;
 defined('MOODLE_INTERNAL') || die();
 
 use tool_lp\api;
-use tool_lp\plan;
+use core_competency\plan;
 
 /**
  * Complete plans task class.

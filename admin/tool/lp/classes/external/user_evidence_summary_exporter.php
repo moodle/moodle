@@ -38,7 +38,7 @@ use tool_lp\external\user_evidence_competency_summary_exporter;
 class user_evidence_summary_exporter extends persistent_exporter {
 
     protected static function define_class() {
-        return 'tool_lp\\user_evidence';
+        return 'core_competency\\user_evidence';
     }
 
     protected static function define_other_properties() {

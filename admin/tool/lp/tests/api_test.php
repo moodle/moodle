@@ -26,12 +26,12 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 use tool_lp\api;
-use tool_lp\competency;
-use tool_lp\competency_framework;
-use tool_lp\course_competency_settings;
-use tool_lp\evidence;
-use tool_lp\user_competency;
-use tool_lp\plan;
+use core_competency\competency;
+use core_competency\competency_framework;
+use core_competency\course_competency_settings;
+use core_competency\evidence;
+use core_competency\user_competency;
+use core_competency\plan;
 
 /**
  * API tests.
@@ -320,8 +320,8 @@ class tool_lp_api_testcase extends advanced_testcase {
                 array('id' => $competency42->get_id(), 'points' => 2, 'required' => 1),
             )
         ));
-        $competency4->set_ruletype('tool_lp\competency_rule_points');
-        $competency4->set_ruleoutcome(\tool_lp\competency::OUTCOME_EVIDENCE);
+        $competency4->set_ruletype('core_competency\competency_rule_points');
+        $competency4->set_ruleoutcome(\core_competency\competency::OUTCOME_EVIDENCE);
         $competency4->set_ruleconfig($config);
         $competency4->update();
 
@@ -447,10 +447,10 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         // Check if user create draft can edit the plan name.
         $plan = api::update_plan($record);
-        $this->assertInstanceOf('\tool_lp\plan', $plan);
+        $this->assertInstanceOf('\core_competency\plan', $plan);
 
         // The status cannot be changed in this method.
-        $record->status = \tool_lp\plan::STATUS_ACTIVE;
+        $record->status = \core_competency\plan::STATUS_ACTIVE;
         try {
             $plan = api::update_plan($record);
             $this->fail('Updating the status is not allowed.');
@@ -459,7 +459,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         }
 
         // Test when user with manage own plan capability try to edit other user plan.
-        $record->status = \tool_lp\plan::STATUS_DRAFT;
+        $record->status = \core_competency\plan::STATUS_DRAFT;
         $record->name = 'plan create draft modified 2';
         $this->setUser($usermanageown);
         try {
@@ -481,10 +481,10 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         // User with manage draft capability can edit other user's learning plan if the status is draft.
         $this->setUser($usermanagedraft);
-        $record->status = \tool_lp\plan::STATUS_DRAFT;
+        $record->status = \core_competency\plan::STATUS_DRAFT;
         $record->name = 'plan manage draft modified 3';
         $plan = api::update_plan($record);
-        $this->assertInstanceOf('\tool_lp\plan', $plan);
+        $this->assertInstanceOf('\core_competency\plan', $plan);
 
         // User with manage  plan capability can create/edit learning plan if status is active/complete.
         $this->setUser($usermanage);
@@ -492,12 +492,12 @@ class tool_lp_api_testcase extends advanced_testcase {
             'name' => 'plan create',
             'description' => 'plan create',
             'userid' => $usermanage->id,
-            'status' => \tool_lp\plan::STATUS_ACTIVE
+            'status' => \core_competency\plan::STATUS_ACTIVE
         );
         $plan = api::create_plan((object)$plan);
 
         // Silently transition to complete status to avoid errors about transitioning to complete.
-        $plan->set_status(\tool_lp\plan::STATUS_COMPLETE);
+        $plan->set_status(\core_competency\plan::STATUS_COMPLETE);
         $plan->update();
 
         $record = $plan->to_record();
@@ -520,8 +520,8 @@ class tool_lp_api_testcase extends advanced_testcase {
         // Creating a new plan.
         $plan = api::create_plan_from_template($tpl, $u1->id);
         $record = $plan->to_record();
-        $this->assertInstanceOf('\tool_lp\plan', $plan);
-        $this->assertTrue(\tool_lp\plan::record_exists($plan->get_id()));
+        $this->assertInstanceOf('\core_competency\plan', $plan);
+        $this->assertTrue(\core_competency\plan::record_exists($plan->get_id()));
         $this->assertEquals($tpl->get_id(), $plan->get_templateid());
         $this->assertEquals($u1->id, $plan->get_userid());
         $this->assertTrue($plan->is_based_on_template());
@@ -608,16 +608,16 @@ class tool_lp_api_testcase extends advanced_testcase {
         $plan3 = $lpg->create_plan(array('userid' => $u1->id, 'templateid' => $tpl1->get_id(), 'status' => plan::STATUS_COMPLETE));
 
         // Check that we have what we expect at this stage.
-        $this->assertEquals(2, \tool_lp\template_competency::count_records(array('templateid' => $tpl1->get_id())));
-        $this->assertEquals(1, \tool_lp\template_competency::count_records(array('templateid' => $tpl2->get_id())));
-        $this->assertEquals(0, \tool_lp\plan_competency::count_records(array('planid' => $plan1->get_id())));
-        $this->assertEquals(0, \tool_lp\plan_competency::count_records(array('planid' => $plan2->get_id())));
+        $this->assertEquals(2, \core_competency\template_competency::count_records(array('templateid' => $tpl1->get_id())));
+        $this->assertEquals(1, \core_competency\template_competency::count_records(array('templateid' => $tpl2->get_id())));
+        $this->assertEquals(0, \core_competency\plan_competency::count_records(array('planid' => $plan1->get_id())));
+        $this->assertEquals(0, \core_competency\plan_competency::count_records(array('planid' => $plan2->get_id())));
         $this->assertTrue($plan1->is_based_on_template());
         $this->assertTrue($plan2->is_based_on_template());
 
         // Let's do this!
-        $tpl1comps = \tool_lp\template_competency::list_competencies($tpl1->get_id(), true);
-        $tpl2comps = \tool_lp\template_competency::list_competencies($tpl2->get_id(), true);
+        $tpl1comps = \core_competency\template_competency::list_competencies($tpl1->get_id(), true);
+        $tpl2comps = \core_competency\template_competency::list_competencies($tpl2->get_id(), true);
 
         api::unlink_plan_from_template($plan1);
 
@@ -625,10 +625,10 @@ class tool_lp_api_testcase extends advanced_testcase {
         $plan2->read();
         $this->assertCount(2, $tpl1comps);
         $this->assertCount(1, $tpl2comps);
-        $this->assertEquals(2, \tool_lp\template_competency::count_records(array('templateid' => $tpl1->get_id())));
-        $this->assertEquals(1, \tool_lp\template_competency::count_records(array('templateid' => $tpl2->get_id())));
-        $this->assertEquals(2, \tool_lp\plan_competency::count_records(array('planid' => $plan1->get_id())));
-        $this->assertEquals(0, \tool_lp\plan_competency::count_records(array('planid' => $plan2->get_id())));
+        $this->assertEquals(2, \core_competency\template_competency::count_records(array('templateid' => $tpl1->get_id())));
+        $this->assertEquals(1, \core_competency\template_competency::count_records(array('templateid' => $tpl2->get_id())));
+        $this->assertEquals(2, \core_competency\plan_competency::count_records(array('planid' => $plan1->get_id())));
+        $this->assertEquals(0, \core_competency\plan_competency::count_records(array('planid' => $plan2->get_id())));
         $this->assertFalse($plan1->is_based_on_template());
         $this->assertEquals($tpl1->get_id(), $plan1->get_origtemplateid());
         $this->assertTrue($plan2->is_based_on_template());
@@ -650,7 +650,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         }
 
         // Even the order remains.
-        $plan1comps = \tool_lp\plan_competency::list_competencies($plan1->get_id());
+        $plan1comps = \core_competency\plan_competency::list_competencies($plan1->get_id());
         $before = reset($tpl1comps);
         $after = reset($plan1comps);
         $this->assertEquals($before->get_id(), $after->get_id());
@@ -786,17 +786,17 @@ class tool_lp_api_testcase extends advanced_testcase {
                 'proficiency' => false, 'grade' => 2 ))
         );
 
-        $this->assertEquals(2, \tool_lp\user_competency::count_records());
-        $this->assertEquals(0, \tool_lp\user_competency_plan::count_records());
+        $this->assertEquals(2, \core_competency\user_competency::count_records());
+        $this->assertEquals(0, \core_competency\user_competency_plan::count_records());
 
         // Change status of the plan to complete.
         api::complete_plan($plan);
 
         // Check that user competencies are now in user_competency_plan objects and still in user_competency.
-        $this->assertEquals(2, \tool_lp\user_competency::count_records());
-        $this->assertEquals(3, \tool_lp\user_competency_plan::count_records());
+        $this->assertEquals(2, \core_competency\user_competency::count_records());
+        $this->assertEquals(3, \core_competency\user_competency_plan::count_records());
 
-        $usercompetenciesplan = \tool_lp\user_competency_plan::get_records();
+        $usercompetenciesplan = \core_competency\user_competency_plan::get_records();
 
         $this->assertEquals($uclist[0]->get_userid(), $usercompetenciesplan[0]->get_userid());
         $this->assertEquals($uclist[0]->get_competencyid(), $usercompetenciesplan[0]->get_competencyid());
@@ -1535,7 +1535,7 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         // Change status of the plan to complete.
         $record = $plan->to_record();
-        $record->status = \tool_lp\plan::STATUS_COMPLETE;
+        $record->status = \core_competency\plan::STATUS_COMPLETE;
 
         try {
             $plan = api::update_plan($record);
@@ -1546,10 +1546,10 @@ class tool_lp_api_testcase extends advanced_testcase {
         api::complete_plan($plan);
 
         // Check that user compretencies are now in user_competency_plan objects and still in user_competency.
-        $this->assertEquals(2, \tool_lp\user_competency::count_records());
-        $this->assertEquals(3, \tool_lp\user_competency_plan::count_records());
+        $this->assertEquals(2, \core_competency\user_competency::count_records());
+        $this->assertEquals(3, \core_competency\user_competency_plan::count_records());
 
-        $usercompetenciesplan = \tool_lp\user_competency_plan::get_records();
+        $usercompetenciesplan = \core_competency\user_competency_plan::get_records();
 
         $this->assertEquals($uclist[0]->get_userid(), $usercompetenciesplan[0]->get_userid());
         $this->assertEquals($uclist[0]->get_competencyid(), $usercompetenciesplan[0]->get_competencyid());
@@ -1571,7 +1571,7 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         // Change status of the plan to active.
         $record = $plan->to_record();
-        $record->status = \tool_lp\plan::STATUS_ACTIVE;
+        $record->status = \core_competency\plan::STATUS_ACTIVE;
 
         try {
             api::update_plan($record);
@@ -1582,8 +1582,8 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         api::reopen_plan($record->id);
         // Check that user_competency_plan objects are deleted if the plan status is changed to another status.
-        $this->assertEquals(2, \tool_lp\user_competency::count_records());
-        $this->assertEquals(0, \tool_lp\user_competency_plan::count_records());
+        $this->assertEquals(2, \core_competency\user_competency::count_records());
+        $this->assertEquals(0, \core_competency\user_competency_plan::count_records());
     }
 
     /**
@@ -1704,7 +1704,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
 
         // Create completed plan with records in user_competency.
-        $completedplan = $lpg->create_plan(array('userid' => $user->id, 'status' => \tool_lp\plan::STATUS_COMPLETE));
+        $completedplan = $lpg->create_plan(array('userid' => $user->id, 'status' => \core_competency\plan::STATUS_COMPLETE));
 
         $lpg->create_plan_competency(array('planid' => $completedplan->get_id(), 'competencyid' => $c1->get_id()));
         $lpg->create_plan_competency(array('planid' => $completedplan->get_id(), 'competencyid' => $c2->get_id()));
@@ -1720,9 +1720,9 @@ class tool_lp_api_testcase extends advanced_testcase {
         api::delete_plan($completedplan->get_id());
 
         // Check that achived user competencies are deleted.
-        $this->assertEquals(0, \tool_lp\plan::count_records());
-        $this->assertEquals(2, \tool_lp\user_competency::count_records());
-        $this->assertEquals(0, \tool_lp\user_competency_plan::count_records());
+        $this->assertEquals(0, \core_competency\plan::count_records());
+        $this->assertEquals(2, \core_competency\user_competency::count_records());
+        $this->assertEquals(0, \core_competency\user_competency_plan::count_records());
     }
 
     /**
@@ -1766,20 +1766,20 @@ class tool_lp_api_testcase extends advanced_testcase {
         $plancompetencies = api::list_plan_competencies($draftplan);
 
         $this->assertCount(3, $plancompetencies);
-        $this->assertInstanceOf('\tool_lp\user_competency', $plancompetencies[0]->usercompetency);
+        $this->assertInstanceOf('\core_competency\user_competency', $plancompetencies[0]->usercompetency);
         $this->assertEquals($uc1->get_id(), $plancompetencies[0]->usercompetency->get_id());
         $this->assertNull($plancompetencies[0]->usercompetencyplan);
 
-        $this->assertInstanceOf('\tool_lp\user_competency', $plancompetencies[1]->usercompetency);
+        $this->assertInstanceOf('\core_competency\user_competency', $plancompetencies[1]->usercompetency);
         $this->assertEquals($uc2->get_id(), $plancompetencies[1]->usercompetency->get_id());
         $this->assertNull($plancompetencies[1]->usercompetencyplan);
 
-        $this->assertInstanceOf('\tool_lp\user_competency', $plancompetencies[2]->usercompetency);
+        $this->assertInstanceOf('\core_competency\user_competency', $plancompetencies[2]->usercompetency);
         $this->assertEquals(0, $plancompetencies[2]->usercompetency->get_id());
         $this->assertNull($plancompetencies[2]->usercompetencyplan);
 
         // Create completed plan with records in user_competency_plan.
-        $completedplan = $lpg->create_plan(array('userid' => $user->id, 'status' => \tool_lp\plan::STATUS_COMPLETE));
+        $completedplan = $lpg->create_plan(array('userid' => $user->id, 'status' => \core_competency\plan::STATUS_COMPLETE));
 
         $pc1 = $lpg->create_plan_competency(array('planid' => $completedplan->get_id(), 'competencyid' => $c1->get_id()));
         $pc2 = $lpg->create_plan_competency(array('planid' => $completedplan->get_id(), 'competencyid' => $c2->get_id()));
@@ -1796,13 +1796,13 @@ class tool_lp_api_testcase extends advanced_testcase {
         $plancompetencies = api::list_plan_competencies($completedplan);
 
         $this->assertCount(3, $plancompetencies);
-        $this->assertInstanceOf('\tool_lp\user_competency_plan', $plancompetencies[0]->usercompetencyplan);
+        $this->assertInstanceOf('\core_competency\user_competency_plan', $plancompetencies[0]->usercompetencyplan);
         $this->assertEquals($ucp1->get_id(), $plancompetencies[0]->usercompetencyplan->get_id());
         $this->assertNull($plancompetencies[0]->usercompetency);
-        $this->assertInstanceOf('\tool_lp\user_competency_plan', $plancompetencies[1]->usercompetencyplan);
+        $this->assertInstanceOf('\core_competency\user_competency_plan', $plancompetencies[1]->usercompetencyplan);
         $this->assertEquals($ucp2->get_id(), $plancompetencies[1]->usercompetencyplan->get_id());
         $this->assertNull($plancompetencies[1]->usercompetency);
-        $this->assertInstanceOf('\tool_lp\user_competency_plan', $plancompetencies[2]->usercompetencyplan);
+        $this->assertInstanceOf('\core_competency\user_competency_plan', $plancompetencies[2]->usercompetencyplan);
         $this->assertEquals($ucp3->get_id(), $plancompetencies[2]->usercompetencyplan->get_id());
         $this->assertNull($plancompetencies[2]->usercompetency);
     }
@@ -1819,18 +1819,18 @@ class tool_lp_api_testcase extends advanced_testcase {
         $t1 = $lpg->create_template();
         $t2 = $lpg->create_template();
 
-        $this->assertEquals(0, \tool_lp\template_cohort::count_records());
+        $this->assertEquals(0, \core_competency\template_cohort::count_records());
 
         // Create two relations with mixed parameters.
         $result = api::create_template_cohort($t1->get_id(), $c1->id);
         $result = api::create_template_cohort($t1, $c2);
 
-        $this->assertEquals(2, \tool_lp\template_cohort::count_records());
-        $this->assertInstanceOf('tool_lp\template_cohort', $result);
+        $this->assertEquals(2, \core_competency\template_cohort::count_records());
+        $this->assertInstanceOf('core_competency\template_cohort', $result);
         $this->assertEquals($c2->id, $result->get_cohortid());
         $this->assertEquals($t1->get_id(), $result->get_templateid());
-        $this->assertEquals(2, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t1->get_id())));
-        $this->assertEquals(0, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t2->get_id())));
+        $this->assertEquals(2, \core_competency\template_cohort::count_records_select('templateid = :id', array('id' => $t1->get_id())));
+        $this->assertEquals(0, \core_competency\template_cohort::count_records_select('templateid = :id', array('id' => $t2->get_id())));
     }
 
     public function test_create_template_cohort_permissions() {
@@ -1856,11 +1856,11 @@ class tool_lp_api_testcase extends advanced_testcase {
         $c2 = $dg->create_cohort(array('visible' => 0, 'contextid' => $catcontext->id));
         $t1 = $lpg->create_template();
 
-        $this->assertEquals(0, \tool_lp\template_cohort::count_records());
+        $this->assertEquals(0, \core_competency\template_cohort::count_records());
 
         $this->setUser($user);
         $result = api::create_template_cohort($t1, $c1);
-        $this->assertInstanceOf('tool_lp\\template_cohort', $result);
+        $this->assertInstanceOf('core_competency\\template_cohort', $result);
 
         try {
             $result = api::create_template_cohort($t1, $c2);
@@ -1874,7 +1874,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         $result = api::create_template_cohort($t1, $c2);
-        $this->assertInstanceOf('tool_lp\\template_cohort', $result);
+        $this->assertInstanceOf('core_competency\\template_cohort', $result);
     }
 
     public function test_delete_template() {
@@ -1894,17 +1894,17 @@ class tool_lp_api_testcase extends advanced_testcase {
         $tc1 = $lpg->create_template_cohort(array('templateid' => $template->get_id(), 'cohortid' => $c2->id));
 
         // Check pre-test.
-        $this->assertTrue(tool_lp\template::record_exists($id));
-        $this->assertEquals(2, \tool_lp\template_cohort::count_records(array('templateid' => $id)));
+        $this->assertTrue(\core_competency\template::record_exists($id));
+        $this->assertEquals(2, \core_competency\template_cohort::count_records(array('templateid' => $id)));
 
         $result = api::delete_template($template->get_id());
         $this->assertTrue($result);
 
         // Check that the template deos not exist anymore.
-        $this->assertFalse(tool_lp\template::record_exists($id));
+        $this->assertFalse(\core_competency\template::record_exists($id));
 
         // Test if associated cohorts are also deleted.
-        $this->assertEquals(0, \tool_lp\template_cohort::count_records(array('templateid' => $id)));
+        $this->assertEquals(0, \core_competency\template_cohort::count_records(array('templateid' => $id)));
     }
 
     public function test_delete_template_cohort() {
@@ -1921,23 +1921,23 @@ class tool_lp_api_testcase extends advanced_testcase {
         $tc1 = $lpg->create_template_cohort(array('templateid' => $t1->get_id(), 'cohortid' => $c1->id));
         $tc1 = $lpg->create_template_cohort(array('templateid' => $t2->get_id(), 'cohortid' => $c2->id));
 
-        $this->assertEquals(2, \tool_lp\template_cohort::count_records());
-        $this->assertEquals(1, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t1->get_id())));
-        $this->assertEquals(1, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t2->get_id())));
+        $this->assertEquals(2, \core_competency\template_cohort::count_records());
+        $this->assertEquals(1, \core_competency\template_cohort::count_records_select('templateid = :id', array('id' => $t1->get_id())));
+        $this->assertEquals(1, \core_competency\template_cohort::count_records_select('templateid = :id', array('id' => $t2->get_id())));
 
         // Delete existing.
         $result = api::delete_template_cohort($t1->get_id(), $c1->id);
         $this->assertTrue($result);
-        $this->assertEquals(1, \tool_lp\template_cohort::count_records());
-        $this->assertEquals(0, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t1->get_id())));
-        $this->assertEquals(1, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t2->get_id())));
+        $this->assertEquals(1, \core_competency\template_cohort::count_records());
+        $this->assertEquals(0, \core_competency\template_cohort::count_records_select('templateid = :id', array('id' => $t1->get_id())));
+        $this->assertEquals(1, \core_competency\template_cohort::count_records_select('templateid = :id', array('id' => $t2->get_id())));
 
         // Delete non-existant.
         $result = api::delete_template_cohort($t1->get_id(), $c1->id);
         $this->assertTrue($result);
-        $this->assertEquals(1, \tool_lp\template_cohort::count_records());
-        $this->assertEquals(0, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t1->get_id())));
-        $this->assertEquals(1, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t2->get_id())));
+        $this->assertEquals(1, \core_competency\template_cohort::count_records());
+        $this->assertEquals(0, \core_competency\template_cohort::count_records_select('templateid = :id', array('id' => $t1->get_id())));
+        $this->assertEquals(1, \core_competency\template_cohort::count_records_select('templateid = :id', array('id' => $t2->get_id())));
     }
 
     public function test_add_evidence_log() {
@@ -1952,15 +1952,15 @@ class tool_lp_api_testcase extends advanced_testcase {
         $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
 
         // Creating a standard evidence with minimal information.
-        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_LOG, 'invaliddata', 'error');
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \core_competency\evidence::ACTION_LOG, 'invaliddata', 'error');
         $evidence->read();
-        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
-        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc->get_status());
+        $uc = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
+        $this->assertEquals(\core_competency\user_competency::STATUS_IDLE, $uc->get_status());
         $this->assertSame(null, $uc->get_grade());
         $this->assertSame(null, $uc->get_proficiency());
         $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
         $this->assertEquals($u1ctx->id, $evidence->get_contextid());
-        $this->assertEquals(\tool_lp\evidence::ACTION_LOG, $evidence->get_action());
+        $this->assertEquals(\core_competency\evidence::ACTION_LOG, $evidence->get_action());
         $this->assertEquals('invaliddata', $evidence->get_descidentifier());
         $this->assertEquals('error', $evidence->get_desccomponent());
         $this->assertSame(null, $evidence->get_desca());
@@ -1969,16 +1969,16 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertSame(null, $evidence->get_actionuserid());
 
         // Creating a standard evidence with more information.
-        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_LOG, 'invaliddata', 'error',
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \core_competency\evidence::ACTION_LOG, 'invaliddata', 'error',
             '$a', false, 'http://moodle.org', null, 2, 'The evidence of prior learning were reviewed.');
         $evidence->read();
-        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
-        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc->get_status());
+        $uc = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
+        $this->assertEquals(\core_competency\user_competency::STATUS_IDLE, $uc->get_status());
         $this->assertSame(null, $uc->get_grade());
         $this->assertSame(null, $uc->get_proficiency());
         $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
         $this->assertEquals($u1ctx->id, $evidence->get_contextid());
-        $this->assertEquals(\tool_lp\evidence::ACTION_LOG, $evidence->get_action());
+        $this->assertEquals(\core_competency\evidence::ACTION_LOG, $evidence->get_action());
         $this->assertEquals('invaliddata', $evidence->get_descidentifier());
         $this->assertEquals('error', $evidence->get_desccomponent());
         $this->assertEquals('$a', $evidence->get_desca());
@@ -1988,15 +1988,15 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertSame('The evidence of prior learning were reviewed.', $evidence->get_note());
 
         // Creating a standard evidence and send for review.
-        $evidence = api::add_evidence($u1->id, $c2->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_LOG, 'invaliddata',
+        $evidence = api::add_evidence($u1->id, $c2->get_id(), $u1ctx->id, \core_competency\evidence::ACTION_LOG, 'invaliddata',
             'error', null, true);
         $evidence->read();
-        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c2->get_id()));
-        $this->assertEquals(\tool_lp\user_competency::STATUS_WAITING_FOR_REVIEW, $uc->get_status());
+        $uc = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c2->get_id()));
+        $this->assertEquals(\core_competency\user_competency::STATUS_WAITING_FOR_REVIEW, $uc->get_status());
 
         // Trying to pass a grade should fail.
         try {
-            $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_LOG, 'invaliddata',
+            $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \core_competency\evidence::ACTION_LOG, 'invaliddata',
                 'error', null, false, null, 1);
             $this->fail('A grade can not be set');
         } catch (coding_exception $e) {
@@ -2027,16 +2027,16 @@ class tool_lp_api_testcase extends advanced_testcase {
         $c3 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
 
         // Creating an evidence with minimal information.
-        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_COMPLETE, 'invaliddata',
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \core_competency\evidence::ACTION_COMPLETE, 'invaliddata',
             'error');
         $evidence->read();
-        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
-        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc->get_status());
+        $uc = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
+        $this->assertEquals(\core_competency\user_competency::STATUS_IDLE, $uc->get_status());
         $this->assertEquals(2, $uc->get_grade());    // The grade has been set automatically to the framework default.
         $this->assertEquals(0, $uc->get_proficiency());
         $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
         $this->assertEquals($u1ctx->id, $evidence->get_contextid());
-        $this->assertEquals(\tool_lp\evidence::ACTION_COMPLETE, $evidence->get_action());
+        $this->assertEquals(\core_competency\evidence::ACTION_COMPLETE, $evidence->get_action());
         $this->assertEquals('invaliddata', $evidence->get_descidentifier());
         $this->assertEquals('error', $evidence->get_desccomponent());
         $this->assertSame(null, $evidence->get_desca());
@@ -2045,16 +2045,16 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertSame(null, $evidence->get_actionuserid());
 
         // Creating an evidence complete on competency with custom scale.
-        $evidence = api::add_evidence($u1->id, $c2->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_COMPLETE, 'invaliddata',
+        $evidence = api::add_evidence($u1->id, $c2->get_id(), $u1ctx->id, \core_competency\evidence::ACTION_COMPLETE, 'invaliddata',
             'error');
         $evidence->read();
-        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c2->get_id()));
-        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc->get_status());
+        $uc = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c2->get_id()));
+        $this->assertEquals(\core_competency\user_competency::STATUS_IDLE, $uc->get_status());
         $this->assertEquals(4, $uc->get_grade());    // The grade has been set automatically to the competency default.
         $this->assertEquals(true, $uc->get_proficiency());
         $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
         $this->assertEquals($u1ctx->id, $evidence->get_contextid());
-        $this->assertEquals(\tool_lp\evidence::ACTION_COMPLETE, $evidence->get_action());
+        $this->assertEquals(\core_competency\evidence::ACTION_COMPLETE, $evidence->get_action());
         $this->assertEquals('invaliddata', $evidence->get_descidentifier());
         $this->assertEquals('error', $evidence->get_desccomponent());
         $this->assertSame(null, $evidence->get_desca());
@@ -2067,16 +2067,16 @@ class tool_lp_api_testcase extends advanced_testcase {
             'proficiency' => 0));
         $this->assertEquals(1, $uc->get_grade());
         $this->assertEquals(0, $uc->get_proficiency());
-        $evidence = api::add_evidence($u1->id, $c3->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_COMPLETE, 'invaliddata',
+        $evidence = api::add_evidence($u1->id, $c3->get_id(), $u1ctx->id, \core_competency\evidence::ACTION_COMPLETE, 'invaliddata',
             'error');
         $evidence->read();
         $uc->read();
-        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc->get_status());
+        $this->assertEquals(\core_competency\user_competency::STATUS_IDLE, $uc->get_status());
         $this->assertEquals(1, $uc->get_grade());    // The grade has not been changed.
         $this->assertEquals(0, $uc->get_proficiency());
         $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
         $this->assertEquals($u1ctx->id, $evidence->get_contextid());
-        $this->assertEquals(\tool_lp\evidence::ACTION_COMPLETE, $evidence->get_action());
+        $this->assertEquals(\core_competency\evidence::ACTION_COMPLETE, $evidence->get_action());
         $this->assertEquals('invaliddata', $evidence->get_descidentifier());
         $this->assertEquals('error', $evidence->get_desccomponent());
         $this->assertSame(null, $evidence->get_desca());
@@ -2085,15 +2085,15 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertSame(null, $evidence->get_actionuserid());
 
         // Creating a standard evidence and send for review.
-        $evidence = api::add_evidence($u1->id, $c2->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_COMPLETE, 'invaliddata',
+        $evidence = api::add_evidence($u1->id, $c2->get_id(), $u1ctx->id, \core_competency\evidence::ACTION_COMPLETE, 'invaliddata',
             'error', null, true);
         $evidence->read();
-        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c2->get_id()));
-        $this->assertEquals(\tool_lp\user_competency::STATUS_WAITING_FOR_REVIEW, $uc->get_status());
+        $uc = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c2->get_id()));
+        $this->assertEquals(\core_competency\user_competency::STATUS_WAITING_FOR_REVIEW, $uc->get_status());
 
         // Trying to pass a grade should throw an exception.
         try {
-            api::add_evidence($u1->id, $c2->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_COMPLETE, 'invaliddata',
+            api::add_evidence($u1->id, $c2->get_id(), $u1ctx->id, \core_competency\evidence::ACTION_COMPLETE, 'invaliddata',
                 'error', null, false, null, 1);
         } catch (coding_exception $e) {
             $this->assertRegExp('/grade MUST NOT be set/', $e->getMessage());
@@ -2111,16 +2111,16 @@ class tool_lp_api_testcase extends advanced_testcase {
         $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
 
         // Creating an evidence with minimal information.
-        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_OVERRIDE, 'invaliddata',
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \core_competency\evidence::ACTION_OVERRIDE, 'invaliddata',
             'error');
         $evidence->read();
-        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
-        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc->get_status());
+        $uc = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
+        $this->assertEquals(\core_competency\user_competency::STATUS_IDLE, $uc->get_status());
         $this->assertSame(null, $uc->get_grade());      // We overrode with 'null'.
         $this->assertSame(null, $uc->get_proficiency());
         $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
         $this->assertEquals($u1ctx->id, $evidence->get_contextid());
-        $this->assertEquals(\tool_lp\evidence::ACTION_OVERRIDE, $evidence->get_action());
+        $this->assertEquals(\core_competency\evidence::ACTION_OVERRIDE, $evidence->get_action());
         $this->assertEquals('invaliddata', $evidence->get_descidentifier());
         $this->assertEquals('error', $evidence->get_desccomponent());
         $this->assertSame(null, $evidence->get_desca());
@@ -2129,16 +2129,16 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertSame(null, $evidence->get_actionuserid());
 
         // Creating an evidence with a grade information.
-        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_OVERRIDE, 'invaliddata',
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \core_competency\evidence::ACTION_OVERRIDE, 'invaliddata',
             'error', null, false, null, 3);
         $evidence->read();
-        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
-        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc->get_status());
+        $uc = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
+        $this->assertEquals(\core_competency\user_competency::STATUS_IDLE, $uc->get_status());
         $this->assertEquals(3, $uc->get_grade());
         $this->assertEquals(true, $uc->get_proficiency());
         $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
         $this->assertEquals($u1ctx->id, $evidence->get_contextid());
-        $this->assertEquals(\tool_lp\evidence::ACTION_OVERRIDE, $evidence->get_action());
+        $this->assertEquals(\core_competency\evidence::ACTION_OVERRIDE, $evidence->get_action());
         $this->assertEquals('invaliddata', $evidence->get_descidentifier());
         $this->assertEquals('error', $evidence->get_desccomponent());
         $this->assertSame(null, $evidence->get_desca());
@@ -2147,16 +2147,16 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertSame(null, $evidence->get_actionuserid());
 
         // Creating an evidence with another grade information.
-        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_OVERRIDE, 'invaliddata',
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \core_competency\evidence::ACTION_OVERRIDE, 'invaliddata',
             'error', null, false, null, 1);
         $evidence->read();
-        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
-        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc->get_status());
+        $uc = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
+        $this->assertEquals(\core_competency\user_competency::STATUS_IDLE, $uc->get_status());
         $this->assertEquals(1, $uc->get_grade());
         $this->assertEquals(0, $uc->get_proficiency());
         $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
         $this->assertEquals($u1ctx->id, $evidence->get_contextid());
-        $this->assertEquals(\tool_lp\evidence::ACTION_OVERRIDE, $evidence->get_action());
+        $this->assertEquals(\core_competency\evidence::ACTION_OVERRIDE, $evidence->get_action());
         $this->assertEquals('invaliddata', $evidence->get_descidentifier());
         $this->assertEquals('error', $evidence->get_desccomponent());
         $this->assertSame(null, $evidence->get_desca());
@@ -2165,13 +2165,13 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertSame(null, $evidence->get_actionuserid());
 
         // Creating reverting the grade and send for review.
-        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_OVERRIDE, 'invaliddata',
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \core_competency\evidence::ACTION_OVERRIDE, 'invaliddata',
             'error', null, true);
         $evidence->read();
-        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
+        $uc = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
         $this->assertSame(null, $uc->get_grade());
         $this->assertSame(null, $uc->get_proficiency());
-        $this->assertEquals(\tool_lp\user_competency::STATUS_WAITING_FOR_REVIEW, $uc->get_status());
+        $this->assertEquals(\core_competency\user_competency::STATUS_WAITING_FOR_REVIEW, $uc->get_status());
         $this->assertSame(null, $evidence->get_grade());
     }
 
@@ -2186,24 +2186,24 @@ class tool_lp_api_testcase extends advanced_testcase {
         $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
 
         // Non-existing user competencies are created up for review.
-        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_LOG, 'invaliddata',
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \core_competency\evidence::ACTION_LOG, 'invaliddata',
             'error', null, true);
-        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
-        $this->assertEquals(\tool_lp\user_competency::STATUS_WAITING_FOR_REVIEW, $uc->get_status());
+        $uc = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
+        $this->assertEquals(\core_competency\user_competency::STATUS_WAITING_FOR_REVIEW, $uc->get_status());
 
         // Existing user competencies sent for review don't change.
-        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_LOG, 'invaliddata',
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \core_competency\evidence::ACTION_LOG, 'invaliddata',
             'error', null, true);
         $uc->read();
-        $this->assertEquals(\tool_lp\user_competency::STATUS_WAITING_FOR_REVIEW, $uc->get_status());
+        $this->assertEquals(\core_competency\user_competency::STATUS_WAITING_FOR_REVIEW, $uc->get_status());
 
         // A user competency with a status non-idle won't change.
-        $uc->set_status(\tool_lp\user_competency::STATUS_IN_REVIEW);
+        $uc->set_status(\core_competency\user_competency::STATUS_IN_REVIEW);
         $uc->update();
-        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_LOG, 'invaliddata',
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \core_competency\evidence::ACTION_LOG, 'invaliddata',
             'error', null, true);
         $uc->read();
-        $this->assertEquals(\tool_lp\user_competency::STATUS_IN_REVIEW, $uc->get_status());
+        $this->assertEquals(\core_competency\user_competency::STATUS_IN_REVIEW, $uc->get_status());
     }
 
     /**
@@ -2230,9 +2230,9 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertSame(null, $uc->get_proficiency());
 
         // Create an evidence and check it was created with the right usercomptencyid and information.
-        $evidence = api::add_evidence($user->id, $c1->get_id(), $syscontext->id, \tool_lp\evidence::ACTION_OVERRIDE,
+        $evidence = api::add_evidence($user->id, $c1->get_id(), $syscontext->id, \core_competency\evidence::ACTION_OVERRIDE,
             'invalidevidencedesc', 'tool_lp', array('a' => 'b'), false, 'http://moodle.org', 1, 2);
-        $this->assertEquals(1, \tool_lp\evidence::count_records());
+        $this->assertEquals(1, \core_competency\evidence::count_records());
 
         $evidence->read();
         $uc->read();
@@ -2241,7 +2241,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals('tool_lp', $evidence->get_desccomponent());
         $this->assertEquals((object) array('a' => 'b'), $evidence->get_desca());
         $this->assertEquals('http://moodle.org', $evidence->get_url());
-        $this->assertEquals(\tool_lp\evidence::ACTION_OVERRIDE, $evidence->get_action());
+        $this->assertEquals(\core_competency\evidence::ACTION_OVERRIDE, $evidence->get_action());
         $this->assertEquals(2, $evidence->get_actionuserid());
         $this->assertEquals(1, $evidence->get_grade());
         $this->assertEquals(1, $uc->get_grade());
@@ -2266,22 +2266,22 @@ class tool_lp_api_testcase extends advanced_testcase {
         $framework = $lpg->create_framework();
         $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
         $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $this->assertEquals(0, \tool_lp\user_competency::count_records());
+        $this->assertEquals(0, \core_competency\user_competency::count_records());
 
         // Create an evidence without a user competency record.
-        $evidence = api::add_evidence($user->id, $c1->get_id(), $syscontext->id, \tool_lp\evidence::ACTION_OVERRIDE,
+        $evidence = api::add_evidence($user->id, $c1->get_id(), $syscontext->id, \core_competency\evidence::ACTION_OVERRIDE,
             'invalidevidencedesc', 'tool_lp', 'Hello world!', false, 'http://moodle.org', 1, 2);
-        $this->assertEquals(1, \tool_lp\evidence::count_records());
-        $this->assertEquals(1, \tool_lp\user_competency::count_records());
+        $this->assertEquals(1, \core_competency\evidence::count_records());
+        $this->assertEquals(1, \core_competency\user_competency::count_records());
 
-        $uc = \tool_lp\user_competency::get_record(array('userid' => $user->id, 'competencyid' => $c1->get_id()));
+        $uc = \core_competency\user_competency::get_record(array('userid' => $user->id, 'competencyid' => $c1->get_id()));
         $evidence->read();
         $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
         $this->assertEquals('invalidevidencedesc', $evidence->get_descidentifier());
         $this->assertEquals('tool_lp', $evidence->get_desccomponent());
         $this->assertEquals('Hello world!', $evidence->get_desca());
         $this->assertEquals('http://moodle.org', $evidence->get_url());
-        $this->assertEquals(\tool_lp\evidence::ACTION_OVERRIDE, $evidence->get_action());
+        $this->assertEquals(\core_competency\evidence::ACTION_OVERRIDE, $evidence->get_action());
         $this->assertEquals(2, $evidence->get_actionuserid());
         $this->assertEquals(1, $evidence->get_grade());
         $this->assertEquals(1, $uc->get_grade());
@@ -2311,17 +2311,17 @@ class tool_lp_api_testcase extends advanced_testcase {
         $c5 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
 
         // Setting up the rules.
-        $c1->set_ruletype('tool_lp\\competency_rule_all');
-        $c1->set_ruleoutcome(\tool_lp\competency::OUTCOME_COMPLETE);
+        $c1->set_ruletype('core_competency\\competency_rule_all');
+        $c1->set_ruleoutcome(\core_competency\competency::OUTCOME_COMPLETE);
         $c1->update();
-        $c2->set_ruletype('tool_lp\\competency_rule_all');
-        $c2->set_ruleoutcome(\tool_lp\competency::OUTCOME_RECOMMEND);
+        $c2->set_ruletype('core_competency\\competency_rule_all');
+        $c2->set_ruleoutcome(\core_competency\competency::OUTCOME_RECOMMEND);
         $c2->update();
-        $c3->set_ruletype('tool_lp\\competency_rule_all');
-        $c3->set_ruleoutcome(\tool_lp\competency::OUTCOME_EVIDENCE);
+        $c3->set_ruletype('core_competency\\competency_rule_all');
+        $c3->set_ruleoutcome(\core_competency\competency::OUTCOME_EVIDENCE);
         $c3->update();
-        $c4->set_ruletype('tool_lp\\competency_rule_all');
-        $c4->set_ruleoutcome(\tool_lp\competency::OUTCOME_NONE);
+        $c4->set_ruletype('core_competency\\competency_rule_all');
+        $c4->set_ruleoutcome(\core_competency\competency::OUTCOME_NONE);
         $c4->update();
 
         // Confirm the current data.
@@ -2408,7 +2408,7 @@ class tool_lp_api_testcase extends advanced_testcase {
             'userid' => $student->id,
             'competencyid' => $comp->get_id(),
         );
-        $usercompcourse = \tool_lp\user_competency_course::get_record($filterparams);
+        $usercompcourse = \core_competency\user_competency_course::get_record($filterparams);
         // There should be no user_competency_course object created when grading.
         $this->assertFalse($usercompcourse);
     }
@@ -2455,7 +2455,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $evidence = api::add_evidence($student->id, $comp, $coursecontext, evidence::ACTION_OVERRIDE,
             'commentincontext', 'core', null, false, null, 3, $USER->id);
         // Get user competency course record.
-        $usercompcourse = \tool_lp\user_competency_course::get_record($filterparams);
+        $usercompcourse = \core_competency\user_competency_course::get_record($filterparams);
         // There should be a user_competency_course object when adding a grade.
         $this->assertNotEmpty($usercompcourse);
         $grade = $evidence->get_grade();
@@ -2469,7 +2469,7 @@ class tool_lp_api_testcase extends advanced_testcase {
             'userid' => $student->id,
             'competencyid' => $comp->get_id(),
         ];
-        $usercompetency = \tool_lp\user_competency::get_record($usercompetencyparams);
+        $usercompetency = \core_competency\user_competency::get_record($usercompetencyparams);
         $this->assertNotEmpty($usercompetency);
         $this->assertNotEquals($usercompcourse->get_grade(), $usercompetency->get_grade());
         $this->assertNotEquals($usercompcourse->get_proficiency(), $usercompetency->get_proficiency());
@@ -2490,13 +2490,13 @@ class tool_lp_api_testcase extends advanced_testcase {
         $c3 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
         $c4 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
         $cc1 = $lpg->create_course_competency(array('competencyid' => $c1->get_id(), 'courseid' => $course->id,
-            'ruleoutcome' => \tool_lp\course_competency::OUTCOME_NONE));
+            'ruleoutcome' => \core_competency\course_competency::OUTCOME_NONE));
         $cc2 = $lpg->create_course_competency(array('competencyid' => $c2->get_id(), 'courseid' => $course->id,
-            'ruleoutcome' => \tool_lp\course_competency::OUTCOME_EVIDENCE));
+            'ruleoutcome' => \core_competency\course_competency::OUTCOME_EVIDENCE));
         $cc3 = $lpg->create_course_competency(array('competencyid' => $c3->get_id(), 'courseid' => $course->id,
-            'ruleoutcome' => \tool_lp\course_competency::OUTCOME_RECOMMEND));
+            'ruleoutcome' => \core_competency\course_competency::OUTCOME_RECOMMEND));
         $cc4 = $lpg->create_course_competency(array('competencyid' => $c4->get_id(), 'courseid' => $course->id,
-            'ruleoutcome' => \tool_lp\course_competency::OUTCOME_COMPLETE));
+            'ruleoutcome' => \core_competency\course_competency::OUTCOME_COMPLETE));
 
         $event = \core\event\course_completed::create(array(
             'objectid' => 1,
@@ -2505,26 +2505,26 @@ class tool_lp_api_testcase extends advanced_testcase {
             'courseid' => $course->id,
             'other' => array('relateduserid' => $u1->id)
         ));
-        $this->assertEquals(0, \tool_lp\user_competency::count_records());
-        $this->assertEquals(0, \tool_lp\evidence::count_records());
+        $this->assertEquals(0, \core_competency\user_competency::count_records());
+        $this->assertEquals(0, \core_competency\evidence::count_records());
 
         // Let's go!
         api::observe_course_completed($event);
-        $this->assertEquals(3, \tool_lp\user_competency::count_records());
-        $this->assertEquals(3, \tool_lp\evidence::count_records());
+        $this->assertEquals(3, \core_competency\user_competency::count_records());
+        $this->assertEquals(3, \core_competency\evidence::count_records());
 
         // Outcome NONE did nothing.
-        $this->assertFalse(\tool_lp\user_competency::record_exists_select('userid = :uid AND competencyid = :cid', array(
+        $this->assertFalse(\core_competency\user_competency::record_exists_select('userid = :uid AND competencyid = :cid', array(
             'uid' => $u1->id, 'cid' => $c1->get_id()
         )));
 
         // Outcome evidence.
-        $uc2 = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c2->get_id()));
-        $ev2 = \tool_lp\evidence::get_record(array('usercompetencyid' => $uc2->get_id()));
+        $uc2 = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c2->get_id()));
+        $ev2 = \core_competency\evidence::get_record(array('usercompetencyid' => $uc2->get_id()));
 
         $this->assertEquals(null, $uc2->get_grade());
         $this->assertEquals(null, $uc2->get_proficiency());
-        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc2->get_status());
+        $this->assertEquals(\core_competency\user_competency::STATUS_IDLE, $uc2->get_status());
 
         $this->assertEquals('evidence_coursecompleted', $ev2->get_descidentifier());
         $this->assertEquals('tool_lp', $ev2->get_desccomponent());
@@ -2532,16 +2532,16 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertStringEndsWith('/report/completion/index.php?course=' . $course->id, $ev2->get_url());
         $this->assertEquals(null, $ev2->get_grade());
         $this->assertEquals($coursectx->id, $ev2->get_contextid());
-        $this->assertEquals(\tool_lp\evidence::ACTION_LOG, $ev2->get_action());
+        $this->assertEquals(\core_competency\evidence::ACTION_LOG, $ev2->get_action());
         $this->assertEquals(null, $ev2->get_actionuserid());
 
         // Outcome recommend.
-        $uc3 = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c3->get_id()));
-        $ev3 = \tool_lp\evidence::get_record(array('usercompetencyid' => $uc3->get_id()));
+        $uc3 = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c3->get_id()));
+        $ev3 = \core_competency\evidence::get_record(array('usercompetencyid' => $uc3->get_id()));
 
         $this->assertEquals(null, $uc3->get_grade());
         $this->assertEquals(null, $uc3->get_proficiency());
-        $this->assertEquals(\tool_lp\user_competency::STATUS_WAITING_FOR_REVIEW, $uc3->get_status());
+        $this->assertEquals(\core_competency\user_competency::STATUS_WAITING_FOR_REVIEW, $uc3->get_status());
 
         $this->assertEquals('evidence_coursecompleted', $ev3->get_descidentifier());
         $this->assertEquals('tool_lp', $ev3->get_desccomponent());
@@ -2549,16 +2549,16 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertStringEndsWith('/report/completion/index.php?course=' . $course->id, $ev3->get_url());
         $this->assertEquals(null, $ev3->get_grade());
         $this->assertEquals($coursectx->id, $ev3->get_contextid());
-        $this->assertEquals(\tool_lp\evidence::ACTION_LOG, $ev3->get_action());
+        $this->assertEquals(\core_competency\evidence::ACTION_LOG, $ev3->get_action());
         $this->assertEquals(null, $ev3->get_actionuserid());
 
         // Outcome complete.
-        $uc4 = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c4->get_id()));
-        $ev4 = \tool_lp\evidence::get_record(array('usercompetencyid' => $uc4->get_id()));
+        $uc4 = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c4->get_id()));
+        $ev4 = \core_competency\evidence::get_record(array('usercompetencyid' => $uc4->get_id()));
 
         $this->assertEquals(3, $uc4->get_grade());
         $this->assertEquals(1, $uc4->get_proficiency());
-        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc4->get_status());
+        $this->assertEquals(\core_competency\user_competency::STATUS_IDLE, $uc4->get_status());
 
         $this->assertEquals('evidence_coursecompleted', $ev4->get_descidentifier());
         $this->assertEquals('tool_lp', $ev4->get_desccomponent());
@@ -2566,7 +2566,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertStringEndsWith('/report/completion/index.php?course=' . $course->id, $ev4->get_url());
         $this->assertEquals(3, $ev4->get_grade());
         $this->assertEquals($coursectx->id, $ev4->get_contextid());
-        $this->assertEquals(\tool_lp\evidence::ACTION_COMPLETE, $ev4->get_action());
+        $this->assertEquals(\core_competency\evidence::ACTION_COMPLETE, $ev4->get_action());
         $this->assertEquals(null, $ev4->get_actionuserid());
     }
 
@@ -2653,15 +2653,15 @@ class tool_lp_api_testcase extends advanced_testcase {
         $cc = api::add_competency_to_course($course->id, $c->get_id());
 
         // Check record was created with default rule value Evidence.
-        $this->assertEquals(1, \tool_lp\course_competency::count_records());
+        $this->assertEquals(1, \core_competency\course_competency::count_records());
         $recordscc = api::list_course_competencies($course->id);
-        $this->assertEquals(\tool_lp\course_competency::OUTCOME_EVIDENCE, $recordscc[0]['coursecompetency']->get_ruleoutcome());
+        $this->assertEquals(\core_competency\course_competency::OUTCOME_EVIDENCE, $recordscc[0]['coursecompetency']->get_ruleoutcome());
 
         // Check ruleoutcome value is updated to None.
         $this->assertTrue(api::set_course_competency_ruleoutcome($recordscc[0]['coursecompetency']->get_id(),
-            \tool_lp\course_competency::OUTCOME_NONE));
+            \core_competency\course_competency::OUTCOME_NONE));
         $recordscc = api::list_course_competencies($course->id);
-        $this->assertEquals(\tool_lp\course_competency::OUTCOME_NONE, $recordscc[0]['coursecompetency']->get_ruleoutcome());
+        $this->assertEquals(\core_competency\course_competency::OUTCOME_NONE, $recordscc[0]['coursecompetency']->get_ruleoutcome());
     }
 
     /**
@@ -2704,7 +2704,7 @@ class tool_lp_api_testcase extends advanced_testcase {
                 'proficiency' => true, 'grade' => 3 ));
             $usercompetency->create();
             $this->fail('Invalid grade not detected in framework scale');
-        } catch (\tool_lp\invalid_persistent_exception $e) {
+        } catch (\core_competency\invalid_persistent_exception $e) {
             $this->assertTrue(true);
         }
 
@@ -2714,7 +2714,7 @@ class tool_lp_api_testcase extends advanced_testcase {
                 'proficiency' => true, 'grade' => 5 ));
             $usercompetency->create();
             $this->fail('Invalid grade not detected in competency scale');
-        } catch (\tool_lp\invalid_persistent_exception $e) {
+        } catch (\core_competency\invalid_persistent_exception $e) {
             $this->assertTrue(true);
         }
 
@@ -2724,7 +2724,7 @@ class tool_lp_api_testcase extends advanced_testcase {
                 'proficiency' => true, 'grade' => 1 ));
             $usercompetency->create();
             $this->assertTrue(true);
-        } catch (\tool_lp\invalid_persistent_exception $e) {
+        } catch (\core_competency\invalid_persistent_exception $e) {
             $this->fail('Valide grade rejected in framework scale');
         }
 
@@ -2734,7 +2734,7 @@ class tool_lp_api_testcase extends advanced_testcase {
                 'proficiency' => true, 'grade' => 4 ));
             $usercompetency->create();
             $this->assertTrue(true);
-        } catch (\tool_lp\invalid_persistent_exception $e) {
+        } catch (\core_competency\invalid_persistent_exception $e) {
             $this->fail('Valide grade rejected in competency scale');
         }
     }
@@ -2814,7 +2814,7 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         // Can associate hidden template to cohort.
         $templatecohort = api::create_template_cohort($template->get_id(), $cohort->id);
-        $this->assertInstanceOf('\tool_lp\template_cohort', $templatecohort);
+        $this->assertInstanceOf('\core_competency\template_cohort', $templatecohort);
     }
 
     /**
@@ -2847,8 +2847,8 @@ class tool_lp_api_testcase extends advanced_testcase {
         api::complete_plan($plan);
 
         // Check user competency plan created correctly.
-        $this->assertEquals(3, \tool_lp\user_competency_plan::count_records());
-        $ucp = \tool_lp\user_competency_plan::get_records();
+        $this->assertEquals(3, \core_competency\user_competency_plan::count_records());
+        $ucp = \core_competency\user_competency_plan::get_records();
         $this->assertEquals($ucp[0]->get_competencyid(), $c1->get_id());
         $this->assertEquals($ucp[1]->get_competencyid(), $c2->get_id());
         $this->assertEquals($ucp[2]->get_competencyid(), $c3->get_id());
@@ -2886,19 +2886,19 @@ class tool_lp_api_testcase extends advanced_testcase {
         $c2a = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
 
         $c1->set_ruleoutcome(competency::OUTCOME_EVIDENCE);
-        $c1->set_ruletype('tool_lp\\competency_rule_all');
+        $c1->set_ruletype('core_competency\\competency_rule_all');
         $c1->update();
         $c1a->set_ruleoutcome(competency::OUTCOME_EVIDENCE);
-        $c1a->set_ruletype('tool_lp\\competency_rule_all');
+        $c1a->set_ruletype('core_competency\\competency_rule_all');
         $c1a->update();
         $c1a1->set_ruleoutcome(competency::OUTCOME_EVIDENCE);
-        $c1a1->set_ruletype('tool_lp\\competency_rule_all');
+        $c1a1->set_ruletype('core_competency\\competency_rule_all');
         $c1a1->update();
         $c1b->set_ruleoutcome(competency::OUTCOME_EVIDENCE);
-        $c1b->set_ruletype('tool_lp\\competency_rule_all');
+        $c1b->set_ruletype('core_competency\\competency_rule_all');
         $c1b->update();
         $c2->set_ruleoutcome(competency::OUTCOME_EVIDENCE);
-        $c2->set_ruletype('tool_lp\\competency_rule_all');
+        $c2->set_ruletype('core_competency\\competency_rule_all');
         $c2->update();
 
         return array(
@@ -3146,21 +3146,21 @@ class tool_lp_api_testcase extends advanced_testcase {
         $p1 = $lpg->create_plan(array('templateid' => $tpl->get_id(), 'userid' => $u1->id));
 
         // Check pre-test.
-        $this->assertTrue(tool_lp\template::record_exists($tpl->get_id()));
-        $this->assertEquals(2, \tool_lp\template_competency::count_competencies($tpl->get_id()));
-        $this->assertEquals(1, count(\tool_lp\plan::get_records(array('templateid' => $tpl->get_id()))));
+        $this->assertTrue(\core_competency\template::record_exists($tpl->get_id()));
+        $this->assertEquals(2, \core_competency\template_competency::count_competencies($tpl->get_id()));
+        $this->assertEquals(1, count(\core_competency\plan::get_records(array('templateid' => $tpl->get_id()))));
 
         $result = api::delete_template($tpl->get_id(), true);
         $this->assertTrue($result);
 
         // Check that the template does not exist anymore.
-        $this->assertFalse(tool_lp\template::record_exists($tpl->get_id()));
+        $this->assertFalse(\core_competency\template::record_exists($tpl->get_id()));
 
         // Check that associated competencies are also deleted.
-        $this->assertEquals(0, \tool_lp\template_competency::count_competencies($tpl->get_id()));
+        $this->assertEquals(0, \core_competency\template_competency::count_competencies($tpl->get_id()));
 
         // Check that associated plan are also deleted.
-        $this->assertEquals(0, count(\tool_lp\plan::get_records(array('templateid' => $tpl->get_id()))));
+        $this->assertEquals(0, count(\core_competency\plan::get_records(array('templateid' => $tpl->get_id()))));
     }
 
     public function test_delete_template_unlink_plans() {
@@ -3185,21 +3185,21 @@ class tool_lp_api_testcase extends advanced_testcase {
         $p1 = $lpg->create_plan(array('templateid' => $tpl->get_id(), 'userid' => $u1->id));
 
         // Check pre-test.
-        $this->assertTrue(tool_lp\template::record_exists($tpl->get_id()));
-        $this->assertEquals(2, \tool_lp\template_competency::count_competencies($tpl->get_id()));
-        $this->assertEquals(1, count(\tool_lp\plan::get_records(array('templateid' => $tpl->get_id()))));
+        $this->assertTrue(\core_competency\template::record_exists($tpl->get_id()));
+        $this->assertEquals(2, \core_competency\template_competency::count_competencies($tpl->get_id()));
+        $this->assertEquals(1, count(\core_competency\plan::get_records(array('templateid' => $tpl->get_id()))));
 
         $result = api::delete_template($tpl->get_id(), false);
         $this->assertTrue($result);
 
         // Check that the template does not exist anymore.
-        $this->assertFalse(tool_lp\template::record_exists($tpl->get_id()));
+        $this->assertFalse(\core_competency\template::record_exists($tpl->get_id()));
 
         // Check that associated competencies are also deleted.
-        $this->assertEquals(0, \tool_lp\template_competency::count_competencies($tpl->get_id()));
+        $this->assertEquals(0, \core_competency\template_competency::count_competencies($tpl->get_id()));
 
         // Check that associated plan still exist but unlink from template.
-        $plans = \tool_lp\plan::get_records(array('id' => $p1->get_id()));
+        $plans = \core_competency\plan::get_records(array('id' => $p1->get_id()));
         $this->assertEquals(1, count($plans));
         $this->assertEquals($plans[0]->get_origtemplateid(), $tpl->get_id());
         $this->assertNull($plans[0]->get_templateid());
@@ -3223,7 +3223,7 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         // Set rules on parent competency.
         $c1->set_ruleoutcome(competency::OUTCOME_EVIDENCE);
-        $c1->set_ruletype('tool_lp\\competency_rule_all');
+        $c1->set_ruletype('core_competency\\competency_rule_all');
         $c1->update();
 
         // If we delete competeny, the related competencies relations and evidences should be deleted.
@@ -3255,7 +3255,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertFalse(competency::record_exists($c12b->get_id()));
 
         // Check if evidence are also deleted.
-        $this->assertEquals(0, tool_lp\user_evidence_competency::count_records(array('competencyid' => $c11b->get_id())));
+        $this->assertEquals(0, \core_competency\user_evidence_competency::count_records(array('competencyid' => $c11b->get_id())));
 
         // Check if related conpetency relation is deleted.
         $this->assertEquals(0, count(api::list_related_competencies($c2->get_id())));
@@ -3482,10 +3482,10 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertFalse(competency::record_exists($c12b->get_id()));
 
         // Check if evidence are also deleted.
-        $this->assertEquals(0, tool_lp\user_evidence_competency::count_records(array('competencyid' => $c11b->get_id())));
+        $this->assertEquals(0, \core_competency\user_evidence_competency::count_records(array('competencyid' => $c11b->get_id())));
 
         // Check if related conpetency relation is deleted.
-        $this->assertEquals(0, count(\tool_lp\related_competency::get_multiple_relations(array($c2id))));
+        $this->assertEquals(0, count(\core_competency\related_competency::get_multiple_relations(array($c2id))));
 
         // Delete a simple framework.
         $f2 = $lpg->create_framework();
@@ -3545,10 +3545,10 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertFalse(competency::record_exists($c11b->get_id()));
         $this->assertFalse(competency::record_exists($c12b->get_id()));
         // Check if evidence are also deleted.
-        $this->assertEquals(0, tool_lp\user_evidence_competency::count_records(array('competencyid' => $c11b->get_id())));
+        $this->assertEquals(0, \core_competency\user_evidence_competency::count_records(array('competencyid' => $c11b->get_id())));
 
         // Check if related conpetency relation is deleted.
-        $this->assertEquals(0, count(\tool_lp\related_competency::get_multiple_relations(array($c2id))));
+        $this->assertEquals(0, count(\core_competency\related_competency::get_multiple_relations(array($c2id))));
     }
 
     public function test_delete_framework_competency_used_in_usercompetency() {
@@ -3602,10 +3602,10 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertFalse(competency::record_exists($c11b->get_id()));
         $this->assertFalse(competency::record_exists($c12b->get_id()));
         // Check if evidence are also deleted.
-        $this->assertEquals(0, tool_lp\user_evidence_competency::count_records(array('competencyid' => $c11b->get_id())));
+        $this->assertEquals(0, \core_competency\user_evidence_competency::count_records(array('competencyid' => $c11b->get_id())));
 
         // Check if related conpetency relation is deleted.
-        $this->assertEquals(0, count(\tool_lp\related_competency::get_multiple_relations(array($c2id))));
+        $this->assertEquals(0, count(\core_competency\related_competency::get_multiple_relations(array($c2id))));
     }
 
     public function test_delete_framework_competency_used_in_usercompetencyplan() {
@@ -3665,10 +3665,10 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertFalse(competency::record_exists($c11b->get_id()));
         $this->assertFalse(competency::record_exists($c12b->get_id()));
         // Check if evidence are also deleted.
-        $this->assertEquals(0, tool_lp\user_evidence_competency::count_records(array('competencyid' => $c11b->get_id())));
+        $this->assertEquals(0, \core_competency\user_evidence_competency::count_records(array('competencyid' => $c11b->get_id())));
 
         // Check if related conpetency relation is deleted.
-        $this->assertEquals(0, count(\tool_lp\related_competency::get_multiple_relations(array($c2id))));
+        $this->assertEquals(0, count(\core_competency\related_competency::get_multiple_relations(array($c2id))));
     }
 
     public function test_delete_framework_competency_used_in_template() {
@@ -3725,10 +3725,10 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertFalse(competency::record_exists($c11b->get_id()));
         $this->assertFalse(competency::record_exists($c12b->get_id()));
         // Check if evidence are also deleted.
-        $this->assertEquals(0, tool_lp\user_evidence_competency::count_records(array('competencyid' => $c11b->get_id())));
+        $this->assertEquals(0, \core_competency\user_evidence_competency::count_records(array('competencyid' => $c11b->get_id())));
 
         // Check if related conpetency relation is deleted.
-        $this->assertEquals(0, count(\tool_lp\related_competency::get_multiple_relations(array($c2id))));
+        $this->assertEquals(0, count(\core_competency\related_competency::get_multiple_relations(array($c2id))));
     }
 
     public function test_delete_framework_competency_used_in_course() {
@@ -3787,10 +3787,10 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertFalse(competency::record_exists($c11b->get_id()));
         $this->assertFalse(competency::record_exists($c12b->get_id()));
         // Check if evidence are also deleted.
-        $this->assertEquals(0, tool_lp\user_evidence_competency::count_records(array('competencyid' => $c11b->get_id())));
+        $this->assertEquals(0, \core_competency\user_evidence_competency::count_records(array('competencyid' => $c11b->get_id())));
 
         // Check if related conpetency relation is deleted.
-        $this->assertEquals(0, count(\tool_lp\related_competency::get_multiple_relations(array($c2id))));
+        $this->assertEquals(0, count(\core_competency\related_competency::get_multiple_relations(array($c2id))));
     }
 
     public function test_grade_competency_in_course_permissions() {
@@ -4248,14 +4248,14 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         $this->assertEquals(4, count($result));
         foreach ($result as $one) {
-            $this->assertInstanceOf('\tool_lp\plan', $one);
+            $this->assertInstanceOf('\core_competency\plan', $one);
         }
         // This lists the plans based on this template, optionally filtered by status.
         $result = api::list_plans_for_template($tpl->get_id(), plan::STATUS_COMPLETE);
 
         $this->assertEquals(3, count($result));
         foreach ($result as $one) {
-            $this->assertInstanceOf('\tool_lp\plan', $one);
+            $this->assertInstanceOf('\core_competency\plan', $one);
             $this->assertEquals(plan::STATUS_COMPLETE, $one->get_status());
         }
 
@@ -4273,7 +4273,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals(2, count($result));
         $leastarray = array($comp4->get_id(), $comp6->get_id());
         foreach ($result as $one) {
-            $this->assertInstanceOf('\tool_lp\competency', $one);
+            $this->assertInstanceOf('\core_competency\competency', $one);
             $this->assertContains($one->get_id(), $leastarray);
         }
     }

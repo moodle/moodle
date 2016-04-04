@@ -33,8 +33,8 @@ use context_system;
 use moodle_url;
 use tool_lp\api;
 use tool_lp\external\competency_summary_exporter;
-use tool_lp\template;
-use tool_lp\template_statistics;
+use core_competency\template;
+use core_competency\template_statistics;
 use tool_lp\external\template_exporter;
 use tool_lp\external\template_statistics_exporter;
 
@@ -49,7 +49,7 @@ class template_competencies_page implements renderable, templatable {
     /** @var template $template Template for this page. */
     protected $template = null;
 
-    /** @var \tool_lp\competency[] $competencies List of competencies. */
+    /** @var \core_competency\competency[] $competencies List of competencies. */
     protected $competencies = array();
 
     /** @var bool $canmanagecompetencyframeworks Can the current user manage competency frameworks. */

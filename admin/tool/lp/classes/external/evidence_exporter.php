@@ -39,7 +39,7 @@ class evidence_exporter extends persistent_exporter {
     }
 
     protected static function define_class() {
-        return 'tool_lp\\evidence';
+        return 'core_competency\\evidence';
     }
 
     protected function get_other_values(renderer_base $output) {

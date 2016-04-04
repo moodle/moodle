@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
-use tool_lp\user_evidence_competency;
+use core_competency\user_evidence_competency;
 
 /**
  * User evidence competency persistent testcase.

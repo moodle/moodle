@@ -25,7 +25,7 @@
 namespace tool_lp\event;
 
 use core\event\base;
-use tool_lp\competency;
+use core_competency\competency;
 
 defined('MOODLE_INTERNAL') || die();
 

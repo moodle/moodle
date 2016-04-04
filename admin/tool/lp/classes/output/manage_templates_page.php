@@ -33,7 +33,7 @@ use stdClass;
 use moodle_url;
 use context_system;
 use tool_lp\api;
-use tool_lp\template;
+use core_competency\template;
 use tool_lp\external\template_exporter;
 
 /**

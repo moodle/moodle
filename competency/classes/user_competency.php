@@ -17,11 +17,11 @@
 /**
  * Class for user_competency persistence.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Serge Gauthier
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_lp;
+namespace core_competency;
 defined('MOODLE_INTERNAL') || die();
 
 use coding_exception;
@@ -451,7 +451,7 @@ class user_competency extends persistent {
      *
      * @param  int $userid The user ID.
      * @param  int $competencyid The competency ID.
-     * @return \tool_lp\user_competency
+     * @return \core_competency\user_competency
      */
     public static function create_relation($userid, $competencyid) {
         $relation = new user_competency(0, (object) array('userid' => $userid, 'competencyid' => $competencyid));
@@ -483,7 +483,7 @@ class user_competency extends persistent {
      *
      * @param  int $userid
      * @param  array  $competenciesorids Limit search to those competencies, or competency IDs.
-     * @return \tool_lp\user_competency[]
+     * @return \core_competency\user_competency[]
      */
     public static function get_multiple($userid, array $competenciesorids = null) {
         global $DB;

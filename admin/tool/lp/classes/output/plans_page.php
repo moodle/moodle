@@ -32,8 +32,8 @@ use single_button;
 use moodle_url;
 use tool_lp\api;
 use tool_lp\external\plan_exporter;
-use tool_lp\plan;
-use tool_lp\user_evidence;
+use core_competency\plan;
+use core_competency\user_evidence;
 use context_user;
 
 /**
@@ -47,7 +47,7 @@ class plans_page implements renderable, templatable {
     /** @var array $navigation List of links to display on the page. Each link contains a url and a title. */
     protected $navigation = array();
 
-    /** @var array|\tool_lp\plan[] $plans List of plans. */
+    /** @var array|\core_competency\plan[] $plans List of plans. */
     protected $plans = array();
 
     /** @var context_user|null $context context.  */
@@ -88,7 +88,7 @@ class plans_page implements renderable, templatable {
         $data->canreaduserevidence = user_evidence::can_read_user($this->userid);
         $data->canmanageuserplans = plan::can_manage_user($this->userid);
 
-        // Attach standard objects as mustache can not parse \tool_lp\plan objects.
+        // Attach standard objects as mustache can not parse \core_competency\plan objects.
         $data->plans = array();
         if ($this->plans) {
             foreach ($this->plans as $plan) {

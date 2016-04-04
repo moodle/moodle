@@ -36,16 +36,16 @@ use coding_exception;
  */
 abstract class persistent_exporter extends exporter {
 
-    /** @var \tool_lp\persistent The persistent object we will export. */
+    /** @var \core_competency\persistent The persistent object we will export. */
     protected $persistent = null;
 
     /**
      * Constructor - saves the persistent object, and the related objects.
      *
-     * @param \tool_lp\persistent $persistent The persistent object to export.
+     * @param \core_competency\persistent $persistent The persistent object to export.
      * @param array $related - An optional list of pre-loaded objects related to this persistent.
      */
-    public final function __construct(\tool_lp\persistent $persistent, $related = array()) {
+    public final function __construct(\core_competency\persistent $persistent, $related = array()) {
         $classname = static::define_class();
         if (!$persistent instanceof $classname) {
             throw new coding_exception('Invalid type for persistent. ' .
