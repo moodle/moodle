@@ -70,8 +70,8 @@ class tool_lp_task_testcase extends advanced_testcase {
 
         $this->assertEquals(2, $created);
 
-        $task = \core\task\manager::get_scheduled_task('\\tool_lp\\task\\sync_plans_from_template_cohorts_task');
-        $this->assertInstanceOf('\tool_lp\task\sync_plans_from_template_cohorts_task', $task);
+        $task = \core\task\manager::get_scheduled_task('\\core\\task\\sync_plans_from_template_cohorts_task');
+        $this->assertInstanceOf('\core\task\sync_plans_from_template_cohorts_task', $task);
 
         // Add two more users to the cohort.
         cohort_add_member($cohort->id, $user3->id);
@@ -181,8 +181,8 @@ class tool_lp_task_testcase extends advanced_testcase {
 
         $this->assertEquals(2, $created);
 
-        $task = \core\task\manager::get_scheduled_task('\\tool_lp\\task\\sync_plans_from_template_cohorts_task');
-        $this->assertInstanceOf('\tool_lp\task\sync_plans_from_template_cohorts_task', $task);
+        $task = \core\task\manager::get_scheduled_task('\\core\\task\\sync_plans_from_template_cohorts_task');
+        $this->assertInstanceOf('\core\task\sync_plans_from_template_cohorts_task', $task);
 
         // Add two more users to the cohort.
         cohort_add_member($cohort->id, $user3->id);
@@ -248,7 +248,7 @@ class tool_lp_task_testcase extends advanced_testcase {
         $cohort = $dg->create_cohort();
         $tpl = $lpg->create_template(array('duedate' => time() + 1000));
         $templatecohort = api::create_template_cohort($tpl->get_id(), $cohort->id);
-        $task = \core\task\manager::get_scheduled_task('\\tool_lp\\task\\sync_plans_from_template_cohorts_task');
+        $task = \core\task\manager::get_scheduled_task('\\core\\task\\sync_plans_from_template_cohorts_task');
 
         // Add 1 user to the cohort.
         cohort_add_member($cohort->id, $user1->id);
@@ -296,8 +296,8 @@ class tool_lp_task_testcase extends advanced_testcase {
         $DB->update_record(plan::TABLE, $record1);
         $DB->update_record(plan::TABLE, $record2);
 
-        $task = \core\task\manager::get_scheduled_task('\\tool_lp\\task\\complete_plans_task');
-        $this->assertInstanceOf('\\tool_lp\\task\\complete_plans_task', $task);
+        $task = \core\task\manager::get_scheduled_task('\\core\\task\\complete_plans_task');
+        $this->assertInstanceOf('\\core\\task\\complete_plans_task', $task);
 
         // Test that draft plan can not be completed on running task.
         $task->execute();

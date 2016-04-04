@@ -17,12 +17,12 @@
 /**
  * Complete plans task.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_lp\task;
+namespace core\task;
 defined('MOODLE_INTERNAL') || die();
 
 use tool_lp\api;

@@ -17,12 +17,12 @@
 /**
  * Synchronise plans from template cohorts.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_lp\task;
+namespace core\task;
 defined('MOODLE_INTERNAL') || die();
 
 use tool_lp\api;
