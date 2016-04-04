@@ -3983,7 +3983,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $currenttime += 1;
         $p2->set_status(plan::STATUS_COMPLETE);
         $p2->update();
-        $plansql = "UPDATE {tool_lp_plan} SET timemodified = :currenttime WHERE id = :planid";
+        $plansql = "UPDATE {" . plan::TABLE . "} SET timemodified = :currenttime WHERE id = :planid";
         $DB->execute($plansql, array('currenttime' => $currenttime, 'planid' => $p2->get_id()));
 
         // Add an other user evidence for the same competency.
@@ -3991,7 +3991,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $ue2 = $lpg->create_user_evidence(array('userid' => $user->id));
         $uec2 = $lpg->create_user_evidence_competency(array('userevidenceid' => $ue2->get_id(), 'competencyid' => $c1->get_id()));
         $e2 = $lpg->create_evidence(array('usercompetencyid' => $uc->get_id()));
-        $evidencesql = "UPDATE {tool_lp_evidence} SET timecreated = :currenttime WHERE id = :evidenceid";
+        $evidencesql = "UPDATE {" . evidence::TABLE . "} SET timecreated = :currenttime WHERE id = :evidenceid";
         $DB->execute($evidencesql, array('currenttime' => $currenttime, 'evidenceid' => $e2->get_id()));
 
         // Check first plan which is not completed as all evidences.

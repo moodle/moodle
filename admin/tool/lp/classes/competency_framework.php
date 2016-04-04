@@ -39,7 +39,7 @@ require_once($CFG->libdir . '/grade/grade_scale.php');
  */
 class competency_framework extends persistent {
 
-    const TABLE = 'tool_lp_competency_framework';
+    const TABLE = 'competency_framework';
 
     /** Taxonomy constant. */
     const TAXONOMY_BEHAVIOUR = 'behaviour';

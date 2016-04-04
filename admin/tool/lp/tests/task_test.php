@@ -46,8 +46,8 @@ class tool_lp_task_testcase extends advanced_testcase {
 
         // Sql to simulate the execution in time.
         $cmsql = "UPDATE {cohort_members} SET timeadded = :currenttime WHERE cohortid = :cohortid AND userid = :userid";
-        $tplsql = "UPDATE {tool_lp_template} SET timemodified = :currenttime WHERE id = :templateid";
-        $plansql = "UPDATE {tool_lp_plan} SET timemodified = :currenttime WHERE id = :planid";
+        $tplsql = "UPDATE {" . \tool_lp\template::TABLE . "} SET timemodified = :currenttime WHERE id = :templateid";
+        $plansql = "UPDATE {" . \tool_lp\plan::TABLE . "} SET timemodified = :currenttime WHERE id = :planid";
 
         $currenttime = time();
 

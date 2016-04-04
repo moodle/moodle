@@ -36,7 +36,7 @@ use context_user;
 class user_competency_plan extends persistent {
 
     /** Table name for user_competency_plan persistency */
-    const TABLE = 'tool_lp_user_competency_plan';
+    const TABLE = 'competency_usercompplan';
 
     /**
      * Return the definition of the properties of this model.

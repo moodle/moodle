@@ -39,7 +39,7 @@ require_once($CFG->libdir . '/grade/grade_scale.php');
  */
 class competency extends persistent {
 
-    const TABLE = 'tool_lp_competency';
+    const TABLE = 'competency';
 
     /** Outcome none. */
     const OUTCOME_NONE = 0;

@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
 class course_competency_settings extends persistent {
 
     /** Table name for plan_competency persistency */
-    const TABLE = 'tool_lp_coursecompsettings';
+    const TABLE = 'competency_coursecompsetting';
 
     /**
      * Return the definition of the properties of this model.

@@ -403,7 +403,7 @@ class tool_lp_persistent_testcase extends advanced_testcase {
  */
 class tool_lp_testable_persistent extends \tool_lp\persistent {
 
-    const TABLE = 'tool_lp_competency';
+    const TABLE = 'competency';
 
     protected static function define_properties() {
         return array(

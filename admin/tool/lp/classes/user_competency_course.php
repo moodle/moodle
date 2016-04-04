@@ -37,7 +37,7 @@ use lang_string;
 class user_competency_course extends persistent {
 
     /** Table name for user_competency persistency */
-    const TABLE = 'tool_lp_user_comp_course';
+    const TABLE = 'competency_usercompcourse';
 
     /**
      * Return the definition of the properties of this model.

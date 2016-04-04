@@ -36,7 +36,7 @@ use stdClass;
  */
 class template extends persistent {
 
-    const TABLE = 'tool_lp_template';
+    const TABLE = 'competency_template';
 
     /** @var template object before update. */
     protected $beforeupdate = null;

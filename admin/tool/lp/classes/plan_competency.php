@@ -35,7 +35,7 @@ use lang_string;
 class plan_competency extends persistent {
 
     /** Table name for plan_competency persistency */
-    const TABLE = 'tool_lp_plan_competency';
+    const TABLE = 'competency_plancomp';
 
     /**
      * Return the definition of the properties of this model.

@@ -40,7 +40,7 @@ use stdClass;
  */
 class evidence extends persistent {
 
-    const TABLE = 'tool_lp_evidence';
+    const TABLE = 'competency_evidence';
 
     /** Action logging. */
     const ACTION_LOG = 0;

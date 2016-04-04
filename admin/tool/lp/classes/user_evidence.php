@@ -37,7 +37,7 @@ use lang_string;
  */
 class user_evidence extends persistent {
 
-    const TABLE = 'tool_lp_user_evidence';
+    const TABLE = 'competency_userevidence';
 
     /**
      * Return the definition of the properties of this model.

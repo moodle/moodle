@@ -37,7 +37,7 @@ use lang_string;
  */
 class plan extends persistent {
 
-    const TABLE = 'tool_lp_plan';
+    const TABLE = 'competency_plan';
 
     /** Draft status. */
     const STATUS_DRAFT = 0;

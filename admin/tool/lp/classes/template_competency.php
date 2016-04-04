@@ -34,7 +34,7 @@ use stdClass;
  */
 class template_competency extends persistent {
 
-    const TABLE = 'tool_lp_template_competency';
+    const TABLE = 'competency_templatecomp';
 
     /**
      * Return the definition of the properties of this model.

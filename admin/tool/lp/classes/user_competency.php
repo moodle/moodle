@@ -39,7 +39,7 @@ use lang_string;
 class user_competency extends persistent {
 
     /** Table name for user_competency persistency */
-    const TABLE = 'tool_lp_user_competency';
+    const TABLE = 'competency_usercomp';
 
     /** Idle status */
     const STATUS_IDLE = 0;

@@ -37,7 +37,7 @@ use tool_lp\template;
  */
 class template_cohort extends persistent {
 
-    const TABLE = 'tool_lp_template_cohort';
+    const TABLE = 'competency_templatecohort';
 
     /** 2 hours of threshold to prevent expired plans **/
     const DUEDATE_THRESHOLD = 7200;

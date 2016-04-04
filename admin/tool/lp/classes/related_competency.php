@@ -36,7 +36,7 @@ use stdClass;
  */
 class related_competency extends persistent {
 
-    const TABLE = 'tool_lp_related_competency';
+    const TABLE = 'competency_relatedcomp';
 
     /**
      * Return the definition of the properties of this model.

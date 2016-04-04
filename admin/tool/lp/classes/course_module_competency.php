@@ -35,7 +35,7 @@ use lang_string;
  */
 class course_module_competency extends persistent {
 
-    const TABLE = 'tool_lp_module_competency';
+    const TABLE = 'competency_modulecomp';
 
     /** Course competency ruleoutcome constant. */
     const OUTCOME_NONE = 0;

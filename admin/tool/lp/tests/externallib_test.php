@@ -34,6 +34,7 @@ use tool_lp\related_competency;
 use tool_lp\user_competency;
 use tool_lp\user_competency_plan;
 use tool_lp\plan_competency;
+use tool_lp\template;
 use tool_lp\template_competency;
 use tool_lp\course_competency_settings;
 
@@ -2007,9 +2008,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $sys1 = $this->create_template(1, true);
         $cat1 = $this->create_template(2, false);
         $cat2 = $this->create_template(3, false);
-        $this->assertTrue($DB->record_exists('tool_lp_template', array('id' => $sys1->id)));
-        $this->assertTrue($DB->record_exists('tool_lp_template', array('id' => $cat1->id)));
-        $this->assertTrue($DB->record_exists('tool_lp_template', array('id' => $cat2->id)));
+        $this->assertTrue($DB->record_exists(template::TABLE, array('id' => $sys1->id)));
+        $this->assertTrue($DB->record_exists(template::TABLE, array('id' => $cat1->id)));
+        $this->assertTrue($DB->record_exists(template::TABLE, array('id' => $cat2->id)));
 
         // User without permissions.
         $this->setUser($this->user);
@@ -2038,7 +2039,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $result = external::delete_template($cat1->id);
         $result = external_api::clean_returnvalue(external::delete_template_returns(), $result);
         $this->assertTrue($result);
-        $this->assertFalse($DB->record_exists('tool_lp_template', array('id' => $cat1->id)));
+        $this->assertFalse($DB->record_exists(template::TABLE, array('id' => $cat1->id)));
 
         // User with system permissions.
         $this->setUser($this->creator);
@@ -2048,8 +2049,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $result = external::delete_template($cat2->id);
         $result = external_api::clean_returnvalue(external::delete_template_returns(), $result);
         $this->assertTrue($result);
-        $this->assertFalse($DB->record_exists('tool_lp_template', array('id' => $sys1->id)));
-        $this->assertFalse($DB->record_exists('tool_lp_template', array('id' => $cat2->id)));
+        $this->assertFalse($DB->record_exists(template::TABLE, array('id' => $sys1->id)));
+        $this->assertFalse($DB->record_exists(template::TABLE, array('id' => $cat2->id)));
     }
 
     /**
