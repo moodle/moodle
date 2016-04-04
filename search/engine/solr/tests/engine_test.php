@@ -187,6 +187,13 @@ class search_solr_engine_testcase extends advanced_testcase {
         unset($querydata->timeend);
         $querydata->title = 'moodle/course:renameroles roleid 1';
         $this->assertCount(1, $this->search->search($querydata));
+
+        // Check that index contents get updated.
+        $DB->delete_records('role_capabilities', array('capability' => 'moodle/course:renameroles'));
+        $this->search->index(true);
+        unset($querydata->title);
+        $querydata->q = '*renameroles*';
+        $this->assertCount(0, $this->search->search($querydata));
     }
 
     public function test_delete() {
@@ -199,7 +206,6 @@ class search_solr_engine_testcase extends advanced_testcase {
 
         $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'role_capabilities');
         $this->search->delete_index($areaid);
-        cache_helper::purge_by_definition('core', 'search_results');
         $this->assertCount(0, $this->search->search($querydata));
     }
 

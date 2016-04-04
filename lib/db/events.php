@@ -54,10 +54,6 @@ $observers = array(
         'eventname'   => '\core\event\user_updated',
         'callback'    => 'core_badges_observer::profile_criteria_review',
     ),
-    array(
-        'eventname'   => '\core\event\search_indexed',
-        'callback'    => 'core_search_observer::invalidate_caches',
-    ),
 );
 
 // List of all events triggered by Moodle can be found using Events list report.

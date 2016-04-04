@@ -59,7 +59,6 @@ $string['cachedef_plugin_functions'] = 'Plugins available callbacks';
 $string['cachedef_plugin_manager'] = 'Plugin info manager';
 $string['cachedef_questiondata'] = 'Question definitions';
 $string['cachedef_repositories'] = 'Repositories instances data';
-$string['cachedef_search_results'] = 'Search results user data';
 $string['cachedef_grade_categories'] = 'Grade category queries';
 $string['cachedef_string'] = 'Language string cache';
 $string['cachedef_tags'] = 'Tags collections and areas';

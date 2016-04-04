@@ -85,7 +85,12 @@ class role_capabilities extends \core_search\area\base {
     }
 
     public function check_access($id) {
-        return \core_search\manager::ACCESS_GRANTED;
+        global $DB;
+
+        if ($DB->get_record('role_capabilities', array('id' => $id))) {
+            return \core_search\manager::ACCESS_GRANTED;
+        }
+        return \core_search\manager::ACCESS_DELETED;
     }
 
     public function get_doc_url(\core_search\document $doc) {
