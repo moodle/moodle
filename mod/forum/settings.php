@@ -133,6 +133,6 @@ if ($ADMIN->fulltree) {
     }
 
     $settings->add(new admin_setting_configcheckbox('forum_enabletimedposts', get_string('timedposts', 'forum'),
-                       get_string('configenabletimedposts', 'forum'), 0));
+                       get_string('configenabletimedposts', 'forum'), 1));
 }
 
