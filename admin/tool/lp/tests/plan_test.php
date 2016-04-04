@@ -51,8 +51,8 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $u2context = context_user::instance($u2->id);
         $u3context = context_user::instance($u3->id);
 
-        assign_capability('tool/lp:planmanage', CAP_ALLOW, $manage, $syscontext->id);
-        assign_capability('tool/lp:planmanageown', CAP_ALLOW, $manageown, $u2context->id);
+        assign_capability('moodle/competency:planmanage', CAP_ALLOW, $manage, $syscontext->id);
+        assign_capability('moodle/competency:planmanageown', CAP_ALLOW, $manageown, $u2context->id);
 
         role_assign($manage, $u1->id, $syscontext->id);
         role_assign($manageown, $u2->id, $syscontext->id);
@@ -96,10 +96,10 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $u4context = context_user::instance($u4->id);
         $u5context = context_user::instance($u5->id);
 
-        assign_capability('tool/lp:planmanage', CAP_ALLOW, $manage, $syscontext->id);
-        assign_capability('tool/lp:planmanageown', CAP_ALLOW, $manageown, $syscontext->id);
-        assign_capability('tool/lp:planmanagedraft', CAP_ALLOW, $managedraft, $syscontext->id);
-        assign_capability('tool/lp:planmanageowndraft', CAP_ALLOW, $manageowndraft, $syscontext->id);
+        assign_capability('moodle/competency:planmanage', CAP_ALLOW, $manage, $syscontext->id);
+        assign_capability('moodle/competency:planmanageown', CAP_ALLOW, $manageown, $syscontext->id);
+        assign_capability('moodle/competency:planmanagedraft', CAP_ALLOW, $managedraft, $syscontext->id);
+        assign_capability('moodle/competency:planmanageowndraft', CAP_ALLOW, $manageowndraft, $syscontext->id);
 
         role_assign($manage, $u1->id, $syscontext->id);
         role_assign($manageown, $u2->id, $syscontext->id);
@@ -159,8 +159,8 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $u2context = context_user::instance($u2->id);
         $u3context = context_user::instance($u3->id);
 
-        assign_capability('tool/lp:planview', CAP_ALLOW, $read, $syscontext->id);
-        assign_capability('tool/lp:planviewown', CAP_ALLOW, $readown, $u2context->id);
+        assign_capability('moodle/competency:planview', CAP_ALLOW, $read, $syscontext->id);
+        assign_capability('moodle/competency:planviewown', CAP_ALLOW, $readown, $u2context->id);
 
         role_assign($read, $u1->id, $syscontext->id);
         role_assign($readown, $u2->id, $syscontext->id);
@@ -204,11 +204,11 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $u4context = context_user::instance($u4->id);
         $u5context = context_user::instance($u5->id);
 
-        assign_capability('tool/lp:planview', CAP_ALLOW, $read, $syscontext->id);
-        assign_capability('tool/lp:planviewown', CAP_ALLOW, $readown, $syscontext->id);
-        assign_capability('tool/lp:planviewdraft', CAP_ALLOW, $readdraft, $syscontext->id);
-        assign_capability('tool/lp:planviewowndraft', CAP_ALLOW, $readowndraft, $syscontext->id);
-        assign_capability('tool/lp:planviewown', CAP_PROHIBIT, $readowndraft, $syscontext->id);
+        assign_capability('moodle/competency:planview', CAP_ALLOW, $read, $syscontext->id);
+        assign_capability('moodle/competency:planviewown', CAP_ALLOW, $readown, $syscontext->id);
+        assign_capability('moodle/competency:planviewdraft', CAP_ALLOW, $readdraft, $syscontext->id);
+        assign_capability('moodle/competency:planviewowndraft', CAP_ALLOW, $readowndraft, $syscontext->id);
+        assign_capability('moodle/competency:planviewown', CAP_PROHIBIT, $readowndraft, $syscontext->id);
 
         role_assign($read, $u1->id, $syscontext->id);
         role_assign($readown, $u2->id, $syscontext->id);

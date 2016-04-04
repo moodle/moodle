@@ -79,7 +79,7 @@ class manage_competencies_page implements renderable, templatable {
         );
         $this->navigation[] = $addpage;
 
-        $this->canmanage = has_capability('tool/lp:competencymanage', $framework->get_context());
+        $this->canmanage = has_capability('moodle/competency:competencymanage', $framework->get_context());
     }
 
     /**

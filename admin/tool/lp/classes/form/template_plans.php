@@ -44,7 +44,7 @@ class template_plans extends moodleform {
         $options = array(
             'ajax' => 'tool_lp/form-user-selector',
             'multiple' => true,
-            'data-capability' => 'tool/lp:planmanage'
+            'data-capability' => 'moodle/competency:planmanage'
         );
         $mform->addElement('autocomplete', 'users', get_string('selectuserstocreateplansfor', 'tool_lp'), array(), $options);
         $mform->addElement('submit', 'submit', get_string('createplans', 'tool_lp'));

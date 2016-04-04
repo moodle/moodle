@@ -488,7 +488,7 @@ class competency_framework extends persistent {
      * @return bool
      */
     public static function can_manage_context($context) {
-        return has_capability('tool/lp:competencymanage', $context);
+        return has_capability('moodle/competency:competencymanage', $context);
     }
 
     /**
@@ -507,7 +507,7 @@ class competency_framework extends persistent {
      * @return bool
      */
     public static function can_read_context($context) {
-        return has_capability('tool/lp:competencyview', $context) || self::can_manage_context($context);
+        return has_capability('moodle/competency:competencyview', $context) || self::can_manage_context($context);
     }
 
 }

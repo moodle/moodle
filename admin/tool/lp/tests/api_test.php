@@ -80,18 +80,18 @@ class tool_lp_api_testcase extends advanced_testcase {
         $sysctx = context_system::instance();
 
         $roleallow = create_role('Allow', 'allow', 'Allow read');
-        assign_capability('tool/lp:competencyview', CAP_ALLOW, $roleallow, $sysctx->id);
+        assign_capability('moodle/competency:competencyview', CAP_ALLOW, $roleallow, $sysctx->id);
         role_assign($roleallow, $user->id, $sysctx->id);
 
         $roleprevent = create_role('Prevent', 'prevent', 'Prevent read');
-        assign_capability('tool/lp:competencyview', CAP_PROHIBIT, $roleprevent, $sysctx->id);
+        assign_capability('moodle/competency:competencyview', CAP_PROHIBIT, $roleprevent, $sysctx->id);
         role_assign($roleprevent, $user->id, $cat2ctx->id);
 
         accesslib_clear_all_caches_for_unit_testing();
         $this->setUser($user);
-        $this->assertFalse(has_capability('tool/lp:competencyview', $cat2ctx));
+        $this->assertFalse(has_capability('moodle/competency:competencyview', $cat2ctx));
 
-        $requiredcap = array('tool/lp:competencyview');
+        $requiredcap = array('moodle/competency:competencyview');
 
         $expected = array();
         $this->assertEquals($expected, api::get_related_contexts($cat2ctx, 'self', $requiredcap));
@@ -141,18 +141,18 @@ class tool_lp_api_testcase extends advanced_testcase {
         $sysctx = context_system::instance();
 
         $roleallow = create_role('Allow', 'allow', 'Allow read');
-        assign_capability('tool/lp:templateview', CAP_ALLOW, $roleallow, $sysctx->id);
+        assign_capability('moodle/competency:templateview', CAP_ALLOW, $roleallow, $sysctx->id);
         role_assign($roleallow, $user->id, $sysctx->id);
 
         $roleprevent = create_role('Prevent', 'prevent', 'Prevent read');
-        assign_capability('tool/lp:templateview', CAP_PROHIBIT, $roleprevent, $sysctx->id);
+        assign_capability('moodle/competency:templateview', CAP_PROHIBIT, $roleprevent, $sysctx->id);
         role_assign($roleprevent, $user->id, $cat2ctx->id);
 
         accesslib_clear_all_caches_for_unit_testing();
         $this->setUser($user);
-        $this->assertFalse(has_capability('tool/lp:templateview', $cat2ctx));
+        $this->assertFalse(has_capability('moodle/competency:templateview', $cat2ctx));
 
-        $requiredcap = array('tool/lp:templateview');
+        $requiredcap = array('moodle/competency:templateview');
 
         $expected = array();
         $this->assertEquals($expected, api::get_related_contexts($cat2ctx, 'self', $requiredcap));
@@ -417,17 +417,17 @@ class tool_lp_api_testcase extends advanced_testcase {
             'shortname' => 'manage'
         ));
 
-        assign_capability('tool/lp:planmanageowndraft', CAP_ALLOW, $manageowndraftrole, $syscontext->id);
-        assign_capability('tool/lp:planviewowndraft', CAP_ALLOW, $manageowndraftrole, $syscontext->id);
+        assign_capability('moodle/competency:planmanageowndraft', CAP_ALLOW, $manageowndraftrole, $syscontext->id);
+        assign_capability('moodle/competency:planviewowndraft', CAP_ALLOW, $manageowndraftrole, $syscontext->id);
 
-        assign_capability('tool/lp:planmanageown', CAP_ALLOW, $manageownrole, $syscontext->id);
-        assign_capability('tool/lp:planviewown', CAP_ALLOW, $manageownrole, $syscontext->id);
+        assign_capability('moodle/competency:planmanageown', CAP_ALLOW, $manageownrole, $syscontext->id);
+        assign_capability('moodle/competency:planviewown', CAP_ALLOW, $manageownrole, $syscontext->id);
 
-        assign_capability('tool/lp:planmanagedraft', CAP_ALLOW, $managedraftrole, $syscontext->id);
-        assign_capability('tool/lp:planviewdraft', CAP_ALLOW, $managedraftrole, $syscontext->id);
+        assign_capability('moodle/competency:planmanagedraft', CAP_ALLOW, $managedraftrole, $syscontext->id);
+        assign_capability('moodle/competency:planviewdraft', CAP_ALLOW, $managedraftrole, $syscontext->id);
 
-        assign_capability('tool/lp:planmanage', CAP_ALLOW, $managerole, $syscontext->id);
-        assign_capability('tool/lp:planview', CAP_ALLOW, $managerole, $syscontext->id);
+        assign_capability('moodle/competency:planmanage', CAP_ALLOW, $managerole, $syscontext->id);
+        assign_capability('moodle/competency:planview', CAP_ALLOW, $managerole, $syscontext->id);
 
         $dg->role_assign($manageowndraftrole, $usermanageowndraft->id, $syscontext->id);
         $dg->role_assign($manageownrole, $usermanageown->id, $syscontext->id);
@@ -855,9 +855,9 @@ class tool_lp_api_testcase extends advanced_testcase {
         $reviewerrole = $dg->create_role();
         $otheruserrole = $dg->create_role();
 
-        assign_capability('tool/lp:planmanageowndraft', CAP_ALLOW, $userrole, $syscontext->id);
-        assign_capability('tool/lp:planmanage', CAP_ALLOW, $reviewerrole, $syscontext->id);
-        assign_capability('tool/lp:planviewdraft', CAP_ALLOW, $reviewerrole, $syscontext->id);
+        assign_capability('moodle/competency:planmanageowndraft', CAP_ALLOW, $userrole, $syscontext->id);
+        assign_capability('moodle/competency:planmanage', CAP_ALLOW, $reviewerrole, $syscontext->id);
+        assign_capability('moodle/competency:planviewdraft', CAP_ALLOW, $reviewerrole, $syscontext->id);
         $dg->role_assign($userrole, $user->id, $syscontext->id);
         $dg->role_assign($reviewerrole, $reviewer->id, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
@@ -1496,10 +1496,10 @@ class tool_lp_api_testcase extends advanced_testcase {
             'name' => 'User manage own',
             'shortname' => 'manageown'
         ));
-        assign_capability('tool/lp:planmanageowndraft', CAP_ALLOW, $manageownrole, $syscontext->id);
-        assign_capability('tool/lp:planviewowndraft', CAP_ALLOW, $manageownrole, $syscontext->id);
-        assign_capability('tool/lp:planmanageown', CAP_ALLOW, $manageownrole, $syscontext->id);
-        assign_capability('tool/lp:planviewown', CAP_ALLOW, $manageownrole, $syscontext->id);
+        assign_capability('moodle/competency:planmanageowndraft', CAP_ALLOW, $manageownrole, $syscontext->id);
+        assign_capability('moodle/competency:planviewowndraft', CAP_ALLOW, $manageownrole, $syscontext->id);
+        assign_capability('moodle/competency:planmanageown', CAP_ALLOW, $manageownrole, $syscontext->id);
+        assign_capability('moodle/competency:planviewown', CAP_ALLOW, $manageownrole, $syscontext->id);
         $dg->role_assign($manageownrole, $user->id, $syscontext->id);
         $this->setUser($user);
 
@@ -1692,8 +1692,8 @@ class tool_lp_api_testcase extends advanced_testcase {
             'name' => 'User manage own',
             'shortname' => 'manageown'
         ));
-        assign_capability('tool/lp:planmanageowndraft', CAP_ALLOW, $managerole, $syscontext->id);
-        assign_capability('tool/lp:planmanageown', CAP_ALLOW, $managerole, $syscontext->id);
+        assign_capability('moodle/competency:planmanageowndraft', CAP_ALLOW, $managerole, $syscontext->id);
+        assign_capability('moodle/competency:planmanageown', CAP_ALLOW, $managerole, $syscontext->id);
         $dg->role_assign($managerole, $user->id, $syscontext->id);
         $this->setUser($user);
 
@@ -1741,8 +1741,8 @@ class tool_lp_api_testcase extends advanced_testcase {
             'name' => 'User view',
             'shortname' => 'view'
         ));
-        assign_capability('tool/lp:planviewdraft', CAP_ALLOW, $viewrole, $syscontext->id);
-        assign_capability('tool/lp:planview', CAP_ALLOW, $viewrole, $syscontext->id);
+        assign_capability('moodle/competency:planviewdraft', CAP_ALLOW, $viewrole, $syscontext->id);
+        assign_capability('moodle/competency:planview', CAP_ALLOW, $viewrole, $syscontext->id);
         $dg->role_assign($viewrole, $user->id, $syscontext->id);
         $this->setUser($user);
 
@@ -1844,7 +1844,7 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         $user = $dg->create_user();
         $role = $dg->create_role();
-        assign_capability('tool/lp:templatemanage', CAP_ALLOW, $role, $syscontext->id, true);
+        assign_capability('moodle/competency:templatemanage', CAP_ALLOW, $role, $syscontext->id, true);
         $dg->role_assign($role, $user->id, $syscontext->id);
 
         $cohortrole = $dg->create_role();
@@ -3819,22 +3819,22 @@ class tool_lp_api_testcase extends advanced_testcase {
         $studentrole = array_shift($studentarch);
 
         $gradablerole = $dg->create_role();
-        assign_capability('tool/lp:coursecompetencygradable', CAP_ALLOW, $gradablerole, $sysctx->id);
+        assign_capability('moodle/competency:coursecompetencygradable', CAP_ALLOW, $gradablerole, $sysctx->id);
 
         $notgradablerole = $dg->create_role();
-        assign_capability('tool/lp:coursecompetencygradable', CAP_PROHIBIT, $notgradablerole, $sysctx->id);
+        assign_capability('moodle/competency:coursecompetencygradable', CAP_PROHIBIT, $notgradablerole, $sysctx->id);
 
         $canviewucrole = $dg->create_role();
-        assign_capability('tool/lp:usercompetencyview', CAP_ALLOW, $canviewucrole, $sysctx->id);
+        assign_capability('moodle/competency:usercompetencyview', CAP_ALLOW, $canviewucrole, $sysctx->id);
 
         $cannotviewcomp = $dg->create_role();
-        assign_capability('tool/lp:competencyview', CAP_PROHIBIT, $cannotviewcomp, $sysctx->id);
+        assign_capability('moodle/competency:competencyview', CAP_PROHIBIT, $cannotviewcomp, $sysctx->id);
 
         $canmanagecomp = $dg->create_role();
-        assign_capability('tool/lp:competencymanage', CAP_ALLOW, $canmanagecomp, $sysctx->id);
+        assign_capability('moodle/competency:competencymanage', CAP_ALLOW, $canmanagecomp, $sysctx->id);
 
         $cangraderole = $dg->create_role();
-        assign_capability('tool/lp:competencygrade', CAP_ALLOW, $cangraderole, $sysctx->id);
+        assign_capability('moodle/competency:competencygrade', CAP_ALLOW, $cangraderole, $sysctx->id);
 
         // Enrol s1 and s2 as students in course 1.
         $dg->enrol_user($student1->id, $c1->id, $studentrole->id);

@@ -96,8 +96,8 @@ class course_competency_statistics_exporter extends exporter {
             'proficientcompetencypercentageformatted' => $proficientcompetencypercentageformatted,
             'leastproficient' => $competencies,
             'leastproficientcount' => count($competencies),
-            'canbegradedincourse' => has_capability('tool/lp:coursecompetencygradable', $this->related['context']),
-            'canmanagecoursecompetencies' => has_capability('tool/lp:coursecompetencymanage', $this->related['context'])
+            'canbegradedincourse' => has_capability('moodle/competency:coursecompetencygradable', $this->related['context']),
+            'canmanagecoursecompetencies' => has_capability('moodle/competency:coursecompetencymanage', $this->related['context'])
         );
     }
 }

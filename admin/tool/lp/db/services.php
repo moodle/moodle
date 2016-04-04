@@ -36,7 +36,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Creates new competency frameworks.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:competencymanage',
+        'capabilities' => 'moodle/competency:competencymanage',
         'ajax'         => true,
     ),
     'tool_lp_read_competency_framework' => array(
@@ -45,7 +45,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load a summary of a competency framework.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'moodle/competency:competencyview',
         'ajax'         => true,
     ),
     'tool_lp_duplicate_competency_framework' => array(
@@ -54,7 +54,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Duplicate a competency framework.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:competencymanage',
+        'capabilities' => 'moodle/competency:competencymanage',
         'ajax'         => true,
     ),
     'tool_lp_delete_competency_framework' => array(
@@ -63,7 +63,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Delete a competency framework.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:competencymanage',
+        'capabilities' => 'moodle/competency:competencymanage',
         'ajax'         => true,
     ),
     'tool_lp_update_competency_framework' => array(
@@ -72,7 +72,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Update a competency framework.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:competencymanage',
+        'capabilities' => 'moodle/competency:competencymanage',
         'ajax'         => true,
     ),
     'tool_lp_list_competency_frameworks' => array(
@@ -81,7 +81,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load a list of a competency frameworks.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'moodle/competency:competencyview',
         'ajax'         => true,
     ),
     'tool_lp_count_competency_frameworks' => array(
@@ -90,7 +90,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Count a list of a competency frameworks.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'moodle/competency:competencyview',
         'ajax'         => true,
     ),
     'tool_lp_competency_framework_viewed' => array(
@@ -99,7 +99,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Log event competency framework viewed',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'moodle/competency:competencyview',
         'ajax'         => true,
     ),
     'tool_lp_data_for_competency_frameworks_manage_page' => array(
@@ -108,7 +108,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load the data for the competency frameworks manage page template',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'moodle/competency:competencyview',
         'ajax'         => true,
     ),
     'tool_lp_create_competency' => array(
@@ -117,7 +117,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Creates new competencies.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:competencymanage',
+        'capabilities' => 'moodle/competency:competencymanage',
         'ajax'         => true,
     ),
     'tool_lp_read_competency' => array(
@@ -126,7 +126,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load a summary of a competency.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'moodle/competency:competencyview',
         'ajax'         => true,
     ),
     'tool_lp_competency_viewed' => array(
@@ -135,7 +135,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Log event competency viewed',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'moodle/competency:competencyview',
         'ajax'         => true,
     ),
     'tool_lp_delete_competency' => array(
@@ -144,7 +144,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Delete a competency.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:competencymanage',
+        'capabilities' => 'moodle/competency:competencymanage',
         'ajax'         => true,
     ),
     'tool_lp_update_competency' => array(
@@ -153,7 +153,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Update a competency.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:competencymanage',
+        'capabilities' => 'moodle/competency:competencymanage',
         'ajax'         => true,
     ),
     'tool_lp_data_for_competency_summary' => array(
@@ -162,7 +162,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load competency data for summary template.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'moodle/competency:competencyview',
         'ajax'         => true,
     ),
     'tool_lp_list_competencies' => array(
@@ -171,7 +171,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load a list of a competencies.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'moodle/competency:competencyview',
         'ajax'         => true,
     ),
     'tool_lp_list_competencies_in_template' => array(
@@ -180,7 +180,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load a list of a competencies for a given template.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'moodle/competency:competencyview',
         'ajax'         => true,
     ),
     'tool_lp_count_competencies' => array(
@@ -189,7 +189,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Count a list of a competencies.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'moodle/competency:competencyview',
         'ajax'         => true,
     ),
     'tool_lp_count_competencies_in_template' => array(
@@ -198,7 +198,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Count a list of a competencies for a given template.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'moodle/competency:competencyview',
         'ajax'         => true,
     ),
     'tool_lp_search_competencies' => array(
@@ -207,7 +207,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Search a list of a competencies.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'moodle/competency:competencyview',
         'ajax'         => true,
     ),
     'tool_lp_data_for_competencies_manage_page' => array(
@@ -216,7 +216,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load the data for the competencies manage page template',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'moodle/competency:competencyview',
         'ajax'         => true,
     ),
     'tool_lp_set_parent_competency' => array(
@@ -225,7 +225,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Set a new parent for a competency.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:competencymanage',
+        'capabilities' => 'moodle/competency:competencymanage',
         'ajax'         => true,
     ),
     'tool_lp_move_up_competency' => array(
@@ -234,7 +234,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Re-order a competency.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:competencymanage',
+        'capabilities' => 'moodle/competency:competencymanage',
         'ajax'         => true,
     ),
     'tool_lp_move_down_competency' => array(
@@ -243,7 +243,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Re-order a competency.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:competencymanage',
+        'capabilities' => 'moodle/competency:competencymanage',
         'ajax'         => true,
     ),
     'tool_lp_list_course_competencies' => array(
@@ -252,7 +252,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'List the competencies in a course',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:coursecompetencyview',
+        'capabilities' => 'moodle/competency:coursecompetencyview',
         'ajax'         => true,
     ),
     'tool_lp_list_courses_using_competency' => array(
@@ -261,7 +261,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'List the courses using a competency',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:coursecompetencyview',
+        'capabilities' => 'moodle/competency:coursecompetencyview',
         'ajax'         => true,
     ),
     'tool_lp_count_competencies_in_course' => array(
@@ -270,7 +270,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'List the competencies in a course',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:coursecompetencyview',
+        'capabilities' => 'moodle/competency:coursecompetencyview',
         'ajax'         => true,
     ),
     'tool_lp_count_courses_using_competency' => array(
@@ -279,7 +279,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'List the courses using a competency',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:coursecompetencyview',
+        'capabilities' => 'moodle/competency:coursecompetencyview',
         'ajax'         => true,
     ),
     'tool_lp_add_competency_to_course' => array(
@@ -288,7 +288,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Add the competency to a course',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:coursecompetencymanage',
+        'capabilities' => 'moodle/competency:coursecompetencymanage',
         'ajax'         => true,
     ),
     'tool_lp_add_competency_to_template' => array(
@@ -297,7 +297,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Add the competency to a template',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:templatemanage',
+        'capabilities' => 'moodle/competency:templatemanage',
         'ajax'         => true,
     ),
     'tool_lp_remove_competency_from_course' => array(
@@ -306,7 +306,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Remove a competency from a course',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:coursecompetencymanage',
+        'capabilities' => 'moodle/competency:coursecompetencymanage',
         'ajax'         => true,
     ),
     'tool_lp_set_course_competency_ruleoutcome' => array(
@@ -315,7 +315,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Modify the ruleoutcome value for course competency',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:coursecompetencymanage',
+        'capabilities' => 'moodle/competency:coursecompetencymanage',
         'ajax'         => true,
     ),
     'tool_lp_remove_competency_from_template' => array(
@@ -324,7 +324,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Remove a competency from a template',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:templatemanage',
+        'capabilities' => 'moodle/competency:templatemanage',
         'ajax'         => true,
     ),
     'tool_lp_data_for_course_competencies_page' => array(
@@ -333,7 +333,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load the data for the course competencies page template.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:coursecompetencyview',
+        'capabilities' => 'moodle/competency:coursecompetencyview',
         'ajax'         => true,
     ),
     'tool_lp_data_for_template_competencies_page' => array(
@@ -342,7 +342,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load the data for the template competencies page template.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:templateview',
+        'capabilities' => 'moodle/competency:templateview',
         'ajax'         => true,
     ),
     'tool_lp_reorder_course_competency' => array(
@@ -351,7 +351,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Move a course competency to a new relative sort order.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:coursecompetencymanage',
+        'capabilities' => 'moodle/competency:coursecompetencymanage',
         'ajax'         => true,
     ),
     'tool_lp_reorder_template_competency' => array(
@@ -360,7 +360,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Move a template competency to a new relative sort order.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:templatemanage',
+        'capabilities' => 'moodle/competency:templatemanage',
         'ajax'         => true,
     ),
     'tool_lp_create_template' => array(
@@ -369,7 +369,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Creates new learning plan templates.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:templatemanage',
+        'capabilities' => 'moodle/competency:templatemanage',
         'ajax'         => true,
     ),
     'tool_lp_duplicate_template' => array(
@@ -378,7 +378,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Duplicate learning plan template.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:templatemanage',
+        'capabilities' => 'moodle/competency:templatemanage',
         'ajax'         => true,
     ),
     'tool_lp_read_template' => array(
@@ -387,7 +387,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load a summary of a learning plan template.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:templateview',
+        'capabilities' => 'moodle/competency:templateview',
         'ajax'         => true,
     ),
     'tool_lp_delete_template' => array(
@@ -396,7 +396,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Delete a learning plan template.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:templatemanage',
+        'capabilities' => 'moodle/competency:templatemanage',
         'ajax'         => true,
     ),
     'tool_lp_update_template' => array(
@@ -405,7 +405,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Update a learning plan template.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:templatemanage',
+        'capabilities' => 'moodle/competency:templatemanage',
         'ajax'         => true,
     ),
     'tool_lp_list_templates' => array(
@@ -414,7 +414,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load a list of a learning plan templates.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:templateview',
+        'capabilities' => 'moodle/competency:templateview',
         'ajax'         => true,
     ),
     'tool_lp_list_templates_using_competency' => array(
@@ -423,7 +423,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load a list of a learning plan templates for a given competency.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:templateview',
+        'capabilities' => 'moodle/competency:templateview',
         'ajax'         => true,
     ),
     'tool_lp_count_templates' => array(
@@ -432,7 +432,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Count a list of a learning plan templates.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:templateview',
+        'capabilities' => 'moodle/competency:templateview',
         'ajax'         => true,
     ),
     'tool_lp_count_templates_using_competency' => array(
@@ -441,7 +441,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Count a list of a learning plan templates for a given competency.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:templateview',
+        'capabilities' => 'moodle/competency:templateview',
         'ajax'         => true,
     ),
     'tool_lp_data_for_templates_manage_page' => array(
@@ -450,7 +450,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load the data for the learning plan templates manage page template',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:templateview',
+        'capabilities' => 'moodle/competency:templateview',
         'ajax'         => true,
     ),
     'tool_lp_create_plan' => array(
@@ -459,7 +459,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Creates a learning plan.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:planmanage',
+        'capabilities' => 'moodle/competency:planmanage',
         'ajax'         => true,
     ),
     'tool_lp_update_plan' => array(
@@ -468,7 +468,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Updates a learning plan.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:planmanage',
+        'capabilities' => 'moodle/competency:planmanage',
         'ajax'         => true,
     ),
     'tool_lp_complete_plan' => array(
@@ -477,7 +477,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Complete learning plan.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:planmanage',
+        'capabilities' => 'moodle/competency:planmanage',
         'ajax'         => true,
     ),
     'tool_lp_reopen_plan' => array(
@@ -486,7 +486,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Reopen learning plan.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:planmanage',
+        'capabilities' => 'moodle/competency:planmanage',
         'ajax'         => true,
     ),
     'tool_lp_read_plan' => array(
@@ -495,7 +495,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load a learning plan.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:planviewown',
+        'capabilities' => 'moodle/competency:planviewown',
         'ajax'         => true,
     ),
     'tool_lp_delete_plan' => array(
@@ -504,7 +504,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Delete a learning plan.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:planmanage',
+        'capabilities' => 'moodle/competency:planmanage',
         'ajax'         => true,
     ),
     'tool_lp_list_user_plans' => array(
@@ -513,7 +513,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'List a user\'s learning plans.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:planviewown',
+        'capabilities' => 'moodle/competency:planviewown',
         'ajax'         => true,
     ),
     'tool_lp_data_for_plans_page' => array(
@@ -522,7 +522,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load the data for the plans page template',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:planviewown',
+        'capabilities' => 'moodle/competency:planviewown',
         'ajax'         => true,
     ),
     'tool_lp_data_for_plan_page' => array(
@@ -531,7 +531,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load the data for the plan page template.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:planview',
+        'capabilities' => 'moodle/competency:planview',
         'ajax'         => true,
     ),
     'tool_lp_list_plan_competencies' => array(
@@ -540,7 +540,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'List the competencies in a plan',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:planviewown',
+        'capabilities' => 'moodle/competency:planviewown',
         'ajax'         => true,
     ),
     'tool_lp_add_competency_to_plan' => array(
@@ -549,7 +549,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Add the competency to a learning plan',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:planmanage',
+        'capabilities' => 'moodle/competency:planmanage',
         'ajax'         => true,
     ),
     'tool_lp_remove_competency_from_plan' => array(
@@ -558,7 +558,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Remove the competency from a learning plan',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:planmanage',
+        'capabilities' => 'moodle/competency:planmanage',
         'ajax'         => true,
     ),
     'tool_lp_reorder_plan_competency' => array(
@@ -567,7 +567,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Move a plan competency to a new relative sort order.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:planmanage',
+        'capabilities' => 'moodle/competency:planmanage',
         'ajax'         => true,
     ),
     'tool_lp_plan_request_review' => array(
@@ -576,7 +576,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Request for a plan to be reviewed.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:planmanagedraft',
+        'capabilities' => 'moodle/competency:planmanagedraft',
         'ajax'         => true,
     ),
     'tool_lp_plan_start_review' => array(
@@ -585,7 +585,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Start the review of a plan.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:planmanage',
+        'capabilities' => 'moodle/competency:planmanage',
         'ajax'         => true,
     ),
     'tool_lp_plan_stop_review' => array(
@@ -594,7 +594,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Stop the review of a plan.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:planmanage',
+        'capabilities' => 'moodle/competency:planmanage',
         'ajax'         => true,
     ),
     'tool_lp_plan_cancel_review_request' => array(
@@ -603,7 +603,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Cancel the review of a plan.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:planmanagedraft',
+        'capabilities' => 'moodle/competency:planmanagedraft',
         'ajax'         => true,
     ),
     'tool_lp_approve_plan' => array(
@@ -612,7 +612,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Approve a plan.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:planmanage',
+        'capabilities' => 'moodle/competency:planmanage',
         'ajax'         => true,
     ),
     'tool_lp_unapprove_plan' => array(
@@ -621,7 +621,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Unapprove a plan.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:planmanage',
+        'capabilities' => 'moodle/competency:planmanage',
         'ajax'         => true,
     ),
      'tool_lp_template_has_related_data' => array(
@@ -630,7 +630,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Check if a template has related data',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:templateview',
+        'capabilities' => 'moodle/competency:templateview',
         'ajax'         => true,
     ),
     'tool_lp_get_scale_values' => array(
@@ -639,7 +639,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Fetch the values for a specific scale',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencymanage',
+        'capabilities' => 'moodle/competency:competencymanage',
         'ajax'         => true,
     ),
     'tool_lp_add_related_competency' => array(
@@ -648,7 +648,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Adds a related competency',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:competencymanage',
+        'capabilities' => 'moodle/competency:competencymanage',
         'ajax'         => true,
     ),
     'tool_lp_remove_related_competency' => array(
@@ -657,7 +657,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Remove a related competency',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:competencymanage',
+        'capabilities' => 'moodle/competency:competencymanage',
         'ajax'         => true,
     ),
     'tool_lp_data_for_related_competencies_section' => array(
@@ -666,7 +666,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load the data for the related competencies template.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:competencyview',
+        'capabilities' => 'moodle/competency:competencyview',
         'ajax'         => true,
     ),
     'tool_lp_search_users' => array(
@@ -695,7 +695,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Read an evidence of prior learning.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:userevidenceview',
+        'capabilities' => 'moodle/competency:userevidenceview',
         'ajax'         => true,
     ),
     'tool_lp_delete_user_evidence' => array(
@@ -704,7 +704,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Delete an evidence of prior learning.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:userevidencemanageown',
+        'capabilities' => 'moodle/competency:userevidencemanageown',
         'ajax'         => true,
     ),
     'tool_lp_data_for_user_evidence_list_page' => array(
@@ -713,7 +713,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load the data for the user evidence list page template',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:userevidenceview',
+        'capabilities' => 'moodle/competency:userevidenceview',
         'ajax'         => true,
     ),
     'tool_lp_data_for_user_evidence_page' => array(
@@ -722,7 +722,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load the data for the user evidence page template',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:userevidenceview',
+        'capabilities' => 'moodle/competency:userevidenceview',
         'ajax'         => true,
     ),
     'tool_lp_create_user_evidence_competency' => array(
@@ -731,7 +731,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Create an evidence of prior learning relationship with a competency.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:userevidencemanageown, tool/lp:competencyview',
+        'capabilities' => 'moodle/competency:userevidencemanageown, moodle/competency:competencyview',
         'ajax'         => true,
     ),
     'tool_lp_delete_user_evidence_competency' => array(
@@ -740,7 +740,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Delete an evidence of prior learning relationship with a competency.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:userevidencemanageown',
+        'capabilities' => 'moodle/competency:userevidencemanageown',
         'ajax'         => true,
     ),
 
@@ -751,7 +751,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Cancel a review request.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:userevidencemanageown',
+        'capabilities' => 'moodle/competency:userevidencemanageown',
         'ajax'         => true,
     ),
     'tool_lp_user_competency_request_review' => array(
@@ -760,7 +760,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Request a review.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:userevidencemanageown',
+        'capabilities' => 'moodle/competency:userevidencemanageown',
         'ajax'         => true,
     ),
     'tool_lp_user_competency_start_review' => array(
@@ -769,7 +769,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Start a review.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:competencygrade',
+        'capabilities' => 'moodle/competency:competencygrade',
         'ajax'         => true,
     ),
     'tool_lp_user_competency_stop_review' => array(
@@ -778,7 +778,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Stop a review.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:competencygrade',
+        'capabilities' => 'moodle/competency:competencygrade',
         'ajax'         => true,
     ),
 
@@ -788,7 +788,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load a summary of a user competency.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:planview',
+        'capabilities' => 'moodle/competency:planview',
         'ajax'         => true,
     ),
     'tool_lp_user_competency_viewed' => array(
@@ -797,7 +797,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Log the user competency viewed event.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:usercompetencyview',
+        'capabilities' => 'moodle/competency:usercompetencyview',
         'ajax'         => true,
     ),
     'tool_lp_user_competency_viewed_in_plan' => array(
@@ -806,7 +806,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Log the user competency viewed in plan event.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:usercompetencyview',
+        'capabilities' => 'moodle/competency:usercompetencyview',
         'ajax'         => true,
     ),
     'tool_lp_user_competency_viewed_in_course' => array(
@@ -815,7 +815,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Log the user competency viewed in course event',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:usercompetencyview',
+        'capabilities' => 'moodle/competency:usercompetencyview',
         'ajax'         => true,
     ),
     'tool_lp_user_competency_plan_viewed' => array(
@@ -824,7 +824,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Log the user competency plan viewed event.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:usercompetencyview',
+        'capabilities' => 'moodle/competency:usercompetencyview',
         'ajax'         => true,
     ),
     'tool_lp_grade_competency' => array(
@@ -833,7 +833,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Grade a competency.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:competencygrade',
+        'capabilities' => 'moodle/competency:competencygrade',
         'ajax'         => true,
     ),
     'tool_lp_grade_competency_in_plan' => array(
@@ -842,7 +842,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Grade a competency from the user plan page.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:competencygrade',
+        'capabilities' => 'moodle/competency:competencygrade',
         'ajax'         => true,
     ),
     'tool_lp_data_for_user_competency_summary_in_plan' => array(
@@ -851,7 +851,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load a summary of a user competency.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:planview',
+        'capabilities' => 'moodle/competency:planview',
         'ajax'         => true,
     ),
     'tool_lp_grade_competency_in_course' => array(
@@ -860,7 +860,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Grade a competency from the course page.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:competencygrade',
+        'capabilities' => 'moodle/competency:competencygrade',
         'ajax'         => true,
     ),
     'tool_lp_data_for_user_competency_summary_in_course' => array(
@@ -869,7 +869,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load a summary of a user competency.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:coursecompetencyview',
+        'capabilities' => 'moodle/competency:coursecompetencyview',
         'ajax'         => true,
     ),
     'tool_lp_unlink_plan_from_template' => array(
@@ -878,7 +878,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Unlink a plan form it template.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:planmanage',
+        'capabilities' => 'moodle/competency:planmanage',
         'ajax'         => true,
     ),
     'tool_lp_view_template' => array(
@@ -887,7 +887,7 @@ $functions = array(
         'classpath'     => '',
         'description'   => 'Log event template viewed',
         'type'          => 'read',
-        'capabilities'  => 'tool/lp:templateview',
+        'capabilities'  => 'moodle/competency:templateview',
         'ajax'          => true,
     ),
     'tool_lp_request_review_of_user_evidence_linked_competencies' => array(
@@ -896,7 +896,7 @@ $functions = array(
         'classpath'     => '',
         'description'   => 'Send user evidence competencies in review',
         'type'          => 'write',
-        'capabilities'  => 'tool/lp:userevidencemanageown',
+        'capabilities'  => 'moodle/competency:userevidencemanageown',
         'ajax'          => true,
     ),
     'tool_lp_update_course_competency_settings' => array(
@@ -905,7 +905,7 @@ $functions = array(
         'classpath'     => '',
         'description'   => 'Update the course competency settings',
         'type'          => 'write',
-        'capabilities'  => 'tool/lp:coursecompetencyconfigure',
+        'capabilities'  => 'moodle/competency:coursecompetencyconfigure',
         'ajax'          => true,
     ),
 );

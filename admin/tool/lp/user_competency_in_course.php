@@ -38,14 +38,14 @@ $course = $DB->get_record('course', array('id' => $courseid));
 $context = context_course::instance($courseid);
 $currentgroup = groups_get_course_group($course, true);
 if (empty($userid)) {
-    $gradable = get_enrolled_users($context, 'tool/lp:coursecompetencygradable', $currentgroup, 'u.id', null, 0, 1);
+    $gradable = get_enrolled_users($context, 'moodle/competency:coursecompetencygradable', $currentgroup, 'u.id', null, 0, 1);
     if (empty($gradable)) {
         $userid = 0;
     } else {
         $userid = array_pop($gradable)->id;
     }
 } else {
-    $gradable = get_enrolled_users($context, 'tool/lp:coursecompetencygradable', $currentgroup, 'u.id');
+    $gradable = get_enrolled_users($context, 'moodle/competency:coursecompetencygradable', $currentgroup, 'u.id');
     if (count($gradable) == 0) {
         $userid = 0;
     } else if (!in_array($userid, array_keys($gradable))) {

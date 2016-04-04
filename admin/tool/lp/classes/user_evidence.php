@@ -170,9 +170,9 @@ class user_evidence extends persistent {
         global $USER;
         $context = context_user::instance($evidenceuserid);
 
-        $capabilities = array('tool/lp:userevidencemanage');
+        $capabilities = array('moodle/competency:userevidencemanage');
         if ($context->instanceid == $USER->id) {
-            $capabilities[] = 'tool/lp:userevidencemanageown';
+            $capabilities[] = 'moodle/competency:userevidencemanageown';
         }
 
         return has_any_capability($capabilities, $context);
@@ -187,7 +187,7 @@ class user_evidence extends persistent {
     public static function can_read_user($evidenceuserid) {
         $context = context_user::instance($evidenceuserid);
 
-        $capabilities = array('tool/lp:userevidenceview');
+        $capabilities = array('moodle/competency:userevidenceview');
 
         return has_any_capability($capabilities, $context) || self::can_manage_user($evidenceuserid);
     }

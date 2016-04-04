@@ -35,7 +35,7 @@ $context = $template->get_context();
 $canreadtemplate = $template->can_read();
 $canmanagetemplate = $template->can_manage();
 if (!$canreadtemplate) {
-    throw new required_capability_exception($context, 'tool/lp:templateview', 'nopermissions', '');
+    throw new required_capability_exception($context, 'moodle/competency:templateview', 'nopermissions', '');
 }
 
 // Set up the page.

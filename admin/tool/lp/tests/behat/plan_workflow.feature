@@ -40,19 +40,19 @@ Feature: Manage plan workflow
     And I log in as "admin"
     And I set the following system permissions of "User manage own draft plan role" role:
       | capability | permission |
-      | tool/lp:planmanageowndraft | Allow |
+      | moodle/competency:planmanageowndraft | Allow |
     And I set the following system permissions of "User manage own plan role" role:
       | capability | permission |
-      | tool/lp:planmanageowndraft | Allow |
-      | tool/lp:planmanageown | Allow |
+      | moodle/competency:planmanageowndraft | Allow |
+      | moodle/competency:planmanageown | Allow |
     And I set the following system permissions of "Manager all plans role" role:
       | capability | permission |
-      | tool/lp:planmanage | Allow |
-      | tool/lp:planmanagedraft | Allow |
-      | tool/lp:planmanageowndraft | Allow |
-      | tool/lp:planview | Allow |
-      | tool/lp:planreview | Allow |
-      | tool/lp:planrequestreview | Allow |
+      | moodle/competency:planmanage | Allow |
+      | moodle/competency:planmanagedraft | Allow |
+      | moodle/competency:planmanageowndraft | Allow |
+      | moodle/competency:planview | Allow |
+      | moodle/competency:planreview | Allow |
+      | moodle/competency:planrequestreview | Allow |
       | block/lp:myaddinstance | Allow |
     And I log out
 

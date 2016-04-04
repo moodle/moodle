@@ -37,7 +37,7 @@ if (\tool_lp\api::is_enabled()) {
         'toollpcompetencies',
         get_string('competencyframeworks', 'tool_lp'),
         new moodle_url('/admin/tool/lp/competencyframeworks.php', array('pagecontextid' => context_system::instance()->id)),
-        array('tool/lp:competencymanage')
+        array('moodle/competency:competencymanage')
     );
     $ADMIN->add($parentname, $temp);
 
@@ -46,7 +46,7 @@ if (\tool_lp\api::is_enabled()) {
         'toollplearningplans',
         get_string('templates', 'tool_lp'),
         new moodle_url('/admin/tool/lp/learningplans.php', array('pagecontextid' => context_system::instance()->id)),
-        array('tool/lp:templatemanage')
+        array('moodle/competency:templatemanage')
     );
     $ADMIN->add($parentname, $temp);
 }

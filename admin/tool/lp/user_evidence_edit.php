@@ -68,12 +68,12 @@ $customdata = array(
 // Check if user has permissions to manage user evidence.
 if ($userevidence != null) {
     if (!$userevidence->can_manage()) {
-        throw new required_capability_exception($context, 'tool/lp:userevidencemanage', 'nopermissions', '');
+        throw new required_capability_exception($context, 'moodle/competency:userevidencemanage', 'nopermissions', '');
     }
     $customdata['evidence'] = $userevidence;
 
 } else if (!\tool_lp\user_evidence::can_manage_user($userid)) {
-    throw new required_capability_exception($context, 'tool/lp:userevidencemanage', 'nopermissions', '');
+    throw new required_capability_exception($context, 'moodle/competency:userevidencemanage', 'nopermissions', '');
 }
 
 $form = new \tool_lp\form\user_evidence($url->out(false), $customdata);

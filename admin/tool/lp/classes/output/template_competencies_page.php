@@ -78,8 +78,8 @@ class template_competencies_page implements renderable, templatable {
         $this->template = $template;
         $this->templatestatistics = new template_statistics($template->get_id());
         $this->competencies = api::list_competencies_in_template($template);
-        $this->canmanagecompetencyframeworks = has_capability('tool/lp:competencymanage', $this->pagecontext);
-        $this->canmanagetemplatecompetencies = has_capability('tool/lp:templatemanage', $this->pagecontext);
+        $this->canmanagecompetencyframeworks = has_capability('moodle/competency:competencymanage', $this->pagecontext);
+        $this->canmanagetemplatecompetencies = has_capability('moodle/competency:templatemanage', $this->pagecontext);
         $this->manageurl = new moodle_url('/admin/tool/lp/competencyframeworks.php',
             array('pagecontextid' => $this->pagecontext->id));
     }

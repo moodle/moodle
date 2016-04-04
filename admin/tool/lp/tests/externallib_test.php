@@ -105,39 +105,39 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $authrole = array_pop($userroles);
 
         // Reset all default authenticated users permissions.
-        unassign_capability('tool/lp:competencygrade', $authrole->id);
-        unassign_capability('tool/lp:competencymanage', $authrole->id);
-        unassign_capability('tool/lp:competencyview', $authrole->id);
-        unassign_capability('tool/lp:planmanage', $authrole->id);
-        unassign_capability('tool/lp:planmanagedraft', $authrole->id);
-        unassign_capability('tool/lp:planmanageown', $authrole->id);
-        unassign_capability('tool/lp:planview', $authrole->id);
-        unassign_capability('tool/lp:planviewdraft', $authrole->id);
-        unassign_capability('tool/lp:planviewown', $authrole->id);
-        unassign_capability('tool/lp:planviewowndraft', $authrole->id);
-        unassign_capability('tool/lp:templatemanage', $authrole->id);
-        unassign_capability('tool/lp:templateview', $authrole->id);
+        unassign_capability('moodle/competency:competencygrade', $authrole->id);
+        unassign_capability('moodle/competency:competencymanage', $authrole->id);
+        unassign_capability('moodle/competency:competencyview', $authrole->id);
+        unassign_capability('moodle/competency:planmanage', $authrole->id);
+        unassign_capability('moodle/competency:planmanagedraft', $authrole->id);
+        unassign_capability('moodle/competency:planmanageown', $authrole->id);
+        unassign_capability('moodle/competency:planview', $authrole->id);
+        unassign_capability('moodle/competency:planviewdraft', $authrole->id);
+        unassign_capability('moodle/competency:planviewown', $authrole->id);
+        unassign_capability('moodle/competency:planviewowndraft', $authrole->id);
+        unassign_capability('moodle/competency:templatemanage', $authrole->id);
+        unassign_capability('moodle/competency:templateview', $authrole->id);
         unassign_capability('moodle/cohort:manage', $authrole->id);
-        unassign_capability('tool/lp:coursecompetencyconfigure', $authrole->id);
+        unassign_capability('moodle/competency:coursecompetencyconfigure', $authrole->id);
 
         // Creating specific roles.
         $this->creatorrole = create_role('Creator role', 'creatorrole', 'learning plan creator role description');
         $this->userrole = create_role('User role', 'userrole', 'learning plan user role description');
 
-        assign_capability('tool/lp:competencymanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
-        assign_capability('tool/lp:competencycompetencyconfigure', CAP_ALLOW, $this->creatorrole, $syscontext->id);
-        assign_capability('tool/lp:competencyview', CAP_ALLOW, $this->userrole, $syscontext->id);
-        assign_capability('tool/lp:planmanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
-        assign_capability('tool/lp:planmanagedraft', CAP_ALLOW, $this->creatorrole, $syscontext->id);
-        assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->creatorrole, $syscontext->id);
-        assign_capability('tool/lp:planview', CAP_ALLOW, $this->creatorrole, $syscontext->id);
-        assign_capability('tool/lp:planviewdraft', CAP_ALLOW, $this->creatorrole, $syscontext->id);
-        assign_capability('tool/lp:templatemanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
-        assign_capability('tool/lp:competencygrade', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('moodle/competency:competencymanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('moodle/competency:competencycompetencyconfigure', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('moodle/competency:competencyview', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('moodle/competency:planmanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('moodle/competency:planmanagedraft', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('moodle/competency:planmanageown', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('moodle/competency:planview', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('moodle/competency:planviewdraft', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('moodle/competency:templatemanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('moodle/competency:competencygrade', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('moodle/cohort:manage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
-        assign_capability('tool/lp:templateview', CAP_ALLOW, $this->userrole, $syscontext->id);
-        assign_capability('tool/lp:planviewown', CAP_ALLOW, $this->userrole, $syscontext->id);
-        assign_capability('tool/lp:planviewowndraft', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('moodle/competency:templateview', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('moodle/competency:planviewown', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('moodle/competency:planviewowndraft', CAP_ALLOW, $this->userrole, $syscontext->id);
 
         role_assign($this->creatorrole, $creator->id, $syscontext->id);
         role_assign($this->creatorrole, $catcreator->id, $catcontext->id);
@@ -1170,7 +1170,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
 
-        assign_capability('tool/lp:planmanageowndraft', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('moodle/competency:planmanageowndraft', CAP_ALLOW, $this->userrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         $this->setUser($this->user);
@@ -1190,7 +1190,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $this->assertTrue(true);
         }
 
-        assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('moodle/competency:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         $plan3 = $this->create_plan(4, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
@@ -1207,8 +1207,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
 
-        unassign_capability('tool/lp:planmanageown', $this->userrole, $syscontext->id);
-        unassign_capability('tool/lp:planmanageowndraft', $this->userrole, $syscontext->id);
+        unassign_capability('moodle/competency:planmanageown', $this->userrole, $syscontext->id);
+        unassign_capability('moodle/competency:planmanageowndraft', $this->userrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         try {
@@ -1230,8 +1230,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $this->setUser($this->user);
 
-        assign_capability('tool/lp:planmanageowndraft', CAP_ALLOW, $this->userrole, $syscontext->id);
-        assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('moodle/competency:planmanageowndraft', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('moodle/competency:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         $this->setUser($this->user);
@@ -1252,8 +1252,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $this->setUser($this->user);
 
-        assign_capability('tool/lp:planmanageowndraft', CAP_ALLOW, $this->userrole, $syscontext->id);
-        assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('moodle/competency:planmanageowndraft', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('moodle/competency:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         $this->setUser($this->user);
@@ -1319,9 +1319,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $plan1->commentarea['canview'] = true;
 
         // Prevent the user from seeing their own non-draft plans.
-        assign_capability('tool/lp:plancommentown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
-        assign_capability('tool/lp:planviewown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
-        assign_capability('tool/lp:planviewowndraft', CAP_ALLOW, $this->userrole, $syscontext->id, true);
+        assign_capability('moodle/competency:plancommentown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
+        assign_capability('moodle/competency:planviewown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
+        assign_capability('moodle/competency:planviewowndraft', CAP_ALLOW, $this->userrole, $syscontext->id, true);
         accesslib_clear_all_caches_for_unit_testing();
 
         $this->assertEquals((array)$plan1, external::read_plan($plan1->id));
@@ -1340,9 +1340,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         }
 
         // Allow user to see their plan.
-        assign_capability('tool/lp:plancommentown', CAP_ALLOW, $this->userrole, $syscontext->id, true);
-        assign_capability('tool/lp:planviewown', CAP_ALLOW, $this->userrole, $syscontext->id, true);
-        assign_capability('tool/lp:planmanageowndraft', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
+        assign_capability('moodle/competency:plancommentown', CAP_ALLOW, $this->userrole, $syscontext->id, true);
+        assign_capability('moodle/competency:planviewown', CAP_ALLOW, $this->userrole, $syscontext->id, true);
+        assign_capability('moodle/competency:planmanageowndraft', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
         accesslib_clear_all_caches_for_unit_testing();
 
         $plan1->commentarea['canpost'] = true;
@@ -1360,9 +1360,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals((array)$plan3, external::read_plan($plan3->id));
 
         // Allow use to manage their own draft plan.
-        assign_capability('tool/lp:planviewown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
-        assign_capability('tool/lp:planmanageown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
-        assign_capability('tool/lp:planmanageowndraft', CAP_ALLOW, $this->userrole, $syscontext->id, true);
+        assign_capability('moodle/competency:planviewown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
+        assign_capability('moodle/competency:planmanageown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
+        assign_capability('moodle/competency:planmanageowndraft', CAP_ALLOW, $this->userrole, $syscontext->id, true);
         accesslib_clear_all_caches_for_unit_testing();
 
         $plan1->canmanage = true;
@@ -1384,9 +1384,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         }
 
         // Allow use to manage their plan.
-        assign_capability('tool/lp:planviewown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
-        assign_capability('tool/lp:planmanageowndraft', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
-        assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id, true);
+        assign_capability('moodle/competency:planviewown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
+        assign_capability('moodle/competency:planmanageowndraft', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
+        assign_capability('moodle/competency:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id, true);
         accesslib_clear_all_caches_for_unit_testing();
 
         $plan1->canmanage = false;
@@ -1423,7 +1423,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $this->assertTrue(external::delete_plan($plan1->id));
 
-        unassign_capability('tool/lp:planmanage', $this->creatorrole, $syscontext->id);
+        unassign_capability('moodle/competency:planmanage', $this->creatorrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         try {
@@ -1443,7 +1443,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
 
-        assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('moodle/competency:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         $this->assertTrue(external::delete_plan($plan2->id));
@@ -1585,7 +1585,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, external::count_competencies_in_template($template->id));
 
         // Unassign capability.
-        unassign_capability('tool/lp:templatemanage', $this->creatorrole, $syscontext->id);
+        unassign_capability('moodle/competency:templatemanage', $this->creatorrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         // Check we can not add the competency now.
@@ -1622,7 +1622,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(0, external::count_competencies_in_template($template->id));
 
         // Unassign capability.
-        unassign_capability('tool/lp:templatemanage', $this->creatorrole, $syscontext->id);
+        unassign_capability('moodle/competency:templatemanage', $this->creatorrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         // Check we can not remove the competency now.
@@ -1848,10 +1848,10 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $cattemplate = $this->create_template(2, false);
 
         // User without permissions to read in system.
-        assign_capability('tool/lp:templateview', CAP_PROHIBIT, $this->userrole, $syscontextid, true);
+        assign_capability('moodle/competency:templateview', CAP_PROHIBIT, $this->userrole, $syscontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
         $this->setUser($this->user);
-        $this->assertFalse(has_capability('tool/lp:templateview', context_system::instance()));
+        $this->assertFalse(has_capability('moodle/competency:templateview', context_system::instance()));
         try {
             external::read_template($systemplate->id);
             $this->fail('Invalid permissions');
@@ -1866,11 +1866,11 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         }
 
         // User with permissions to read in a category.
-        assign_capability('tool/lp:templateview', CAP_PREVENT, $this->userrole, $syscontextid, true);
-        assign_capability('tool/lp:templateview', CAP_ALLOW, $this->userrole, $catcontextid, true);
+        assign_capability('moodle/competency:templateview', CAP_PREVENT, $this->userrole, $syscontextid, true);
+        assign_capability('moodle/competency:templateview', CAP_ALLOW, $this->userrole, $catcontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
-        $this->assertFalse(has_capability('tool/lp:templateview', context_system::instance()));
-        $this->assertTrue(has_capability('tool/lp:templateview', context_coursecat::instance($this->category->id)));
+        $this->assertFalse(has_capability('moodle/competency:templateview', context_system::instance()));
+        $this->assertTrue(has_capability('moodle/competency:templateview', context_coursecat::instance($this->category->id)));
         try {
             external::read_template($systemplate->id);
             $this->fail('Invalid permissions');
@@ -1889,9 +1889,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(userdate(0), $result['duedateformatted']);
 
         // User with permissions to read in the system.
-        assign_capability('tool/lp:templateview', CAP_ALLOW, $this->userrole, $syscontextid, true);
+        assign_capability('moodle/competency:templateview', CAP_ALLOW, $this->userrole, $syscontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
-        $this->assertTrue(has_capability('tool/lp:templateview', context_system::instance()));
+        $this->assertTrue(has_capability('moodle/competency:templateview', context_system::instance()));
         $result = external::read_template($systemplate->id);
         $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($systemplate->id, $result['id']);
@@ -2068,7 +2068,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // User without permission.
         $this->setUser($this->user);
-        assign_capability('tool/lp:templateview', CAP_PROHIBIT, $this->userrole, $syscontextid, true);
+        assign_capability('moodle/competency:templateview', CAP_PROHIBIT, $this->userrole, $syscontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
         try {
             external::list_templates('id', 'ASC', 0, 10, array('contextid' => $syscontextid), 'children', false);
@@ -2078,8 +2078,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         }
 
         // User with category permissions.
-        assign_capability('tool/lp:templateview', CAP_PREVENT, $this->userrole, $syscontextid, true);
-        assign_capability('tool/lp:templateview', CAP_ALLOW, $this->userrole, $catcontextid, true);
+        assign_capability('moodle/competency:templateview', CAP_PREVENT, $this->userrole, $syscontextid, true);
+        assign_capability('moodle/competency:templateview', CAP_ALLOW, $this->userrole, $catcontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
         $result = external::list_templates('id', 'ASC', 0, 10, array('contextid' => $syscontextid), 'children', false);
         $result = external_api::clean_returnvalue(external::list_templates_returns(), $result);
@@ -2088,7 +2088,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($cat2->id, $result[1]['id']);
 
         // User with system permissions.
-        assign_capability('tool/lp:templateview', CAP_ALLOW, $this->userrole, $syscontextid, true);
+        assign_capability('moodle/competency:templateview', CAP_ALLOW, $this->userrole, $syscontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
         $result = external::list_templates('id', 'DESC', 0, 3, array('contextid' => $catcontextid), 'parents', false);
         $result = external_api::clean_returnvalue(external::list_templates_returns(), $result);
@@ -2159,7 +2159,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // User without permission.
         $this->setUser($this->user);
-        assign_capability('tool/lp:templateview', CAP_PROHIBIT, $this->userrole, $syscontextid, true);
+        assign_capability('moodle/competency:templateview', CAP_PROHIBIT, $this->userrole, $syscontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
         try {
             external::count_templates(array('contextid' => $syscontextid), 'children');
@@ -2169,15 +2169,15 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         }
 
         // User with category permissions.
-        assign_capability('tool/lp:templateview', CAP_PREVENT, $this->userrole, $syscontextid, true);
-        assign_capability('tool/lp:templateview', CAP_ALLOW, $this->userrole, $catcontextid, true);
+        assign_capability('moodle/competency:templateview', CAP_PREVENT, $this->userrole, $syscontextid, true);
+        assign_capability('moodle/competency:templateview', CAP_ALLOW, $this->userrole, $catcontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
         $result = external::count_templates(array('contextid' => $syscontextid), 'children');
         $result = external_api::clean_returnvalue(external::count_templates_returns(), $result);
         $this->assertEquals(3, $result);
 
         // User with system permissions.
-        assign_capability('tool/lp:templateview', CAP_ALLOW, $this->userrole, $syscontextid, true);
+        assign_capability('moodle/competency:templateview', CAP_ALLOW, $this->userrole, $syscontextid, true);
         accesslib_clear_all_caches_for_unit_testing();
         $result = external::count_templates(array('contextid' => $catcontextid), 'parents');
         $result = external_api::clean_returnvalue(external::count_templates_returns(), $result);
@@ -2360,8 +2360,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             'shortname' => 'manage'
         ));
 
-        assign_capability('tool/lp:planmanage', CAP_ALLOW, $managerole, $syscontext->id);
-        assign_capability('tool/lp:planview', CAP_ALLOW, $managerole, $syscontext->id);
+        assign_capability('moodle/competency:planmanage', CAP_ALLOW, $managerole, $syscontext->id);
+        assign_capability('moodle/competency:planview', CAP_ALLOW, $managerole, $syscontext->id);
 
         $dg->role_assign($managerole, $usermanage->id, $syscontext->id);
 
@@ -2422,8 +2422,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             'shortname' => 'manage'
         ));
 
-        assign_capability('tool/lp:planmanage', CAP_ALLOW, $managerole, $syscontext->id);
-        assign_capability('tool/lp:planview', CAP_ALLOW, $managerole, $syscontext->id);
+        assign_capability('moodle/competency:planmanage', CAP_ALLOW, $managerole, $syscontext->id);
+        assign_capability('moodle/competency:planview', CAP_ALLOW, $managerole, $syscontext->id);
 
         $dg->role_assign($managerole, $usermanage->id, $syscontext->id);
 
@@ -2467,8 +2467,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             'shortname' => 'manage'
         ));
 
-        assign_capability('tool/lp:planmanage', CAP_ALLOW, $managerole, $syscontext->id);
-        assign_capability('tool/lp:planview', CAP_ALLOW, $managerole, $syscontext->id);
+        assign_capability('moodle/competency:planmanage', CAP_ALLOW, $managerole, $syscontext->id);
+        assign_capability('moodle/competency:planview', CAP_ALLOW, $managerole, $syscontext->id);
 
         $dg->role_assign($managerole, $usermanage->id, $syscontext->id);
 
@@ -2663,7 +2663,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // First we search with no capability assigned.
         $this->setUser($ux);
-        $result = external::search_users('yyylan', 'tool/lp:planmanage');
+        $result = external::search_users('yyylan', 'moodle/competency:planmanage');
         $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(0, $result['users']);
         $this->assertEquals(0, $result['count']);
@@ -2671,25 +2671,25 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         // Now we assign a different capability.
         $usercontext = context_user::instance($u1->id);
         $systemcontext = context_system::instance();
-        $customrole = $this->assignUserCapability('tool/lp:planview', $usercontext->id);
+        $customrole = $this->assignUserCapability('moodle/competency:planview', $usercontext->id);
 
-        $result = external::search_users('yyylan', 'tool/lp:planmanage');
+        $result = external::search_users('yyylan', 'moodle/competency:planmanage');
         $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(0, $result['users']);
         $this->assertEquals(0, $result['count']);
 
         // Now we assign a matching capability in the same role.
         $usercontext = context_user::instance($u1->id);
-        $this->assignUserCapability('tool/lp:planmanage', $usercontext->id, $customrole);
+        $this->assignUserCapability('moodle/competency:planmanage', $usercontext->id, $customrole);
 
-        $result = external::search_users('yyylan', 'tool/lp:planmanage');
+        $result = external::search_users('yyylan', 'moodle/competency:planmanage');
         $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(1, $result['users']);
         $this->assertEquals(1, $result['count']);
 
         // Now assign another role with the same capability (test duplicates).
         role_assign($this->creatorrole, $ux->id, $usercontext->id);
-        $result = external::search_users('yyylan', 'tool/lp:planmanage');
+        $result = external::search_users('yyylan', 'moodle/competency:planmanage');
         $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(1, $result['users']);
         $this->assertEquals(1, $result['count']);
@@ -2698,7 +2698,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $ux2 = $dg->create_user();
         role_assign($this->creatorrole, $ux2->id, $systemcontext->id);
         $this->setUser($ux2);
-        $result = external::search_users('yyylan', 'tool/lp:planmanage');
+        $result = external::search_users('yyylan', 'moodle/competency:planmanage');
         $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(1, $result['users']);
         $this->assertEquals(1, $result['count']);
@@ -2707,7 +2707,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $ux3 = $dg->create_user();
         role_assign($this->creatorrole, $ux3->id, $usercontext->id);
         $this->setUser($ux3);
-        $result = external::search_users('yyylan', 'tool/lp:planmanage');
+        $result = external::search_users('yyylan', 'moodle/competency:planmanage');
         $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(1, $result['users']);
         $this->assertEquals(1, $result['count']);
@@ -2716,15 +2716,15 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->setUser($ux);
 
         // Now add a prevent override (will change nothing because we still have an ALLOW).
-        assign_capability('tool/lp:planmanage', CAP_PREVENT, $customrole, $usercontext->id);
-        $result = external::search_users('yyylan', 'tool/lp:planmanage');
+        assign_capability('moodle/competency:planmanage', CAP_PREVENT, $customrole, $usercontext->id);
+        $result = external::search_users('yyylan', 'moodle/competency:planmanage');
         $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(1, $result['users']);
         $this->assertEquals(1, $result['count']);
 
         // Now change to a prohibit override (should prevent access).
-        assign_capability('tool/lp:planmanage', CAP_PROHIBIT, $customrole, $usercontext->id);
-        $result = external::search_users('yyylan', 'tool/lp:planmanage');
+        assign_capability('moodle/competency:planmanage', CAP_PROHIBIT, $customrole, $usercontext->id);
+        $result = external::search_users('yyylan', 'moodle/competency:planmanage');
         $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(1, $result['users']);
         $this->assertEquals(1, $result['count']);
@@ -2814,32 +2814,32 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         // We need to give the user the capability we are searching for on each of the test users.
         $this->setAdminUser();
         $usercontext = context_user::instance($u1->id);
-        $dummyrole = $this->assignUserCapability('tool/lp:planmanage', $usercontext->id);
+        $dummyrole = $this->assignUserCapability('moodle/competency:planmanage', $usercontext->id);
         $usercontext = context_user::instance($u2->id);
-        $this->assignUserCapability('tool/lp:planmanage', $usercontext->id, $dummyrole);
+        $this->assignUserCapability('moodle/competency:planmanage', $usercontext->id, $dummyrole);
         $usercontext = context_user::instance($u3->id);
-        $this->assignUserCapability('tool/lp:planmanage', $usercontext->id, $dummyrole);
+        $this->assignUserCapability('moodle/competency:planmanage', $usercontext->id, $dummyrole);
 
         $this->setUser($ux);
         $usercontext = context_user::instance($u1->id);
-        $this->assignUserCapability('tool/lp:planmanage', $usercontext->id, $dummyrole);
+        $this->assignUserCapability('moodle/competency:planmanage', $usercontext->id, $dummyrole);
         $usercontext = context_user::instance($u2->id);
-        $this->assignUserCapability('tool/lp:planmanage', $usercontext->id, $dummyrole);
+        $this->assignUserCapability('moodle/competency:planmanage', $usercontext->id, $dummyrole);
         $usercontext = context_user::instance($u3->id);
-        $this->assignUserCapability('tool/lp:planmanage', $usercontext->id, $dummyrole);
+        $this->assignUserCapability('moodle/competency:planmanage', $usercontext->id, $dummyrole);
 
         $this->setAdminUser();
 
         // No identity fields.
         $CFG->showuseridentity = '';
-        $result = external::search_users('cats', 'tool/lp:planmanage');
+        $result = external::search_users('cats', 'moodle/competency:planmanage');
         $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(0, $result['users']);
         $this->assertEquals(0, $result['count']);
 
         // Filter by name.
         $CFG->showuseridentity = '';
-        $result = external::search_users('dyyylan', 'tool/lp:planmanage');
+        $result = external::search_users('dyyylan', 'moodle/competency:planmanage');
         $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(2, $result['users']);
         $this->assertEquals(2, $result['count']);
@@ -2848,7 +2848,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // Filter by institution and name.
         $CFG->showuseridentity = 'institution';
-        $result = external::search_users('bob', 'tool/lp:planmanage');
+        $result = external::search_users('bob', 'moodle/competency:planmanage');
         $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(2, $result['users']);
         $this->assertEquals(2, $result['count']);
@@ -2857,7 +2857,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // Filter by id number.
         $CFG->showuseridentity = 'idnumber';
-        $result = external::search_users('cats', 'tool/lp:planmanage');
+        $result = external::search_users('cats', 'moodle/competency:planmanage');
         $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(1, $result['users']);
         $this->assertEquals(1, $result['count']);
@@ -2871,7 +2871,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // Filter by email.
         $CFG->showuseridentity = 'email';
-        $result = external::search_users('yyy', 'tool/lp:planmanage');
+        $result = external::search_users('yyy', 'moodle/competency:planmanage');
         $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(3, $result['users']);
         $this->assertEquals(3, $result['count']);
@@ -2884,7 +2884,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // Filter by any.
         $CFG->showuseridentity = 'idnumber,email,phone1,phone2,department,institution';
-        $result = external::search_users('yyy', 'tool/lp:planmanage');
+        $result = external::search_users('yyy', 'moodle/competency:planmanage');
         $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(3, $result['users']);
         $this->assertEquals(3, $result['count']);
@@ -2905,7 +2905,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(0, $result['users']);
         $this->assertEquals(0, $result['count']);
 
-        $result = external::search_users('bob', 'tool/lp:planmanage');
+        $result = external::search_users('bob', 'moodle/competency:planmanage');
         $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(1, $result['users']);
         $this->assertEquals(1, $result['count']);
@@ -3066,9 +3066,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $compmanager = $this->getDataGenerator()->create_user();
         $compnoob = $this->getDataGenerator()->create_user();
 
-        assign_capability('tool/lp:coursecompetencyconfigure', CAP_ALLOW, $roleid, $context->id, true);
-        assign_capability('tool/lp:coursecompetencyview', CAP_ALLOW, $roleid, $context->id, true);
-        assign_capability('tool/lp:coursecompetencyview', CAP_ALLOW, $noobroleid, $context->id, true);
+        assign_capability('moodle/competency:coursecompetencyconfigure', CAP_ALLOW, $roleid, $context->id, true);
+        assign_capability('moodle/competency:coursecompetencyview', CAP_ALLOW, $roleid, $context->id, true);
+        assign_capability('moodle/competency:coursecompetencyview', CAP_ALLOW, $noobroleid, $context->id, true);
 
         role_assign($roleid, $compmanager->id, $context->id);
         role_assign($noobroleid, $compnoob->id, $context->id);

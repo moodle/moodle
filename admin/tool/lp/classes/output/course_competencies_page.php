@@ -78,8 +78,8 @@ class course_competencies_page implements renderable, templatable {
         $this->context = context_course::instance($courseid);
         $this->courseid = $courseid;
         $this->coursecompetencylist = api::list_course_competencies($courseid);
-        $this->canmanagecoursecompetencies = has_capability('tool/lp:coursecompetencymanage', $this->context);
-        $this->canconfigurecoursecompetencies = has_capability('tool/lp:coursecompetencyconfigure', $this->context);
+        $this->canmanagecoursecompetencies = has_capability('moodle/competency:coursecompetencymanage', $this->context);
+        $this->canconfigurecoursecompetencies = has_capability('moodle/competency:coursecompetencyconfigure', $this->context);
         $this->coursecompetencysettings = api::read_course_competency_settings($courseid);
         $this->coursecompetencystatistics = new course_competency_statistics($courseid);
 
@@ -88,7 +88,7 @@ class course_competencies_page implements renderable, templatable {
         $this->canmanagecompetencyframeworks = false;
         $contexts = array_reverse($this->context->get_parent_contexts(true));
         foreach ($contexts as $context) {
-            $canmanage = has_capability('tool/lp:competencymanage', $context);
+            $canmanage = has_capability('moodle/competency:competencymanage', $context);
             if ($canmanage) {
                 $this->manageurl = new moodle_url('/admin/tool/lp/competencyframeworks.php',
                     array('pagecontextid' => $context->id));
@@ -113,7 +113,7 @@ class course_competencies_page implements renderable, templatable {
         $data->competencies = array();
         $contextcache = array();
 
-        $gradable = is_enrolled($this->context, $USER, 'tool/lp:coursecompetencygradable');
+        $gradable = is_enrolled($this->context, $USER, 'moodle/competency:coursecompetencygradable');
         if ($gradable) {
             $usercompetencycourses = api::list_user_competencies_in_course($this->courseid, $USER->id);
             $data->gradableuserid = $USER->id;

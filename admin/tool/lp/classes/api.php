@@ -147,7 +147,7 @@ class api {
     /**
      * Create a competency from a record containing all the data for the class.
      *
-     * Requires tool/lp:competencymanage capability at the system context.
+     * Requires moodle/competency:competencymanage capability at the system context.
      *
      * @param stdClass $record Record containing all the data for an instance of the class.
      * @return competency
@@ -157,7 +157,7 @@ class api {
         $competency = new competency(0, $record);
 
         // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', $competency->get_context());
+        require_capability('moodle/competency:competencymanage', $competency->get_context());
 
         // Reset the sortorder, use reorder instead.
         $competency->set_sortorder(null);
@@ -178,7 +178,7 @@ class api {
     /**
      * Delete a competency by id.
      *
-     * Requires tool/lp:competencymanage capability at the system context.
+     * Requires moodle/competency:competencymanage capability at the system context.
      *
      * @param int $id The record to delete. This will delete alot of related data - you better be sure.
      * @return boolean
@@ -189,7 +189,7 @@ class api {
         $competency = new competency($id);
 
         // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', $competency->get_context());
+        require_capability('moodle/competency:competencymanage', $competency->get_context());
 
         $events = array();
         $competencyids = array(intval($competency->get_id()));
@@ -240,7 +240,7 @@ class api {
     /**
      * Reorder this competency.
      *
-     * Requires tool/lp:competencymanage capability at the system context.
+     * Requires moodle/competency:competencymanage capability at the system context.
      *
      * @param int $id The id of the competency to move.
      * @return boolean
@@ -250,7 +250,7 @@ class api {
         $current = new competency($id);
 
         // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', $current->get_context());
+        require_capability('moodle/competency:competencymanage', $current->get_context());
 
         $max = self::count_competencies(array('parentid' => $current->get_parentid(),
                                               'competencyframeworkid' => $current->get_competencyframeworkid()));
@@ -283,7 +283,7 @@ class api {
     /**
      * Reorder this competency.
      *
-     * Requires tool/lp:competencymanage capability at the system context.
+     * Requires moodle/competency:competencymanage capability at the system context.
      *
      * @param int $id The id of the competency to move.
      * @return boolean
@@ -293,7 +293,7 @@ class api {
         $current = new competency($id);
 
         // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', $current->get_context());
+        require_capability('moodle/competency:competencymanage', $current->get_context());
 
         $sortorder = $current->get_sortorder();
         if ($sortorder == 0) {
@@ -321,7 +321,7 @@ class api {
     /**
      * Move this competency so it sits in a new parent.
      *
-     * Requires tool/lp:competencymanage capability at the system context.
+     * Requires moodle/competency:competencymanage capability at the system context.
      *
      * @param int $id The id of the competency to move.
      * @param int $newparentid The new parent id for the competency.
@@ -333,7 +333,7 @@ class api {
         $current = new competency($id);
 
         // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', $current->get_context());
+        require_capability('moodle/competency:competencymanage', $current->get_context());
         if ($id == $newparentid) {
             throw new coding_exception('Can not set a competency as a parent of itself.');
         } if ($newparentid == $current->get_parentid()) {
@@ -390,7 +390,7 @@ class api {
     /**
      * Update the details for a competency.
      *
-     * Requires tool/lp:competencymanage capability at the system context.
+     * Requires moodle/competency:competencymanage capability at the system context.
      *
      * @param stdClass $record The new details for the competency.
      *                         Note - must contain an id that points to the competency to update.
@@ -402,7 +402,7 @@ class api {
         $competency = new competency($record->id);
 
         // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', $competency->get_context());
+        require_capability('moodle/competency:competencymanage', $competency->get_context());
 
         // Some things should not be changed in an update - they should use a more specific method.
         $record->sortorder = $competency->get_sortorder();
@@ -410,7 +410,7 @@ class api {
         $record->competencyframeworkid = $competency->get_competencyframeworkid();
 
         $competency->from_record($record);
-        require_capability('tool/lp:competencymanage', $competency->get_context());
+        require_capability('moodle/competency:competencymanage', $competency->get_context());
 
         // OK - all set.
         $result = $competency->update();
@@ -424,7 +424,7 @@ class api {
     /**
      * Read a the details for a single competency and return a record.
      *
-     * Requires tool/lp:competencyview capability at the system context.
+     * Requires moodle/competency:competencyview capability at the system context.
      *
      * @param int $id The id of the competency to read.
      * @param bool $includerelated Include related tags or not.
@@ -436,8 +436,8 @@ class api {
 
         // First we do a permissions check.
         $context = $competency->get_context();
-        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'tool/lp:competencyview', 'nopermissions', '');
+        if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'), $context)) {
+             throw new required_capability_exception($context, 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -454,7 +454,7 @@ class api {
     /**
      * Perform a text search based and return all results and their parents.
      *
-     * Requires tool/lp:competencyview capability at the framework context.
+     * Requires moodle/competency:competencyview capability at the framework context.
      *
      * @param string $textsearch A string to search for.
      * @param int $competencyframeworkid The id of the framework to limit the search.
@@ -466,8 +466,8 @@ class api {
 
         // First we do a permissions check.
         $context = $framework->get_context();
-        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'tool/lp:competencyview', 'nopermissions', '');
+        if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'), $context)) {
+             throw new required_capability_exception($context, 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -478,7 +478,7 @@ class api {
     /**
      * Perform a search based on the provided filters and return a paginated list of records.
      *
-     * Requires tool/lp:competencyview capability at some context.
+     * Requires moodle/competency:competencyview capability at some context.
      *
      * @param array $filters A list of filters to apply to the list.
      * @param string $sort The column to sort on
@@ -497,8 +497,8 @@ class api {
         }
 
         // First we do a permissions check.
-        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'tool/lp:competencyview', 'nopermissions', '');
+        if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'), $context)) {
+             throw new required_capability_exception($context, 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -508,7 +508,7 @@ class api {
     /**
      * Perform a search based on the provided filters and return a paginated list of records.
      *
-     * Requires tool/lp:competencyview capability at some context.
+     * Requires moodle/competency:competencyview capability at some context.
      *
      * @param array $filters A list of filters to apply to the list.
      * @return int
@@ -523,8 +523,8 @@ class api {
         }
 
         // First we do a permissions check.
-        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'tool/lp:competencyview', 'nopermissions', '');
+        if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'), $context)) {
+             throw new required_capability_exception($context, 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -534,7 +534,7 @@ class api {
     /**
      * Create a competency framework from a record containing all the data for the class.
      *
-     * Requires tool/lp:competencymanage capability at the system context.
+     * Requires moodle/competency:competencymanage capability at the system context.
      *
      * @param stdClass $record Record containing all the data for an instance of the class.
      * @return competency_framework
@@ -542,7 +542,7 @@ class api {
     public static function create_framework(stdClass $record) {
         static::require_enabled();
         $framework = new competency_framework(0, $record);
-        require_capability('tool/lp:competencymanage', $framework->get_context());
+        require_capability('moodle/competency:competencymanage', $framework->get_context());
 
         // Account for different formats of taxonomies.
         if (isset($record->taxonomies)) {
@@ -560,7 +560,7 @@ class api {
     /**
      * Duplicate a competency framework by id.
      *
-     * Requires tool/lp:competencymanage capability at the system context.
+     * Requires moodle/competency:competencymanage capability at the system context.
      *
      * @param int $id The record to duplicate. All competencies associated and related will be duplicated.
      * @return competency_framework the framework duplicated
@@ -570,7 +570,7 @@ class api {
         static::require_enabled();
 
         $framework = new competency_framework($id);
-        require_capability('tool/lp:competencymanage', $framework->get_context());
+        require_capability('moodle/competency:competencymanage', $framework->get_context());
         // Starting transaction.
         $transaction = $DB->start_delegated_transaction();
 
@@ -629,7 +629,7 @@ class api {
     /**
      * Delete a competency framework by id.
      *
-     * Requires tool/lp:competencymanage capability at the system context.
+     * Requires moodle/competency:competencymanage capability at the system context.
      *
      * @param int $id The record to delete. This will delete alot of related data - you better be sure.
      * @return boolean
@@ -638,7 +638,7 @@ class api {
         global $DB;
         static::require_enabled();
         $framework = new competency_framework($id);
-        require_capability('tool/lp:competencymanage', $framework->get_context());
+        require_capability('moodle/competency:competencymanage', $framework->get_context());
 
         $events = array();
         $competenciesid = competency::get_ids_by_frameworkid($id);
@@ -687,7 +687,7 @@ class api {
     /**
      * Update the details for a competency framework.
      *
-     * Requires tool/lp:competencymanage capability at the system context.
+     * Requires moodle/competency:competencymanage capability at the system context.
      *
      * @param stdClass $record The new details for the framework. Note - must contain an id that points to the framework to update.
      * @return boolean
@@ -697,7 +697,7 @@ class api {
         $framework = new competency_framework($record->id);
 
         // Check the permissions before update.
-        require_capability('tool/lp:competencymanage', $framework->get_context());
+        require_capability('moodle/competency:competencymanage', $framework->get_context());
 
         // Account for different formats of taxonomies.
         $framework->from_record($record);
@@ -714,7 +714,7 @@ class api {
     /**
      * Read a the details for a single competency framework and return a record.
      *
-     * Requires tool/lp:competencyview capability at the system context.
+     * Requires moodle/competency:competencyview capability at the system context.
      *
      * @param int $id The id of the framework to read.
      * @return competency_framework
@@ -722,8 +722,8 @@ class api {
     public static function read_framework($id) {
         static::require_enabled();
         $framework = new competency_framework($id);
-        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $framework->get_context())) {
-             throw new required_capability_exception($framework->get_context(), 'tool/lp:competencyview', 'nopermissions', '');
+        if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'), $framework->get_context())) {
+             throw new required_capability_exception($framework->get_context(), 'moodle/competency:competencyview', 'nopermissions', '');
         }
         return $framework;
     }
@@ -740,8 +740,8 @@ class api {
         if (!is_object($framework)) {
             $framework = new competency_framework($framework);
         }
-        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $framework->get_context())) {
-             throw new required_capability_exception($framework->get_context(), 'tool/lp:competencyview', 'nopermissions', '');
+        if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'), $framework->get_context())) {
+             throw new required_capability_exception($framework->get_context(), 'moodle/competency:competencyview', 'nopermissions', '');
         }
         \tool_lp\event\competency_framework_viewed::create_from_framework($framework)->trigger();
         return true;
@@ -760,8 +760,8 @@ class api {
             $competency = new competency($competency);
         }
 
-        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $competency->get_context())) {
-             throw new required_capability_exception($competency->get_context(), 'tool/lp:competencyview', 'nopermissions', '');
+        if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'), $competency->get_context())) {
+             throw new required_capability_exception($competency->get_context(), 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
         \tool_lp\event\competency_viewed::create_from_competency($competency)->trigger();
@@ -771,7 +771,7 @@ class api {
     /**
      * Perform a search based on the provided filters and return a paginated list of records.
      *
-     * Requires tool/lp:competencyview capability at the system context.
+     * Requires moodle/competency:competencyview capability at the system context.
      *
      * @param string $sort The column to sort on
      * @param string $order ('ASC' or 'DESC')
@@ -794,10 +794,10 @@ class api {
 
         // Get all the relevant contexts.
         $contexts = self::get_related_contexts($context, $includes,
-            array('tool/lp:competencyview', 'tool/lp:competencymanage'));
+            array('moodle/competency:competencyview', 'moodle/competency:competencymanage'));
 
         if (empty($contexts)) {
-            throw new required_capability_exception($context, 'tool/lp:competencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -823,7 +823,7 @@ class api {
     /**
      * Perform a search based on the provided filters and return a paginated list of records.
      *
-     * Requires tool/lp:competencyview capability at the system context.
+     * Requires moodle/competency:competencyview capability at the system context.
      *
      * @param context $context The parent context of the frameworks.
      * @param string $includes Defines what other contexts to fetch frameworks from.
@@ -839,10 +839,10 @@ class api {
 
         // Get all the relevant contexts.
         $contexts = self::get_related_contexts($context, $includes,
-            array('tool/lp:competencyview', 'tool/lp:competencymanage'));
+            array('moodle/competency:competencyview', 'moodle/competency:competencymanage'));
 
         if (empty($contexts)) {
-            throw new required_capability_exception($context, 'tool/lp:competencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -932,7 +932,7 @@ class api {
             }
 
             $context = context_course::instance($course->id);
-            $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
+            $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
             if (!has_any_capability($capabilities, $context)) {
                 continue;
             }
@@ -959,9 +959,9 @@ class api {
         $coursecontext = context_course::instance($courseid);
 
         // We will not check each module - course permissions should be enough.
-        $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
+        $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
         if (!has_any_capability($capabilities, $coursecontext)) {
-            throw new required_capability_exception($coursecontext, 'tool/lp:coursecompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($coursecontext, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
         }
 
         $cmlist = course_module_competency::list_course_modules($competencyid, $courseid);
@@ -991,9 +991,9 @@ class api {
         self::validate_course_module($cm);
         $context = context_module::instance($cm->id);
 
-        $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
+        $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
-            throw new required_capability_exception($context, 'tool/lp:coursecompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
         }
 
         $result = array();
@@ -1022,7 +1022,7 @@ class api {
         // Now check permissions on each course.
         foreach ($courses as $id => $course) {
             $context = context_course::instance($course->id);
-            $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
+            $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
             if (!has_any_capability($capabilities, $context)) {
                 unset($courses[$id]);
                 continue;
@@ -1052,9 +1052,9 @@ class api {
         // First we do a permissions check.
         $context = context_course::instance($courseid);
 
-        $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
+        $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:coursecompetencyview', 'nopermissions', '');
+             throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -1075,9 +1075,9 @@ class api {
         // First we do a permissions check.
         $context = context_course::instance($courseid);
 
-        $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
+        $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:coursecompetencyview', 'nopermissions', '');
+             throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -1104,9 +1104,9 @@ class api {
         self::validate_course($course);
         $context = context_course::instance($course->id);
 
-        $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
+        $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
-            throw new required_capability_exception($context, 'tool/lp:coursecompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
         }
 
         $result = array();
@@ -1144,7 +1144,7 @@ class api {
         }
 
         if (!$uc->can_read()) {
-            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($uc->get_context(), 'moodle/competency:usercompetencyview', 'nopermissions', '');
         }
         return $uc;
     }
@@ -1159,7 +1159,7 @@ class api {
         static::require_enabled();
         $uc = new user_competency($usercompetencyid);
         if (!$uc->can_read()) {
-            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($uc->get_context(), 'moodle/competency:usercompetencyview', 'nopermissions', '');
         }
         return $uc;
     }
@@ -1184,9 +1184,9 @@ class api {
         self::validate_course_module($cm);
         $context = context_module::instance($cm->id);
 
-        $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
+        $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
-            throw new required_capability_exception($context, 'tool/lp:coursecompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
         }
 
         $result = array();
@@ -1219,11 +1219,11 @@ class api {
         // First we do a permissions check.
         $context = context_course::instance($courseid);
 
-        $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
+        $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
-            throw new required_capability_exception($context, 'tool/lp:coursecompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
         } else if (!user_competency::can_read_user_in_course($userid, $courseid)) {
-            throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:usercompetencyview', 'nopermissions', '');
         }
 
         // This will throw an exception if the competency does not belong to the course.
@@ -1255,11 +1255,11 @@ class api {
         $context = context_course::instance($courseid);
         $onlyvisible = 1;
 
-        $capabilities = array('tool/lp:coursecompetencyview', 'tool/lp:coursecompetencymanage');
+        $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
-            throw new required_capability_exception($context, 'tool/lp:coursecompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
         } else if (!user_competency::can_read_user_in_course($userid, $courseid)) {
-            throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:usercompetencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -1318,7 +1318,7 @@ class api {
             $userid = $USER->id;
         }
 
-        $capability = 'tool/lp:usercompetencyreview';
+        $capability = 'moodle/competency:usercompetencyreview';
         $ucfields = user_competency::get_sql_fields('uc');
         $compfields = competency::get_sql_fields('c');
         $usercols = array('id') + get_user_fieldnames();
@@ -1397,7 +1397,7 @@ class api {
         // First we do a permissions check.
         $context = context_module::instance($cm->id);
 
-        require_capability('tool/lp:coursecompetencymanage', $context);
+        require_capability('moodle/competency:coursecompetencymanage', $context);
 
         // Check that the competency belongs to the course.
         $exists = course_competency::get_records(array('courseid' => $cm->course, 'competencyid' => $competencyid));
@@ -1439,7 +1439,7 @@ class api {
         // First we do a permissions check.
         $context = context_module::instance($cm->id);
 
-        require_capability('tool/lp:coursecompetencymanage', $context);
+        require_capability('moodle/competency:coursecompetencymanage', $context);
 
         $record = new stdClass();
         $record->cmid = $cm->id;
@@ -1456,7 +1456,7 @@ class api {
     /**
      * Move the course module competency up or down in the display list.
      *
-     * Requires tool/lp:coursecompetencymanage capability at the course module context.
+     * Requires moodle/competency:coursecompetencymanage capability at the course module context.
      *
      * @param mixed $cmorid The course module, or id of the course module
      * @param int $competencyidfrom The id of the competency we are moving.
@@ -1475,7 +1475,7 @@ class api {
         // First we do a permissions check.
         $context = context_module::instance($cm->id);
 
-        require_capability('tool/lp:coursecompetencymanage', $context);
+        require_capability('moodle/competency:coursecompetencymanage', $context);
 
         $down = true;
         $matches = course_module_competency::get_records(array('cmid' => $cm->id, 'competencyid' => $competencyidfrom));
@@ -1531,7 +1531,7 @@ class api {
         self::validate_course_module($cm);
         $context = context_module::instance($cm->id);
 
-        require_capability('tool/lp:coursecompetencymanage', $context);
+        require_capability('moodle/competency:coursecompetencymanage', $context);
 
         $coursemodulecompetency->set_ruleoutcome($ruleoutcome);
         return $coursemodulecompetency->update();
@@ -1552,7 +1552,7 @@ class api {
         // First we do a permissions check.
         $context = context_course::instance($courseid);
 
-        require_capability('tool/lp:coursecompetencymanage', $context);
+        require_capability('moodle/competency:coursecompetencymanage', $context);
 
         $record = new stdClass();
         $record->courseid = $courseid;
@@ -1591,7 +1591,7 @@ class api {
         // First we do a permissions check.
         $context = context_course::instance($courseid);
 
-        require_capability('tool/lp:coursecompetencymanage', $context);
+        require_capability('moodle/competency:coursecompetencymanage', $context);
 
         $record = new stdClass();
         $record->courseid = $courseid;
@@ -1614,7 +1614,7 @@ class api {
     /**
      * Move the course competency up or down in the display list.
      *
-     * Requires tool/lp:coursecompetencymanage capability at the course context.
+     * Requires moodle/competency:coursecompetencymanage capability at the course context.
      *
      * @param int $courseid The course
      * @param int $competencyidfrom The id of the competency we are moving.
@@ -1629,7 +1629,7 @@ class api {
         // First we do a permissions check.
         $context = context_course::instance($courseid);
 
-        require_capability('tool/lp:coursecompetencymanage', $context);
+        require_capability('moodle/competency:coursecompetencymanage', $context);
 
         $down = true;
         $coursecompetency = new course_competency();
@@ -1685,7 +1685,7 @@ class api {
         self::validate_course($courseid);
         $coursecontext = context_course::instance($courseid);
 
-        require_capability('tool/lp:coursecompetencymanage', $coursecontext);
+        require_capability('moodle/competency:coursecompetencymanage', $coursecontext);
 
         $coursecompetency->set_ruleoutcome($ruleoutcome);
         return $coursecompetency->update();
@@ -1694,7 +1694,7 @@ class api {
     /**
      * Create a learning plan template from a record containing all the data for the class.
      *
-     * Requires tool/lp:templatemanage capability.
+     * Requires moodle/competency:templatemanage capability.
      *
      * @param stdClass $record Record containing all the data for an instance of the class.
      * @return template
@@ -1705,7 +1705,7 @@ class api {
 
         // First we do a permissions check.
         if (!$template->can_manage()) {
-            throw new required_capability_exception($template->get_context(), 'tool/lp:templatemanage', 'nopermissions', '');
+            throw new required_capability_exception($template->get_context(), 'moodle/competency:templatemanage', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -1720,7 +1720,7 @@ class api {
     /**
      * Duplicate a learning plan template.
      *
-     * Requires tool/lp:templatemanage capability at the template context.
+     * Requires moodle/competency:templatemanage capability at the template context.
      *
      * @param int $id the template id.
      * @return template
@@ -1731,7 +1731,7 @@ class api {
 
         // First we do a permissions check.
         if (!$template->can_manage()) {
-            throw new required_capability_exception($template->get_context(), 'tool/lp:templatemanage', 'nopermissions', '');
+            throw new required_capability_exception($template->get_context(), 'moodle/competency:templatemanage', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -1758,7 +1758,7 @@ class api {
      * Delete a learning plan template by id.
      * If the learning plan template has associated cohorts they will be deleted.
      *
-     * Requires tool/lp:templatemanage capability.
+     * Requires moodle/competency:templatemanage capability.
      *
      * @param int $id The record to delete.
      * @param boolean $deleteplans True to delete plans associaated to template, false to unlink them.
@@ -1771,7 +1771,7 @@ class api {
 
         // First we do a permissions check.
         if (!$template->can_manage()) {
-            throw new required_capability_exception($template->get_context(), 'tool/lp:templatemanage', 'nopermissions', '');
+            throw new required_capability_exception($template->get_context(), 'moodle/competency:templatemanage', 'nopermissions', '');
         }
 
         $transaction = $DB->start_delegated_transaction();
@@ -1826,7 +1826,7 @@ class api {
     /**
      * Update the details for a learning plan template.
      *
-     * Requires tool/lp:templatemanage capability.
+     * Requires moodle/competency:templatemanage capability.
      *
      * @param stdClass $record The new details for the template. Note - must contain an id that points to the template to update.
      * @return boolean
@@ -1838,7 +1838,7 @@ class api {
 
         // First we do a permissions check.
         if (!$template->can_manage()) {
-            throw new required_capability_exception($template->get_context(), 'tool/lp:templatemanage', 'nopermissions', '');
+            throw new required_capability_exception($template->get_context(), 'moodle/competency:templatemanage', 'nopermissions', '');
 
         } else if (isset($record->contextid) && $record->contextid != $template->get_contextid()) {
              // We can never change the context of a template.
@@ -1883,7 +1883,7 @@ class api {
     /**
      * Read a the details for a single learning plan template and return a record.
      *
-     * Requires tool/lp:templateview capability at the system context.
+     * Requires moodle/competency:templateview capability at the system context.
      *
      * @param int $id The id of the template to read.
      * @return template
@@ -1895,7 +1895,7 @@ class api {
 
         // First we do a permissions check.
         if (!$template->can_read()) {
-             throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
+             throw new required_capability_exception($template->get_context(), 'moodle/competency:templateview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -1905,7 +1905,7 @@ class api {
     /**
      * Perform a search based on the provided filters and return a paginated list of records.
      *
-     * Requires tool/lp:templateview capability at the system context.
+     * Requires moodle/competency:templateview capability at the system context.
      *
      * @param string $sort The column to sort on
      * @param string $order ('ASC' or 'DESC')
@@ -1926,11 +1926,11 @@ class api {
 
         // Get all the relevant contexts.
         $contexts = self::get_related_contexts($context, $includes,
-            array('tool/lp:templateview', 'tool/lp:templatemanage'));
+            array('moodle/competency:templateview', 'moodle/competency:templatemanage'));
 
         // First we do a permissions check.
         if (empty($contexts)) {
-             throw new required_capability_exception($context, 'tool/lp:templateview', 'nopermissions', '');
+             throw new required_capability_exception($context, 'moodle/competency:templateview', 'nopermissions', '');
         }
 
         // Make the order by.
@@ -1954,7 +1954,7 @@ class api {
     /**
      * Perform a search based on the provided filters and return how many results there are.
      *
-     * Requires tool/lp:templateview capability at the system context.
+     * Requires moodle/competency:templateview capability at the system context.
      *
      * @param context $context The parent context of the frameworks.
      * @param string $includes Defines what other contexts to fetch frameworks from.
@@ -1970,10 +1970,10 @@ class api {
 
         // First we do a permissions check.
         $contexts = self::get_related_contexts($context, $includes,
-            array('tool/lp:templateview', 'tool/lp:templatemanage'));
+            array('moodle/competency:templateview', 'moodle/competency:templatemanage'));
 
         if (empty($contexts)) {
-             throw new required_capability_exception($context, 'tool/lp:templateview', 'nopermissions', '');
+             throw new required_capability_exception($context, 'moodle/competency:templateview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -1994,12 +1994,12 @@ class api {
         $context = context_system::instance();
         $onlyvisible = 1;
 
-        $capabilities = array('tool/lp:templateview', 'tool/lp:templatemanage');
+        $capabilities = array('moodle/competency:templateview', 'moodle/competency:templatemanage');
         if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:templateview', 'nopermissions', '');
+             throw new required_capability_exception($context, 'moodle/competency:templateview', 'nopermissions', '');
         }
 
-        if (has_capability('tool/lp:templatemanage', $context)) {
+        if (has_capability('moodle/competency:templatemanage', $context)) {
             $onlyvisible = 0;
         }
 
@@ -2019,12 +2019,12 @@ class api {
         $context = context_system::instance();
         $onlyvisible = 1;
 
-        $capabilities = array('tool/lp:templateview', 'tool/lp:templatemanage');
+        $capabilities = array('moodle/competency:templateview', 'moodle/competency:templatemanage');
         if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:templateview', 'nopermissions', '');
+             throw new required_capability_exception($context, 'moodle/competency:templateview', 'nopermissions', '');
         }
 
-        if (has_capability('tool/lp:templatemanage', $context)) {
+        if (has_capability('moodle/competency:templatemanage', $context)) {
             $onlyvisible = 0;
         }
 
@@ -2048,7 +2048,7 @@ class api {
         }
 
         if (!$template->can_read()) {
-            throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
+            throw new required_capability_exception($template->get_context(), 'moodle/competency:templateview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -2069,7 +2069,7 @@ class api {
         }
 
         if (!$template->can_read()) {
-            throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
+            throw new required_capability_exception($template->get_context(), 'moodle/competency:templateview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -2091,7 +2091,7 @@ class api {
         }
 
         if (!$template->can_read()) {
-            throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
+            throw new required_capability_exception($template->get_context(), 'moodle/competency:templateview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -2110,7 +2110,7 @@ class api {
         // First we do a permissions check.
         $template = new template($templateid);
         if (!$template->can_manage()) {
-            throw new required_capability_exception($template->get_context(), 'tool/lp:templatemanage', 'nopermissions', '');
+            throw new required_capability_exception($template->get_context(), 'moodle/competency:templatemanage', 'nopermissions', '');
         }
 
         $record = new stdClass();
@@ -2145,7 +2145,7 @@ class api {
         // First we do a permissions check.
         $template = new template($templateid);
         if (!$template->can_manage()) {
-            throw new required_capability_exception($template->get_context(), 'tool/lp:templatemanage', 'nopermissions', '');
+            throw new required_capability_exception($template->get_context(), 'moodle/competency:templatemanage', 'nopermissions', '');
         }
 
         $record = new stdClass();
@@ -2165,7 +2165,7 @@ class api {
     /**
      * Move the template competency up or down in the display list.
      *
-     * Requires tool/lp:templatemanage capability at the system context.
+     * Requires moodle/competency:templatemanage capability at the system context.
      *
      * @param int $templateid The template id
      * @param int $competencyidfrom The id of the competency we are moving.
@@ -2177,7 +2177,7 @@ class api {
         // First we do a permissions check.
         $context = context_system::instance();
 
-        require_capability('tool/lp:templatemanage', $context);
+        require_capability('moodle/competency:templatemanage', $context);
 
         $down = true;
         $matches = template_competency::get_records(array('templateid' => $templateid, 'competencyid' => $competencyidfrom));
@@ -2231,7 +2231,7 @@ class api {
         if (!is_object($template)) {
             $template = new template($template);
         }
-        require_capability('tool/lp:templatemanage', $template->get_context());
+        require_capability('moodle/competency:templatemanage', $template->get_context());
 
         $cohort = $cohortorid;
         if (!is_object($cohort)) {
@@ -2267,7 +2267,7 @@ class api {
         if (!is_object($template)) {
             $template = new template($template);
         }
-        require_capability('tool/lp:templatemanage', $template->get_context());
+        require_capability('moodle/competency:templatemanage', $template->get_context());
 
         $cohort = $cohortorid;
         if (!is_object($cohort)) {
@@ -2297,7 +2297,7 @@ class api {
 
         // Check that we can read something here.
         if (!plan::can_read_user($userid) && !plan::can_read_user_draft($userid)) {
-            throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:planview', 'nopermissions', '');
         }
 
         // The user cannot view the drafts.
@@ -2382,7 +2382,7 @@ class api {
         }
 
         // TODO MDL-52243 Use core function.
-        list($insql, $inparams) = external::filter_users_with_capability_on_user_context_sql('tool/lp:planreview',
+        list($insql, $inparams) = external::filter_users_with_capability_on_user_context_sql('moodle/competency:planreview',
             $userid, SQL_PARAMS_NAMED);
         $sql .= " AND p.userid $insql";
         $params += $inparams;
@@ -2430,7 +2430,7 @@ class api {
 
         if (!$plan->can_manage()) {
             $context = context_user::instance($plan->get_userid());
-            throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
         $plan->create();
@@ -2456,7 +2456,7 @@ class api {
 
         // The user must be able to view the template to use it as a base for a plan.
         if (!$template->can_read()) {
-            throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
+            throw new required_capability_exception($template->get_context(), 'moodle/competency:templateview', 'nopermissions', '');
         }
         // Can not create plan from a hidden template.
         if ($template->get_visible() == false) {
@@ -2485,7 +2485,7 @@ class api {
 
         $plan = new plan(0, $record);
         if (!$plan->can_manage()) {
-            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
         // We first apply the permission checks as we wouldn't want to leak information by returning early that
@@ -2522,7 +2522,7 @@ class api {
 
         // The user must be able to view the template to use it as a base for a plan.
         if (!$template->can_read()) {
-            throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
+            throw new required_capability_exception($template->get_context(), 'moodle/competency:templateview', 'nopermissions', '');
         }
 
         // Can not create plan from a hidden template.
@@ -2595,7 +2595,7 @@ class api {
 
         // The user must be allowed to manage the plans of the user, nothing about the template.
         if (!$plan->can_manage()) {
-            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
         // Only plan with status DRAFT or ACTIVE can be unliked..
@@ -2648,7 +2648,7 @@ class api {
 
         // Validate that the plan as it is can be managed.
         if (!$plan->can_manage()) {
-            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'moodle/competency:planmanage', 'nopermissions', '');
 
         } else if ($plan->get_status() == plan::STATUS_COMPLETE) {
             // A completed plan cannot be edited.
@@ -2693,7 +2693,7 @@ class api {
 
         if (!$plan->can_read()) {
             $context = context_user::instance($plan->get_userid());
-            throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:planview', 'nopermissions', '');
         }
 
         return $plan;
@@ -2715,7 +2715,7 @@ class api {
         // First we do a permissions check.
         if (!$plan->can_read()) {
             $context = context_user::instance($plan->get_userid());
-            throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:planview', 'nopermissions', '');
         }
 
         // Trigger a template viewed event.
@@ -2740,7 +2740,7 @@ class api {
 
         if (!$plan->can_manage()) {
             $context = context_user::instance($plan->get_userid());
-            throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
         // Wrap the suppression in a DB transaction.
@@ -2782,7 +2782,7 @@ class api {
 
         // We need to be able to view the plan at least.
         if (!$plan->can_read()) {
-            throw new required_capability_exception($plan->get_context(), 'tool/lp:planview', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'moodle/competency:planview', 'nopermissions', '');
         }
 
         if ($plan->is_based_on_template()) {
@@ -2790,7 +2790,7 @@ class api {
         } else if ($plan->get_status() != plan::STATUS_WAITING_FOR_REVIEW) {
             throw new coding_exception('The plan review cannot be cancelled at this stage.');
         } else if (!$plan->can_request_review()) {
-            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
         $plan->set_status(plan::STATUS_DRAFT);
@@ -2817,7 +2817,7 @@ class api {
 
         // We need to be able to view the plan at least.
         if (!$plan->can_read()) {
-            throw new required_capability_exception($plan->get_context(), 'tool/lp:planview', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'moodle/competency:planview', 'nopermissions', '');
         }
 
         if ($plan->is_based_on_template()) {
@@ -2825,7 +2825,7 @@ class api {
         } else if ($plan->get_status() != plan::STATUS_DRAFT) {
             throw new coding_exception('The plan cannot be sent for review at this stage.');
         } else if (!$plan->can_request_review()) {
-            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
         $plan->set_status(plan::STATUS_WAITING_FOR_REVIEW);
@@ -2853,7 +2853,7 @@ class api {
 
         // We need to be able to view the plan at least.
         if (!$plan->can_read()) {
-            throw new required_capability_exception($plan->get_context(), 'tool/lp:planview', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'moodle/competency:planview', 'nopermissions', '');
         }
 
         if ($plan->is_based_on_template()) {
@@ -2861,7 +2861,7 @@ class api {
         } else if ($plan->get_status() != plan::STATUS_WAITING_FOR_REVIEW) {
             throw new coding_exception('The plan review cannot be started at this stage.');
         } else if (!$plan->can_review()) {
-            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
         $plan->set_status(plan::STATUS_IN_REVIEW);
@@ -2889,7 +2889,7 @@ class api {
 
         // We need to be able to view the plan at least.
         if (!$plan->can_read()) {
-            throw new required_capability_exception($plan->get_context(), 'tool/lp:planview', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'moodle/competency:planview', 'nopermissions', '');
         }
 
         if ($plan->is_based_on_template()) {
@@ -2897,7 +2897,7 @@ class api {
         } else if ($plan->get_status() != plan::STATUS_IN_REVIEW) {
             throw new coding_exception('The plan review cannot be stopped at this stage.');
         } else if (!$plan->can_review()) {
-            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
         $plan->set_status(plan::STATUS_DRAFT);
@@ -2927,7 +2927,7 @@ class api {
 
         // We need to be able to view the plan at least.
         if (!$plan->can_read()) {
-            throw new required_capability_exception($plan->get_context(), 'tool/lp:planview', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'moodle/competency:planview', 'nopermissions', '');
         }
 
         // We can approve a plan that is either a draft, in review, or waiting for review.
@@ -2936,7 +2936,7 @@ class api {
         } else if (!$plan->is_draft()) {
             throw new coding_exception('The plan cannot be approved at this stage.');
         } else if (!$plan->can_review()) {
-            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
         $plan->set_status(plan::STATUS_ACTIVE);
@@ -2966,7 +2966,7 @@ class api {
 
         // We need to be able to view the plan at least.
         if (!$plan->can_read()) {
-            throw new required_capability_exception($plan->get_context(), 'tool/lp:planview', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'moodle/competency:planview', 'nopermissions', '');
         }
 
         if ($plan->is_based_on_template()) {
@@ -2974,7 +2974,7 @@ class api {
         } else if ($plan->get_status() != plan::STATUS_ACTIVE) {
             throw new coding_exception('The plan cannot be sent back to draft at this stage.');
         } else if (!$plan->can_review()) {
-            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
         $plan->set_status(plan::STATUS_DRAFT);
@@ -3003,7 +3003,7 @@ class api {
 
         // Validate that the plan can be managed.
         if (!$plan->can_manage()) {
-            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
         // Check if the plan was already completed.
@@ -3016,7 +3016,7 @@ class api {
 
         // The user should also be able to manage the plan when it's completed.
         if (!$plan->can_manage()) {
-            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
         // Put back original status because archive needs it to extract competencies from the right table.
@@ -3059,7 +3059,7 @@ class api {
         // Validate that the plan as it is can be managed.
         if (!$plan->can_manage()) {
             $context = context_user::instance($plan->get_userid());
-            throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
         $beforestatus = $plan->get_status();
@@ -3068,7 +3068,7 @@ class api {
         // Validate if status can be changed.
         if (!$plan->can_manage()) {
             $context = context_user::instance($plan->get_userid());
-            throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
         // Wrap the updates in a DB transaction.
@@ -3120,7 +3120,7 @@ class api {
         }
 
         if (!user_competency::can_read_user($plan->get_userid())) {
-            throw new required_capability_exception($plan->get_context(), 'tool/lp:usercompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'moodle/competency:usercompetencyview', 'nopermissions', '');
         }
 
         $competency = $plan->get_competency($competencyid);
@@ -3178,7 +3178,7 @@ class api {
 
         if (!$plan->can_read()) {
             $context = context_user::instance($plan->get_userid());
-            throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:planview', 'nopermissions', '');
         }
 
         $result = array();
@@ -3239,7 +3239,7 @@ class api {
 
         // First we do a permissions check.
         if (!$plan->can_manage()) {
-            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'moodle/competency:planmanage', 'nopermissions', '');
 
         } else if ($plan->is_based_on_template()) {
             throw new coding_exception('A competency can not be added to a learning plan based on a template');
@@ -3282,7 +3282,7 @@ class api {
         // First we do a permissions check.
         if (!$plan->can_manage()) {
             $context = context_user::instance($plan->get_userid());
-            throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:planmanage', 'nopermissions', '');
 
         } else if ($plan->is_based_on_template()) {
             throw new coding_exception('A competency can not be removed from a learning plan based on a template');
@@ -3302,7 +3302,7 @@ class api {
     /**
      * Move the plan competency up or down in the display list.
      *
-     * Requires tool/lp:planmanage capability at the system context.
+     * Requires moodle/competency:planmanage capability at the system context.
      *
      * @param int $planid The plan  id
      * @param int $competencyidfrom The id of the competency we are moving.
@@ -3316,7 +3316,7 @@ class api {
         // First we do a permissions check.
         if (!$plan->can_manage()) {
             $context = context_user::instance($plan->get_userid());
-            throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:planmanage', 'nopermissions', '');
 
         } else if ($plan->is_based_on_template()) {
             throw new coding_exception('A competency can not be reordered in a learning plan based on a template');
@@ -3373,11 +3373,11 @@ class api {
         $context = context_user::instance($userid);
         $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
         if (!$uc || !$uc->can_read()) {
-            throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:usercompetencyview', 'nopermissions', '');
         } else if ($uc->get_status() != user_competency::STATUS_WAITING_FOR_REVIEW) {
             throw new coding_exception('The competency can not be cancel review request at this stage.');
         } else if (!$uc->can_request_review()) {
-            throw new required_capability_exception($context, 'tool/lp:usercompetencyrequestreview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:usercompetencyrequestreview', 'nopermissions', '');
         }
 
         $uc->set_status(user_competency::STATUS_IDLE);
@@ -3404,11 +3404,11 @@ class api {
         }
 
         if (!$uc->can_read()) {
-            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($uc->get_context(), 'moodle/competency:usercompetencyview', 'nopermissions', '');
         } else if ($uc->get_status() != user_competency::STATUS_IDLE) {
             throw new coding_exception('The competency can not be sent for review at this stage.');
         } else if (!$uc->can_request_review()) {
-            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyrequestreview', 'nopermissions', '');
+            throw new required_capability_exception($uc->get_context(), 'moodle/competency:usercompetencyrequestreview', 'nopermissions', '');
         }
 
         $uc->set_status(user_competency::STATUS_WAITING_FOR_REVIEW);
@@ -3433,11 +3433,11 @@ class api {
         $context = context_user::instance($userid);
         $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
         if (!$uc || !$uc->can_read()) {
-            throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:usercompetencyview', 'nopermissions', '');
         } else if ($uc->get_status() != user_competency::STATUS_WAITING_FOR_REVIEW) {
             throw new coding_exception('The competency review can not be started at this stage.');
         } else if (!$uc->can_review()) {
-            throw new required_capability_exception($context, 'tool/lp:usercompetencyreview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:usercompetencyreview', 'nopermissions', '');
         }
 
         $uc->set_status(user_competency::STATUS_IN_REVIEW);
@@ -3461,11 +3461,11 @@ class api {
         $context = context_user::instance($userid);
         $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
         if (!$uc || !$uc->can_read()) {
-            throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:usercompetencyview', 'nopermissions', '');
         } else if ($uc->get_status() != user_competency::STATUS_IN_REVIEW) {
             throw new coding_exception('The competency review can not be stopped at this stage.');
         } else if (!$uc->can_review()) {
-            throw new required_capability_exception($context, 'tool/lp:usercompetencyreview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:usercompetencyreview', 'nopermissions', '');
         }
 
         $uc->set_status(user_competency::STATUS_IDLE);
@@ -3490,7 +3490,7 @@ class api {
         }
 
         if (!$uc || !$uc->can_read()) {
-            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($uc->get_context(), 'moodle/competency:usercompetencyview', 'nopermissions', '');
         }
 
         \tool_lp\event\user_competency_viewed::create_from_user_competency_viewed($uc)->trigger();
@@ -3512,7 +3512,7 @@ class api {
         }
 
         if (!$uc || !$uc->can_read()) {
-            throw new required_capability_exception($uc->get_context(), 'tool/lp:usercompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($uc->get_context(), 'moodle/competency:usercompetencyview', 'nopermissions', '');
         }
         $plan = new plan($planid);
         if ($plan->get_status() == plan::STATUS_COMPLETE) {
@@ -3538,7 +3538,7 @@ class api {
         }
 
         if (!$ucc || !user_competency::can_read_user_in_course($ucc->get_userid(), $ucc->get_courseid())) {
-            throw new required_capability_exception($ucc->get_context(), 'tool/lp:usercompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($ucc->get_context(), 'moodle/competency:usercompetencyview', 'nopermissions', '');
         }
 
         // Validate the course, this will throw an exception if not valid.
@@ -3562,7 +3562,7 @@ class api {
         }
 
         if (!$ucp || !user_competency::can_read_user($ucp->get_userid())) {
-            throw new required_capability_exception($ucp->get_context(), 'tool/lp:usercompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($ucp->get_context(), 'moodle/competency:usercompetencyview', 'nopermissions', '');
         }
         $plan = new plan($ucp->get_planid());
         if ($plan->get_status() != plan::STATUS_COMPLETE) {
@@ -3586,7 +3586,7 @@ class api {
         $template = new template($templateid);
 
         if (!$template->can_read()) {
-            throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
+            throw new required_capability_exception($template->get_context(), 'moodle/competency:templateview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -3603,8 +3603,8 @@ class api {
         static::require_enabled();
         $competency = new competency($competencyid);
 
-        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $competency->get_context())) {
-             throw new required_capability_exception($competency->get_context(), 'tool/lp:competencyview', 'nopermissions', '');
+        if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'), $competency->get_context())) {
+             throw new required_capability_exception($competency->get_context(), 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
         return $competency->get_related_competencies();
@@ -3622,7 +3622,7 @@ class api {
         $competency1 = new competency($competencyid);
         $competency2 = new competency($relatedcompetencyid);
 
-        require_capability('tool/lp:competencymanage', $competency1->get_context());
+        require_capability('moodle/competency:competencymanage', $competency1->get_context());
 
         $relatedcompetency = related_competency::get_relation($competency1->get_id(), $competency2->get_id());
         if (!$relatedcompetency->get_id()) {
@@ -3646,7 +3646,7 @@ class api {
 
         // This only check if we have the permission in either competency because both competencies
         // should belong to the same framework.
-        require_capability('tool/lp:competencymanage', $competency->get_context());
+        require_capability('moodle/competency:competencymanage', $competency->get_context());
 
         $relatedcompetency = related_competency::get_relation($competencyid, $relatedcompetencyid);
         if ($relatedcompetency->get_id()) {
@@ -3668,7 +3668,7 @@ class api {
 
         if (!$userevidence->can_read()) {
             $context = $userevidence->get_context();
-            throw new required_capability_exception($context, 'tool/lp:userevidenceview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:userevidenceview', 'nopermissions', '');
         }
 
         return $userevidence;
@@ -3687,7 +3687,7 @@ class api {
         $context = $userevidence->get_context();
 
         if (!$userevidence->can_manage()) {
-            throw new required_capability_exception($context, 'tool/lp:userevidencemanage', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:userevidencemanage', 'nopermissions', '');
         }
 
         $userevidence->create();
@@ -3716,7 +3716,7 @@ class api {
         $context = $userevidence->get_context();
 
         if (!$userevidence->can_manage()) {
-            throw new required_capability_exception($context, 'tool/lp:userevidencemanage', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:userevidencemanage', 'nopermissions', '');
 
         } else if (array_key_exists('userid', $data) && $data->userid != $userevidence->get_userid()) {
             throw new coding_exception('Can not change the userid of a user evidence.');
@@ -3749,7 +3749,7 @@ class api {
         $context = $userevidence->get_context();
 
         if (!$userevidence->can_manage()) {
-            throw new required_capability_exception($context, 'tool/lp:userevidencemanage', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:userevidencemanage', 'nopermissions', '');
         }
 
         // Delete the user evidence.
@@ -3784,7 +3784,7 @@ class api {
         static::require_enabled();
         if (!user_evidence::can_read_user($userid)) {
             $context = context_user::instance($userid);
-            throw new required_capability_exception($context, 'tool/lp:userevidenceview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:userevidenceview', 'nopermissions', '');
         }
 
         $evidence = user_evidence::get_records(array('userid' => $userid), 'name');
@@ -3810,7 +3810,7 @@ class api {
         // Perform user evidence capability checks.
         if (!$userevidence->can_manage()) {
             $context = $userevidence->get_context();
-            throw new required_capability_exception($context, 'tool/lp:userevidencemanage', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:userevidencemanage', 'nopermissions', '');
         }
 
         // Perform competency capability checks.
@@ -3859,7 +3859,7 @@ class api {
         // Perform user evidence capability checks.
         if (!$userevidence->can_manage()) {
             $context = $userevidence->get_context();
-            throw new required_capability_exception($context, 'tool/lp:userevidencemanage', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:userevidencemanage', 'nopermissions', '');
         }
 
         // Get (and delete) the relation.
@@ -3900,7 +3900,7 @@ class api {
         $userid = $userevidence->get_userid();
 
         if (!$userevidence->can_manage()) {
-            throw new required_capability_exception($context, 'tool/lp:userevidencemanage', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:userevidencemanage', 'nopermissions', '');
         }
 
         $usercompetencies = user_evidence_competency::get_user_competencies_by_userevidenceid($id);
@@ -4077,7 +4077,7 @@ class api {
 
         if (!user_competency::can_read_user($userid)) {
             $context = context_user::instance($userid);
-            throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:usercompetencyview', 'nopermissions', '');
         }
 
         $usercompetency = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
@@ -4130,7 +4130,7 @@ class api {
 
         if (!user_competency::can_read_user_in_course($userid, $courseid)) {
             $context = context_user::instance($userid);
-            throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:usercompetencyview', 'nopermissions', '');
         }
 
         $usercompetency = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
@@ -4626,14 +4626,14 @@ class api {
         $uc = static::get_user_competency($userid, $competencyid);
         $context = $uc->get_context();
         if (!user_competency::can_grade_user($uc->get_userid())) {
-            throw new required_capability_exception($context, 'tool/lp:competencygrade', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:competencygrade', 'nopermissions', '');
         }
 
         // Throws exception if competency not in plan.
         $competency = $uc->get_competency();
         $competencycontext = $competency->get_context();
-        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $competencycontext)) {
-            throw new required_capability_exception($competencycontext, 'tool/lp:competencyview', 'nopermissions', '');
+        if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'), $competencycontext)) {
+            throw new required_capability_exception($competencycontext, 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
         $action = evidence::ACTION_OVERRIDE;
@@ -4679,14 +4679,14 @@ class api {
 
         $context = $plan->get_context();
         if (!user_competency::can_grade_user($plan->get_userid())) {
-            throw new required_capability_exception($context, 'tool/lp:competencygrade', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:competencygrade', 'nopermissions', '');
         }
 
         // Throws exception if competency not in plan.
         $competency = $plan->get_competency($competencyid);
         $competencycontext = $competency->get_context();
-        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $competencycontext)) {
-            throw new required_capability_exception($competencycontext, 'tool/lp:competencyview', 'nopermissions', '');
+        if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'), $competencycontext)) {
+            throw new required_capability_exception($competencycontext, 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
         $action = evidence::ACTION_OVERRIDE;
@@ -4737,23 +4737,23 @@ class api {
 
         // Check that we can view the user competency details in the course.
         if (!user_competency::can_read_user_in_course($userid, $course->id)) {
-            throw new required_capability_exception($context, 'tool/lp:usercompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:usercompetencyview', 'nopermissions', '');
         }
 
         // Validate the permission to grade.
         if (!user_competency::can_grade_user_in_course($userid, $course->id)) {
-            throw new required_capability_exception($context, 'tool/lp:competencygrade', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:competencygrade', 'nopermissions', '');
         }
 
         // Check that competency is in course and visible to the current user.
         $competency = course_competency::get_competency($course->id, $competencyid);
         $competencycontext = $competency->get_context();
-        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $competencycontext)) {
-            throw new required_capability_exception($competencycontext, 'tool/lp:competencyview', 'nopermissions', '');
+        if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'), $competencycontext)) {
+            throw new required_capability_exception($competencycontext, 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
         // Check that the user is enrolled in the course, and is "gradable".
-        if (!is_enrolled($context, $userid, 'tool/lp:coursecompetencygradable')) {
+        if (!is_enrolled($context, $userid, 'moodle/competency:coursecompetencygradable')) {
             throw new coding_exception('The competency may not be rated at this time.');
         }
 
@@ -4784,7 +4784,7 @@ class api {
     /**
      * Count the plans in the template, filtered by status.
      *
-     * Requires tool/lp:templateview capability at the system context.
+     * Requires moodle/competency:templateview capability at the system context.
      *
      * @param mixed $templateorid The id or the template.
      * @param int $status One of the plan status constants (or 0 for all plans).
@@ -4799,7 +4799,7 @@ class api {
 
         // First we do a permissions check.
         if (!$template->can_read()) {
-             throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
+             throw new required_capability_exception($template->get_context(), 'moodle/competency:templateview', 'nopermissions', '');
         }
 
         return plan::count_records_for_template($template->get_id(), $status);
@@ -4808,7 +4808,7 @@ class api {
     /**
      * Count the user-completency-plans in the template, optionally filtered by proficiency.
      *
-     * Requires tool/lp:templateview capability at the system context.
+     * Requires moodle/competency:templateview capability at the system context.
      *
      * @param mixed $templateorid The id or the template.
      * @param mixed $proficiency If true, filter by proficiency, if false filter by not proficient, if null - no filter.
@@ -4823,7 +4823,7 @@ class api {
 
         // First we do a permissions check.
         if (!$template->can_read()) {
-             throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
+             throw new required_capability_exception($template->get_context(), 'moodle/competency:templateview', 'nopermissions', '');
         }
 
         return user_competency_plan::count_records_for_template($template->get_id(), $proficiency);
@@ -4832,7 +4832,7 @@ class api {
     /**
      * List the plans in the template, filtered by status.
      *
-     * Requires tool/lp:templateview capability at the system context.
+     * Requires moodle/competency:templateview capability at the system context.
      *
      * @param mixed $templateorid The id or the template.
      * @param int $status One of the plan status constants (or 0 for all plans).
@@ -4848,7 +4848,7 @@ class api {
 
         // First we do a permissions check.
         if (!$template->can_read()) {
-             throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
+             throw new required_capability_exception($template->get_context(), 'moodle/competency:templateview', 'nopermissions', '');
         }
 
         return plan::get_records_for_template($template->get_id(), $status, $skip, $limit);
@@ -4857,7 +4857,7 @@ class api {
     /**
      * Get the most often not completed competency for this course.
      *
-     * Requires tool/lp:coursecompetencyview capability at the course context.
+     * Requires moodle/competency:coursecompetencyview capability at the course context.
      *
      * @param int $courseid The course id
      * @param int $skip The number of records to skip
@@ -4868,8 +4868,8 @@ class api {
         static::require_enabled();
         $coursecontext = context_course::instance($courseid);
 
-        if (!has_any_capability(array('tool/lp:competencyview', 'tool/lp:competencymanage'), $coursecontext)) {
-            throw new required_capability_exception($coursecontext, 'tool/lp:competencyview', 'nopermissions', '');
+        if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'), $coursecontext)) {
+            throw new required_capability_exception($coursecontext, 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
         return user_competency_course::get_least_proficient_competencies_for_course($courseid, $skip, $limit);
@@ -4878,7 +4878,7 @@ class api {
     /**
      * Get the most often not completed competency for this template.
      *
-     * Requires tool/lp:templateview capability at the system context.
+     * Requires moodle/competency:templateview capability at the system context.
      *
      * @param mixed $templateorid The id or the template.
      * @param int $skip The number of records to skip
@@ -4894,7 +4894,7 @@ class api {
 
         // First we do a permissions check.
         if (!$template->can_read()) {
-             throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
+             throw new required_capability_exception($template->get_context(), 'moodle/competency:templateview', 'nopermissions', '');
         }
 
         return user_competency_plan::get_least_proficient_competencies_for_template($template->get_id(), $skip, $limit);
@@ -4903,7 +4903,7 @@ class api {
     /**
      * Template event viewed.
      *
-     * Requires tool/lp:templateview capability at the system context.
+     * Requires moodle/competency:templateview capability at the system context.
      *
      * @param mixed $templateorid The id or the template.
      * @return boolean
@@ -4917,7 +4917,7 @@ class api {
 
         // First we do a permissions check.
         if (!$template->can_read()) {
-             throw new required_capability_exception($template->get_context(), 'tool/lp:templateview', 'nopermissions', '');
+             throw new required_capability_exception($template->get_context(), 'moodle/competency:templateview', 'nopermissions', '');
         }
 
         // Trigger a template viewed event.
@@ -4929,7 +4929,7 @@ class api {
     /**
      * Get the competency settings for a course.
      *
-     * Requires tool/lp:coursecompetencyview capability at the course context.
+     * Requires moodle/competency:coursecompetencyview capability at the course context.
      *
      * @param int $courseid The course id
      * @return course_competency_settings
@@ -4940,7 +4940,7 @@ class api {
         // First we do a permissions check.
         if (!course_competency_settings::can_read($courseid)) {
             $context = context_course::instance($courseid);
-            throw new required_capability_exception($context, 'tool/lp:coursecompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
         }
 
         return course_competency_settings::get_by_courseid($courseid);
@@ -4949,7 +4949,7 @@ class api {
     /**
      * Update the competency settings for a course.
      *
-     * Requires tool/lp:coursecompetencyconfigure capability at the course context.
+     * Requires moodle/competency:coursecompetencyconfigure capability at the course context.
      *
      * @param int $courseid The course id
      * @param stdClass $settings List of settings. The only valid setting ATM is pushratginstouserplans (boolean).
@@ -4966,7 +4966,7 @@ class api {
         // First we do a permissions check.
         if (!course_competency_settings::can_manage_course($courseid)) {
             $context = context_course::instance($courseid);
-            throw new required_capability_exception($context, 'tool/lp:coursecompetencyconfigure', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:coursecompetencyconfigure', 'nopermissions', '');
         }
 
         $exists = course_competency_settings::get_record(array('courseid' => $courseid));

@@ -438,7 +438,7 @@ function tool_lp_coursemodule_standard_elements($formwrapper, $mform) {
 
     if (!\tool_lp\api::is_enabled()) {
         return;
-    } else if (!has_capability('tool/lp:coursecompetencymanage', $formwrapper->get_context())) {
+    } else if (!has_capability('moodle/competency:coursecompetencymanage', $formwrapper->get_context())) {
         return;
     }
 

@@ -335,9 +335,9 @@ class user_competency extends persistent {
     public static function can_comment_user($userid) {
         global $USER;
 
-        $capabilities = array('tool/lp:usercompetencycomment');
+        $capabilities = array('moodle/competency:usercompetencycomment');
         if ($USER->id == $userid) {
-            $capabilities[] = 'tool/lp:usercompetencycommentown';
+            $capabilities[] = 'moodle/competency:usercompetencycommentown';
         }
 
         if (has_any_capability($capabilities, context_user::instance($userid))) {
@@ -354,7 +354,7 @@ class user_competency extends persistent {
      * @return bool
      */
     public static function can_grade_user($userid) {
-        $ratecap = 'tool/lp:competencygrade';
+        $ratecap = 'moodle/competency:competencygrade';
         return has_capability($ratecap, context_user::instance($userid));
     }
 
@@ -366,7 +366,7 @@ class user_competency extends persistent {
      * @return bool
      */
     public static function can_grade_user_in_course($userid, $courseid) {
-        $ratecap = 'tool/lp:competencygrade';
+        $ratecap = 'moodle/competency:competencygrade';
         return has_capability($ratecap, context_course::instance($courseid))
             || static::can_grade_user($userid);
     }
@@ -390,7 +390,7 @@ class user_competency extends persistent {
      * @return bool
      */
     public static function can_read_user_in_course($userid, $courseid) {
-        $capability = 'tool/lp:usercompetencyview';
+        $capability = 'moodle/competency:usercompetencyview';
         return has_capability($capability, context_course::instance($courseid))
             || static::can_read_user($userid);
     }
@@ -402,7 +402,7 @@ class user_competency extends persistent {
      * @return bool
      */
     public static function can_read_user($userid) {
-        $capability = 'tool/lp:usercompetencyview';
+        $capability = 'moodle/competency:usercompetencyview';
         return has_capability($capability, context_user::instance($userid))
             || plan::can_read_user($userid);
     }
@@ -420,9 +420,9 @@ class user_competency extends persistent {
     public static function can_request_review_user($userid) {
         global $USER;
 
-        $capabilities = array('tool/lp:usercompetencyrequestreview');
+        $capabilities = array('moodle/competency:usercompetencyrequestreview');
         if ($USER->id == $userid) {
-            $capabilities[] = 'tool/lp:usercompetencyrequestreviewown';
+            $capabilities[] = 'moodle/competency:usercompetencyrequestreviewown';
         }
 
         if (has_any_capability($capabilities, context_user::instance($userid))) {
@@ -439,7 +439,7 @@ class user_competency extends persistent {
      * @return bool
      */
     public static function can_review_user($userid) {
-        $capability = 'tool/lp:usercompetencyreview';
+        $capability = 'moodle/competency:usercompetencyreview';
         return has_capability($capability, context_user::instance($userid));
     }
 

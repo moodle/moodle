@@ -364,9 +364,9 @@ class plan extends persistent {
     public static function can_comment_user($planuserid) {
         global $USER;
 
-        $capabilities = array('tool/lp:plancomment');
+        $capabilities = array('moodle/competency:plancomment');
         if ($USER->id == $planuserid) {
-            $capabilities[] = 'tool/lp:plancommentown';
+            $capabilities[] = 'moodle/competency:plancommentown';
         }
 
         return has_any_capability($capabilities, context_user::instance($planuserid));
@@ -382,9 +382,9 @@ class plan extends persistent {
         global $USER;
         $context = context_user::instance($planuserid);
 
-        $capabilities = array('tool/lp:planmanage');
+        $capabilities = array('moodle/competency:planmanage');
         if ($context->instanceid == $USER->id) {
-            $capabilities[] = 'tool/lp:planmanageown';
+            $capabilities[] = 'moodle/competency:planmanageown';
         }
 
         return has_any_capability($capabilities, $context);
@@ -400,9 +400,9 @@ class plan extends persistent {
         global $USER;
         $context = context_user::instance($planuserid);
 
-        $capabilities = array('tool/lp:planmanagedraft');
+        $capabilities = array('moodle/competency:planmanagedraft');
         if ($context->instanceid == $USER->id) {
-            $capabilities[] = 'tool/lp:planmanageowndraft';
+            $capabilities[] = 'moodle/competency:planmanageowndraft';
         }
 
         return has_any_capability($capabilities, $context);
@@ -429,9 +429,9 @@ class plan extends persistent {
         global $USER;
         $context = context_user::instance($planuserid);
 
-        $capabilities = array('tool/lp:planview');
+        $capabilities = array('moodle/competency:planview');
         if ($context->instanceid == $USER->id) {
-            $capabilities[] = 'tool/lp:planviewown';
+            $capabilities[] = 'moodle/competency:planviewown';
         }
 
         return has_any_capability($capabilities, $context)
@@ -448,9 +448,9 @@ class plan extends persistent {
         global $USER;
         $context = context_user::instance($planuserid);
 
-        $capabilities = array('tool/lp:planviewdraft');
+        $capabilities = array('moodle/competency:planviewdraft');
         if ($context->instanceid == $USER->id) {
-            $capabilities[] = 'tool/lp:planviewowndraft';
+            $capabilities[] = 'moodle/competency:planviewowndraft';
         }
 
         return has_any_capability($capabilities, $context)
@@ -466,9 +466,9 @@ class plan extends persistent {
     public static function can_request_review_user($planuserid) {
         global $USER;
 
-        $capabilities = array('tool/lp:planrequestreview');
+        $capabilities = array('moodle/competency:planrequestreview');
         if ($USER->id == $planuserid) {
-            $capabilities[] = 'tool/lp:planrequestreviewown';
+            $capabilities[] = 'moodle/competency:planrequestreviewown';
         }
 
         return has_any_capability($capabilities, context_user::instance($planuserid));
@@ -483,7 +483,7 @@ class plan extends persistent {
      * @return bool
      */
     public static function can_review_user($planuserid) {
-        return has_capability('tool/lp:planreview', context_user::instance($planuserid))
+        return has_capability('moodle/competency:planreview', context_user::instance($planuserid))
             || self::can_manage_user($planuserid);
     }
 

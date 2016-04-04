@@ -47,12 +47,12 @@ class tool_lp_course_competency_settings_testcase extends advanced_testcase {
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('tool_lp');
         $role = create_role('Settings changer role', 'settingschanger', 'Someone who can change course competency settings');
-        assign_capability('tool/lp:coursecompetencyconfigure', CAP_ALLOW, $role, $syscontext->id);
-        assign_capability('tool/lp:competencygrade', CAP_ALLOW, $role, $syscontext->id);
-        assign_capability('tool/lp:coursecompetencyview', CAP_ALLOW, $role, $syscontext->id);
-        assign_capability('tool/lp:planview', CAP_ALLOW, $role, $syscontext->id);
+        assign_capability('moodle/competency:coursecompetencyconfigure', CAP_ALLOW, $role, $syscontext->id);
+        assign_capability('moodle/competency:competencygrade', CAP_ALLOW, $role, $syscontext->id);
+        assign_capability('moodle/competency:coursecompetencyview', CAP_ALLOW, $role, $syscontext->id);
+        assign_capability('moodle/competency:planview', CAP_ALLOW, $role, $syscontext->id);
         $gradedrole = create_role('Graded role', 'graded', 'Someone who can be graded');
-        assign_capability('tool/lp:coursecompetencygradable', CAP_ALLOW, $gradedrole, $syscontext->id);
+        assign_capability('moodle/competency:coursecompetencygradable', CAP_ALLOW, $gradedrole, $syscontext->id);
 
         $c1 = $dg->create_course();
         $u1 = $dg->create_user();

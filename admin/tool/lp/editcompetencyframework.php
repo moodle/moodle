@@ -41,7 +41,7 @@ if (!empty($id)) {
 // We check that we have the permission to edit this framework, in its own context.
 require_login();
 \tool_lp\api::require_enabled();
-require_capability('tool/lp:competencymanage', $context);
+require_capability('moodle/competency:competencymanage', $context);
 
 // Set up the framework page.
 list($pagetitle, $pagesubtitle, $url, $frameworksurl) = tool_lp\page_helper::setup_for_framework($id,

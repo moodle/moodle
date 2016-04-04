@@ -48,8 +48,8 @@ class tool_lp_lib_testcase extends advanced_testcase {
         $u2 = $dg->create_user();
         $u3 = $dg->create_user();
         $reviewerroleid = $dg->create_role();
-        assign_capability('tool/lp:planview', CAP_ALLOW, $reviewerroleid, context_system::instance()->id, true);
-        assign_capability('tool/lp:usercompetencycomment', CAP_ALLOW, $reviewerroleid, context_system::instance()->id, true);
+        assign_capability('moodle/competency:planview', CAP_ALLOW, $reviewerroleid, context_system::instance()->id, true);
+        assign_capability('moodle/competency:usercompetencycomment', CAP_ALLOW, $reviewerroleid, context_system::instance()->id, true);
         $dg->role_assign($reviewerroleid, $u2->id, context_user::instance($u1->id));
         $dg->role_assign($reviewerroleid, $u3->id, context_user::instance($u1->id));
         accesslib_clear_all_caches_for_unit_testing();
@@ -196,11 +196,11 @@ class tool_lp_lib_testcase extends advanced_testcase {
         $u3 = $dg->create_user();
         $userroleid = $dg->create_role();
         $reviewerroleid = $dg->create_role();
-        assign_capability('tool/lp:planviewowndraft', CAP_ALLOW, $userroleid, context_system::instance()->id, true);
-        assign_capability('tool/lp:planviewown', CAP_ALLOW, $userroleid, context_system::instance()->id, true);
-        assign_capability('tool/lp:planviewdraft', CAP_ALLOW, $reviewerroleid, context_system::instance()->id, true);
-        assign_capability('tool/lp:planmanage', CAP_ALLOW, $reviewerroleid, context_system::instance()->id, true);
-        assign_capability('tool/lp:plancomment', CAP_ALLOW, $reviewerroleid, context_system::instance()->id, true);
+        assign_capability('moodle/competency:planviewowndraft', CAP_ALLOW, $userroleid, context_system::instance()->id, true);
+        assign_capability('moodle/competency:planviewown', CAP_ALLOW, $userroleid, context_system::instance()->id, true);
+        assign_capability('moodle/competency:planviewdraft', CAP_ALLOW, $reviewerroleid, context_system::instance()->id, true);
+        assign_capability('moodle/competency:planmanage', CAP_ALLOW, $reviewerroleid, context_system::instance()->id, true);
+        assign_capability('moodle/competency:plancomment', CAP_ALLOW, $reviewerroleid, context_system::instance()->id, true);
         $dg->role_assign($userroleid, $u1->id, context_user::instance($u1->id));
         $dg->role_assign($reviewerroleid, $u2->id, context_user::instance($u1->id));
         $dg->role_assign($reviewerroleid, $u3->id, context_system::instance());

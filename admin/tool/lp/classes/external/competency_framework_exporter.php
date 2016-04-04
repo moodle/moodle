@@ -54,7 +54,7 @@ class competency_framework_exporter extends persistent_exporter {
         $filters = array('competencyframeworkid' => $this->persistent->get_id());
         $context = $this->persistent->get_context();
         return array(
-            'canmanage' => has_capability('tool/lp:competencymanage', $context),
+            'canmanage' => has_capability('moodle/competency:competencymanage', $context),
             'competenciescount' => api::count_competencies($filters),
             'contextname' => $context->get_context_name(),
             'contextnamenoprefix' => $context->get_context_name(false)

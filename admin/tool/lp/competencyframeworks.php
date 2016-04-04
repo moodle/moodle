@@ -35,7 +35,7 @@ require_login();
 \tool_lp\api::require_enabled();
 
 if (!\tool_lp\competency_framework::can_read_context($context)) {
-    throw new required_capability_exception($context, 'tool/lp:competencyview', 'nopermissions', '');
+    throw new required_capability_exception($context, 'moodle/competency:competencyview', 'nopermissions', '');
 }
 
 $title = get_string('competencies', 'tool_lp');

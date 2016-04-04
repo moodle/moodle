@@ -62,13 +62,13 @@ $cancreate = \tool_lp\plan::can_manage_user_draft($userid) || \tool_lp\plan::can
 // If editing plan, check if user has permissions to edit it.
 if ($plan != null) {
     if (!$plan->can_manage()) {
-        throw new required_capability_exception($PAGE->context, 'tool/lp:planmanage', 'nopermissions', '');
+        throw new required_capability_exception($PAGE->context, 'moodle/competency:planmanage', 'nopermissions', '');
     }
     if (!$plan->can_be_edited()) {
         throw new coding_exception('Completed plan can not be edited');
     }
 } else if (!$cancreate) {
-    throw new required_capability_exception($PAGE->context, 'tool/lp:planmanage', 'nopermissions', '');
+    throw new required_capability_exception($PAGE->context, 'moodle/competency:planmanage', 'nopermissions', '');
 }
 
 $form = new \tool_lp\form\plan($url->out(false), $customdata);

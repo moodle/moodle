@@ -85,7 +85,7 @@ class user_competency_course_navigation implements renderable, templatable {
         $data->baseurl = $this->baseurl;
         $data->groupselector = '';
 
-        if (has_capability('tool/lp:coursecompetencymanage', $context)) {
+        if (has_capability('moodle/competency:coursecompetencymanage', $context)) {
             $course = $DB->get_record('course', array('id' => $this->courseid));
             $currentgroup = groups_get_course_group($course, true);
             if ($currentgroup !== false) {
@@ -97,7 +97,7 @@ class user_competency_course_navigation implements renderable, templatable {
             $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
             $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $context);
 
-            $users = get_enrolled_users($context, 'tool/lp:coursecompetencygradable', $currentgroup,
+            $users = get_enrolled_users($context, 'moodle/competency:coursecompetencygradable', $currentgroup,
                                         'u.*', null, 0, 0, $showonlyactiveenrol);
 
             $data->users = array();

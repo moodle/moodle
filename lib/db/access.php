@@ -2056,6 +2056,239 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         )
-    )
+    ),
+
+    // Competencies.
+    'moodle/competency:competencymanage' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSECAT,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW
+        )
+    ),
+    'moodle/competency:competencyview' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSECAT,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/block:view'
+    ),
+    'moodle/competency:competencygrade' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE, // And CONTEXT_USER.
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+    ),
+    // Course competencies.
+    'moodle/competency:coursecompetencymanage' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/site:backup'
+    ),
+    'moodle/competency:coursecompetencyconfigure' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/site:backup'
+    ),
+    'moodle/competency:coursecompetencygradable' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'student' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/course:isincompletionreports'
+    ),
+    'moodle/competency:coursecompetencyview' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/block:view'
+    ),
+    // User plans.
+    'moodle/competency:planmanage' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+    'moodle/competency:planmanagedraft' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+    'moodle/competency:planmanageown' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+    'moodle/competency:planmanageowndraft' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+    'moodle/competency:planview' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+    'moodle/competency:planviewdraft' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+    'moodle/competency:planviewown' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/block:view'
+    ),
+    'moodle/competency:planviewowndraft' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+    'moodle/competency:planrequestreview' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+        )
+    ),
+    'moodle/competency:planrequestreviewown' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        )
+    ),
+    'moodle/competency:planreview' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+    'moodle/competency:plancomment' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+    'moodle/competency:plancommentown' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        ),
+    ),
+    // User competencies.
+    'moodle/competency:usercompetencyview' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,     // And CONTEXT_COURSE.
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW
+        )
+    ),
+    'moodle/competency:usercompetencyrequestreview' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+        )
+    ),
+    'moodle/competency:usercompetencyrequestreviewown' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        )
+    ),
+    'moodle/competency:usercompetencyreview' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+    'moodle/competency:usercompetencycomment' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+    'moodle/competency:usercompetencycommentown' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        ),
+    ),
+    // Template.
+    'moodle/competency:templatemanage' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSECAT,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+    'moodle/competency:templateview' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSECAT,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+    // User evidence.
+    'moodle/competency:userevidencemanage' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+    'moodle/competency:userevidencemanageown' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/block:view'
+    ),
+    'moodle/competency:userevidenceview' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
 
 );
