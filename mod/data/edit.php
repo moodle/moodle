@@ -268,6 +268,9 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
                     'rid' => $recordid,
                 ));
                 redirect($viewurl);
+            } else if (!empty($datarecord->saveandadd)) {
+                // User has clicked "Save and add another". Reset all of the fields.
+                $datarecord = null;
             }
         }
     }
@@ -354,7 +357,7 @@ if ($rid) {
     echo '&nbsp;<input type="submit" name="cancel" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
 } else {
     if ((!$data->maxentries) || has_capability('mod/data:manageentries', $context) || (data_numentries($data) < ($data->maxentries - 1))) {
-        echo '&nbsp;<input type="submit" value="'.get_string('saveandadd','data').'" />';
+        echo '&nbsp;<input type="submit" name="saveandadd" value="' . get_string('saveandadd', 'data') . '" />';
     }
 }
 echo '</div>';
