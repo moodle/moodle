@@ -1121,5 +1121,20 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015083100, 'local', 'iomad');
     }
 
+    if ($oldversion < 2015083101) {
+
+        // Define field notifyperiod to be added to iomad_courses.
+        $table = new xmldb_table('iomad_courses');
+        $field = new xmldb_field('notifyperiod', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'warncompletion');
+
+        // Conditionally launch add field notifyperiod.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2015083101, 'local', 'iomad');
+    }
+
     return $result;
 }

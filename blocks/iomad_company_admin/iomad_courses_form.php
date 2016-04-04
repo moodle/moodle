@@ -35,6 +35,7 @@ $shared = optional_param('shared', 0, PARAM_INTEGER);
 $validfor = optional_param('validfor', 0, PARAM_INTEGER);
 $warnexpire = optional_param('warnexpire', 0, PARAM_INTEGER);
 $warncompletion = optional_param('warncompletion', 0, PARAM_INTEGER);
+$notifyperiod = optional_param('notifyperiod', 0, PARAM_INTEGER);
 
 $params = array();
 
@@ -210,6 +211,13 @@ if (!empty($update)) {
             }
             $coursedetails['warncompletion'] = $warncompletion;
             $DB->update_record('iomad_courses', $coursedetails);
+        } else if ('notifyperiod' == $update) {
+            // Work out the time in seconds....
+            if ($notifyperiod < 0) {
+                $notifyperiod = 0;
+            }
+            $coursedetails['notifyperiod'] = $notifyperiod;
+            $DB->update_record('iomad_courses', $coursedetails);
         }
     }
 }
@@ -276,16 +284,15 @@ $table->head = array (
     get_string('shared', 'block_iomad_company_admin')  . $OUTPUT->help_icon('shared', 'block_iomad_company_admin'),
     get_string('validfor', 'block_iomad_company_admin') . $OUTPUT->help_icon('validfor', 'block_iomad_company_admin'),
     get_string('warnexpire', 'block_iomad_company_admin') . $OUTPUT->help_icon('warnexpire', 'block_iomad_company_admin'),
-    get_string('warncompletion', 'block_iomad_company_admin') . $OUTPUT->help_icon('warncompletion', 'block_iomad_company_admin')
+    get_string('warncompletion', 'block_iomad_company_admin') . $OUTPUT->help_icon('warncompletion', 'block_iomad_company_admin'),
+    get_string('notifyperiod', 'block_iomad_company_admin') . $OUTPUT->help_icon('notifyperiod', 'block_iomad_company_admin')
 );
-$table->align = array ("left", "center", "center", "center", "center", "center", "center");
+$table->align = array ("left", "center", "center", "center", "center", "center", "center", "center");
 $table->width = "95%";
 $selectbutton = array('0' => get_string('no'), '1' => get_string('yes'));
 $sharedselectbutton = array('0' => get_string('no'),
-                            '1' => get_string('open',
-                            'block_iomad_company_admin'),
-                            '2' => get_string('closed',
-                            'block_iomad_company_admin'));
+                            '1' => get_string('open', 'block_iomad_company_admin'),
+                            '2' => get_string('closed', 'block_iomad_company_admin'));
 
 
 foreach ($courses as $course) {
@@ -336,32 +343,44 @@ foreach ($courses as $course) {
     } else {
         $warncompletion = $iomaddetails->warncompletion;
     }
+    if (empty($iomaddetails->notifyperiod)) {
+        $notifyperiod = 0;
+    } else {
+        $notifyperiod = $iomaddetails->notifyperiod;
+    }
     $formhtml = '<form action="iomad_courses_form.php" method="get">
                  <input type="hidden" name="courseid" value="' . $course->id . '" />
                  <input type="hidden" name="company" value="'.$company.'" />
                  <input type="hidden" name="update" value="validfor" />
-                 <input type="text" name="validfor" id="id_validfor" value="'.$duration.'" />
+                 <input type="text" name="validfor" id="id_validfor" value="'.$duration.'" size="10"/>
                  <input type="submit" value="' . get_string('submit') . '" />
                  </form>';
     $expirehtml = '<form action="iomad_courses_form.php" method="get">
                  <input type="hidden" name="courseid" value="' . $course->id . '" />
                  <input type="hidden" name="company" value="'.$company.'" />
                  <input type="hidden" name="update" value="warnexpire" />
-                 <input type="text" name="warnexpire" id="id_warnexpire" value="'.$warnexpire.'" />
+                 <input type="text" name="warnexpire" id="id_warnexpire" value="'.$warnexpire.'" size="10"/>
                  <input type="submit" value="' . get_string('submit') . '" />
                  </form>';
     $warnhtml = '<form action="iomad_courses_form.php" method="get">
                  <input type="hidden" name="courseid" value="' . $course->id . '" />
                  <input type="hidden" name="company" value="'.$company.'" />
                  <input type="hidden" name="update" value="warncompletion" />
-                 <input type="text" name="warncompletion" id="id_warncompletion" value="'.$warncompletion.'" />
+                 <input type="text" name="warncompletion" id="id_warncompletion" value="'.$warncompletion.'" size="10"/>
                  <input type="submit" value="' . get_string('submit') . '" />
                  </form>';
-$courselink = new moodle_url('/course/view.php', array('id'=>$course->id));
+    $notifyhtml = '<form action="iomad_courses_form.php" method="get">
+                 <input type="hidden" name="courseid" value="' . $course->id . '" />
+                 <input type="hidden" name="company" value="'.$company.'" />
+                 <input type="hidden" name="update" value="notifyperiod" />
+                 <input type="text" name="notifyperiod" id="id_notifyperiod" value="'.$notifyperiod.'" size="10"/>
+                 <input type="submit" value="' . get_string('submit') . '" />
+                 </form>';
+    $courselink = new moodle_url('/course/view.php', array('id'=>$course->id));
     $table->data[] = array ($companyname,
                             "<a href='$courselink'>$course->fullname</a>",
                             $licenseselectoutput,
-                            $sharedselectoutput, $formhtml, $expirehtml, $warnhtml);
+                            $sharedselectoutput, $formhtml, $expirehtml, $warnhtml, $notifyhtml);
 }
 
 if (!empty($table)) {

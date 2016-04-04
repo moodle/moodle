@@ -179,17 +179,17 @@ Please visit {LinkURL}  to change this';
 $string['completion_warn_user_subject'] = 'Notice: Course {Course_FullName} has not been completed';
 $string['completion_warn_user_body'] = 'Dear {User_FirstName},
 You have still not completed your training on {Course_FullName}.  Please visit {CourseURL} to rectify this.';
-$string['completion_warn_manager_subject'] = 'Completion failure report for {Course_FullName}';
+$string['completion_warn_manager_subject'] = 'User completion failure report';
 $string['completion_warn_manager_body'] = 'Dear {User_FirstName},
-the following users have not completed the training on the course {Course_FullName} within the normal timeframe :
+the following users have not completed their training within the normal timeframe :
 
 {Course_ReportText}';
 $string['expiry_warn_user_subject'] = 'Notice: Accreditation in {Course_FullName} will expire soon.';
 $string['expiry_warn_user_body'] = 'Dear {User_FirstName},
 your accredited training on {Course_FullName} is expiring soon.  Please arrange for re-accreditation if appropriate';
-$string['expiry_warn_manager_subject'] = 'Accreditation expiry report for {Course_FullName}';
-$string['expiry_warn_manager_body'] = 'Dear {User_FullName},
-the following users accreditation in {Course_FullName} is due to expire soon :
+$string['expiry_warn_manager_subject'] = 'Accreditation expiry report';
+$string['expiry_warn_manager_body'] = 'Dear {User_FirstName},
+the following users accreditation is due to expire soon :
 
 {Course_ReportText}';
 $string['expire_subject'] = 'Course expires';
@@ -198,7 +198,7 @@ $string['expire_manager_subject'] = 'Accreditation expired report for {Course_Fu
 $string['expire_manager_body'] = 'Dear {User_FullName},
 the following users accreditation in {Course_FullName} has expired :
 
-{Course_ReportText}';
+{User_ReportText}';
 $string['user_create_subject'] = 'A new on-line learning account has been created for you';
 $string['user_create_body'] = 'Dear {User_FirstName},
 

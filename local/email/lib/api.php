@@ -125,6 +125,7 @@ class EmailTemplate {
         $this->classroom = array_key_exists('classroom', $options) ? $options['classroom'] : null;
         $this->license = array_key_exists('license', $options) ? $options['license'] : null;
         $this->headers = array_key_exists('headers', $options) ? $options['headers'] : null;
+        $this->company = array_key_exists('company', $options) ? $options['company'] : null;
 
         if (!isset($user)) {
             $user =& $USER;
@@ -168,7 +169,7 @@ class EmailTemplate {
         if (!empty($SESSION->currenteditingcompany)) {
             $this->company = $DB->get_record('company', array('id' => $SESSION->currenteditingcompany));
             // Otherwise use the creating users company.
-        } else {
+        } else if (empty($this->company)) {
             $this->company = $DB->get_record_sql("SELECT * FROM {company}
                                                   WHERE id = (
                                                    SELECT companyid FROM {company_users}

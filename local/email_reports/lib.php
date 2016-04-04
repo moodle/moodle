@@ -17,88 +17,302 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot.'/local/email/lib.php');
 
-function emails_report_cron() {
+function email_reports_cron() {
     global $DB;
 
+    // Set some defaults.
     $runtime = time();
-    echo "Running email report cron at ".date('D M Y h:m:s', $runtime)."\n";
+    $courses = array();
 
-    // Generate automatic reports.
-    // Training reaching lifetime/expired.
-    if ($checkcourses = $DB->get_records_sql('SELECT * from {iomad_courses} where validlength!=0')) {
-        // We have some courses which we need to check against.
-        foreach ($checkcourses as $checkcourse) {
-            $expiredtext = "";
-            $expiringtext = "";
-            $latetext = "";
-            echo "Get completion information for $checkcourse->courseid \n";
-            if ($coursecompletions = $DB->get_records('course_completions', array('course' => $checkcourse->courseid))) {
-                // Get the course information.
-                $course = $DB->get_record('course', array('id' => $checkcourse->courseid));
-                // We have completion information.
-                foreach ($coursecompletions as $completion) {
-                    if (!empty($completion->timecompleted)) {
-                        // Got a completed time.
-                        if ($completion->timecompleted + $checkcourse->validlength * 86400 > $runtime) {
-                            // Got someone overdue.
-                            $user = $DB->get_record('user', array('id' => $completion->userid));
-                            echo "Sending overdue email to $user->email \n";
-                            EmailTemplate::send('expire', array('course' => $course, 'user' => $user));
-                            $expiredtext .= $user->firstname.' '.$user->lastname.', '.$user->email.' - '.
-                                            date('D M Y', $completion->timecompleted)."\n";
-                        } else if ($completion->timecompleted + $checkcourse->validlength * 86400 +
-                                   $checkcourse->warnexpire * 86400 > $runtime) {
-                            // We got someone approaching expiry.
-                            $user = $DB->get_record('user', array('id' => $completion->userid));
-                            echo "Sending exiry email to $user->email \n";
-                            EmailTemplate::send('expiry_warn_user', array('course' => $course, 'user' => $user));
-                            $expiringtext .= $user->firstname.' '.$user->lastname.', '.$user->email.' - '.
-                                             date('D M Y', $completion->timecompleted)."\n";
-                        }
-                    } else if (!empty($completion->timeenrolled)) {
-                        if ($completion->timeenrolled + $checkcourse->warncompletion * 86400 > $runtime) {
-                            // Go someone not completed in time.
-                            $user = $DB->get_record('user', array('id' => $completion->userid));
-                            echo "Sending completion warning email to $user->email \n";
-                            EmailTemplate::send('completion_warn_user', array('course' => $course, 'user' => $user));
-                            $latetext .= $user->firstname.' '.$user->lastname.', '.$user->email.' - '.
-                                         date('D M Y', $completion->timeenrolled)."\n";
-                        }
-                    }
-                }
-                // Get the list of company managers.
-                $companymanagers = $DB->get_records_sql("SELECT cm.userid FROM {companymanager} cm,
-                                                         {companycourse} cc
-                                                         WHERE cc.courseid = $checkcourse->courseid
-                                                         AND cc.companyid = cm.companyid");
-                $managers = array();
-                $coursecontext = context_course::instance($course->id);
-                foreach ($companymanagers as $companymanager) {
-                    $user = $DB->get_record('user', array('id' => $companymanager->userid));
-                    if (has_capability('moodle/course:view', $coursecontext, $user)) {
-                        $managers[] = $user;
-                    }
-                }
+    mtrace("Running email report cron at ".date('D M Y h:m:s', $runtime));
 
-                // Check if there are any managers on this course.
-                foreach ($managers as $manager) {
-                    if (!empty($expiredtext)) {
-                        // Send the summary email.
-                        $course->reporttext = $expiredtext;
-                        EmailTemplate::send('expire_manager', array('course' => $course, 'user' => $manager));
-                    }
-                    if (!empty($expiringtext)) {
-                        // Send the summary email.
-                        $course->reporttext = $expiringtext;
-                        EmailTemplate::send('expiry_warn_manager', array('course' => $course, 'user' => $manager));
-                    }
-                    if (!empty($latetext)) {
-                        // Send the summary email.
-                        $course->reporttext = $latetext;
-                        EmailTemplate::send('completion_warn_manager', array('course' => $course, 'user' => $manager));
-                    }
+    // Deal with courses which have completed by warnings
+    // Generate the Temp table for storing the users.
+    $tempcomptablename = uniqid('emailrep');
+
+    $dbman = $DB->get_manager();
+
+    // Define table user to be created.
+    // We need, companyid, company name, departmentid, department name, userid, course id, course name, timeenrolled, lastrun.
+    $table = new xmldb_table($tempcomptablename);
+    $table->add_field('id', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+    $table->add_field('companyid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+    $table->add_field('departmentid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+    $table->add_field('userid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+    $table->add_field('courseid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('notifyperiod', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('timeenrolled', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('companyname', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('departmentname', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('coursename', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('firstname', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('lastname', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('email', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('username', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
+    $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        $dbman->create_temp_table($table);
+
+    // Populate this table.
+    $populatesql = "INSERT INTO {" . $tempcomptablename . "} (companyid, companyname, departmentid, departmentname, courseid,
+                    coursename, notifyperiod, timeenrolled, userid, firstname, lastname, username, email)
+                    SELECT co.id, co.name, d.id, d.name, c.id, c.fullname, ic.notifyperiod, cc.timeenrolled, u.id, u.firstname, u.lastname, u.username, u.email
+                    FROM {iomad_courses} ic
+                    JOIN {course_completions} cc
+                    ON (ic.courseid = cc.course
+                        AND cc.timecompleted IS NULL
+                        AND ic.warncompletion > 0
+                        AND cc.timeenrolled < " . $runtime . " - ic.warncompletion * 86400)
+                    JOIN {company_users} cu
+                    ON (cc.userid = cu.userid)
+                    JOIN {company} co
+                    ON (cu.companyid = co.id)
+                    JOIN {department} d
+                    ON (cu.departmentid = d.id)
+                    JOIN {course} c
+                    ON (ic.courseid = c.id)
+                    JOIN {user} u
+                    ON (cc.userid = u.id
+                        AND u.deleted = 0
+                        AND u.suspended = 0)";
+
+    $DB->execute($populatesql);
+
+    // Email all of the users.
+    $allusers = $DB->get_records($tempcomptablename);
+
+    foreach ($allusers as $compuser) {
+        if (!$user = $DB->get_record('user', array('id' => $compuser->userid))) {
+            continue;
+        }
+        if (!$course = $DB->get_record('course', array('id' => $compuser->courseid))) {
+            continue;
+        }
+        if (!$company = $DB->get_record('company', array('id' => $compuser->companyid))) {
+            continue;
+        }
+        if ($DB->get_records_sql("SELECT id FROM {email}
+                                  WHERE userid = :userid
+                                  AND courseid = :courseid
+                                  AND templatename = :templatename
+                                  AND SENT IS NULL
+                                  OR sent > " . $runtime . " - " . $compuser->notifyperiod . " * 86400",
+                                  array('userid' => $compuser->userid,
+                                        'courseid' => $compuser->courseid,
+                                        'templatename' => 'completion_warn_user'))) {
+            continue;
+        }
+        mtrace("Sending completion warning email to $user->email");
+        EmailTemplate::send('completion_warn_user', array('course' => $course, 'user' => $user, 'company' => $company));
+    }
+
+    // Email the managers
+    // Get the companies from the list of users in the temp table.
+    $companies = $DB->get_records_sql("SELECT DISTINCT companyid FROM {" . $tempcomptablename . "}");
+    foreach ($companies as $company) {
+        // Get the managers.
+        $managers = $DB->get_records_sql("SELECT * FROM {company_users}
+                                          WHERE companyid = :companyid
+                                          AND managertype != 0", array('companyid' => $company->companyid));
+        if (!$companyrec = $DB->get_record('company', array('id' => $company->companyid))) {
+            continue;
+        }
+        foreach ($managers as $manager) {
+            // Get their users.
+            $departmentusers = company::get_recursive_department_users($manager->departmentid);
+            $departmentids = "";
+            foreach ($departmentusers as $departmentuser) {
+                if (!empty($departmentids)) {
+                    $departmentids .= ",".$departmentuser->userid;
+                } else {
+                    $departmentids .= $departmentuser->userid;
                 }
+            }
+            $managerusers = $DB->get_records_sql("SELECT * FROM {" . $tempcomptablename . "}
+                                                  WHERE userid IN (" . $departmentids . ")");
+            $summary = get_string('firstname') . "," .
+                       get_string('lastname') . "," .
+                       get_string('email') . "," .
+                       get_string('course') . "," .
+                       get_string('timeenrolled', 'local_report_completion') ."\n";
+            $foundusers = false;
+            foreach ($managerusers as $manageruser) {
+                if (!$user = $DB->get_record('user', array('id' => $manageruser->userid))) {
+                    continue;
+                }
+                if (!$course = $DB->get_record('course', array('id' => $manageruser->courseid))) {
+                    continue;
+                }
+                if ($DB->get_records_sql("SELECT id FROM {email}
+                                          WHERE userid = :userid
+                                          AND courseid = :courseid
+                                          AND templatename = :templatename
+                                          AND sent > " . $runtime . " - " . $manageruser->notifyperiod . " * 86400",
+                                          array('userid' => $manageruser->userid,
+                                                'courseid' => $manageruser->courseid,
+                                                'templatename' => 'completion_warn_user'))) {
+                    continue;
+                }
+                $foundusers = true;
+                $summary .= $manageruser->firstname . "," .
+                            $manageruser->lastname . "," .
+                            $manageruser->email . "," .
+                            $manageruser->coursename . "," .
+                            date('d-m-y', $manageruser->timeenrolled) . "\n";
+            }
+            if ($foundusers && $user = $DB->get_record('user', array('id' => $manager->userid))) {
+                $course = new stdclass();
+                $course->reporttext = $summary;
+                $course->id = 0;
+                mtrace("Sending completion warning summary report to $user->email");
+                EmailTemplate::send('completion_warn_manager', array('user' => $user, 'course' => $course, 'company' => $companyrec));
             }
         }
     }
+
+    $dbman->drop_table($table);
+
+    // Deal with courses which have expiry warnings
+    $tempcomptablename = uniqid('emailrep');
+    // Generate the Temp table for storing the users.
+
+    $dbman = $DB->get_manager();
+
+    // Define table user to be created.
+    // We need, companyid, company name, departmentid, department name, userid, course id, course name, timeenrolled, lastrun.
+    $table = new xmldb_table($tempcomptablename);
+    $table->add_field('id', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+    $table->add_field('companyid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+    $table->add_field('departmentid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+    $table->add_field('userid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+    $table->add_field('courseid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('notifyperiod', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('timecompleted', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('companyname', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('departmentname', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('coursename', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('firstname', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('lastname', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('email', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('username', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
+    $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    $dbman->create_temp_table($table);
+
+    // Populate this table.
+    $populatesql = "INSERT INTO {" . $tempcomptablename . "} (companyid, companyname, departmentid, departmentname, courseid,
+                    coursename, notifyperiod, timecompleted, userid, firstname, lastname, username, email)
+                    SELECT co.id, co.name, d.id, d.name, c.id, c.fullname, ic.notifyperiod, cc.timecompleted, u.id, u.firstname, u.lastname, u.username, u.email
+                    FROM {iomad_courses} ic
+                    JOIN {course_completions} cc
+                    ON (ic.courseid = cc.course
+                        AND ic.validlength > 0
+                        AND (cc.timecompleted + ic.validlength * 86400 - ic.warnexpire * 86400) < " . $runtime . ")
+                    JOIN {company_users} cu
+                    ON (cc.userid = cu.userid)
+                    JOIN {company} co
+                    ON (cu.companyid = co.id)
+                    JOIN {department} d
+                    ON (cu.departmentid = d.id)
+                    JOIN {course} c
+                    ON (ic.courseid = c.id)
+                    JOIN {user} u
+                    ON (cc.userid = u.id
+                        AND u.deleted = 0
+                        AND u.suspended = 0)";
+
+    $DB->execute($populatesql);
+
+    // Email all of the users
+    $allusers = $DB->get_records($tempcomptablename);
+
+    foreach ($allusers as $compuser) {
+        if (!$user = $DB->get_record('user', array('id' => $compuser->userid))) {
+            continue;
+        }
+        if (!$course = $DB->get_record('course', array('id' => $compuser->courseid))) {
+            continue;
+        }
+        if (!$company = $DB->get_record('company', array('id' => $compuser->companyid))) {
+            continue;
+        }
+        if ($DB->get_records_sql("SELECT id FROM {email}
+                                  WHERE userid = :userid
+                                  AND courseid = :courseid
+                                  AND templatename = :templatename
+                                  AND sent IS NULL
+                                  OR sent > " . $runtime . " - " . $compuser->notifyperiod . " * 86400",
+                                  array('userid' => $compuser->userid,
+                                        'courseid' => $compuser->courseid,
+                                        'templatename' => 'expiry_warn_user'))) {
+            continue;
+        }
+        mtrace("Sending expiry warning email to $user->email");
+        EmailTemplate::send('expiry_warn_user', array('course' => $course, 'user' => $user, 'company' => $company));
+    }
+
+    // Email the managers
+    // Get the companies from the list of users in the temp table.
+    $companies = $DB->get_records_sql("SELECT DISTINCT companyid FROM {" . $tempcomptablename ."}");
+    foreach ($companies as $company) {
+        // Get the managers.
+        $managers = $DB->get_records_sql("SELECT * FROM {company_users}
+                                          WHERE companyid = :companyid
+                                          AND managertype != 0", array('companyid' => $company->companyid));
+        if (!$companyrec = $DB->get_record('company', array('id' => $company->companyid))) {
+            continue;
+        }
+        foreach ($managers as $manager) {
+            // Get their users.
+            $departmentusers = company::get_recursive_department_users($manager->departmentid);
+            $departmentids = "";
+            foreach ($departmentusers as $departmentuser) {
+                if (!empty($departmentids)) {
+                    $departmentids .= ",".$departmentuser->userid;
+                } else {
+                    $departmentids .= $departmentuser->userid;
+                }
+            }
+            $managerusers = $DB->get_records_sql("SELECT * FROM {" . $tempcomptablename . "}
+                                                  WHERE userid IN (" . $departmentids . ")");
+            $summary = get_string('firstname') . "," .
+                       get_string('lastname') . "," .
+                       get_string('email') . "," .
+                       get_string('course') . "," .
+                       get_string('completed', 'local_report_completion') ."\n";
+            $foundusers = false;
+            foreach ($managerusers as $manageruser) {
+                if (!$user = $DB->get_record('user', array('id' => $manageruser->userid))) {
+                    continue;
+                }
+                if (!$course = $DB->get_record('course', array('id' => $manageruser->courseid))) {
+                    continue;
+                }
+                if ($DB->get_records_sql("SELECT id FROM {email}
+                                          WHERE userid = :userid
+                                          AND courseid = :courseid
+                                          AND templatename = :templatename
+                                          AND sent > " . $runtime . " - " . $manageruser->notifyperiod . " * 86400",
+                                          array('userid' => $manageruser->userid,
+                                                'courseid' => $manageruser->courseid,
+                                                'templatename' => 'expiry_warn_user'))) {
+                    continue;
+                }
+                $foundusers = true;
+                $summary .= $manageruser->firstname . "," .
+                            $manageruser->lastname . "," .
+                            $manageruser->email . "," .
+                            $manageruser->coursename . "," .
+                            date('d-m-y', $manageruser->timecompleted) . "\n";
+            }
+            if ($foundusers && $user = $DB->get_record('user', array('id' => $manager->userid))) {
+                $course = new stdclass();
+                $course->reporttext = $summary;
+                $course->id = 0;
+                mtrace("Sending expiry summary report to $user->email");
+                EmailTemplate::send('expiry_warn_manager', array('user' => $user, 'course' => $course, 'company' => $companyrec));
+            }
+        }
+    }
+    $dbman->drop_table($table);
 }
