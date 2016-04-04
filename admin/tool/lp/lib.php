@@ -282,8 +282,8 @@ function tool_lp_comment_add($comment, $params) {
         }
 
         $message = new \core\message\message();
-        $message->component = 'tool_lp';
-        $message->name = 'user_competency_comment';
+        $message->component = 'moodle';
+        $message->name = 'competencyusercompcomment';
         $message->notification = 1;
         $message->userfrom = core_user::get_noreply_user();
         $message->subject = get_string('usercommentedonacompetencysubject', 'tool_lp', $fullname);
@@ -352,8 +352,8 @@ function tool_lp_comment_add($comment, $params) {
         }
 
         $message = new \core\message\message();
-        $message->component = 'tool_lp';
-        $message->name = 'plan_comment';
+        $message->component = 'moodle';
+        $message->name = 'competencyplancomment';
         $message->notification = 1;
         $message->userfrom = core_user::get_noreply_user();
         $message->subject = get_string('usercommentedonaplansubject', 'tool_lp', $fullname);
