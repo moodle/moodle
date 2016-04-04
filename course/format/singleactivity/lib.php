@@ -341,7 +341,9 @@ class format_singleactivity extends format_base {
     }
 
     /**
-     * Checks if the activity type requires subtypes.
+     * Checks if the activity type has multiple items in the activity chooser.
+     * This may happen as a result of defining callback modulename_get_shortcuts()
+     * or [deprecated] modulename_get_types() - TODO MDL-53697 remove this line.
      *
      * @return bool|null (null if the check is not possible)
      */
@@ -349,7 +351,13 @@ class format_singleactivity extends format_base {
         if (!($modname = $this->get_activitytype())) {
             return null;
         }
-        return component_callback('mod_' . $modname, 'get_types', array(), MOD_SUBTYPE_NO_CHILDREN) !== MOD_SUBTYPE_NO_CHILDREN;
+        $metadata = get_module_metadata($this->get_course(), self::get_supported_activities());
+        foreach ($metadata as $key => $moduledata) {
+            if (preg_match('/^'.$modname.':/', $key)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -399,7 +407,7 @@ class format_singleactivity extends format_base {
                 if ($this->can_add_activity()) {
                     // This is a user who has capability to create an activity.
                     if ($this->activity_has_subtypes()) {
-                        // Activity that requires subtype can not be added automatically.
+                        // Activity has multiple items in the activity chooser, it can not be added automatically.
                         if (optional_param('addactivity', 0, PARAM_INT)) {
                             return;
                         } else {

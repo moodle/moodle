@@ -252,14 +252,7 @@ class core_course_renderer extends plugin_renderer_base {
     protected function course_modchooser_module_types($modules) {
         $return = '';
         foreach ($modules as $module) {
-            if (!isset($module->types)) {
-                $return .= $this->course_modchooser_module($module);
-            } else {
-                $return .= $this->course_modchooser_module($module, array('nonoption'));
-                foreach ($module->types as $type) {
-                    $return .= $this->course_modchooser_module($type, array('option', 'subtype'));
-                }
-            }
+            $return .= $this->course_modchooser_module($module);
         }
         return $return;
     }
@@ -443,39 +436,15 @@ class core_course_renderer extends plugin_renderer_base {
         $activities = array(MOD_CLASS_ACTIVITY => array(), MOD_CLASS_RESOURCE => array());
 
         foreach ($modules as $module) {
-            if (isset($module->types)) {
-                // This module has a subtype
-                // NOTE: this is legacy stuff, module subtypes are very strongly discouraged!!
-                $subtypes = array();
-                foreach ($module->types as $subtype) {
-                    $link = $subtype->link->out(true, $urlparams);
-                    $subtypes[$link] = $subtype->title;
-                }
-
-                // Sort module subtypes into the list
-                $activityclass = MOD_CLASS_ACTIVITY;
-                if ($module->archetype == MOD_CLASS_RESOURCE) {
-                    $activityclass = MOD_CLASS_RESOURCE;
-                }
-                if (!empty($module->title)) {
-                    // This grouping has a name
-                    $activities[$activityclass][] = array($module->title => $subtypes);
-                } else {
-                    // This grouping does not have a name
-                    $activities[$activityclass] = array_merge($activities[$activityclass], $subtypes);
-                }
-            } else {
-                // This module has no subtypes
-                $activityclass = MOD_CLASS_ACTIVITY;
-                if ($module->archetype == MOD_ARCHETYPE_RESOURCE) {
-                    $activityclass = MOD_CLASS_RESOURCE;
-                } else if ($module->archetype === MOD_ARCHETYPE_SYSTEM) {
-                    // System modules cannot be added by user, do not add to dropdown
-                    continue;
-                }
-                $link = $module->link->out(true, $urlparams);
-                $activities[$activityclass][$link] = $module->title;
+            $activityclass = MOD_CLASS_ACTIVITY;
+            if ($module->archetype == MOD_ARCHETYPE_RESOURCE) {
+                $activityclass = MOD_CLASS_RESOURCE;
+            } else if ($module->archetype === MOD_ARCHETYPE_SYSTEM) {
+                // System modules cannot be added by user, do not add to dropdown.
+                continue;
             }
+            $link = $module->link->out(true, $urlparams);
+            $activities[$activityclass][$link] = $module->title;
         }
 
         $straddactivity = get_string('addactivity');

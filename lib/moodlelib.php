@@ -448,7 +448,11 @@ define('MOD_ARCHETYPE_ASSIGNMENT', 2);
 /** System (not user-addable) module archetype */
 define('MOD_ARCHETYPE_SYSTEM', 3);
 
-/** Return this from modname_get_types callback to use default display in activity chooser */
+/**
+ * Return this from modname_get_types callback to use default display in activity chooser.
+ * Deprecated, will be removed in 3.5, TODO MDL-53697.
+ * @deprecated since Moodle 3.1
+ */
 define('MOD_SUBTYPE_NO_CHILDREN', 'modsubtypenochildren');
 
 /**
