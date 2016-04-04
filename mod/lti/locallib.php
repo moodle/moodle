@@ -1074,7 +1074,7 @@ function lti_filter_tool_types(array $tools, $state) {
  * Returns all lti types visible in this course
  *
  * @param int $courseid The id of the course to retieve types for
- * @return stdClass All the lti types visible in the given course
+ * @return stdClass[] All the lti types visible in the given course
  */
 function lti_get_lti_types_by_course($courseid) {
     global $DB, $SITE;
@@ -1112,9 +1112,10 @@ function lti_get_types_for_add_instance() {
  * Returns a list of configured types in the given course
  *
  * @param int $courseid The id of the course to retieve types for
- * @return array Array of lti types
+ * @param int $sectionreturn section to return to for forming the URLs
+ * @return array Array of lti types. Each element is object with properties: name, title, icon, help, link
  */
-function lti_get_configured_types($courseid) {
+function lti_get_configured_types($courseid, $sectionreturn = 0) {
     global $OUTPUT;
     $types = array();
     $admintypes = lti_get_lti_types_by_course($courseid);
@@ -1129,11 +1130,8 @@ function lti_get_configured_types($courseid) {
         } else {
             $type->icon = html_writer::empty_tag('img', array('src' => $ltitype->icon, 'alt' => $ltitype->name, 'class' => 'icon'));
         }
-        if (!empty($ltitype->description)) {
-            $type->help = $ltitype->description;
-        }
-        $type->link = new moodle_url('/course/modedit.php', array('add' => 'lti', 'return' => 0, 'course' => $courseid, 'sr' => 0,
-                                    'typeid' => $ltitype->id));
+        $type->link = new moodle_url('/course/modedit.php', array('add' => 'lti', 'return' => 0, 'course' => $courseid,
+            'sr' => $sectionreturn, 'typeid' => $ltitype->id));
         $types[] = $type;
     }
     return $types;
