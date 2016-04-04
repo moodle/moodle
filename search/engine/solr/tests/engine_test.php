@@ -165,8 +165,6 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->assertEquals($USER->id, $results[0]->get('userid'));
         $this->assertEquals(\context_system::instance()->id, $results[0]->get('contextid'));
 
-        // Testing filters we don't purge cache in between assertions because cache key depends on the whole filters set
-        // and they are different.
         sleep(1);
         $beforeadding = time();
         sleep(1);
@@ -404,7 +402,6 @@ class search_solr_engine_testcase extends advanced_testcase {
         // Reindex the document with the changed files.
         $engine->add_document($doc, true);
         $engine->area_index_complete($area->get_area_id());
-        cache_helper::purge_by_definition('core', 'search_results');
 
         // Go through our check array, and see if the file is there or not.
         foreach ($checkfiles as $key => $keep) {
@@ -498,7 +495,6 @@ class search_solr_engine_testcase extends advanced_testcase {
         $deleteid = $first->get('id');
 
         $engine->delete_by_id($deleteid);
-        cache_helper::purge_by_definition('core', 'search_results');
 
         // Check that we don't get a result for it anymore.
         $results = $this->search->search($querydata);
