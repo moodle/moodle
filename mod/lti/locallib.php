@@ -1402,10 +1402,8 @@ function lti_prepare_type_for_save($type, $config) {
         $type->secureicon = $config->lti_secureicon;
     }
 
-    if (isset($config->lti_forcessl)) {
-        $type->forcessl = !empty($config->lti_forcessl) ? $config->lti_forcessl : 0;
-        $config->lti_forcessl = $type->forcessl;
-    }
+    $type->forcessl = !empty($config->lti_forcessl) ? $config->lti_forcessl : 0;
+    $config->lti_forcessl = $type->forcessl;
 
     $type->timemodified = time();
 
