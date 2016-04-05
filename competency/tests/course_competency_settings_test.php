@@ -17,7 +17,7 @@
 /**
  * Course competency persistent class tests.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,11 +32,11 @@ use core_competency\course_competency_settings;
 /**
  * This test ensures that the course competency settings are applied and work correctly.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_lp_course_competency_settings_testcase extends advanced_testcase {
+class core_competency_course_competency_settings_testcase extends advanced_testcase {
 
     public function test_who_can_change_settings() {
         global $CFG, $DB;

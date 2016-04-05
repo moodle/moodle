@@ -36,7 +36,7 @@ global $CFG;
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_lp_lib_testcase extends advanced_testcase {
+class core_competency_lib_testcase extends advanced_testcase {
 
     public function test_comment_add_user_competency() {
         global $DB;

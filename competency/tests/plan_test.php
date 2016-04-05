@@ -17,7 +17,7 @@
 /**
  * Plan persistent class tests.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,16 +25,17 @@
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
+use core_competency\api;
 use core_competency\plan;
 
 /**
  * Plan persistent testcase.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_lp_plan_testcase extends advanced_testcase {
+class core_competency_plan_testcase extends advanced_testcase {
 
     public function test_can_manage_user() {
         $this->resetAfterTest(true);
@@ -60,19 +61,19 @@ class tool_lp_plan_testcase extends advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         $this->setUser($u1);
-        $this->assertTrue(\core_competency\plan::can_manage_user($u1->id));
-        $this->assertTrue(\core_competency\plan::can_manage_user($u2->id));
-        $this->assertTrue(\core_competency\plan::can_manage_user($u3->id));
+        $this->assertTrue(plan::can_manage_user($u1->id));
+        $this->assertTrue(plan::can_manage_user($u2->id));
+        $this->assertTrue(plan::can_manage_user($u3->id));
 
         $this->setUser($u2);
-        $this->assertFalse(\core_competency\plan::can_manage_user($u1->id));
-        $this->assertTrue(\core_competency\plan::can_manage_user($u2->id));
-        $this->assertFalse(\core_competency\plan::can_manage_user($u3->id));
+        $this->assertFalse(plan::can_manage_user($u1->id));
+        $this->assertTrue(plan::can_manage_user($u2->id));
+        $this->assertFalse(plan::can_manage_user($u3->id));
 
         $this->setUser($u3);
-        $this->assertFalse(\core_competency\plan::can_manage_user($u1->id));
-        $this->assertTrue(\core_competency\plan::can_manage_user($u2->id));
-        $this->assertFalse(\core_competency\plan::can_manage_user($u3->id));
+        $this->assertFalse(plan::can_manage_user($u1->id));
+        $this->assertTrue(plan::can_manage_user($u2->id));
+        $this->assertFalse(plan::can_manage_user($u3->id));
     }
 
     public function test_can_manage_user_draft() {
@@ -109,39 +110,39 @@ class tool_lp_plan_testcase extends advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         $this->setUser($u1);
-        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u1->id));
-        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u2->id));
-        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u3->id));
-        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u4->id));
-        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u5->id));
+        $this->assertFalse(plan::can_manage_user_draft($u1->id));
+        $this->assertFalse(plan::can_manage_user_draft($u2->id));
+        $this->assertFalse(plan::can_manage_user_draft($u3->id));
+        $this->assertFalse(plan::can_manage_user_draft($u4->id));
+        $this->assertFalse(plan::can_manage_user_draft($u5->id));
 
         $this->setUser($u2);
-        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u1->id));
-        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u2->id));
-        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u3->id));
-        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u4->id));
-        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u5->id));
+        $this->assertFalse(plan::can_manage_user_draft($u1->id));
+        $this->assertFalse(plan::can_manage_user_draft($u2->id));
+        $this->assertFalse(plan::can_manage_user_draft($u3->id));
+        $this->assertFalse(plan::can_manage_user_draft($u4->id));
+        $this->assertFalse(plan::can_manage_user_draft($u5->id));
 
         $this->setUser($u3);
-        $this->assertTrue(\core_competency\plan::can_manage_user_draft($u1->id));
-        $this->assertTrue(\core_competency\plan::can_manage_user_draft($u2->id));
-        $this->assertTrue(\core_competency\plan::can_manage_user_draft($u3->id));
-        $this->assertTrue(\core_competency\plan::can_manage_user_draft($u4->id));
-        $this->assertTrue(\core_competency\plan::can_manage_user_draft($u5->id));
+        $this->assertTrue(plan::can_manage_user_draft($u1->id));
+        $this->assertTrue(plan::can_manage_user_draft($u2->id));
+        $this->assertTrue(plan::can_manage_user_draft($u3->id));
+        $this->assertTrue(plan::can_manage_user_draft($u4->id));
+        $this->assertTrue(plan::can_manage_user_draft($u5->id));
 
         $this->setUser($u4);
-        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u1->id));
-        $this->assertTrue(\core_competency\plan::can_manage_user_draft($u2->id));
-        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u3->id));
-        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u4->id));
-        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u5->id));
+        $this->assertFalse(plan::can_manage_user_draft($u1->id));
+        $this->assertTrue(plan::can_manage_user_draft($u2->id));
+        $this->assertFalse(plan::can_manage_user_draft($u3->id));
+        $this->assertFalse(plan::can_manage_user_draft($u4->id));
+        $this->assertFalse(plan::can_manage_user_draft($u5->id));
 
         $this->setUser($u5);
-        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u1->id));
-        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u2->id));
-        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u3->id));
-        $this->assertFalse(\core_competency\plan::can_manage_user_draft($u4->id));
-        $this->assertTrue(\core_competency\plan::can_manage_user_draft($u5->id));
+        $this->assertFalse(plan::can_manage_user_draft($u1->id));
+        $this->assertFalse(plan::can_manage_user_draft($u2->id));
+        $this->assertFalse(plan::can_manage_user_draft($u3->id));
+        $this->assertFalse(plan::can_manage_user_draft($u4->id));
+        $this->assertTrue(plan::can_manage_user_draft($u5->id));
     }
 
     public function test_can_read_user() {
@@ -168,19 +169,19 @@ class tool_lp_plan_testcase extends advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         $this->setUser($u1);
-        $this->assertTrue(\core_competency\plan::can_read_user($u1->id));
-        $this->assertTrue(\core_competency\plan::can_read_user($u2->id));
-        $this->assertTrue(\core_competency\plan::can_read_user($u3->id));
+        $this->assertTrue(plan::can_read_user($u1->id));
+        $this->assertTrue(plan::can_read_user($u2->id));
+        $this->assertTrue(plan::can_read_user($u3->id));
 
         $this->setUser($u2);
-        $this->assertFalse(\core_competency\plan::can_read_user($u1->id));
-        $this->assertTrue(\core_competency\plan::can_read_user($u2->id));
-        $this->assertFalse(\core_competency\plan::can_read_user($u3->id));
+        $this->assertFalse(plan::can_read_user($u1->id));
+        $this->assertTrue(plan::can_read_user($u2->id));
+        $this->assertFalse(plan::can_read_user($u3->id));
 
         $this->setUser($u3);
-        $this->assertFalse(\core_competency\plan::can_read_user($u1->id));
-        $this->assertTrue(\core_competency\plan::can_read_user($u2->id));
-        $this->assertTrue(\core_competency\plan::can_read_user($u3->id));    // Due to the default capability.
+        $this->assertFalse(plan::can_read_user($u1->id));
+        $this->assertTrue(plan::can_read_user($u2->id));
+        $this->assertTrue(plan::can_read_user($u3->id));    // Due to the default capability.
     }
 
     public function test_can_read_user_draft() {
@@ -218,39 +219,39 @@ class tool_lp_plan_testcase extends advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         $this->setUser($u1);
-        $this->assertFalse(\core_competency\plan::can_read_user_draft($u1->id));
-        $this->assertFalse(\core_competency\plan::can_read_user_draft($u2->id));
-        $this->assertFalse(\core_competency\plan::can_read_user_draft($u3->id));
-        $this->assertFalse(\core_competency\plan::can_read_user_draft($u4->id));
-        $this->assertFalse(\core_competency\plan::can_read_user_draft($u5->id));
+        $this->assertFalse(plan::can_read_user_draft($u1->id));
+        $this->assertFalse(plan::can_read_user_draft($u2->id));
+        $this->assertFalse(plan::can_read_user_draft($u3->id));
+        $this->assertFalse(plan::can_read_user_draft($u4->id));
+        $this->assertFalse(plan::can_read_user_draft($u5->id));
 
         $this->setUser($u2);
-        $this->assertFalse(\core_competency\plan::can_read_user_draft($u1->id));
-        $this->assertFalse(\core_competency\plan::can_read_user_draft($u2->id));
-        $this->assertFalse(\core_competency\plan::can_read_user_draft($u3->id));
-        $this->assertFalse(\core_competency\plan::can_read_user_draft($u4->id));
-        $this->assertFalse(\core_competency\plan::can_read_user_draft($u5->id));
+        $this->assertFalse(plan::can_read_user_draft($u1->id));
+        $this->assertFalse(plan::can_read_user_draft($u2->id));
+        $this->assertFalse(plan::can_read_user_draft($u3->id));
+        $this->assertFalse(plan::can_read_user_draft($u4->id));
+        $this->assertFalse(plan::can_read_user_draft($u5->id));
 
         $this->setUser($u3);
-        $this->assertTrue(\core_competency\plan::can_read_user_draft($u1->id));
-        $this->assertTrue(\core_competency\plan::can_read_user_draft($u2->id));
-        $this->assertTrue(\core_competency\plan::can_read_user_draft($u3->id));
-        $this->assertTrue(\core_competency\plan::can_read_user_draft($u4->id));
-        $this->assertTrue(\core_competency\plan::can_read_user_draft($u5->id));
+        $this->assertTrue(plan::can_read_user_draft($u1->id));
+        $this->assertTrue(plan::can_read_user_draft($u2->id));
+        $this->assertTrue(plan::can_read_user_draft($u3->id));
+        $this->assertTrue(plan::can_read_user_draft($u4->id));
+        $this->assertTrue(plan::can_read_user_draft($u5->id));
 
         $this->setUser($u4);
-        $this->assertFalse(\core_competency\plan::can_read_user_draft($u1->id));
-        $this->assertTrue(\core_competency\plan::can_read_user_draft($u2->id));
-        $this->assertFalse(\core_competency\plan::can_read_user_draft($u3->id));
-        $this->assertFalse(\core_competency\plan::can_read_user_draft($u4->id));
-        $this->assertFalse(\core_competency\plan::can_read_user_draft($u5->id));
+        $this->assertFalse(plan::can_read_user_draft($u1->id));
+        $this->assertTrue(plan::can_read_user_draft($u2->id));
+        $this->assertFalse(plan::can_read_user_draft($u3->id));
+        $this->assertFalse(plan::can_read_user_draft($u4->id));
+        $this->assertFalse(plan::can_read_user_draft($u5->id));
 
         $this->setUser($u5);
-        $this->assertFalse(\core_competency\plan::can_read_user_draft($u1->id));
-        $this->assertFalse(\core_competency\plan::can_read_user_draft($u2->id));
-        $this->assertFalse(\core_competency\plan::can_read_user_draft($u3->id));
-        $this->assertFalse(\core_competency\plan::can_read_user_draft($u4->id));
-        $this->assertTrue(\core_competency\plan::can_read_user_draft($u5->id));
+        $this->assertFalse(plan::can_read_user_draft($u1->id));
+        $this->assertFalse(plan::can_read_user_draft($u2->id));
+        $this->assertFalse(plan::can_read_user_draft($u3->id));
+        $this->assertFalse(plan::can_read_user_draft($u4->id));
+        $this->assertTrue(plan::can_read_user_draft($u5->id));
     }
 
     public function test_validate_duedate() {
@@ -262,15 +263,15 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $user = $dg->create_user();
 
         $record = array('userid' => $user->id,
-                        'status' => core_competency\plan::STATUS_DRAFT,
+                        'status' => plan::STATUS_DRAFT,
                         'duedate' => time() - 8000);
 
         // Ignore duedate validation on create/update draft plan.
         $plan = $lpg->create_plan($record);
-        $this->assertInstanceOf('\core_competency\plan', $plan);
+        $this->assertInstanceOf('core_competency\plan', $plan);
 
         // Passing from draft to active.
-        $plan->set_status(core_competency\plan::STATUS_ACTIVE);
+        $plan->set_status(plan::STATUS_ACTIVE);
 
         // Draft to active with duedate in the past.
         $expected = array(
@@ -293,7 +294,7 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $this->assertEquals($expected, $plan->validate());
 
         // Draft to active: past date => future date (pass).
-        $plan->set_duedate(time() + core_competency\plan::DUEDATE_THRESHOLD + 10);
+        $plan->set_duedate(time() + plan::DUEDATE_THRESHOLD + 10);
         $this->assertEquals(true, $plan->validate());
 
         // Draft to active: past date => unset date (pass).
@@ -335,7 +336,7 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $this->assertEquals($expected, $plan->validate());
 
         // Active to active: unset date => future date (pass).
-        $plan->set_duedate(time() + core_competency\plan::DUEDATE_THRESHOLD + 10);
+        $plan->set_duedate(time() + plan::DUEDATE_THRESHOLD + 10);
         $this->assertEquals(true, $plan->validate());
 
         // Updating active plan with future date.
@@ -364,50 +365,50 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $this->assertEquals($expected, $plan->validate());
 
         // Active to active: future date => future date (pass).
-        $plan->set_duedate(time() + core_competency\plan::DUEDATE_THRESHOLD + 10);
+        $plan->set_duedate(time() + plan::DUEDATE_THRESHOLD + 10);
         $this->assertEquals(true, $plan->validate());
 
         // Completing plan: with due date in the past.
         $record = $plan->to_record();
-        $record->status = core_competency\plan::STATUS_ACTIVE;
+        $record->status = plan::STATUS_ACTIVE;
         $record->duedate = time() - 200;
-        $DB->update_record(core_competency\plan::TABLE, $record);
+        $DB->update_record(plan::TABLE, $record);
 
         $success = core_competency\api::complete_plan($plan->get_id());
         $this->assertTrue($success);
 
         // Completing plan: with due date too soon (pass).
         $record = $plan->to_record();
-        $record->status = core_competency\plan::STATUS_ACTIVE;
+        $record->status = plan::STATUS_ACTIVE;
         $record->duedate = time() + 200;
-        $DB->update_record(core_competency\plan::TABLE, $record);
+        $DB->update_record(plan::TABLE, $record);
 
         $success = core_competency\api::complete_plan($plan->get_id());
         $this->assertTrue($success);
 
         // Completing plan: with due date in the future (pass).
         $record = $plan->to_record();
-        $record->status = core_competency\plan::STATUS_ACTIVE;
-        $record->duedate = time() + core_competency\plan::DUEDATE_THRESHOLD + 10;
-        $DB->update_record(core_competency\plan::TABLE, $record);
+        $record->status = plan::STATUS_ACTIVE;
+        $record->duedate = time() + plan::DUEDATE_THRESHOLD + 10;
+        $DB->update_record(plan::TABLE, $record);
 
         $success = core_competency\api::complete_plan($plan->get_id());
         $this->assertTrue($success);
 
         // Completing plan: with due date unset (pass).
         $record = $plan->to_record();
-        $record->status = core_competency\plan::STATUS_ACTIVE;
+        $record->status = plan::STATUS_ACTIVE;
         $record->duedate = 0;
-        $DB->update_record(core_competency\plan::TABLE, $record);
+        $DB->update_record(plan::TABLE, $record);
 
         $success = core_competency\api::complete_plan($plan->get_id());
         $this->assertTrue($success);
 
         // Reopening plan: with due date in the past => duedate unset.
         $record = $plan->to_record();
-        $record->status = core_competency\plan::STATUS_COMPLETE;
+        $record->status = plan::STATUS_COMPLETE;
         $record->duedate = time() - 200;
-        $DB->update_record(core_competency\plan::TABLE, $record);
+        $DB->update_record(plan::TABLE, $record);
 
         $success = core_competency\api::reopen_plan($plan->get_id());
         $this->assertTrue($success);
@@ -416,9 +417,9 @@ class tool_lp_plan_testcase extends advanced_testcase {
 
         // Reopening plan: with due date too soon => duedate unset.
         $record = $plan->to_record();
-        $record->status = core_competency\plan::STATUS_COMPLETE;
+        $record->status = plan::STATUS_COMPLETE;
         $record->duedate = time() + 100;
-        $DB->update_record(core_competency\plan::TABLE, $record);
+        $DB->update_record(plan::TABLE, $record);
 
         $success = core_competency\api::reopen_plan($plan->get_id());
         $this->assertTrue($success);
@@ -427,17 +428,101 @@ class tool_lp_plan_testcase extends advanced_testcase {
 
         // Reopening plan: with due date in the future => duedate unchanged.
         $record = $plan->to_record();
-        $record->status = core_competency\plan::STATUS_COMPLETE;
-        $record->duedate = time() + core_competency\plan::DUEDATE_THRESHOLD + 10;
-        $DB->update_record(core_competency\plan::TABLE, $record);
+        $record->status = plan::STATUS_COMPLETE;
+        $record->duedate = time() + plan::DUEDATE_THRESHOLD + 10;
+        $DB->update_record(plan::TABLE, $record);
 
         $success = core_competency\api::reopen_plan($plan->get_id());
         $this->assertTrue($success);
         $plan->read();
 
         // Check that the due date has not changed, but allow for PHP Unit latency.
-        $this->assertTrue($plan->get_duedate() >= time() + core_competency\plan::DUEDATE_THRESHOLD + 10);
-        $this->assertTrue($plan->get_duedate() <= time() + core_competency\plan::DUEDATE_THRESHOLD + 15);
-
+        $this->assertTrue($plan->get_duedate() >= time() + plan::DUEDATE_THRESHOLD + 10);
+        $this->assertTrue($plan->get_duedate() <= time() + plan::DUEDATE_THRESHOLD + 15);
     }
+
+    public function test_get_by_user_and_competency() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('core_competency');
+
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
+        $u4 = $dg->create_user();
+
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+
+        $tpl1 = $lpg->create_template();
+        $lpg->create_template_competency(array('competencyid' => $c1->get_id(), 'templateid' => $tpl1->get_id()));
+
+        $p1 = $lpg->create_plan(array('userid' => $u1->id));
+        $lpg->create_plan_competency(array('planid' => $p1->get_id(), 'competencyid' => $c1->get_id()));
+        $p2 = $lpg->create_plan(array('userid' => $u2->id));
+        $lpg->create_plan_competency(array('planid' => $p2->get_id(), 'competencyid' => $c1->get_id()));
+        $p3 = $lpg->create_plan(array('userid' => $u3->id, 'templateid' => $tpl1->get_id()));
+        $p4 = $lpg->create_plan(array('userid' => $u4->id, 'templateid' => $tpl1->get_id()));
+        api::complete_plan($p2);
+        api::complete_plan($p4);
+
+        // Finding a plan, not completed.
+        $plans = plan::get_by_user_and_competency($u1->id, $c1->get_id());
+        $this->assertCount(1, $plans);
+        $plan = array_shift($plans);
+        $this->assertEquals($p1->get_id(), $plan->get_id());
+        $this->assertNotEquals(plan::STATUS_COMPLETE, $plan->get_status());
+
+        // Finding a completed plan.
+        $plans = plan::get_by_user_and_competency($u2->id, $c1->get_id());
+        $this->assertCount(1, $plans);
+        $plan = array_shift($plans);
+        $this->assertEquals($p2->get_id(), $plan->get_id());
+        $this->assertEquals(plan::STATUS_COMPLETE, $plan->get_status());
+
+        // Finding a plan based on a template, not completed.
+        $plans = plan::get_by_user_and_competency($u3->id, $c1->get_id());
+        $this->assertCount(1, $plans);
+        $plan = array_shift($plans);
+        $this->assertEquals($p3->get_id(), $plan->get_id());
+        $this->assertTrue($plan->is_based_on_template());
+        $this->assertNotEquals(plan::STATUS_COMPLETE, $plan->get_status());
+
+        // Finding a plan based on a template.
+        $plans = plan::get_by_user_and_competency($u4->id, $c1->get_id());
+        $this->assertCount(1, $plans);
+        $plan = array_shift($plans);
+        $this->assertEquals($p4->get_id(), $plan->get_id());
+        $this->assertTrue($plan->is_based_on_template());
+        $this->assertEquals(plan::STATUS_COMPLETE, $plan->get_status());
+
+        // Finding more than one plan, no template.
+        $p5 = $lpg->create_plan(array('userid' => $u1->id));
+        $lpg->create_plan_competency(array('planid' => $p5->get_id(), 'competencyid' => $c1->get_id()));
+        $plans = plan::get_by_user_and_competency($u1->id, $c1->get_id());
+        $this->assertCount(2, $plans);
+        $plan = array_shift($plans);
+        $this->assertEquals($p1->get_id(), $plan->get_id());
+        $plan = array_shift($plans);
+        $this->assertEquals($p5->get_id(), $plan->get_id());
+
+        // Finding more than one plan, with template.
+        $p6 = $lpg->create_plan(array('userid' => $u1->id, 'templateid' => $tpl1->get_id()));
+        $plans = plan::get_by_user_and_competency($u1->id, $c1->get_id());
+        $this->assertCount(3, $plans);
+        $plan = array_shift($plans);
+        $this->assertEquals($p1->get_id(), $plan->get_id());
+        $plan = array_shift($plans);
+        $this->assertEquals($p5->get_id(), $plan->get_id());
+        $plan = array_shift($plans);
+        $this->assertEquals($p6->get_id(), $plan->get_id());
+
+        // Finding no plans.
+        $plans = plan::get_by_user_and_competency($u1->id, $c2->get_id());
+        $this->assertCount(0, $plans);
+    }
+
 }

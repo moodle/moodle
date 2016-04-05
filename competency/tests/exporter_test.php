@@ -17,7 +17,7 @@
 /**
  * Exporter class tests.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,11 +28,11 @@ global $CFG;
 /**
  * Exporter testcase.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_lp_exporter_testcase extends advanced_testcase {
+class core_competency_exporter_testcase extends advanced_testcase {
 
     protected $validrelated = null;
     protected $invalidrelated = null;
@@ -50,7 +50,7 @@ class tool_lp_exporter_testcase extends advanced_testcase {
     }
 
     public function test_get_read_structure() {
-        $structure = tool_lp_testable_exporter::get_read_structure();
+        $structure = core_competency_testable_exporter::get_read_structure();
 
         $this->assertInstanceOf('external_single_structure', $structure);
         $this->assertInstanceOf('external_value', $structure->keys['stringA']);
@@ -61,7 +61,7 @@ class tool_lp_exporter_testcase extends advanced_testcase {
     }
 
     public function test_get_create_structure() {
-        $structure = tool_lp_testable_exporter::get_create_structure();
+        $structure = core_competency_testable_exporter::get_create_structure();
 
         $this->assertInstanceOf('external_single_structure', $structure);
         $this->assertInstanceOf('external_value', $structure->keys['stringA']);
@@ -72,7 +72,7 @@ class tool_lp_exporter_testcase extends advanced_testcase {
     }
 
     public function test_get_update_structure() {
-        $structure = tool_lp_testable_exporter::get_update_structure();
+        $structure = core_competency_testable_exporter::get_update_structure();
 
         $this->assertInstanceOf('external_single_structure', $structure);
         $this->assertInstanceOf('external_value', $structure->keys['stringA']);
@@ -85,7 +85,7 @@ class tool_lp_exporter_testcase extends advanced_testcase {
     public function test_invalid_data() {
         global $PAGE;
         $this->setExpectedException('coding_exception');
-        $exporter = new tool_lp_testable_exporter($this->invaliddata, $this->validrelated);
+        $exporter = new core_competency_testable_exporter($this->invaliddata, $this->validrelated);
         $output = $PAGE->get_renderer('tool_lp');
 
         $result = $exporter->export($output);
@@ -94,7 +94,7 @@ class tool_lp_exporter_testcase extends advanced_testcase {
     public function test_invalid_related() {
         global $PAGE;
         $this->setExpectedException('coding_exception');
-        $exporter = new tool_lp_testable_exporter($this->validdata, $this->invalidrelated);
+        $exporter = new core_competency_testable_exporter($this->validdata, $this->invalidrelated);
         $output = $PAGE->get_renderer('tool_lp');
 
         $result = $exporter->export($output);
@@ -102,7 +102,7 @@ class tool_lp_exporter_testcase extends advanced_testcase {
 
     public function test_valid_data_and_related() {
         global $PAGE;
-        $exporter = new tool_lp_testable_exporter($this->validdata, $this->validrelated);
+        $exporter = new core_competency_testable_exporter($this->validdata, $this->validrelated);
 
         $output = $PAGE->get_renderer('tool_lp');
 
@@ -113,11 +113,11 @@ class tool_lp_exporter_testcase extends advanced_testcase {
 /**
  * Example persistent class.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_lp_testable_exporter extends \core_competency\external\exporter {
+class core_competency_testable_exporter extends \core_competency\external\exporter {
 
     protected static function define_related() {
         // We cache the context so it does not need to be retrieved from the course.

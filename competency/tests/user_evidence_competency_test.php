@@ -17,7 +17,7 @@
 /**
  * User evidence competency persistent class tests.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2016 Serge Gauthier - <serge.gauthier.2@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,11 +30,11 @@ use core_competency\user_evidence_competency;
 /**
  * User evidence competency persistent testcase.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2016 Serge Gauthier - <serge.gauthier.2@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_lp_user_evidene_competency_testcase extends advanced_testcase {
+class core_competency_user_evidene_competency_testcase extends advanced_testcase {
 
     public function test_get_user_competencies_by_userevidenceid() {
         global $CFG, $DB;

@@ -17,7 +17,7 @@
 /**
  * API tests.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -36,11 +36,11 @@ use core_competency\plan;
 /**
  * API tests.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_lp_api_testcase extends advanced_testcase {
+class core_competency_api_testcase extends advanced_testcase {
 
     public function test_get_framework_related_contexts() {
         $this->resetAfterTest(true);

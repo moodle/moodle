@@ -17,7 +17,7 @@
 /**
  * Competency rule tests.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,11 +35,11 @@ use core_competency\competency_rule_points;
 /**
  * Competency rule testcase.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_lp_competency_rule_testcase extends externallib_advanced_testcase {
+class core_competency_competency_rule_testcase extends externallib_advanced_testcase {
 
     public function test_rule_all_matching() {
         $this->resetAfterTest(true);

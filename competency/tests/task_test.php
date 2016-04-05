@@ -17,7 +17,7 @@
 /**
  * Task tests.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,11 +30,11 @@ use core_competency\plan;
 /**
  * Task tests.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_lp_task_testcase extends advanced_testcase {
+class core_competency_task_testcase extends advanced_testcase {
 
     public function test_sync_plans_from_cohorts_task() {
         global $DB;

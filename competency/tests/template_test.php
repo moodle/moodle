@@ -17,7 +17,7 @@
 /**
  * Template persistent class tests.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,11 +30,11 @@ use core_competency\template;
 /**
  * Template persistent testcase.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_lp_template_testcase extends advanced_testcase {
+class core_competency_template_testcase extends advanced_testcase {
 
     public function test_validate_duedate() {
         global $DB;
