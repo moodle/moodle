@@ -24,18 +24,18 @@
 namespace report_competency\output;
 
 use context_course;
-use tool_lp\external\competency_summary_exporter;
-use tool_lp\external\course_summary_exporter;
-use tool_lp\external\user_competency_course_exporter;
-use tool_lp\external\user_summary_exporter;
-use tool_lp\user_competency;
 use renderable;
 use core_user;
 use templatable;
 use renderer_base;
 use moodle_url;
 use stdClass;
-use tool_lp\api;
+use core_competency\api;
+use core_competency\external\user_competency_course_exporter;
+use core_competency\external\user_summary_exporter;
+use core_competency\user_competency;
+use tool_lp\external\competency_summary_exporter;
+use tool_lp\external\course_summary_exporter;
 
 /**
  * Class containing data for learning plan template competencies page

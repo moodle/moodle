@@ -25,10 +25,10 @@
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
-use \tool_lp\course_competency;
-use \tool_lp\course_module_competency;
-use \tool_lpmigrate\framework_mapper;
-use \tool_lpmigrate\framework_processor;
+use core_competency\course_competency;
+use core_competency\course_module_competency;
+use tool_lpmigrate\framework_mapper;
+use tool_lpmigrate\framework_processor;
 
 /**
  * Framework processor testcase.
@@ -49,7 +49,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
     public function setUp() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
 
         $f1 = $lpg->create_framework(array('idnumber' => 'BIO2015'));
         $f2 = $lpg->create_framework(array('idnumber' => 'BIO2016'));
@@ -313,7 +313,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
 
     public function test_destination_competency_exists() {
         $this->setAdminUser();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         // Pre-add the new competency to course 1.
         $lpg->create_course_competency(array('courseid' => $this->c1->id, 'competencyid' => $this->f2comps['A1']->get_id()));
@@ -361,7 +361,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
 
     public function test_destination_competency_exists_remove_original() {
         $this->setAdminUser();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         // Pre-add the new competency to course 1.
         $lpg->create_course_competency(array('courseid' => $this->c1->id, 'competencyid' => $this->f2comps['A1']->get_id()));
@@ -410,7 +410,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
 
         $dg->enrol_user($u->id, $this->c1->id, 'editingteacher');
         $dg->enrol_user($u->id, $this->c2->id, 'editingteacher');
-        assign_capability('tool/lp:coursecompetencymanage', CAP_PROHIBIT, $role, $sysctx->id);
+        assign_capability('moodle/competency:coursecompetencymanage', CAP_PROHIBIT, $role, $sysctx->id);
         role_assign($role, $u->id, context_course::instance($this->c1->id)->id);
         role_assign($role, $u->id, context_module::instance($this->cms[$this->c2->id]['F1']->cmid)->id);
 

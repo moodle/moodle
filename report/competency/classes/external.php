@@ -33,10 +33,10 @@ use external_function_parameters;
 use external_multiple_structure;
 use external_single_structure;
 use external_value;
+use core_competency\external\user_competency_course_exporter;
+use core_competency\external\user_summary_exporter;
 use tool_lp\external\competency_summary_exporter;
 use tool_lp\external\course_summary_exporter;
-use tool_lp\external\user_competency_course_exporter;
-use tool_lp\external\user_summary_exporter;
 
 /**
  * This is the external API for this report.
@@ -88,7 +88,7 @@ class external extends external_api {
         );
         $context = context_course::instance($params['courseid']);
         self::validate_context($context);
-        if (!is_enrolled($context, $params['userid'], 'tool/lp:coursecompetencygradable')) {
+        if (!is_enrolled($context, $params['userid'], 'moodle/competency:coursecompetencygradable')) {
             throw new coding_exception('invaliduser');
         }
 

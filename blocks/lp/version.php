@@ -28,5 +28,5 @@ $plugin->version   = 2016011100;
 $plugin->requires  = 2014110400;
 $plugin->component = 'block_lp';
 $plugin->dependencies = array(
-    'tool_lp' => 2015111035
+    'tool_lp' => ANY_VERSION
 );

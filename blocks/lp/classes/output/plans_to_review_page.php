@@ -28,10 +28,10 @@ use renderable;
 use templatable;
 use renderer_base;
 use stdClass;
-use tool_lp\api;
-use tool_lp\external\plan_exporter;
-use tool_lp\external\user_summary_exporter;
 use moodle_url;
+use core_competency\api;
+use core_competency\external\plan_exporter;
+use core_competency\external\user_summary_exporter;
 
 /**
  * Plans to review renderable class.

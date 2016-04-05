@@ -27,10 +27,10 @@ defined('MOODLE_INTERNAL') || die();
 
 use coding_exception;
 use moodle_exception;
-use tool_lp\api;
-use tool_lp\competency;
-use tool_lp\course_competency;
-use tool_lp\course_module_competency;
+use core_competency\api;
+use core_competency\competency;
+use core_competency\course_competency;
+use core_competency\course_module_competency;
 
 /**
  * Processor class.

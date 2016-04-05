@@ -28,11 +28,11 @@ use renderable;
 use templatable;
 use renderer_base;
 use stdClass;
-use tool_lp\api;
-use tool_lp\external\competency_exporter;
-use tool_lp\external\user_competency_exporter;
-use tool_lp\external\user_summary_exporter;
 use moodle_url;
+use core_competency\api;
+use core_competency\external\competency_exporter;
+use core_competency\external\user_competency_exporter;
+use core_competency\external\user_summary_exporter;
 
 /**
  * Competencies to review renderable class.

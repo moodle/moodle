@@ -36,7 +36,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Load the data for the competency report in a course.',
         'type'         => 'read',
-        'capabilities' => 'tool/lp:coursecompetencyview',
+        'capabilities' => 'moodle/competency:coursecompetencyview',
         'ajax'         => true,
     )
 );

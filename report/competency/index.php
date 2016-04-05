@@ -36,14 +36,14 @@ $currentuser = optional_param('user', null, PARAM_INT);
 $groupmode = groups_get_course_groupmode($course);
 $currentgroup = groups_get_course_group($course, true);
 if (empty($currentuser)) {
-    $gradable = get_enrolled_users($context, 'tool/lp:coursecompetencygradable', $currentgroup, 'u.id', null, 0, 1);
+    $gradable = get_enrolled_users($context, 'moodle/competency:coursecompetencygradable', $currentgroup, 'u.id', null, 0, 1);
     if (empty($gradable)) {
         $currentuser = 0;
     } else {
         $currentuser = array_pop($gradable)->id;
     }
 } else {
-    $gradable = get_enrolled_users($context, 'tool/lp:coursecompetencygradable', $currentgroup, 'u.id');
+    $gradable = get_enrolled_users($context, 'moodle/competency:coursecompetencygradable', $currentgroup, 'u.id');
     if (count($gradable) == 0) {
         $currentuser = 0;
     } else if (!in_array($currentuser, array_keys($gradable))) {

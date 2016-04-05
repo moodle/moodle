@@ -25,11 +25,12 @@
 namespace block_lp\output;
 defined('MOODLE_INTERNAL') || die();
 
-use tool_lp\api;
-use tool_lp\external\competency_exporter;
-use tool_lp\external\plan_exporter;
-use tool_lp\external\user_competency_exporter;
-use tool_lp\external\user_summary_exporter;
+use core_competency\api;
+use core_competency\external\competency_exporter;
+use core_competency\external\plan_exporter;
+use core_competency\external\user_competency_exporter;
+use core_competency\external\user_summary_exporter;
+use core_competency\plan;
 use renderable;
 use renderer_base;
 use templatable;
@@ -81,7 +82,7 @@ class summary implements renderable, templatable {
             if (count($plans) >= 3) {
                 break;
             }
-            if ($plan->get_status() == \tool_lp\plan::STATUS_ACTIVE) {
+            if ($plan->get_status() == plan::STATUS_ACTIVE) {
                 $plans[] = $plan;
             }
         }

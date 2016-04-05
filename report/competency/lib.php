@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die;
  * @param stdClass $context The context of the course
  */
 function report_competency_extend_navigation_course($navigation, $course, $context) {
-    if (has_capability('tool/lp:coursecompetencyview', $context)) {
+    if (has_capability('moodle/competency:coursecompetencyview', $context)) {
         $url = new moodle_url('/report/competency/index.php', array('id' => $course->id));
         $name = get_string('pluginname', 'report_competency');
         $navigation->add($name, $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));

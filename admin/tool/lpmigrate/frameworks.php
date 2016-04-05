@@ -67,7 +67,8 @@ if ($form->is_cancelled()) {
     $unmappedfrom = $mapper->get_unmapped_objects_from();
     $unmappedto = $mapper->get_unmapped_objects_to();
     $renderable = new \tool_lpmigrate\output\migrate_framework_results($context, $processor,
-        \tool_lp\api::read_framework($data->from), \tool_lp\api::read_framework($data->to), $unmappedfrom, $unmappedto);
+        \core_competency\api::read_framework($data->from), \core_competency\api::read_framework($data->to),
+        $unmappedfrom, $unmappedto);
     echo $output->render($renderable);
 
 } else {

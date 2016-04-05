@@ -75,7 +75,7 @@ class tool_cohortroles_api_testcase extends advanced_testcase {
     }
 
     public function test_create_cohort_role_assignment_with_invalid_data() {
-        $this->setExpectedException('tool_lp\invalid_persistent_exception');
+        $this->setExpectedException('core_competency\invalid_persistent_exception');
         $this->setAdminUser();
         $params = (object) array(
             'userid' => $this->userassignto->id,

@@ -25,7 +25,7 @@
 namespace tool_lpmigrate;
 defined('MOODLE_INTERNAL') || die();
 
-use tool_lp\api;
+use core_competency\api;
 
 /**
  * Framework mapper class.

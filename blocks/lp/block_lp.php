@@ -60,6 +60,7 @@ class block_lp extends block_base {
         if (isset($this->content)) {
             return $this->content;
         }
+        $this->content = new stdClass();
 
         $summary = new \block_lp\output\summary();
         if (!$summary->has_content()) {
@@ -67,7 +68,6 @@ class block_lp extends block_base {
         }
 
         $renderer = $this->page->get_renderer('block_lp');
-        $this->content = new stdClass();
         $this->content->text = $renderer->render($summary);
         $this->content->footer = '';
 

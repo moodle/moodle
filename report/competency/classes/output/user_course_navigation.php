@@ -27,7 +27,7 @@ use renderable;
 use renderer_base;
 use templatable;
 use context_course;
-use \tool_lp\external\user_summary_exporter;
+use core_competency\external\user_summary_exporter;
 use stdClass;
 
 /**
@@ -78,7 +78,7 @@ class user_course_navigation implements renderable, templatable {
         $data->baseurl = $this->baseurl;
         $data->groupselector = '';
 
-        if (has_capability('tool/lp:coursecompetencymanage', $context)) {
+        if (has_capability('moodle/competency:coursecompetencymanage', $context)) {
             $course = $DB->get_record('course', array('id' => $this->courseid));
             $currentgroup = groups_get_course_group($course, true);
             if ($currentgroup !== false) {
@@ -93,7 +93,7 @@ class user_course_navigation implements renderable, templatable {
             // Fetch current active group.
             $groupmode = groups_get_course_groupmode($course);
 
-            $users = get_enrolled_users($context, 'tool/lp:coursecompetencygradable', $currentgroup,
+            $users = get_enrolled_users($context, 'moodle/competency:coursecompetencygradable', $currentgroup,
                                         'u.*', null, 0, 0, $showonlyactiveenrol);
 
             $data->users = array();

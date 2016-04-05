@@ -23,7 +23,9 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-if (\tool_lp\api::is_enabled()) {
+if (\core_competency\api::is_enabled()) {
+
+    $parentname = 'competencies';
 
     // Manage competency frameworks page.
     $temp = new admin_externalpage(
@@ -32,6 +34,6 @@ if (\tool_lp\api::is_enabled()) {
         new moodle_url('/admin/tool/lpmigrate/frameworks.php'),
         array('tool/lpmigrate:frameworksmigrate')
     );
-    $ADMIN->add('toollprootpage', $temp);
+    $ADMIN->add($parentname, $temp);
 
 }
