@@ -133,6 +133,7 @@ function email_reports_cron() {
             $summary = get_string('firstname') . "," .
                        get_string('lastname') . "," .
                        get_string('email') . "," .
+                       get_string('department', 'block_iomad_company_admin') ."\n";
                        get_string('course') . "," .
                        get_string('timeenrolled', 'local_report_completion') ."\n";
             $foundusers = false;
@@ -157,6 +158,7 @@ function email_reports_cron() {
                 $summary .= $manageruser->firstname . "," .
                             $manageruser->lastname . "," .
                             $manageruser->email . "," .
+                            $manageruser->departmentname . "," .
                             $manageruser->coursename . "," .
                             date('d-m-y', $manageruser->timeenrolled) . "\n";
             }
@@ -278,6 +280,7 @@ function email_reports_cron() {
             $summary = get_string('firstname') . "," .
                        get_string('lastname') . "," .
                        get_string('email') . "," .
+                       get_string('department', 'block_iomad_company_admin') ."\n";
                        get_string('course') . "," .
                        get_string('completed', 'local_report_completion') ."\n";
             $foundusers = false;
@@ -302,6 +305,7 @@ function email_reports_cron() {
                 $summary .= $manageruser->firstname . "," .
                             $manageruser->lastname . "," .
                             $manageruser->email . "," .
+                            $manageruser->departmentname . "," .
                             $manageruser->coursename . "," .
                             date('d-m-y', $manageruser->timecompleted) . "\n";
             }
