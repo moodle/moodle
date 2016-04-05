@@ -372,8 +372,10 @@ function upgrade_stale_php_files_present() {
 
     $someexamplesofremovedfiles = array(
         // Removed in 3.1.
-        '/repository/boxnet/migrationv1.php',
-        '/repository/boxnet/cli/migrationv1.php',
+        '/lib/classes/log/sql_internal_reader.php',
+        '/lib/zend/',
+        '/mod/forum/pix/icon.gif',
+        '/tag/templates/tagname.mustache',
         // Removed in 3.0.
         '/mod/lti/grade.php',
         '/tag/coursetagslib.php',
