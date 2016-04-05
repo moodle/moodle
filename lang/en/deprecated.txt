@@ -28,3 +28,5 @@ tagtype,core_tag
 manageofficialtags,core_tag
 settypeofficial,core_tag
 filetoolarge,core
+maxbytesforfile,core
+maxbytes,core_error
