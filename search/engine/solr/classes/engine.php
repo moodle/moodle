@@ -117,7 +117,7 @@ class engine extends \core_search\engine {
             throw new \core_search\engine_exception('engineserverstatus', 'search');
         }
 
-        $query = new \SolrQuery();
+        $query = new \SolrDisMaxQuery();
         $maxrows = \core_search\manager::MAX_RESULTS;
         if ($this->file_indexing_enabled()) {
             // When using file indexing and grouping, we are going to collapse results, so we want extra results.
@@ -198,6 +198,7 @@ class engine extends \core_search\engine {
 
     /**
      * Prepares a new query by setting the query, start offset and rows to return.
+     *
      * @param SolrQuery $query
      * @param object    $q Containing query and filters.
      * @param null|int  $maxresults The number of results to limit. manager::MAX_RESULTS if not set.
@@ -226,13 +227,23 @@ class engine extends \core_search\engine {
     /**
      * Sets fields to be returned in the result.
      *
-     * @param SolrQuery $query object.
+     * @param SolrDisMaxQuery|SolrQuery $query object.
      */
     public function add_fields($query) {
         $documentclass = $this->get_document_classname();
-        $fields = array_keys($documentclass::get_default_fields_definition());
-        foreach ($fields as $field) {
-            $query->addField($field);
+        $fields = $documentclass::get_default_fields_definition();
+
+        $dismax = false;
+        if ($query instanceof SolrDisMaxQuery) {
+            $dismax = true;
+        }
+
+        foreach ($fields as $key => $field) {
+            $query->addField($key);
+            if ($dismax && !empty($field['mainquery'])) {
+                // Add fields the main query should be run against.
+                $query->addQueryField($key);
+            }
         }
     }
 

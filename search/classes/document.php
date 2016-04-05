@@ -103,12 +103,14 @@ class document implements \renderable, \templatable {
         'title' => array(
             'type' => 'text',
             'stored' => true,
-            'indexed' => true
+            'indexed' => true,
+            'mainquery' => true
         ),
         'content' => array(
             'type' => 'text',
             'stored' => true,
-            'indexed' => true
+            'indexed' => true,
+            'mainquery' => true
         ),
         'contextid' => array(
             'type' => 'int',
@@ -160,12 +162,14 @@ class document implements \renderable, \templatable {
         'description1' => array(
             'type' => 'text',
             'stored' => true,
-            'indexed' => true
+            'indexed' => true,
+            'mainquery' => true
         ),
         'description2' => array(
             'type' => 'text',
             'stored' => true,
-            'indexed' => true
+            'indexed' => true,
+            'mainquery' => true
         )
     );
 
