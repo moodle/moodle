@@ -206,8 +206,8 @@ function email_reports_cron() {
                     coursename, notifyperiod, timecompleted, userid, firstname, lastname, username, email)
                     SELECT co.id, co.name, d.id, d.name, c.id, c.fullname, ic.notifyperiod, cc.timecompleted, u.id, u.firstname, u.lastname, u.username, u.email
                     FROM {iomad_courses} ic
-                    JOIN {course_completions} cc
-                    ON (ic.courseid = cc.course
+                    JOIN {local_iomad_track} cc
+                    ON (ic.courseid = cc.courseid
                         AND ic.validlength > 0
                         AND (cc.timecompleted + ic.validlength * 86400 - ic.warnexpire * 86400) < " . $runtime . ")
                     JOIN {company_users} cu
@@ -221,7 +221,10 @@ function email_reports_cron() {
                     JOIN {user} u
                     ON (cc.userid = u.id
                         AND u.deleted = 0
-                        AND u.suspended = 0)";
+                        AND u.suspended = 0)
+                    WHERE cc.id IN (
+                        SELECT max(id) FROM {local_iomad_track}
+                        GROUP BY userid,courseid)";
 
     $DB->execute($populatesql);
 
