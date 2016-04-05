@@ -429,8 +429,21 @@ function book_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
     if ($args[0] == 'index.html') {
         $filename = "index.html";
 
+        // We need to rewrite the pluginfile URLs so the media filters can work.
+        $content = file_rewrite_pluginfile_urls($chapter->content, 'webservice/pluginfile.php', $context->id, 'mod_book', 'chapter',
+                                                $chapter->id);
+        $formatoptions = new stdClass;
+        $formatoptions->noclean = true;
+        $formatoptions->overflowdiv = true;
+        $formatoptions->context = $context;
+
+        $content = format_text($content, $chapter->contentformat, $formatoptions);
+
         // Remove @@PLUGINFILE@@/.
-        $content = str_replace('@@PLUGINFILE@@/', '', $chapter->content);
+        $options = array('reverse' => true);
+        $content = file_rewrite_pluginfile_urls($content, 'webservice/pluginfile.php', $context->id, 'mod_book', 'chapter',
+                                                $chapter->id, $options);
+        $content = str_replace('@@PLUGINFILE@@/', '', $content);
 
         $titles = "";
         // Format the chapter titles.
@@ -451,12 +464,7 @@ function book_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
             }
         }
 
-        $formatoptions = new stdClass;
-        $formatoptions->noclean = true;
-        $formatoptions->overflowdiv = true;
-        $formatoptions->context = $context;
-
-        $content = $titles . format_text($content, $chapter->contentformat, $formatoptions);
+        $content = $titles . $content;
 
         send_file($content, $filename, 0, 0, true, true);
     } else {

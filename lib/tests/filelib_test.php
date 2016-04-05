@@ -951,6 +951,26 @@ EOF;
         $this->assertSame(0, $extcurl->get_errno());
         $this->assertSame('', $contents);
     }
+
+    /**
+     * Test file_rewrite_pluginfile_urls.
+     */
+    public function test_file_rewrite_pluginfile_urls() {
+
+        $syscontext = context_system::instance();
+        $originaltext = 'Fake test with an image <img src="@@PLUGINFILE@@/image.png">';
+
+        // Do the rewrite.
+        $finaltext = file_rewrite_pluginfile_urls($originaltext, 'pluginfile.php', $syscontext->id, 'user', 'private', 0);
+        $this->assertContains("pluginfile.php", $finaltext);
+
+        // Now undo.
+        $options = array('reverse' => true);
+        $finaltext = file_rewrite_pluginfile_urls($finaltext, 'pluginfile.php', $syscontext->id, 'user', 'private', 0, $options);
+
+        // Compare the final text is the same that the original.
+        $this->assertEquals($originaltext, $finaltext);
+    }
 }
 
 /**
