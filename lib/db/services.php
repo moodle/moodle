@@ -1195,6 +1195,15 @@ $functions = array(
         'capabilities'  => 'moodle/question:flag',
     ),
 
+    // Badges functions.
+    'core_badges_get_user_badges' => array(
+        'classname'     => 'core_badges_external',
+        'methodname'    => 'get_user_badges',
+        'description'   => 'Returns the list of badges awarded to a user.',
+        'type'          => 'read',
+        'capabilities'  => 'moodle/badges:viewotherbadges'
+    ),
+
 );
 
 $services = array(
@@ -1261,8 +1270,9 @@ $services = array(
             'core_rating_get_item_ratings',
             'core_user_get_users_by_field',
             'core_user_add_user_private_files',
-            'core_question_update_flag'
-            ),
+            'core_question_update_flag',
+            'core_badges_get_user_badges',
+        ),
         'enabled' => 0,
         'restrictedusers' => 0,
         'shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE,
