@@ -40,7 +40,7 @@ class tool_lp_template_testcase extends advanced_testcase {
         global $DB;
 
         $this->resetAfterTest();
-        $tpl = $this->getDataGenerator()->get_plugin_generator('tool_lp')->create_template();
+        $tpl = $this->getDataGenerator()->get_plugin_generator('core_competency')->create_template();
 
         // No due date -> pass.
         $tpl->set_duedate(0);

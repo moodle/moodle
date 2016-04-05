@@ -45,7 +45,7 @@ class tool_lp_course_competency_settings_testcase extends advanced_testcase {
 
         $syscontext = context_system::instance();
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $role = create_role('Settings changer role', 'settingschanger', 'Someone who can change course competency settings');
         assign_capability('moodle/competency:coursecompetencyconfigure', CAP_ALLOW, $role, $syscontext->id);
         assign_capability('moodle/competency:competencygrade', CAP_ALLOW, $role, $syscontext->id);

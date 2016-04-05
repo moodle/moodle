@@ -258,7 +258,7 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $user = $dg->create_user();
 
         $record = array('userid' => $user->id,

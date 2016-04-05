@@ -42,7 +42,7 @@ class tool_lp_lib_testcase extends advanced_testcase {
         global $DB;
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
 
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
@@ -189,7 +189,7 @@ class tool_lp_lib_testcase extends advanced_testcase {
     public function test_comment_add_plan() {
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
 
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();

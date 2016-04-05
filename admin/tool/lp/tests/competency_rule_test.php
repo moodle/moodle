@@ -45,7 +45,7 @@ class tool_lp_competency_rule_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
 
         $this->setAdminUser();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $u1 = $this->getDataGenerator()->create_user();
 
         // Set up the framework and competencies.
@@ -97,7 +97,7 @@ class tool_lp_competency_rule_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $framework = $lpg->create_framework();
         $framework2 = $lpg->create_framework();
         $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
@@ -227,7 +227,7 @@ class tool_lp_competency_rule_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
 
         $this->setAdminUser();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $u1 = $this->getDataGenerator()->create_user();
 
         // Set up the framework and competencies.

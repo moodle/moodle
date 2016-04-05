@@ -41,7 +41,7 @@ class tool_lp_course_competency_testcase extends advanced_testcase {
 
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
 
         $c1 = $dg->create_course();
         $c2 = $dg->create_course();

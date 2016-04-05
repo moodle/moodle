@@ -113,7 +113,7 @@ class behat_tool_lp_data_generators extends behat_base {
         }
 
         $datagenerator = testing_util::get_data_generator();
-        $this->datageneratorlp = $datagenerator->get_plugin_generator('tool_lp');
+        $this->datageneratorlp = $datagenerator->get_plugin_generator('core_competency');
 
         $elementdatagenerator = self::$elements[$elementname]['datagenerator'];
         $requiredfields = self::$elements[$elementname]['required'];

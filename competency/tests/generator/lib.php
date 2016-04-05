@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tool LP data generator.
+ * Competency data generator.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @category   test
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,8 +27,9 @@ use core_competency\competency;
 use core_competency\competency_framework;
 use core_competency\course_competency;
 use core_competency\course_module_competency;
-use tool_lp\external;
+use core_competency\evidence;
 use core_competency\plan;
+use core_competency\plan_competency;
 use core_competency\related_competency;
 use core_competency\template;
 use core_competency\template_cohort;
@@ -36,22 +37,21 @@ use core_competency\template_competency;
 use core_competency\user_competency;
 use core_competency\user_competency_course;
 use core_competency\user_competency_plan;
-use core_competency\plan_competency;
-use core_competency\evidence;
 use core_competency\user_evidence;
 use core_competency\user_evidence_competency;
+use tool_lp\external;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Tool LP data generator.
+ * Competency data generator class.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @category   test
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_lp_generator extends component_generator_base {
+class core_competency_generator extends component_generator_base {
 
     /** @var int Number of created competencies. */
     protected $competencycount = 0;

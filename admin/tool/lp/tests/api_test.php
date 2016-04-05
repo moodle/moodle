@@ -194,7 +194,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_list_frameworks() {
         $this->resetAfterTest(true);
         $this->setAdminUser();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         // Create a list of frameworks.
         $framework1 = $lpg->create_framework(array(
@@ -281,7 +281,7 @@ class tool_lp_api_testcase extends advanced_testcase {
      * Test duplicate a framework.
      */
     public function test_duplicate_framework() {
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
@@ -515,7 +515,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->setAdminUser();
 
         $u1 = $this->getDataGenerator()->create_user();
-        $tpl = $this->getDataGenerator()->get_plugin_generator('tool_lp')->create_template();
+        $tpl = $this->getDataGenerator()->get_plugin_generator('core_competency')->create_template();
 
         // Creating a new plan.
         $plan = api::create_plan_from_template($tpl, $u1->id);
@@ -539,7 +539,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_update_plan_based_on_template() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
 
@@ -583,7 +583,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_unlink_plan_from_template() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
 
@@ -668,7 +668,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $dg = $this->getDataGenerator();
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $tpl1 = $lpg->create_template();
         $tpl2 = $lpg->create_template();
 
@@ -760,7 +760,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $user = $dg->create_user();
 
         // Create a framework and assign competencies.
@@ -862,7 +862,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $dg->role_assign($reviewerrole, $reviewer->id, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $tpl = $lpg->create_template();
         $plan = $lpg->create_plan(array('userid' => $user->id));
         $tplplan = $lpg->create_plan(array('userid' => $user->id, 'templateid' => $tpl->get_id()));
@@ -1486,7 +1486,7 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         $syscontext = context_system::instance();
 
@@ -1595,7 +1595,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         $syscontext = context_system::instance();
 
@@ -1682,7 +1682,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_delete_plan_manage_archived_competencies() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         $syscontext = context_system::instance();
 
@@ -1731,7 +1731,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_list_plan_competencies_manage_archived_competencies() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         $syscontext = context_system::instance();
 
@@ -1812,7 +1812,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->setAdminUser();
 
         $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         $c1 = $dg->create_cohort();
         $c2 = $dg->create_cohort();
@@ -1837,7 +1837,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
 
         $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $cat = $dg->create_category();
         $catcontext = context_coursecat::instance($cat->id);
         $syscontext = context_system::instance();
@@ -1882,7 +1882,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->setAdminUser();
 
         $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         $c1 = $dg->create_cohort();
         $c2 = $dg->create_cohort();
@@ -1912,7 +1912,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->setAdminUser();
 
         $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         $c1 = $dg->create_cohort();
         $c2 = $dg->create_cohort();
@@ -1943,7 +1943,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_add_evidence_log() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
 
         $u1 = $dg->create_user();
         $u1ctx = context_user::instance($u1->id);
@@ -2007,7 +2007,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_add_evidence_complete() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
 
         $u1 = $dg->create_user();
         $u1ctx = context_user::instance($u1->id);
@@ -2103,7 +2103,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_add_evidence_override() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
 
         $u1 = $dg->create_user();
         $u1ctx = context_user::instance($u1->id);
@@ -2178,7 +2178,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_add_evidence_and_send_for_review() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
 
         $u1 = $dg->create_user();
         $u1ctx = context_user::instance($u1->id);
@@ -2212,7 +2212,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_add_evidence_existing_user_competency() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         $syscontext = context_system::instance();
 
@@ -2254,7 +2254,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_add_evidence_no_existing_user_competency() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         $syscontext = context_system::instance();
 
@@ -2291,7 +2291,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_add_evidence_applies_competency_rules() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $syscontext = context_system::instance();
         $ctxid = $syscontext->id;
 
@@ -2395,7 +2395,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $student = $dg->create_user();
 
         // Create a competency for the course.
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $framework = $lpg->create_framework();
         $comp = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
 
@@ -2438,7 +2438,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $dg->enrol_user($student->id, $course->id, $studentrole->id);
 
         // Create a competency for the course.
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $framework = $lpg->create_framework();
         // Do not push ratings from course to user plans.
         $comp = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
@@ -2478,7 +2478,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_observe_course_completed() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
 
         // Set-up users, framework, competencies and course competencies.
         $course = $dg->create_course();
@@ -2575,7 +2575,7 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
         $course = $dg->create_course();
@@ -2642,7 +2642,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_set_ruleoutcome_course_competency() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
         $course = $dg->create_course();
@@ -2673,7 +2673,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $user = $dg->create_user();
 
         $dg->create_scale(array("id" => "1", "scale" => "value1, value2"));
@@ -2746,7 +2746,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $user = $dg->create_user();
 
         // Create a course.
@@ -2796,7 +2796,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $user = $dg->create_user();
 
         // Create a cohort.
@@ -2826,7 +2826,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $user = $dg->create_user();
 
         // Create a framework and assign competencies.
@@ -2871,7 +2871,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     protected function setup_framework_for_reset_rules_tests() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
 
         $this->setAdminUser();
         $f1 = $lpg->create_framework();
@@ -3110,7 +3110,7 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         $dg = $this->getDataGenerator();
         $user = $dg->create_user();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $tpl1 = $lpg->create_template();
         $tpl2 = $lpg->create_template();
 
@@ -3129,7 +3129,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->setAdminUser();
 
         $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         $u1 = $dg->create_user();
         $f = $lpg->create_framework();
@@ -3168,7 +3168,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->setAdminUser();
 
         $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         $u1 = $dg->create_user();
         $f = $lpg->create_framework();
@@ -3208,7 +3208,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_delete_competency() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $this->setAdminUser();
 
         $u1 = $dg->create_user();
@@ -3268,7 +3268,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_delete_competency_used_in_plan() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $this->setAdminUser();
 
         $u1 = $dg->create_user();
@@ -3301,7 +3301,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_delete_competency_used_in_usercompetency() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $this->setAdminUser();
 
         $u1 = $dg->create_user();
@@ -3333,7 +3333,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_delete_competency_used_in_usercompetencyplan() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $this->setAdminUser();
 
         $u1 = $dg->create_user();
@@ -3371,7 +3371,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_delete_competency_used_in_template() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $this->setAdminUser();
 
         $template = $lpg->create_template();
@@ -3405,7 +3405,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_delete_competency_used_in_course() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $this->setAdminUser();
 
         $cat1 = $dg->create_category();
@@ -3442,7 +3442,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_delete_framework() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $this->setAdminUser();
 
         $u1 = $dg->create_user();
@@ -3496,7 +3496,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_delete_framework_competency_used_in_plan() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $this->setAdminUser();
 
         $u1 = $dg->create_user();
@@ -3554,7 +3554,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_delete_framework_competency_used_in_usercompetency() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $this->setAdminUser();
 
         $u1 = $dg->create_user();
@@ -3611,7 +3611,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_delete_framework_competency_used_in_usercompetencyplan() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $this->setAdminUser();
 
         $u1 = $dg->create_user();
@@ -3674,7 +3674,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_delete_framework_competency_used_in_template() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $this->setAdminUser();
 
         $u1 = $dg->create_user();
@@ -3734,7 +3734,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_delete_framework_competency_used_in_course() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $this->setAdminUser();
 
         $cat1 = $dg->create_category();
@@ -3809,7 +3809,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $student2 = $dg->create_user();
         $notstudent1 = $dg->create_user();
 
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $framework = $lpg->create_framework();
         $comp1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
         $comp2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
@@ -3949,7 +3949,7 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         $currenttime = time();
         $syscontext = context_system::instance();
@@ -4009,7 +4009,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_get_user_competency_in_course() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $this->setAdminUser();
 
         $user = $dg->create_user();
@@ -4052,7 +4052,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_course_statistics() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $this->setAdminUser();
 
         $u1 = $dg->create_user();
@@ -4142,7 +4142,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_template_statistics() {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
         $this->setAdminUser();
 
         $u1 = $dg->create_user();
@@ -4168,7 +4168,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $lpg->create_course_competency(array('competencyid' => $comp5->get_id(), 'courseid' => $c1->id));
 
         // Put all 6 in a template.
-        $tpl = $this->getDataGenerator()->get_plugin_generator('tool_lp')->create_template();
+        $tpl = $this->getDataGenerator()->get_plugin_generator('core_competency')->create_template();
         $tplc1 = $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $comp1->get_id()));
         $tplc2 = $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $comp2->get_id()));
         $tplc3 = $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $comp3->get_id()));
@@ -4281,7 +4281,7 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_is_scale_used_anywhere() {
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
 
         $scale1 = $dg->create_scale();
         $scale2 = $dg->create_scale();

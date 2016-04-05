@@ -42,7 +42,7 @@ class tool_lp_task_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
 
         // Sql to simulate the execution in time.
         $cmsql = "UPDATE {cohort_members} SET timeadded = :currenttime WHERE cohortid = :cohortid AND userid = :userid";
@@ -160,7 +160,7 @@ class tool_lp_task_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
 
         $user1 = $dg->create_user();
         $user2 = $dg->create_user();
@@ -241,7 +241,7 @@ class tool_lp_task_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
 
         $user1 = $dg->create_user();
         $user2 = $dg->create_user();
@@ -278,7 +278,7 @@ class tool_lp_task_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
-        $lpg = $dg->get_plugin_generator('tool_lp');
+        $lpg = $dg->get_plugin_generator('core_competency');
 
         $user = $dg->create_user();
 
