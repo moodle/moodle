@@ -120,3 +120,35 @@ div img.feedback_bar_image {
 .path-mod-feedback .uneditable-input {
     width: auto;
 }
+
+.path-mod-feedback #analysis-form label { display: inline; }
+
+/* Responses navigation */
+.path-mod-feedback .response_navigation {
+    margin: .5em 0;
+}
+.path-mod-feedback .response_navigation a {
+    display: inline-block;
+}
+.path-mod-feedback .response_navigation a.back_to_list {
+    margin: auto;
+    float: right;
+    left: -50%;
+    position: relative;
+}
+.dir-rtl.path-mod-feedback .response_navigation .next_response:after,
+.path-mod-feedback .response_navigation .prev_response:before {
+    content: ' ◄ ';
+}
+.dir-rtl.path-mod-feedback .response_navigation .prev_response:before,
+.path-mod-feedback .response_navigation .next_response:after {
+    content: ' ► ';
+}
+.dir-rtl.path-mod-feedback .response_navigation .prev_response,
+.path-mod-feedback .response_navigation .next_response {
+    float: right;
+}
+.dir-rtl.path-mod-feedback .response_navigation .next_response,
+.path-mod-feedback .response_navigation .prev_response {
+    float: left;
+}

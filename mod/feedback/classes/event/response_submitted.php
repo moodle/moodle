@@ -72,8 +72,8 @@ class response_submitted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' created feedback for the user with id '$this->relateduserid' " .
-            "for the feedback activity with course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' submitted response for 'feedback' activity with "
+                . "course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -81,12 +81,12 @@ class response_submitted extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        if ($this->other['anonymous'] == FEEDBACK_ANONYMOUS_YES) {
-            return new \moodle_url('/mod/feedback/show_entries.php' , array('id' => $this->other['cmid'],
-                    'do_show' => 'showoneentry' , 'userid' => $this->relateduserid));
+        if ($this->anonymous) {
+            return new \moodle_url('/mod/feedback/show_entries.php', array('id' => $this->other['cmid'],
+                    'showcompleted' => $this->objectid));
         } else {
-            return new \moodle_url('/mod/feedback/show_entries_anonym.php', array('id' => $this->other['cmid'],
-                    'do_show' => 'showoneentry', 'showall' => 1, 'showcompleted' => $this->objectid));
+            return new \moodle_url('/mod/feedback/show_entries.php' , array('id' => $this->other['cmid'],
+                    'userid' => $this->userid, 'showcompleted' => $this->objectid));
         }
     }
 

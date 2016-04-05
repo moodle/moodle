@@ -70,7 +70,7 @@ if (has_capability('mod/feedback:viewreports', $context)) {
                                 get_string('analysis', 'feedback'));
     }
 
-    $url_params = array('id'=>$usedid, 'do_show'=>'showentries');
+    $url_params = array('id' => $usedid);
     $reporturl = new moodle_url('/mod/feedback/show_entries.php', $url_params);
     $row[] = new tabobject('showentries',
                             $reporturl->out(),

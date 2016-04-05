@@ -62,14 +62,10 @@ echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 
 //get the groupid
 $myurl = $CFG->wwwroot.'/mod/feedback/analysis.php?id='.$cm->id.'&do_show=analysis';
-$groupselect = groups_print_activity_menu($cm, $myurl, true);
-$mygroupid = groups_get_activity_group($cm);
+$mygroupid = groups_get_activity_group($cm, true);
+groups_print_activity_menu($cm, $myurl);
 
 if ( has_capability('mod/feedback:viewreports', $context) ) {
-
-    echo isset($groupselect) ? $groupselect : '';
-    echo '<div class="clearer"></div>';
-
     //button "export to excel"
     echo $OUTPUT->container_start('form-buttons');
     $aurl = new moodle_url('analysis_to_excel.php', array('sesskey'=>sesskey(), 'id'=>$id));
@@ -80,23 +76,22 @@ if ( has_capability('mod/feedback:viewreports', $context) ) {
 //get completed feedbacks
 $completedscount = feedback_get_completeds_group_count($feedback, $mygroupid);
 
-//show the group, if available
-if ($mygroupid and $group = $DB->get_record('groups', array('id'=>$mygroupid))) {
-    echo '<b>'.get_string('group').': '.$group->name. '</b><br />';
-}
-//show the count
+echo '<div class="analysis_header">';
+// Show the submissions count.
 echo '<b>'.get_string('completed_feedbacks', 'feedback').': '.$completedscount. '</b><br />';
 
 // get the items of the feedback
 $items = $DB->get_records('feedback_item',
                           array('feedback'=>$feedback->id, 'hasvalue'=>1),
                           'position');
-//show the count
+// Show the items count.
 if (is_array($items)) {
     echo '<b>'.get_string('questions', 'feedback').': ' .count($items). ' </b><hr />';
 } else {
     $items=array();
 }
+echo '</div>';
+
 $check_anonymously = true;
 if ($mygroupid > 0 AND $feedback->anonymous == FEEDBACK_ANONYMOUS_YES) {
     if ($completedscount < FEEDBACK_MIN_ANONYMOUS_COUNT_IN_GROUP) {

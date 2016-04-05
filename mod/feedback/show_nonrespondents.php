@@ -215,16 +215,13 @@ if ($showall) {
 $students = feedback_get_incomplete_users($cm, $usedgroupid, $sort, $startpage, $pagecount);
 //####### viewreports-start
 //print the list of students
-echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
+echo $OUTPUT->heading(get_string('non_respondents_students', 'feedback', $matchcount), 4);
 echo isset($groupselect) ? $groupselect : '';
 echo '<div class="clearer"></div>';
-echo $OUTPUT->box_start('mdl-align');
 
 if (!$students) {
     echo $OUTPUT->notification(get_string('noexistingparticipants', 'enrol'));
 } else {
-    echo print_string('non_respondents_students', 'feedback');
-    echo ' ('.$matchcount.')<hr />';
 
     if (has_capability('moodle/course:bulkmessaging', $coursecontext)) {
         echo '<form class="mform" action="show_nonrespondents.php" method="post" id="feedback_sendmessageform">';
@@ -288,8 +285,6 @@ if (!$students) {
         $PAGE->requires->js_init_call('M.mod_feedback.init_sendmessage', null, false, $module);
     }
 }
-echo $OUTPUT->box_end();
-echo $OUTPUT->box_end();
 
 /// Finish the page
 ///////////////////////////////////////////////////////////////////////////

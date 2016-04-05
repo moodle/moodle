@@ -71,4 +71,27 @@ class behat_mod_feedback extends behat_base {
 
         return $rv;
     }
+
+    /**
+     * Quick way to generate answers to a one-page feedback.
+     *
+     * @When /^I log in as "(?P<user_name_string>(?:[^"]|\\")*)" and complete feedback "(?P<feedback_name_string>(?:[^"]|\\")*)" in course "(?P<course_name_string>(?:[^"]|\\")*)" with:$/
+     * @param string $questiontype
+     * @param TableNode $questiondata with data for filling the add question form
+     */
+    public function i_log_in_as_and_complete_feedback_in_course($username, $feedbackname, $coursename, TableNode $answers) {
+        $username = $this->escape($username);
+        $coursename = $this->escape($coursename);
+        $feedbackname = $this->escape($feedbackname);
+        $completeform = $this->escape(get_string('complete_the_form', 'feedback'));
+        return [
+            new Given("I log in as \"$username\""),
+            new Given("I follow \"$coursename\""),
+            new Given("I follow \"$feedbackname\""),
+            new Given("I follow \"$completeform\""),
+            new Given("I set the following fields to these values:", $answers),
+            new Given("I press \"Submit your answers\""),
+            new Given("I log out")
+        ];
+    }
 }

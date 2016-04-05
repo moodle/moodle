@@ -1025,6 +1025,31 @@ function feedback_get_complete_users($cm,
 }
 
 /**
+ * If there are any new responses to the anonymous feedback, re-shuffle all
+ * responses and assign response number to each of them.
+ *
+ * @param stdClass $feedback
+ */
+function feedback_shuffle_anonym_responses($feedback) {
+    global $DB;
+    $params = array('feedback' => $feedback->id,
+                    'random_response' => 0,
+                    'anonymous_response' => FEEDBACK_ANONYMOUS_YES);
+
+    if ($DB->count_records('feedback_completed', $params, 'random_response')) {
+        // Get all of the anonymous records, go through them and assign a response id.
+        unset($params['random_response']);
+        $feedbackcompleteds = $DB->get_records('feedback_completed', $params, 'id');
+        shuffle($feedbackcompleteds);
+        $num = 1;
+        foreach ($feedbackcompleteds as $compl) {
+            $compl->random_response = $num++;
+            $DB->update_record('feedback_completed', $compl);
+        }
+    }
+}
+
+/**
  * get users which have the viewreports-capability
  *
  * @uses CONTEXT_MODULE
@@ -2956,8 +2981,7 @@ function feedback_send_email($cm, $feedback, $course, $userid) {
             $info->feedback = format_string($feedback->name, true);
             $info->url = $CFG->wwwroot.'/mod/feedback/show_entries.php?'.
                             'id='.$cm->id.'&'.
-                            'userid='.$userid.'&'.
-                            'do_show=showentries';
+                            'userid=' . $userid;
 
             $a = array('username' => $info->username, 'feedbackname' => $feedback->name);
 
@@ -3028,7 +3052,7 @@ function feedback_send_email_anonym($cm, $feedback, $course) {
             $info = new stdClass();
             $info->username = $printusername;
             $info->feedback = format_string($feedback->name, true);
-            $info->url = $CFG->wwwroot.'/mod/feedback/show_entries_anonym.php?id='.$cm->id;
+            $info->url = $CFG->wwwroot.'/mod/feedback/show_entries.php?id=' . $cm->id;
 
             $a = array('username' => $info->username, 'feedbackname' => $feedback->name);
 
@@ -3170,8 +3194,7 @@ function feedback_extend_settings_navigation(settings_navigation $settings,
 
         $feedbacknode->add(get_string('show_entries', 'feedback'),
                     new moodle_url('/mod/feedback/show_entries.php',
-                                    array('id' => $PAGE->cm->id,
-                                          'do_show' => 'showentries')));
+                                    array('id' => $PAGE->cm->id)));
 
         if ($feedback->anonymous == FEEDBACK_ANONYMOUS_NO AND $feedback->course != SITEID) {
             $feedbacknode->add(get_string('show_nonrespondents', 'feedback'),
