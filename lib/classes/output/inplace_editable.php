@@ -178,7 +178,15 @@ class inplace_editable implements templatable, renderable {
             $this->editable = false;
         }
         $this->type = 'select';
-        $this->options = json_encode($options);
+
+        $pairedoptions = [];
+        foreach ($options as $key => $value) {
+            $pairedoptions[] = [
+                'key' => $key,
+                'value' => $value,
+            ];
+        }
+        $this->options = json_encode($pairedoptions);
         if ($this->displayvalue === null) {
             $this->displayvalue = $options[$this->value];
         }
