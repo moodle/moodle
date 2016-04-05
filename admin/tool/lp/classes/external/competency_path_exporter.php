@@ -33,7 +33,7 @@ use moodle_url;
  * @copyright  2016 Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class competency_path_exporter extends exporter {
+class competency_path_exporter extends \core_competency\external\exporter {
 
     /**
      * Constructor.

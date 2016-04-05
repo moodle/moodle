@@ -15,24 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class for exporting plan data.
+ * Class for exporting course competency data.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_lp\external;
+namespace core_competency\external;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class for exporting related competency data.
+ * Class for exporting course competency data.
  *
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class related_competency_exporter extends persistent_exporter {
+class course_competency_exporter extends persistent_exporter {
 
     protected static function define_class() {
-        return 'core_competency\\related_competency';
+        return 'core_competency\\course_competency';
     }
 }

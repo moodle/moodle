@@ -34,7 +34,7 @@ use context;
 use context_system;
 use tool_lp\api;
 use core_competency\competency_framework;
-use tool_lp\external\competency_framework_exporter;
+use core_competency\external\competency_framework_exporter;
 
 /**
  * Class containing data for managecompetencyframeworks page

@@ -33,7 +33,7 @@ use renderer_base;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_module_summary_exporter extends exporter {
+class course_module_summary_exporter extends \core_competency\external\exporter {
 
     protected static function define_related() {
         return array('cm' => 'cm_info');

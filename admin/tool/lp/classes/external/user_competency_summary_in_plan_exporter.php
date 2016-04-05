@@ -26,6 +26,7 @@ namespace tool_lp\external;
 use context_user;
 use renderer_base;
 use stdClass;
+use core_competency\external\plan_exporter;
 
 /**
  * Class for exporting user competency data with additional related data in a plan.
@@ -33,7 +34,7 @@ use stdClass;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_competency_summary_in_plan_exporter extends exporter {
+class user_competency_summary_in_plan_exporter extends \core_competency\external\exporter {
 
     protected static function define_related() {
         // We cache the context so it does not need to be retrieved from the framework every time.

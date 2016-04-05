@@ -30,7 +30,7 @@ use renderer_base;
 use stdClass;
 use moodle_url;
 use tool_lp\api;
-use tool_lp\external\competency_exporter;
+use core_competency\external\competency_exporter;
 
 /**
  * Class containing data for related competencies.

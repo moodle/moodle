@@ -31,12 +31,12 @@ use stdClass;
 use context;
 use context_system;
 use moodle_url;
+use core_competency\external\template_exporter;
+use core_competency\template;
 use tool_lp\api;
 use tool_lp\external\competency_summary_exporter;
-use core_competency\template;
-use core_competency\template_statistics;
-use tool_lp\external\template_exporter;
 use tool_lp\external\template_statistics_exporter;
+use tool_lp\template_statistics;
 
 /**
  * Class containing data for learning plan template competencies page

@@ -34,7 +34,7 @@ use stdClass;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_competency_summary_in_course_exporter extends exporter {
+class user_competency_summary_in_course_exporter extends \core_competency\external\exporter {
 
     protected static function define_related() {
         // We cache the context so it does not need to be retrieved from the framework every time.

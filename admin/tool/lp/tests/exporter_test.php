@@ -117,7 +117,7 @@ class tool_lp_exporter_testcase extends advanced_testcase {
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_lp_testable_exporter extends \tool_lp\external\exporter {
+class tool_lp_testable_exporter extends \core_competency\external\exporter {
 
     protected static function define_related() {
         // We cache the context so it does not need to be retrieved from the course.

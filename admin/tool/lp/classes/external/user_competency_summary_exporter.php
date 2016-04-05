@@ -26,6 +26,11 @@ namespace tool_lp\external;
 use context_user;
 use renderer_base;
 use stdClass;
+use core_competency\external\comment_area_exporter;
+use core_competency\external\evidence_exporter;
+use core_competency\external\user_competency_exporter;
+use core_competency\external\user_competency_plan_exporter;
+use core_competency\external\user_summary_exporter;
 use core_competency\user_competency;
 
 /**
@@ -34,7 +39,7 @@ use core_competency\user_competency;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_competency_summary_exporter extends exporter {
+class user_competency_summary_exporter extends \core_competency\external\exporter {
 
     protected static function define_related() {
         // We cache the context so it does not need to be retrieved from the framework every time.

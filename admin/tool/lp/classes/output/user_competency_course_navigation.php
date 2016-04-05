@@ -27,8 +27,8 @@ use renderable;
 use renderer_base;
 use templatable;
 use context_course;
-use \tool_lp\external\user_summary_exporter;
-use \tool_lp\external\competency_exporter;
+use \core_competency\external\competency_exporter;
+use \core_competency\external\user_summary_exporter;
 use stdClass;
 
 /**

@@ -17,11 +17,11 @@
 /**
  * Generic exporter to take a stdClass and prepare it for return by webservice.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_lp\external;
+namespace core_competency\external;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/externallib.php');
@@ -151,7 +151,7 @@ abstract class exporter {
                     throw new coding_exception('Unexpected property ' . $propertyformat);
                 }
                 $format = $record->$propertyformat;
-                list($text, $format) = external_format_text($data->$property, $format, $context->id, 'tool_lp', '', 0);
+                list($text, $format) = external_format_text($data->$property, $format, $context->id, 'core_competency', '', 0);
                 $data->$property = $text;
                 $data->$propertyformat = $format;
 

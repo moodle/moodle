@@ -17,11 +17,11 @@
 /**
  * Class for exporting competency_framework data.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_lp\external;
+namespace core_competency\external;
 defined('MOODLE_INTERNAL') || die();
 
 use tool_lp\api;

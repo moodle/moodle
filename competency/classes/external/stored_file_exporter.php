@@ -17,11 +17,11 @@
 /**
  * Class for exporting stored_file data.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_lp\external;
+namespace core_competency\external;
 
 use coding_exception;
 use core_text;
@@ -33,7 +33,7 @@ use stored_file;
 /**
  * Class for exporting stored_file data.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

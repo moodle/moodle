@@ -33,7 +33,7 @@ use moodle_url;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cohort_summary_exporter extends exporter {
+class cohort_summary_exporter extends \core_competency\external\exporter {
 
     protected static function define_related() {
         // Cohorts can exist on a category context.

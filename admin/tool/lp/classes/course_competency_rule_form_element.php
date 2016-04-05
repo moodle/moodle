@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 use tool_lp\api;
-use tool_lp\external\competency_exporter;
+use core_competency\external\competency_exporter;
 use core_competency\course_module_competency;
 
 require_once($CFG->libdir . '/form/select.php');

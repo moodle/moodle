@@ -17,11 +17,11 @@
 /**
  * Class for exporting user_evidence data.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_lp\external;
+namespace core_competency\external;
 
 use moodle_url;
 use renderer_base;
@@ -29,7 +29,7 @@ use renderer_base;
 /**
  * Class for exporting user_evidence data.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

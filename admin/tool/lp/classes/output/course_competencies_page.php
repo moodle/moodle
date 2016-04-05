@@ -32,17 +32,17 @@ use moodle_url;
 use context_system;
 use context_course;
 use tool_lp\api;
-use core_competency\course_competency;
-use core_competency\course_competency_statistics;
+use tool_lp\course_competency_statistics;
 use core_competency\competency;
-use tool_lp\external\competency_exporter;
+use core_competency\course_competency;
+use core_competency\external\competency_exporter;
+use core_competency\external\course_competency_exporter;
+use core_competency\external\course_competency_settings_exporter;
+use core_competency\external\user_competency_course_exporter;
+use core_competency\external\user_competency_exporter;
 use tool_lp\external\competency_path_exporter;
-use tool_lp\external\course_competency_exporter;
 use tool_lp\external\course_competency_statistics_exporter;
-use tool_lp\external\course_competency_settings_exporter;
 use tool_lp\external\course_module_summary_exporter;
-use tool_lp\external\user_competency_exporter;
-use tool_lp\external\user_competency_course_exporter;
 
 /**
  * Class containing data for course competencies page

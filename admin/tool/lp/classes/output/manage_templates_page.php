@@ -34,7 +34,7 @@ use moodle_url;
 use context_system;
 use tool_lp\api;
 use core_competency\template;
-use tool_lp\external\template_exporter;
+use core_competency\external\template_exporter;
 
 /**
  * Class containing data for managecompetencyframeworks page

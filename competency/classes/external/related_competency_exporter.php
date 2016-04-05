@@ -15,27 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * User evidence competency exporter.
+ * Class for exporting plan data.
  *
- * @package    tool_lp
- * @copyright  2015 Frédéric Massart - FMCorz.net
+ * @package    core_competency
+ * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace tool_lp\external;
+namespace core_competency\external;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * User evidence competency exporter class.
+ * Class for exporting related competency data.
  *
- * @package    tool_lp
- * @copyright  2015 Frédéric Massart - FMCorz.net
+ * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_evidence_competency_exporter extends persistent_exporter {
+class related_competency_exporter extends persistent_exporter {
 
     protected static function define_class() {
-        return 'core_competency\\user_evidence_competency';
+        return 'core_competency\\related_competency';
     }
-
 }

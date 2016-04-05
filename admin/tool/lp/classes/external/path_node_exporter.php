@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2016 Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class path_node_exporter extends exporter {
+class path_node_exporter extends \core_competency\external\exporter {
 
     /**
      * Return the list of properties.

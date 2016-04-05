@@ -24,10 +24,9 @@
 namespace tool_lp\external;
 defined('MOODLE_INTERNAL') || die();
 
-use tool_lp\api;
 use moodle_url;
 use renderer_base;
-use tool_lp\external\user_evidence_competency_summary_exporter;
+use core_competency\external\stored_file_exporter;
 
 /**
  * Class for exporting user evidence with all competencies.
@@ -35,7 +34,7 @@ use tool_lp\external\user_evidence_competency_summary_exporter;
  * @copyright  2016 Serge Gauthier - <serge.gauthier.2@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_evidence_summary_exporter extends persistent_exporter {
+class user_evidence_summary_exporter extends \core_competency\external\persistent_exporter {
 
     protected static function define_class() {
         return 'core_competency\\user_evidence';

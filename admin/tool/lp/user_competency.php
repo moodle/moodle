@@ -43,7 +43,7 @@ if (!$user || !core_user::is_real_user($user->id)) {
 $iscurrentuser = ($USER->id == $user->id);
 
 $competency = $uc->get_competency();
-$compexporter = new \tool_lp\external\competency_exporter($competency, array('context' => $competency->get_context()));
+$compexporter = new \core_competency\external\competency_exporter($competency, array('context' => $competency->get_context()));
 
 $PAGE->set_pagelayout('standard');
 $PAGE->set_url($url);

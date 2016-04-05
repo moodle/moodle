@@ -19,11 +19,11 @@
  *
  * A comment area is the set of information about a defined comments area.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_lp\external;
+namespace core_competency\external;
 require_once($CFG->dirroot . '/comment/lib.php');
 
 // TODO MDL-52243 Move this to core.
@@ -36,7 +36,7 @@ use stdClass;
 /**
  * Class for exporting a comment area.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
