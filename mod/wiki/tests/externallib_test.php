@@ -629,11 +629,16 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
 
-        // Check that WS doesn't return page content if includecontent is false.
-        unset($expectedpages[0]['cachedcontent']);
-        unset($expectedpages[0]['contentformat']);
-        unset($expectedpages[1]['cachedcontent']);
-        unset($expectedpages[1]['contentformat']);
+        // Check that WS doesn't return page content if includecontent is false, it returns the size instead.
+        foreach ($expectedpages as $i => $expectedpage) {
+            if (function_exists('mb_strlen') && ((int)ini_get('mbstring.func_overload') & 2)) {
+                $expectedpages[$i]['contentsize'] = mb_strlen($expectedpages[$i]['cachedcontent'], '8bit');
+            } else {
+                $expectedpages[$i]['contentsize'] = strlen($expectedpages[$i]['cachedcontent']);
+            }
+            unset($expectedpages[$i]['cachedcontent']);
+            unset($expectedpages[$i]['contentformat']);
+        }
         $result = mod_wiki_external::get_subwiki_pages($this->wiki->id, 0, 0, array('sortby' => 'id', 'includecontent' => 0));
         $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
         $this->assertEquals($expectedpages, $result['pages']);
