@@ -47,7 +47,6 @@ $string['eventitemdeleted_desc'] = 'Item with ID {$a->objectid} deleted.';
 $string['eventitemrestored'] = 'Item restored';
 $string['eventitemrestored_desc'] = 'Item with ID {$a->objectid} restored.';
 $string['invalidcontext'] = 'Invalid context supplied.';
-$string['neverdelete'] = 'Never delete recycled items';
 $string['noitemsinbin'] = 'There are no items in the recycle bin.';
 $string['notenabled'] = 'Sorry, but the recycle bin has been disabled by the administrator.';
 $string['pluginname'] = 'Recycle bin';
