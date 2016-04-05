@@ -94,7 +94,7 @@ define(['jquery',
         var self = this;
 
         return Ajax.call([
-            { methodname: 'tool_lp_list_plan_competencies', args: {
+            { methodname: 'core_competency_list_plan_competencies', args: {
                 id: planId
             }}
         ])[0].done(function(competencies) {
@@ -161,7 +161,7 @@ define(['jquery',
 
         if (self._singlePlan) {
             promise = Ajax.call([
-                { methodname: 'tool_lp_read_plan', args: {
+                { methodname: 'core_competency_read_plan', args: {
                     id: this._planId
                 }}
             ])[0].then(function(plan) {
@@ -169,7 +169,7 @@ define(['jquery',
             });
         } else {
             promise = Ajax.call([
-                { methodname: 'tool_lp_list_user_plans', args: {
+                { methodname: 'core_competency_list_user_plans', args: {
                     userid: self._userId
                 }}
             ])[0];

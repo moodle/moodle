@@ -115,7 +115,7 @@ define(['jquery',
         var settings = { pushratingstouserplans: newValue };
 
         ajax.call([
-            { methodname: 'tool_lp_update_course_competency_settings',
+            { methodname: 'core_competency_update_course_competency_settings',
               args: { courseid: courseId, settings: settings } }
         ])[0].done(function() {
             this.refreshCourseCompetenciesPage();

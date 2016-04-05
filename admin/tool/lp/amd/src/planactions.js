@@ -152,7 +152,7 @@ define(['jquery',
     PlanActions.prototype._doDelete = function(planData) {
         var self = this,
             calls = [{
-                methodname: 'tool_lp_delete_plan',
+                methodname: 'core_competency_delete_plan',
                 args: { id: planData.id }
             }];
         self._callAndRefresh(calls, planData);
@@ -168,7 +168,7 @@ define(['jquery',
             requests;
 
         requests = ajax.call([{
-            methodname: 'tool_lp_read_plan',
+            methodname: 'core_competency_read_plan',
             args: { id: planData.id }
         }]);
 
@@ -201,7 +201,7 @@ define(['jquery',
     PlanActions.prototype._doReopenPlan = function(planData) {
         var self = this,
             calls = [{
-                methodname: 'tool_lp_reopen_plan',
+                methodname: 'core_competency_reopen_plan',
                 args: { planid: planData.id}
             }];
         self._callAndRefresh(calls, planData);
@@ -215,7 +215,7 @@ define(['jquery',
     PlanActions.prototype.reopenPlan = function(planData) {
         var self = this,
             requests = ajax.call([{
-                methodname: 'tool_lp_read_plan',
+                methodname: 'core_competency_read_plan',
                 args: { id: planData.id }
             }]);
 
@@ -248,7 +248,7 @@ define(['jquery',
     PlanActions.prototype._doCompletePlan = function(planData) {
         var self = this,
             calls = [{
-                methodname: 'tool_lp_complete_plan',
+                methodname: 'core_competency_complete_plan',
                 args: { planid: planData.id}
             }];
         self._callAndRefresh(calls, planData);
@@ -262,7 +262,7 @@ define(['jquery',
     PlanActions.prototype.completePlan = function(planData) {
         var self = this,
             requests = ajax.call([{
-                methodname: 'tool_lp_read_plan',
+                methodname: 'core_competency_read_plan',
                 args: { id: planData.id }
             }]);
 
@@ -294,7 +294,7 @@ define(['jquery',
     PlanActions.prototype._doUnlinkPlan = function(planData) {
         var self = this,
             calls = [{
-                methodname: 'tool_lp_unlink_plan_from_template',
+                methodname: 'core_competency_unlink_plan_from_template',
                 args: { planid: planData.id}
             }];
         self._callAndRefresh(calls, planData);
@@ -308,7 +308,7 @@ define(['jquery',
     PlanActions.prototype.unlinkPlan = function(planData) {
         var self = this,
             requests = ajax.call([{
-                methodname: 'tool_lp_read_plan',
+                methodname: 'core_competency_read_plan',
                 args: { id: planData.id }
             }]);
 
@@ -340,7 +340,7 @@ define(['jquery',
      */
     PlanActions.prototype._doRequestReview = function(planData) {
         var calls = [{
-            methodname: 'tool_lp_plan_request_review',
+            methodname: 'core_competency_plan_request_review',
             args: {
                 id: planData.id
             }
@@ -366,7 +366,7 @@ define(['jquery',
      */
     PlanActions.prototype._doCancelReviewRequest = function(planData) {
         var calls = [{
-            methodname: 'tool_lp_plan_cancel_review_request',
+            methodname: 'core_competency_plan_cancel_review_request',
             args: {
                 id: planData.id
             }
@@ -392,7 +392,7 @@ define(['jquery',
      */
     PlanActions.prototype._doStartReview = function(planData) {
         var calls = [{
-            methodname: 'tool_lp_plan_start_review',
+            methodname: 'core_competency_plan_start_review',
             args: {
                 id: planData.id
             }
@@ -418,7 +418,7 @@ define(['jquery',
      */
     PlanActions.prototype._doStopReview = function(planData) {
         var calls = [{
-            methodname: 'tool_lp_plan_stop_review',
+            methodname: 'core_competency_plan_stop_review',
             args: {
                 id: planData.id
             }
@@ -444,7 +444,7 @@ define(['jquery',
      */
     PlanActions.prototype._doApprove = function(planData) {
         var calls = [{
-            methodname: 'tool_lp_approve_plan',
+            methodname: 'core_competency_approve_plan',
             args: {
                 id: planData.id
             }
@@ -470,7 +470,7 @@ define(['jquery',
      */
     PlanActions.prototype._doUnapprove = function(planData) {
         var calls = [{
-            methodname: 'tool_lp_unapprove_plan',
+            methodname: 'core_competency_unapprove_plan',
             args: {
                 id: planData.id
             }

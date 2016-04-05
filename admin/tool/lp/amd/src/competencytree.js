@@ -75,7 +75,7 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'too
             templates.replaceNodeContents($(treeSelector), loadinghtml, loadingjs);
 
             var promises = ajax.call([{
-                methodname: 'tool_lp_search_competencies',
+                methodname: 'core_competency_search_competencies',
                 args: {
                     searchtext: searchtext,
                     competencyframeworkid: competencyFrameworkId

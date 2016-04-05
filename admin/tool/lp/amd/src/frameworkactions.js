@@ -64,7 +64,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
 
         // We are chaining ajax requests here.
         var requests = ajax.call([{
-            methodname: 'tool_lp_duplicate_competency_framework',
+            methodname: 'core_competency_duplicate_competency_framework',
             args: { id: frameworkid }
         }, {
             methodname: 'tool_lp_data_for_competency_frameworks_manage_page',
@@ -83,7 +83,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
 
         // We are chaining ajax requests here.
         var requests = ajax.call([{
-            methodname: 'tool_lp_delete_competency_framework',
+            methodname: 'core_competency_delete_competency_framework',
             args: { id: frameworkid }
         }, {
             methodname: 'tool_lp_data_for_competency_frameworks_manage_page',
@@ -96,7 +96,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
         requests[0].done(function (success) {
             if (success === false) {
                 var req = ajax.call([{
-                    methodname: 'tool_lp_read_competency_framework',
+                    methodname: 'core_competency_read_competency_framework',
                     args: { id: frameworkid }
                 }]);
                 req[0].done(function (framework) {
@@ -126,7 +126,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
         frameworkid = id;
 
         var requests = ajax.call([{
-            methodname: 'tool_lp_read_competency_framework',
+            methodname: 'core_competency_read_competency_framework',
             args: { id: frameworkid }
         }]);
 

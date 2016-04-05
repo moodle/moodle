@@ -107,7 +107,7 @@ define(['jquery',
     var doMove = function() {
         var frameworkid = $('[data-region="filtercompetencies"]').data('frameworkid');
         var requests = ajax.call([{
-            methodname: 'tool_lp_set_parent_competency',
+            methodname: 'core_competency_set_parent_competency',
             args: { competencyid: moveSource, parentid: moveTarget }
         }, {
             methodname: 'tool_lp_data_for_competencies_manage_page',
@@ -225,13 +225,13 @@ define(['jquery',
         // Load data for the template.
         var requests = ajax.call([
             {
-                methodname: 'tool_lp_search_competencies',
+                methodname: 'core_competency_search_competencies',
                 args: {
                     competencyframeworkid: competency.competencyframeworkid,
                     searchtext: ''
                 }
             },{
-                methodname: 'tool_lp_read_competency_framework',
+                methodname: 'core_competency_read_competency_framework',
                 args: {
                     id: competency.competencyframeworkid
                 }
@@ -336,7 +336,7 @@ define(['jquery',
         // We are chaining ajax requests here.
         var competency = $('[data-region="competencyactions"]').data('competency');
         var requests = ajax.call([{
-            methodname: 'tool_lp_move_up_competency',
+            methodname: 'core_competency_move_up_competency',
             args: { id: competency.id }
         }, {
             methodname: 'tool_lp_data_for_competencies_manage_page',
@@ -354,7 +354,7 @@ define(['jquery',
         // We are chaining ajax requests here.
         var competency = $('[data-region="competencyactions"]').data('competency');
         var requests = ajax.call([{
-            methodname: 'tool_lp_move_down_competency',
+            methodname: 'core_competency_move_down_competency',
             args: { id: competency.id }
         }, {
             methodname: 'tool_lp_data_for_competencies_manage_page',
@@ -408,7 +408,7 @@ define(['jquery',
                 var calls = [];
                 $.each(compIds, function(index, value) {
                     calls.push({
-                        methodname: 'tool_lp_add_related_competency',
+                        methodname: 'core_competency_add_related_competency',
                         args: { competencyid: value, relatedcompetencyid: relatedTarget.id }
                     });
                 });
@@ -453,7 +453,7 @@ define(['jquery',
             ruleconfig: config.ruleconfig
         };
         var promise = ajax.call([{
-            methodname: 'tool_lp_update_competency',
+            methodname: 'core_competency_update_competency',
             args: { competency: update }
         }]);
         promise[0].then(function(result) {
@@ -474,7 +474,7 @@ define(['jquery',
         // We are chaining ajax requests here.
         var competency = $('[data-region="competencyactions"]').data('competency');
         var requests = ajax.call([{
-            methodname: 'tool_lp_delete_competency',
+            methodname: 'core_competency_delete_competency',
             args: { id: competency.id }
         }, {
             methodname: 'tool_lp_data_for_competencies_manage_page',
@@ -585,7 +585,7 @@ define(['jquery',
         var relatedid = this.id.substr(11);
         var competency = $('[data-region="competencyactions"]').data('competency');
         var removeRelated = ajax.call([
-            { methodname: 'tool_lp_remove_related_competency',
+            { methodname: 'core_competency_remove_related_competency',
               args: { relatedcompetencyid: relatedid, competencyid: competency.id } },
             { methodname: 'tool_lp_data_for_related_competencies_section',
               args: { competencyid: competency.id } }
@@ -622,7 +622,7 @@ define(['jquery',
             // Set the selected competency id.
             selectedCompetencyId = competency.id;
             ajax.call([{
-                    methodname: 'tool_lp_competency_viewed',
+                    methodname: 'core_competency_competency_viewed',
                     args: { id: competency.id }
             }]);
         }

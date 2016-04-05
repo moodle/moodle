@@ -51,7 +51,7 @@ define(['jquery',
      */
     Competencydialogue.prototype.triggerCompetencyViewedEvent = function(competencyId) {
         ajax.call([{
-                methodname: 'tool_lp_competency_viewed',
+                methodname: 'core_competency_competency_viewed',
                 args: { id: competencyId }
         }]);
     };

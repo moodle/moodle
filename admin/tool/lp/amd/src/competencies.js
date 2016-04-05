@@ -87,21 +87,21 @@ define(['jquery',
         if (localthis.itemtype == 'course') {
             requests = ajax.call([
                 {
-                    methodname: 'tool_lp_reorder_course_competency',
+                    methodname: 'core_competency_reorder_course_competency',
                     args: { courseid: localthis.itemid, competencyidfrom: fromid, competencyidto: toid }
                 }
             ]);
         } else if (localthis.itemtype == 'template') {
             requests = ajax.call([
                 {
-                    methodname: 'tool_lp_reorder_template_competency',
+                    methodname: 'core_competency_reorder_template_competency',
                     args: { templateid: localthis.itemid, competencyidfrom: fromid, competencyidto: toid }
                 }
             ]);
         } else if (localthis.itemtype == 'plan') {
             requests = ajax.call([
                 {
-                    methodname: 'tool_lp_reorder_plan_competency',
+                    methodname: 'core_competency_reorder_plan_competency',
                     args: { planid: localthis.itemid, competencyidfrom: fromid, competencyidto: toid }
                 }
             ]);
@@ -137,7 +137,7 @@ define(['jquery',
 
                     $.each(compIds, function(index, compId) {
                         requests.push({
-                            methodname: 'tool_lp_add_competency_to_course',
+                            methodname: 'core_competency_add_competency_to_course',
                             args: { courseid: self.itemid, competencyid: compId }
                         });
                     });
@@ -154,7 +154,7 @@ define(['jquery',
 
                     $.each(compIds, function(index, compId) {
                         requests.push({
-                            methodname: 'tool_lp_add_competency_to_template',
+                            methodname: 'core_competency_add_competency_to_template',
                             args: { templateid: self.itemid, competencyid: compId }
                         });
                     });
@@ -169,7 +169,7 @@ define(['jquery',
 
                     $.each(compIds, function(index, compId) {
                         requests.push({
-                            methodname: 'tool_lp_add_competency_to_plan',
+                            methodname: 'core_competency_add_competency_to_plan',
                             args: { planid: self.itemid, competencyid: compId }
                         });
                     });
@@ -208,7 +208,7 @@ define(['jquery',
         // Delete the link and reload the page template.
         if (localthis.itemtype == 'course') {
             requests = ajax.call([
-                { methodname: 'tool_lp_remove_competency_from_course',
+                { methodname: 'core_competency_remove_competency_from_course',
                     args: { courseid: localthis.itemid, competencyid: deleteid } },
                 { methodname: 'tool_lp_data_for_course_competencies_page',
                     args: { courseid: localthis.itemid } }
@@ -217,7 +217,7 @@ define(['jquery',
             pageregion = 'coursecompetenciespage';
         } else if (localthis.itemtype == 'template') {
             requests = ajax.call([
-                { methodname: 'tool_lp_remove_competency_from_template',
+                { methodname: 'core_competency_remove_competency_from_template',
                     args: { templateid: localthis.itemid, competencyid: deleteid } },
                 { methodname: 'tool_lp_data_for_template_competencies_page',
                     args: { templateid: localthis.itemid, pagecontext: { contextid: localthis.pageContextId } } }
@@ -226,7 +226,7 @@ define(['jquery',
             pageregion = 'templatecompetenciespage';
         } else if (localthis.itemtype == 'plan') {
             requests = ajax.call([
-                { methodname: 'tool_lp_remove_competency_from_plan',
+                { methodname: 'core_competency_remove_competency_from_plan',
                     args: { planid: localthis.itemid, competencyid: deleteid } },
                 { methodname: 'tool_lp_data_for_plan_page',
                     args: { planid: localthis.itemid } }
@@ -266,7 +266,7 @@ define(['jquery',
         }
 
         requests = ajax.call([{
-            methodname: 'tool_lp_read_competency',
+            methodname: 'core_competency_read_competency',
             args: { id: deleteid }
         }]);
 
@@ -307,7 +307,7 @@ define(['jquery',
                 var coursecompetencyid = $(e.target).data('id');
                 var ruleoutcome = $(e.target).val();
                 requests = ajax.call([
-                    { methodname: 'tool_lp_set_course_competency_ruleoutcome',
+                    { methodname: 'core_competency_set_course_competency_ruleoutcome',
                       args: { coursecompetencyid: coursecompetencyid, ruleoutcome: ruleoutcome } },
                     { methodname: 'tool_lp_data_for_course_competencies_page',
                       args: { courseid: localthis.itemid } }

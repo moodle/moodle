@@ -25,6 +25,8 @@
 namespace tool_lp;
 defined('MOODLE_INTERNAL') || die();
 
+use core_competency\api;
+
 /**
  * Course competency statistics class.
  *

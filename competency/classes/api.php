@@ -1353,7 +1353,7 @@ class api {
         }
 
         // TODO MDL-52243 Use core function.
-        list($insql, $inparams) = external::filter_users_with_capability_on_user_context_sql(
+        list($insql, $inparams) = self::filter_users_with_capability_on_user_context_sql(
             $capability, $userid, SQL_PARAMS_NAMED);
         $params += $inparams;
         $countsql = $countselect . $sql . " AND uc.userid $insql";
@@ -2383,7 +2383,7 @@ class api {
         }
 
         // TODO MDL-52243 Use core function.
-        list($insql, $inparams) = external::filter_users_with_capability_on_user_context_sql('moodle/competency:planreview',
+        list($insql, $inparams) = self::filter_users_with_capability_on_user_context_sql('moodle/competency:planreview',
             $userid, SQL_PARAMS_NAMED);
         $sql .= " AND p.userid $insql";
         $params += $inparams;
@@ -4986,4 +4986,148 @@ class api {
             return !empty($result);
         }
     }
+
+
+    /**
+     * Function used to return a list of users where the given user has a particular capability.
+     *
+     * This is used e.g. to find all the users where someone is able to manage their learning plans,
+     * it also would be useful for mentees etc.
+     *
+     * @param string $capability - The capability string we are filtering for. If '' is passed,
+     *                             an always matching filter is returned.
+     * @param int $userid - The user id we are using for the access checks. Defaults to current user.
+     * @param int $type - The type of named params to return (passed to $DB->get_in_or_equal).
+     * @param string $prefix - The type prefix for the db table (passed to $DB->get_in_or_equal).
+     * @return list($sql, $params) Same as $DB->get_in_or_equal().
+     * @todo MDL-52243 Move this function to lib/accesslib.php
+     */
+    public static function filter_users_with_capability_on_user_context_sql($capability, $userid = 0,
+            $type=SQL_PARAMS_QM, $prefix='param') {
+
+        global $USER, $DB;
+        $allresultsfilter = array('> 0', array());
+        $noresultsfilter = array('= -1', array());
+
+        if (empty($capability)) {
+            return $allresultsfilter;
+        }
+
+        if (!$capinfo = get_capability_info($capability)) {
+            throw new coding_exception('Capability does not exist: ' . $capability);
+        }
+
+        if (empty($userid)) {
+            $userid = $USER->id;
+        }
+
+        // Make sure the guest account and not-logged-in users never get any risky caps no matter what the actual settings are.
+        if (($capinfo->captype === 'write') or ($capinfo->riskbitmask & (RISK_XSS | RISK_CONFIG | RISK_DATALOSS))) {
+            if (isguestuser($userid) or $userid == 0) {
+                return $noresultsfilter;
+            }
+        }
+
+        if (is_siteadmin($userid)) {
+            // No filtering for site admins.
+            return $allresultsfilter;
+        }
+
+        // Check capability on system level.
+        $syscontext = context_system::instance();
+        $hassystem = has_capability($capability, $syscontext, $userid);
+
+        $access = get_user_access_sitewide($userid);
+        // Build up a list of level 2 contexts (candidates to be user context).
+        $filtercontexts = array();
+        foreach ($access['ra'] as $path => $role) {
+            $parts = explode('/', $path);
+            if (count($parts) == 3) {
+                $filtercontexts[$parts[2]] = $parts[2];
+            } else if (count($parts) > 3) {
+                // We know this is not a user context because there is another path with more than 2 levels.
+                unset($filtercontexts[$parts[2]]);
+            }
+        }
+
+        // Add all contexts in which a role may be overidden.
+        foreach ($access['rdef'] as $pathandroleid => $def) {
+            $matches = array();
+            if (!isset($def[$capability])) {
+                // The capability is not mentioned, we can ignore.
+                continue;
+            }
+
+            list($contextpath, $roleid) = explode(':', $pathandroleid, 2);
+            $parts = explode('/', $contextpath);
+            if (count($parts) != 3) {
+                // Only get potential user contexts, they only ever have 2 slashes /parentId/Id.
+                continue;
+            }
+
+            $filtercontexts[$parts[2]] = $parts[2];
+        }
+
+        // No interesting contexts - return all or no results.
+        if (empty($filtercontexts)) {
+            if ($hassystem) {
+                return $allresultsfilter;
+            } else {
+                return $noresultsfilter;
+            }
+        }
+        // Fetch all interesting contexts for further examination.
+        list($insql, $params) = $DB->get_in_or_equal($filtercontexts, SQL_PARAMS_NAMED);
+        $params['level'] = CONTEXT_USER;
+        $fields = context_helper::get_preload_record_columns_sql('ctx');
+        $interestingcontexts = $DB->get_recordset_sql('SELECT ' . $fields . '
+                                                       FROM {context} ctx
+                                                       WHERE ctx.contextlevel = :level
+                                                         AND ctx.id ' . $insql . '
+                                                       ORDER BY ctx.id', $params);
+        if ($hassystem) {
+            // If allowed at system, search for exceptions prohibiting the capability at user context.
+            $excludeusers = array();
+            foreach ($interestingcontexts as $contextrecord) {
+                $candidateuserid = $contextrecord->ctxinstance;
+                context_helper::preload_from_record($contextrecord);
+                $usercontext = context_user::instance($candidateuserid);
+                // Has capability should use the data already preloaded.
+                if (!has_capability($capability, $usercontext, $userid)) {
+                    $excludeusers[$candidateuserid] = $candidateuserid;
+                }
+            }
+
+            // Construct SQL excluding users with this role assigned for this user.
+            if (empty($excludeusers)) {
+                $interestingcontexts->close();
+                return $allresultsfilter;
+            }
+            list($sql, $params) = $DB->get_in_or_equal($excludeusers, $type, $prefix, false);
+        } else {
+            // If not allowed at system, search for exceptions allowing the capability at user context.
+            $allowusers = array();
+            foreach ($interestingcontexts as $contextrecord) {
+                $candidateuserid = $contextrecord->ctxinstance;
+                context_helper::preload_from_record($contextrecord);
+                $usercontext = context_user::instance($candidateuserid);
+                // Has capability should use the data already preloaded.
+                if (has_capability($capability, $usercontext, $userid)) {
+                    $allowusers[$candidateuserid] = $candidateuserid;
+                }
+            }
+
+            // Construct SQL excluding users with this role assigned for this user.
+            if (empty($allowusers)) {
+                $interestingcontexts->close();
+                return $noresultsfilter;
+            }
+            list($sql, $params) = $DB->get_in_or_equal($allowusers, $type, $prefix);
+        }
+        $interestingcontexts->close();
+
+        // Return the goods!.
+        return array($sql, $params);
+    }
+
 }

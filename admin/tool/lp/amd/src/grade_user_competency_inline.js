@@ -63,20 +63,20 @@ define(['jquery',
         }.bind(this));
 
         if (this._planId) {
-            this._methodName = 'tool_lp_grade_competency_in_plan';
+            this._methodName = 'core_competency_grade_competency_in_plan';
             this._args = {
                 competencyid: this._competencyId,
                 planid: this._planId
             };
         } else if (this._courseId) {
-            this._methodName = 'tool_lp_grade_competency_in_course';
+            this._methodName = 'core_competency_grade_competency_in_course';
             this._args = {
                 competencyid: this._competencyId,
                 courseid: this._courseId,
                 userid: this._userId
             };
         } else {
-            this._methodName = 'tool_lp_grade_competency';
+            this._methodName = 'core_competency_grade_competency';
             this._args = {
                 userid: this._userId,
                 competencyid: this._competencyId

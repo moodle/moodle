@@ -139,7 +139,7 @@ define(['jquery',
     UserEvidenceActions.prototype._doDelete = function(evidenceData) {
         var self = this,
             calls = [{
-                methodname: 'tool_lp_delete_user_evidence',
+                methodname: 'core_competency_delete_user_evidence',
                 args: { id: evidenceData.id }
             }];
         self._callAndRefresh(calls, evidenceData);
@@ -155,7 +155,7 @@ define(['jquery',
             requests;
 
         requests = ajax.call([{
-            methodname: 'tool_lp_read_user_evidence',
+            methodname: 'core_competency_read_user_evidence',
             args: { id: evidenceData.id }
         }]);
 
@@ -204,7 +204,7 @@ define(['jquery',
 
         $.each(competencyIds, function(index, competencyId) {
             calls.push({
-                methodname: 'tool_lp_create_user_evidence_competency',
+                methodname: 'core_competency_create_user_evidence_competency',
                 args: {
                     userevidenceid: evidenceData.id,
                     competencyid: competencyId,
@@ -254,7 +254,7 @@ define(['jquery',
             calls = [];
 
         calls.push({
-            methodname: 'tool_lp_delete_user_evidence_competency',
+            methodname: 'core_competency_delete_user_evidence_competency',
             args: {
                 userevidenceid: evidenceData.id,
                 competencyid: competencyId,
@@ -294,7 +294,7 @@ define(['jquery',
     UserEvidenceActions.prototype._doReviewUserEvidenceCompetencies = function(evidenceData) {
         var self = this,
             calls = [{
-                methodname: 'tool_lp_request_review_of_user_evidence_linked_competencies',
+                methodname: 'core_competency_request_review_of_user_evidence_linked_competencies',
                 args: { id: evidenceData.id }
             }];
         self._callAndRefresh(calls, evidenceData);
@@ -310,7 +310,7 @@ define(['jquery',
             requests;
 
         requests = ajax.call([{
-            methodname: 'tool_lp_read_user_evidence',
+            methodname: 'core_competency_read_user_evidence',
             args: { id: evidenceData.id }
         }]);
 

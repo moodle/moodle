@@ -226,7 +226,7 @@ define(['jquery',
         var self = this;
 
         return Ajax.call([
-            { methodname: 'tool_lp_search_competencies', args: {
+            { methodname: 'core_competency_search_competencies', args: {
                 searchtext: searchText,
                 competencyframeworkid: frameworkId
             }}
@@ -315,7 +315,7 @@ define(['jquery',
 
         if (self._singleFramework) {
             promise = Ajax.call([
-                { methodname: 'tool_lp_read_competency_framework', args: {
+                { methodname: 'core_competency_read_competency_framework', args: {
                     id: this._frameworkId
                 }}
             ])[0].then(function(framework) {
@@ -323,7 +323,7 @@ define(['jquery',
             });
         } else {
             promise = Ajax.call([
-                { methodname: 'tool_lp_list_competency_frameworks', args: {
+                { methodname: 'core_competency_list_competency_frameworks', args: {
                     sort: 'shortname',
                     context: { contextid: self._pageContextId },
                     includes: self._pageContextIncludes,

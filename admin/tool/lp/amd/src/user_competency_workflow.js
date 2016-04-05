@@ -52,7 +52,7 @@ define(['jquery',
      */
     UserCompetencyWorkflow.prototype._cancelReviewRequest = function(data) {
         var call = {
-            methodname: 'tool_lp_user_competency_cancel_review_request',
+            methodname: 'core_competency_user_competency_cancel_review_request',
             args: {
                 userid: data.userid,
                 competencyid: data.competencyid
@@ -100,7 +100,7 @@ define(['jquery',
      */
     UserCompetencyWorkflow.prototype._requestReview = function(data) {
         var call = {
-            methodname: 'tool_lp_user_competency_request_review',
+            methodname: 'core_competency_user_competency_request_review',
             args: {
                 userid: data.userid,
                 competencyid: data.competencyid
@@ -148,7 +148,7 @@ define(['jquery',
      */
     UserCompetencyWorkflow.prototype._startReview = function(data) {
         var call = {
-            methodname: 'tool_lp_user_competency_start_review',
+            methodname: 'core_competency_user_competency_start_review',
             args: {
                 userid: data.userid,
                 competencyid: data.competencyid
@@ -196,7 +196,7 @@ define(['jquery',
      */
     UserCompetencyWorkflow.prototype._stopReview = function(data) {
         var call = {
-            methodname: 'tool_lp_user_competency_stop_review',
+            methodname: 'core_competency_user_competency_stop_review',
             args: {
                 userid: data.userid,
                 competencyid: data.competencyid

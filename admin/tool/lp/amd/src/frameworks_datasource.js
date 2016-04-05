@@ -44,7 +44,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
 
             $.extend(args, typeof options === 'undefined' ? {} : options);
             promise = Ajax.call([{
-                methodname: 'tool_lp_list_competency_frameworks',
+                methodname: 'core_competency_list_competency_frameworks',
                 args: args
             }])[0];
 

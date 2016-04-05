@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use renderer_base;
 use moodle_url;
-use core_competency\competency_exporter;
+use core_competency\external\competency_exporter;
 
 /**
  * Class for exporting a course competency statistics summary.

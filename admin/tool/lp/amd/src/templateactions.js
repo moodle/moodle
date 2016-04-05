@@ -66,7 +66,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
 
         // We are chaining ajax requests here.
         var requests = ajax.call([{
-            methodname: 'tool_lp_delete_template',
+            methodname: 'core_competency_delete_template',
             args: { id: templateid,
                     deleteplans: deleteplans }
         }, {
@@ -92,7 +92,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
 
         // We are chaining ajax requests here.
         var requests = ajax.call([{
-            methodname: 'tool_lp_duplicate_template',
+            methodname: 'core_competency_duplicate_template',
             args: { id: templateid }
         }, {
             methodname: 'tool_lp_data_for_templates_manage_page',
@@ -118,10 +118,10 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
         deleteplans = true;
 
         var requests = ajax.call([{
-            methodname: 'tool_lp_read_template',
+            methodname: 'core_competency_read_template',
             args: { id: templateid }
         }, {
-            methodname: 'tool_lp_template_has_related_data',
+            methodname: 'core_competency_template_has_related_data',
             args: { id: templateid }
         }]);
 
