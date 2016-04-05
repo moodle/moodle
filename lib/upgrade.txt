@@ -105,6 +105,7 @@ information provided here is intended especially for developers.
 * Any plugin can report when a scale is being used with the callback function [pluginname]_scale_used_anywhere(int $scaleid).
 * Changes in file_rewrite_pluginfile_urls: Passing a new option reverse = true in the $options var will make the function to convert
   actual URLs in $text to encoded URLs in the @@PLUGINFILE@@ form.
+* behat_util::is_server_running() is removed, please use behat_util::check_server_status() instead.
 
 === 3.0 ===
 
