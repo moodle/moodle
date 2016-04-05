@@ -30,7 +30,7 @@ $category = new admin_category($parentname, get_string('competencies', 'tool_lp'
 $ADMIN->add('root', $category, 'badges');
 
 // If the plugin is enabled we add the pages.
-if (\tool_lp\api::is_enabled()) {
+if (\core_competency\api::is_enabled()) {
 
     // Manage competency frameworks page.
     $temp = new admin_externalpage(

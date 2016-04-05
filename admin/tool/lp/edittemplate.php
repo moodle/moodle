@@ -40,7 +40,7 @@ if (!empty($id)) {
 
 // We check that we have the permission to edit this framework, in its own context.
 require_login(0, false);
-\tool_lp\api::require_enabled();
+\core_competency\api::require_enabled();
 require_capability('moodle/competency:templatemanage', $context);
 
 // We keep the original context in the URLs, so that we remain in the same context.
@@ -55,7 +55,7 @@ if (empty($id)) {
     list($title, $subtitle, $returnurl) = \tool_lp\page_helper::setup_for_template($pagecontextid, $url, null, $pagetitle,
         $returntype);
 } else {
-    $template = \tool_lp\api::read_template($id);
+    $template = \core_competency\api::read_template($id);
     $pagetitle = get_string('edittemplate', 'tool_lp');
     list($title, $subtitle, $returnurl) = \tool_lp\page_helper::setup_for_template($pagecontextid, $url, $template,
         $pagetitle, $returntype);
@@ -69,14 +69,14 @@ if ($form->is_cancelled()) {
 $data = $form->get_data();
 if ($data) {
     if (empty($data->id)) {
-        $template = \tool_lp\api::create_template($data);
+        $template = \core_competency\api::create_template($data);
         $returnurl = new moodle_url('/admin/tool/lp/templatecompetencies.php', [
             'templateid' => $template->get_id(),
             'pagecontextid' => $pagecontextid
         ]);
         $returnmsg = get_string('templatecreated', 'tool_lp');
     } else {
-        \tool_lp\api::update_template($data);
+        \core_competency\api::update_template($data);
         $returnmsg = get_string('templateupdated', 'tool_lp');
     }
     redirect($returnurl, $returnmsg, null, \core\output\notification::NOTIFY_SUCCESS);

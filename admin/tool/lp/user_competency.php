@@ -30,9 +30,9 @@ require_login(null, false);
 if (isguestuser()) {
     throw new require_login_exception('Guests are not allowed here.');
 }
-\tool_lp\api::require_enabled();
+\core_competency\api::require_enabled();
 
-$uc = \tool_lp\api::get_user_competency_by_id($id);
+$uc = \core_competency\api::get_user_competency_by_id($id);
 $params = array('id' => $id);
 $url = new moodle_url('/admin/tool/lp/user_competency.php', $params);
 
@@ -63,6 +63,6 @@ echo $output->header();
 $page = new \tool_lp\output\user_competency_summary($uc);
 echo $output->render($page);
 // Trigger viewed event.
-\tool_lp\api::user_competency_viewed($uc);
+\core_competency\api::user_competency_viewed($uc);
 
 echo $output->footer();

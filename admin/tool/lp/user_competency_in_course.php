@@ -32,7 +32,7 @@ require_login(null, false);
 if (isguestuser()) {
     throw new require_login_exception('Guests are not allowed here.');
 }
-\tool_lp\api::require_enabled();
+\core_competency\api::require_enabled();
 
 $course = $DB->get_record('course', array('id' => $courseid));
 $context = context_course::instance($courseid);
@@ -64,7 +64,7 @@ $competency = new \core_competency\competency($competencyid);
 
 // Does a permissions check for us.
 if ($userid > 0) {
-    $usercompetencycourses = \tool_lp\api::list_user_competencies_in_course($courseid, $userid);
+    $usercompetencycourses = \core_competency\api::list_user_competencies_in_course($courseid, $userid);
 }
 $subtitle = $competency->get_shortname() . ' <em>' . $competency->get_idnumber() . '</em>';
 
@@ -91,8 +91,8 @@ if ($userid > 0) {
     echo $output->render($page);
 
     // Trigger the viewed event.
-    $uc = \tool_lp\api::get_user_competency_in_course($courseid, $userid, $competencyid);
-    \tool_lp\api::user_competency_viewed_in_course($uc, $courseid);
+    $uc = \core_competency\api::get_user_competency_in_course($courseid, $userid, $competencyid);
+    \core_competency\api::user_competency_viewed_in_course($uc, $courseid);
 } else {
     echo $output->container('', 'clearfix');
     echo $output->notify_problem(get_string('noparticipants', 'tool_lp'));

@@ -30,9 +30,9 @@ require_login(null, false);
 if (isguestuser()) {
     throw new require_login_exception('Guests are not allowed here.');
 }
-\tool_lp\api::require_enabled();
+\core_competency\api::require_enabled();
 
-$plan = \tool_lp\api::read_plan($id);
+$plan = \core_competency\api::read_plan($id);
 $url = new moodle_url('/admin/tool/lp/plan.php', array('id' => $id));
 
 list($title, $subtitle) = \tool_lp\page_helper::setup_for_plan($plan->get_userid(), $url, $plan);
@@ -44,6 +44,6 @@ $page = new \tool_lp\output\plan_page($plan);
 echo $output->render($page);
 
 // Trigger viewed event.
-\tool_lp\api::plan_viewed($plan);
+\core_competency\api::plan_viewed($plan);
 
 echo $output->footer();

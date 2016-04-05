@@ -29,7 +29,7 @@ use renderer_base;
 use stdClass;
 use single_button;
 use moodle_url;
-use tool_lp\api;
+use core_competency\api;
 use tool_lp\external\user_evidence_summary_exporter;
 use core_competency\user_evidence;
 use context_user;

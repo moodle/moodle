@@ -32,7 +32,7 @@ $url = new moodle_url("/admin/tool/lp/competencyframeworks.php");
 $url->param('pagecontextid', $pagecontextid);
 
 require_login();
-\tool_lp\api::require_enabled();
+\core_competency\api::require_enabled();
 
 if (!\core_competency\competency_framework::can_read_context($context)) {
     throw new required_capability_exception($context, 'moodle/competency:competencyview', 'nopermissions', '');

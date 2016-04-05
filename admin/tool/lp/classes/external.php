@@ -42,6 +42,7 @@ use external_multiple_structure;
 use invalid_parameter_exception;
 use required_capability_exception;
 use grade_scale;
+use core_competency\api;
 use core_competency\competency;
 use core_competency\competency_framework;
 use core_competency\course_competency;

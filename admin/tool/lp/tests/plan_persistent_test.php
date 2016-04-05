@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
-use tool_lp\api;
+use core_competency\api;
 use core_competency\plan;
 
 /**

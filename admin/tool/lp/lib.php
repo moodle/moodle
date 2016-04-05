@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/externallib.php');
  * @param context $coursecontext The context of the course
  */
 function tool_lp_extend_navigation_course($navigation, $course, $coursecontext) {
-    if (!\tool_lp\api::is_enabled()) {
+    if (!\core_competency\api::is_enabled()) {
         return;
     }
 
@@ -62,7 +62,7 @@ function tool_lp_extend_navigation_course($navigation, $course, $coursecontext) 
  * @param context_course $coursecontext The context of the course
  */
 function tool_lp_extend_navigation_user($navigation, $user, $usercontext, $course, $coursecontext) {
-    if (!\tool_lp\api::is_enabled()) {
+    if (!\core_competency\api::is_enabled()) {
         return;
     }
 
@@ -89,7 +89,7 @@ function tool_lp_extend_navigation_user($navigation, $user, $usercontext, $cours
  * @return bool
  */
 function tool_lp_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
-    if (!\tool_lp\api::is_enabled()) {
+    if (!\core_competency\api::is_enabled()) {
         return false;
     } else if (!\core_competency\plan::can_read_user($user->id)) {
         return false;
@@ -110,7 +110,7 @@ function tool_lp_myprofile_navigation(core_user\output\myprofile\tree $tree, $us
  * @param context $coursecategorycontext The context of the course category
  */
 function tool_lp_extend_navigation_category_settings($navigation, $coursecategorycontext) {
-    if (!\tool_lp\api::is_enabled()) {
+    if (!\core_competency\api::is_enabled()) {
         return false;
     }
 
@@ -168,7 +168,7 @@ function tool_lp_extend_navigation_category_settings($navigation, $coursecategor
 function tool_lp_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
     global $CFG;
 
-    if (!\tool_lp\api::is_enabled()) {
+    if (!\core_competency\api::is_enabled()) {
         return false;
     }
 
@@ -202,7 +202,7 @@ function tool_lp_pluginfile($course, $cm, $context, $filearea, $args, $forcedown
 function tool_lp_comment_add($comment, $params) {
     global $USER;
 
-    if (!\tool_lp\api::is_enabled()) {
+    if (!\core_competency\api::is_enabled()) {
         return;
     }
 
@@ -383,7 +383,7 @@ function tool_lp_comment_add($comment, $params) {
  * @return array
  */
 function tool_lp_comment_permissions($params) {
-    if (!\tool_lp\api::is_enabled()) {
+    if (!\core_competency\api::is_enabled()) {
         return array('post' => false, 'view' => false);
     }
 
@@ -409,7 +409,7 @@ function tool_lp_comment_permissions($params) {
  * @return bool
  */
 function tool_lp_comment_validate($params) {
-    if (!\tool_lp\api::is_enabled()) {
+    if (!\core_competency\api::is_enabled()) {
         return false;
     }
 
@@ -436,7 +436,7 @@ function tool_lp_comment_validate($params) {
 function tool_lp_coursemodule_standard_elements($formwrapper, $mform) {
     global $CFG, $COURSE;
 
-    if (!\tool_lp\api::is_enabled()) {
+    if (!\core_competency\api::is_enabled()) {
         return;
     } else if (!has_capability('moodle/competency:coursecompetencymanage', $formwrapper->get_context())) {
         return;
@@ -471,7 +471,7 @@ function tool_lp_coursemodule_standard_elements($formwrapper, $mform) {
  * @param stdClass $course The course.
  */
 function tool_lp_coursemodule_edit_post_actions($data, $course) {
-    if (!\tool_lp\api::is_enabled()) {
+    if (!\core_competency\api::is_enabled()) {
         return $data;
     }
 
@@ -495,17 +495,17 @@ function tool_lp_coursemodule_edit_post_actions($data, $course) {
     $added = array_diff($newids, $existingids);
 
     foreach ($removed as $removedid) {
-        \tool_lp\api::remove_competency_from_course_module($data->coursemodule, $removedid);
+        \core_competency\api::remove_competency_from_course_module($data->coursemodule, $removedid);
     }
     foreach ($added as $addedid) {
-        \tool_lp\api::add_competency_to_course_module($data->coursemodule, $addedid);
+        \core_competency\api::add_competency_to_course_module($data->coursemodule, $addedid);
     }
 
     if (isset($data->competency_rule)) {
         // Now update the rules for each course_module_competency.
-        $current = \tool_lp\api::list_course_module_competencies_in_course_module($data->coursemodule);
+        $current = \core_competency\api::list_course_module_competencies_in_course_module($data->coursemodule);
         foreach ($current as $coursemodulecompetency) {
-            \tool_lp\api::set_course_module_competency_ruleoutcome($coursemodulecompetency, $data->competency_rule);
+            \core_competency\api::set_course_module_competency_ruleoutcome($coursemodulecompetency, $data->competency_rule);
         }
     }
 
@@ -519,5 +519,5 @@ function tool_lp_coursemodule_edit_post_actions($data, $course) {
  * @return bool
  */
 function tool_lp_scale_used_anywhere($scaleid) {
-    return \tool_lp\api::is_scale_used_anywhere($scaleid);
+    return \core_competency\api::is_scale_used_anywhere($scaleid);
 }

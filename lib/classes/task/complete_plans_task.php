@@ -25,7 +25,7 @@
 namespace core\task;
 defined('MOODLE_INTERNAL') || die();
 
-use tool_lp\api;
+use core_competency\api;
 use core_competency\plan;
 
 /**
@@ -34,7 +34,7 @@ use core_competency\plan;
  * This task should run relatively often because the plans due dates can be set at
  * any time of the day in any timezone.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -27,7 +27,7 @@ use moodle_url;
 use renderable;
 use templatable;
 use stdClass;
-use tool_lp\api;
+use core_competency\api;
 use tool_lp\external\user_evidence_summary_exporter;
 
 /**

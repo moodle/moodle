@@ -26,7 +26,7 @@ namespace tool_lp\output;
 use renderable;
 use renderer_base;
 use templatable;
-use tool_lp\api;
+use core_competency\api;
 use core_competency\user_competency;
 use tool_lp\external\user_competency_summary_in_course_exporter;
 

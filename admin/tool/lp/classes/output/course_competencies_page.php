@@ -31,7 +31,7 @@ use stdClass;
 use moodle_url;
 use context_system;
 use context_course;
-use tool_lp\api;
+use core_competency\api;
 use tool_lp\course_competency_statistics;
 use core_competency\competency;
 use core_competency\course_competency;

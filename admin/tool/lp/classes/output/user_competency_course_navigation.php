@@ -115,7 +115,7 @@ class user_competency_course_navigation implements renderable, templatable {
             $data->hasusers = false;
         }
 
-        $coursecompetencies = \tool_lp\api::list_course_competencies($this->courseid);
+        $coursecompetencies = \core_competency\api::list_course_competencies($this->courseid);
         $data->competencies = array();
         $contextcache = array();
         foreach ($coursecompetencies as $coursecompetency) {

@@ -29,17 +29,17 @@ $templateid = required_param('templateid', PARAM_INT);
 $pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to the context we came from.
 
 require_login(0, false);
-\tool_lp\api::require_enabled();
+\core_competency\api::require_enabled();
 
 $pagecontext = context::instance_by_id($pagecontextid);
-$template = \tool_lp\api::read_template($templateid);
+$template = \core_competency\api::read_template($templateid);
 $context = $template->get_context();
 if (!$template->can_read()) {
     throw new required_capability_exception($context, 'moodle/competency:templateview', 'nopermissions', '');
 }
 
 // Trigger a template viewed event.
-\tool_lp\api::template_viewed($template);
+\core_competency\api::template_viewed($template);
 
 // Set up the page.
 $url = new moodle_url('/admin/tool/lp/templatecompetencies.php', array('templateid' => $template->get_id(),

@@ -24,7 +24,7 @@
 namespace core_competency\external;
 defined('MOODLE_INTERNAL') || die();
 
-use tool_lp\api;
+use core_competency\api;
 use renderer_base;
 
 /**

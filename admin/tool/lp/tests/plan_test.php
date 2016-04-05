@@ -373,7 +373,7 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $record->duedate = time() - 200;
         $DB->update_record(core_competency\plan::TABLE, $record);
 
-        $success = tool_lp\api::complete_plan($plan->get_id());
+        $success = core_competency\api::complete_plan($plan->get_id());
         $this->assertTrue($success);
 
         // Completing plan: with due date too soon (pass).
@@ -382,7 +382,7 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $record->duedate = time() + 200;
         $DB->update_record(core_competency\plan::TABLE, $record);
 
-        $success = tool_lp\api::complete_plan($plan->get_id());
+        $success = core_competency\api::complete_plan($plan->get_id());
         $this->assertTrue($success);
 
         // Completing plan: with due date in the future (pass).
@@ -391,7 +391,7 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $record->duedate = time() + core_competency\plan::DUEDATE_THRESHOLD + 10;
         $DB->update_record(core_competency\plan::TABLE, $record);
 
-        $success = tool_lp\api::complete_plan($plan->get_id());
+        $success = core_competency\api::complete_plan($plan->get_id());
         $this->assertTrue($success);
 
         // Completing plan: with due date unset (pass).
@@ -400,7 +400,7 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $record->duedate = 0;
         $DB->update_record(core_competency\plan::TABLE, $record);
 
-        $success = tool_lp\api::complete_plan($plan->get_id());
+        $success = core_competency\api::complete_plan($plan->get_id());
         $this->assertTrue($success);
 
         // Reopening plan: with due date in the past => duedate unset.
@@ -409,7 +409,7 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $record->duedate = time() - 200;
         $DB->update_record(core_competency\plan::TABLE, $record);
 
-        $success = tool_lp\api::reopen_plan($plan->get_id());
+        $success = core_competency\api::reopen_plan($plan->get_id());
         $this->assertTrue($success);
         $plan->read();
         $this->assertEquals(0, $plan->get_duedate());
@@ -420,7 +420,7 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $record->duedate = time() + 100;
         $DB->update_record(core_competency\plan::TABLE, $record);
 
-        $success = tool_lp\api::reopen_plan($plan->get_id());
+        $success = core_competency\api::reopen_plan($plan->get_id());
         $this->assertTrue($success);
         $plan->read();
         $this->assertEquals(0, $plan->get_duedate());
@@ -431,7 +431,7 @@ class tool_lp_plan_testcase extends advanced_testcase {
         $record->duedate = time() + core_competency\plan::DUEDATE_THRESHOLD + 10;
         $DB->update_record(core_competency\plan::TABLE, $record);
 
-        $success = tool_lp\api::reopen_plan($plan->get_id());
+        $success = core_competency\api::reopen_plan($plan->get_id());
         $this->assertTrue($success);
         $plan->read();
 

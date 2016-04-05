@@ -28,7 +28,7 @@ use renderable;
 use templatable;
 use stdClass;
 use moodle_url;
-use tool_lp\api;
+use core_competency\api;
 use core_competency\plan;
 use core_competency\external\competency_exporter;
 use core_competency\external\plan_exporter;

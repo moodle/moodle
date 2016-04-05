@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-use tool_lp\api;
+use core_competency\api;
 use core_competency\external\competency_exporter;
 use core_competency\course_module_competency;
 
@@ -59,7 +59,7 @@ class tool_lp_course_competency_rule_form_element extends MoodleQuickForm_select
         if (!empty($options['cmid'])) {
             $cmid = $options['cmid'];
 
-            $current = \tool_lp\api::list_course_module_competencies_in_course_module($cmid);
+            $current = \core_competency\api::list_course_module_competencies_in_course_module($cmid);
 
             // Note: We just pick the outcome set on the first course_module_competency - because in our UI are are
             // forcing them to be all the same for each activity.

@@ -27,7 +27,7 @@ global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
-use tool_lp\api;
+use core_competency\api;
 use tool_lp\external;
 use core_competency\invalid_persistent_exception;
 use core_competency\plan;

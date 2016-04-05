@@ -17,14 +17,15 @@
 /**
  * Class for loading/storing competency frameworks from the DB.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_lp;
+namespace core_competency;
 defined('MOODLE_INTERNAL') || die();
 
 use stdClass;
+use cm_info;
 use context;
 use context_helper;
 use context_system;
@@ -36,23 +37,6 @@ use require_login_exception;
 use moodle_exception;
 use moodle_url;
 use required_capability_exception;
-use \core_competency\competency;
-use \core_competency\competency_framework;
-use \core_competency\course_competency;
-use \core_competency\course_competency_settings;
-use \core_competency\course_module_competency;
-use \core_competency\evidence;
-use \core_competency\plan;
-use \core_competency\plan_competency;
-use \core_competency\related_competency;
-use \core_competency\template;
-use \core_competency\template_cohort;
-use \core_competency\template_competency;
-use \core_competency\user_competency;
-use \core_competency\user_competency_course;
-use \core_competency\user_competency_plan;
-use \core_competency\user_evidence;
-use \core_competency\user_evidence_competency;
 
 /**
  * Class for doing things with competency frameworks.
@@ -4998,7 +4982,8 @@ class api {
         } else {
             $data = (object) array('courseid' => $courseid, 'pushratingstouserplans' => $pushratingstouserplans);
             $settings = new course_competency_settings(0, $data);
-            return !empty($settings->create());
+            $result = $settings->create();
+            return !empty($result);
         }
     }
 }

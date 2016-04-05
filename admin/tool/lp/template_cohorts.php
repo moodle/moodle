@@ -28,9 +28,9 @@ $id = required_param('id', PARAM_INT);
 $pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to the context we came from.
 
 require_login(0, false);
-\tool_lp\api::require_enabled();
+\core_competency\api::require_enabled();
 
-$template = \tool_lp\api::read_template($id);
+$template = \core_competency\api::read_template($id);
 $context = $template->get_context();
 $canreadtemplate = $template->can_read();
 $canmanagetemplate = $template->can_manage();
@@ -50,7 +50,7 @@ list($title, $subtitle) = \tool_lp\page_helper::setup_for_template($pagecontexti
 
 // Remove cohort.
 if ($canmanagetemplate && ($removecohort = optional_param('removecohort', false, PARAM_INT)) !== false && confirm_sesskey()) {
-    \tool_lp\api::delete_template_cohort($template, $removecohort);
+    \core_competency\api::delete_template_cohort($template, $removecohort);
 }
 
 // Capture the form submission.
@@ -62,7 +62,7 @@ if ($canmanagetemplate && ($data = $form->get_data()) && !empty($data->cohorts))
     foreach ($data->cohorts as $cohortid) {
 
         // Create the template/cohort relationship.
-        $relation = \tool_lp\api::create_template_cohort($template, $cohortid);
+        $relation = \core_competency\api::create_template_cohort($template, $cohortid);
 
         // Create a plan for each member if template visible, and the due date is not reached, and we didn't reach our limit yet.
         if ($template->get_visible() && $i < $maxtocreate && !$duedatereached) {
@@ -70,7 +70,7 @@ if ($canmanagetemplate && ($data = $form->get_data()) && !empty($data->cohorts))
             // Only create a few plans right now.
             $tocreate = \core_competency\template_cohort::get_missing_plans($template->get_id(), $cohortid);
             if ($i + count($tocreate) <= $maxtocreate) {
-                $i += \tool_lp\api::create_plans_from_template_cohort($template, $cohortid);
+                $i += \core_competency\api::create_plans_from_template_cohort($template, $cohortid);
             } else {
                 $maxreached = true;
             }

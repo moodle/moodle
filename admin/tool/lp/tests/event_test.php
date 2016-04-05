@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/comment/lib.php');
 
-use tool_lp\api;
+use core_competency\api;
 
 /**
  * Event tests.

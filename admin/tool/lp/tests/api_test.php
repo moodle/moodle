@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
-use tool_lp\api;
+use core_competency\api;
 use core_competency\competency;
 use core_competency\competency_framework;
 use core_competency\course_competency_settings;

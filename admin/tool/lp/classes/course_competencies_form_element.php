@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-use tool_lp\api;
+use core_competency\api;
 use core_competency\external\competency_exporter;
 require_once($CFG->libdir . '/form/autocomplete.php');
 
@@ -62,7 +62,7 @@ class tool_lp_course_competencies_form_element extends MoodleQuickForm_autocompl
         $courseid = $options['courseid'];
 
         if (!empty($options['cmid'])) {
-            $current = \tool_lp\api::list_course_module_competencies_in_course_module($options['cmid']);
+            $current = \core_competency\api::list_course_module_competencies_in_course_module($options['cmid']);
             $ids = array();
             foreach ($current as $coursemodulecompetency) {
                 array_push($ids, $coursemodulecompetency->get_competencyid());

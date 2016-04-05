@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use renderable;
 use templatable;
-use tool_lp\api;
+use core_competency\api;
 use tool_lp\external\user_competency_summary_in_plan_exporter;
 
 /**

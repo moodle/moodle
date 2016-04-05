@@ -29,7 +29,7 @@ use templatable;
 use renderer_base;
 use stdClass;
 use moodle_url;
-use tool_lp\api;
+use core_competency\api;
 use core_competency\external\competency_exporter;
 
 /**

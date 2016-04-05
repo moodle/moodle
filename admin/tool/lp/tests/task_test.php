@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-use tool_lp\api;
+use core_competency\api;
 use core_competency\plan;
 
 /**
@@ -122,7 +122,7 @@ class tool_lp_task_testcase extends advanced_testcase {
         // Let's unlink the plan and run the task again, it should not be recreated.
         $currenttime = $currenttime + 1;
         $plan = plan::get_record(array('userid' => $user5->id, 'templateid' => $tpl->get_id()));
-        \tool_lp\api::unlink_plan_from_template($plan);
+        \core_competency\api::unlink_plan_from_template($plan);
         $DB->execute($plansql, array('currenttime' => $currenttime, 'planid' => $plan->get_id()));
         $this->assertTrue(plan::record_exists_select('userid = ?', array($user5->id)));
         $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
@@ -149,7 +149,7 @@ class tool_lp_task_testcase extends advanced_testcase {
         // Test a user plan deleted will not be recreated.
         $currenttime = $currenttime + 1;
         $plan = plan::get_record(array('userid' => $user4->id, 'templateid' => $tpl->get_id()));
-        \tool_lp\api::delete_plan($plan->get_id());
+        \core_competency\api::delete_plan($plan->get_id());
         $currenttime = $currenttime + 1;
         $task->execute();
         $task->set_last_run_time($currenttime);
@@ -218,7 +218,7 @@ class tool_lp_task_testcase extends advanced_testcase {
 
         // Let's unlink the plan and run the task again, it should not be recreated.
         $plan = plan::get_record(array('userid' => $user5->id, 'templateid' => $tpl->get_id()));
-        \tool_lp\api::unlink_plan_from_template($plan);
+        \core_competency\api::unlink_plan_from_template($plan);
         $this->assertTrue(plan::record_exists_select('userid = ?', array($user5->id)));
         $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
         $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));

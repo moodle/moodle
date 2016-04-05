@@ -31,7 +31,7 @@ $pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to th
 $parentid = optional_param('parentid', 0, PARAM_INT);
 
 require_login();
-\tool_lp\api::require_enabled();
+\core_competency\api::require_enabled();
 
 if (empty($competencyframeworkid) && empty($id)) {
     throw new coding_exception('Competencyframeworkid param is required');
@@ -40,13 +40,13 @@ if (empty($competencyframeworkid) && empty($id)) {
 // Get competency framework.
 $competencyframework = null;
 if (!empty($competencyframeworkid)) {
-    $competencyframework = \tool_lp\api::read_framework($competencyframeworkid);
+    $competencyframework = \core_competency\api::read_framework($competencyframeworkid);
 }
 
 // Get competency.
 $competency = null;
 if (!empty($id)) {
-    $competency = \tool_lp\api::read_competency($id);
+    $competency = \core_competency\api::read_competency($id);
     if (empty($competencyframework)) {
         $competencyframework = $competency->get_framework();
     }
@@ -57,7 +57,7 @@ $parent = null;
 if ($competency) {
     $parent = $competency->get_parent();
 } else if ($parentid) {
-    $parent = \tool_lp\api::read_competency($parentid);
+    $parent = \core_competency\api::read_competency($parentid);
 }
 
 // Get page URL.
@@ -90,10 +90,10 @@ if ($form->is_cancelled()) {
 $data = $form->get_data();
 if ($data) {
     if (empty($competency)) {
-        \tool_lp\api::create_competency($data);
+        \core_competency\api::create_competency($data);
         $returnmsg = get_string('competencycreated', 'tool_lp');
     } else {
-        \tool_lp\api::update_competency($data);
+        \core_competency\api::update_competency($data);
         $returnmsg = get_string('competencyupdated', 'tool_lp');
     }
     redirect($returnurl, $returnmsg, null, \core\output\notification::NOTIFY_SUCCESS);

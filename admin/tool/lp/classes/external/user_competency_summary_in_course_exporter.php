@@ -23,7 +23,7 @@
  */
 namespace tool_lp\external;
 
-use tool_lp\api;
+use core_competency\api;
 use context_course;
 use renderer_base;
 use stdClass;

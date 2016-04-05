@@ -28,11 +28,11 @@ require_login(null, false);
 if (isguestuser()) {
     throw new require_login_exception('Guests are not allowed here.');
 }
-\tool_lp\api::require_enabled();
+\core_competency\api::require_enabled();
 
 $id = optional_param('id', null, PARAM_INT);
 
-$userevidence = \tool_lp\api::read_user_evidence($id);
+$userevidence = \core_competency\api::read_user_evidence($id);
 $url = new moodle_url('/admin/tool/lp/user_evidence_list.php', array('id' => $id));
 list($title, $subtitle) = \tool_lp\page_helper::setup_for_user_evidence($userevidence->get_userid(), $url, $userevidence);
 

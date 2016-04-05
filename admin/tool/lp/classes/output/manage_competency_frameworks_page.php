@@ -32,7 +32,7 @@ use stdClass;
 use moodle_url;
 use context;
 use context_system;
-use tool_lp\api;
+use core_competency\api;
 use core_competency\competency_framework;
 use core_competency\external\competency_framework_exporter;
 

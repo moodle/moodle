@@ -28,7 +28,7 @@ require_login(null, false);
 if (isguestuser()) {
     throw new require_login_exception('Guests are not allowed here.');
 }
-\tool_lp\api::require_enabled();
+\core_competency\api::require_enabled();
 
 $userid = optional_param('userid', $USER->id, PARAM_INT);
 $id = optional_param('id', null, PARAM_INT);
@@ -43,7 +43,7 @@ if (empty($id)) {
         $pagetitle, $returntype);
 
 } else {
-    $userevidence = \tool_lp\api::read_user_evidence($id);
+    $userevidence = \core_competency\api::read_user_evidence($id);
 
     // The userid parameter must be the same as the owner of the evidence.
     if ($userid != $userevidence->get_userid()) {
@@ -99,11 +99,11 @@ if ($data = $form->get_data()) {
     unset($data->files);
 
     if (empty($userevidence)) {
-        $userevidence = \tool_lp\api::create_user_evidence($data, $draftitemid);
+        $userevidence = \core_competency\api::create_user_evidence($data, $draftitemid);
         $returnurl = new moodle_url('/admin/tool/lp/user_evidence.php', ['id' => $userevidence->get_id()]);
         $returnmsg = get_string('userevidencecreated', 'tool_lp');
     } else {
-        \tool_lp\api::update_user_evidence($data, $draftitemid);
+        \core_competency\api::update_user_evidence($data, $draftitemid);
         $returnmsg = get_string('userevidenceupdated', 'tool_lp');
     }
     redirect($returnurl, $returnmsg, null, \core\output\notification::NOTIFY_SUCCESS);

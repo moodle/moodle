@@ -28,9 +28,9 @@ $id = required_param('id', PARAM_INT);
 $pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to the context we came from.
 
 require_login(0, false);
-\tool_lp\api::require_enabled();
+\core_competency\api::require_enabled();
 
-$template = \tool_lp\api::read_template($id);
+$template = \core_competency\api::read_template($id);
 $context = $template->get_context();
 $canreadtemplate = $template->can_read();
 $canmanagetemplate = $template->can_manage();
@@ -51,7 +51,7 @@ $form = new \tool_lp\form\template_plans($url->out(false));
 if ($canmanagetemplate && ($data = $form->get_data()) && !empty($data->users)) {
     $i = 0;
     foreach ($data->users as $userid) {
-        $result = \tool_lp\api::create_plan_from_template($template->get_id(), $userid);
+        $result = \core_competency\api::create_plan_from_template($template->get_id(), $userid);
         if ($result) {
             $i++;
         }

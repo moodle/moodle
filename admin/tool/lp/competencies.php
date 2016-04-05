@@ -30,10 +30,10 @@ $pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to th
 $search = optional_param('search', '', PARAM_RAW);
 
 require_login();
-\tool_lp\api::require_enabled();
+\core_competency\api::require_enabled();
 
 $pagecontext = context::instance_by_id($pagecontextid);
-$framework = \tool_lp\api::read_framework($id);
+$framework = \core_competency\api::read_framework($id);
 $context = $framework->get_context();
 
 if (!\core_competency\competency_framework::can_read_context($context)) {
@@ -62,6 +62,6 @@ $page = new \tool_lp\output\manage_competencies_page($framework, $search, $pagec
 echo $output->render($page);
 
 // Log the framework viewed event after rendering the page.
-\tool_lp\api::competency_framework_viewed($framework);
+\core_competency\api::competency_framework_viewed($framework);
 
 echo $output->footer();

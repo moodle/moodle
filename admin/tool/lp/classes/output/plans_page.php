@@ -30,7 +30,7 @@ use renderer_base;
 use stdClass;
 use single_button;
 use moodle_url;
-use tool_lp\api;
+use core_competency\api;
 use core_competency\external\plan_exporter;
 use core_competency\plan;
 use core_competency\user_evidence;

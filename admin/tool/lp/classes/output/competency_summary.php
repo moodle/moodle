@@ -28,7 +28,7 @@ use renderable;
 use templatable;
 use renderer_base;
 use stdClass;
-use tool_lp\api;
+use core_competency\api;
 use tool_lp\external\competency_summary_exporter;
 
 /**
