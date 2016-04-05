@@ -25,14 +25,14 @@ Feature: Testing multichoice questions in feedback
     And the following "activities" exist:
       | activity   | name                | course | idnumber    |
       | feedback   | Learning experience | C1     | feedback0   |
-    When I log in as "teacher1"
+    And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Learning experience"
     And I follow "Edit questions"
 
   @javascript
   Scenario: Non-rated single-answer multiple choice questions in feedback
-    And I add a "Multiple choice" question to the feedback with:
+    When I add a "Multiple choice" question to the feedback with:
       | Question         | this is a multiple choice 1 |
       | Label            | multichoice1                |
       | Multiple choice type | Multiple choice - single answer |
@@ -170,7 +170,7 @@ Feature: Testing multichoice questions in feedback
 
   Scenario: Non-rated multiple-answers multiple choice questions in feedback
     # Create a feedback with three pages, required and dependent questions.
-    And I add a "Multiple choice" question to the feedback with:
+    When I add a "Multiple choice" question to the feedback with:
       | Question         | this is a multiple choice 1 |
       | Label            | multichoice1                |
       | Multiple choice type | Multiple choice - multiple answers |
@@ -307,7 +307,7 @@ Feature: Testing multichoice questions in feedback
     And I log out
 
   Scenario: Non-rated single-answer dropdown multiple choice questions in feedback
-    And I add a "Multiple choice" question to the feedback with:
+    When I add a "Multiple choice" question to the feedback with:
       | Question         | this is a multiple choice 1 |
       | Label            | multichoice1                |
       | Multiple choice type | Multiple choice - single answer allowed (dropdownlist) |
