@@ -164,7 +164,7 @@ class api {
         $competency->set_sortorder(null);
         $competency->create();
 
-        \tool_lp\event\competency_created::create_from_competency($competency)->trigger();
+        \core\event\competency_created::create_from_competency($competency)->trigger();
 
         // Reset the rule of the parent.
         $parent = $competency->get_parent();
@@ -223,7 +223,7 @@ class api {
             user_evidence_competency::delete_by_competencyids($competencyids);
 
             // Register the competencies deleted events.
-            $events = \tool_lp\event\competency_deleted::create_multiple_from_competencyids($competencyids, $contextid);
+            $events = \core\event\competency_deleted::create_multiple_from_competencyids($competencyids, $contextid);
 
         } catch (\Exception $e) {
             $transaction->rollback($e);
@@ -417,7 +417,7 @@ class api {
         $result = $competency->update();
 
         // Trigger the update event.
-        \tool_lp\event\competency_updated::create_from_competency($competency)->trigger();
+        \core\event\competency_updated::create_from_competency($competency)->trigger();
 
         return $result;
     }
@@ -553,7 +553,7 @@ class api {
         $framework = $framework->create();
 
         // Trigger a competency framework created event.
-        \tool_lp\event\competency_framework_created::create_from_framework($framework)->trigger();
+        \core\event\competency_framework_created::create_from_framework($framework)->trigger();
 
         return $framework;
     }
@@ -622,7 +622,7 @@ class api {
         }
 
         // Trigger a competency framework created event.
-        \tool_lp\event\competency_framework_created::create_from_framework($framework)->trigger();
+        \core\event\competency_framework_created::create_from_framework($framework)->trigger();
 
         return $framework;
     }
@@ -661,11 +661,11 @@ class api {
             }
 
             // Create a competency framework deleted event.
-            $event = \tool_lp\event\competency_framework_deleted::create_from_framework($framework);
+            $event = \core\event\competency_framework_deleted::create_from_framework($framework);
             $result = $framework->delete();
 
             // Register the deleted events competencies.
-            $events = \tool_lp\event\competency_deleted::create_multiple_from_competencyids($competenciesid, $contextid);
+            $events = \core\event\competency_deleted::create_multiple_from_competencyids($competenciesid, $contextid);
 
         } catch (\Exception $e) {
             $transaction->rollback($e);
@@ -707,7 +707,7 @@ class api {
         }
 
         // Trigger a competency framework updated event.
-        \tool_lp\event\competency_framework_updated::create_from_framework($framework)->trigger();
+        \core\event\competency_framework_updated::create_from_framework($framework)->trigger();
 
         return $framework->update();
     }
@@ -744,7 +744,7 @@ class api {
         if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'), $framework->get_context())) {
              throw new required_capability_exception($framework->get_context(), 'moodle/competency:competencyview', 'nopermissions', '');
         }
-        \tool_lp\event\competency_framework_viewed::create_from_framework($framework)->trigger();
+        \core\event\competency_framework_viewed::create_from_framework($framework)->trigger();
         return true;
     }
 
@@ -765,7 +765,7 @@ class api {
              throw new required_capability_exception($competency->get_context(), 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
-        \tool_lp\event\competency_viewed::create_from_competency($competency)->trigger();
+        \core\event\competency_viewed::create_from_competency($competency)->trigger();
         return true;
     }
 
@@ -1713,7 +1713,7 @@ class api {
         $template = $template->create();
 
         // Trigger a template created event.
-        \tool_lp\event\template_created::create_from_template($template)->trigger();
+        \core\event\competency_template_created::create_from_template($template)->trigger();
 
         return $template;
     }
@@ -1750,7 +1750,7 @@ class api {
         }
 
         // Trigger a template created event.
-        \tool_lp\event\template_created::create_from_template($duplicatedtemplate)->trigger();
+        \core\event\competency_template_created::create_from_template($duplicatedtemplate)->trigger();
 
         return $duplicatedtemplate;
     }
@@ -1806,7 +1806,7 @@ class api {
         // OK - all set.
         if ($success) {
             // Create a template deleted event.
-            $event = \tool_lp\event\template_deleted::create_from_template($template);
+            $event = \core\event\competency_template_deleted::create_from_template($template);
 
             $success = $template->delete();
         }
@@ -1870,7 +1870,7 @@ class api {
         }
 
         // Trigger a template updated event.
-        \tool_lp\event\template_updated::create_from_template($template)->trigger();
+        \core\event\competency_template_updated::create_from_template($template)->trigger();
 
         if ($updateplans) {
             plan::update_multiple_from_template($template);
@@ -2437,7 +2437,7 @@ class api {
         $plan->create();
 
         // Trigger created event.
-        \tool_lp\event\plan_created::create_from_plan($plan)->trigger();
+        \core\event\competency_plan_created::create_from_plan($plan)->trigger();
         return $plan;
     }
 
@@ -2499,7 +2499,7 @@ class api {
         $plan->create();
 
         // Trigger created event.
-        \tool_lp\event\plan_created::create_from_plan($plan)->trigger();
+        \core\event\competency_plan_created::create_from_plan($plan)->trigger();
         return $plan;
     }
 
@@ -2572,7 +2572,7 @@ class api {
 
             $plan->create();
             // Trigger created event.
-            \tool_lp\event\plan_created::create_from_plan($plan)->trigger();
+            \core\event\competency_plan_created::create_from_plan($plan)->trigger();
             $created++;
         }
 
@@ -2631,7 +2631,7 @@ class api {
         $transaction->allow_commit();
 
         // Trigger unlinked event.
-        \tool_lp\event\plan_unlinked::create_from_plan($plan)->trigger();
+        \core\event\competency_plan_unlinked::create_from_plan($plan)->trigger();
 
         return $success;
     }
@@ -2677,7 +2677,7 @@ class api {
         $plan->update();
 
         // Trigger updated event.
-        \tool_lp\event\plan_updated::create_from_plan($plan)->trigger();
+        \core\event\competency_plan_updated::create_from_plan($plan)->trigger();
 
         return $plan;
     }
@@ -2720,7 +2720,7 @@ class api {
         }
 
         // Trigger a template viewed event.
-        \tool_lp\event\plan_viewed::create_from_plan($plan)->trigger();
+        \core\event\competency_plan_viewed::create_from_plan($plan)->trigger();
 
         return true;
     }
@@ -2757,7 +2757,7 @@ class api {
         if ($plan->get_status() == plan::STATUS_COMPLETE) {
             self::remove_archived_user_competencies_in_plan($plan);
         }
-        $event = \tool_lp\event\plan_deleted::create_from_plan($plan);
+        $event = \core\event\competency_plan_deleted::create_from_plan($plan);
         $success = $plan->delete();
 
         $transaction->allow_commit();
@@ -2798,7 +2798,7 @@ class api {
         $result = $plan->update();
 
         // Trigger review request cancelled event.
-        \tool_lp\event\plan_review_request_cancelled::create_from_plan($plan)->trigger();
+        \core\event\competency_plan_review_request_cancelled::create_from_plan($plan)->trigger();
 
         return $result;
     }
@@ -2833,7 +2833,7 @@ class api {
         $result = $plan->update();
 
         // Trigger review requested event.
-        \tool_lp\event\plan_review_requested::create_from_plan($plan)->trigger();
+        \core\event\competency_plan_review_requested::create_from_plan($plan)->trigger();
 
         return $result;
     }
@@ -2870,7 +2870,7 @@ class api {
         $result = $plan->update();
 
         // Trigger review started event.
-        \tool_lp\event\plan_review_started::create_from_plan($plan)->trigger();
+        \core\event\competency_plan_review_started::create_from_plan($plan)->trigger();
 
         return $result;
     }
@@ -2906,7 +2906,7 @@ class api {
         $result = $plan->update();
 
         // Trigger review stopped event.
-        \tool_lp\event\plan_review_stopped::create_from_plan($plan)->trigger();
+        \core\event\competency_plan_review_stopped::create_from_plan($plan)->trigger();
 
         return $result;
     }
@@ -2945,7 +2945,7 @@ class api {
         $result = $plan->update();
 
         // Trigger approved event.
-        \tool_lp\event\plan_approved::create_from_plan($plan)->trigger();
+        \core\event\competency_plan_approved::create_from_plan($plan)->trigger();
 
         return $result;
     }
@@ -2982,7 +2982,7 @@ class api {
         $result = $plan->update();
 
         // Trigger unapproved event.
-        \tool_lp\event\plan_unapproved::create_from_plan($plan)->trigger();
+        \core\event\competency_plan_unapproved::create_from_plan($plan)->trigger();
 
         return $result;
     }
@@ -3037,7 +3037,7 @@ class api {
         $transaction->allow_commit();
 
         // Trigger updated event.
-        \tool_lp\event\plan_completed::create_from_plan($plan)->trigger();
+        \core\event\competency_plan_completed::create_from_plan($plan)->trigger();
 
         return $success;
     }
@@ -3096,7 +3096,7 @@ class api {
         $transaction->allow_commit();
 
         // Trigger reopened event.
-        \tool_lp\event\plan_reopened::create_from_plan($plan)->trigger();
+        \core\event\competency_plan_reopened::create_from_plan($plan)->trigger();
 
         return $success;
     }
@@ -3384,7 +3384,7 @@ class api {
         $uc->set_status(user_competency::STATUS_IDLE);
         $result = $uc->update();
         if ($result) {
-            \tool_lp\event\user_competency_review_request_cancelled::create_from_user_competency($uc)->trigger();
+            \core\event\competency_user_competency_review_request_cancelled::create_from_user_competency($uc)->trigger();
         }
         return $result;
     }
@@ -3415,7 +3415,7 @@ class api {
         $uc->set_status(user_competency::STATUS_WAITING_FOR_REVIEW);
         $result = $uc->update();
         if ($result) {
-            \tool_lp\event\user_competency_review_requested::create_from_user_competency($uc)->trigger();
+            \core\event\competency_user_competency_review_requested::create_from_user_competency($uc)->trigger();
         }
         return $result;
     }
@@ -3445,7 +3445,7 @@ class api {
         $uc->set_reviewerid($USER->id);
         $result = $uc->update();
         if ($result) {
-            \tool_lp\event\user_competency_review_started::create_from_user_competency($uc)->trigger();
+            \core\event\competency_user_competency_review_started::create_from_user_competency($uc)->trigger();
         }
         return $result;
     }
@@ -3472,7 +3472,7 @@ class api {
         $uc->set_status(user_competency::STATUS_IDLE);
         $result = $uc->update();
         if ($result) {
-            \tool_lp\event\user_competency_review_stopped::create_from_user_competency($uc)->trigger();
+            \core\event\competency_user_competency_review_stopped::create_from_user_competency($uc)->trigger();
         }
         return $result;
     }
@@ -3494,7 +3494,7 @@ class api {
             throw new required_capability_exception($uc->get_context(), 'moodle/competency:usercompetencyview', 'nopermissions', '');
         }
 
-        \tool_lp\event\user_competency_viewed::create_from_user_competency_viewed($uc)->trigger();
+        \core\event\competency_user_competency_viewed::create_from_user_competency_viewed($uc)->trigger();
         return true;
     }
 
@@ -3520,7 +3520,7 @@ class api {
             throw new coding_exception('To log the user competency in completed plan use user_competency_plan_viewed method.');
         }
 
-        \tool_lp\event\user_competency_viewed_in_plan::create_from_user_competency_viewed_in_plan($uc, $planid)->trigger();
+        \core\event\competency_user_competency_viewed_in_plan::create_from_user_competency_viewed_in_plan($uc, $planid)->trigger();
         return true;
     }
 
@@ -3545,7 +3545,7 @@ class api {
         // Validate the course, this will throw an exception if not valid.
         self::validate_course($ucc->get_courseid());
 
-        \tool_lp\event\user_competency_viewed_in_course::create_from_user_competency_viewed_in_course($ucc)->trigger();
+        \core\event\competency_user_competency_viewed_in_course::create_from_user_competency_viewed_in_course($ucc)->trigger();
         return true;
     }
 
@@ -3571,7 +3571,7 @@ class api {
                 . 'user_competency_viewed_in_plan method.');
         }
 
-        \tool_lp\event\user_competency_plan_viewed::create_from_user_competency_plan($ucp)->trigger();
+        \core\event\competency_user_competency_plan_viewed::create_from_user_competency_plan($ucp)->trigger();
         return true;
     }
 
@@ -3699,7 +3699,7 @@ class api {
         }
 
         // Trigger an evidence of prior learning created event.
-        \tool_lp\event\user_evidence_created::create_from_user_evidence($userevidence)->trigger();
+        \core\event\competency_user_evidence_created::create_from_user_evidence($userevidence)->trigger();
 
         return $userevidence;
     }
@@ -3733,7 +3733,7 @@ class api {
         }
 
         // Trigger an evidence of prior learning updated event.
-        \tool_lp\event\user_evidence_updated::create_from_user_evidence($userevidence)->trigger();
+        \core\event\competency_user_evidence_updated::create_from_user_evidence($userevidence)->trigger();
 
         return $userevidence;
     }
@@ -3768,7 +3768,7 @@ class api {
         }
 
         // Trigger an evidence of prior learning deleted event.
-        \tool_lp\event\user_evidence_deleted::create_from_user_evidence($userevidence)->trigger();
+        \core\event\competency_user_evidence_deleted::create_from_user_evidence($userevidence)->trigger();
 
         $userevidence->set_id(0);       // Restore the object.
 
@@ -3940,7 +3940,7 @@ class api {
                 $competency->create();
 
                 // Trigger the created event competency.
-                \tool_lp\event\competency_created::create_from_competency($competency)->trigger();
+                \core\event\competency_created::create_from_competency($competency)->trigger();
 
                 // Match the old id with the new one.
                 $matchids[$parentid] = $competency;
@@ -4395,7 +4395,7 @@ class api {
         $evidence->create();
 
         // Trigger the evidence_created event.
-        \tool_lp\event\evidence_created::create_from_evidence($evidence, $usercompetency, $recommend)->trigger();
+        \core\event\competency_evidence_created::create_from_evidence($evidence, $usercompetency, $recommend)->trigger();
 
         // The competency was marked as completed, apply the rules.
         if ($wascompleted) {
@@ -4656,7 +4656,7 @@ class api {
                                   $note);
         if ($result) {
             $uc->read();
-            $event = \tool_lp\event\user_competency_grade_rated::create_from_user_competency($uc);
+            $event = \core\event\competency_user_competency_rated::create_from_user_competency($uc);
             $event->trigger();
         }
         return $result;
@@ -4709,7 +4709,7 @@ class api {
                                   $note);
         if ($result) {
             $uc = static::get_user_competency($plan->get_userid(), $competency->get_id());
-            $event = \tool_lp\event\user_competency_grade_rated_in_plan::create_from_user_competency($uc, $plan->get_id());
+            $event = \core\event\competency_user_competency_rated_in_plan::create_from_user_competency($uc, $plan->get_id());
             $event->trigger();
         }
         return $result;
@@ -4778,7 +4778,7 @@ class api {
         if ($result) {
             $all = user_competency_course::get_multiple($userid, $course->id, array($competency->get_id()));
             $uc = reset($all);
-            $event = \tool_lp\event\user_competency_grade_rated_in_course::create_from_user_competency_course($uc);
+            $event = \core\event\competency_user_competency_rated_in_course::create_from_user_competency_course($uc);
             $event->trigger();
         }
         return $result;
@@ -4924,7 +4924,7 @@ class api {
         }
 
         // Trigger a template viewed event.
-        \tool_lp\event\template_viewed::create_from_template($template)->trigger();
+        \core\event\competency_template_viewed::create_from_template($template)->trigger();
 
         return true;
     }

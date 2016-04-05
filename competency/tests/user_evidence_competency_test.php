@@ -34,7 +34,7 @@ use core_competency\user_evidence_competency;
  * @copyright  2016 Serge Gauthier - <serge.gauthier.2@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_competency_user_evidene_competency_testcase extends advanced_testcase {
+class core_competency_user_evidence_competency_testcase extends advanced_testcase {
 
     public function test_get_user_competencies_by_userevidenceid() {
         global $CFG, $DB;
