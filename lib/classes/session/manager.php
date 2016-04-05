@@ -72,11 +72,14 @@ class manager {
         try {
             self::$handler->init();
             self::prepare_cookies();
-            $newsid = empty($_COOKIE[session_name()]);
+            $isnewsession = empty($_COOKIE[session_name()]);
 
-            self::$handler->start();
+            if (!self::$handler->start()) {
+                // Could not successfully start/recover session.
+                throw new \core\session\exception(get_string('servererror'));
+            }
 
-            self::initialise_user_session($newsid);
+            self::initialise_user_session($isnewsession);
             self::check_security();
 
             // Link global $USER and $SESSION,
@@ -90,7 +93,6 @@ class manager {
             $_SESSION['SESSION'] =& $GLOBALS['SESSION'];
 
         } catch (\Exception $ex) {
-            @session_write_close();
             self::init_empty_session();
             self::$sessionactive = false;
             throw $ex;
@@ -429,6 +431,7 @@ class manager {
      * Do various session security checks.
      *
      * WARNING: $USER and $SESSION are set up later, do not use them yet!
+     * @throws \core\session\exception
      */
     protected static function check_security() {
         global $CFG;
@@ -512,11 +515,23 @@ class manager {
      * Unblocks the sessions, other scripts may start executing in parallel.
      */
     public static function write_close() {
-        if (self::$sessionactive) {
-            session_write_close();
+        if (version_compare(PHP_VERSION, '5.6.0', '>=')) {
+            // More control over whether session data
+            // is persisted or not.
+            if (self::$sessionactive && session_id()) {
+                // Write session and release lock only if
+                // indication session start was clean.
+                session_write_close();
+            } else {
+                // Otherwise, if possibile lock exists want
+                // to clear it, but do not write session.
+                @session_abort();
+            }
         } else {
-            if (session_id()) {
-                @session_write_close();
+            // Any indication session was started, attempt
+            // to close it.
+            if (self::$sessionactive || session_id()) {
+                session_write_close();
             }
         }
         self::$sessionactive = false;

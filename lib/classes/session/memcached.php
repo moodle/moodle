@@ -93,7 +93,23 @@ class memcached extends handler {
         $default = ini_get('max_execution_time');
         set_time_limit($this->acquiretimeout);
 
+        $isnewsession = empty($_COOKIE[session_name()]);
+        $starttimer = microtime(true);
+
         $result = parent::start();
+
+        // If session_start returned TRUE, but it took as long
+        // as the timeout value, and the $_SESSION returned is
+        // empty when should not have been (isnewsession false)
+        // then assume it did timeout and is invalid.
+        // Add 1 second to elapsed time to account for inexact
+        // timings in php_memcached_session.c.
+        // @TODO Remove this check when php-memcached is fixed
+        // to return false after key lock acquisition timeout.
+        if (!$isnewsession && $result && count($_SESSION) == 0
+            && (microtime(true) - $starttimer + 1) >= floatval($this->acquiretimeout)) {
+            $result = false;
+        }
 
         set_time_limit($default);
         return $result;
