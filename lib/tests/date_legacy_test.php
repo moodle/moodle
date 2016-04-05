@@ -46,20 +46,6 @@ class core_date_legacy_testcase extends advanced_testcase {
         $this->assertSame('99', $user->timezone);
     }
 
-    public function test_get_list_of_timezones() {
-        // Use timezones that are not problematic, this way we may test before
-        // and after the big tz rewrite.
-        $list = get_list_of_timezones();
-        $this->assertDebuggingCalled();
-        $this->assertArrayHasKey('Europe/London', $list);
-        $this->assertArrayHasKey('Pacific/Auckland', $list);
-        $this->assertArrayHasKey('America/New_York', $list);
-        $this->assertArrayHasKey('Europe/Berlin', $list);
-        $this->assertArrayHasKey('Europe/Prague', $list);
-        $this->assertArrayHasKey('Australia/Perth', $list);
-        $this->assertArrayHasKey('Australia/Lord_Howe', $list);
-    }
-
     public function test_get_user_timezone() {
         global $CFG, $USER;
 
@@ -131,44 +117,6 @@ class core_date_legacy_testcase extends advanced_testcase {
 
         $tz = get_user_timezone('Europe/Berlin');
         $this->assertSame('Europe/Berlin', $tz);
-    }
-
-    public function test_get_timezone_offset() {
-        // This is a useless function, the timezone offset may be changing!
-        $this->assertSame(60 * 60 * -5, get_timezone_offset('America/New_York'));
-        $this->assertDebuggingCalled();
-        $this->assertSame(60 * 60 * -1, get_timezone_offset(-1));
-        $this->assertSame(60 * 60 * 1, get_timezone_offset(1));
-        $this->assertSame(60 * 60 * 1, get_timezone_offset('Europe/Prague'));
-        $this->assertSame(60 * 60 * 8, get_timezone_offset('Australia/Perth'));
-        $this->assertSame(60 * 60 * 12, get_timezone_offset('Pacific/Auckland'));
-
-        // Known half an hour offsets.
-        $this->assertEquals(60 * 60 * -4.5, get_timezone_offset('-4.5'));
-        $this->assertEquals(60 * 60 * -4.5, get_timezone_offset('America/Caracas'));
-        $this->assertEquals(60 * 60 * 4.5, get_timezone_offset('4.5'));
-        $this->assertEquals(60 * 60 * 4.5, get_timezone_offset('Asia/Kabul'));
-        $this->assertEquals(60 * 60 * 5.5, get_timezone_offset('5.5'));
-        $this->assertEquals(60 * 60 * 5.5, get_timezone_offset('Asia/Kolkata'));
-        $this->assertEquals(60 * 60 * 6.5, get_timezone_offset('6.5'));
-        $this->assertEquals(60 * 60 * 6.5, get_timezone_offset('Asia/Rangoon'));
-        $this->assertEquals(60 * 60 * 9.5, get_timezone_offset('9.5'));
-        $this->assertEquals(60 * 60 * 9.5, get_timezone_offset('Australia/Darwin'));
-
-        $this->resetDebugging();
-    }
-
-    public function test_get_user_timezone_offset() {
-        // This is a useless function, the timezone offset may be changing!
-        $this->assertSame(-5.0, get_user_timezone_offset('America/New_York'));
-        $this->assertDebuggingCalled();
-        $this->assertSame(-1.0, get_user_timezone_offset(-1));
-        $this->assertSame(1.0, get_user_timezone_offset(1));
-        $this->assertSame(1.0, get_user_timezone_offset('Europe/Prague'));
-        $this->assertSame(8.0, get_user_timezone_offset('Australia/Perth'));
-        $this->assertSame(12.0, get_user_timezone_offset('Pacific/Auckland'));
-
-        $this->resetDebugging();
     }
 
     public function test_dst_offset_on() {

@@ -4,6 +4,19 @@ information provided here is intended especially for developers.
 === 3.1 ===
 
 * The moodle/blog:associatecourse and moodle/blog:associatemodule capabilities has been removed.
+* The following functions has been finally deprecated and can not be used any more:
+    - profile_display_badges()
+    - useredit_shared_definition_preferences()
+    - calendar_normalize_tz()
+    - get_user_timezone_offset()
+    - get_timezone_offset()
+    - get_list_of_timezones()
+    - calculate_user_dst_table()
+    - dst_changes_for_year()
+    - get_timezone_record()
+    - test_get_list_of_timezones()
+    - test_get_timezone_offset()
+    - test_get_user_timezone_offset()
 * The google api library has been updated to version 1.1.7. There was some important changes
   on the SSL handling. Now the SSL version will be determined by the underlying library.
   For more information see https://github.com/google/google-api-php-client/pull/644

@@ -2128,45 +2128,9 @@ function message_current_user_is_involved($user1, $user2) {
  * Print badges on user profile page.
  *
  * @deprecated since Moodle 2.9 MDL-45898 - please do not use this function any more.
- * @param int $userid User ID.
- * @param int $courseid Course if we need to filter badges (optional).
  */
 function profile_display_badges($userid, $courseid = 0) {
-    global $CFG, $PAGE, $USER, $SITE;
-    require_once($CFG->dirroot . '/badges/renderer.php');
-
-    debugging('profile_display_badges() is deprecated.', DEBUG_DEVELOPER);
-
-    // Determine context.
-    if (isloggedin()) {
-        $context = context_user::instance($USER->id);
-    } else {
-        $context = context_system::instance();
-    }
-
-    if ($USER->id == $userid || has_capability('moodle/badges:viewotherbadges', $context)) {
-        $records = badges_get_user_badges($userid, $courseid, null, null, null, true);
-        $renderer = new core_badges_renderer($PAGE, '');
-
-        // Print local badges.
-        if ($records) {
-            $left = get_string('localbadgesp', 'badges', format_string($SITE->fullname));
-            $right = $renderer->print_badges_list($records, $userid, true);
-            echo html_writer::tag('dt', $left);
-            echo html_writer::tag('dd', $right);
-        }
-
-        // Print external badges.
-        if ($courseid == 0 && !empty($CFG->badges_allowexternalbackpack)) {
-            $backpack = get_backpack_settings($userid);
-            if (isset($backpack->totalbadges) && $backpack->totalbadges !== 0) {
-                $left = get_string('externalbadgesp', 'badges');
-                $right = $renderer->print_badges_list($backpack->badges, $userid, true, true);
-                echo html_writer::tag('dt', $left);
-                echo html_writer::tag('dd', $right);
-            }
-        }
-    }
+    throw new coding_exception('profile_display_badges() can not be used any more.');
 }
 
 /**
@@ -2192,82 +2156,58 @@ function calendar_normalize_tz($tz) {
  * Returns a float which represents the user's timezone difference from GMT in hours
  * Checks various settings and picks the most dominant of those which have a value
  * @deprecated since Moodle 2.9
- * @param float|int|string $tz timezone user timezone
- * @return float
  */
 function get_user_timezone_offset($tz = 99) {
-    debugging('get_user_timezone_offset() is deprecated, use PHP DateTimeZone instead', DEBUG_DEVELOPER);
-    $tz = core_date::get_user_timezone($tz);
-    $date = new DateTime('now', new DateTimeZone($tz));
-    return ($date->getOffset() - dst_offset_on(time(), $tz)) / (3600.0);
+    throw new coding_exception('get_user_timezone_offset() can not be used any more, please use standard PHP DateTimeZone class instead');
+
 }
 
 /**
  * Returns an int which represents the systems's timezone difference from GMT in seconds
  * @deprecated since Moodle 2.9
- * @param float|int|string $tz timezone for which offset is required.
- *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
- * @return int|bool if found, false is timezone 99 or error
  */
 function get_timezone_offset($tz) {
-    debugging('get_timezone_offset() is deprecated, use PHP DateTimeZone instead', DEBUG_DEVELOPER);
-    $date = new DateTime('now', new DateTimeZone(core_date::normalise_timezone($tz)));
-    return $date->getOffset() - dst_offset_on(time(), $tz);
+    throw new coding_exception('get_timezone_offset() can not be used any more, please use standard PHP DateTimeZone class instead');
 }
 
 /**
  * Returns a list of timezones in the current language.
  * @deprecated since Moodle 2.9
- * @return array
  */
 function get_list_of_timezones() {
-    debugging('get_list_of_timezones() is deprecated, use core_date::get_list_of_timezones() instead', DEBUG_DEVELOPER);
-    return core_date::get_list_of_timezones();
+    throw new coding_exception('get_list_of_timezones() can not be used any more, please use core_date::get_list_of_timezones() instead');
 }
 
 /**
  * Previous internal API, it was not supposed to be used anywhere.
  * @deprecated since Moodle 2.9
- * @param array $timezones
  */
 function update_timezone_records($timezones) {
-    debugging('update_timezone_records() is not available any more, use standard PHP date/time code', DEBUG_DEVELOPER);
+    throw new coding_exception('update_timezone_records() can not be used any more, please use standard PHP DateTime class instead');
 }
 
 /**
  * Previous internal API, it was not supposed to be used anywhere.
  * @deprecated since Moodle 2.9
- * @param int $fromyear
- * @param int $toyear
- * @param mixed $strtimezone
- * @return bool
  */
 function calculate_user_dst_table($fromyear = null, $toyear = null, $strtimezone = null) {
-    debugging('calculate_user_dst_table() is not available any more, use standard PHP date/time code', DEBUG_DEVELOPER);
-    return false;
+    throw new coding_exception('calculate_user_dst_table() can not be used any more, please use standard PHP DateTime class instead');
 }
 
 /**
  * Previous internal API, it was not supposed to be used anywhere.
  * @deprecated since Moodle 2.9
- * @param int|string $year
- * @param mixed $timezone
- * @return null
  */
 function dst_changes_for_year($year, $timezone) {
-    debugging('dst_changes_for_year() is not available any more, use standard PHP date/time code', DEBUG_DEVELOPER);
-    return null;
+    throw new coding_exception('dst_changes_for_year() can not be used any more, please use standard DateTime class instead');
 }
 
 /**
  * Previous internal API, it was not supposed to be used anywhere.
  * @deprecated since Moodle 2.9
- * @param string $timezonename
- * @return array
  */
 function get_timezone_record($timezonename) {
-    debugging('get_timezone_record() is not available any more, use standard PHP date/time code', DEBUG_DEVELOPER);
-    return array();
+    throw new coding_exception('get_timezone_record() can not be used any more, please use standard PHP DateTime class instead');
 }
 
 /* === Apis deprecated since Moodle 3.0 === */

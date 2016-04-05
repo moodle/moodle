@@ -302,7 +302,6 @@ class core_statslib_testcase extends advanced_testcase {
         $dataset = $this->load_xml_data_file(__DIR__."/fixtures/statslib-test01.xml");
         $DB->delete_records('log');
 
-        // Don't ask.  I don't think get_timezone_offset works correctly.
         $date = new DateTime('now', core_date::get_server_timezone_object());
         $day = self::DAY - $date->getOffset();
 
