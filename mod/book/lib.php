@@ -571,7 +571,7 @@ function book_export_contents($cm, $baseurl) {
             $file = array();
             $file['type']         = 'file';
             $file['filename']     = $fileinfo->get_filename();
-            $file['filepath']     = "/{$chapter->id}/";
+            $file['filepath']     = "/{$chapter->id}" . $fileinfo->get_filepath();
             $file['filesize']     = $fileinfo->get_filesize();
             $file['fileurl']      = moodle_url::make_webservice_pluginfile_url(
                                         $context->id, 'mod_book', 'chapter', $chapter->id,
