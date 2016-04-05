@@ -214,6 +214,7 @@ $string['save'] = 'Save';
 $string['saving'] = 'Saving wiki page';
 $string['savingerror'] = 'Saving error';
 $string['search:activity'] = 'Wiki activities';
+$string['search:collaborative_page'] = 'Wiki Pages - Collaborative';
 $string['searchcontent'] = 'Search in page content';
 $string['searchresult'] = 'Search results:';
 $string['searchterms'] = 'Search terms';
