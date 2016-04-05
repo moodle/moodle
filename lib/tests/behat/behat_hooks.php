@@ -135,7 +135,7 @@ class behat_hooks extends behat_base {
             throw new Exception('Behat only can run if test mode is enabled. More info in ' . behat_command::DOCS_URL . '#Running_tests');
         }
 
-        // Reset all data, before checking for is_server_running.
+        // Reset all data, before checking for check_server_status.
         // If not done, then it can return apache error, while running tests.
         behat_util::reset_all_data();
 
@@ -242,7 +242,7 @@ class behat_hooks extends behat_base {
             $session = $this->getSession();
         } catch (CurlExec $e) {
             // Exception thrown by WebDriver, so only @javascript tests will be caugth; in
-            // behat_util::is_server_running() we already checked that the server is running.
+            // behat_util::check_server_status() we already checked that the server is running.
             $this->stop_execution($driverexceptionmsg);
         } catch (DriverException $e) {
             $this->stop_execution($driverexceptionmsg);
