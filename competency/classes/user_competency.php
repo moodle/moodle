@@ -195,7 +195,7 @@ class user_competency extends persistent {
 
         $comment = new comment((object) array(
             'context' => $this->get_context(),
-            'component' => 'tool_lp',
+            'component' => 'competency',    // This cannot be named 'core_competency'.
             'itemid' => $this->get_id(),
             'area' => 'user_competency',
             'showcount' => true,

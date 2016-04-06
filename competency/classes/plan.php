@@ -200,7 +200,7 @@ class plan extends persistent {
         $comment = new comment((object) array(
             'client_id' => 'plancommentarea' . $this->get_id(),
             'context' => $this->get_context(),
-            'component' => 'tool_lp',
+            'component' => 'competency',    // This cannot be named 'core_competency'.
             'itemid' => $this->get_id(),
             'area' => 'plan',
             'showcount' => true,

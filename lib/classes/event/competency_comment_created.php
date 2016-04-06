@@ -18,24 +18,24 @@
  * Comment created event for tool_lp areas.
  *
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2016 Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_lp\event;
+namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Comment created event class for tool_lp areas.
+ * Comment created event class for core_competency areas.
  *
  *
- * @package    tool_lp
+ * @package    core_competency
  * @since      Moodle 3.1
  * @copyright  2016 Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class comment_created extends \core\event\comment_created {
+class competency_comment_created extends \core\event\comment_created {
 
     /**
      * Returns description of what happened.

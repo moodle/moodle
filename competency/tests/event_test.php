@@ -1241,7 +1241,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $cmt->context = $context;
         $cmt->area = 'plan';
         $cmt->itemid = $plan->get_id();
-        $cmt->component = 'tool_lp';
+        $cmt->component = 'competency';
         $cmt->showcount = 1;
         $manager = new comment($cmt);
         $manager->set_post_permission(true);
@@ -1255,7 +1255,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $event = array_pop($events);
 
         // Checking that the event contains the expected values.
-        $this->assertInstanceOf('\tool_lp\event\comment_created', $event);
+        $this->assertInstanceOf('\core\event\competency_comment_created', $event);
         $this->assertEquals($context, $event->get_context());
         $this->assertEquals($plan->get_id(), $event->other['itemid']);
         $this->assertEventContextNotUsed($event);
@@ -1279,7 +1279,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $cmt->context = $context;
         $cmt->area = 'plan';
         $cmt->itemid = $plan->get_id();
-        $cmt->component = 'tool_lp';
+        $cmt->component = 'competency';
         $manager = new comment($cmt);
         $newcomment = $manager->add("Comment to be deleted");
 
@@ -1291,7 +1291,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $event = reset($events);
 
         // Checking that the event contains the expected values.
-        $this->assertInstanceOf('\tool_lp\event\comment_deleted', $event);
+        $this->assertInstanceOf('\core\event\competency_comment_deleted', $event);
         $this->assertEquals($context, $event->get_context());
         $this->assertEquals($plan->get_id(), $event->other['itemid']);
         $this->assertEventContextNotUsed($event);
@@ -1633,7 +1633,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $cmt->context = $context;
         $cmt->area = 'user_competency';
         $cmt->itemid = $uc->get_id();
-        $cmt->component = 'tool_lp';
+        $cmt->component = 'competency';
         $cmt->showcount = 1;
         $manager = new comment($cmt);
 
@@ -1646,7 +1646,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $event = reset($events);
 
         // Checking that the event contains the expected values.
-        $this->assertInstanceOf('\tool_lp\event\comment_created', $event);
+        $this->assertInstanceOf('\core\event\competency_comment_created', $event);
         $this->assertEquals($context, $event->get_context());
         $this->assertEquals($uc->get_id(), $event->other['itemid']);
         $this->assertEventContextNotUsed($event);
@@ -1674,7 +1674,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $cmt->context = $context;
         $cmt->area = 'user_competency';
         $cmt->itemid = $uc->get_id();
-        $cmt->component = 'tool_lp';
+        $cmt->component = 'competency';
         $manager = new comment($cmt);
         $newcomment = $manager->add("Comment to be deleted");
 
@@ -1686,7 +1686,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $event = reset($events);
 
         // Checking that the event contains the expected values.
-        $this->assertInstanceOf('\tool_lp\event\comment_deleted', $event);
+        $this->assertInstanceOf('\core\event\competency_comment_deleted', $event);
         $this->assertEquals($context, $event->get_context());
         $this->assertEquals($uc->get_id(), $event->other['itemid']);
         $this->assertEventContextNotUsed($event);
