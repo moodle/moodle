@@ -32,8 +32,7 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException,
     Behat\Mink\Exception\DriverException as DriverException,
     WebDriver\Exception\NoSuchElement as NoSuchElement,
     WebDriver\Exception\StaleElementReference as StaleElementReference,
-    Behat\Gherkin\Node\TableNode as TableNode,
-    Moodle\BehatExtension\Context\Step\Given as Given;
+    Behat\Gherkin\Node\TableNode as TableNode;
 
 /**
  * Cross component steps definitions.
@@ -258,8 +257,9 @@ class behat_general extends behat_base {
      */
     public function wait_until_the_page_is_ready() {
 
+        // No need to wait if not running JS.
         if (!$this->running_javascript()) {
-            throw new DriverException('Waits are disabled in scenarios without Javascript support');
+            return;
         }
 
         $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);

@@ -26,9 +26,6 @@
 require_once(__DIR__ . '/../../../../../../lib/behat/behat_base.php');
 
 use Behat\Gherkin\Node\TableNode as TableNode,
-    Moodle\BehatExtension\Context\Step\Given as Given,
-    Moodle\BehatExtension\Context\Step\When as When,
-    Moodle\BehatExtension\Context\Step\Then as Then,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
     Behat\Mink\Exception\ExpectationException as ExpectationException;
 
@@ -162,9 +159,6 @@ class behat_gradingform_guide extends behat_base {
         $stepusage = '"I grade by filling the rubric with:" step needs you to provide a table where each row is a criterion' .
             ' and each criterion has 3 different values: | Criterion name | Number of points | Remark text |';
 
-        // To fill with the steps to execute.
-        $steps = array();
-
         // First element -> name, second -> points, third -> Remark.
         foreach ($criteria as $name => $criterion) {
 
@@ -192,12 +186,11 @@ class behat_gradingform_guide extends behat_base {
             if ($criterionid) {
                 $criterionroot = 'advancedgrading[criteria]' . '[' . $criterionid . ']';
 
-                $steps[] = new Given('I set the field "' . $criterionroot . '[score]' . '" to "' . $points . '"');
-                $steps[] = new Given('I set the field "' . $criterionroot . '[remark]' . '" to "' . $criterion[1] . '"');
+                $this->execute('behat_forms::i_set_the_field_to', array($criterionroot . '[score]', $points));
+
+                $this->execute('behat_forms::i_set_the_field_to', array($criterionroot . '[remark]', $criterion[1]));
             }
         }
-
-        return $steps;
     }
 
     /**

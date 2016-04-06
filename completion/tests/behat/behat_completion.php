@@ -27,9 +27,7 @@
 
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
-use Moodle\BehatExtension\Context\Step\Given,
-    Moodle\BehatExtension\Context\Step\Then,
-    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
+use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
 /**
  * Steps definitions to deal with course and activities completion.
@@ -55,9 +53,9 @@ class behat_completion extends behat_base {
         $xpath = "//table[@id='completion-progress']" .
             "/descendant::img[contains(@title, $titleliteral)]";
 
-        return array(
-            new Given('I go to the current course activity completion report'),
-            new Then('"' . $this->escape($xpath) . '" "xpath_element" should exist')
+        $this->execute("behat_completion::go_to_the_current_course_activity_completion_report");
+        $this->execute("behat_general::should_exist",
+            array($this->escape($xpath), "xpath_element")
         );
     }
 
@@ -74,12 +72,9 @@ class behat_completion extends behat_base {
         $titleliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($userfullname . ", " . $activityname . ": Not completed");
         $xpath = "//table[@id='completion-progress']" .
             "/descendant::img[contains(@title, $titleliteral)]";
-        return array(
-            new Given('I go to the current course activity completion report'),
-            new Then('"' . $this->escape($xpath) . '" "xpath_element" should exist')
-        );
 
-        return $steps;
+        $this->execute("behat_completion::go_to_the_current_course_activity_completion_report");
+        $this->execute("behat_general::should_exist", array($this->escape($xpath), "xpath_element"));
     }
 
     /**
@@ -91,7 +86,7 @@ class behat_completion extends behat_base {
         $completionnode = get_string('pluginname', 'report_progress');
         $reportsnode = get_string('courseadministration') . ' > ' . get_string('reports');
 
-        return new Given('I navigate to "' . $completionnode . '" node in "' . $reportsnode . '"');
+        $this->execute("behat_navigation::i_navigate_to_node_in", array($completionnode, $reportsnode));
     }
 
     /**
@@ -104,18 +99,21 @@ class behat_completion extends behat_base {
 
         $toggle = strtolower($completionstatus) == 'enabled' ? get_string('yes') : get_string('no');
 
-        return array(
-            new Given('I follow "'.get_string('editsettings').'"'),
-            new Given('I set the field "'.get_string('enablecompletion', 'completion').'" to "'.$toggle.'"'),
-            new Given('I press "'.get_string('savechangesanddisplay').'"')
-        );
+        // Go to course editing.
+        $this->execute("behat_general::click_link", get_string('editsettings'));
+
+        // Enable completion.
+        $this->execute("behat_forms::i_set_the_field_to",
+            array(get_string('enablecompletion', 'completion'), $toggle));
+
+        // Save course settings.
+        $this->execute("behat_forms::press_button", get_string('savechangesanddisplay'));
     }
 
     /**
      * Checks if the activity with specified name is maked as complete.
      *
      * @Given /^the "(?P<activityname_string>(?:[^"]|\\")*)" "(?P<activitytype_string>(?:[^"]|\\")*)" activity with "(manual|auto)" completion should be marked as complete$/
-     * @return array
      */
     public function activity_marked_as_complete($activityname, $activitytype, $completiontype) {
         if ($completiontype == "manual") {
@@ -125,15 +123,17 @@ class behat_completion extends behat_base {
         }
         $csselementforactivitytype = "li.modtype_".strtolower($activitytype);
 
-        return new Given('"//img[contains(@alt, \''.$imgalttext.'\')]" "xpath_element" ' .
-            'should exist in the "'.$csselementforactivitytype.'" "css_element"');
+        $xpathtocheck = "//img[contains(@alt, '$imgalttext')]";
+        $this->execute("behat_general::should_exist_in_the",
+            array($xpathtocheck, "xpath_element", $csselementforactivitytype, "css_element")
+        );
+
     }
 
     /**
      * Checks if the activity with specified name is maked as complete.
      *
      * @Given /^the "(?P<activityname_string>(?:[^"]|\\")*)" "(?P<activitytype_string>(?:[^"]|\\")*)" activity with "(manual|auto)" completion should be marked as not complete$/
-     * @return array
      */
     public function activity_marked_as_not_complete($activityname, $activitytype, $completiontype) {
         if ($completiontype == "manual") {
@@ -143,7 +143,10 @@ class behat_completion extends behat_base {
         }
         $csselementforactivitytype = "li.modtype_".strtolower($activitytype);
 
-        return new Given('"//img[contains(@alt, \''.$imgalttext.'\')]" "xpath_element" ' .
-            'should exist in the "'.$csselementforactivitytype.'" "css_element"');
+        $xpathtocheck = "//img[contains(@alt, '$imgalttext')]";
+        $this->execute("behat_general::should_exist_in_the",
+            array($xpathtocheck, "xpath_element", $csselementforactivitytype, "css_element")
+        );
+
     }
 }

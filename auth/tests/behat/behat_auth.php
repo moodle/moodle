@@ -28,9 +28,6 @@
 
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
-use Moodle\BehatExtension\Context\Step\Given as Given;
-use Moodle\BehatExtension\Context\Step\When as When;
-
 /**
  * Log in log out steps definitions.
  *
@@ -51,12 +48,11 @@ class behat_auth extends behat_base {
         $this->getSession()->visit($this->locate_path('login/index.php'));
 
         // Enter username and password.
-        $behatforms = behat_context_helper::get('behat_forms');
-        $behatforms->i_set_the_field_to('Username', $this->escape($username));
-        $behatforms->i_set_the_field_to('Password', $this->escape($username));
+        $this->execute('behat_forms::i_set_the_field_to', array('Username', $this->escape($username)));
+        $this->execute('behat_forms::i_set_the_field_to', array('Password', $this->escape($username)));
 
-        // Press log in button.
-        $behatforms->press_button(get_string('login'));
+        // Press log in button, no need to check for exceptions as it will checked after this step execution.
+        $this->execute('behat_forms::press_button', get_string('login'));
     }
 
     /**
@@ -65,22 +61,18 @@ class behat_auth extends behat_base {
      * @Given /^I log out$/
      */
     public function i_log_out() {
-
-        $steps = array(new When('I follow "' . get_string('logout') . '"'));
-
-        // No need to check anything else if we run without JS.
-        if (!$this->running_javascript()) {
-            return $steps;
-        }
-
         // There is no longer any need to worry about whether the navigation
         // bar needs to be expanded; user_menu now lives outside the
         // hamburger.
 
-        // However, the user menu *always* needs to be expanded.
-        $xpath = "//div[@class='usermenu']//a[contains(concat(' ', @class, ' '), ' toggle-display ')]";
-        array_unshift($steps, new When('I click on "'.$xpath.'" "xpath_element"'));
+        // However, the user menu *always* needs to be expanded. if running JS.
+        if ($this->running_javascript()) {
+            $xpath = "//div[@class='usermenu']//a[contains(concat(' ', @class, ' '), ' toggle-display ')]";
 
-        return $steps;
+            $this->execute('behat_general::i_click_on', array($xpath, "xpath_element"));
+        }
+
+        // No need to check for exceptions as it will checked after this step execution.
+        $this->execute('behat_general::click_link', get_string('logout'));
     }
 }

@@ -27,8 +27,6 @@
 
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
-use Moodle\BehatExtension\Context\Step\Given as Given;
-
 /**
  * Choice activity definitions.
  *
@@ -49,12 +47,11 @@ class behat_mod_choice extends behat_base {
      */
     public function I_choose_option_from_activity($option, $choiceactivity) {
 
-        // Escaping again the strings as backslashes have been removed by the automatic transformation.
-        return array(
-            new Given('I follow "' . $this->escape($choiceactivity) . '"'),
-            new Given('I set the field "' . $this->escape($option) . '" to "1"'),
-            new Given('I press "' . get_string('savemychoice', 'choice') . '"')
-        );
+        $this->execute("behat_general::click_link", $this->escape($choiceactivity));
+
+        $this->execute('behat_forms::i_set_the_field_to', array( $this->escape($option), 1));
+
+        $this->execute("behat_forms::press_button", get_string('savemychoice', 'choice'));
     }
 
     /**

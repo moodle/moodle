@@ -28,7 +28,6 @@
 require_once(__DIR__ . '/../../behat/behat_base.php');
 
 use Behat\Mink\Exception\ExpectationException as ExpectationException,
-    Moodle\BehatExtension\Context\Step\Given as Given,
     Behat\Gherkin\Node\TableNode as TableNode;
 
 /**
@@ -46,20 +45,25 @@ class behat_permissions extends behat_base {
      * @Given /^I set the following system permissions of "(?P<rolefullname_string>(?:[^"]|\\")*)" role:$/
      * @param string $rolename
      * @param TableNode $table
-     * @return void Executes other steps
      */
     public function i_set_the_following_system_permissions_of_role($rolename, $table) {
 
         $parentnodes = get_string('administrationsite') . ' > ' .
             get_string('users', 'admin') . ' > ' .
             get_string('permissions', 'role');
-        return array(
-            new Given('I am on homepage'),
-            new Given('I navigate to "' . get_string('defineroles', 'role') . '" node in "' . $parentnodes . '"'),
-            new Given('I follow "Edit ' . $this->escape($rolename) . ' role"'),
-            new Given('I fill the capabilities form with the following permissions:', $table),
-            new Given('I press "' . get_string('savechanges') . '"')
+
+        // Go to home page.
+        $this->execute("behat_general::i_am_on_homepage");
+
+        // Navigate to course management page via navigation block.
+        $this->execute("behat_navigation::i_navigate_to_node_in",
+            array(get_string('defineroles', 'role'), $parentnodes)
         );
+
+        $this->execute("behat_general::click_link", "Edit " . $this->escape($rolename) . " role");
+        $this->execute("behat_permissions::i_fill_the_capabilities_form_with_the_following_permissions", $table);
+
+        $this->execute('behat_forms::press_button', get_string('savechanges'));
     }
 
     /**
@@ -67,22 +71,23 @@ class behat_permissions extends behat_base {
      * @Given /^I override the system permissions of "(?P<rolefullname_string>(?:[^"]|\\")*)" role with:$/
      * @param string $rolename
      * @param TableNode $table
-     * @return void Executes other steps
      */
     public function i_override_the_system_permissions_of_role_with($rolename, $table) {
 
         // We don't know the number of overrides so we have to get it to match the option contents.
         $roleoption = $this->find('xpath', '//select[@name="roleid"]/option[contains(.,"' . $this->escape($rolename) . '")]');
 
-        $result = array(
-            new Given('I set the field "' . get_string('advancedoverride', 'role') .
-                '" to "' . $this->escape($roleoption->getText()) . '"'));
+        $this->execute('behat_forms::i_set_the_field_to',
+            array(get_string('advancedoverride', 'role'), $this->escape($roleoption->getText()))
+        );
+
         if (!$this->running_javascript()) {
-            $result[] = new Given('I press "' . get_string('go') . '"');
+            $this->execute("behat_forms::press_button", get_string('go'));
         }
-        $result[] = new Given('I fill the capabilities form with the following permissions:', $table);
-        $result[] = new Given('I press "' . get_string('savechanges') . '"');
-        return $result;
+
+        $this->execute("behat_permissions::i_fill_the_capabilities_form_with_the_following_permissions", $table);
+
+        $this->execute('behat_forms::press_button', get_string('savechanges'));
     }
 
     /**
@@ -192,13 +197,21 @@ class behat_permissions extends behat_base {
         $parentnodes = get_string('administrationsite') . ' > ' .
             get_string('users', 'admin') . ' > ' .
             get_string('permissions', 'role');
-        return array(
-            new Given('I am on homepage'),
-            new Given('I navigate to "' . get_string('defineroles', 'role') . '" node in "' . $parentnodes . '"'),
-            new Given('I follow "Allow role assignments"'),
-            new Given('I fill in the allowed role assignments form for the "' . $rolename . '" role with:', $table),
-            new Given('I press "' . get_string('savechanges') . '"')
+
+        // Go to home page.
+        $this->execute("behat_general::i_am_on_homepage");
+
+        // Navigate to course management page via navigation block.
+        $this->execute("behat_navigation::i_navigate_to_node_in",
+            array(get_string('defineroles', 'role'), $parentnodes)
         );
+
+        $this->execute("behat_general::click_link", "Allow role assignments");
+        $this->execute("behat_permissions::i_fill_in_the_allowed_role_assignments_form_for_a_role_with",
+            array($rolename, $table)
+        );
+
+        $this->execute('behat_forms::press_button', get_string('savechanges'));
     }
 
     /**
