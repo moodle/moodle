@@ -1536,6 +1536,68 @@ class backup_activity_logstores_structure_step extends backup_course_logstores_s
 }
 
 /**
+ * Course competencies backup structure step.
+ */
+class backup_course_competencies_structure_step extends backup_structure_step {
+
+    protected function define_structure() {
+        $wrapper = new backup_nested_element('course_competencies');
+
+        $settings = new backup_nested_element('settings', array('id'), array('pushratingstouserplans'));
+        $wrapper->add_child($settings);
+
+        $sql = 'SELECT s.pushratingstouserplans
+                  FROM {' . \core_competency\course_competency_settings::TABLE . '} s
+                 WHERE s.courseid = :courseid';
+        $settings->set_source_sql($sql, array('courseid' => backup::VAR_COURSEID));
+
+        $competencies = new backup_nested_element('competencies');
+        $wrapper->add_child($competencies);
+
+        $competency = new backup_nested_element('competency', null, array('idnumber', 'ruleoutcome',
+            'sortorder', 'frameworkidnumber'));
+        $competencies->add_child($competency);
+
+        $sql = 'SELECT c.idnumber, cc.ruleoutcome, cc.sortorder, f.idnumber AS frameworkidnumber
+                  FROM {' . \core_competency\course_competency::TABLE . '} cc
+                  JOIN {' . \core_competency\competency::TABLE . '} c ON c.id = cc.competencyid
+                  JOIN {' . \core_competency\competency_framework::TABLE . '} f ON f.id = c.competencyframeworkid
+                 WHERE cc.courseid = :courseid
+              ORDER BY cc.sortorder';
+        $competency->set_source_sql($sql, array('courseid' => backup::VAR_COURSEID));
+
+        return $wrapper;
+    }
+}
+
+/**
+ * Activity competencies backup structure step.
+ */
+class backup_activity_competencies_structure_step extends backup_structure_step {
+
+    protected function define_structure() {
+        $wrapper = new backup_nested_element('course_module_competencies');
+
+        $competencies = new backup_nested_element('competencies');
+        $wrapper->add_child($competencies);
+
+        $competency = new backup_nested_element('competency', null, array('idnumber', 'ruleoutcome',
+            'sortorder', 'frameworkidnumber'));
+        $competencies->add_child($competency);
+
+        $sql = 'SELECT c.idnumber, cmc.ruleoutcome, cmc.sortorder, f.idnumber AS frameworkidnumber
+                  FROM {' . \core_competency\course_module_competency::TABLE . '} cmc
+                  JOIN {' . \core_competency\competency::TABLE . '} c ON c.id = cmc.competencyid
+                  JOIN {' . \core_competency\competency_framework::TABLE . '} f ON f.id = c.competencyframeworkid
+                 WHERE cmc.cmid = :coursemoduleid
+              ORDER BY cmc.sortorder';
+        $competency->set_source_sql($sql, array('coursemoduleid' => backup::VAR_MODID));
+
+        return $wrapper;
+    }
+}
+
+/**
  * structure in charge of constructing the inforef.xml file for all the items we want
  * to have referenced there (users, roles, files...)
  */

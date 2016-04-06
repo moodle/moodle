@@ -3055,6 +3055,171 @@ class restore_course_logstores_structure_step extends restore_structure_step {
 class restore_activity_logstores_structure_step extends restore_course_logstores_structure_step {
 }
 
+/**
+ * Restore course competencies structure step.
+ */
+class restore_course_competencies_structure_step extends restore_structure_step {
+
+    /**
+     * Returns the structure.
+     *
+     * @return array
+     */
+    protected function define_structure() {
+        $paths = array(
+            new restore_path_element('course_competency', '/course_competencies/competencies/competency'),
+            new restore_path_element('course_competency_settings', '/course_competencies/settings')
+        );
+        return $paths;
+    }
+
+    /**
+     * Process a course competency settings.
+     *
+     * @param array $data The data.
+     */
+    public function process_course_competency_settings($data) {
+        global $DB;
+
+        $data = (object) $data;
+        $courseid = $this->task->get_courseid();
+        $exists = \core_competency\course_competency_settings::get_record(array('courseid' => $courseid));
+
+        // Now update or insert.
+        if ($exists) {
+            $settings = $exists;
+            $settings->set_pushratingstouserplans($data->pushratingstouserplans);
+            return $settings->update();
+        } else {
+            $data = (object) array('courseid' => $courseid, 'pushratingstouserplans' => $data->pushratingstouserplans);
+            $settings = new \core_competency\course_competency_settings(0, $data);
+            $result = $settings->create();
+            return !empty($result);
+        }
+    }
+
+    /**
+     * Process a course competency.
+     *
+     * @param array $data The data.
+     */
+    public function process_course_competency($data) {
+        $data = (object) $data;
+
+        // Mapping the competency by ID numbers.
+        $framework = \core_competency\competency_framework::get_record(array('idnumber' => $data->frameworkidnumber));
+        if (!$framework) {
+            return;
+        }
+        $competency = \core_competency\competency::get_record(array('idnumber' => $data->idnumber,
+            'competencyframeworkid' => $framework->get_id()));
+        if (!$competency) {
+            return;
+        }
+
+        $params = array(
+            'competencyid' => $competency->get_id(),
+            'courseid' => $this->task->get_courseid()
+        );
+        $query = 'competencyid = :competencyid AND courseid = :courseid';
+        $existing = \core_competency\course_competency::record_exists_select($query, $params);
+
+        if (!$existing) {
+            // Sortorder is ignored by precaution, anyway we should walk through the records in the right order.
+            $record = (object) $params;
+            $record->ruleoutcome = $data->ruleoutcome;
+            $coursecompetency = new \core_competency\course_competency(0, $record);
+            $coursecompetency->create();
+        }
+    }
+
+    /**
+     * Execute conditions.
+     *
+     * @return bool
+     */
+    protected function execute_condition() {
+
+        // Do not execute if the competencies XML file is not found.
+        $fullpath = $this->task->get_taskbasepath();
+        $fullpath = rtrim($fullpath, '/') . '/' . $this->filename;
+        if (!file_exists($fullpath)) {
+            return false;
+        }
+
+        return true;
+    }
+}
+
+/**
+ * Restore activity competencies structure step.
+ */
+class restore_activity_competencies_structure_step extends restore_structure_step {
+
+    /**
+     * Defines the structure.
+     *
+     * @return array
+     */
+    protected function define_structure() {
+        $paths = array(
+            new restore_path_element('course_module_competency', '/course_module_competencies/competencies/competency')
+        );
+        return $paths;
+    }
+
+    /**
+     * Process a course module competency.
+     *
+     * @param array $data The data.
+     */
+    public function process_course_module_competency($data) {
+        $data = (object) $data;
+
+        // Mapping the competency by ID numbers.
+        $framework = \core_competency\competency_framework::get_record(array('idnumber' => $data->frameworkidnumber));
+        if (!$framework) {
+            return;
+        }
+        $competency = \core_competency\competency::get_record(array('idnumber' => $data->idnumber,
+            'competencyframeworkid' => $framework->get_id()));
+        if (!$competency) {
+            return;
+        }
+
+        $params = array(
+            'competencyid' => $competency->get_id(),
+            'cmid' => $this->task->get_moduleid()
+        );
+        $query = 'competencyid = :competencyid AND cmid = :cmid';
+        $existing = \core_competency\course_module_competency::record_exists_select($query, $params);
+
+        if (!$existing) {
+            // Sortorder is ignored by precaution, anyway we should walk through the records in the right order.
+            $record = (object) $params;
+            $record->ruleoutcome = $data->ruleoutcome;
+            $coursemodulecompetency = new \core_competency\course_module_competency(0, $record);
+            $coursemodulecompetency->create();
+        }
+    }
+
+    /**
+     * Execute conditions.
+     *
+     * @return bool
+     */
+    protected function execute_condition() {
+
+        // Do not execute if the competencies XML file is not found.
+        $fullpath = $this->task->get_taskbasepath();
+        $fullpath = rtrim($fullpath, '/') . '/' . $this->filename;
+        if (!file_exists($fullpath)) {
+            return false;
+        }
+
+        return true;
+    }
+}
 
 /**
  * Defines the restore step for advanced grading methods attached to the activity module
