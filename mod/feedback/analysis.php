@@ -47,7 +47,6 @@ if (!feedback_can_view_analysis($feedback, $context)) {
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
-$PAGE->navbar->add(get_string('analysis', 'feedback'));
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
 echo $OUTPUT->header();
@@ -56,9 +55,6 @@ echo $OUTPUT->heading(format_string($feedback->name));
 /// print the tabs
 require('tabs.php');
 
-
-//print analysed items
-echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 
 //get the groupid
 $myurl = $CFG->wwwroot.'/mod/feedback/analysis.php?id='.$cm->id.'&do_show=analysis';
@@ -127,7 +123,6 @@ if ($check_anonymously) {
                                     'feedback', '', '', 3);
 }
 echo '</div>';
-echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();
 

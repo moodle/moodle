@@ -1,3 +1,7 @@
+=== 3.1 ===
+
+* feedback_get_courses_from_sitecourse_map() now returns course id as 'id' attribute
+
 === 2.7 ===
 
 * The validation of the following events is now stricter (see MDL-45445):

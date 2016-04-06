@@ -137,11 +137,6 @@ if (isset($error)) {
 }
 $itemobj->show_editform();
 
-if ($typ!='label') {
-    $PAGE->requires->js('/mod/feedback/feedback.js');
-    $PAGE->requires->js_function_call('set_item_focus', Array('id_itemname'));
-}
-
 /// Finish the page
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////

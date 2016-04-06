@@ -28,18 +28,15 @@ require_once("lib.php");
 $current_tab = 'analysis';
 
 $id = required_param('id', PARAM_INT);  //the POST dominated the GET
-$coursefilter = optional_param('coursefilter', '0', PARAM_INT);
 $courseitemfilter = optional_param('courseitemfilter', '0', PARAM_INT);
 $courseitemfiltertyp = optional_param('courseitemfiltertyp', '0', PARAM_ALPHANUM);
 $searchcourse = optional_param('searchcourse', '', PARAM_RAW);
 $courseid = optional_param('courseid', false, PARAM_INT);
 
 $url = new moodle_url('/mod/feedback/analysis_course.php', array('id'=>$id));
+navigation_node::override_active_url($url);
 if ($courseid !== false) {
     $url->param('courseid', $courseid);
-}
-if ($coursefilter !== '0') {
-    $url->param('coursefilter', $coursefilter);
 }
 if ($courseitemfilter !== '0') {
     $url->param('courseitemfilter', $courseitemfilter);
@@ -51,10 +48,6 @@ if ($searchcourse !== '') {
     $url->param('searchcourse', $searchcourse);
 }
 $PAGE->set_url($url);
-
-if (($searchcourse OR $courseitemfilter OR $coursefilter) AND !confirm_sesskey()) {
-    print_error('invalidsesskey');
-}
 
 if (! $cm = get_coursemodule_from_id('feedback', $id)) {
     print_error('invalidcoursemodule');
@@ -83,21 +76,18 @@ $strfeedback  = get_string("modulename", "feedback");
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
 echo $OUTPUT->header();
+echo $OUTPUT->heading(format_string($feedback->name));
 
 /// print the tabs
 require('tabs.php');
 
 //print the analysed items
-echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 
 if (has_capability('mod/feedback:viewreports', $context)) {
     //button "export to excel"
-    echo $OUTPUT->container_start('mdl-align');
-    $aurl = new moodle_url('analysis_to_excel.php',
-                           array('sesskey' => sesskey(),
-                                 'id' => $id,
-                                 'coursefilter' => $coursefilter));
-
+    echo $OUTPUT->container_start('form-buttons');
+    $aurl = new moodle_url('analysis_to_excel.php', array('sesskey' => sesskey(), 'id' => $id,
+                                 'coursefilter' => $courseid));
     echo $OUTPUT->single_button($aurl, get_string('export_to_excel', 'feedback'));
     echo $OUTPUT->container_end();
 }
@@ -106,7 +96,7 @@ if (has_capability('mod/feedback:viewreports', $context)) {
 //lstgroupid is the choosen id
 $mygroupid = false;
 //get completed feedbacks
-$completedscount = feedback_get_completeds_group_count($feedback, $mygroupid, $coursefilter);
+$completedscount = feedback_get_completeds_group_count($feedback, $mygroupid, $courseid);
 
 //show the count
 echo '<b>'.get_string('completed_feedbacks', 'feedback').': '.$completedscount. '</b><br />';
@@ -117,15 +107,8 @@ $items = $DB->get_records('feedback_item', $params, 'position');
 //show the count
 if (is_array($items)) {
     echo '<b>'.get_string('questions', 'feedback').': ' .count($items). ' </b><hr />';
-    echo '<a href="analysis_course.php?id=' . $id . '&courseid='.$courseid.'">';
-    echo get_string('show_all', 'feedback');
-    echo '</a>';
-} else {
-    $items=array();
 }
 
-echo '<form name="report" method="post" id="analysis-form">';
-echo '<div class="mdl-align"><table width="80%" cellpadding="10">';
 if ($courseitemfilter > 0) {
     $avgvalue = 'avg(value)';
     if ($DB->get_dbfamily() == 'postgres') { // TODO: this should be moved to standard sql DML function ;-)
@@ -140,8 +123,9 @@ if ($courseitemfilter > 0) {
 
     if ($courses = $DB->get_records_sql($sql, array($courseitemfiltertyp, $courseitemfilter))) {
         $item = $DB->get_record('feedback_item', array('id'=>$courseitemfilter));
-        echo '<tr><th colspan="2">'.$item->name.'</th></tr>';
-        echo '<tr><td><table align="left">';
+        echo '<h4>'.$item->name.'</h4>';
+        echo '<div class="clearfix">';
+        echo '<table>';
         echo '<tr><th>Course</th><th>Average</th></tr>';
         $sep_dec = get_string('separator_decimal', 'feedback');
         $sep_thous = get_string('separator_thousand', 'feedback');
@@ -157,21 +141,21 @@ if ($courseitemfilter > 0) {
             echo '</td>';
             echo '</tr>';
         }
-         echo '</table></td></tr>';
+        echo '</table>';
     } else {
-         echo '<tr><td>'.get_string('noresults').'</td></tr>';
+        echo '<p>'.get_string('noresults').'</p>';
     }
+    echo '<p><a href="analysis_course.php?id=' . $id . '">';
+    echo get_string('back');
+    echo '</a></p>';
 } else {
 
+    echo '<div class="mdl-align">';
+    echo '<form name="report" method="get" id="analysis-form">';
     echo html_writer::label(get_string('search_course', 'feedback') . ': ', 'searchcourse');
     echo '<input id="searchcourse" type="text" name="searchcourse" value="'.s($searchcourse).'"/> ';
     echo '<input type="submit" value="'.get_string('search').'"/>';
-    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<input type="hidden" name="id" value="'.$id.'" />';
-    echo '<input type="hidden" name="courseitemfilter" value="'.$courseitemfilter.'" />';
-    echo '<input type="hidden" name="courseitemfiltertyp" value="'.$courseitemfiltertyp.'" />';
-    echo '<input type="hidden" name="courseid" value="'.$courseid.'" />';
-    echo html_writer::script('', $CFG->wwwroot.'/mod/feedback/feedback.js');
     $sql = 'select DISTINCT c.id, c.shortname from {course} c, '.
                                           '{feedback_value} fv, {feedback_item} fi '.
                                           'where c.id = fv.course_id and fv.item = fi.id '.
@@ -182,9 +166,11 @@ if ($courseitemfilter > 0) {
     $params = array($feedback->id, "%$searchcourse%", "%$searchcourse%");
 
     if ($courses = $DB->get_records_sql_menu($sql, $params)) {
-
-         echo ' '. html_writer::label(get_string('filter_by_course', 'feedback'), 'coursefilterid'). ': ';
-         echo html_writer::select($courses, 'coursefilter', $coursefilter,
+        if (!$courseid) {
+            $courses = array('' => get_string('choosedots')) + $courses;
+        }
+        echo ' '. html_writer::label(get_string('filter_by_course', 'feedback'). ': ', 'coursefilterid');
+        echo html_writer::select($courses, 'courseid', $courseid,
                                   null, array('id'=>'coursefilterid', 'class' => 'autosubmit'));
 
         $PAGE->requires->yui_module('moodle-core-formautosubmit',
@@ -192,15 +178,22 @@ if ($courseitemfilter > 0) {
             array(array('selectid' => 'coursefilterid', 'nothing' => false))
         );
     }
+    if ($courseid) {
+        echo ' <a href="analysis_course.php?id=' . $id . '">';
+        echo get_string('show_all', 'feedback');
+        echo '</a>';
+    }
+
+    echo '</form>';
+    echo '</div>';
     echo '<hr />';
     $itemnr = 0;
     //print the items in an analysed form
-    echo '<tr><td>';
     foreach ($items as $item) {
         if ($item->hasvalue == 0) {
             continue;
         }
-        echo '<table width="100%" class="generalbox">';
+        echo '<table>';
         //get the class from item-typ
         $itemobj = feedback_get_item_class($item->typ);
         $itemnr++;
@@ -209,25 +202,17 @@ if ($courseitemfilter > 0) {
         } else {
             $printnr = '';
         }
-        $itemobj->print_analysed($item, $printnr, $mygroupid, $coursefilter);
+        $itemobj->print_analysed($item, $printnr, $mygroupid, $courseid);
         if (preg_match('/rated$/i', $item->typ)) {
-            $onclick = 'onclick="setcourseitemfilter'.
-                        "(".$item->id.",'".$item->typ."');".
-                        ' return false;"';
-
-            $anker = '<a href="#" '.$onclick.'>'.
-                     get_string('sort_by_course', 'feedback').
-                     '</a>';
+            $url = new moodle_url('/mod/feedback/analysis_course.php', array('id' => $id,
+                'courseitemfilter' => $item->id, 'courseitemfiltertyp' => $item->typ));
+            $anker = html_writer::link($url, get_string('sort_by_course', 'feedback'));
 
             echo '<tr><td colspan="2">'.$anker.'</td></tr>';
         }
         echo '</table>';
     }
-    echo '</td></tr>';
 }
-echo '</table></div>';
-echo '</form>';
-echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();
 

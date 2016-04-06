@@ -2851,16 +2851,15 @@ function feedback_get_feedbacks_from_sitecourse_map($courseid) {
 }
 
 /**
- * gets the courses from table feedback_sitecourse_map.
+ * Gets the courses from table feedback_sitecourse_map
  *
- * @global object
  * @param int $feedbackid
  * @return array the course-records
  */
 function feedback_get_courses_from_sitecourse_map($feedbackid) {
     global $DB;
 
-    $sql = "SELECT f.id, f.courseid, c.fullname, c.shortname
+    $sql = "SELECT c.id, c.fullname, c.shortname
               FROM {feedback_sitecourse_map} f, {course} c
              WHERE c.id = f.courseid
                    AND f.feedbackid = ?
@@ -2868,6 +2867,27 @@ function feedback_get_courses_from_sitecourse_map($feedbackid) {
 
     return $DB->get_records_sql($sql, array($feedbackid));
 
+}
+
+/**
+ * Updates the course mapping for the feedback
+ *
+ * @param stdClass $feedback
+ * @param array $courses array of course ids
+ */
+function feedback_update_sitecourse_map($feedback, $courses) {
+    global $DB;
+    if (empty($courses)) {
+        $courses = array();
+    }
+    $currentmapping = $DB->get_fieldset_select('feedback_sitecourse_map', 'courseid', 'feedbackid=?', array($feedback->id));
+    foreach (array_diff($courses, $currentmapping) as $courseid) {
+        $DB->insert_record('feedback_sitecourse_map', array('feedbackid' => $feedback->id, 'courseid' => $courseid));
+    }
+    foreach (array_diff($currentmapping, $courses) as $courseid) {
+        $DB->delete_records('feedback_sitecourse_map', array('feedbackid' => $feedback->id, 'courseid' => $courseid));
+    }
+    // TODO MDL-53574 add events.
 }
 
 /**
@@ -3147,7 +3167,7 @@ function feedback_encode_target_url($url) {
 function feedback_extend_settings_navigation(settings_navigation $settings,
                                              navigation_node $feedbacknode) {
 
-    global $PAGE, $DB;
+    global $PAGE;
 
     if (!$context = context_module::instance($PAGE->cm->id, IGNORE_MISSING)) {
         print_error('badcontext');
@@ -3176,20 +3196,22 @@ function feedback_extend_settings_navigation(settings_navigation $settings,
                                           'do_show' => 'templates')));
     }
 
+    if (has_capability('mod/feedback:mapcourse', $context) && $PAGE->course->id == SITEID) {
+        $feedbacknode->add(get_string('mappedcourses', 'feedback'),
+                    new moodle_url('/mod/feedback/mapcourse.php',
+                                    array('id' => $PAGE->cm->id)));
+    }
+
     if (has_capability('mod/feedback:viewreports', $context)) {
-        $feedback = $DB->get_record('feedback', array('id'=>$PAGE->cm->instance));
+        $feedback = $PAGE->activityrecord;
         if ($feedback->course == SITEID) {
             $feedbacknode->add(get_string('analysis', 'feedback'),
                     new moodle_url('/mod/feedback/analysis_course.php',
-                                    array('id' => $PAGE->cm->id,
-                                          'course' => $PAGE->course->id,
-                                          'do_show' => 'analysis')));
+                                    array('id' => $PAGE->cm->id)));
         } else {
             $feedbacknode->add(get_string('analysis', 'feedback'),
                     new moodle_url('/mod/feedback/analysis.php',
-                                    array('id' => $PAGE->cm->id,
-                                          'course' => $PAGE->course->id,
-                                          'do_show' => 'analysis')));
+                                    array('id' => $PAGE->cm->id)));
         }
 
         $feedbacknode->add(get_string('show_entries', 'feedback'),
