@@ -4,7 +4,6 @@ Feature: Multiple option choice response
   As a teacher
   I need to add choice activities to courses with multiple options enabled
 
-  @javascript
   Scenario: Complete a choice with multiple options enabled
     Given the following "users" exist:
       | username | firstname | lastname | email |
@@ -33,7 +32,6 @@ Feature: Multiple option choice response
     Then I should see "Your selection: Option 1; Option 2"
     And I should see "Your choice has been saved"
 
-  @javascript
   Scenario: Complete a choice with multiple options enabled and limited responses set
     Given the following "users" exist:
       | username | firstname | lastname | email |

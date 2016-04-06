@@ -20,7 +20,6 @@ Feature: In a lesson activity, students can see questions in random order
     And I follow "Course 1"
     And I turn editing mode on
 
-  @javascript
   Scenario: Lesson with two clusters
     Given I add a "Lesson" to section "1" and I fill the form with:
       | Name | Lesson with clusters |
@@ -33,7 +32,7 @@ Feature: In a lesson activity, students can see questions in random order
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I set the field "qtype" to "Add a content page"
+    And I select "Add a content page" from the "qtype" singleselect
     And I set the following fields to these values:
       | Page title | Second page name |
       | Page contents | Second page contents |
