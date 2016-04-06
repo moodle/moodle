@@ -71,7 +71,6 @@ Feature: In a lesson activity, teacher can edit a cluster page
       | id_jumpto_0 | Next page |
     And I press "Save page"
 
-  @javascript
   Scenario: Edit lesson cluster page
     Given I click on "//th[normalize-space(.)='Cluster']/descendant::a[2]" "xpath_element"
     When I set the following fields to these values:

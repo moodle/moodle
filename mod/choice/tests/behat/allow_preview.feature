@@ -20,7 +20,6 @@ Feature: Allow choice preview
     And I follow "Course 1"
     And I turn editing mode on
 
-  @javascript
   Scenario: Enable the choice preview option and view the activity as a student before the opening time
     Given I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice name |
