@@ -40,7 +40,7 @@ $time = optional_param('preset_time', 'weeknow', PARAM_ALPHA);
 $now = $calendartype->timestamp_to_date_array(time());
 
 // Let's see if we have sufficient and correct data
-$allowed_what = array('all', 'courses');
+$allowed_what = array('all', 'user', 'groups', 'courses');
 $allowed_time = array('weeknow', 'weeknext', 'monthnow', 'monthnext', 'recentupcoming', 'custom');
 
 if (!empty($generateurl)) {
@@ -61,8 +61,7 @@ if(!empty($what) && !empty($time)) {
     if(in_array($what, $allowed_what) && in_array($time, $allowed_time)) {
         $courses = enrol_get_users_courses($user->id, true, 'id, visible, shortname');
 
-        if ($what == 'all') {
-            $users = $user->id;
+        if ($what == 'all' || $what == 'groups') {
             $groups = array();
             foreach ($courses as $course) {
                 $course_groups = groups_get_all_groups($course->id, $user->id);
@@ -71,8 +70,18 @@ if(!empty($what) && !empty($time)) {
             if (empty($groups)) {
                 $groups = false;
             }
+        }
+        if ($what == 'all') {
+            $users = $user->id;
             $courses[SITEID] = new stdClass;
             $courses[SITEID]->shortname = get_string('globalevents', 'calendar');
+        } else if ($what == 'groups') {
+            $users = false;
+            $courses = array();
+        } else if ($what == 'user') {
+            $users = $user->id;
+            $groups = false;
+            $courses = array();
         } else {
             $users = false;
             $groups = false;
