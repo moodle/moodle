@@ -51,7 +51,7 @@ if (!empty($approve) and confirm_sesskey()) {
     $courseid = $course->approve();
 
     if ($courseid !== false) {
-        redirect($CFG->wwwroot.'/course/edit.php?id=' . $courseid);
+        redirect(new moodle_url('/course/edit.php', ['id' => $courseid, 'returnto' => 'pending']));
     } else {
         print_error('courseapprovedfailed');
     }
