@@ -35,7 +35,6 @@ class mod_feedback_course_map_form extends moodleform {
      * Definition of the form
      */
     public function definition() {
-        global $PAGE;
         $mform  = $this->_form;
 
         $mform->addElement('hidden', 'id');
@@ -44,7 +43,6 @@ class mod_feedback_course_map_form extends moodleform {
         $options = array('multiple' => true);
         $mform->addElement('course', 'mappedcourses', get_string('courses'), $options);
 
-        // Automatically submit form in AJAX request every time 'mappedcourses' is modified.
-        $PAGE->requires->js_call_amd('mod_feedback/feedback', 'initCourseMapping', array('#id_mappedcourses'));
+        $this->add_action_buttons();
     }
 }

@@ -153,6 +153,7 @@ $string['mapcourse_help'] = 'By default, feedback forms created on your homepage
 and will appear in all courses using the feedback block. You can force the feedback form to appear by making it a sticky block or limit the courses in which a feedback form will appear by mapping it to specific courses.';
 $string['mapcourses'] = 'Map feedback to courses';
 $string['mappedcourses'] = 'Mapped courses';
+$string['mappingchanged'] = 'Course mapping has been changed';
 $string['max_args_exceeded'] = 'Max 6 arguments can be handled, too many arguments for';
 $string['minimal'] = 'minimum';
 $string['maximal'] = 'maximum';

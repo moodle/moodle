@@ -143,9 +143,8 @@ Feature: Mapping courses in a feedback
     And I follow "Course feedback"
     And I follow "Map feedback to courses"
     And I set the field "Courses" to "Course 2"
-    And I wait until the page is ready
     And I set the field "Courses" to "Course 3"
-    And I wait until the page is ready
+    And I press "Save changes"
     And I log out
 
     And I log in as "user1"

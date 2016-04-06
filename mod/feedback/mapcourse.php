@@ -43,8 +43,12 @@ require_capability('mod/feedback:mapcourse', $context);
 $coursemap = array_keys(feedback_get_courses_from_sitecourse_map($feedback->id));
 $form = new mod_feedback_course_map_form();
 $form->set_data(array('id' => $cm->id, 'mappedcourses' => $coursemap));
-if ($data = $form->get_data()) {
+$mainurl = new moodle_url('/mod/feedback/view.php', ['id' => $id]);
+if ($form->is_cancelled()) {
+    redirect($mainurl);
+} else if ($data = $form->get_data()) {
     feedback_update_sitecourse_map($feedback, $data->mappedcourses);
+    redirect($mainurl, get_string('mappingchanged', 'feedback'), null, \core\output\notification::NOTIFY_SUCCESS);
 }
 
 // Print the page header.
