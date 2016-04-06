@@ -72,8 +72,8 @@ class behat_question extends behat_question_base {
     public function the_state_of_question_is_shown_as($questiondescription, $state) {
 
         // Using xpath literal to avoid quotes problems.
-        $questiondescriptionliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($questiondescription);
-        $stateliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($state);
+        $questiondescriptionliteral = behat_context_helper::escape($questiondescription);
+        $stateliteral = behat_context_helper::escape($state);
 
         // Split in two checkings to give more feedback in case of exception.
         $exception = new ElementNotFoundException($this->getSession(), 'Question "' . $questiondescription . '" ');

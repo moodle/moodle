@@ -106,6 +106,8 @@ information provided here is intended especially for developers.
 * Changes in file_rewrite_pluginfile_urls: Passing a new option reverse = true in the $options var will make the function to convert
   actual URLs in $text to encoded URLs in the @@PLUGINFILE@@ form.
 * behat_util::is_server_running() is removed, please use behat_util::check_server_status() instead.
+* Behat\Mink\Selector\SelectorsHandler::xpathLiteral() method is deprecated use behat_context_helper::escape instead
+  when building Xpath, or pass the unescaped value when using the named selector.',
 
 === 3.0 ===
 

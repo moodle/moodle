@@ -227,8 +227,8 @@ class behat_gradingform_rubric extends behat_base {
      */
     public function i_replace_rubric_level_with($currentvalue, $value, $criterionname) {
 
-        $currentvalueliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($currentvalue);
-        $criterionliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($criterionname);
+        $currentvalueliteral = behat_context_helper::escape($currentvalue);
+        $criterionliteral = behat_context_helper::escape($criterionname);
 
         $criterionxpath = "//div[@id='rubric-rubric']" .
             "/descendant::td[contains(concat(' ', normalize-space(@class), ' '), ' description ')]";
@@ -488,7 +488,7 @@ class behat_gradingform_rubric extends behat_base {
      * @return string
      */
     protected function get_criterion_xpath($criterionname) {
-        $literal = $this->getSession()->getSelectorsHandler()->xpathLiteral($criterionname);
+        $literal = behat_context_helper::escape($criterionname);
         return "//tr[contains(concat(' ', normalize-space(@class), ' '), ' criterion ')]" .
             "[./descendant::td[@class='description'][text()=$literal]]";
     }

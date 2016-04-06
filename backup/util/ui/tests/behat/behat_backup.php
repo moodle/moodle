@@ -167,7 +167,7 @@ class behat_backup extends behat_base {
             $this->getSession());
 
         // The argument should be converted to an xpath literal.
-        $fromcourse = $this->getSession()->getSelectorsHandler()->xpathLiteral($fromcourse);
+        $fromcourse = behat_context_helper::escape($fromcourse);
         $xpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' ics-results ')]" .
             "/descendant::tr[contains(., $fromcourse)]" .
             "/descendant::input[@type='radio']";
@@ -212,7 +212,7 @@ class behat_backup extends behat_base {
         $this->select_backup($backupfilename);
 
         // The argument should be converted to an xpath literal.
-        $existingcourse = $this->getSession()->getSelectorsHandler()->xpathLiteral($existingcourse);
+        $existingcourse = behat_context_helper::escape($existingcourse);
 
         // Selecting the specified course (we can not call behat_forms::select_radio here as is in another behat subcontext).
         $radionode = $this->find('xpath', "//div[contains(concat(' ', normalize-space(@class), ' '), ' bcs-existing-course ')]" .
@@ -333,7 +333,7 @@ class behat_backup extends behat_base {
             $this->getSession());
 
         // The argument should be converted to an xpath literal.
-        $backupfilename = $this->getSession()->getSelectorsHandler()->xpathLiteral($backupfilename);
+        $backupfilename = behat_context_helper::escape($backupfilename);
 
         $xpath = "//tr[contains(., $backupfilename)]/descendant::a[contains(., '" . get_string('restore') . "')]";
         $restorelink = $this->find('xpath', $xpath, $exception);

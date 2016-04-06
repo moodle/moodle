@@ -49,10 +49,10 @@ class behat_groups extends behat_base {
      */
     public function i_add_user_to_group_members($userfullname, $groupname) {
 
-        $userfullname = $this->getSession()->getSelectorsHandler()->xpathLiteral($userfullname);
+        $userfullname = behat_context_helper::escape($userfullname);
 
         // Using a xpath liternal to avoid problems with quotes and double quotes.
-        $groupname = $this->getSession()->getSelectorsHandler()->xpathLiteral($groupname);
+        $groupname = behat_context_helper::escape($groupname);
 
         // We don't know the option text as it contains the number of users in the group.
         $select = $this->find_field('groups');

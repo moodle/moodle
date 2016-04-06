@@ -60,7 +60,7 @@ class behat_navigation extends behat_base {
             $exception = new ExpectationException($exception, $this->getSession());
         }
 
-        $nodetextliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
+        $nodetextliteral = behat_context_helper::escape($text);
         $hasblocktree = "[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]";
         $hasbranch = "[contains(concat(' ', normalize-space(@class), ' '), ' branch ')]";
         $hascollapsed = "li[@aria-expanded='false']";
@@ -274,7 +274,7 @@ class behat_navigation extends behat_base {
                 // If node is a link then some driver click in the middle of the node, which click on link and
                 // page gets redirected. To ensure expansion works in all cases, check if the node to expand is a
                 // link and if yes then click on link and wait for it to navigate to next page with node expanded.
-                $nodetoexpandliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($parentnodes[$i]);
+                $nodetoexpandliteral = behat_context_helper::escape($parentnodes[$i]);
                 $nodetoexpandxpathlink = $xpath . "/a[normalize-space(.)=" . $nodetoexpandliteral . "]";
 
                 if ($nodetoexpandlink = $node->find('xpath', $nodetoexpandxpathlink)) {
@@ -297,7 +297,7 @@ class behat_navigation extends behat_base {
         }
 
         // Finally, click on requested node under navigation.
-        $nodetextliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($nodetext);
+        $nodetextliteral = behat_context_helper::escape($nodetext);
         $xpath = "/ul/li/p[contains(concat(' ', normalize-space(@class), ' '), ' tree_item ')]" .
                 "/a[normalize-space(.)=" . $nodetextliteral . "]";
         $nodetoclick = $node->find('xpath', $xpath);
@@ -321,7 +321,7 @@ class behat_navigation extends behat_base {
     protected function get_top_navigation_node($nodetext) {
 
         // Avoid problems with quotes.
-        $nodetextliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($nodetext);
+        $nodetextliteral = behat_context_helper::escape($nodetext);
         $exception = new ExpectationException('Top navigation node "' . $nodetext . ' not found in "', $this->getSession());
 
         // First find in navigation block.
@@ -365,7 +365,7 @@ class behat_navigation extends behat_base {
     protected function get_navigation_node($nodetext, $parentnode = null) {
 
         // Avoid problems with quotes.
-        $nodetextliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($nodetext);
+        $nodetextliteral = behat_context_helper::escape($nodetext);
 
         $xpath = "/ul/li[contains(concat(' ', normalize-space(@class), ' '), ' contains_branch ')]" .
             "[child::p[contains(concat(' ', normalize-space(@class), ' '), ' branch ')]" .
