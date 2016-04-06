@@ -383,6 +383,21 @@ class enrol_lti_plugin extends enrol_plugin {
         }
         return $actions;
     }
+
+    /**
+     * Restore instance and map settings.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $course
+     * @param int $oldid
+     */
+    public function restore_instance(restore_enrolments_structure_step $step, stdClass $data, $course, $oldid) {
+        // We want to call the parent because we do not want to add an enrol_lti_tools row
+        // as that is done as part of the restore process.
+        $instanceid = parent::add_instance($course, (array)$data);
+        $step->set_mapping('enrol', $oldid, $instanceid);
+    }
 }
 
 /**
