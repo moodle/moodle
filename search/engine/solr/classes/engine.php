@@ -234,7 +234,7 @@ class engine extends \core_search\engine {
         $fields = $documentclass::get_default_fields_definition();
 
         $dismax = false;
-        if ($query instanceof SolrDisMaxQuery) {
+        if ($query instanceof \SolrDisMaxQuery) {
             $dismax = true;
         }
 
@@ -763,6 +763,11 @@ class engine extends \core_search\engine {
 
         // This will prevent solr from automatically making fields for every tika output.
         $url->param('uprefix', 'ignored_');
+
+        // Control how content is captured. This will keep our file content clean of non-important metadata.
+        $url->param('captureAttr', 'true');
+        // Move the content to a field for indexing.
+        $url->param('fmap.content', 'solr_filecontent');
 
         // These are common fields that matches the standard *_point dynamic field and causes an error.
         $url->param('fmap.media_white_point', 'ignored_mwp');

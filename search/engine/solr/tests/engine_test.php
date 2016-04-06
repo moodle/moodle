@@ -165,6 +165,11 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->assertEquals($USER->id, $results[0]->get('userid'));
         $this->assertEquals(\context_system::instance()->id, $results[0]->get('contextid'));
 
+        // Do a test to make sure we aren't searching non-query fields, like areaid.
+        $querydata->q = \core_search\manager::generate_areaid('core_mocksearch', 'role_capabilities');
+        $this->assertCount(0, $this->search->search($querydata));
+        $querydata->q = 'message';
+
         sleep(1);
         $beforeadding = time();
         sleep(1);

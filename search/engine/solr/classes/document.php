@@ -63,17 +63,25 @@ class document extends \core_search\document {
         'solr_fileid' => array(
             'type' => 'string',
             'stored' => true,
-            'indexed' => false
+            'indexed' => true
         ),
         'solr_filecontenthash' => array(
             'type' => 'string',
             'stored' => true,
-            'indexed' => false
+            'indexed' => true
         ),
+        // Stores the status of file indexing.
         'solr_fileindexedcontent' => array(
             'type' => 'int',
             'stored' => true,
             'indexed' => true
+        ),
+        // Field to index, but not store, file contents.
+        'solr_filecontent' => array(
+            'type' => 'text',
+            'stored' => false,
+            'indexed' => true,
+            'mainquery' => true
         )
     );
 
