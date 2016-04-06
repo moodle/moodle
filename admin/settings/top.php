@@ -30,6 +30,7 @@ if ($hassiteconfig) {
 $ADMIN->add('root', new admin_category('users', new lang_string('users','admin')));
 $ADMIN->add('root', new admin_category('courses', new lang_string('courses','admin')));
 $ADMIN->add('root', new admin_category('grades', new lang_string('grades')));
+$ADMIN->add('root', new admin_category('competencies', new lang_string('competencies', 'core_competency')));
 $ADMIN->add('root', new admin_category('badges', new lang_string('badges'), empty($CFG->enablebadges)));
 $ADMIN->add('root', new admin_category('location', new lang_string('location','admin')));
 $ADMIN->add('root', new admin_category('language', new lang_string('language')));

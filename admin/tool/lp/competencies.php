@@ -40,7 +40,7 @@ if (!\core_competency\competency_framework::can_read_context($context)) {
     throw new required_capability_exception($context, 'moodle/competency:competencyview', 'nopermissions', '');
 }
 
-$title = get_string('competencies', 'tool_lp');
+$title = get_string('competencies', 'core_competency');
 $pagetitle = get_string('competenciesforframework', 'tool_lp', $framework->get_shortname());
 
 // Set up the page.

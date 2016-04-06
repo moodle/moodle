@@ -344,7 +344,7 @@ class page_helper {
         $frameworksurl = new moodle_url('/admin/tool/lp/competencyframeworks.php', array('pagecontextid' => $pagecontextid));
 
         $PAGE->navigation->override_active_url($frameworksurl);
-        $title = get_string('competencies', 'tool_lp');
+        $title = get_string('competencies', 'core_competency');
         if (empty($id)) {
             $pagetitle = get_string('competencyframeworks', 'tool_lp');
             $pagesubtitle = get_string('addnewcompetencyframework', 'tool_lp');

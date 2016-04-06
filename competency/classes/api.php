@@ -52,7 +52,7 @@ class api {
      * @return boolean True when enabled.
      */
     public static function is_enabled() {
-        return get_config('tool_lp', 'enabled');
+        return get_config('core_competency', 'enabled');
     }
 
     /**
@@ -63,7 +63,7 @@ class api {
      */
     public static function require_enabled() {
         if (!static::is_enabled()) {
-            throw new moodle_exception('competenciesarenotenabled', 'tool_lp');
+            throw new moodle_exception('competenciesarenotenabled', 'core_competency');
         }
     }
 

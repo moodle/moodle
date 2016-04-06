@@ -442,7 +442,7 @@ function tool_lp_coursemodule_standard_elements($formwrapper, $mform) {
         return;
     }
 
-    $mform->addElement('header', 'competenciessection', get_string('competencies', 'tool_lp'));
+    $mform->addElement('header', 'competenciessection', get_string('competencies', 'core_competency'));
 
     MoodleQuickForm::registerElementType('course_competencies',
                                          "$CFG->dirroot/admin/tool/lp/classes/course_competencies_form_element.php",
