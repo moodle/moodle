@@ -2331,6 +2331,49 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
     }
 
     /**
+     * Test get plugins file areas
+     */
+    public function test_get_plugins_file_areas() {
+        $this->setUser($this->editingteachers[0]);
+        $assign = $this->create_instance();
+
+        // Test that all the submission and feedback plugins are returning the expected file aras.
+        $usingfilearea = 0;
+        foreach ($assign->get_submission_plugins() as $plugin) {
+            $type = $plugin->get_type();
+            $fileareas = $plugin->get_file_areas();
+
+            if ($type == 'onlinetext') {
+                $this->assertEquals(array('submissions_onlinetext' => 'Online text'), $fileareas);
+                $usingfilearea++;
+            } else if ($type == 'file') {
+                $this->assertEquals(array('submission_files' => 'File submissions'), $fileareas);
+                $usingfilearea++;
+            } else {
+                $this->assertEmpty($fileareas);
+            }
+        }
+        $this->assertEquals(2, $usingfilearea);
+
+        $usingfilearea = 0;
+        foreach ($assign->get_feedback_plugins() as $plugin) {
+            $type = $plugin->get_type();
+            $fileareas = $plugin->get_file_areas();
+
+            if ($type == 'editpdf') {
+                $this->assertEquals(array('download' => 'Annotate PDF'), $fileareas);
+                $usingfilearea++;
+            } else if ($type == 'file') {
+                $this->assertEquals(array('feedback_files' => 'Feedback files'), $fileareas);
+                $usingfilearea++;
+            } else {
+                $this->assertEmpty($fileareas);
+            }
+        }
+        $this->assertEquals(2, $usingfilearea);
+    }
+
+    /**
      * Test the quicksave grades processor
      */
     public function test_process_save_quick_grades() {
