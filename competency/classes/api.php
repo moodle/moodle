@@ -3695,7 +3695,7 @@ class api {
         if (!empty($draftitemid)) {
             $fileareaoptions = array('subdirs' => true);
             $itemid = $userevidence->get_id();
-            file_save_draft_area_files($draftitemid, $context->id, 'tool_lp', 'userevidence', $itemid, $fileareaoptions);
+            file_save_draft_area_files($draftitemid, $context->id, 'core_competency', 'userevidence', $itemid, $fileareaoptions);
         }
 
         // Trigger an evidence of prior learning created event.
@@ -3729,7 +3729,7 @@ class api {
         if (!empty($draftitemid)) {
             $fileareaoptions = array('subdirs' => true);
             $itemid = $userevidence->get_id();
-            file_save_draft_area_files($draftitemid, $context->id, 'tool_lp', 'userevidence', $itemid, $fileareaoptions);
+            file_save_draft_area_files($draftitemid, $context->id, 'core_competency', 'userevidence', $itemid, $fileareaoptions);
         }
 
         // Trigger an evidence of prior learning updated event.
@@ -3758,7 +3758,7 @@ class api {
 
         // Delete associated files.
         $fs = get_file_storage();
-        $fs->delete_area_files($context->id, 'tool_lp', 'userevidence', $id);
+        $fs->delete_area_files($context->id, 'core_competency', 'userevidence', $id);
 
         // Delete relation between evidence and competencies.
         $userevidence->set_id($id);     // Restore the ID to fully mock the object.

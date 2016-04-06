@@ -89,7 +89,7 @@ if ($userevidence) {
 
 // Massaging the file API.
 $draftitemid = file_get_submitted_draft_itemid('files');
-file_prepare_draft_area($draftitemid, $context->id, 'tool_lp', 'userevidence', $itemid, $fileareaoptions);
+file_prepare_draft_area($draftitemid, $context->id, 'core_competency', 'userevidence', $itemid, $fileareaoptions);
 $form->set_data((object) array('files' => $draftitemid));
 
 // Hurray, the user has submitted the form! Everyone loves forms :)!

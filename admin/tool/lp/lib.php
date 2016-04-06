@@ -152,46 +152,6 @@ function tool_lp_extend_navigation_category_settings($navigation, $coursecategor
     }
 }
 
-
-/**
- * File serving.
- *
- * @param stdClass $course The course object.
- * @param stdClass $cm The cm object.
- * @param context $context The context object.
- * @param string $filearea The file area.
- * @param array $args List of arguments.
- * @param bool $forcedownload Whether or not to force the download of the file.
- * @param array $options Array of options.
- * @return void|false
- */
-function tool_lp_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
-    global $CFG;
-
-    if (!\core_competency\api::is_enabled()) {
-        return false;
-    }
-
-    $fs = get_file_storage();
-    $file = null;
-
-    $itemid = array_shift($args);
-    $filename = array_shift($args);
-    $filepath = $args ? '/' .implode('/', $args) . '/' : '/';
-
-    if ($filearea == 'userevidence' && $context->contextlevel == CONTEXT_USER) {
-        if (\core_competency\user_evidence::can_read_user($context->instanceid)) {
-            $file = $fs->get_file($context->id, 'tool_lp', $filearea, $itemid, $filepath, $filename);
-        }
-    }
-
-    if (!$file) {
-        return false;
-    }
-
-    send_stored_file($file, null, 0, $forcedownload);
-}
-
 /**
  * Hook when a comment is added.
  *
