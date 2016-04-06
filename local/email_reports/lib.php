@@ -209,6 +209,7 @@ function email_reports_cron() {
                     JOIN {local_iomad_track} cc
                     ON (ic.courseid = cc.courseid
                         AND ic.validlength > 0
+                        AND ic.warnexpire > 0
                         AND (cc.timecompleted + ic.validlength * 86400 - ic.warnexpire * 86400) < " . $runtime . ")
                     JOIN {company_users} cu
                     ON (cc.userid = cu.userid)
