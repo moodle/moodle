@@ -142,7 +142,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
      * Test get_assignments
      */
     public function test_get_assignments() {
-        global $DB, $USER;
+        global $DB, $USER, $CFG;
 
         $this->resetAfterTest(true);
 
@@ -228,7 +228,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('lightwork assignment', $assignment['name']);
         $this->assertContains('the assignment intro text here', $assignment['intro']);
         // Check the url of the file attatched.
-        $this->assertRegExp('/.*mod_assign\/intro\/intro\.txt.*/', $assignment['intro']);
+        $this->assertRegExp('@"' . $CFG->wwwroot . '/webservice/pluginfile.php/\d+/mod_assign/intro/intro\.txt"@', $assignment['intro']);
         $this->assertEquals(1, $assignment['markingworkflow']);
         $this->assertEquals(1, $assignment['markingallocation']);
 
