@@ -93,11 +93,8 @@ class competency_user_competency_plan_viewed extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/admin/tool/lp/user_competency_in_plan.php', array(
-            'competencyid' => $this->other['competencyid'],
-            'userid' => $this->relateduserid,
-            'planid' => $this->other['planid']
-        ));
+        return \core_competency\url::user_competency_in_plan($this->relateduserid, $this->other['competencyid'],
+            $this->other['planid']);
     }
 
     /**

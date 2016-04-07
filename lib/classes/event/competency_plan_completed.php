@@ -87,8 +87,7 @@ class competency_plan_completed extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/admin/tool/lp/plan.php',
-                               array('id' => $this->objectid, 'pagecontextid' => $this->contextid));
+        return \core_competency\url::plan($this->objectid);
     }
 
     /**

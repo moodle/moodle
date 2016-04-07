@@ -96,11 +96,8 @@ class competency_user_competency_viewed_in_course extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/admin/tool/lp/user_competency_in_course.php', array(
-            'competencyid' => $this->other['competencyid'],
-            'userid' => $this->relateduserid,
-            'courseid' => $this->courseid
-        ));
+        return \core_competency\url::user_competency_in_course($this->relateduserid, $this->other['competencyid'],
+            $this->courseid);
     }
 
     /**

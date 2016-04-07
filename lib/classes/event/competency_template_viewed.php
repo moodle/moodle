@@ -84,8 +84,7 @@ class competency_template_viewed extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/admin/tool/lp/templatecompetencies.php',
-                               array('templateid' => $this->objectid, 'pagecontextid' => $this->contextid));
+        return \core_competency\url::template($this->objectid, $this->contextid);
     }
 
     /**

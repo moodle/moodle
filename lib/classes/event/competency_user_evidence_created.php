@@ -85,8 +85,7 @@ class competency_user_evidence_created extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/admin/tool/lp/user_evidence.php',
-                               array('id' => $this->objectid));
+        return \core_competency\url::user_evidence($this->objectid);
     }
 
     /**

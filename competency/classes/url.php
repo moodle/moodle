@@ -73,6 +73,28 @@ class url {
     }
 
     /**
+     * The URL where the competency can be found.
+     *
+     * @param int $competencyid The competency ID.
+     * @param int $pagecontextid The ID of the context we are in.
+     * @return moodle_url
+     */
+    public static function competency($competencyid, $pagecontextid) {
+        return static::get(__FUNCTION__, func_get_args());
+    }
+
+    /**
+     * The URL where the framework can be found.
+     *
+     * @param int $frameworkid The framework ID.
+     * @param int $pagecontextid The ID of the context we are in.
+     * @return moodle_url
+     */
+    public static function framework($frameworkid, $pagecontextid) {
+        return static::get(__FUNCTION__, func_get_args());
+    }
+
+    /**
      * The URL where the frameworks can be found.
      *
      * @param int $pagecontextid The ID of the context that we are browsing.
@@ -103,12 +125,45 @@ class url {
     }
 
     /**
+     * The URL where the template can be found.
+     *
+     * @param int $templateid The template ID.
+     * @param int $pagecontextid The ID of the context we are in.
+     * @return moodle_url
+     */
+    public static function template($templateid, $pagecontextid) {
+        return static::get(__FUNCTION__, func_get_args());
+    }
+
+    /**
+     * The URL where the templates can be found.
+     *
+     * @param int $pagecontextid The ID of the context that we are browsing.
+     * @return moodle_url
+     */
+    public function templates($pagecontextid) {
+        return static::get(__FUNCTION__, func_get_args());
+    }
+
+    /**
      * The URL where the user competency can be found.
      *
-     * @param int $usercompetency The user competency ID
+     * @param int $usercompetencyid The user competency ID
      * @return moodle_url
      */
     public static function user_competency($usercompetencyid) {
+        return static::get(__FUNCTION__, func_get_args());
+    }
+
+    /**
+     * The URL where the user competency can be found in the context of a course.
+     *
+     * @param int $userid The user ID
+     * @param int $competencyid The competency ID.
+     * @param int $courseid The course ID.
+     * @return moodle_url
+     */
+    public static function user_competency_in_course($userid, $competencyid, $courseid) {
         return static::get(__FUNCTION__, func_get_args());
     }
 
@@ -127,7 +182,7 @@ class url {
     /**
      * The URL where the user evidence (of prior learning) can be found.
      *
-     * @param int $usercompetency The user evidence ID
+     * @param int $userevidenceid The user evidence ID
      * @return moodle_url
      */
     public static function user_evidence($userevidenceid) {

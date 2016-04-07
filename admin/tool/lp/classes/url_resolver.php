@@ -37,6 +37,34 @@ use moodle_url;
 class url_resolver {
 
     /**
+     * The URL where the competency can be found.
+     *
+     * @param int $competencyid The competency ID.
+     * @param int $pagecontextid The ID of the context we are in.
+     * @return moodle_url
+     */
+    public function competency($competencyid, $pagecontextid) {
+        return new moodle_url('/admin/tool/lp/editcompetency.php', array(
+            'id' => $competencyid,
+            'pagecontextid' => $pagecontextid
+        ));
+    }
+
+    /**
+     * The URL where the framework can be found.
+     *
+     * @param int $frameworkid The framework ID.
+     * @param int $pagecontextid The ID of the context we are in.
+     * @return moodle_url
+     */
+    public function framework($frameworkid, $pagecontextid) {
+        return new moodle_url('/admin/tool/lp/competencies.php', array(
+            'competencyframeworkid' => $frameworkid,
+            'pagecontextid' => $pagecontextid
+        ));
+    }
+
+    /**
      * The URL where the frameworks can be found.
      *
      * @param int $pagecontextid The ID of the context that we are browsing.
@@ -67,13 +95,53 @@ class url_resolver {
     }
 
     /**
+     * The URL where the template can be found.
+     *
+     * @param int $templateid The template ID.
+     * @param int $pagecontextid The ID of the context we are in.
+     * @return moodle_url
+     */
+    public function template($templateid, $pagecontextid) {
+        return new moodle_url('/admin/tool/lp/templatecompetencies.php', array(
+            'templateid' => $templateid,
+            'pagecontextid' => $pagecontextid
+        ));
+    }
+
+    /**
+     * The URL where the templates can be found.
+     *
+     * @param int $pagecontextid The ID of the context that we are browsing.
+     * @return moodle_url
+     */
+    public function templates($pagecontextid) {
+        return new moodle_url('/admin/tool/lp/learningplans.php', array('pagecontextid' => $pagecontextid));
+    }
+
+    /**
      * The URL where the user competency can be found.
      *
-     * @param int $usercompetency The user competency ID
+     * @param int $usercompetencyid The user competency ID
      * @return moodle_url
      */
     public function user_competency($usercompetencyid) {
         return new moodle_url('/admin/tool/lp/user_competency.php', array('id' => $usercompetencyid));
+    }
+
+    /**
+     * The URL where the user competency can be found in the context of a course.
+     *
+     * @param int $userid The user ID
+     * @param int $competencyid The competency ID.
+     * @param int $courseid The course ID.
+     * @return moodle_url
+     */
+    public function user_competency_in_course($userid, $competencyid, $courseid) {
+        return new moodle_url('/admin/tool/lp/user_competency_in_course.php', array(
+            'userid' => $userid,
+            'competencyid' => $competencyid,
+            'courseid' => $courseid
+        ));
     }
 
     /**
@@ -95,7 +163,7 @@ class url_resolver {
     /**
      * The URL where the user evidence (of prior learning) can be found.
      *
-     * @param int $usercompetency The user evidence ID
+     * @param int $userevidenceid The user evidence ID
      * @return moodle_url
      */
     public function user_evidence($userevidenceid) {

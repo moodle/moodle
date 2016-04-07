@@ -84,9 +84,7 @@ class competency_user_competency_review_requested extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/admin/tool/lp/user_competency.php', array(
-                'id' => $this->objectid
-        ));
+        return \core_competency\url::user_competency($this->objectid);
     }
 
     /**

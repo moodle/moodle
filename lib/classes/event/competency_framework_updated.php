@@ -85,8 +85,7 @@ class competency_framework_updated extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/admin/tool/lp/editcompetencyframework.php',
-                               array('id' => $this->objectid, 'pagecontextid' => $this->contextid));
+        return \core_competency\url::framework($this->objectid, $this->contextid);
     }
 
     /**

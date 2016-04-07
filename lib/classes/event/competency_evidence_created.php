@@ -119,10 +119,7 @@ class competency_evidence_created extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        $urlparams = [
-            'id' => $this->other['usercompetencyid']
-        ];
-        return new \moodle_url('/admin/tool/lp/user_competency.php', $urlparams);
+        return \core_competency\url::user_competency($this->other['usercompetencyid']);
     }
 
     /**
