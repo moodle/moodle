@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 use core_competency\plan;
+use core_competency\url;
 use core_competency\user_competency;
 
 global $CFG;
@@ -86,11 +87,7 @@ class core_competency_lib_testcase extends advanced_testcase {
         $message = array_pop($messages);
 
         $expectedurlname = $c1->get_shortname();
-        $expectedurl = new moodle_url('/admin/tool/lp/user_competency_in_plan.php', array(
-            'userid' => $u1->id,
-            'competencyid' => $c1->get_id(),
-            'planid' => $p1->get_id()
-        ));
+        $expectedurl = url::user_competency_in_plan($u1->id, $c1->get_id(), $p1->get_id());
         $this->assertEquals(core_user::get_noreply_user()->id, $message->useridfrom);
         $this->assertEquals($u2->id, $message->useridto);
         $this->assertTrue(strpos($message->fullmessage, 'Hello world!') !== false);
@@ -110,11 +107,7 @@ class core_competency_lib_testcase extends advanced_testcase {
         $message = array_pop($messages);
 
         $expectedurlname = $c2->get_shortname();
-        $expectedurl = new moodle_url('/admin/tool/lp/user_competency_in_plan.php', array(
-            'userid' => $u1->id,
-            'competencyid' => $c2->get_id(),
-            'planid' => $p2->get_id()
-        ));
+        $expectedurl = url::user_competency_in_plan($u1->id, $c2->get_id(), $p2->get_id());
         $this->assertEquals(core_user::get_noreply_user()->id, $message->useridfrom);
         $this->assertEquals($u1->id, $message->useridto);
         $this->assertTrue(strpos($message->fullmessage, 'Hello world!') !== false);
@@ -134,9 +127,7 @@ class core_competency_lib_testcase extends advanced_testcase {
         $message = array_pop($messages);
 
         $expectedurlname = get_string('userplans', 'core_competency');
-        $expectedurl = new moodle_url('/admin/tool/lp/plans.php', array(
-            'userid' => $u1->id,
-        ));
+        $expectedurl = url::plans($u1->id);
         $this->assertEquals(core_user::get_noreply_user()->id, $message->useridfrom);
         $this->assertEquals($u1->id, $message->useridto);
         $this->assertTrue(strpos($message->fullmessage, 'Hello world!') !== false);
@@ -171,9 +162,7 @@ class core_competency_lib_testcase extends advanced_testcase {
         $message = array_pop($messages);
 
         $expectedurlname = get_string('userplans', 'core_competency');
-        $expectedurl = new moodle_url('/admin/tool/lp/plans.php', array(
-            'userid' => $u1->id,
-        ));
+        $expectedurl = url::plans($u1->id);
         $this->assertEquals(core_user::get_noreply_user()->id, $message->useridfrom);
         $this->assertEquals($u1->id, $message->useridto);
         $this->assertTrue(strpos($message->fullmessage, '<em>Hello world!</em>') !== false);
@@ -288,9 +277,7 @@ class core_competency_lib_testcase extends advanced_testcase {
         $message = array_pop($messages);
 
         $expectedurlname = $p1->get_name();
-        $expectedurl = new moodle_url('/admin/tool/lp/plan.php', array(
-            'id' => $p1->get_id()
-        ));
+        $expectedurl = url::plan($p1->get_id());
         $this->assertTrue(strpos($message->fullmessage, 'Hello world!') !== false);
         $this->assertTrue(strpos($message->fullmessagehtml, 'Hello world!') !== false);
         $this->assertEquals(FORMAT_MOODLE, $message->fullmessageformat);
@@ -308,9 +295,7 @@ class core_competency_lib_testcase extends advanced_testcase {
         $message = array_pop($messages);
 
         $expectedurlname = $p1->get_name();
-        $expectedurl = new moodle_url('/admin/tool/lp/plan.php', array(
-            'id' => $p1->get_id()
-        ));
+        $expectedurl = url::plan($p1->get_id());
         $this->assertTrue(strpos($message->fullmessage, '<em>Hello world!</em>') !== false);
         $this->assertTrue(strpos($message->fullmessagehtml, '<em>Hello world!</em>') !== false);
         $this->assertEquals(FORMAT_HTML, $message->fullmessageformat);

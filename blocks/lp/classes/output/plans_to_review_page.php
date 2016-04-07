@@ -73,7 +73,6 @@ class plans_to_review_page implements renderable, templatable {
 
         $data = array(
             'plans' => $planstoreview,
-            'cbebaseurl' => (new moodle_url('/admin/tool/lp'))->out(false),
             'pluginbaseurl' => (new moodle_url('/blocks/lp'))->out(false),
         );
 

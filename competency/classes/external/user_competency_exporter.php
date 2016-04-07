@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 use core_user;
 use renderer_base;
 use stdClass;
+use core_competency\url;
 use core_competency\user_competency;
 
 /**
@@ -87,6 +88,8 @@ class user_competency_exporter extends persistent_exporter {
             $result->reviewer = $userexporter->export($output);
         }
 
+        $result->url = url::user_competency($this->persistent->get_id())->out(false);
+
         return (array) $result;
     }
 
@@ -131,6 +134,9 @@ class user_competency_exporter extends persistent_exporter {
             ),
             'statusname' => array(
                 'type' => PARAM_RAW
+            ),
+            'url' => array(
+                'type' => PARAM_URL
             ),
         );
     }

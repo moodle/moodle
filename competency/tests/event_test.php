@@ -27,6 +27,7 @@ global $CFG;
 require_once($CFG->dirroot . '/comment/lib.php');
 
 use core_competency\api;
+use core_competency\url;
 
 /**
  * Event tests.
@@ -1347,7 +1348,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $this->assertEquals($description, $event->get_description());
 
         // Test get_url().
-        $url = new moodle_url('/admin/tool/lp/user_competency.php', ['id' => $evidence->get_usercompetencyid()]);
+        $url = url::user_competency($evidence->get_usercompetencyid());
         $this->assertEquals($url, $event->get_url());
 
         // Test get_objectid_mapping().

@@ -110,7 +110,6 @@ class external extends external_api {
             'courseid' => new external_value(PARAM_INT, 'Course id'),
             'user' => user_summary_exporter::get_read_structure(),
             'course' => course_summary_exporter::get_read_structure(),
-            'pluginbaseurl' => new external_value(PARAM_LOCALURL, 'Url to the tool_lp plugin folder on this Moodle site'),
             'usercompetencies' => new external_multiple_structure(
                 new external_single_structure(array(
                     'usercompetencycourse' => user_competency_course_exporter::get_read_structure(),

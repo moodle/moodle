@@ -31,6 +31,7 @@ use core_competency\external\plan_exporter;
 use core_competency\external\user_competency_exporter;
 use core_competency\external\user_summary_exporter;
 use core_competency\plan;
+use core_competency\url;
 use renderable;
 use renderer_base;
 use templatable;
@@ -130,7 +131,7 @@ class summary implements renderable, templatable {
             'hasplanstoreview' => $this->planstoreview['count'] > 0,
             'hasmoreplanstoreview' => $this->planstoreview['count'] > 3,
 
-            'cbebaseurl' => (new \moodle_url('/admin/tool/lp'))->out(false),
+            'plansurl' => url::plans($this->user->id)->out(false),
             'pluginbaseurl' => (new \moodle_url('/blocks/lp'))->out(false),
             'userid' => $this->user->id,
         );

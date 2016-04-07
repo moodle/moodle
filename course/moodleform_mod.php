@@ -34,7 +34,7 @@ abstract class moodleform_mod extends moodleform {
 
     /**
      * Current course.
-      *
+     *
      * @var mixed
      */
     protected $_course;

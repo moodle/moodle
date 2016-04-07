@@ -78,7 +78,6 @@ class competencies_to_review_page implements renderable, templatable {
 
         $data = array(
             'competencies' => $compstoreview,
-            'cbebaseurl' => (new moodle_url('/admin/tool/lp'))->out(false),
             'pluginbaseurl' => (new moodle_url('/blocks/lp'))->out(false),
         );
 

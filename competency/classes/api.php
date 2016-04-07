@@ -3822,7 +3822,7 @@ class api {
         if (!$relation->get_id()) {
             $relation->create();
 
-            $link = new moodle_url('/admin/tool/lp/user_evidence.php', array('id' => $userevidence->get_id()));
+            $link = url::user_evidence($userevidence->get_id());
             self::add_evidence(
                 $userevidence->get_userid(),
                 $competency,

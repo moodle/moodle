@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use core_competency\api;
 use core_competency\plan;
+use core_competency\url;
 use core_competency\user_competency;
 use core_competency\user_evidence;
 
@@ -85,17 +86,12 @@ function core_competency_comment_add($comment, $params) {
 
         // Urls.
         // TODO MDL-52749 Replace the link to the plan with the user competency page.
-        // FIXME Use a URL resolver here.
         if (empty($plan)) {
             $urlname = get_string('userplans', 'core_competency');
-            $url = new moodle_url('/admin/tool/lp/plans.php', array('userid' => $uc->get_userid()));
+            $url = url::plans($uc->get_userid());
         } else {
             $urlname = $competencyname;
-            $url = new moodle_url('/admin/tool/lp/user_competency_in_plan.php', array(
-                'userid' => $uc->get_userid(),
-                'competencyid' => $uc->get_competencyid(),
-                'planid' => $plan->get_id()
-            ));
+            $url = url::user_competency_in_plan($uc->get_userid(), $uc->get_competencyid(), $plan->get_id());
         }
 
         // Construct the message content.
@@ -164,10 +160,7 @@ function core_competency_comment_add($comment, $params) {
         $fullname = fullname($user);
         $planname = format_string($plan->get_name(), true, array('context' => $plan->get_context()));
         $urlname = $planname;
-        // FIXME Use a URL resolver here.
-        $url = new moodle_url('/admin/tool/lp/plan.php', array(
-            'id' => $plan->get_id()
-        ));
+        $url = url::plan($plan->get_id());
 
         // Construct the message content.
         $fullmessagehtml = get_string('usercommentedonaplanhtml', 'core_competency', array(

@@ -42,15 +42,15 @@
             {{#hasactiveplans}}
                 <ul>
                     {{#activeplans}}
-                        <li><a href="{{cbebaseurl}}/plan.php?id={{id}}">{{name}}</a></li>
+                        <li><a href="{{url}}">{{name}}</a></li>
                     {{/activeplans}}
                     {{#hasmoreplans}}
-                        <li class="more"><a href="{{cbebaseurl}}/plans.php?userid={{userid}}">{{#str}}viewmore, block_lp{{/str}}</a></li>
+                        <li class="more"><a href="{{plansurl}}">{{#str}}viewmore, block_lp{{/str}}</a></li>
                     {{/hasmoreplans}}
                 </ul>
             {{/hasactiveplans}}
             {{^hasactiveplans}}
-                <p>No active plans at the moment. <a href="{{cbebaseurl}}/plans.php?userid={{userid}}">{{#str}}viewotherplans, block_lp{{/str}}</a></p>
+                <p>No active plans at the moment. <a href="{{plansurl}}">{{#str}}viewotherplans, block_lp{{/str}}</a></p>
             {{/hasactiveplans}}
         </div>
     {{/hasplans}}
@@ -60,7 +60,7 @@
             <ul>
                 {{#compstoreview}}
                     <li>
-                        <a href="{{cbebaseurl}}/user_competency.php?id={{usercompetency.id}}">{{competency.shortname}}</a> ({{user.fullname}}) - {{usercompetency.statusname}}
+                        <a href="{{usercompetency.url}}">{{competency.shortname}}</a> ({{user.fullname}}) - {{usercompetency.statusname}}
                     </li>
                 {{/compstoreview}}
                 {{#hasmorecompstoreview}}
@@ -75,7 +75,7 @@
             <ul>
                 {{#planstoreview}}
                     <li>
-                        <a href="{{cbebaseurl}}/plan.php?id={{plan.id}}">{{plan.name}}</a> ({{user.fullname}}) - {{plan.statusname}}
+                        <a href="{{plan.url}}">{{plan.name}}</a> ({{user.fullname}}) - {{plan.statusname}}
                     </li>
                 {{/planstoreview}}
                 {{#hasmoreplanstoreview}}

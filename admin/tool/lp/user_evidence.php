@@ -30,10 +30,10 @@ if (isguestuser()) {
 }
 \core_competency\api::require_enabled();
 
-$id = optional_param('id', null, PARAM_INT);
+$id = required_param('id', PARAM_INT);
 
 $userevidence = \core_competency\api::read_user_evidence($id);
-$url = new moodle_url('/admin/tool/lp/user_evidence_list.php', array('id' => $id));
+$url = new moodle_url('/admin/tool/lp/user_evidence.php', array('id' => $id));
 list($title, $subtitle) = \tool_lp\page_helper::setup_for_user_evidence($userevidence->get_userid(), $url, $userevidence);
 
 $output = $PAGE->get_renderer('tool_lp');

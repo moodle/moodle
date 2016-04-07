@@ -28,6 +28,7 @@ use core_user;
 use renderer_base;
 use stdClass;
 use moodle_url;
+use core_competency\url;
 
 /**
  * Class for exporting plan data.
@@ -99,7 +100,7 @@ class plan_exporter extends persistent_exporter {
 
         $commentareaexporter = new comment_area_exporter($this->persistent->get_comment_object());
         $values->commentarea = $commentareaexporter->export($output);
-        $values->url = new moodle_url('/admin/tool/lp/plan.php', array('id' => $this->persistent->get_id()));
+        $values->url = url::plan($this->persistent->get_id())->out(false);
 
         return (array) $values;
     }
@@ -181,7 +182,7 @@ class plan_exporter extends persistent_exporter {
                 'optional' => true,
             ),
             'url' => array(
-                'type' => PARAM_TEXT
+                'type' => PARAM_URL
             )
         );
     }

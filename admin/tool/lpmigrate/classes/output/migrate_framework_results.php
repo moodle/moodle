@@ -35,6 +35,7 @@ use core_competency\competency;
 use core_competency\competency_framework;
 use core_competency\external\competency_exporter;
 use core_competency\external\competency_framework_exporter;
+use core_competency\url;
 use tool_lpmigrate\framework_processor;
 
 /**
@@ -147,7 +148,7 @@ class migrate_framework_results implements renderable, templatable {
         }
 
         $data->pluginbaseurl = (new moodle_url('/admin/tool/lpmigrate'))->out(false);
-        $data->cbebaseurl = (new moodle_url('/admin/tool/lp'))->out(false);
+        $data->frameworksurl = url::frameworks($this->pagecontext->id)->out(false);
 
         return $data;
     }
