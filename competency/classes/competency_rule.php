@@ -82,15 +82,6 @@ abstract class competency_rule {
     abstract public function validate_config($value);
 
     /**
-     * Get the fully qualified name of the AMD module to use.
-     *
-     * @return string
-     */
-    public static function get_amd_module() {
-        throw new coding_exception('Method not implemented.');
-    }
-
-    /**
      * The name of the rule.
      *
      * @return lang_string

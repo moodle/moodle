@@ -686,18 +686,14 @@ class competency extends persistent {
     /**
      * Get the available rules.
      *
-     * @return array Keys are the class names, values is an object containing name and amd.
+     * @return array Keys are the class names, values are the name of the rule.
      */
     public static function get_available_rules() {
         // Fully qualified class names without leading slashes because get_class() does not add them either.
         $rules = array(
-            'core_competency\\competency_rule_all' => (object) array(),
-            'core_competency\\competency_rule_points' => (object) array(),
+            'core_competency\\competency_rule_all' => competency_rule_all::get_name(),
+            'core_competency\\competency_rule_points' => competency_rule_points::get_name(),
         );
-        foreach ($rules as $class => $rule) {
-            $rule->name = $class::get_name();
-            $rule->amd = $class::get_amd_module();
-        }
         return $rules;
     }
 

@@ -97,12 +97,27 @@ class manage_competencies_page implements renderable, templatable {
         $data->pagecontextid = $this->pagecontext->id;
         $data->pluginbaseurl = (new moodle_url('/admin/tool/lp'))->out(true);
 
+        $rulesmodules = array();
         $rules = competency::get_available_rules();
-        foreach ($rules as $type => $rule) {
-            $rule->name = (string) $rule->name;
-            $rule->type = $type;
+        foreach ($rules as $type => $rulename) {
+
+            $amd = null;
+            if ($type == 'core_competency\\competency_rule_all') {
+                $amd = 'tool_lp/competency_rule_all';
+            } else if ($type == 'core_competency\\competency_rule_points') {
+                $amd = 'tool_lp/competency_rule_points';
+            } else {
+                // We do not know how to display that rule.
+                continue;
+            }
+
+            $rulesmodules[] = [
+                'name' => (string) $rulename,
+                'type' => $type,
+                'amd' => $amd,
+            ];
         }
-        $data->rulesmodules = json_encode(array_values($rules));
+        $data->rulesmodules = json_encode(array_values($rulesmodules));
 
         return $data;
     }

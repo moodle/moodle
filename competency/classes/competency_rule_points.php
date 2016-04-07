@@ -183,15 +183,6 @@ class competency_rule_points extends competency_rule {
     }
 
     /**
-     * Validate the rule config.
-     *
-     * @return bool
-     */
-    public static function get_amd_module() {
-        return 'tool_lp/competency_rule_points';
-    }
-
-    /**
      * The name of the rule.
      *
      * @return lang_string
