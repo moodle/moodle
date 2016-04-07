@@ -44,7 +44,7 @@ class sync_plans_from_template_cohorts_task extends \core\task\scheduled_task {
      * @return string
      */
     public function get_name() {
-        return get_string('syncplanscohorts', 'tool_lp');
+        return get_string('syncplanscohorts', 'core_competency');
     }
 
     /**

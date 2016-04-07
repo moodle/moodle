@@ -2231,14 +2231,14 @@ class core_competency_api_testcase extends advanced_testcase {
 
         // Create an evidence and check it was created with the right usercomptencyid and information.
         $evidence = api::add_evidence($user->id, $c1->get_id(), $syscontext->id, \core_competency\evidence::ACTION_OVERRIDE,
-            'invalidevidencedesc', 'tool_lp', array('a' => 'b'), false, 'http://moodle.org', 1, 2);
+            'invalidevidencedesc', 'core_competency', array('a' => 'b'), false, 'http://moodle.org', 1, 2);
         $this->assertEquals(1, \core_competency\evidence::count_records());
 
         $evidence->read();
         $uc->read();
         $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
         $this->assertEquals('invalidevidencedesc', $evidence->get_descidentifier());
-        $this->assertEquals('tool_lp', $evidence->get_desccomponent());
+        $this->assertEquals('core_competency', $evidence->get_desccomponent());
         $this->assertEquals((object) array('a' => 'b'), $evidence->get_desca());
         $this->assertEquals('http://moodle.org', $evidence->get_url());
         $this->assertEquals(\core_competency\evidence::ACTION_OVERRIDE, $evidence->get_action());
@@ -2270,7 +2270,7 @@ class core_competency_api_testcase extends advanced_testcase {
 
         // Create an evidence without a user competency record.
         $evidence = api::add_evidence($user->id, $c1->get_id(), $syscontext->id, \core_competency\evidence::ACTION_OVERRIDE,
-            'invalidevidencedesc', 'tool_lp', 'Hello world!', false, 'http://moodle.org', 1, 2);
+            'invalidevidencedesc', 'core_competency', 'Hello world!', false, 'http://moodle.org', 1, 2);
         $this->assertEquals(1, \core_competency\evidence::count_records());
         $this->assertEquals(1, \core_competency\user_competency::count_records());
 
@@ -2278,7 +2278,7 @@ class core_competency_api_testcase extends advanced_testcase {
         $evidence->read();
         $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
         $this->assertEquals('invalidevidencedesc', $evidence->get_descidentifier());
-        $this->assertEquals('tool_lp', $evidence->get_desccomponent());
+        $this->assertEquals('core_competency', $evidence->get_desccomponent());
         $this->assertEquals('Hello world!', $evidence->get_desca());
         $this->assertEquals('http://moodle.org', $evidence->get_url());
         $this->assertEquals(\core_competency\evidence::ACTION_OVERRIDE, $evidence->get_action());
@@ -2527,7 +2527,7 @@ class core_competency_api_testcase extends advanced_testcase {
         $this->assertEquals(\core_competency\user_competency::STATUS_IDLE, $uc2->get_status());
 
         $this->assertEquals('evidence_coursecompleted', $ev2->get_descidentifier());
-        $this->assertEquals('tool_lp', $ev2->get_desccomponent());
+        $this->assertEquals('core_competency', $ev2->get_desccomponent());
         $this->assertEquals($course->shortname, $ev2->get_desca());
         $this->assertStringEndsWith('/report/completion/index.php?course=' . $course->id, $ev2->get_url());
         $this->assertEquals(null, $ev2->get_grade());
@@ -2544,7 +2544,7 @@ class core_competency_api_testcase extends advanced_testcase {
         $this->assertEquals(\core_competency\user_competency::STATUS_WAITING_FOR_REVIEW, $uc3->get_status());
 
         $this->assertEquals('evidence_coursecompleted', $ev3->get_descidentifier());
-        $this->assertEquals('tool_lp', $ev3->get_desccomponent());
+        $this->assertEquals('core_competency', $ev3->get_desccomponent());
         $this->assertEquals($course->shortname, $ev3->get_desca());
         $this->assertStringEndsWith('/report/completion/index.php?course=' . $course->id, $ev3->get_url());
         $this->assertEquals(null, $ev3->get_grade());
@@ -2561,7 +2561,7 @@ class core_competency_api_testcase extends advanced_testcase {
         $this->assertEquals(\core_competency\user_competency::STATUS_IDLE, $uc4->get_status());
 
         $this->assertEquals('evidence_coursecompleted', $ev4->get_descidentifier());
-        $this->assertEquals('tool_lp', $ev4->get_desccomponent());
+        $this->assertEquals('core_competency', $ev4->get_desccomponent());
         $this->assertEquals($course->shortname, $ev4->get_desca());
         $this->assertStringEndsWith('/report/completion/index.php?course=' . $course->id, $ev4->get_url());
         $this->assertEquals(3, $ev4->get_grade());

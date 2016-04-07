@@ -76,7 +76,7 @@ class competency_template_deleted extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventtemplatedeleted', 'tool_lp');
+        return get_string('eventtemplatedeleted', 'core_competency');
     }
 
     /**

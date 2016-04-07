@@ -91,7 +91,7 @@ class competency_user_competency_rated_in_plan extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventusercompetencygraderatedinplan', 'tool_lp');
+        return get_string('eventusercompetencygraderatedinplan', 'core_competency');
     }
 
     /**

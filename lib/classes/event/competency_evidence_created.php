@@ -17,7 +17,7 @@
 /**
  * Evidence created event.
  *
- * @package    tool_lp
+ * @package    core_competency
  * @copyright  2016 Jun Pataleta <jun@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -41,7 +41,7 @@ defined('MOODLE_INTERNAL') || die();
  *      - bool recommend: The recommend flag.
  * }
  *
- * @package    tool_lp
+ * @package    core_competency
  * @since      Moodle 3.1
  * @copyright  2016 Jun Pataleta <jun@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -101,7 +101,7 @@ class competency_evidence_created extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventevidencecreated', 'tool_lp');
+        return get_string('eventevidencecreated', 'core_competency');
     }
 
     /**

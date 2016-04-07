@@ -90,7 +90,7 @@ class competency_deleted extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventcompetencydeleted', 'tool_lp');
+        return get_string('eventcompetencydeleted', 'core_competency');
     }
 
     /**

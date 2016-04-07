@@ -126,11 +126,11 @@ class course_module_competency extends persistent {
                 $strname = 'complete';
                 break;
             default:
-                throw new \moodle_exception('errorcompetencyrule', 'tool_lp', '', $ruleoutcome);
+                throw new \moodle_exception('errorcompetencyrule', 'core_competency', '', $ruleoutcome);
                 break;
         }
 
-        return new lang_string('coursemodulecompetencyoutcome_' . $strname, 'tool_lp');
+        return new lang_string('coursemodulecompetencyoutcome_' . $strname, 'core_competency');
     }
 
     /**

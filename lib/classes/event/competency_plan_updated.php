@@ -78,7 +78,7 @@ class competency_plan_updated extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventplanupdated', 'tool_lp');
+        return get_string('eventplanupdated', 'core_competency');
     }
 
     /**

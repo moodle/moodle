@@ -113,7 +113,7 @@ class user_competency_plan extends persistent {
      */
     protected function validate_competencyid($value) {
         if (!competency::record_exists($value)) {
-            return new lang_string('errornocompetency', 'tool_lp', $value);
+            return new lang_string('errornocompetency', 'core_competency', $value);
         }
 
         return true;
@@ -128,14 +128,14 @@ class user_competency_plan extends persistent {
     protected function validate_grade($value) {
         if ($value !== null) {
             if ($value <= 0) {
-                return new lang_string('invalidgrade', 'tool_lp');
+                return new lang_string('invalidgrade', 'core_competency');
             }
 
             // TODO MDL-52243 Use a core method to validate the grade_scale item.
             // Check if grade exist in the scale item values.
             $competency = $this->get_competency();
             if (!array_key_exists($value - 1, $competency->get_scale()->scale_items)) {
-                return new lang_string('invalidgrade', 'tool_lp');
+                return new lang_string('invalidgrade', 'core_competency');
             }
         }
 
@@ -150,7 +150,7 @@ class user_competency_plan extends persistent {
      */
     protected function validate_planid($value) {
         if (!plan::record_exists($value) ) {
-            return new lang_string('invalidplan', 'tool_lp');
+            return new lang_string('invalidplan', 'core_competency');
         }
 
         return true;

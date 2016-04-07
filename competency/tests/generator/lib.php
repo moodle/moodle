@@ -446,7 +446,7 @@ class core_competency_generator extends component_generator_base {
             $record->descidentifier = 'invalidevidencedesc';
         }
         if (!isset($record->desccomponent)) {
-            $record->desccomponent = 'tool_lp';
+            $record->desccomponent = 'core_competency';
         }
         $evidence = new evidence(0, $record);
         $evidence->create();

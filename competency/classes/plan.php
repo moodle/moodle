@@ -284,11 +284,11 @@ class plan extends persistent {
                 $strname = 'complete';
                 break;
             default:
-                throw new \moodle_exception('errorplanstatus', 'tool_lp', '', $status);
+                throw new \moodle_exception('errorplanstatus', 'core_competency', '', $status);
                 break;
         }
 
-        return get_string('planstatus' . $strname, 'tool_lp');
+        return get_string('planstatus' . $strname, 'core_competency');
     }
 
     /**
@@ -560,10 +560,10 @@ class plan extends persistent {
     public static function get_status_list($userid) {
         $status = array();
         if (self::can_manage_user_draft($userid)) {
-            $status[self::STATUS_DRAFT] = get_string('planstatusdraft', 'tool_lp');
+            $status[self::STATUS_DRAFT] = get_string('planstatusdraft', 'core_competency');
         }
         if (self::can_manage_user($userid)) {
-            $status[self::STATUS_ACTIVE] = get_string('planstatusactive', 'tool_lp');
+            $status[self::STATUS_ACTIVE] = get_string('planstatusactive', 'core_competency');
         }
         return $status;
     }
@@ -653,12 +653,12 @@ class plan extends persistent {
 
         if ($value <= time()) {
             // We cannot set the date in the past.
-            return new lang_string('errorcannotsetduedateinthepast', 'tool_lp');
+            return new lang_string('errorcannotsetduedateinthepast', 'core_competency');
         }
 
         if ($value <= time() + self::DUEDATE_THRESHOLD) {
             // We cannot set the date too soon, but we can leave it empty.
-            return new lang_string('errorcannotsetduedatetoosoon', 'tool_lp');
+            return new lang_string('errorcannotsetduedatetoosoon', 'core_competency');
         }
 
         return true;

@@ -75,7 +75,7 @@ class competency_user_competency_review_request_cancelled extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventusercompetencyreviewrequestcancelled', 'tool_lp');
+        return get_string('eventusercompetencyreviewrequestcancelled', 'core_competency');
     }
 
     /**

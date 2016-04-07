@@ -220,7 +220,7 @@ class evidence extends persistent {
      */
     protected function validate_descidentifier($value) {
         if (!$this->get_id() && !get_string_manager()->string_exists($value, $this->get('desccomponent'))) {
-            return new lang_string('invalidevidencedesc', 'tool_lp');
+            return new lang_string('invalidevidencedesc', 'core_competency');
         }
 
         return true;
@@ -237,15 +237,15 @@ class evidence extends persistent {
      */
     protected function validate_grade($value) {
         if ($value !== null && $value <= 0) {
-            return new lang_string('invalidgrade', 'tool_lp');
+            return new lang_string('invalidgrade', 'core_competency');
         }
 
         $action = $this->get('action');
         if ($value === null && $action == self::ACTION_COMPLETE) {
-            return new lang_string('invalidgrade', 'tool_lp');
+            return new lang_string('invalidgrade', 'core_competency');
 
         } else if ($value !== null && $action == self::ACTION_LOG) {
-            return new lang_string('invalidgrade', 'tool_lp');
+            return new lang_string('invalidgrade', 'core_competency');
         }
 
         if ($value !== null) {
@@ -253,7 +253,7 @@ class evidence extends persistent {
             // Check if grade exist in the scale item values.
             $competency = $this->get_competency();
             if (!array_key_exists($value - 1, $competency->get_scale()->scale_items)) {
-                return new lang_string('invalidgrade', 'tool_lp');
+                return new lang_string('invalidgrade', 'core_competency');
             }
         }
 

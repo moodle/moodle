@@ -75,7 +75,7 @@ class competency_user_competency_review_requested extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventusercompetencyreviewrequested', 'tool_lp');
+        return get_string('eventusercompetencyreviewrequested', 'core_competency');
     }
 
     /**

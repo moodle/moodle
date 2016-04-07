@@ -84,7 +84,7 @@ class competency_user_competency_viewed extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventusercompetencyviewed', 'tool_lp');
+        return get_string('eventusercompetencyviewed', 'core_competency');
     }
 
     /**

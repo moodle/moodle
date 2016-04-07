@@ -44,7 +44,7 @@ $url = new moodle_url('/admin/tool/lp/template_plans.php', array(
     'pagecontextid' => $pagecontextid
 ));
 list($title, $subtitle) = \tool_lp\page_helper::setup_for_template($pagecontextid, $url, $template,
-    get_string('userplans', 'tool_lp'));
+    get_string('userplans', 'core_competency'));
 
 // Capture the form submission.
 $form = new \tool_lp\form\template_plans($url->out(false));

@@ -96,6 +96,6 @@ class competency_rule_all extends competency_rule {
      * @return lang_string
      */
     public static function get_name() {
-        return new lang_string('allchildrenarecomplete', 'tool_lp');
+        return new lang_string('allchildrenarecomplete', 'core_competency');
     }
 }

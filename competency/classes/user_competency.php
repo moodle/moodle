@@ -154,11 +154,11 @@ class user_competency extends persistent {
                 $strname = 'inreview';
                 break;
             default:
-                throw new \moodle_exception('errorcomptencystatus', 'tool_lp', '', $status);
+                throw new \moodle_exception('errorusercomptencystatus', 'core_competency', '', $status);
                 break;
         }
 
-        return new lang_string('usercompetencystatus_' . $strname, 'tool_lp');
+        return new lang_string('usercompetencystatus_' . $strname, 'core_competency');
     }
 
     /**
@@ -260,7 +260,7 @@ class user_competency extends persistent {
      */
     protected function validate_competencyid($value) {
         if (!competency::record_exists($value)) {
-            return new lang_string('errornocompetency', 'tool_lp', $value);
+            return new lang_string('errornocompetency', 'core_competency', $value);
         }
 
         return true;
@@ -312,14 +312,14 @@ class user_competency extends persistent {
     protected function validate_grade($value) {
         if ($value !== null) {
             if ($value <= 0) {
-                return new lang_string('invalidgrade', 'tool_lp');
+                return new lang_string('invalidgrade', 'core_competency');
             }
 
             // TODO MDL-52243 Use a core method to validate the grade_scale item.
             // Check if grade exist in the scale item values.
             $competency = $this->get_competency();
             if (!array_key_exists($value - 1 , $competency->get_scale()->scale_items)) {
-                return new lang_string('invalidgrade', 'tool_lp');
+                return new lang_string('invalidgrade', 'core_competency');
             }
         }
 

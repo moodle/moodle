@@ -187,7 +187,7 @@ class template extends persistent {
         if (!empty($value) && $value <= time() - 600) {
             // We cannot set the date in the past. But we allow for 10 minutes of margin so that
             // a user can set the due date to "now" without risking to hit a validation error.
-            return new lang_string('errorcannotsetduedateinthepast', 'tool_lp');
+            return new lang_string('errorcannotsetduedateinthepast', 'core_competency');
         }
 
         return true;

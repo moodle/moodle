@@ -66,7 +66,7 @@ class competency_template_viewed extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventtemplateviewed', 'tool_lp');
+        return get_string('eventtemplateviewed', 'core_competency');
     }
 
     /**

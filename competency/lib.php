@@ -87,7 +87,7 @@ function core_competency_comment_add($comment, $params) {
         // TODO MDL-52749 Replace the link to the plan with the user competency page.
         // FIXME Use a URL resolver here.
         if (empty($plan)) {
-            $urlname = get_string('userplans', 'tool_lp');
+            $urlname = get_string('userplans', 'core_competency');
             $url = new moodle_url('/admin/tool/lp/plans.php', array('userid' => $uc->get_userid()));
         } else {
             $urlname = $competencyname;
@@ -99,7 +99,7 @@ function core_competency_comment_add($comment, $params) {
         }
 
         // Construct the message content.
-        $fullmessagehtml = get_string('usercommentedonacompetencyhtml', 'tool_lp', array(
+        $fullmessagehtml = get_string('usercommentedonacompetencyhtml', 'core_competency', array(
             'fullname' => $fullname,
             'competency' => $competencyname,
             'comment' => format_text($comment->content, $comment->format, array('context' => $params->context->id)),
@@ -108,7 +108,7 @@ function core_competency_comment_add($comment, $params) {
         ));
         if ($comment->format == FORMAT_PLAIN || $comment->format == FORMAT_MOODLE) {
             $format = FORMAT_MOODLE;
-            $fullmessage = get_string('usercommentedonacompetency', 'tool_lp', array(
+            $fullmessage = get_string('usercommentedonacompetency', 'core_competency', array(
                 'fullname' => $fullname,
                 'competency' => $competencyname,
                 'comment' => $comment->content,
@@ -124,11 +124,11 @@ function core_competency_comment_add($comment, $params) {
         $message->name = 'competencyusercompcomment';
         $message->notification = 1;
         $message->userfrom = core_user::get_noreply_user();
-        $message->subject = get_string('usercommentedonacompetencysubject', 'tool_lp', $fullname);
+        $message->subject = get_string('usercommentedonacompetencysubject', 'core_competency', $fullname);
         $message->fullmessage = $fullmessage;
         $message->fullmessageformat = $format;
         $message->fullmessagehtml = $fullmessagehtml;
-        $message->smallmessage = get_string('usercommentedonacompetencysmall', 'tool_lp', array(
+        $message->smallmessage = get_string('usercommentedonacompetencysmall', 'core_competency', array(
             'fullname' => $fullname,
             'competency' => $competencyname,
         ));
@@ -170,7 +170,7 @@ function core_competency_comment_add($comment, $params) {
         ));
 
         // Construct the message content.
-        $fullmessagehtml = get_string('usercommentedonaplanhtml', 'tool_lp', array(
+        $fullmessagehtml = get_string('usercommentedonaplanhtml', 'core_competency', array(
             'fullname' => $fullname,
             'plan' => $planname,
             'comment' => format_text($comment->content, $comment->format, array('context' => $params->context->id)),
@@ -179,7 +179,7 @@ function core_competency_comment_add($comment, $params) {
         ));
         if ($comment->format == FORMAT_PLAIN || $comment->format == FORMAT_MOODLE) {
             $format = FORMAT_MOODLE;
-            $fullmessage = get_string('usercommentedonaplan', 'tool_lp', array(
+            $fullmessage = get_string('usercommentedonaplan', 'core_competency', array(
                 'fullname' => $fullname,
                 'plan' => $planname,
                 'comment' => $comment->content,
@@ -195,11 +195,11 @@ function core_competency_comment_add($comment, $params) {
         $message->name = 'competencyplancomment';
         $message->notification = 1;
         $message->userfrom = core_user::get_noreply_user();
-        $message->subject = get_string('usercommentedonaplansubject', 'tool_lp', $fullname);
+        $message->subject = get_string('usercommentedonaplansubject', 'core_competency', $fullname);
         $message->fullmessage = $fullmessage;
         $message->fullmessageformat = $format;
         $message->fullmessagehtml = $fullmessagehtml;
-        $message->smallmessage = get_string('usercommentedonaplansmall', 'tool_lp', array(
+        $message->smallmessage = get_string('usercommentedonaplansmall', 'core_competency', array(
             'fullname' => $fullname,
             'plan' => $planname,
         ));

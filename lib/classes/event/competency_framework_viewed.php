@@ -72,7 +72,7 @@ class competency_framework_viewed extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventcompetencyframeworkviewed', 'tool_lp');
+        return get_string('eventcompetencyframeworkviewed', 'core_competency');
     }
 
     /**

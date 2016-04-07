@@ -275,21 +275,21 @@ class core_competency_plan_testcase extends advanced_testcase {
 
         // Draft to active with duedate in the past.
         $expected = array(
-            'duedate' => new lang_string('errorcannotsetduedateinthepast', 'tool_lp'),
+            'duedate' => new lang_string('errorcannotsetduedateinthepast', 'core_competency'),
         );
         $this->assertEquals($expected, $plan->validate());
 
         // Draft to active: past date => past date(fail).
         $plan->set_duedate(time() - 100);
         $expected = array(
-            'duedate' => new lang_string('errorcannotsetduedateinthepast', 'tool_lp'),
+            'duedate' => new lang_string('errorcannotsetduedateinthepast', 'core_competency'),
         );
         $this->assertEquals($expected, $plan->validate());
 
         // Draft to active: past date => too soon (fail).
         $plan->set_duedate(time() + 100);
         $expected = array(
-            'duedate' => new lang_string('errorcannotsetduedatetoosoon', 'tool_lp'),
+            'duedate' => new lang_string('errorcannotsetduedatetoosoon', 'core_competency'),
         );
         $this->assertEquals($expected, $plan->validate());
 
@@ -324,14 +324,14 @@ class core_competency_plan_testcase extends advanced_testcase {
         // Active to active: unset date => past date(fail).
         $plan->set_duedate(time() - 100);
         $expected = array(
-            'duedate' => new lang_string('errorcannotsetduedateinthepast', 'tool_lp'),
+            'duedate' => new lang_string('errorcannotsetduedateinthepast', 'core_competency'),
         );
         $this->assertEquals($expected, $plan->validate());
 
         // Active to active: unset date => too soon (fail).
         $plan->set_duedate(time() + 100);
         $expected = array(
-            'duedate' => new lang_string('errorcannotsetduedatetoosoon', 'tool_lp'),
+            'duedate' => new lang_string('errorcannotsetduedatetoosoon', 'core_competency'),
         );
         $this->assertEquals($expected, $plan->validate());
 
@@ -353,14 +353,14 @@ class core_competency_plan_testcase extends advanced_testcase {
         // Active to active: future date => past date(fail).
         $plan->set_duedate(time() - 100);
         $expected = array(
-            'duedate' => new lang_string('errorcannotsetduedateinthepast', 'tool_lp'),
+            'duedate' => new lang_string('errorcannotsetduedateinthepast', 'core_competency'),
         );
         $this->assertEquals($expected, $plan->validate());
 
         // Active to active: future date => too soon (fail).
         $plan->set_duedate(time() + 100);
         $expected = array(
-            'duedate' => new lang_string('errorcannotsetduedatetoosoon', 'tool_lp'),
+            'duedate' => new lang_string('errorcannotsetduedatetoosoon', 'core_competency'),
         );
         $this->assertEquals($expected, $plan->validate());
 

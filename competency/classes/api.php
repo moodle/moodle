@@ -580,7 +580,7 @@ class api {
             $idnumber = competency_framework::get_unused_idnumber($framework->get_idnumber());
             $framework->set_idnumber($idnumber);
             // Adding the suffix copy to the shortname.
-            $framework->set_shortname(get_string('duplicateditemname', 'tool_lp', $framework->get_shortname()));
+            $framework->set_shortname(get_string('duplicateditemname', 'core_competency', $framework->get_shortname()));
             $framework->set_id(0);
             $framework = $framework->create();
 
@@ -1739,7 +1739,7 @@ class api {
         $competencies = template_competency::list_competencies($id, false);
 
         // Adding the suffix copy.
-        $template->set_shortname(get_string('duplicateditemname', 'tool_lp', $template->get_shortname()));
+        $template->set_shortname(get_string('duplicateditemname', 'core_competency', $template->get_shortname()));
         $template->set_id(0);
 
         $duplicatedtemplate = $template->create();
@@ -3829,7 +3829,7 @@ class api {
                 $userevidence->get_context(),
                 evidence::ACTION_LOG,
                 'evidence_evidenceofpriorlearninglinked',
-                'tool_lp',
+                'core_competency',
                 $userevidence->get_name(),
                 false,
                 $link->out(false),
@@ -3877,7 +3877,7 @@ class api {
                 $userevidence->get_context(),
                 evidence::ACTION_LOG,
                 'evidence_evidenceofpriorlearningunlinked',
-                'tool_lp',
+                'core_competency',
                 $userevidence->get_name(),
                 false,
                 null,
@@ -4487,7 +4487,7 @@ class api {
             $parent->get_context()->id,
             $action,
             'evidence_competencyrule',
-            'tool_lp',
+            'core_competency',
             null,
             $recommend
         );
@@ -4545,7 +4545,7 @@ class api {
                     $event->contextid,
                     $action,
                     $strdesc,
-                    'tool_lp',
+                    'core_competency',
                     $cmname,
                     $recommend,
                     $url
@@ -4605,7 +4605,7 @@ class api {
                 $event->contextid,
                 $action,
                 $strdesc,
-                'tool_lp',
+                'core_competency',
                 $courseshortname,
                 $recommend,
                 $event->get_url()
@@ -4647,7 +4647,7 @@ class api {
                                   $context->id,
                                   $action,
                                   $desckey,
-                                  'tool_lp',
+                                  'core_competency',
                                   null,
                                   false,
                                   null,
@@ -4700,7 +4700,7 @@ class api {
                                   $context->id,
                                   $action,
                                   $desckey,
-                                  'tool_lp',
+                                  'core_competency',
                                   $plan->get_name(),
                                   false,
                                   null,
@@ -4768,7 +4768,7 @@ class api {
                                   $context->id,
                                   $action,
                                   $desckey,
-                                  'tool_lp',
+                                  'core_competency',
                                   $context->get_context_name(),
                                   false,
                                   null,

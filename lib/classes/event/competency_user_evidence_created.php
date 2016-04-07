@@ -67,7 +67,7 @@ class competency_user_evidence_created extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventuserevidencecreated', 'tool_lp');
+        return get_string('eventuserevidencecreated', 'core_competency');
     }
 
     /**

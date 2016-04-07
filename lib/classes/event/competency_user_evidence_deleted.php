@@ -67,7 +67,7 @@ class competency_user_evidence_deleted extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventuserevidencedeleted', 'tool_lp');
+        return get_string('eventuserevidencedeleted', 'core_competency');
     }
 
     /**

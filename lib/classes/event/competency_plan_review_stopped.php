@@ -78,7 +78,7 @@ class competency_plan_review_stopped extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventplanreviewstopped', 'tool_lp');
+        return get_string('eventplanreviewstopped', 'core_competency');
     }
 
     /**

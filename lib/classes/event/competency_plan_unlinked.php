@@ -75,7 +75,7 @@ class competency_plan_unlinked extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventplanunlinked', 'tool_lp');
+        return get_string('eventplanunlinked', 'core_competency');
     }
 
     /**

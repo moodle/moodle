@@ -85,7 +85,7 @@ class competency_user_competency_rated extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventusercompetencygraderated', 'tool_lp');
+        return get_string('eventusercompetencygraderated', 'core_competency');
     }
 
     /**

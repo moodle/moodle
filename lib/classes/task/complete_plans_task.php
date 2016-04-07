@@ -46,7 +46,7 @@ class complete_plans_task extends \core\task\scheduled_task {
      * @return string
      */
     public function get_name() {
-        return get_string('completeplanstask', 'tool_lp');
+        return get_string('completeplanstask', 'core_competency');
     }
 
     /**

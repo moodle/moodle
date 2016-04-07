@@ -617,7 +617,7 @@ class competency extends persistent {
             // Validate that we can only change the scale when it is not used yet.
             if ($this->beforeupdate->get_scaleid() != $value) {
                 if ($this->has_user_competencies()) {
-                    return new lang_string('errorscalealreadyused', 'tool_lp');
+                    return new lang_string('errorscalealreadyused', 'core_competency');
                 }
             }
 
@@ -650,7 +650,7 @@ class competency extends persistent {
             $scaleinfo = array_shift($scaleconfigurations);
             if (empty($scaleinfo) || !isset($scaleinfo->scaleid) || $scaleinfo->scaleid != $scaleid) {
                 // This should never happen.
-                return new lang_string('errorscaleconfiguration', 'tool_lp');
+                return new lang_string('errorscaleconfiguration', 'core_competency');
             }
 
             // Walk through the array to find proficient and default values.
@@ -665,7 +665,7 @@ class competency extends persistent {
         }
 
         if (!$scaledefaultselected || !$proficientselected) {
-            return new lang_string('errorscaleconfiguration', 'tool_lp');
+            return new lang_string('errorscaleconfiguration', 'core_competency');
         }
 
         return true;

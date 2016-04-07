@@ -279,7 +279,7 @@ class competency_framework extends persistent {
             // Validate that we can only change the scale when it is not used yet.
             if ($this->beforeupdate->get_scaleid() != $value) {
                 if ($this->beforeupdate->has_user_competencies()) {
-                    return new lang_string('errorscalealreadyused', 'tool_lp');
+                    return new lang_string('errorscalealreadyused', 'core_competency');
                 }
             }
 
@@ -305,7 +305,7 @@ class competency_framework extends persistent {
             $scaleinfo = array_shift($scaleconfigurations);
             if (empty($scaleinfo) || !isset($scaleinfo->scaleid) || $scaleinfo->scaleid != $this->get('scaleid')) {
                 // This should never happen.
-                return new lang_string('errorscaleconfiguration', 'tool_lp');
+                return new lang_string('errorscaleconfiguration', 'core_competency');
             }
 
             // Walk through the array to find proficient and default values.
@@ -320,7 +320,7 @@ class competency_framework extends persistent {
         }
 
         if (!$scaledefaultselected || !$proficientselected) {
-            return new lang_string('errorscaleconfiguration', 'tool_lp');
+            return new lang_string('errorscaleconfiguration', 'core_competency');
         }
 
         return true;
@@ -341,7 +341,7 @@ class competency_framework extends persistent {
 
         foreach ($terms as $term) {
             if (!empty($term) && !array_key_exists($term, self::get_taxonomies_list())) {
-                return new lang_string('invalidtaxonomy', 'tool_lp', $term);
+                return new lang_string('invalidtaxonomy', 'core_competency', $term);
             }
         }
 
@@ -434,17 +434,17 @@ class competency_framework extends persistent {
         // decide to allow more taxonomies to be added dynamically from a CFG variable for instance.
         if ($list === null) {
             $list = array(
-                self::TAXONOMY_BEHAVIOUR => new lang_string('taxonomy_' . self::TAXONOMY_BEHAVIOUR, 'tool_lp'),
-                self::TAXONOMY_COMPETENCY => new lang_string('taxonomy_' . self::TAXONOMY_COMPETENCY, 'tool_lp'),
-                self::TAXONOMY_CONCEPT => new lang_string('taxonomy_' . self::TAXONOMY_CONCEPT, 'tool_lp'),
-                self::TAXONOMY_DOMAIN => new lang_string('taxonomy_' . self::TAXONOMY_DOMAIN, 'tool_lp'),
-                self::TAXONOMY_INDICATOR => new lang_string('taxonomy_' . self::TAXONOMY_INDICATOR, 'tool_lp'),
-                self::TAXONOMY_LEVEL => new lang_string('taxonomy_' . self::TAXONOMY_LEVEL, 'tool_lp'),
-                self::TAXONOMY_OUTCOME => new lang_string('taxonomy_' . self::TAXONOMY_OUTCOME, 'tool_lp'),
-                self::TAXONOMY_PRACTICE => new lang_string('taxonomy_' . self::TAXONOMY_PRACTICE, 'tool_lp'),
-                self::TAXONOMY_PROFICIENCY => new lang_string('taxonomy_' . self::TAXONOMY_PROFICIENCY, 'tool_lp'),
-                self::TAXONOMY_SKILL => new lang_string('taxonomy_' . self::TAXONOMY_SKILL, 'tool_lp'),
-                self::TAXONOMY_VALUE => new lang_string('taxonomy_' . self::TAXONOMY_VALUE, 'tool_lp'),
+                self::TAXONOMY_BEHAVIOUR => new lang_string('taxonomy_' . self::TAXONOMY_BEHAVIOUR, 'core_competency'),
+                self::TAXONOMY_COMPETENCY => new lang_string('taxonomy_' . self::TAXONOMY_COMPETENCY, 'core_competency'),
+                self::TAXONOMY_CONCEPT => new lang_string('taxonomy_' . self::TAXONOMY_CONCEPT, 'core_competency'),
+                self::TAXONOMY_DOMAIN => new lang_string('taxonomy_' . self::TAXONOMY_DOMAIN, 'core_competency'),
+                self::TAXONOMY_INDICATOR => new lang_string('taxonomy_' . self::TAXONOMY_INDICATOR, 'core_competency'),
+                self::TAXONOMY_LEVEL => new lang_string('taxonomy_' . self::TAXONOMY_LEVEL, 'core_competency'),
+                self::TAXONOMY_OUTCOME => new lang_string('taxonomy_' . self::TAXONOMY_OUTCOME, 'core_competency'),
+                self::TAXONOMY_PRACTICE => new lang_string('taxonomy_' . self::TAXONOMY_PRACTICE, 'core_competency'),
+                self::TAXONOMY_PROFICIENCY => new lang_string('taxonomy_' . self::TAXONOMY_PROFICIENCY, 'core_competency'),
+                self::TAXONOMY_SKILL => new lang_string('taxonomy_' . self::TAXONOMY_SKILL, 'core_competency'),
+                self::TAXONOMY_VALUE => new lang_string('taxonomy_' . self::TAXONOMY_VALUE, 'core_competency'),
             );
         }
 

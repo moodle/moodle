@@ -1340,7 +1340,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $this->assertEquals($recommend, $event->other['recommend']);
 
         // Test get_name().
-        $this->assertEquals(get_string('eventevidencecreated', 'tool_lp'), $event->get_name());
+        $this->assertEquals(get_string('eventevidencecreated', 'core_competency'), $event->get_name());
 
         // Test get_description().
         $description = "The user with id '$USER->id' created an evidence with id '{$evidence->get_id()}'.";

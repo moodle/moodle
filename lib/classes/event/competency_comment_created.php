@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Comment created event for tool_lp areas.
+ * Comment created event for core_competency areas.
  *
  *
  * @package    core_competency

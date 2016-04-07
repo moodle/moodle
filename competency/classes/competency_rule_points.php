@@ -197,7 +197,7 @@ class competency_rule_points extends competency_rule {
      * @return lang_string
      */
     public static function get_name() {
-        return new lang_string('pointsrequiredaremet', 'tool_lp');
+        return new lang_string('pointsrequiredaremet', 'core_competency');
     }
 
     /**

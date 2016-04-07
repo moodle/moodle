@@ -64,7 +64,7 @@ class user_evidence extends persistent {
             'url' => array(
                 'type' => PARAM_URL,
                 'default' => '',
-                'message' => new lang_string('invalidurl', 'tool_lp')
+                'message' => new lang_string('invalidurl', 'core_competency')
             )
         );
     }

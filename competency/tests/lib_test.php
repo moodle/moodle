@@ -133,7 +133,7 @@ class core_competency_lib_testcase extends advanced_testcase {
         $this->assertCount(1, $messages);
         $message = array_pop($messages);
 
-        $expectedurlname = get_string('userplans', 'tool_lp');
+        $expectedurlname = get_string('userplans', 'core_competency');
         $expectedurl = new moodle_url('/admin/tool/lp/plans.php', array(
             'userid' => $u1->id,
         ));
@@ -170,7 +170,7 @@ class core_competency_lib_testcase extends advanced_testcase {
         $this->assertCount(1, $messages);
         $message = array_pop($messages);
 
-        $expectedurlname = get_string('userplans', 'tool_lp');
+        $expectedurlname = get_string('userplans', 'core_competency');
         $expectedurl = new moodle_url('/admin/tool/lp/plans.php', array(
             'userid' => $u1->id,
         ));
