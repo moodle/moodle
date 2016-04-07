@@ -62,6 +62,14 @@ class search extends \moodleform {
         }
         $mform->addElement('select', 'areaid', get_string('searcharea', 'search'), $areanames);
 
+        $options = array(
+            'multiple' => true,
+            'limittoenrolled' => !is_siteadmin(),
+            'noselectionstring' => get_string('allcourses', 'search'),
+        );
+        $mform->addElement('course', 'courseids', get_string('courses', 'core'), $options);
+        $mform->setType('courseids', PARAM_INT);
+
         $mform->addElement('date_time_selector', 'timestart', get_string('fromtime', 'search'), array('optional' => true));
         $mform->setDefault('timestart', 0);
 

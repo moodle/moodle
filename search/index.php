@@ -28,7 +28,7 @@ $page = optional_param('page', 0, PARAM_INT);
 $q = optional_param('q', '', PARAM_NOTAGS);
 $title = optional_param('title', '', PARAM_NOTAGS);
 $areaid = optional_param('areaid', false, PARAM_ALPHANUMEXT);
-// Moving timestart and timeend further down as they might come as an array if they come from the form.
+// Moving courseids, timestart, and timeend further down as they might come as an array if they come from the form.
 
 $context = context_system::instance();
 $pagetitle = get_string('globalsearch', 'search');
@@ -67,6 +67,11 @@ if (!$data && $q) {
     $data->q = $q;
     $data->title = $title;
     $data->areaid = $areaid;
+    $courseids = optional_param('courseids', '', PARAM_RAW);
+    if (!empty($courseids)) {
+        $courseids = explode(',', $courseids);
+        $data->courseids = clean_param_array($courseids, PARAM_INT);
+    }
     $data->timestart = optional_param('timestart', 0, PARAM_INT);
     $data->timeend = optional_param('timeend', 0, PARAM_INT);
     $mform->set_data($data);
@@ -78,6 +83,9 @@ if ($data) {
     $urlparams['q'] = $data->q;
     $urlparams['title'] = $data->title;
     $urlparams['areaid'] = $data->areaid;
+    if (!empty($data->courseids)) {
+        $urlparams['courseids'] = implode(',', $data->courseids);
+    }
     $urlparams['timestart'] = $data->timestart;
     $urlparams['timeend'] = $data->timeend;
 }
