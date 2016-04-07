@@ -523,9 +523,9 @@ BRANCH.prototype = {
                 branchicon.setAttribute('title', icon.title);
             }
             if (icon.classes) {
-                for (var i in icon.classes) {
-                    branchicon.addClass(icon.classes[i]);
-                }
+                icon.classes.forEach(function(element) {
+                    branchicon.addClass(element);
+                });
             }
         }
 
