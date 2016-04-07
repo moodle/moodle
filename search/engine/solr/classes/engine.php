@@ -234,7 +234,7 @@ class engine extends \core_search\engine {
         $fields = $documentclass::get_default_fields_definition();
 
         $dismax = false;
-        if ($query instanceof SolrDisMaxQuery) {
+        if ($query instanceof \SolrDisMaxQuery) {
             $dismax = true;
         }
 
@@ -618,7 +618,7 @@ class engine extends \core_search\engine {
                         if ($indexedfile->solr_filecontenthash != $files[$fileid]->get_contenthash()) {
                             continue;
                         }
-                        if ($indexedfile->solr_fileindexedcontent == document::INDEXED_FILE_FALSE &&
+                        if ($indexedfile->solr_fileindexstatus == document::INDEXED_FILE_FALSE &&
                                 $this->file_is_indexable($files[$fileid])) {
                             // This means that the last time we indexed this file, filtering blocked it.
                             // Current settings say it is indexable, so we will allow it to be indexed.
@@ -682,7 +682,7 @@ class engine extends \core_search\engine {
         $query->addField('title');
         $query->addField('solr_fileid');
         $query->addField('solr_filecontenthash');
-        $query->addField('solr_fileindexedcontent');
+        $query->addField('solr_fileindexstatus');
 
         $query->addFilterQuery('{!cache=false}solr_filegroupingid:(' . $document->get('id') . ')');
         $query->addFilterQuery('type:' . \core_search\manager::TYPE_FILE);
@@ -729,7 +729,7 @@ class engine extends \core_search\engine {
             $result->title = $doc->title;
             $result->solr_fileid = $doc->solr_fileid;
             $result->solr_filecontenthash = $doc->solr_filecontenthash;
-            $result->solr_fileindexedcontent = $doc->solr_fileindexedcontent;
+            $result->solr_fileindexstatus = $doc->solr_fileindexstatus;
             $out[] = $result;
         }
 
@@ -752,7 +752,7 @@ class engine extends \core_search\engine {
 
         if (!$this->file_is_indexable($storedfile)) {
             // For files that we don't consider indexable, we will still place a reference in the search engine.
-            $filedoc['solr_fileindexedcontent'] = document::INDEXED_FILE_FALSE;
+            $filedoc['solr_fileindexstatus'] = document::INDEXED_FILE_FALSE;
             $this->add_solr_document($filedoc);
             return;
         }
@@ -763,6 +763,11 @@ class engine extends \core_search\engine {
 
         // This will prevent solr from automatically making fields for every tika output.
         $url->param('uprefix', 'ignored_');
+
+        // Control how content is captured. This will keep our file content clean of non-important metadata.
+        $url->param('captureAttr', 'true');
+        // Move the content to a field for indexing.
+        $url->param('fmap.content', 'solr_filecontent');
 
         // These are common fields that matches the standard *_point dynamic field and causes an error.
         $url->param('fmap.media_white_point', 'ignored_mwp');
@@ -833,7 +838,7 @@ class engine extends \core_search\engine {
         }
 
         // If we get here, the document was not indexed due to an error. So we will index just the base info without the file.
-        $filedoc['solr_fileindexedcontent'] = document::INDEXED_FILE_ERROR;
+        $filedoc['solr_fileindexstatus'] = document::INDEXED_FILE_ERROR;
         $this->add_solr_document($filedoc);
     }
 

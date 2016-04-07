@@ -63,17 +63,25 @@ class document extends \core_search\document {
         'solr_fileid' => array(
             'type' => 'string',
             'stored' => true,
-            'indexed' => false
+            'indexed' => true
         ),
         'solr_filecontenthash' => array(
             'type' => 'string',
             'stored' => true,
-            'indexed' => false
+            'indexed' => true
         ),
-        'solr_fileindexedcontent' => array(
+        // Stores the status of file indexing.
+        'solr_fileindexstatus' => array(
             'type' => 'int',
             'stored' => true,
             'indexed' => true
+        ),
+        // Field to index, but not store, file contents.
+        'solr_filecontent' => array(
+            'type' => 'text',
+            'stored' => false,
+            'indexed' => true,
+            'mainquery' => true
         )
     );
 
@@ -186,7 +194,7 @@ class document extends \core_search\document {
         $data['type'] = \core_search\manager::TYPE_FILE;
         $data['solr_fileid'] = $file->get_id();
         $data['solr_filecontenthash'] = $file->get_contenthash();
-        $data['solr_fileindexedcontent'] = self::INDEXED_FILE_TRUE;
+        $data['solr_fileindexstatus'] = self::INDEXED_FILE_TRUE;
         $data['title'] = $file->get_filename();
 
         return $data;
