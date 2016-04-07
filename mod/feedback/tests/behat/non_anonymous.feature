@@ -22,10 +22,6 @@ Feature: Non anonymous feedback
     And the following "system role assigns" exist:
       | user    | course               | role    |
       | manager | Acceptance test site | manager |
-    And I log in as "admin"
-    And I navigate to "Manage activities" node in "Site administration > Plugins > Activity modules"
-    And I click on "Show" "link" in the "Feedback" "table_row"
-    And I log out
     And the following "activities" exist:
       | activity   | name            | course               | idnumber  | anonymous | publish_stats |
       | feedback   | Site feedback   | Acceptance test site | feedback0 | 2         | 1             |
