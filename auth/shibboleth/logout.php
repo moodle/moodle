@@ -32,7 +32,7 @@ if ($action == 'logout' && !empty($redirect)) {
         redirect($redirect);
     }
 
-} else if (!file_get_contents("php://input")) {
+} else if (!empty(file_get_contents("php://input"))) {
 
     // Back channel logout.
     // Set SOAP header.
