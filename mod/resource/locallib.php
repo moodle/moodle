@@ -253,7 +253,6 @@ function resource_print_header($resource, $cm, $course) {
     $PAGE->set_title($course->shortname.': '.$resource->name);
     $PAGE->set_heading($course->fullname);
     $PAGE->set_activity_record($resource);
-    $PAGE->set_button(update_module_button($cm->id, '', get_string('modulename', 'resource')));
     echo $OUTPUT->header();
 }
 

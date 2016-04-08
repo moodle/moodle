@@ -978,14 +978,6 @@ class page_wiki_preview extends page_wiki_edit {
 
     private $newcontent;
 
-    function __construct($wiki, $subwiki, $cm) {
-        global $PAGE, $CFG, $OUTPUT;
-        parent::__construct($wiki, $subwiki, $cm);
-        $buttons = $OUTPUT->update_module_button($cm->id, 'wiki');
-        $PAGE->set_button($buttons);
-
-    }
-
     function print_header() {
         global $PAGE, $CFG;
 
