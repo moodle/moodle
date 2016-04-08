@@ -193,6 +193,11 @@ abstract class base {
         return (bool)get_config($componentname, $varname . '_enabled');
     }
 
+    public function set_enabled($isenabled) {
+        list($componentname, $varname) = $this->get_config_var_name();
+        return set_config($varname . '_enabled', $isenabled, $componentname);
+    }
+
     /**
      * Returns true if this area uses file indexing.
      *

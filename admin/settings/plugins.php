@@ -528,15 +528,9 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_configselect('searchengine',
                                 new lang_string('selectsearchengine', 'admin'), '', 'solr', $engines));
 
-    // Enable search areas.
-    $temp->add(new admin_setting_heading('searchareasheading', new lang_string('availablesearchareas', 'admin'), ''));
-    $searchareas = \core_search\manager::get_search_areas_list();
-    foreach ($searchareas as $areaid => $searcharea) {
-        list($componentname, $varname) = $searcharea->get_config_var_name();
-        $temp->add(new admin_setting_configcheckbox($componentname . '/' . $varname . '_enabled', $searcharea->get_visible_name(true),
-            '', 1, 1, 0));
-    }
     $ADMIN->add('searchplugins', $temp);
+    $ADMIN->add('searchplugins', new admin_externalpage('searchareas', new lang_string('searchareas', 'admin'),
+        new moodle_url('/admin/searchareas.php')));
 
     core_collator::asort_objects_by_property($pages, 'visiblename');
     foreach ($pages as $page) {

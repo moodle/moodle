@@ -9715,7 +9715,7 @@ class admin_setting_searchsetupinfo extends admin_setting {
 
         // Available areas.
         $row = array();
-        $url = new moodle_url('/admin/settings.php?section=manageglobalsearch#admin-searchengine');
+        $url = new moodle_url('/admin/searchareas.php');
         $row[0] = '2. ' . html_writer::tag('a', get_string('enablesearchareas', 'admin'),
                         array('href' => $url));
 
