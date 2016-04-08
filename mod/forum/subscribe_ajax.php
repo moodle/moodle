@@ -32,7 +32,7 @@ $includetext    = optional_param('includetext', false, PARAM_BOOL);
 
 $forum          = $DB->get_record('forum', array('id' => $forumid), '*', MUST_EXIST);
 $course         = $DB->get_record('course', array('id' => $forum->course), '*', MUST_EXIST);
-$discussion     = $DB->get_record('forum_discussions', array('id' => $discussionid), '*', MUST_EXIST);
+$discussion     = $DB->get_record('forum_discussions', array('id' => $discussionid, 'forum' => $forumid), '*', MUST_EXIST);
 $cm             = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
 $context        = context_module::instance($cm->id);
 
