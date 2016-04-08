@@ -35,98 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @since Moodle 2.0
  */
 function external_function_info($function, $strictness=MUST_EXIST) {
-    global $DB, $CFG;
-
-    if (!is_object($function)) {
-        if (!$function = $DB->get_record('external_functions', array('name'=>$function), '*', $strictness)) {
-            return false;
-        }
-    }
-
-    // First try class autoloading.
-    if (!class_exists($function->classname)) {
-        // Fallback to explicit include of externallib.php.
-        $function->classpath = empty($function->classpath) ? core_component::get_component_directory($function->component).'/externallib.php' : $CFG->dirroot.'/'.$function->classpath;
-        if (!file_exists($function->classpath)) {
-            throw new coding_exception('Cannot find file with external function implementation: ' . $function->classname);
-        }
-        require_once($function->classpath);
-        if (!class_exists($function->classname)) {
-            throw new coding_exception('Cannot find external class');
-        }
-    }
-
-    $function->ajax_method = $function->methodname.'_is_allowed_from_ajax';
-    $function->parameters_method = $function->methodname.'_parameters';
-    $function->returns_method    = $function->methodname.'_returns';
-    $function->deprecated_method = $function->methodname.'_is_deprecated';
-
-    // make sure the implementaion class is ok
-    if (!method_exists($function->classname, $function->methodname)) {
-        throw new coding_exception('Missing implementation method of '.$function->classname.'::'.$function->methodname);
-    }
-    if (!method_exists($function->classname, $function->parameters_method)) {
-        throw new coding_exception('Missing parameters description');
-    }
-    if (!method_exists($function->classname, $function->returns_method)) {
-        throw new coding_exception('Missing returned values description');
-    }
-    if (method_exists($function->classname, $function->deprecated_method)) {
-        if (call_user_func(array($function->classname, $function->deprecated_method)) === true) {
-            $function->deprecated = true;
-        }
-    }
-    $function->allowed_from_ajax = false;
-
-    // fetch the parameters description
-    $function->parameters_desc = call_user_func(array($function->classname, $function->parameters_method));
-    if (!($function->parameters_desc instanceof external_function_parameters)) {
-        throw new coding_exception('Invalid parameters description');
-    }
-
-    // fetch the return values description
-    $function->returns_desc = call_user_func(array($function->classname, $function->returns_method));
-    // null means void result or result is ignored
-    if (!is_null($function->returns_desc) and !($function->returns_desc instanceof external_description)) {
-        throw new coding_exception('Invalid return description');
-    }
-
-    //now get the function description
-    //TODO MDL-31115 use localised lang pack descriptions, it would be nice to have
-    //      easy to understand descriptions in admin UI,
-    //      on the other hand this is still a bit in a flux and we need to find some new naming
-    //      conventions for these descriptions in lang packs
-    $function->description = null;
-    $servicesfile = core_component::get_component_directory($function->component).'/db/services.php';
-    if (file_exists($servicesfile)) {
-        $functions = null;
-        include($servicesfile);
-        if (isset($functions[$function->name]['description'])) {
-            $function->description = $functions[$function->name]['description'];
-        }
-        if (isset($functions[$function->name]['testclientpath'])) {
-            $function->testclientpath = $functions[$function->name]['testclientpath'];
-        }
-        if (isset($functions[$function->name]['type'])) {
-            $function->type = $functions[$function->name]['type'];
-        }
-        if (isset($functions[$function->name]['ajax'])) {
-            $function->allowed_from_ajax = $functions[$function->name]['ajax'];
-        } else if (method_exists($function->classname, $function->ajax_method)) {
-            if (call_user_func(array($function->classname, $function->ajax_method)) === true) {
-                debugging('External function ' . $function->ajax_method . '() function is deprecated.' .
-                          'Set ajax=>true in db/service.php instead.', DEBUG_DEVELOPER);
-                $function->allowed_from_ajax = true;
-            }
-        }
-        if (isset($functions[$function->name]['loginrequired'])) {
-            $function->loginrequired = $functions[$function->name]['loginrequired'];
-        } else {
-            $function->loginrequired = true;
-        }
-    }
-
-    return $function;
+    return external_api::external_function_info($function, $strictness);
 }
 
 /**
@@ -160,6 +69,195 @@ class external_api {
 
     /** @var stdClass context where the function calls will be restricted */
     private static $contextrestriction;
+
+    /**
+     * Returns detailed function information
+     *
+     * @param string|object $function name of external function or record from external_function
+     * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
+     *                        MUST_EXIST means throw exception if no record or multiple records found
+     * @return stdClass description or false if not found or exception thrown
+     * @since Moodle 2.0
+     */
+    public static function external_function_info($function, $strictness=MUST_EXIST) {
+        global $DB, $CFG;
+
+        if (!is_object($function)) {
+            if (!$function = $DB->get_record('external_functions', array('name' => $function), '*', $strictness)) {
+                return false;
+            }
+        }
+
+        // First try class autoloading.
+        if (!class_exists($function->classname)) {
+            // Fallback to explicit include of externallib.php.
+            if (empty($function->classpath)) {
+                $function->classpath = core_component::get_component_directory($function->component).'/externallib.php';
+            } else {
+                $function->classpath = $CFG->dirroot.'/'.$function->classpath;
+            }
+            if (!file_exists($function->classpath)) {
+                throw new coding_exception('Cannot find file with external function implementation');
+            }
+            require_once($function->classpath);
+            if (!class_exists($function->classname)) {
+                throw new coding_exception('Cannot find external class');
+            }
+        }
+
+        $function->ajax_method = $function->methodname.'_is_allowed_from_ajax';
+        $function->parameters_method = $function->methodname.'_parameters';
+        $function->returns_method    = $function->methodname.'_returns';
+        $function->deprecated_method = $function->methodname.'_is_deprecated';
+
+        // Make sure the implementaion class is ok.
+        if (!method_exists($function->classname, $function->methodname)) {
+            throw new coding_exception('Missing implementation method of '.$function->classname.'::'.$function->methodname);
+        }
+        if (!method_exists($function->classname, $function->parameters_method)) {
+            throw new coding_exception('Missing parameters description');
+        }
+        if (!method_exists($function->classname, $function->returns_method)) {
+            throw new coding_exception('Missing returned values description');
+        }
+        if (method_exists($function->classname, $function->deprecated_method)) {
+            if (call_user_func(array($function->classname, $function->deprecated_method)) === true) {
+                $function->deprecated = true;
+            }
+        }
+        $function->allowed_from_ajax = false;
+
+        // Fetch the parameters description.
+        $function->parameters_desc = call_user_func(array($function->classname, $function->parameters_method));
+        if (!($function->parameters_desc instanceof external_function_parameters)) {
+            throw new coding_exception('Invalid parameters description');
+        }
+
+        // Fetch the return values description.
+        $function->returns_desc = call_user_func(array($function->classname, $function->returns_method));
+        // Null means void result or result is ignored.
+        if (!is_null($function->returns_desc) and !($function->returns_desc instanceof external_description)) {
+            throw new coding_exception('Invalid return description');
+        }
+
+        // Now get the function description.
+
+        // TODO MDL-31115 use localised lang pack descriptions, it would be nice to have
+        // easy to understand descriptions in admin UI,
+        // on the other hand this is still a bit in a flux and we need to find some new naming
+        // conventions for these descriptions in lang packs.
+        $function->description = null;
+        $servicesfile = core_component::get_component_directory($function->component).'/db/services.php';
+        if (file_exists($servicesfile)) {
+            $functions = null;
+            include($servicesfile);
+            if (isset($functions[$function->name]['description'])) {
+                $function->description = $functions[$function->name]['description'];
+            }
+            if (isset($functions[$function->name]['testclientpath'])) {
+                $function->testclientpath = $functions[$function->name]['testclientpath'];
+            }
+            if (isset($functions[$function->name]['type'])) {
+                $function->type = $functions[$function->name]['type'];
+            }
+            if (isset($functions[$function->name]['ajax'])) {
+                $function->allowed_from_ajax = $functions[$function->name]['ajax'];
+            } else if (method_exists($function->classname, $function->ajax_method)) {
+                if (call_user_func(array($function->classname, $function->ajax_method)) === true) {
+                    debugging('External function ' . $function->ajax_method . '() function is deprecated.' .
+                              'Set ajax=>true in db/service.php instead.', DEBUG_DEVELOPER);
+                    $function->allowed_from_ajax = true;
+                }
+            }
+            if (isset($functions[$function->name]['loginrequired'])) {
+                $function->loginrequired = $functions[$function->name]['loginrequired'];
+            } else {
+                $function->loginrequired = true;
+            }
+        }
+
+        return $function;
+    }
+
+    /**
+     * Call an external function validating all params/returns correctly.
+     *
+     * Note that an external function may modify the state of the current page, so this wrapper
+     * saves and restores tha PAGE and COURSE global variables before/after calling the external function.
+     *
+     * @param string $function A webservice function name.
+     * @param array $args Params array (named params)
+     * @param boolean $ajaxonly If true, an extra check will be peformed to see if ajax is required.
+     * @return array containing keys for error (bool), exception and data.
+     */
+    public static function call_external_function($function, $args, $ajaxonly=false) {
+        global $PAGE, $COURSE, $CFG, $SITE;
+
+        require_once($CFG->libdir . "/pagelib.php");
+
+        $externalfunctioninfo = self::external_function_info($function);
+
+        $currentpage = $PAGE;
+        $currentcourse = $COURSE;
+        $response = array();
+
+        try {
+
+            $PAGE = new moodle_page();
+            $COURSE = clone($SITE);
+
+            if ($ajaxonly && !$externalfunctioninfo->allowed_from_ajax) {
+                throw new moodle_exception('servicenotavailable', 'webservice');
+            }
+
+            // Do not allow access to write or delete webservices as a public user.
+            if ($externalfunctioninfo->loginrequired) {
+                if (defined('NO_MOODLE_COOKIES') && NO_MOODLE_COOKIES && !PHPUNIT_TEST) {
+                    throw new moodle_exception('servicenotavailable', 'webservice');
+                }
+                if (!isloggedin()) {
+                    throw new moodle_exception('servicenotavailable', 'webservice');
+                } else {
+                    require_sesskey();
+                }
+            }
+
+            // Validate params, this also sorts the params properly, we need the correct order in the next part.
+            $callable = array($externalfunctioninfo->classname, 'validate_parameters');
+            $params = call_user_func($callable,
+                                     $externalfunctioninfo->parameters_desc,
+                                     $args);
+
+            // Execute - gulp!
+            $callable = array($externalfunctioninfo->classname, $externalfunctioninfo->methodname);
+            $result = call_user_func_array($callable,
+                                           array_values($params));
+
+            // Validate the return parameters.
+            if ($externalfunctioninfo->returns_desc !== null) {
+                $callable = array($externalfunctioninfo->classname, 'clean_returnvalue');
+                $result = call_user_func($callable, $externalfunctioninfo->returns_desc, $result);
+            }
+
+            $response['error'] = false;
+            $response['data'] = $result;
+        } catch (Exception $e) {
+            $exception = get_exception_info($e);
+            unset($exception->a);
+            if (!debugging('', DEBUG_DEVELOPER)) {
+                unset($exception->debuginfo);
+                unset($exception->backtrace);
+            }
+            $response['error'] = true;
+            $response['exception'] = $exception;
+            // Do not process the remaining requests.
+        }
+
+        $PAGE = $currentpage;
+        $COURSE = $currentcourse;
+
+        return $response;
+    }
 
     /**
      * Set context restriction for all following subsequent function calls.
@@ -359,7 +457,7 @@ class external_api {
      * @since Moodle 2.0
      */
     public static function validate_context($context) {
-        global $CFG;
+        global $CFG, $PAGE;
 
         if (empty($context)) {
             throw new invalid_parameter_exception('Context does not exist');
@@ -382,10 +480,10 @@ class external_api {
             }
         }
 
-        if ($context->contextlevel >= CONTEXT_COURSE) {
-            list($context, $course, $cm) = get_context_info_array($context->id);
-            require_login($course, false, $cm, false, true);
-        }
+        $PAGE->reset_theme_and_output();
+        list($unused, $course, $cm) = get_context_info_array($context->id);
+        require_login($course, false, $cm, false, true);
+        $PAGE->set_context($context);
     }
 
     /**

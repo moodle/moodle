@@ -346,10 +346,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $discussions = mod_forum_external::get_forum_discussions(array($forum1->id, $forum2->id));
         $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
         $this->assertEquals($expecteddiscussions, $discussions);
-        // Some debugging is going to be produced, this is because we switch PAGE contexts in the get_forum_discussions function,
-        // the switch happens when the validate_context function is called inside a foreach loop.
-        // See MDL-41746 for more information.
-        $this->assertDebuggingCalled();
 
         // Remove the users post from the qanda forum and ensure they can still see the discussion.
         $DB->delete_records('forum_posts', array('id' => $discussion2reply1->id));
@@ -365,7 +361,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
-        $this->assertDebuggingCalled();
 
         // Unenrol user from second course.
         $enrol->unenrol_user($instance2, $user1->id);
@@ -857,8 +852,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             mod_forum_external::add_discussion_post($discussion->firstpost, 'some subject', 'some text here...');
             $this->fail('Exception expected due to invalid permissions for posting.');
         } catch (moodle_exception $e) {
-            // Expect debugging since we are switching context, and this is something WS_SERVER mode don't like.
-            $this->assertDebuggingCalled();
             $this->assertEquals('nopostforum', $e->errorcode);
         }
 

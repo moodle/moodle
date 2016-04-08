@@ -354,6 +354,46 @@ class core_externallib_testcase extends advanced_testcase {
         // The extra course passed is not returned.
         $this->assertArrayNotHasKey($c4->id, $courses);
     }
+
+
+    public function test_call_external_function() {
+        global $PAGE, $COURSE;
+
+        $this->resetAfterTest(true);
+
+        // Call some webservice functions and verify they are correctly handling $PAGE and $COURSE.
+        // First test a function that calls validate_context outside a course.
+        $this->setAdminUser();
+        $category = $this->getDataGenerator()->create_category();
+        $params = array(
+            'contextid' => context_coursecat::instance($category->id)->id,
+            'name' => 'aaagrrryyy',
+            'idnumber' => '',
+            'description' => ''
+        );
+        $cohort1 = $this->getDataGenerator()->create_cohort($params);
+        $cohort2 = $this->getDataGenerator()->create_cohort();
+
+        $beforepage = $PAGE;
+        $beforecourse = $COURSE;
+        $params = array('cohortids' => array($cohort1->id, $cohort2->id));
+        $result = external_api::call_external_function('core_cohort_get_cohorts', $params);
+
+        $this->assertSame($beforepage, $PAGE);
+        $this->assertSame($beforecourse, $COURSE);
+
+        // Now test a function that calls validate_context inside a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        $beforepage = $PAGE;
+        $beforecourse = $COURSE;
+        $params = array('courseid' => $course->id, 'options' => array());
+        $result = external_api::call_external_function('core_enrol_get_enrolled_users', $params);
+
+        $this->assertSame($beforepage, $PAGE);
+        $this->assertSame($beforecourse, $COURSE);
+    }
+
 }
 
 /*
