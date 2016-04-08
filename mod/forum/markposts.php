@@ -55,6 +55,7 @@ if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
 $user = $USER;
 
 require_login($course, false, $cm);
+require_sesskey();
 
 if ($returnpage == 'index.php') {
     $returnto = new moodle_url("/mod/forum/$returnpage", array('id' => $course->id));
