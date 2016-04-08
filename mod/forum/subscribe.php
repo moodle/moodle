@@ -53,7 +53,9 @@ if (!is_null($sesskey)) {
 }
 if (!is_null($discussionid)) {
     $url->param('d', $discussionid);
-    $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid), '*', MUST_EXIST);
+    if (!$discussion = $DB->get_record('forum_discussions', array('id' => $discussionid, 'forum' => $id))) {
+        print_error('invaliddiscussionid', 'forum');
+    }
 }
 $PAGE->set_url($url);
 
