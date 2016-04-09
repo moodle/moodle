@@ -137,8 +137,9 @@ class feedback_item_textfield extends feedback_item_base {
             echo $this->get_display_name($item);
             echo '</th></tr>';
             foreach ($values as $value) {
-                echo '<tr><td colspan="2" valign="top" align="left">';
-                echo '-&nbsp;&nbsp;'.str_replace("\n", '<br />', $value->value);
+                $class = strlen(trim($value->value)) ? '' : ' class="isempty"';
+                echo '<tr'.$class.'><td colspan="2" class="singlevalue">';
+                echo str_replace("\n", '<br />', $value->value);
                 echo '</td></tr>';
             }
         }

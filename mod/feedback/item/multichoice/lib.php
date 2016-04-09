@@ -230,10 +230,10 @@ class feedback_item_multichoice extends feedback_item_base {
                     $str_quotient = ' ('. $quotient . ' %)';
                 }
                 echo '<tr>';
-                echo '<td align="left" valign="top">
-                            - '.format_text(trim($val->answertext), FORMAT_HTML, array('noclean' => true, 'para' => false)).':
+                echo '<td class="optionname">' .
+                            format_text(trim($val->answertext), FORMAT_HTML, array('noclean' => true, 'para' => false)).':
                       </td>
-                      <td align="left" style="width:'.FEEDBACK_MAX_PIX_LENGTH.';">
+                      <td class="optioncount" style="width:'.FEEDBACK_MAX_PIX_LENGTH.';">
                         <img class="feedback_bar_image" alt="'.$intvalue.'" src="'.$pix.'" width="'.$pixwidth.'" />'.
                         '<img class="feedback_bar_image" alt="" src="'.$pixspacer.'" width="'.$pixwidthspacer.'" />
                         '.$val->answercount.$str_quotient.'

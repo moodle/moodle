@@ -151,8 +151,8 @@ class feedback_item_numeric extends feedback_item_base {
             echo '</th></tr>';
 
             foreach ($values->data as $value) {
-                echo '<tr><td colspan="2" valign="top" align="left">';
-                echo '-&nbsp;&nbsp;'.$this->format_float($value);
+                echo '<tr><td colspan="2" class="singlevalue">';
+                echo $this->format_float($value);
                 echo '</td></tr>';
             }
 
@@ -161,7 +161,7 @@ class feedback_item_numeric extends feedback_item_base {
             } else {
                 $avg = '-';
             }
-            echo '<tr><td align="left" colspan="2"><b>';
+            echo '<tr><td colspan="2"><b>';
             echo get_string('average', 'feedback').': '.$avg;
             echo '</b></td></tr>';
         }

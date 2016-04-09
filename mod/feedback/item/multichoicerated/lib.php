@@ -199,10 +199,10 @@ class feedback_item_multichoicerated extends feedback_item_base {
                 $avg += $val->avg;
                 $quotient = format_float($val->quotient * 100, 2);
                 echo '<tr>';
-                echo '<td align="left" valign="top">';
-                echo '- ('.$val->value.') '.
+                echo '<td class="optionname">';
+                echo '<span class="weight">('.$val->value.') </span>'.
                         format_text(trim($val->answertext), FORMAT_HTML, array('noclean' => true, 'para' => false)).':</td>';
-                echo '<td align="left" style="width: '.FEEDBACK_MAX_PIX_LENGTH.'">';
+                echo '<td class="optionvalue" style="width: '.FEEDBACK_MAX_PIX_LENGTH.'">';
                 echo '<img class="feedback_bar_image" alt="'.$intvalue.'" src="'.$pix.'" width="'.$pixwidth.'" />';
                 echo '<img class="feedback_bar_image" alt="" src="'.$pixspacer.'" width="'.$pixwidthspacer.'" /> ';
                 echo $val->answercount;

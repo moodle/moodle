@@ -141,9 +141,9 @@ class feedback_item_textarea extends feedback_item_base {
             echo format_text($item->name, FORMAT_HTML, array('noclean' => true, 'para' => false));
             echo '</th></tr>';
             foreach ($values as $value) {
-                echo '<tr>';
-                echo '<td colspan="2" valign="top" align="left">';
-                echo '-&nbsp;&nbsp;';
+                $class = strlen(trim($value->value)) ? '' : ' class="isempty"';
+                echo '<tr'.$class.'>';
+                echo '<td colspan="2" class="singlevalue">';
                 echo str_replace("\n", '<br />', $value->value);
                 echo '</td>';
                 echo '</tr>';

@@ -150,7 +150,7 @@ class feedback_item_info extends feedback_item_base {
             echo '</th></tr>';
             $sizeofdata = count($data);
             for ($i = 0; $i < $sizeofdata; $i++) {
-                echo '<tr><td colspan="2" valign="top" align="left">-&nbsp;&nbsp;';
+                echo '<tr><td colspan="2" class="singlevalue">';
                 echo str_replace("\n", '<br />', $data[$i]->show);
                 echo '</td></tr>';
             }

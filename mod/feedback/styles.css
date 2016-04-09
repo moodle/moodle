@@ -140,15 +140,40 @@ body.dir-rtl.path-mod-feedback #region-main .mform.feedback_form .femptylabel .f
     float: right;
 }
 
-.path-mod-feedback table.analysis {
-    width: 100%;
-}
-
 .path-mod-feedback .templateslist td.cell.action,
 .path-mod-feedback .templateslist th.header.action {
     width: 10%;
 }
 
+/* Analysis page */
+.path-mod-feedback table.analysis {
+    width: 100%;
+    border-top: 1px solid #aaaaaa;
+    margin-top: 10px;
+}
+
+.path-mod-feedback table.analysis tr:first-child th {
+    padding-top:10px;
+}
+
+.path-mod-feedback table.analysis tr:hover {
+    background: #f5f5f5;
+}
+
+.path-mod-feedback table.analysis td.singlevalue:before,
+.path-mod-feedback table.analysis td.optionname:before {
+    content:'- ';
+}
+
+.path-mod-feedback table.analysis.itemtype_textarea td {
+    padding: 4px 0;
+}
+
+.path-mod-feedback table.analysis tr.isempty {
+    display:none;
+}
+
+/* Responses list */
 .path-mod-feedback #showentrytable td.cell.completed_timemodified,
 .path-mod-feedback #showentryanontable td.cell.random_response {
     font-weight: bold;

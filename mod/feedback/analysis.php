@@ -95,7 +95,7 @@ echo '<div>';
 if ($check_anonymously) {
     // Print the items in an analysed form.
     foreach ($items as $item) {
-        echo '<table class="analysis">';
+        echo "<table class=\"analysis itemtype_{$item->typ}\">";
         $itemobj = feedback_get_item_class($item->typ);
         $printnr = ($feedback->autonumbering && $item->itemnr) ? ($item->itemnr . '.') : '';
         $itemobj->print_analysed($item, $printnr, $mygroupid);
