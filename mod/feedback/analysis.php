@@ -59,14 +59,6 @@ require('tabs.php');
 $mygroupid = groups_get_activity_group($cm, true);
 groups_print_activity_menu($cm, $url);
 
-if ( has_capability('mod/feedback:viewreports', $context) ) {
-    //button "export to excel"
-    echo $OUTPUT->container_start('form-buttons');
-    $aurl = new moodle_url('analysis_to_excel.php', array('sesskey'=>sesskey(), 'id'=>$id));
-    echo $OUTPUT->single_button($aurl, get_string('export_to_excel', 'feedback'));
-    echo $OUTPUT->container_end();
-}
-
 // Show the summary.
 $summary = new mod_feedback\output\summary($feedbackstructure, $mygroupid);
 echo $OUTPUT->render_from_template('mod_feedback/summary', $summary->export_for_template($OUTPUT));

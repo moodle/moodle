@@ -129,6 +129,7 @@ $string['checkbox'] = 'Multiple choice - multiple answers allowed (check boxes)'
 $string['check_values'] = 'Possible responses';
 $string['choosefile'] = 'Choose a file';
 $string['chosen_feedback_response'] = 'chosen feedback response';
+$string['downloadresponseas'] = 'Download all responses as:';
 $string['importfromthisfile'] = 'Import from this file';
 $string['import_questions'] = 'Import questions';
 $string['import_successfully'] = 'Import successfully';

@@ -102,7 +102,7 @@ Feature: Anonymous feedback
     And I follow "Show responses"
     And I should not see "Username"
     And I should see "Anonymous entries (2)"
-    And I click on "Show response" "link" in the "Response number: 1" "table_row"
+    And I follow "Response number: 1"
     And I should not see "Username"
     And I should see "Response number: 1 (Anonymous)"
     And I log out
@@ -164,7 +164,7 @@ Feature: Anonymous feedback
     And I follow "Site feedback"
     And I follow "Show responses"
     And I should see "Anonymous entries (2)"
-    And I click on "Show response" "link" in the "Response number: 1" "table_row"
+    And I follow "Response number: 1"
     And I should see "Response number: 1 (Anonymous)"
     And I log out
 
@@ -222,7 +222,7 @@ Feature: Anonymous feedback
     And I follow "Show responses"
     And I should not see "Username"
     And I should see "Anonymous entries (2)"
-    And I click on "Show response" "link" in the "Response number: 1" "table_row"
+    And I follow "Response number: 1"
     And I should not see "Username"
     And I should see "Response number: 1 (Anonymous)"
     And I should not see "Prev"

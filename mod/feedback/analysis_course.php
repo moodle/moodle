@@ -30,7 +30,6 @@ $current_tab = 'analysis';
 $id = required_param('id', PARAM_INT);  //the POST dominated the GET
 $courseitemfilter = optional_param('courseitemfilter', '0', PARAM_INT);
 $courseitemfiltertyp = optional_param('courseitemfiltertyp', '0', PARAM_ALPHANUM);
-$searchcourse = optional_param('searchcourse', '', PARAM_RAW);
 $courseid = optional_param('courseid', false, PARAM_INT);
 
 $url = new moodle_url('/mod/feedback/analysis_course.php', array('id'=>$id));
@@ -43,9 +42,6 @@ if ($courseitemfilter !== '0') {
 }
 if ($courseitemfiltertyp !== '0') {
     $url->param('courseitemfiltertyp', $courseitemfiltertyp);
-}
-if ($searchcourse !== '') {
-    $url->param('searchcourse', $searchcourse);
 }
 $PAGE->set_url($url);
 
@@ -62,6 +58,12 @@ if (!($feedback->publish_stats OR has_capability('mod/feedback:viewreports', $co
 
 $feedbackstructure = new mod_feedback_structure($feedback, $PAGE->cm, $courseid);
 
+// Process course select form.
+$courseselectform = new mod_feedback_course_select_form($url, $feedbackstructure);
+if ($data = $courseselectform->get_data()) {
+    redirect(new moodle_url($url, ['courseid' => $data->courseid]));
+}
+
 /// Print the page header
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
@@ -74,20 +76,11 @@ echo $OUTPUT->heading(format_string($feedback->name));
 /// print the tabs
 require('tabs.php');
 
-//print the analysed items
-
-if (has_capability('mod/feedback:viewreports', $context)) {
-    //button "export to excel"
-    echo $OUTPUT->container_start('form-buttons');
-    $aurl = new moodle_url('analysis_to_excel.php', array('sesskey' => sesskey(), 'id' => $id,
-                                 'coursefilter' => $courseid));
-    echo $OUTPUT->single_button($aurl, get_string('export_to_excel', 'feedback'));
-    echo $OUTPUT->container_end();
-}
-
 //get the groupid
 //lstgroupid is the choosen id
 $mygroupid = false;
+
+$courseselectform->display();
 
 // Show the summary.
 $summary = new mod_feedback\output\summary($feedbackstructure);
@@ -130,43 +123,6 @@ if ($courseitemfilter > 0) {
     echo get_string('back');
     echo '</a></p>';
 } else {
-
-    echo '<div class="mdl-align">';
-    echo '<form name="report" method="get" id="analysis-form">';
-    echo html_writer::label(get_string('search_course', 'feedback') . ': ', 'searchcourse');
-    echo '<input id="searchcourse" type="text" name="searchcourse" value="'.s($searchcourse).'"/> ';
-    echo '<input type="submit" value="'.get_string('search').'"/>';
-    echo '<input type="hidden" name="id" value="'.$id.'" />';
-    $sql = 'select DISTINCT c.id, c.shortname from {course} c, '.
-                                          '{feedback_value} fv, {feedback_item} fi '.
-                                          'where c.id = fv.course_id and fv.item = fi.id '.
-                                          'and fi.feedback = ? '.
-                                          'and
-                                          ('.$DB->sql_like('c.shortname', '?', false).'
-                                          OR '.$DB->sql_like('c.fullname', '?', false).')';
-    $params = array($feedback->id, "%$searchcourse%", "%$searchcourse%");
-
-    if ($courses = $DB->get_records_sql_menu($sql, $params)) {
-        if (!$courseid) {
-            $courses = array('' => get_string('choosedots')) + $courses;
-        }
-        echo ' '. html_writer::label(get_string('filter_by_course', 'feedback'). ': ', 'coursefilterid');
-        echo html_writer::select($courses, 'courseid', $courseid,
-                                  null, array('id'=>'coursefilterid', 'class' => 'autosubmit'));
-
-        $PAGE->requires->yui_module('moodle-core-formautosubmit',
-            'M.core.init_formautosubmit',
-            array(array('selectid' => 'coursefilterid', 'nothing' => false))
-        );
-    }
-    if ($courseid) {
-        echo ' <a href="analysis_course.php?id=' . $id . '">';
-        echo get_string('show_all', 'feedback');
-        echo '</a>';
-    }
-
-    echo '</form>';
-    echo '</div>';
 
     // Print the items in an analysed form.
     foreach ($items as $item) {
