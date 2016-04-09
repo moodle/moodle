@@ -88,18 +88,13 @@ if (has_capability('mod/feedback:viewreports', $context)) {
 //get the groupid
 //lstgroupid is the choosen id
 $mygroupid = false;
-//get completed feedbacks
-$completedcount = $feedbackstructure->count_completed_responses();
 
-//show the count
-echo '<b>'.get_string('completed_feedbacks', 'feedback').': '.$completedscount. '</b><br />';
+// Show the summary.
+$summary = new mod_feedback\output\summary($feedbackstructure);
+echo $OUTPUT->render_from_template('mod_feedback/summary', $summary->export_for_template($OUTPUT));
 
 // Get the items of the feedback.
 $items = $feedbackstructure->get_items(true);
-//show the count
-if (is_array($items)) {
-    echo '<b>'.get_string('questions', 'feedback').': ' .count($items). ' </b><hr />';
-}
 
 if ($courseitemfilter > 0) {
     $sumvalue = 'SUM(' . $DB->sql_cast_char2real('value', true) . ')';
@@ -176,7 +171,6 @@ if ($courseitemfilter > 0) {
     // Print the items in an analysed form.
     foreach ($items as $item) {
         echo '<table class="analysis">';
-        echo "<tr><td colspan=\"2\" class=\"analysis_separator\"><hr></td></tr>";
         $itemobj = feedback_get_item_class($item->typ);
         $printnr = ($feedback->autonumbering && $item->itemnr) ? ($item->itemnr . '.') : '';
         $itemobj->print_analysed($item, $printnr, $mygroupid, $feedbackstructure->get_courseid());

@@ -97,50 +97,9 @@ if (has_capability('mod/feedback:edititems', $context)) {
     $groupselect = groups_print_activity_menu($cm, $CFG->wwwroot.'/mod/feedback/view.php?id='.$cm->id, true);
     $mygroupid = groups_get_activity_group($cm);
 
-    echo $OUTPUT->box_start('boxaligncenter');
     echo $groupselect.'<div class="clearer">&nbsp;</div>';
-    $completedscount = feedback_get_completeds_group_count($feedback, $mygroupid);
-    echo $OUTPUT->box_start('feedback_info');
-    echo '<span class="feedback_info">';
-    echo get_string('completed_feedbacks', 'feedback').': ';
-    echo '</span>';
-    echo '<span class="feedback_info_value">';
-    echo $completedscount;
-    echo '</span>';
-    echo $OUTPUT->box_end();
-
-    $params = array('feedback'=>$feedback->id, 'hasvalue'=>1);
-    $itemscount = count($feedbackcompletion->get_items(true));
-    echo $OUTPUT->box_start('feedback_info');
-    echo '<span class="feedback_info">';
-    echo get_string('questions', 'feedback').': ';
-    echo '</span>';
-    echo '<span class="feedback_info_value">';
-    echo $itemscount;
-    echo '</span>';
-    echo $OUTPUT->box_end();
-
-    if ($feedback->timeopen) {
-        echo $OUTPUT->box_start('feedback_info');
-        echo '<span class="feedback_info">';
-        echo get_string('feedbackopen', 'feedback').': ';
-        echo '</span>';
-        echo '<span class="feedback_info_value">';
-        echo userdate($feedback->timeopen);
-        echo '</span>';
-        echo $OUTPUT->box_end();
-    }
-    if ($feedback->timeclose) {
-        echo $OUTPUT->box_start('feedback_info');
-        echo '<span class="feedback_info">';
-        echo get_string('feedbackclose', 'feedback').': ';
-        echo '</span>';
-        echo '<span class="feedback_info_value">';
-        echo userdate($feedback->timeclose);
-        echo '</span>';
-        echo $OUTPUT->box_end();
-    }
-    echo $OUTPUT->box_end();
+    $summary = new mod_feedback\output\summary($feedbackcompletion, $mygroupid, true);
+    echo $OUTPUT->render_from_template('mod_feedback/summary', $summary->export_for_template($OUTPUT));
 
     if ($pageaftersubmit = $feedbackcompletion->page_after_submit()) {
         echo $OUTPUT->heading(get_string("page_after_submit", "feedback"), 3);

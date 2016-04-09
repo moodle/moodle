@@ -67,25 +67,16 @@ if ( has_capability('mod/feedback:viewreports', $context) ) {
     echo $OUTPUT->container_end();
 }
 
-// Get completed feedbacks.
-$completedcount = $feedbackstructure->count_completed_responses($mygroupid);
-
-echo '<div class="analysis_header">';
-// Show the submissions count.
-echo '<b>'.get_string('completed_feedbacks', 'feedback').': '.$completedscount. '</b><br />';
+// Show the summary.
+$summary = new mod_feedback\output\summary($feedbackstructure, $mygroupid);
+echo $OUTPUT->render_from_template('mod_feedback/summary', $summary->export_for_template($OUTPUT));
 
 // Get the items of the feedback.
 $items = $feedbackstructure->get_items(true);
-// Show the items count.
-if (is_array($items)) {
-    echo '<b>'.get_string('questions', 'feedback').': ' .count($items). ' </b><hr />';
-} else {
-    $items=array();
-}
-echo '</div>';
 
 $check_anonymously = true;
 if ($mygroupid > 0 AND $feedback->anonymous == FEEDBACK_ANONYMOUS_YES) {
+    $completedcount = $feedbackstructure->count_completed_responses($mygroupid);
     if ($completedcount < FEEDBACK_MIN_ANONYMOUS_COUNT_IN_GROUP) {
         $check_anonymously = false;
     }
