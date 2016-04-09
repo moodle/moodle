@@ -38,6 +38,9 @@ defined('MOODLE_INTERNAL') || die();
 
 function xmldb_feedback_upgrade($oldversion) {
     global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/feedback/db/upgradelib.php');
+
+    $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
@@ -70,6 +73,42 @@ function xmldb_feedback_upgrade($oldversion) {
 
         // Feedback savepoint reached.
         upgrade_mod_savepoint(true, 2016040100, 'feedback');
+    }
+
+    if ($oldversion < 2016040300) {
+
+        // Define field courseid to be added to feedback_completed.
+        $table = new xmldb_table('feedback_completed');
+        $field = new xmldb_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'anonymous_response');
+
+        // Conditionally launch add field courseid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field courseid to be added to feedback_completedtmp.
+        $table = new xmldb_table('feedback_completedtmp');
+        $field = new xmldb_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'anonymous_response');
+
+        // Conditionally launch add field courseid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define table feedback_tracking to be dropped.
+        $table = new xmldb_table('feedback_tracking');
+
+        // Conditionally launch drop table for feedback_tracking.
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Run upgrade script to fill the new field courseid with the data from feedback_value* tables.
+        mod_feedback_upgrade_courseid(false);
+        mod_feedback_upgrade_courseid(true);
+
+        // Feedback savepoint reached.
+        upgrade_mod_savepoint(true, 2016040300, 'feedback');
     }
 
     return true;
