@@ -53,25 +53,26 @@ $time = optional_param('time', 0, PARAM_INT);
 
 $url = new moodle_url('/calendar/view.php');
 
-if ($courseid != SITEID) {
-    $url->param('course', $courseid);
-}
-
-if ($view !== 'upcoming') {
-    $url->param('view', $view);
-}
-
 // If a day, month and year were passed then convert it to a timestamp. If these were passed
 // then we can assume the day, month and year are passed as Gregorian, as no where in core
 // should we be passing these values rather than the time. This is done for BC.
 if (!empty($day) && !empty($mon) && !empty($year)) {
     if (checkdate($mon, $day, $year)) {
         $time = make_timestamp($year, $mon, $day);
-    } else {
-        $time = usergetmidnight(time());
     }
-} else if (empty($time)) {
-    $time = usergetmidnight(time());
+}
+
+if (empty($time)) {
+    $time = time();
+}
+
+if ($courseid != SITEID) {
+    $url->param('course', $courseid);
+}
+
+if ($view !== 'upcoming') {
+    $time = usergetmidnight($time);
+    $url->param('view', $view);
 }
 
 $url->param('time', $time);
