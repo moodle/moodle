@@ -2933,8 +2933,6 @@ function forum_get_discussions_count($cm) {
         $groupselect = "";
     }
 
-    $cutoffdate = $now - ($CFG->forum_oldpostdays*24*60*60);
-
     $timelimit = "";
 
     if (!empty($CFG->forum_enabletimedposts)) {
