@@ -23,7 +23,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-require_once($CFG->libdir . '/externallib.php');
 
 /**
  * This function extends the course navigation
@@ -235,14 +234,4 @@ function tool_lp_coursemodule_edit_post_actions($data, $course) {
     }
 
     return $data;
-}
-
-/**
- * Reports whether a scale is being used in the plugin.
- *
- * @param int $scaleid The scale ID.
- * @return bool
- */
-function tool_lp_scale_used_anywhere($scaleid) {
-    return \core_competency\api::is_scale_used_anywhere($scaleid);
 }
