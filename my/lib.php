@@ -150,22 +150,23 @@ function my_reset_page_for_all_users($private = MY_PAGE_PRIVATE, $pagetype = 'my
     $where = 'userid IS NOT NULL AND private = :private';
     $params = array('private' => $private);
     $pages = $DB->get_recordset_select('my_pages', $where, $params, 'id, userid');
-    $pageids = array();
     $blockids = array();
 
     foreach ($pages as $page) {
-        $pageids[] = $page->id;
         $usercontext = context_user::instance($page->userid);
 
         // Find all block instances in that page.
-        $blocks = $DB->get_recordset('block_instances', array('parentcontextid' => $usercontext->id,
-            'pagetypepattern' => $pagetype), '', 'id, subpagepattern');
-        foreach ($blocks as $block) {
-            if (is_null($block->subpagepattern) || $block->subpagepattern == $page->id) {
-                $blockids[] = $block->id;
-            }
+        $blockswhere = 'parentcontextid = :parentcontextid AND
+            pagetypepattern = :pagetypepattern AND
+            (subpagepattern IS NULL OR subpagepattern = :subpagepattern)';
+        $blockswhereparams = [
+            'parentcontextid' => $usercontext->id,
+            'pagetypepattern' => $pagetype,
+            'subpagepattern' => $page->id
+        ];
+        if ($pageblockids = $DB->get_fieldset_select('block_instances', 'id', $blockswhere, $blockswhereparams)) {
+            $blockids = array_merge($blockids, $pageblockids);
         }
-        $blocks->close();
     }
     $pages->close();
 
@@ -178,9 +179,8 @@ function my_reset_page_for_all_users($private = MY_PAGE_PRIVATE, $pagetype = 'my
     }
 
     // Finally delete the pages.
-    if (!empty($pageids)) {
-        list($insql, $inparams) = $DB->get_in_or_equal($pageids);
-        $DB->delete_records_select('my_pages', "id $insql", $pageids);
+    if (!empty($pages)) {
+        $DB->delete_records_select('my_pages', $where, $params);
     }
 
     // We should be good to go now.
