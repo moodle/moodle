@@ -135,8 +135,10 @@ class manager {
         global $DB;
 
         $record = self::record_from_adhoc_task($task);
-        // Schedule it immediately.
-        $record->nextruntime = time() - 1;
+        // Schedule it immediately if nextruntime not explicitly set.
+        if (!$task->get_next_run_time()) {
+            $record->nextruntime = time() - 1;
+        }
         $result = $DB->insert_record('task_adhoc', $record);
 
         return $result;
