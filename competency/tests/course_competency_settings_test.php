@@ -65,7 +65,7 @@ class core_competency_course_competency_settings_testcase extends advanced_testc
         $lpg->create_course_competency(array('competencyid' => $comp1->get_id(), 'courseid' => $c1->id));
         $lpg->create_course_competency(array('competencyid' => $comp2->get_id(), 'courseid' => $c1->id));
 
-        // Enrol the user
+        // Enrol the user.
         $dg->enrol_user($u1->id, $c1->id);
         role_assign($gradedrole, $u1->id, $syscontext->id);
 

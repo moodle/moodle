@@ -113,8 +113,8 @@ class template_statistics_exporter extends \core_competency\external\exporter {
         $proficientusercompetencyplanpercentage = 0;
         $proficientusercompetencyplanpercentageformatted = '';
         if ($this->data->usercompetencyplancount > 0) {
-            $proficientusercompetencyplanpercentage = ((float) $this->data->proficientusercompetencyplancount /
-                    (float) $this->data->usercompetencyplancount) * 100.0;
+            $proficientusercompetencyplanpercentage = ((float) $this->data->proficientusercompetencyplancount
+                    / (float) $this->data->usercompetencyplancount) * 100.0;
             $proficientusercompetencyplanpercentageformatted = format_float($proficientusercompetencyplanpercentage);
         }
         $competencies = array();

@@ -82,7 +82,7 @@ class course_competency_settings extends persistent {
     /**
      * Can the current user view competency settings for this course.
      *
-     * @param int $data The course ID.
+     * @param int $courseid The course ID.
      * @return bool
      */
     public static function can_read($courseid) {
@@ -96,7 +96,7 @@ class course_competency_settings extends persistent {
     /**
      * Can the current user change competency settings for this course.
      *
-     * @param int $data The course ID.
+     * @param int $courseid The course ID.
      * @return bool
      */
     public static function can_manage_course($courseid) {

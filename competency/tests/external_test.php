@@ -650,7 +650,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(true, $result->visible);
     }
 
-    public function list_competency_frameworks_with_query() {
+    public function test_list_competency_frameworks_with_query() {
         $this->setUser($this->creator);
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $framework1 = $lpg->create_framework(array(
@@ -676,9 +676,9 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
         $this->assertCount(2, $result);
         $f = (object) array_shift($result);
-        $this->assertEquals($framework1->get_id(), $f->get_id());
+        $this->assertEquals($framework1->get_id(), $f->id);
         $f = (object) array_shift($result);
-        $this->assertEquals($framework2->get_id(), $f->get_id());
+        $this->assertEquals($framework2->get_id(), $f->id);
 
         // Search on ID number.
         $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
@@ -686,7 +686,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
         $this->assertCount(1, $result);
         $f = (object) array_shift($result);
-        $this->assertEquals($framework2->get_id(), $f->get_id());
+        $this->assertEquals($framework2->get_id(), $f->id);
 
         // Search on shortname.
         $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
@@ -694,7 +694,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
         $this->assertCount(1, $result);
         $f = (object) array_shift($result);
-        $this->assertEquals($framework1->get_id(), $f->get_id());
+        $this->assertEquals($framework1->get_id(), $f->id);
 
         // No match.
         $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
@@ -1666,11 +1666,10 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
         // Test if removing competency from template don't create sortorder holes.
         external::remove_competency_from_template($template->id, $competency3->id);
-        $templcomp4 = template_competency::get_record(
-                                array(
-                                    'templateid' => $template->id,
-                                    'competencyid' => $competency4->id
-                                ));
+        $templcomp4 = template_competency::get_record(array(
+            'templateid' => $template->id,
+            'competencyid' => $competency4->id
+        ));
 
         $this->assertEquals(2, $templcomp4->get_sortorder());
 
@@ -2496,23 +2495,16 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
         // Test if removing competency from plan don't create sortorder holes.
         external::remove_competency_from_plan($pl1->get_id(), $c4->get_id());
-        $plancomp5 = plan_competency::get_record(
-                                array(
-                                    'planid' => $pl1->get_id(),
-                                    'competencyid' => $c5->get_id()
-                                ));
+        $plancomp5 = plan_competency::get_record(array(
+            'planid' => $pl1->get_id(),
+            'competencyid' => $c5->get_id()
+        ));
 
         $this->assertEquals(3, $plancomp5->get_sortorder());
 
         $this->assertTrue(external::reorder_plan_competency($pl1->get_id(), $c2->get_id(), $c5->get_id()));
         $this->assertTrue(external::reorder_plan_competency($pl1->get_id(), $c3->get_id(), $c1->get_id()));
-        $plancompetencies = plan_competency::get_records(
-                array(
-                    'planid' => $pl1->get_id()
-                ),
-                'sortorder',
-                'ASC'
-                );
+        $plancompetencies = plan_competency::get_records(array('planid' => $pl1->get_id()), 'sortorder', 'ASC');
         $plcmp1 = $plancompetencies[0];
         $plcmp2 = $plancompetencies[1];
         $plcmp3 = $plancompetencies[2];

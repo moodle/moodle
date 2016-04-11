@@ -141,8 +141,8 @@ class competency extends persistent {
                 $this->set_new_sortorder();
             }
 
-        // During create.
         } else {
+            // During create.
 
             $this->set_new_path();
             // Always generate new sortorder when we create new competency.
@@ -458,8 +458,8 @@ class competency extends persistent {
                 return new lang_string('invaliddata', 'error');
             }
 
-        // During create.
         } else {
+            // During create.
 
             // Check that the framework exists.
             if (!competency_framework::record_exists($value)) {
@@ -503,12 +503,12 @@ class competency extends persistent {
         if (substr($value, -(strlen($id) + 2)) != '/' . $id . '/') {
             return new lang_string('invaliddata', 'error');
 
-        // The format of the path should be as follows.
         } else if (!preg_match('@/([0-9]+/)+@', $value)) {
+            // The format of the path is not correct.
             return new lang_string('invaliddata', 'error');
 
-        // Validate the depth of the path.
         } else if ((substr_count($value, '/') - 1) > competency_framework::get_taxonomies_max_level()) {
+            // Validate the depth of the path.
             return new lang_string('invaliddata', 'error');
         }
 

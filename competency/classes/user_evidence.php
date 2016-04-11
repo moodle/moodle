@@ -117,7 +117,8 @@ class user_evidence extends persistent {
      */
     public function get_files() {
         $fs = get_file_storage();
-        $files = $fs->get_area_files($this->get_context()->id, 'core_competency', 'userevidence', $this->get_id(), 'filename', false);
+        $files = $fs->get_area_files($this->get_context()->id, 'core_competency', 'userevidence', $this->get_id(),
+            'filename', false);
         return $files;
     }
 

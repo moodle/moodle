@@ -196,11 +196,10 @@ class external extends external_api {
     public static function data_for_competencies_manage_page($competencyframeworkid, $search) {
         global $PAGE;
 
-        $params = self::validate_parameters(self::data_for_competencies_manage_page_parameters(),
-                                            array(
-                                                'competencyframeworkid' => $competencyframeworkid,
-                                                'search' => $search
-                                            ));
+        $params = self::validate_parameters(self::data_for_competencies_manage_page_parameters(), array(
+            'competencyframeworkid' => $competencyframeworkid,
+            'search' => $search
+        ));
 
         $framework = api::read_framework($params['competencyframeworkid']);
         self::validate_context($framework->get_context());
@@ -272,12 +271,11 @@ class external extends external_api {
      */
     public static function data_for_competency_summary($competencyid, $includerelated = false, $includecourses = false) {
         global $PAGE;
-        $params = self::validate_parameters(self::data_for_competency_summary_parameters(),
-                                            array(
-                                                'competencyid' => $competencyid,
-                                                'includerelated' => $includerelated,
-                                                'includecourses' => $includecourses
-                                            ));
+        $params = self::validate_parameters(self::data_for_competency_summary_parameters(), array(
+            'competencyid' => $competencyid,
+            'includerelated' => $includerelated,
+            'includecourses' => $includecourses
+        ));
 
         $competency = api::read_competency($params['competencyid']);
         $framework = api::read_framework($competency->get_competencyframeworkid());
@@ -376,10 +374,9 @@ class external extends external_api {
      */
     public static function data_for_course_competencies_page($courseid) {
         global $PAGE;
-        $params = self::validate_parameters(self::data_for_course_competencies_page_parameters(),
-                                            array(
-                                                'courseid' => $courseid,
-                                            ));
+        $params = self::validate_parameters(self::data_for_course_competencies_page_parameters(), array(
+            'courseid' => $courseid,
+        ));
         self::validate_context(context_course::instance($params['courseid']));
 
         $renderable = new output\course_competencies_page($params['courseid']);
@@ -418,7 +415,8 @@ class external extends external_api {
                         'value' => new external_value(PARAM_INT, 'The option value'),
                         'text' => new external_value(PARAM_NOTAGS, 'The name of the option'),
                         'selected' => new external_value(PARAM_BOOL, 'If this is the currently selected option'),
-                ))),
+                    ))
+                ),
                 'comppath' => competency_path_exporter::get_read_structure(),
             ))),
             'manageurl' => new external_value(PARAM_LOCALURL, 'Url to the manage competencies page.'),
@@ -503,11 +501,10 @@ class external extends external_api {
      */
     public static function data_for_template_competencies_page($templateid, $pagecontext) {
         global $PAGE;
-        $params = self::validate_parameters(self::data_for_template_competencies_page_parameters(),
-                                            array(
-                                                'templateid' => $templateid,
-                                                'pagecontext' => $pagecontext
-                                            ));
+        $params = self::validate_parameters(self::data_for_template_competencies_page_parameters(), array(
+            'templateid' => $templateid,
+            'pagecontext' => $pagecontext
+        ));
 
         $context = self::get_context_from_params($params['pagecontext']);
         self::validate_context($context);
@@ -565,10 +562,9 @@ class external extends external_api {
      */
     public static function data_for_plan_page($planid) {
         global $PAGE;
-        $params = self::validate_parameters(self::data_for_plan_page_parameters(),
-                                            array(
-                                                'planid' => $planid
-                                            ));
+        $params = self::validate_parameters(self::data_for_plan_page_parameters(), array(
+            'planid' => $planid
+        ));
         $plan = api::read_plan($params['planid']);
         self::validate_context($plan->get_context());
 
@@ -635,10 +631,9 @@ class external extends external_api {
     public static function data_for_plans_page($userid) {
         global $PAGE;
 
-        $params = self::validate_parameters(self::data_for_plans_page_parameters(),
-                                            array(
-                                                'userid' => $userid,
-                                            ));
+        $params = self::validate_parameters(self::data_for_plans_page_parameters(), array(
+            'userid' => $userid,
+        ));
 
         $context = context_user::instance($params['userid']);
         self::validate_context($context);
@@ -781,10 +776,9 @@ class external extends external_api {
     public static function data_for_related_competencies_section($competencyid) {
         global $PAGE;
 
-        $params = self::validate_parameters(self::data_for_related_competencies_section_parameters(),
-                                            array(
-                                                'competencyid' => $competencyid,
-                                            ));
+        $params = self::validate_parameters(self::data_for_related_competencies_section_parameters(), array(
+            'competencyid' => $competencyid,
+        ));
         $competency = api::read_competency($params['competencyid']);
         self::validate_context($competency->get_context());
 
@@ -852,13 +846,12 @@ class external extends external_api {
     public static function search_users($query, $capability = '', $limitfrom = 0, $limitnum = 100) {
         global $DB, $CFG, $PAGE, $USER;
 
-        $params = self::validate_parameters(self::search_users_parameters(),
-                                            array(
-                                                'query' => $query,
-                                                'capability' => $capability,
-                                                'limitfrom' => $limitfrom,
-                                                'limitnum' => $limitnum,
-                                            ));
+        $params = self::validate_parameters(self::search_users_parameters(), array(
+            'query' => $query,
+            'capability' => $capability,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum,
+        ));
         $query = $params['query'];
         $cap = $params['capability'];
         $limitfrom = $params['limitfrom'];
@@ -977,14 +970,13 @@ class external extends external_api {
         global $DB, $CFG, $PAGE;
         require_once($CFG->dirroot . '/cohort/lib.php');
 
-        $params = self::validate_parameters(self::search_cohorts_parameters(),
-                                            array(
-                                                'query' => $query,
-                                                'context' => $context,
-                                                'includes' => $includes,
-                                                'limitfrom' => $limitfrom,
-                                                'limitnum' => $limitnum,
-                                            ));
+        $params = self::validate_parameters(self::search_cohorts_parameters(), array(
+            'query' => $query,
+            'context' => $context,
+            'includes' => $includes,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum,
+        ));
         $query = $params['query'];
         $includes = $params['includes'];
         $context = self::get_context_from_params($params['context']);
@@ -1126,11 +1118,10 @@ class external extends external_api {
      */
     public static function data_for_user_competency_summary_in_plan($competencyid, $planid) {
         global $PAGE;
-        $params = self::validate_parameters(self::data_for_user_competency_summary_in_plan_parameters(),
-                                            array(
-                                                'competencyid' => $competencyid,
-                                                'planid' => $planid
-                                            ));
+        $params = self::validate_parameters(self::data_for_user_competency_summary_in_plan_parameters(), array(
+            'competencyid' => $competencyid,
+            'planid' => $planid
+        ));
 
         $plan = api::read_plan($params['planid']);
         $context = $plan->get_context();
@@ -1190,12 +1181,11 @@ class external extends external_api {
      */
     public static function data_for_user_competency_summary_in_course($userid, $competencyid, $courseid) {
         global $PAGE;
-        $params = self::validate_parameters(self::data_for_user_competency_summary_in_course_parameters(),
-                                            array(
-                                                'userid' => $userid,
-                                                'competencyid' => $competencyid,
-                                                'courseid' => $courseid
-                                            ));
+        $params = self::validate_parameters(self::data_for_user_competency_summary_in_course_parameters(), array(
+            'userid' => $userid,
+            'competencyid' => $competencyid,
+            'courseid' => $courseid
+        ));
         $context = context_user::instance($params['userid']);
         self::validate_context($context);
         $output = $PAGE->get_renderer('tool_lp');

@@ -59,7 +59,7 @@ class renderer extends plugin_renderer_base {
 
     /**
      * Defer to template.
-     * @param renderable $page
+     * @param renderable $summary
      * @return string
      */
     public function render_summary(renderable $summary) {

@@ -4238,16 +4238,15 @@ class external extends external_api {
     /**
      * Update the course competency settings
      *
-     * @param int $id the course id
+     * @param int $courseid the course id
      * @param stdClass $settings The list of settings (currently only pushratingstouserplans).
      * @throws moodle_exception
      */
     public static function update_course_competency_settings($courseid, $settings) {
-        $params = self::validate_parameters(self::update_course_competency_settings_parameters(),
-                                            array(
-                                                'courseid' => $courseid,
-                                                'settings' => $settings
-                                            ));
+        $params = self::validate_parameters(self::update_course_competency_settings_parameters(), array(
+            'courseid' => $courseid,
+            'settings' => $settings
+        ));
 
         $context = context_course::instance($params['courseid']);
         self::validate_context($context);

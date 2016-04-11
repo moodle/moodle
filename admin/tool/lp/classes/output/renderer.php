@@ -134,7 +134,7 @@ class renderer extends plugin_renderer_base {
     /**
      * Defer to template.
      *
-     * @param renderable $page
+     * @param user_competency_summary_in_course $page
      * @return string
      */
     public function render_user_competency_summary_in_course(user_competency_summary_in_course $page) {
@@ -145,7 +145,7 @@ class renderer extends plugin_renderer_base {
     /**
      * Defer to template.
      *
-     * @param renderable $page
+     * @param user_competency_summary_in_plan $page
      * @return string
      */
     public function render_user_competency_summary_in_plan(user_competency_summary_in_plan $page) {
@@ -209,7 +209,7 @@ class renderer extends plugin_renderer_base {
     /**
      * Defer to template.
      *
-     * @param user_competency_page $page
+     * @param user_competency_summary $page
      * @return string
      */
     public function render_user_competency_summary(user_competency_summary $page) {

@@ -79,7 +79,8 @@ class course_competency_statistics_exporter extends \core_competency\external\ex
         $proficientcompetencypercentage = 0;
         $proficientcompetencypercentageformatted = '';
         if ($this->data->competencycount > 0) {
-            $proficientcompetencypercentage = ((float) $this->data->proficientcompetencycount / (float) $this->data->competencycount) * 100.0;
+            $proficientcompetencypercentage = ((float) $this->data->proficientcompetencycount
+                / (float) $this->data->competencycount) * 100.0;
             $proficientcompetencypercentageformatted = format_float($proficientcompetencypercentage);
         }
         $competencies = array();

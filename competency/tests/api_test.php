@@ -1829,8 +1829,10 @@ class core_competency_api_testcase extends advanced_testcase {
         $this->assertInstanceOf('core_competency\template_cohort', $result);
         $this->assertEquals($c2->id, $result->get_cohortid());
         $this->assertEquals($t1->get_id(), $result->get_templateid());
-        $this->assertEquals(2, \core_competency\template_cohort::count_records_select('templateid = :id', array('id' => $t1->get_id())));
-        $this->assertEquals(0, \core_competency\template_cohort::count_records_select('templateid = :id', array('id' => $t2->get_id())));
+        $this->assertEquals(2, \core_competency\template_cohort::count_records_select('templateid = :id',
+            array('id' => $t1->get_id())));
+        $this->assertEquals(0, \core_competency\template_cohort::count_records_select('templateid = :id',
+            array('id' => $t2->get_id())));
     }
 
     public function test_create_template_cohort_permissions() {
@@ -1865,7 +1867,7 @@ class core_competency_api_testcase extends advanced_testcase {
         try {
             $result = api::create_template_cohort($t1, $c2);
             $this->fail('Permission required.');
-        } catch(required_capability_exception $e) {
+        } catch (required_capability_exception $e) {
             // That's what should happen.
         }
 
@@ -1922,22 +1924,28 @@ class core_competency_api_testcase extends advanced_testcase {
         $tc1 = $lpg->create_template_cohort(array('templateid' => $t2->get_id(), 'cohortid' => $c2->id));
 
         $this->assertEquals(2, \core_competency\template_cohort::count_records());
-        $this->assertEquals(1, \core_competency\template_cohort::count_records_select('templateid = :id', array('id' => $t1->get_id())));
-        $this->assertEquals(1, \core_competency\template_cohort::count_records_select('templateid = :id', array('id' => $t2->get_id())));
+        $this->assertEquals(1, \core_competency\template_cohort::count_records_select('templateid = :id',
+            array('id' => $t1->get_id())));
+        $this->assertEquals(1, \core_competency\template_cohort::count_records_select('templateid = :id',
+            array('id' => $t2->get_id())));
 
         // Delete existing.
         $result = api::delete_template_cohort($t1->get_id(), $c1->id);
         $this->assertTrue($result);
         $this->assertEquals(1, \core_competency\template_cohort::count_records());
-        $this->assertEquals(0, \core_competency\template_cohort::count_records_select('templateid = :id', array('id' => $t1->get_id())));
-        $this->assertEquals(1, \core_competency\template_cohort::count_records_select('templateid = :id', array('id' => $t2->get_id())));
+        $this->assertEquals(0, \core_competency\template_cohort::count_records_select('templateid = :id',
+            array('id' => $t1->get_id())));
+        $this->assertEquals(1, \core_competency\template_cohort::count_records_select('templateid = :id',
+            array('id' => $t2->get_id())));
 
         // Delete non-existant.
         $result = api::delete_template_cohort($t1->get_id(), $c1->id);
         $this->assertTrue($result);
         $this->assertEquals(1, \core_competency\template_cohort::count_records());
-        $this->assertEquals(0, \core_competency\template_cohort::count_records_select('templateid = :id', array('id' => $t1->get_id())));
-        $this->assertEquals(1, \core_competency\template_cohort::count_records_select('templateid = :id', array('id' => $t2->get_id())));
+        $this->assertEquals(0, \core_competency\template_cohort::count_records_select('templateid = :id',
+            array('id' => $t1->get_id())));
+        $this->assertEquals(1, \core_competency\template_cohort::count_records_select('templateid = :id',
+            array('id' => $t2->get_id())));
     }
 
     public function test_add_evidence_log() {
@@ -1952,7 +1960,8 @@ class core_competency_api_testcase extends advanced_testcase {
         $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
 
         // Creating a standard evidence with minimal information.
-        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \core_competency\evidence::ACTION_LOG, 'invaliddata', 'error');
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \core_competency\evidence::ACTION_LOG,
+            'invaliddata', 'error');
         $evidence->read();
         $uc = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
         $this->assertEquals(\core_competency\user_competency::STATUS_IDLE, $uc->get_status());
@@ -1969,8 +1978,8 @@ class core_competency_api_testcase extends advanced_testcase {
         $this->assertSame(null, $evidence->get_actionuserid());
 
         // Creating a standard evidence with more information.
-        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \core_competency\evidence::ACTION_LOG, 'invaliddata', 'error',
-            '$a', false, 'http://moodle.org', null, 2, 'The evidence of prior learning were reviewed.');
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \core_competency\evidence::ACTION_LOG, 'invaliddata',
+            'error', '$a', false, 'http://moodle.org', null, 2, 'The evidence of prior learning were reviewed.');
         $evidence->read();
         $uc = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
         $this->assertEquals(\core_competency\user_competency::STATUS_IDLE, $uc->get_status());
@@ -2655,7 +2664,8 @@ class core_competency_api_testcase extends advanced_testcase {
         // Check record was created with default rule value Evidence.
         $this->assertEquals(1, \core_competency\course_competency::count_records());
         $recordscc = api::list_course_competencies($course->id);
-        $this->assertEquals(\core_competency\course_competency::OUTCOME_EVIDENCE, $recordscc[0]['coursecompetency']->get_ruleoutcome());
+        $this->assertEquals(\core_competency\course_competency::OUTCOME_EVIDENCE,
+            $recordscc[0]['coursecompetency']->get_ruleoutcome());
 
         // Check ruleoutcome value is updated to None.
         $this->assertTrue(api::set_course_competency_ruleoutcome($recordscc[0]['coursecompetency']->get_id(),
@@ -3887,7 +3897,7 @@ class core_competency_api_testcase extends advanced_testcase {
         $this->assertExceptionWithGradeCompetencyInCourse('coding_exception', 'The competency may not be rated at this time.',
             $c1->id, $notstudent1->id, $comp1->get_id());
 
-       // Give permission for non-editing teacher to grade.
+        // Give permission for non-editing teacher to grade.
         $dg->role_assign($canviewucrole, $noneditingteacher->id, $c1ctx->id);
         $dg->role_assign($cangraderole, $noneditingteacher->id, $c1ctx->id);
         $this->setUser($noneditingteacher);
