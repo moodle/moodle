@@ -416,7 +416,7 @@ class mod_wiki_external extends external_api {
                                     'sortdirection' => new external_value(PARAM_ALPHA,
                                             'Sort direction: ASC or DESC.', VALUE_DEFAULT, 'ASC'),
                                     'includecontent' => new external_value(PARAM_INT,
-                                            'Include each page contents or not.', VALUE_DEFAULT, 1),
+                                            'Include each page contents or just the contents size.', VALUE_DEFAULT, 1),
                             ), 'Options', VALUE_DEFAULT, array()),
             )
         );
