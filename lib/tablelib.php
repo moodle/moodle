@@ -114,12 +114,6 @@ class flexible_table {
     var $downloadable = false;
 
     /**
-     * @var string which download plugin to use. Default '' means none - print
-     * html table with paging.
-     */
-    var $defaultdownloadformat  = 'csv';
-
-    /**
      * @var bool Has start output been called yet?
      */
     var $started_output = false;
@@ -157,10 +151,10 @@ class flexible_table {
      * for you (even if the param is '', which means no download this time.
      * Also you can call this method with no params to get the current set
      * download type.
-     * @param string $download download type. One of csv, tsv, xhtml, ods, etc
+     * @param string $download dataformat type. One of csv, xhtml, ods, etc
      * @param string $filename filename for downloads without file extension.
      * @param string $sheettitle title for downloaded data.
-     * @return string download type.  One of csv, tsv, xhtml, ods, etc
+     * @return string download dataformat type. One of csv, xhtml, ods, etc
      */
     function is_downloading($download = null, $filename='', $sheettitle='') {
         if ($download!==null) {
@@ -184,8 +178,7 @@ class flexible_table {
             $this->exportclass = $exportclass;
             $this->exportclass->table = $this;
         } else if (is_null($this->exportclass) && !empty($this->download)) {
-            $classname = 'table_'.$this->download.'_export_format';
-            $this->exportclass = new $classname($this);
+            $this->exportclass = new table_dataformat_export_format($this, $this->download);
             if (!$this->exportclass->document_started()) {
                 $this->exportclass->start_document($this->filename);
             }
@@ -1018,44 +1011,23 @@ class flexible_table {
         }
         return $row;
     }
-    /**
-     * This function is not part of the public api.
-     */
-    function get_download_menu() {
-        $allclasses= get_declared_classes();
-        $exportclasses = array();
-        foreach ($allclasses as $class) {
-            $matches = array();
-            if (preg_match('/^table\_([a-z]+)\_export\_format$/', $class, $matches)) {
-                $type = $matches[1];
-                $exportclasses[$type]= get_string("download$type", 'table');
-            }
-        }
-        return $exportclasses;
-    }
 
     /**
-     * This function is not part of the public api.
+     * Get the html for the download buttons
+     *
+     * Usually only use internally
      */
-    function download_buttons() {
+    public function download_buttons() {
+        global $OUTPUT;
+
         if ($this->is_downloadable() && !$this->is_downloading()) {
-            $downloadoptions = $this->get_download_menu();
-
-            $downloadelements = new stdClass();
-            $downloadelements->formatsmenu = html_writer::select($downloadoptions,
-                    'download', $this->defaultdownloadformat, false);
-            $downloadelements->downloadbutton = '<input type="submit" value="'.
-                    get_string('download').'"/>';
-            $html = '<form action="'. $this->baseurl .'" method="post">';
-            $html .= '<div class="mdl-align">';
-            $html .= html_writer::tag('label', get_string('downloadas', 'table', $downloadelements));
-            $html .= '</div></form>';
-
-            return $html;
+            return $OUTPUT->download_dataformat_selector(get_string('downloadas', 'table'),
+                    $this->baseurl->out_omit_querystring(), 'download', $this->baseurl->params());
         } else {
             return '';
         }
     }
+
     /**
      * This function is not part of the public api.
      * You don't normally need to call this. It is called automatically when
@@ -1820,6 +1792,109 @@ class table_ods_export_format extends table_spreadsheet_export_format_parent {
     }
 }
 
+/**
+ * Dataformat exporter
+ *
+ * @package    core
+ * @subpackage tablelib
+ * @copyright  2016 Brendan Heywood (brendan@catalyst-au.net)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class table_dataformat_export_format extends table_default_export_format_parent {
+
+    /** @var $dataformat */
+    protected $dataformat;
+
+    /** @var $rownum */
+    protected $rownum = 0;
+
+    /** @var $columns */
+    protected $columns;
+
+    /**
+     * Constructor
+     *
+     * @param string $table An sql table
+     * @param string $dataformat type of dataformat for export
+     */
+    public function __construct(&$table, $dataformat) {
+        parent::__construct($table);
+
+        if (!NO_OUTPUT_BUFFERING) {
+            // Ideally this would throw a coding exception but we are more forgiving here due
+            // to the large amount of code already using table_sql.
+            debugging("NO_OUTPUT_BUFFERING should be set to true before downloading", DEBUG_DEVELOPER);
+        }
+
+        $classname = 'dataformat_' . $dataformat . '\writer';
+        if (!class_exists($classname)) {
+            throw new coding_exception("Unable to locate dataformat/$dataformat/classes/writer.php");
+        }
+        $this->dataformat = new $classname;
+
+        // The dataformat export time to first byte could take a while to generate...
+        set_time_limit(0);
+
+        // Close the session so that the users other tabs in the same session are not blocked.
+        \core\session\manager::write_close();
+    }
+
+    /**
+     * Start document
+     *
+     * @param string $filename
+     */
+    public function start_document($filename) {
+        $this->filename = $filename;
+        $this->documentstarted = true;
+        $this->dataformat->set_filename($filename);
+        $this->dataformat->send_http_headers();
+    }
+
+    /**
+     * Start export
+     *
+     * @param string $sheettitle optional spreadsheet worksheet title
+     */
+    public function start_table($sheettitle) {
+        $this->dataformat->set_sheettitle($sheettitle);
+    }
+
+    /**
+     * Output headers
+     *
+     * @param array $headers
+     */
+    public function output_headers($headers) {
+        $this->columns = $headers;
+        $this->dataformat->write_header($headers);
+    }
+
+    /**
+     * Add a row of data
+     *
+     * @param array $row One record of data
+     */
+    public function add_data($row) {
+        $this->dataformat->write_record($row, $this->rownum++);
+        return true;
+    }
+
+    /**
+     * Finish export
+     */
+    public function finish_table() {
+        $this->dataformat->write_footer($this->columns);
+    }
+
+    /**
+     * Finish download
+     */
+    public function finish_document() {
+        exit;
+    }
+
+}
 
 /**
  * @package   moodlecore

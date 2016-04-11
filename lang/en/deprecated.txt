@@ -30,3 +30,9 @@ settypeofficial,core_tag
 filetoolarge,core
 maxbytesforfile,core
 maxbytes,core_error
+downloadcsv,core_table
+downloadexcel,core_table
+downloadods,core_table
+downloadoptions,core_table
+downloadtsv,core_table
+downloadxhtml,core_table
