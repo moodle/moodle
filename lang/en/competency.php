@@ -37,6 +37,7 @@ $string['coursemodulecompetencyoutcome_complete'] = 'Complete the competency';
 $string['coursemodulecompetencyoutcome_evidence'] = 'Attach an evidence';
 $string['coursemodulecompetencyoutcome_none'] = 'Do nothing';
 $string['coursemodulecompetencyoutcome_recommend'] = 'Send for review';
+$string['deletecompetencyratings'] = 'Delete competency ratings';
 $string['duplicateditemname'] = '{$a} (copy)';
 $string['enablecompetencies'] = 'Enable competencies';
 $string['enablecompetencies_desc'] = 'When unticked the competencies module will be disabled.';

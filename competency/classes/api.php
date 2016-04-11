@@ -4644,6 +4644,47 @@ class api {
     }
 
     /**
+     * Action to perform when a course module is deleted.
+     *
+     * Do not call this directly, this is reserved for core use.
+     *
+     * @param stdClass $cm The CM object.
+     * @return void
+     */
+    public static function hook_course_module_deleted(stdClass $cm) {
+        global $DB;
+        $DB->delete_records(course_module_competency::TABLE, array('cmid' => $cm->id));
+    }
+
+    /**
+     * Action to perform when a course is deleted.
+     *
+     * Do not call this directly, this is reserved for core use.
+     *
+     * @param stdClass $course The course object.
+     * @return void
+     */
+    public static function hook_course_deleted(stdClass $course) {
+        global $DB;
+        $DB->delete_records(course_competency::TABLE, array('courseid' => $course->id));
+        $DB->delete_records(course_competency_settings::TABLE, array('courseid' => $course->id));
+        $DB->delete_records(user_competency_course::TABLE, array('courseid' => $course->id));
+    }
+
+    /**
+     * Action to perform when a course is being reset.
+     *
+     * Do not call this directly, this is reserved for core use.
+     *
+     * @param int $courseid The course ID.
+     * @return void
+     */
+    public static function hook_course_reset_competency_ratings($courseid) {
+        global $DB;
+        $DB->delete_records(user_competency_course::TABLE, array('courseid' => $courseid));
+    }
+
+    /**
      * Manually grade a user competency.
      *
      * @param int $userid

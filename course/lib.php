@@ -1770,6 +1770,9 @@ function course_delete_module($cmid) {
     core_tag_tag::delete_instances('mod_' . $modulename, null, $modcontext->id);
     core_tag_tag::remove_all_item_tags('core', 'course_modules', $cm->id);
 
+    // Notify the competency subsystem.
+    \core_competency\api::hook_course_module_deleted($cm);
+
     // Delete the context.
     context_helper::delete_instance(CONTEXT_MODULE, $cm->id);
 
