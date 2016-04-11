@@ -95,6 +95,7 @@ $string['eventuserevidenceupdated'] = 'Evidence of prior learning updated.';
 $string['evidence_competencyrule'] = 'The rule of the competency was met.';
 $string['evidence_coursecompleted'] = 'The course \'{$a}\' was completed.';
 $string['evidence_coursemodulecompleted'] = 'The activity \'{$a}\' was completed.';
+$string['evidence_courserestored'] = 'The rating was restored along with the course \'{$a}\'.';
 $string['evidence_evidenceofpriorlearninglinked'] = 'The evidence of prior learning \'{$a}\' was linked.';
 $string['evidence_evidenceofpriorlearningunlinked'] = 'The evidence of prior learning \'{$a}\' was unlinked.';
 $string['evidence_manualoverride'] = 'The competency rating was manually set.';
