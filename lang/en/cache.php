@@ -57,6 +57,7 @@ $string['cachedef_navigation_expandcourse'] = 'Navigation expandable courses';
 $string['cachedef_observers'] = 'Event observers';
 $string['cachedef_plugin_functions'] = 'Plugins available callbacks';
 $string['cachedef_plugin_manager'] = 'Plugin info manager';
+$string['cachedef_tagindexbuilder'] = 'Search results for tagged items';
 $string['cachedef_questiondata'] = 'Question definitions';
 $string['cachedef_repositories'] = 'Repositories instances data';
 $string['cachedef_grade_categories'] = 'Grade category queries';

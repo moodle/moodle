@@ -3917,3 +3917,109 @@ function core_course_inplace_editable($itemtype, $itemid, $newvalue) {
         return \core_course\output\course_module_name::update($itemid, $newvalue);
     }
 }
+
+/**
+ * Returns course modules tagged with a specified tag ready for output on tag/index.php page
+ *
+ * This is a callback used by the tag area core/course_modules to search for course modules
+ * tagged with a specific tag.
+ *
+ * @param core_tag_tag $tag
+ * @param bool $exclusivemode if set to true it means that no other entities tagged with this tag
+ *             are displayed on the page and the per-page limit may be bigger
+ * @param int $fromcontextid context id where the link was displayed, may be used by callbacks
+ *            to display items in the same context first
+ * @param int $contextid context id where to search for records
+ * @param bool $recursivecontext search in subcontexts as well
+ * @param int $page 0-based number of page being displayed
+ * @return \core_tag\output\tagindex
+ */
+function course_get_tagged_course_modules($tag, $exclusivemode = false, $fromcontextid = 0, $contextid = 0,
+                                          $recursivecontext = 1, $page = 0) {
+    global $OUTPUT;
+    $perpage = $exclusivemode ? 20 : 5;
+
+    // Build select query.
+    $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
+    $query = "SELECT cm.id AS cmid, c.id AS courseid, $ctxselect
+                FROM {course_modules} cm
+                JOIN {tag_instance} tt ON cm.id = tt.itemid
+                JOIN {course} c ON cm.course = c.id
+                JOIN {context} ctx ON ctx.instanceid = cm.id AND ctx.contextlevel = :coursemodulecontextlevel
+               WHERE tt.itemtype = :itemtype AND tt.tagid = :tagid AND tt.component = :component
+                AND c.id %COURSEFILTER% AND cm.id %ITEMFILTER%";
+
+    $params = array('itemtype' => 'course_modules', 'tagid' => $tag->id, 'component' => 'core',
+        'coursemodulecontextlevel' => CONTEXT_MODULE);
+    if ($contextid) {
+        $context = context::instance_by_id($contextid);
+        $query .= $recursivecontext ? ' AND (ctx.id = :contextid OR ctx.path LIKE :path)' : ' AND ctx.id = :contextid';
+        $params['contextid'] = $context->id;
+        $params['path'] = $context->path.'/%';
+    }
+
+    $query .= ' ORDER BY';
+    if ($fromcontextid) {
+        // In order-clause specify that modules from inside "fromctx" context should be returned first.
+        $fromcontext = context::instance_by_id($fromcontextid);
+        $query .= ' (CASE WHEN ctx.id = :fromcontextid OR ctx.path LIKE :frompath THEN 0 ELSE 1 END),';
+        $params['fromcontextid'] = $fromcontext->id;
+        $params['frompath'] = $fromcontext->path.'/%';
+    }
+    $query .= ' c.sortorder, cm.id';
+    $totalpages = $page + 1;
+
+    // Use core_tag_index_builder to build and filter the list of items.
+    // Request one item more than we need so we know if next page exists.
+    $builder = new core_tag_index_builder('core', 'course_modules', $query, $params, $page * $perpage, $perpage + 1);
+    while ($item = $builder->has_item_that_needs_access_check()) {
+        context_helper::preload_from_record($item);
+        $courseid = $item->courseid;
+        if (!$builder->can_access_course($courseid)) {
+            $builder->set_accessible($item, false);
+            continue;
+        }
+        $modinfo = get_fast_modinfo($builder->get_course($courseid));
+        // Set accessibility of this item and all other items in the same course.
+        $builder->walk(function ($taggeditem) use ($courseid, $modinfo, $builder) {
+            if ($taggeditem->courseid == $courseid) {
+                $cm = $modinfo->get_cm($taggeditem->cmid);
+                $builder->set_accessible($taggeditem, $cm->uservisible);
+            }
+        });
+    }
+
+    $items = $builder->get_items();
+    if (count($items) > $perpage) {
+        $totalpages = $page + 2; // We don't need exact page count, just indicate that the next page exists.
+        array_pop($items);
+    }
+
+    // Build the display contents.
+    if ($items) {
+        $tagfeed = new core_tag\output\tagfeed();
+        foreach ($items as $item) {
+            context_helper::preload_from_record($item);
+            $course = $builder->get_course($item->courseid);
+            $modinfo = get_fast_modinfo($course);
+            $cm = $modinfo->get_cm($item->cmid);
+            $courseurl = course_get_url($item->courseid, $cm->sectionnum);
+            $cmname = $cm->get_formatted_name();
+            if (!$exclusivemode) {
+                $cmname = shorten_text($cmname, 100);
+            }
+            $cmname = html_writer::link($cm->url?:$courseurl, $cmname);
+            $coursename = format_string($course->fullname, true,
+                    array('context' => context_course::instance($item->courseid)));
+            $coursename = html_writer::link($courseurl, $coursename);
+            $icon = html_writer::empty_tag('img', array('src' => $cm->get_icon_url()));
+            $tagfeed->add($icon, $cmname, $coursename);
+        }
+
+        $content = $OUTPUT->render_from_template('core_tag/tagfeed',
+                $tagfeed->export_for_template($OUTPUT));
+
+        return new core_tag\output\tagindex($tag, 'core', 'course_modules', $content,
+                $exclusivemode, $fromcontextid, $contextid, $recursivecontext, $page, $totalpages);
+    }
+}
