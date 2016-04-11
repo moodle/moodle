@@ -43,6 +43,15 @@ EDITOR.prototype = {
     dialogue : null,
 
     /**
+     * The panel used for all action menu displays.
+     *
+     * @property type
+     * @type Y.Node
+     * @protected
+     */
+    panel : null,
+
+    /**
      * The number of pages in the pdf.
      *
      * @property pagecount
@@ -203,11 +212,24 @@ EDITOR.prototype = {
             link.on('click', this.link_handler, this);
             link.on('key', this.link_handler, 'down:13', this);
 
-            this.currentedit.start = false;
-            this.currentedit.end = false;
-            if (!this.get('readonly')) {
-                this.quicklist = new M.assignfeedback_editpdf.quickcommentlist(this);
-            }
+            // We call the amd module to see if we can take control of the review panel.
+            require(['mod_assign/grading_review_panel'], function(ReviewPanelManager) {
+                var panelManager = new ReviewPanelManager();
+
+                var panel = panelManager.getReviewPanel('assignfeedback_editpdf');
+                if (panel) {
+                    panel = Y.one(panel);
+                    panel.empty();
+                    link.ancestor('.fitem').hide();
+                    this.open_in_panel(panel);
+                }
+                this.currentedit.start = false;
+                this.currentedit.end = false;
+                if (!this.get('readonly')) {
+                    this.quicklist = new M.assignfeedback_editpdf.quickcommentlist(this);
+                }
+            }.bind(this));
+
         }
     },
 
@@ -284,6 +306,36 @@ EDITOR.prototype = {
             newpoint = new M.assignfeedback_editpdf.point(point.x + bounds.x, point.y + bounds.y);
 
         return newpoint;
+    },
+
+    /**
+     * Open the edit-pdf editor in the panel in the page instead of a popup.
+     * @method open_in_panel
+     */
+    open_in_panel : function(panel) {
+        var drawingcanvas, drawingregion;
+
+        this.panel = panel;
+        panel.append(this.get('body'));
+        panel.addClass(CSS.DIALOGUE);
+
+        this.loadingicon = this.get_dialogue_element(SELECTOR.LOADINGICON);
+
+        drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
+        this.graphic = new Y.Graphic({render : drawingcanvas});
+
+        drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
+        drawingregion.on('scroll', this.move_canvas, this);
+
+        if (!this.get('readonly')) {
+            drawingcanvas.on('gesturemovestart', this.edit_start, null, this);
+            drawingcanvas.on('gesturemove', this.edit_move, null, this);
+            drawingcanvas.on('gesturemoveend', this.edit_end, null, this);
+
+            this.refresh_button_state();
+        }
+
+        this.load_all_pages();
     },
 
     /**
@@ -441,14 +493,18 @@ EDITOR.prototype = {
         try {
             data = Y.JSON.parse(responsetext);
             if (data.error || !data.pagecount) {
-                this.dialogue.hide();
+                if (this.dialogue) {
+                    this.dialogue.hide();
+                }
                 // Display alert dialogue.
                 error = new M.core.alert({ message: M.util.get_string('cannotopenpdf', 'assignfeedback_editpdf') });
                 error.show();
                 return;
             }
         } catch (e) {
-            this.dialogue.hide();
+            if (this.dialogue) {
+                this.dialogue.hide();
+            }
             // Display alert dialogue.
             error = new M.core.alert({ title: M.util.get_string('cannotopenpdf', 'assignfeedback_editpdf')});
             error.show();
@@ -679,7 +735,11 @@ EDITOR.prototype = {
      * @method get_dialogue_element
      */
     get_dialogue_element : function(selector) {
-        return this.dialogue.get('boundingBox').one(selector);
+        if (this.panel) {
+            return this.panel.one(selector);
+        } else {
+            return this.dialogue.get('boundingBox').one(selector);
+        }
     },
 
     /**
@@ -860,10 +920,12 @@ EDITOR.prototype = {
     resize : function() {
         var drawingregion, drawregionheight;
 
-        if (!this.dialogue.get('visible')) {
-            return;
+        if (this.dialogue) {
+            if (!this.dialogue.get('visible')) {
+                return;
+            }
+            this.dialogue.centerDialogue();
         }
-        this.dialogue.centerDialogue();
 
         // Make sure the dialogue box is not bigger than the max height of the viewport.
         drawregionheight = Y.one('body').get('winHeight') - 120; // Space for toolbar + titlebar.
@@ -871,7 +933,9 @@ EDITOR.prototype = {
             drawregionheight = 100;
         }
         drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
-        drawingregion.setStyle('maxHeight', drawregionheight +'px');
+        if (this.dialogue) {
+            drawingregion.setStyle('maxHeight', drawregionheight +'px');
+        }
         this.redraw();
         return true;
     },
@@ -930,8 +994,16 @@ EDITOR.prototype = {
                         if (jsondata.error) {
                             return new M.core.ajaxException(jsondata);
                         }
-                        Y.one('#' + this.get('linkid')).siblings(SELECTOR.UNSAVEDCHANGESDIV)
-                            .item(0).addClass('haschanges');
+                        Y.one(SELECTOR.UNSAVEDCHANGESINPUT).set('value', 'true');
+                        Y.one(SELECTOR.UNSAVEDCHANGESDIV).setStyle('opacity', 1);
+                        Y.one(SELECTOR.UNSAVEDCHANGESDIV).setStyle('display', 'inline-block');
+                        Y.one(SELECTOR.UNSAVEDCHANGESDIV).transition({
+                            duration: 1,
+                            delay: 2,
+                            opacity: 0
+                        }, function() {
+                            Y.one(SELECTOR.UNSAVEDCHANGESDIV).setStyle('display', 'none');
+                        });
                     } catch (e) {
                         return new M.core.exception(e);
                     }
@@ -1174,5 +1246,6 @@ M.assignfeedback_editpdf.editor = M.assignfeedback_editpdf.editor || {};
  * @param {Object} params
  */
 M.assignfeedback_editpdf.editor.init = M.assignfeedback_editpdf.editor.init || function(params) {
-    return new EDITOR(params);
+    M.assignfeedback_editpdf.instance =  new EDITOR(params);
+    return M.assignfeedback_editpdf.instance;
 };

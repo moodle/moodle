@@ -1,4 +1,4 @@
-@mod @mod_assign
+@mod @mod_assign @javascript
 Feature: In an assignment, teachers grade multiple students on one page
   In order to quickly give students grades and feedback
   As a teacher
@@ -38,14 +38,14 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I am on site homepage
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View/grade all submissions"
-    And I click on "Grade Student 1" "link" in the "Student 1" "table_row"
+    And I follow "View all submissions"
+    And I click on "Grade" "link" in the "Student 1" "table_row"
     And I press "Save changes"
-    And I press "Continue"
+    And I press "Ok"
+    And I click on "Edit settings" "link"
     And I follow "Test assignment name"
     Then I should see "1" in the "Needs grading" "table_row"
 
-  @javascript
   Scenario: Grade multiple students on one page
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
@@ -109,14 +109,17 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View/grade all submissions"
-    And I click on "Grade Student 1" "link" in the "Student 1" "table_row"
+    And I follow "View all submissions"
+    And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Grade out of 100 | 50.0 |
       | M8d skillZ! | 1337 |
       | Feedback comments | I'm the teacher first feedback |
     And I press "Save changes"
-    And I press "Continue"
+    And I press "Ok"
+    And I click on "Edit settings" "link"
+    And I follow "Test assignment name"
+    And I follow "View all submissions"
     Then I click on "Quick grading" "checkbox"
     And I set the field "User grade" to "60.0"
     And I press "Save all quick grading changes"
@@ -144,7 +147,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View/grade all submissions"
+    And I follow "View all submissions"
     And I click on "Hide User picture" "link"
     And I click on "Hide Full name" "link"
     And I click on "Hide Email address" "link"

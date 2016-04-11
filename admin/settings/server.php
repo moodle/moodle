@@ -12,6 +12,7 @@ $temp->add(new admin_setting_configexecutable('pathtodu', new lang_string('patht
 $temp->add(new admin_setting_configexecutable('aspellpath', new lang_string('aspellpath', 'admin'), new lang_string('edhelpaspellpath'), ''));
 $temp->add(new admin_setting_configexecutable('pathtodot', new lang_string('pathtodot', 'admin'), new lang_string('pathtodot_help', 'admin'), ''));
 $temp->add(new admin_setting_configexecutable('pathtogs', new lang_string('pathtogs', 'admin'), new lang_string('pathtogs_help', 'admin'), '/usr/bin/gs'));
+$temp->add(new admin_setting_configexecutable('pathtounoconv', new lang_string('pathtounoconv', 'admin'), new lang_string('pathtounoconv_help', 'admin'), '/usr/bin/unoconv'));
 $ADMIN->add('server', $temp);
 
 

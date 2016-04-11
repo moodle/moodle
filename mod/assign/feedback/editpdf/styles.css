@@ -12,10 +12,20 @@
     cursor: crosshair;
     background-repeat: no-repeat;
     background-color: #ccc;
+    margin-left: auto;
+    margin-right: auto;
+}
+.assignfeedback_editpdf_widget .moodle-dialogue-bd .drawingregion {
+    position: inherit;
 }
 .assignfeedback_editpdf_widget .drawingregion {
+    border: 1px solid #ccc;
+    left: 1em;
+    right: 1em;
+    top: 52px;
+    bottom: 0px;
+    position: absolute;
     overflow: auto;
-    width: 842px; /* A4 portrait should not need a horizontal scrollbar */
 }
 
 .assignfeedback_editpdf_widget {
@@ -32,18 +42,25 @@
     padding-left: 20px;
     padding-right: 20px;
     min-height: 50px;
+    height: 52px;
+    overflow: auto;
 }
 
 .moodle-dialogue-base .moodle-dialogue.assignfeedback_editpdf_widget .moodle-dialogue-bd {
     padding: 0px;
 }
 
-.assignfeedback_editpdf_unsavedchanges.haschanges{
-    display: block;
+.assignfeedback_editpdf_widget .assignfeedback_editpdf_unsavedchanges.haschanges{
+    display: inline-block;
 }
-.assignfeedback_editpdf_unsavedchanges {
+.assignfeedback_editpdf_widget .assignfeedback_editpdf_unsavedchanges {
     display: none;
-    margin-top: 1em;
+    position: absolute;
+    left: 20px;
+    top: 60px;
+}
+.dir-rtl .assignfeedback_editpdf_widget .assignfeedback_editpdf_unsavedchanges {
+    float: right;
 }
 .yui3-colourpicker-hidden,
 .yui3-commentsearch-hidden,
@@ -289,4 +306,32 @@ ul.assignfeedback_editpdf_menu {
 .hideoverflow {
     overflow: hidden;
     position: relative;
+}
+@media (max-width: 899px) {
+    .assignfeedback_editpdf_widget .pageheader {
+        height: 104px;
+    }
+    .assignfeedback_editpdf_widget .drawingregion {
+        top: 104px;
+    }
+}
+@media (max-width: 767px) {
+    .assignfeedback_editpdf_widget .drawingregion {
+        position: inherit;
+        margin-bottom: 1em;
+    }
+    .assignfeedback_editpdf_widget .pageheader {
+        height: 52px;
+    }
+    .assignfeedback_editpdf_widget .drawingregion {
+        top: 52px;
+    }
+}
+@media (max-width: 683px) {
+    .assignfeedback_editpdf_widget .pageheader {
+        height: 104px;
+    }
+    .assignfeedback_editpdf_widget .drawingregion {
+        top: 104px;
+    }
 }

@@ -488,6 +488,15 @@ class assign_submission_status implements renderable {
         $this->usergroups = $usergroups;
     }
 }
+/**
+ * Renderable submission status
+ * @package   mod_assign
+ * @copyright 2016 Damyon Wiese
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class assign_submission_status_compact extends assign_submission_status implements renderable {
+    // Compact view of the submission status. Not in a table etc.
+}
 
 /**
  * Used to output the attempt history for a particular assignment.
@@ -553,6 +562,86 @@ class assign_attempt_history implements renderable {
         $this->cangrade = $cangrade;
         $this->useridlistid = $useridlistid;
         $this->rownum = $rownum;
+    }
+}
+
+/**
+ * Used to output the attempt history chooser for a particular assignment.
+ *
+ * @package mod_assign
+ * @copyright 2016 Damyon Wiese
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class assign_attempt_history_chooser implements renderable, templatable {
+
+    /** @var array submissions - The list of previous attempts */
+    public $submissions = array();
+    /** @var array grades - The grades for the previous attempts */
+    public $grades = array();
+    /** @var int coursemoduleid - The cmid for the assignment */
+    public $coursemoduleid = 0;
+    /** @var int userid - The current userid */
+    public $userid = 0;
+
+    /**
+     * Constructor
+     *
+     * @param array $submissions
+     * @param array $grades
+     * @param int $coursemoduleid
+     * @param int $userid
+     */
+    public function __construct($submissions,
+                                $grades,
+                                $coursemoduleid,
+                                $userid) {
+        $this->submissions = $submissions;
+        $this->grades = $grades;
+        $this->coursemoduleid = $coursemoduleid;
+        $this->userid = $userid;
+    }
+
+    /**
+     * Function to export the renderer data in a format that is suitable for a
+     * mustache template.
+     *
+     * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
+     * @return stdClass|array
+     */
+    public function export_for_template(renderer_base $output) {
+        // Show newest to oldest.
+        $export = (object) $this;
+        $export->submissions = array_reverse($export->submissions);
+        $export->submissioncount = count($export->submissions);
+
+        foreach ($export->submissions as $i => $submission) {
+            $grade = null;
+            foreach ($export->grades as $onegrade) {
+                if ($onegrade->attemptnumber == $submission->attemptnumber) {
+                    $submission->grade = $onegrade;
+                    break;
+                }
+            }
+            if (!$submission) {
+                $submission = new stdClass();
+            }
+
+            $editbtn = '';
+
+            if ($submission->timemodified) {
+                $submissionsummary = userdate($submission->timemodified);
+            } else {
+                $submissionsummary = get_string('nosubmission', 'assign');
+            }
+
+            $attemptsummaryparams = array('attemptnumber' => $submission->attemptnumber + 1,
+                                          'submissionsummary' => $submissionsummary);
+            $submission->attemptsummary = get_string('attemptheading', 'assign', $attemptsummaryparams);
+            $submission->statussummary = get_string('submissionstatus_' . $submission->status, 'assign');
+
+        }
+
+        return $export;
     }
 }
 

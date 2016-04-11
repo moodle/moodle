@@ -62,12 +62,15 @@ Feature: Outcome grading
     When I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View/grade all submissions"
-    And I click on "img[alt='Grade Student 0']" "css_element"
+    And I follow "View all submissions"
+    And I click on "Grade" "link" in the "Student 0" "table_row"
     And I set the following fields to these values:
       | Outcome Test: | Excellent |
     And I press "Save changes"
-    And I press "Continue"
+    And I press "Ok"
+    And I click on "Edit settings" "link"
+    And I follow "Test assignment name"
+    And I follow "View all submissions"
     Then I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should not see "Outcome Test: Excellent" in the "Student 1" "table_row"
 
@@ -109,22 +112,28 @@ Feature: Outcome grading
     When I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View/grade all submissions"
-    And I click on "img[alt='Grade Student 0']" "css_element"
+    And I follow "View all submissions"
+    And I click on "Grade" "link" in the "Student 0" "table_row"
     And I set the following fields to these values:
       | Outcome Test: | Excellent |
       | Apply grades and feedback to entire group | Yes |
     And I press "Save changes"
-    And I press "Continue"
+    And I press "Ok"
+    And I click on "Edit settings" "link"
+    And I follow "Test assignment name"
+    And I follow "View all submissions"
     Then I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should see "Outcome Test: Excellent" in the "Student 1" "table_row"
     And I should not see "Outcome Test: Excellent" in the "Student 2" "table_row"
-    And I click on "img[alt='Grade Student 1']" "css_element"
+    And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Outcome Test: | Disappointing |
       | Apply grades and feedback to entire group | No |
     And I press "Save changes"
-    And I press "Continue"
+    And I press "Ok"
+    And I click on "Edit settings" "link"
+    And I follow "Test assignment name"
+    And I follow "View all submissions"
     And I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should see "Outcome Test: Disappointing" in the "Student 1" "table_row"
     And I should not see "Outcome Test: Disappointing" in the "Student 0" "table_row"

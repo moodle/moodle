@@ -1507,6 +1507,91 @@ class mod_assign_external extends external_api {
     }
 
     /**
+     * Describes the parameters for submit_grading_form webservice.
+     * @return external_external_function_parameters
+     * @since  Moodle 3.1
+     */
+    public static function submit_grading_form_parameters() {
+        return new external_function_parameters(
+            array(
+                'assignmentid' => new external_value(PARAM_INT, 'The assignment id to operate on'),
+                'userid' => new external_value(PARAM_INT, 'The user id the submission belongs to'),
+                'jsonformdata' => new external_value(PARAM_RAW, 'The data from the grading form, encoded as a json array')
+            )
+        );
+    }
+
+    /**
+     * Submit the logged in users assignment for grading.
+     *
+     * @param int $assignmentid The id of the assignment
+     * @param int $userid The id of the user the submission belongs to.
+     * @param string $jsonformdata The data from the form, encoded as a json array.
+     * @return array of warnings to indicate any errors.
+     * @since Moodle 2.6
+     */
+    public static function submit_grading_form($assignmentid, $userid, $jsonformdata) {
+        global $CFG, $USER;
+
+        require_once($CFG->dirroot . '/mod/assign/locallib.php');
+        require_once($CFG->dirroot . '/mod/assign/gradeform.php');
+
+        $params = self::validate_parameters(self::submit_grading_form_parameters(),
+                                            array(
+                                                'assignmentid' => $assignmentid,
+                                                'userid' => $userid,
+                                                'jsonformdata' => $jsonformdata
+                                            ));
+
+        $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        $assignment = new assign($context, $cm, null);
+
+        $serialiseddata = json_decode($params['jsonformdata']);
+
+        $data = array();
+        parse_str($serialiseddata, $data);
+
+        $warnings = array();
+
+        $options = array(
+            'userid' => $params['userid'],
+            'attemptnumber' => $data['attemptnumber'],
+            'rownum' => 0,
+            'gradingpanel' => true
+        );
+
+        $customdata = (object) $data;
+        $formparams = array($assignment, $customdata, $options);
+
+        // Data is injected into the form by the last param for the constructor.
+        $mform = new mod_assign_grade_form(null, $formparams, 'post', '', null, true, $data);
+        $validateddata = $mform->get_data();
+
+        if ($validateddata) {
+            $assignment->save_grade($params['userid'], $validateddata);
+        } else {
+            $warnings[] = self::generate_warning($params['assignmentid'],
+                                                 'couldnotsavegrade',
+                                                 'Form validation failed.');
+        }
+
+
+        return $warnings;
+    }
+
+    /**
+     * Describes the return for submit_grading_form
+     * @return external_external_function_parameters
+     * @since  Moodle 3.1
+     */
+    public static function submit_grading_form_returns() {
+        return new external_warnings();
+    }
+
+    /**
      * Describes the parameters for submit_for_grading
      * @return external_external_function_parameters
      * @since  Moodle 2.6
@@ -2185,6 +2270,7 @@ class mod_assign_external extends external_api {
             )
         );
     }
+
     /**
      * Describes the parameters for view_submission_status.
      *
@@ -2486,4 +2572,194 @@ class mod_assign_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function list_participants_parameters() {
+        return new external_function_parameters(
+            array(
+                'assignid' => new external_value(PARAM_INT, 'assign instance id'),
+                'groupid' => new external_value(PARAM_INT, 'group id'),
+                'filter' => new external_value(PARAM_RAW, 'search string to filter the results'),
+                'skip' => new external_value(PARAM_INT, 'number of records to skip', VALUE_DEFAULT, 0),
+                'limit' => new external_value(PARAM_INT, 'maximum number of records to return', VALUE_DEFAULT, 0),
+                'onlyids' => new external_value(PARAM_BOOL, 'Do not return all user fields', VALUE_DEFAULT, false),
+            )
+        );
+    }
+
+    /**
+     * Trigger the grading_table_viewed event.
+     *
+     * @param int $assignid the assign instance id
+     * @param int $groupid the current group id
+     * @param string $filter search string to filter the results.
+     * @param int $skip Number of records to skip
+     * @param int $limit Maximum number of records to return
+     * @return array of warnings and status result
+     * @since Moodle 3.0
+     * @throws moodle_exception
+     */
+    public static function list_participants($assignid, $groupid, $filter, $skip, $limit) {
+        global $DB, $CFG;
+        require_once($CFG->dirroot . "/mod/assign/locallib.php");
+        require_once($CFG->dirroot . "/user/lib.php");
+
+        $params = self::validate_parameters(self::list_participants_parameters(),
+                                            array(
+                                                'assignid' => $assignid,
+                                                'groupid' => $groupid,
+                                                'filter' => $filter,
+                                                'skip' => $skip,
+                                                'limit' => $limit
+                                            ));
+        $warnings = array();
+
+        // Request and permission validation.
+        $assign = $DB->get_record('assign', array('id' => $params['assignid']), 'id', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($assign, 'assign');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        require_capability('mod/assign:view', $context);
+
+        $assign = new assign($context, null, null);
+        $assign->require_view_grades();
+
+        $participants = $assign->list_participants_with_filter_status_and_group($params['groupid']);
+
+        $result = array();
+        $index = 0;
+        foreach ($participants as $record) {
+            // Preserve the fullname set by the assignment.
+            $fullname = $record->fullname;
+            $searchable = $fullname;
+            $match = false;
+            if (empty($filter)) {
+                $match = true;
+            } else {
+                $filter = core_text::strtolower($filter);
+                $value = core_text::strtolower($searchable);
+                if (is_string($value) && (core_text::strpos($value, $filter) !== false)) {
+                    $match = true;
+                }
+            }
+            if ($match) {
+                $index++;
+                if ($index <= $params['skip']) {
+                    continue;
+                }
+                if (($params['limit'] > 0) && (($index - $params['skip']) > $params['limit'])) {
+                    break;
+                }
+                // Now we do the expensive lookup of user details because we completed the filtering.
+                if (!$assign->is_blind_marking() && !$params['onlyids']) {
+                    $userdetails = user_get_user_details($record, $course);
+                } else {
+                    $userdetails = array('id' => $record->id);
+                }
+                $userdetails['fullname'] = $fullname;
+                $userdetails['submitted'] = $record->submitted;
+                $userdetails['requiregrading'] = $record->requiregrading;
+                if (!empty($record->groupid)) {
+                    $userdetails['groupid'] = $record->groupid;
+                }
+                if (!empty($record->groupname)) {
+                    $userdetails['groupname'] = $record->groupname;
+                }
+
+                $result[] = $userdetails;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function list_participants_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(array(
+                'id'    => new external_value(PARAM_INT, 'ID of the user'),
+                'username'    => new external_value(PARAM_RAW, 'Username', VALUE_OPTIONAL),
+                'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL),
+                'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
+                'fullname'    => new external_value(PARAM_NOTAGS, 'The fullname of the user'),
+                'idnumber'    => new external_value(PARAM_NOTAGS, 'The idnumber of the user', VALUE_OPTIONAL),
+                'email'       => new external_value(PARAM_TEXT, 'Email address', VALUE_OPTIONAL),
+                'address'     => new external_value(PARAM_MULTILANG, 'Postal address', VALUE_OPTIONAL),
+                'phone1'      => new external_value(PARAM_NOTAGS, 'Phone 1', VALUE_OPTIONAL),
+                'phone2'      => new external_value(PARAM_NOTAGS, 'Phone 2', VALUE_OPTIONAL),
+                'icq'         => new external_value(PARAM_NOTAGS, 'icq number', VALUE_OPTIONAL),
+                'skype'       => new external_value(PARAM_NOTAGS, 'skype id', VALUE_OPTIONAL),
+                'yahoo'       => new external_value(PARAM_NOTAGS, 'yahoo id', VALUE_OPTIONAL),
+                'aim'         => new external_value(PARAM_NOTAGS, 'aim id', VALUE_OPTIONAL),
+                'msn'         => new external_value(PARAM_NOTAGS, 'msn number', VALUE_OPTIONAL),
+                'department'  => new external_value(PARAM_TEXT, 'department', VALUE_OPTIONAL),
+                'institution' => new external_value(PARAM_TEXT, 'institution', VALUE_OPTIONAL),
+                'interests'   => new external_value(PARAM_TEXT, 'user interests (separated by commas)', VALUE_OPTIONAL),
+                'firstaccess' => new external_value(PARAM_INT, 'first access to the site (0 if never)', VALUE_OPTIONAL),
+                'lastaccess'  => new external_value(PARAM_INT, 'last access to the site (0 if never)', VALUE_OPTIONAL),
+                'description' => new external_value(PARAM_RAW, 'User profile description', VALUE_OPTIONAL),
+                'descriptionformat' => new external_value(PARAM_INT, 'User profile description format', VALUE_OPTIONAL),
+                'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
+                'url'         => new external_value(PARAM_URL, 'URL of the user', VALUE_OPTIONAL),
+                'country'     => new external_value(PARAM_ALPHA, 'Country code of the user, such as AU or CZ', VALUE_OPTIONAL),
+                'profileimageurlsmall' => new external_value(PARAM_URL, 'User image profile URL - small', VALUE_OPTIONAL),
+                'profileimageurl' => new external_value(PARAM_URL, 'User image profile URL - big', VALUE_OPTIONAL),
+                'customfields' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'type'  => new external_value(PARAM_ALPHANUMEXT, 'The type of the custom field'),
+                            'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
+                            'name' => new external_value(PARAM_RAW, 'The name of the custom field'),
+                            'shortname' => new external_value(PARAM_RAW, 'The shortname of the custom field'),
+                        )
+                    ), 'User custom fields (also known as user profil fields)', VALUE_OPTIONAL),
+                'groups' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id'  => new external_value(PARAM_INT, 'group id'),
+                            'name' => new external_value(PARAM_RAW, 'group name'),
+                            'description' => new external_value(PARAM_RAW, 'group description'),
+                        )
+                    ), 'user groups', VALUE_OPTIONAL),
+                'roles' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'roleid'       => new external_value(PARAM_INT, 'role id'),
+                            'name'         => new external_value(PARAM_RAW, 'role name'),
+                            'shortname'    => new external_value(PARAM_ALPHANUMEXT, 'role shortname'),
+                            'sortorder'    => new external_value(PARAM_INT, 'role sortorder')
+                        )
+                    ), 'user roles', VALUE_OPTIONAL),
+                'preferences' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preferences'),
+                            'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
+                        )
+                ), 'User preferences', VALUE_OPTIONAL),
+                'enrolledcourses' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id'  => new external_value(PARAM_INT, 'Id of the course'),
+                            'fullname' => new external_value(PARAM_RAW, 'Fullname of the course'),
+                            'shortname' => new external_value(PARAM_RAW, 'Shortname of the course')
+                        )
+                ), 'Courses where the user is enrolled - limited by which courses the user is able to see', VALUE_OPTIONAL),
+                'submitted' => new external_value(PARAM_BOOL, 'have they submitted their assignment'),
+                'requiregrading' => new external_value(PARAM_BOOL, 'is their submission waiting for grading'),
+                'groupid' => new external_value(PARAM_INT, 'for group assignments this is the group id', VALUE_OPTIONAL),
+                'groupname' => new external_value(PARAM_NOTAGS, 'for group assignments this is the group name', VALUE_OPTIONAL),
+            ))
+        );
+    }
 }

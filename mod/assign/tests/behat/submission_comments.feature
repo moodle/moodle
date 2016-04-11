@@ -1,4 +1,4 @@
-@mod @mod_assign
+@mod @mod_assign @javascript
 Feature: In an assignment, students can comment in their submissions
   In order to refine assignment submissions
   As a student
@@ -17,7 +17,6 @@ Feature: In an assignment, students can comment in their submissions
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
 
-  @javascript
   Scenario: Student comments an assignment submission
     Given the following "activities" exist:
       | activity | course | idnumber | name                 | intro                       | assignsubmission_onlinetext_enabled |
@@ -46,7 +45,6 @@ Feature: In an assignment, students can comment in their submissions
     And I should see "Second student comment"
     And I should not see "First student comment"
 
-  @javascript
   Scenario: Teacher can comment on an offline assignment
     Given the following "activities" exist:
       | activity | course | idnumber | name                 | intro                       | assignsubmission_onlinetext_enabled | assignmentsubmission_file_enabled | assignfeedback_comments_enabled |
@@ -54,13 +52,16 @@ Feature: In an assignment, students can comment in their submissions
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View/grade all submissions"
-    And I click on "Grade Student 1" "link" in the "Student 1" "table_row"
+    And I follow "View all submissions"
+    And I click on "Grade" "link" in the "Student 1" "table_row"
     When I set the following fields to these values:
       | Grade out of 100 | 50 |
       | Feedback comments | I'm the teacher feedback |
     And I press "Save changes"
-    And I press "Continue"
+    And I press "Ok"
+    And I click on "Edit settings" "link"
+    And I follow "Test assignment name"
+    And I follow "View all submissions"
     Then I should see "50.00" in the "Student 1" "table_row"
     And I should see "I'm the teacher feedback" in the "Student 1" "table_row"
 
@@ -71,15 +72,14 @@ Feature: In an assignment, students can comment in their submissions
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View/grade all submissions"
-    And I click on "Grade Student 1" "link" in the "Student 1" "table_row"
+    And I follow "View all submissions"
+    And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Grade out of 100 | 0 |
     And I press "Save changes"
-    And I should see "The grade changes were saved"
-    And I press "Continue"
-    When I click on "Grade Student 1" "link" in the "Student 1" "table_row"
+    And I should see "The changes to the grade and feedback were saved"
+    And I press "Ok"
     And I set the following fields to these values:
       | Feedback comments | I'm the teacher feedback |
     And I press "Save changes"
-    Then I should see "The grade changes were saved"
+    Then I should see "The changes to the grade and feedback were saved"

@@ -840,6 +840,12 @@ $CFG->admin = 'admin';
 // Note that, for now, this only used by the profiling features
 // (Development->Profiling) built into Moodle.
 //      $CFG->pathtodot = '';
+//
+// Path to unoconv.
+// Probably something like /usr/bin/unoconv. Used as a fallback to convert between document formats.
+// Unoconv is used convert between file formats supported by LibreOffice.
+// Use a recent version of unoconv ( >= 0.7 ), older versions have trouble running from a webserver.
+//      $CFG->pathtounoconv = '';
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

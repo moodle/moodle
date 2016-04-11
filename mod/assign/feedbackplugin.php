@@ -168,6 +168,15 @@ abstract class assign_feedback_plugin extends assign_plugin {
     }
 
     /**
+     * Supports injecting content into the review panel of the grading app.
+     *
+     * @return bool True if this plugin will add content to the review panel of the grading app.
+     */
+    public function supports_review_panel() {
+        return false;
+    }
+
+    /**
      * Show a batch operations form
      *
      * @param string $action The action chosen from the batch operations menu

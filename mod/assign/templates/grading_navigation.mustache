@@ -1,0 +1,73 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_assign/grading_navigation
+
+    Actions panel at the bottom of the assignment grading UI.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * data-region, data-assignmentid, data-groupid
+
+    Context variables required for this template:
+    * see mod/assign/classes/output/grading_app.php
+
+    Example context (json):
+    This template includes ajax functionality, so it cannot be shown in the template library.
+}}
+<div data-region="grading-navigation" class="row-fluid">
+<div data-region="assignment-info" class="span4">
+<a href="{{config.wwwroot}}/course/view.php?id={{courseid}}">{{coursename}}</a><br/>
+<a href="{{config.wwwroot}}/mod/assign/view.php?id={{cmid}}">{{name}}</a>
+{{#caneditsettings}}
+<a href="{{config.wwwroot}}/course/modedit.php?update={{cmid}}&return=1">{{#pix}}t/edit, core,{{#str}}editsettings{{/str}}{{/pix}}</a>
+{{/caneditsettings}}
+<div role="tooltip" id="tooltip-{{uniqid}}" class="accesshide">
+{{#duedate}}
+{{#str}}duedatecolon, mod_assign, {{duedatestr}}{{/str}}
+{{/duedate}}
+
+{{#cutoffdate}}
+<br>{{cutoffdatestr}}
+{{/cutoffdate}}
+
+{{#duedate}}
+<br>{{timeremainingstr}}
+{{/duedate}}
+</div>
+{{#duedate}}
+<br/><small data-region="assignment-tooltip" aria-describedby="tooltip-{{uniqid}}">{{#str}}duedatecolon, mod_assign, {{duedatestr}}{{/str}}</small>
+{{/duedate}}
+</span>
+</div>
+<div data-region="user-info" class="span4" data-assignmentid="{{assignmentid}}" data-groupid="{{groupid}}">
+    {{> mod_assign/grading_navigation_user_info }}
+</div>
+<div data-region="user-selector" class="span4">
+    <div class="alignment">
+        {{> mod_assign/grading_navigation_user_selector }}
+    </div>
+</div>
+</div>
+{{#js}}
+require(['mod_assign/grading_navigation', 'core/tooltip'], function(GradingNavigation, ToolTip) {
+    var nav = new GradingNavigation('[data-region="user-selector"]');
+    var tooltip = new ToolTip('[data-region="assignment-tooltip"]');
+});
+{{/js}}

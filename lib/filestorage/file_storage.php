@@ -53,6 +53,9 @@ class file_storage {
     private $dirpermissions;
     /** @var int Permissions for new files */
     private $filepermissions;
+    /** @var array List of formats supported by unoconv */
+    private $unoconvformats;
+
 
     /**
      * Constructor - do not use directly use {@link get_file_storage()} call instead.
@@ -154,6 +157,129 @@ class file_storage {
     public function get_file_instance(stdClass $filerecord) {
         $storedfile = new stored_file($this, $filerecord, $this->filedir);
         return $storedfile;
+    }
+
+    /**
+     * Get converted document.
+     *
+     * Get an alternate version of the specified document, if it is possible to convert.
+     *
+     * @param stored_file $file the file we want to preview
+     * @param string $format The desired format - e.g. 'pdf'. Formats are specified by file extension.
+     * @return stored_file|bool false if unable to create the conversion, stored file otherwise
+     */
+    public function get_converted_document(stored_file $file, $format) {
+
+        $context = context_system::instance();
+        $path = '/' . $format . '/';
+        $conversion = $this->get_file($context->id, 'core', 'documentconversion', 0, $path, $file->get_contenthash());
+
+        if (!$conversion) {
+            $conversion = $this->create_converted_document($file, $format);
+            if (!$conversion) {
+                return false;
+            }
+        }
+
+        return $conversion;
+    }
+
+    /**
+     * Verify the format is supported.
+     *
+     * @param string $format The desired format - e.g. 'pdf'. Formats are specified by file extension.
+     * @return bool - True if the format is supported for input.
+     */
+    protected function is_format_supported_by_unoconv($format) {
+        global $CFG;
+
+        if (!isset($this->unoconvformats)) {
+            // Ask unoconv for it's list of supported document formats.
+            $cmd = escapeshellcmd(trim($CFG->pathtounoconv)) . ' --show';
+            $pipes = array();
+            $pipesspec = array(2 => array('pipe', 'w'));
+            $proc = proc_open($cmd, $pipesspec, $pipes);
+            $programoutput = stream_get_contents($pipes[2]);
+            fclose($pipes[2]);
+            proc_close($proc);
+            $matches = array();
+            preg_match_all('/\[\.(.*)\]/', $programoutput, $matches);
+
+            $this->unoconvformats = $matches[1];
+            $this->unoconvformats = array_unique($this->unoconvformats);
+        }
+
+        $sanitized = trim(core_text::strtolower($format));
+        return in_array($sanitized, $this->unoconvformats);
+    }
+
+
+    /**
+     * Perform a file format conversion on the specified document.
+     *
+     * @param stored_file $file the file we want to preview
+     * @param string $format The desired format - e.g. 'pdf'. Formats are specified by file extension.
+     * @return stored_file|bool false if unable to create the conversion, stored file otherwise
+     */
+    protected function create_converted_document(stored_file $file, $format) {
+        global $CFG;
+
+        if (empty($CFG->pathtounoconv) || !is_executable(trim($CFG->pathtounoconv))) {
+            // No conversions are possible, sorry.
+            return false;
+        }
+
+        $fileextension = core_text::strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
+        if (!self::is_format_supported_by_unoconv($fileextension)) {
+            return false;
+        }
+
+        if (!self::is_format_supported_by_unoconv($format)) {
+            return false;
+        }
+
+        // Copy the file to the local tmp dir.
+        $tmp = make_request_directory();
+        $localfilename = $file->get_filename();
+        // Safety.
+        $localfilename = clean_param($localfilename, PARAM_FILE);
+
+        $filename = $tmp . '/' . $localfilename;
+        $file->copy_content_to($filename);
+
+        $newtmpfile = pathinfo($filename, PATHINFO_FILENAME) . '.' . $format;
+
+        // Safety.
+        $newtmpfile = $tmp . '/' . clean_param($newtmpfile, PARAM_FILE);
+
+        $cmd = escapeshellcmd(trim($CFG->pathtounoconv)) . ' ' .
+               escapeshellarg('-f') . ' ' .
+               escapeshellarg($format) . ' ' .
+               escapeshellarg('-o') . ' ' .
+               escapeshellarg($newtmpfile) . ' ' .
+               escapeshellarg($filename);
+
+        $e = file_exists($filename);
+        $output = null;
+        $currentdir = getcwd();
+        chdir($tmp);
+        $result = exec($cmd, $output);
+        chdir($currentdir);
+        if (!file_exists($newtmpfile)) {
+            return false;
+        }
+
+        $context = context_system::instance();
+        $record = array(
+            'contextid' => $context->id,
+            'component' => 'core',
+            'filearea'  => 'documentconversion',
+            'itemid'    => 0,
+            'filepath'  => '/' . $format . '/',
+            'filename'  => $file->get_contenthash(),
+        );
+
+        return $this->create_file_from_pathname($record, $newtmpfile);
     }
 
     /**
@@ -2270,6 +2396,26 @@ class file_storage {
                   FROM {files} p
              LEFT JOIN {files} o ON (p.filename = o.contenthash)
                  WHERE p.contextid = ? AND p.component = 'core' AND p.filearea = 'preview' AND p.itemid = 0
+                       AND o.id IS NULL";
+        $syscontext = context_system::instance();
+        $rs = $DB->get_recordset_sql($sql, array($syscontext->id));
+        foreach ($rs as $orphan) {
+            $file = $this->get_file_instance($orphan);
+            if (!$file->is_directory()) {
+                $file->delete();
+            }
+        }
+        $rs->close();
+        mtrace('done.');
+
+        // Remove orphaned converted files (that is files in the core documentconversion filearea without
+        // the existing original file).
+        mtrace('Deleting orphaned document conversion files... ', '');
+        cron_trace_time_and_memory();
+        $sql = "SELECT p.*
+                  FROM {files} p
+             LEFT JOIN {files} o ON (p.filename = o.contenthash)
+                 WHERE p.contextid = ? AND p.component = 'core' AND p.filearea = 'documentconversion' AND p.itemid = 0
                        AND o.id IS NULL";
         $syscontext = context_system::instance();
         $rs = $DB->get_recordset_sql($sql, array($syscontext->id));
