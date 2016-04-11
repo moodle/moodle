@@ -40,7 +40,9 @@ $capabilities = array(
     'block/lp:myaddinstance' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array()
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        )
     ),
 
     // Whether or not a user can see the block.
