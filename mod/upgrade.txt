@@ -3,6 +3,8 @@ information provided here is intended especially for developers.
 
 === 3.1 ===
 
+* A new parameter ($attributes) has been added to standard_intro_elements() on course/moodleform_mod.php. The
+  purpose of this parameter is allow developers to pass an array with custom attributes to the text editor.
 * Old /mod/MODULENAME/pix/icon.gif and enrol/paypal/pix/icon.gif GIF icons have been removed. Please use pix_icon
   renderable instead.
 
