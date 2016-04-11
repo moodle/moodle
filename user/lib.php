@@ -45,7 +45,7 @@ function user_create_user($user, $updatepassword = true, $triggerevent = true) {
     if ($user->username !== core_text::strtolower($user->username)) {
         throw new moodle_exception('usernamelowercase');
     } else {
-        if ($user->username !== clean_param($user->username, PARAM_USERNAME)) {
+        if ($user->username !== core_user::clean_field($user->username, 'username')) {
             throw new moodle_exception('invalidusername');
         }
     }
@@ -62,17 +62,11 @@ function user_create_user($user, $updatepassword = true, $triggerevent = true) {
         unset($user->password);
     }
 
-    // Make sure calendartype, if set, is valid.
-    if (!empty($user->calendartype)) {
-        $availablecalendartypes = \core_calendar\type_factory::get_list_of_calendar_types();
-        if (empty($availablecalendartypes[$user->calendartype])) {
-            $user->calendartype = $CFG->calendartype;
-        }
-    } else {
+    // Apply default values for user preferences that are stored in users table.
+    if (!isset($user->calendartype)) {
         $user->calendartype = $CFG->calendartype;
     }
 
-    // Apply default values for user preferences that are stored in users table.
     if (!isset($user->maildisplay)) {
         $user->maildisplay = $CFG->defaultpreference_maildisplay;
     }
@@ -94,6 +88,15 @@ function user_create_user($user, $updatepassword = true, $triggerevent = true) {
 
     $user->timecreated = time();
     $user->timemodified = $user->timecreated;
+
+    // Validate user data object.
+    $uservalidation = core_user::validate($user);
+    if ($uservalidation !== true) {
+        foreach ($uservalidation as $field => $message) {
+            debugging("The property '$field' has invalid data and has been cleaned.", DEBUG_DEVELOPER);
+            $user->$field = core_user::clean_field($user->$field, $field);
+        }
+    }
 
     // Insert the user into the database.
     $newuserid = $DB->insert_record('user', $user);
@@ -139,7 +142,7 @@ function user_update_user($user, $updatepassword = true, $triggerevent = true) {
         if ($user->username !== core_text::strtolower($user->username)) {
             throw new moodle_exception('usernamelowercase');
         } else {
-            if ($user->username !== clean_param($user->username, PARAM_USERNAME)) {
+            if ($user->username !== core_user::clean_field($user->username, 'username')) {
                 throw new moodle_exception('invalidusername');
             }
         }
@@ -158,18 +161,22 @@ function user_update_user($user, $updatepassword = true, $triggerevent = true) {
     }
 
     // Make sure calendartype, if set, is valid.
-    if (!empty($user->calendartype)) {
-        $availablecalendartypes = \core_calendar\type_factory::get_list_of_calendar_types();
-        // If it doesn't exist, then unset this value, we do not want to update the user's value.
-        if (empty($availablecalendartypes[$user->calendartype])) {
-            unset($user->calendartype);
-        }
-    } else {
+    if (empty($user->calendartype)) {
         // Unset this variable, must be an empty string, which we do not want to update the calendartype to.
         unset($user->calendartype);
     }
 
     $user->timemodified = time();
+
+    // Validate user data object.
+    $uservalidation = core_user::validate($user);
+    if ($uservalidation !== true) {
+        foreach ($uservalidation as $field => $message) {
+            debugging("The property '$field' has invalid data and has been cleaned.", DEBUG_DEVELOPER);
+            $user->$field = core_user::clean_field($user->$field, $field);
+        }
+    }
+
     $DB->update_record('user', $user);
 
     if ($updatepassword) {
