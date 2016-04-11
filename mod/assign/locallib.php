@@ -2065,11 +2065,7 @@ class assign {
     public function get_submission_group_members($groupid, $onlyids, $excludesuspended = false) {
         $members = array();
         if ($groupid != 0) {
-            if ($onlyids) {
-                $allusers = groups_get_members($groupid, 'u.id');
-            } else {
-                $allusers = groups_get_members($groupid);
-            }
+            $allusers = $this->list_participants($groupid, $onlyids);
             foreach ($allusers as $user) {
                 if ($this->get_submission_group($user->id)) {
                     $members[] = $user;
