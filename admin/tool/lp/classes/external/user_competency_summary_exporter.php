@@ -30,6 +30,7 @@ use core_competency\external\comment_area_exporter;
 use core_competency\external\evidence_exporter;
 use core_competency\external\user_competency_exporter;
 use core_competency\external\user_competency_plan_exporter;
+use core_competency\external\user_competency_course_exporter;
 use core_competency\external\user_summary_exporter;
 use core_competency\user_competency;
 
@@ -48,6 +49,7 @@ class user_competency_summary_exporter extends \core_competency\external\exporte
                      'user' => '\\stdClass',
                      'usercompetency' => '\\core_competency\\user_competency?',
                      'usercompetencyplan' => '\\core_competency\\user_competency_plan?',
+                     'usercompetencycourse' => '\\core_competency\\user_competency_course?',
                      'evidence' => '\\core_competency\\evidence[]');
     }
 
@@ -71,6 +73,10 @@ class user_competency_summary_exporter extends \core_competency\external\exporte
             ),
             'usercompetencyplan' => array(
                 'type' => user_competency_exporter::read_properties_definition(),
+                'optional' => true
+            ),
+            'usercompetencycourse' => array(
+                'type' => user_competency_course_exporter::read_properties_definition(),
                 'optional' => true
             ),
             'evidence' => array(
@@ -113,6 +119,10 @@ class user_competency_summary_exporter extends \core_competency\external\exporte
         if ($this->related['usercompetencyplan']) {
             $exporter = new user_competency_plan_exporter($this->related['usercompetencyplan'], $related);
             $result->usercompetencyplan = $exporter->export($output);
+        }
+        if ($this->related['usercompetencycourse']) {
+            $exporter = new user_competency_course_exporter($this->related['usercompetencycourse'], $related);
+            $result->usercompetencycourse = $exporter->export($output);
         }
 
         $allevidence = array();

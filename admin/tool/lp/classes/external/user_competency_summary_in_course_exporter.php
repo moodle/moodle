@@ -52,18 +52,6 @@ class user_competency_summary_in_course_exporter extends \core_competency\extern
             'usercompetencysummary' => array(
                 'type' => user_competency_summary_exporter::read_properties_definition()
             ),
-            'proficiency' => array(
-                'type' => PARAM_BOOL,
-            ),
-            'proficiencyname' => array(
-                'type' => PARAM_TEXT
-            ),
-            'grade' => array(
-                'type' => PARAM_INT
-            ),
-            'gradename' => array(
-                'type' => PARAM_TEXT
-            ),
             'course' => array(
                 'type' => course_summary_exporter::read_properties_definition(),
             ),
@@ -84,16 +72,6 @@ class user_competency_summary_in_course_exporter extends \core_competency\extern
         $related['usercompetency'] = null;
         $exporter = new user_competency_summary_exporter(null, $related);
         $result->usercompetencysummary = $exporter->export($output);
-
-        $result->gradename = '-';
-        if ($this->related['usercompetencycourse']) {
-            $result->proficiency = $this->related['usercompetencycourse']->get_proficiency();
-            $result->proficiencyname = $result->proficiency ? get_string('yes') : get_string('no');
-            $result->grade = $this->related['usercompetencycourse']->get_grade();
-            if ($result->grade) {
-                $result->gradename = $this->related['scale']->scale_items[$result->grade - 1];
-            }
-        }
 
         $context = context_course::instance($this->related['course']->id);
         $exporter = new course_summary_exporter($this->related['course'], array('context' => $context));

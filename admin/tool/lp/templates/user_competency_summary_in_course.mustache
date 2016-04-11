@@ -65,6 +65,7 @@
         </dd>
         {{/user}}
         {{/displayuser}}
+        {{#usercompetencycourse}}
         <dt>{{#str}}proficient, tool_lp{{/str}}</dt>
         <dd>
             <span class="label{{^proficiency}} label-important{{/proficiency}} pull-left">
@@ -77,6 +78,7 @@
                 <buttn class="btn" id="rate_{{uniqid}}">{{#str}}rate, tool_lp{{/str}}</button>
             {{/cangrade}}
         </dd>
+        {{/usercompetencycourse}}
         {{#js}}
         require(['jquery', 'tool_lp/grade_user_competency_inline', 'tool_lp/user_competency_info'], function($, mod, info) {
 

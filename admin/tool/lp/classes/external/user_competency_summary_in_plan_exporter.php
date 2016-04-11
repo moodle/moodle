@@ -63,6 +63,8 @@ class user_competency_summary_in_plan_exporter extends \core_competency\external
         $related = $this->related;
         // Remove plan from related as it is not wanted by the user_competency_summary_exporter.
         unset($related['plan']);
+        // We do not need user_competency_course in user_competency_summary_exporter.
+        $related['usercompetencycourse'] = null;
         $exporter = new user_competency_summary_exporter(null, $related);
         $result = new stdClass();
         $result->usercompetencysummary = $exporter->export($output);
