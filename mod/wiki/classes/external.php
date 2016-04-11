@@ -537,16 +537,26 @@ class mod_wiki_external extends external_api {
                         'firstpage' => $page->id == $firstpage->id
                     );
 
-                if ($options['includecontent']) {
-                    // Refresh page cached content if needed.
-                    if ($page->timerendered + WIKI_REFRESH_CACHE_TIME < time()) {
-                        if ($content = wiki_refresh_cachedcontent($page)) {
-                            $page = $content['page'];
-                        }
+                // Refresh page cached content if needed.
+                if ($page->timerendered + WIKI_REFRESH_CACHE_TIME < time()) {
+                    if ($content = wiki_refresh_cachedcontent($page)) {
+                        $page = $content['page'];
                     }
+                }
+                list($cachedcontent, $contentformat) = external_format_text(
+                            $page->cachedcontent, FORMAT_HTML, $context->id, 'mod_wiki', 'attachments', $subwiki->id);
 
-                    list($retpage['cachedcontent'], $retpage['contentformat']) = external_format_text(
-                                $page->cachedcontent, FORMAT_HTML, $context->id, 'mod_wiki', 'attachments', $subwiki->id);
+                if ($options['includecontent']) {
+                    // Return the page content.
+                    $retpage['cachedcontent'] = $cachedcontent;
+                    $retpage['contentformat'] = $contentformat;
+                } else {
+                    // Return the size of the content.
+                    if (function_exists('mb_strlen') && ((int)ini_get('mbstring.func_overload') & 2)) {
+                        $retpage['contentsize'] = mb_strlen($cachedcontent, '8bit');
+                    } else {
+                        $retpage['contentsize'] = strlen($cachedcontent);
+                    }
                 }
 
                 $returnedpages[] = $retpage;
@@ -586,6 +596,8 @@ class mod_wiki_external extends external_api {
                             'firstpage' => new external_value(PARAM_BOOL, 'True if it\'s the first page.'),
                             'cachedcontent' => new external_value(PARAM_RAW, 'Page contents.', VALUE_OPTIONAL),
                             'contentformat' => new external_format_value('cachedcontent', VALUE_OPTIONAL),
+                            'contentsize' => new external_value(PARAM_INT, 'Size of page contents in bytes (doesn\'t include'.
+                                                                            ' size of attached files).', VALUE_OPTIONAL),
                         ), 'Pages'
                     )
                 ),
