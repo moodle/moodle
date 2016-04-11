@@ -226,28 +226,28 @@ class admin_uploaduser_form2 extends moodleform {
 
         $choices = array(0 => get_string('emaildisplayno'), 1 => get_string('emaildisplayyes'), 2 => get_string('emaildisplaycourse'));
         $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
-        $mform->setDefault('maildisplay', $CFG->defaultpreference_maildisplay);
+        $mform->setDefault('maildisplay', core_user::get_property_default('maildisplay'));
 
         $choices = array(0 => get_string('textformat'), 1 => get_string('htmlformat'));
         $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);
-        $mform->setDefault('mailformat', $CFG->defaultpreference_mailformat);
+        $mform->setDefault('mailformat', core_user::get_property_default('mailformat'));
         $mform->setAdvanced('mailformat');
 
         $choices = array(0 => get_string('emaildigestoff'), 1 => get_string('emaildigestcomplete'), 2 => get_string('emaildigestsubjects'));
         $mform->addElement('select', 'maildigest', get_string('emaildigest'), $choices);
-        $mform->setDefault('maildigest', $CFG->defaultpreference_maildigest);
+        $mform->setDefault('maildigest', core_user::get_property_default('maildigest'));
         $mform->setAdvanced('maildigest');
 
         $choices = array(1 => get_string('autosubscribeyes'), 0 => get_string('autosubscribeno'));
         $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
-        $mform->setDefault('autosubscribe', $CFG->defaultpreference_autosubscribe);
+        $mform->setDefault('autosubscribe', core_user::get_property_default('autosubscribe'));
 
         $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="25"');
         $mform->setType('city', PARAM_TEXT);
         if (empty($CFG->defaultcity)) {
             $mform->setDefault('city', $templateuser->city);
         } else {
-            $mform->setDefault('city', $CFG->defaultcity);
+            $mform->setDefault('city', core_user::get_property_default('city'));
         }
 
         $choices = get_string_manager()->get_list_of_countries();
@@ -256,7 +256,7 @@ class admin_uploaduser_form2 extends moodleform {
         if (empty($CFG->country)) {
             $mform->setDefault('country', $templateuser->country);
         } else {
-            $mform->setDefault('country', $CFG->country);
+            $mform->setDefault('country', core_user::get_property_default('country'));
         }
         $mform->setAdvanced('country');
 

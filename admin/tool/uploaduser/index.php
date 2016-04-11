@@ -280,7 +280,7 @@ if ($formdata = $mform2->is_cancelled()) {
         // normalize username
         $originalusername = $user->username;
         if ($standardusernames) {
-            $user->username = clean_param($user->username, PARAM_USERNAME);
+            $user->username = core_user::clean_field($user->username, 'username');
         }
 
         // make sure we really have username
@@ -295,7 +295,7 @@ if ($formdata = $mform2->is_cancelled()) {
             continue;
         }
 
-        if ($user->username !== clean_param($user->username, PARAM_USERNAME)) {
+        if ($user->username !== core_user::clean_field($user->username, 'username')) {
             $upt->track('status', get_string('invalidusername', 'error', 'username'), 'error');
             $upt->track('username', $errorstr, 'error');
             $userserrors++;
@@ -443,7 +443,7 @@ if ($formdata = $mform2->is_cancelled()) {
             }
 
             if ($standardusernames) {
-                $oldusername = clean_param($user->oldusername, PARAM_USERNAME);
+                $oldusername = core_user::clean_field($user->oldusername, 'username');
             } else {
                 $oldusername = $user->oldusername;
             }
@@ -597,7 +597,7 @@ if ($formdata = $mform2->is_cancelled()) {
                             if (empty($user->lang)) {
                                 // Do not change to not-set value.
                                 continue;
-                            } else if (clean_param($user->lang, PARAM_LANG) === '') {
+                            } else if (core_user::clean_field($user->lang, 'lang') === '') {
                                 $upt->track('status', get_string('cannotfindlang', 'error', $user->lang), 'warning');
                                 continue;
                             }
@@ -774,7 +774,7 @@ if ($formdata = $mform2->is_cancelled()) {
 
             if (empty($user->lang)) {
                 $user->lang = '';
-            } else if (clean_param($user->lang, PARAM_LANG) === '') {
+            } else if (core_user::clean_field($user->lang, 'lang') === '') {
                 $upt->track('status', get_string('cannotfindlang', 'error', $user->lang), 'warning');
                 $user->lang = '';
             }
@@ -1177,7 +1177,7 @@ while ($linenum <= $previewrows and $fields = $cir->next()) {
     $rowcols['status'] = array();
 
     if (isset($rowcols['username'])) {
-        $stdusername = clean_param($rowcols['username'], PARAM_USERNAME);
+        $stdusername = core_user::clean_field($rowcols['username'], 'username');
         if ($rowcols['username'] !== $stdusername) {
             $rowcols['status'][] = get_string('invalidusernameupload');
         }

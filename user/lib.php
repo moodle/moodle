@@ -34,7 +34,7 @@
  * @return int id of the newly created user
  */
 function user_create_user($user, $updatepassword = true, $triggerevent = true) {
-    global $CFG, $DB;
+    global $DB;
 
     // Set the timecreate field to the current time.
     if (!is_object($user)) {
@@ -64,26 +64,25 @@ function user_create_user($user, $updatepassword = true, $triggerevent = true) {
 
     // Apply default values for user preferences that are stored in users table.
     if (!isset($user->calendartype)) {
-        $user->calendartype = $CFG->calendartype;
+        $user->calendartype = core_user::get_property_default('calendartype');
     }
-
     if (!isset($user->maildisplay)) {
-        $user->maildisplay = $CFG->defaultpreference_maildisplay;
+        $user->maildisplay = core_user::get_property_default('maildisplay');
     }
     if (!isset($user->mailformat)) {
-        $user->mailformat = $CFG->defaultpreference_mailformat;
+        $user->mailformat = core_user::get_property_default('mailformat');
     }
     if (!isset($user->maildigest)) {
-        $user->maildigest = $CFG->defaultpreference_maildigest;
+        $user->maildigest = core_user::get_property_default('maildigest');
     }
     if (!isset($user->autosubscribe)) {
-        $user->autosubscribe = $CFG->defaultpreference_autosubscribe;
+        $user->autosubscribe = core_user::get_property_default('autosubscribe');
     }
     if (!isset($user->trackforums)) {
-        $user->trackforums = $CFG->defaultpreference_trackforums;
+        $user->trackforums = core_user::get_property_default('trackforums');
     }
     if (!isset($user->lang)) {
-        $user->lang = $CFG->lang;
+        $user->lang = core_user::get_property_default('lang');
     }
 
     $user->timecreated = time();
