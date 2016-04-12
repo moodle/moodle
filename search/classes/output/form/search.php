@@ -56,11 +56,15 @@ class search extends \moodleform {
         $search = \core_search\manager::instance();
 
         $searchareas = \core_search\manager::get_search_areas_list(true);
-        $areanames = array('' => get_string('allareas', 'search'));
+        $areanames = array();
         foreach ($searchareas as $areaid => $searcharea) {
             $areanames[$areaid] = $searcharea->get_visible_name();
         }
-        $mform->addElement('select', 'areaid', get_string('searcharea', 'search'), $areanames);
+        $options = array(
+            'multiple' => true,
+            'noselectionstring' => get_string('allareas', 'search'),
+        );
+        $mform->addElement('autocomplete', 'areaids', get_string('searcharea', 'search'), $areanames, $options);
 
         $options = array(
             'multiple' => true,

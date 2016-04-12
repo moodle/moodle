@@ -131,9 +131,9 @@ class engine extends \core_search\engine {
         if (!empty($data->title)) {
             $query->addFilterQuery('{!field cache=false f=title}' . $data->title);
         }
-        if (!empty($data->areaid)) {
-            // Even if it is only supposed to contain PARAM_ALPHANUMEXT, better to prevent.
-            $query->addFilterQuery('{!field cache=false f=areaid}' . $data->areaid);
+        if (!empty($data->areaids)) {
+            // If areaids are specified, we want to get any that match.
+            $query->addFilterQuery('{!cache=false}areaid:(' . implode(' OR ', $data->areaids) . ')');
         }
         if (!empty($data->courseids)) {
             $query->addFilterQuery('{!cache=false}courseid:(' . implode(' OR ', $data->courseids) . ')');
@@ -165,7 +165,7 @@ class engine extends \core_search\engine {
             // Join all area contexts into a single array and implode.
             $allcontexts = array();
             foreach ($usercontexts as $areaid => $areacontexts) {
-                if (!empty($data->areaid) && ($areaid !== $data->areaid)) {
+                if (!empty($data->areaids) && !in_array($areaid, $data->areaids)) {
                     // Skip unused areas.
                     continue;
                 }
