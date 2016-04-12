@@ -79,6 +79,26 @@ class core_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get_string with HTML.
+     */
+    public function test_get_string_containing_html() {
+        $result = core_external::get_string('registrationinfo');
+        $actual = external_api::clean_returnvalue(core_external::get_string_returns(), $result);
+        $expected = get_string('registrationinfo', 'moodle');
+        $this->assertSame($expected, $actual);
+    }
+
+    /**
+     * Test get_string with arguments containing HTML.
+     */
+    public function test_get_string_with_args_containing_html() {
+        $result = core_external::get_string('added', 'moodle', null, [['value' => '<strong>Test</strong>']]);
+        $actual = external_api::clean_returnvalue(core_external::get_string_returns(), $result);
+        $expected = get_string('added', 'moodle', '<strong>Test</strong>');
+        $this->assertSame($expected, $actual);
+    }
+
+    /**
      * Test get_strings
      */
     public function test_get_strings() {
@@ -112,6 +132,29 @@ class core_external_testcase extends externallib_advanced_testcase {
                                                      'en');
             $this->assertSame($corestring, $returnedstring['string']);
         }
+    }
+
+    /**
+     * Test get_strings with HTML.
+     */
+    public function test_get_strings_containing_html() {
+        $result = core_external::get_strings([['stringid' => 'registrationinfo'], ['stringid' => 'loginaspasswordexplain']]);
+        $actual = external_api::clean_returnvalue(core_external::get_strings_returns(), $result);
+        $this->assertSame(get_string('registrationinfo', 'moodle'), $actual[0]['string']);
+        $this->assertSame(get_string('loginaspasswordexplain', 'moodle'), $actual[1]['string']);
+    }
+
+    /**
+     * Test get_strings with arguments containing HTML.
+     */
+    public function test_get_strings_with_args_containing_html() {
+        $result = core_external::get_strings([
+            ['stringid' => 'added', 'stringparams' => [['value' => '<strong>Test</strong>']]],
+            ['stringid' => 'loggedinas', 'stringparams' => [['value' => '<strong>Test</strong>']]]]
+        );
+        $actual = external_api::clean_returnvalue(core_external::get_strings_returns(), $result);
+        $this->assertSame(get_string('added', 'moodle', '<strong>Test</strong>'), $actual[0]['string']);
+        $this->assertSame(get_string('loggedinas', 'moodle', '<strong>Test</strong>'), $actual[1]['string']);
     }
 
     /**

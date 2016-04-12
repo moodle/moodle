@@ -92,7 +92,7 @@ class core_external extends external_api {
                       new external_single_structure(array(
                           'name' => new external_value(PARAM_ALPHANUMEXT, 'param name
                             - if the string expect only one $a parameter then don\'t send this field, just send the value.', VALUE_OPTIONAL),
-                          'value' => new external_value(PARAM_TEXT,'param value'))),
+                          'value' => new external_value(PARAM_RAW,'param value'))),
                           'the definition of a string param (i.e. {$a->name})', VALUE_DEFAULT, array()
                    )
             )
@@ -124,7 +124,7 @@ class core_external extends external_api {
      * @since Moodle 2.4
      */
     public static function get_string_returns() {
-        return new external_value(PARAM_TEXT, 'translated string');
+        return new external_value(PARAM_RAW, 'translated string');
     }
 
     /**
@@ -144,7 +144,7 @@ class core_external extends external_api {
                             new external_single_structure(array(
                                 'name' => new external_value(PARAM_ALPHANUMEXT, 'param name
                                     - if the string expect only one $a parameter then don\'t send this field, just send the value.', VALUE_OPTIONAL),
-                                'value' => new external_value(PARAM_TEXT, 'param value'))),
+                                'value' => new external_value(PARAM_RAW, 'param value'))),
                                 'the definition of a string param (i.e. {$a->name})', VALUE_DEFAULT, array()
                         ))
                     )
@@ -198,7 +198,7 @@ class core_external extends external_api {
                 'stringid' => new external_value(PARAM_STRINGID, 'string id'),
                 'component' => new external_value(PARAM_COMPONENT, 'string component'),
                 'lang' => new external_value(PARAM_LANG, 'lang'),
-                'string' => new external_value(PARAM_TEXT, 'translated string'))
+                'string' => new external_value(PARAM_RAW, 'translated string'))
             ));
     }
 
