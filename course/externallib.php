@@ -2221,7 +2221,7 @@ class core_course_external extends external_api {
         foreach ($courses as $course) {
             if (!empty($limittoenrolled)) {
                 // Filter out not enrolled courses.
-                if (empty($enrolled[$course->id])) {
+                if (!isset($enrolled[$course->id])) {
                     $totalcount--;
                     continue;
                 }
