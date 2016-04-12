@@ -302,7 +302,6 @@ class core_tag_external extends external_api {
         $context = $params['ctx'] ? context::instance_by_id($params['ctx']) : context_system::instance();
         require_login(null, false, null, false, true);
         self::validate_context($context);
-        $PAGE->set_context(null);
 
         $tag = core_tag_tag::get_by_name($params['tc'], $params['tag'], '*', MUST_EXIST);
         $tagareas = core_tag_collection::get_areas($params['tc']);
