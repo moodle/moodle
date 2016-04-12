@@ -209,6 +209,29 @@ class core_tag_tag {
     }
 
     /**
+     * Simple function to just return a single tag object by its id
+     *
+     * @param    int[]  $ids
+     * @param    string $returnfields which fields do we want returned from table {tag}.
+     *                        Default value is 'id,name,rawname,tagcollid',
+     *                        specify '*' to include all fields.
+     * @return   core_tag_tag[] array of retrieved tags
+     */
+    public static function get_bulk($ids, $returnfields = 'id, name, rawname, tagcollid') {
+        global $DB;
+        $result = array();
+        if (empty($ids)) {
+            return $result;
+        }
+        list($sql, $params) = $DB->get_in_or_equal($ids);
+        $records = $DB->get_records_select('tag', 'id '.$sql, $params, '', $returnfields);
+        foreach ($records as $record) {
+            $result[$record->id] = new static($record);
+        }
+        return $result;
+    }
+
+    /**
      * Simple function to just return a single tag object by tagcollid and name
      *
      * @param int $tagcollid tag collection to use,
@@ -591,7 +614,7 @@ class core_tag_tag {
 
         $standardonly = (int)$standardonly; // In case somebody passed bool.
 
-        // Note: if the fields in this query are changed, you need to do the same changes in tag_get_correlated().
+        // Note: if the fields in this query are changed, you need to do the same changes in core_tag_tag::get_correlated_tags().
         $sql = "SELECT ti.id AS taginstanceid, tg.id, tg.isstandard, tg.name, tg.rawname, tg.flag,
                     tg.tagcollid, ti.ordering, ti.contextid AS taginstancecontextid
                   FROM {tag_instance} ti
@@ -1091,8 +1114,10 @@ class core_tag_tag {
                 tg.tagcollid, ti.ordering, ti.contextid AS taginstancecontextid
               FROM {tag} tg
         INNER JOIN {tag_instance} ti ON tg.id = ti.tagid
-             WHERE tg.id $query
+             WHERE tg.id $query AND tg.id <> ? AND tg.tagcollid = ?
           ORDER BY ti.ordering ASC, ti.id";
+        $params[] = $this->id;
+        $params[] = $this->tagcollid;
         $records = $DB->get_records_sql($sql, $params);
         $seen = array();
         $result = array();
@@ -1423,5 +1448,158 @@ class core_tag_tag {
         }
 
         return true;
+    }
+
+    /**
+     * Combine together correlated tags of several tags
+     *
+     * This is a help method for method combine_tags()
+     *
+     * @param core_tag_tag[] $tags
+     */
+    protected function combine_correlated_tags($tags) {
+        global $DB;
+        $ids = array_map(function($t) {
+            return $t->id;
+        }, $tags);
+
+        // Retrieve the correlated tags of this tag and correlated tags of all tags to be merged in one query
+        // but store them separately. Calculate the list of correlated tags that need to be added to the current.
+        list($sql, $params) = $DB->get_in_or_equal($ids);
+        $params[] = $this->id;
+        $records = $DB->get_records_select('tag_correlation', 'tagid '.$sql.' OR tagid = ?',
+            $params, '', 'tagid, id, correlatedtags');
+        $correlated = array();
+        $mycorrelated = array();
+        foreach ($records as $record) {
+            $taglist = preg_split('/\s*,\s*/', trim($record->correlatedtags), -1, PREG_SPLIT_NO_EMPTY);
+            if ($record->tagid == $this->id) {
+                $mycorrelated = $taglist;
+            } else {
+                $correlated = array_merge($correlated, $taglist);
+            }
+        }
+        array_unique($correlated);
+        // Strip out from $correlated the ids of the tags that are already in $mycorrelated
+        // or are one of the tags that are going to be combined.
+        $correlated = array_diff($correlated, [$this->id], $ids, $mycorrelated);
+
+        if (empty($correlated)) {
+            // Nothing to do, ignore situation when current tag is correlated to one of the merged tags - they will
+            // be deleted later and get_tag_correlation() will not return them. Next cron will clean everything up.
+            return;
+        }
+
+        // Update correlated tags of this tag.
+        $newcorrelatedlist = join(',', array_merge($mycorrelated, $correlated));
+        if (isset($records[$this->id])) {
+            $DB->update_record('tag_correlation', array('id' => $records[$this->id]->id, 'correlatedtags' => $newcorrelatedlist));
+        } else {
+            $DB->insert_record('tag_correlation', array('tagid' => $this->id, 'correlatedtags' => $newcorrelatedlist));
+        }
+
+        // Add this tag to the list of correlated tags of each tag in $correlated.
+        list($sql, $params) = $DB->get_in_or_equal($correlated);
+        $records = $DB->get_records_select('tag_correlation', 'tagid '.$sql, $params, '', 'tagid, id, correlatedtags');
+        foreach ($correlated as $tagid) {
+            if (isset($records[$tagid])) {
+                $newcorrelatedlist = $records[$tagid]->correlatedtags . ',' . $this->id;
+                $DB->update_record('tag_correlation', array('id' => $records[$tagid]->id, 'correlatedtags' => $newcorrelatedlist));
+            } else {
+                $DB->insert_record('tag_correlation', array('tagid' => $tagid, 'correlatedtags' => '' . $this->id));
+            }
+        }
+    }
+
+    /**
+     * Combines several other tags into this one
+     *
+     * Combining rules:
+     * - current tag becomes the "main" one, all instances
+     *   pointing to other tags are changed to point to it.
+     * - if any of the tags is standard, the "main" tag becomes standard too
+     * - all tags except for the current ("main") are deleted, even when they are standard
+     *
+     * @param core_tag_tag[] $tags tags to combine into this one
+     */
+    public function combine_tags($tags) {
+        global $DB;
+
+        $this->ensure_fields_exist(array('id', 'tagcollid', 'isstandard', 'name', 'rawname'), 'combine_tags');
+
+        // Retrieve all tag objects, find if there are any standard tags in the set.
+        $isstandard = false;
+        $tagstocombine = array();
+        $ids = array();
+        $relatedtags = $this->get_manual_related_tags();
+        foreach ($tags as $tag) {
+            $tag->ensure_fields_exist(array('id', 'tagcollid', 'isstandard', 'tagcollid', 'name', 'rawname'), 'combine_tags');
+            if ($tag && $tag->id != $this->id && $tag->tagcollid == $this->tagcollid) {
+                $isstandard = $isstandard || $tag->isstandard;
+                $tagstocombine[$tag->name] = $tag;
+                $ids[] = $tag->id;
+                $relatedtags = array_merge($relatedtags, $tag->get_manual_related_tags());
+            }
+        }
+
+        if (empty($tagstocombine)) {
+            // Nothing to do.
+            return;
+        }
+
+        // Combine all manually set related tags, exclude itself all the tags it is about to be combined with.
+        if ($relatedtags) {
+            $relatedtags = array_map(function($t) {
+                return $t->name;
+            }, $relatedtags);
+            array_unique($relatedtags);
+            $relatedtags = array_diff($relatedtags, [$this->name], array_keys($tagstocombine));
+        }
+        $this->set_related_tags($relatedtags);
+
+        // Combine all correlated tags, exclude itself all the tags it is about to be combined with.
+        $this->combine_correlated_tags($tagstocombine);
+
+        // If any of the duplicate tags are standard, mark this one as standard too.
+        if ($isstandard && !$this->isstandard) {
+            $this->update(array('isstandard' => 1));
+        }
+
+        // Go through all instances of each tag that needs to be combined and make them point to this tag instead.
+        // We go though the list one by one because otherwise looking-for-duplicates logic would be too complicated.
+        foreach ($tagstocombine as $tag) {
+            $params = array('tagid' => $tag->id, 'mainid' => $this->id);
+            $mainsql = 'SELECT ti.*, t.name, t.rawname, tim.id AS alreadyhasmaintag '
+                    . 'FROM {tag_instance} ti '
+                    . 'LEFT JOIN {tag} t ON t.id = ti.tagid '
+                    . 'LEFT JOIN {tag_instance} tim ON ti.component = tim.component AND '
+                    . '    ti.itemtype = tim.itemtype AND ti.itemid = tim.itemid AND '
+                    . '    ti.tiuserid = tim.tiuserid AND tim.tagid = :mainid '
+                    . 'WHERE ti.tagid = :tagid';
+
+            $records = $DB->get_records_sql($mainsql, $params);
+            foreach ($records as $record) {
+                if ($record->alreadyhasmaintag) {
+                    // Item is tagged with both main tag and the duplicate tag.
+                    // Remove instance pointing to the duplicate tag.
+                    $tag->delete_instance_as_record($record, false);
+                    $sql = "UPDATE {tag_instance} ti SET ordering = ordering - 1
+                            WHERE ti.itemtype = :itemtype
+                        AND ti.itemid = :itemid AND ti.component = :component AND ti.tiuserid = :tiuserid
+                        AND ti.ordering > :ordering";
+                    $DB->execute($sql, (array)$record);
+                } else {
+                    // Item is tagged only with duplicate tag but not the main tag.
+                    // Replace tagid in the instance pointing to the duplicate tag with this tag.
+                    $DB->update_record('tag_instance', array('id' => $record->id, 'tagid' => $this->id));
+                    \core\event\tag_removed::create_from_tag_instance($record, $record->name, $record->rawname)->trigger();
+                    $record->tagid = $this->id;
+                    \core\event\tag_added::create_from_tag_instance($record, $this->name, $this->rawname)->trigger();
+                }
+            }
+        }
+
+        // Finally delete all tags that we combined into the current one.
+        self::delete_tags($ids);
     }
 }

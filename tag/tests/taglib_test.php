@@ -326,11 +326,11 @@ class core_tag_taglib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test for function tag_compute_correlations() that is part of tag cron
+     * Prepares environment for testing tag correlations
+     * @return core_tag_tag[] list of used tags
      */
-    public function test_correlations() {
+    protected function prepare_correlated() {
         global $DB;
-        $task = new \core\task\tag_cron_task();
 
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
@@ -353,13 +353,24 @@ class core_tag_taglib_testcase extends advanced_testcase {
         core_tag_tag::set_item_tags('core', 'user', $user6->id, context_user::instance($user6->id), array('dog', 'dogs', 'puppy'));
 
         $tags = core_tag_tag::get_by_name_bulk(core_tag_collection::get_default(),
-            array('cat', 'cats', 'dog', 'dogs', 'kitten', 'puppy'));
-        $tags = array_map(function ($t) {
-            return $t->id;
-        }, $tags);
+            array('cat', 'cats', 'dog', 'dogs', 'kitten', 'puppy'), '*');
 
         // Add manual relation between tags 'cat' and 'kitten'.
-        core_tag_tag::get($tags['cat'])->set_related_tags(array('kitten'));
+        core_tag_tag::get($tags['cat']->id)->set_related_tags(array('kitten'));
+
+        return $tags;
+    }
+
+    /**
+     * Test for function tag_compute_correlations() that is part of tag cron
+     */
+    public function test_correlations() {
+        global $DB;
+        $task = new \core\task\tag_cron_task();
+
+        $tags = array_map(function ($t) {
+            return $t->id;
+        }, $this->prepare_correlated());
 
         $task->compute_correlations();
 
@@ -887,5 +898,141 @@ class core_tag_taglib_testcase extends advanced_testcase {
         $this->assertEquals('Dog', $tags3['dog']->rawname);
         $this->assertEquals('mouse', $tags3['mouse']->rawname);
 
+    }
+
+    /**
+     * Testing function core_tag_tag::combine_tags()
+     */
+    public function test_combine_tags() {
+        $initialtags = array(
+            array('Cat', 'Dog'),
+            array('Dog', 'Cat'),
+            array('Cats', 'Hippo'),
+            array('Hippo', 'Cats'),
+            array('Cat', 'Mouse', 'Kitten'),
+            array('Cats', 'Mouse', 'Kitten'),
+            array('Kitten', 'Mouse', 'Cat'),
+            array('Kitten', 'Mouse', 'Cats'),
+            array('Cats', 'Mouse', 'Kitten'),
+            array('Mouse', 'Hippo')
+        );
+
+        $finaltags = array(
+            array('Cat', 'Dog'),
+            array('Dog', 'Cat'),
+            array('Cat', 'Hippo'),
+            array('Hippo', 'Cat'),
+            array('Cat', 'Mouse'),
+            array('Cat', 'Mouse'),
+            array('Mouse', 'Cat'),
+            array('Mouse', 'Cat'),
+            array('Cat', 'Mouse'),
+            array('Mouse', 'Hippo')
+        );
+
+        $collid = core_tag_collection::get_default();
+        $context = context_system::instance();
+        foreach ($initialtags as $id => $taglist) {
+            core_tag_tag::set_item_tags('core', 'course', $id + 10, $context, $initialtags[$id]);
+        }
+
+        core_tag_tag::get_by_name($collid, 'Cats', '*')->update(array('isstandard' => 1));
+
+        // Combine tags 'Cats' and 'Kitten' into 'Cat'.
+        $cat = core_tag_tag::get_by_name($collid, 'Cat', '*');
+        $cats = core_tag_tag::get_by_name($collid, 'Cats', '*');
+        $kitten = core_tag_tag::get_by_name($collid, 'Kitten', '*');
+        $cat->combine_tags(array($cats, $kitten));
+
+        foreach ($finaltags as $id => $taglist) {
+            $this->assertEquals($taglist,
+                array_values(core_tag_tag::get_item_tags_array('core', 'course', $id + 10)),
+                    'Original array ('.join(', ', $initialtags[$id]).')');
+        }
+
+        // Ensure combined tags are deleted and 'Cat' is now official (because 'Cats' was official).
+        $this->assertEmpty(core_tag_tag::get_by_name($collid, 'Cats'));
+        $this->assertEmpty(core_tag_tag::get_by_name($collid, 'Kitten'));
+        $cattag = core_tag_tag::get_by_name($collid, 'Cat', '*');
+        $this->assertEquals(1, $cattag->isstandard);
+    }
+
+    /**
+     * Testing function core_tag_tag::combine_tags() when related tags are present.
+     */
+    public function test_combine_tags_with_related() {
+        $collid = core_tag_collection::get_default();
+        $context = context_system::instance();
+        core_tag_tag::set_item_tags('core', 'course', 10, $context, array('Cat', 'Cats', 'Dog'));
+        core_tag_tag::get_by_name($collid, 'Cat', '*')->set_related_tags(array('Kitty'));
+        core_tag_tag::get_by_name($collid, 'Cats', '*')->set_related_tags(array('Cat', 'Kitten', 'Kitty'));
+
+        // Combine tags 'Cats' into 'Cat'.
+        $cat = core_tag_tag::get_by_name($collid, 'Cat', '*');
+        $cats = core_tag_tag::get_by_name($collid, 'Cats', '*');
+        $cat->combine_tags(array($cats));
+
+        // Ensure 'Cat' is now related to 'Kitten' and 'Kitty' (order of related tags may be random).
+        $relatedtags = array_map(function($t) {return $t->rawname;}, $cat->get_manual_related_tags());
+        sort($relatedtags);
+        $this->assertEquals(array('Kitten', 'Kitty'), array_values($relatedtags));
+    }
+
+    /**
+     * Testing function core_tag_tag::combine_tags() when correlated tags are present.
+     */
+    public function test_combine_tags_with_correlated() {
+        $task = new \core\task\tag_cron_task();
+
+        $tags = $this->prepare_correlated();
+
+        $task->compute_correlations();
+        // Now 'cat' is correlated with 'cats'.
+        // Also 'dog', 'dogs' and 'puppy' are correlated.
+        // There is a manual relation between 'cat' and 'kitten'.
+        // See function test_correlations() for assertions.
+
+        // Combine tags 'dog' and 'kitten' into 'cat' and make sure that cat is now correlated with dogs and puppy.
+        $tags['cat']->combine_tags(array($tags['dog'], $tags['kitten']));
+
+        $correlatedtags = $this->get_correlated_tags_names($tags['cat']);
+        $this->assertEquals(['cats', 'dogs', 'puppy'], $correlatedtags);
+
+        $correlatedtags = $this->get_correlated_tags_names($tags['dogs']);
+        $this->assertEquals(['cat', 'puppy'], $correlatedtags);
+
+        $correlatedtags = $this->get_correlated_tags_names($tags['puppy']);
+        $this->assertEquals(['cat', 'dogs'], $correlatedtags);
+
+        // Add tag that does not have any correlations.
+        $user7 = $this->getDataGenerator()->create_user();
+        core_tag_tag::set_item_tags('core', 'user', $user7->id, context_user::instance($user7->id), array('hippo'));
+        $tags['hippo'] = core_tag_tag::get_by_name(core_tag_collection::get_default(), 'hippo', '*');
+
+        // Combine tag 'cat' into 'hippo'. Now 'hippo' should have the same correlations 'cat' used to have and also
+        // tags 'dogs' and 'puppy' should have 'hippo' in correlations.
+        $tags['hippo']->combine_tags(array($tags['cat']));
+
+        $correlatedtags = $this->get_correlated_tags_names($tags['hippo']);
+        $this->assertEquals(['cats', 'dogs', 'puppy'], $correlatedtags);
+
+        $correlatedtags = $this->get_correlated_tags_names($tags['dogs']);
+        $this->assertEquals(['hippo', 'puppy'], $correlatedtags);
+
+        $correlatedtags = $this->get_correlated_tags_names($tags['puppy']);
+        $this->assertEquals(['dogs', 'hippo'], $correlatedtags);
+    }
+
+    /**
+     * Help method to return sorted array of names of correlated tags to use for assertions
+     * @param core_tag $tag
+     * @return string
+     */
+    protected function get_correlated_tags_names($tag) {
+        $rv = array_map(function($t) {
+            return $t->rawname;
+        }, $tag->get_correlated_tags());
+        sort($rv);
+        return array_values($rv);
     }
 }
