@@ -1583,10 +1583,10 @@ class core_tag_tag {
                     // Item is tagged with both main tag and the duplicate tag.
                     // Remove instance pointing to the duplicate tag.
                     $tag->delete_instance_as_record($record, false);
-                    $sql = "UPDATE {tag_instance} ti SET ordering = ordering - 1
-                            WHERE ti.itemtype = :itemtype
-                        AND ti.itemid = :itemid AND ti.component = :component AND ti.tiuserid = :tiuserid
-                        AND ti.ordering > :ordering";
+                    $sql = "UPDATE {tag_instance} SET ordering = ordering - 1
+                            WHERE itemtype = :itemtype
+                        AND itemid = :itemid AND component = :component AND tiuserid = :tiuserid
+                        AND ordering > :ordering";
                     $DB->execute($sql, (array)$record);
                 } else {
                     // Item is tagged only with duplicate tag but not the main tag.
