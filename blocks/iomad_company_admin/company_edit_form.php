@@ -395,8 +395,6 @@ if ($mform->is_cancelled()) {
 
         $company = new company($companyid);
         $oldtheme = $company->get_theme();
-echo "data =<pre>";
-print_r($data);
         $themechanged = $oldtheme != $data->theme;
         $DB->update_record('company', $data);
 
