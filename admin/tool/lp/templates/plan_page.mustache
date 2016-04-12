@@ -126,7 +126,7 @@
                         {{#plan.canbeedited}}
                         <span class="drag-handlecontainer pull-left"></span>
                         {{/plan.canbeedited}}
-                        <a href="{{pluginbaseurl}}/user_competency_in_plan.php?competencyid={{competency.id}}&amp;userid={{plan.userid}}&amp;planid={{plan.id}}">{{competency.shortname}}</a>
+                        <a data-usercompetency="true" href="#">{{competency.shortname}}</a>
                         <em>{{competency.idnumber}}</em>
                         {{#comppath}}
                             <br>
@@ -178,10 +178,11 @@
     </div>
 </div>
 {{#js}}
-require(['tool_lp/competencies', 'tool_lp/planactions', 'tool_lp/user_competency_workflow'], function(mod, actionsMod, UserCompWorkflow) {
+require(['tool_lp/competencies', 'tool_lp/planactions', 'tool_lp/user_competency_workflow', 'tool_lp/user_competency_plan_popup'], function(mod, actionsMod, UserCompWorkflow, Popup) {
     var planActions = new actionsMod('plan');
 
     (new mod({{plan.id}}, 'plan', {{contextid}}));
+    (new Popup('[data-region=plan-page]', '[data-usercompetency=true]', {{plan.id}}));
     planActions.registerEvents();
 
     var ucw = new UserCompWorkflow();

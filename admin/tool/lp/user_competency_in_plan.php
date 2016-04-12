@@ -46,7 +46,11 @@ list($title, $subtitle) = \tool_lp\page_helper::setup_for_plan($userid, $url, $p
 $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
 echo $output->heading($title);
+// User competency plan navigation.
+$baseurl = new moodle_url('/admin/tool/lp/user_competency_in_plan.php');
+$nav = new \tool_lp\output\competency_plan_navigation($userid, $competencyid, $planid, $baseurl);
 
+echo $output->render($nav);
 $page = new \tool_lp\output\user_competency_summary_in_plan($competencyid, $planid);
 echo $output->render($page);
 // Trigger the viewed event.
