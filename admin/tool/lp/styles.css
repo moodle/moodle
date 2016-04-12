@@ -15,6 +15,9 @@
     margin-left: 2em;
     margin-right: 2em;
 }
+.dir-rtl.path-admin-tool-lp .progress .bar {
+    float: right;
+}
 .path-admin-tool-lp [data-region="managecompetencies"] ul[data-enhance="tree"],
 .path-admin-tool-lp [data-region="plans"] ul[data-enhance="tree"],
 .path-admin-tool-lp [data-region="competencylinktree"] ul[data-enhance="linktree"],
@@ -58,6 +61,10 @@
 }
 .path-admin-tool-lp [data-region="filtercompetencies"] input {
     margin-left: 10px;
+}
+
+.dir-rtl.path-admin-tool-lp [data-region="managecompetencies"] .row-fluid [class*="span"] {
+    float: right;
 }
 
 .path-admin-tool-lp [data-region="link-buttons"],
@@ -219,4 +226,18 @@ input[type="checkbox"].tool_lp_scale_proficient {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
+}
+
+/** Broader RTL changes */
+.dir-rtl.path-admin-tool-lp .pull-left {
+    float: right;
+}
+.dir-rtl.path-admin-tool-lp .pull-right {
+    float: left;
+}
+.dir-rtl.path-admin-tool-lp dd {
+    margin-right: 10px;
+}
+.dir-rtl.path-admin-tool-lp ul.inline {
+    margin-right: 0;
 }
