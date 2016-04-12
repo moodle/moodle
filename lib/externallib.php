@@ -792,16 +792,34 @@ function external_format_string($str, $contextid, $striplinks = true, $options =
  * The caller can change the format (raw, filter, file, fileurl) with the external_settings singleton
  * All web service servers must set this singleton when parsing the $_GET and $_POST.
  *
+ * <pre>
+ * Options are the same that in {@link format_text()} with some changes in defaults to provide backwards compatibility:
+ *      trusted     :   If true the string won't be cleaned. Default false.
+ *      noclean     :   If true the string won't be cleaned only if trusted is also true. Default false.
+ *      nocache     :   If true the string will not be cached and will be formatted every call. Default false.
+ *      filter      :   If true the string will be run through applicable filters as well. Default (different from format_text)
+ *                      got form settings.
+ *      para        :   If true then the returned string will be wrapped in div tags. Default (different from format_text) false.
+ *                      Default changed because div tags are not commonly needed.
+ *      newlines    :   If true then lines newline breaks will be converted to HTML newline breaks. Default true.
+ *      context     :   Not used! Using contextid parameter instead.
+ *      overflowdiv :   If set to true the formatted text will be encased in a div with the class no-overflow before being
+ *                      returned. Default false.
+ *      allowid     :   If true then id attributes will not be removed, even when using htmlpurifier. Default (different from
+ *                      format_text) true. Default changed id attributes are commonly needed.
+ * </pre>
+ *
  * @param string $text The content that may contain ULRs in need of rewriting.
  * @param int $textformat The text format.
  * @param int $contextid This parameter and the next two identify the file area to use.
  * @param string $component
  * @param string $filearea helps identify the file area.
  * @param int $itemid helps identify the file area.
+ * @param object/array $options text formatting options
  * @return array text + textformat
  * @since Moodle 2.3
  */
-function external_format_text($text, $textformat, $contextid, $component, $filearea, $itemid) {
+function external_format_text($text, $textformat, $contextid, $component, $filearea, $itemid, $options = null) {
     global $CFG;
 
     // Get settings (singleton).
@@ -813,8 +831,23 @@ function external_format_text($text, $textformat, $contextid, $component, $filea
     }
 
     if (!$settings->get_raw()) {
-        $context = context::instance_by_id($contextid);
-        $text = format_text($text, $textformat, array('para' => false, 'filter' => $settings->get_filter(), 'context' => $context));
+        $options = (array)$options;
+
+        // If context is passed in options, check that is the same to show a debug message.
+        if (isset($options['context'])) {
+            if ((is_object($options['context']) && $options['context']->id != $contextid)
+                    || (!is_object($options['context']) && $options['context'] != $contextid)) {
+                debugging('Different contexts found in external_format_text parameters. $options[\'context\'] not allowed.
+                    Using $contextid parameter...', DEBUG_DEVELOPER);
+            }
+        }
+
+        $options['filter'] = isset($options['filter']) ? $options['filter'] : $settings->get_filter();
+        $options['para'] = isset($options['para']) ? $options['para'] : false;
+        $options['context'] = context::instance_by_id($contextid);
+        $options['allowid'] = isset($options['allowid']) ? $options['allowid'] : true;
+
+        $text = format_text($text, $textformat, $options);
         $textformat = FORMAT_HTML; // Once converted to html (from markdown, plain... lets inform consumer this is already HTML).
     }
 
