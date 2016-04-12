@@ -72,6 +72,68 @@ class core_externallib_testcase extends advanced_testcase {
         $this->assertSame('aaa', $result['text']);
     }
 
+    public function test_external_format_text() {
+        $settings = external_settings::get_instance();
+
+        $currentraw = $settings->get_raw();
+        $currentfilter = $settings->get_filter();
+
+        $settings->set_raw(true);
+        $settings->set_filter(false);
+        $context = context_system::instance();
+
+        $test = '$$ \pi $$';
+        $testformat = FORMAT_MARKDOWN;
+        $correct = array($test, $testformat);
+        $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0), $correct);
+
+        $settings->set_raw(false);
+        $settings->set_filter(true);
+
+        $test = '$$ \pi $$';
+        $testformat = FORMAT_MARKDOWN;
+        $correct = array('<span class="nolink"><span class="filter_mathjaxloader_equation"><p>$$ \pi $$</p>
+</span></span>', FORMAT_HTML);
+        $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0), $correct);
+
+        $test = '<p><a id="test"></a><a href="#test">Text</a></p>';
+        $testformat = FORMAT_HTML;
+        $correct = array($test, FORMAT_HTML);
+        $options = array('allowid' => true);
+        $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0, $options), $correct);
+
+        $test = '<p><a id="test"></a><a href="#test">Text</a></p>';
+        $testformat = FORMAT_HTML;
+        $correct = array('<p><a></a><a href="#test">Text</a></p>', FORMAT_HTML);
+        $options = new StdClass();
+        $options->allowid = false;
+        $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0, $options), $correct);
+
+        $test = '<p><a id="test"></a><a href="#test">Text</a></p>'."\n".'Newline';
+        $testformat = FORMAT_MOODLE;
+        $correct = array('<p><a id="test"></a><a href="#test">Text</a></p> Newline', FORMAT_HTML);
+        $options = new StdClass();
+        $options->newlines = false;
+        $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0, $options), $correct);
+
+        $test = '<p><a id="test"></a><a href="#test">Text</a></p>';
+        $testformat = FORMAT_MOODLE;
+        $correct = array('<div class="text_to_html">'.$test.'</div>', FORMAT_HTML);
+        $options = new StdClass();
+        $options->para = true;
+        $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0, $options), $correct);
+
+        $test = '<p><a id="test"></a><a href="#test">Text</a></p>';
+        $testformat = FORMAT_MOODLE;
+        $correct = array($test, FORMAT_HTML);
+        $options = new StdClass();
+        $options->context = $context;
+        $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0, $options), $correct);
+
+        $settings->set_raw($currentraw);
+        $settings->set_filter($currentfilter);
+    }
+
     /**
      * Test for clean_returnvalue().
      */
