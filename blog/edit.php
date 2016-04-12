@@ -63,9 +63,13 @@ if ($id) {
 
 $sitecontext = context_system::instance();
 $usercontext = context_user::instance($userid);
-$PAGE->set_context($usercontext);
-$blognode = $PAGE->settingsnav->find('blogadd', null);
-$blognode->make_active();
+if ($modid) {
+    $PAGE->set_context($sitecontext);
+} else {
+    $PAGE->set_context($usercontext);
+    $blognode = $PAGE->settingsnav->find('blogadd', null);
+    $blognode->make_active();
+}
 
 require_login($courseid);
 
