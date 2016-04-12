@@ -147,11 +147,23 @@ class company_edit_form extends company_moodleform {
         $mform->setDefault('lang', $CFG->lang);
 
         /* === end user defaults === */
-
+        $companyTheme = $this->companyrecord->theme;
+        $ischild = false;
+        try {
+            $theme = theme_config::load($companyTheme);
+            foreach ($theme->parents as $parentsTheme) {
+                if($parentsTheme == 'iomad' || $parentsTheme == 'bootstrap' ){
+                    $ischild = true;
+                    break;
+                }
+            }
+        } catch (Exception $e) {
+            // Bad theme
+        }
         // Only show the Appearence section if the theme is iomad or you have abilities
         // to change that.
         if (iomad::has_capability('block/iomad_company_admin:company_add', $context) ||
-            $this->companyrecord->theme == 'iomad' || $this->companyrecord->theme == 'bootstrap') {
+            $this->companyrecord->theme == 'iomad' || $this->companyrecord->theme == 'bootstrap' || $ischild) {
 
             $mform->addElement('header', 'appearance',
                                     get_string('appearance', 'block_iomad_company_admin'));
@@ -196,7 +208,7 @@ class company_edit_form extends company_moodleform {
             if (!isset($this->companyrecord->theme)) {
                 $this->companyrecord->theme = 'iomadbootstrap';
             }
-            if ($this->companyrecord->theme == 'iomad' || $this->companyrecord->theme == 'iomadbootstrap') {
+            if ($this->companyrecord->theme == 'iomad' || $this->companyrecord->theme == 'iomadbootstrap' || $ischild) {
                 $mform->addElement('HTML', get_string('theoptionsbelow',
                                                       'block_iomad_company_admin'));
                 $mform->addElement('filemanager', 'companylogo',
