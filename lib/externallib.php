@@ -836,7 +836,7 @@ function external_format_text($text, $textformat, $contextid, $component, $filea
         // If context is passed in options, check that is the same to show a debug message.
         if (isset($options['context'])) {
             if ((is_object($options['context']) && $options['context']->id != $contextid)
-                    || $options['context'] != $contextid) {
+                    || (!is_object($options['context']) && $options['context'] != $contextid)) {
                 debugging('Different contexts found in external_format_text parameters. $options[\'context\'] not allowed.
                     Using $contextid parameter...', DEBUG_DEVELOPER);
             }

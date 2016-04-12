@@ -96,6 +96,40 @@ class core_externallib_testcase extends advanced_testcase {
 </span></span>', FORMAT_HTML);
         $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0), $correct);
 
+        $test = '<p><a id="test"></a><a href="#test">Text</a></p>';
+        $testformat = FORMAT_HTML;
+        $correct = array($test, FORMAT_HTML);
+        $options = array('allowid' => true);
+        $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0, $options), $correct);
+
+        $test = '<p><a id="test"></a><a href="#test">Text</a></p>';
+        $testformat = FORMAT_HTML;
+        $correct = array('<p><a></a><a href="#test">Text</a></p>', FORMAT_HTML);
+        $options = new StdClass();
+        $options->allowid = false;
+        $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0, $options), $correct);
+
+        $test = '<p><a id="test"></a><a href="#test">Text</a></p>'."\n".'Newline';
+        $testformat = FORMAT_MOODLE;
+        $correct = array('<p><a id="test"></a><a href="#test">Text</a></p> Newline', FORMAT_HTML);
+        $options = new StdClass();
+        $options->newlines = false;
+        $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0, $options), $correct);
+
+        $test = '<p><a id="test"></a><a href="#test">Text</a></p>';
+        $testformat = FORMAT_MOODLE;
+        $correct = array('<div class="text_to_html">'.$test.'</div>', FORMAT_HTML);
+        $options = new StdClass();
+        $options->para = true;
+        $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0, $options), $correct);
+
+        $test = '<p><a id="test"></a><a href="#test">Text</a></p>';
+        $testformat = FORMAT_MOODLE;
+        $correct = array($test, FORMAT_HTML);
+        $options = new StdClass();
+        $options->context = $context;
+        $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0, $options), $correct);
+
         $settings->set_raw($currentraw);
         $settings->set_filter($currentfilter);
     }
