@@ -62,6 +62,10 @@ class block_lp extends block_base {
         }
         $this->content = new stdClass();
 
+        if (!\core_competency\api::is_enabled()) {
+            return $this->content;
+        }
+
         $summary = new \block_lp\output\summary();
         if (!$summary->has_content()) {
             return $this->content;
