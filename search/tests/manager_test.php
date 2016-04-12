@@ -200,5 +200,25 @@ class search_manager_testcase extends advanced_testcase {
         $contexts = $search->get_areas_user_accesses();
         $this->assertEquals(array($frontpageforumcontext->id => $frontpageforumcontext->id, $context1->id => $context1->id),
             $contexts[$this->forumpostareaid]);
+
+        // Now test course limited searches.
+        set_coursemodule_visible($forum2->cmid, 1);
+        $this->getDataGenerator()->enrol_user($student->id, $course2->id, 'student');
+        $contexts = $search->get_areas_user_accesses();
+        $allcontexts = array($frontpageforumcontext->id => $frontpageforumcontext->id, $context1->id => $context1->id,
+            $context2->id => $context2->id, $context3->id => $context3->id);
+        $this->assertEquals($allcontexts, $contexts[$this->forumpostareaid]);
+
+        $contexts = $search->get_areas_user_accesses(array($course1->id, $course2->id));
+        $allcontexts = array($context1->id => $context1->id, $context2->id => $context2->id, $context3->id => $context3->id);
+        $this->assertEquals($allcontexts, $contexts[$this->forumpostareaid]);
+
+        $contexts = $search->get_areas_user_accesses(array($course2->id));
+        $allcontexts = array($context3->id => $context3->id);
+        $this->assertEquals($allcontexts, $contexts[$this->forumpostareaid]);
+
+        $contexts = $search->get_areas_user_accesses(array($course1->id));
+        $allcontexts = array($context1->id => $context1->id, $context2->id => $context2->id);
+        $this->assertEquals($allcontexts, $contexts[$this->forumpostareaid]);
     }
 }

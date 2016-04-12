@@ -2139,7 +2139,8 @@ class core_course_external extends external_api {
                 'requiredcapabilities' => new external_multiple_structure(
                     new external_value(PARAM_CAPABILITY, 'Capability string used to filter courses by permission'),
                     VALUE_OPTIONAL
-                )
+                ),
+                'limittoenrolled' => new external_value(PARAM_BOOL, 'limit to enrolled courses', VALUE_DEFAULT, 0),
             )
         );
     }
@@ -2152,6 +2153,7 @@ class core_course_external extends external_api {
      * @param int $page             Page number (for pagination)
      * @param int $perpage          Items per page
      * @param array $requiredcapabilities Optional list of required capabilities (used to filter the list).
+     * @param int $limittoenrolled  Limit to only enrolled courses
      * @return array of course objects and warnings
      * @since Moodle 3.0
      * @throws moodle_exception
@@ -2160,7 +2162,8 @@ class core_course_external extends external_api {
                                           $criteriavalue,
                                           $page=0,
                                           $perpage=0,
-                                          $requiredcapabilities=array()) {
+                                          $requiredcapabilities=array(),
+                                          $limittoenrolled=0) {
         global $CFG;
         require_once($CFG->libdir . '/coursecatlib.php');
 
@@ -2207,10 +2210,22 @@ class core_course_external extends external_api {
         $courses = coursecat::search_courses($searchcriteria, $options, $params['requiredcapabilities']);
         $totalcount = coursecat::search_courses_count($searchcriteria, $options, $params['requiredcapabilities']);
 
+        if (!empty($limittoenrolled)) {
+            // Get the courses where the current user has access.
+            $enrolled = enrol_get_my_courses(array('id', 'cacherev'));
+        }
+
         $finalcourses = array();
         $categoriescache = array();
 
         foreach ($courses as $course) {
+            if (!empty($limittoenrolled)) {
+                // Filter out not enrolled courses.
+                if (!isset($enrolled[$course->id])) {
+                    $totalcount--;
+                    continue;
+                }
+            }
 
             $coursecontext = context_course::instance($course->id);
 
