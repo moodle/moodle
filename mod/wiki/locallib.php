@@ -1687,3 +1687,50 @@ function wiki_get_visible_subwikis($wiki, $cm = null, $context = null) {
 
     return $subwikis;
 }
+
+/**
+ * Utility function for getting a subwiki by group and user, validating that the user can view it.
+ * If the subwiki doesn't exists in DB yet it'll have id -1.
+ *
+ * @param stdClass $wiki The wiki.
+ * @param int $groupid Group ID. 0 means the subwiki doesn't use groups.
+ * @param int $userid User ID. 0 means the subwiki doesn't use users.
+ * @return stdClass Subwiki. If it doesn't exists in DB yet it'll have id -1. If the user can't view the
+ *                  subwiki this function will return false.
+ * @since  Moodle 3.1
+ * @throws moodle_exception
+ */
+function wiki_get_subwiki_by_group_and_user_with_validation($wiki, $groupid, $userid) {
+    global $USER, $DB;
+
+    // Get subwiki based on group and user.
+    if (!$subwiki = wiki_get_subwiki_by_group($wiki->id, $groupid, $userid)) {
+
+        // The subwiki doesn't exist.
+        // Validate if user is valid.
+        if ($userid != 0) {
+            $user = core_user::get_user($userid, '*', MUST_EXIST);
+            core_user::require_active_user($user);
+        }
+
+        // Validate that groupid is valid.
+        if ($groupid != 0 && !groups_group_exists($groupid)) {
+            throw new moodle_exception('cannotfindgroup', 'error');
+        }
+
+        // Valid data but subwiki not found. We'll simulate a subwiki object to check if the user would be able to see it
+        // if it existed. If he's able to see it then we'll return an empty array because the subwiki has no pages.
+        $subwiki = new stdClass();
+        $subwiki->id = -1;
+        $subwiki->wikiid = $wiki->id;
+        $subwiki->userid = $userid;
+        $subwiki->groupid = $groupid;
+    }
+
+    // Check that the user can view the subwiki. This function checks capabilities.
+    if (!wiki_user_can_view($subwiki, $wiki)) {
+        return false;
+    }
+
+    return $subwiki;
+}
