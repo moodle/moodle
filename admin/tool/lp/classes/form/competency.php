@@ -73,7 +73,7 @@ class competency extends persistent {
             get_string('parentcompetency', 'tool_lp');
         $editaction = '';
         if (!$competency->get_id()) {
-            $icon = $OUTPUT->pix_icon('t/editstring', get_string('parentcompetency_edit', 'tool_lp'));
+            $icon = $OUTPUT->pix_icon('t/editinline', get_string('parentcompetency_edit', 'tool_lp'));
             $editaction = $OUTPUT->action_link('#', $icon, null, array('id' => 'id_parentcompetencybutton'));
         }
 
