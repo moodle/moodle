@@ -94,34 +94,20 @@ if ($switchitemrequired) {
     exit;
 }
 
-//The create_template-form
-$create_template_form = new feedback_edit_create_template_form();
-$create_template_form->set_feedbackdata(array('context'=>$context, 'course'=>$course));
-$create_template_form->set_form_elements();
-$create_template_form->set_data(array('id'=>$id, 'do_show'=>'templates'));
-$create_template_formdata = $create_template_form->get_data();
-if (isset($create_template_formdata->savetemplate) && $create_template_formdata->savetemplate == 1) {
-    //Check the capabilities to create templates.
-    if (!has_capability('mod/feedback:createprivatetemplate', $context) AND
-            !has_capability('mod/feedback:createpublictemplate', $context)) {
-        print_error('cannotsavetempl', 'feedback');
+// Process the create template form.
+$cancreatetemplates = has_capability('mod/feedback:createprivatetemplate', $context) ||
+            has_capability('mod/feedback:createpublictemplate', $context);
+$create_template_form = new feedback_edit_create_template_form(null, array('id' => $id));
+if ($data = $create_template_form->get_data()) {
+    // Check the capabilities to create templates.
+    if (!$cancreatetemplates) {
+        print_error('cannotsavetempl', 'feedback', $url);
     }
-    if (trim($create_template_formdata->templatename) == '') {
-        $savereturn = 'notsaved_name';
+    $ispublic = !empty($data->ispublic) ? 1 : 0;
+    if (!feedback_save_as_template($feedback, $data->templatename, $ispublic)) {
+        redirect($url, get_string('saving_failed', 'feedback'), null, \core\output\notification::NOTIFY_ERROR);
     } else {
-        //If the feedback is located on the frontpage then templates can be public.
-        if (has_capability('mod/feedback:createpublictemplate', context_system::instance())) {
-            $create_template_formdata->ispublic = isset($create_template_formdata->ispublic) ? 1 : 0;
-        } else {
-            $create_template_formdata->ispublic = 0;
-        }
-        if (!feedback_save_as_template($feedback,
-                                      $create_template_formdata->templatename,
-                                      $create_template_formdata->ispublic)) {
-            $savereturn = 'failed';
-        } else {
-            $savereturn = 'saved';
-        }
+        redirect($url, get_string('template_saved', 'feedback'), null, \core\output\notification::NOTIFY_SUCCESS);
     }
 }
 
@@ -141,10 +127,7 @@ $lastposition++;
 
 
 //The use_template-form
-$use_template_form = new feedback_edit_use_template_form('use_templ.php');
-$use_template_form->set_feedbackdata(array('course' => $course));
-$use_template_form->set_form_elements();
-$use_template_form->set_data(array('id'=>$id));
+$use_template_form = new feedback_edit_use_template_form('use_templ.php', array('course' => $course, 'id' => $id));
 
 //Print the page header.
 $strfeedbacks = get_string('modulenameplural', 'feedback');
@@ -178,36 +161,13 @@ require('tabs.php');
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-$savereturn=isset($savereturn)?$savereturn:'';
-
-//Print the messages.
-if ($savereturn == 'notsaved_name') {
-    echo '<p align="center"><b><font color="red">'.
-          get_string('name_required', 'feedback').
-          '</font></b></p>';
-}
-
-if ($savereturn == 'saved') {
-    echo '<p align="center"><b><font color="green">'.
-          get_string('template_saved', 'feedback').
-          '</font></b></p>';
-}
-
-if ($savereturn == 'failed') {
-    echo '<p align="center"><b><font color="red">'.
-          get_string('saving_failed', 'feedback').
-          '</font></b></p>';
-}
-
 ///////////////////////////////////////////////////////////////////////////
 ///Print the template-section.
 ///////////////////////////////////////////////////////////////////////////
 if ($do_show == 'templates') {
-    echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
     $use_template_form->display();
 
-    if (has_capability('mod/feedback:createprivatetemplate', $context) OR
-                has_capability('mod/feedback:createpublictemplate', $context)) {
+    if ($cancreatetemplates) {
         $deleteurl = new moodle_url('/mod/feedback/delete_template.php', array('id' => $id));
         $create_template_form->display();
         echo '<p><a href="'.$deleteurl->out().'">'.
@@ -226,7 +186,6 @@ if ($do_show == 'templates') {
             <a href="'.$importurl->out().'">'.get_string('import_questions', 'feedback').'</a>
         </p>';
     }
-    echo $OUTPUT->box_end();
 }
 ///////////////////////////////////////////////////////////////////////////
 ///Print the Item-Edit-section.

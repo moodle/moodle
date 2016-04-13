@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<FEEDBACK VERSION="200701" COMMENT="XML-Importfile for mod/feedback">
+     <ITEMS>
+          <ITEM TYPE="info" REQUIRED="0">
+               <ITEMID>
+                    <![CDATA[1000]]>
+               </ITEMID>
+               <ITEMTEXT>
+                    <![CDATA[this is an information question]]>
+               </ITEMTEXT>
+               <ITEMLABEL>
+                    <![CDATA[info]]>
+               </ITEMLABEL>
+               <PRESENTATION>
+                    <![CDATA[2]]>
+               </PRESENTATION>
+               <OPTIONS>
+                    <![CDATA[]]>
+               </OPTIONS>
+               <DEPENDITEM>
+                    <![CDATA[0]]>
+               </DEPENDITEM>
+               <DEPENDVALUE>
+                    <![CDATA[]]>
+               </DEPENDVALUE>
+          </ITEM>
+          <ITEM TYPE="label" REQUIRED="0">
+               <ITEMID>
+                    <![CDATA[1001]]>
+               </ITEMID>
+               <ITEMTEXT>
+                    <![CDATA[label]]>
+               </ITEMTEXT>
+               <ITEMLABEL>
+                    <![CDATA[]]>
+               </ITEMLABEL>
+               <PRESENTATION>
+                    <![CDATA[label text]]>
+               </PRESENTATION>
+               <OPTIONS>
+                    <![CDATA[]]>
+               </OPTIONS>
+               <DEPENDITEM>
+                    <![CDATA[0]]>
+               </DEPENDITEM>
+               <DEPENDVALUE>
+                    <![CDATA[]]>
+               </DEPENDVALUE>
+          </ITEM>
+          <ITEM TYPE="textarea" REQUIRED="1">
+               <ITEMID>
+                    <![CDATA[1002]]>
+               </ITEMID>
+               <ITEMTEXT>
+                    <![CDATA[this is a longer text answer]]>
+               </ITEMTEXT>
+               <ITEMLABEL>
+                    <![CDATA[longertext]]>
+               </ITEMLABEL>
+               <PRESENTATION>
+                    <![CDATA[30|5]]>
+               </PRESENTATION>
+               <OPTIONS>
+                    <![CDATA[]]>
+               </OPTIONS>
+               <DEPENDITEM>
+                    <![CDATA[0]]>
+               </DEPENDITEM>
+               <DEPENDVALUE>
+                    <![CDATA[]]>
+               </DEPENDVALUE>
+          </ITEM>
+          <ITEM TYPE="multichoice" REQUIRED="0">
+               <ITEMID>
+                    <![CDATA[1003]]>
+               </ITEMID>
+               <ITEMTEXT>
+                    <![CDATA[this is a multiple choice 1]]>
+               </ITEMTEXT>
+               <ITEMLABEL>
+                    <![CDATA[multichoice1]]>
+               </ITEMLABEL>
+               <PRESENTATION>
+                    <![CDATA[r>>>>>option a|option b|option c]]>
+               </PRESENTATION>
+               <OPTIONS>
+                    <![CDATA[]]>
+               </OPTIONS>
+               <DEPENDITEM>
+                    <![CDATA[0]]>
+               </DEPENDITEM>
+               <DEPENDVALUE>
+                    <![CDATA[]]>
+               </DEPENDVALUE>
+          </ITEM>
+          <ITEM TYPE="pagebreak" REQUIRED="0">
+               <ITEMID>
+                    <![CDATA[1004]]>
+               </ITEMID>
+               <ITEMTEXT>
+                    <![CDATA[]]>
+               </ITEMTEXT>
+               <ITEMLABEL>
+                    <![CDATA[]]>
+               </ITEMLABEL>
+               <PRESENTATION>
+                    <![CDATA[]]>
+               </PRESENTATION>
+               <OPTIONS>
+                    <![CDATA[]]>
+               </OPTIONS>
+               <DEPENDITEM>
+                    <![CDATA[0]]>
+               </DEPENDITEM>
+               <DEPENDVALUE>
+                    <![CDATA[]]>
+               </DEPENDVALUE>
+          </ITEM>
+          <ITEM TYPE="multichoice" REQUIRED="0">
+               <ITEMID>
+                    <![CDATA[1005]]>
+               </ITEMID>
+               <ITEMTEXT>
+                    <![CDATA[this is a multiple choice 2]]>
+               </ITEMTEXT>
+               <ITEMLABEL>
+                    <![CDATA[multichoice2]]>
+               </ITEMLABEL>
+               <PRESENTATION>
+                    <![CDATA[c>>>>>option d|option e|option f]]>
+               </PRESENTATION>
+               <OPTIONS>
+                    <![CDATA[h]]>
+               </OPTIONS>
+               <DEPENDITEM>
+                    <![CDATA[1003]]>
+               </DEPENDITEM>
+               <DEPENDVALUE>
+                    <![CDATA[option a]]>
+               </DEPENDVALUE>
+          </ITEM>
+          <ITEM TYPE="multichoice" REQUIRED="0">
+               <ITEMID>
+                    <![CDATA[1006]]>
+               </ITEMID>
+               <ITEMTEXT>
+                    <![CDATA[this is a multiple choice 3]]>
+               </ITEMTEXT>
+               <ITEMLABEL>
+                    <![CDATA[multichoice3]]>
+               </ITEMLABEL>
+               <PRESENTATION>
+                    <![CDATA[d>>>>>option g|option h|option i]]>
+               </PRESENTATION>
+               <OPTIONS>
+                    <![CDATA[]]>
+               </OPTIONS>
+               <DEPENDITEM>
+                    <![CDATA[0]]>
+               </DEPENDITEM>
+               <DEPENDVALUE>
+                    <![CDATA[]]>
+               </DEPENDVALUE>
+          </ITEM>
+          <ITEM TYPE="multichoicerated" REQUIRED="0">
+               <ITEMID>
+                    <![CDATA[1007]]>
+               </ITEMID>
+               <ITEMTEXT>
+                    <![CDATA[this is a multiple choice rated]]>
+               </ITEMTEXT>
+               <ITEMLABEL>
+                    <![CDATA[multichoice4]]>
+               </ITEMLABEL>
+               <PRESENTATION>
+                    <![CDATA[r>>>>>0####option k|1####option l|5####option m]]>
+               </PRESENTATION>
+               <OPTIONS>
+                    <![CDATA[]]>
+               </OPTIONS>
+               <DEPENDITEM>
+                    <![CDATA[0]]>
+               </DEPENDITEM>
+               <DEPENDVALUE>
+                    <![CDATA[]]>
+               </DEPENDVALUE>
+          </ITEM>
+          <ITEM TYPE="numeric" REQUIRED="0">
+               <ITEMID>
+                    <![CDATA[1008]]>
+               </ITEMID>
+               <ITEMTEXT>
+                    <![CDATA[this is a numeric answer]]>
+               </ITEMTEXT>
+               <ITEMLABEL>
+                    <![CDATA[numeric]]>
+               </ITEMLABEL>
+               <PRESENTATION>
+                    <![CDATA[-|100]]>
+               </PRESENTATION>
+               <OPTIONS>
+                    <![CDATA[]]>
+               </OPTIONS>
+               <DEPENDITEM>
+                    <![CDATA[0]]>
+               </DEPENDITEM>
+               <DEPENDVALUE>
+                    <![CDATA[]]>
+               </DEPENDVALUE>
+          </ITEM>
+          <ITEM TYPE="textfield" REQUIRED="0">
+               <ITEMID>
+                    <![CDATA[1009]]>
+               </ITEMID>
+               <ITEMTEXT>
+                    <![CDATA[this is a short text answer]]>
+               </ITEMTEXT>
+               <ITEMLABEL>
+                    <![CDATA[shorttext]]>
+               </ITEMLABEL>
+               <PRESENTATION>
+                    <![CDATA[30|200]]>
+               </PRESENTATION>
+               <OPTIONS>
+                    <![CDATA[]]>
+               </OPTIONS>
+               <DEPENDITEM>
+                    <![CDATA[0]]>
+               </DEPENDITEM>
+               <DEPENDVALUE>
+                    <![CDATA[]]>
+               </DEPENDVALUE>
+          </ITEM>
+     </ITEMS>
+</FEEDBACK>

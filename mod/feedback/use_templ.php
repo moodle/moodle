@@ -28,51 +28,30 @@ require_once('use_templ_form.php');
 
 $id = required_param('id', PARAM_INT);
 $templateid = optional_param('templateid', false, PARAM_INT);
-$deleteolditems = optional_param('deleteolditems', 0, PARAM_INT);
 
 if (!$templateid) {
     redirect('edit.php?id='.$id);
 }
 
 $url = new moodle_url('/mod/feedback/use_templ.php', array('id'=>$id, 'templateid'=>$templateid));
-if ($deleteolditems !== 0) {
-    $url->param('deleteolditems', $deleteolditems);
-}
 $PAGE->set_url($url);
 
-if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-    print_error('invalidcoursemodule');
-}
-
-if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-    print_error('coursemisconf');
-}
-
-if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-    print_error('invalidcoursemodule');
-}
-
+list($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
 $context = context_module::instance($cm->id);
 
 require_login($course, true, $cm);
 
+$feedback = $PAGE->activityrecord;
+
 require_capability('mod/feedback:edititems', $context);
 
 $mform = new mod_feedback_use_templ_form();
-$newformdata = array('id'=>$id,
-                    'templateid'=>$templateid,
-                    'confirmadd'=>'1',
-                    'deleteolditems'=>'1',
-                    'do_show'=>'edit');
-$mform->set_data($newformdata);
-$formdata = $mform->get_data();
+$mform->set_data(array('id' => $id, 'templateid' => $templateid));
 
 if ($mform->is_cancelled()) {
     redirect('edit.php?id='.$id.'&do_show=templates');
-}
-
-if (isset($formdata->confirmadd) AND $formdata->confirmadd == 1) {
-    feedback_items_from_template($feedback, $templateid, $deleteolditems);
+} else if ($formdata = $mform->get_data()) {
+    feedback_items_from_template($feedback, $templateid, $formdata->deleteolditems);
     redirect('edit.php?id=' . $id);
 }
 
@@ -80,8 +59,8 @@ if (isset($formdata->confirmadd) AND $formdata->confirmadd == 1) {
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
-$PAGE->navbar->add($strfeedbacks, new moodle_url('/mod/feedback/index.php', array('id'=>$course->id)));
-$PAGE->navbar->add(format_string($feedback->name));
+navigation_node::override_active_url(new moodle_url('/mod/feedback/edit.php',
+        array('id' => $id, 'do_show' => 'templates')));
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
 echo $OUTPUT->header();
@@ -92,12 +71,9 @@ echo $OUTPUT->header();
 ///////////////////////////////////////////////////////////////////////////
 echo $OUTPUT->heading(format_string($feedback->name));
 
-echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
-echo $OUTPUT->heading(get_string('confirmusetemplate', 'feedback'), 3);
+echo $OUTPUT->heading(get_string('confirmusetemplate', 'feedback'), 4);
 
 $mform->display();
-
-echo $OUTPUT->box_end();
 
 $templateitems = $DB->get_records('feedback_item', array('template'=>$templateid), 'position');
 if (is_array($templateitems)) {

@@ -1266,7 +1266,7 @@ class behat_general extends behat_base {
      * @param string $link the text of the link.
      * @return string the content of the downloaded file.
      */
-    protected function download_file_from_link($link) {
+    public function download_file_from_link($link) {
         // Find the link.
         $linknode = $this->find_link($link);
         $this->ensure_node_is_visible($linknode);
