@@ -110,11 +110,7 @@ if (is_array($items)) {
 }
 
 if ($courseitemfilter > 0) {
-    $avgvalue = 'avg(value)';
-    if ($DB->get_dbfamily() == 'postgres') { // TODO: this should be moved to standard sql DML function ;-)
-         $avgvalue = 'avg(cast (value as integer))';
-    }
-
+    $avgvalue = 'avg(' . $DB->sql_cast_char2int('value', true) . ')';
     $sql = "SELECT fv.course_id, c.shortname, $avgvalue AS avgvalue
             FROM {feedback_value} fv, {course} c, {feedback_item} fi
             WHERE fv.course_id = c.id AND fi.id = fv.item AND fi.typ = ? AND fv.item = ?
