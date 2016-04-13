@@ -407,7 +407,8 @@ class document implements \renderable, \templatable {
      * @return string
      */
     public static function format_string_for_engine($string) {
-        return $string;
+        //FIXME: this shouldn't be required. Where is bad utf8 coming from?
+        return fix_utf8($string);
     }
 
     /**
@@ -420,7 +421,8 @@ class document implements \renderable, \templatable {
      * @return string
      */
     public static function format_text_for_engine($text) {
-        return $text;
+        //FIXME: this shouldn't be required. Where is bad utf8 coming from?
+        return fix_utf8($text);
     }
 
     /**

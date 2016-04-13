@@ -120,16 +120,40 @@ class engine extends \core_search\engine {
         }
 
         // And finally the main query after applying all AND filters.
-        $ands[] = '(' .
-            $DB->sql_like('title', '?', false, false) . ' OR ' .
-            $DB->sql_like('content', '?', false, false) . ' OR ' .
-            $DB->sql_like('description1', '?', false, false) . ' OR ' .
-            $DB->sql_like('description2', '?', false, false) .
-            ')';
-        $params[] = '%' . $data->q . '%';
-        $params[] = '%' . $data->q . '%';
-        $params[] = '%' . $data->q . '%';
-        $params[] = '%' . $data->q . '%';
+        switch ($DB->get_dbfamily()) {
+            case 'postgres':
+                $ands[] = "(" .
+                    "to_tsvector('simple', title) @@ plainto_tsquery(?) OR ".
+                    "to_tsvector('simple', content) @@ plainto_tsquery(?) OR ".
+                    "to_tsvector('simple', description1) @@ plainto_tsquery(?) OR ".
+                    "to_tsvector('simple', description2) @@ plainto_tsquery(?)".
+                    ")";
+                $params[] = $data->q;
+                $params[] = $data->q;
+                $params[] = $data->q;
+                $params[] = $data->q;
+                break;
+            case 'mysql':
+                $ands[] = "MATCH (title, content, description1, description2) AGAINST (?)";
+                $params[] = $data->q;
+                break;
+            case 'mssql':
+                $ands[] = "CONTAINS ((title, content, description1, description2), ?)";
+                $params[] = $data->q;
+                break;
+            default:
+                $ands[] = '(' .
+                    $DB->sql_like('title', '?', false, false) . ' OR ' .
+                    $DB->sql_like('content', '?', false, false) . ' OR ' .
+                    $DB->sql_like('description1', '?', false, false) . ' OR ' .
+                    $DB->sql_like('description2', '?', false, false) .
+                    ')';
+                $params[] = '%' . $data->q . '%';
+                $params[] = '%' . $data->q . '%';
+                $params[] = '%' . $data->q . '%';
+                $params[] = '%' . $data->q . '%';
+                break;
+        }
 
         $recordset = $DB->get_recordset_sql($sql . implode(' AND ', $ands), $params, 0, \core_search\manager::MAX_RESULTS);
 
@@ -201,8 +225,8 @@ class engine extends \core_search\engine {
                 $DB->insert_record('search_simpledb_index', $doc);
             }
 
-        } catch (dml_exception $ex) {
-            debugging('dml error while trying to insert document with id ' . $doc->docid . ': ' . $e->getMessage(),
+        } catch (\dml_exception $ex) {
+            debugging('dml error while trying to insert document with id ' . $doc->docid . ': ' . $ex->getMessage(),
                 DEBUG_DEVELOPER);
         }
 
