@@ -7,7 +7,6 @@
             "overlay",
             "escape",
             "event",
-            "event-key",
             "event-simulate",
             "event-custom",
             "node-event-html5",
