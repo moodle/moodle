@@ -774,6 +774,19 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
         }
     }
     /**
+     * Converts HTML tags to line breaks to display the info in CLI
+     *
+     * @param string $html
+     * @return string
+     */
+    protected function get_debug_text($html) {
+
+        // Replacing HTML tags for new lines and keeping only the text.
+        $notags = preg_replace('/<+\s*\/*\s*([A-Z][A-Z0-9]*)\b[^>]*\/*\s*>*/i', "\n", $html);
+        return preg_replace("/(\n)+/s", "\n", $notags);
+    }
+
+    /**
      * Helper function to execute api in a given context.
      *
      * @param string $contextapi context in which api is defined.
