@@ -505,19 +505,6 @@ class behat_hooks extends behat_base {
     }
 
     /**
-     * Converts HTML tags to line breaks to display the info in CLI
-     *
-     * @param string $html
-     * @return string
-     */
-    protected function get_debug_text($html) {
-
-        // Replacing HTML tags for new lines and keeping only the text.
-        $notags = preg_replace('/<+\s*\/*\s*([A-Z][A-Z0-9]*)\b[^>]*\/*\s*>*/i', "\n", $html);
-        return preg_replace("/(\n)+/s", "\n", $notags);
-    }
-
-    /**
      * Returns whether the first scenario of the suite is running
      *
      * @return bool
