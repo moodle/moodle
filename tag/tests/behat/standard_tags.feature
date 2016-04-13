@@ -19,6 +19,7 @@ Feature: Manager can add standard tags and change the tag type of existing tags
       | Tag2 | 0          |
       | Tag3 | 1          |
 
+  @javascript
   Scenario: Adding standard tags
     When I log in as "manager1"
     And I navigate to "Manage tags" node in "Site administration > Appearance"
@@ -27,9 +28,9 @@ Feature: Manager can add standard tags and change the tag type of existing tags
     And "Make standard" "link" should exist in the "Tag1" "table_row"
     And "Make standard" "link" should exist in the "Tag2" "table_row"
     And "Remove from standard tags" "link" should exist in the "Tag3" "table_row"
-    And I set the following fields to these values:
-      | Add standard tags | Tag1,TAG2,Tag3,Tag4,Tag5 |
-    And I press "Add standard tags"
+    And I follow "Add standard tags"
+    And I set the field "Enter comma-separated list of new tags" to "Tag1,TAG2,Tag3,Tag4,Tag5"
+    And I press "Continue"
     And I should see "Standard tag(s) added"
     # No changes to Tag0
     And "Make standard" "link" should exist in the "Tag0" "table_row"
