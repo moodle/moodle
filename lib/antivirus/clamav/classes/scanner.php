@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 define('ANTIVIRUS_CLAMAV_SOCKET_TIMEOUT', 10);
 
 /**
- * Class implemeting ClamAV antivirus.
+ * Class implementing ClamAV antivirus.
  * @copyright  2015 Ruslan Kabalin, Lancaster University.
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -50,48 +50,34 @@ class scanner extends \core\antivirus\scanner {
     }
 
     /**
-     * Scan file, throws exception in case of infected file.
+     * Scan file.
+     *
+     * This method is normally called from antivirus manager (\core\antivirus\manager::scan_file).
      *
      * @param string $file Full path to the file.
      * @param string $filename Name of the file (could be different from physical file if temp file is used).
-     * @param bool $deleteinfected whether infected file needs to be deleted.
-     * @throws moodle_exception If file is infected.
-     * @return void
+     * @return int Scanning result constant.
      */
-    public function scan_file($file, $filename, $deleteinfected) {
-        global $CFG;
-
+    public function scan_file($file, $filename) {
         if (!is_readable($file)) {
             // This should not happen.
             debugging('File is not readable.');
-            return;
+            return self::SCAN_RESULT_ERROR;
         }
 
         // Execute the scan using preferable method.
         $method = 'scan_file_execute_' . $this->get_config('runningmethod');
-        list($return, $notice) = $this->$method($file);
+        $return = $this->$method($file);
 
-        if ($return == 0) {
-            // Perfect, no problem found, file is clean.
-            return;
-        } else if ($return == 1) {
-            // Infection found.
-            if ($deleteinfected) {
-                unlink($file);
-            }
-            throw new \core\antivirus\scanner_exception('virusfounduser', '', array('filename' => $filename));
-        } else {
-            // Unknown problem.
-            $this->message_admins($notice);
+        if ($return === self::SCAN_RESULT_ERROR) {
+            $this->message_admins($this->get_scanning_notice());
+            // If plugin settings require us to act like virus on any error,
+            // return SCAN_RESULT_FOUND result.
             if ($this->get_config('clamfailureonupload') === 'actlikevirus') {
-                if ($deleteinfected) {
-                    unlink($file);
-                }
-                throw new \core\antivirus\scanner_exception('virusfounduser', '', array('filename' => $filename));
-            } else {
-                return;
+                return self::SCAN_RESULT_FOUND;
             }
         }
+        return $return;
     }
 
     /**
@@ -132,7 +118,7 @@ class scanner extends \core\antivirus\scanner {
      * Scan file using command line utility.
      *
      * @param string $file Full path to the file.
-     * @return array ($return, $notice) Execution return code and notification text.
+     * @return int Scanning result constant.
      */
     public function scan_file_execute_commandline($file) {
         $pathtoclam = trim($this->get_config('pathtoclam'));
@@ -140,7 +126,8 @@ class scanner extends \core\antivirus\scanner {
         if (!file_exists($pathtoclam) or !is_executable($pathtoclam)) {
             // Misconfigured clam, notify admins.
             $notice = get_string('invalidpathtoclam', 'antivirus_clamav', $pathtoclam);
-            return array(-1, $notice);
+            $this->set_scanning_notice($notice);
+            return self::SCAN_RESULT_ERROR;
         }
 
         $clamparam = ' --stdout ';
@@ -155,27 +142,35 @@ class scanner extends \core\antivirus\scanner {
         // Execute scan.
         $cmd = escapeshellcmd($pathtoclam).$clamparam.escapeshellarg($file);
         exec($cmd, $output, $return);
-        $notice = '';
-        if ($return > 1) {
+        // Return variable will contain execution return code. It will be 0 if no virus is found,
+        // 1 if virus is found, and 2 or above for the error. Return codes 0 and 1 correspond to
+        // SCAN_RESULT_OK and SCAN_RESULT_FOUND constants, so we return them as it is.
+        // If there is an error, it gets stored as scanning notice and function
+        // returns SCAN_RESULT_ERROR.
+        if ($return > self::SCAN_RESULT_FOUND) {
             $notice = get_string('clamfailed', 'antivirus_clamav', $this->get_clam_error_code($return));
             $notice .= "\n\n". implode("\n", $output);
+            $this->set_scanning_notice($notice);
+            return self::SCAN_RESULT_ERROR;
         }
 
-        return array($return, $notice);
+        return (int)$return;
     }
 
     /**
-     * Scan file using unix socket.
+     * Scan file using Unix domain sockets.
      *
      * @param string $file Full path to the file.
-     * @return array ($return, $notice) Execution return code and notification text.
+     * @return int Scanning result constant.
      */
     public function scan_file_execute_unixsocket($file) {
-        $socket = stream_socket_client('unix://' . $this->get_config('pathtounixsocket'), $errno, $errstr, ANTIVIRUS_CLAMAV_SOCKET_TIMEOUT);
+        $socket = stream_socket_client('unix://' . $this->get_config('pathtounixsocket'),
+                $errno, $errstr, ANTIVIRUS_CLAMAV_SOCKET_TIMEOUT);
         if (!$socket) {
             // Can't open socket for some reason, notify admins.
             $notice = get_string('errorcantopensocket', 'antivirus_clamav', "$errstr ($errno)");
-            return array(-1, $notice);
+            $this->set_scanning_notice($notice);
+            return self::SCAN_RESULT_ERROR;
         } else {
             // Execute scanning. We are running SCAN command and passing file as an argument,
             // it is the fastest option, but clamav user need to be able to access it, so
@@ -194,16 +189,17 @@ class scanner extends \core\antivirus\scanner {
             $splitoutput = explode(': ', $output);
             $message = trim($splitoutput[1]);
             if ($message === 'OK') {
-                return array(0, '');
+                return self::SCAN_RESULT_OK;
             } else {
                 $parts = explode(' ', $message);
                 $status = array_pop($parts);
                 if ($status === 'FOUND') {
-                    return array(1, '');
+                    return self::SCAN_RESULT_FOUND;
                 } else {
                     $notice = get_string('clamfailed', 'antivirus_clamav', $this->get_clam_error_code(2));
                     $notice .= "\n\n" . $output;
-                    return array(2, $notice);
+                    $this->set_scanning_notice($notice);
+                    return self::SCAN_RESULT_ERROR;
                 }
             }
         }
