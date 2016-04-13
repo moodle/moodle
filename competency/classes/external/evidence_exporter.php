@@ -24,6 +24,8 @@
 namespace core_competency\external;
 
 use renderer_base;
+use core_competency\evidence;
+use core_competency\user_competency;
 
 /**
  * Class for exporting evidence data.
@@ -34,8 +36,12 @@ use renderer_base;
 class evidence_exporter extends persistent_exporter {
 
     protected static function define_related() {
-        return array('actionuser' => 'stdClass?',
-                     'scale' => 'grade_scale');
+        return array(
+            'actionuser' => 'stdClass?',
+            'scale' => 'grade_scale',
+            'usercompetency' => 'core_competency\\user_competency?',
+            'usercompetencyplan' => 'core_competency\\user_competency_plan?',
+        );
     }
 
     protected static function define_class() {
@@ -62,6 +68,18 @@ class evidence_exporter extends persistent_exporter {
         }
         $other['gradename'] = $gradename;
 
+        // Try to guess the user from the user competency.
+        $userid = null;
+        if ($this->related['usercompetency']) {
+            $userid = $this->related['usercompetency']->get_userid();
+        } else if ($this->related['usercompetencyplan']) {
+            $userid = $this->related['usercompetencyplan']->get_userid();
+        } else {
+            $uc = user_competency::get_record(['id' => $this->persistent->get_usercompetencyid()]);
+            $userid = $uc->get_userid();
+        }
+        $other['candelete'] = evidence::can_delete_user($userid);
+
         return $other;
     }
 
@@ -79,6 +97,9 @@ class evidence_exporter extends persistent_exporter {
             ),
             'userdate' => array(
                 'type' => PARAM_TEXT
+            ),
+            'candelete' => array(
+                'type' => PARAM_BOOL
             )
         );
     }

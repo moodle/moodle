@@ -149,7 +149,11 @@ class user_competency_summary_exporter extends \core_competency\external\exporte
 
             foreach ($this->related['evidence'] as $evidence) {
                 $actionuserid = $evidence->get_actionuserid();
-                $related = array('scale' => $scale);
+                $related = array(
+                    'scale' => $scale,
+                    'usercompetency' => ($this->related['usercompetency'] ? $this->related['usercompetency'] : null),
+                    'usercompetencyplan' => ($this->related['usercompetencyplan'] ? $this->related['usercompetencyplan'] : null),
+                );
                 $related['actionuser'] = !empty($actionuserid) ? $usercache[$actionuserid] : null;
                 $exporter = new evidence_exporter($evidence, $related);
                 $allevidence[] = $exporter->export($output);

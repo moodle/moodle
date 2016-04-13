@@ -2117,6 +2117,14 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' => 'moodle/block:view'
     ),
+    // Evidence.
+    'moodle/competency:evidencedelete' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
     // User plans.
     'moodle/competency:planmanage' => array(
         'captype' => 'write',

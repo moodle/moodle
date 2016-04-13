@@ -4375,4 +4375,43 @@ class core_competency_api_testcase extends advanced_testcase {
         $this->assertTrue(api::is_scale_used_anywhere($scale3->id));
         $this->assertTrue(api::is_scale_used_anywhere($scale4->id));
     }
+
+    public function test_delete_evidence() {
+        $this->resetAfterTest();
+        $dg = $this->getDataGenerator();
+        $ccg = $dg->get_plugin_generator('core_competency');
+
+        $u1 = $dg->create_user();
+        $f1 = $ccg->create_framework();
+        $comp1 = $ccg->create_competency(['competencyframeworkid' => $f1->get_id()]);
+        $uc1 = $ccg->create_user_competency(['userid' => $u1->id, 'competencyid' => $comp1->get_id()]);
+
+        $ev1 = $ccg->create_evidence(['usercompetencyid' => $uc1->get_id()]);
+        $ev2 = $ccg->create_evidence(['usercompetencyid' => $uc1->get_id()]);
+
+        $this->setAdminUser($u1);
+
+        $this->assertEquals(2, evidence::count_records());
+        api::delete_evidence($ev1);
+        $this->assertEquals(1, evidence::count_records());
+        $this->assertFalse(evidence::record_exists($ev1->get_id()));
+        $this->assertTrue(evidence::record_exists($ev2->get_id()));
+    }
+
+    public function test_delete_evidence_without_permissions() {
+        $this->resetAfterTest();
+        $dg = $this->getDataGenerator();
+        $ccg = $dg->get_plugin_generator('core_competency');
+
+        $u1 = $dg->create_user();
+        $f1 = $ccg->create_framework();
+        $comp1 = $ccg->create_competency(['competencyframeworkid' => $f1->get_id()]);
+        $uc1 = $ccg->create_user_competency(['userid' => $u1->id, 'competencyid' => $comp1->get_id()]);
+        $ev1 = $ccg->create_evidence(['usercompetencyid' => $uc1->get_id()]);
+
+        $this->setUser($u1);
+        $this->setExpectedException('required_capability_exception');
+
+        api::delete_evidence($ev1);
+    }
 }

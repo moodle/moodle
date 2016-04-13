@@ -1926,6 +1926,15 @@ $functions = array(
         'capabilities'  => 'moodle/competency:coursecompetencyconfigure',
         'ajax'          => true,
     ),
+    'core_competency_delete_evidence' => array(
+        'classname'     => 'core_competency\external',
+        'methodname'    => 'delete_evidence',
+        'classpath'     => '',
+        'description'   => 'Delete an evidence',
+        'type'          => 'write',
+        'capabilities'  => 'moodle/competency:evidencedelete',
+        'ajax'          => true,
+    ),
 );
 
 $services = array(

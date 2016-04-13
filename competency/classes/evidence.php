@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use coding_exception;
 use context;
+use context_user;
 use lang_string;
 use moodle_exception;
 use stdClass;
@@ -271,6 +272,16 @@ class evidence extends persistent {
             return new lang_string('invaliddata', 'error');
         }
         return true;
+    }
+
+    /**
+     * Whether the current user can delete an evidence in the context of a user.
+     *
+     * @param int $userid The user ID the evidence belongs to.
+     * @return bool
+     */
+    public static function can_delete_user($userid) {
+        return has_capability('moodle/competency:evidencedelete', context_user::instance($userid));
     }
 
 }

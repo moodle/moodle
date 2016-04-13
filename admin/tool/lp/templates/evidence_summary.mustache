@@ -39,10 +39,17 @@
       "grade": 2,
       "gradename": "Met",
       "description": "The user competency was manually rated in the plan Personal plan A",
-      "url": "http://moodle.org/"
+      "url": "http://moodle.org/",
+      "candelete": true,
+      "id": 1
     }
 }}
-<div class="well well-small evidence">
+<div class="well well-small evidence" data-region="evidence" data-id="{{id}}">
+    {{#candelete}}
+        <div class="pull-right">
+            <a href="#" data-action="delete-evidence">{{#pix}}t/delete{{/pix}}</a>
+        </div>
+    {{/candelete}}
 {{#actionuser}}
     <div>
         {{> tool_lp/user_summary }}
@@ -60,3 +67,9 @@
     <p><a href="{{url}}" target="_blank" rel="noreferrer">{{url}}</a></p>
 {{/url}}
 </div>
+
+{{#js}}
+require(['tool_lp/evidence_delete'], function(EvidenceDelete) {
+    EvidenceDelete.register('[data-action="delete-evidence"]', '[data-region="evidence"]');
+});
+{{/js}}

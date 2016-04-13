@@ -113,6 +113,7 @@ $string['competency:coursecompetencygradable'] = 'Receive competency marks';
 $string['competency:coursecompetencyconfigure'] = 'Configure course competency settings';
 $string['competency:coursecompetencymanage'] = 'Manage course competencies';
 $string['competency:coursecompetencyview'] = 'View course competencies';
+$string['competency:evidencedelete'] = 'Delete evidence';
 $string['competency:plancomment'] = 'Comment on a learning plan';
 $string['competency:plancommentown'] = 'Comment on own learning plan';
 $string['competency:planmanage'] = 'Manage learning plans';

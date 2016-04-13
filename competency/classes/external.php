@@ -3719,7 +3719,12 @@ class external extends external_api {
         );
 
         $scale = $uc->get_competency()->get_scale();
-        $exporter = new evidence_exporter($evidence, array('actionuser' => $USER, 'scale' => $scale));
+        $exporter = new evidence_exporter($evidence, [
+            'actionuser' => $USER,
+            'scale' => $scale,
+            'usercompetency' => $uc,
+            'usercompetencyplan' => null,
+        ]);
         return $exporter->export($output);
     }
 
@@ -3800,7 +3805,12 @@ class external extends external_api {
         );
         $competency = api::read_competency($params['competencyid']);
         $scale = $competency->get_scale();
-        $exporter = new evidence_exporter($evidence, array('actionuser' => $USER, 'scale' => $scale));
+        $exporter = new evidence_exporter($evidence, [
+            'actionuser' => $USER,
+            'scale' => $scale,
+            'usercompetency' => null,
+            'usercompetencyplan' => null,
+        ]);
         return $exporter->export($output);
     }
 
@@ -4107,7 +4117,12 @@ class external extends external_api {
         );
         $competency = api::read_competency($params['competencyid']);
         $scale = $competency->get_scale();
-        $exporter = new evidence_exporter($evidence, array('actionuser' => $USER, 'scale' => $scale));
+        $exporter = new evidence_exporter($evidence, array(
+            'actionuser' => $USER,
+            'scale' => $scale,
+            'usercompetency' => null,
+            'usercompetencyplan' => null,
+        ));
         return $exporter->export($output);
     }
 
@@ -4262,6 +4277,44 @@ class external extends external_api {
      */
     public static function update_course_competency_settings_returns() {
         return new external_value(PARAM_BOOL, 'True if the update was successful.');
+    }
+
+    /**
+     * Returns description of external function parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function delete_evidence_parameters() {
+        return new external_function_parameters(array(
+            'id' => new external_value(PARAM_INT, 'The evidence ID'),
+        ));
+    }
+
+    /**
+     * External function delete_evidence.
+     *
+     * @param int $id The evidence ID.
+     * @return boolean
+     */
+    public static function delete_evidence($id) {
+        $params = self::validate_parameters(self::delete_evidence_parameters(), array(
+            'id' => $id
+        ));
+
+        $evidence = api::read_evidence($params['id']);
+        $uc = api::get_user_competency_by_id($evidence->get_usercompetencyid());
+        self::validate_context($uc->get_context());
+
+        return api::delete_evidence($evidence);
+    }
+
+    /**
+     * Returns description of external function result value.
+     *
+     * @return \external_function_parameters
+     */
+    public static function delete_evidence_returns() {
+        return new external_value(PARAM_BOOL, 'The success');
     }
 
 }

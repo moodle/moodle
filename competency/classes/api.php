@@ -4438,6 +4438,44 @@ class api {
     }
 
     /**
+     * Read an evidence.
+     * @param int $evidenceid The evidence ID.
+     * @return evidence
+     */
+    public static function read_evidence($evidenceid) {
+        static::require_enabled();
+
+        $evidence = new evidence($evidenceid);
+        $uc = new user_competency($evidence->get_usercompetencyid());
+        if (!$uc->can_read()) {
+            throw new required_capability_exception($uc->get_context(), 'moodle/competency:usercompetencyview',
+                'nopermissions', '');
+        }
+
+        return $evidence;
+    }
+
+    /**
+     * Delete an evidence.
+     *
+     * @param evidence|int $evidenceorid The evidence, or its ID.
+     * @return bool
+     */
+    public static function delete_evidence($evidenceorid) {
+        $evidence = $evidenceorid;
+        if (!is_object($evidence)) {
+            $evidence = new evidence($evidenceorid);
+        }
+
+        $uc = new user_competency($evidence->get_usercompetencyid());
+        if (!evidence::can_delete_user($uc->get_userid())) {
+            throw new required_capability_exception($uc->get_context(), 'moodle/competency:evidencedelete', 'nopermissions', '');
+        }
+
+        return $evidence->delete();
+    }
+
+    /**
      * Apply the competency rules from a user competency.
      *
      * The user competency passed should be one that was recently marked as complete.
