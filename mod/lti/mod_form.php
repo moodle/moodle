@@ -96,6 +96,8 @@ class mod_lti_mod_form extends moodleform_mod {
 
         // Tool settings.
         $tooltypes = $mform->addElement('select', 'typeid', get_string('external_tool_type', 'lti'), array());
+        $typeid = optional_param('typeid', false, PARAM_INT);
+        $mform->getElement('typeid')->setValue($typeid);
         $mform->addHelpButton('typeid', 'external_tool_type', 'lti');
         $toolproxy = array();
 
@@ -149,6 +151,7 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->addElement('select', 'launchcontainer', get_string('launchinpopup', 'lti'), $launchoptions);
         $mform->setDefault('launchcontainer', LTI_LAUNCH_CONTAINER_DEFAULT);
         $mform->addHelpButton('launchcontainer', 'launchinpopup', 'lti');
+        $mform->setAdvanced('launchcontainer');
 
         $mform->addElement('text', 'resourcekey', get_string('resourcekey', 'lti'));
         $mform->setType('resourcekey', PARAM_TEXT);
@@ -242,6 +245,11 @@ class mod_lti_mod_form extends moodleform_mod {
                 array('forced_help', 'lti')
             ),
         );
+
+        if (!empty($typeid)) {
+            $mform->setAdvanced('typeid');
+            $mform->setAdvanced('toolurl');
+        }
 
         $PAGE->requires->js_init_call('M.mod_lti.editor.init', array(json_encode($jsinfo)), true, $module);
     }

@@ -5,6 +5,8 @@ information provided here is intended especially for developers.
 
 * Old /mod/MODULENAME/pix/icon.gif and enrol/paypal/pix/icon.gif GIF icons have been removed. Please use pix_icon
   renderable instead.
+* Callback get_types() is deprecated, instead activity modules can define callback get_shortcuts().
+  See source code for get_module_metadata().
 
 === 3.0 ===
 

@@ -1070,8 +1070,14 @@ function lti_filter_tool_types(array $tools, $state) {
     return $return;
 }
 
-function lti_get_types_for_add_instance() {
-    global $DB, $SITE, $COURSE;
+/**
+ * Returns all lti types visible in this course
+ *
+ * @param int $courseid The id of the course to retieve types for
+ * @return stdClass[] All the lti types visible in the given course
+ */
+function lti_get_lti_types_by_course($courseid) {
+    global $DB, $SITE;
 
     $query = "SELECT *
                 FROM {lti_types}
@@ -1079,8 +1085,18 @@ function lti_get_types_for_add_instance() {
                  AND (course = :siteid OR course = :courseid)
                  AND state = :active";
 
-    $admintypes = $DB->get_records_sql($query,
-        array('siteid' => $SITE->id, 'courseid' => $COURSE->id, 'active' => LTI_TOOL_STATE_CONFIGURED));
+    return $DB->get_records_sql($query,
+        array('siteid' => $SITE->id, 'courseid' => $courseid, 'active' => LTI_TOOL_STATE_CONFIGURED));
+}
+
+/**
+ * Returns tool types for lti add instance and edit page
+ *
+ * @return array Array of lti types
+ */
+function lti_get_types_for_add_instance() {
+    global $COURSE;
+    $admintypes = lti_get_lti_types_by_course($COURSE->id);
 
     $types = array();
     $types[0] = (object)array('name' => get_string('automatic', 'lti'), 'course' => 0, 'toolproxyid' => null);
@@ -1089,6 +1105,35 @@ function lti_get_types_for_add_instance() {
         $types[$type->id] = $type;
     }
 
+    return $types;
+}
+
+/**
+ * Returns a list of configured types in the given course
+ *
+ * @param int $courseid The id of the course to retieve types for
+ * @param int $sectionreturn section to return to for forming the URLs
+ * @return array Array of lti types. Each element is object with properties: name, title, icon, help, link
+ */
+function lti_get_configured_types($courseid, $sectionreturn = 0) {
+    global $OUTPUT;
+    $types = array();
+    $admintypes = lti_get_lti_types_by_course($courseid);
+
+    foreach ($admintypes as $ltitype) {
+        $type           = new stdClass();
+        $type->modclass = MOD_CLASS_ACTIVITY;
+        $type->name     = 'lti_type_' . $ltitype->id;
+        $type->title    = $ltitype->name;
+        if (empty($ltitype->icon)) {
+            $type->icon = $OUTPUT->pix_icon('icon', '', 'lti', array('class' => 'icon'));
+        } else {
+            $type->icon = html_writer::empty_tag('img', array('src' => $ltitype->icon, 'alt' => $ltitype->name, 'class' => 'icon'));
+        }
+        $type->link = new moodle_url('/course/modedit.php', array('add' => 'lti', 'return' => 0, 'course' => $courseid,
+            'sr' => $sectionreturn, 'typeid' => $ltitype->id));
+        $types[] = $type;
+    }
     return $types;
 }
 

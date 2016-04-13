@@ -196,47 +196,53 @@ function lti_delete_instance($id) {
     return $DB->delete_records("lti", array("id" => $basiclti->id));
 }
 
-function lti_get_types() {
-    global $OUTPUT;
+/**
+ * Return aliases of this activity. LTI should have an alias for each configured tool type
+ * This is so you can add an external tool types directly to the activity chooser
+ *
+ * @param stdClass $defaultitem default item that would be added to the activity chooser if this callback was not present.
+ *     It has properties: archetype, name, title, help, icon, link
+ * @return array An array of aliases for this activity. Each element is an object with same list of properties as $defaultitem.
+ *     Properties title and link are required
+ **/
+function lti_get_shortcuts($defaultitem) {
+    global $CFG, $COURSE;
+    require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
-    $subtypes = array();
-    foreach (get_plugin_list('ltisource') as $name => $dir) {
-        if ($moretypes = component_callback("ltisource_$name", 'get_types')) {
-            $subtypes = array_merge($subtypes, $moretypes);
+    $types = lti_get_configured_types($COURSE->id, $defaultitem->link->param('sr'));
+    $types[] = $defaultitem;
+
+    // Add items defined in ltisource plugins.
+    foreach (core_component::get_plugin_list('ltisource') as $pluginname => $dir) {
+        if ($moretypes = component_callback("ltisource_$pluginname", 'get_types')) {
+            // Callback 'get_types()' in 'ltisource' plugins is deprecated in 3.1 and will be removed in 3.5, TODO MDL-53697.
+            debugging('Deprecated callback get_types() is found in ltisource_' . $pluginname .
+                ', use get_shortcuts() instead', DEBUG_DEVELOPER);
+            $grouptitle = get_string('modulenameplural', 'mod_lti');
+            foreach ($moretypes as $subtype) {
+                // Instead of adding subitems combine the name of the group with the name of the subtype.
+                $subtype->title = get_string('activitytypetitle', '',
+                    (object)['activity' => $grouptitle, 'type' => $subtype->typestr]);
+                // Re-implement the logic of get_module_metadata() in Moodle 3.0 and below for converting
+                // subtypes into items in activity chooser.
+                $subtype->type = str_replace('&amp;', '&', $subtype->type);
+                $subtype->name = preg_replace('/.*type=/', '', $subtype->type);
+                $subtype->link = new moodle_url($defaultitem->link, array('type' => $subtype->name));
+                if (empty($subtype->help) && !empty($subtype->name) &&
+                        get_string_manager()->string_exists('help' . $subtype->name, $pluginname)) {
+                    $subtype->help = get_string('help' . $subtype->name, $pluginname);
+                }
+                unset($subtype->typestr);
+                $types[] = $subtype;
+            }
+        }
+        // LTISOURCE plugins can also implement callback get_shortcuts() to add items to the activity chooser.
+        // The return values are the same as of the 'mod' callbacks except that $defaultitem is only passed for reference and
+        // should not be added to the return value.
+        if ($moretypes = component_callback("ltisource_$pluginname", 'get_shortcuts', array($defaultitem))) {
+            $types = array_merge($types, $moretypes);
         }
     }
-    if (empty($subtypes)) {
-        return MOD_SUBTYPE_NO_CHILDREN;
-    }
-
-    $types = array();
-
-    $type           = new stdClass();
-    $type->modclass = MOD_CLASS_ACTIVITY;
-    $type->type     = 'lti_group_start';
-    $type->typestr  = '--'.get_string('modulenameplural', 'mod_lti');
-    $types[]        = $type;
-
-    $link     = get_string('modulename_link', 'mod_lti');
-    $linktext = get_string('morehelp');
-    $help     = get_string('modulename_help', 'mod_lti');
-    $help    .= html_writer::tag('div', $OUTPUT->doc_link($link, $linktext, true), array('class' => 'helpdoclink'));
-
-    $type           = new stdClass();
-    $type->modclass = MOD_CLASS_ACTIVITY;
-    $type->type     = '';
-    $type->typestr  = get_string('generaltool', 'mod_lti');
-    $type->help     = $help;
-    $types[]        = $type;
-
-    $types = array_merge($types, $subtypes);
-
-    $type           = new stdClass();
-    $type->modclass = MOD_CLASS_ACTIVITY;
-    $type->type     = 'lti_group_end';
-    $type->typestr  = '--';
-    $types[]        = $type;
-
     return $types;
 }
 

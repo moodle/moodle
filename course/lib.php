@@ -1226,7 +1226,7 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
  * module
  */
 function get_module_metadata($course, $modnames, $sectionreturn = null) {
-    global $CFG, $OUTPUT;
+    global $OUTPUT;
 
     // get_module_metadata will be called once per section on the page and courses may show
     // different modules to one another
@@ -1246,82 +1246,107 @@ function get_module_metadata($course, $modnames, $sectionreturn = null) {
         }
         if (isset($modlist[$course->id][$modname])) {
             // This module is already cached
-            $return[$modname] = $modlist[$course->id][$modname];
+            $return += $modlist[$course->id][$modname];
+            continue;
+        }
+        $modlist[$course->id][$modname] = array();
+
+        // Create an object for a default representation of this module type in the activity chooser. It will be used
+        // if module does not implement callback get_shortcuts() and it will also be passed to the callback if it exists.
+        $defaultmodule = new stdClass();
+        $defaultmodule->title = $modnamestr;
+        $defaultmodule->name = $modname;
+        $defaultmodule->link = new moodle_url($urlbase, array('add' => $modname));
+        $defaultmodule->icon = $OUTPUT->pix_icon('icon', '', $defaultmodule->name, array('class' => 'icon'));
+        $sm = get_string_manager();
+        if ($sm->string_exists('modulename_help', $modname)) {
+            $defaultmodule->help = get_string('modulename_help', $modname);
+            if ($sm->string_exists('modulename_link', $modname)) {  // Link to further info in Moodle docs.
+                $link = get_string('modulename_link', $modname);
+                $linktext = get_string('morehelp');
+                $defaultmodule->help .= html_writer::tag('div',
+                    $OUTPUT->doc_link($link, $linktext, true), array('class' => 'helpdoclink'));
+            }
+        }
+        $defaultmodule->archetype = plugin_supports('mod', $modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
+
+        // Legacy support for callback get_types() - do not use any more, use get_shortcuts() instead!
+        $typescallbackexists = component_callback_exists($modname, 'get_types');
+
+        // Each module can implement callback modulename_get_shortcuts() in its lib.php and return the list
+        // of elements to be added to activity chooser.
+        $items = component_callback($modname, 'get_shortcuts', array($defaultmodule), null);
+        if ($items !== null) {
+            foreach ($items as $item) {
+                // Add all items to the return array. All items must have different links, use them as a key in the return array.
+                if (!isset($item->archetype)) {
+                    $item->archetype = $defaultmodule->archetype;
+                }
+                if (!isset($item->icon)) {
+                    $item->icon = $defaultmodule->icon;
+                }
+                // If plugin returned the only one item with the same link as default item - cache it as $modname,
+                // otherwise append the link url to the module name.
+                $item->name = (count($items) == 1 &&
+                    $item->link->out() === $defaultmodule->link->out()) ? $modname : $modname . ':' . $item->link;
+                $modlist[$course->id][$modname][$item->name] = $item;
+            }
+            $return += $modlist[$course->id][$modname];
+            if ($typescallbackexists) {
+                debugging('Both callbacks get_shortcuts() and get_types() are found in module ' . $modname .
+                    '. Callback get_types() will be completely ignored', DEBUG_DEVELOPER);
+            }
+            // If get_shortcuts() callback is defined, the default module action is not added.
+            // It is a responsibility of the callback to add it to the return value unless it is not needed.
             continue;
         }
 
-        // Include the module lib
-        $libfile = "$CFG->dirroot/mod/$modname/lib.php";
-        if (!file_exists($libfile)) {
-            continue;
+        if ($typescallbackexists) {
+            debugging('Callback get_types() is found in module ' . $modname . ', this functionality is deprecated, ' .
+                'please use callback get_shortcuts() instead', DEBUG_DEVELOPER);
         }
-        include_once($libfile);
-
-        // NOTE: this is legacy stuff, module subtypes are very strongly discouraged!!
-        $gettypesfunc =  $modname.'_get_types';
-        $types = MOD_SUBTYPE_NO_CHILDREN;
-        if (function_exists($gettypesfunc)) {
-            $types = $gettypesfunc();
-        }
+        $types = component_callback($modname, 'get_types', array(), MOD_SUBTYPE_NO_CHILDREN);
         if ($types !== MOD_SUBTYPE_NO_CHILDREN) {
+            // Legacy support for deprecated callback get_types(). To be removed in Moodle 3.5. TODO MDL-53697.
             if (is_array($types) && count($types) > 0) {
-                $group = new stdClass();
-                $group->name = $modname;
-                $group->icon = $OUTPUT->pix_icon('icon', '', $modname, array('class' => 'icon'));
+                $grouptitle = $modnamestr;
+                $icon = $OUTPUT->pix_icon('icon', '', $modname, array('class' => 'icon'));
                 foreach($types as $type) {
                     if ($type->typestr === '--') {
                         continue;
                     }
                     if (strpos($type->typestr, '--') === 0) {
-                        $group->title = str_replace('--', '', $type->typestr);
+                        $grouptitle = str_replace('--', '', $type->typestr);
                         continue;
                     }
-                    // Set the Sub Type metadata
+                    // Set the Sub Type metadata.
                     $subtype = new stdClass();
-                    $subtype->title = $type->typestr;
+                    $subtype->title = get_string('activitytypetitle', '',
+                        (object)['activity' => $grouptitle, 'type' => $type->typestr]);
                     $subtype->type = str_replace('&amp;', '&', $type->type);
-                    $subtype->name = preg_replace('/.*type=/', '', $subtype->type);
+                    $typename = preg_replace('/.*type=/', '', $subtype->type);
                     $subtype->archetype = $type->modclass;
-
-                    // The group archetype should match the subtype archetypes and all subtypes
-                    // should have the same archetype
-                    $group->archetype = $subtype->archetype;
 
                     if (!empty($type->help)) {
                         $subtype->help = $type->help;
                     } else if (get_string_manager()->string_exists('help' . $subtype->name, $modname)) {
                         $subtype->help = get_string('help' . $subtype->name, $modname);
                     }
-                    $subtype->link = new moodle_url($urlbase, array('add' => $modname, 'type' => $subtype->name));
-                    $group->types[] = $subtype;
+                    $subtype->link = new moodle_url($urlbase, array('add' => $modname, 'type' => $typename));
+                    $subtype->name = $modname . ':' . $subtype->link;
+                    $subtype->icon = $icon;
+                    $modlist[$course->id][$modname][$subtype->name] = $subtype;
                 }
-                $modlist[$course->id][$modname] = $group;
+                $return += $modlist[$course->id][$modname];
             }
         } else {
-            $module = new stdClass();
-            $module->title = $modnamestr;
-            $module->name = $modname;
-            $module->link = new moodle_url($urlbase, array('add' => $modname));
-            $module->icon = $OUTPUT->pix_icon('icon', '', $module->name, array('class' => 'icon'));
-            $sm = get_string_manager();
-            if ($sm->string_exists('modulename_help', $modname)) {
-                $module->help = get_string('modulename_help', $modname);
-                if ($sm->string_exists('modulename_link', $modname)) {  // Link to further info in Moodle docs
-                    $link = get_string('modulename_link', $modname);
-                    $linktext = get_string('morehelp');
-                    $module->help .= html_writer::tag('div', $OUTPUT->doc_link($link, $linktext, true), array('class' => 'helpdoclink'));
-                }
-            }
-            $module->archetype = plugin_supports('mod', $modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
-            $modlist[$course->id][$modname] = $module;
-        }
-        if (isset($modlist[$course->id][$modname])) {
-            $return[$modname] = $modlist[$course->id][$modname];
-        } else {
-            debugging("Invalid module metadata configuration for {$modname}");
+            // Neither get_shortcuts() nor get_types() callbacks found, use the default item for the activity chooser.
+            $modlist[$course->id][$modname][$modname] = $defaultmodule;
+            $return[$modname] = $defaultmodule;
         }
     }
 
+    core_collator::asort_objects_by_property($return, 'title');
     return $return;
 }
 
