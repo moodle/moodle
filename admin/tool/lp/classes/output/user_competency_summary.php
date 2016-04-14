@@ -74,6 +74,7 @@ class user_competency_summary implements renderable, templatable {
         $related += array(
             'usercompetency' => $this->usercompetency,
             'usercompetencyplan' => null,
+            'usercompetencycourse' => null,
             'evidence' => api::list_evidence($this->usercompetency->get_userid(), $this->usercompetency->get_competencyid()),
             'relatedcompetencies' => api::list_related_competencies($this->usercompetency->get_competencyid())
         );
