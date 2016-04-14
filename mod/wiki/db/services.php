@@ -105,5 +105,14 @@ $functions = array(
         'type'          => 'write',
         'capabilities'  => 'mod/wiki:editpage',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+
+    'mod_wiki_edit_page' => array(
+        'classname'     => 'mod_wiki_external',
+        'methodname'    => 'edit_page',
+        'description'   => 'Save the contents of a page.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/wiki:editpage',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     )
 );

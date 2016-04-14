@@ -1075,4 +1075,109 @@ class mod_wiki_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for edit_page.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function edit_page_parameters() {
+        return new external_function_parameters (
+            array(
+                'pageid' => new external_value(PARAM_INT, 'Page ID.'),
+                'content' => new external_value(PARAM_RAW, 'Page contents.'),
+                'section' => new external_value(PARAM_TEXT, 'Section page title.', VALUE_DEFAULT, null)
+            )
+        );
+    }
+
+    /**
+     * Edit a page contents.
+     *
+     * @param int $pageid The page ID.
+     * @param string $content Page contents.
+     * @param int $section Section to be edited.
+     * @return array of warnings and page data.
+     * @since Moodle 3.1
+     */
+    public static function edit_page($pageid, $content, $section = null) {
+        global $USER;
+
+        $params = self::validate_parameters(self::edit_page_parameters(),
+                                            array(
+                                                'pageid' => $pageid,
+                                                'content' => $content,
+                                                'section' => $section
+                                            )
+            );
+        $warnings = array();
+
+        // Get wiki page.
+        if (!$page = wiki_get_page($params['pageid'])) {
+            throw new moodle_exception('incorrectpageid', 'wiki');
+        }
+
+        // Get wiki instance.
+        if (!$wiki = wiki_get_wiki_from_pageid($params['pageid'])) {
+            throw new moodle_exception('incorrectwikiid', 'wiki');
+        }
+
+        // Get subwiki instance.
+        if (!$subwiki = wiki_get_subwiki($page->subwikiid)) {
+            throw new moodle_exception('incorrectsubwikiid', 'wiki');
+        }
+
+        // Permission validation.
+        $cm = get_coursemodule_from_instance('wiki', $wiki->id, $wiki->course);
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        if (!wiki_user_can_edit($subwiki)) {
+            throw new moodle_exception('cannoteditpage', 'wiki');
+        }
+
+        if (wiki_is_page_section_locked($page->id, $USER->id, $params['section'])) {
+            throw new moodle_exception('pageislocked', 'wiki');
+        }
+
+        // Save content.
+        if (!is_null($params['section'])) {
+            $version = wiki_get_current_version($page->id);
+            $content = wiki_parser_proxy::get_section($version->content, $version->contentformat, $params['section'], false);
+            if (!$content) {
+                throw new moodle_exception('invalidsection', 'wiki');
+            }
+
+            $save = wiki_save_section($page, $params['section'], $params['content'], $USER->id);
+        } else {
+            $save = wiki_save_page($page, $params['content'], $USER->id);
+        }
+
+        wiki_delete_locks($page->id, $USER->id, $params['section']);
+
+        if (!$save) {
+            throw new moodle_exception('savingerror', 'wiki');
+        }
+
+        $result = array();
+        $result['pageid'] = $page->id;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the edit_page return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function edit_page_returns() {
+        return new external_single_structure(
+            array(
+                'pageid' => new external_value(PARAM_INT, 'Edited page id.'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }

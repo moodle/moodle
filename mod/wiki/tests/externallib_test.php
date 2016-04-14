@@ -1239,4 +1239,68 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
 
     }
 
+    /**
+     * Test edit_page. We won't test all the possible cases because that's already
+     * done in the tests for wiki_save_section / wiki_save_page.
+     */
+    public function test_edit_page() {
+
+        $this->create_individual_wikis_with_groups();
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        $newpage = $this->getDataGenerator()->get_plugin_generator('mod_wiki')->create_page($this->wikisepind,
+            array('group' => $this->group1->id, 'content' => 'Test'));
+
+        // Test edit whole page.
+        $sectioncontent = '<h1>Title1</h1>Text inside section';
+        $newpagecontent = $sectioncontent.'<h1>Title2</h1>Text inside section';
+
+        $result = mod_wiki_external::edit_page($newpage->id, $newpagecontent);
+        $result = external_api::clean_returnvalue(mod_wiki_external::edit_page_returns(), $result);
+        $this->assertInternalType('int', $result['pageid']);
+
+        $version = wiki_get_current_version($result['pageid']);
+        $this->assertEquals($newpagecontent, $version->content);
+
+        // Test edit section.
+        $newsectioncontent = '<h1>Title2</h1>New test2';
+        $section = 'Title2';
+
+        $result = mod_wiki_external::edit_page($newpage->id, $newsectioncontent, $section);
+        $result = external_api::clean_returnvalue(mod_wiki_external::edit_page_returns(), $result);
+        $this->assertInternalType('int', $result['pageid']);
+
+        $expected = $sectioncontent . $newsectioncontent;
+
+        $version = wiki_get_current_version($result['pageid']);
+        $this->assertEquals($expected, $version->content);
+
+        // Test locked section.
+        $newsectioncontent = '<h1>Title2</h1>New test2';
+        $section = 'Title2';
+
+        try {
+            // Using user 1 to avoid other users to edit.
+            wiki_set_lock($newpage->id, 1, $section, true);
+            mod_wiki_external::edit_page($newpage->id, $newsectioncontent, $section);
+            $this->fail('Exception expected due to locked section');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('pageislocked', $e->errorcode);
+        }
+
+        // Test edit non existing section.
+        $newsectioncontent = '<h1>Title3</h1>New test3';
+        $section = 'Title3';
+
+        try {
+            mod_wiki_external::edit_page($newpage->id, $newsectioncontent, $section);
+            $this->fail('Exception expected due to non existing section in the page.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('invalidsection', $e->errorcode);
+        }
+
+    }
+
 }
