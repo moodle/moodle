@@ -202,8 +202,16 @@ class external_api {
         $response = array();
 
         try {
-
-            $PAGE = new moodle_page();
+            // Taken straight from from setup.php.
+            if (!empty($CFG->moodlepageclass)) {
+                if (!empty($CFG->moodlepageclassfile)) {
+                    require_once($CFG->moodlepageclassfile);
+                }
+                $classname = $CFG->moodlepageclass;
+            } else {
+                $classname = 'moodle_page';
+            }
+            $PAGE = new $classname();
             $COURSE = clone($SITE);
 
             if ($ajaxonly && !$externalfunctioninfo->allowed_from_ajax) {

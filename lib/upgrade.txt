@@ -7,6 +7,7 @@ information provided here is intended especially for developers.
   only to courses the user is enrolled in, and are visible to them.
 * External functions that are not calling external_api::validate_context are buggy and will now generate
   exceptions. Previously they were only generating warnings in the webserver error log.
+  See https://docs.moodle.org/dev/External_functions_API#Security
 * The moodle/blog:associatecourse and moodle/blog:associatemodule capabilities has been removed.
 * The following functions has been finally deprecated and can not be used any more:
     - profile_display_badges()

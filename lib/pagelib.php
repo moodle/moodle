@@ -1568,6 +1568,8 @@ class moodle_page {
         $this->_theme = null;
         $this->_wherethemewasinitialised = null;
         $this->_course = null;
+        $this->_cm = null;
+        $this->_module = null;
         $this->_context = null;
     }
 
