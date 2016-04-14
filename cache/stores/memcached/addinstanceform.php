@@ -42,6 +42,8 @@ class cachestore_memcached_addinstance_form extends cachestore_addinstance_form 
      */
     protected function configuration_definition() {
         $form = $this->_form;
+        $version = phpversion('memcached');
+        $hasrequiredversion = ($version || version_compare($version, cachestore_memcached::REQUIRED_VERSION, '>='));
 
         $form->addElement('textarea', 'servers', get_string('servers', 'cachestore_memcached'), array('cols' => 75, 'rows' => 5));
         $form->addHelpButton('servers', 'servers', 'cachestore_memcached');
@@ -75,6 +77,15 @@ class cachestore_memcached_addinstance_form extends cachestore_addinstance_form 
         $form->setDefault('bufferwrites', 0);
         $form->setType('bufferwrites', PARAM_BOOL);
 
+        if ($hasrequiredversion) {
+            // Only show this option if we have the required version of memcache extension installed.
+            // If it's not installed then this option does nothing, so there is no point in displaying it.
+            $form->addElement('selectyesno', 'isshared', get_string('isshared', 'cachestore_memcached'));
+            $form->addHelpButton('isshared', 'isshared', 'cachestore_memcached');
+            $form->setDefault('isshared', 0);
+            $form->setType('isshared', PARAM_BOOL);
+        }
+
         $form->addElement('header', 'clusteredheader', get_string('clustered', 'cachestore_memcached'));
 
         $form->addElement('checkbox', 'clustered', get_string('clustered', 'cachestore_memcached'));
@@ -87,8 +98,7 @@ class cachestore_memcached_addinstance_form extends cachestore_addinstance_form 
         $form->disabledIf('setservers', 'clustered');
         $form->setType('setservers', PARAM_RAW);
 
-        $version = phpversion('memcached');
-        if (!$version || !version_compare($version, cachestore_memcached::REQUIRED_VERSION, '>=')) {
+        if (!$hasrequiredversion) {
             $form->addElement('header', 'upgradenotice', get_string('notice', 'cachestore_memcached'));
             $form->setExpanded('upgradenotice');
             $form->addElement('html', nl2br(get_string('upgrade200recommended', 'cachestore_memcached')));

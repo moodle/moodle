@@ -124,11 +124,11 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
     protected $candeletemulti = false;
 
     /**
-     * True if Memcached::getAllKeys can be used, false otherwise.
+     * True if the memcached server is shared, false otherwise.
      * This required extension version 2.0.0 or greater.
      * @var bool
      */
-    protected $cangetallkeys = false;
+    protected $isshared = false;
 
     /**
      * Constructs the store instance.
@@ -222,9 +222,12 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
             }
         }
 
+        if (isset($configuration['isshared'])) {
+            $this->isshared = $configuration['isshared'];
+        }
+
         $version = phpversion('memcached');
         $this->candeletemulti = ($version && version_compare($version, self::REQUIRED_VERSION, '>='));
-        $this->cangetallkeys = $this->candeletemulti;
 
         // Test the connection to the main connection.
         $this->isready = @$this->connection->set("ping", 'ping', 1);
@@ -469,9 +472,13 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
      */
     public function purge() {
         if ($this->isready) {
+            // Only use delete multi if we have the correct extension installed and if the memcached
+            // server is shared (flushing the cache is quicker otherwise).
+            $candeletemulti = ($this->candeletemulti && $this->isshared);
+
             if ($this->clustered) {
                 foreach ($this->setconnections as $connection) {
-                    if ($this->candeletemulti && $this->cangetallkeys) {
+                    if ($candeletemulti) {
                         $keys = self::get_prefixed_keys($connection, $this->prefix);
                         $connection->deleteMulti($keys);
                     } else {
@@ -479,7 +486,7 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
                         $connection->flush();
                     }
                 }
-            } else if ($this->candeletemulti && $this->cangetallkeys) {
+            } else if ($candeletemulti) {
                 $keys = self::get_prefixed_keys($this->connection, $this->prefix);
                 $this->connection->deleteMulti($keys);
             } else {
@@ -495,7 +502,6 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
      * Returns all of the keys in the given connection that belong to this cache store instance.
      *
      * Requires php memcached extension version 2.0.0 or greater.
-     * You should always check $this->cangetallkeys before calling this.
      *
      * @param Memcached $connection
      * @param string $prefix
@@ -588,6 +594,11 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
             }
         }
 
+        $isshared = false;
+        if (isset($data->isshared)) {
+            $isshared = $data->isshared;
+        }
+
         return array(
             'servers' => $servers,
             'compression' => $data->compression,
@@ -596,7 +607,8 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
             'hash' => $data->hash,
             'bufferwrites' => $data->bufferwrites,
             'clustered' => $clustered,
-            'setservers' => $setservers
+            'setservers' => $setservers,
+            'isshared' => $isshared
         );
     }
 
@@ -639,6 +651,9 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
                 $servers[] = join(":", $server);
             }
             $data['setservers'] = join("\n", $servers);
+        }
+        if (isset($config['isshared'])) {
+            $data['isshared'] = $config['isshared'];
         }
         $editform->set_data($data);
     }

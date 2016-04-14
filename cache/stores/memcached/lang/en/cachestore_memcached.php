@@ -46,6 +46,13 @@ $string['hash_fnv1_32'] = 'FNV1_32';
 $string['hash_fnv1a_32'] = 'FNV1A_32';
 $string['hash_hsieh'] = 'Hsieh';
 $string['hash_murmur'] = 'Murmur';
+$string['isshared'] = 'Shared cache';
+$string['isshared_help'] = "Is your memcached server also being used by other applications?
+
+If the cache is shared by other applications then each key will be deleted individually to ensure that only data owned by this application is purged (leaving external application cache data unchanged). This can result in reduced performance when purging the cache, depending on your server configuration.
+
+If you are running a dedicated cache for this application then the entire cache can safely be flushed without any risk of destroying another application's cache data. This should result in increased performance when purging the cache.
+";
 $string['notice'] = 'Notice';
 $string['pluginname'] = 'Memcached';
 $string['prefix'] = 'Prefix key';
