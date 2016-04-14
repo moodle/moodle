@@ -72,7 +72,7 @@ class template_statistics {
         $this->plancount = api::count_plans_for_template($template, 0);
         $this->completedplancount = api::count_plans_for_template($template, plan::STATUS_COMPLETE);
 
-        $this->usercompetencyplancount = api::count_user_competency_plans_for_template($template, false);
+        $this->usercompetencyplancount = api::count_user_competency_plans_for_template($template);
         $this->proficientusercompetencyplancount = api::count_user_competency_plans_for_template($template, true);
 
         $this->leastproficientcompetencies = api::get_least_proficient_competencies_for_template($template, 0, 3);
