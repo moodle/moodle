@@ -1127,4 +1127,44 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($expectedfile, $result['files'][0]);
     }
 
+
+    /**
+     * Test get_page_for_editing. We won't test all the possible cases because that's already
+     * done in the tests for wiki_parser_proxy::get_section.
+     */
+    public function test_get_page_for_editing() {
+
+        $this->create_individual_wikis_with_groups();
+
+        $sectioncontent = '<h1>Title1</h1>Text inside section';
+        $pagecontent = $sectioncontent.'<h1>Title2</h1>Text inside section';
+        $newpage = $this->getDataGenerator()->get_plugin_generator('mod_wiki')->create_page(
+                                $this->wiki, array('content' => $pagecontent));
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Set expected result: Full Page content.
+        $expected = array(
+            'content' => $pagecontent,
+            'contentformat' => 'html',
+            'version' => '1'
+        );
+
+        $result = mod_wiki_external::get_page_for_editing($newpage->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_page_for_editing_returns(), $result);
+        $this->assertEquals($expected, $result['pagesection']);
+
+        // Set expected result: Section Page content.
+        $expected = array(
+            'content' => $sectioncontent,
+            'contentformat' => 'html',
+            'version' => '1'
+        );
+
+        $result = mod_wiki_external::get_page_for_editing($newpage->id, 'Title1');
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_page_for_editing_returns(), $result);
+        $this->assertEquals($expected, $result['pagesection']);
+    }
+
 }

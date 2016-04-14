@@ -87,5 +87,14 @@ $functions = array(
         'type'          => 'read',
         'capabilities'  => 'mod/wiki:viewpage',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+
+    'mod_wiki_get_page_for_editing' => array(
+        'classname'     => 'mod_wiki_external',
+        'methodname'    => 'get_page_for_editing',
+        'description'   => 'Locks and retrieves info of page-section to be edited.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/wiki:editpage',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     )
 );
