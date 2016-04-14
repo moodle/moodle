@@ -39,6 +39,7 @@ class search extends \moodleform {
         global $CFG;
 
         $mform =& $this->_form;
+        $mform->disable_form_change_checker();
         $mform->addElement('header', 'search', get_string('search', 'search'));
 
         // Help info depends on the selected search engine.
