@@ -110,7 +110,7 @@
     <h4>{{#str}}unmappedin, tool_lpmigrate, {{frameworkfrom.shortname}}{{/str}}</h4>
     <ul>
         {{#unmappedfrom}}
-            <li><a href="#" data-id="{{id}}" data-action="competency-dialogue">{{shortname}}</a> <em>{{idnumber}}</em></li>
+            <li><a href="#" data-id="{{id}}" data-action="competency-dialogue" data-includecourses="true">{{shortname}}</a> <em>{{idnumber}}</em></li>
         {{/unmappedfrom}}
     </ul>
     {{/hasunmappedfrom}}
@@ -119,7 +119,7 @@
     <h4>{{#str}}unmappedin, tool_lpmigrate, {{frameworkto.shortname}}{{/str}}</h4>
     <ul>
         {{#unmappedto}}
-            <li><a href="#" data-id="{{id}}" data-action="competency-dialogue">{{shortname}}</a> <em>{{idnumber}}</em></li>
+            <li><a href="#" data-id="{{id}}" data-action="competency-dialogue" data-includecourses="true">{{shortname}}</a> <em>{{idnumber}}</em></li>
         {{/unmappedto}}
     </ul>
     {{/hasunmappedto}}
@@ -131,7 +131,7 @@
             <li>
                 <p>
                     {{message}}<br>
-                    <small>{{course}} {{#cm}} - {{cm}} {{/cm}} - <a href="#" data-id="{{competencyid}}" data-action="competency-dialogue">{{competency}}</a></small>
+                    <small>{{course}} {{#cm}} - {{cm}} {{/cm}} - <a href="#" data-id="{{competencyid}}" data-action="competency-dialogue" data-includecourses="true">{{competency}}</a></small>
                 </p>
             </li>
         {{/warnings}}
@@ -145,7 +145,7 @@
             <li>
                 <p>
                     {{message}}<br>
-                    <small>{{course}} {{#cm}} - {{cm}} {{/cm}} - <a href="#" data-id="{{competencyid}}" data-action="competency-dialogue">{{competency}}</a></small>
+                    <small>{{course}} {{#cm}} - {{cm}} {{/cm}} - <a href="#" data-id="{{competencyid}}" data-action="competency-dialogue" data-includecourses="true">{{competency}}</a></small>
                 </p>
             </li>
         {{/errors}}
@@ -159,8 +159,7 @@
     </p>
 </div>
 {{#js}}
-require(['tool_lp/competencydialogue'], function(CompDialogue) {
-    var cd = new CompDialogue({includecourses: true, includerelated: true});
-    cd.watch('[data-region="migration-results"]');
-})
+require(['tool_lp/competencydialogue'], function(Compdialogue) {
+    Compdialogue.init();
+});
 {{/js}}

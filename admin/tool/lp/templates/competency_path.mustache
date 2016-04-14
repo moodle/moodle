@@ -49,7 +49,6 @@
 </nav>
 {{#js}}
 require(['tool_lp/competencydialogue'], function(Compdialogue) {
-    var competencydialogue = new Compdialogue({includerelated : true});
-    competencydialogue.watch('[id="competency-path-{{uniqid}}"]');
+    Compdialogue.init();
 });
 {{/js}}

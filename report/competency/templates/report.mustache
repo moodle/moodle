@@ -51,8 +51,7 @@
 </div>
 {{#js}}
 require(['tool_lp/competencydialogue'], function(Compdialogue) {
-    var competencydialogue = new Compdialogue({includerelated : true});
-    competencydialogue.watch('[data-region="competency-breakdown-report"]');
+    Compdialogue.init();
 });
 require(['report_competency/grading_popup'], function(Popup) {
     (new Popup('[data-region=competency-breakdown-report]', '[data-user-competency=true]'));
