@@ -157,6 +157,7 @@ class core_tag_external_testcase extends externallib_advanced_testcase {
 
         $this->resetAfterTest(true);
         $tag = $this->getDataGenerator()->create_tag();
+        $this->setUser($this->getDataGenerator()->create_user());
 
         // Call service for core_tag component without necessary permissions.
         try {

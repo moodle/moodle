@@ -86,15 +86,15 @@ class course_module_name extends \core\output\inplace_editable {
      * @return static
      */
     public static function update($itemid, $newvalue) {
-        list($course, $cm) = get_course_and_cm_from_cmid($itemid);
-        $context = context_module::instance($cm->id);
+        global $PAGE;
+        $context = context_module::instance($itemid);
         // Check access.
-        require_login($course, false, $cm, true, true);
+        \external_api::validate_context($context);
         require_capability('moodle/course:manageactivities', $context);
         // Update value.
-        set_coursemodule_name($cm->id, $newvalue);
+        set_coursemodule_name($PAGE->cm->id, $newvalue);
         // Return instance.
-        $cm = get_fast_modinfo($course)->get_cm($cm->id);
+        $cm = get_fast_modinfo($PAGE->course)->get_cm($PAGE->cm->id);
         return new static($cm, true);
     }
 }

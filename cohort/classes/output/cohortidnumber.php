@@ -61,6 +61,7 @@ class cohortidnumber extends \core\output\inplace_editable {
         global $DB;
         $cohort = $DB->get_record('cohort', array('id' => $cohortid), '*', MUST_EXIST);
         $cohortcontext = \context::instance_by_id($cohort->contextid);
+        \external_api::validate_context($cohortcontext);
         require_capability('moodle/cohort:manage', $cohortcontext);
         $record = (object)array('id' => $cohort->id, 'idnumber' => $newvalue, 'contextid' => $cohort->contextid);
         cohort_update_cohort($record);

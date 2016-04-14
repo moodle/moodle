@@ -1089,8 +1089,8 @@ abstract class format_base {
      */
     public function inplace_editable_update_section_name($section, $itemtype, $newvalue) {
         if ($itemtype === 'sectionname' || $itemtype === 'sectionnamenl') {
-            require_login($section->course, false, null, true, true);
             $context = context_course::instance($section->course);
+            external_api::validate_context($context);
             require_capability('moodle/course:update', $context);
 
             $newtitle = clean_param($newvalue, PARAM_TEXT);

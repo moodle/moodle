@@ -41,66 +41,15 @@ if ($requests === null) {
 }
 $responses = array();
 
-
 foreach ($requests as $request) {
     $response = array();
     $methodname = clean_param($request['methodname'], PARAM_ALPHANUMEXT);
     $index = clean_param($request['index'], PARAM_INT);
     $args = $request['args'];
 
-    try {
-        $externalfunctioninfo = external_function_info($methodname);
-
-        if (!$externalfunctioninfo->allowed_from_ajax) {
-            error_log('This external function is not available to ajax. Failed to call "' . $methodname . '"');
-            throw new moodle_exception('servicenotavailable', 'webservice');
-        }
-
-        // Do not allow access to write or delete webservices as a public user.
-        if ($externalfunctioninfo->loginrequired) {
-            if (defined('NO_MOODLE_COOKIES') && NO_MOODLE_COOKIES) {
-                error_log('Set "loginrequired" to false in db/service.php when calling entry point service-nologin.php. ' .
-                          'Failed to call "' . $methodname . '"');
-                throw new moodle_exception('servicenotavailable', 'webservice');
-            }
-            if (!isloggedin()) {
-                error_log('This external function is not available to public users. Failed to call "' . $methodname . '"');
-                throw new moodle_exception('servicenotavailable', 'webservice');
-            } else {
-                require_sesskey();
-            }
-        }
-
-        // Validate params, this also sorts the params properly, we need the correct order in the next part.
-        $callable = array($externalfunctioninfo->classname, 'validate_parameters');
-        $params = call_user_func($callable,
-                                 $externalfunctioninfo->parameters_desc,
-                                 $args);
-
-        // Execute - gulp!
-        $callable = array($externalfunctioninfo->classname, $externalfunctioninfo->methodname);
-        $result = call_user_func_array($callable,
-                                       array_values($params));
-
-        // Validate the return parameters.
-        if ($externalfunctioninfo->returns_desc !== null) {
-            $callable = array($externalfunctioninfo->classname, 'clean_returnvalue');
-            $result = call_user_func($callable, $externalfunctioninfo->returns_desc, $result);
-        }
-
-        $response['error'] = false;
-        $response['data'] = $result;
-        $responses[$index] = $response;
-    } catch (Exception $e) {
-        $jsonexception = get_exception_info($e);
-        unset($jsonexception->a);
-        if (!debugging('', DEBUG_DEVELOPER)) {
-            unset($jsonexception->debuginfo);
-            unset($jsonexception->backtrace);
-        }
-        $response['error'] = true;
-        $response['exception'] = $jsonexception;
-        $responses[$index] = $response;
+    $response = external_api::call_external_function($methodname, $args, true);
+    $responses[$index] = $response;
+    if ($response['error']) {
         // Do not process the remaining requests.
         break;
     }

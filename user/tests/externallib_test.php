@@ -818,6 +818,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $device2['pushid'] = "0987654321";
         $device2['appid'] = "other.app.com";
 
+        $this->setAdminUser();
         // Create a user device using the external API function.
         core_user_external::add_user_device($device['appid'], $device['name'], $device['model'], $device['platform'],
                                             $device['version'], $device['pushid'], $device['uuid']);

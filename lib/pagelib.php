@@ -981,7 +981,6 @@ class moodle_page {
             }
             return;
         }
-
         // Ideally we should set context only once.
         if (isset($this->_context) && $context->id !== $this->_context->id) {
             $current = $this->_context->contextlevel;
@@ -993,11 +992,7 @@ class moodle_page {
             } else {
                 // We do not want devs to do weird switching of context levels on the fly because we might have used
                 // the context already such as in text filter in page title.
-                // This is explicitly allowed for webservices though which may
-                // call "external_api::validate_context on many contexts in a single request.
-                if (!WS_SERVER) {
-                    debugging("Coding problem: unsupported modification of PAGE->context from {$current} to {$context->contextlevel}");
-                }
+                debugging("Coding problem: unsupported modification of PAGE->context from {$current} to {$context->contextlevel}");
             }
         }
 
@@ -1558,6 +1553,22 @@ class moodle_page {
         }
 
         $this->_wherethemewasinitialised = debug_backtrace();
+    }
+
+    /**
+     * Reset the theme and output for a new context. This only makes sense from
+     * external::validate_context(). Do not cheat.
+     *
+     * @return string the name of the theme that should be used on this page.
+     */
+    public function reset_theme_and_output() {
+        global $COURSE, $SITE;
+
+        $COURSE = clone($SITE);
+        $this->_theme = null;
+        $this->_wherethemewasinitialised = null;
+        $this->_course = null;
+        $this->_context = null;
     }
 
     /**
