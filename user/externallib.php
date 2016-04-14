@@ -536,6 +536,9 @@ class core_user_external extends external_api {
         // Retrieve the users.
         $users = $DB->get_records_list('user', $field, $cleanedvalues, 'id');
 
+        $context = context_system::instance();
+        self::validate_context($context);
+
         // Finally retrieve each users information.
         $returnedusers = array();
         foreach ($users as $user) {
