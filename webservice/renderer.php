@@ -216,7 +216,7 @@ class core_webservice_renderer extends plugin_renderer_base {
 
             $anydeprecated = false;
             foreach ($functions as $function) {
-                $function = external_function_info($function);
+                $function = external_api::external_function_info($function);
 
                 if (!empty($function->deprecated)) {
                     $anydeprecated = true;

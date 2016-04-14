@@ -1246,7 +1246,7 @@ abstract class webservice_base_server extends webservice_server {
         }
 
         // function must exist
-        $function = external_function_info($this->functionname);
+        $function = external_api::external_function_info($this->functionname);
 
         if ($this->restricted_serviceid) {
             $params = array('sid1'=>$this->restricted_serviceid, 'sid2'=>$this->restricted_serviceid);
@@ -1475,7 +1475,7 @@ EOD;
      * @throws moodle_exception
      */
     protected function get_virtual_method_code($function) {
-        $function = external_function_info($function);
+        $function = external_api::external_function_info($function);
 
         // Parameters and their defaults for the method signature.
         $paramanddefaults = array();

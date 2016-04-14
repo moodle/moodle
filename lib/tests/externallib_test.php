@@ -317,7 +317,7 @@ class core_externallib_testcase extends advanced_testcase {
      * @dataProvider all_external_info_provider
      */
     public function test_all_external_info($f) {
-        $desc = external_function_info($f);
+        $desc = external_api::external_function_info($f);
         $this->assertNotEmpty($desc->name);
         $this->assertNotEmpty($desc->classname);
         $this->assertNotEmpty($desc->methodname);

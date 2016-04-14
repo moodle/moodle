@@ -4473,3 +4473,20 @@ function site_scale_used($scaleid, &$courses) {
     }
     return $return;
 }
+
+/**
+ * Returns detailed function information
+ *
+ * @deprecated since Moodle 3.1
+ * @param string|object $function name of external function or record from external_function
+ * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
+ *                        MUST_EXIST means throw exception if no record or multiple records found
+ * @return stdClass description or false if not found or exception thrown
+ * @since Moodle 2.0
+ */
+function external_function_info($function, $strictness=MUST_EXIST) {
+    debugging('external_function_info() is deprecated. Please use external_api::external_function_info() instead.',
+              DEBUG_DEVELOPER);
+    return external_api::external_function_info($function, $strictness);
+}
+

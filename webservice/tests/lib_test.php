@@ -121,7 +121,7 @@ class webservice_test extends advanced_testcase {
         // Check the contents of service methods.
         foreach ($servicemethods as $method) {
             // Get the external function info.
-            $function = external_function_info($method->name);
+            $function = external_api::external_function_info($method->name);
 
             // Check input params.
             foreach ($function->parameters_desc->keys as $name => $keydesc) {
