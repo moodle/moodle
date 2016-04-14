@@ -96,5 +96,14 @@ $functions = array(
         'type'          => 'write',
         'capabilities'  => 'mod/wiki:editpage',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+
+    'mod_wiki_new_page' => array(
+        'classname'     => 'mod_wiki_external',
+        'methodname'    => 'new_page',
+        'description'   => 'Create a new page in a subwiki.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/wiki:editpage',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     )
 );

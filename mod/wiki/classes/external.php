@@ -919,4 +919,160 @@ class mod_wiki_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for new_page.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function new_page_parameters() {
+        return new external_function_parameters (
+            array(
+                'title' => new external_value(PARAM_TEXT, 'New page title.'),
+                'content' => new external_value(PARAM_RAW, 'Page contents.'),
+                'contentformat' => new external_value(PARAM_TEXT, 'Page contents format. If an invalid format is provided, default
+                    wiki format is used.', VALUE_DEFAULT, null),
+                'subwikiid' => new external_value(PARAM_INT, 'Page\'s subwiki ID.', VALUE_DEFAULT, null),
+                'wikiid' => new external_value(PARAM_INT, 'Page\'s wiki ID. Used if subwiki does not exists.', VALUE_DEFAULT,
+                    null),
+                'userid' => new external_value(PARAM_INT, 'Subwiki\'s user ID. Used if subwiki does not exists.', VALUE_DEFAULT,
+                    null),
+                'groupid' => new external_value(PARAM_INT, 'Subwiki\'s group ID. Used if subwiki does not exists.', VALUE_DEFAULT,
+                    null)
+            )
+        );
+    }
+
+    /**
+     * Creates a new page.
+     *
+     * @param string $title New page title.
+     * @param string $content Page contents.
+     * @param int $contentformat Page contents format. If an invalid format is provided, default wiki format is used.
+     * @param int $subwikiid The Subwiki ID where to store the page.
+     * @param int $wikiid Page\'s wiki ID. Used if subwiki does not exists.
+     * @param int $userid Subwiki\'s user ID. Used if subwiki does not exists.
+     * @param int $groupid Subwiki\'s group ID. Used if subwiki does not exists.
+     * @return array of warnings and page data.
+     * @since Moodle 3.1
+     */
+    public static function new_page($title, $content, $contentformat = null, $subwikiid = null, $wikiid = null, $userid = null,
+        $groupid = null) {
+        global $USER;
+
+        $params = self::validate_parameters(self::new_page_parameters(),
+                                            array(
+                                                'title' => $title,
+                                                'content' => $content,
+                                                'contentformat' => $contentformat,
+                                                'subwikiid' => $subwikiid,
+                                                'wikiid' => $wikiid,
+                                                'userid' => $userid,
+                                                'groupid' => $groupid
+                                            )
+            );
+
+        $warnings = array();
+
+        // Get wiki and subwiki instances.
+        if (!empty($params['subwikiid'])) {
+            if (!$subwiki = wiki_get_subwiki($params['subwikiid'])) {
+                throw new moodle_exception('incorrectsubwikiid', 'wiki');
+            }
+
+            if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
+                throw new moodle_exception('incorrectwikiid', 'wiki');
+            }
+
+            // Permission validation.
+            $cm = get_coursemodule_from_instance('wiki', $wiki->id, $wiki->course);
+            $context = context_module::instance($cm->id);
+            self::validate_context($context);
+
+        } else {
+            if (!$wiki = wiki_get_wiki($params['wikiid'])) {
+                throw new moodle_exception('incorrectwikiid', 'wiki');
+            }
+
+            // Permission validation.
+            $cm = get_coursemodule_from_instance('wiki', $wiki->id, $wiki->course);
+            $context = context_module::instance($cm->id);
+            self::validate_context($context);
+
+            // Determine groupid and userid to use.
+            list($groupid, $userid) = self::determine_group_and_user($cm, $wiki, $params['groupid'], $params['userid']);
+
+            // Get subwiki and validate it.
+            $subwiki = wiki_get_subwiki_by_group_and_user_with_validation($wiki, $groupid, $userid);
+
+            if ($subwiki === false) {
+                // User cannot view page.
+                throw new moodle_exception('cannoteditpage', 'wiki');
+            } else if ($subwiki->id < 0) {
+                // Subwiki needed to check edit permissions.
+                if (!wiki_user_can_edit($subwiki)) {
+                    throw new moodle_exception('cannoteditpage', 'wiki');
+                }
+
+                // Subwiki does not exists and it can be created.
+                $swid = wiki_add_subwiki($wiki->id, $groupid, $userid);
+                if (!$subwiki = wiki_get_subwiki($swid)) {
+                    throw new moodle_exception('incorrectsubwikiid', 'wiki');
+                }
+            }
+        }
+
+        // Subwiki needed to check edit permissions.
+        if (!wiki_user_can_edit($subwiki)) {
+            throw new moodle_exception('cannoteditpage', 'wiki');
+        }
+
+        if ($page = wiki_get_page_by_title($subwiki->id, $params['title'])) {
+            throw new moodle_exception('pageexists', 'wiki');
+        }
+
+        // Ignore invalid formats and use default instead.
+        if (!$params['contentformat'] || $wiki->forceformat) {
+            $params['contentformat'] = $wiki->defaultformat;
+        } else {
+            $formats = wiki_get_formats();
+            if (!in_array($params['contentformat'], $formats)) {
+                $params['contentformat'] = $wiki->defaultformat;
+            }
+        }
+
+        $newpageid = wiki_create_page($subwiki->id, $params['title'], $params['contentformat'], $USER->id);
+
+        if (!$page = wiki_get_page($newpageid)) {
+            throw new moodle_exception('incorrectpageid', 'wiki');
+        }
+
+        // Save content.
+        $save = wiki_save_page($page, $params['content'], $USER->id);
+
+        if (!$save) {
+            throw new moodle_exception('savingerror', 'wiki');
+        }
+
+        $result = array();
+        $result['pageid'] = $page->id;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the new_page return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function new_page_returns() {
+        return new external_single_structure(
+            array(
+                'pageid' => new external_value(PARAM_INT, 'New page id.'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }

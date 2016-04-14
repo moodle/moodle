@@ -1167,4 +1167,76 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($expected, $result['pagesection']);
     }
 
+    /**
+     * Test new_page. We won't test all the possible cases because that's already
+     * done in the tests for wiki_create_page.
+     */
+    public function test_new_page() {
+
+        $this->create_individual_wikis_with_groups();
+
+        $sectioncontent = '<h1>Title1</h1>Text inside section';
+        $pagecontent = $sectioncontent.'<h1>Title2</h1>Text inside section';
+        $pagetitle = 'Page Title';
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Test on existing subwiki.
+        $result = mod_wiki_external::new_page($pagetitle, $pagecontent, 'html', $this->fpsepg1indstu->subwikiid);
+        $result = external_api::clean_returnvalue(mod_wiki_external::new_page_returns(), $result);
+        $this->assertInternalType('int', $result['pageid']);
+
+        $version = wiki_get_current_version($result['pageid']);
+        $this->assertEquals($pagecontent, $version->content);
+        $this->assertEquals('html', $version->contentformat);
+
+        $page = wiki_get_page($result['pageid']);
+        $this->assertEquals($pagetitle, $page->title);
+
+        // Test existing page creation.
+        try {
+            mod_wiki_external::new_page($pagetitle, $pagecontent, 'html', $this->fpsepg1indstu->subwikiid);
+            $this->fail('Exception expected due to creation of an existing page.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('pageexists', $e->errorcode);
+        }
+
+        // Test on non existing subwiki. Add student to group2 to have a new subwiki to be created.
+        $this->getDataGenerator()->create_group_member(array('userid' => $this->student->id, 'groupid' => $this->group2->id));
+        $result = mod_wiki_external::new_page($pagetitle, $pagecontent, 'html', null, $this->wikisepind->id, $this->student->id,
+            $this->group2->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::new_page_returns(), $result);
+        $this->assertInternalType('int', $result['pageid']);
+
+        $version = wiki_get_current_version($result['pageid']);
+        $this->assertEquals($pagecontent, $version->content);
+        $this->assertEquals('html', $version->contentformat);
+
+        $page = wiki_get_page($result['pageid']);
+        $this->assertEquals($pagetitle, $page->title);
+
+        $subwiki = wiki_get_subwiki($page->subwikiid);
+        $expected = new StdClass();
+        $expected->id = $subwiki->id;
+        $expected->wikiid = $this->wikisepind->id;
+        $expected->groupid = $this->group2->id;
+        $expected->userid = $this->student->id;
+        $this->assertEquals($expected, $subwiki);
+
+        // Check page creation for a user not in course.
+        $this->studentnotincourse = self::getDataGenerator()->create_user();
+        $this->anothercourse = $this->getDataGenerator()->create_course();
+        $this->groupnotincourse = $this->getDataGenerator()->create_group(array('courseid' => $this->anothercourse->id));
+
+        try {
+            mod_wiki_external::new_page($pagetitle, $pagecontent, 'html', null, $this->wikisepind->id,
+                $this->studentnotincourse->id, $this->groupnotincourse->id);
+            $this->fail('Exception expected due to creation of an invalid subwiki creation.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('cannoteditpage', $e->errorcode);
+        }
+
+    }
+
 }
