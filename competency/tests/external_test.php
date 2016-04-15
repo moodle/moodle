@@ -2670,7 +2670,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
         $evidence = external::grade_competency_in_plan($plan->get_id(), $c1->get_id(), 1, 'Evil note');
 
-        $this->assertEquals('The competency grade was manually set in the plan \'Evil\'.', $evidence->description);
+        $this->assertEquals('The competency rating was manually set in the learning plan \'Evil\'.', $evidence->description);
         $this->assertEquals('A', $evidence->gradename);
         $this->assertEquals('Evil note', $evidence->note);
 

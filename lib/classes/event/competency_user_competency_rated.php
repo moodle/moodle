@@ -76,7 +76,7 @@ class competency_user_competency_rated extends base {
      */
     public function get_description() {
         return "The user with id '$this->userid' rated the user competency with id '$this->objectid' "
-                . "with '" . $this->other['grade'] . "' grade";
+                . "with '" . $this->other['grade'] . "' rating";
     }
 
     /**
@@ -85,7 +85,7 @@ class competency_user_competency_rated extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventusercompetencygraderated', 'core_competency');
+        return get_string('eventusercompetencyrated', 'core_competency');
     }
 
     /**

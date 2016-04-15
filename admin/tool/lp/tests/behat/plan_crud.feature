@@ -32,8 +32,8 @@ Feature: Manage plearning plan
     And I click on ".template-userplans" "css_element" in the "Science template" "table_row"
     And I click on ".form-autocomplete-downarrow" "css_element"
     And I click on "Admin" item in the autocomplete list
-    When I click on "Create plans" "button"
-    Then I should see "A plan was created"
+    When I click on "Create learning plans" "button"
+    Then I should see "A learning plan was created"
     And I should see "Admin User" in the "Science template" "table_row"
 
   Scenario: Create a learning plan from template cohort
@@ -59,7 +59,7 @@ Feature: Manage plearning plan
     And I click on ".form-autocomplete-downarrow" "css_element"
     And I click on "cohort plan" item in the autocomplete list
     When I click on "Add cohorts" "button"
-    Then I should see "2 plans were created."
+    Then I should see "2 learning plans were created."
     And I follow "Learning plan templates"
     And I click on ".template-userplans" "css_element" in the "Science template cohort" "table_row"
     And I should see "Student 1"

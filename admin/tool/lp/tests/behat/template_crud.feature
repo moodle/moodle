@@ -30,7 +30,7 @@ Feature: Manage plearning plan templates
     And I should see "Science template Year-2"
     When I click on "Science template Year-2" "link"
     Then I should see "Science template Year-2"
-    And I should see "Template competencies"
+    And I should see "Learning plan template competencies"
 
   Scenario: Edit a learning plan template
     Given the following lp "templates" exist:
