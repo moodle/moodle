@@ -36,6 +36,7 @@ if (($formdata = data_submitted()) AND !confirm_sesskey()) {
 
 $do_show = optional_param('do_show', 'edit', PARAM_ALPHA);
 $switchitemrequired = optional_param('switchitemrequired', false, PARAM_INT);
+$deleteitem = optional_param('deleteitem', false, PARAM_INT);
 
 $current_tab = $do_show;
 
@@ -50,10 +51,21 @@ $feedback = $PAGE->activityrecord;
 $feedbackstructure = new mod_feedback_structure($feedback, $cm);
 
 if ($switchitemrequired) {
-    $item = $DB->get_record('feedback_item', array('id'=>$switchitemrequired));
-    @feedback_switch_item_required($item);
-    redirect($url->out(false));
-    exit;
+    require_sesskey();
+    $items = $feedbackstructure->get_items();
+    if (isset($items[$switchitemrequired])) {
+        feedback_switch_item_required($items[$switchitemrequired]);
+    }
+    redirect($url);
+}
+
+if ($deleteitem) {
+    require_sesskey();
+    $items = $feedbackstructure->get_items();
+    if (isset($items[$deleteitem])) {
+        feedback_delete_item($deleteitem);
+    }
+    redirect($url);
 }
 
 // Process the create template form.

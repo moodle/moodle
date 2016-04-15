@@ -545,7 +545,7 @@ class mod_feedback_complete_form extends moodleform {
      * Displays the form
      */
     public function display() {
-        global $OUTPUT;
+        global $OUTPUT, $PAGE;
         // Finalize the form definition if not yet done.
         if (!$this->_definition_finalized) {
             $this->_definition_finalized = true;
@@ -575,5 +575,9 @@ class mod_feedback_complete_form extends moodleform {
         }
 
         $this->_form->display();
+
+        if ($this->mode == self::MODE_EDIT) {
+            $PAGE->requires->js_call_amd('mod_feedback/edit', 'setup');
+        }
     }
 }

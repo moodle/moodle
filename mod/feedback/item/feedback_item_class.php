@@ -227,9 +227,9 @@ abstract class feedback_item_base {
                 $buttontitle = get_string('switch_item_to_required', 'feedback');
                 $buttonimg = 'notrequired';
             }
-            $url = new moodle_url('/mod/feedback/edit.php', array('id' => $cm->id, 'do_show' => 'edit'));
             $actions['required'] = new action_menu_link_secondary(
-                new moodle_url($url, array('switchitemrequired' => $item->id)),
+                new moodle_url('/mod/feedback/edit.php', array('id' => $cm->id,
+                    'switchitemrequired' => $item->id, 'sesskey' => sesskey())),
                 new pix_icon($buttonimg, $buttontitle, 'feedback', array('class' => 'iconsmall', 'title' => '')),
                 $buttontitle,
                 array('class' => 'editing_togglerequired', 'data-action' => 'togglerequired')
@@ -238,7 +238,7 @@ abstract class feedback_item_base {
 
         $strdelete = get_string('delete_item', 'feedback');
         $actions['delete'] = new action_menu_link_secondary(
-            new moodle_url('/mod/feedback/delete_item.php', array('deleteitem' => $item->id)),
+            new moodle_url('/mod/feedback/edit.php', array('id' => $cm->id, 'deleteitem' => $item->id, 'sesskey' => sesskey())),
             new pix_icon('t/delete', $strdelete, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             $strdelete,
             array('class' => 'editing_delete', 'data-action' => 'delete')
@@ -308,7 +308,7 @@ class feedback_item_pagebreak extends feedback_item_base {
         $actions = array();
         $strdelete = get_string('delete_pagebreak', 'feedback');
         $actions['delete'] = new action_menu_link_secondary(
-            new moodle_url('/mod/feedback/delete_item.php', array('deleteitem' => $item->id)),
+            new moodle_url('/mod/feedback/edit.php', array('id' => $cm->id, 'deleteitem' => $item->id, 'sesskey' => sesskey())),
             new pix_icon('t/delete', $strdelete, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             $strdelete,
             array('class' => 'editing_delete', 'data-action' => 'delete')
