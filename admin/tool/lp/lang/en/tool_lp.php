@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['actions'] = 'Actions';
 $string['activities'] = 'Activities';
 $string['addcohorts'] = 'Add cohorts';
+$string['addcohortstosync'] = 'Add cohorts to sync';
 $string['addcompetency'] = 'Add competency';
 $string['addcoursecompetencies'] = 'Add competencies to course';
 $string['addcrossreferencedcompetency'] = 'Add cross-referenced competency';
@@ -79,6 +80,7 @@ $string['coursecompetencyratingsquestion'] = 'When a course competency is rated,
 $string['coursesusingthiscompetency'] = 'Courses linked to this competency';
 $string['coveragesummary'] = '{$a->competenciescoveredcount} of {$a->competenciescount} competencies are covered ( {$a->coveragepercentage} % )';
 $string['createplans'] = 'Create plans';
+$string['createlearningplans'] = 'Create learning plans';
 $string['crossreferencedcompetencies'] = 'Cross-referenced competencies';
 $string['default'] = 'Default';
 $string['deletecompetency'] = 'Delete competency \'{$a}\'?';
