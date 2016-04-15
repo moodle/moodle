@@ -525,4 +525,48 @@ class core_competency_plan_testcase extends advanced_testcase {
         $this->assertCount(0, $plans);
     }
 
+    public function test_get_competency() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('core_competency');
+
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $u3 = $dg->create_user();
+        $u4 = $dg->create_user();
+
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c4 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+
+        $tpl1 = $lpg->create_template();
+        $p1 = $lpg->create_plan(array('userid' => $u1->id));
+        $p2 = $lpg->create_plan(array('userid' => $u2->id));
+        $p3 = $lpg->create_plan(array('userid' => $u3->id, 'templateid' => $tpl1->get_id()));
+        $p4 = $lpg->create_plan(array('userid' => $u4->id, 'templateid' => $tpl1->get_id()));
+
+        $lpg->create_plan_competency(array('planid' => $p1->get_id(), 'competencyid' => $c1->get_id()));
+        $lpg->create_plan_competency(array('planid' => $p2->get_id(), 'competencyid' => $c2->get_id()));
+        $lpg->create_template_competency(array('templateid' => $tpl1->get_id(), 'competencyid' => $c3->get_id()));
+        $lpg->create_template_competency(array('templateid' => $tpl1->get_id(), 'competencyid' => $c4->get_id()));
+
+        // Completing the plans and removing a competency from the template.
+        api::complete_plan($p2);
+        api::complete_plan($p4);
+        api::remove_competency_from_template($tpl1->get_id(), $c4->get_id());
+
+        // We can find all competencies.
+        $this->assertEquals($c1->to_record(), $p1->get_competency($c1->get_id())->to_record());
+        $this->assertEquals($c2->to_record(), $p2->get_competency($c2->get_id())->to_record());
+        $this->assertEquals($c3->to_record(), $p3->get_competency($c3->get_id())->to_record());
+        $this->assertEquals($c4->to_record(), $p4->get_competency($c4->get_id())->to_record());
+
+        // Getting the competency 4 from the non-completed plan based on a template p4, will throw an exception.
+        $this->setExpectedException('coding_exception', 'The competency does not belong to this template: ');
+        $p3->get_competency($c4->get_id());
+    }
 }

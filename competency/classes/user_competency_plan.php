@@ -203,6 +203,30 @@ class user_competency_plan extends persistent {
     }
 
     /**
+     * Fetch a competency by plan ID.
+     *
+     * @param  int $id The plan ID.
+     * @return competency
+     */
+    public static function get_competency_by_planid($planid, $competencyid) {
+        global $DB;
+
+        $sql = "SELECT c.*
+                  FROM {" . self::TABLE . "} ucp
+                  JOIN {" . competency::TABLE . "} c
+                    ON c.id = ucp.competencyid
+                 WHERE ucp.planid = ?
+                   AND ucp.competencyid = ?";
+        $record = $DB->get_record_sql($sql, array($planid, $competencyid));
+
+        if (!$record) {
+            throw new coding_exception('The competency does not belong to this plan: ' . $competencyid . ', ' . $planid);
+        }
+
+        return new competency(0, $record);
+    }
+
+    /**
      * Get multiple user_competency_plan for a user.
      *
      * @param int $userid The user ID.

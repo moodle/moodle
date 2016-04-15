@@ -234,12 +234,18 @@ class plan extends persistent {
     /**
      * Get a single competency from this plan.
      *
+     * This will throw an exception if the competency does not belong to the plan.
+     *
      * @param int $competencyid The competency ID.
      * @return competency
      */
     public function get_competency($competencyid) {
-        $competencies = array();
-        if ($this->get_templateid()) {
+        $competency = null;
+
+        if ($this->get_status() == self::STATUS_COMPLETE) {
+            // Get the competency from the archive of the plan.
+            $competency = user_competency_plan::get_competency_by_planid($this->get_id(), $competencyid);
+        } else if ($this->is_based_on_template()) {
             // Get the competency from the template.
             $competency = template_competency::get_competency($this->get_templateid(), $competencyid);
         } else {
