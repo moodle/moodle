@@ -115,11 +115,13 @@ Feature: availability_grade
 
     # Give the assignment 40%.
     And I follow "A1"
-    And I follow "View/grade all submissions"
+    And I follow "View all submissions"
     # Pick the grade link in the row that has s@example.com in it.
-    And I click on "//a[contains(@href, 'action=grade') and ancestor::tr/td[normalize-space(.) = 's@example.com']]/img" "xpath_element"
+    And I click on "Grade" "link" in the "s@example.com" "table_row"
     And I set the field "Grade out of 100" to "40"
     And I click on "Save changes" "button"
+    And I press "Ok"
+    And I click on "Edit settings" "link"
 
     # Log back in as student.
     And I log out

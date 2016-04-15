@@ -82,21 +82,19 @@ class behat_grading extends behat_base {
     public function i_go_to_activity_advanced_grading_page($userfullname, $activityname) {
 
         // Step to access the user grade page from the grading page.
-        $usergradetext = get_string('gradeuser', 'assign', $userfullname);
-
-        // Shortcut in case we already are in the grading page.
-        $usergradetextliteral = behat_context_helper::escape($usergradetext);
-        if ($this->getSession()->getPage()->find('named_partial', array('link', $usergradetextliteral))) {
-            $this->execute('behat_general::click_link', $this->escape($usergradetext));
-
-            return true;
-        }
+        $gradetext = get_string('grade');
 
         $this->execute('behat_general::click_link', $this->escape($activityname));
 
         $this->execute('behat_general::click_link', $this->escape(get_string('viewgrading', 'assign')));
 
-        $this->execute('behat_general::click_link', $this->escape($usergradetext));
+        $this->execute('behat_general::i_click_on_in_the',
+                       array(
+                           $this->escape($gradetext),
+                           'link',
+                           $this->escape($userfullname),
+                           'table_row'
+                       ));
     }
 
     /**
@@ -156,7 +154,10 @@ class behat_grading extends behat_base {
     public function i_save_the_advanced_grading_form() {
 
         $this->execute('behat_forms::press_button', get_string('savechanges'));
-        $this->execute('behat_forms::press_button', get_string('continue'));
+        $this->execute('behat_forms::press_button', 'Ok');
+        $this->execute('behat_general::i_click_on', array($this->escape(get_string('editsettings')), 'link'));
+        $this->execute('behat_forms::press_button', get_string('cancel'));
+        $this->execute('behat_general::i_click_on', array($this->escape(get_string('viewgrading', 'mod_assign')), 'link'));
     }
 
     /**

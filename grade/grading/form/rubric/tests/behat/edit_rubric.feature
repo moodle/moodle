@@ -4,7 +4,8 @@ Feature: Rubrics can be created and edited
   As a teacher
   I need to edit previously used rubrics
 
-  Background:
+  @javascript
+  Scenario: I can use rubrics to grade and edit them later updating students grades
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
@@ -152,8 +153,3 @@ Feature: Rubrics can be created and edited
     And I should not see "Criterion 2" in the ".submissionstatustable" "css_element"
     And I should not see "Criterion 3" in the ".submissionstatustable" "css_element"
     And I should not see "Rubric test description" in the ".feedback" "css_element"
-
-  @javascript
-  Scenario: I can use rubrics to grade and edit them later updating students grades with Javascript enabled
-
-  Scenario: I can use rubrics to grade and edit them later updating students grades with Javascript disabled

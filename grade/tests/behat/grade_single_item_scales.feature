@@ -1,4 +1,4 @@
-@core @core_grades
+@core @core_grades @javascript
 Feature: View gradebook when single item scales are used
   In order to use single item scales to grade activities
   As an teacher
@@ -43,10 +43,11 @@ Feature: View gradebook when single item scales are used
     And I set the field "grade[modgrade_type]" to "Scale"
     And I set the field "grade[modgrade_scale]" to "Singleitem"
     And I press "Save and display"
-    And I follow "View/grade all submissions"
-    And I click on "Grade Student 1" "link" in the "Student 1" "table_row"
+    And I follow "View all submissions"
+    And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade" to "A"
     And I press "Save changes"
+    And I press "Ok"
     And I follow "Course 1"
     And I navigate to "Grades" node in "Course administration"
     And I navigate to "Course grade settings" node in "Grade administration > Setup"

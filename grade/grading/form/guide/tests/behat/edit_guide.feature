@@ -84,9 +84,11 @@ Feature: Marking guides can be created and edited
     And I wait "1" seconds
     Then the field "Guide criterion B criterion remark" matches value "Comment 4"
     When I press "Save changes"
-    Then I should see "The grade changes were saved"
+    And I press "Ok"
+    And I follow "Edit settings"
+    And I follow "Test assignment 1 name"
+    And I follow "View all submissions"
     # Checking that the user grade is correct.
-    When I press "Continue"
     Then I should see "80" in the "Student 1" "table_row"
     And I log out
     # Viewing it as a student.

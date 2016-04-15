@@ -1,4 +1,4 @@
-@core @core_grades @gradereport_singleview
+@core @core_grades @gradereport_singleview @javascript
 Feature: We can bulk insert grades for students in a course
   As a teacher
   In order to quickly grade items
@@ -33,12 +33,13 @@ Feature: We can bulk insert grades for students in a course
     Given I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment one"
-    And I follow "View/grade all submissions"
-    And I follow "Grade Student 1"
+    And I follow "View all submissions"
+    And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Grade out of 100 | 50 |
     And I press "Save changes"
-    And I press "Continue"
+    And I press "Ok"
+    And I follow "Edit settings"
     And I follow "View gradebook"
     And I follow "Single view for Test assignment one"
     Then the field "Grade for james (Student) 1" matches value "50.00"
@@ -73,13 +74,16 @@ Feature: We can bulk insert grades for students in a course
     Given I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment two"
-    And I follow "View/grade all submissions"
-    And I follow "Grade Student 1"
+    And I follow "View all submissions"
+    And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Grade out of 100 | 50 |
     And I press "Save changes"
-    And I press "Continue"
+    And I press "Ok"
+    And I follow "Edit settings"
     And I follow "View gradebook"
+    And I click on "input[title='Dock Navigation block']" "css_element"
+    And I click on "input[title='Dock Administration block']" "css_element"
     And I follow "Single view for Test assignment two"
     And I select "Student 1" from the "Select user..." singleselect
     Then the field "Grade for Test assignment two" matches value "50.00"
