@@ -2761,10 +2761,10 @@ class assign {
     /**
      * Download a zip file of all assignment submissions.
      *
-     * @param array $idusers The array of idusers to download assignment submissions in a zip file
+     * @param array $userids Array of user ids to download assignment submissions in a zip file
      * @return string - If an error occurs, this will contain the error page.
      */
-    protected function download_submissions($idusers='all') {
+    protected function download_submissions($userids = false) {
         global $CFG, $DB;
 
         // More efficient to load this here.
@@ -2801,7 +2801,7 @@ class assign {
         foreach ($students as $student) {
             $userid = $student->id;
             // Download all assigments submission or only selected users.
-            if ($idusers != 'all' and !in_array($userid, $idusers)) {
+            if ($userids and !in_array($userid, $userids)) {
                 continue;
             }
 
