@@ -162,8 +162,6 @@ Feature: Non anonymous feedback
     And I follow "Back"
     # Delete non anonymous response
     And I click on "Delete entry" "link" in the "Username 1" "table_row"
-    And I should see "Are you sure you want to delete this entry?"
-    And I press "Continue"
     And I should see "Non anonymous entries (1)"
     And I should not see "Username 1"
     And I should see "Username 2"

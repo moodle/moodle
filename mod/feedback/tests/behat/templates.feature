@@ -153,9 +153,7 @@ Feature: Saving, using and deleting feedback templates
     Then I should not see "My public template"
     And ".publictemplates" "css_element" should not exist
     And "My course template" "text" should exist in the ".coursetemplates" "css_element"
-    And I click on "Delete" "button" in the "My course template" "table_row"
-    And I should see "Are you sure you want to delete this template?"
-    And I press "Continue"
+    And I click on "Delete" "link" in the "My course template" "table_row"
     And I should see "Template deleted"
     And "My course template" "text" should not exist in the ".coursetemplates" "css_element"
     And "No templates available yet" "text" should exist in the ".coursetemplates" "css_element"
@@ -164,6 +162,7 @@ Feature: Saving, using and deleting feedback templates
     And the "Use a template" select box should contain "My public template"
     And I log out
 
+  @javascript
   Scenario: Manager can delete both course and public templates
     # Save feedback as both public and course template
     When I log in as "manager"
@@ -180,17 +179,17 @@ Feature: Saving, using and deleting feedback templates
     And I follow "Delete template..."
     Then "My public template" "text" should exist in the ".publictemplates" "css_element"
     And "My course template" "text" should exist in the ".coursetemplates" "css_element"
-    And I click on "Delete" "button" in the "My course template" "table_row"
+    And I click on "Delete" "link" in the "My course template" "table_row"
     And I should see "Are you sure you want to delete this template?"
-    And I press "Continue"
+    And I press "Yes"
     And I should see "Template deleted"
     And "My course template" "text" should not exist in the ".coursetemplates" "css_element"
     And "No templates available yet" "text" should exist in the ".coursetemplates" "css_element"
     # Delete public template
     And "My public template" "text" should exist in the ".publictemplates" "css_element"
-    And I click on "Delete" "button" in the "My public template" "table_row"
+    And I click on "Delete" "link" in the "My public template" "table_row"
     And I should see "Are you sure you want to delete this template?"
-    And I press "Continue"
+    And I press "Yes"
     And I should see "Template deleted"
     And "My public template" "text" should not exist in the ".publictemplates" "css_element"
     And "No templates available yet" "text" should exist in the ".publictemplates" "css_element"

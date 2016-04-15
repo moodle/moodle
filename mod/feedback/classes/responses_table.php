@@ -183,9 +183,10 @@ class mod_feedback_responses_table extends table_sql {
      */
     public function col_deleteentry($row) {
         global $OUTPUT;
-        $icon = $OUTPUT->render(new \pix_icon('t/delete', get_string('delete_entry', 'feedback')));
-        $deleteentryurl = new moodle_url($this->baseurl, ['delete' => $row->id]);
-        return html_writer::link($deleteentryurl, $icon);
+        $deleteentryurl = new moodle_url($this->baseurl, ['delete' => $row->id, 'sesskey' => sesskey()]);
+        $deleteaction = new confirm_action(get_string('confirmdeleteentry', 'feedback'));
+        return $OUTPUT->action_icon($deleteentryurl,
+            new pix_icon('t/delete', get_string('delete_entry', 'feedback')), $deleteaction);
     }
 
     /**

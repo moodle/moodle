@@ -54,12 +54,10 @@ require_capability('mod/feedback:viewreports', $context);
 if ($deleteid) {
     // This is a request to delete a reponse.
     require_capability('mod/feedback:deletesubmissions', $context);
+    require_sesskey();
     $feedbackstructure = new mod_feedback_completion($feedback, $cm, 0, true, $deleteid);
-    if (optional_param('confirm', 0, PARAM_BOOL) && confirm_sesskey()) {
-        // Process delete template result.
-        feedback_delete_completed($feedbackstructure->get_completed(), $feedback, $cm);
-        redirect($baseurl);
-    }
+    feedback_delete_completed($feedbackstructure->get_completed(), $feedback, $cm);
+    redirect($baseurl);
 } else if ($showcompleted || $userid) {
     // Viewing individual response.
     $feedbackstructure = new mod_feedback_completion($feedback, $cm, 0, true, $showcompleted, $userid);
@@ -98,11 +96,7 @@ require('tabs.php');
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-if ($deleteid) {
-    // Print confirmation form to delete a response.
-    $continueurl = new moodle_url($baseurl, array('delete' => $deleteid, 'confirm' => 1, 'sesskey' => sesskey()));
-    echo $OUTPUT->confirm(get_string('confirmdeleteentry', 'feedback'), $continueurl, $baseurl);
-} else if ($userid || $showcompleted) {
+if ($userid || $showcompleted) {
     // Print the response of the given user.
     $completedrecord = $feedbackstructure->get_completed();
 

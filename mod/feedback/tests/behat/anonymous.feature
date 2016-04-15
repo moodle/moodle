@@ -233,8 +233,6 @@ Feature: Anonymous feedback
     And I follow "Back"
     # Delete anonymous response
     And I click on "Delete entry" "link" in the "Response number: 1" "table_row"
-    And I should see "Are you sure you want to delete this entry?"
-    And I press "Continue"
     And I should see "Anonymous entries (1)"
     And I should not see "Response number: 1"
     And I should see "Response number: 2"

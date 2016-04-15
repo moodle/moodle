@@ -43,7 +43,8 @@ $feedback = $PAGE->activityrecord;
 $systemcontext = context_system::instance();
 
 // Process template deletion.
-if ($deletetempl && optional_param('confirm', 0, PARAM_BOOL) && confirm_sesskey()) {
+if ($deletetempl) {
+    require_sesskey();
     $template = $DB->get_record('feedback_template', array('id' => $deletetempl), '*', MUST_EXIST);
 
     if ($template->ispublic) {
@@ -69,36 +70,29 @@ echo $OUTPUT->heading(format_string($feedback->name));
 /// print the tabs
 require('tabs.php');
 
-/// Print the main part of the page
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
+// Print the main part of the page.
 echo $OUTPUT->heading($strdeletefeedback, 3);
-if ($deletetempl) {
-    $continueurl = new moodle_url($baseurl, array('deletetempl' => $deletetempl, 'confirm' => 1, 'sesskey' => sesskey()));
-    echo $OUTPUT->confirm(get_string('confirmdeletetemplate', 'feedback'), $continueurl, $baseurl);
-} else {
-    // First we get the course templates.
-    $templates = feedback_get_template_list($course, 'own');
-    echo $OUTPUT->box_start('coursetemplates');
-    echo $OUTPUT->heading(get_string('course'), 4);
-    $tablecourse = new mod_feedback_templates_table('feedback_template_course_table', $baseurl);
-    $tablecourse->display($templates);
-    echo $OUTPUT->box_end();
-    // Now we get the public templates if it is permitted.
-    if (has_capability('mod/feedback:createpublictemplate', $systemcontext) AND
-        has_capability('mod/feedback:deletetemplate', $systemcontext)) {
-        $templates = feedback_get_template_list($course, 'public');
-        echo $OUTPUT->box_start('publictemplates');
-        echo $OUTPUT->heading(get_string('public', 'feedback'), 4);
-        $tablepublic = new mod_feedback_templates_table('feedback_template_public_table', $baseurl);
-        $tablepublic->display($templates);
-        echo $OUTPUT->box_end();
-    }
 
-    $url = new moodle_url('/mod/feedback/edit.php', array('id' => $id, 'do_show' => 'templates'));
-    echo $OUTPUT->single_button($url, get_string('back'), 'post');
+// First we get the course templates.
+$templates = feedback_get_template_list($course, 'own');
+echo $OUTPUT->box_start('coursetemplates');
+echo $OUTPUT->heading(get_string('course'), 4);
+$tablecourse = new mod_feedback_templates_table('feedback_template_course_table', $baseurl);
+$tablecourse->display($templates);
+echo $OUTPUT->box_end();
+// Now we get the public templates if it is permitted.
+if (has_capability('mod/feedback:createpublictemplate', $systemcontext) AND
+    has_capability('mod/feedback:deletetemplate', $systemcontext)) {
+    $templates = feedback_get_template_list($course, 'public');
+    echo $OUTPUT->box_start('publictemplates');
+    echo $OUTPUT->heading(get_string('public', 'feedback'), 4);
+    $tablepublic = new mod_feedback_templates_table('feedback_template_public_table', $baseurl);
+    $tablepublic->display($templates);
+    echo $OUTPUT->box_end();
 }
+
+$url = new moodle_url('/mod/feedback/edit.php', array('id' => $id, 'do_show' => 'templates'));
+echo $OUTPUT->single_button($url, get_string('back'), 'post');
 
 echo $OUTPUT->footer();
 
