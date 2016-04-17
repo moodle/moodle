@@ -205,7 +205,12 @@ class assign {
     public function register_return_link($action, $params) {
         global $PAGE;
         $params['action'] = $action;
-        $currenturl = new moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id));
+        $cm = $this->get_course_module();
+        if ($cm) {
+            $currenturl = new moodle_url('/mod/assign/view.php', array('id' => $cm->id));
+        } else {
+            $currenturl = new moodle_url('/mod/assign/index.php', array('id' => $this->get_course()->id));
+        }
 
         $currenturl->params($params);
         $PAGE->set_url($currenturl);
