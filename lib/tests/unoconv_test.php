@@ -71,7 +71,7 @@ class core_unoconv_testcase extends advanced_testcase {
     public function test_generate_pdf() {
         global $CFG;
 
-        if (empty($CFG->pathtounoconv) || !is_executable(trim($CFG->pathtounoconv))) {
+        if (empty($CFG->pathtounoconv) || !file_is_executable(trim($CFG->pathtounoconv))) {
             // No conversions are possible, sorry.
             return $this->markTestSkipped();
         }
@@ -90,7 +90,7 @@ class core_unoconv_testcase extends advanced_testcase {
     public function test_generate_markdown() {
         global $CFG;
 
-        if (empty($CFG->pathtounoconv) || !is_executable(trim($CFG->pathtounoconv))) {
+        if (empty($CFG->pathtounoconv) || !file_is_executable(trim($CFG->pathtounoconv))) {
             // No conversions are possible, sorry.
             return $this->markTestSkipped();
         }

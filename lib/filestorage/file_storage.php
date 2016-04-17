@@ -224,7 +224,7 @@ class file_storage {
     protected function create_converted_document(stored_file $file, $format) {
         global $CFG;
 
-        if (empty($CFG->pathtounoconv) || !is_executable(trim($CFG->pathtounoconv))) {
+        if (empty($CFG->pathtounoconv) || !file_is_executable(trim($CFG->pathtounoconv))) {
             // No conversions are possible, sorry.
             return false;
         }

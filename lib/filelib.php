@@ -2660,6 +2660,35 @@ function file_modify_html_header($text) {
 }
 
 /**
+ * Tells whether the filename is executable.
+ *
+ * @link http://php.net/manual/en/function.is-executable.php
+ * @link https://bugs.php.net/bug.php?id=41062
+ * @param string $filename Path to the file.
+ * @return bool True if the filename exists and is executable; otherwise, false.
+ */
+function file_is_executable($filename) {
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        if (is_executable($filename)) {
+            return true;
+        } else {
+            $fileext = strrchr($filename, '.');
+            // If we have an extension we can check if it is listed as executable.
+            if ($fileext && file_exists($filename) && !is_dir($filename)) {
+                $winpathext = strtolower(getenv('PATHEXT'));
+                $winpathexts = explode(';', $winpathext);
+
+                return in_array(strtolower($fileext), $winpathexts);
+            }
+
+            return false;
+        }
+    } else {
+        return is_executable($filename);
+    }
+}
+
+/**
  * RESTful cURL class
  *
  * This is a wrapper class for curl, it is quite easy to use:
