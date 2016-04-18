@@ -53,7 +53,6 @@ Feature: Manage plan workflow
       | moodle/competency:planview | Allow |
       | moodle/competency:planreview | Allow |
       | moodle/competency:planrequestreview | Allow |
-      | block/lp:myaddinstance | Allow |
     And I log out
 
   Scenario: User can manages his own plan draft
@@ -97,9 +96,7 @@ Feature: Manage plan workflow
       | name | user | description | status |
       | Test-Plan3 | user2 | Description of plan 3 for user 1 | waiting for review |
       | Test-Plan4 | user1 | Description of plan 3 for user 1 | draft |
-    And I log in as "manager1"
-    When I click on "Customise this page" "button"
-    And I set the field "bui_addblock" to "lp"
+    When I log in as "manager1"
     Then I should see "Test-Plan3"
     And I should not see "Test-Plan4"
     And I log out
@@ -109,8 +106,6 @@ Feature: Manage plan workflow
       | name | user | description | status |
       | Test-Plan3 | user1 | Description of plan 3 for user 1 | waiting for review |
     And I log in as "manager1"
-    And I click on "Customise this page" "button"
-    And I set the field "bui_addblock" to "lp"
     And I follow "Test-Plan3"
     And I should see "User 1"
     And I should see "Test-Plan3"
@@ -123,8 +118,6 @@ Feature: Manage plan workflow
       | name | user | description | status | reviewer |
       | Test-Plan3 | user1 | Description of plan 3 for user 1 | in review | manager1 |
     And I log in as "manager1"
-    And I click on "Customise this page" "button"
-    And I set the field "bui_addblock" to "lp"
     And I follow "Test-Plan3"
     And I should see "User 1"
     And I should see "Test-Plan3"
@@ -138,8 +131,6 @@ Feature: Manage plan workflow
       | name | user | description | status | reviewer |
       | Test-Plan3 | user1 | Description of plan 3 for user 1 | in review | manager1 |
     And I log in as "manager1"
-    And I click on "Customise this page" "button"
-    And I set the field "bui_addblock" to "lp"
     And I follow "Test-Plan3"
     And I should see "User 1"
     And I should see "Test-Plan3"
