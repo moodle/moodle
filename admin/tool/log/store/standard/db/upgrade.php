@@ -123,5 +123,20 @@ function xmldb_logstore_standard_upgrade($oldversion) {
     // Moodle v3.0.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2015111601) {
+        // This could take a long time. Unfortunately, no way to know how long, and no way to do progress, so setting for 1 hour.
+        upgrade_set_timeout(3600);
+
+        // Define key contextid (foreign) to be added to logstore_standard_log.
+        $table = new xmldb_table('logstore_standard_log');
+        $key = new xmldb_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+
+        // Launch add key contextid.
+        $dbman->add_key($table, $key);
+
+        // Standard savepoint reached.
+        upgrade_plugin_savepoint(true, 2015111601, 'logstore', 'standard');
+    }
+
     return true;
 }
