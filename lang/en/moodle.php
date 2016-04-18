@@ -557,7 +557,10 @@ $string['edituser'] = 'Edit user accounts';
 $string['edulevelother'] = 'Other';
 $string['edulevelteacher'] = 'Teaching';
 $string['edulevelparticipating'] = 'Participating';
-$string['edulevel'] = 'Educational level';
+$string['edulevel'] = 'All events';
+$string['edulevel_help'] = '* Teaching - actions performed by a teacher, e.g. updating a resource
+* Participating - actions performed by a student, e.g. posting in a forum
+* Other - actions performed by a user with a role other than teacher or student';
 $string['email'] = 'Email address';
 $string['emailalreadysent'] = 'A password reset email has already been sent. Please check your email.';
 $string['emailactive'] = 'Email activated';
