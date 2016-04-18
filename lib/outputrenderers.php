@@ -3336,8 +3336,11 @@ EOD;
         }
 
         //accessibility: heading for navbar list  (MDL-20446)
-        $navbarcontent = html_writer::tag('span', get_string('pagepath'), array('class'=>'accesshide'));
-        $navbarcontent .= html_writer::tag('nav', html_writer::tag('ul', join('', $htmlblocks)));
+        $navbarcontent = html_writer::tag('span', get_string('pagepath'),
+                array('class' => 'accesshide', 'id' => 'navbar-label'));
+        $navbarcontent .= html_writer::tag('nav',
+                html_writer::tag('ul', join('', $htmlblocks)),
+                array('aria-labelledby' => 'navbar-label'));
         // XHTML
         return $navbarcontent;
     }
@@ -4065,7 +4068,7 @@ EOD;
         $html = html_writer::start_tag('header', array('id' => 'page-header', 'class' => 'clearfix'));
         $html .= $this->context_header();
         $html .= html_writer::start_div('clearfix', array('id' => 'page-navbar'));
-        $html .= html_writer::tag('nav', $this->navbar(), array('class' => 'breadcrumb-nav'));
+        $html .= html_writer::tag('div', $this->navbar(), array('class' => 'breadcrumb-nav'));
         $html .= html_writer::div($this->page_heading_button(), 'breadcrumb-button');
         $html .= html_writer::end_div();
         $html .= html_writer::tag('div', $this->course_header(), array('id' => 'course-header'));
