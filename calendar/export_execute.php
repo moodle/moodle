@@ -60,7 +60,8 @@ if (!empty($generateurl)) {
 if(!empty($what) && !empty($time)) {
     if(in_array($what, $allowed_what) && in_array($time, $allowed_time)) {
         $courses = enrol_get_users_courses($user->id, true, 'id, visible, shortname');
-
+        // Array of courses that we will pass to calendar_get_events() which is initially set to the list of the user's courses.
+        $paramcourses = $courses;
         if ($what == 'all' || $what == 'groups') {
             $groups = array();
             foreach ($courses as $course) {
@@ -75,13 +76,14 @@ if(!empty($what) && !empty($time)) {
             $users = $user->id;
             $courses[SITEID] = new stdClass;
             $courses[SITEID]->shortname = get_string('globalevents', 'calendar');
+            $paramcourses[SITEID] = $courses[SITEID];
         } else if ($what == 'groups') {
             $users = false;
-            $courses = array();
+            $paramcourses = array();
         } else if ($what == 'user') {
             $users = $user->id;
             $groups = false;
-            $courses = array();
+            $paramcourses = array();
         } else {
             $users = false;
             $groups = false;
@@ -177,7 +179,7 @@ if(!empty($what) && !empty($time)) {
         die();
     }
 }
-$events = calendar_get_events($timestart, $timeend, $users, $groups, array_keys($courses), false);
+$events = calendar_get_events($timestart, $timeend, $users, $groups, array_keys($paramcourses), false);
 
 $ical = new iCalendar;
 $ical->add_property('method', 'PUBLISH');
