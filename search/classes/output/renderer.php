@@ -50,26 +50,26 @@ class renderer extends \plugin_renderer_base {
      * Renders search results.
      *
      * @param \core_search\document[] $results
-     * @param int $page
+     * @param int $page Zero based page number.
+     * @param int $totalcount Total number of results available.
      * @param \moodle_url $url
      * @return string HTML
      */
-    public function render_results($results, $page = 0, $url) {
+    public function render_results($results, $page, $totalcount, $url) {
 
         // Paging bar.
         $perpage = \core_search\manager::DISPLAY_RESULTS_PER_PAGE;
-        $content = $this->output->paging_bar(count($results), $page, $perpage, $url);
+        $content = $this->output->paging_bar($totalcount, $page, $perpage, $url);
 
         // Results.
         $resultshtml = array();
-        $hits = array_slice($results, $page * $perpage, $perpage, true);
-        foreach ($hits as $hit) {
+        foreach ($results as $hit) {
             $resultshtml[] = $this->render_result($hit);
         }
         $content .= \html_writer::tag('div', implode('<hr/>', $resultshtml), array('class' => 'search-results'));
 
         // Paging bar.
-        $content .= $this->output->paging_bar(count($results), $page, $perpage, $url);
+        $content .= $this->output->paging_bar($totalcount, $page, $perpage, $url);
 
         return $content;
     }

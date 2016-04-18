@@ -90,8 +90,7 @@ echo $OUTPUT->heading($pagetitle);
 
 // Get the results.
 if ($data) {
-    $data->page = $page;
-    $results = $search->search($data);
+    $results = $search->paged_search($data, $page);
 }
 
 if ($errorstr = $search->get_engine()->get_query_error()) {
@@ -103,7 +102,7 @@ if ($errorstr = $search->get_engine()->get_query_error()) {
 $mform->display();
 
 if (!empty($results)) {
-    echo $searchrenderer->render_results($results, $page, $url);
+    echo $searchrenderer->render_results($results->results, $results->actualpage, $results->totalcount, $url);
 }
 
 echo $OUTPUT->footer();

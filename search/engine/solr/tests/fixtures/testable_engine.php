@@ -14,50 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mock_search;
+namespace search_solr;
 
 /**
  * Search engine for testing purposes.
  *
- * @package   core_search
+ * @package   search_solr
  * @category  phpunit
- * @copyright David Monllao {@link http://www.davidmonllao.com}
+ * @copyright 2016 Eric Merrill {@link http://www.merrilldigital.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-class engine extends \core_search\engine {
-
-    public function is_installed() {
-        return true;
-    }
-
-    public function is_server_ready() {
-        return true;
-    }
-
-    public function add_document($document, $fileindexing = false) {
-        // No need to implement.
-    }
-
-    public function execute_query($data, $usercontexts, $limit = 0) {
-        // No need to implement.
-    }
-
-    public function delete($areaid = null) {
-        return null;
-    }
-
-    public function get_course($courseid) {
-        return parent::get_course($courseid);
-    }
-
-    public function get_search_area($areaid) {
-        return parent::get_search_area($areaid);
-    }
-
-    public function get_query_total_count() {
-        return 0;
+class testable_engine extends \search_solr\engine {
+    /**
+     * Function that lets us update the internally cached config object of the engine.
+     */
+    public function test_set_config($name, $value) {
+        $this->config->$name = $value;
     }
 }
