@@ -742,9 +742,9 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
      */
     public function test_create_competency_with_read_permissions() {
         $this->setExpectedException('required_capability_exception');
-        $framework = $this->create_competency_framework(1, true);
+        $framework = $this->getDataGenerator()->get_plugin_generator('core_competency')->create_framework();
         $this->setUser($this->user);
-        $competency = $this->create_competency(1, $framework->id);
+        $competency = $this->create_competency(1, $framework->get_id());
     }
 
     /**
@@ -1747,6 +1747,9 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
      */
     public function test_get_scale_values() {
         global $DB;
+
+        $this->setUser($this->creator);
+
         // Create a scale.
         $record = new stdClass();
         $record->courseid = 0;

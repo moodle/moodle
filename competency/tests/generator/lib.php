@@ -41,7 +41,11 @@ use core_competency\user_competency_plan;
 use core_competency\user_evidence;
 use core_competency\user_evidence_competency;
 
+
 defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->libdir . '/grade/grade_scale.php');
 
 /**
  * Competency data generator class.
@@ -159,7 +163,12 @@ class core_competency_generator extends component_generator_base {
             $record->scaleid = $this->scale->id;
         }
         if (!isset($record->scaleconfiguration)) {
-            $values = external::get_scale_values($record->scaleid);
+            $scale = grade_scale::fetch(array('id' => $record->scaleid));
+            $values = $scale->load_items();
+            foreach ($values as $key => $value) {
+                // Add a key (make the first value 1).
+                $values[$key] = array('id' => $key + 1, 'name' => $value);
+            }
             if (count($values) < 2) {
                 throw new coding_exception('Please provide the scale configuration for one-item scales.');
             }
