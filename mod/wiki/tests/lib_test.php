@@ -654,4 +654,88 @@ class mod_wiki_lib_testcase extends advanced_testcase {
         $result = wiki_get_visible_subwikis($wikisepind);
         $this->assertEquals($expectedsubwikis, $result, '', 0, 10, true);
     }
+
+    public function test_mod_wiki_get_tagged_pages() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Setup test data.
+        $wikigenerator = $this->getDataGenerator()->get_plugin_generator('mod_wiki');
+        $course3 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course1 = $this->getDataGenerator()->create_course();
+        $wiki1 = $this->getDataGenerator()->create_module('wiki', array('course' => $course1->id));
+        $wiki2 = $this->getDataGenerator()->create_module('wiki', array('course' => $course2->id));
+        $wiki3 = $this->getDataGenerator()->create_module('wiki', array('course' => $course3->id));
+        $page11 = $wikigenerator->create_content($wiki1, array('tags' => array('Cats', 'Dogs')));
+        $page12 = $wikigenerator->create_content($wiki1, array('tags' => array('Cats', 'mice')));
+        $page13 = $wikigenerator->create_content($wiki1, array('tags' => array('Cats')));
+        $page14 = $wikigenerator->create_content($wiki1);
+        $page15 = $wikigenerator->create_content($wiki1, array('tags' => array('Cats')));
+        $page21 = $wikigenerator->create_content($wiki2, array('tags' => array('Cats')));
+        $page22 = $wikigenerator->create_content($wiki2, array('tags' => array('Cats', 'Dogs')));
+        $page23 = $wikigenerator->create_content($wiki2, array('tags' => array('mice', 'Cats')));
+        $page31 = $wikigenerator->create_content($wiki3, array('tags' => array('mice', 'Cats')));
+
+        $tag = core_tag_tag::get_by_name(0, 'Cats');
+
+        // Admin can see everything.
+        $res = mod_wiki_get_tagged_pages($tag, /*$exclusivemode = */false,
+                /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$page = */0);
+        $this->assertRegExp('/'.$page11->title.'/', $res->content);
+        $this->assertRegExp('/'.$page12->title.'/', $res->content);
+        $this->assertRegExp('/'.$page13->title.'/', $res->content);
+        $this->assertNotRegExp('/'.$page14->title.'/', $res->content);
+        $this->assertRegExp('/'.$page15->title.'/', $res->content);
+        $this->assertRegExp('/'.$page21->title.'/', $res->content);
+        $this->assertNotRegExp('/'.$page22->title.'/', $res->content);
+        $this->assertNotRegExp('/'.$page23->title.'/', $res->content);
+        $this->assertNotRegExp('/'.$page31->title.'/', $res->content);
+        $this->assertEmpty($res->prevpageurl);
+        $this->assertNotEmpty($res->nextpageurl);
+        $res = mod_wiki_get_tagged_pages($tag, /*$exclusivemode = */false,
+                /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$page = */1);
+        $this->assertNotRegExp('/'.$page11->title.'/', $res->content);
+        $this->assertNotRegExp('/'.$page12->title.'/', $res->content);
+        $this->assertNotRegExp('/'.$page13->title.'/', $res->content);
+        $this->assertNotRegExp('/'.$page14->title.'/', $res->content);
+        $this->assertNotRegExp('/'.$page15->title.'/', $res->content);
+        $this->assertNotRegExp('/'.$page21->title.'/', $res->content);
+        $this->assertRegExp('/'.$page22->title.'/', $res->content);
+        $this->assertRegExp('/'.$page23->title.'/', $res->content);
+        $this->assertRegExp('/'.$page31->title.'/', $res->content);
+        $this->assertNotEmpty($res->prevpageurl);
+        $this->assertEmpty($res->nextpageurl);
+
+        // Create and enrol a user.
+        $student = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course1->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($student->id, $course2->id, $studentrole->id, 'manual');
+        $this->setUser($student);
+        core_tag_index_builder::reset_caches();
+
+        // User can not see pages in course 3 because he is not enrolled.
+        $res = mod_wiki_get_tagged_pages($tag, /*$exclusivemode = */false,
+                /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$page = */1);
+        $this->assertRegExp('/'.$page22->title.'/', $res->content);
+        $this->assertRegExp('/'.$page23->title.'/', $res->content);
+        $this->assertNotRegExp('/'.$page31->title.'/', $res->content);
+
+        // User can search wiki pages inside a course.
+        $coursecontext = context_course::instance($course1->id);
+        $res = mod_wiki_get_tagged_pages($tag, /*$exclusivemode = */false,
+                /*$fromctx = */0, /*$ctx = */$coursecontext->id, /*$rec = */1, /*$page = */0);
+        $this->assertRegExp('/'.$page11->title.'/', $res->content);
+        $this->assertRegExp('/'.$page12->title.'/', $res->content);
+        $this->assertRegExp('/'.$page13->title.'/', $res->content);
+        $this->assertNotRegExp('/'.$page14->title.'/', $res->content);
+        $this->assertRegExp('/'.$page15->title.'/', $res->content);
+        $this->assertNotRegExp('/'.$page21->title.'/', $res->content);
+        $this->assertNotRegExp('/'.$page22->title.'/', $res->content);
+        $this->assertNotRegExp('/'.$page23->title.'/', $res->content);
+        $this->assertEmpty($res->nextpageurl);
+    }
 }
