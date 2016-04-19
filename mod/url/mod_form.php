@@ -48,8 +48,11 @@ class mod_url_mod_form extends moodleform_mod {
         $mform->addElement('url', 'externalurl', get_string('externalurl', 'url'), array('size'=>'60'), array('usefilepicker'=>true));
         $mform->setType('externalurl', PARAM_RAW_TRIMMED);
         $mform->addRule('externalurl', null, 'required', null, 'client');
-        $this->standard_intro_elements(null, array('rows' => 5));
-
+        $this->standard_intro_elements();
+        $element = $mform->getElement('introeditor');
+        $attributes = $element->getAttributes();
+        $attributes['rows'] = 5;
+        $element->setAttributes($attributes);
         //-------------------------------------------------------
         $mform->addElement('header', 'optionssection', get_string('appearance'));
 

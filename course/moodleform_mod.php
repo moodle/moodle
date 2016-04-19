@@ -886,10 +886,9 @@ abstract class moodleform_mod extends moodleform {
      * Add an editor for an activity's introduction field.
      *
      * @param null $customlabel Override default label for editor
-     * @param array $attributes add custom attributes for the editor, it sets rows size to 10 (default) to text editor.
      * @throws coding_exception
      */
-    protected function standard_intro_elements($customlabel=null, $attributes = array()) {
+    protected function standard_intro_elements($customlabel=null) {
         global $CFG;
 
         $required = $CFG->requiremodintro;
@@ -897,9 +896,7 @@ abstract class moodleform_mod extends moodleform {
         $mform = $this->_form;
         $label = is_null($customlabel) ? get_string('moduleintro') : $customlabel;
 
-        $attributes['rows'] = !empty($attributes['rows']) ? $attributes['rows'] : 10;
-
-        $mform->addElement('editor', 'introeditor', $label, $attributes, array('maxfiles' => EDITOR_UNLIMITED_FILES,
+        $mform->addElement('editor', 'introeditor', $label, array('rows' => 10), array('maxfiles' => EDITOR_UNLIMITED_FILES,
             'noclean' => true, 'context' => $this->context, 'subdirs' => true));
         $mform->setType('introeditor', PARAM_RAW); // no XSS prevention here, users must be trusted
         if ($required) {
