@@ -3935,7 +3935,7 @@ class core_competency_api_testcase extends advanced_testcase {
      * @param int $grade The grade.
      */
     protected function assertExceptionWithGradeCompetencyInCourse($exceptiontype, $exceptiontext, $courseid, $userid, $compid,
-            $grade = 1) {
+                                                                  $grade = 1) {
 
         $raised = false;
         try {

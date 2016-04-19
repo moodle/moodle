@@ -445,7 +445,7 @@ class external extends external_api {
      * @throws invalid_parameter_exception
      */
     public static function list_competency_frameworks($sort, $order, $skip, $limit, $context, $includes, $onlyvisible,
-            $query = '') {
+                                                      $query = '') {
         global $PAGE;
 
         $params = self::validate_parameters(self::list_competency_frameworks_parameters(), array(

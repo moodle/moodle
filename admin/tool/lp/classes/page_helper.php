@@ -108,7 +108,7 @@ class page_helper {
      *               - Return URL
      */
     public static function setup_for_template($pagecontextid, moodle_url $url, $template = null, $subtitle = '',
-            $returntype = null) {
+                                              $returntype = null) {
         global $PAGE, $SITE;
 
         $pagecontext = context::instance_by_id($pagecontextid);

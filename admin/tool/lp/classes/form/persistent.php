@@ -82,7 +82,7 @@ abstract class persistent extends moodleform {
      * @param bool $editable
      */
     public function __construct($action = null, $customdata = null, $method = 'post', $target = '',
-            $attributes = null, $editable = true) {
+                                $attributes = null, $editable = true) {
         if (empty(static::$persistentclass)) {
             throw new coding_exception('Static property $persistentclass must be set.');
         } else if (!is_subclass_of(static::$persistentclass, 'core_competency\\persistent')) {
