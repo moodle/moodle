@@ -81,10 +81,16 @@
                 <dd>{{{plan.description}}}</dd>
             {{/description}}
             <dt>{{#str}}progress, tool_lp{{/str}}</dt>
-            <dd><span class="progresstext">{{#str}}xcompetenciesproficientoutofy, tool_lp, { "x": "{{proficientcompetencycount}}", "y": "{{competencycount}}" }{{/str}}</span>
-                <div class="progress">
-                    <div class="bar" style="width: {{proficientcompetencypercentage}}%;">
-                        {{proficientcompetencypercentageformatted}} %
+            <dd>
+                <div class="span4">
+                    <div class="progresstext">
+                        {{#str}}xcompetenciesproficientoutofy, tool_lp, { "x": "{{proficientcompetencycount}}", "y": "{{competencycount}}" }{{/str}}
+                    </div>
+                </div>
+                <div class="span4">
+                    <span class="pull-right label label-info">{{proficientcompetencypercentageformatted}} %</span>
+                    <div class="progress">
+                        <div class="bar" style="width: {{proficientcompetencypercentage}}%;"></div>
                     </div>
                 </div>
             </dd>

@@ -46,38 +46,49 @@
 }}
 {{#competencycount}}
 <div data-region="templatestatistics" class="well">
-    <div>
-        <div class="progresstext">
-            {{#str}}xcompetencieslinkedoutofy, tool_lp, { "x": "{{linkedcompetencycount}}", "y": "{{competencycount}}" } {{/str}}
+    <div class="clearfix">
+        <div class="span4">
+            <div class="progresstext">
+                {{#str}}xcompetencieslinkedoutofy, tool_lp, { "x": "{{linkedcompetencycount}}", "y": "{{competencycount}}" } {{/str}}
+            </div>
         </div>
-        <div class="progress">
-            <div class="bar" style="width: {{linkedcompetencypercentage}}%;">
-                {{linkedcompetencypercentageformatted}} %
+        <div class="span6">
+            <span class="pull-right label label-info">{{linkedcompetencypercentageformatted}} %</span>
+            <div class="progress">
+                <div class="bar" style="width: {{linkedcompetencypercentage}}%;"></div>
             </div>
         </div>
     </div>
     {{#plancount}}
-    <div>
-        <div class="progresstext">
-            {{#str}}xplanscompletedoutofy, tool_lp, { "x": "{{completedplancount}}", "y": "{{plancount}}" } {{/str}}
-        </div>
-        <div class="progress">
-            <div class="bar" style="width: {{completedplanpercentage}}%;">
-                {{completedplanpercentageformatted}} %
+    <div class="clearfix">
+        <div class="span4">
+            <div class="progresstext">
+                {{#str}}xplanscompletedoutofy, tool_lp, { "x": "{{completedplancount}}", "y": "{{plancount}}" } {{/str}}
             </div>
         </div>
+        <div class="span6">
+            <span class="pull-right label label-info">{{completedplanpercentageformatted}} %</span>
+            <div class="progress">
+                <div class="bar" style="width: {{completedplanpercentage}}%;">
+
+                </div>
+            </div>
+        </div>    
     </div>
     {{/plancount}}
     {{#usercompetencyplancount}}
-    <div>
-        <div class="progresstext">
-            {{#str}}averageproficiencyrate, tool_lp, {{proficientusercompetencyplanpercentageformatted}} {{/str}}
-        </div>
-        <div class="progress">
-            <div class="bar" style="width: {{proficientusercompetencyplanpercentage}}%;">
-                {{proficientusercompetencyplanpercentageformatted}} %
+    <div  class="clearfix">
+        <div class="span4">
+            <div class="progresstext">
+                {{#str}}averageproficiencyrate, tool_lp, {{proficientusercompetencyplanpercentageformatted}} {{/str}}
             </div>
         </div>
+        <div class="span6">
+            <span class="pull-right label label-info">{{proficientusercompetencyplanpercentageformatted}} %</span>
+            <div class="progress">
+                <div class="bar" style="width: {{proficientusercompetencyplanpercentage}}%;"></div>
+            </div>
+        </div>     
     </div>
     {{/usercompetencyplancount}}
     {{#leastproficientcount}}
