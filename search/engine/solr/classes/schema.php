@@ -80,6 +80,28 @@ class schema {
     }
 
     /**
+     * Can setup be executed against the configured server.
+     *
+     * @return true|string True or error message.
+     */
+    public function can_setup_server() {
+
+        $engine = new \search_solr\engine();
+        $status = $engine->is_server_configured();
+        if ($status !== true) {
+            return $status;
+        }
+
+        // We know that the server is ready here.
+        if ($engine->get_solr_major_version() < 5) {
+            // Schema setup script only available for 5.0 onwards.
+            return get_string('schemasetupfromsolr5', 'search_solr');
+        }
+
+        return true;
+    }
+
+    /**
      * Setup solr stuff required by moodle.
      *
      * @param  bool $checkexisting Whether to check if the fields already exist or not

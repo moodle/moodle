@@ -112,11 +112,6 @@ class engine extends \core_search\engine {
         // If there is any problem we trigger the exception as soon as possible.
         $client = $this->get_search_client();
 
-        $serverstatus = $this->is_server_ready();
-        if ($serverstatus !== true) {
-            throw new \core_search\engine_exception('engineserverstatus', 'search');
-        }
-
         $query = new \SolrDisMaxQuery();
         $maxrows = \core_search\manager::MAX_RESULTS;
         if ($this->file_indexing_enabled()) {
@@ -948,6 +943,29 @@ class engine extends \core_search\engine {
      */
     public function is_server_ready() {
 
+        $configured = $this->is_server_configured();
+        if ($configured !== true) {
+            return $configured;
+        }
+
+        // Check that the schema is already set up.
+        try {
+            $schema = new \search_solr\schema();
+            $schema->validate_setup();
+        } catch (\moodle_exception $e) {
+            return $e->getMessage();
+        }
+
+        return true;
+    }
+
+    /**
+     * Is the solr server properly configured?.
+     *
+     * @return true|string Returns true if all good or an error string.
+     */
+    public function is_server_configured() {
+
         if (empty($this->config->server_hostname) || empty($this->config->indexname)) {
             return 'No solr configuration found';
         }
@@ -957,22 +975,28 @@ class engine extends \core_search\engine {
         }
 
         try {
-            @$client->ping();
+            if ($this->get_solr_major_version() < 4) {
+                // Minimum solr 4.0.
+                return get_string('minimumsolr4', 'search_solr');
+            }
         } catch (\SolrClientException $ex) {
             return 'Solr client error: ' . $ex->getMessage();
         } catch (\SolrServerException $ex) {
             return 'Solr server error: ' . $ex->getMessage();
         }
 
-        // Check that setup schema has already run.
-        try {
-            $schema = new \search_solr\schema();
-            $schema->validate_setup();
-        } catch (\moodle_exception $e) {
-            return $e->getMessage();
-        }
-
         return true;
+    }
+
+    /**
+     * Returns the solr server major version.
+     *
+     * @return int
+     */
+    public function get_solr_major_version() {
+        $systemdata = $this->get_search_client()->system();
+        $solrversion = $systemdata->getResponse()->offsetGet('lucene')->offsetGet('solr-spec-version');
+        return intval(substr($solrversion, 0, strpos($solrversion, '.')));
     }
 
     /**
