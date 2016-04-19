@@ -353,6 +353,7 @@ $cache = '.var_export($cache, true).';
             'calendar'    => $CFG->dirroot.'/calendar',
             'cohort'      => $CFG->dirroot.'/cohort',
             'comment'     => $CFG->dirroot.'/comment',
+            'competency'  => $CFG->dirroot.'/competency',
             'completion'  => $CFG->dirroot.'/completion',
             'countries'   => null,
             'course'      => $CFG->dirroot.'/course',

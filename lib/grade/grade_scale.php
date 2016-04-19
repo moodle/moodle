@@ -289,6 +289,11 @@ class grade_scale extends grade_object {
             return true;
         }
 
+        // Ask the competency subsystem.
+        if (\core_competency\api::is_scale_used_anywhere($scaleid)) {
+            return true;
+        }
+
         // Ask all plugins if the scale is used anywhere.
         $pluginsfunction = get_plugins_with_function('scale_used_anywhere');
         foreach ($pluginsfunction as $plugintype => $plugins) {

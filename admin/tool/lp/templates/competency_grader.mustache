@@ -1,0 +1,26 @@
+<div class="competency-grader" data-region="competency-grader">
+    <form>
+        <div class="content">
+            <div data-region="rating">
+                <label for="rating_{{uniqid}}">{{#str}}rating, tool_lp{{/str}}</label>
+                <select name="rating" id="rating_{{uniqid}}">
+                    {{#ratings}}
+                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                    {{/ratings}}
+                </select>
+            </div>
+            <div data-region="comment">
+                <label for="comment_{{uniqid}}">{{#str}}ratecomment, tool_lp{{/str}}</label>
+                <textarea name="comment" id="comment_{{uniqid}}"></textarea>
+            </div>
+        </div>
+        <div data-region="footer">
+            <div class="pull-right">
+                <input type="button" data-action="rate" value="{{#str}}rate, tool_lp{{/str}}" class="btn">
+            </div>
+            <div>
+                <button data-action="cancel" class="btn btn-link">{{#str}}cancel{{/str}}</button>
+            </div>
+        </div>
+    </form>
+</div>

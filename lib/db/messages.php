@@ -94,5 +94,11 @@ $messageproviders = array (
         'defaults' => array(
             'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDOFF,
         )
-    )
+    ),
+
+    // A comment was left on a plan.
+    'competencyplancomment' => array(),
+
+    // A comment was left on a user competency.
+    'competencyusercompcomment' => array(),
 );

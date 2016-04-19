@@ -127,6 +127,9 @@ class backup_course_task extends backup_task {
             $this->add_step(new backup_course_logstores_structure_step('course_logstores', 'logstores.xml'));
         }
 
+        // Generate the course competencies.
+        $this->add_step(new backup_course_competencies_structure_step('course_competencies', 'competencies.xml'));
+
         // Generate the inforef file (must be after ALL steps gathering annotations of ANY type)
         $this->add_step(new backup_inforef_structure_step('course', 'inforef.xml'));
 
