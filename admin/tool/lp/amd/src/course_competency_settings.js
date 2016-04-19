@@ -100,7 +100,7 @@ define(['jquery',
     settingsMod.prototype._find = function(selector) {
         return $('[data-region="coursecompetencysettings"]').find(selector);
     };
-    
+
     /**
      * Save the settings.
      *

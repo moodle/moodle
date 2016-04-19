@@ -57,7 +57,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/ajax', 'core/log', 'cor
             done: this._contextLoaded.bind(this),
             fail: notification.exception
         }]);
-    
+
         // Log the user competency viewed in course event.
         requests[0].then(function(){
             ajax.call([{

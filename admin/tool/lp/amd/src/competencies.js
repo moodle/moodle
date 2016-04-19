@@ -246,7 +246,7 @@ define(['jquery',
 
     /**
      * Show a confirm dialogue before deleting a competency.
-     * 
+     *
      * @method deleteHandler
      * @param {int} deleteid The id of record to delete.
      */

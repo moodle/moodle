@@ -18,7 +18,7 @@
  *
  * To handle 'save' events use: actionselector.on('save')
  * This will receive the information to display in popup.
- * The actions have the format [{'text': sometext, 'value' : somevalue}] 
+ * The actions have the format [{'text': sometext, 'value' : somevalue}].
  *
  * @package    tool_lp
  * @copyright  2016 Serge Gauthier - <serge.gauthier.2@umontreal.ca>
@@ -43,7 +43,7 @@ define(['jquery',
      */
     var ActionSelector = function(title, message, actions, confirm, cancel) {
         var self = this;
-        
+
         EventBase.prototype.constructor.apply(this, []);
         self._title = title;
         self._message = message;
@@ -55,7 +55,7 @@ define(['jquery',
     };
 
     ActionSelector.prototype = Object.create(EventBase.prototype);
-    
+
     /** @type {String} The value that was selected. */
     ActionSelector.prototype._selectedValue = null;
     /** @type {Dialogue} The reference to the dialogue. */
@@ -170,9 +170,9 @@ define(['jquery',
         for (var i in self._actions) {
             choices.push(self._actions[i]);
         }
-        var content = {'message': self._message, 'choices' : choices, 
+        var content = {'message': self._message, 'choices' : choices,
             'confirm' : self._confirm, 'cancel' : self._cancel};
- 
+
         return Templates.render('tool_lp/action_selector', content);
     };
 
@@ -183,7 +183,7 @@ define(['jquery',
      *
      * @method _reset
      */
-    ActionSelector.prototype._reset = function() {   
+    ActionSelector.prototype._reset = function() {
         this._popup = null;
         this._selectedValue = '';
     };

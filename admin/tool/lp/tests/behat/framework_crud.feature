@@ -73,7 +73,7 @@ Feature: Manage competency frameworks
 
 Scenario: Edit a framework with competencies in user competency
     Given the following lp "frameworks" exist:
-      | shortname | idnumber | 
+      | shortname | idnumber |
       | Science Year-5 | sc-y-5 |
     And the following lp "competencies" exist:
       | shortname | framework |
@@ -87,7 +87,7 @@ Scenario: Edit a framework with competencies in user competency
       | Plan Science-5 | Comp1 |
       | Plan Science-5 | Comp2 |
     And the following lp "usercompetencies" exist:
-      | user | competency | 
+      | user | competency |
       | admin | Comp1 |
       | admin | Comp2 |
     And I follow "Competency Frameworks"
@@ -103,7 +103,7 @@ Scenario: Edit a framework with competencies in user competency
 
 Scenario: Edit a framework with competencies in user competency plan
     Given the following lp "frameworks" exist:
-      | shortname | idnumber | 
+      | shortname | idnumber |
       | Science Year-6 | sc-y-6 |
     And the following lp "competencies" exist:
       | shortname | framework |

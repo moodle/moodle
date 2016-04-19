@@ -21,7 +21,7 @@
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str','tool_lp/actionselector'], 
+define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str','tool_lp/actionselector'],
        function($, templates, ajax, notification, str, Actionselector) {
     // Private variables and functions.
 
@@ -30,7 +30,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
 
     /** @var {Number} templateid The id of the template */
     var templateid = 0;
-    
+
     /** @var {Boolean} Action to apply to plans when deleting a template */
     var deleteplans = true;
 
@@ -136,14 +136,14 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
                         { key: 'confirm', component: 'moodle' },
                         { key: 'cancel', component: 'moodle' }
                     ]).done(function (strings) {
-                        var actions = [{'text': strings[2], 'value' : 'delete'}, 
+                        var actions = [{'text': strings[2], 'value' : 'delete'},
                                        {'text': strings[3], 'value' : 'unlink'}];
                         var actionselector = new Actionselector(
                                 strings[0], // Title.
                                 strings[1], // Message
                                 actions, // Radio button options.
                                 strings[4], // Confirm.
-                                strings[5]); // Cancel.                             
+                                strings[5]); // Cancel.
                         actionselector.display();
                         actionselector.on('save', function(e, data) {
                             if (data.action != 'delete') {
@@ -168,7 +168,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
                         doDelete
                         );
                     }).fail(notification.exception);
-                }                
+                }
             }).fail(notification.exception);
         }).fail(notification.exception);
 
