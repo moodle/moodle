@@ -73,7 +73,7 @@ Structure of the user enroller panel
 .user-enroller-panel .uep-footer {padding:3px;background-color:#ddd;text-align:center;}
 .user-enroller-panel .uep-search {margin:3px;}
 .user-enroller-panel .uep-search label {padding-right:8px;}
-.user-enroller-panel .uep-search input {width:50%;}
+.user-enroller-panel .uep-search input {width:50%; margin: 0 0 10px 5px}
 .user-enroller-panel .uep-search input.uep-search-btn {width:20%;}
 .user-enroller-panel .uep-searchoptions {margin:3px;cursor:pointer;}
 .user-enroller-panel .uep-controls select {margin-left:1em;margin-bottom:0;}
