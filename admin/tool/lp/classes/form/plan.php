@@ -52,9 +52,12 @@ class plan extends persistent {
 
         $mform->addElement('header', 'generalhdr', get_string('general'));
 
-        $mform->addElement('text', 'name', get_string('planname', 'tool_lp'));
+        // Name.
+        $mform->addElement('text', 'name', get_string('planname', 'tool_lp'), 'maxlength="100"');
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
+        $mform->addRule('name', get_string('maximumchars', '', 100), 'maxlength', 100, 'client');
+        // Description.
         $mform->addElement('editor', 'description', get_string('plandescription', 'tool_lp'), array('rows' => 4));
         $mform->setType('description', PARAM_RAW);
 

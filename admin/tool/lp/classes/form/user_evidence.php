@@ -47,10 +47,12 @@ class user_evidence extends persistent {
 
         $mform->addElement('header', 'generalhdr', get_string('general'));
 
+        // Name.
         $mform->addElement('text', 'name', get_string('userevidencename', 'tool_lp'), 'maxlength="100"');
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
-
+        $mform->addRule('name', get_string('maximumchars', '', 100), 'maxlength', 100, 'client');
+        // Description.
         $mform->addElement('editor', 'description', get_string('userevidencedescription', 'tool_lp'), array('rows' => 10));
         $mform->setType('description', PARAM_RAW);
 
