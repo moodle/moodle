@@ -2037,4 +2037,276 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         mod_assign_external::get_submission_status($assign->get_instance()->id, $student1->id);
 
     }
+
+    /**
+     * get_participant should throw an excaption if the requested assignment doesn't exist.
+     */
+    public function test_get_participant_no_assignment() {
+        $this->resetAfterTest(true);
+        $this->setExpectedException('moodle_exception');
+        mod_assign_external::get_participant('-1', '-1', false);
+    }
+
+    /**
+     * get_participant should throw a require_login_exception if the user doesn't have access
+     * to view assignments.
+     */
+    public function test_get_participant_no_view_capability() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $result = $this->create_assign_with_student_and_teacher();
+        $assign = $result['assign'];
+        $student = $result['student'];
+        $course = $result['course'];
+        $context = context_course::instance($course->id);
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+
+        $this->setUser($student);
+        assign_capability('mod/assign:view', CAP_PROHIBIT, $studentrole->id, $context->id, true);
+
+        $this->setExpectedException('require_login_exception');
+        mod_assign_external::get_participant($assign->id, $student->id, false);
+    }
+
+    /**
+     * get_participant should throw a required_capability_exception if the user doesn't have access
+     * to view assignment grades.
+     */
+    public function test_get_participant_no_grade_capability() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $result = $this->create_assign_with_student_and_teacher();
+        $assign = $result['assign'];
+        $student = $result['student'];
+        $teacher = $result['teacher'];
+        $course = $result['course'];
+        $context = context_course::instance($course->id);
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+
+        $this->setUser($teacher);
+        assign_capability('mod/assign:viewgrades', CAP_PROHIBIT, $teacherrole->id, $context->id, true);
+        assign_capability('mod/assign:grade', CAP_PROHIBIT, $teacherrole->id, $context->id, true);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->setExpectedException('required_capability_exception');
+        mod_assign_external::get_participant($assign->id, $student->id, false);
+    }
+
+    /**
+     * get_participant should throw an exception if the user isn't enrolled in the course.
+     */
+    public function test_get_participant_no_participant() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $result = $this->create_assign_with_student_and_teacher(array('blindmarking' => true));
+        $student = $this->getDataGenerator()->create_user();
+        $assign = $result['assign'];
+        $teacher = $result['teacher'];
+
+        $this->setUser($teacher);
+
+        $this->setExpectedException('moodle_exception');
+        $result = mod_assign_external::get_participant($assign->id, $student->id, false);
+    }
+
+    /**
+     * get_participant should return a summarised list of details with a different fullname if blind
+     * marking is on for the requested assignment.
+     */
+    public function test_get_participant_blind_marking() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $result = $this->create_assign_with_student_and_teacher(array('blindmarking' => true));
+        $assign = $result['assign'];
+        $student = $result['student'];
+        $teacher = $result['teacher'];
+        $course = $result['course'];
+        $context = context_course::instance($course->id);
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+
+        $this->setUser($teacher);
+
+        $result = mod_assign_external::get_participant($assign->id, $student->id, true);
+        $this->assertEquals($student->id, $result['id']);
+        $this->assertFalse(fullname($student) == $result['fullname']);
+        $this->assertFalse($result['submitted']);
+        $this->assertFalse($result['requiregrading']);
+        $this->assertTrue($result['blindmarking']);
+        // Make sure we don't get any additional info.
+        $this->assertTrue(empty($result['user']));
+    }
+
+    /**
+     * get_participant should return a summarised list of details if requested.
+     */
+    public function test_get_participant_no_user() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $result = $this->create_assign_with_student_and_teacher();
+        $assignmodule = $result['assign'];
+        $student = $result['student'];
+        $teacher = $result['teacher'];
+        $course = $result['course'];
+        $context = context_course::instance($course->id);
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+
+        // Create an assign instance to save a submission.
+        set_config('submissionreceipts', 0, 'assign');
+
+        $cm = get_coursemodule_from_instance('assign', $assignmodule->id);
+        $context = context_module::instance($cm->id);
+
+        $assign = new assign($context, $cm, $course);
+
+        $this->setUser($student);
+
+        // Simulate a submission.
+        $data = new stdClass();
+        $data->onlinetext_editor = array(
+            'itemid' => file_get_unused_draft_itemid(),
+            'text' => 'Student submission text',
+            'format' => FORMAT_MOODLE
+        );
+
+        $notices = array();
+        $assign->save_submission($data, $notices);
+
+        $data = new stdClass;
+        $data->userid = $student->id;
+        $assign->submit_for_grading($data, array());
+
+        $this->setUser($teacher);
+
+        $result = mod_assign_external::get_participant($assignmodule->id, $student->id, false);
+        $this->assertEquals($student->id, $result['id']);
+        $this->assertEquals(fullname($student), $result['fullname']);
+        $this->assertTrue($result['submitted']);
+        $this->assertTrue($result['requiregrading']);
+        $this->assertFalse($result['blindmarking']);
+        // Make sure we don't get any additional info.
+        $this->assertTrue(empty($result['user']));
+    }
+
+    /**
+     * get_participant should return user details if requested.
+     */
+    public function test_get_participant_full_details() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $result = $this->create_assign_with_student_and_teacher();
+        $assign = $result['assign'];
+        $student = $result['student'];
+        $teacher = $result['teacher'];
+        $course = $result['course'];
+        $context = context_course::instance($course->id);
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+
+        $this->setUser($teacher);
+
+        $result = mod_assign_external::get_participant($assign->id, $student->id, true);
+        // Check some of the extended properties we get when requesting the user.
+        $this->assertEquals($student->id, $result['id']);
+        // We should get user infomation back.
+        $user = $result['user'];
+        $this->assertFalse(empty($user));
+        $this->assertEquals($student->firstname, $user['firstname']);
+        $this->assertEquals($student->lastname, $user['lastname']);
+        $this->assertEquals($student->email, $user['email']);
+    }
+
+    /**
+     * get_participant should return group details if a group submission was
+     * submitted.
+     */
+    public function test_get_participant_group_submission() {
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
+
+        $this->resetAfterTest(true);
+
+        $result = $this->create_assign_with_student_and_teacher(array(
+            'assignsubmission_onlinetext_enabled' => 1,
+            'teamsubmission' => 1
+        ));
+        $assignmodule = $result['assign'];
+        $student = $result['student'];
+        $teacher = $result['teacher'];
+        $course = $result['course'];
+        $context = context_course::instance($course->id);
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $group = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $cm = get_coursemodule_from_instance('assign', $assignmodule->id);
+        $context = context_module::instance($cm->id);
+        $assign = new testable_assign($context, $cm, $course);
+
+        groups_add_member($group, $student);
+
+        $this->setUser($student);
+        $submission = $assign->get_group_submission($student->id, $group->id, true);
+        $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+        $assign->testable_update_submission($submission, $student->id, true, false);
+        $data = new stdClass();
+        $data->onlinetext_editor = array('itemid' => file_get_unused_draft_itemid(),
+                                         'text' => 'Submission text',
+                                         'format' => FORMAT_MOODLE);
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
+
+        $this->setUser($teacher);
+
+        $result = mod_assign_external::get_participant($assignmodule->id, $student->id, false);
+        // Check some of the extended properties we get when not requesting a summary.
+        $this->assertEquals($student->id, $result['id']);
+        $this->assertEquals($group->id, $result['groupid']);
+        $this->assertEquals($group->name, $result['groupname']);
+    }
+
+    /**
+     * Create a a course, assignment module instance, student and teacher and enrol them in
+     * the course.
+     *
+     * @param array $params parameters to be provided to the assignment module creation
+     * @return array containing the course, assignment module, student and teacher
+     */
+    private function create_assign_with_student_and_teacher($params = array()) {
+        global $DB;
+
+        $course = $this->getDataGenerator()->create_course();
+        $params = array_merge(array(
+            'course' => $course->id,
+            'name' => 'assignment',
+            'intro' => 'assignment intro text',
+        ), $params);
+
+        // Create a course and assignment and users.
+        $assign = $this->getDataGenerator()->create_module('assign', $params);
+
+        $cm = get_coursemodule_from_instance('assign', $assign->id);
+        $context = context_module::instance($cm->id);
+
+        $student = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id);
+        $teacher = $this->getDataGenerator()->create_user();
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
+
+        assign_capability('mod/assign:view', CAP_ALLOW, $teacherrole->id, $context->id, true);
+        assign_capability('mod/assign:viewgrades', CAP_ALLOW, $teacherrole->id, $context->id, true);
+        assign_capability('mod/assign:grade', CAP_ALLOW, $teacherrole->id, $context->id, true);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        return array(
+            'course' => $course,
+            'assign' => $assign,
+            'student' => $student,
+            'teacher' => $teacher
+        );
+    }
 }

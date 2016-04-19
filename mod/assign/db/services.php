@@ -210,4 +210,13 @@ $functions = array(
                 'ajax'          => true,
                 'capabilities'  => 'mod/assign:grade'
         ),
+        'mod_assign_get_participant' => array(
+                'classname'     => 'mod_assign_external',
+                'methodname'    => 'get_participant',
+                'classpath'     => 'mod/assign/externallib.php',
+                'description'   => 'Get a participant for an assignment, with some summary info about their submissions.',
+                'type'          => 'read',
+                'ajax'          => true,
+                'capabilities'  => 'mod/assign:view, mod/assign:viewgrades'
+        ),
 );

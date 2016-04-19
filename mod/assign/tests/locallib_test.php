@@ -721,6 +721,95 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertEquals(2, count($assign->list_participants(null, true)));
     }
 
+    public function test_get_participant_user_not_exist() {
+        $assign = $this->create_instance(array('grade' => 100));
+        $this->assertNull($assign->get_participant('-1'));
+    }
+
+    public function test_get_participant_not_enrolled() {
+        $assign = $this->create_instance(array('grade' => 100));
+        $user = $this->getDataGenerator()->create_user();
+        $this->assertNull($assign->get_participant($user->id));
+    }
+
+    public function test_get_participant_no_submission() {
+        $assign = $this->create_instance(array('grade' => 100));
+        $student = $this->students[0];
+        $participant = $assign->get_participant($student->id);
+
+        $this->assertEquals($student->id, $participant->id);
+        $this->assertFalse($participant->submitted);
+        $this->assertFalse($participant->requiregrading);
+    }
+
+    public function test_get_participant_with_ungraded_submission() {
+        $assign = $this->create_instance(array('grade' => 100));
+        $student = $this->students[0];
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+
+        $this->setUser($student);
+
+        // Simulate a submission.
+        $data = new stdClass();
+        $data->onlinetext_editor = array(
+            'itemid' => file_get_unused_draft_itemid(),
+            'text' => 'Student submission text',
+            'format' => FORMAT_MOODLE
+        );
+
+        $notices = array();
+        $assign->save_submission($data, $notices);
+
+        $data = new stdClass;
+        $data->userid = $student->id;
+        $assign->submit_for_grading($data, array());
+
+        $participant = $assign->get_participant($student->id);
+
+        $this->assertEquals($student->id, $participant->id);
+        $this->assertTrue($participant->submitted);
+        $this->assertTrue($participant->requiregrading);
+    }
+
+    public function test_get_participant_with_graded_submission() {
+        $assign = $this->create_instance(array('grade' => 100));
+        $student = $this->students[0];
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+
+        $this->setUser($student);
+
+        // Simulate a submission.
+        $data = new stdClass();
+        $data->onlinetext_editor = array(
+            'itemid' => file_get_unused_draft_itemid(),
+            'text' => 'Student submission text',
+            'format' => FORMAT_MOODLE
+        );
+
+        $notices = array();
+        $assign->save_submission($data, $notices);
+
+        $data = new stdClass;
+        $data->userid = $student->id;
+        $assign->submit_for_grading($data, array());
+
+        // This is to make sure the grade happens after the submission because
+        // we have no control over the timemodified values.
+        sleep(1);
+        // Grade the submission.
+        $this->setUser($this->teachers[0]);
+
+        $data = new stdClass();
+        $data->grade = '50.0';
+        $assign->testable_apply_grade_to_user($data, $student->id, 0);
+
+        $participant = $assign->get_participant($student->id);
+
+        $this->assertEquals($student->id, $participant->id);
+        $this->assertTrue($participant->submitted);
+        $this->assertFalse($participant->requiregrading);
+    }
+
     public function test_count_teams() {
         $this->create_extra_users();
         $this->setUser($this->editingteachers[0]);
