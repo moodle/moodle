@@ -75,6 +75,8 @@ class tool_lp_course_competencies_form_element extends MoodleQuickForm_autocompl
 
         $context = context_course::instance($courseid);
         foreach ($competencies as $competency) {
+            // We don't need to show the description as part of the options, so just set this to null.
+            $competency['competency']->set_description(null);
             $exporter = new competency_exporter($competency['competency'], array('context' => $context));
             $templatecontext = array('competency' => $exporter->export($OUTPUT));
             $id = $competency['competency']->get_id();
