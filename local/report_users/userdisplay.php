@@ -319,7 +319,7 @@ if (empty($dodownload)) {
     }
 }
 
-if (!empty($courseid && !empty($usercompletion[$courseid]))) {
+if (!empty($courseid) && !empty($usercompletion[$courseid]))) {
     if (empty($dodownload)) {
         echo "<h3>".$usercompletion[$courseid]->data[$courseid]->coursename.
              " (<a href='".
