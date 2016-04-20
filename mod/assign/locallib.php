@@ -2786,9 +2786,10 @@ class assign {
     /**
      * Download a zip file of all assignment submissions.
      *
+     * @param array $userids Array of user ids to download assignment submissions in a zip file
      * @return string - If an error occurs, this will contain the error page.
      */
-    protected function download_submissions() {
+    protected function download_submissions($userids = false) {
         global $CFG, $DB;
 
         // More efficient to load this here.
@@ -2824,6 +2825,10 @@ class assign {
         // Get all the files for each student.
         foreach ($students as $student) {
             $userid = $student->id;
+            // Download all assigments submission or only selected users.
+            if ($userids and !in_array($userid, $userids)) {
+                continue;
+            }
 
             if ((groups_is_member($groupid, $userid) or !$groupmode or !$groupid)) {
                 // Get the plugins to add their own files to the zip.
@@ -4084,16 +4089,20 @@ class assign {
                 }
             }
 
-            foreach ($userlist as $userid) {
-                if ($data->operation == 'lock') {
-                    $this->process_lock_submission($userid);
-                } else if ($data->operation == 'unlock') {
-                    $this->process_unlock_submission($userid);
-                } else if ($data->operation == 'reverttodraft') {
-                    $this->process_revert_to_draft($userid);
-                } else if ($data->operation == 'addattempt') {
-                    if (!$this->get_instance()->teamsubmission) {
-                        $this->process_add_attempt($userid);
+            if ($data->operation == 'downloadselected') {
+                $this->download_submissions($userlist);
+            } else {
+                foreach ($userlist as $userid) {
+                    if ($data->operation == 'lock') {
+                        $this->process_lock_submission($userid);
+                    } else if ($data->operation == 'unlock') {
+                        $this->process_unlock_submission($userid);
+                    } else if ($data->operation == 'reverttodraft') {
+                        $this->process_revert_to_draft($userid);
+                    } else if ($data->operation == 'addattempt') {
+                        if (!$this->get_instance()->teamsubmission) {
+                            $this->process_add_attempt($userid);
+                        }
                     }
                 }
             }
