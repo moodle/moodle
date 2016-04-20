@@ -574,6 +574,11 @@ class framework_processor {
             // Finally, we remove the course competencies, but only for the 100% successful ones.
             foreach ($competenciestoremovefromcourse as $competencyid => $unused) {
 
+                // Skip competencies with issues.
+                if (isset($competencieswithissues[$competencyid])) {
+                    continue;
+                }
+
                 try {
                     // Process the course competency.
                     api::remove_competency_from_course($courseid, $competencyid);
