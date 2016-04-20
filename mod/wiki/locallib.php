@@ -1808,7 +1808,7 @@ function mod_wiki_get_tagged_pages($tag, $exclusivemode = false, $fromctx = 0, $
                 $accessible = false;
                 if (($cm = $modinfo->get_cm($taggeditem->cmid)) && $cm->uservisible) {
                     $subwiki = (object)array('id' => $taggeditem->subwikiid, 'groupid' => $taggeditem->groupid,
-                        'userid' => $taggeditem->groupid, 'wikiid' => $taggeditem->wikiid);
+                        'userid' => $taggeditem->userid, 'wikiid' => $taggeditem->wikiid);
                     $wiki = (object)array('id' => $taggeditem->wikiid, 'wikimode' => $taggeditem->wikimode,
                         'course' => $cm->course);
                     $accessible = wiki_user_can_view($subwiki, $wiki);
