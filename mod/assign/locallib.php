@@ -889,6 +889,26 @@ class assign {
     }
 
     /**
+     * Get the marking table page size
+     *
+     * @return integer
+     */
+    public function get_assign_perpage() {
+        $perpage = (int) get_user_preferences('assign_perpage', 10);
+        $adminconfig = $this->get_admin_config();
+        $maxperpage = -1;
+        if (isset($adminconfig->maxperpage)) {
+            $maxperpage = $adminconfig->maxperpage;
+        }
+        if (isset($maxperpage) &&
+            $maxperpage != -1 &&
+            ($perpage == -1 || $perpage > $maxperpage)) {
+            $perpage = $maxperpage;
+        }
+        return $perpage;
+    }
+
+    /**
      * Load and cache the admin config for this module.
      *
      * @return stdClass the plugin config
@@ -3599,7 +3619,7 @@ class assign {
 
         $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
 
-        $perpage = (int) get_user_preferences('assign_perpage', 10);
+        $perpage = $this->get_assign_perpage();
         $filter = get_user_preferences('assign_filter', '');
         $markerfilter = get_user_preferences('assign_markerfilter', '');
         $workflowfilter = get_user_preferences('assign_workflowfilter', '');
