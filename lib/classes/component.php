@@ -358,7 +358,6 @@ $cache = '.var_export($cache, true).';
             'countries'   => null,
             'course'      => $CFG->dirroot.'/course',
             'currencies'  => null,
-            'dataformat'  => $CFG->dirroot.'/dataformat',
             'dbtransfer'  => null,
             'debug'       => null,
             'editor'      => $CFG->dirroot.'/lib/editor',
