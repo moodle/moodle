@@ -63,7 +63,7 @@ if ($entryid and !isset($userid)) {
     $userid = $entry->userid;
 }
 
-if (isset($userid) && empty($courseid)) {
+if (isset($userid) && empty($courseid) && empty($modid)) {
     $context = context_user::instance($userid);
 } else if (!empty($courseid) && $courseid != SITEID) {
     $context = context_course::instance($courseid);
