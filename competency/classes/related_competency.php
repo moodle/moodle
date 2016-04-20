@@ -138,24 +138,25 @@ class related_competency extends persistent {
     public static function get_related_competencies($competencyid) {
         global $DB;
 
-        $sql = "(SELECT c.*, " . $DB->sql_concat('rc.relatedcompetencyid', "'_'", 'rc.competencyid') . " AS rid
+        $fields = competency::get_sql_fields('c', 'c_');
+        $sql = "(SELECT $fields, " . $DB->sql_concat('rc.relatedcompetencyid', "'_'", 'rc.competencyid') . " AS rid
                    FROM {" . self::TABLE . "} rc
                    JOIN {" . competency::TABLE . "} c
                      ON c.id = rc.relatedcompetencyid
                   WHERE rc.competencyid = :cid)
               UNION ALL
-                (SELECT c.*, " . $DB->sql_concat('rc.competencyid', "'_'", 'rc.relatedcompetencyid') . " AS rid
+                (SELECT $fields, " . $DB->sql_concat('rc.competencyid', "'_'", 'rc.relatedcompetencyid') . " AS rid
                    FROM {" . self::TABLE . "} rc
                    JOIN {" . competency::TABLE . "} c
                      ON c.id = rc.competencyid
                   WHERE rc.relatedcompetencyid = :cid2)
-               ORDER BY path, sortorder ASC";
+               ORDER BY c_path ASC, c_sortorder ASC";
 
         $competencies = array();
         $records = $DB->get_recordset_sql($sql, array('cid' => $competencyid, 'cid2' => $competencyid));
         foreach ($records as $record) {
             unset($record->rid);
-            $competencies[$record->id] = new competency(null, $record);
+            $competencies[$record->c_id] = new competency(null, competency::extract_record($record, 'c_'));
         }
         $records->close();
 

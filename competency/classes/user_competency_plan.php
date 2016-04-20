@@ -340,24 +340,26 @@ class user_competency_plan extends persistent {
     public static function get_least_proficient_competencies_for_template($templateid, $skip = 0, $limit = 0) {
         global $DB;
 
-        $fields = competency::get_sql_fields('c');
+        $fields = competency::get_sql_fields('c', 'c_');
         $params = array('templateid' => $templateid, 'notproficient' => false);
-        $sql = 'SELECT ' . $fields . ', COUNT(c.id) AS timesnotproficient ' .
-                ' FROM {' . self::TABLE . '} ucp
-                  JOIN {' . plan::TABLE . '} p
-                    ON ucp.planid = p.id
+        $sql = 'SELECT ' . $fields . '
+                  FROM (SELECT ucp.competencyid, COUNT(ucp.competencyid) AS timesnotproficient
+                          FROM {' . self::TABLE . '} ucp
+                          JOIN {' . plan::TABLE . '} p
+                               ON p.id = ucp.planid
+                         WHERE p.templateid = :templateid
+                               AND (ucp.proficiency = :notproficient OR ucp.proficiency IS NULL)
+                      GROUP BY ucp.competencyid
+                     ) p
                   JOIN {' . competency::TABLE . '} c
-                    ON ucp.competencyid = c.id
-                 WHERE p.templateid = :templateid
-                    AND (ucp.proficiency = :notproficient OR ucp.proficiency IS NULL)
-                GROUP BY c.id
-                ORDER BY timesnotproficient DESC';
+                    ON c.id = p.competencyid
+              ORDER BY p.timesnotproficient DESC, c.id ASC';
 
         $results = $DB->get_records_sql($sql, $params, $skip, $limit);
 
         $comps = array();
         foreach ($results as $r) {
-            $c = competency::extract_record($r);
+            $c = competency::extract_record($r, 'c_');
             $comps[] = new competency(0, $c);
         }
         return $comps;
