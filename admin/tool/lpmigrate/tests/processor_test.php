@@ -332,7 +332,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $this->assertEquals(2, $processor->get_courses_found_count());
         $this->assertEquals(5, $processor->get_expected_course_competency_migrations());
         $this->assertEquals(3, $processor->get_course_competency_migrations());
-        $this->assertEquals(3, $processor->get_course_competency_removals());
+        $this->assertEquals(2, $processor->get_course_competency_removals());
 
         $this->assertEquals(3, $processor->get_cms_found_count());
         $this->assertEquals(5, $processor->get_expected_module_competency_migrations());

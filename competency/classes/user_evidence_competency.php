@@ -122,7 +122,8 @@ class user_evidence_competency extends persistent {
                   JOIN {" . user_evidence::TABLE . "} ue
                     ON uec.userevidenceid = ue.id
                    AND uc.userid = ue.userid
-                   AND ue.id = ?";
+                   AND ue.id = ?
+              ORDER BY uc.id ASC";
 
         $usercompetencies = array();
         $records = $DB->get_recordset_sql($sql, array($userevidenceid));

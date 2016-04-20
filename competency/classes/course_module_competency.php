@@ -298,4 +298,33 @@ class course_module_competency extends persistent {
         return $instances;
     }
 
+    /**
+     * List the relationship objects for a competency in a course.
+     *
+     * @param int $competencyid The competency ID.
+     * @param int $courseid The course ID.
+     * @return course_module_competency[]
+     */
+    public static function get_records_by_competencyid_in_course($competencyid, $courseid) {
+        global $DB;
+
+        $sql = 'SELECT cmc.*
+                  FROM {' . self::TABLE . '} cmc
+                  JOIN {course_modules} cm
+                    ON cm.course = ?
+                   AND cmc.cmid = cm.id
+                 WHERE cmc.competencyid = ?
+              ORDER BY cmc.sortorder ASC';
+        $params = array($courseid, $competencyid);
+
+        $results = $DB->get_recordset_sql($sql, $params);
+        $instances = array();
+        foreach ($results as $result) {
+            $instances[$result->id] = new course_module_competency(0, $result);
+        }
+        $results->close();
+
+        return $instances;
+    }
+
 }

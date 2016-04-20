@@ -107,6 +107,8 @@ class template_competency extends persistent {
             $params[] = 1;
         }
 
+        $sql .= ' ORDER BY tpl.id ASC';
+
         $results = $DB->get_records_sql($sql, $params);
 
         $instances = array();
@@ -199,10 +201,9 @@ class template_competency extends persistent {
                   FROM {' . competency::TABLE . '} comp
                   JOIN {' . self::TABLE . '} tplcomp
                     ON tplcomp.competencyid = comp.id
-                 WHERE tplcomp.templateid = ?';
+                 WHERE tplcomp.templateid = ?
+              ORDER BY tplcomp.sortorder ASC';
         $params = array($templateid);
-
-        $sql .= 'ORDER BY tplcomp.sortorder ASC';
 
         $results = $DB->get_records_sql($sql, $params);
 

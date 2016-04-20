@@ -263,24 +263,27 @@ class user_competency_course extends persistent {
     public static function get_least_proficient_competencies_for_course($courseid, $skip = 0, $limit = 0) {
         global $DB;
 
-        $fields = competency::get_sql_fields('c');
+        $fields = competency::get_sql_fields('c', 'c_');
         $params = array('courseid' => $courseid);
-        $sql = 'SELECT ' . $fields . ', SUM(COALESCE(ucc.proficiency, 0)) AS timesproficient ' .
-                ' FROM {' . competency::TABLE . '} c
-                  JOIN {' . course_competency::TABLE . '} cc
-                    ON c.id = cc.competencyid
-                  LEFT JOIN {' . self::TABLE . '} ucc
-                    ON ucc.competencyid = c.id AND ucc.courseid = cc.courseid
-                 WHERE cc.courseid = :courseid
-                GROUP BY c.id
-                ORDER BY timesproficient ASC, c.id DESC';
+        $sql = 'SELECT ' . $fields . '
+                  FROM (SELECT cc.competencyid, SUM(COALESCE(ucc.proficiency, 0)) AS timesproficient
+                          FROM {' . course_competency::TABLE . '} cc
+                     LEFT JOIN {' . self::TABLE . '} ucc
+                                ON ucc.competencyid = cc.competencyid
+                               AND ucc.courseid = cc.courseid
+                         WHERE cc.courseid = :courseid
+                      GROUP BY cc.competencyid
+                     ) p
+                  JOIN {' . competency::TABLE . '} c
+                    ON c.id = p.competencyid
+              ORDER BY p.timesproficient ASC, c.id DESC';
 
         $results = $DB->get_records_sql($sql, $params, $skip, $limit);
         $a = $DB->get_records_sql('SELECT * from {' . self::TABLE . '}');
 
         $comps = array();
         foreach ($results as $r) {
-            $c = competency::extract_record($r);
+            $c = competency::extract_record($r, 'c_');
             $comps[] = new competency(0, $c);
         }
         return $comps;

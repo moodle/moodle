@@ -1606,12 +1606,11 @@ class api {
         $record->courseid = $courseid;
         $record->competencyid = $competencyid;
 
-        $competency = new competency($competencyid);
         $coursecompetency = new course_competency();
-        $exists = $coursecompetency->get_record(array('courseid' => $courseid, 'competencyid' => $competencyid));
+        $exists = course_competency::get_record(array('courseid' => $courseid, 'competencyid' => $competencyid));
         if ($exists) {
             // Delete all course_module_competencies for this competency in this course.
-            $cmcs = course_module_competency::list_course_module_competencies($competencyid, $courseid);
+            $cmcs = course_module_competency::get_records_by_competencyid_in_course($competencyid, $courseid);
             foreach ($cmcs as $cmc) {
                 $cmc->delete();
             }
