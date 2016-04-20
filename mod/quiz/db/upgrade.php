@@ -193,5 +193,32 @@ function xmldb_quiz_upgrade($oldversion) {
     // Moodle v3.1.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2016092000) {
+        // Define new fields to be added to quiz.
+        $table = new xmldb_table('quiz');
+
+        $field = new xmldb_field('allowofflineattempts', XMLDB_TYPE_INTEGER, '1', null, null, null, 0, 'completionpass');
+        // Conditionally launch add field allowofflineattempts.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2016092000, 'quiz');
+    }
+
+    if ($oldversion < 2016092001) {
+        // New field for quiz_attemps.
+        $table = new xmldb_table('quiz_attempts');
+
+        $field = new xmldb_field('timemodifiedoffline', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, 'timemodified');
+        // Conditionally launch add field timemodifiedoffline.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2016092001, 'quiz');
+    }
+
     return true;
 }

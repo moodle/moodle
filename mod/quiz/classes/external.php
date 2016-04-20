@@ -131,7 +131,8 @@ class mod_quiz_external extends external_api {
                                                     'reviewoverallfeedback', 'questionsperpage', 'navmethod', 'sumgrades', 'grade',
                                                     'browsersecurity', 'delay1', 'delay2', 'showuserpicture', 'showblocks',
                                                     'completionattemptsexhausted', 'completionpass', 'overduehandling',
-                                                    'graceperiod', 'preferredbehaviour', 'canredoquestions');
+                                                    'graceperiod', 'preferredbehaviour', 'canredoquestions',
+                                                    'allowofflineattempts');
                         $viewablefields = array_merge($viewablefields, $additionalfields);
                     }
 
@@ -258,6 +259,8 @@ class mod_quiz_external extends external_api {
                                                                                 exhausted the maximum number of attempts',
                                                                                 VALUE_OPTIONAL),
                             'completionpass' => new external_value(PARAM_INT, 'Whether to require passing grade', VALUE_OPTIONAL),
+                            'allowofflineattempts' => new external_value(PARAM_INT, 'Whether to allow the quiz to be attempted
+                                                                            offline in the mobile app', VALUE_OPTIONAL),
                             'autosaveperiod' => new external_value(PARAM_INT, 'Auto-save delay', VALUE_OPTIONAL),
                             'hasfeedback' => new external_value(PARAM_INT, 'Whether the quiz has any non-blank feedback text',
                                                                 VALUE_OPTIONAL),
@@ -445,6 +448,7 @@ class mod_quiz_external extends external_api {
                 'timefinish' => new external_value(PARAM_INT, 'Time when the attempt was submitted.
                                                     0 if the attempt has not been submitted yet.', VALUE_OPTIONAL),
                 'timemodified' => new external_value(PARAM_INT, 'Last modified time.', VALUE_OPTIONAL),
+                'timemodifiedoffline' => new external_value(PARAM_INT, 'Last modified time via webservices.', VALUE_OPTIONAL),
                 'timecheckstate' => new external_value(PARAM_INT, 'Next time quiz cron should check attempt for
                                                         state changes.  NULL means never check.', VALUE_OPTIONAL),
                 'sumgrades' => new external_value(PARAM_FLOAT, 'Total marks for this attempt.', VALUE_OPTIONAL),
@@ -748,7 +752,8 @@ class mod_quiz_external extends external_api {
                     throw new moodle_quiz_exception($quizobj, 'attemptstillinprogress');
                 }
             }
-            $attempt = quiz_prepare_and_start_new_attempt($quizobj, $attemptnumber, $lastattempt);
+            $offlineattempt = WS_SERVER ? true : false;
+            $attempt = quiz_prepare_and_start_new_attempt($quizobj, $attemptnumber, $lastattempt, $offlineattempt);
         }
 
         $result = array();
@@ -1136,6 +1141,8 @@ class mod_quiz_external extends external_api {
             $_POST[$element['name']] = $element['value'];
         }
         $timenow = time();
+        // Update the timemodifiedoffline field.
+        $attemptobj->set_offline_modified_time($timenow);
         $attemptobj->process_auto_save($timenow);
         $transaction->allow_commit();
 
@@ -1231,7 +1238,10 @@ class mod_quiz_external extends external_api {
         $timeup = $params['timeup'];
 
         $result = array();
+        // Update the timemodifiedoffline field.
+        $attemptobj->set_offline_modified_time($timenow);
         $result['state'] = $attemptobj->process_attempt($timenow, $finishattempt, $timeup, 0);
+
         $result['warnings'] = $warnings;
         return $result;
     }

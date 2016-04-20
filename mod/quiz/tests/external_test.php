@@ -199,7 +199,8 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
                                         'reviewoverallfeedback', 'questionsperpage', 'navmethod', 'sumgrades', 'grade',
                                         'browsersecurity', 'delay1', 'delay2', 'showuserpicture', 'showblocks',
                                         'completionattemptsexhausted', 'completionpass', 'autosaveperiod', 'hasquestions',
-                                        'hasfeedback', 'overduehandling', 'graceperiod', 'preferredbehaviour', 'canredoquestions');
+                                        'hasfeedback', 'overduehandling', 'graceperiod', 'preferredbehaviour', 'canredoquestions',
+                                        'allowofflineattempts');
         $managerfields = array('shuffleanswers', 'timecreated', 'timemodified', 'password', 'subnet');
 
         // Add expected coursemodule and other data.
