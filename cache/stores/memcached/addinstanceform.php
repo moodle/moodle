@@ -41,9 +41,17 @@ class cachestore_memcached_addinstance_form extends cachestore_addinstance_form 
      * Adds the desired form elements.
      */
     protected function configuration_definition() {
+        global $OUTPUT;
+
         $form = $this->_form;
         $version = phpversion('memcached');
         $hasrequiredversion = ($version || version_compare($version, cachestore_memcached::REQUIRED_VERSION, '>='));
+
+        if (!$hasrequiredversion) {
+            $notify = new \core\output\notification(nl2br(get_string('upgrade200recommended', 'cachestore_memcached')),
+                \core\output\notification::NOTIFY_WARNING);
+            $form->addElement('html', $OUTPUT->render($notify));
+        }
 
         $form->addElement('textarea', 'servers', get_string('servers', 'cachestore_memcached'), array('cols' => 75, 'rows' => 5));
         $form->addHelpButton('servers', 'servers', 'cachestore_memcached');
@@ -97,12 +105,6 @@ class cachestore_memcached_addinstance_form extends cachestore_addinstance_form 
         $form->addHelpButton('setservers', 'setservers', 'cachestore_memcached');
         $form->disabledIf('setservers', 'clustered');
         $form->setType('setservers', PARAM_RAW);
-
-        if (!$hasrequiredversion) {
-            $form->addElement('header', 'upgradenotice', get_string('notice', 'cachestore_memcached'));
-            $form->setExpanded('upgradenotice');
-            $form->addElement('html', nl2br(get_string('upgrade200recommended', 'cachestore_memcached')));
-        }
     }
 
     /**
