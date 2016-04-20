@@ -9,7 +9,7 @@ select {
     width: auto;
 }
 
-// Forum
+// Forum module
 
 .path-mod-forum .forumsearch {
     input,
@@ -245,6 +245,8 @@ div#dock {
     display: none;
 }
 
+// Choice module
+
 .path-mod-choice {
     .horizontal  .choices {
         margin: 0;
@@ -257,6 +259,8 @@ div#dock {
         white-space: normal;
     }
 }
+
+// Lesson module
 
 .path-mod-lesson .firstpageoptions {
     margin: auto;
@@ -685,5 +689,88 @@ div#dock {
             height: inherit;
         }
         overflow: hidden;
+    }
+}
+
+// Quiz module
+
+// Question navigation block.
+.path-mod-quiz #mod_quiz_navblock {
+    .qnbutton {
+        text-decoration: none;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: normal;
+        background-color: @white;
+        background-image: none;
+        height: 40px;
+        width: 30px;
+        border-radius: 3px;
+        border: 0;
+        overflow: visible;
+        margin: 0 6px 6px 0;
+    }
+    span.qnbutton {
+        cursor: default;
+        background-color: @inputDisabledBackground;
+        color: @gray;
+    }
+    a.qnbutton:hover,
+    a.qnbutton:active,
+    a.qnbutton:focus {
+        text-decoration: underline;
+    }
+
+    .qnbutton .thispageholder {
+        border: 1px solid;
+        border-radius: 3px;
+        z-index: 1;
+    }
+    .qnbutton.thispage .thispageholder {
+        border-width: 3px;
+    }
+    .allquestionsononepage .qnbutton.thispage .thispageholder {
+        border-width: 1px;
+    }
+
+    .qnbutton.flagged .thispageholder {
+        background: transparent url([[pix:theme|mod/quiz/flag-on]]) 15px 0px no-repeat;
+    }
+
+    .qnbutton .trafficlight {
+        border: 0;
+        background: @white none center/10px no-repeat scroll;
+        height: 20px;
+        margin-top: 20px;
+        border-radius: 0 0 3px 3px;
+    }
+
+    .qnbutton.notyetanswered .trafficlight,
+    .qnbutton.invalidanswer .trafficlight {
+        background-color: @white;
+    }
+    .qnbutton.invalidanswer .trafficlight {
+        background-image: url([[pix:theme|mod/quiz/warningtriangle]]);
+    }
+    .qnbutton.correct .trafficlight {
+        background-image: url([[pix:theme|mod/quiz/checkmark]]);
+        background-color: @successText;
+    }
+    .qnbutton.blocked .trafficlight {
+        background-image: url([[pix:core|t/locked]]);
+        background-color: @inputDisabledBackground;
+    }
+    .qnbutton.notanswered .trafficlight,
+    .qnbutton.incorrect .trafficlight {
+        background-color: @errorText;
+    }
+    .qnbutton.partiallycorrect .trafficlight {
+        background-image: url([[pix:theme|mod/quiz/whitecircle]]);
+        background-color: @orange;
+    }
+    .qnbutton.complete .trafficlight,
+    .qnbutton.answersaved .trafficlight,
+    .path-mod-quiz #page .qnbutton.requiresgrading .trafficlight {
+        background-color: @grayLight;
     }
 }
