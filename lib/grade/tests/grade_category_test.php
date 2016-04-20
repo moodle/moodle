@@ -282,6 +282,10 @@ class core_grade_category_testcase extends grade_base_testcase {
         $DB->set_field('grade_grades', 'finalgrade', null, array('itemid'=>$childcat1itemid));
         $parentcat->generate_grades();
 
+        $this->assertFalse($DB->record_exists_select(
+                                     'grade_grades',
+                                     "aggregationstatus='dropped' and itemid in (?,?)",
+                                     array($childcat1itemid, $childcat2itemid)));
         $this->assertTrue($DB->record_exists_select(
                                      'grade_grades',
                                      "aggregationstatus='novalue' and itemid = ?",
