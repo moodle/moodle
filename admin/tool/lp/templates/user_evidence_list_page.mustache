@@ -95,11 +95,13 @@
                                 {{#pix}}t/edit{{/pix}} {{#str}}editthisuserevidence, tool_lp{{/str}}
                             </a>
                         </li>
+                        {{#userhasplan}}
                         <li>
                             <a href="#" data-action="link-competency">
                                 {{#pix}}t/add{{/pix}} {{#str}}linkcompetencies, tool_lp{{/str}}
                             </a>
                         </li>
+                        {{/userhasplan}}
                         <li>
                             <a data-action="send-competencies-review" href="#">
                                 {{#pix}}t/edit{{/pix}} {{#str}}sendcompetenciestoreview, tool_lp{{/str}}

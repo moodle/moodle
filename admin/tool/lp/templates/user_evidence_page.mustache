@@ -89,7 +89,9 @@
         <div data-region="actions">
             <div class="pull-right">
                 {{#canmanage}}
+                    {{#userhasplan}}
                     <button class="btn" data-action="link-competency">{{#pix}}t/add{{/pix}} {{#str}}linkcompetencies, tool_lp{{/str}}</button>
+                    {{/userhasplan}}
                 {{/canmanage}}
             </div>
         </div>

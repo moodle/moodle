@@ -111,6 +111,15 @@ class user_evidence extends persistent {
     }
 
     /**
+     * Return true if the user of the evidence has plan.
+     *
+     * @return bool
+     */
+    public function user_has_plan() {
+        return plan::record_exists_select('userid = ?', array($this->get_userid()));
+    }
+
+    /**
      * Return the files associated with this evidence.
      *
      * @return object[]
