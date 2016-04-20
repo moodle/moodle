@@ -290,7 +290,7 @@ class grade_scale extends grade_object {
         }
 
         // Ask the competency subsystem.
-        if (\core_competency\api::is_scale_used_anywhere($scaleid)) {
+        if (\core_competency\api::is_scale_used_anywhere($this->id)) {
             return true;
         }
 
