@@ -1704,10 +1704,8 @@ class table_dataformat_export_format extends table_default_export_format_parent 
     public function __construct(&$table, $dataformat) {
         parent::__construct($table);
 
-        if (!NO_OUTPUT_BUFFERING) {
-            // Ideally this would throw a coding exception but we are more forgiving here due
-            // to the large amount of code already using table_sql.
-            debugging("NO_OUTPUT_BUFFERING should be set to true before downloading", DEBUG_DEVELOPER);
+        if (ob_get_length()) {
+            throw new coding_exception("Output can not be buffered before instantiating table_dataformat_export_format");
         }
 
         $classname = 'dataformat_' . $dataformat . '\writer';

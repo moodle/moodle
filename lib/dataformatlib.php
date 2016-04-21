@@ -38,8 +38,8 @@
  */
 function download_as_dataformat($filename, $dataformat, $columns, $iterator, $callback = null) {
 
-    if (!NO_OUTPUT_BUFFERING) {
-        throw new coding_exception("NO_OUTPUT_BUFFERING must be set to true before calling download_as_dataformat");
+    if (ob_get_length()) {
+        throw new coding_exception("Output can not be buffered before calling download_as_dataformat");
     }
 
     $classname = 'dataformat_' . $dataformat . '\writer';

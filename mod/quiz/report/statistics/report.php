@@ -667,21 +667,10 @@ class quiz_statistics_report extends quiz_default_report {
      * @return string HTML.
      */
     protected function everything_download_options() {
-        $downloadoptions = $this->table->get_download_menu();
+        global $OUTPUT;
 
-        $downloadelements = new stdClass();
-        $downloadelements->formatsmenu = html_writer::select($downloadoptions, 'download',
-                $this->table->defaultdownloadformat, false);
-        $downloadelements->downloadbutton = '<input type="submit" value="' .
-                get_string('download') . '"/>';
-
-        $output = '<form action="'. $this->table->baseurl .'" method="post">';
-        $output .= '<div class="mdl-align">';
-        $output .= '<input type="hidden" name="everything" value="1"/>';
-        $output .= html_writer::tag('label', get_string('downloadeverything', 'quiz_statistics', $downloadelements));
-        $output .= '</div></form>';
-
-        return $output;
+        return $OUTPUT->download_dataformat_selector(get_string('downloadeverything', 'quiz_statistics'),
+            $this->table->baseurl->out_omit_querystring(), 'download', $this->table->baseurl->params() + array('everything' => 1));
     }
 
     /**

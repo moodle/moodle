@@ -51,6 +51,10 @@ abstract class spout_base extends \core\dataformat\base {
         $this->writer = \Box\Spout\Writer\WriterFactory::create($this->spouttype);
         $filename = $this->filename . $this->get_extension();
         $this->writer->openToBrowser($filename);
+        if ($this->sheettitle) {
+            $sheet = $this->writer->getCurrentSheet();
+            $sheet->setName($this->sheettitle);
+        }
     }
 
     /**
@@ -64,11 +68,7 @@ abstract class spout_base extends \core\dataformat\base {
         if (!$title) {
             return;
         }
-        $title = preg_replace('/[\\\\\/\\?\\*\\[\\]]/', '', $title);
-        $title = substr($title, 0, 31);
         $this->sheettitle = $title;
-        $sheet = $this->writer->getCurrentSheet();
-        $sheet->setName($title);
     }
 
     /**
