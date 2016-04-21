@@ -456,7 +456,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $this->assertEquals(1, $processor->get_courses_found_count());
         $this->assertEquals(2, $processor->get_expected_course_competency_migrations());
         $this->assertEquals(2, $processor->get_course_competency_migrations());
-        $this->assertEquals(2, $processor->get_course_competency_removals());
+        $this->assertEquals(0, $processor->get_course_competency_removals());
 
         $this->assertEquals(1, $processor->get_cms_found_count());
         $this->assertEquals(2, $processor->get_expected_module_competency_migrations());
@@ -472,8 +472,13 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $this->assertRegexp('/Sorry, but you do not currently have permissions to do that/', $errors[0]['message']);
         $this->assertEquals($this->f1comps['A3']->get_id(), $errors[1]['competencyid']);
 
-        $this->assertCourseCompetencyMigrated($this->c2, $this->f1comps['A2'], $this->f2comps['A2']);
-        $this->assertCourseCompetencyMigrated($this->c2, $this->f1comps['A3'], $this->f2comps['A3']);
+        // The new competencies were added to the course, but the old ones were not removed because they are still in modules.
+        $this->assertCourseCompetencyExists($this->c2, $this->f1comps['A2']);
+        $this->assertCourseCompetencyExists($this->c2, $this->f1comps['A3']);
+        $this->assertCourseCompetencyExists($this->c2, $this->f2comps['A2']);
+        $this->assertCourseCompetencyExists($this->c2, $this->f2comps['A3']);
+
+        // Module competencies were not migrated because permissions are lacking.
         $this->assertModuleCompetencyNotMigrated($this->cms[$this->c2->id]['F1'], $this->f1comps['A2'], $this->f2comps['A2']);
         $this->assertModuleCompetencyNotMigrated($this->cms[$this->c2->id]['F1'], $this->f1comps['A3'], $this->f2comps['A2']);
     }

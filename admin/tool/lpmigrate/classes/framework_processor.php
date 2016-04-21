@@ -543,6 +543,7 @@ class framework_processor {
 
                             } catch (moodle_exception $e) {
                                 // There was a major problem with this competency in this module.
+                                $competencieswithissues[$competencyid] = true;
                                 $message = get_string('errorwhilemigratingmodulecompetencywithexception', 'tool_lpmigrate',
                                     $e->getMessage());
                                 $this->log_error($courseid, $competencyid, $cmid, $message);
@@ -564,6 +565,7 @@ class framework_processor {
                                 $this->modulecompetencyremovals++;
                             }
                         } catch (moodle_exception $e) {
+                            $competencieswithissues[$competencyid] = true;
                             $this->log_warning($courseid, $competencyid, $cmid,
                                 get_string('warningcouldnotremovemodulecompetency', 'tool_lpmigrate'));
                         }
