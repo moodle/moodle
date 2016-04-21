@@ -110,12 +110,12 @@ if (is_array($items)) {
 }
 
 if ($courseitemfilter > 0) {
-    $avgvalue = 'avg(' . $DB->sql_cast_char2int('value', true) . ')';
-    $sql = "SELECT fv.course_id, c.shortname, $avgvalue AS avgvalue
+    $sumvalue = 'SUM(' . $DB->sql_cast_char2real('value', true) . ')';
+    $sql = "SELECT fv.course_id, c.shortname, $sumvalue AS sumvalue, COUNT(value) as countvalue
             FROM {feedback_value} fv, {course} c, {feedback_item} fi
             WHERE fv.course_id = c.id AND fi.id = fv.item AND fi.typ = ? AND fv.item = ?
             GROUP BY course_id, shortname
-            ORDER BY avgvalue desc";
+            ORDER BY sumvalue desc";
 
     if ($courses = $DB->get_records_sql($sql, array($courseitemfiltertyp, $courseitemfilter))) {
         $item = $DB->get_record('feedback_item', array('id'=>$courseitemfilter));
@@ -133,7 +133,7 @@ if ($courseitemfilter > 0) {
             echo '<tr>';
             echo '<td>'.$shortname.'</td>';
             echo '<td align="right">';
-            echo number_format(($c->avgvalue), 2, $sep_dec, $sep_thous);
+            echo number_format(($c->sumvalue / $c->countvalue), 2, $sep_dec, $sep_thous);
             echo '</td>';
             echo '</tr>';
         }
