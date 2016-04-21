@@ -545,6 +545,7 @@
 
 .path-mod-assign [data-region="grade-panel"] #id_gradeheader {
     display: table-cell;
+    min-width: 0;
 }
 
 .path-mod-assign [data-region="grade-panel"] #id_gradeheader > legend {
@@ -637,6 +638,7 @@
 
 .path-mod-assign [data-region="grade-panel"] .gradingform_rubric {
     padding-bottom: 0;
+    max-width: none;
 }
 
 .path-mod-assign [data-region="grade-panel"] .gradingform_rubric .criterion .description {
@@ -747,6 +749,7 @@
     left: 20%;
     right: 20%;
     top: 20%;
+    bottom: 20%;
     z-index: 1000;
     border: 1px solid rgba(0, 0, 0, 0.3);
     border-radius: 6px;
@@ -757,6 +760,7 @@
     text-align: center;
     padding-left: 15px;
     padding-right: 15px;
+    height: 45px;
 }
 
 .path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) .fcontainer .fitem.popout .fitemtitle label {
@@ -778,6 +782,12 @@
 
 .path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) .fcontainer .fitem.popout .felement {
     padding: 10px 15px 15px;
+    height: calc(100% - 54px);
+    overflow: auto;
+}
+
+.path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) .fcontainer .fitem.popout .felement .gradingform_rubric {
+    overflow: visible;
 }
 
 /***** End popout dialogue *****/
