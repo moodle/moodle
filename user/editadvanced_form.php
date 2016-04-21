@@ -60,7 +60,7 @@ class user_editadvanced_form extends moodleform {
 
         // Add some extra hidden fields.
         $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
+        $mform->setType('id', core_user::get_property_type('id'));
         $mform->addElement('hidden', 'course', $COURSE->id);
         $mform->setType('course', PARAM_INT);
 
@@ -69,7 +69,7 @@ class user_editadvanced_form extends moodleform {
 
         $mform->addElement('text', 'username', get_string('username'), 'size="20"');
         $mform->addRule('username', $strrequired, 'required', null, 'client');
-        $mform->setType('username', PARAM_RAW);
+        $mform->setType('username', core_user::get_property_type('username'));
 
         $auths = core_component::get_plugin_list('auth');
         $enabled = get_string('pluginenabled', 'core_plugin');
@@ -107,7 +107,7 @@ class user_editadvanced_form extends moodleform {
         }
         $mform->addElement('passwordunmask', 'newpassword', get_string('newpassword'), 'size="20"');
         $mform->addHelpButton('newpassword', 'newpassword');
-        $mform->setType('newpassword', PARAM_RAW);
+        $mform->setType('newpassword', core_user::get_property_type('password'));
         $mform->disabledIf('newpassword', 'createpassword', 'checked');
 
         $mform->disabledIf('newpassword', 'auth', 'in', $cannotchangepass);
@@ -259,7 +259,7 @@ class user_editadvanced_form extends moodleform {
             if ($usernew->username !== core_text::strtolower($usernew->username)) {
                 $err['username'] = get_string('usernamelowercase');
             } else {
-                if ($usernew->username !== clean_param($usernew->username, PARAM_USERNAME)) {
+                if ($usernew->username !== core_user::clean_field($usernew->username, 'username')) {
                     $err['username'] = get_string('invalidusername');
                 }
             }

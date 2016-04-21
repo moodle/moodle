@@ -51,53 +51,53 @@ class core_user_external extends external_api {
                     new external_single_structure(
                         array(
                             'username' =>
-                                new external_value(PARAM_USERNAME, 'Username policy is defined in Moodle security config.'),
+                                new external_value(core_user::get_property_type('username'), 'Username policy is defined in Moodle security config.'),
                             'password' =>
-                                new external_value(PARAM_RAW, 'Plain text password consisting of any characters', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('password'), 'Plain text password consisting of any characters', VALUE_OPTIONAL),
                             'createpassword' =>
                                 new external_value(PARAM_BOOL, 'True if password should be created and mailed to user.',
                                     VALUE_OPTIONAL),
                             'firstname' =>
-                                new external_value(PARAM_NOTAGS, 'The first name(s) of the user'),
+                                new external_value(core_user::get_property_type('firstname'), 'The first name(s) of the user'),
                             'lastname' =>
-                                new external_value(PARAM_NOTAGS, 'The family name of the user'),
+                                new external_value(core_user::get_property_type('lastname'), 'The family name of the user'),
                             'email' =>
-                                new external_value(PARAM_EMAIL, 'A valid and unique email address'),
+                                new external_value(core_user::get_property_type('email'), 'A valid and unique email address'),
                             'auth' =>
-                                new external_value(PARAM_PLUGIN, 'Auth plugins include manual, ldap, imap, etc', VALUE_DEFAULT,
-                                    'manual', NULL_NOT_ALLOWED),
+                                new external_value(core_user::get_property_type('auth'), 'Auth plugins include manual, ldap, imap, etc', VALUE_DEFAULT,
+                                    'manual', core_user::get_property_null('auth')),
                             'idnumber' =>
-                                new external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution',
+                                new external_value(core_user::get_property_type('idnumber'), 'An arbitrary ID code number perhaps from the institution',
                                     VALUE_DEFAULT, ''),
                             'lang' =>
-                                new external_value(PARAM_SAFEDIR, 'Language code such as "en", must exist on server', VALUE_DEFAULT,
-                                    $CFG->lang, NULL_NOT_ALLOWED),
+                                new external_value(core_user::get_property_type('lang'), 'Language code such as "en", must exist on server', VALUE_DEFAULT,
+                                    core_user::get_property_default('lang'), core_user::get_property_null('lang')),
                             'calendartype' =>
-                                new external_value(PARAM_PLUGIN, 'Calendar type such as "gregorian", must exist on server',
+                                new external_value(core_user::get_property_type('calendartype'), 'Calendar type such as "gregorian", must exist on server',
                                     VALUE_DEFAULT, $CFG->calendartype, VALUE_OPTIONAL),
                             'theme' =>
-                                new external_value(PARAM_PLUGIN, 'Theme name such as "standard", must exist on server',
+                                new external_value(core_user::get_property_type('theme'), 'Theme name such as "standard", must exist on server',
                                     VALUE_OPTIONAL),
                             'timezone' =>
-                                new external_value(PARAM_TIMEZONE, 'Timezone code such as Australia/Perth, or 99 for default',
+                                new external_value(core_user::get_property_type('timezone'), 'Timezone code such as Australia/Perth, or 99 for default',
                                     VALUE_OPTIONAL),
                             'mailformat' =>
-                                new external_value(PARAM_INT, 'Mail format code is 0 for plain text, 1 for HTML etc',
+                                new external_value(core_user::get_property_type('mailformat'), 'Mail format code is 0 for plain text, 1 for HTML etc',
                                     VALUE_OPTIONAL),
                             'description' =>
-                                new external_value(PARAM_TEXT, 'User profile description, no HTML', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('description'), 'User profile description, no HTML', VALUE_OPTIONAL),
                             'city' =>
-                                new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('city'), 'Home city of the user', VALUE_OPTIONAL),
                             'country' =>
-                                new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('country'), 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
                             'firstnamephonetic' =>
-                                new external_value(PARAM_NOTAGS, 'The first name(s) phonetically of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('firstnamephonetic'), 'The first name(s) phonetically of the user', VALUE_OPTIONAL),
                             'lastnamephonetic' =>
-                                new external_value(PARAM_NOTAGS, 'The family name phonetically of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('lastnamephonetic'), 'The family name phonetically of the user', VALUE_OPTIONAL),
                             'middlename' =>
-                                new external_value(PARAM_NOTAGS, 'The middle name of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('middlename'), 'The middle name of the user', VALUE_OPTIONAL),
                             'alternatename' =>
-                                new external_value(PARAM_NOTAGS, 'The alternate name of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('alternatename'), 'The alternate name of the user', VALUE_OPTIONAL),
                             'preferences' => new external_multiple_structure(
                                 new external_single_structure(
                                     array(
@@ -252,8 +252,8 @@ class core_user_external extends external_api {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
-                    'id'       => new external_value(PARAM_INT, 'user id'),
-                    'username' => new external_value(PARAM_USERNAME, 'user name'),
+                    'id'       => new external_value(core_user::get_property_type('id'), 'user id'),
+                    'username' => new external_value(core_user::get_property_type('username'), 'user name'),
                 )
             )
         );
@@ -269,7 +269,7 @@ class core_user_external extends external_api {
     public static function delete_users_parameters() {
         return new external_function_parameters(
             array(
-                'userids' => new external_multiple_structure(new external_value(PARAM_INT, 'user ID')),
+                'userids' => new external_multiple_structure(new external_value(core_user::get_property_type('id'), 'user ID')),
             )
         );
     }
@@ -336,56 +336,56 @@ class core_user_external extends external_api {
                     new external_single_structure(
                         array(
                             'id' =>
-                                new external_value(PARAM_INT, 'ID of the user'),
+                                new external_value(core_user::get_property_type('id'), 'ID of the user'),
                             'username' =>
-                                new external_value(PARAM_USERNAME, 'Username policy is defined in Moodle security config.',
+                                new external_value(core_user::get_property_type('username'), 'Username policy is defined in Moodle security config.',
                                     VALUE_OPTIONAL, '', NULL_NOT_ALLOWED),
                             'password' =>
-                                new external_value(PARAM_RAW, 'Plain text password consisting of any characters', VALUE_OPTIONAL,
+                                new external_value(core_user::get_property_type('password'), 'Plain text password consisting of any characters', VALUE_OPTIONAL,
                                     '', NULL_NOT_ALLOWED),
                             'firstname' =>
-                                new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL, '',
+                                new external_value(core_user::get_property_type('firstname'), 'The first name(s) of the user', VALUE_OPTIONAL, '',
                                     NULL_NOT_ALLOWED),
                             'lastname' =>
-                                new external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('lastname'), 'The family name of the user', VALUE_OPTIONAL),
                             'email' =>
-                                new external_value(PARAM_EMAIL, 'A valid and unique email address', VALUE_OPTIONAL, '',
+                                new external_value(core_user::get_property_type('email'), 'A valid and unique email address', VALUE_OPTIONAL, '',
                                     NULL_NOT_ALLOWED),
                             'auth' =>
-                                new external_value(PARAM_PLUGIN, 'Auth plugins include manual, ldap, imap, etc', VALUE_OPTIONAL, '',
+                                new external_value(core_user::get_property_type('auth'), 'Auth plugins include manual, ldap, imap, etc', VALUE_OPTIONAL, '',
                                     NULL_NOT_ALLOWED),
                             'idnumber' =>
-                                new external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution',
+                                new external_value(core_user::get_property_type('idnumber'), 'An arbitrary ID code number perhaps from the institution',
                                     VALUE_OPTIONAL),
                             'lang' =>
-                                new external_value(PARAM_SAFEDIR, 'Language code such as "en", must exist on server',
+                                new external_value(core_user::get_property_type('lang'), 'Language code such as "en", must exist on server',
                                     VALUE_OPTIONAL, '', NULL_NOT_ALLOWED),
                             'calendartype' =>
-                                new external_value(PARAM_PLUGIN, 'Calendar type such as "gregorian", must exist on server',
+                                new external_value(core_user::get_property_type('calendartype'), 'Calendar type such as "gregorian", must exist on server',
                                     VALUE_OPTIONAL, '', NULL_NOT_ALLOWED),
                             'theme' =>
-                                new external_value(PARAM_PLUGIN, 'Theme name such as "standard", must exist on server',
+                                new external_value(core_user::get_property_type('theme'), 'Theme name such as "standard", must exist on server',
                                     VALUE_OPTIONAL),
                             'timezone' =>
-                                new external_value(PARAM_TIMEZONE, 'Timezone code such as Australia/Perth, or 99 for default',
+                                new external_value(core_user::get_property_type('timezone'), 'Timezone code such as Australia/Perth, or 99 for default',
                                     VALUE_OPTIONAL),
                             'mailformat' =>
-                                new external_value(PARAM_INT, 'Mail format code is 0 for plain text, 1 for HTML etc',
+                                new external_value(core_user::get_property_type('mailformat'), 'Mail format code is 0 for plain text, 1 for HTML etc',
                                     VALUE_OPTIONAL),
                             'description' =>
-                                new external_value(PARAM_TEXT, 'User profile description, no HTML', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('description'), 'User profile description, no HTML', VALUE_OPTIONAL),
                             'city' =>
-                                new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('city'), 'Home city of the user', VALUE_OPTIONAL),
                             'country' =>
-                                new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('country'), 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
                             'firstnamephonetic' =>
-                                new external_value(PARAM_NOTAGS, 'The first name(s) phonetically of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('firstnamephonetic'), 'The first name(s) phonetically of the user', VALUE_OPTIONAL),
                             'lastnamephonetic' =>
-                                new external_value(PARAM_NOTAGS, 'The family name phonetically of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('lastnamephonetic'), 'The family name phonetically of the user', VALUE_OPTIONAL),
                             'middlename' =>
-                                new external_value(PARAM_NOTAGS, 'The middle name of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('middlename'), 'The middle name of the user', VALUE_OPTIONAL),
                             'alternatename' =>
-                                new external_value(PARAM_NOTAGS, 'The alternate name of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('alternatename'), 'The alternate name of the user', VALUE_OPTIONAL),
                             'customfields' => new external_multiple_structure(
                                 new external_single_structure(
                                     array(
@@ -507,16 +507,16 @@ class core_user_external extends external_api {
 
         switch ($field) {
             case 'id':
-                $paramtype = PARAM_INT;
+                $paramtype = core_user::get_property_type('id');
                 break;
             case 'idnumber':
-                $paramtype = PARAM_RAW;
+                $paramtype = core_user::get_property_type('idnumber');
                 break;
             case 'username':
-                $paramtype = PARAM_RAW;
+                $paramtype = core_user::get_property_type('username');
                 break;
             case 'email':
-                $paramtype = PARAM_EMAIL;
+                $paramtype = core_user::get_property_type('email');
                 break;
             default:
                 throw new coding_exception('invalid field parameter',
@@ -638,24 +638,24 @@ class core_user_external extends external_api {
             $paramtype = PARAM_RAW;
             switch ($criteria['key']) {
                 case 'id':
-                    $paramtype = PARAM_INT;
+                    $paramtype = core_user::get_property_type('id');
                     break;
                 case 'idnumber':
-                    $paramtype = PARAM_RAW;
+                    $paramtype = core_user::get_property_type('idnumber');
                     break;
                 case 'username':
-                    $paramtype = PARAM_RAW;
+                    $paramtype = core_user::get_property_type('username');
                     break;
                 case 'email':
                     // We use PARAM_RAW to allow searches with %.
-                    $paramtype = PARAM_RAW;
+                    $paramtype = core_user::get_property_type('email');
                     break;
                 case 'auth':
-                    $paramtype = PARAM_AUTH;
+                    $paramtype = core_user::get_property_type('auth');
                     break;
                 case 'lastname':
                 case 'firstname':
-                    $paramtype = PARAM_TEXT;
+                    $paramtype = core_user::get_property_type('firstname');
                     break;
                 default:
                     // Send back a warning that this search key is not supported in this version.
@@ -752,7 +752,9 @@ class core_user_external extends external_api {
     public static function get_users_by_id_parameters() {
         return new external_function_parameters(
             array(
-                'userids' => new external_multiple_structure(new external_value(PARAM_INT, 'user ID')),
+                'userids' => new external_multiple_structure(
+                    new external_value(core_user::get_property_type('id'), 'user ID')
+                ),
             )
         );
     }
@@ -857,7 +859,7 @@ class core_user_external extends external_api {
                 'userlist' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'userid'    => new external_value(PARAM_INT, 'userid'),
+                            'userid'    => new external_value(core_user::get_property_type('id'), 'userid'),
                             'courseid'    => new external_value(PARAM_INT, 'courseid'),
                         )
                     )
@@ -977,38 +979,38 @@ class core_user_external extends external_api {
      */
     public static function user_description($additionalfields = array()) {
         $userfields = array(
-            'id'    => new external_value(PARAM_INT, 'ID of the user'),
-            'username'    => new external_value(PARAM_RAW, 'The username', VALUE_OPTIONAL),
-            'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL),
-            'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
-            'fullname'    => new external_value(PARAM_NOTAGS, 'The fullname of the user'),
-            'email'       => new external_value(PARAM_TEXT, 'An email address - allow email as root@localhost', VALUE_OPTIONAL),
-            'address'     => new external_value(PARAM_TEXT, 'Postal address', VALUE_OPTIONAL),
-            'phone1'      => new external_value(PARAM_NOTAGS, 'Phone 1', VALUE_OPTIONAL),
-            'phone2'      => new external_value(PARAM_NOTAGS, 'Phone 2', VALUE_OPTIONAL),
-            'icq'         => new external_value(PARAM_NOTAGS, 'icq number', VALUE_OPTIONAL),
-            'skype'       => new external_value(PARAM_NOTAGS, 'skype id', VALUE_OPTIONAL),
-            'yahoo'       => new external_value(PARAM_NOTAGS, 'yahoo id', VALUE_OPTIONAL),
-            'aim'         => new external_value(PARAM_NOTAGS, 'aim id', VALUE_OPTIONAL),
-            'msn'         => new external_value(PARAM_NOTAGS, 'msn number', VALUE_OPTIONAL),
-            'department'  => new external_value(PARAM_TEXT, 'department', VALUE_OPTIONAL),
-            'institution' => new external_value(PARAM_TEXT, 'institution', VALUE_OPTIONAL),
-            'idnumber'    => new external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution', VALUE_OPTIONAL),
+            'id'    => new external_value(core_user::get_property_type('id'), 'ID of the user'),
+            'username'    => new external_value(core_user::get_property_type('username'), 'The username', VALUE_OPTIONAL),
+            'firstname'   => new external_value(core_user::get_property_type('firstname'), 'The first name(s) of the user', VALUE_OPTIONAL),
+            'lastname'    => new external_value(core_user::get_property_type('lastname'), 'The family name of the user', VALUE_OPTIONAL),
+            'fullname'    => new external_value(core_user::get_property_type('firstname'), 'The fullname of the user'),
+            'email'       => new external_value(core_user::get_property_type('email'), 'An email address - allow email as root@localhost', VALUE_OPTIONAL),
+            'address'     => new external_value(core_user::get_property_type('address'), 'Postal address', VALUE_OPTIONAL),
+            'phone1'      => new external_value(core_user::get_property_type('phone1'), 'Phone 1', VALUE_OPTIONAL),
+            'phone2'      => new external_value(core_user::get_property_type('phone2'), 'Phone 2', VALUE_OPTIONAL),
+            'icq'         => new external_value(core_user::get_property_type('icq'), 'icq number', VALUE_OPTIONAL),
+            'skype'       => new external_value(core_user::get_property_type('skype'), 'skype id', VALUE_OPTIONAL),
+            'yahoo'       => new external_value(core_user::get_property_type('yahoo'), 'yahoo id', VALUE_OPTIONAL),
+            'aim'         => new external_value(core_user::get_property_type('aim'), 'aim id', VALUE_OPTIONAL),
+            'msn'         => new external_value(core_user::get_property_type('msn'), 'msn number', VALUE_OPTIONAL),
+            'department'  => new external_value(core_user::get_property_type('department'), 'department', VALUE_OPTIONAL),
+            'institution' => new external_value(core_user::get_property_type('institution'), 'institution', VALUE_OPTIONAL),
+            'idnumber'    => new external_value(core_user::get_property_type('idnumber'), 'An arbitrary ID code number perhaps from the institution', VALUE_OPTIONAL),
             'interests'   => new external_value(PARAM_TEXT, 'user interests (separated by commas)', VALUE_OPTIONAL),
-            'firstaccess' => new external_value(PARAM_INT, 'first access to the site (0 if never)', VALUE_OPTIONAL),
-            'lastaccess'  => new external_value(PARAM_INT, 'last access to the site (0 if never)', VALUE_OPTIONAL),
-            'auth'        => new external_value(PARAM_PLUGIN, 'Auth plugins include manual, ldap, imap, etc', VALUE_OPTIONAL),
-            'confirmed'   => new external_value(PARAM_INT, 'Active user: 1 if confirmed, 0 otherwise', VALUE_OPTIONAL),
-            'lang'        => new external_value(PARAM_SAFEDIR, 'Language code such as "en", must exist on server', VALUE_OPTIONAL),
-            'calendartype' => new external_value(PARAM_PLUGIN, 'Calendar type such as "gregorian", must exist on server', VALUE_OPTIONAL),
-            'theme'       => new external_value(PARAM_PLUGIN, 'Theme name such as "standard", must exist on server', VALUE_OPTIONAL),
-            'timezone'    => new external_value(PARAM_TIMEZONE, 'Timezone code such as Australia/Perth, or 99 for default', VALUE_OPTIONAL),
-            'mailformat'  => new external_value(PARAM_INT, 'Mail format code is 0 for plain text, 1 for HTML etc', VALUE_OPTIONAL),
-            'description' => new external_value(PARAM_RAW, 'User profile description', VALUE_OPTIONAL),
-            'descriptionformat' => new external_format_value('description', VALUE_OPTIONAL),
-            'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
-            'url'         => new external_value(PARAM_URL, 'URL of the user', VALUE_OPTIONAL),
-            'country'     => new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
+            'firstaccess' => new external_value(core_user::get_property_type('firstaccess'), 'first access to the site (0 if never)', VALUE_OPTIONAL),
+            'lastaccess'  => new external_value(core_user::get_property_type('lastaccess'), 'last access to the site (0 if never)', VALUE_OPTIONAL),
+            'auth'        => new external_value(core_user::get_property_type('auth'), 'Auth plugins include manual, ldap, imap, etc', VALUE_OPTIONAL),
+            'confirmed'   => new external_value(core_user::get_property_type('confirmed'), 'Active user: 1 if confirmed, 0 otherwise', VALUE_OPTIONAL),
+            'lang'        => new external_value(core_user::get_property_type('lang'), 'Language code such as "en", must exist on server', VALUE_OPTIONAL),
+            'calendartype' => new external_value(core_user::get_property_type('calendartype'), 'Calendar type such as "gregorian", must exist on server', VALUE_OPTIONAL),
+            'theme'       => new external_value(core_user::get_property_type('theme'), 'Theme name such as "standard", must exist on server', VALUE_OPTIONAL),
+            'timezone'    => new external_value(core_user::get_property_type('timezone'), 'Timezone code such as Australia/Perth, or 99 for default', VALUE_OPTIONAL),
+            'mailformat'  => new external_value(core_user::get_property_type('mailformat'), 'Mail format code is 0 for plain text, 1 for HTML etc', VALUE_OPTIONAL),
+            'description' => new external_value(core_user::get_property_type('description'), 'User profile description', VALUE_OPTIONAL),
+            'descriptionformat' => new external_format_value(core_user::get_property_type('descriptionformat'), VALUE_OPTIONAL),
+            'city'        => new external_value(core_user::get_property_type('city'), 'Home city of the user', VALUE_OPTIONAL),
+            'url'         => new external_value(core_user::get_property_type('url'), 'URL of the user', VALUE_OPTIONAL),
+            'country'     => new external_value(core_user::get_property_type('country'), 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
             'profileimageurlsmall' => new external_value(PARAM_URL, 'User image profile URL - small version'),
             'profileimageurl' => new external_value(PARAM_URL, 'User image profile URL - big version'),
             'customfields' => new external_multiple_structure(

@@ -1999,5 +1999,11 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016041500.66);
     }
 
+    if ($oldversion < 2016042100.00) {
+        // Update all countries to upper case.
+        $DB->execute("UPDATE {user} SET country = UPPER(country)");
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2016042100.00);
+    }
     return true;
 }

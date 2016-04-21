@@ -322,7 +322,7 @@ function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions
     $choices['1'] = get_string('emaildisplayyes');
     $choices['2'] = get_string('emaildisplaycourse');
     $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
-    $mform->setDefault('maildisplay', $CFG->defaultpreference_maildisplay);
+    $mform->setDefault('maildisplay', core_user::get_property_default('maildisplay'));
 
     $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="21"');
     $mform->setType('city', PARAM_TEXT);
@@ -334,14 +334,14 @@ function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions
     $choices = array('' => get_string('selectacountry') . '...') + $choices;
     $mform->addElement('select', 'country', get_string('selectacountry'), $choices);
     if (!empty($CFG->country)) {
-        $mform->setDefault('country', $CFG->country);
+        $mform->setDefault('country', core_user::get_property_default('country'));
     }
 
     if (isset($CFG->forcetimezone) and $CFG->forcetimezone != 99) {
         $choices = core_date::get_list_of_timezones($CFG->forcetimezone);
         $mform->addElement('static', 'forcedtimezone', get_string('timezone'), $choices[$CFG->forcetimezone]);
         $mform->addElement('hidden', 'timezone');
-        $mform->setType('timezone', PARAM_TIMEZONE);
+        $mform->setType('timezone', core_user::get_property_type('timezone'));
     } else {
         $choices = core_date::get_list_of_timezones($user->timezone, true);
         $mform->addElement('select', 'timezone', get_string('timezone'), $choices);
@@ -413,40 +413,40 @@ function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions
     $mform->addElement('header', 'moodle_optional', get_string('optional', 'form'));
 
     $mform->addElement('text', 'url', get_string('webpage'), 'maxlength="255" size="50"');
-    $mform->setType('url', PARAM_URL);
+    $mform->setType('url', core_user::get_property_type('url'));
 
     $mform->addElement('text', 'icq', get_string('icqnumber'), 'maxlength="15" size="25"');
-    $mform->setType('icq', PARAM_NOTAGS);
+    $mform->setType('icq', core_user::get_property_type('icq'));
 
     $mform->addElement('text', 'skype', get_string('skypeid'), 'maxlength="50" size="25"');
-    $mform->setType('skype', PARAM_NOTAGS);
+    $mform->setType('skype', core_user::get_property_type('skype'));
 
     $mform->addElement('text', 'aim', get_string('aimid'), 'maxlength="50" size="25"');
-    $mform->setType('aim', PARAM_NOTAGS);
+    $mform->setType('aim', core_user::get_property_type('aim'));
 
     $mform->addElement('text', 'yahoo', get_string('yahooid'), 'maxlength="50" size="25"');
-    $mform->setType('yahoo', PARAM_NOTAGS);
+    $mform->setType('yahoo', core_user::get_property_type('yahoo'));
 
     $mform->addElement('text', 'msn', get_string('msnid'), 'maxlength="50" size="25"');
-    $mform->setType('msn', PARAM_NOTAGS);
+    $mform->setType('msn', core_user::get_property_type('msn'));
 
     $mform->addElement('text', 'idnumber', get_string('idnumber'), 'maxlength="255" size="25"');
-    $mform->setType('idnumber', PARAM_NOTAGS);
+    $mform->setType('idnumber', core_user::get_property_type('idnumber'));
 
     $mform->addElement('text', 'institution', get_string('institution'), 'maxlength="255" size="25"');
-    $mform->setType('institution', PARAM_TEXT);
+    $mform->setType('institution', core_user::get_property_type('institution'));
 
     $mform->addElement('text', 'department', get_string('department'), 'maxlength="255" size="25"');
-    $mform->setType('department', PARAM_TEXT);
+    $mform->setType('department', core_user::get_property_type('department'));
 
     $mform->addElement('text', 'phone1', get_string('phone1'), 'maxlength="20" size="25"');
-    $mform->setType('phone1', PARAM_NOTAGS);
+    $mform->setType('phone1', core_user::get_property_type('phone1'));
 
     $mform->addElement('text', 'phone2', get_string('phone2'), 'maxlength="20" size="25"');
-    $mform->setType('phone2', PARAM_NOTAGS);
+    $mform->setType('phone2', core_user::get_property_type('phone2'));
 
     $mform->addElement('text', 'address', get_string('address'), 'maxlength="255" size="25"');
-    $mform->setType('address', PARAM_TEXT);
+    $mform->setType('address', core_user::get_property_type('address'));
 }
 
 /**

@@ -58,7 +58,7 @@ class user_edit_language_form extends moodleform {
         $mform->setType('course', PARAM_INT);
 
         $mform->addElement('select', 'lang', get_string('preferredlanguage'), get_string_manager()->get_list_of_translations());
-        $mform->setDefault('lang', $CFG->lang);
+        $mform->setDefault('lang', core_user::get_property_default('lang'));
 
         $this->add_action_buttons(true, get_string('savechanges'));
     }
@@ -77,7 +77,7 @@ class user_edit_language_form extends moodleform {
             // Check lang exists.
             if (!get_string_manager()->translation_exists($lang, false)) {
                 $langel =& $mform->getElement('lang');
-                $langel->setValue($CFG->lang);
+                $langel->setValue(core_user::get_property_default('lang'));
             }
         }
 

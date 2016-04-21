@@ -92,6 +92,29 @@ class core_userliblib_testcase extends advanced_testcase {
         $this->assertCount(1, $events);
         $event = array_pop($events);
         $this->assertInstanceOf('\core\event\user_password_updated', $event);
+
+        // Test user data validation.
+        $user->username = 'johndoe123';
+        $user->auth = 'shibolth';
+        $user->country = 'WW';
+        $user->lang = 'xy';
+        $user->theme = 'somewrongthemename';
+        $user->timezone = 'Paris';
+        $user->url = 'wwww.somewrong@#$url.com.aus';
+        $debugmessages = $this->getDebuggingMessages();
+        user_update_user($user, true, false);
+        $this->assertDebuggingCalledCount(6, $debugmessages);
+
+        // Now, with valid user data.
+        $user->username = 'johndoe321';
+        $user->auth = 'shibboleth';
+        $user->country = 'AU';
+        $user->lang = 'en';
+        $user->theme = 'clean';
+        $user->timezone = 'Australia/Perth';
+        $user->url = 'www.moodle.org';
+        user_update_user($user, true, false);
+        $this->assertDebuggingNotCalled();
     }
 
     /**
@@ -115,7 +138,7 @@ class core_userliblib_testcase extends advanced_testcase {
             'email' => 'usertest1@example.com',
             'description' => 'This is a description for user 1',
             'city' => 'Perth',
-            'country' => 'au'
+            'country' => 'AU'
             );
 
         // Create user and capture event.
@@ -152,6 +175,33 @@ class core_userliblib_testcase extends advanced_testcase {
         $events = $sink->get_events();
         $sink->close();
         $this->assertCount(0, $events);
+
+        // Test user data validation, first some invalid data.
+        $user['username'] = 'johndoe123';
+        $user['auth'] = 'shibolth';
+        $user['country'] = 'WW';
+        $user['lang'] = 'xy';
+        $user['theme'] = 'somewrongthemename';
+        $user['timezone'] = 'Paris';
+        $user['url'] = 'wwww.somewrong@#$url.com.aus';
+        $debugmessages = $this->getDebuggingMessages();
+        $user['id'] = user_create_user($user, true, false);
+        $this->assertDebuggingCalledCount(6, $debugmessages);
+        $dbuser = $DB->get_record('user', array('id' => $user['id']));
+        $this->assertEquals($dbuser->country, 0);
+        $this->assertEquals($dbuser->lang, 'en');
+        $this->assertEquals($dbuser->timezone, 'Australia/Perth');
+
+        // Now, with valid user data.
+        $user['username'] = 'johndoe321';
+        $user['auth'] = 'shibboleth';
+        $user['country'] = 'AU';
+        $user['lang'] = 'en';
+        $user['theme'] = 'clean';
+        $user['timezone'] = 'Australia/Perth';
+        $user['url'] = 'www.moodle.org';
+        user_create_user($user, true, false);
+        $this->assertDebuggingNotCalled();
     }
 
     /**

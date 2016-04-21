@@ -64,8 +64,8 @@ class core_test_generator_testcase extends advanced_testcase {
         $this->setCurrentTimeStart();
         $user = $generator->create_user();
         $this->assertEquals($count + 1, $DB->count_records('user'));
-        $this->assertSame($user->username, clean_param($user->username, PARAM_USERNAME));
-        $this->assertSame($user->email, clean_param($user->email, PARAM_EMAIL));
+        $this->assertSame($user->username, core_user::clean_field($user->username, 'username'));
+        $this->assertSame($user->email, core_user::clean_field($user->email, 'email'));
         $this->assertSame(AUTH_PASSWORD_NOT_CACHED, $user->password);
         $this->assertNotEmpty($user->firstnamephonetic);
         $this->assertNotEmpty($user->lastnamephonetic);
