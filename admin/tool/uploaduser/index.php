@@ -212,7 +212,7 @@ if ($formdata = $mform2->is_cancelled()) {
     // init upload progress tracker
     $upt = new uu_progress_tracker();
     $upt->start(); // start table
-
+    $validation = array();
     while ($line = $cir->next()) {
         $upt->flush();
         $linenum++;
@@ -1115,9 +1115,14 @@ if ($formdata = $mform2->is_cancelled()) {
                 }
             }
         }
+        $validation[$user->username] = core_user::validate($user);
     }
     $upt->close(); // close table
-
+    if (!empty($validation)) {
+        foreach ($validation as $username => $error) {
+            \core\notification::warning(get_string('invaliduserdata', 'tool_uploaduser', s($username)));
+        }
+    }
     $cir->close();
     $cir->cleanup(true);
 
