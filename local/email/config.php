@@ -40,7 +40,8 @@ $emailarray = array('approval',
                     'completion_warn_manager',
                     'expiry_warn_user',
                     'expiry_warn_manager',
-                    'user_create');
+                    'user_create',
+                    'user_reset');
 foreach ($emailarray as $templatename) {
     $email[$templatename] = array(
         'subject' => get_string($templatename . '_subject', 'local_email' ),

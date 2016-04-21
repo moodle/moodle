@@ -199,6 +199,18 @@ $string['expire_manager_body'] = 'Dear {User_FullName},
 the following users accreditation in {Course_FullName} has expired :
 
 {User_ReportText}';
+$string['user_reset_subject'] = 'The login details for your account have been reset';
+$string['user_reset_body'] = 'Dear {User_FirstName},
+
+Your user account details are as follows.
+
+username: {User_Username}
+password: {User_Newpassword}
+(you will have to change your password when you log in)
+
+Best Regards,
+
+{Sender_FirstName} {Sender_LastName}';
 $string['user_create_subject'] = 'A new on-line learning account has been created for you';
 $string['user_create_body'] = 'Dear {User_FirstName},
 

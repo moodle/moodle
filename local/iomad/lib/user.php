@@ -382,14 +382,17 @@ Thank you for your request.
      * @param stdclass $user
      * @param boolean $sendemail
      */
-    public static function generate_temporary_password($user, $sendemail = false) {
+    public static function generate_temporary_password($user, $sendemail = false, $reset = false) {
         global $DB;
 
-        if ( get_user_preferences('create_password', false, $user) ) {
+        if ( get_user_preferences('create_password', false, $user) || $reset) {
             $newpassword = generate_password();
             $DB->set_field('user', 'password', hash_internal_user_password($newpassword),
                             array('id' => $user->id));
-            self::store_temporary_password($user, $sendemail, $newpassword);
+            self::store_temporary_password($user, $sendemail, $newpassword, $reset);
+            if ($reset) {
+                set_user_preference('auth_forcepasswordchange', 1, $user->id);
+            }
         }
     }
 
@@ -398,20 +401,43 @@ Thank you for your request.
      * @param boolean $sendemail
      * @param text $temppassword
      */
-    public static function store_temporary_password($user, $sendemail, $temppassword) {
+    public static function store_temporary_password($user, $sendemail, $temppassword, $reset) {
         global $CFG, $USER;
         set_user_preference('iomad_temporary', self::rc4encrypt($temppassword), $user);
         unset_user_preference('create_password', $user);
         if ( $sendemail ) {
+            if ($reset) {
+                // Get the company details.
+                $company = company::get_company_byuserid($user->id);
+            } else {
+                $company = new stdclass();
+            }
             $user->newpassword = $temppassword;
             if (!empty($CFG->iomad_email_senderisreal)) {
-                EmailTemplate::send('user_create', array('user' => $user, 'sender' => $USER));
+                if ($reset) {
+                    EmailTemplate::send('user_reset', array('user' => $user,
+                                                            'company' => $company,
+                                                            'sender' => $USER));
+                } else {
+                    EmailTemplate::send('user_create', array('user' => $user, 'sender' => $USER));
+                }
             } else if (is_siteadmin($USER->id)) {
-                EmailTemplate::send('user_create', array('user' => $user,));
+                if ($reset) {
+                    EmailTemplate::send('user_reset', array('user' => $user, 'company' => $company));
+                } else {
+                    EmailTemplate::send('user_create', array('user' => $user));
+                }
             } else {
-                EmailTemplate::send('user_create',
-                                     array('user' => $user,
-                                     'headers' => serialize(array("Cc:".$USER->email))));
+                if ($reset) {
+                    EmailTemplate::send('user_reset',
+                                         array('user' => $user,
+                                         'company' => $company,
+                                         'headers' => serialize(array("Cc:".$USER->email))));
+                } else {
+                    EmailTemplate::send('user_create',
+                                         array('user' => $user,
+                                         'headers' => serialize(array("Cc:".$USER->email))));
+                }
             }
         } else {
             unset_user_preference('iomad_send_password', $user);

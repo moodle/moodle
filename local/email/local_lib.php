@@ -42,7 +42,8 @@ function local_email_get_templates() {
                         'completion_warn_manager',
                         'expiry_warn_user',
                         'expiry_warn_manager',
-                        'user_create');
+                        'user_create',
+                        'user_reset');
 
     // Set up the email template array.
     foreach ($emailarray as $templatename) {

@@ -20,6 +20,7 @@ require_once($CFG->dirroot.'/user/filters/lib.php');
 require_once('lib.php');
 
 $delete       = optional_param('delete', 0, PARAM_INT);
+$password      = optional_param('password', 0, PARAM_INT);
 $suspend      = optional_param('suspend', 0, PARAM_INT);
 $unsuspend      = optional_param('unsuspend', 0, PARAM_INT);
 $showsuspended  = optional_param('showsuspended', 0, PARAM_INT);
@@ -220,6 +221,8 @@ $strdelete = get_string('delete');
 $strdeletecheck = get_string('deletecheck');
 $strsuspend = get_string('suspend', 'block_iomad_company_admin');
 $strsuspendcheck = get_string('suspendcheck', 'block_iomad_company_admin');
+$strpassword = get_string('resetpassword', 'block_iomad_company_admin');
+$strpasswordcheck = get_string('resetpasswordcheck', 'block_iomad_company_admin');
 $strunsuspend = get_string('unsuspend', 'block_iomad_company_admin');
 $strunsuspendcheck = get_string('unsuspendcheck', 'block_iomad_company_admin');
 $strshowallusers = get_string('showallusers');
@@ -250,6 +253,23 @@ if ($confirmuser and confirm_sesskey()) {
         redirect($returnurl, get_string('usernotconfirmed', '', fullname($user, true)));
     }
 
+} else if ($password and confirm_sesskey()) {
+    if (!$user = $DB->get_record('user', array('id' => $password))) {
+        print_error('nousers');
+    }
+
+    if ($confirm != md5($password)) {
+        $fullname = fullname($user, true);
+        echo $OUTPUT->heading(get_string('resetpassword', 'block_iomad_company_admin'). " " . $fullname);
+        $optionsyes = array('password' => $password, 'confirm' => md5($password), 'sesskey' => sesskey());
+        echo $OUTPUT->confirm(get_string('resetpasswordcheckfull', 'block_iomad_company_admin', "'$fullname'"),
+                              new moodle_url('editusers.php', $optionsyes), 'editusers.php');
+        echo $OUTPUT->footer();
+        die;
+    } else {
+        // Actually delete the user.
+        company_user::generate_temporary_password($user, true, true);
+    }
 } else if ($delete and confirm_sesskey()) {              // Delete a selected user, after confirmation.
 
     if (!iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
@@ -606,8 +626,10 @@ if (!$users) {
              or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))
              and ($user->id == $USER->id or $user->id != $mainadmin->id) and !is_mnet_remote_user($user)) {
             $editbutton = "<a href=\"$securewwwroot/blocks/iomad_company_admin/editadvanced.php?id=$user->id\">$stredit</a>";
+            $passwordbutton = "<a href=\"editusers.php?password=$user->id&amp;sesskey=".sesskey()."\">$strpassword</a>";
         } else {
             $editbutton = "";
+            $passwordbutton = "";
         }
 
         if ((iomad::has_capability('block/iomad_company_admin:company_course_users', $systemcontext)
@@ -654,7 +676,8 @@ if (!$users) {
                                 $strlastaccess,
                                 $editbutton .
                                 $suspendbutton .
-                                $deletebutton . '</br>' .
+                                $deletebutton .
+                                $passwordbutton . '<br />' .
                                 $enrolmentbutton . '</br>' .
                                 $licensebutton);
         } else {
@@ -671,7 +694,8 @@ if (!$users) {
                                     $strlastaccess,
                                     $editbutton .
                                     $suspendbutton .
-                                    $deletebutton . '</br>' .
+                                    $deletebutton .
+                                    $passwordbutton . '<br />' .
                                     $enrolmentbutton . '</br>' .
                                     $licensebutton);
         }
