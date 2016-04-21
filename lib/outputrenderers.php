@@ -1893,7 +1893,7 @@ class core_renderer extends renderer_base {
             if ($format->is_enabled()) {
                 $options[] = array(
                     'value' => $format->name,
-                    'label' => get_string('shortname', $format->component),
+                    'label' => get_string('dataformat', $format->component),
                 );
             }
         }

@@ -30,15 +30,17 @@
     * submit
 }}
 <form method="get" action="{{base}}" class="dataformatselector">
-    <input type="hidden" name="sesskey" value="{{sesskey}}">
-    <label for="downloadtype_{{name}}">{{label}}</label>
-    <select name="{{name}}" id="downloadtype_{{name}}">
-    {{#options}}
-        <option value="{{value}}">{{label}}</option>
-    {{/options}}
-    </select>
-    <input type="submit" value="{{submit}}">
-    {{#params}}
-    <input type="hidden" name="{{name}}" value="{{value}}" />
-    {{/params}}
+    <div class="mdl-align">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+        <label for="downloadtype_{{name}}">{{label}}</label>
+        <select name="{{name}}" id="downloadtype_{{name}}">
+        {{#options}}
+            <option value="{{value}}">{{label}}</option>
+        {{/options}}
+        </select>
+        <input type="submit" value="{{submit}}">
+        {{#params}}
+        <input type="hidden" name="{{name}}" value="{{value}}" />
+        {{/params}}
+    </div>
 </form>
