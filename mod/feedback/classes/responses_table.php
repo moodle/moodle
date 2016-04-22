@@ -416,22 +416,11 @@ class mod_feedback_responses_table extends table_sql {
      * Returns html code for displaying "Download" button if applicable.
      */
     public function download_buttons() {
+        global $OUTPUT;
+
         if ($this->is_downloadable() && !$this->is_downloading()) {
-
-            $elementid = $this->uniqueid . '_download';
-            $html = '<div class="mdl-align">';
-            $html .= '<form action="'. $this->baseurl .'" method="post" class="form-inline">';
-            if ($courseid = $this->feedbackstructure->get_courseid()) {
-                $html .= '<input type="hidden" name="courseid" value="' . s($courseid) . '">';
-            }
-            $html .= html_writer::tag('label', get_string('downloadresponseas', 'feedback'),
-                    ['for' => $elementid]);
-            $html .= html_writer::select($this->get_download_menu(),
-                    $this->downloadparamname, $this->defaultdownloadformat, false, ['id' => $elementid]);
-            $html .= html_writer::empty_tag('input', ['type' => 'submit', 'value' => get_string('download')]);
-            $html .= '</form></div>';
-
-            return $html;
+            return $OUTPUT->download_dataformat_selector(get_string('downloadas', 'table'),
+                    $this->baseurl->out_omit_querystring(), $this->downloadparamname, $this->baseurl->params());
         } else {
             return '';
         }
