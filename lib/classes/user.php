@@ -332,7 +332,7 @@ class core_user {
         $fields['country'] = array('type' => PARAM_ALPHA, 'null' => NULL_NOT_ALLOWED, 'default' => $CFG->country,
                 'choices' => array_merge(array('' => ''), get_string_manager()->get_list_of_countries(true, true)));
         $fields['lang'] = array('type' => PARAM_LANG, 'null' => NULL_NOT_ALLOWED, 'default' => $CFG->lang,
-                'choices' => array_merge(array('' => ''), get_string_manager()->get_list_of_languages()));
+                'choices' => array_merge(array('' => ''), get_string_manager()->get_list_of_translations(false)));
         $fields['calendartype'] = array('type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED, 'default' => $CFG->calendartype,
                 'choices' => array_merge(array('' => ''), \core_calendar\type_factory::get_list_of_calendar_types()));
         $fields['theme'] = array('type' => PARAM_THEME, 'null' => NULL_NOT_ALLOWED,
@@ -409,8 +409,7 @@ class core_user {
                 }
                 // Check that the value is part of a list of allowed values.
                 if (!empty(self::$propertiescache[$property]['choices']) &&
-                        !isset(self::$propertiescache[$property]['choices'][$data->$property]) &&
-                        !array_key_exists($data->$property, self::$propertiescache[$property]['choices'])) {
+                        !isset(self::$propertiescache[$property]['choices'][$value])) {
                     throw new invalid_parameter_exception($value);
                 }
             } catch (invalid_parameter_exception $e) {
@@ -445,17 +444,7 @@ class core_user {
         foreach ($user as $field => $value) {
             // Get the property parameter type and do the cleaning.
             try {
-                if (isset(self::$propertiescache[$field]['choices'])) {
-                    if (!array_key_exists($value, self::$propertiescache[$field]['choices'])) {
-                        if (isset(self::$propertiescache[$field]['default'])) {
-                            $user->$field = self::$propertiescache[$field]['default'];
-                        } else {
-                            $user->$field = '';
-                        }
-                    }
-                } else {
-                    $user->$field = core_user::clean_field($value, $field);
-                }
+                $user->$field = core_user::clean_field($value, $field);
             } catch (coding_exception $e) {
                 debugging("The property '$field' could not be cleaned.", DEBUG_DEVELOPER);
             }
@@ -486,6 +475,8 @@ class core_user {
                     } else {
                         $data = '';
                     }
+                } else {
+                    return $data;
                 }
             } else {
                 $data = clean_param($data, $type);
