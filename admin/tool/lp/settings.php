@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 $parentname = 'competencies';
 
 // If the plugin is enabled we add the pages.
-if (\core_competency\api::is_enabled()) {
+if (get_config('core_competency', 'enabled')) {
 
     // Manage competency frameworks page.
     $temp = new admin_externalpage(

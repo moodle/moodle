@@ -62,7 +62,7 @@ class block_lp extends block_base {
         }
         $this->content = new stdClass();
 
-        if (!\core_competency\api::is_enabled()) {
+        if (!get_config('core_competency', 'enabled')) {
             return $this->content;
         }
 
