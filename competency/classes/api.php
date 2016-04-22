@@ -49,6 +49,10 @@ class api {
     /**
      * Returns whether competencies are enabled.
      *
+     * This method should never do more than checking the config setting, the reason
+     * being that some other code could be checking the config value directly
+     * to avoid having to load this entire file into memory.
+     *
      * @return boolean True when enabled.
      */
     public static function is_enabled() {

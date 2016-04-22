@@ -40,7 +40,7 @@ use core_competency\user_evidence;
 function core_competency_comment_add($comment, $params) {
     global $USER;
 
-    if (!api::is_enabled()) {
+    if (!get_config('core_competency', 'enabled')) {
         return;
     }
 
@@ -215,7 +215,7 @@ function core_competency_comment_add($comment, $params) {
  * @return array
  */
 function core_competency_comment_permissions($params) {
-    if (!api::is_enabled()) {
+    if (!get_config('core_competency', 'enabled')) {
         return array('post' => false, 'view' => false);
     }
 
@@ -241,7 +241,7 @@ function core_competency_comment_permissions($params) {
  * @return bool
  */
 function core_competency_comment_validate($params) {
-    if (!api::is_enabled()) {
+    if (!get_config('core_competency', 'enabled')) {
         return false;
     }
 
@@ -274,7 +274,7 @@ function core_competency_comment_validate($params) {
 function core_competency_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
     global $CFG;
 
-    if (!api::is_enabled()) {
+    if (!get_config('core_competency', 'enabled')) {
         return false;
     }
 

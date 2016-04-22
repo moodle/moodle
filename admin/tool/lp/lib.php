@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param context $coursecontext The context of the course
  */
 function tool_lp_extend_navigation_course($navigation, $course, $coursecontext) {
-    if (!\core_competency\api::is_enabled()) {
+    if (!get_config('core_competency', 'enabled')) {
         return;
     }
 
@@ -61,7 +61,7 @@ function tool_lp_extend_navigation_course($navigation, $course, $coursecontext) 
  * @param context_course $coursecontext The context of the course
  */
 function tool_lp_extend_navigation_user($navigation, $user, $usercontext, $course, $coursecontext) {
-    if (!\core_competency\api::is_enabled()) {
+    if (!get_config('core_competency', 'enabled')) {
         return;
     }
 
@@ -88,7 +88,7 @@ function tool_lp_extend_navigation_user($navigation, $user, $usercontext, $cours
  * @return bool
  */
 function tool_lp_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
-    if (!\core_competency\api::is_enabled()) {
+    if (!get_config('core_competency', 'enabled')) {
         return false;
     } else if (!\core_competency\plan::can_read_user($user->id)) {
         return false;
@@ -109,7 +109,7 @@ function tool_lp_myprofile_navigation(core_user\output\myprofile\tree $tree, $us
  * @param context $coursecategorycontext The context of the course category
  */
 function tool_lp_extend_navigation_category_settings($navigation, $coursecategorycontext) {
-    if (!\core_competency\api::is_enabled()) {
+    if (!get_config('core_competency', 'enabled')) {
         return false;
     }
 
@@ -160,7 +160,7 @@ function tool_lp_extend_navigation_category_settings($navigation, $coursecategor
 function tool_lp_coursemodule_standard_elements($formwrapper, $mform) {
     global $CFG, $COURSE;
 
-    if (!\core_competency\api::is_enabled()) {
+    if (!get_config('core_competency', 'enabled')) {
         return;
     } else if (!has_capability('moodle/competency:coursecompetencymanage', $formwrapper->get_context())) {
         return;
@@ -195,7 +195,7 @@ function tool_lp_coursemodule_standard_elements($formwrapper, $mform) {
  * @param stdClass $course The course.
  */
 function tool_lp_coursemodule_edit_post_actions($data, $course) {
-    if (!\core_competency\api::is_enabled()) {
+    if (!get_config('core_competency', 'enabled')) {
         return $data;
     }
 

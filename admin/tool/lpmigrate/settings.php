@@ -23,7 +23,7 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-if (\core_competency\api::is_enabled()) {
+if (get_config('core_competency', 'enabled')) {
 
     $parentname = 'competencies';
 
