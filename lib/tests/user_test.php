@@ -353,8 +353,6 @@ class core_user_testcase extends advanced_testcase {
         // Test against lang property choices.
         $choices = core_user::get_property_choices('lang');
         $this->assertArrayHasKey('en', $choices);
-        $this->assertArrayHasKey('ko', $choices);
-        $this->assertArrayHasKey('ru', $choices);
         $this->assertArrayNotHasKey('ww', $choices);
         $this->assertArrayNotHasKey('yy', $choices);
 
