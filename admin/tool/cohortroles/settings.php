@@ -24,4 +24,5 @@
 
 defined('MOODLE_INTERNAL') || die;
 $str = get_string('managecohortroles', 'tool_cohortroles');
-$ADMIN->add('roles', new admin_externalpage('toolcohortroles', $str, '/admin/tool/cohortroles/index.php', 'moodle/role:manage'));
+$url = new moodle_url('/admin/tool/cohortroles/index.php');
+$ADMIN->add('roles', new admin_externalpage('toolcohortroles', $str, $url, 'moodle/role:manage'));
