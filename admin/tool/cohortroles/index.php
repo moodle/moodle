@@ -57,15 +57,15 @@ if ($removeid) {
     require_sesskey();
     // We must create them all or none.
     $saved = 0;
-    foreach ($data->userids as $userid) {
-        if (empty($data->cohortids)) {
-            $data->cohortids = array();
-        }
-        foreach ($data->cohortids as $cohortid) {
-            $params = (object) array('userid' => $userid, 'cohortid' => $cohortid, 'roleid' => $data->roleid);
-            $result = \tool_cohortroles\api::create_cohort_role_assignment($params);
-            if ($result) {
-                $saved++;
+    // Loop through userids and cohortids only if both of them are not empty.
+    if (!empty($data->userids) && !empty($data->cohortids)) {
+        foreach ($data->userids as $userid) {
+            foreach ($data->cohortids as $cohortid) {
+                $params = (object) array('userid' => $userid, 'cohortid' => $cohortid, 'roleid' => $data->roleid);
+                $result = \tool_cohortroles\api::create_cohort_role_assignment($params);
+                if ($result) {
+                    $saved++;
+                }
             }
         }
     }
