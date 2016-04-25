@@ -43,5 +43,20 @@ if ($hassiteconfig) {
 
     $temp->add(new admin_setting_configtext('mobilecssurl', new lang_string('mobilecssurl', 'admin'),
                 new lang_string('configmobilecssurl', 'admin'), '', PARAM_URL));
+
+    // Type of login.
+    $options = array(
+        tool_mobile\api::LOGIN_VIA_APP => new lang_string('loginintheapp', 'tool_mobile'),
+        tool_mobile\api::LOGIN_VIA_BROWSER => new lang_string('logininthebrowser', 'tool_mobile'),
+        tool_mobile\api::LOGIN_VIA_EMBEDDED_BROWSER => new lang_string('loginintheembeddedbrowser', 'tool_mobile'),
+    );
+    $temp->add(new admin_setting_configselect('tool_mobile/typeoflogin',
+                new lang_string('typeoflogin', 'tool_mobile'),
+                new lang_string('typeoflogin_desc', 'tool_mobile'), 1, $options));
+
+    $temp->add(new admin_setting_configtext('tool_mobile/forcedurlscheme',
+                new lang_string('forcedurlscheme_key', 'tool_mobile'),
+                new lang_string('forcedurlscheme', 'tool_mobile'), '', PARAM_NOTAGS));
+
     $ADMIN->add('webservicesettings', $temp);
 }

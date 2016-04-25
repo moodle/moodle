@@ -140,6 +140,8 @@ class external extends external_api {
                 'enablemobilewebservice' => new external_value(PARAM_INT, 'Whether the Mobile service is enabled.'),
                 'maintenanceenabled' => new external_value(PARAM_INT, 'Whether site maintenance is enabled.'),
                 'maintenancemessage' => new external_value(PARAM_RAW, 'Maintenance message.'),
+                'typeoflogin' => new external_value(PARAM_INT, 'The type of login. 1 for app, 2 for browser, 3 for embedded.'),
+                'launchurl' => new external_value(PARAM_URL, 'SSO login launch URL. Empty if it won\'t be used.', VALUE_OPTIONAL),
                 'warnings' => new external_warnings(),
             )
         );

@@ -31,6 +31,7 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 use tool_mobile\external;
+use tool_mobile\api;
 
 /**
  * External learning plans webservice API tests.
@@ -78,17 +79,21 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             'enablemobilewebservice' => $CFG->enablemobilewebservice,
             'maintenanceenabled' => $CFG->maintenance_enabled,
             'maintenancemessage' => format_text($CFG->maintenance_message),
+            'typeoflogin' => api::LOGIN_VIA_APP,
             'warnings' => array()
         );
         $this->assertEquals($expected, $result);
 
-        // Change a value.
+        // Change some values.
         set_config('registerauth', 'email');
         $authinstructions = 'Something with <b>html tags</b>';
         set_config('auth_instructions', $authinstructions);
+        set_config('typeoflogin', api::LOGIN_VIA_BROWSER, 'tool_mobile');
 
         $expected['registerauth'] = 'email';
         $expected['authinstructions'] = format_text($authinstructions);
+        $expected['typeoflogin'] = api::LOGIN_VIA_BROWSER;
+        $expected['launchurl'] = "$CFG->wwwroot/$CFG->admin/tool/mobile/launch.php";;
 
         $result = external::get_site_public_settings();
         $result = external_api::clean_returnvalue(external::get_site_public_settings_returns(), $result);

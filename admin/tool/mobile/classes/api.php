@@ -27,6 +27,7 @@ namespace tool_mobile;
 use core_component;
 use core_plugin_manager;
 use context_system;
+use moodle_url;
 
 /**
  * API exposed by tool_mobile
@@ -36,6 +37,13 @@ use context_system;
  * @since      Moodle 3.1
  */
 class api {
+
+    /** @var int to identify the login via app. */
+    const LOGIN_VIA_APP = 1;
+    /** @var int to identify the login via browser. */
+    const LOGIN_VIA_BROWSER = 2;
+    /** @var int to identify the login via an embedded browser. */
+    const LOGIN_VIA_EMBEDDED_BROWSER = 3;
 
     /**
      * Returns a list of Moodle plugins supporting the mobile app.
@@ -111,6 +119,19 @@ class api {
             'maintenanceenabled' => $CFG->maintenance_enabled,
             'maintenancemessage' => format_text($CFG->maintenance_message),
         );
+
+        $typeoflogin = get_config('tool_mobile', 'typeoflogin');
+        // Not found, edge case.
+        if ($typeoflogin === false) {
+            $typeoflogin = self::LOGIN_VIA_APP; // Defaults to via app.
+        }
+        $settings['typeoflogin'] = $typeoflogin;
+
+        if ($typeoflogin == self::LOGIN_VIA_BROWSER or
+                $typeoflogin == self::LOGIN_VIA_EMBEDDED_BROWSER) {
+            $url = new moodle_url("/$CFG->admin/tool/mobile/launch.php");
+            $settings['launchurl'] = $url->out(false);
+        }
         return $settings;
     }
 
