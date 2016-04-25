@@ -85,8 +85,8 @@ class convert_submissions extends scheduled_task {
             } else {
                 $members = $assignment->get_submission_group_members($submission->groupid, true);
 
-                foreach ($members as $memberid) {
-                    array_push($users, $memberid);
+                foreach ($members as $member) {
+                    array_push($users, $member->id);
                 }
             }
 
