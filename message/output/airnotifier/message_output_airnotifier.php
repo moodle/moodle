@@ -83,8 +83,19 @@ class message_output_airnotifier extends message_output {
 
         // Site name.
         $site = get_site();
-        $extra->sitefullname = format_string($site->fullname);
-        $extra->siteshortname = format_string($site->shortname);
+        $extra->sitefullname = clean_param(format_string($site->fullname), PARAM_NOTAGS);
+        $extra->siteshortname = clean_param(format_string($site->shortname), PARAM_NOTAGS);
+
+        // Clean HTML, push notifications must arrive clean.
+        if (!empty($extra->smallmessage)) {
+            $extra->smallmessage = clean_param($extra->smallmessage, PARAM_NOTAGS);
+        }
+        if (!empty($extra->fullmessage)) {
+            $extra->fullmessage = clean_param($extra->fullmessage, PARAM_NOTAGS);
+        }
+        if (!empty($extra->fullmessagehtml)) {
+            $extra->fullmessagehtml = clean_param($extra->fullmessagehtml, PARAM_NOTAGS);
+        }
 
         // We are sending to message to all devices.
         $airnotifiermanager = new message_airnotifier_manager();
