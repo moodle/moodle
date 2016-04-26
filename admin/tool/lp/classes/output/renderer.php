@@ -209,6 +209,17 @@ class renderer extends plugin_renderer_base {
     /**
      * Defer to template.
      *
+     * @param competency_plan_navigation $nav
+     * @return string
+     */
+    public function render_competency_plan_navigation(competency_plan_navigation $nav) {
+        $data = $nav->export_for_template($this);
+        return parent::render_from_template('tool_lp/competency_plan_navigation', $data);
+    }
+
+    /**
+     * Defer to template.
+     *
      * @param user_competency_summary $page
      * @return string
      */
