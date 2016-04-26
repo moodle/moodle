@@ -41,6 +41,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/search/tests/fixtures/testable_core_search.php');
 require_once($CFG->dirroot . '/search/tests/fixtures/mock_search_area.php');
+require_once($CFG->dirroot . '/search/engine/solr/tests/fixtures/testable_engine.php');
 
 /**
  * Solr search engine base unit tests.
@@ -56,6 +57,16 @@ class search_solr_engine_testcase extends advanced_testcase {
      * @var \core_search::manager
      */
     protected $search = null;
+
+    /**
+     * @var Instace of core_search_generator.
+     */
+    protected $generator = null;
+
+    /**
+     * @var Instace of testable_engine.
+     */
+    protected $engine = null;
 
     public function setUp() {
         $this->resetAfterTest();
@@ -104,12 +115,15 @@ class search_solr_engine_testcase extends advanced_testcase {
         // We are only test indexing small string files, so setting this as low as we can.
         set_config('maxindexfilekb', 1, 'search_solr');
 
+        $this->generator = self::getDataGenerator()->get_plugin_generator('core_search');
+        $this->generator->setup();
+
         // Inject search solr engine into the testable core search as we need to add the mock
         // search component to it.
-        $searchengine = new \search_solr\engine();
-        $this->search = testable_core_search::instance($searchengine);
-        $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'role_capabilities');
-        $this->search->add_search_area($areaid, new core_mocksearch\search\role_capabilities());
+        $this->engine = new \search_solr\testable_engine();
+        $this->search = testable_core_search::instance($this->engine);
+        $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'mock_search_area');
+        $this->search->add_search_area($areaid, new core_mocksearch\search\mock_search_area());
 
         $this->setAdminUser();
 
@@ -121,14 +135,40 @@ class search_solr_engine_testcase extends advanced_testcase {
         $schema->setup(false);
     }
 
-    public function test_connection() {
-        $this->assertTrue($this->search->get_engine()->is_server_ready());
+    public function tearDown() {
+        // For unit tests before PHP 7, teardown is called even on skip. So only do our teardown if we did setup.
+        if ($this->generator) {
+            // Moodle DML freaks out if we don't teardown the temp table after each run.
+            $this->generator->teardown();
+            $this->generator = null;
+        }
     }
 
-    public function test_index() {
+    /**
+     * Simple data provider to allow tests to be run with file indexing on and off.
+     */
+    public function file_indexing_provider() {
+        return array(
+            'file-indexing-on' => array(1),
+            'file-indexing-off' => array(0)
+        );
+    }
+
+    public function test_connection() {
+        $this->assertTrue($this->engine->is_server_ready());
+    }
+
+    /**
+     * @dataProvider file_indexing_provider
+     */
+    public function test_index($fileindexing) {
         global $DB;
 
-        $noneditingteacherid = $DB->get_field('role', 'id', array('shortname' => 'teacher'));
+        $this->engine->test_set_config('fileindexing', $fileindexing);
+
+        $record = new \stdClass();
+        $record->timemodified = time() - 1;
+        $this->generator->create_record($record);
 
         // Data gets into the search engine.
         $this->assertTrue($this->search->index());
@@ -137,8 +177,7 @@ class search_solr_engine_testcase extends advanced_testcase {
         sleep(1);
         $this->assertFalse($this->search->index());
 
-        assign_capability('moodle/course:renameroles', CAP_ALLOW, $noneditingteacherid, context_system::instance()->id);
-        accesslib_clear_all_caches_for_unit_testing();
+        $this->generator->create_record();
 
         // Indexing again once there is new data.
         $this->assertTrue($this->search->index());
@@ -147,12 +186,19 @@ class search_solr_engine_testcase extends advanced_testcase {
     /**
      * Better keep this not very strict about which or how many results are returned as may depend on solr engine config.
      *
+     * @dataProvider file_indexing_provider
+     *
      * @return void
      */
-    public function test_search() {
+    public function test_search($fileindexing) {
         global $USER, $DB;
 
-        $noneditingteacherid = $DB->get_field('role', 'id', array('shortname' => 'teacher'));
+        $this->engine->test_set_config('fileindexing', $fileindexing);
+
+        $this->generator->create_record();
+        $record = new \stdClass();
+        $record->title = "Special title";
+        $this->generator->create_record($record);
 
         $this->search->index();
 
@@ -166,15 +212,14 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->assertEquals(\context_system::instance()->id, $results[0]->get('contextid'));
 
         // Do a test to make sure we aren't searching non-query fields, like areaid.
-        $querydata->q = \core_search\manager::generate_areaid('core_mocksearch', 'role_capabilities');
+        $querydata->q = \core_search\manager::generate_areaid('core_mocksearch', 'mock_search_area');
         $this->assertCount(0, $this->search->search($querydata));
         $querydata->q = 'message';
 
         sleep(1);
         $beforeadding = time();
         sleep(1);
-        assign_capability('moodle/course:renameroles', CAP_ALLOW, $noneditingteacherid, context_system::instance()->id);
-        accesslib_clear_all_caches_for_unit_testing();
+        $this->generator->create_record();
         $this->search->index();
 
         // Timestart.
@@ -188,7 +233,7 @@ class search_solr_engine_testcase extends advanced_testcase {
 
         // Title.
         unset($querydata->timeend);
-        $querydata->title = 'moodle/course:renameroles roleid 1';
+        $querydata->title = 'Special title';
         $this->assertCount(1, $this->search->search($querydata));
 
         // Course IDs.
@@ -217,14 +262,21 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->assertCount(3, $this->search->search($querydata));
 
         // Check that index contents get updated.
-        $DB->delete_records('role_capabilities', array('capability' => 'moodle/course:renameroles'));
+        $this->generator->delete_all();
         $this->search->index(true);
         unset($querydata->title);
-        $querydata->q = '*renameroles*';
+        $querydata->q = '*';
         $this->assertCount(0, $this->search->search($querydata));
     }
 
-    public function test_delete() {
+    /**
+     * @dataProvider file_indexing_provider
+     */
+    public function test_delete($fileindexing) {
+        $this->engine->test_set_config('fileindexing', $fileindexing);
+
+        $this->generator->create_record();
+        $this->generator->create_record();
         $this->search->index();
 
         $querydata = new stdClass();
@@ -232,26 +284,24 @@ class search_solr_engine_testcase extends advanced_testcase {
 
         $this->assertCount(2, $this->search->search($querydata));
 
-        $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'role_capabilities');
+        $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'mock_search_area');
         $this->search->delete_index($areaid);
         $this->assertCount(0, $this->search->search($querydata));
     }
 
-    public function test_alloweduserid() {
-        $engine = $this->search->get_engine();
-        $area = new core_mocksearch\search\role_capabilities();
+    /**
+     * @dataProvider file_indexing_provider
+     */
+    public function test_alloweduserid($fileindexing) {
+        $this->engine->test_set_config('fileindexing', $fileindexing);
 
-        // Get the first record for the recordset.
-        $recordset = $area->get_recordset_by_timestamp();
-        foreach ($recordset as $r) {
-            $record = $r;
-            break;
-        }
-        $recordset->close();
+        $area = new core_mocksearch\search\mock_search_area();
+
+        $record = $this->generator->create_record();
 
         // Get the doc and insert the default doc.
         $doc = $area->get_document($record);
-        $engine->add_document($doc);
+        $this->engine->add_document($doc);
 
         $users = array();
         $users[] = $this->getDataGenerator()->create_user();
@@ -266,10 +316,10 @@ class search_solr_engine_testcase extends advanced_testcase {
             $doc = $area->get_document($record);
             $doc->set('id', $originalid.'-'.$user->id);
             $doc->set('owneruserid', $user->id);
-            $engine->add_document($doc);
+            $this->engine->add_document($doc);
         }
 
-        $engine->area_index_complete($area->get_area_id());
+        $this->engine->area_index_complete($area->get_area_id());
 
         $querydata = new stdClass();
         $querydata->q = 'message';
@@ -314,16 +364,22 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->assertEquals($originalid, $results[0]->get('id'));
     }
 
-    public function test_highlight() {
+    /**
+     * @dataProvider file_indexing_provider
+     */
+    public function test_highlight($fileindexing) {
         global $PAGE;
 
+        $this->engine->test_set_config('fileindexing', $fileindexing);
+
+        $this->generator->create_record();
         $this->search->index();
 
         $querydata = new stdClass();
         $querydata->q = 'message';
 
         $results = $this->search->search($querydata);
-        $this->assertCount(2, $results);
+        $this->assertCount(1, $results);
 
         $result = reset($results);
 
@@ -339,23 +395,25 @@ class search_solr_engine_testcase extends advanced_testcase {
 
     public function test_index_file() {
         // Very simple test.
+        $file = $this->generator->create_file();
+
+        $record = new \stdClass();
+        $record->attachfileids = array($file->get_id());
+        $this->generator->create_record($record);
+
         $this->search->index();
         $querydata = new stdClass();
         $querydata->q = '"File contents"';
 
-        $this->assertCount(2, $this->search->search($querydata));
+        $this->assertCount(1, $this->search->search($querydata));
     }
 
     public function test_reindexing_files() {
-        // Get engine and area to work with.
-        $engine = $this->search->get_engine();
-        $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'role_capabilities');
+        // Get area to work with.
+        $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'mock_search_area');
         $area = \core_search\manager::get_search_area($areaid);
 
-        // Get a single record to make a doc from.
-        $recordset = $area->get_recordset_by_timestamp(0);
-        $record = $recordset->current();
-        $recordset->close();
+        $record = $this->generator->create_record();
 
         $doc = $area->get_document($record);
 
@@ -364,27 +422,22 @@ class search_solr_engine_testcase extends advanced_testcase {
         $syscontext = \context_system::instance();
 
         $files = array();
-        $filerecord = array(
-            'contextid' => $syscontext->id,
-            'component' => 'core',
-            'filearea'  => 'unittest',
-            'itemid'    => 0,
-            'filepath'  => '/',
-        );
 
+        $filerecord = new \stdClass();
         // We make enough so that we pass the 500 files threashold. That is the boundary when getting files.
         $boundary = 500;
         $top = (int)($boundary * 1.1);
         for ($i = 0; $i < $top; $i++) {
-            $filerecord['filename']  = 'searchfile'.$i;
-            $file = $fs->create_file_from_string($filerecord, 'Some FileContents'.$i);
+            $filerecord->filename  = 'searchfile'.$i;
+            $filerecord->content = 'Some FileContents'.$i;
+            $file = $this->generator->create_file($filerecord);
             $doc->add_stored_file($file);
             $files[] = $file;
         }
 
         // Add the doc with lots of files, then commit.
-        $engine->add_document($doc, true);
-        $engine->area_index_complete($area->get_area_id());
+        $this->engine->add_document($doc, true);
+        $this->engine->area_index_complete($area->get_area_id());
 
         // Indexes we are going to check. 0 means we will delete, 1 means we will keep.
         $checkfiles = array(
@@ -420,8 +473,9 @@ class search_solr_engine_testcase extends advanced_testcase {
         }
 
         // And make us a new file to add.
-        $filerecord['filename']  = 'searchfileNew';
-        $files[] = $fs->create_file_from_string($filerecord, 'Some FileContentsNew');
+        $filerecord->filename  = 'searchfileNew';
+        $filerecord->content  = 'Some FileContentsNew';
+        $files[] = $this->generator->create_file($filerecord);
         $checkfiles['New'] = 1;
 
         $doc = $area->get_document($record);
@@ -430,8 +484,8 @@ class search_solr_engine_testcase extends advanced_testcase {
         }
 
         // Reindex the document with the changed files.
-        $engine->add_document($doc, true);
-        $engine->area_index_complete($area->get_area_id());
+        $this->engine->add_document($doc, true);
+        $this->engine->area_index_complete($area->get_area_id());
 
         // Go through our check array, and see if the file is there or not.
         foreach ($checkfiles as $key => $keep) {
@@ -446,16 +500,16 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->assertCount(1, $this->search->search($querydata));
     }
 
+    /**
+     * Test indexing a file we don't consider indexable.
+     */
     public function test_index_filtered_file() {
-        // Get engine and area to work with.
-        $engine = $this->search->get_engine();
-        $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'role_capabilities');
+        // Get area to work with.
+        $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'mock_search_area');
         $area = \core_search\manager::get_search_area($areaid);
 
         // Get a single record to make a doc from.
-        $recordset = $area->get_recordset_by_timestamp(0);
-        $record = $recordset->current();
-        $recordset->close();
+        $record = $this->generator->create_record();
 
         $doc = $area->get_document($record);
 
@@ -463,33 +517,26 @@ class search_solr_engine_testcase extends advanced_testcase {
         $fs = get_file_storage();
         $syscontext = \context_system::instance();
 
-        $files = array();
-        $filerecord = array(
-            'contextid' => $syscontext->id,
-            'component' => 'core',
-            'filearea'  => 'unittest',
-            'itemid'    => 0,
-            'filepath'  => '/',
-            'filename'  => 'largefile'
-        );
-
         // We need to make a file greater than 1kB in size, which is the lowest filter size.
-        $contents = 'Some LargeFindContent to find.';
+        $filerecord = new \stdClass();
+        $filerecord->filename = 'largefile';
+        $filerecord->content = 'Some LargeFindContent to find.';
         for ($i = 0; $i < 200; $i++) {
-            $contents .= ' The quick brown fox jumps over the lazy dog.';
+            $filerecord->content .= ' The quick brown fox jumps over the lazy dog.';
         }
 
-        $this->assertGreaterThan(1024, strlen($contents));
+        $this->assertGreaterThan(1024, strlen($filerecord->content));
 
-        $file = $fs->create_file_from_string($filerecord, $contents);
+        $file = $this->generator->create_file($filerecord);
         $doc->add_stored_file($file);
 
-        $filerecord['filename'] = 'smallfile';
-        $file = $fs->create_file_from_string($filerecord, 'Some SmallFindContent to find.');
+        $filerecord->filename = 'smallfile';
+        $filerecord->content = 'Some SmallFindContent to find.';
+        $file = $this->generator->create_file($filerecord);
         $doc->add_stored_file($file);
 
-        $engine->add_document($doc, true);
-        $engine->area_index_complete($area->get_area_id());
+        $this->engine->add_document($doc, true);
+        $this->engine->area_index_complete($area->get_area_id());
 
         $querydata = new stdClass();
         // We shouldn't be able to find the large file contents.
@@ -511,8 +558,12 @@ class search_solr_engine_testcase extends advanced_testcase {
 
     public function test_delete_by_id() {
         // First get files in the index.
+        $file = $this->generator->create_file();
+        $record = new \stdClass();
+        $record->attachfileids = array($file->get_id());
+        $this->generator->create_record($record);
+        $this->generator->create_record($record);
         $this->search->index();
-        $engine = $this->search->get_engine();
 
         $querydata = new stdClass();
 
@@ -524,12 +575,164 @@ class search_solr_engine_testcase extends advanced_testcase {
         $first = reset($results);
         $deleteid = $first->get('id');
 
-        $engine->delete_by_id($deleteid);
+        $this->engine->delete_by_id($deleteid);
 
         // Check that we don't get a result for it anymore.
         $results = $this->search->search($querydata);
         $this->assertCount(1, $results);
         $result = reset($results);
         $this->assertNotEquals($deleteid, $result->get('id'));
+    }
+
+    /**
+     * Test that expected results are returned, even with low check_access success rate.
+     *
+     * @dataProvider file_indexing_provider
+     */
+    public function test_solr_filling($fileindexing) {
+        $this->engine->test_set_config('fileindexing', $fileindexing);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // We are going to create a bunch of records that user 1 can see with 2 keywords.
+        // Then we are going to create a bunch for user 2 with only 1 of the keywords.
+        // If user 2 searches for both keywords, solr will return all of the user 1 results, then the user 2 results.
+        // This is because the user 1 results will match 2 keywords, while the others will match only 1.
+
+        $record = new \stdClass();
+
+        // First create a bunch of records for user 1 to see.
+        $record->denyuserids = array($user2->id);
+        $record->content = 'Something1 Something2';
+        $maxresults = (int)(\core_search\manager::MAX_RESULTS * .75);
+        for ($i = 0; $i < $maxresults; $i++) {
+            $this->generator->create_record($record);
+        }
+
+        // Then create a bunch of records for user 2 to see.
+        $record->denyuserids = array($user1->id);
+        $record->content = 'Something1';
+        for ($i = 0; $i < $maxresults; $i++) {
+            $this->generator->create_record($record);
+        }
+
+        $this->search->index();
+
+        // Check that user 1 sees all their results.
+        $this->setUser($user1);
+        $querydata = new stdClass();
+        $querydata->q = 'Something1 Something2';
+        $results = $this->search->search($querydata);
+        $this->assertCount($maxresults, $results);
+
+        // Check that user 2 will see theirs, even though they may be crouded out.
+        $this->setUser($user2);
+        $results = $this->search->search($querydata);
+        $this->assertCount($maxresults, $results);
+    }
+
+    /**
+     * Create 40 docs, that will be return from Solr in 10 hidden, 10 visible, 10 hidden, 10 visible if you query for:
+     * Something1 Something2 Something3 Something4, with the specified user set.
+     */
+    protected function setup_user_hidden_docs($user) {
+        // These results will come first, and will not be visible by the user.
+        $record = new \stdClass();
+        $record->denyuserids = array($user->id);
+        $record->content = 'Something1 Something2 Something3 Something4';
+        for ($i = 0; $i < 10; $i++) {
+            $this->generator->create_record($record);
+        }
+
+        // These results will come second, and will  be visible by the user.
+        unset($record->denyuserids);
+        $record->content = 'Something1 Something2 Something3';
+        for ($i = 0; $i < 10; $i++) {
+            $this->generator->create_record($record);
+        }
+
+        // These results will come third, and will not be visible by the user.
+        $record->denyuserids = array($user->id);
+        $record->content = 'Something1 Something2';
+        for ($i = 0; $i < 10; $i++) {
+            $this->generator->create_record($record);
+        }
+
+        // These results will come fourth, and will be visible by the user.
+        unset($record->denyuserids);
+        $record->content = 'Something1 ';
+        for ($i = 0; $i < 10; $i++) {
+            $this->generator->create_record($record);
+        }
+    }
+
+    /**
+     * Test that counts are what we expect.
+     *
+     * @dataProvider file_indexing_provider
+     */
+    public function test_get_query_total_count($fileindexing) {
+        $this->engine->test_set_config('fileindexing', $fileindexing);
+
+        $user = self::getDataGenerator()->create_user();
+        $this->setup_user_hidden_docs($user);
+        $this->search->index();
+
+        $this->setUser($user);
+        $querydata = new stdClass();
+        $querydata->q = 'Something1 Something2 Something3 Something4';
+
+        // In this first set, it should have determined the first 10 of 40 are bad, so there could be up to 30 left.
+        $results = $this->engine->execute_query($querydata, true, 5);
+        $this->assertEquals(30, $this->engine->get_query_total_count());
+        $this->assertCount(5, $results);
+
+        // To get to 15, it has to process the first 10 that are bad, 10 that are good, 10 that are bad, then 5 that are good.
+        // So we now know 20 are bad out of 40.
+        $results = $this->engine->execute_query($querydata, true, 15);
+        $this->assertEquals(20, $this->engine->get_query_total_count());
+        $this->assertCount(15, $results);
+
+        // Try to get more then all, make sure we still see 20 count and 20 returned.
+        $results = $this->engine->execute_query($querydata, true, 30);
+        $this->assertEquals(20, $this->engine->get_query_total_count());
+        $this->assertCount(20, $results);
+    }
+
+    /**
+     * Test that paged results are what we expect.
+     *
+     * @dataProvider file_indexing_provider
+     */
+    public function test_manager_paged_search($fileindexing) {
+        $this->engine->test_set_config('fileindexing', $fileindexing);
+
+        $user = self::getDataGenerator()->create_user();
+        $this->setup_user_hidden_docs($user);
+        $this->search->index();
+
+        // Check that user 1 sees all their results.
+        $this->setUser($user);
+        $querydata = new stdClass();
+        $querydata->q = 'Something1 Something2 Something3 Something4';
+
+        // On this first page, it should have determined the first 10 of 40 are bad, so there could be up to 30 left.
+        $results = $this->search->paged_search($querydata, 0);
+        $this->assertEquals(30, $results->totalcount);
+        $this->assertCount(10, $results->results);
+        $this->assertEquals(0, $results->actualpage);
+
+        // On the second page, it should have found the next 10 bad ones, so we no know there are only 20 total.
+        $results = $this->search->paged_search($querydata, 1);
+        $this->assertEquals(20, $results->totalcount);
+        $this->assertCount(10, $results->results);
+        $this->assertEquals(1, $results->actualpage);
+
+        // Try to get an additional page - we should get back page 1 results, since that is the last page with valid results.
+        $results = $this->search->paged_search($querydata, 2);
+        $this->assertEquals(20, $results->totalcount);
+        $this->assertCount(10, $results->results);
+        $this->assertEquals(1, $results->actualpage);
     }
 }

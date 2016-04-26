@@ -399,6 +399,61 @@ class manager {
     }
 
     /**
+     * Returns requested page of documents plus additional information for paging.
+     *
+     * This function does not perform any kind of security checking for access, the caller code
+     * should check that the current user have moodle/search:query capability.
+     *
+     * If a page is requested that is beyond the last result, the last valid page is returned in
+     * results, and actualpage indicates which page was returned.
+     *
+     * @param stdClass $formdata
+     * @param int $pagenum The 0 based page number.
+     * @return object An object with 3 properties:
+     *                    results    => An array of \core_search\documents for the actual page.
+     *                    totalcount => Number of records that are possibly available, to base paging on.
+     *                    actualpage => The actual page returned.
+     */
+    public function paged_search(\stdClass $formdata, $pagenum) {
+        $out = new \stdClass();
+
+        $perpage = static::DISPLAY_RESULTS_PER_PAGE;
+
+        // Make sure we only allow request up to max page.
+        $pagenum = min($pagenum, (static::MAX_RESULTS / $perpage) - 1);
+
+        // Calculate the first and last document number for the current page, 1 based.
+        $mindoc = ($pagenum * $perpage) + 1;
+        $maxdoc = ($pagenum + 1) * $perpage;
+
+        // Get engine documents, up to max.
+        $docs = $this->search($formdata, $maxdoc);
+
+        $resultcount = count($docs);
+        if ($resultcount < $maxdoc) {
+            // This means it couldn't give us results to max, so the count must be the max.
+            $out->totalcount = $resultcount;
+        } else {
+            // Get the possible count reported by engine, and limit to our max.
+            $out->totalcount = $this->engine->get_query_total_count();
+            $out->totalcount = min($out->totalcount, static::MAX_RESULTS);
+        }
+
+        // Determine the actual page.
+        if ($resultcount < $mindoc) {
+            // We couldn't get the min docs for this page, so determine what page we can get.
+            $out->actualpage = floor(($resultcount - 1) / $perpage);
+        } else {
+            $out->actualpage = $pagenum;
+        }
+
+        // Split the results to only return the page.
+        $out->results = array_slice($docs, $out->actualpage * $perpage, $perpage, true);
+
+        return $out;
+    }
+
+    /**
      * Returns documents from the engine based on the data provided.
      *
      * This function does not perform any kind of security checking, the caller code
@@ -407,9 +462,10 @@ class manager {
      * It might return the results from the cache instead.
      *
      * @param stdClass $formdata
+     * @param int      $limit The maximum number of documents to return
      * @return \core_search\document[]
      */
-    public function search(\stdClass $formdata) {
+    public function search(\stdClass $formdata, $limit = 0) {
         global $USER;
 
         $limitcourseids = false;
@@ -425,7 +481,7 @@ class manager {
             // User can not access any context.
             $docs = array();
         } else {
-            $docs = $this->engine->execute_query($formdata, $areascontexts);
+            $docs = $this->engine->execute_query($formdata, $areascontexts, $limit);
         }
 
         return $docs;

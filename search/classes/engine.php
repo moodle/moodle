@@ -312,6 +312,20 @@ abstract class engine {
     }
 
     /**
+     * Returns the total number of documents available for the most recent call to execute_query.
+     *
+     * This can be an estimate, but should get more accurate the higher the limited passed to execute_query is.
+     * To do that, the engine can use (actual result returned count + count of unchecked documents), or
+     * (total possible docs - docs that have been checked and rejected).
+     *
+     * Engine can limit to manager::MAX_RESULTS if there is cost to determining more.
+     * If this cannot be computed in a reasonable way, manager::MAX_RESULTS may be returned.
+     *
+     * @return int
+     */
+    abstract public function get_query_total_count();
+
+    /**
      * Return true if file indexing is supported and enabled. False otherwise.
      *
      * @return bool
@@ -352,12 +366,16 @@ abstract class engine {
      *
      * Implementations of this function should check user context array to limit the results to contexts where the
      * user have access. They should also limit the owneruserid field to manger::NO_OWNER_ID or the current user's id.
+     * Engines must use area->check_access() to confirm user access.
+     *
+     * Engines should reasonably attempt to fill up to limit with valid results if they are available.
      *
      * @param  stdClass $filters Query and filters to apply.
      * @param  array    $usercontexts Contexts where the user has access. True if the user can access all contexts.
+     * @param  int      $limit The maximum number of results to return. If empty, limit to manager::MAX_RESULTS.
      * @return \core_search\document[] Results or false if no results
      */
-    abstract function execute_query($filters, $usercontexts);
+    abstract function execute_query($filters, $usercontexts, $limit = 0);
 
     /**
      * Delete all documents.

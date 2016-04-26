@@ -27,7 +27,7 @@ namespace core_mocksearch\search;
 
 defined('MOODLE_INTERNAL') || die;
 
-class role_capabilities extends \core_search\area\base {
+class mock_search_area extends \core_search\area\base {
 
     /**
      * To make things easier, base class required config stuff.
@@ -40,44 +40,40 @@ class role_capabilities extends \core_search\area\base {
 
     public function get_recordset_by_timestamp($modifiedfrom = 0) {
         global $DB;
+
         // Filter by capability as we want this quick.
-        return $DB->get_recordset_sql("SELECT id, contextid, roleid, capability FROM {role_capabilities} where timemodified >= ? and capability = ?", array($modifiedfrom, 'moodle/course:renameroles'));
+        return $DB->get_recordset_sql("SELECT * FROM {temp_mock_search_area} WHERE timemodified >= ?", array($modifiedfrom));
     }
 
     public function get_document($record, $options = array()) {
         global $USER;
 
+        $info = unserialize($record->info);
+
         // Prepare associative array with data from DB.
         $doc = \core_search\document_factory::instance($record->id, $this->componentname, $this->areaname);
-        $doc->set('title', $record->capability . ' roleid ' . $record->roleid);
-        $doc->set('content', $record->capability . ' roleid ' . $record->roleid . ' message');
-        $doc->set('contextid', $record->contextid);
-        $doc->set('courseid', SITEID);
-        $doc->set('userid', $USER->id);
-        $doc->set('owneruserid', \core_search\manager::NO_OWNER_ID);
-        $doc->set('modified', time());
+        $doc->set('title', $info->title);
+        $doc->set('content', $info->content);
+        $doc->set('contextid', $info->contextid);
+        $doc->set('courseid', $info->courseid);
+        $doc->set('userid', $info->userid);
+        $doc->set('owneruserid', $info->owneruserid);
+        $doc->set('modified', $record->timemodified);
 
         return $doc;
     }
 
     public function attach_files($document) {
-        global $CFG;
+        global $DB;
 
-        // Add the searchable file fixture.
-        $syscontext = \context_system::instance();
-        $filerecord = array(
-            'contextid' => $syscontext->id,
-            'component' => 'core',
-            'filearea'  => 'unittest',
-            'itemid'    => 0,
-            'filepath'  => '/',
-            'filename'  => 'searchfile'.$document->get('itemid').'.txt',
-        );
+        if (!$record = $DB->get_record('temp_mock_search_area', array('id' => $document->get('itemid')))) {
+            return;
+        }
 
-        $fs = get_file_storage();
-        $file = $fs->create_file_from_string($filerecord, 'File contents');
-
-        $document->add_stored_file($file);
+        $info = unserialize($record->info);
+        foreach ($info->attachfileids as $fileid) {
+            $document->add_stored_file($fileid);
+        }
     }
 
     public function uses_file_indexing() {
@@ -85,9 +81,14 @@ class role_capabilities extends \core_search\area\base {
     }
 
     public function check_access($id) {
-        global $DB;
+        global $DB, $USER;
 
-        if ($DB->get_record('role_capabilities', array('id' => $id))) {
+        if ($record = $DB->get_record('temp_mock_search_area', array('id' => $id))) {
+            $info = unserialize($record->info);
+
+            if (in_array($USER->id, $info->denyuserids)) {
+                return \core_search\manager::ACCESS_DENIED;
+            }
             return \core_search\manager::ACCESS_GRANTED;
         }
         return \core_search\manager::ACCESS_DELETED;
