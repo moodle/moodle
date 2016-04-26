@@ -36,8 +36,8 @@ function tool_lp_extend_navigation_course($navigation, $course, $coursecontext) 
         return;
     }
 
-    // Just a link to course report.
-    $title = get_string('coursecompetencies', 'tool_lp');
+    // Just a link to course competency.
+    $title = get_string('competencies', 'core_competency');
     $path = new moodle_url("/admin/tool/lp/coursecompetencies.php", array('courseid' => $course->id));
     $settingsnode = navigation_node::create($title,
                                             $path,

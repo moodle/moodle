@@ -3866,7 +3866,7 @@ class core_competency_api_testcase extends advanced_testcase {
         // Give permission to view competencies.
         $dg->role_assign($canviewucrole, $teacher1->id, $c1ctx->id);
         accesslib_clear_all_caches_for_unit_testing();
-        $this->assertExceptionWithGradeCompetencyInCourse('required_capability_exception', 'Set competency grade',
+        $this->assertExceptionWithGradeCompetencyInCourse('required_capability_exception', 'Set competency rating',
             $c1->id, $student1->id, $comp1->get_id());
 
         // Give permission to rate.
