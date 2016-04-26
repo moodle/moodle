@@ -66,6 +66,9 @@ class user_evidence_summary_exporter extends \core_competency\external\persisten
                 'optional' => true,
                 'multiple' => true
             ),
+            'userhasplan' => array(
+                'type' => PARAM_BOOL
+            ),
         );
     }
 
@@ -124,6 +127,7 @@ class user_evidence_summary_exporter extends \core_competency\external\persisten
             'canmanage' => $this->persistent->can_manage(),
             'filecount' => count($files),
             'files' => $files,
+            'userhasplan' => $this->persistent->user_has_plan(),
             'hasurlorfiles' => !empty($files) || !empty($url),
             'urlshort' => $urlshort,
             'competencycount' => count($userevidencecompetencies),
