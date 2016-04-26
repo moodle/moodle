@@ -136,7 +136,14 @@ abstract class base {
      * @return string
      */
     public function get_visible_name($lazyload = false) {
-        return get_string('search:' . $this->areaname, $this->componentname, null, $lazyload);
+
+        $component = $this->componentname;
+
+        // Core subsystem strings go to lang/XX/search.php.
+        if (strpos($component, 'core_') === 0) {
+            $component = 'search';
+        }
+        return get_string('search:' . $this->areaname, $component, null, $lazyload);
     }
 
     /**
@@ -150,8 +157,9 @@ abstract class base {
     public function get_config_var_name() {
 
         if ($this->componenttype === 'core') {
-            // Core subsystems config in search.
-            return array('search', $this->areaid);
+            // Core subsystems config in core_search and setting name using only [a-zA-Z0-9_]+.
+            $parts = \core_search\manager::extract_areaid_parts($this->areaid);
+            return array('core_search', $parts[0] . '_' . $parts[1]);
         }
 
         // Plugins config in the plugin scope.
