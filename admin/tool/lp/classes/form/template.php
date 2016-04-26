@@ -50,10 +50,12 @@ class template extends persistent {
 
         $mform->addElement('header', 'generalhdr', get_string('general'));
 
-        $mform->addElement('text', 'shortname',
-                           get_string('shortname', 'tool_lp'));
+        // Name.
+        $mform->addElement('text', 'shortname', get_string('shortname', 'tool_lp'), 'maxlength="100"');
         $mform->setType('shortname', PARAM_TEXT);
         $mform->addRule('shortname', null, 'required', null, 'client');
+        $mform->addRule('shortname', get_string('maximumchars', '', 100), 'maxlength', 100, 'client');
+        // Description.
         $mform->addElement('editor', 'description',
                            get_string('description', 'tool_lp'), array('rows' => 4));
         $mform->setType('description', PARAM_RAW);
