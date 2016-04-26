@@ -45,13 +45,16 @@
 {{#competencycount}}
 <div data-region="coursecompetencystatistics" class="well">
     {{#canbegradedincourse}}
-    <div>
-        <div class="progresstext">
-            {{#str}}xcompetenciesproficientoutofyincourse, tool_lp, { "x": "{{proficientcompetencycount}}", "y": "{{competencycount}}" } {{/str}}
+    <div class="clearfix">
+        <div class="span6">
+            <div class="progresstext">
+                {{#str}}xcompetenciesproficientoutofyincourse, tool_lp, { "x": "{{proficientcompetencycount}}", "y": "{{competencycount}}" } {{/str}}
+            </div>
         </div>
-        <div class="progress">
-            <div class="bar" style="width: {{proficientcompetencypercentage}}%;">
-                {{proficientcompetencypercentageformatted}} %
+        <div class="span6">
+            <span class="pull-right label label-info">{{proficientcompetencypercentageformatted}} %</span>
+            <div class="progress">
+                <div class="bar" style="width: {{proficientcompetencypercentage}}%;"></div>
             </div>
         </div>
     </div>

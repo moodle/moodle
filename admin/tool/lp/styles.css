@@ -10,9 +10,8 @@
     vertical-align: top;
 }
 .path-admin-tool-lp .progress {
-    width: 10em;
+    width: 100%;
     display: inline-block;
-    margin-left: 2em;
     margin-right: 2em;
 }
 .dir-rtl.path-admin-tool-lp .progress .bar {
