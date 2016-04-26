@@ -136,7 +136,12 @@ class memcached extends handler {
         ini_set('memcached.sess_locking', '1'); // Locking is required!
 
         // Try to configure lock and expire timeouts - ignored if memcached is before version 2.2.0.
-        ini_set('memcached.sess_lock_max_wait', $this->acquiretimeout);
+        if (version_compare($version, '3.0.0-dev') >= 0) {
+            ini_set('memcached.sess_lock_wait_max', $this->acquiretimeout * 1000);
+        } else {
+            ini_set('memcached.sess_lock_max_wait', $this->acquiretimeout);
+        }
+
         ini_set('memcached.sess_lock_expire', $this->lockexpire);
     }
 
