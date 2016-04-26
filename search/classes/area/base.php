@@ -140,7 +140,7 @@ abstract class base {
         $component = $this->componentname;
 
         // Core subsystem strings go to lang/XX/search.php.
-        if (strpos($component, 'core_') === 0) {
+        if ($this->componenttype === 'core') {
             $component = 'search';
         }
         return get_string('search:' . $this->areaname, $component, null, $lazyload);
