@@ -30,17 +30,19 @@ define(['jquery',
        function($, notification, ajax, templates, str, Dialogue) {
 
     /**
+     * The main instance we'll be working with.
+     *
+     * @type {Competencydialogue}
+     */
+    var instance;
+
+    /**
      * Constructor for CompetencyDialogue.
      *
      * @param {Object} options
      *
      */
-    var Competencydialogue = function(options) {
-        this.options = {
-            includerelated: false,
-            includecourses: false
-        };
-        $.extend(this.options, options);
+    var Competencydialogue = function() {
     };
 
     /**
@@ -57,28 +59,15 @@ define(['jquery',
     };
 
     /**
-     * Callback on dialogue display, it apply enhance on competencies dialogue.
-     *
-     * @param {Dialogue} dialogue
-     * @method enhanceDialogue
-     */
-    Competencydialogue.prototype.enhanceDialogue = function(dialogue) {
-        //Apply watch on the related competencies and competencies in the dialogue.
-        var comprelated = new Competencydialogue({includerelated : false});
-        comprelated.watch(dialogue.getContent());
-    };
-
-    /**
      * Display a dialogue box by competencyid.
      *
-     * @param {Number} the competency id
-     * @param {Object} Options for tool_lp_data_for_competency_summary service
-     * @param {Object} dataSource data to be used to display dialogue box
+     * @param {Number} competencyid The competency ID.
+     * @param {Object} options The options.
      * @method showDialogue
      */
-    Competencydialogue.prototype.showDialogue = function(competencyid) {
+    Competencydialogue.prototype.showDialogue = function(competencyid, options) {
 
-        var datapromise = this.getCompetencyDataPromise(competencyid);
+        var datapromise = this.getCompetencyDataPromise(competencyid, options);
         var localthis = this;
         datapromise.done(function(data) {
             // Inner Html in the dialogue content.
@@ -90,8 +79,7 @@ define(['jquery',
                     // Show the dialogue.
                     new Dialogue(
                         data.competency.shortname,
-                        html,
-                        localthis.enhanceDialogue
+                        html
                     );
                 }).fail(notification.exception);
         }).fail(notification.exception);
@@ -130,10 +118,16 @@ define(['jquery',
     Competencydialogue.prototype.clickEventHandler = function(e) {
 
         var compdialogue = e.data.compdialogue;
-        var competencyid = $(e.currentTarget).data('id');
+        var currentTarget = $(e.currentTarget);
+        var competencyid = currentTarget.data('id');
+        var includerelated = !(currentTarget.data('excluderelated'));
+        var includecourses = currentTarget.data('includecourses');
 
         // Show the dialogue box.
-        compdialogue.showDialogue(competencyid);
+        compdialogue.showDialogue(competencyid, {
+            includerelated: includerelated,
+            includecourses: includecourses
+        });
         e.preventDefault();
     };
 
@@ -144,13 +138,13 @@ define(['jquery',
      * @return {Promise} return promise on data request
      * @method getCompetencyDataPromise
      */
-    Competencydialogue.prototype.getCompetencyDataPromise = function(competencyid) {
+    Competencydialogue.prototype.getCompetencyDataPromise = function(competencyid, options) {
 
         var requests = ajax.call([
             { methodname: 'tool_lp_data_for_competency_summary',
               args: { competencyid: competencyid,
-                      includerelated: this.options.includerelated,
-                      includecourses: this.options.includecourses
+                      includerelated: options.includerelated || false,
+                      includecourses: options.includecourses || false
                     }
             }
         ]);
@@ -160,16 +154,24 @@ define(['jquery',
         }).fail(notification.exception);
     };
 
-    /**
-     * Watch the competencies links in container.
-     *
-     * @param {String} container selector of node containing competencies links
-     * @method watch
-     */
-    Competencydialogue.prototype.watch = function(containerSelector) {
-        $(containerSelector).off('click', '[data-action="competency-dialogue"]', this.clickEventHandler);
-        $(containerSelector).on('click', '[data-action="competency-dialogue"]', { compdialogue: this }, this.clickEventHandler);
-    };
+    return /** @alias module:tool_lp/competencydialogue */ {
 
-    return Competencydialogue;
+        /**
+         * Initialise the competency dialogue module.
+         *
+         * Only the first call matters.
+         *
+         * @return {Void}
+         */
+        init: function() {
+            if (typeof instance !== 'undefined') {
+                return;
+            }
+
+            // Instantiate the one instance and delegate event on the body.
+            instance = new Competencydialogue();
+            $('body').delegate('[data-action="competency-dialogue"]', 'click', { compdialogue: instance },
+                instance.clickEventHandler.bind(instance));
+        }
+    };
 });

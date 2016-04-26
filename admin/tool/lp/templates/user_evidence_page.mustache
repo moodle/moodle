@@ -111,8 +111,7 @@ require(['tool_lp/user_evidence_actions'], function(UserEvidenceActions) {
 
 {{#js}}
 require(['tool_lp/competencydialogue'], function(Compdialogue) {
-    var competencydialogue = new Compdialogue({includerelated : true});
-    competencydialogue.watch('[data-region="user-evidence-competencies"]');
+    Compdialogue.init();
 });
 {{/js}}
 
