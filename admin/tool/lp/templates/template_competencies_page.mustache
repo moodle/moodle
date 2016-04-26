@@ -24,17 +24,17 @@
             <a href="{{pluginbaseurl}}/edittemplate.php?id={{template.id}}&amp;pagecontextid={{pagecontextid}}">{{#pix}}t/edit, core, {{#str}}edittemplate, tool_lp{{/str}}{{/pix}}</a>
         {{/template.canmanage}}
     </h2>
-    <h3>{{#str}}templatecompetencies, tool_lp{{/str}}</h3>
-    {{#statistics}}
-        {{> tool_lp/template_statistics }}
-    {{/statistics}}
     {{#canmanagetemplatecompetencies}}
     <div data-region="actions" class="clearfix">
-        <div class="pull-right">
+        <div class="pull-left">
             <button disabled>{{#str}}addtemplatecompetencies, tool_lp{{/str}}</button>
         </div>
     </div>
     {{/canmanagetemplatecompetencies}}
+    <h3>{{#str}}templatecompetencies, tool_lp{{/str}}</h3>
+    {{#statistics}}
+        {{> tool_lp/template_statistics }}
+    {{/statistics}}
     <div data-region="templatecompetencies">
         <div class="managecompetencies">
             <div class="drag-parentnode">

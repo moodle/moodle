@@ -34,12 +34,13 @@
     * navigation - array of strings containing buttons for navigation
 }}
 <div data-region="managecompetencies">
-<div class="btn-group pull-right">
+<div class="btn-group pull-left">
     {{#navigation}}
     {{{.}}}
     {{/navigation}}
 </div>
 <table class="generaltable fullwidth managecompetencies">
+    <caption>{{#str}}listcompetencyframeworkscaption, tool_lp{{/str}}</caption>
     <thead>
         <tr>
             <th scope="col">{{#str}}competencyframeworkname, tool_lp{{/str}}</th>

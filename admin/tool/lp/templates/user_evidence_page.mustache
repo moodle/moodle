@@ -36,6 +36,15 @@
             <a href="{{pluginbaseurl}}/user_evidence_edit.php?id={{id}}&amp;userid={{userid}}">{{#pix}}t/edit, core, {{#str}}editthisuserevidence, tool_lp{{/str}}{{/pix}}</a>
         {{/canmanage}}
     </h2>
+    {{#canmanage}}
+    <div data-region="actions" class="clearfix">
+        <div class="pull-left">
+            {{#userhasplan}}
+                <button class="btn" data-action="link-competency">{{#pix}}t/add{{/pix}} {{#str}}linkcompetencies, tool_lp{{/str}}</button>
+            {{/userhasplan}}
+        </div>
+    </div>
+    {{/canmanage}}
 
     <div data-region="user-evidence-summary">
         {{#description}}
@@ -85,16 +94,6 @@
                 {{/usercompetencies}}
             </tbody>
         </table>
-
-        <div data-region="actions">
-            <div class="pull-right">
-                {{#canmanage}}
-                    {{#userhasplan}}
-                    <button class="btn" data-action="link-competency">{{#pix}}t/add{{/pix}} {{#str}}linkcompetencies, tool_lp{{/str}}</button>
-                    {{/userhasplan}}
-                {{/canmanage}}
-            </div>
-        </div>
     </div>
 </div>
 
