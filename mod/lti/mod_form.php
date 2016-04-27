@@ -128,12 +128,12 @@ class mod_lti_mod_form extends moodleform_mod {
         }
 
         $mform->addElement('text', 'toolurl', get_string('launch_url', 'lti'), array('size' => '64'));
-        $mform->setType('toolurl', PARAM_TEXT);
+        $mform->setType('toolurl', PARAM_URL);
         $mform->addHelpButton('toolurl', 'launch_url', 'lti');
         $mform->disabledIf('toolurl', 'typeid', 'neq', '0');
 
         $mform->addElement('text', 'securetoolurl', get_string('secure_launch_url', 'lti'), array('size' => '64'));
-        $mform->setType('securetoolurl', PARAM_TEXT);
+        $mform->setType('securetoolurl', PARAM_URL);
         $mform->setAdvanced('securetoolurl');
         $mform->addHelpButton('securetoolurl', 'secure_launch_url', 'lti');
         $mform->disabledIf('securetoolurl', 'typeid', 'neq', '0');
@@ -239,9 +239,14 @@ class mod_lti_mod_form extends moodleform_mod {
                 array('global_tool_types', 'lti'),
                 array('course_tool_types', 'lti'),
                 array('using_tool_configuration', 'lti'),
+                array('using_tool_cartridge', 'lti'),
                 array('domain_mismatch', 'lti'),
                 array('custom_config', 'lti'),
                 array('tool_config_not_found', 'lti'),
+                array('tooltypeadded', 'lti'),
+                array('tooltypedeleted', 'lti'),
+                array('tooltypenotdeleted', 'lti'),
+                array('tooltypeupdated', 'lti'),
                 array('forced_help', 'lti')
             ),
         );

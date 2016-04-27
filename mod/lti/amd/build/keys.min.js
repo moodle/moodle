@@ -1,0 +1,1 @@
+define([],function(){return{ENTER:13,SPACE:32}});
