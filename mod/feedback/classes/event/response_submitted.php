@@ -58,6 +58,29 @@ class response_submitted extends \core\event\base {
     }
 
     /**
+     * Creates an instance from the record from db table feedback_completed
+     *
+     * @param stdClass $completed
+     * @param stdClass|cm_info $cm
+     * @return self
+     */
+    public static function create_from_record($completed, $cm) {
+        $event = self::create(array(
+            'relateduserid' => $completed->userid,
+            'objectid' => $completed->id,
+            'context' => \context_module::instance($cm->id),
+            'anonymous' => ($completed->anonymous_response == FEEDBACK_ANONYMOUS_YES),
+            'other' => array(
+                'cmid' => $cm->id,
+                'instanceid' => $completed->feedback,
+                'anonymous' => $completed->anonymous_response // Deprecated.
+            )
+        ));
+        $event->add_record_snapshot('feedback_completed', $completed);
+        return $event;
+    }
+
+    /**
      * Returns localised general event name.
      *
      * @return string

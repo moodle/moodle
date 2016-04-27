@@ -44,26 +44,27 @@ class feedback_multichoice_form extends feedback_item_form {
                                   'maxlength' => 255));
 
         $mform->addElement('select',
-                            'horizontal',
-                            get_string('adjustment', 'feedback').'&nbsp;',
-                            array(0 => get_string('vertical', 'feedback'),
-                                  1 => get_string('horizontal', 'feedback')));
-
-        $mform->addElement('select',
                             'subtype',
                             get_string('multichoicetype', 'feedback').'&nbsp;',
                             array('r'=>get_string('radio', 'feedback'),
                                   'c'=>get_string('check', 'feedback'),
                                   'd'=>get_string('dropdown', 'feedback')));
 
-        $mform->addElement('selectyesno',
-                           'ignoreempty',
-                           get_string('do_not_analyse_empty_submits', 'feedback'));
+        $mform->addElement('select',
+                            'horizontal',
+                            get_string('adjustment', 'feedback').'&nbsp;',
+                            array(0 => get_string('vertical', 'feedback'),
+                                  1 => get_string('horizontal', 'feedback')));
+        $mform->disabledIf('horizontal', 'subtype', 'eq', 'd');
 
         $mform->addElement('selectyesno',
                            'hidenoselect',
                            get_string('hide_no_select_option', 'feedback'));
         $mform->disabledIf('hidenoselect', 'subtype', 'ne', 'r');
+
+        $mform->addElement('selectyesno',
+                           'ignoreempty',
+                           get_string('do_not_analyse_empty_submits', 'feedback'));
 
         $mform->addElement('textarea', 'values', get_string('multichoice_values', 'feedback'),
             'wrap="virtual" rows="10" cols="65"');
@@ -105,6 +106,9 @@ class feedback_multichoice_form extends feedback_item_form {
         }
         if (!isset($item->hidenoselect)) {
             $item->hidenoselect = 1;
+        }
+        if (!isset($item->ignoreempty)) {
+            $item->ignoreempty = 0;
         }
 
         $item->presentation = $subtype.FEEDBACK_MULTICHOICE_TYPE_SEP.$presentation;

@@ -22,10 +22,6 @@ Feature: Anonymous feedback
     And the following "system role assigns" exist:
       | user    | course               | role    |
       | manager | Acceptance test site | manager |
-    And I log in as "admin"
-    And I navigate to "Manage activities" node in "Site administration > Plugins > Activity modules"
-    And I click on "Show" "link" in the "Feedback" "table_row"
-    And I log out
     And the following "activities" exist:
       | activity   | name            | course               | idnumber  | anonymous | publish_stats |
       | feedback   | Site feedback   | Acceptance test site | feedback0 | 1         | 1             |
@@ -106,7 +102,7 @@ Feature: Anonymous feedback
     And I follow "Show responses"
     And I should not see "Username"
     And I should see "Anonymous entries (2)"
-    And I click on "Show response" "link" in the "Response number: 1" "table_row"
+    And I follow "Response number: 1"
     And I should not see "Username"
     And I should see "Response number: 1 (Anonymous)"
     And I log out
@@ -168,7 +164,7 @@ Feature: Anonymous feedback
     And I follow "Site feedback"
     And I follow "Show responses"
     And I should see "Anonymous entries (2)"
-    And I click on "Show response" "link" in the "Response number: 1" "table_row"
+    And I follow "Response number: 1"
     And I should see "Response number: 1 (Anonymous)"
     And I log out
 
@@ -226,7 +222,7 @@ Feature: Anonymous feedback
     And I follow "Show responses"
     And I should not see "Username"
     And I should see "Anonymous entries (2)"
-    And I click on "Show response" "link" in the "Response number: 1" "table_row"
+    And I follow "Response number: 1"
     And I should not see "Username"
     And I should see "Response number: 1 (Anonymous)"
     And I should not see "Prev"
@@ -237,8 +233,6 @@ Feature: Anonymous feedback
     And I follow "Back"
     # Delete anonymous response
     And I click on "Delete entry" "link" in the "Response number: 1" "table_row"
-    And I should see "Are you sure you want to delete this entry?"
-    And I press "Continue"
     And I should see "Anonymous entries (1)"
     And I should not see "Response number: 1"
     And I should see "Response number: 2"

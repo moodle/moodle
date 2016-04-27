@@ -33,10 +33,6 @@ Feature: Show users who have not responded to the feedback survey
     And the following "grouping groups" exist:
       | grouping | group  |
       | GXI1     | GI1    |
-    And I log in as "admin"
-    And I navigate to "Manage activities" node in "Site administration > Plugins > Activity modules"
-    And I click on "Show" "link" in the "Feedback" "table_row"
-    And I log out
 
   @javascript
   Scenario: See users who have not responded

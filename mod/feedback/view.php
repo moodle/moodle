@@ -21,102 +21,48 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package mod_feedback
  */
-require_once("../../config.php");
-require_once("lib.php");
+require_once(__DIR__ . '/../../config.php');
+require_once($CFG->dirroot . '/mod/feedback/lib.php');
 
 $id = required_param('id', PARAM_INT);
 $courseid = optional_param('courseid', false, PARAM_INT);
 
 $current_tab = 'view';
 
-if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-    print_error('invalidcoursemodule');
-}
+list($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
+require_course_login($course, true, $cm);
+$feedback = $PAGE->activityrecord;
 
-if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-    print_error('coursemisconf');
-}
-
-if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-    print_error('invalidcoursemodule');
-}
+$feedbackcompletion = new mod_feedback_completion($feedback, $cm, $courseid);
 
 $context = context_module::instance($cm->id);
 
-$feedback_complete_cap = false;
-
-if (has_capability('mod/feedback:complete', $context)) {
-    $feedback_complete_cap = true;
-}
-
-if (!empty($CFG->feedback_allowfullanonymous)
-            AND $course->id == SITEID
-            AND $feedback->anonymous == FEEDBACK_ANONYMOUS_YES
-            AND (!isloggedin() OR isguestuser())) {
-    // Guests are allowed to complete fully anonymous feedback without having 'mod/feedback:complete' capability.
-    $feedback_complete_cap = true;
-}
-
-//check whether the feedback is located and! started from the mainsite
-if ($course->id == SITEID AND !$courseid) {
-    $courseid = SITEID;
-}
-
-require_course_login($course, true, $cm);
-
 if ($course->id == SITEID) {
-    $PAGE->set_context($context);
-    $PAGE->set_cm($cm, $course);
     $PAGE->set_pagelayout('incourse');
 }
 $PAGE->set_url('/mod/feedback/view.php', array('id' => $cm->id));
 $PAGE->set_title($feedback->name);
 $PAGE->set_heading($course->fullname);
 
-// Check whether the feedback is mapped to the given courseid.
-if ($course->id == SITEID AND !has_capability('mod/feedback:edititems', $context)) {
-    if ($DB->get_records('feedback_sitecourse_map', array('feedbackid' => $feedback->id))) {
-        $params = array('feedbackid' => $feedback->id, 'courseid' => $courseid);
-        if (!$DB->get_record('feedback_sitecourse_map', $params)) {
-            if ($courseid == SITEID) {
-                echo $OUTPUT->header();
-                echo $OUTPUT->notification(get_string('cannotaccess', 'mod_feedback'));
-                echo $OUTPUT->footer();
-                exit;
-            } else {
-                print_error('invalidcoursemodule');
-            }
-        }
-    }
+// Check access to the given courseid.
+if ($courseid AND $courseid != SITEID) {
+    require_course_login(get_course($courseid)); // This overwrites the object $COURSE .
 }
 
-//check whether the given courseid exists
-if ($courseid AND $courseid != SITEID) {
-    if ($course2 = $DB->get_record('course', array('id'=>$courseid))) {
-        require_course_login($course2); //this overwrites the object $course :-(
-        $course = $DB->get_record("course", array("id"=>$cm->course)); // the workaround
-    } else {
-        print_error('invalidcourseid');
-    }
+// Check whether the feedback is mapped to the given courseid.
+if (!has_capability('mod/feedback:edititems', $context) &&
+        !$feedbackcompletion->check_course_is_mapped()) {
+    echo $OUTPUT->header();
+    echo $OUTPUT->notification(get_string('cannotaccess', 'mod_feedback'));
+    echo $OUTPUT->footer();
+    exit;
 }
 
 // Trigger module viewed event.
-$event = \mod_feedback\event\course_module_viewed::create(array(
-    'objectid' => $feedback->id,
-    'context' => $context,
-    'anonymous' => ($feedback->anonymous == FEEDBACK_ANONYMOUS_YES),
-    'other' => array(
-        'anonymous' => $feedback->anonymous // Deprecated.
-    )
-));
-$event->add_record_snapshot('course_modules', $cm);
-$event->add_record_snapshot('course', $course);
-$event->add_record_snapshot('feedback', $feedback);
+$event = \mod_feedback\event\course_module_viewed::create_from_record($feedback, $cm, $course);
 $event->trigger();
 
 /// Print the page header
-$strfeedbacks = get_string("modulenameplural", "feedback");
-$strfeedback  = get_string("modulename", "feedback");
 echo $OUTPUT->header();
 
 /// Print the main part of the page
@@ -151,80 +97,24 @@ if (has_capability('mod/feedback:edititems', $context)) {
     $groupselect = groups_print_activity_menu($cm, $CFG->wwwroot.'/mod/feedback/view.php?id='.$cm->id, true);
     $mygroupid = groups_get_activity_group($cm);
 
-    echo $OUTPUT->box_start('boxaligncenter');
     echo $groupselect.'<div class="clearer">&nbsp;</div>';
-    $completedscount = feedback_get_completeds_group_count($feedback, $mygroupid);
-    echo $OUTPUT->box_start('feedback_info');
-    echo '<span class="feedback_info">';
-    echo get_string('completed_feedbacks', 'feedback').': ';
-    echo '</span>';
-    echo '<span class="feedback_info_value">';
-    echo $completedscount;
-    echo '</span>';
-    echo $OUTPUT->box_end();
+    $summary = new mod_feedback\output\summary($feedbackcompletion, $mygroupid, true);
+    echo $OUTPUT->render_from_template('mod_feedback/summary', $summary->export_for_template($OUTPUT));
 
-    $params = array('feedback'=>$feedback->id, 'hasvalue'=>1);
-    $itemscount = $DB->count_records('feedback_item', $params);
-    echo $OUTPUT->box_start('feedback_info');
-    echo '<span class="feedback_info">';
-    echo get_string('questions', 'feedback').': ';
-    echo '</span>';
-    echo '<span class="feedback_info_value">';
-    echo $itemscount;
-    echo '</span>';
-    echo $OUTPUT->box_end();
-
-    if ($feedback->timeopen) {
-        echo $OUTPUT->box_start('feedback_info');
-        echo '<span class="feedback_info">';
-        echo get_string('feedbackopen', 'feedback').': ';
-        echo '</span>';
-        echo '<span class="feedback_info_value">';
-        echo userdate($feedback->timeopen);
-        echo '</span>';
-        echo $OUTPUT->box_end();
+    if ($pageaftersubmit = $feedbackcompletion->page_after_submit()) {
+        echo $OUTPUT->heading(get_string("page_after_submit", "feedback"), 3);
+        echo $OUTPUT->box($pageaftersubmit, 'generalbox feedback_after_submit');
     }
-    if ($feedback->timeclose) {
-        echo $OUTPUT->box_start('feedback_info');
-        echo '<span class="feedback_info">';
-        echo get_string('feedbackclose', 'feedback').': ';
-        echo '</span>';
-        echo '<span class="feedback_info_value">';
-        echo userdate($feedback->timeclose);
-        echo '</span>';
-        echo $OUTPUT->box_end();
-    }
-    echo $OUTPUT->box_end();
-}
-
-if (has_capability('mod/feedback:edititems', $context)) {
-    require_once($CFG->libdir . '/filelib.php');
-
-    $page_after_submit_output = file_rewrite_pluginfile_urls($feedback->page_after_submit,
-                                                            'pluginfile.php',
-                                                            $context->id,
-                                                            'mod_feedback',
-                                                            'page_after_submit',
-                                                            0);
-
-    echo $OUTPUT->heading(get_string("page_after_submit", "feedback"), 3);
-    echo $OUTPUT->box_start('generalbox feedback_after_submit');
-    echo format_text($page_after_submit_output,
-                     $feedback->page_after_submitformat,
-                     array('overflowdiv'=>true));
-
-    echo $OUTPUT->box_end();
 }
 
 if (!has_capability('mod/feedback:viewreports', $context) &&
-        feedback_can_view_analysis($feedback, $context, $courseid)) {
+        $feedbackcompletion->can_view_analysis()) {
     $analysisurl = new moodle_url('/mod/feedback/analysis.php', array('id' => $id));
     echo '<div class="mdl-align"><a href="'.$analysisurl->out().'">';
     echo get_string('completed_feedbacks', 'feedback').'</a>';
     echo '</div>';
 }
 
-//####### mapcourse-start
 if (has_capability('mod/feedback:mapcourse', $context) && $feedback->course == SITEID) {
     echo $OUTPUT->box_start('generalbox feedback_mapped_courses');
     echo $OUTPUT->heading(get_string("mappedcourses", "feedback"), 3);
@@ -233,65 +123,31 @@ if (has_capability('mod/feedback:mapcourse', $context) && $feedback->course == S
     echo '<p class="mdl-align">' . html_writer::link($mapurl, get_string('mapcourses', 'feedback')) . '</p>';
     echo $OUTPUT->box_end();
 }
-//####### mapcourse-end
 
-//####### completed-start
-if ($feedback_complete_cap) {
-    echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
-    //check, whether the feedback is open (timeopen, timeclose)
-    $checktime = time();
-    if (($feedback->timeopen > $checktime) OR
-            ($feedback->timeclose < $checktime AND $feedback->timeclose > 0)) {
-
+if ($feedbackcompletion->can_complete()) {
+    echo $OUTPUT->box_start('generalbox boxaligncenter');
+    if (!$feedbackcompletion->is_open()) {
+        // Feedback is not yet open or is already closed.
         echo $OUTPUT->notification(get_string('feedback_is_not_open', 'feedback'));
-        echo $OUTPUT->continue_button($CFG->wwwroot.'/course/view.php?id='.$course->id);
-        echo $OUTPUT->box_end();
-        echo $OUTPUT->footer();
-        exit;
-    }
-
-    //check multiple Submit
-    $feedback_can_submit = true;
-    if ($feedback->multiple_submit == 0 ) {
-        if (feedback_is_already_submitted($feedback->id, $courseid)) {
-            $feedback_can_submit = false;
-        }
-    }
-    if ($feedback_can_submit) {
-        //if the user is not known so we cannot save the values temporarly
-        if (!isloggedin() or isguestuser()) {
-            $guestid = sesskey();
+        echo $OUTPUT->continue_button(course_get_url($courseid ?: $course->id));
+    } else if ($feedbackcompletion->can_submit()) {
+        // Display a link to complete feedback or resume.
+        $completeurl = new moodle_url('/mod/feedback/complete.php',
+                ['id' => $id, 'courseid' => $courseid]);
+        if ($startpage = $feedbackcompletion->get_resume_page()) {
+            $completeurl->param('gopage', $startpage);
+            $label = get_string('continue_the_form', 'feedback');
         } else {
-            $guestid = false;
+            $label = get_string('complete_the_form', 'feedback');
         }
-        $url_params = array('id'=>$id, 'courseid'=>$courseid, 'gopage'=>0);
-        $completeurl = new moodle_url('/mod/feedback/complete.php', $url_params);
-
-        $feedbackcompletedtmp = feedback_get_current_completed($feedback->id, true, $courseid, $guestid);
-        if ($feedbackcompletedtmp) {
-            if ($startpage = feedback_get_page_to_continue($feedback->id, $courseid, $guestid)) {
-                $completeurl->param('gopage', $startpage);
-            }
-            echo '<a href="'.$completeurl->out().'">'.get_string('continue_the_form', 'feedback').'</a>';
-        } else {
-            echo '<a href="'.$completeurl->out().'">'.get_string('complete_the_form', 'feedback').'</a>';
-        }
+        echo html_writer::div(html_writer::link($completeurl, $label), 'complete-feedback');
     } else {
+        // Feedback was already submitted.
         echo $OUTPUT->notification(get_string('this_feedback_is_already_submitted', 'feedback'));
-        if ($courseid) {
-            echo $OUTPUT->continue_button($CFG->wwwroot.'/course/view.php?id='.$courseid);
-        } else {
-            echo $OUTPUT->continue_button($CFG->wwwroot.'/course/view.php?id='.$course->id);
-        }
+        $OUTPUT->continue_button(course_get_url($courseid ?: $course->id));
     }
     echo $OUTPUT->box_end();
 }
-//####### completed-end
-
-/// Finish the page
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
 
 echo $OUTPUT->footer();
 

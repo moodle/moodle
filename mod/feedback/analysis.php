@@ -36,16 +36,15 @@ list($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
 require_course_login($course, true, $cm);
 
 $feedback = $PAGE->activityrecord;
+$feedbackstructure = new mod_feedback_structure($feedback, $cm);
 
 $context = context_module::instance($cm->id);
 
-if (!feedback_can_view_analysis($feedback, $context)) {
+if (!$feedbackstructure->can_view_analysis()) {
     print_error('error');
 }
 
 /// Print the page header
-$strfeedbacks = get_string("modulenameplural", "feedback");
-$strfeedback  = get_string("modulename", "feedback");
 
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
@@ -57,63 +56,31 @@ require('tabs.php');
 
 
 //get the groupid
-$myurl = $CFG->wwwroot.'/mod/feedback/analysis.php?id='.$cm->id.'&do_show=analysis';
 $mygroupid = groups_get_activity_group($cm, true);
-groups_print_activity_menu($cm, $myurl);
+groups_print_activity_menu($cm, $url);
 
-if ( has_capability('mod/feedback:viewreports', $context) ) {
-    //button "export to excel"
-    echo $OUTPUT->container_start('form-buttons');
-    $aurl = new moodle_url('analysis_to_excel.php', array('sesskey'=>sesskey(), 'id'=>$id));
-    echo $OUTPUT->single_button($aurl, get_string('export_to_excel', 'feedback'));
-    echo $OUTPUT->container_end();
-}
+// Show the summary.
+$summary = new mod_feedback\output\summary($feedbackstructure, $mygroupid);
+echo $OUTPUT->render_from_template('mod_feedback/summary', $summary->export_for_template($OUTPUT));
 
-//get completed feedbacks
-$completedscount = feedback_get_completeds_group_count($feedback, $mygroupid);
-
-echo '<div class="analysis_header">';
-// Show the submissions count.
-echo '<b>'.get_string('completed_feedbacks', 'feedback').': '.$completedscount. '</b><br />';
-
-// get the items of the feedback
-$items = $DB->get_records('feedback_item',
-                          array('feedback'=>$feedback->id, 'hasvalue'=>1),
-                          'position');
-// Show the items count.
-if (is_array($items)) {
-    echo '<b>'.get_string('questions', 'feedback').': ' .count($items). ' </b><hr />';
-} else {
-    $items=array();
-}
-echo '</div>';
+// Get the items of the feedback.
+$items = $feedbackstructure->get_items(true);
 
 $check_anonymously = true;
 if ($mygroupid > 0 AND $feedback->anonymous == FEEDBACK_ANONYMOUS_YES) {
-    if ($completedscount < FEEDBACK_MIN_ANONYMOUS_COUNT_IN_GROUP) {
+    $completedcount = $feedbackstructure->count_completed_responses($mygroupid);
+    if ($completedcount < FEEDBACK_MIN_ANONYMOUS_COUNT_IN_GROUP) {
         $check_anonymously = false;
     }
 }
 
 echo '<div>';
 if ($check_anonymously) {
-    $itemnr = 0;
-    //print the items in an analysed form
+    // Print the items in an analysed form.
     foreach ($items as $item) {
-        if ($item->hasvalue == 0) {
-            continue;
-        }
-        echo '<table width="100%" class="generalbox">';
-
-        //get the class of item-typ
+        echo "<table class=\"analysis itemtype_{$item->typ}\">";
         $itemobj = feedback_get_item_class($item->typ);
-
-        $itemnr++;
-        if ($feedback->autonumbering) {
-            $printnr = $itemnr.'.';
-        } else {
-            $printnr = '';
-        }
+        $printnr = ($feedback->autonumbering && $item->itemnr) ? ($item->itemnr . '.') : '';
         $itemobj->print_analysed($item, $printnr, $mygroupid);
         echo '</table>';
     }

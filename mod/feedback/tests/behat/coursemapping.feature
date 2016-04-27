@@ -30,12 +30,6 @@ Feature: Mapping courses in a feedback
     And the following "system role assigns" exist:
       | user    | course               | role    |
       | manager | Acceptance test site | manager |
-    And I log in as "admin"
-    And I navigate to "Manage activities" node in "Site administration > Plugins > Activity modules"
-    And I click on "Show" "link" in the "Feedback" "table_row"
-    And I navigate to "Manage blocks" node in "Site administration > Plugins > Blocks"
-    And I click on "Show" "link" in the "Feedback" "table_row"
-    And I log out
     And the following "activities" exist:
       | activity   | name             | course               | idnumber  | anonymous | publish_stats |
       | feedback   | Course feedback  | Acceptance test site | feedback0 | 1         | 1             |
@@ -121,7 +115,7 @@ Feature: Mapping courses in a feedback
     And I follow "Course feedback"
 
     And I follow "Analysis"
-    And the field "Filter by course" matches value "Choose..."
+    And I should see "All courses" in the "#feedback_course_filter .fautocomplete .label" "css_element"
     And I should see "1 (33.33 %)" in the "option a" "table_row"
     And I should see "1 (33.33 %)" in the "option b" "table_row"
     And I should see "1 (33.33 %)" in the "option c" "table_row"
@@ -130,7 +124,9 @@ Feature: Mapping courses in a feedback
     And I should see "2.50" in the "C1" "table_row"
     And I should see "1.00" in the "Acceptance test site" "table_row"
     And I follow "Back"
-    And I set the field "Filter by course" to "C1"
+    And I set the field "Filter by course" to "Course 1"
+    And I press "Filter"
+    And I should see "Course 1" in the "#feedback_course_filter .fautocomplete .label" "css_element"
     And I should see "0" in the "option a" "table_row"
     And I should see "1 (50.00 %)" in the "option b" "table_row"
     And I should see "1 (50.00 %)" in the "option c" "table_row"
@@ -200,7 +196,7 @@ Feature: Mapping courses in a feedback
     And I am on site homepage
     And I follow "Course feedback"
     And I follow "Analysis"
-    And the field "Filter by course" matches value "Choose..."
+    And I should see "All courses" in the "#feedback_course_filter .fautocomplete .label" "css_element"
     And I should see "0" in the "option a" "table_row"
     And I should see "1 (33.33 %)" in the "option b" "table_row"
     And I should see "2 (66.67 %)" in the "option c" "table_row"
@@ -209,12 +205,14 @@ Feature: Mapping courses in a feedback
     And I should see "3.00" in the "C3" "table_row"
     And I should see "2.50" in the "C2" "table_row"
     And I follow "Back"
-    And I set the field "Filter by course" to "C2"
+    And I set the field "Filter by course" to "Course 2"
+    And I press "Filter"
     And I should see "0" in the "option a" "table_row"
     And I should see "1 (50.00 %)" in the "option b" "table_row"
     And I should see "1 (50.00 %)" in the "option c" "table_row"
     And I should see "2 (100.00 %)" in the "option e" "table_row"
-    And I set the field "Filter by course" to "C3"
+    And I set the field "Filter by course" to "Course 3"
+    And I press "Filter"
     And I should see "0" in the "option a" "table_row"
     And I should see "0" in the "option b" "table_row"
     And I should see "1 (100.00 %)" in the "option c" "table_row"

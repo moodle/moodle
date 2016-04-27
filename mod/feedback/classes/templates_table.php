@@ -77,9 +77,10 @@ class mod_feedback_templates_table extends flexible_table {
         foreach ($templates as $template) {
             $data = array();
             $data[] = format_string($template->name);
-            $url = new moodle_url($this->baseurl, array('deletetempl' => $template->id));
+            $url = new moodle_url($this->baseurl, array('deletetempl' => $template->id, 'sesskey' => sesskey()));
 
-            $data[] = $OUTPUT->single_button($url, $strdeletefeedback, 'post');
+            $deleteaction = new confirm_action(get_string('confirmdeletetemplate', 'feedback'));
+            $data[] = $OUTPUT->action_icon($url, new pix_icon('t/delete', $strdeletefeedback), $deleteaction);
             $this->add_data($data);
         }
         $this->finish_output();
