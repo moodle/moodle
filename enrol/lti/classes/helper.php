@@ -110,7 +110,13 @@ class helper {
         $user->country = (!empty($tool->country)) ? $tool->country : "";
         $user->institution = (!empty($tool->institution)) ? $tool->institution : "";
         $user->timezone = (!empty($tool->timezone)) ? $tool->timezone : "";
-        $user->maildisplay = (!empty($tool->maildisplay)) ? $tool->maildisplay : $CFG->defaultpreference_maildisplay;
+        if (isset($tool->maildisplay)) {
+            $user->maildisplay = $tool->maildisplay;
+        } else if (isset($CFG->defaultpreference_maildisplay)) {
+            $user->maildisplay = $CFG->defaultpreference_maildisplay;
+        } else {
+            $user->maildisplay = 2;
+        }
         $user->mnethostid = $CFG->mnet_localhost_id;
         $user->confirmed = 1;
         $user->lang = $tool->lang;
