@@ -3181,7 +3181,7 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="courseidlink" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" COMMENT="Course foreign key."/>
-        <KEY NAME="competencyid" TYPE="foreign" FIELDS="competencyid" REFTABLE="competency_competency" REFFIELDS="id" COMMENT="Competency foreign key."/>
+        <KEY NAME="competencyid" TYPE="foreign" FIELDS="competencyid" REFTABLE="competency" REFFIELDS="id" COMMENT="Competency foreign key."/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseidruleoutcome" UNIQUE="false" FIELDS="courseid, ruleoutcome"/>
@@ -3243,7 +3243,7 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="templateidlink" TYPE="foreign" FIELDS="templateid" REFTABLE="competency_template" REFFIELDS="id" COMMENT="Template foreign key."/>
-        <KEY NAME="competencyid" TYPE="foreign" FIELDS="competencyid" REFTABLE="competency_competency" REFFIELDS="id" COMMENT="Competency foreign key."/>
+        <KEY NAME="competencyid" TYPE="foreign" FIELDS="competencyid" REFTABLE="competency" REFFIELDS="id" COMMENT="Competency foreign key."/>
       </KEYS>
     </TABLE>
     <TABLE NAME="competency_templatecohort" COMMENT="Default comment for the table, please edit me">
@@ -3426,7 +3426,7 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="cmidkey" TYPE="foreign" FIELDS="cmid" REFTABLE="course_modules" REFFIELDS="id" COMMENT="Foreign key on course modules table."/>
-        <KEY NAME="competencyidkey" TYPE="foreign" FIELDS="competencyid" REFTABLE="competency_competency" REFFIELDS="id" COMMENT="Foreign key on competency id."/>
+        <KEY NAME="competencyidkey" TYPE="foreign" FIELDS="competencyid" REFTABLE="competency" REFFIELDS="id" COMMENT="Foreign key on competency id."/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="cmidruleoutcome" UNIQUE="false" FIELDS="cmid, ruleoutcome" COMMENT="Index on cmid and outcome so we can quickly find what to do when an activity is completed."/>
