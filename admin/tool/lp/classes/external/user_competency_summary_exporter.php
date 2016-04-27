@@ -72,7 +72,7 @@ class user_competency_summary_exporter extends \core_competency\external\exporte
                 'optional' => true
             ),
             'usercompetencyplan' => array(
-                'type' => user_competency_exporter::read_properties_definition(),
+                'type' => user_competency_plan_exporter::read_properties_definition(),
                 'optional' => true
             ),
             'usercompetencycourse' => array(

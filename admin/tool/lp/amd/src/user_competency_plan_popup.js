@@ -46,6 +46,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/ajax', 'core/templates'
      * @param {Event} e
      */
     UserCompetencyPopup.prototype._handleClick = function(e) {
+        e.preventDefault();
         var tr = $(e.target).closest('tr');
         var competencyId = $(tr).data('competencyid');
         var userId = $(tr).data('userid');
@@ -59,10 +60,15 @@ define(['jquery', 'core/notification', 'core/str', 'core/ajax', 'core/templates'
         }]);
 
         // Log the user competency viewed in plan event.
-        requests[0].then(function(){
+        requests[0].then(function (result) {
+            var eventMethodName = 'core_competency_user_competency_viewed_in_plan';
+            // Trigger core_competency_user_competency_plan_viewed event instead if plan is already completed.
+            if (result.plan.iscompleted) {
+                eventMethodName = 'core_competency_user_competency_plan_viewed';
+            }
             ajax.call([{
-                methodname : 'core_competency_user_competency_viewed_in_plan',
-                args: { competencyid: competencyId, userid: userId, planid: planId },
+                methodname: eventMethodName,
+                args: {competencyid: competencyId, userid: userId, planid: planId},
                 fail: notification.exception
             }]);
         });
@@ -78,7 +84,12 @@ define(['jquery', 'core/notification', 'core/str', 'core/ajax', 'core/templates'
         var self = this;
         templates.render('tool_lp/user_competency_summary_in_plan', context).done(function(html, js) {
             str.get_string('usercompetencysummary', 'report_competency').done(function(title) {
-                (new Dialogue(title, html, templates.runTemplateJS.bind(templates, js), self._refresh.bind(self), true));
+                var afterShow = null;
+                // Run afterShow script if plan has not yet been completed.
+                if (!context.plan.iscomplete) {
+                    afterShow = templates.runTemplateJS.bind(templates, js);
+                }
+                (new Dialogue(title, html, afterShow, self._refresh.bind(self), true));
             }).fail(notification.exception);
         }).fail(notification.exception);
     };
