@@ -247,7 +247,7 @@ class search_solr_engine_testcase extends advanced_testcase {
         // Now try some area-id combinations.
         unset($querydata->courseids);
         $forumpostareaid = \core_search\manager::generate_areaid('mod_forum', 'post');
-        $mockareaid = \core_search\manager::generate_areaid('core_mocksearch', 'role_capabilities');
+        $mockareaid = \core_search\manager::generate_areaid('core_mocksearch', 'mock_search_area');
 
         $querydata->areaids = array($forumpostareaid);
         $this->assertCount(0, $this->search->search($querydata));
