@@ -3107,6 +3107,7 @@ class course_request {
         $data->visible            = $courseconfig->visible;
         $data->visibleold         = $data->visible;
         $data->lang               = $courseconfig->lang;
+        $data->enablecompletion   = $courseconfig->enablecompletion;
 
         $course = create_course($data);
         $context = context_course::instance($course->id, MUST_EXIST);
