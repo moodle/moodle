@@ -373,19 +373,30 @@ class qtype_ordering_question extends question_graded_automatically {
     }
 
     public function get_ordered_subset($contiguous) {
+
         $positions = $this->get_ordered_positions($this->correctresponse,
                                                   $this->currentresponse);
-        $subsets = $this->get_ordered_subsets($positions, $contiguous, count($positions));
-        $countcorrect = 1; // i.e. ignore single item subsets
-        $subsetcorrect = array();
+
+        $subsets = $this->get_ordered_subsets($positions,
+                                              $contiguous,
+                                              count($positions));
+
+        // the best subset (longest and leftmost)
+        $bestsubset = array();
+
+        // the length of the best subset
+        // initializing this to 1 means
+        // we ignore single item subsets
+        $bestcount = 1;
+
         foreach ($subsets as $subset) {
             $count = count($subset);
-            if ($count > $countcorrect) {
-                $countcorrect = $count;
-                $subsetcorrect = $subset;
+            if ($count > $bestcount) {
+                $bestcount = $count;
+                $bestsubset = $subset;
             }
         }
-        return $subsetcorrect;
+        return $bestsubset;
     }
 
     public function get_ordered_positions($correctresponse, $currentresponse) {
@@ -396,6 +407,15 @@ class qtype_ordering_question extends question_graded_automatically {
         return $positions;
     }
 
+    /**
+     * get all ordered subsets in the positions array
+     *
+     * @param array   $positions
+     * @param boolean $contiguous TRUE if searching only for contiguous subsets; otherwise FALSE
+     * @param integer $i_max the length of the $positions array
+     * @param integer $i_min (optional, default = 0) the index in $position at which to start checking values
+     * @param integer $previous (optional, default = -1) the minimum allowed value. Any values less than this will be skipped.
+     */
     public function get_ordered_subsets($positions, $contiguous, $i_max, $i_min=0, $previous=-1) {
 
         // $subsets is the collection of all subsets within $positions
@@ -407,35 +427,47 @@ class qtype_ordering_question extends question_graded_automatically {
         for ($i=$i_min; $i<$i_max; $i++) {
             $current = $positions[$i];
 
-            // if $current is out of sequence, skip it
-            if ($current < $previous) {
-                continue;
+            switch (true) {
+
+                case ($previous < 0 || $current==($previous + 1)):
+                    // first item, or next item in a contiguous sequence
+                    // there is no need to search for $tailsets
+                    $tailsets = array();
+                    $prepend_subset = false;
+                    $append_to_subset = true;
+                    break;
+
+                case ($current < $previous || ($contiguous && $current > ($previous + 1))):
+                    // $current breaks the sequence, so look for subsets that start here
+                    $tailsets = $this->get_ordered_subsets($positions, $contiguous, $i_max, $i);
+                    $prepend_subset = false;
+                    $append_to_subset = false;
+                    break;
+
+                case ($current > $previous):
+                    // a non-contiguous sequence,
+                    // so search for subsets in the tail
+                    $tailsets = $this->get_ordered_subsets($positions, $contiguous, $i_max, $i+1, $previous);
+                    $prepend_subset = true;
+                    $append_to_subset = true;
+                    break;
             }
 
-            // if $current is not the position immediately after
-            // $previous, then we have a non-contiguous sequence
-            if ($current > ($previous + 1)) {
-
-                // fetch all the subsets in the tail of $positions,
-                $tailsets = $this->get_ordered_subsets($positions, $contiguous, $i_max, $i+1, $previous);
-                foreach ($tailsets as $tailset) {
-                    if ($contiguous) {
-                        // add this tail subset
-                        $subsets[] = $tailset;
-                    } else {
-                        // prepend $subset-so-far to each tail subset
-                        $subsets[] = array_merge($subset, $tailset);
-                    }
+            // append any $tailsets that were found
+            foreach ($tailsets as $tailset) {
+                if ($prepend_subset) {
+                    // prepend $subset-so-far to each tail subset
+                    $subsets[] = array_merge($subset, $tailset);
+                } else {
+                    // add this tail subset
+                    $subsets[] = $tailset;
                 }
             }
 
-            // decide if we want to add this $i(tem) to the main $subset
-            if ($contiguous==false || $previous < 0 || $current==($previous + 1)) {
-
-                // add $i to the main subset
+            // add $i to the main subset
+            // update the $previous value
+            if ($append_to_subset) {
                 $subset[] = $i;
-
-                // update the $previous value
                 $previous = $current;
             }
         }
