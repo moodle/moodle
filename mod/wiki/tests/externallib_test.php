@@ -1127,4 +1127,180 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($expectedfile, $result['files'][0]);
     }
 
+
+    /**
+     * Test get_page_for_editing. We won't test all the possible cases because that's already
+     * done in the tests for wiki_parser_proxy::get_section.
+     */
+    public function test_get_page_for_editing() {
+
+        $this->create_individual_wikis_with_groups();
+
+        $sectioncontent = '<h1>Title1</h1>Text inside section';
+        $pagecontent = $sectioncontent.'<h1>Title2</h1>Text inside section';
+        $newpage = $this->getDataGenerator()->get_plugin_generator('mod_wiki')->create_page(
+                                $this->wiki, array('content' => $pagecontent));
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Set expected result: Full Page content.
+        $expected = array(
+            'content' => $pagecontent,
+            'contentformat' => 'html',
+            'version' => '1'
+        );
+
+        $result = mod_wiki_external::get_page_for_editing($newpage->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_page_for_editing_returns(), $result);
+        $this->assertEquals($expected, $result['pagesection']);
+
+        // Set expected result: Section Page content.
+        $expected = array(
+            'content' => $sectioncontent,
+            'contentformat' => 'html',
+            'version' => '1'
+        );
+
+        $result = mod_wiki_external::get_page_for_editing($newpage->id, 'Title1');
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_page_for_editing_returns(), $result);
+        $this->assertEquals($expected, $result['pagesection']);
+    }
+
+    /**
+     * Test new_page. We won't test all the possible cases because that's already
+     * done in the tests for wiki_create_page.
+     */
+    public function test_new_page() {
+
+        $this->create_individual_wikis_with_groups();
+
+        $sectioncontent = '<h1>Title1</h1>Text inside section';
+        $pagecontent = $sectioncontent.'<h1>Title2</h1>Text inside section';
+        $pagetitle = 'Page Title';
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Test on existing subwiki.
+        $result = mod_wiki_external::new_page($pagetitle, $pagecontent, 'html', $this->fpsepg1indstu->subwikiid);
+        $result = external_api::clean_returnvalue(mod_wiki_external::new_page_returns(), $result);
+        $this->assertInternalType('int', $result['pageid']);
+
+        $version = wiki_get_current_version($result['pageid']);
+        $this->assertEquals($pagecontent, $version->content);
+        $this->assertEquals('html', $version->contentformat);
+
+        $page = wiki_get_page($result['pageid']);
+        $this->assertEquals($pagetitle, $page->title);
+
+        // Test existing page creation.
+        try {
+            mod_wiki_external::new_page($pagetitle, $pagecontent, 'html', $this->fpsepg1indstu->subwikiid);
+            $this->fail('Exception expected due to creation of an existing page.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('pageexists', $e->errorcode);
+        }
+
+        // Test on non existing subwiki. Add student to group2 to have a new subwiki to be created.
+        $this->getDataGenerator()->create_group_member(array('userid' => $this->student->id, 'groupid' => $this->group2->id));
+        $result = mod_wiki_external::new_page($pagetitle, $pagecontent, 'html', null, $this->wikisepind->id, $this->student->id,
+            $this->group2->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::new_page_returns(), $result);
+        $this->assertInternalType('int', $result['pageid']);
+
+        $version = wiki_get_current_version($result['pageid']);
+        $this->assertEquals($pagecontent, $version->content);
+        $this->assertEquals('html', $version->contentformat);
+
+        $page = wiki_get_page($result['pageid']);
+        $this->assertEquals($pagetitle, $page->title);
+
+        $subwiki = wiki_get_subwiki($page->subwikiid);
+        $expected = new StdClass();
+        $expected->id = $subwiki->id;
+        $expected->wikiid = $this->wikisepind->id;
+        $expected->groupid = $this->group2->id;
+        $expected->userid = $this->student->id;
+        $this->assertEquals($expected, $subwiki);
+
+        // Check page creation for a user not in course.
+        $this->studentnotincourse = self::getDataGenerator()->create_user();
+        $this->anothercourse = $this->getDataGenerator()->create_course();
+        $this->groupnotincourse = $this->getDataGenerator()->create_group(array('courseid' => $this->anothercourse->id));
+
+        try {
+            mod_wiki_external::new_page($pagetitle, $pagecontent, 'html', null, $this->wikisepind->id,
+                $this->studentnotincourse->id, $this->groupnotincourse->id);
+            $this->fail('Exception expected due to creation of an invalid subwiki creation.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('cannoteditpage', $e->errorcode);
+        }
+
+    }
+
+    /**
+     * Test edit_page. We won't test all the possible cases because that's already
+     * done in the tests for wiki_save_section / wiki_save_page.
+     */
+    public function test_edit_page() {
+
+        $this->create_individual_wikis_with_groups();
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        $newpage = $this->getDataGenerator()->get_plugin_generator('mod_wiki')->create_page($this->wikisepind,
+            array('group' => $this->group1->id, 'content' => 'Test'));
+
+        // Test edit whole page.
+        $sectioncontent = '<h1>Title1</h1>Text inside section';
+        $newpagecontent = $sectioncontent.'<h1>Title2</h1>Text inside section';
+
+        $result = mod_wiki_external::edit_page($newpage->id, $newpagecontent);
+        $result = external_api::clean_returnvalue(mod_wiki_external::edit_page_returns(), $result);
+        $this->assertInternalType('int', $result['pageid']);
+
+        $version = wiki_get_current_version($result['pageid']);
+        $this->assertEquals($newpagecontent, $version->content);
+
+        // Test edit section.
+        $newsectioncontent = '<h1>Title2</h1>New test2';
+        $section = 'Title2';
+
+        $result = mod_wiki_external::edit_page($newpage->id, $newsectioncontent, $section);
+        $result = external_api::clean_returnvalue(mod_wiki_external::edit_page_returns(), $result);
+        $this->assertInternalType('int', $result['pageid']);
+
+        $expected = $sectioncontent . $newsectioncontent;
+
+        $version = wiki_get_current_version($result['pageid']);
+        $this->assertEquals($expected, $version->content);
+
+        // Test locked section.
+        $newsectioncontent = '<h1>Title2</h1>New test2';
+        $section = 'Title2';
+
+        try {
+            // Using user 1 to avoid other users to edit.
+            wiki_set_lock($newpage->id, 1, $section, true);
+            mod_wiki_external::edit_page($newpage->id, $newsectioncontent, $section);
+            $this->fail('Exception expected due to locked section');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('pageislocked', $e->errorcode);
+        }
+
+        // Test edit non existing section.
+        $newsectioncontent = '<h1>Title3</h1>New test3';
+        $section = 'Title3';
+
+        try {
+            mod_wiki_external::edit_page($newpage->id, $newsectioncontent, $section);
+            $this->fail('Exception expected due to non existing section in the page.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('invalidsection', $e->errorcode);
+        }
+
+    }
+
 }
