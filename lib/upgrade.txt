@@ -117,6 +117,8 @@ information provided here is intended especially for developers.
 * Behat\Mink\Selector\SelectorsHandler::xpathLiteral() method is deprecated use behat_context_helper::escape instead
   when building Xpath, or pass the unescaped value when using the named selector.',
 * table_sql download process is using the new data formats plugin which you can't use if you are buffering any output
+    * flexible_table::get_download_menu(), considered private, has been deleted. Use
+      $OUTPUT->download_dataformat_selector() instead.
 
 === 3.0 ===
 
