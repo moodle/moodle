@@ -40,8 +40,6 @@ define(['jquery', 'core/templates', 'core/notification', 'core/yui'], function (
          * @param commentOptions The array of frequently used comments to be used as options.
          */
         initialise: function (criterionId, buttonId, remarkId, commentOptions) {
-            var chooserDialog;
-
             /**
              * Display the chooser dialog using the compiled HTML from the mustache template
              * and binds onclick events for the generated comment options.
@@ -54,58 +52,61 @@ define(['jquery', 'core/templates', 'core/notification', 'core/yui'], function (
                 var cancelButtonId = 'comment-chooser-' + criterionId + '-cancel';
                 var cancelButton = '<button id="' + cancelButtonId + '">' + M.util.get_string('cancel', 'moodle') + '</button>';
 
-                if (typeof chooserDialog === 'undefined') {
-                    // Set dialog's body content.
-                    chooserDialog = new M.core.dialogue({
-                        modal: true,
-                        headerContent: titleLabel,
-                        bodyContent: compiledSource,
-                        footerContent: cancelButton,
-                        focusAfterHide: '#' + remarkId,
-                        id: "comments-chooser-dialog-" + criterionId
+                // Set dialog's body content.
+                var chooserDialog = new M.core.dialogue({
+                    modal: true,
+                    headerContent: titleLabel,
+                    bodyContent: compiledSource,
+                    footerContent: cancelButton,
+                    focusAfterHide: '#' + remarkId,
+                    id: "comments-chooser-dialog-" + criterionId
+                });
+
+                // Bind click event to the cancel button.
+                $("#" + cancelButtonId).click(function() {
+                    chooserDialog.hide();
+                });
+
+                // Loop over each comment item and bind click events.
+                $.each(comments, function (index, comment) {
+                    var commentOptionId = '#comment-option-' + criterionId + '-' + comment.id;
+
+                    // Delegate click event for the generated option link.
+                    $(commentOptionId).click(function () {
+                        var remarkTextArea = $('#' + remarkId);
+                        var remarkText = remarkTextArea.val();
+
+                        // Add line break if the current value of the remark text is not empty.
+                        if ($.trim(remarkText) !== '') {
+                            remarkText += '\n';
+                        }
+                        remarkText += comment.description;
+
+                        remarkTextArea.val(remarkText);
+
+                        chooserDialog.hide();
                     });
 
-                    // Bind click event to the cancel button.
-                    $("#" + cancelButtonId).click(function() {
-                        if (typeof chooserDialog !== 'undefined') {
-                            chooserDialog.hide();
+                    // Handle keypress on list items.
+                    $(document).off('keypress', commentOptionId).on('keypress', commentOptionId, function () {
+                        var keyCode = event.which || event.keyCode;
+
+                        // Enter or space key.
+                        if (keyCode == 13 || keyCode == 32) {
+                            // Trigger click event.
+                            $(commentOptionId).click();
                         }
                     });
+                });
 
-                    // Loop over each comment item and bind click events.
-                    $.each(comments, function (index, comment) {
-                        var commentOptionId = '#comment-option-' + criterionId + '-' + comment.id;
-
-                        // Delegate click event for the generated option link.
-                        $(commentOptionId).click(function () {
-                            var remarkTextArea = $('#' + remarkId);
-                            var remarkText = remarkTextArea.val();
-
-                            // Add line break if the current value of the remark text is not empty.
-                            if ($.trim(remarkText) !== '') {
-                                remarkText += '\n';
-                            }
-                            remarkText += comment.description;
-
-                            remarkTextArea.val(remarkText);
-
-                            if (typeof chooserDialog !== 'undefined') {
-                                chooserDialog.hide();
-                            }
-                        });
-
-                        // Handle keypress on list items.
-                        $(document).off('keypress', commentOptionId).on('keypress', commentOptionId, function () {
-                            var keyCode = event.which || event.keyCode;
-
-                            // Enter or space key.
-                            if (keyCode == 13 || keyCode == 32) {
-                                // Trigger click event.
-                                $(commentOptionId).click();
-                            }
-                        });
-                    });
-                }
+                // Destroy the dialog when it is hidden to allow the grading section to
+                // be loaded as a fragment multiple times within the same page.
+                chooserDialog.after('visibleChange', function(e) {
+                    // Going from visible to hidden.
+                    if (e.prevVal && !e.newVal) {
+                        this.destroy();
+                    }
+                }, chooserDialog);
 
                 // Show dialog.
                 chooserDialog.show();
