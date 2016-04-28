@@ -158,6 +158,44 @@ class enrol_lti_helper_testcase extends advanced_testcase {
     }
 
     /**
+     * Test returning the number of available tools.
+     */
+    public function test_count_lti_tools() {
+        // Create two tools belonging to the same course.
+        $course1 = $this->getDataGenerator()->create_course();
+        $data = new stdClass();
+        $data->courseid = $course1->id;
+        $this->create_tool($data);
+        $this->create_tool($data);
+
+        // Create two more tools in a separate course.
+        $course2 = $this->getDataGenerator()->create_course();
+        $data = new stdClass();
+        $data->courseid = $course2->id;
+        $this->create_tool($data);
+
+        // Set the next tool to disabled.
+        $data->status = ENROL_INSTANCE_DISABLED;
+        $this->create_tool($data);
+
+        // Count all the tools.
+        $count = \enrol_lti\helper::count_lti_tools();
+        $this->assertEquals(4, $count);
+
+        // Count all the tools in course 1.
+        $count = \enrol_lti\helper::count_lti_tools(array('courseid' => $course1->id));
+        $this->assertEquals(2, $count);
+
+        // Count all the tools in course 2 that are disabled.
+        $count = \enrol_lti\helper::count_lti_tools(array('courseid' => $course2->id, 'status' => ENROL_INSTANCE_DISABLED));
+        $this->assertEquals(1, $count);
+
+        // Count all the tools that are enabled.
+        $count = \enrol_lti\helper::count_lti_tools(array('status' => ENROL_INSTANCE_ENABLED));
+        $this->assertEquals(3, $count);
+    }
+
+    /**
      * Test returning the list of available tools.
      */
     public function test_get_lti_tools() {
