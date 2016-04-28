@@ -558,9 +558,10 @@ function profile_signup_fields($mform) {
 /**
  * Returns an object with the custom profile fields set for the given user
  * @param integer $userid
+ * @param bool $onlyinuserobject True if you only want the ones in $USER.
  * @return stdClass
  */
-function profile_user_record($userid) {
+function profile_user_record($userid, $onlyinuserobject = true) {
     global $CFG, $DB;
 
     $usercustomfields = new stdClass();
@@ -570,7 +571,7 @@ function profile_user_record($userid) {
             require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
             $newfield = 'profile_field_'.$field->datatype;
             $formfield = new $newfield($field->id, $userid);
-            if ($formfield->is_user_object_data()) {
+            if (!$onlyinuserobject || $formfield->is_user_object_data()) {
                 $usercustomfields->{$field->shortname} = $formfield->data;
             }
         }
