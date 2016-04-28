@@ -373,7 +373,7 @@ class core_webservice_renderer extends plugin_renderer_base {
      * ws description object can be 'external_multiple_structure', 'external_single_structure'
      * or 'external_value'
      *
-     * Example of documentation for moodle_group_create_groups function:
+     * Example of documentation for core_group_create_groups function:
      * list of (
      *     object {
      *         courseid int //id of course

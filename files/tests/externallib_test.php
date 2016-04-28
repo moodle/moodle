@@ -111,7 +111,7 @@ class core_files_externallib_testcase extends advanced_testcase {
         $context = context_user::instance($USER->id);
         $contextid = $context->id;
         $component = "backup";
-        $filearea = "private";
+        $filearea = "draft";
         $itemid = 0;
         $filepath = "/";
         $filename = "Simple3.txt";
@@ -126,7 +126,7 @@ class core_files_externallib_testcase extends advanced_testcase {
     }
 
     /*
-     * Make sure only private or draft areas are allowed in  core_files_external::upload().
+     * Make sure only draft areas are allowed in  core_files_external::upload().
      */
     public function test_upload_param_area() {
         global $USER;
@@ -147,35 +147,6 @@ class core_files_externallib_testcase extends advanced_testcase {
         // Make sure the file is created.
         $fileinfo = @core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent);
         $fileinfo = external_api::clean_returnvalue(core_files_external::upload_returns(), $fileinfo);
-        $browser = get_file_browser();
-        $file = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename);
-        $this->assertNotEmpty($file);
-    }
-
-    /*
-     * Make sure core_files_external::upload() works without new parameters.
-     */
-    public function test_upload_without_new_param() {
-        global $USER;
-
-        $this->resetAfterTest();
-        $this->setAdminUser();
-        $context = context_user::instance($USER->id);
-        $contextid = $context->id;
-        $component = "user";
-        $filearea = "private";
-        $itemid = 0;
-        $filepath = "/";
-        $filename = "Simple4.txt";
-        $filecontent = base64_encode("Let us create a nice simple file");
-
-        $fileinfo = @core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent);
-        $fileinfo = external_api::clean_returnvalue(core_files_external::upload_returns(), $fileinfo);
-
-        // Assert debugging called (deprecation warning).
-        $this->assertDebuggingCalled();
-
-        // Make sure the file is created.
         $browser = get_file_browser();
         $file = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename);
         $this->assertNotEmpty($file);

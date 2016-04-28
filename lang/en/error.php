@@ -455,6 +455,7 @@ $string['prefixcannotbeempty'] = '<p>Error: database table prefix cannot be empt
 <p>The site administrator must fix this problem.</p>';
 $string['prefixtoolong'] = '<p>Error: database table prefix is too long ({$a->dbfamily})</p>
 <p>The site administrator must fix this problem. Maximum length for table prefixes in {$a->dbfamily} is {$a->maxlength} characters.</p>';
+$string['privatefilesupload'] = 'Uploading directly to user private files area is no longer supported. Upload to a draft area and then move the files with core_user::add_user_private_files';
 $string['processingstops'] = 'Processing stops here. Remaining records ignored.';
 $string['querystringcannotbeempty'] = 'The query string cannot be empty.';
 $string['redirecterrordetected'] = 'Unsupported redirect detected, script execution terminated';

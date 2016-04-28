@@ -518,21 +518,20 @@ class webservice {
      * Example of returned value:
      *  Array
      *  (
-     *    [moodle_group_create_groups] => Array
+     *    [core_group_create_groups] => Array
      *    (
      *       [0] => moodle/course:managegroups
      *    )
      *
-     *    [moodle_enrol_get_enrolled_users] => Array
+     *    [core_enrol_get_enrolled_users] => Array
      *    (
-     *       [0] => moodle/site:viewparticipants
-     *       [1] => moodle/course:viewparticipants
-     *       [2] => moodle/role:review
-     *       [3] => moodle/site:accessallgroups
-     *       [4] => moodle/course:enrolreview
+     *       [0] => moodle/user:viewdetails
+     *       [1] => moodle/user:viewhiddendetails
+     *       [2] => moodle/course:useremail
+     *       [3] => moodle/user:update
+     *       [4] => moodle/site:accessallgroups
      *    )
      *  )
-     *
      * @param int $serviceid service id
      * @return array
      */
