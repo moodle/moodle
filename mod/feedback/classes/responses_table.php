@@ -71,10 +71,10 @@ class mod_feedback_responses_table extends table_sql {
             $this->baseurl->param($this->showallparamname, $this->showall);
         }
 
+        $name = format_string($feedbackstructure->get_feedback()->name);
         $this->is_downloadable(true);
         $this->is_downloading(optional_param($this->downloadparamname, 0, PARAM_ALPHA),
-                'feedback_test');
-
+                $name, get_string('responses', 'feedback'));
         $this->useridfield = 'userid';
         $this->init();
     }
