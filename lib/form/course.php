@@ -125,7 +125,7 @@ class MoodleQuickForm_course extends MoodleQuickForm_autocomplete {
         }
 
         if (empty($coursestofetch)) {
-            return $this->setSelected(array());
+            return $this->setSelected($values);
         }
 
         // There is no API function to load a list of course from a list of ids.
@@ -152,6 +152,7 @@ class MoodleQuickForm_course extends MoodleQuickForm_autocomplete {
             $this->addOption($label, $course->id);
             array_push($coursestoselect, $course->id);
         }
-        return $this->setSelected($coursestoselect);
+
+        return $this->setSelected($values);
     }
 }
