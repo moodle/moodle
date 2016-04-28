@@ -506,10 +506,6 @@ class competency extends persistent {
         } else if (!preg_match('@/([0-9]+/)+@', $value)) {
             // The format of the path is not correct.
             return new lang_string('invaliddata', 'error');
-
-        } else if ((substr_count($value, '/') - 1) > competency_framework::get_taxonomies_max_level()) {
-            // Validate the depth of the path.
-            return new lang_string('invaliddata', 'error');
         }
 
         return true;
@@ -695,6 +691,29 @@ class competency extends persistent {
             'core_competency\\competency_rule_points' => competency_rule_points::get_name(),
         );
         return $rules;
+    }
+
+    /**
+     * Return the current depth of a competency framework.
+     *
+     * @param int $frameworkid The framework ID.
+     * @return int
+     */
+    public static function get_framework_depth($frameworkid) {
+        global $DB;
+        $totallength = $DB->sql_length('path');
+        $trimmedlength = $DB->sql_length("REPLACE(path, '/', '')");
+        $sql = "SELECT ($totallength - $trimmedlength - 1) AS depth
+                  FROM {" . self::TABLE . "}
+                 WHERE competencyframeworkid = :id
+              ORDER BY depth DESC";
+        $record = $DB->get_record_sql($sql, array('id' => $frameworkid), IGNORE_MULTIPLE);
+        if (!$record) {
+            $depth = 0;
+        } else {
+            $depth = $record->depth;
+        }
+        return $depth;
     }
 
     /**

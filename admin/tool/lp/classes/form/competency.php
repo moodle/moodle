@@ -88,7 +88,6 @@ class competency extends persistent {
                 '#tool_lp_parentcompetency',
                 '#id_parentdesc',
                 $framework->get_id(),
-                \core_competency\competency_framework::get_taxonomies_max_level(),
                 $pagecontextid));
         }
 

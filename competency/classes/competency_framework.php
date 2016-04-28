@@ -134,6 +134,16 @@ class competency_framework extends persistent {
     }
 
     /**
+     * Return the current depth of a competency framework.
+     *
+     * @see competency::get_framework_depth()
+     * @return int
+     */
+    public function get_depth() {
+        return competency::get_framework_depth($this->get_id());
+    }
+
+    /**
      * Return the scale.
      *
      * @return \grade_scale
@@ -176,8 +186,8 @@ class competency_framework extends persistent {
         unset($taxonomies[0]);
 
         // Ensure that we do not return empty levels.
-        for ($i = 1; $i <= self::get_taxonomies_max_level(); $i++) {
-            if (empty($taxonomies[$i])) {
+        foreach ($taxonomies as $i => $taxonomy) {
+            if (empty($taxonomy)) {
                 $taxonomies[$i] = self::TAXONOMY_COMPETENCY;
             }
         }
@@ -335,10 +345,6 @@ class competency_framework extends persistent {
     protected function validate_taxonomies($value) {
         $terms = explode(',', $value);
 
-        if (count($terms) > self::get_taxonomies_max_level()) {
-            return new lang_string('invaliddata', 'error');
-        }
-
         foreach ($terms as $term) {
             if (!empty($term) && !array_key_exists($term, self::get_taxonomies_list())) {
                 return new lang_string('invalidtaxonomy', 'core_competency', $term);
@@ -408,18 +414,6 @@ class competency_framework extends persistent {
      */
     public static function get_taxonomy_from_constant($constant) {
         return self::get_taxonomies_list()[$constant];
-    }
-
-    /**
-     * Return the maximum number of taxonomy levels.
-     *
-     * This is a method and not a constant because we want to make it easy to adapt
-     * to the number of levels desired in the future.
-     *
-     * @return int
-     */
-    public static function get_taxonomies_max_level() {
-        return 6;
     }
 
     /**

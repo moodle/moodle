@@ -629,17 +629,6 @@ define(['jquery',
     };
 
     /**
-     * Return if the level has a sub level.
-     *
-     * @param  {Number} level The level.
-     * @return {Boolean}
-     * @function hasSubLevel
-     */
-    var hasSubLevel = function(level) {
-        return typeof taxonomiesConstants[level + 1] !== 'undefined';
-    };
-
-    /**
      * Return the taxonomy constant for a level.
      *
      * @param  {Number} level The level.
@@ -764,11 +753,7 @@ define(['jquery',
             var competency = treeModel.getCompetency(id);
 
             level = treeModel.getCompetencyLevel(id);
-            if (!hasSubLevel(level)) {
-                sublevel = false;
-            } else {
-                sublevel = level + 1;
-            }
+            sublevel = level + 1;
 
             actionMenu.show();
             $('[data-region="competencyactions"]').data('competency', competency);
@@ -781,15 +766,12 @@ define(['jquery',
             selectedTitle.text(str);
         });
 
-        if (!sublevel) {
-            btn.hide();
-        } else {
-            strAddTaxonomy(sublevel).then(function(str) {
-                btn.show()
-                    .find('[data-region="term"]')
-                    .text(str);
-            });
-        }
+        strAddTaxonomy(sublevel).then(function(str) {
+            btn.show()
+                .find('[data-region="term"]')
+                .text(str);
+        });
+
         // We handled this event so consume it.
         evt.preventDefault();
         return false;

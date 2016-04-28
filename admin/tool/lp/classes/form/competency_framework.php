@@ -100,7 +100,8 @@ class competency_framework extends persistent {
         $mform->addElement('header', 'taxonomyhdr', get_string('taxonomies', 'tool_lp'));
         $taxonomies = \core_competency\competency_framework::get_taxonomies_list();
         $taxdefaults = array();
-        for ($i = 1; $i <= \core_competency\competency_framework::get_taxonomies_max_level(); $i++) {
+        $taxcount = max($framework ? $framework->get_depth() : 4, 4);
+        for ($i = 1; $i <= $taxcount; $i++) {
             $mform->addElement('select', "taxonomies[$i]", get_string('levela', 'tool_lp', $i), $taxonomies);
             $taxdefaults[$i] = \core_competency\competency_framework::TAXONOMY_COMPETENCY;
         }

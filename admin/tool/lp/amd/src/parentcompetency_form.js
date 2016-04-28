@@ -30,20 +30,17 @@ define(['jquery', 'core/ajax', 'core/str', 'tool_lp/competencypicker', 'core/tem
      * @param {String} inputHiddenSelector The hidden input field selector.
      * @param {String} staticElementSelector The static element displaying the parent competency.
      * @param {Number} frameworkId The competency framework ID.
-     * @param {Number} frameworkMaxLevel The framework max level.
      * @param {Number} pageContextId The page context ID.
      */
     var ParentCompetencyForm = function(buttonSelector,
                                         inputHiddenSelector,
                                         staticElementSelector,
                                         frameworkId,
-                                        frameworkMaxLevel,
                                         pageContextId) {
         this.buttonSelector = buttonSelector;
         this.inputHiddenSelector = inputHiddenSelector;
         this.staticElementSelector = staticElementSelector;
         this.frameworkId = frameworkId;
-        this.frameworkMaxLevel = frameworkMaxLevel;
         this.pageContextId = pageContextId;
 
         // Register the events.
@@ -58,8 +55,6 @@ define(['jquery', 'core/ajax', 'core/str', 'tool_lp/competencypicker', 'core/tem
     ParentCompetencyForm.prototype.staticElementSelector = null;
     /** @var {Number} The competency framework ID. */
     ParentCompetencyForm.prototype.frameworkId = null;
-    /** @var {Number} The framework max level. */
-    ParentCompetencyForm.prototype.frameworkMaxLevel = null;
     /** @var {Number} The page context ID. */
     ParentCompetencyForm.prototype.pageContextId = null;
 
@@ -103,55 +98,7 @@ define(['jquery', 'core/ajax', 'core/str', 'tool_lp/competencypicker', 'core/tem
             e.preventDefault();
 
             var picker = new Picker(self.pageContextId, self.frameworkId, 'self', false);
-            var maxlevel = self.frameworkMaxLevel;
-            // Override the fetchcompetencies method to filter by max level.
-            picker._fetchCompetencies = function(frameworkId, searchText) {
-                var self = this;
 
-                return ajax.call([
-                    { methodname: 'core_competency_search_competencies', args: {
-                        searchtext: searchText,
-                        competencyframeworkid: frameworkId
-                    }}
-                ])[0].done(function(competencies) {
-
-                    var disabledcompetencies = [];
-                    function addCompetencyChildren(parent, competencies) {
-                        for (var i = 0; i < competencies.length; i++) {
-                            // Check if competency does not exceed the framework max level.
-                            var path = String(competencies[i].path),
-                            level = path.split('/').length - 2;
-                            if (level >= maxlevel && competencies[i].id !== "0") {
-                                disabledcompetencies.push(competencies[i].id);
-                            }
-
-                            if (competencies[i].parentid == parent.id) {
-                                parent.haschildren = true;
-                                competencies[i].children = [];
-                                competencies[i].haschildren = false;
-                                parent.children[parent.children.length] = competencies[i];
-                                addCompetencyChildren(competencies[i], competencies);
-                            }
-                        }
-                    }
-
-                    // Expand the list of competencies into a tree.
-                    var i, tree = [], comp;
-                    for (i = 0; i < competencies.length; i++) {
-                        comp = competencies[i];
-                        if (comp.parentid == "0") { // Loose check for now, because WS returns a string.
-                            comp.children = [];
-                            comp.haschildren = 0;
-                            tree[tree.length] = comp;
-                            addCompetencyChildren(comp, competencies);
-                        }
-                    }
-
-                    self._competencies = tree;
-                    self.setDisallowedCompetencyIDs(disabledcompetencies);
-
-                }.bind(self)).fail(Notification.exception);
-            };
             // Override the render method to make framework selectable.
             picker._render = function() {
                 var self = this;
@@ -185,7 +132,6 @@ define(['jquery', 'core/ajax', 'core/str', 'tool_lp/competencypicker', 'core/tem
          * @param {String} inputHiddenSelector The hidden input field selector.
          * @param {String} staticElementSelector The static element displaying the parent competency.
          * @param {Number} frameworkId The competency framework ID.
-         * @param {Number} frameworkMaxLevel The framework max level.
          * @param {Number} pageContextId The page context ID.
          * @method init
          */
@@ -193,14 +139,12 @@ define(['jquery', 'core/ajax', 'core/str', 'tool_lp/competencypicker', 'core/tem
                         inputSelector,
                         staticElementSelector,
                         frameworkId,
-                        frameworkMaxLevel,
                         pageContextId) {
             // Create instance.
             new ParentCompetencyForm(buttonSelector,
                                     inputSelector,
                                     staticElementSelector,
                                     frameworkId,
-                                    frameworkMaxLevel,
                                     pageContextId);
         }
     };
