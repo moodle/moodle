@@ -339,8 +339,8 @@ $functions = array(
         'classname' => 'core_external',
         'methodname' => 'get_component_strings',
         'classpath' => 'lib/external/externallib.php',
-        'description' => 'Return all raw strings (with {$a->xxx}), for a specific component
-		    - similar to core get_component_strings(), call',
+        'description' => 'Return all raw strings (with {$a->xxx}), for a specific component ' .
+            '- similar to core get_component_strings(), call',
         'type' => 'read',
         'loginrequired' => '',
         'ajax' => '1',
