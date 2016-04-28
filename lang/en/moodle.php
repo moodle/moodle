@@ -1053,24 +1053,7 @@ $string['loginaspasswordexplain'] = '<p>You must enter the special "loginas pass
 $string['login_failure_logs'] = 'Login failure logs';
 $string['loginguest'] = 'Log in as a guest';
 $string['loginsite'] = 'Log in to the site';
-$string['loginsteps'] = 'Hi! For full access to courses you\'ll need to take
-   a minute to create a new account for yourself on this web site.
-   Each of the individual courses may also have a one-time
-   "enrolment key", which you won\'t need until later. Here are
-   the steps:
-   <ol>
-   <li>Fill out the <a href="{$a}">New Account</a> form with your details.</li>
-   <li>An email will be immediately sent to your email address.</li>
-   <li>Read your email, and click on the web link it contains.</li>
-   <li>Your account will be confirmed and you will be logged in.</li>
-   <li>Now, select the course you want to participate in.</li>
-   <li>If you are prompted for an "enrolment key" - use the one
-   that your teacher has given you. This will "enrol" you in the
-   course.</li>
-   <li>You can now access the full course. From now on you will only need
-   to enter your personal username and password (in the form on this page)
-   to log in and access any course you have enrolled in.</li>
-   </ol>';
+$string['loginsteps'] = 'For full access to this site, you first need to create an account.';
 $string['loginstepsnone'] = '<p>Hi!</p>
 <p>For full access to courses you\'ll need to create yourself an account.</p>
 <p>All you need to do is make up a username and password and use it in the form on this page!</p>
