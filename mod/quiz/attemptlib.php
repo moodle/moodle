@@ -1653,7 +1653,9 @@ class quiz_attempt {
 
         $bc = new block_contents();
         $bc->attributes['id'] = 'mod_quiz_navblock';
-        $bc->title = get_string('quiznavigation', 'quiz');
+        $bc->attributes['role'] = 'navigation';
+        $bc->attributes['aria-labelled-by'] = 'mod_quiz_navblock_title';
+        $bc->title = html_writer::span(get_string('quiznavigation', 'quiz'), '', array('id' => 'mod_quiz_navblock_title'));
         $bc->content = $output->navigation_panel($panel);
         return $bc;
     }
