@@ -1541,6 +1541,8 @@ class backup_activity_logstores_structure_step extends backup_course_logstores_s
 class backup_course_competencies_structure_step extends backup_structure_step {
 
     protected function define_structure() {
+        $userinfo = $this->get_setting_value('users');
+
         $wrapper = new backup_nested_element('course_competencies');
 
         $settings = new backup_nested_element('settings', array('id'), array('pushratingstouserplans'));
@@ -1554,17 +1556,32 @@ class backup_course_competencies_structure_step extends backup_structure_step {
         $competencies = new backup_nested_element('competencies');
         $wrapper->add_child($competencies);
 
-        $competency = new backup_nested_element('competency', null, array('idnumber', 'ruleoutcome',
-            'sortorder', 'frameworkidnumber'));
+        $competency = new backup_nested_element('competency', null, array('id', 'idnumber', 'ruleoutcome',
+            'sortorder', 'frameworkid', 'frameworkidnumber'));
         $competencies->add_child($competency);
 
-        $sql = 'SELECT c.idnumber, cc.ruleoutcome, cc.sortorder, f.idnumber AS frameworkidnumber
+        $sql = 'SELECT c.id, c.idnumber, cc.ruleoutcome, cc.sortorder, f.id AS frameworkid, f.idnumber AS frameworkidnumber
                   FROM {' . \core_competency\course_competency::TABLE . '} cc
                   JOIN {' . \core_competency\competency::TABLE . '} c ON c.id = cc.competencyid
                   JOIN {' . \core_competency\competency_framework::TABLE . '} f ON f.id = c.competencyframeworkid
                  WHERE cc.courseid = :courseid
               ORDER BY cc.sortorder';
         $competency->set_source_sql($sql, array('courseid' => backup::VAR_COURSEID));
+
+        $usercomps = new backup_nested_element('user_competencies');
+        $wrapper->add_child($usercomps);
+        if ($userinfo) {
+            $usercomp = new backup_nested_element('user_competency', null, array('userid', 'competencyid',
+                'proficiency', 'grade'));
+            $usercomps->add_child($usercomp);
+
+            $sql = 'SELECT ucc.userid, ucc.competencyid, ucc.proficiency, ucc.grade
+                      FROM {' . \core_competency\user_competency_course::TABLE . '} ucc
+                     WHERE ucc.courseid = :courseid
+                       AND ucc.grade IS NOT NULL';
+            $usercomp->set_source_sql($sql, array('courseid' => backup::VAR_COURSEID));
+            $usercomp->annotate_ids('user', 'userid');
+        }
 
         return $wrapper;
     }
