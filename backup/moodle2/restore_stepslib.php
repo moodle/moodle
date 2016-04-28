@@ -3186,6 +3186,11 @@ class restore_course_competencies_structure_step extends restore_structure_step 
      */
     protected function execute_condition() {
 
+        // Do not restore when competencies are disabled.
+        if (!\core_competency\api::is_enabled()) {
+            return false;
+        }
+
         // Do not execute if the competencies XML file is not found.
         $fullpath = $this->task->get_taskbasepath();
         $fullpath = rtrim($fullpath, '/') . '/' . $this->filename;
@@ -3255,6 +3260,11 @@ class restore_activity_competencies_structure_step extends restore_structure_ste
      * @return bool
      */
     protected function execute_condition() {
+
+        // Do not restore when competencies are disabled.
+        if (!\core_competency\api::is_enabled()) {
+            return false;
+        }
 
         // Do not execute if the competencies XML file is not found.
         $fullpath = $this->task->get_taskbasepath();
