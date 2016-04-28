@@ -27,6 +27,9 @@ class feedback_item_info extends feedback_item_base {
     /** Mode recording current course category */
     const MODE_CATEGORY = 3;
 
+    /** Special constant to keep the current timestamp as value for the form element */
+    const CURRENTTIMESTAMP = '__CURRENT__TIMESTAMP__';
+
     public function build_editform($item, $feedback, $cm) {
         global $DB, $CFG;
         require_once('info_form.php');
@@ -130,7 +133,7 @@ class feedback_item_info extends feedback_item_base {
 
     public function get_printval($item, $value) {
 
-        if (!isset($value->value)) {
+        if (strval($value->value) === '') {
             return '';
         }
         return $item->presentation == self::MODE_RESPONSETIME ?
@@ -231,6 +234,7 @@ class feedback_item_info extends feedback_item_base {
         switch ($item->presentation) {
             case self::MODE_RESPONSETIME:
                 $class = 'info-responsetime';
+                $value = $value ? self::CURRENTTIMESTAMP : '';
                 break;
             case self::MODE_COURSE:
                 $class = 'info-course';
@@ -254,6 +258,18 @@ class feedback_item_info extends feedback_item_base {
         if ($form->get_mode() == mod_feedback_complete_form::MODE_COMPLETE) {
             $element->setPersistantFreeze(true);
         }
+    }
+
+    /**
+     * Converts the value from complete_form data to the string value that is stored in the db.
+     * @param mixed $value element from mod_feedback_complete_form::get_data() with the name $item->typ.'_'.$item->id
+     * @return string
+     */
+    public function create_value($value) {
+        if ($value === self::CURRENTTIMESTAMP) {
+            return strval(time());
+        }
+        return parent::create_value($value);
     }
 
     public function can_switch_require() {
