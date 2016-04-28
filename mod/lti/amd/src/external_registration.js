@@ -34,24 +34,12 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
         function($, ajax, notification, templates, ltiEvents, toolProxy, toolType, KEYS, str) {
 
     var SELECTORS = {
-        REGISTRATION_URL: '#external-registration-url',
         EXTERNAL_REGISTRATION_CONTAINER: '#external-registration-page-container',
         EXTERNAL_REGISTRATION_TEMPLATE_CONTAINER: '#external-registration-template-container',
         EXTERNAL_REGISTRATION_CANCEL_BUTTON: '#cancel-external-registration',
         TOOL_TYPE_CAPABILITIES_CONTAINER: '#tool-type-capabilities-container',
         TOOL_TYPE_CAPABILITIES_TEMPLATE_CONTAINER: '#tool-type-capabilities-template-container',
         CAPABILITIES_AGREE_CONTAINER: '.capabilities-container',
-    };
-
-    /**
-     * Return the URL the user entered for the registration.
-     *
-     * @method getRegistrationURL
-     * @private
-     * @return string
-     */
-    var getRegistrationURL = function() {
-        return $(SELECTORS.EXTERNAL_REGISTRATION_CONTAINER).attr('data-registration-url');
     };
 
     /**
@@ -231,6 +219,17 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
     };
 
     /**
+     * Returns true if a tool proxy id has been recorded.
+     *
+     * @method hasToolProxyId
+     * @private
+     * @return bool
+     */
+    var hasToolProxyId = function() {
+        return getToolProxyId() ? true : false;
+    };
+
+    /**
      * Checks if this process has created a tool proxy within
      * Moodle yet.
      *
@@ -239,7 +238,32 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      * @return bool
      */
     var hasCreatedToolProxy = function() {
-        return getToolProxyId() ? true : false;
+        var button = getExternalRegistrationCancelButton();
+        return button.attr('data-tool-proxy-new') && hasToolProxyId();
+    };
+
+    /**
+     * Records that this process has created a tool proxy.
+     *
+     * @method setProxyAsNew
+     * @private
+     * @return bool
+     */
+    var setProxyAsNew = function() {
+        var button = getExternalRegistrationCancelButton();
+        return button.attr('data-tool-proxy-new', "new");
+    };
+
+    /**
+     * Records that this process has not created a tool proxy.
+     *
+     * @method setProxyAsOld
+     * @private
+     * @return bool
+     */
+    var setProxyAsOld = function() {
+        var button = getExternalRegistrationCancelButton();
+        return button.removeAttr('data-tool-proxy-new');
     };
 
     /**
@@ -412,49 +436,72 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      * If the tool proxy creation fails then we redirect the page section back to the home section and
      * display the error, rather than rendering the external registration page.
      *
-     * @method submitExternalRegistration
+     * @method createAndRegisterToolProxy
      * @private
+     * @param url Tool registration URL to register
      * @return object jQuery Deferred object
      */
-    var submitExternalRegistration = function() {
+    var createAndRegisterToolProxy = function(url) {
         var promise = $.Deferred();
-        var url = getRegistrationURL();
 
-        if (url === "") {
+        if (!url || url === "") {
             // No URL has been input so do nothing.
             promise.resolve();
         } else {
-            // A tool proxy needs to exists before the external page is rendered because
+            // A tool proxy needs to exist before the external page is rendered because
             // the external page sends requests back to Moodle for information that is stored
             // in the proxy.
-            toolProxy.create({regurl: url}).done(function(result) {
-                var id = result.id;
-                var regURL = result.regurl;
-
-                // Save the id on the DOM to cleanup later.
-                setToolProxyId(id);
-
-                // There is a specific set of data needed to send to the external registration page
-                // in a form, so let's get it from our server.
-                getRegistrationRequest(id).done(function(registrationRequest) {
-
-                    registrationRequest.reg_url = regURL;
-                    renderExternalRegistrationWindow(registrationRequest).done(function() {
-
-                        promise.resolve();
-
-                    }).fail(promise.fail);
-
-                }).fail(promise.fail);
-
-            }).fail(function(exception) {
-                // Clean up.
-                cancelRegistration();
-                // Let the user know what the error is.
-                $(document).trigger(ltiEvents.REGISTRATION_FEEDBACK, {status: 'error', message: exception.message, error: true});
-                promise.reject(exception);
-            });
+            toolProxy.create({regurl: url})
+                .done(function(result) {
+                        // Note that it's a new proxy so we will always clean it up.
+                        setProxyAsNew();
+                        promise = registerProxy(result.id);
+                    })
+                .fail(function(exception) {
+                        // Clean up.
+                        cancelRegistration();
+                        // Let the user know what the error is.
+                        str.get_string('error', 'moodle')
+                            .done(function (s) {
+                                    var feedback = {
+                                        status: s,
+                                        message: exception.message,
+                                        error: true
+                                    };
+                                    $(document).trigger(ltiEvents.REGISTRATION_FEEDBACK, feedback);
+                                })
+                            .fail(notification.exception);
+                        promise.reject(exception);
+                    });
         }
+
+        return promise;
+    };
+
+    /**
+     * Loads the window to register a proxy, given an ID.
+     *
+     * @method registerProxy
+     * @private
+     * @param id Proxy id to register
+     * @return jQuery Deferred object to fail or resolve
+     */
+    var registerProxy = function(id) {
+        var promise = $.Deferred();
+        // Save the id on the DOM to cleanup later.
+        setToolProxyId(id);
+
+        // There is a specific set of data needed to send to the external registration page
+        // in a form, so let's get it from our server.
+        getRegistrationRequest(id)
+            .done(function(registrationRequest) {
+                    renderExternalRegistrationWindow(registrationRequest)
+                        .done(function() {
+                                promise.resolve();
+                            })
+                        .fail(promise.fail);
+                })
+            .fail(promise.fail);
 
         return promise;
     };
@@ -467,9 +514,10 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      * @private
      */
     var finishExternalRegistration = function() {
-        if (hasCreatedToolProxy()) {
+        if (hasToolProxyId()) {
             clearToolProxyId();
         }
+        setProxyAsOld(false);
 
         hideExternalRegistrationContent();
         var container = getExternalRegistrationTemplateContainer();
@@ -486,9 +534,17 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      */
     var registerEventListeners = function() {
 
-        $(document).on(ltiEvents.START_EXTERNAL_REGISTRATION, function() {
-            submitExternalRegistration();
-        });
+        $(document).on(ltiEvents.START_EXTERNAL_REGISTRATION, function(event, data) {
+                if (!data) {
+                    return;
+                }
+                if (data.url) {
+                    createAndRegisterToolProxy(data.url);
+                }
+                if (data.proxyid) {
+                    registerProxy(data.proxyid);
+                }
+            });
 
         var cancelExternalRegistrationButton = getExternalRegistrationCancelButton();
         cancelExternalRegistrationButton.click(function(e) {

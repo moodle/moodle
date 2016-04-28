@@ -137,6 +137,8 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
         /**
          * Check if the given URL is a cartridge URL.
          *
+         * The promise will fail if the URL is unreachable, so you must handle the fail result.
+         *
          * @method isCartridge
          * @public
          * @param string URL
@@ -151,8 +153,6 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
             };
 
             var promise = ajax.call([request])[0];
-
-            promise.fail(notification.exception);
 
             return promise;
         },

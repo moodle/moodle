@@ -302,6 +302,7 @@ function lti_build_registration_request($toolproxy) {
     $requestparams['lti_version'] = 'LTI-2p0';
     $requestparams['reg_key'] = $key;
     $requestparams['reg_password'] = $secret;
+    $requestparams['reg_url'] = $toolproxy->regurl;
 
     // Add the profile URL.
     $profileservice = lti_get_service_by_name('profile');
@@ -1624,6 +1625,30 @@ function lti_get_tool_proxy($id) {
 }
 
 /**
+ * Returns lti tool proxies.
+ *
+ * @param bool $orphanedonly Only retrieves tool proxies that have no type associated with them
+ * @return array of basicLTI types
+ */
+function lti_get_tool_proxies($orphanedonly) {
+    global $DB;
+
+    if ($orphanedonly) {
+        $tools = $DB->get_records('lti_types');
+        $usedproxyids = array_values($DB->get_fieldset_select('lti_types', 'toolproxyid', 'toolproxyid IS NOT NULL'));
+        $proxies = $DB->get_records('lti_tool_proxies', null, 'state DESC, timemodified DESC');
+        foreach ($proxies as $key => $value) {
+            if (in_array($value->id, $usedproxyids)) {
+                unset($proxies[$key]);
+            }
+        }
+        return $proxies;
+    } else {
+        return $DB->get_records('lti_tool_proxies', null, 'state DESC, timemodified DESC');
+    }
+}
+
+/**
  * Generates some of the tool proxy configuration based on the admin configuration details
  *
  * @param int $id
@@ -2274,6 +2299,19 @@ function get_tool_type_edit_url(stdClass $type) {
 }
 
 /**
+ * Returns the edit url for the given tool proxy.
+ *
+ * @param stdClass $proxy The tool proxy
+ *
+ * @return string The url to edit the tool type
+ */
+function get_tool_proxy_edit_url(stdClass $proxy) {
+    $url = new moodle_url('/mod/lti/registersettings.php',
+                          array('action' => 'update', 'id' => $proxy->id, 'sesskey' => sesskey(), 'returnto' => 'toolconfigure'));
+    return $url->out();
+}
+
+/**
  * Returns the course url for the given tool type
  *
  * @param stdClass $type The tool type
@@ -2294,7 +2332,7 @@ function get_tool_type_course_url(stdClass $type) {
  *
  * @param stdClass $type The tool type
  *
- * @return string The url to the course of the tool type
+ * @return string The urls of the tool type
  */
 function get_tool_type_urls(stdClass $type) {
     $courseurl = get_tool_type_course_url($type);
@@ -2307,6 +2345,24 @@ function get_tool_type_urls(stdClass $type) {
     if ($courseurl) {
         $urls['course'] = $courseurl;
     }
+
+    return $urls;
+}
+
+/**
+ * Returns the icon and edit urls for the tool proxy.
+ *
+ * @param stdClass $proxy The tool proxy
+ *
+ * @return string The urls of the tool proxy
+ */
+function get_tool_proxy_urls(stdClass $proxy) {
+    global $OUTPUT;
+
+    $urls = array(
+        'icon' => $OUTPUT->pix_url('icon', 'lti')->out(),
+        'edit' => get_tool_proxy_edit_url($proxy),
+    );
 
     return $urls;
 }
@@ -2429,6 +2485,34 @@ function serialise_tool_type(stdClass $type) {
         'courseid' => $type->course == 1 ? 0 : $type->course,
         'instanceids' => $instanceids,
         'instancecount' => count($instanceids)
+    );
+}
+
+/**
+ * Serialises this tool proxy.
+ *
+ * @param stdClass $proxy The tool proxy
+ *
+ * @return array An array of values representing this type
+ */
+function serialise_tool_proxy(stdClass $proxy) {
+    return array(
+        'id' => $proxy->id,
+        'name' => $proxy->name,
+        'description' => $proxy->regurl . ' You will need to activate this proxy before adding a description',
+        'urls' => get_tool_proxy_urls($proxy),
+        'state' => array(
+            'text' => get_string('pending', 'mod_lti'),
+            'pending' => true,
+            'configured' => false,
+            'rejected' => false,
+            'unknown' => false
+        ),
+        'hascapabilitygroups' => true,
+        'capabilitygroups' => array(),
+        'courseid' => 0,
+        'instanceids' => array(),
+        'instancecount' => 0
     );
 }
 

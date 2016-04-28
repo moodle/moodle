@@ -162,6 +162,7 @@ $string['embed_no_blocks'] = 'Embed, without blocks';
 $string['enableemailnotification'] = 'Send notification emails';
 $string['enableemailnotification_help'] = 'If enabled, students will receive email notification when their tool submissions are graded.';
 $string['enterkeyandsecret'] = 'Enter your consumer key and shared secret';
+$string['errorbadurl'] = 'URL is not a valid tool URL or cartridge.';
 $string['errormisconfig'] = 'Misconfigured tool. Please ask your Moodle administrator to fix the configuration of the tool.';
 $string['existing_window'] = 'Existing window';
 $string['extensions'] = 'LTI extension services';

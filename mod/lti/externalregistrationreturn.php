@@ -42,7 +42,13 @@ $pageurl = new moodle_url('/mod/lti/externalregistrationreturn.php');
 $PAGE->set_context($systemcontext);
 $PAGE->set_url($pageurl);
 $PAGE->set_pagelayout('maintenance');
-echo $OUTPUT->header();
+$output = $PAGE->get_renderer('mod_lti');
+echo $output->header();
+
 $params = array('message' => s($msg), 'error' => s($err), 'id' => $id, 'status' => s($status));
+
+$page = new \mod_lti\output\external_registration_return_page();
+echo $output->render($page);
+
 $PAGE->requires->js_call_amd('mod_lti/external_registration_return', 'init', $params);
-echo $OUTPUT->footer();
+echo $output->footer();

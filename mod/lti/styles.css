@@ -48,21 +48,22 @@
     min-height: 800px;
 }
 
-#external-registration-container .registration-loading-container {
+.loading-screen {
     text-align: center;
     padding: 3em;
 }
 
-#external-registration-container .registration-loading-container .loading-text, #external-registration-container .registration-loading-container .loader {
+.loading-screen .loading-text {
     font-size: 2em;
 }
 
-#external-registration-container .registration-loading-container .loader {
+.loading-screen .loader {
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 1em;
     height: 2em;
     width: 2em;
+    font-size: 2em;
 }
 
 #registration-submit {
@@ -70,7 +71,7 @@
 }
 
 #registration-form-container {
-    min-height: 230px;
+    min-height: 260px;
 }
 
 #registration-form-container .well {
@@ -91,14 +92,6 @@
 
 #registration-choice-container p:last-child {
     margin-top: 20px;
-}
-
-#registration-feedback-container {
-    cursor: pointer;
-}
-
-#registration-feedback-container h4 {
-    text-transform: capitalize;
 }
 
 #tool-type-capabilities-container .registration-loading-container {
@@ -325,6 +318,7 @@
 
 .tool-card-body .description {
     max-height: 100px;
+    word-wrap: break-word;
 }
 
 .tool-card-footer {
