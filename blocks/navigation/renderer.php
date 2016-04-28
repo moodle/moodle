@@ -32,6 +32,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class block_navigation_renderer extends plugin_renderer_base {
+
     /**
      * Returns the content of the navigation tree.
      *
@@ -77,33 +78,37 @@ class block_navigation_renderer extends plugin_renderer_base {
             if (!$item->display && !$item->contains_active_node()) {
                 continue;
             }
-            $content = $item->get_content();
-            $title = $item->get_title();
 
             $isexpandable = (empty($expansionlimit) || ($item->type > navigation_node::TYPE_ACTIVITY || $item->type < $expansionlimit) || ($item->contains_active_node() && $item->children->count() > 0));
-            $isbranch = $isexpandable && ($item->children->count() > 0 || ($item->has_children() && (isloggedin() || $item->type <= navigation_node::TYPE_CATEGORY)));
 
             // Skip elements which have no content and no action - no point in showing them
             if (!$isexpandable && empty($item->action)) {
                 continue;
             }
 
+            $id = $item->id ? $item->id : uniqid();
+            $content = $item->get_content();
+            $title = $item->get_title();
+            $ulattr = ['id' => $id . '_group', 'role' => 'group'];
+            $liattr = ['class' => [$item->get_css_type(), 'depth_'.$depth]];
+            $pattr = ['class' => ['tree_item'], 'role' => 'treeitem'];
+            $pattr += !empty($item->id) ? ['id' => $item->id] : [];
+            $isbranch = $isexpandable && ($item->children->count() > 0 || ($item->has_children() && (isloggedin() || $item->type <= navigation_node::TYPE_CATEGORY)));
             $hasicon = ((!$isbranch || $item->type == navigation_node::TYPE_ACTIVITY || $item->type == navigation_node::TYPE_RESOURCE) && $item->icon instanceof renderable);
+            $icon = '';
 
             if ($hasicon) {
+                $liattr['class'][] = 'item_with_icon';
+                $pattr['class'][] = 'hasicon';
                 $icon = $this->output->render($item->icon);
                 // Because an icon is being used we're going to wrap the actual content in a span.
                 // This will allow designers to create columns for the content, as we've done in styles.css.
                 $content = $icon . html_writer::span($content, 'item-content-wrap');
-            } else {
-                $icon = '';
             }
-
             if ($item->helpbutton !== null) {
                 $content = trim($item->helpbutton).html_writer::tag('span', $content, array('class'=>'clearhelpbutton'));
             }
-
-            if ($content === '') {
+            if (empty($content)) {
                 continue;
             }
 
@@ -129,70 +134,47 @@ class block_navigation_renderer extends plugin_renderer_base {
                 $content = html_writer::link($item->action, $content, $attributes);
             }
 
-            // This applies to the li item which contains all child lists too.
-            $liclasses = array($item->get_css_type(), 'depth_'.$depth);
-
-            // Class attribute on the div item which only contains the item content.
-            $divclasses = array('tree_item');
-
-            $liexpandable = array();
-            $lirole = array('role' => 'treeitem');
             if ($isbranch) {
-                $liclasses[] = 'contains_branch';
-                if ($depth == 1) {
-                    $liexpandable = array(
-                        'data-expandable' => 'false',
-                        'data-collapsible' => 'false'
-                    );
-                } else {
-                    $liexpandable = array(
-                        'aria-expanded' => ($item->has_children() &&
-                            (!$item->forceopen || $item->collapse)) ? "false" : "true");
-                }
-
+                $pattr['class'][] = 'branch';
+                $liattr['class'][] = 'contains_branch';
+                $pattr += ['aria-expanded' => ($item->has_children() && (!$item->forceopen || $item->collapse)) ? "false" : "true"];
                 if ($item->requiresajaxloading) {
-                    $liexpandable['data-requires-ajax'] = 'true';
-                    $liexpandable['data-loaded'] = 'false';
-                    $liexpandable['data-node-id'] = $item->id;
-                    $liexpandable['data-node-key'] = $item->key;
-                    $liexpandable['data-node-type'] = $item->type;
+                    $pattr += [
+                        'data-requires-ajax' => 'true',
+                        'data-loaded' => 'false',
+                        'data-node-id' => $item->id,
+                        'data-node-key' => $item->key,
+                        'data-node-type' => $item->type
+                    ];
+                } else {
+                    $pattr += ['aria-owns' => $id . '_group'];
                 }
+            }
 
-                $divclasses[] = 'branch';
-            } else {
-                $divclasses[] = 'leaf';
-            }
-            if ($hasicon) {
-                // Add this class if the item has an icon, whether it is a branch or not.
-                $liclasses[] = 'item_with_icon';
-                $divclasses[] = 'hasicon';
-            }
             if ($item->isactive === true) {
-                $liclasses[] = 'current_branch';
+                $liattr['class'][] = 'current_branch';
             }
             if (!empty($item->classes) && count($item->classes)>0) {
-                $divclasses[] = join(' ', $item->classes);
+                $pattr['class'] = array_merge($pattr['class'], $item->classes);
             }
 
-            // Now build attribute arrays.
-            $liattr = array('class' => join(' ', $liclasses)) + $liexpandable + $lirole;
-            $divattr = array('class'=>join(' ', $divclasses));
-            if (!empty($item->id)) {
-                $divattr['id'] = $item->id;
+            $liattr['class'] = join(' ', $liattr['class']);
+            $pattr['class'] = join(' ', $pattr['class']);
+
+            $pattr += $depth == 1 ? ['data-collapsible' => 'false'] : [];
+            if (isset($pattr['aria-expanded']) && $pattr['aria-expanded'] === 'false') {
+                $ulattr += ['aria-hidden' => 'true'];
             }
 
             // Create the structure.
-            $content = html_writer::tag('p', $content, $divattr);
+            $content = html_writer::tag('p', $content, $pattr);
             if ($isexpandable) {
-                $content .= $this->navigation_node($item->children, array('role' => 'group'), $expansionlimit,
-                    $options, $depth + 1);
+                $content .= $this->navigation_node($item->children, $ulattr, $expansionlimit, $options, $depth + 1);
             }
             if (!empty($item->preceedwithhr) && $item->preceedwithhr===true) {
                 $content = html_writer::empty_tag('hr') . $content;
             }
-            if ($depth == 1) {
-                $liattr['tabindex'] = '0';
-            }
+
             $liattr['aria-labelledby'] = $nodetextid;
             $content = html_writer::tag('li', $content, $liattr);
             $lis[] = $content;
@@ -207,5 +189,4 @@ class block_navigation_renderer extends plugin_renderer_base {
         // The source is complex already anyway.
         return html_writer::tag('ul', implode('', $lis), $attrs);
     }
-
 }
