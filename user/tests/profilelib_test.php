@@ -62,6 +62,9 @@ class core_user_profilelib_testcase extends advanced_testcase {
         // Check that profile_user_record returns same (no) fields.
         $this->assertObjectNotHasAttribute('frogdesc', profile_user_record($user->id));
 
+        // Check that profile_user_record returns all the fields when requested.
+        $this->assertObjectHasAttribute('frogdesc', profile_user_record($user->id, false));
+
         // Add another custom field, this time of normal text type.
         $id2 = $DB->insert_record('user_info_field', array(
                 'shortname' => 'frogname', 'name' => 'Name of frog', 'categoryid' => 1,
@@ -77,6 +80,9 @@ class core_user_profilelib_testcase extends advanced_testcase {
 
         // Check profile_user_record returns same field.
         $this->assertObjectHasAttribute('frogname', profile_user_record($user->id));
+
+        // Check that profile_user_record returns all the fields when requested.
+        $this->assertObjectHasAttribute('frogname', profile_user_record($user->id, false));
     }
 
     /**
