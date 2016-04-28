@@ -18,9 +18,9 @@ Feature: Manage competency frameworks
     And I should see "General"
     And I should see "Taxonomies"
     And I set the field "Name" to "Science Year-1"
-    And I set the field "Id number" to "Comp-frm-1"
+    And I set the field "ID number" to "Comp-frm-1"
     And I press "Save changes"
-    And I should see "You must configure the scale by selecting default and proficient values"
+    And I should see "The scale needs to be configured by selecting default and proficient items."
     And "Configure scales" "button" should be visible
     And I press "Configure scales"
     And I click on "//input[@data-field='tool_lp_scale_default_1']" "xpath_element"
