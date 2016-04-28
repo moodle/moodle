@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clickheretolaunchtheapp'] = 'Please, click here if the app does not open automatically.';
 $string['forcedurlscheme'] = 'The URL scheme allows to open the mobile app from other apps like the browser. Use this setting if you want to allow only your custom branded app to be opened by the browser.';
 $string['forcedurlscheme_key'] = 'URL scheme';
 $string['loginintheapp'] = 'Via the app';
