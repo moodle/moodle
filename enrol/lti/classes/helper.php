@@ -313,7 +313,7 @@ class helper {
                 $where = "AND";
             }
         }
-        $sql .= " ORDER BY timecreated";
+        $sql .= " ORDER BY elt.timecreated";
 
         return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     }
