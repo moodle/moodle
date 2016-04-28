@@ -128,15 +128,8 @@
             <tbody class="drag-parentnode">
                 {{#competencies}}
                 <tr class="drag-samenode" data-node="user-competency" data-id="{{competency.id}}"
-                    {{#plan.iscompleted}}
-                        data-competencyid="{{usercompetencyplan.id}}"
-                        data-userid="{{usercompetencyplan.userid}}"
-                    {{/plan.iscompleted}}
-                    {{^plan.iscompleted}}
-                        data-competencyid="{{usercompetency.competencyid}}"
-                        data-userid="{{usercompetency.userid}}"
-                    {{/plan.iscompleted}}
-                >
+                        data-competencyid="{{competency.id}}"
+                        data-userid="{{plan.userid}}">
                     <td>
                         {{#plan.canbeedited}}
                         <span class="drag-handlecontainer pull-left"></span>
