@@ -25,8 +25,6 @@
 
 require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
 
-use Behat\Behat\Context\Step\Given as Given;
-
 /**
  * Step definition for learning plan system.
  *
@@ -44,17 +42,12 @@ class behat_tool_lp extends behat_base {
      *
      * @param string $nodetext
      * @param string $rowname
-     * @return Given[] array of steps
      */
     public function click_on_edit_menu_of_the_row($nodetext, $rowname) {
-        $steps = array();
+        $xpathtarget = "//ul//li//ul//li[@class='tool-lp-menu-item']//a[contains(.,'" . $nodetext . "')]";
 
-        $xpathtarget = "//ul//li//ul//li[@class='tool-lp-menu-item']//a[contains(.,'". $nodetext ."')]";
-
-        $steps[] = new Given('I click on "Edit" "link" in the "' . $this->escape($rowname) . '" "table_row"');
-        $steps[] = new Given('I click on "'.$xpathtarget.'" "xpath_element" in the "' . $this->escape($rowname) . '" "table_row"');
-
-        return $steps;
+        $this->execute('behat_general::i_click_on_in_the', [get_string('edit'), 'link', $this->escape($rowname), 'table_row']);
+        $this->execute('behat_general::i_click_on_in_the', [$xpathtarget, 'xpath_element', $this->escape($rowname), 'table_row']);
     }
 
     /**
@@ -63,16 +56,11 @@ class behat_tool_lp extends behat_base {
      * @Given /^I select "([^"]*)" of the competency tree$/
      *
      * @param string $competencyname
-     * @return Given[] array of steps
      */
     public function select_of_the_competency_tree($competencyname) {
-        $steps = array();
+        $xpathtarget = "//li[@role='tree-item']//span[contains(.,'" . $competencyname . "')]";
 
-        $xpathtarget = "//li[@role='tree-item']//span[contains(.,'". $competencyname ."')]";
-
-        $steps[] = new Given('I click on "' . $xpathtarget . '" "xpath_element"');
-
-        return $steps;
+        $this->execute('behat_general::i_click_on', [$xpathtarget, 'xpath_element']);
     }
 
     /**
@@ -81,15 +69,10 @@ class behat_tool_lp extends behat_base {
      * @Given /^I click on "([^"]*)" item in the autocomplete list$/
      *
      * @param string $item
-     * @return Given[] array of steps
      */
     public function i_click_on_item_in_the_autocomplete_list($item) {
-        $steps = array();
+        $xpathtarget = "//ul[@class='form-autocomplete-suggestions']//li//span//span[contains(.,'" . $item . "')]";
 
-        $xpathtarget = "//ul[@class='form-autocomplete-suggestions']//li//span//span[contains(.,'". $item ."')]";
-
-        $steps[] = new Given('I click on "' . $xpathtarget . '" "xpath_element"');
-
-        return $steps;
+        $this->execute('behat_general::i_click_on', [$xpathtarget, 'xpath_element']);
     }
 }
