@@ -47,13 +47,22 @@ class block_rss_client_edit_form extends block_edit_form {
             $mform->setDefault('config_shownumentries', 5);
         }
 
+        $rssconfig = unserialize(base64_decode($this->block->instance->configdata));
+        list($insql, $inparams) = $DB->get_in_or_equal($rssconfig->rssid);
+
+        $queryparams = array('', $USER->id);
+        foreach ($inparams as $paramid) {
+            $queryparams[] = $paramid;
+        }
+        $queryparams[] = '';
+
         $rssfeeds = $DB->get_records_sql_menu('
                 SELECT id,
                        CASE WHEN preferredtitle = ? THEN ' . $DB->sql_compare_text('title', 64) .' ELSE preferredtitle END
                 FROM {block_rss_client}
-                WHERE userid = ? OR shared = 1
+                WHERE userid = ? OR shared = 1 OR id '.$insql.'
                 ORDER BY CASE WHEN preferredtitle = ? THEN ' . $DB->sql_compare_text('title', 64) . ' ELSE preferredtitle END ',
-                array('', $USER->id, ''));
+                $queryparams);
         if ($rssfeeds) {
             $select = $mform->addElement('select', 'config_rssid', get_string('choosefeedlabel', 'block_rss_client'), $rssfeeds);
             $select->setMultiple(true);
