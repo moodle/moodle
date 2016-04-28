@@ -1,5 +1,5 @@
 @mod @mod_feedback
-Feature: Test creating different types of feedback questions for anonymous feedback
+Feature: Test creating different types of feedback questions for non-anonymous feedback
   In order to create feedbacks
   As a teacher
   I need to be able to add different question types
@@ -19,8 +19,8 @@ Feature: Test creating different types of feedback questions for anonymous feedb
       | student1 | C1     | student        |
       | student2 | C1     | student        |
     And the following "activities" exist:
-      | activity   | name                | course | idnumber    |
-      | feedback   | Learning experience | C1     | feedback0   |
+      | activity   | name                | course | idnumber    | anonymous |
+      | feedback   | Learning experience | C1     | feedback0   | 2         |
     When I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Learning experience"
@@ -29,6 +29,10 @@ Feature: Test creating different types of feedback questions for anonymous feedb
       | Question         | this is an information question |
       | Label            | info                            |
       | Information-Type | Course                          |
+    And I add a "Information" question to the feedback with:
+      | Question         | this is a response time question |
+      | Label            | curtime                          |
+      | Information-Type | Responsestime                    |
     And I add a "Label" question to the feedback with:
       | Contents | label text |
     And I add a "Longer text answer" question to the feedback with:
@@ -100,7 +104,7 @@ Feature: Test creating different types of feedback questions for anonymous feedb
     And I follow "Learning experience"
     And I follow "Analysis"
     And I should see "Submitted answers: 2"
-    And I should see "Questions: 8"
+    And I should see "Questions: 9"
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
@@ -127,11 +131,11 @@ Feature: Test creating different types of feedback questions for anonymous feedb
     And I should see "no way" in the "(shorttext)" "table"
     And I should see "hello" in the "(shorttext)" "table"
 
-  Scenario: Create different types of questions in anonymous feedback with javascript disabled
+  Scenario: Create different types of questions in non-anonymous feedback with javascript disabled
     And I log out
 
   @javascript
-  Scenario: Create different types of questions in anonymous feedback with javascript enabled
+  Scenario: Create different types of questions in non-anonymous feedback with javascript enabled
     And I should see "1 (50.00 %)" in the "option a:" "table_row"
     And I should see "1 (50.00 %)" in the "option b:" "table_row"
     And I log out

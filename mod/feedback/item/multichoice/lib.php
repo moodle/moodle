@@ -336,8 +336,10 @@ class feedback_item_multichoice extends feedback_item_base {
             if ($info->subtype === 'c') {
                 // Checkboxes.
                 $objs[] = ['hidden', $inputname.'[0]', 0];
+                $form->set_element_type($inputname.'[0]', PARAM_INT);
                 foreach ($options as $idx => $label) {
                     $objs[] = ['advcheckbox', $inputname.'['.$idx.']', '', $label, null, array(0, $idx)];
+                    $form->set_element_type($inputname.'['.$idx.']', PARAM_INT);
                 }
                 $element = $form->add_form_group_element($item, 'group_'.$inputname, $name, $objs, $separator, $class);
                 if ($tmpvalue) {

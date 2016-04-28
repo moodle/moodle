@@ -117,22 +117,14 @@ class mod_feedback_complete_form extends moodleform {
             $mform->closeHeaderBefore('buttonar');
         }
 
+        if ($this->mode == self::MODE_COMPLETE) {
+            $this->definition_complete();
+        } else {
+            $this->definition_preview();
+        }
+
         // Set data.
         $this->set_data(array('gopage' => $this->gopage));
-    }
-
-    /**
-     * This method is called after definition(), data submission and set_data().
-     * All form setup that is dependent on form values should go in here.
-     */
-    public function definition_after_data() {
-        parent::definition_after_data();
-
-        if ($this->mode == self::MODE_COMPLETE) {
-            $this->definition_after_data_complete();
-        } else {
-            $this->definition_after_data_preview();
-        }
     }
 
     /**
@@ -140,7 +132,7 @@ class mod_feedback_complete_form extends moodleform {
      *
      * This will add only items from a current page to the feedback and adjust the buttons
      */
-    protected function definition_after_data_complete() {
+    protected function definition_complete() {
         if (!$this->structure instanceof mod_feedback_completion) {
             // We should not really be here but just in case.
             return;
@@ -174,7 +166,7 @@ class mod_feedback_complete_form extends moodleform {
      *
      * This will add all items to the form, including pagebreaks as horizontal rules.
      */
-    protected function definition_after_data_preview() {
+    protected function definition_preview() {
         foreach ($this->structure->get_items() as $feedbackitem) {
             $itemobj = feedback_get_item_class($feedbackitem->typ);
             $itemobj->complete_form_element($feedbackitem, $this);
