@@ -51,7 +51,7 @@ abstract class spout_base extends \core\dataformat\base {
         $this->writer = \Box\Spout\Writer\WriterFactory::create($this->spouttype);
         $filename = $this->filename . $this->get_extension();
         $this->writer->openToBrowser($filename);
-        if ($this->sheettitle) {
+        if ($this->sheettitle && $this->writer instanceof \Box\Spout\Writer\AbstractMultiSheetsWriter) {
             $sheet = $this->writer->getCurrentSheet();
             $sheet->setName($this->sheettitle);
         }

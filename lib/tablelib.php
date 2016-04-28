@@ -1730,7 +1730,6 @@ class table_dataformat_export_format extends table_default_export_format_parent 
         $this->filename = $filename;
         $this->documentstarted = true;
         $this->dataformat->set_filename($filename);
-        $this->dataformat->send_http_headers();
     }
 
     /**
@@ -1740,6 +1739,7 @@ class table_dataformat_export_format extends table_default_export_format_parent 
      */
     public function start_table($sheettitle) {
         $this->dataformat->set_sheettitle($sheettitle);
+        $this->dataformat->send_http_headers();
     }
 
     /**
