@@ -277,6 +277,7 @@ $string['userevidencename'] = 'Name';
 $string['userevidencesummary'] = 'Summary';
 $string['userevidenceupdated'] = 'Evidence of prior learning updated';
 $string['userevidenceurl'] = 'URL';
+$string['userevidenceurl_help'] = 'The URL must start with \'http://\' or \'https://\'.';
 $string['viewdetails'] = 'View details';
 $string['visible'] = 'Visible';
 $string['visible_help'] = 'A competency framework can be hidden from teachers. This could be useful if a framework is still in the process of being developed.';
