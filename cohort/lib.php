@@ -113,6 +113,9 @@ function cohort_delete_cohort($cohort) {
     $DB->delete_records('cohort_members', array('cohortid'=>$cohort->id));
     $DB->delete_records('cohort', array('id'=>$cohort->id));
 
+    // Notify the competency subsystem.
+    \core_competency\api::hook_cohort_deleted($cohort);
+
     $event = \core\event\cohort_deleted::create(array(
         'context' => context::instance_by_id($cohort->contextid),
         'objectid' => $cohort->id,

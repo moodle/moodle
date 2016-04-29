@@ -4707,6 +4707,19 @@ class api {
     }
 
     /**
+     * Action to perform when a cohort is deleted.
+     *
+     * Do not call this directly, this is reserved for core use.
+     *
+     * @param \stdClass $cohort The cohort object.
+     * @return void
+     */
+    public static function hook_cohort_deleted(\stdClass $cohort) {
+        global $DB;
+        $DB->delete_records(template_cohort::TABLE, array('cohortid' => $cohort->id));
+    }
+
+    /**
      * Manually grade a user competency.
      *
      * @param int $userid

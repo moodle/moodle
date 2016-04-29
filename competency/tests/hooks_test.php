@@ -179,4 +179,32 @@ class core_competency_hooks_testcase extends advanced_testcase {
         $this->assertEquals(2, user_competency_course::count_records(['courseid' => $c2->id, 'userid' => $u1->id]));
     }
 
+    public function test_hook_cohort_deleted() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $datagen = $this->getDataGenerator();
+        $corecompgen = $datagen->get_plugin_generator('core_competency');
+
+        $c1 = $datagen->create_cohort();
+        $c2 = $datagen->create_cohort();
+        $t1 = $corecompgen->create_template();
+        $t2 = $corecompgen->create_template();
+
+        // Create the template cohorts.
+        core_competency\api::create_template_cohort($t1->get_id(), $c1->id);
+        core_competency\api::create_template_cohort($t1->get_id(), $c2->id);
+        core_competency\api::create_template_cohort($t2->get_id(), $c1->id);
+
+        // Check that the association was made.
+        $this->assertEquals(2, \core_competency\template_cohort::count_records(array('templateid' => $t1->get_id())));
+        $this->assertEquals(1, \core_competency\template_cohort::count_records(array('templateid' => $t2->get_id())));
+
+        // Delete the first cohort.
+        cohort_delete_cohort($c1);
+
+        // Check that the association was removed.
+        $this->assertEquals(1, \core_competency\template_cohort::count_records(array('templateid' => $t1->get_id())));
+        $this->assertEquals(0, \core_competency\template_cohort::count_records(array('templateid' => $t2->get_id())));
+    }
 }
