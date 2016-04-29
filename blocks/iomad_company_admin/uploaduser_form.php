@@ -202,7 +202,7 @@ class admin_uploaduser_form2 extends company_moodleform {
      * Form tweaks that depend on current data.
      */
     public function definition_after_data() {
-        global $USER, $SESSION;
+        global $USER, $SESSION, $DB;
 
         $mform   =& $this->_form;
         $columns =& $this->_customdata;
@@ -221,8 +221,9 @@ class admin_uploaduser_form2 extends company_moodleform {
         }
 
         // Get the department list.
+        $systemcontext = context_system::instance();
         $parentlevel = company::get_company_parentnode($companyid);
-        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $systemcontext)) {
             $userhierarchylevel = $parentlevel->id;
         } else {
             $userlevel = company::get_userlevel($USER);
@@ -239,6 +240,68 @@ class admin_uploaduser_form2 extends company_moodleform {
                                                            'uutypelabel');
 
         $this->courseselector = $this->add_course_selector();
+
+        // Deal with licenses.
+        if (iomad::has_capability('block/iomad_company_admin:allocate_licenses', $systemcontext)) {
+            $foundlicenses = $DB->get_records_sql_menu("SELECT id, name FROM {companylicense}
+                                                   WHERE expirydate >= :timestamp
+                                                   AND companyid = :companyid
+                                                   AND used < allocation",
+                                                   array('timestamp' => time(),
+                                                         'companyid' => $this->selectedcompany));
+            $licenses = $foundlicenses;
+            if (empty($SESSION->chosenlicenseid)) {
+                list($mylicenseid, $mylicensecourse) = each($licenses);
+            } else {
+                $mylicenseid = $SESSION->chosenlicenseid;
+            }
+            if (count($foundlicenses) == 0) {
+                // No valid licenses.
+                $mform->addElement('html', '<div id="licensedetails"><b>' . get_string('nolicenses', 'block_iomad_company_admin') . '</b></div>');
+                $onlyone = true;
+            } else {
+                if (empty($mylicenseid) && count($foundlicenses) == 1) {
+                    // There is only one so select it!
+                    $onlyone = true;
+                    unset($licenses[0]);
+                    list($mylicenseid, $mylicensecourse) = each($licenses);
+                    $mylicensedetails = $DB->get_record('companylicense', array('id' => $mylicenseid));
+                    $licensestring = get_string('licensedetails', 'block_iomad_company_admin', $mylicensedetails);
+                    $licensestring2 = get_string('licensedetails2', 'block_iomad_company_admin', $mylicensedetails);
+                    $licensestring3 = get_string('licensedetails3', 'block_iomad_company_admin', $mylicensedetails);
+                    $mform->addElement('html', '<div id="licensedetails"><b>You have ' . ((intval($licensestring3, 0)) - (intval($licensestring2, 0))) . ' courses left to allocate on this license</b></div>');
+                    $mform->addElement('hidden', 'licenseid', $mylicenseid);
+                    $mform->setType('licenseid', PARAM_INT);
+                } else {
+                    $onlyone = false;
+                    $mform->addElement('select', 'licenseid', get_string('select_license', 'block_iomad_company_admin'),
+                                       $licenses, array('id' => 'licenseidselector'));
+                    if (empty($mylicenseid)) {
+                        $mform->addElement('html', '<div id="licensedetails"></div>');
+                    } else {
+                        $mylicensedetails = $DB->get_record('companylicense', array('id' => $mylicenseid));
+                        $licensestring = get_string('licensedetails', 'block_iomad_company_admin', $mylicensedetails);
+                        $licensestring2 = get_string('licensedetails2', 'block_iomad_company_admin', $mylicensedetails);
+                        $licensestring3 = get_string('licensedetails3', 'block_iomad_company_admin', $mylicensedetails);
+                        $mform->addElement('html', '<div id="licensedetails"><b>You have ' . ((intval($licensestring3, 0)) - (intval($licensestring2, 0))) . ' courses left to allocate on this license </b></div>');
+                    }
+                }
+
+                if (!$licensecourses = $DB->get_records_sql_menu("SELECT c.id, c.fullname FROM {companylicense_courses} clc
+                                                             JOIN {course} c ON (clc.courseid = c.id
+                                                             AND clc.licenseid = :licenseid)",
+                                                             array('licenseid' => $mylicenseid))) {
+                    $licensecourses = array();
+                }
+
+                $licensecourseselect = $mform->addElement('select', 'licensecourses',
+                                                          get_string('select_license_courses', 'block_iomad_company_admin'),
+                                                          $licensecourses, array('id' => 'licensecourseselector'));
+                $licensecourseselect->setMultiple(true);
+                $licensecourseselect->setSelected(array());
+            }
+        }
+
         $this->add_action_buttons(true, get_string('uploadusers', 'tool_uploaduser'));
     }
 
@@ -246,6 +309,10 @@ class admin_uploaduser_form2 extends company_moodleform {
      * Server side validation.
      */
     public function validation($data, $files) {
+        global $DB, $SESSION;
+        if (!empty($data['cancel'])) {
+            return true;
+        }
         $errors = parent::validation($data, $files);
         $columns =& $this->_customdata;
         $optype  = $data['uutype'];
@@ -300,7 +367,24 @@ class admin_uploaduser_form2 extends company_moodleform {
                 $errors['email'] = get_string('requiredtemplate', 'tool_uploaduser');
             }
         }
+        //$errors['licenseid'] = 'Not enough test';
 
+        if (!empty($data['licenseid'])) {
+            $license = $DB->get_record('companylicense', array('id' => $data['licenseid']));
+            if (!empty($data['licensecourses'])) {
+                $requiredcount = count($data['licensecourses']) * ($data['readcount'] - 1);
+            } else {
+                $requiredcount = 0;
+            }
+
+            $free = ($license->allocation - $license->used);
+            if ( $requiredcount > $free) {
+                // check how many free spaces
+                // compare it to numbers of users
+                $errors['licenseid'] = 'We need ' . $requiredcount . ' license slots and have ' . $free;
+            }
+        }
+    
         return $errors;
     }
 
@@ -324,6 +408,8 @@ class admin_uploaduser_form2 extends company_moodleform {
 
         if ($data['companyid'] > 0) {
             $this->selectedcompany = $data['companyid'];
+        }
+        if (!empty($data['licenseid'])) {
         }
     }
 }

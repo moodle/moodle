@@ -29,6 +29,11 @@ $iid         = optional_param('iid', '', PARAM_INT);
 $previewrows = optional_param('previewrows', 10, PARAM_INT);
 $readcount   = optional_param('readcount', 0, PARAM_INT);
 $uploadtype  = optional_param('uutype', 0, PARAM_INT);
+$licenseid = optional_param('licenseid', 0, PARAM_INT);
+
+if (!empty($licenseid)) {
+    $SESSION->chosenlicenseid = $licenseid;
+}
 
 $montharray = array('jan' => '01',
                     'feb' => '02',
@@ -72,6 +77,7 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'user_upload_title');
 $blockpage->setup();
+$PAGE->requires->jquery();
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
@@ -192,632 +198,689 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 
 } else if ($formdata = $mform->get_data()) {
-    // Another cancelled check.
-    if (!empty($formdata->cancel) && $formdata->cancel == 'Cancel') {
-        $cir->cleanup(true);
-        redirect($returnurl);
-    }
-    // Print the header.
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('uploadusersresult', 'tool_uploaduser'));
+    if (!empty($formdata->submitbutton)) {
+        // Another cancelled check.
+        if (!empty($formdata->cancel) && $formdata->cancel == 'Cancel') {
+            $cir->cleanup(true);
+            redirect($returnurl);
+        }
+        // Print the header.
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('uploadusersresult', 'tool_uploaduser'));
+    
+        $optype = $formdata->uutype;
+    
+        $createpasswords   = (!empty($formdata->uupasswordnew) and $optype != UU_UPDATE);
+        $updatepasswords   = (!empty($formdata->uupasswordold)  and $optype != UU_ADDNEW and $optype != UU_ADDINC);
+        $allowrenames      = (!empty($formdata->uuallowrenames) and $optype != UU_ADDNEW and $optype != UU_ADDINC);
+        $allowdeletes      = (!empty($formdata->uuallowdeletes) and $optype != UU_ADDNEW and $optype != UU_ADDINC);
+        $updatetype        = isset($formdata->uuupdatetype) ? $formdata->uuupdatetype : 0;
+        $bulk              = $formdata->uubulk;
+        $noemailduplicates = $formdata->uunoemailduplicates;
+    
+        // Verification moved to two places: after upload and into form2.
+        $usersnew     = 0;
+        $usersupdated = 0;
+        $userserrors  = 0;
+        $deletes      = 0;
+        $deleteerrors = 0;
+        $renames      = 0;
+        $renameerrors = 0;
+        $usersskipped = 0;
+        $weakpasswords = 0;
+        $numlicenses = 0;
+        $numlicenseerrors = 0;
 
-    $optype = $formdata->uutype;
+        // Caches.
+        $ccache       = array(); // Course cache - do not fetch all courses here, we  will not probably use them all anyway!
+        $rolecache    = uu_allowed_roles_cache(); // Roles lookup cache.
+        $manualcache  = array(); // Cache of used manual enrol plugins in each course.
+    
+        $allowedauths   = uu_allowed_auths();
+        $allowedauths   = array_keys($allowedauths);
+        $availableauths = get_plugin_list('auth');
+        $availableauths = array_keys($availableauths);
+    
+        // We use only manual enrol plugin here, if it is disabled no enrol is done.
+        if (enrol_is_enabled('manual')) {
+            $manual = enrol_get_plugin('manual');
+        } else {
+            $manual = null;
+        }
 
-    $createpasswords   = (!empty($formdata->uupasswordnew) and $optype != UU_UPDATE);
-    $updatepasswords   = (!empty($formdata->uupasswordold)  and $optype != UU_ADDNEW and $optype != UU_ADDINC);
-    $allowrenames      = (!empty($formdata->uuallowrenames) and $optype != UU_ADDNEW and $optype != UU_ADDINC);
-    $allowdeletes      = (!empty($formdata->uuallowdeletes) and $optype != UU_ADDNEW and $optype != UU_ADDINC);
-    $updatetype        = isset($formdata->uuupdatetype) ? $formdata->uuupdatetype : 0;
-    $bulk              = $formdata->uubulk;
-    $noemailduplicates = $formdata->uunoemailduplicates;
+        // Clear bulk selection.
+        if ($bulk) {
+            $SESSION->bulk_users = array();
+        }
 
-    // Verification moved to two places: after upload and into form2.
-    $usersnew     = 0;
-    $usersupdated = 0;
-    $userserrors  = 0;
-    $deletes      = 0;
-    $deleteerrors = 0;
-    $renames      = 0;
-    $renameerrors = 0;
-    $usersskipped = 0;
-    $weakpasswords = 0;
+        // Init csv import helper.
+        $cir->init();
+        $linenum = 1; // Column header is first line.
 
-    // Caches.
-    $ccache       = array(); // Course cache - do not fetch all courses here, we  will not probably use them all anyway!
-    $rolecache    = uu_allowed_roles_cache(); // Roles lookup cache.
-    $manualcache  = array(); // Cache of used manual enrol plugins in each course.
+        // Init upload progress tracker.
+        $upt = new uu_progress_tracker();
+        $upt->init(); // Start table.
 
-    $allowedauths   = uu_allowed_auths();
-    $allowedauths   = array_keys($allowedauths);
-    $availableauths = get_plugin_list('auth');
-    $availableauths = array_keys($availableauths);
-
-    // We use only manual enrol plugin here, if it is disabled no enrol is done.
-    if (enrol_is_enabled('manual')) {
-        $manual = enrol_get_plugin('manual');
-    } else {
-        $manual = null;
-    }
-
-    // Clear bulk selection.
-    if ($bulk) {
-        $SESSION->bulk_users = array();
-    }
-
-    // Init csv import helper.
-    $cir->init();
-    $linenum = 1; // Column header is first line.
-
-    // Init upload progress tracker.
-    $upt = new uu_progress_tracker();
-    $upt->init(); // Start table.
-
-    while ($line = $cir->next()) {
-        $upt->flush();
-        $linenum++;
-
-        $upt->track('line', $linenum);
-
-        $forcechangepassword = false;
-
-        $user = new stdClass();
-        // By default, use the local mnet id (this may be changed in the file).
-        $user->mnethostid = $CFG->mnet_localhost_id;
-        // Add fields to user object.
-        foreach ($line as $key => $value) {
-            if ($value !== '') {
-                $key = $columns[$key];
-                $user->$key = $value;
-                if (in_array($key, $upt->columns)) {
-                    $upt->track($key, $value);
+        while ($line = $cir->next()) {
+            $upt->flush();
+            $linenum++;
+    
+            $upt->track('line', $linenum);
+    
+            $forcechangepassword = false;
+    
+            $user = new stdClass();
+            // By default, use the local mnet id (this may be changed in the file).
+            $user->mnethostid = $CFG->mnet_localhost_id;
+            // Add fields to user object.
+            foreach ($line as $key => $value) {
+                if ($value !== '') {
+                    $key = $columns[$key];
+                    $user->$key = $value;
+                    if (in_array($key, $upt->columns)) {
+                        $upt->track($key, $value);
+                    }
+                } else {
+                    $user->$columns[$key] = '';
                 }
-            } else {
-                $user->$columns[$key] = '';
             }
-        }
-
-        if (empty($user->username) && !empty($user->email)) {
-            // No username given, try to find an existing user via the email address.
-            if ($perfexistinguser = $DB->get_record('user', array('email' => $user->email, 'mnethostid' => $user->mnethostid))) {
-                $user->username = $perfexistinguser->username;
-            } else {
-                // No existing user matches, generate a new username.
-                $user->username = company_user::generate_username($user->email);
+    
+            if (empty($user->username) && !empty($user->email)) {
+                // No username given, try to find an existing user via the email address.
+                if ($perfexistinguser = $DB->get_record('user', array('email' => $user->email, 'mnethostid' => $user->mnethostid))) {
+                    $user->username = $perfexistinguser->username;
+                } else {
+                    // No existing user matches, generate a new username.
+                    $user->username = company_user::generate_username($user->email);
+                }
+                $upt->track('username', $user->username);
             }
-            $upt->track('username', $user->username);
-        }
-
-        // Get username, first/last name now - we need them in templates!!
-        if ($optype == UU_UPDATE) {
-            // When updating only username is required.
-            if (!isset($user->username)) {
+    
+            // Get username, first/last name now - we need them in templates!!
+            if ($optype == UU_UPDATE) {
+                // When updating only username is required.
+                if (!isset($user->username)) {
+                    $upt->track('status', get_string('missingfield', 'error', 'username'), 'error');
+                    $upt->track('username', $errorstr, 'error');
+                    $userserrors++;
+                    continue;
+                }
+    
+            } else {
+                $error = false;
+                // When all other ops need firstname and lastname.
+                if (!isset($user->firstname) or $user->firstname === '') {
+                    $upt->track('status', get_string('missingfield', 'error', 'firstname'), 'error');
+                    $upt->track('firstname', $errorstr, 'error');
+                    $error = true;
+                }
+                if (!isset($user->lastname) or $user->lastname === '') {
+                    $upt->track('status', get_string('missingfield', 'error', 'lastname'), 'error');
+                    $upt->track('lastname', $errorstr, 'error');
+                    $error = true;
+                }
+                if ($error) {
+                    $userserrors++;
+                    continue;
+                }
+                // We require username too - we might use template for it though.
+                if (!isset($user->username)) {
+                    if (!isset($formdata->username) or $formdata->username === '') {
+                        $upt->track('status', get_string('missingfield', 'error', 'username'), 'error');
+                        $upt->track('username', $errorstr, 'error');
+                        $userserrors++;
+                        continue;
+                    } else {
+                        $user->username = process_template($formdata->username, $user);
+                        $upt->track('username', $user->username);
+                    }
+                }
+            }
+    
+            // Normalize username.
+            $user->username = clean_param($user->username, PARAM_USERNAME);
+    
+            if (empty($user->username)) {
                 $upt->track('status', get_string('missingfield', 'error', 'username'), 'error');
                 $upt->track('username', $errorstr, 'error');
                 $userserrors++;
                 continue;
             }
-
-        } else {
-            $error = false;
-            // When all other ops need firstname and lastname.
-            if (!isset($user->firstname) or $user->firstname === '') {
-                $upt->track('status', get_string('missingfield', 'error', 'firstname'), 'error');
-                $upt->track('firstname', $errorstr, 'error');
-                $error = true;
+    
+            if ($existinguser = $DB->get_record('user', array('username' => $user->username, 'mnethostid' => $user->mnethostid))) {
+                $upt->track('id', $existinguser->id, 'normal', false);
             }
-            if (!isset($user->lastname) or $user->lastname === '') {
-                $upt->track('status', get_string('missingfield', 'error', 'lastname'), 'error');
-                $upt->track('lastname', $errorstr, 'error');
-                $error = true;
+    
+            // Find out in username incrementing required.
+            if ($existinguser and $optype == UU_ADDINC) {
+                $oldusername = $user->username;
+                $user->username = increment_username($user->username, $user->mnethostid);
+                $upt->track('username', '', 'normal', false); // Clear previous.
+                $upt->track('username', $oldusername.'-->'.$user->username, 'info');
+                $existinguser = false;
             }
-            if ($error) {
-                $userserrors++;
-                continue;
-            }
-            // We require username too - we might use template for it though.
-            if (!isset($user->username)) {
-                if (!isset($formdata->username) or $formdata->username === '') {
-                    $upt->track('status', get_string('missingfield', 'error', 'username'), 'error');
-                    $upt->track('username', $errorstr, 'error');
-                    $userserrors++;
+    
+            // Add default values for remaining fields.
+            foreach ($stdfields as $field) {
+                if (isset($user->$field)) {
                     continue;
-                } else {
-                    $user->username = process_template($formdata->username, $user);
-                    $upt->track('username', $user->username);
                 }
-            }
-        }
-
-        // Normalize username.
-        $user->username = clean_param($user->username, PARAM_USERNAME);
-
-        if (empty($user->username)) {
-            $upt->track('status', get_string('missingfield', 'error', 'username'), 'error');
-            $upt->track('username', $errorstr, 'error');
-            $userserrors++;
-            continue;
-        }
-
-        if ($existinguser = $DB->get_record('user', array('username' => $user->username, 'mnethostid' => $user->mnethostid))) {
-            $upt->track('id', $existinguser->id, 'normal', false);
-        }
-
-        // Find out in username incrementing required.
-        if ($existinguser and $optype == UU_ADDINC) {
-            $oldusername = $user->username;
-            $user->username = increment_username($user->username, $user->mnethostid);
-            $upt->track('username', '', 'normal', false); // Clear previous.
-            $upt->track('username', $oldusername.'-->'.$user->username, 'info');
-            $existinguser = false;
-        }
-
-        // Add default values for remaining fields.
-        foreach ($stdfields as $field) {
-            if (isset($user->$field)) {
-                continue;
-            }
-            // All validation moved to form2.
-            if (isset($formdata->$field)) {
-                // Process templates.
-                $user->$field = process_template($formdata->$field, $user);
-            }
-        }
-        foreach ($prffields as $field) {
-            if (isset($user->$field)) {
-                if (preg_match('/(?P<day>\d{2})-(?P<month>[a-zA-Z]{3})-(?P<year>\d{4})/', $user->$field, $datearray)) {
-                    $month = $montharray[$datearray[2]];
-                    $unixtime = mktime (0, 0, 0, $month, $datearray['day'], $datearray['year']);
-                    $user->$field = $unixtime;
-                }
-                continue;
-            }
-            if (isset($formdata->$field)) {
-                // Process templates.
-                // Check if is in a dd-Mon-yyy format.
-                if (preg_match('/(?P<day>\d{2})-(?P<month>[a-zA-Z]{3})-(?P<year>\d{4})/', $formdata->$field, $datearray)) {
-                    $month = $montharray[$datearray[2]];
-                    $unixtime = mktime (0, 0, 0, $month, $datearray['day'], $datearray['year']);
-                    $user->$field = $unixtime;
-                } else {
+                // All validation moved to form2.
+                if (isset($formdata->$field)) {
+                    // Process templates.
                     $user->$field = process_template($formdata->$field, $user);
                 }
             }
-        }
-
-        // Delete user.
-        if (!empty($user->deleted)) {
-            if (!$allowdeletes) {
-                $usersskipped++;
-                $upt->track('status', $strusernotdeletedoff, 'warning');
-                continue;
-            }
-            if ($existinguser) {
-                if (is_siteadmin($existinguser->id)) {
-                    $upt->track('status', $strusernotdeletedadmin, 'error');
-                    $deleteerrors++;
+            foreach ($prffields as $field) {
+                if (isset($user->$field)) {
+                    if (preg_match('/(?P<day>\d{2})-(?P<month>[a-zA-Z]{3})-(?P<year>\d{4})/', $user->$field, $datearray)) {
+                        $month = $montharray[$datearray[2]];
+                        $unixtime = mktime (0, 0, 0, $month, $datearray['day'], $datearray['year']);
+                        $user->$field = $unixtime;
+                    }
                     continue;
                 }
-                if (delete_user($existinguser)) {
-                    $upt->track('status', $struserdeleted);
-                    $deletes++;
+                if (isset($formdata->$field)) {
+                    // Process templates.
+                    // Check if is in a dd-Mon-yyy format.
+                    if (preg_match('/(?P<day>\d{2})-(?P<month>[a-zA-Z]{3})-(?P<year>\d{4})/', $formdata->$field, $datearray)) {
+                        $month = $montharray[$datearray[2]];
+                        $unixtime = mktime (0, 0, 0, $month, $datearray['day'], $datearray['year']);
+                        $user->$field = $unixtime;
+                    } else {
+                        $user->$field = process_template($formdata->$field, $user);
+                    }
+                }
+            }
+    
+            // Delete user.
+            if (!empty($user->deleted)) {
+                if (!$allowdeletes) {
+                    $usersskipped++;
+                    $upt->track('status', $strusernotdeletedoff, 'warning');
+                    continue;
+                }
+                if ($existinguser) {
+                    if (is_siteadmin($existinguser->id)) {
+                        $upt->track('status', $strusernotdeletedadmin, 'error');
+                        $deleteerrors++;
+                        continue;
+                    }
+                    if (delete_user($existinguser)) {
+                        $upt->track('status', $struserdeleted);
+                        $deletes++;
+                    } else {
+                        $upt->track('status', $strusernotdeletederror, 'error');
+                        $deleteerrors++;
+                    }
                 } else {
-                    $upt->track('status', $strusernotdeletederror, 'error');
+                    $upt->track('status', $strusernotdeletedmissing, 'error');
                     $deleteerrors++;
                 }
-            } else {
-                $upt->track('status', $strusernotdeletedmissing, 'error');
-                $deleteerrors++;
-            }
-            continue;
-        }
-        // We do not need the deleted flag anymore.
-        unset($user->deleted);
-
-        // Renaming requested?
-        if (!empty($user->oldusername) ) {
-            $oldusername = core_text::strtolower($user->oldusername);
-            if (!$allowrenames) {
-                $usersskipped++;
-                $upt->track('status', $strusernotrenamedoff, 'warning');
                 continue;
             }
-
-            if ($existinguser) {
-                $upt->track('status', $strusernotrenamedexists, 'error');
-                $renameerrors++;
-                continue;
-            }
-
-            if ($olduser = $DB->get_record('user', array('username' => $oldusername, 'mnethostid' => $user->mnethostid))) {
-                $upt->track('id', $olduser->id, 'normal', false);
-                if (is_siteadmin($olduser->id)) {
-                    $upt->track('status', $strusernotrenamedadmin, 'error');
+            // We do not need the deleted flag anymore.
+            unset($user->deleted);
+    
+            // Renaming requested?
+            if (!empty($user->oldusername) ) {
+                $oldusername = core_text::strtolower($user->oldusername);
+                if (!$allowrenames) {
+                    $usersskipped++;
+                    $upt->track('status', $strusernotrenamedoff, 'warning');
+                    continue;
+                }
+    
+                if ($existinguser) {
+                    $upt->track('status', $strusernotrenamedexists, 'error');
                     $renameerrors++;
                     continue;
                 }
-                $DB->set_field('user', 'username', $user->username, array('id' => $olduser->id));
-                $upt->track('username', '', 'normal', false); // Clear previous.
-                $upt->track('username', $oldusername.'-->'.$user->username, 'info');
-                $upt->track('status', $struserrenamed);
-                $renames++;
-            } else {
-                $upt->track('status', $strusernotrenamedmissing, 'error');
-                $renameerrors++;
+    
+                if ($olduser = $DB->get_record('user', array('username' => $oldusername, 'mnethostid' => $user->mnethostid))) {
+                    $upt->track('id', $olduser->id, 'normal', false);
+                    if (is_siteadmin($olduser->id)) {
+                        $upt->track('status', $strusernotrenamedadmin, 'error');
+                        $renameerrors++;
+                        continue;
+                    }
+                    $DB->set_field('user', 'username', $user->username, array('id' => $olduser->id));
+                    $upt->track('username', '', 'normal', false); // Clear previous.
+                    $upt->track('username', $oldusername.'-->'.$user->username, 'info');
+                    $upt->track('status', $struserrenamed);
+                    $renames++;
+                } else {
+                    $upt->track('status', $strusernotrenamedmissing, 'error');
+                    $renameerrors++;
+                    continue;
+                }
+                $existinguser = $olduser;
+                $existinguser->username = $user->username;
+            }
+    
+            // Can we process with update or insert?
+            $skip = false;
+            switch ($optype) {
+                case UU_ADDNEW:
+                    if ($existinguser) {
+                        $usersskipped++;
+                        $upt->track('status', $strusernotadded, 'warning');
+                        $skip = true;
+                    }
+                    break;
+    
+                case UU_ADDINC:
+                    if ($existinguser) {
+                        // This should not happen!
+                        $upt->track('status', $strusernotaddederror, 'error');
+                        $userserrors++;
+                        continue;
+                    }
+                    break;
+    
+                case UU_ADD_UPDATE:
+                    break;
+    
+                case UU_UPDATE:
+                    if (!$existinguser) {
+                        $usersskipped++;
+                        $upt->track('status', $strusernotupdatednotexists, 'warning');
+                        $skip = true;
+                    }
+                    break;
+            }
+    
+            if ($skip) {
                 continue;
             }
-            $existinguser = $olduser;
-            $existinguser->username = $user->username;
-        }
-
-        // Can we process with update or insert?
-        $skip = false;
-        switch ($optype) {
-            case UU_ADDNEW:
-                if ($existinguser) {
-                    $usersskipped++;
-                    $upt->track('status', $strusernotadded, 'warning');
-                    $skip = true;
-                }
-                break;
-
-            case UU_ADDINC:
-                if ($existinguser) {
-                    // This should not happen!
-                    $upt->track('status', $strusernotaddederror, 'error');
+    
+            if ($existinguser) {
+                $user->id = $existinguser->id;
+    
+                if (is_siteadmin($user->id)) {
+                    $upt->track('status', $strusernotupdatedadmin, 'error');
                     $userserrors++;
                     continue;
                 }
-                break;
-
-            case UU_ADD_UPDATE:
-                break;
-
-            case UU_UPDATE:
-                if (!$existinguser) {
-                    $usersskipped++;
-                    $upt->track('status', $strusernotupdatednotexists, 'warning');
-                    $skip = true;
-                }
-                break;
-        }
-
-        if ($skip) {
-            continue;
-        }
-
-        if ($existinguser) {
-            $user->id = $existinguser->id;
-
-            if (is_siteadmin($user->id)) {
-                $upt->track('status', $strusernotupdatedadmin, 'error');
-                $userserrors++;
-                continue;
-            }
-
-            if (!empty($updatetype)) {
-                $existinguser->timemodified = time();
-                if (empty($existinguser->timecreated)) {
-                    if (empty($existinguser->firstaccess)) {
-                        $existinguser->timecreated = time();
-                    } else {
-                        $existinguser->timecreated = $existinguser->firstaccess;
+    
+                if (!empty($updatetype)) {
+                    $existinguser->timemodified = time();
+                    if (empty($existinguser->timecreated)) {
+                        if (empty($existinguser->firstaccess)) {
+                            $existinguser->timecreated = time();
+                        } else {
+                            $existinguser->timecreated = $existinguser->firstaccess;
+                        }
                     }
-                }
-
-                // Load existing profile data.
-                profile_load_data($existinguser);
-
-                $allowed = array();
-                if ($updatetype == 1) {
-                    $allowed = $columns;
-                } else if ($updatetype == 2 or $updatetype == 3) {
-                    $allowed = array_merge($stdfields, $prffields);
-                }
-                foreach ($allowed as $column) {
-                    $temppasswordhandler = '';
-                    if ($column == 'username') {
-                        continue;
+    
+                    // Load existing profile data.
+                    profile_load_data($existinguser);
+    
+                    $allowed = array();
+                    if ($updatetype == 1) {
+                        $allowed = $columns;
+                    } else if ($updatetype == 2 or $updatetype == 3) {
+                        $allowed = array_merge($stdfields, $prffields);
                     }
-                    if ((property_exists($existinguser, $column) and property_exists($user, $column))
-                         or in_array($column, $prffields)) {
-                        if ($updatetype == 3 && $existinguser->$column !== '') {
-                            // Missing == non-empty only!
+                    foreach ($allowed as $column) {
+                        $temppasswordhandler = '';
+                        if ($column == 'username') {
                             continue;
                         }
-                        if ($existinguser->$column !== $user->$column) {
-                            if ($column == 'email') {
-                                if ($DB->record_exists('user', array('email' => $user->email))) {
-                                    if ($noemailduplicates) {
-                                        $upt->track('email', $stremailduplicate, 'error');
-                                        $upt->track('status', $strusernotupdated, 'error');
-                                        $userserrors++;
-                                        continue 2;
-                                    } else {
-                                        $upt->track('email', $stremailduplicate, 'warning');
-                                    }
-                                }
+                        if ((property_exists($existinguser, $column) and property_exists($user, $column))
+                             or in_array($column, $prffields)) {
+                            if ($updatetype == 3 && $existinguser->$column !== '') {
+                                // Missing == non-empty only!
+                                continue;
                             }
-
-                            if ($column == 'password') {
-                                $temppasswordhandler = $existinguser->password;
-                            }
-
-                            if ($column == 'auth') {
-                                if (isset($user->auth) && empty($user->auth)) {
-                                    $user->auth = 'manual';
-                                }
-
-                                $existinguserauth = get_auth_plugin($existinguser->auth);
-                                $existingisinternalauth = $existinguserauth->is_internal();
-
-                                $userauth = get_auth_plugin($user->auth);
-                                $isinternalauth = $userauth->is_internal();
-
-                                if ($isinternalauth === $existingisinternalauth) {
-                                    if ($updatepasswords) {
-                                        if (empty($user->password)) {
-                                            $forcechangepassword = true;
+                            if ($existinguser->$column !== $user->$column) {
+                                if ($column == 'email') {
+                                    if ($DB->record_exists('user', array('email' => $user->email))) {
+                                        if ($noemailduplicates) {
+                                            $upt->track('email', $stremailduplicate, 'error');
+                                            $upt->track('status', $strusernotupdated, 'error');
+                                            $userserrors++;
+                                            continue 2;
+                                        } else {
+                                            $upt->track('email', $stremailduplicate, 'warning');
                                         }
                                     }
-                                } else if ($isinternalauth) {
-                                    $existinguser->password = '';
-                                    $forcechangepassword = true;
                                 }
-                            }
-
-                            $upt->track($column, '', 'normal', false); // Clear previous.
-                            if ($column != 'password' && in_array($column, $upt->columns)) {
-                                $upt->track($column, $existinguser->$column.'-->'.$user->$column, 'info');
-                            }
-                            $existinguser->$column = $user->$column;
-
-                            if (!isset($user->auth) && !$updatepasswords) {
-                                $existinguser->password = $temppasswordhandler;
+    
+                                if ($column == 'password') {
+                                    $temppasswordhandler = $existinguser->password;
+                                }
+    
+                                if ($column == 'auth') {
+                                    if (isset($user->auth) && empty($user->auth)) {
+                                        $user->auth = 'manual';
+                                    }
+    
+                                    $existinguserauth = get_auth_plugin($existinguser->auth);
+                                    $existingisinternalauth = $existinguserauth->is_internal();
+    
+                                    $userauth = get_auth_plugin($user->auth);
+                                    $isinternalauth = $userauth->is_internal();
+    
+                                    if ($isinternalauth === $existingisinternalauth) {
+                                        if ($updatepasswords) {
+                                            if (empty($user->password)) {
+                                                $forcechangepassword = true;
+                                            }
+                                        }
+                                    } else if ($isinternalauth) {
+                                        $existinguser->password = '';
+                                        $forcechangepassword = true;
+                                    }
+                                }
+    
+                                $upt->track($column, '', 'normal', false); // Clear previous.
+                                if ($column != 'password' && in_array($column, $upt->columns)) {
+                                    $upt->track($column, $existinguser->$column.'-->'.$user->$column, 'info');
+                                }
+                                $existinguser->$column = $user->$column;
+    
+                                if (!isset($user->auth) && !$updatepasswords) {
+                                    $existinguser->password = $temppasswordhandler;
+                                }
                             }
                         }
                     }
+    
+                    // Do not update record if new auth plugin does not exist!
+                    if (!in_array($existinguser->auth, $availableauths)) {
+                        $upt->track('auth', get_string('userautherror', 'error', $existinguser->auth), 'error');
+                        $upt->track('status', $strusernotupdated, 'error');
+                        $userserrors++;
+                        continue;
+                    } else if (!in_array($existinguser->auth, $allowedauths)) {
+                        $upt->track('auth', $struserauthunsupported, 'warning');
+                    }
+    
+                    $auth = get_auth_plugin($existinguser->auth);
+                    $isinternalauth = $auth->is_internal();
+    
+                    if ($isinternalauth && $updatepasswords && !check_password_policy($user->password, $errmsg)) {
+                        $upt->track('password', get_string('internalauthpassworderror', 'error', $existinguser->password), 'error');
+                        $upt->track('status', $strusernotupdated, 'error');
+                        $userserrors++;
+                        continue;
+                    } else {
+                        $forcechangepassword = true;
+                    }
+    
+                    if (!$isinternalauth) {
+                        $existinguser->password = 'not cached';
+                        $upt->track('password', 'not cached');
+                        $forcechangepassword = false;
+                    } else if ($updatepasswords) {
+                        $existinguser->password = hash_internal_user_password($existinguser->password);
+                    } else {
+                        $existinguser->password = $temppasswordhandler;
+                    }
+    
+                    $DB->update_record('user', $existinguser);
+    
+                    // Remove user preference.
+    
+                    if (get_user_preferences('create_password', false, $existinguser)) {
+                        unset_user_preference('create_password', $existinguser);
+                    }
+                    if (get_user_preferences('auth_forcepasswordchange', false, $existinguser)) {
+                        unset_user_preference('auth_forcepasswordchange', $existinguser);
+                    }
+    
+                    if ($isinternalauth && $updatepasswords) {
+                        if (empty($existinguser->password)) {
+                            set_user_preference('create_password', 1, $existinguser->id);
+                            set_user_preference('auth_forcepasswordchange', 1, $existinguser->id);
+                            $upt->track('password', get_string('new'));
+                        } else if ($forcechangepassword) {
+                            set_user_preference('auth_forcepasswordchange', 1, $existinguser->id);
+                        }
+                    }
+                    $upt->track('status', $struserupdated);
+                    $usersupdated++;
+                    // Save custom profile fields data from csv file.
+                    profile_save_data($existinguser);
+    
+                    \core\event\user_updated::create(array('context'=>$systemcontext, 'relateduserid' => $USER->id, 'userid' => $existinguser->id))->trigger();
+     
                 }
-
-                // Do not update record if new auth plugin does not exist!
-                if (!in_array($existinguser->auth, $availableauths)) {
-                    $upt->track('auth', get_string('userautherror', 'error', $existinguser->auth), 'error');
-                    $upt->track('status', $strusernotupdated, 'error');
-                    $userserrors++;
-                    continue;
-                } else if (!in_array($existinguser->auth, $allowedauths)) {
-                    $upt->track('auth', $struserauthunsupported, 'warning');
-                }
-
-                $auth = get_auth_plugin($existinguser->auth);
-                $isinternalauth = $auth->is_internal();
-
-                if ($isinternalauth && $updatepasswords && !check_password_policy($user->password, $errmsg)) {
-                    $upt->track('password', get_string('internalauthpassworderror', 'error', $existinguser->password), 'error');
-                    $upt->track('status', $strusernotupdated, 'error');
-                    $userserrors++;
-                    continue;
-                } else {
-                    $forcechangepassword = true;
-                }
-
-                if (!$isinternalauth) {
-                    $existinguser->password = 'not cached';
-                    $upt->track('password', 'not cached');
-                    $forcechangepassword = false;
-                } else if ($updatepasswords) {
-                    $existinguser->password = hash_internal_user_password($existinguser->password);
-                } else {
-                    $existinguser->password = $temppasswordhandler;
-                }
-
-                $DB->update_record('user', $existinguser);
-
-                // Remove user preference.
-
-                if (get_user_preferences('create_password', false, $existinguser)) {
-                    unset_user_preference('create_password', $existinguser);
-                }
-                if (get_user_preferences('auth_forcepasswordchange', false, $existinguser)) {
-                    unset_user_preference('auth_forcepasswordchange', $existinguser);
-                }
-
-                if ($isinternalauth && $updatepasswords) {
-                    if (empty($existinguser->password)) {
-                        set_user_preference('create_password', 1, $existinguser->id);
-                        set_user_preference('auth_forcepasswordchange', 1, $existinguser->id);
-                        $upt->track('password', get_string('new'));
-                    } else if ($forcechangepassword) {
-                        set_user_preference('auth_forcepasswordchange', 1, $existinguser->id);
+    
+                if ($bulk == 2 or $bulk == 3) {
+                    if (!in_array($user->id, $SESSION->bulk_users)) {
+                        $SESSION->bulk_users[] = $user->id;
                     }
                 }
-                $upt->track('status', $struserupdated);
-                $usersupdated++;
-                // Save custom profile fields data from csv file.
-                profile_save_data($existinguser);
-
-                \core\event\user_updated::create(array('context'=>$systemcontext, 'relateduserid' => $USER->id, 'userid' => $existinguser->id))->trigger();
- 
-            }
-
-            if ($bulk == 2 or $bulk == 3) {
-                if (!in_array($user->id, $SESSION->bulk_users)) {
-                    $SESSION->bulk_users[] = $user->id;
-                }
-            }
-
-        } else {
-            // Save the user to the database.
-            $user->confirmed = 1;
-            $user->timemodified = time();
-            $user->timecreated = time();
-
-            if (isset($user->auth) && empty($user->auth)) {
-                $user->auth = 'manual';
-            }
-            $auth = get_auth_plugin($user->auth);
-            $isinternalauth = $auth->is_internal();
-
-            if (!$createpasswords && $isinternalauth) {
-                if (empty($user->password)) {
-                    $upt->track('password', get_string('missingfield', 'error', 'password'), 'error');
-                    $upt->track('status', $strusernotaddederror, 'error');
-                    $userserrors++;
-                    continue;
-                } else if ($forcechangepassword) {
-                    $upt->track('password', $strinvalidpasswordpolicy);
-                    $upt->track('status', $strusernotaddederror, 'error');
-                    $userserrors++;
-                    continue;
-                }
-            }
-
-            // Do not insert record if new auth plguin does not exist!
-            if (isset($user->auth)) {
-                if (!in_array($user->auth, $availableauths)) {
-                    $upt->track('auth', get_string('userautherror', 'error', $user->auth), 'error');
-                    $upt->track('status', $strusernotaddederror, 'error');
-                    $userserrors++;
-                    continue;
-                } else if (!in_array($user->auth, $allowedauths)) {
-                    $upt->track('auth', $struserauthunsupported, 'warning');
-                }
-            }
-
-            if ($DB->record_exists('user', array('email' => $user->email))) {
-                if ($noemailduplicates) {
-                    $upt->track('email', $stremailduplicate, 'error');
-                    $upt->track('status', $strusernotaddederror, 'error');
-                    $userserrors++;
-                    continue;
-                } else {
-                    $upt->track('email', $stremailduplicate, 'warning');
-                }
-            }
-            if (!$isinternalauth) {
-                $user->password = 'not cached';
-                $upt->track('password', 'not cached');
-            } else {
-                if (isset($user->password) ) {
-                    $user->password = hash_internal_user_password($user->password);
-                }
-            }
-
-            // Merge user with company user defaults.
-            if (!empty($companyid)) {
-                $company = new company($companyid);
-                $defaults = $company->get_user_defaults();
-
-                $user = (object) array_merge((array) $defaults, (array) $user);
-            }
-            $user->id = $DB->insert_record('user', $user);
-            $info = ': ' . $user->username .' (ID = ' . $user->id . ')';
-            $upt->track('status', $struseradded);
-            $upt->track('id', $user->id, 'normal', false);
-            $usersnew++;
-            if ($createpasswords && $isinternalauth) {
-                if (empty($user->password) || $forcechangepassword) {
-                    // Passwords will be created and sent out on cron.
-                    set_user_preference('create_password', 1, $user->id);
-                    set_user_preference('auth_forcepasswordchange', 1, $user->id);
-                    $upt->track('password', get_string('new'));
-                } else {
-                    set_user_preference('auth_forcepasswordchange', 1, $user->id);
-                }
-            }
-            // Save custom profile fields data.
-            profile_save_data($user);
-
-            // Make sure user context exists.
-            context_user::instance($user->id);
-
-            // Add the user to the company
-            $company->assign_user_to_company($user->id);
-
-            // Add the user to the company default hierarchy level.
-            company::assign_user_to_department($formdata->userdepartment, $user->id);
-
-            \core\event\user_created::create_from_userid($user->id)->trigger();
-
-            if ($bulk == 1 or $bulk == 3) {
-                if (!in_array($user->id, $SESSION->bulk_users)) {
-                    $SESSION->bulk_users[] = $user->id;
-                }
-            }
-        }
-
-        // Find course enrolments, groups, roles/types and enrol periods.
-        foreach ($columns as $column) {
-            if (preg_match('/^course\d+$/', $column)) {
-                $i = substr($column, 6);
     
-                if (empty($user->{'course'.$i})) {
-                    continue;
+            } else {
+                // Save the user to the database.
+                $user->confirmed = 1;
+                $user->timemodified = time();
+                $user->timecreated = time();
+    
+                if (isset($user->auth) && empty($user->auth)) {
+                    $user->auth = 'manual';
                 }
-                $shortname = $user->{'course'.$i};
-                if (!array_key_exists($shortname, $ccache)) {
-                    if (!$course = $DB->get_record('course', array('shortname' => $shortname), 'id, shortname')) {
-                        $upt->track('enrolments', get_string('unknowncourse', 'error', $shortname), 'error');
+                $auth = get_auth_plugin($user->auth);
+                $isinternalauth = $auth->is_internal();
+    
+                if (!$createpasswords && $isinternalauth) {
+                    if (empty($user->password)) {
+                        $upt->track('password', get_string('missingfield', 'error', 'password'), 'error');
+                        $upt->track('status', $strusernotaddederror, 'error');
+                        $userserrors++;
+                        continue;
+                    } else if ($forcechangepassword) {
+                        $upt->track('password', $strinvalidpasswordpolicy);
+                        $upt->track('status', $strusernotaddederror, 'error');
+                        $userserrors++;
                         continue;
                     }
-                    $ccache[$shortname] = $course;
-                    $ccache[$shortname]->groups = null;
                 }
-                company_user::enrol($user, $ccache[$shortname], $companyid);
-            }
-            if (!empty($formdata->selectedcourses)) {
-                // add the user to the courses selected in the upload form.
-                $courseids = array();
-                foreach ($formdata->selectedcourses as $selectedcourse) {
-                    $courseids[] = $selectedcourse->id;
+    
+                // Do not insert record if new auth plguin does not exist!
+                if (isset($user->auth)) {
+                    if (!in_array($user->auth, $availableauths)) {
+                        $upt->track('auth', get_string('userautherror', 'error', $user->auth), 'error');
+                        $upt->track('status', $strusernotaddederror, 'error');
+                        $userserrors++;
+                        continue;
+                    } else if (!in_array($user->auth, $allowedauths)) {
+                        $upt->track('auth', $struserauthunsupported, 'warning');
+                    }
                 }
-                company_user::enrol($user, $courseids, $companyid);
+    
+                if ($DB->record_exists('user', array('email' => $user->email))) {
+                    if ($noemailduplicates) {
+                        $upt->track('email', $stremailduplicate, 'error');
+                        $upt->track('status', $strusernotaddederror, 'error');
+                        $userserrors++;
+                        continue;
+                    } else {
+                        $upt->track('email', $stremailduplicate, 'warning');
+                    }
+                }
+                if (!$isinternalauth) {
+                    $user->password = 'not cached';
+                    $upt->track('password', 'not cached');
+                } else {
+                    if (isset($user->password) ) {
+                        $user->password = hash_internal_user_password($user->password);
+                    }
+                }
+    
+                // Merge user with company user defaults.
+                if (!empty($companyid)) {
+                    $company = new company($companyid);
+                    $defaults = $company->get_user_defaults();
+    
+                    $user = (object) array_merge((array) $defaults, (array) $user);
+                }
+                $user->id = $DB->insert_record('user', $user);
+                $info = ': ' . $user->username .' (ID = ' . $user->id . ')';
+                $upt->track('status', $struseradded);
+                $upt->track('id', $user->id, 'normal', false);
+                $usersnew++;
+                if ($createpasswords && $isinternalauth) {
+                    if (empty($user->password) || $forcechangepassword) {
+                        // Passwords will be created and sent out on cron.
+                        set_user_preference('create_password', 1, $user->id);
+                        set_user_preference('auth_forcepasswordchange', 1, $user->id);
+                        $upt->track('password', get_string('new'));
+                    } else {
+                        set_user_preference('auth_forcepasswordchange', 1, $user->id);
+                    }
+                }
+                // Save custom profile fields data.
+                profile_save_data($user);
+    
+                // Make sure user context exists.
+                context_user::instance($user->id);
+    
+                // Add the user to the company
+                $company->assign_user_to_company($user->id);
+    
+                // Add the user to the company default hierarchy level.
+                company::assign_user_to_department($formdata->userdepartment, $user->id);
+    
+                \core\event\user_created::create_from_userid($user->id)->trigger();
+    
+                if ($bulk == 1 or $bulk == 3) {
+                    if (!in_array($user->id, $SESSION->bulk_users)) {
+                        $SESSION->bulk_users[] = $user->id;
+                    }
+                }
             }
+    
+            // Find course enrolments, groups, roles/types and enrol periods.
+            foreach ($columns as $column) {
+                if (preg_match('/^course\d+$/', $column)) {
+                    $i = substr($column, 6);
+        
+                    if (empty($user->{'course'.$i})) {
+                        continue;
+                    }
+                    $shortname = $user->{'course'.$i};
+                    if (!array_key_exists($shortname, $ccache)) {
+                        if (!$course = $DB->get_record('course', array('shortname' => $shortname), 'id, shortname')) {
+                            $upt->track('enrolments', get_string('unknowncourse', 'error', $shortname), 'error');
+                            continue;
+                        }
+                        $ccache[$shortname] = $course;
+                        $ccache[$shortname]->groups = null;
+                    }
+                    company_user::enrol($user, $ccache[$shortname], $companyid);
+                }
+                if (!empty($formdata->selectedcourses)) {
+                    // add the user to the courses selected in the upload form.
+                    $courseids = array();
+                    foreach ($formdata->selectedcourses as $selectedcourse) {
+                        $courseids[] = $selectedcourse->id;
+                    }
+                    company_user::enrol($user, $courseids, $companyid);
+                }
+            }
+    
+            // Enrol user into courses that were selected on the form.
+            if (isset($formdata->selectedcourses) ) {
+                company_user::enrol($user, array_keys($formdata->selectedcourses) );
+            }
+
+            // Assign and licenses.
+            if (!empty($formdata->licensecourses)) {
+                $licenserecord = (array) $DB->get_record('companylicense', array('id' => $formdata->licenseid));
+                $count = $licenserecord['used'];
+                $numberoflicenses = $licenserecord['allocation'];
+                foreach ($formdata->licensecourses as $licensecourse) {
+                    if ($count >= $numberoflicenses) {
+                        // Set the used amount.
+                        $licenserecord['used'] = $count;
+                        $DB->update_record('companylicense', $licenserecord);
+                        $numlicenseerrors++;
+                        continue;
+                    }
+                    if ($DB->get_record_sql("SELECT id FROM {companylicense_users}
+                                             WHERE licenseid = :licenseid
+                                             AND licensecourseid = :licensecourseid
+                                             AND userid = :userid
+                                             AND (isusing = 0 OR timecompleted IS NOT NULL)",
+                                             array('userid' => $user->id, 'licenseid' => $formdata->licenseid,
+                                                  'licensecourseid' => $licensecourse))) {
+                        // Already assigned skip and error.
+                        $numlicenseerrors++;
+                        continue;
+                    }
+                    $allow = true;
+                    $numlicenses++;
+        
+                    if ($allow) {
+                        $count++;
+                        $DB->insert_record('companylicense_users',
+                                            array('userid' => $user->id,
+                                                  'licenseid' => $formdata->licenseid,
+                                                  'licensecourseid' => $licensecourse,
+                                                  'issuedate' => time()));
+                    }
+                    // Create an email event.
+                    $license = new stdclass();
+                    $license->length = $licenserecord['validlength'];
+                    $license->valid = date('d M Y', $licenserecord['expirydate']);
+                    EmailTemplate::send('license_allocated', array('course' => $licensecourse,
+                                                                   'user' => $user,
+                                                                   'license' => $license));
+                }
+        
+                // Set the used amount for the license.
+                $licenserecord['used'] = $DB->count_records('companylicense_users', array('licenseid' => $formdata->licenseid));
+                $DB->update_record('companylicense', $licenserecord);
+            }
+
+
+            // If user was set to have password generated, generate it now, so that it can be downloaded.
+            company_user::generate_temporary_password($user, $formdata->sendnewpasswordemails);
         }
-
-        // Enrol user into courses that were selected on the form.
-        if (isset($formdata->selectedcourses) ) {
-            company_user::enrol($user, array_keys($formdata->selectedcourses) );
+        $upt->flush();
+        $upt->close(); // Close table.
+    
+        $cir->close();
+        $cir->cleanup(true);
+    
+        echo $OUTPUT->box_start('boxwidthnarrow boxaligncenter generalbox', 'uploadresults');
+        echo '<p>';
+        if ($optype != UU_UPDATE) {
+            echo get_string('userscreated', 'tool_uploaduser').': '.$usersnew.'<br />';
         }
-
-        // If user was set to have password generated, generate it now, so that it can be downloaded.
-        company_user::generate_temporary_password($user, $formdata->sendnewpasswordemails);
+        if ($optype == UU_UPDATE or $optype == UU_ADD_UPDATE) {
+            echo get_string('usersupdated', 'tool_uploaduser').': '.$usersupdated.'<br />';
+        }
+        if ($allowdeletes) {
+            echo get_string('usersdeleted', 'tool_uploaduser').': '.$deletes.'<br />';
+            echo get_string('deleteerrors', 'tool_uploaduser').': '.$deleteerrors.'<br />';
+        }
+        if ($allowrenames) {
+            echo get_string('usersrenamed', 'tool_uploaduser').': '.$renames.'<br />';
+            echo get_string('renameerrors', 'tool_uploaduser').': '.$renameerrors.'<br />';
+        }
+        if ($usersskipped) {
+            echo get_string('usersskipped', 'tool_uploaduser').': '.$usersskipped.'<br />';
+        }
+        echo get_string('usersweakpassword', 'tool_uploaduser').': '.$weakpasswords.'<br />';
+        echo get_string('errors', 'tool_uploaduser').': '.$userserrors.'</p>';
+        echo get_string('licensecount', 'block_iomad_company_admin').': '.$numlicenses.'<br />';
+        echo get_string('licenseerrors', 'block_iomad_company_admin').': '.$numlicenseerrors.'</p>';
+        echo $OUTPUT->box_end();
+    
+        if ($bulk) {
+            echo $OUTPUT->continue_button($bulknurl);
+        } else {
+            echo $OUTPUT->continue_button($returnurl);
+        }
+        echo $OUTPUT->footer();
+        unset($SESSION->chosenlicenseid);
+        die;
     }
-    $upt->flush();
-    $upt->close(); // Close table.
-
-    $cir->close();
-    $cir->cleanup(true);
-
-    echo $OUTPUT->box_start('boxwidthnarrow boxaligncenter generalbox', 'uploadresults');
-    echo '<p>';
-    if ($optype != UU_UPDATE) {
-        echo get_string('userscreated', 'tool_uploaduser').': '.$usersnew.'<br />';
-    }
-    if ($optype == UU_UPDATE or $optype == UU_ADD_UPDATE) {
-        echo get_string('usersupdated', 'tool_uploaduser').': '.$usersupdated.'<br />';
-    }
-    if ($allowdeletes) {
-        echo get_string('usersdeleted', 'tool_uploaduser').': '.$deletes.'<br />';
-        echo get_string('deleteerrors', 'tool_uploaduser').': '.$deleteerrors.'<br />';
-    }
-    if ($allowrenames) {
-        echo get_string('usersrenamed', 'tool_uploaduser').': '.$renames.'<br />';
-        echo get_string('renameerrors', 'tool_uploaduser').': '.$renameerrors.'<br />';
-    }
-    if ($usersskipped) {
-        echo get_string('usersskipped', 'tool_uploaduser').': '.$usersskipped.'<br />';
-    }
-    echo get_string('usersweakpassword', 'tool_uploaduser').': '.$weakpasswords.'<br />';
-    echo get_string('errors', 'tool_uploaduser').': '.$userserrors.'</p>';
-    echo $OUTPUT->box_end();
-
-    if ($bulk) {
-        echo $OUTPUT->continue_button($bulknurl);
-    } else {
-        echo $OUTPUT->continue_button($returnurl);
-    }
-    echo $OUTPUT->footer();
-    die;
 }
 
 // Print the header.
@@ -1055,6 +1118,31 @@ if ($haserror) {
     echo $OUTPUT->container(get_string('uupreprocessedcount', 'block_iomad_company_admin', $countcontent),
                             'block_iomad_company_admin');
 }
+?>
+<script type="text/javascript">
+Y.on('change', submit_form, '#licenseidselector');
+ function submit_form() {
+     var nValue = Y.one('#licenseidselector').get('value');
+    $.ajax({
+        type: "GET",
+        url: "<?php echo $CFG->wwwroot; ?>/blocks/iomad_company_admin/js/company_user_create_form.ajax.php?licenseid="+nValue,
+        datatype: "HTML",
+        success: function(response){
+            $("#licensecourseselector").html(response);
+        }
+    });
+    $.ajax({
+        type: "GET",
+        url: "<?php echo $CFG->wwwroot; ?>/blocks/iomad_company_admin/js/company_user_create_form-license.ajax.php?licenseid="+nValue,
+        datatype: "HTML",
+        success: function(response){
+            $("#licensedetails").html(response);
+        }
+    });
+ }
+</script>
+<?php
+
 
 $mform->display();
 echo $OUTPUT->footer();

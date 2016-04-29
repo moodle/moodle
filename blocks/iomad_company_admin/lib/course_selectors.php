@@ -93,11 +93,11 @@ class current_company_course_selector extends company_course_selector_base {
         } else {
             $this->licenses = false;
         }
-        // Default for shared is false.
+        // Default for shared is true.
         if (isset($options['shared'])) {
-            $this->shared = true;
+            $this->shared = $options['shared'];
         } else {
-            $this->shared = false;
+            $this->shared = true;
         }
         parent::__construct($name, $options);
     }
@@ -129,7 +129,7 @@ class current_company_course_selector extends company_course_selector_base {
         $countfields = 'SELECT COUNT(1)';
 
         // Deal with licensed courses.
-        if ($this->licenses) {
+        if (!$this->licenses) {
             if ($licensecourses = $DB->get_records('iomad_courses', array('licensed' => 1), null, 'courseid')) {
                 $licensesql = " AND c.id not in (".implode(',', array_keys($licensecourses)).")";
             } else {
@@ -145,23 +145,30 @@ class current_company_course_selector extends company_course_selector_base {
                 $sharedsql = " FROM {course} c
                                INNER JOIN {iomad_courses} pc
                                ON c.id=pc.courseid
-                               WHERE pc.shared=1
-                               AND pc.licensed != 1";
+                               WHERE pc.shared = 1
+                               AND pc.licensed = 1";
                 $partialsharedsql = " FROM {course} c
                                       WHERE c.id IN
                                        (SELECT pc.courseid
                                         FROM {iomad_courses} pc
                                         INNER JOIN {company_shared_courses} csc
                                         ON pc.courseid=csc.courseid
-                                        WHERE pc.shared=2
-                                        AND pc.licensed !=1
+                                        WHERE pc.shared= 2
+                                        AND pc.licensed = 1
                                         AND csc.companyid = :companyid)";
             } else {
-                $sharedsql = " FROM {course} c INNER JOIN {iomad_courses} pc ON c.id=pc.courseid WHERE pc.shared=1";
+                $sharedsql = " FROM {course} c
+                               INNER JOIN {iomad_courses} pc
+                               ON c.id=pc.courseid
+                               WHERE pc.shared = 1
+                               AND pc.licensed = 0";
                 $partialsharedsql = " FROM {course} c
-                                    WHERE c.id IN (SELECT pc.courseid from {iomad_courses} pc
-                                    INNER JOIN {company_shared_courses} csc ON pc.courseid=csc.courseid
-                                       where pc.shared=2 AND csc.companyid = :companyid)
+                                    WHERE c.id IN (
+                                     SELECT pc.courseid FROM {iomad_courses} pc
+                                     INNER JOIN {company_shared_courses} csc ON pc.courseid=csc.courseid
+                                     WHERE pc.shared = 2
+                                     AND pc.licensed = 0 
+                                     AND csc.companyid = :companyid)
                                     AND c.id IN (
                                        SELECT courseid FROM {company_course}
                                        WHERE departmentid = :departmentid)";
@@ -190,6 +197,7 @@ class current_company_course_selector extends company_course_selector_base {
         $availablecourses = $DB->get_records_sql($fields . $sql . $order, $params) +
                             $DB->get_records_sql($fields . $sharedsql . $order, $params) +
                             $DB->get_records_sql($fields . $partialsharedsql . $order, $params);
+
         if (empty($availablecourses)) {
             return array();
         }
