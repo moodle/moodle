@@ -1585,6 +1585,21 @@ class backup_course_competencies_structure_step extends backup_structure_step {
 
         return $wrapper;
     }
+
+    /**
+     * Execute conditions.
+     *
+     * @return bool
+     */
+    protected function execute_condition() {
+
+        // Do not execute if competencies are not included.
+        if (!$this->get_setting_value('competencies')) {
+            return false;
+        }
+
+        return true;
+    }
 }
 
 /**
@@ -1611,6 +1626,21 @@ class backup_activity_competencies_structure_step extends backup_structure_step 
         $competency->set_source_sql($sql, array('coursemoduleid' => backup::VAR_MODID));
 
         return $wrapper;
+    }
+
+    /**
+     * Execute conditions.
+     *
+     * @return bool
+     */
+    protected function execute_condition() {
+
+        // Do not execute if competencies are not included.
+        if (!$this->get_setting_value('competencies')) {
+            return false;
+        }
+
+        return true;
     }
 }
 

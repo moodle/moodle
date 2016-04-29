@@ -163,5 +163,10 @@ class backup_root_task extends backup_task {
         $groups = new backup_groups_setting('groups', base_setting::IS_BOOLEAN, true);
         $groups->set_ui(new backup_setting_ui_checkbox($groups, get_string('rootsettinggroups', 'backup')));
         $this->add_setting($groups);
+
+        // Define competencies inclusion setting if competencies are enabled.
+        $competencies = new backup_competencies_setting();
+        $competencies->set_ui(new backup_setting_ui_checkbox($competencies, get_string('rootsettingcompetencies', 'backup')));
+        $this->add_setting($competencies);
     }
 }

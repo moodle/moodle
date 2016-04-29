@@ -3213,8 +3213,8 @@ class restore_course_competencies_structure_step extends restore_structure_step 
      */
     protected function execute_condition() {
 
-        // Do not restore when competencies are disabled.
-        if (!\core_competency\api::is_enabled()) {
+        // Do not execute if competencies are not included.
+        if (!$this->get_setting_value('competencies')) {
             return false;
         }
 
@@ -3288,8 +3288,8 @@ class restore_activity_competencies_structure_step extends restore_structure_ste
      */
     protected function execute_condition() {
 
-        // Do not restore when competencies are disabled.
-        if (!\core_competency\api::is_enabled()) {
+        // Do not execute if competencies are not included.
+        if (!$this->get_setting_value('competencies')) {
             return false;
         }
 
