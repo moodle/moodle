@@ -429,16 +429,17 @@ class core_competency_plan_testcase extends advanced_testcase {
         // Reopening plan: with due date in the future => duedate unchanged.
         $record = $plan->to_record();
         $record->status = plan::STATUS_COMPLETE;
-        $record->duedate = time() + plan::DUEDATE_THRESHOLD + 10;
+        $duedate = time() + plan::DUEDATE_THRESHOLD + 10;
+        $record->duedate = $duedate;
         $DB->update_record(plan::TABLE, $record);
 
         $success = core_competency\api::reopen_plan($plan->get_id());
         $this->assertTrue($success);
         $plan->read();
 
-        // Check that the due date has not changed, but allow for PHP Unit latency.
-        $this->assertTrue($plan->get_duedate() >= time() + plan::DUEDATE_THRESHOLD + 10);
-        $this->assertTrue($plan->get_duedate() <= time() + plan::DUEDATE_THRESHOLD + 15);
+        // Check that the due date has not changed.
+        $this->assertNotEquals(0, $plan->get_duedate());
+        $this->assertEquals($duedate, $plan->get_duedate());
     }
 
     public function test_get_by_user_and_competency() {
