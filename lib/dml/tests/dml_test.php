@@ -3670,7 +3670,7 @@ class core_dml_testcase extends database_driver_testcase {
 
         $DB->insert_record($tablename, array('name'=>'10.10', 'nametext'=>'10.10', 'res'=>5.1));
         $DB->insert_record($tablename, array('name'=>'91.10', 'nametext'=>'91.10', 'res'=>666));
-        $DB->insert_record($tablename, array('name'=>'011.10', 'nametext'=>'011.10', 'res'=>10.1));
+        $DB->insert_record($tablename, array('name'=>'011.13333333', 'nametext'=>'011.13333333', 'res'=>10.1));
 
         // Casting varchar field.
         $sql = "SELECT * FROM {{$tablename}} WHERE ".$DB->sql_cast_char2real('name')." > res";
@@ -3681,8 +3681,11 @@ class core_dml_testcase extends database_driver_testcase {
         $records = $DB->get_records_sql($sql);
         $this->assertCount(3, $records);
         $this->assertSame('10.10', reset($records)->name);
-        $this->assertSame('011.10', next($records)->name);
+        $this->assertSame('011.13333333', next($records)->name);
         $this->assertSame('91.10', next($records)->name);
+        // And verify we can operate with them without too much problem with at least 6 decimals scale accuracy.
+        $sql = "SELECT AVG(" . $DB->sql_cast_char2real('name') . ") FROM {{$tablename}}";
+        $this->assertEquals(37.44444443333333, (float)$DB->get_field_sql($sql), '', 1.0E-6);
 
         // Casting text field.
         $sql = "SELECT * FROM {{$tablename}} WHERE ".$DB->sql_cast_char2real('nametext', true)." > res";
@@ -3693,8 +3696,19 @@ class core_dml_testcase extends database_driver_testcase {
         $records = $DB->get_records_sql($sql);
         $this->assertCount(3, $records);
         $this->assertSame('10.10', reset($records)->nametext);
-        $this->assertSame('011.10', next($records)->nametext);
+        $this->assertSame('011.13333333', next($records)->nametext);
         $this->assertSame('91.10', next($records)->nametext);
+        // And verify we can operate with them without too much problem with at least 6 decimals scale accuracy.
+        $sql = "SELECT AVG(" . $DB->sql_cast_char2real('nametext', true) . ") FROM {{$tablename}}";
+        $this->assertEquals(37.44444443333333, (float)$DB->get_field_sql($sql), '', 1.0E-6);
+
+        // Check it works with values passed as param.
+        $sql = "SELECT name FROM {{$tablename}} WHERE FLOOR(res - " . $DB->sql_cast_char2real(':param') . ") = 0";
+        $this->assertEquals('011.13333333', $DB->get_field_sql($sql, array('param' => '10.09999')));
+
+        // And also, although not recommended, with directly passed values.
+        $sql = "SELECT name FROM {{$tablename}} WHERE FLOOR(res - " . $DB->sql_cast_char2real('10.09999') . ") = 0";
+        $this->assertEquals('011.13333333', $DB->get_field_sql($sql));
     }
 
     public function test_sql_compare_text() {
