@@ -53,7 +53,12 @@ defined('MOODLE_INTERNAL') || die;
  */
 class backup_lti_activity_structure_step extends backup_activity_structure_step {
 
+    /**
+     * Defines structure of activity backup
+     * @return backup_nested_element
+     */
     protected function define_structure() {
+        global $DB;
 
         // To know if we are including userinfo.
         $userinfo = $this->get_setting_value('userinfo');
@@ -87,50 +92,90 @@ class backup_lti_activity_structure_step extends backup_activity_structure_step 
             )
         );
 
-        $ltitypes = new backup_nested_element('ltitypes');
-        $ltitype  = new backup_nested_element('ltitype', array('id'), array(
+        $ltitype = new backup_nested_element('ltitype', array('id'), array(
             'name',
             'baseurl',
             'tooldomain',
             'state',
+            'course',
             'coursevisible',
+            'toolproxyid',
+            'enabledcapability',
+            'parameter',
+            'icon',
+            'secureicon',
             'createdby',
             'timecreated',
             'timemodified',
+            'description'
             )
         );
 
         $ltitypesconfigs = new backup_nested_element('ltitypesconfigs');
         $ltitypesconfig  = new backup_nested_element('ltitypesconfig', array('id'), array(
-            'typeid',
-            'name',
-            'value',
+                'name',
+                'value',
+            )
+        );
+        $ltitypesconfigencrypted  = new backup_nested_element('ltitypesconfigencrypted', array('id'), array(
+                'name',
+                new encrypted_final_element('value'),
+            )
+        );
+
+        $ltitoolproxy = new backup_nested_element('ltitoolproxy', array('id'));
+
+        $ltitoolsettings = new backup_nested_element('ltitoolsettings');
+        $ltitoolsetting  = new backup_nested_element('ltitoolsetting', array('id'), array(
+                'settings',
+                'timecreated',
+                'timemodified',
             )
         );
 
         // Build the tree
-        $lti->add_child($ltitypes);
-        $lti->add_child($ltitypesconfigs);
-        $ltitypes->add_child($ltitype);
+        $lti->add_child($ltitype);
+        $ltitype->add_child($ltitypesconfigs);
         $ltitypesconfigs->add_child($ltitypesconfig);
+        $ltitypesconfigs->add_child($ltitypesconfigencrypted);
+        $ltitype->add_child($ltitoolproxy);
+        $ltitoolproxy->add_child($ltitoolsettings);
+        $ltitoolsettings->add_child($ltitoolsetting);
 
         // Define sources.
-        $lti->set_source_table('lti', array('id' => backup::VAR_ACTIVITYID));
+        $ltirecord = $DB->get_record('lti', ['id' => $this->task->get_activityid()]);
+        $lti->set_source_array([$ltirecord]);
 
-        $ltitype->set_source_sql("SELECT lt.*
-            FROM {lti} l
-            JOIN {lti_types} lt ON lt.id = l.typeid
-            WHERE l.id = ?", array(backup::VAR_ACTIVITYID));
-        $ltitypesconfig->set_source_sql("SELECT lc.*
-            FROM {lti} l
-            JOIN {lti_types_config} lc ON lc.typeid = l.typeid
-            WHERE lc.name != 'password'
-            AND lc.name != 'resourcekey'
-            AND lc.name != 'servicesalt'
-            AND l.id = ?", array(backup::VAR_ACTIVITYID));
+        $ltitypedata = $this->retrieve_lti_type($ltirecord);
+        $ltitype->set_source_array($ltitypedata ? [$ltitypedata] : []);
+
+        if (isset($ltitypedata->baseurl)) {
+            // Add type config values only if the type was backed up. Encrypt password and resourcekey.
+            $params = [backup_helper::is_sqlparam($ltitypedata->id),
+                backup_helper::is_sqlparam('password'),
+                backup_helper::is_sqlparam('resourcekey')];
+            $ltitypesconfig->set_source_sql("SELECT id, name, value
+                FROM {lti_types_config}
+                WHERE typeid = ? AND name <> ? AND name <> ?", $params);
+            $ltitypesconfigencrypted->set_source_sql("SELECT id, name, value
+                FROM {lti_types_config}
+                WHERE typeid = ? AND (name = ? OR name = ?)", $params);
+        }
+
+        if (!empty($ltitypedata->toolproxyid)) {
+            // If this is LTI 2 tool add settings for the current activity.
+            $ltitoolproxy->set_source_array([['id' => $ltitypedata->toolproxyid]]);
+            $ltitoolsetting->set_source_sql("SELECT *
+                FROM {lti_tool_settings}
+                WHERE toolproxyid = ? AND course = ? AND coursemoduleid = ?",
+                [backup_helper::is_sqlparam($ltitypedata->toolproxyid), backup::VAR_COURSEID, backup::VAR_MODID]);
+        } else {
+            $ltitoolproxy->set_source_array([]);
+        }
 
         // Define id annotations
         $ltitype->annotate_ids('user', 'createdby');
+        $ltitype->annotate_ids('course', 'course');
 
         // Define file annotations.
         $lti->annotate_files('mod_lti', 'intro', null); // This file areas haven't itemid.
@@ -141,5 +186,35 @@ class backup_lti_activity_structure_step extends backup_activity_structure_step 
 
         // Return the root element (lti), wrapped into standard activity structure.
         return $this->prepare_activity_structure($lti);
+    }
+
+    /**
+     * Retrieves a record from {lti_type} table associated with the current activity
+     *
+     * Information about site tools is not returned because it is insecure to back it up,
+     * only fields necessary for same-site tool matching are left in the record
+     *
+     * @param stdClass $ltirecord record from {lti} table
+     * @return stdClass|null
+     */
+    protected function retrieve_lti_type($ltirecord) {
+        global $DB;
+        if (!$ltirecord->typeid) {
+            return null;
+        }
+
+        $record = $DB->get_record('lti_types', ['id' => $ltirecord->typeid]);
+        if ($record && $record->course == SITEID) {
+            // Site LTI types or registrations are not backed up except for their name (which is visible).
+            // Predefined course types can be backed up.
+            $allowedkeys = ['id', 'course', 'name', 'toolproxyid'];
+            foreach ($record as $key => $value) {
+                if (!in_array($key, $allowedkeys)) {
+                    $record->$key = null;
+                }
+            }
+        }
+
+        return $record;
     }
 }
