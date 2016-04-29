@@ -40,6 +40,7 @@ $string['databasehost'] = 'Gostitelj podatkovne baze';
 $string['databasename'] = 'Ime podatkovne baze';
 $string['databasetypehead'] = 'Izberite gonilnik podatkovne baze';
 $string['dataroot'] = 'Imenik za podatke';
+$string['datarootpermission'] = 'Pravice za podatkovno mapo';
 $string['dbprefix'] = 'Predpona tabel';
 $string['dirroot'] = 'Imenik Moodle';
 $string['environmenthead'] = 'Preverjanje vašega okolja ...';
