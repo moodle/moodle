@@ -508,9 +508,14 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
      * @return array
      */
     protected static function get_prefixed_keys(Memcached $connection, $prefix) {
+        $connkeys = $connection->getAllKeys();
+        if (empty($connkeys)) {
+            return array();
+        }
+
         $keys = array();
         $start = strlen($prefix);
-        foreach ($connection->getAllKeys() as $key) {
+        foreach ($connkeys as $key) {
             if (strpos($key, $prefix) === 0) {
                 $keys[] = substr($key, $start);
             }
