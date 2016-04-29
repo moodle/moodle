@@ -1496,7 +1496,11 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     public function sql_cast_char2real($fieldname, $text=false) {
-        return ' CAST(' . $fieldname . ' AS DECIMAL) ';
+        // Set to 65 (max mysql 5.5 precision) with 7 as scale
+        // because we must ensure at least 6 decimal positions
+        // per casting given that postgres is casting to that scale (::real::).
+        // Can be raised easily but that must be done in all DBs and tests.
+        return ' CAST(' . $fieldname . ' AS DECIMAL(65,7)) ';
     }
 
     /**
