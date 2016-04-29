@@ -23,6 +23,20 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
-$str = get_string('managecohortroles', 'tool_cohortroles');
-$url = new moodle_url('/admin/tool/cohortroles/index.php');
-$ADMIN->add('roles', new admin_externalpage('toolcohortroles', $str, $url, 'moodle/role:manage'));
+
+// This tool's required capabilities.
+$capabilities = [
+    'moodle/cohort:view',
+    'moodle/role:manage'
+];
+
+// Check if the user has all of the required capabilities.
+$context = context_system::instance();
+$hasaccess = has_all_capabilities($capabilities, $context);
+
+// Add this admin page only if the user has all of the required capabilities.
+if ($hasaccess) {
+    $str = get_string('managecohortroles', 'tool_cohortroles');
+    $url = new moodle_url('/admin/tool/cohortroles/index.php');
+    $ADMIN->add('roles', new admin_externalpage('toolcohortroles', $str, $url, $capabilities));
+}
