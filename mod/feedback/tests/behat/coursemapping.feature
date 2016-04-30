@@ -222,3 +222,17 @@ Feature: Mapping courses in a feedback
     And I should see "2 (66.67 %)" in the "option e" "table_row"
     And I should see "0" in the "option f" "table_row"
     And I log out
+
+  Scenario: Site feedback deletion hides feedback block completely
+    When I log in as "manager"
+    And I am on site homepage
+    And I follow "Turn editing on"
+    And I add the "Feedback" block
+    And I click on "Delete" "link" in the "//div[contains(@class,'block_site_main_menu')]//li[contains(.,'Course feedback')]" "xpath_element"
+    And I press "Yes"
+    And I follow "Turn editing off"
+    And I am on site homepage
+    Then "Feedback" "block" should not exist
+    And I follow "Course 1"
+    And "Feedback" "block" should not exist
+    And I log out
