@@ -150,16 +150,12 @@ class qtype_ordering extends question_type {
         foreach ($question->answer as $i => $answer) {
 
             // extract $answer fields
-            if (is_array($answer)) {
-                // editor
-                $answertext   = $answer['text'];
-                $answerformat = $answer['format'];
+            $answertext   = $answer['text'];
+            $answerformat = $answer['format'];
+            if (!empty($answer['itemid'])) {
                 $answeritemid = $answer['itemid'];
             } else {
-                // textarea
-                $answertext   = $answer;
-                $answerformat = FORMAT_MOODLE;
-                $answeritemid = 0; // i.e. no editor
+                $answeritemid = null;
             }
 
             // reduce simple <p>...</p> to plain text
@@ -218,6 +214,7 @@ class qtype_ordering extends question_type {
             'gradingtype' => $question->gradingtype
         );
         $options = $this->save_ordering_feedback_helper($options, $question, $context, true);
+        $this->save_hints($question, false);
 
         // add/update $options for this ordering question
         if ($options->id = $DB->get_field('qtype_ordering_options', 'id', array('questionid' => $question->id))) {
@@ -318,7 +315,7 @@ class qtype_ordering extends question_type {
             return false;
         }
 
-        //parent::get_question_options($question);
+        parent::get_question_options($question);
         return true;
     }
 
@@ -549,13 +546,16 @@ class qtype_ordering extends question_type {
         $output .= "    <selecttype>$selecttype</selecttype>\n";
         $output .= "    <selectcount>$selectcount</selectcount>\n";
         $output .= "    <gradingtype>$gradingtype</gradingtype>\n";
+        $output .= $format->write_combined_feedback($question->options, $question->id, $question->contextid);
 
         foreach($question->options->answers as $answer) {
             $output .= '    <answer fraction="'.$answer->fraction.'" '.$format->format($answer->answerformat).">\n";
             $output .= $format->writetext($answer->answer, 3);
+            $output .= $format->write_files($answer->answerfiles);
             if ($feedback = trim($answer->feedback)) { // usually there is no feedback
                 $output .= '      <feedback '.$format->format($answer->feedbackformat).">\n";
                 $output .= $format->writetext($answer->feedback, 4);
+                $output .= $format->write_files($answer->feedbackfiles);
                 $output .= "      </feedback>\n";
             }
             $output .= "    </answer>\n";
@@ -614,20 +614,18 @@ class qtype_ordering extends question_type {
 
         $i = 0;
         while ($answer = $format->getpath($data, array('#', 'answer', $i), '')) {
-            if ($text = $format->getpath($answer, array('#', 'text', 0, '#'), '')) {
-                $newquestion->answer[] = $text;
-                $answerformat = $format->getpath($answer, array('@', 'format'), 'moodle_auto_format');
-                $newquestion->answerformat[] = $format->trans_format($answerformat);
-                $newquestion->fraction[] = 1; // will be reset later in save_question_options()
-                $newquestion->feedback[] = $format->getpath($answer, array('#', 'feedback', 0, '#', 'text', 0, '#'), '');
-                $feedbackformat = $format->getpath($answer, array('#', 'format', 0, '@', 'format'), 'moodle_auto_format');
-                $newquestion->feedbackformat[] = $format->trans_format($feedbackformat);
-            }
+            $ans = $format->import_answer($answer, true, $format->get_format($newquestion->questiontextformat));
+            $newquestion->answer[$i] = $ans->answer;
+            $newquestion->fraction[$i] = 1; // will be reset later in save_question_options()
+            $newquestion->feedback[$i] = $ans->feedback;
             $i++;
         }
 
+        $format->import_combined_feedback($newquestion, $data, false);
         // check that the required feedback fields exist
         $this->check_ordering_combined_feedback($newquestion);
+
+        $format->import_hints($newquestion, $data, false);
 
         return $newquestion;
     }

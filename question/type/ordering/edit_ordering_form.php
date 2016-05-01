@@ -44,10 +44,6 @@ class qtype_ordering_edit_form extends question_edit_form {
     const NUM_ANS_MIN     =  3;
     const NUM_ANS_ADD     =  3;
 
-    // this functionality is currently disabled
-    // because it is not fully functional
-    protected $use_editor_for_answers = true;
-
     /**
      * unique name for this question type
      */
@@ -113,13 +109,8 @@ class qtype_ordering_edit_form extends question_edit_form {
         $options[$name] = array('expanded' => true);
 
         $name = 'answer';
-        if (isset($this->question->id)) {
-            $elements[] = $mform->createElement('editor', $name, $label, $this->get_editor_attributes(), $this->get_editor_options());
-            $elements[] = $mform->createElement('submit', $name.'removeeditor', get_string('removeeditor', $plugin), array('onclick' => 'skipClientValidation = true;'));
-            //$elements[] = $mform->createElement('submit', $name.'removeitem', get_string('removeitem', $plugin));
-        } else {
-            $elements[] = $mform->createElement('textarea', $name, $label, $this->get_editor_attributes());
-        }
+        $elements[] = $mform->createElement('editor', $name, $label, $this->get_editor_attributes(), $this->get_editor_options());
+        $elements[] = $mform->createElement('submit', $name.'removeeditor', get_string('removeeditor', $plugin), array('onclick' => 'skipClientValidation = true;'));
         $options[$name] = array('type' => PARAM_RAW);
 
         $repeats = $this->get_answer_repeats($this->question);
@@ -134,10 +125,10 @@ class qtype_ordering_edit_form extends question_edit_form {
         $this->adjust_html_editors($mform, $name, $repeats);
 
         // feedback
-        $this->add_ordering_feedback_fields(true);
+        $this->add_ordering_feedback_fields(false);
 
         // interactive
-        $this->add_ordering_interactive_settings(true, true);
+        $this->add_ordering_interactive_settings(false, false);
     }
 
     protected function get_answer_repeats($question) {
@@ -198,6 +189,8 @@ class qtype_ordering_edit_form extends question_edit_form {
             $ids = array();
         }
 
+        $defaultanswerformat = get_config('qtype_ordering', 'defaultanswerformat');
+
         for ($i=0; $i<$repeats; $i++) {
 
             $editor = $name.'['.$i.']';
@@ -219,12 +212,12 @@ class qtype_ordering_edit_form extends question_edit_form {
 
                 // remove HTML editor, if necessary
                 if (optional_param($newname, 0, PARAM_RAW)) {
-                    $format = $this->reset_editor_format($editor);
+                    $format = $this->reset_editor_format($editor, FORMAT_MOODLE);
                     $_POST['answer'][$i]['format'] = $format; // overwrite incoming data
                 } else if ($id) {
                     $format = $this->question->options->answers[$id]->answerformat;
                 } else {
-                    $format = $this->reset_editor_format($editor);
+                    $format = $this->reset_editor_format($editor, $defaultanswerformat);
                 }
 
                 // check we have a submit button - it should always be there !!
@@ -256,6 +249,7 @@ class qtype_ordering_edit_form extends question_edit_form {
 
         // feedback
         $question = $this->data_preprocessing_ordering_feedback($question);
+        $question = $this->data_preprocessing_hints($question, false, false);
 
         // answers and fractions
         $question->answer     = array();
@@ -267,6 +261,7 @@ class qtype_ordering_edit_form extends question_edit_form {
             $answerids = array_keys($question->options->answers);
         }
 
+        $defaultanswerformat = get_config('qtype_ordering', 'defaultanswerformat');
         $repeats = $this->get_answer_repeats($question);
         for ($i=0; $i<$repeats; $i++) {
 
@@ -274,7 +269,7 @@ class qtype_ordering_edit_form extends question_edit_form {
                 $answer = $question->options->answers[$answerid];
             } else {
                 $answer = (object)array('answer' => '',
-                                        'answerformat' => FORMAT_MOODLE);
+                                        'answerformat' => $defaultanswerformat);
                 $answerid = 0;
             }
 

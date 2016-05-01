@@ -17,8 +17,8 @@
         <FIELD NAME="partiallycorrectfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="partiallycorrectfeedback"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for question_ordering" NEXT="questionid"/>
-        <KEY NAME="qtypordeopti_que_uix" TYPE="foreign-unique" FIELDS="questionid" REFTABLE="question" REFFIELDS="id"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for question_ordering" NEXT="question"/>
+        <KEY NAME="question" TYPE="foreign-unique" FIELDS="questionid" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
   </TABLES>
