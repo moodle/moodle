@@ -532,7 +532,6 @@ class core_date {
         }
 
         // Legacy Moodle half an hour offsets - pick any city nearby, ideally without DST.
-        self::$badzones['-4.5'] = 'America/Caracas';
         self::$badzones['4.5'] = 'Asia/Kabul';
         self::$badzones['5.5'] = 'Asia/Kolkata';
         self::$badzones['6.5'] = 'Asia/Rangoon';
