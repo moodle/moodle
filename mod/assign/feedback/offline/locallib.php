@@ -68,6 +68,17 @@ class assign_feedback_offline extends assign_feedback_plugin {
     }
 
     /**
+     * This plugin does not save through the normal interface so this returns false.
+     *
+     * @param stdClass $grade The grade.
+     * @param stdClass $data Form data from the feedback form.
+     * @return boolean - False
+     */
+    public function is_feedback_modified(stdClass $grade, stdClass $data) {
+        return false;
+    }
+
+    /**
      * Loop through uploaded grades and update the grades for this assignment
      *
      * @param int $draftid - The unique draft item id for this import

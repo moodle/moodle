@@ -188,53 +188,61 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
      * @return boolean True if the pdf has been modified, else false.
      */
     public function is_feedback_modified(stdClass $grade, stdClass $data) {
-        global $USER;
-        $pagenumbercount = document_services::page_number_for_attempt($this->assignment, $grade->userid, $grade->attemptnumber);
-        for ($i = 0; $i < $pagenumbercount; $i++) {
-            // Select all annotations.
-            $draftannotations = page_editor::get_annotations($grade->id, $i, true);
-            $nondraftannotations = page_editor::get_annotations($grade->id, $i, false);
-            // Check to see if the count is the same.
-            if (count($draftannotations) != count($nondraftannotations)) {
-                // The count is different so we have a modification.
-                return true;
-            } else {
-                $matches = 0;
-                // Have a closer look and see if the draft files match all the non draft files.
-                foreach ($nondraftannotations as $ndannotation) {
-                    foreach ($draftannotations as $dannotation) {
-                        foreach ($ndannotation as $key => $value) {
-                            if ($key != 'id' && $value != $dannotation->{$key}) {
-                                continue 2;
+        // We only need to know if the source user's PDF has changed. If so then all
+        // following users will have the same status. If it's only an individual annotation
+        // then only one user will come through this method.
+        // Source user id is only added to the form if there was a pdf.
+        if (!empty($data->editpdf_source_userid)) {
+            $sourceuserid = $data->editpdf_source_userid;
+            // Retrieve the grade information for the source user.
+            $sourcegrade = $this->assignment->get_user_grade($sourceuserid, true, $grade->attemptnumber);
+            $pagenumbercount = document_services::page_number_for_attempt($this->assignment, $sourceuserid, $sourcegrade->attemptnumber);
+            for ($i = 0; $i < $pagenumbercount; $i++) {
+                // Select all annotations.
+                $draftannotations = page_editor::get_annotations($sourcegrade->id, $i, true);
+                $nondraftannotations = page_editor::get_annotations($grade->id, $i, false);
+                // Check to see if the count is the same.
+                if (count($draftannotations) != count($nondraftannotations)) {
+                    // The count is different so we have a modification.
+                    return true;
+                } else {
+                    $matches = 0;
+                    // Have a closer look and see if the draft files match all the non draft files.
+                    foreach ($nondraftannotations as $ndannotation) {
+                        foreach ($draftannotations as $dannotation) {
+                            foreach ($ndannotation as $key => $value) {
+                                if ($key != 'id' && $value != $dannotation->{$key}) {
+                                    continue 2;
+                                }
                             }
+                            $matches++;
                         }
-                        $matches++;
+                    }
+                    if ($matches !== count($nondraftannotations)) {
+                        return true;
                     }
                 }
-                if ($matches !== count($nondraftannotations)) {
+                // Select all comments.
+                $draftcomments = page_editor::get_comments($sourcegrade->id, $i, true);
+                $nondraftcomments = page_editor::get_comments($grade->id, $i, false);
+                if (count($draftcomments) != count($nondraftcomments)) {
                     return true;
-                }
-            }
-            // Select all comments.
-            $draftcomments = page_editor::get_comments($grade->id, $i, true);
-            $nondraftcomments = page_editor::get_comments($grade->id, $i, false);
-            if (count($draftcomments) != count($nondraftcomments)) {
-                return true;
-            } else {
-                // Go for a closer inspection.
-                $matches = 0;
-                foreach ($nondraftcomments as $ndcomment) {
-                    foreach ($draftcomments as $dcomment) {
-                        foreach ($ndcomment as $key => $value) {
-                            if ($key != 'id' && $value != $dcomment->{$key}) {
-                                continue 2;
+                } else {
+                    // Go for a closer inspection.
+                    $matches = 0;
+                    foreach ($nondraftcomments as $ndcomment) {
+                        foreach ($draftcomments as $dcomment) {
+                            foreach ($ndcomment as $key => $value) {
+                                if ($key != 'id' && $value != $dcomment->{$key}) {
+                                    continue 2;
+                                }
                             }
+                            $matches++;
                         }
-                        $matches++;
                     }
-                }
-                if ($matches !== count($nondraftcomments)) {
-                    return true;
+                    if ($matches !== count($nondraftcomments)) {
+                        return true;
+                    }
                 }
             }
         }
