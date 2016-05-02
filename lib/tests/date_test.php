@@ -67,6 +67,7 @@ class core_date_testcase extends advanced_testcase {
         $this->assertSame('Etc/GMT-2', core_date::normalise_timezone('2.0'));
         $this->assertSame('Etc/GMT+2', core_date::normalise_timezone(-2));
         $this->assertSame('Etc/GMT+2', core_date::normalise_timezone('-2.0'));
+        $this->assertSame('Etc/GMT+4', core_date::normalise_timezone(-4));
         $this->assertSame('Etc/GMT-2', core_date::normalise_timezone('UTC+2'));
         $this->assertSame('Etc/GMT+2', core_date::normalise_timezone('UTC-2'));
         $this->assertSame('Etc/GMT-2', core_date::normalise_timezone('GMT+2'));
@@ -78,7 +79,6 @@ class core_date_testcase extends advanced_testcase {
         $this->assertSame('Etc/GMT-13', core_date::normalise_timezone(13));
         $this->assertSame('Pacific/Auckland', core_date::normalise_timezone(14));
 
-        $this->assertSame('America/Caracas', core_date::normalise_timezone(-4.5));
         $this->assertSame('Asia/Kabul', core_date::normalise_timezone(4.5));
         $this->assertSame('Asia/Kolkata', core_date::normalise_timezone(5.5));
         $this->assertSame('Asia/Rangoon', core_date::normalise_timezone(6.5));
