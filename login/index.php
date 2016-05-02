@@ -352,7 +352,7 @@ if (!empty($SESSION->loginerrormsg)) {
     if ($errormsg) {
         $SESSION->loginerrormsg = $errormsg;
     }
-    redirect(new moodle_url('/login/index.php'));
+    redirect(new moodle_url($CFG->httpswwwroot . '/login/index.php'));
 }
 
 $PAGE->set_title("$site->fullname: $loginsite");
