@@ -946,7 +946,7 @@ class assign_grading_table extends table_sql implements renderable {
 
             $o .= $this->output->container(get_string('submissionstatus_' . $displaystatus, 'assign'),
                                            array('class'=>'submissionstatus' .$displaystatus));
-            if ($due && $timesubmitted > $due && $row->status != ASSIGN_SUBMISSION_STATUS_NEW) {
+            if ($due && $timesubmitted > $due && $status != ASSIGN_SUBMISSION_STATUS_NEW) {
                 $usertime = format_time($timesubmitted - $due);
                 $latemessage = get_string('submittedlateshort',
                                           'assign',
@@ -962,7 +962,7 @@ class assign_grading_table extends table_sql implements renderable {
             if (!$instance->markingworkflow) {
                 if ($row->grade !== null && $row->grade >= 0) {
                     $o .= $this->output->container(get_string('graded', 'assign'), 'submissiongraded');
-                } else if (!$timesubmitted || $row->status == ASSIGN_SUBMISSION_STATUS_NEW) {
+                } else if (!$timesubmitted || $status == ASSIGN_SUBMISSION_STATUS_NEW) {
                     $now = time();
                     if ($due && ($now > $due)) {
                         $overduestr = get_string('overdue', 'assign', format_time($now - $due));
