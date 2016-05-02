@@ -69,6 +69,7 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
             up:       38,
             right:    39,
             down:     40,
+            eight:    56,
             asterisk: 106
         };
 
@@ -274,6 +275,8 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
     Tree.prototype.handleKeyDown = function(item, e) {
         var currentIndex = this.visibleItems.index(item);
         var newItem = null;
+        var hasKeyModifier = e.shiftKey || e.ctrlKey || e.metaKey || e.altKey;
+        var thisObj = this;
 
         switch (e.keyCode) {
             case this.keys.home: {
@@ -282,7 +285,7 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
                 newItem.focus();
                 if (e.shiftKey) {
                     this.multiSelectItem(newItem);
-                } else if (!e.ctrlKey) {
+                } else if (!hasKeyModifier) {
                     this.selectItem(newItem);
                 }
 
@@ -295,7 +298,7 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
                 newItem.focus();
                 if (e.shiftKey) {
                     this.multiSelectItem(newItem);
-                } else if (!e.ctrlKey) {
+                } else if (!hasKeyModifier) {
                     this.selectItem(newItem);
                 }
 
@@ -307,7 +310,7 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
 
                 if (e.shiftKey) {
                     this.multiSelectItem(item);
-                } else if (e.ctrlKey) {
+                } else if (e.metaKey || e.ctrlKey) {
                     this.toggleItem(item);
                 } else {
                     this.selectItem(item);
@@ -327,7 +330,7 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
                         itemParent.focus();
                         if (e.shiftKey) {
                             this.multiSelectItem(itemParent);
-                        } else if (!e.ctrlKey) {
+                        } else if (!hasKeyModifier) {
                             this.selectItem(itemParent);
                         }
                     }
@@ -346,7 +349,7 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
                         newItem.focus();
                         if (e.shiftKey) {
                             this.multiSelectItem(newItem);
-                        } else if (!e.ctrlKey) {
+                        } else if (!hasKeyModifier) {
                             this.selectItem(newItem);
                         }
                     }
@@ -362,7 +365,7 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
                     prev.focus();
                     if (e.shiftKey) {
                         this.multiSelectItem(prev);
-                    } else if (!e.ctrlKey) {
+                    } else if (!hasKeyModifier) {
                         this.selectItem(prev);
                     }
                 }
@@ -377,7 +380,7 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
                     next.focus();
                     if (e.shiftKey) {
                         this.multiSelectItem(next);
-                    } else if (!e.ctrlKey) {
+                    } else if (!hasKeyModifier) {
                         this.selectItem(next);
                     }
                 }
@@ -386,14 +389,23 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
             }
             case this.keys.asterisk: {
                 // Expand all groups.
-
-                var thisObj = this;
-
                 this.parents.each(function() {
                     thisObj.expandGroup($(this));
                 });
 
                 e.stopPropagation();
+                return false;
+            }
+            case this.keys.eight: {
+                if (e.shiftKey) {
+                    // Expand all groups.
+                    this.parents.each(function() {
+                        thisObj.expandGroup($(this));
+                    });
+
+                    e.stopPropagation();
+                }
+
                 return false;
             }
         }
@@ -409,7 +421,7 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
      * @param {Event} e The event.
      */
     Tree.prototype.handleKeyPress = function(item, e) {
-        if (e.altKey || e.ctrlKey || e.shiftKey) {
+        if (e.altKey || e.ctrlKey || e.shiftKey || e.metaKey) {
             // Do nothing.
             return true;
         }
@@ -498,7 +510,7 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
      */
     Tree.prototype.handleDblClick = function(item, e) {
 
-        if (e.altKey || e.ctrlKey || e.shiftKey) {
+        if (e.altKey || e.ctrlKey || e.shiftKey || e.metaKey) {
             // Do nothing.
             return true;
         }
@@ -540,7 +552,7 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
 
         if (e.shiftKey) {
             this.multiSelectItem(item);
-        } else if (e.ctrlKey) {
+        } else if (e.metaKey || e.ctrlKey) {
             this.toggleItem(item);
         } else {
             this.selectItem(item);
