@@ -66,14 +66,17 @@ class block_lp extends block_base {
             return $this->content;
         }
 
-        $summary = new \block_lp\output\summary();
-        if (!$summary->has_content()) {
-            return $this->content;
-        }
+        // Block needs a valid, non-guest user to be logged-in in order to display the user's learning plans.
+        if (isloggedin() && !isguestuser()) {
+            $summary = new \block_lp\output\summary();
+            if (!$summary->has_content()) {
+                return $this->content;
+            }
 
-        $renderer = $this->page->get_renderer('block_lp');
-        $this->content->text = $renderer->render($summary);
-        $this->content->footer = '';
+            $renderer = $this->page->get_renderer('block_lp');
+            $this->content->text = $renderer->render($summary);
+            $this->content->footer = '';
+        }
 
         return $this->content;
     }
