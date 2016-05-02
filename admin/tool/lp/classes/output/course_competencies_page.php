@@ -80,6 +80,7 @@ class course_competencies_page implements renderable, templatable {
         $this->coursecompetencylist = api::list_course_competencies($courseid);
         $this->canmanagecoursecompetencies = has_capability('moodle/competency:coursecompetencymanage', $this->context);
         $this->canconfigurecoursecompetencies = has_capability('moodle/competency:coursecompetencyconfigure', $this->context);
+        $this->cangradecompetencies = has_capability('moodle/competency:competencygrade', $this->context);
         $this->coursecompetencysettings = api::read_course_competency_settings($courseid);
         $this->coursecompetencystatistics = new course_competency_statistics($courseid);
 
@@ -183,6 +184,7 @@ class course_competencies_page implements renderable, templatable {
         $data->canmanagecompetencyframeworks = $this->canmanagecompetencyframeworks;
         $data->canmanagecoursecompetencies = $this->canmanagecoursecompetencies;
         $data->canconfigurecoursecompetencies = $this->canconfigurecoursecompetencies;
+        $data->cangradecompetencies = $this->cangradecompetencies;
         $exporter = new course_competency_settings_exporter($this->coursecompetencysettings);
         $data->settings = $exporter->export($output);
         $related = array('context' => $this->context);

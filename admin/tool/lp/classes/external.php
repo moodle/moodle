@@ -404,6 +404,7 @@ class external extends external_api {
             'canmanagecompetencyframeworks' => new external_value(PARAM_BOOL, 'User can manage competency frameworks'),
             'canmanagecoursecompetencies' => new external_value(PARAM_BOOL, 'User can manage linked course competencies'),
             'canconfigurecoursecompetencies' => new external_value(PARAM_BOOL, 'User can configure course competency settings'),
+            'cangradecompetencies' => new external_value(PARAM_BOOL, 'User can grade competencies.'),
             'settings' => course_competency_settings_exporter::get_read_structure(),
             'statistics' => course_competency_statistics_exporter::get_read_structure(),
             'competencies' => new external_multiple_structure(new external_single_structure(array(
