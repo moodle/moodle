@@ -2382,8 +2382,12 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
 
         // Test that all the submission and feedback plugins are returning the expected file aras.
         $usingfilearea = 0;
+        $coreplugins = core_plugin_manager::standard_plugins_list('assignsubmission');
         foreach ($assign->get_submission_plugins() as $plugin) {
             $type = $plugin->get_type();
+            if (!in_array($type, $coreplugins)) {
+                continue;
+            }
             $fileareas = $plugin->get_file_areas();
 
             if ($type == 'onlinetext') {
@@ -2399,8 +2403,12 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $this->assertEquals(2, $usingfilearea);
 
         $usingfilearea = 0;
+        $coreplugins = core_plugin_manager::standard_plugins_list('assignfeedback');
         foreach ($assign->get_feedback_plugins() as $plugin) {
             $type = $plugin->get_type();
+            if (!in_array($type, $coreplugins)) {
+                continue;
+            }
             $fileareas = $plugin->get_file_areas();
 
             if ($type == 'editpdf') {
