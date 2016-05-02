@@ -112,7 +112,7 @@ class feedback_item_info extends feedback_item_base {
                 switch($presentation) {
                     case self::MODE_RESPONSETIME:
                         $datavalue->value = $value->value;
-                        $datavalue->show = userdate($datavalue->value);
+                        $datavalue->show = $value->value ? userdate($datavalue->value) : '';
                         break;
                     case self::MODE_COURSE:
                         $datavalue->value = $value->value;
@@ -153,7 +153,8 @@ class feedback_item_info extends feedback_item_base {
             echo '</th></tr>';
             $sizeofdata = count($data);
             for ($i = 0; $i < $sizeofdata; $i++) {
-                echo '<tr><td colspan="2" class="singlevalue">';
+                $class = strlen(trim($data[$i]->show)) ? '' : ' class="isempty"';
+                echo '<tr'.$class.'><td colspan="2" class="singlevalue">';
                 echo str_replace("\n", '<br />', $data[$i]->show);
                 echo '</td></tr>';
             }
