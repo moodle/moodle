@@ -1389,6 +1389,14 @@ class mod_quiz_external extends external_api {
             array(
                 'attemptid' => new external_value(PARAM_INT, 'attempt id'),
                 'page' => new external_value(PARAM_INT, 'page number'),
+                'preflightdata' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, array()
+                )
             )
         );
     }
@@ -1398,16 +1406,18 @@ class mod_quiz_external extends external_api {
      *
      * @param int $attemptid attempt id
      * @param int $page page number
+     * @param array $preflightdata preflight required data (like passwords)
      * @return array of warnings and status result
      * @since Moodle 3.1
      */
-    public static function view_attempt($attemptid, $page) {
+    public static function view_attempt($attemptid, $page, $preflightdata = array()) {
 
         $warnings = array();
 
         $params = array(
             'attemptid' => $attemptid,
             'page' => $page,
+            'preflightdata' => $preflightdata,
         );
         $params = self::validate_parameters(self::view_attempt_parameters(), $params);
         list($attemptobj, $messages) = self::validate_attempt($params);
@@ -1451,6 +1461,14 @@ class mod_quiz_external extends external_api {
         return new external_function_parameters (
             array(
                 'attemptid' => new external_value(PARAM_INT, 'attempt id'),
+                'preflightdata' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, array()
+                )
             )
         );
     }
@@ -1459,15 +1477,17 @@ class mod_quiz_external extends external_api {
      * Trigger the attempt summary viewed event.
      *
      * @param int $attemptid attempt id
+     * @param array $preflightdata preflight required data (like passwords)
      * @return array of warnings and status result
      * @since Moodle 3.1
      */
-    public static function view_attempt_summary($attemptid) {
+    public static function view_attempt_summary($attemptid, $preflightdata = array()) {
 
         $warnings = array();
 
         $params = array(
             'attemptid' => $attemptid,
+            'preflightdata' => $preflightdata,
         );
         $params = self::validate_parameters(self::view_attempt_summary_parameters(), $params);
         list($attemptobj, $messages) = self::validate_attempt($params);
