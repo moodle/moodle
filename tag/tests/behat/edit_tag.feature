@@ -162,7 +162,7 @@ Feature: Users can edit tags to add description or rename
     And I click on "Edit tag name" "link" in the "Turtle" "table_row"
     And I set the field "New name for tag Turtle" to "DOG"
     And I press key "13" in the field "New name for tag Turtle"
-    And I should see "This tag name is already used, do you want to combine these tags?"
+    And I should see "The tag name is already in use. Do you want to combine these tags?"
     And I press "Cancel"
     And "New name for tag" "field" should not exist
     And I should see "Turtle"
@@ -192,7 +192,7 @@ Feature: Users can edit tags to add description or rename
     And I click on "Edit tag name" "link" in the "Turtle" "table_row"
     And I set the field "New name for tag Turtle" to "DOG"
     And I press key "13" in the field "New name for tag Turtle"
-    And I should see "This tag name is already used, do you want to combine these tags?"
+    And I should see "The tag name is already in use. Do you want to combine these tags?"
     And I press "Yes"
     Then I should not see "Turtle"
     And I should not see "DOG"

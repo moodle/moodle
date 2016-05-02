@@ -140,7 +140,7 @@ $string['importgroups_help'] = 'Groups may be imported via text file. The format
 * Optional fieldnames are description, enrolmentkey, picture, hidepicture';
 $string['importgroups_link'] = 'group/import';
 $string['includeonlyactiveenrol'] = 'Include only active enrolments';
-$string['includeonlyactiveenrol_help'] = 'This setting determines if only active enrolled users will be included in the groups. If enabled, suspended users will not be included in groups.';
+$string['includeonlyactiveenrol_help'] = 'If enabled, suspended users will not be included in groups.';
 $string['javascriptrequired'] = 'This page requires JavaScript to be enabled.';
 $string['members'] = 'Members per group';
 $string['membersofselectedgroup'] = 'Members of:';
