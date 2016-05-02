@@ -173,7 +173,6 @@ class behat_util extends testing_util {
                 }
             }
             echo $output;
-            ob_flush();
         }
     }
 
