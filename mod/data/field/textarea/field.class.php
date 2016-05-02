@@ -270,7 +270,8 @@ class data_field_textarea extends data_field_base {
         $names = explode('_', $name);
         // Clean first.
         if (count($names) == 2) {
-            return !empty($value);
+            // Don't assume that this is coming from a text editor with tags.
+            return strval($value) !== '';
         }
         return false;
     }

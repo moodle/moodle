@@ -225,3 +225,25 @@ Feature: Users can be required to specify certain fields when adding entries to 
     And I press "Save and view"
     Then ".alert.alert-error" "css_element" should exist in the "Required Latlong" "table_row"
     And ".alert.alert-error" "css_element" should exist in the "Not required Latlong" "table_row"
+
+    Scenario: A student filling in number and text fields with zero will not see an error.
+      Given I log in as "student1"
+      And I follow "Course 1"
+      When I add an entry to "Test database name" database with:
+         | Base Text input               | Some input to allow us to submit the otherwise empty form |
+         | Required Checkbox Option 1    | 1                                                         |
+         | RTOC Option 1                 | 1                                                         |
+         | Latitude                      | 0                                                         |
+         | Longitude                     | 0                                                         |
+         | Required Menu                 | 1                                                         |
+         | Required Number               | 0                                                         |
+         | Required Radio Option 1       | 1                                                         |
+         | Required Text input           | 0                                                         |
+         | Required Text area            | 0                                                         |
+         | Required URL                  | http://example.com/                                       |
+         | Required Multimenu            | 1                                                         |
+         | Required Two-Option Multimenu | 1                                                         |
+      And I press "Save and view"
+      And I follow "View list"
+      Then I should not see "No entries in database"
+      And I should see "Some input to allow us to submit the otherwise empty form"
