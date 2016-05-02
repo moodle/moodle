@@ -84,6 +84,8 @@ class user_competency_course_navigation implements renderable, templatable {
         $data->courseid = $this->courseid;
         $data->baseurl = $this->baseurl;
         $data->groupselector = '';
+        $data->jumptocompetency = get_string('jumptocompetency', 'tool_lp');
+        $data->jumptouser = get_string('jumptouser', 'tool_lp');
 
         if (has_any_capability(array('moodle/competency:usercompetencyview', 'moodle/competency:coursecompetencymanage'),
                 $context)) {

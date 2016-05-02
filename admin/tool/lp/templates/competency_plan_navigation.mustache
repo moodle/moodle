@@ -1,7 +1,7 @@
 <div class="pull-right well">
 {{#hascompetencies}}
 <span>
-<label for="competency-nav-{{uniqid}}" class="accesshide">{{#str}}jumptocompetency, tool_lp{{/str}}</label>
+<label for="competency-nav-{{uniqid}}" class="accesshide">{{jumptocompetency}}</label>
 <select id="competency-nav-{{uniqid}}">
 {{#competencies}}
 <option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{shortname}} {{idnumber}}</option>
@@ -15,7 +15,7 @@
 require(['core/form-autocomplete', 'tool_lp/competency_plan_navigation'], function(autocomplete, nav) {
     (new nav('#competency-nav-{{uniqid}}', '{{baseurl}}', {{userid}}, {{competencyid}}, {{planid}}));
 {{#hascompetencies}}
-    autocomplete.enhance('#competency-nav-{{uniqid}}', false, false, '{{#str}}jumptocompetency, tool_lp{{/str}}');
+    autocomplete.enhance('#competency-nav-{{uniqid}}', false, false, '{{jumptocompetency}}');
 {{/hascompetencies}}
 
 });
