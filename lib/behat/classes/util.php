@@ -164,7 +164,7 @@ class behat_util extends testing_util {
         $result = json_decode($result, true);
         $clienv = self::get_environment();
         if ($result != $clienv) {
-            $output = 'Differences decteted between cli and webserver...'.PHP_EOL;
+            $output = 'Differences detected between cli and webserver...'.PHP_EOL;
             foreach ($result as $key => $version) {
                 if ($clienv[$key] != $version) {
                     $output .= ' ' . $key . ': ' . PHP_EOL;
