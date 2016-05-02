@@ -238,7 +238,7 @@ $functions = array(
         'description' => 'Return course details',
         'type' => 'read',
         'capabilities' => 'moodle/course:view, moodle/course:update, moodle/course:viewhiddencourses',
-        'ajax' => '1',
+        'ajax' => true,
     ),
     'core_course_import_course' => array(
         'classname' => 'core_course_external',
@@ -254,7 +254,7 @@ $functions = array(
         'classpath' => 'course/externallib.php',
         'description' => 'Search courses by (name, module, block, tag)',
         'type' => 'read',
-        'ajax' => '1',
+        'ajax' => true,
     ),
     'core_course_update_categories' => array(
         'classname' => 'core_course_external',
@@ -318,8 +318,8 @@ $functions = array(
         'classpath' => 'lib/external/externallib.php',
         'description' => 'Return a list of notifications for the current session',
         'type' => 'read',
-        'loginrequired' => '',
-        'ajax' => '1',
+        'loginrequired' => false,
+        'ajax' => true,
     ),
     'core_files_get_files' => array(
         'classname' => 'core_files_external',
@@ -342,8 +342,8 @@ $functions = array(
         'description' => 'Return all raw strings (with {$a->xxx}), for a specific component ' .
             '- similar to core get_component_strings(), call',
         'type' => 'read',
-        'loginrequired' => '',
-        'ajax' => '1',
+        'loginrequired' => false,
+        'ajax' => true,
     ),
     'core_get_fragment' => array(
         'classname' => 'core_external',
@@ -351,7 +351,7 @@ $functions = array(
         'classpath' => 'lib/external/externallib.php',
         'description' => 'Return a fragment for inclusion, such as a JavaScript page.',
         'type' => 'read',
-        'ajax' => '1',
+        'ajax' => true,
     ),
     'core_get_string' => array(
         'classname' => 'core_external',
@@ -359,8 +359,8 @@ $functions = array(
         'classpath' => 'lib/external/externallib.php',
         'description' => 'Return a translated string - similar to core get_string(), call',
         'type' => 'read',
-        'loginrequired' => '',
-        'ajax' => '1',
+        'loginrequired' => false,
+        'ajax' => true,
     ),
     'core_get_strings' => array(
         'classname' => 'core_external',
@@ -368,8 +368,8 @@ $functions = array(
         'classpath' => 'lib/external/externallib.php',
         'description' => 'Return some translated strings - like several core get_string(), calls',
         'type' => 'read',
-        'loginrequired' => '',
-        'ajax' => '1',
+        'loginrequired' => false,
+        'ajax' => true,
     ),
     'core_grades_get_grades' => array(
         'classname' => 'core_grades_external',
@@ -663,8 +663,8 @@ $functions = array(
         'methodname' => 'load_template',
         'description' => 'Load a template for a renderable',
         'type' => 'read',
-        'loginrequired' => '',
-        'ajax' => '1',
+        'loginrequired' => false,
+        'ajax' => true,
     ),
     // Question related functions.
     'core_question_update_flag' => array(
@@ -702,21 +702,21 @@ $functions = array(
         'methodname' => 'get_tagindex',
         'description' => 'Gets tag index page for one tag and one tag area',
         'type' => 'read',
-        'ajax' => '1',
+        'ajax' => true,
     ),
     'core_tag_get_tags' => array(
         'classname' => 'core_tag_external',
         'methodname' => 'get_tags',
         'description' => 'Gets tags by their ids',
         'type' => 'read',
-        'ajax' => '1',
+        'ajax' => true,
     ),
     'core_tag_update_tags' => array(
         'classname' => 'core_tag_external',
         'methodname' => 'update_tags',
         'description' => 'Updates tags',
         'type' => 'write',
-        'ajax' => '1',
+        'ajax' => true,
     ),
     'core_update_inplace_editable' => array(
         'classname' => 'core_external',
@@ -724,8 +724,8 @@ $functions = array(
         'classpath' => 'lib/external/externallib.php',
         'description' => 'Generic service to update title',
         'type' => 'write',
-        'loginrequired' => '1',
-        'ajax' => '1',
+        'loginrequired' => true,
+        'ajax' => true,
     ),
     'core_user_add_user_device' => array(
         'classname' => 'core_user_external',
@@ -782,6 +782,7 @@ $functions = array(
         'description' => 'Retrieve users\' information for a specified unique field - If you want to do a user search, use '
             . 'core_user_get_users()',
         'type' => 'read',
+        'ajax' => true,
         'capabilities' => 'moodle/user:viewdetails, moodle/user:viewhiddendetails, moodle/course:useremail, moodle/user:update'
     ),
     'core_user_remove_user_device' => array(
@@ -1602,6 +1603,7 @@ $services = array(
             'core_user_add_user_private_files',
             'core_user_get_course_user_profiles',
             'core_user_get_users_by_field',
+            'core_user_get_users_by_id',
             'core_user_remove_user_device',
             'core_user_view_user_list',
             'core_user_view_user_profile',
