@@ -267,7 +267,10 @@ class helper {
             $instance->enrol = 'lti';
             $instance->status = $tool->status;
             $ltienrol = enrol_get_plugin('lti');
-            $ltienrol->enrol_user($instance, $userid, null, time(), $timeend);
+
+            // Hack - need to do this to workaround DB caching hack. See MDL-53977.
+            $timestart = intval(substr(time(), 0, 8) . '00') - 1;
+            $ltienrol->enrol_user($instance, $userid, null, $timestart, $timeend);
         }
 
         return self::ENROLMENT_SUCCESSFUL;
