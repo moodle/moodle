@@ -90,7 +90,7 @@ class assign_feedback_file extends assign_feedback_plugin {
         $filekey = null;
         $draftareainfo = null;
         foreach ($data as $key => $value) {
-            if (strpos($key, 'files_') === 0) {
+            if (strpos($key, 'files_') === 0 && strpos($key, '_filemanager')) {
                 $filekey = $key;
             }
         }
