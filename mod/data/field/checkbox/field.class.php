@@ -234,7 +234,7 @@ class data_field_checkbox extends data_field_base {
     function notemptyfield($value, $name) {
         $found = false;
         foreach ($value as $checkboxitem) {
-            if (!empty($checkboxitem)) {
+            if (strval($checkboxitem) !== '') {
                 $found = true;
                 break;
             }
