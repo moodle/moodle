@@ -1696,6 +1696,11 @@
           <ON_CHECK message="unsupporteddbtablerowformat" />
         </FEEDBACK>
       </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_unoconv_version" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="unoconvwarning" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
 </COMPATIBILITY_MATRIX>
