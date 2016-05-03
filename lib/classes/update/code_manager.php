@@ -187,6 +187,9 @@ class code_manager {
             }
         }
 
+        // Set the permissions of extracted subdirs and files.
+        $this->set_plugin_files_permissions($targetdir, $files);
+
         return $files;
     }
 
@@ -489,4 +492,32 @@ class code_manager {
         return $files;
     }
 
+    /**
+     * Sets the permissions of extracted subdirs and files
+     *
+     * As a result of unzipping, the subdirs and files are created with
+     * permissions set to $CFG->directorypermissions and $CFG->filepermissions.
+     * These are too benevolent by default (777 and 666 respectively) for PHP
+     * scripts and may lead to HTTP 500 errors in some environments.
+     *
+     * To fix this behaviour, we inherit the permissions of the plugin root
+     * directory itself.
+     *
+     * @param string $targetdir full path to the directory the ZIP file was extracted to
+     * @param array $files list of extracted files
+     */
+    protected function set_plugin_files_permissions($targetdir, array $files) {
+
+        $dirpermissions = fileperms($targetdir);
+        $filepermissions = ($dirpermissions & 0666);
+
+        foreach ($files as $subpath => $notusedhere) {
+            $path = $targetdir.'/'.$subpath;
+            if (is_dir($path)) {
+                @chmod($path, $dirpermissions);
+            } else {
+                @chmod($path, $filepermissions);
+            }
+        }
+    }
 }
