@@ -431,6 +431,7 @@ class core_course_external extends external_api {
             $courseinfo['id'] = $course->id;
             $courseinfo['fullname'] = $course->fullname;
             $courseinfo['shortname'] = $course->shortname;
+            $courseinfo['displayname'] = external_format_string(get_course_display_name_for_list($course), $context->id);
             $courseinfo['categoryid'] = $course->category;
             list($courseinfo['summary'], $courseinfo['summaryformat']) =
                 external_format_text($course->summary, $course->summaryformat, $context->id, 'course', 'summary', 0);
@@ -498,6 +499,7 @@ class core_course_external extends external_api {
                             'categorysortorder' => new external_value(PARAM_INT,
                                     'sort order into the category', VALUE_OPTIONAL),
                             'fullname' => new external_value(PARAM_TEXT, 'full name'),
+                            'displayname' => new external_value(PARAM_TEXT, 'course display name'),
                             'idnumber' => new external_value(PARAM_RAW, 'id number', VALUE_OPTIONAL),
                             'summary' => new external_value(PARAM_RAW, 'summary'),
                             'summaryformat' => new external_format_value('summary'),
