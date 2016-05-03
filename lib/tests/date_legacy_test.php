@@ -340,7 +340,8 @@ class core_date_legacy_testcase extends advanced_testcase {
         $USER->timezone = 'Europe/Prague';
         $this->assertSame('Europe/Prague', usertimezone('99'));
 
-        // Checking fallback with an unexisting timezone.
+        // When passed an unknown non-whole hour TZ, verify we round to closest
+        // hour. (Possible for legacy reasons when old timezones go away).
         $USER->timezone = '-9.23';
         $this->assertSame('UTC-9', usertimezone('99'));
     }
