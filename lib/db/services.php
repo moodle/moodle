@@ -1603,7 +1603,6 @@ $services = array(
             'core_user_add_user_private_files',
             'core_user_get_course_user_profiles',
             'core_user_get_users_by_field',
-            'core_user_get_users_by_id',
             'core_user_remove_user_device',
             'core_user_view_user_list',
             'core_user_view_user_profile',
