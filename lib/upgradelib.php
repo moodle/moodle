@@ -1237,7 +1237,7 @@ function external_update_descriptions($component) {
 }
 
 /**
- * Allow plugins to add external functions to other plugins or core services.
+ * Allow plugins and subsystems to add external functions to other plugins or built-in services.
  * This function is executed just after all the plugins have been updated.
  */
 function external_update_services() {
@@ -1739,7 +1739,8 @@ function upgrade_noncore($verbose) {
         foreach ($plugintypes as $type=>$location) {
             upgrade_plugins($type, 'print_upgrade_part_start', 'print_upgrade_part_end', $verbose);
         }
-        // Upgrade services. This function gives plugins a chance to add functions to existing core or non-core services.
+        // Upgrade services.
+        // This function gives plugins and subsystems a chance to add functions to existing built-in services.
         external_update_services();
 
         // Update cache definitions. Involves scanning each plugin for any changes.

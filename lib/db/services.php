@@ -39,7 +39,8 @@ $functions = array(
         'methodname'    => 'get_user_badges',
         'description'   => 'Returns the list of badges awarded to a user.',
         'type'          => 'read',
-        'capabilities'  => 'moodle/badges:viewotherbadges'
+        'capabilities'  => 'moodle/badges:viewotherbadges',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_calendar_create_calendar_events' => array(
         'classname' => 'core_calendar_external',
@@ -63,7 +64,8 @@ $functions = array(
         'description' => 'Get calendar events',
         'classpath' => 'calendar/externallib.php',
         'type' => 'read',
-        'capabilities' => 'moodle/calendar:manageentries, moodle/calendar:manageownentries, moodle/calendar:managegroupentries'
+        'capabilities' => 'moodle/calendar:manageentries, moodle/calendar:manageownentries, moodle/calendar:managegroupentries',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_cohort_add_cohort_members' => array(
         'classname' => 'core_cohort_external',
@@ -126,32 +128,37 @@ $functions = array(
         'methodname' => 'get_comments',
         'description' => 'Returns comments.',
         'type' => 'read',
-        'capabilities' => 'moodle/comment:view'
+        'capabilities' => 'moodle/comment:view',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_completion_get_activities_completion_status' => array(
         'classname' => 'core_completion_external',
         'methodname' => 'get_activities_completion_status',
         'description' => 'Return the activities completion status for a user in a course.',
         'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_completion_get_course_completion_status' => array(
         'classname' => 'core_completion_external',
         'methodname' => 'get_course_completion_status',
         'description' => 'Returns course completion status.',
         'type' => 'read',
-        'capabilities' => 'report/completion:view'
+        'capabilities' => 'report/completion:view',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_completion_mark_course_self_completed' => array(
         'classname' => 'core_completion_external',
         'methodname' => 'mark_course_self_completed',
         'description' => 'Update the course completion status for the current user (if course self-completion is enabled).',
         'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_completion_update_activity_completion_status_manually' => array(
         'classname' => 'core_completion_external',
         'methodname' => 'update_activity_completion_status_manually',
         'description' => 'Update completion status for the current user in an activity, only for activities with manual tracking.',
         'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_course_create_categories' => array(
         'classname' => 'core_course_external',
@@ -215,7 +222,8 @@ $functions = array(
         'classpath' => 'course/externallib.php',
         'description' => 'Get course contents',
         'type' => 'read',
-        'capabilities' => 'moodle/course:update, moodle/course:viewhiddencourses'
+        'capabilities' => 'moodle/course:update, moodle/course:viewhiddencourses',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_course_get_course_module' => array(
         'classname' => 'core_course_external',
@@ -223,6 +231,7 @@ $functions = array(
         'classpath' => 'course/externallib.php',
         'description' => 'Return information about a course module',
         'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_course_get_course_module_by_instance' => array(
         'classname' => 'core_course_external',
@@ -230,6 +239,7 @@ $functions = array(
         'classpath' => 'course/externallib.php',
         'description' => 'Return information about a given module name and instance id',
         'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_course_get_courses' => array(
         'classname' => 'core_course_external',
@@ -239,6 +249,7 @@ $functions = array(
         'type' => 'read',
         'capabilities' => 'moodle/course:view, moodle/course:update, moodle/course:viewhiddencourses',
         'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_course_import_course' => array(
         'classname' => 'core_course_external',
@@ -255,6 +266,7 @@ $functions = array(
         'description' => 'Search courses by (name, module, block, tag)',
         'type' => 'read',
         'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_course_update_categories' => array(
         'classname' => 'core_course_external',
@@ -279,6 +291,7 @@ $functions = array(
         'classpath' => 'course/externallib.php',
         'description' => 'Log that the course was viewed',
         'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_enrol_get_course_enrolment_methods' => array(
         'classname' => 'core_enrol_external',
@@ -286,6 +299,7 @@ $functions = array(
         'classpath' => 'enrol/externallib.php',
         'description' => 'Get the list of course enrolment methods',
         'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_enrol_get_enrolled_users' => array(
         'classname' => 'core_enrol_external',
@@ -294,7 +308,8 @@ $functions = array(
         'description' => 'Get enrolled users by course id.',
         'type' => 'read',
         'capabilities' => 'moodle/user:viewdetails, moodle/user:viewhiddendetails, moodle/course:useremail, moodle/user:update, '
-            . 'moodle/site:accessallgroups'
+            . 'moodle/site:accessallgroups',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_enrol_get_enrolled_users_with_capability' => array(
         'classname' => 'core_enrol_external',
@@ -310,7 +325,8 @@ $functions = array(
         'classpath' => 'enrol/externallib.php',
         'description' => 'Get the list of courses where a user is enrolled in',
         'type' => 'read',
-        'capabilities' => 'moodle/course:viewparticipants'
+        'capabilities' => 'moodle/course:viewparticipants',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_fetch_notifications' => array(
         'classname' => 'core_external',
@@ -327,6 +343,7 @@ $functions = array(
         'description' => 'browse moodle files',
         'type' => 'read',
         'classpath' => 'files/externallib.php',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_files_upload' => array(
         'classname' => 'core_files_external',
@@ -344,6 +361,7 @@ $functions = array(
         'type' => 'read',
         'loginrequired' => false,
         'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_get_fragment' => array(
         'classname' => 'core_external',
@@ -385,6 +403,7 @@ $functions = array(
         'methodname' => 'update_grades',
         'description' => 'Update a grade item and associated student grades.',
         'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_grading_get_definitions' => array(
         'classname' => 'core_grading_external',
@@ -463,6 +482,7 @@ $functions = array(
         'classpath' => 'group/externallib.php',
         'description' => 'Gets a list of groups that the user is allowed to access within the specified activity.',
         'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_group_get_activity_groupmode' => array(
         'classname' => 'core_group_external',
@@ -470,6 +490,7 @@ $functions = array(
         'classpath' => 'group/externallib.php',
         'description' => 'Returns effective groupmode used in a given activity.',
         'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_group_get_course_groupings' => array(
         'classname' => 'core_group_external',
@@ -492,7 +513,8 @@ $functions = array(
         'classpath' => 'group/externallib.php',
         'description' => 'Returns all groups in specified course for the specified user.',
         'type' => 'read',
-        'capabilities' => 'moodle/course:managegroups'
+        'capabilities' => 'moodle/course:managegroups',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_group_get_group_members' => array(
         'classname' => 'core_group_external',
@@ -537,6 +559,7 @@ $functions = array(
         'classpath' => 'message/externallib.php',
         'description' => 'Block contacts',
         'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_create_contacts' => array(
         'classname' => 'core_message_external',
@@ -544,6 +567,7 @@ $functions = array(
         'classpath' => 'message/externallib.php',
         'description' => 'Add contacts to the contact list',
         'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_delete_contacts' => array(
         'classname' => 'core_message_external',
@@ -551,6 +575,7 @@ $functions = array(
         'classpath' => 'message/externallib.php',
         'description' => 'Remove contacts from the contact list',
         'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_delete_message' => array(
         'classname' => 'core_message_external',
@@ -558,7 +583,8 @@ $functions = array(
         'classpath' => 'message/externallib.php',
         'description' => 'Deletes a message.',
         'type' => 'write',
-        'capabilities' => 'moodle/site:deleteownmessage'
+        'capabilities' => 'moodle/site:deleteownmessage',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_get_blocked_users' => array(
         'classname' => 'core_message_external',
@@ -566,6 +592,7 @@ $functions = array(
         'classpath' => 'message/externallib.php',
         'description' => 'Retrieve a list of users blocked',
         'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_get_contacts' => array(
         'classname' => 'core_message_external',
@@ -573,6 +600,7 @@ $functions = array(
         'classpath' => 'message/externallib.php',
         'description' => 'Retrieve the contact list',
         'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_get_messages' => array(
         'classname' => 'core_message_external',
@@ -580,6 +608,7 @@ $functions = array(
         'classpath' => 'message/externallib.php',
         'description' => 'Retrieve a list of messages sent and received by a user (conversations, notifications or both)',
         'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_mark_message_read' => array(
         'classname' => 'core_message_external',
@@ -587,6 +616,7 @@ $functions = array(
         'classpath' => 'message/externallib.php',
         'description' => 'Mark a single message as read, trigger message_viewed event.',
         'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_search_contacts' => array(
         'classname' => 'core_message_external',
@@ -594,6 +624,7 @@ $functions = array(
         'classpath' => 'message/externallib.php',
         'description' => 'Search for contacts',
         'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_send_instant_messages' => array(
         'classname' => 'core_message_external',
@@ -601,7 +632,8 @@ $functions = array(
         'classpath' => 'message/externallib.php',
         'description' => 'Send instant messages',
         'type' => 'write',
-        'capabilities' => 'moodle/site:sendmessage'
+        'capabilities' => 'moodle/site:sendmessage',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_unblock_contacts' => array(
         'classname' => 'core_message_external',
@@ -609,6 +641,7 @@ $functions = array(
         'classpath' => 'message/externallib.php',
         'description' => 'Unblock contacts',
         'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_notes_create_notes' => array(
         'classname' => 'core_notes_external',
@@ -616,7 +649,8 @@ $functions = array(
         'classpath' => 'notes/externallib.php',
         'description' => 'Create notes',
         'type' => 'write',
-        'capabilities' => 'moodle/notes:manage'
+        'capabilities' => 'moodle/notes:manage',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_notes_delete_notes' => array(
         'classname' => 'core_notes_external',
@@ -624,7 +658,8 @@ $functions = array(
         'classpath' => 'notes/externallib.php',
         'description' => 'Delete notes',
         'type' => 'write',
-        'capabilities' => 'moodle/notes:manage'
+        'capabilities' => 'moodle/notes:manage',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_notes_get_course_notes' => array(
         'classname' => 'core_notes_external',
@@ -632,7 +667,8 @@ $functions = array(
         'classpath' => 'notes/externallib.php',
         'description' => 'Returns all notes in specified course (or site), for the specified user.',
         'type' => 'read',
-        'capabilities' => 'moodle/notes:view'
+        'capabilities' => 'moodle/notes:view',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_notes_get_notes' => array(
         'classname' => 'core_notes_external',
@@ -656,7 +692,8 @@ $functions = array(
         'classpath' => 'notes/externallib.php',
         'description' => 'Simulates the web interface view of notes/index.php: trigger events.',
         'type' => 'write',
-        'capabilities' => 'moodle/notes:view'
+        'capabilities' => 'moodle/notes:view',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_output_load_template' => array(
         'classname' => 'core\output\external',
@@ -673,13 +710,15 @@ $functions = array(
         'description'   => 'Update the flag state of a question attempt.',
         'type'          => 'write',
         'capabilities'  => 'moodle/question:flag',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_rating_get_item_ratings' => array(
         'classname' => 'core_rating_external',
         'methodname' => 'get_item_ratings',
         'description' => 'Retrieve all the ratings for an item.',
         'type' => 'read',
-        'capabilities' => 'moodle/rating:view'
+        'capabilities' => 'moodle/rating:view',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_role_assign_roles' => array(
         'classname' => 'core_role_external',
@@ -733,6 +772,7 @@ $functions = array(
         'classpath' => 'user/externallib.php',
         'description' => 'Store mobile user devices information for PUSH Notifications.',
         'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_user_add_user_private_files' => array(
         'classname' => 'core_user_external',
@@ -740,7 +780,8 @@ $functions = array(
         'classpath' => 'user/externallib.php',
         'description' => 'Copy files from a draft area to users private files area.',
         'type' => 'write',
-        'capabilities' => 'moodle/user:manageownfiles'
+        'capabilities' => 'moodle/user:manageownfiles',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_user_create_users' => array(
         'classname' => 'core_user_external',
@@ -765,7 +806,8 @@ $functions = array(
         'description' => 'Get course user profiles (each of the profils matching a course id and a user id),.',
         'type' => 'read',
         'capabilities' => 'moodle/user:viewdetails, moodle/user:viewhiddendetails, moodle/course:useremail, moodle/user:update, '
-            . 'moodle/site:accessallgroups'
+            . 'moodle/site:accessallgroups',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_user_get_users' => array(
         'classname' => 'core_user_external',
@@ -782,8 +824,9 @@ $functions = array(
         'description' => 'Retrieve users\' information for a specified unique field - If you want to do a user search, use '
             . 'core_user_get_users()',
         'type' => 'read',
+        'capabilities' => 'moodle/user:viewdetails, moodle/user:viewhiddendetails, moodle/course:useremail, moodle/user:update',
         'ajax' => true,
-        'capabilities' => 'moodle/user:viewdetails, moodle/user:viewhiddendetails, moodle/course:useremail, moodle/user:update'
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_user_remove_user_device' => array(
         'classname' => 'core_user_external',
@@ -791,6 +834,7 @@ $functions = array(
         'classpath' => 'user/externallib.php',
         'description' => 'Remove a user device from the Moodle database.',
         'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_user_update_users' => array(
         'classname' => 'core_user_external',
@@ -807,6 +851,7 @@ $functions = array(
         'description' => 'Simulates the web-interface view of user/index.php (triggering events),.',
         'type' => 'write',
         'capabilities' => 'moodle/course:viewparticipants',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_user_view_user_profile' => array(
         'classname' => 'core_user_external',
@@ -815,6 +860,7 @@ $functions = array(
         'description' => 'Simulates the web-interface view of user/view.php and user/profile.php (triggering events),.',
         'type' => 'write',
         'capabilities' => 'moodle/user:viewdetails',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
 
     // Competencies functions.
@@ -1554,67 +1600,13 @@ $functions = array(
         'classpath' => 'webservice/externallib.php',
         'description' => 'Return some site info / user info / list web service functions',
         'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     )
 );
 
 $services = array(
    'Moodle mobile web service'  => array(
-        'functions' => array (
-            'core_badges_get_user_badges',
-            'core_calendar_get_calendar_events',
-            'core_comment_get_comments',
-            'core_completion_get_activities_completion_status',
-            'core_completion_get_course_completion_status',
-            'core_completion_mark_course_self_completed',
-            'core_completion_update_activity_completion_status_manually',
-            'core_course_get_contents',
-            'core_course_get_course_module',
-            'core_course_get_course_module_by_instance',
-            'core_course_get_courses',
-            'core_course_search_courses',
-            'core_course_view_course',
-            'core_enrol_get_course_enrolment_methods',
-            'core_enrol_get_enrolled_users',
-            'core_enrol_get_users_courses',
-            'core_files_get_files',
-            'core_get_component_strings',
-            'core_grades_update_grades',
-            'core_group_get_activity_allowed_groups',
-            'core_group_get_activity_groupmode',
-            'core_group_get_course_user_groups',
-            'core_message_block_contacts',
-            'core_message_create_contacts',
-            'core_message_delete_contacts',
-            'core_message_delete_message',
-            'core_message_get_blocked_users',
-            'core_message_get_contacts',
-            'core_message_get_messages',
-            'core_message_mark_message_read',
-            'core_message_search_contacts',
-            'core_message_send_instant_messages',
-            'core_message_unblock_contacts',
-            'core_notes_create_notes',
-            'core_notes_delete_notes',
-            'core_notes_get_course_notes',
-            'core_notes_view_notes',
-            'core_question_update_flag',
-            'core_rating_get_item_ratings',
-            'core_user_add_user_device',
-            'core_user_add_user_private_files',
-            'core_user_get_course_user_profiles',
-            'core_user_get_users_by_field',
-            'core_user_remove_user_device',
-            'core_user_view_user_list',
-            'core_user_view_user_profile',
-            'core_webservice_get_site_info',
-            'enrol_guest_get_instance_info',
-            'enrol_self_enrol_user',
-            'enrol_self_get_instance_info',
-            'gradereport_user_get_grades_table',
-            'gradereport_user_view_grade_report',
-            'message_airnotifier_are_notification_preferences_configured',
-            'message_airnotifier_is_system_configured',
-            ),
+        'functions' => array(), // Unused as we add the service in each function definition, third party services would use this.
         'enabled' => 0,
         'restrictedusers' => 0,
         'shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE,

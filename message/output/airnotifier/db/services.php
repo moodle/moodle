@@ -31,6 +31,7 @@ $functions = array(
         'classpath'   => 'message/output/airnotifier/externallib.php',
         'description' => 'Check whether the airnotifier settings have been configured',
         'type'        => 'read',
+        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
 
     'message_airnotifier_are_notification_preferences_configured' => array(
@@ -39,5 +40,6 @@ $functions = array(
         'classpath'   => 'message/output/airnotifier/externallib.php',
         'description' => 'Check if the users have notification preferences configured yet',
         'type'        => 'read',
+        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
 );
