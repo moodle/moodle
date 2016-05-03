@@ -134,7 +134,7 @@ class core_date {
             // Convert to known zone.
             $tz = self::$badzones[$tz];
             $fixed = true;
-        } else if (is_number($tz)) {
+        } else if (is_numeric($tz)) {
             // Half hour numeric offsets were already tested, try rounding to integers here.
             $roundedtz = (string)(int)$tz;
             if (isset(self::$badzones[$roundedtz])) {
