@@ -1605,15 +1605,7 @@ $functions = array(
 
 $services = array(
    'Moodle mobile web service'  => array(
-        'functions' => array (
-            'enrol_guest_get_instance_info',
-            'enrol_self_enrol_user',
-            'enrol_self_get_instance_info',
-            'gradereport_user_get_grades_table',
-            'gradereport_user_view_grade_report',
-            'message_airnotifier_are_notification_preferences_configured',
-            'message_airnotifier_is_system_configured',
-            ),
+        'functions' => array(),
         'enabled' => 0,
         'restrictedusers' => 0,
         'shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE,
