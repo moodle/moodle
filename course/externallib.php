@@ -2164,6 +2164,7 @@ class core_course_external extends external_api {
             'perpage'       => $perpage
         );
         $params = self::validate_parameters(self::search_courses_parameters(), $parameters);
+        self::validate_context(context_system::instance());
 
         $allowedcriterianames = array('search', 'modulelist', 'blocklist', 'tagid');
         if (!in_array($params['criterianame'], $allowedcriterianames)) {
