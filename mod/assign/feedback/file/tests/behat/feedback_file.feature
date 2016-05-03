@@ -52,14 +52,14 @@ Feature: In an assignment, teacher can submit feedback files during grading
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I click on "Grade"
+    And I click on "Grade" "link" in the ".submissionlinks" "css_element"
     And I upload "mod/assign/feedback/file/tests/fixtures/feedback.txt" file to "Feedback files" filemanager
 
   @javascript
   Scenario: A teacher can provide a feedback file when grading an assignment.
     Given I set the field "applytoall" to "0"
     And I press "Save changes"
-    And I click "Ok" "button"
+    And I click on "Ok" "button"
     And I follow "Course 1"
     And I log out
     And I log in as "student1"
@@ -75,7 +75,7 @@ Feature: In an assignment, teacher can submit feedback files during grading
   @javascript
   Scenario: A teacher can provide a feedback file when grading an assignment and all students in the group will receive the file.
     Given I press "Save changes"
-    And I click "Ok" "button"
+    And I click on "Ok" "button"
     And I follow "Course 1"
     And I log out
     And I log in as "student1"
