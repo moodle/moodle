@@ -48,7 +48,7 @@ class feedback_item_info extends feedback_item_base {
         //the elements for position dropdownlist
         $positionlist = array_slice(range(0, $i_formselect_last), 1, $i_formselect_last, true);
 
-        $item->presentation = empty($item->presentation) ? 1 : $item->presentation;
+        $item->presentation = empty($item->presentation) ? self::MODE_COURSE : $item->presentation;
         $item->required = 0;
 
         //all items for dependitem
@@ -59,12 +59,23 @@ class feedback_item_info extends feedback_item_base {
                              'items'=>$feedbackitems,
                              'feedback'=>$feedback->id);
 
+        // Options for the 'presentation' select element.
+        $presentationoptions = array();
+        if ($feedback->anonymous == FEEDBACK_ANONYMOUS_NO || $item->presentation == self::MODE_RESPONSETIME) {
+            // "Response time" is hidden anyway in case of anonymous feedback, no reason to offer this option.
+            // However if it was already selected leave it in the dropdown.
+            $presentationoptions[self::MODE_RESPONSETIME] = get_string('responsetime', 'feedback');
+        }
+        $presentationoptions[self::MODE_COURSE]  = get_string('course');
+        $presentationoptions[self::MODE_CATEGORY]  = get_string('coursecategory');
+
         //build the form
         $this->item_form = new feedback_info_form('edit_item.php',
                                                   array('item'=>$item,
                                                   'common'=>$commonparams,
                                                   'positionlist'=>$positionlist,
-                                                  'position' => $position));
+                                                  'position' => $position,
+                                                  'presentationoptions' => $presentationoptions));
     }
 
     public function save_item() {
