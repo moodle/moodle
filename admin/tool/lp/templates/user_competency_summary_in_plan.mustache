@@ -42,6 +42,7 @@
 }}
 {{#usercompetencysummary}}
 <div data-region="user-competency-full-info" data-node="user-competency" data-competencyid="{{usercompetency.competencyid}}" data-userid="{{usercompetency.userid}}" data-region-id="{{uniqid}}">
+<div>{{{plan.description}}}</div>
 {{#plan.iscompleted}}
 <div class="alert alert-info" role="alert">
     {{#str}} usercompetencyfrozen, tool_lp {{/str}}
