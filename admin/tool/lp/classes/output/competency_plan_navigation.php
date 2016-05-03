@@ -79,7 +79,6 @@ class competency_plan_navigation implements renderable, templatable {
         $data->competencyid = $this->competencyid;
         $data->planid = $this->planid;
         $data->baseurl = $this->baseurl;
-        $data->jumptocompetency = get_string('jumptocompetency', 'tool_lp');
 
         $plancompetencies = \core_competency\api::list_plan_competencies($data->planid);
         $data->competencies = array();
