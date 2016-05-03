@@ -680,7 +680,13 @@ class mod_assign_renderer extends plugin_renderer_base {
         if ($submission) {
             $row = new html_table_row();
             $cell1 = new html_table_cell(get_string('timemodified', 'assign'));
-            $cell2 = new html_table_cell(userdate($submission->timemodified));
+
+            if ($submission->status != ASSIGN_SUBMISSION_STATUS_NEW) {
+                $cell2 = new html_table_cell(userdate($submission->timemodified));
+            } else {
+                $cell2 = new html_table_cell('-');
+            }
+
             $row->cells = array($cell1, $cell2);
             $t->data[] = $row;
 
