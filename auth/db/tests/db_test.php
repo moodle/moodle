@@ -456,7 +456,7 @@ class auth_db_testcase extends advanced_testcase {
         $user3->username = 'john%#&~%*_doe';
         $user3->email = ' john@testing.com ';
         $user3->deleted = 'no';
-        $user3->description = '<b>A description <script>alert(123)</script>about myself.</b>';
+        $user3->description = '<b>A description about myself.</b>';
         $user3cleaned = $auth->clean_data($user3);
 
         // Expected results.
