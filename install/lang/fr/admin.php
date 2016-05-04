@@ -40,5 +40,5 @@ $string['cliunknowoption'] = 'Options non reconnues :
  {$a}.
 Utilisez l\'option --help.';
 $string['cliyesnoprompt'] = 'Tapez y (pour oui) ou n (pour non)';
-$string['environmentrequireinstall'] = 'doit être installé et activé';
-$string['environmentrequireversion'] = 'la version {$a->needed} est requise ; vous utilisez actuellement la version {$a->current}';
+$string['environmentrequireinstall'] = 'L\'extension doit être installée et activée';
+$string['environmentrequireversion'] = 'La version {$a->needed} est requise ; vous utilisez actuellement la version {$a->current}';
