@@ -728,7 +728,7 @@ if (empty($charttype)) {
                             $certtabledata = "<a class=\"btn\" href='".new moodle_url('/mod/iomadcertificate/view.php',
                                                                          array('id' => $certificatemodinstance->id,
                                                                                'action' => 'get',
-                                                                               'userid' => $user->id,
+                                                                               'userid' => $user->uid,
                                                                                'sesskey' => sesskey()))."'>".
                                               get_string('downloadcert', 'local_report_users')."</a>";
                         } else {
