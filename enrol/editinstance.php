@@ -42,6 +42,7 @@ require_capability('enrol/' . $type . ':config', $context);
 
 $PAGE->set_url('/enrol/editinstance.php', array('courseid' => $course->id, 'id' => $instanceid, 'type' => $type));
 $PAGE->set_pagelayout('admin');
+$PAGE->set_docs_path('enrol/' . $type . '/edit');
 
 if (empty($return)) {
     $return = new moodle_url('/enrol/instances.php', array('id' => $course->id));
