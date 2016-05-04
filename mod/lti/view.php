@@ -112,10 +112,11 @@ if ($lti->showdescriptionlaunch && $lti->intro) {
 
 if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
     echo "<script language=\"javascript\">//<![CDATA[\n";
-    echo "window.open('launch.php?id=".$cm->id."','lti');";
+    echo "window.open('launch.php?id=".$cm->id."','lti-".$cm->id."');";
     echo "//]]\n";
     echo "</script>\n";
     echo "<p>".get_string("basiclti_in_new_window", "lti")."</p>\n";
+    echo "<p> <a href='launch.php?id=".$cm->id."' target='_blank'>".get_string("basiclti_in_new_window_open", "lti")."</a></p>\n";
 } else {
     // Request the launch content with an iframe tag.
     echo '<iframe id="contentframe" height="600px" width="100%" src="launch.php?id='.$cm->id.'"></iframe>';

@@ -80,6 +80,7 @@ $string['basiclti'] = 'LTI';
 $string['basiclti_base_string'] = 'LTI OAuth base string';
 $string['basiclti_endpoint'] = 'LTI launch endpoint';
 $string['basiclti_in_new_window'] = 'Your activity has opened in a new window';
+$string['basiclti_in_new_window_open'] = 'Click here if the new window has not opened';
 $string['basiclti_parameters'] = 'LTI launch parameters';
 $string['basicltiactivities'] = 'LTI activities';
 $string['basicltifieldset'] = 'Custom example fieldset';
