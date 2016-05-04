@@ -24,6 +24,7 @@
 namespace tool_lp\external;
 
 use core_competency\api;
+use core_competency\user_competency;
 use context_course;
 use renderer_base;
 use stdClass;
@@ -72,6 +73,8 @@ class user_competency_summary_in_course_exporter extends \core_competency\extern
         $related['usercompetency'] = null;
         $exporter = new user_competency_summary_exporter(null, $related);
         $result->usercompetencysummary = $exporter->export($output);
+        $result->usercompetencysummary->cangrade = user_competency::can_grade_user_in_course($this->related['user']->id,
+            $this->related['course']->id);
 
         $context = context_course::instance($this->related['course']->id);
         $exporter = new course_summary_exporter($this->related['course'], array('context' => $context));
