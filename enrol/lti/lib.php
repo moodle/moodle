@@ -174,11 +174,12 @@ class enrol_lti_plugin extends enrol_plugin {
     public function unenrol_user(stdClass $instance, $userid) {
         global $DB;
 
-        // Get the tool associated with this instance.
-        $tool = $DB->get_record('enrol_lti_tools', array('enrolid' => $instance->id), 'id', MUST_EXIST);
-
-        // Need to remove the user from the users table.
-        $DB->delete_records('enrol_lti_users', array('userid' => $userid, 'toolid' => $tool->id));
+        // Get the tool associated with this instance. Note - it may not exist if we have deleted
+        // the tool. This is fine because we have already cleaned the 'enrol_lti_users' table.
+        if ($tool = $DB->get_record('enrol_lti_tools', array('enrolid' => $instance->id), 'id')) {
+            // Need to remove the user from the users table.
+            $DB->delete_records('enrol_lti_users', array('userid' => $userid, 'toolid' => $tool->id));
+        }
 
         parent::unenrol_user($instance, $userid);
     }
