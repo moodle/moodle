@@ -38,6 +38,9 @@ env:
     # Perform an upgrade test too.
     - DB=pgsql    TASK=UPGRADE
 
+    # Run a check for unbuilt files with Grunt.
+    - DB=none     TASK=GRUNT
+
 matrix:
     # Enable fast finish.
     # This will fail the build if a single job fails (except those in allow_failures).
@@ -56,6 +59,9 @@ matrix:
         - env: DB=mysqli   TASK=PHPUNIT
           php: 5.4
 
+        - env: DB=none     TASK=GRUNT
+          php: 5.4
+
         # Moodle 2.7 is not compatible with PHP 7 for the upgrade test.
         - env: DB=pgsql    TASK=UPGRADE
           php: 7.0
@@ -63,6 +69,7 @@ matrix:
 cache:
     directories:
       - $HOME/.composer/cache
+      - $HOME/.npm
 
 install:
     # Disable xdebug. We aren't generating code coverage, and it has a huge impact upon test performance.
@@ -139,6 +146,14 @@ before_script:
         php admin/tool/phpunit/cli/init.php
       fi
 
+    - >
+      if [ "$TASK" = 'GRUNT' ];
+      then
+        npm install ;
+        npm install -g grunt ;
+        grunt ;
+      fi
+
     ########################################################################
     # CI Tests
     ########################################################################
@@ -203,6 +218,15 @@ script:
       if [ "$TASK" = 'CITEST' ];
       then
         bash local/ci/php_lint/php_lint.sh;
+      fi
+
+    - >
+      if [ "$TASK" = 'GRUNT' ];
+      then
+        # Add all files to the git index and then run diff --cached to see all changes.
+        # This ensures that we get the status of all files, including new files.
+        git add . ;
+        git diff --cached --exit-code ;
       fi
 
     ########################################################################
