@@ -38,8 +38,6 @@ define(['jquery'], function($) {
         this._userId = userId + '';
         this._competencyId = competencyId + '';
         this._courseId = courseId;
-        this._ignoreFirstUser = true;
-        this._ignoreFirstCompetency = true;
 
         $(userSelector).on('change', this._userChanged.bind(this));
         $(competencySelector).on('change', this._competencyChanged.bind(this));
@@ -52,11 +50,6 @@ define(['jquery'], function($) {
      * @param {Event} e
      */
     UserCompetencyCourseNavigation.prototype._userChanged = function(e) {
-        if (this._ignoreFirstUser) {
-            this._ignoreFirstUser = false;
-            return;
-        }
-
         var newUserId = $(e.target).val();
         var queryStr = '?userid=' + newUserId + '&courseid=' + this._courseId + '&competencyid=' + this._competencyId;
         document.location = this._baseUrl + queryStr;
@@ -69,10 +62,6 @@ define(['jquery'], function($) {
      * @param {Event} e
      */
     UserCompetencyCourseNavigation.prototype._competencyChanged = function(e) {
-        if (this._ignoreFirstCompetency) {
-            this._ignoreFirstCompetency = false;
-            return;
-        }
         var newCompetencyId = $(e.target).val();
         var queryStr = '?userid=' + this._userId + '&courseid=' + this._courseId + '&competencyid=' + newCompetencyId;
         document.location = this._baseUrl + queryStr;
