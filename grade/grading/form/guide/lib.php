@@ -213,6 +213,16 @@ class gradingform_guide_controller extends gradingform_controller {
                 $data = array('definitionid' => $this->definition->id, 'descriptionformat' => FORMAT_MOODLE);
                 foreach ($commentfields as $key) {
                     if (array_key_exists($key, $comment)) {
+                        // Check if key is the comment's description.
+                        if ($key === 'description') {
+                            // Get a trimmed value for the comment description.
+                            $description = trim($comment[$key]);
+                            // Check if the comment description is empty.
+                            if (empty($description)) {
+                                // Continue to the next comment object if the description is empty.
+                                continue 2;
+                            }
+                        }
                         $data[$key] = $comment[$key];
                     }
                 }
