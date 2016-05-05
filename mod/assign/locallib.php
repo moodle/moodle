@@ -3012,7 +3012,7 @@ class assign {
         $o .= $this->get_renderer()->render($header);
 
         // If userid is passed - we are only grading a single student.
-        $rownum = required_param('rownum', PARAM_INT);
+        $rownum = optional_param('rownum', 0, PARAM_INT);
         $useridlistid = optional_param('useridlistid', $this->get_useridlist_key_id(), PARAM_ALPHANUM);
         $userid = optional_param('userid', 0, PARAM_INT);
         $attemptnumber = optional_param('attemptnumber', -1, PARAM_INT);
@@ -3025,6 +3025,7 @@ class assign {
             $useridlist = $SESSION->mod_assign_useridlist[$useridlistkey];
         } else {
             $rownum = 0;
+            $useridlistid = 0;
             $useridlist = array($userid);
         }
 
@@ -3144,11 +3145,11 @@ class assign {
 
         // Now show the grading form.
         if (!$mform) {
-            $pagination = array('rownum'=>$rownum,
-                                'useridlistid'=>$useridlistid,
-                                'last'=>$last,
-                                'userid'=>optional_param('userid', 0, PARAM_INT),
-                                'attemptnumber'=>$attemptnumber);
+            $pagination = array('rownum' => $rownum,
+                                'useridlistid' => $useridlistid,
+                                'last' => $last,
+                                'userid' => $userid,
+                                'attemptnumber' => $attemptnumber);
             $formparams = array($this, $data, $pagination);
             $mform = new mod_assign_grade_form(null,
                                                $formparams,
@@ -6109,7 +6110,9 @@ class assign {
         $useridlistid = $params['useridlistid'];
         $userid = $params['userid'];
         $attemptnumber = $params['attemptnumber'];
-        if (!$userid) {
+        $bothids = ($userid && $useridlistid);
+
+        if (!$userid || $bothids) {
             $useridlistkey = $this->get_useridlist_key($useridlistid);
             if (empty($SESSION->mod_assign_useridlist[$useridlistkey])) {
                 $SESSION->mod_assign_useridlist[$useridlistkey] = $this->get_grading_userid_list();
@@ -6275,6 +6278,8 @@ class assign {
         $mform->setType('attemptnumber', PARAM_INT);
         $mform->addElement('hidden', 'ajax', optional_param('ajax', 0, PARAM_INT));
         $mform->setType('ajax', PARAM_INT);
+        $mform->addElement('hidden', 'userid', optional_param('userid', 0, PARAM_INT));
+        $mform->setType('userid', PARAM_INT);
 
         if ($this->get_instance()->teamsubmission) {
             $mform->addElement('header', 'groupsubmissionsettings', get_string('groupsubmissionsettings', 'assign'));
@@ -6988,11 +6993,11 @@ class assign {
 
         $data = new stdClass();
 
-        $gradeformparams = array('rownum'=>$rownum,
-                                 'useridlistid'=>$useridlistid,
-                                 'last'=>false,
-                                 'attemptnumber'=>$attemptnumber,
-                                 'userid'=>optional_param('userid', 0, PARAM_INT));
+        $gradeformparams = array('rownum' => $rownum,
+                                 'useridlistid' => $useridlistid,
+                                 'last' => $last,
+                                 'attemptnumber' => $attemptnumber,
+                                 'userid' => $userid);
         $mform = new mod_assign_grade_form(null,
                                            array($this, $data, $gradeformparams),
                                            'post',
