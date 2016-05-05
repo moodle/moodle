@@ -65,7 +65,7 @@ class mod_assign_grade_form extends moodleform {
      */
     protected function get_form_identifier() {
         $params = $this->_customdata[2];
-        return get_class($this) . '_' . $params['rownum'];
+        return get_class($this) . '_' . $params['userid'];
     }
 
     /**
