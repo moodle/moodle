@@ -38,6 +38,43 @@ require_once($CFG->dirroot.'/user/lib.php');
  */
 class core_userliblib_testcase extends advanced_testcase {
     /**
+     * Test user_get_user_details_courses
+     */
+    public function test_user_get_user_details_courses() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create user and modify user profile.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course1->id);
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        role_assign($teacherrole->id, $user1->id, $coursecontext->id);
+        role_assign($teacherrole->id, $user2->id, $coursecontext->id);
+
+        accesslib_clear_all_caches_for_unit_testing();
+
+        // Get user2 details as a user with super system capabilities.
+        $result = user_get_user_details_courses($user2);
+        $this->assertEquals($user2->id, $result['id']);
+        $this->assertEquals(fullname($user2), $result['fullname']);
+        $this->assertEquals($course1->id, $result['enrolledcourses'][0]['id']);
+
+        $this->setUser($user1);
+        // Get user2 details as a user who can only see this user in a course.
+        $result = user_get_user_details_courses($user2);
+        $this->assertEquals($user2->id, $result['id']);
+        $this->assertEquals(fullname($user2), $result['fullname']);
+        $this->assertEquals($course1->id, $result['enrolledcourses'][0]['id']);
+
+    }
+
+    /**
      * Test user_update_user.
      */
     public function test_user_update_user() {
