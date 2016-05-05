@@ -281,6 +281,11 @@ class behat_gradingform_rubric extends behat_base {
         $stepusage = '"I grade by filling the rubric with:" step needs you to provide a table where each row is a criterion' .
             ' and each criterion has 3 different values: | Criterion name | Number of points | Remark text |';
 
+        // If running Javascript, ensure we zoom in before filling the grades.
+        if ($this->running_javascript()) {
+            $this->execute('behat_general::click_link', get_string('togglezoom', 'mod_assign'));
+        }
+
         // First element -> name, second -> points, third -> Remark.
         foreach ($criteria as $name => $criterion) {
 
@@ -325,6 +330,11 @@ class behat_gradingform_rubric extends behat_base {
             // First we need to get the textarea name, then we can set the value.
             $textarea = $this->get_node_in_container('css_element', 'textarea', 'table_row', $name);
             $this->execute('behat_forms::i_set_the_field_to', array($textarea->getAttribute('name'), $criterion[1]));
+        }
+
+        // If running Javascript, then ensure to close zoomed rubric.
+        if ($this->running_javascript()) {
+            $this->execute('behat_general::click_link', get_string('togglezoom', 'mod_assign'));
         }
     }
 
