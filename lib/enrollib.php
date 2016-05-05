@@ -789,6 +789,7 @@ function enrol_get_all_users_courses($userid, $onlyactive = false, $fields = NUL
     $basefields = array('id', 'category', 'sortorder',
             'shortname', 'fullname', 'idnumber',
             'startdate', 'visible',
+            'defaultgroupingid',
             'groupmode', 'groupmodeforce');
 
     if (empty($fields)) {
