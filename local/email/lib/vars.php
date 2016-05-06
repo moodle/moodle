@@ -48,11 +48,8 @@ class EmailVars {
         $this->approveuser =& $approveuser;
 
         if (!isset($this->company)) {
-            if (isset($user->id) && !isset($user->profile)) {
-                profile_load_custom_fields($this->user);
-            }
-            if (isset($user->profile["company"])) {
-                $this->company = company::by_shortname($this->user->profile["company"])->get('*');
+            if (isset($user->id)) {
+                $this->company = company::by_userid($user->id);
             }
         }
 
@@ -158,7 +155,15 @@ class EmailVars {
      *
      **/
     function CourseURL() {
-        return $this->course->url;
+        global $CFG;
+
+        if (empty($CFG->allowthemechangeonurl)) {
+            return $this->course->url;
+        } else {
+            // Get the company theme.
+            $theme = $this->company->get_theme();
+            return new moodle_url($this->course->url, array('theme' => $theme));
+        }            
     }
 
     /**
@@ -169,7 +174,14 @@ class EmailVars {
      **/
     function SiteURL() {
         global $CFG;
-        return $CFG->wwwroot;
+
+        if (empty($CFG->allowthemechangeonurl)) {
+            return $CFG->wwwroot;
+        } else {
+            // Get the company theme.
+            $theme = $this->company->get_theme();
+            return new moodle_url($CFG->wwwroot, array('theme' => $theme));
+        }            
     }
 
     /**
@@ -179,6 +191,14 @@ class EmailVars {
      *
      **/
     function LinkURL() {
-        return $this->url;
+        global $CFG;
+
+        if (empty($CFG->allowthemechangeonurl)) {
+            return $this->url;
+        } else {
+            // Get the company theme.
+            $theme = $this->company->get_theme();
+            return new moodle_url($this->url, array('theme' => $theme));
+        }            
     }
 }
