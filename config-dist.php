@@ -242,10 +242,6 @@ $CFG->admin = 'admin';
 //      $CFG->session_handler_class = '\core\session\file';
 //      $CFG->session_file_save_path = $CFG->dataroot.'/sessions';
 //
-//   Redis session handler (requires redis server and redis extension):
-//      $CFG->session_handler_class = '\core\session\redis';
-//      $CFG->session_redis_save_path = 'tcp://127.0.0.1'
-//
 //   Memcached session handler (requires memcached server and extension):
 //      $CFG->session_handler_class = '\core\session\memcached';
 //      $CFG->session_memcached_save_path = '127.0.0.1:11211';
