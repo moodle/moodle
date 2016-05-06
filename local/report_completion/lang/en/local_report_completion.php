@@ -49,6 +49,7 @@ $string['certificate'] = 'Certificate';
 $string['coursesummary'] = 'Course Overview';
 $string['courseusers'] = 'User summary for course - ';
 $string['percent'] = '% completed';
+$string['timecreated'] = 'Date created';
 $string['timestarted'] = 'Date started';
 $string['timecompleted'] = 'Date completed';
 $string['finalscore'] = 'Final score';

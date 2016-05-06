@@ -219,10 +219,13 @@ $returnurl = $CFG->wwwroot."/local/report_users/index.php";
 
 // Carry on with the user listing.
 
-$columns = array("firstname", "lastname", "department", "email", "city", "country", "lastaccess");
+$columns = array("firstname", "lastname", "department", "email", "city", "country", "timecreated", "lastaccess");
 
 foreach ($columns as $column) {
     $string[$column] = get_string("$column");
+    if ($column == 'timecreated') {
+        $string[$column] = get_string("$column", 'local_report_completion');
+    }
     if ($sort != $column) {
         $columnicon = "";
         if ($column == "lastaccess") {
@@ -312,6 +315,9 @@ $dbsort = "";
             case "email":
                 $sqlsearch .= " order by email $dir ";
             break;
+            case "timecreated":
+                $sqlsearch .= " order by timecreated $dir ";
+            break;
             case "access":
                 $sqlsearch .= " order by lastaccess $dir ";
                 $sort = "lastaccess";
@@ -383,6 +389,10 @@ $dbsort = "";
                 $sqlsearch .= " order by email $dir ";
                 $dbsort = " order by u.email $dir ";
             break;
+            case "timecreated":
+                $sqlsearch .= " order by timecreated $dir ";
+                $dbsort = " order by u.timecreated $dir ";
+            break;
             case "lastaccess":
                 $sqlsearch .= " order by currentlogin $dir ";
                 $dbsort = " order by u.currentlogin $dir ";
@@ -414,6 +424,7 @@ if (!empty($userlist)) {
                                           u.middlename as middlename,
                                           u.city as city,
                                           u.country as country,
+                                          u.timecreated as timecreated,
                                           u.currentlogin as lastaccess,
                                           u.suspended as suspended,
                                           d.name as departmentname
@@ -488,6 +499,8 @@ if (!$users) {
         $departmenturl = new moodle_url('index.php', $linkparams);
         $linkparams['sort'] = 'email';
         $emailurl = new moodle_url('index.php', $linkparams);
+        $linkparams['sort'] = 'timecreated';
+        $timecreatedurl = new moodle_url('index.php', $linkparams);
         $linkparams['sort'] = 'lastaccess';
         $accessurl = new moodle_url('index.php', $linkparams);
         $linkparams['sort'] = 'city';
@@ -542,6 +555,15 @@ if (!$users) {
                     $linkparams['dir'] = 'ASC';
                     $accessurl = new moodle_url('index.php', $linkparams);
                 }
+            } else if ($params['sort'] == 'timecreated') {
+                $linkparams['sort'] = 'timecreated';
+                if ($params['dir'] == 'ASC') {
+                    $linkparams['dir'] = 'DESC';
+                    $timecreatedurl = new moodle_url('index.php', $linkparams);
+                } else {
+                    $linkparams['dir'] = 'ASC';
+                    $timecreatedurl = new moodle_url('index.php', $linkparams);
+                }
             } else if ($params['sort'] == 'country') {
                 $linkparams['sort'] = 'country';
                 if ($params['dir'] == 'ASC') {
@@ -574,8 +596,9 @@ if (!$users) {
                           $OUTPUT->action_link($cityurl, $city),
                           $OUTPUT->action_link($countryurl,
                           $country),
+                          $OUTPUT->action_link($timecreatedurl, $timecreated),
                           $OUTPUT->action_link($accessurl, $lastaccess));
-    $table->align = array ("left", "left", "left", "left", "left", "left", "center", "center");
+    $table->align = array ("left", "left", "left", "left", "left", "left", "center", "center", "center");
     $table->width = "95%";
     foreach ($users as $user) {
         if ($user->username == 'guest') {
@@ -583,6 +606,11 @@ if (!$users) {
         }
 
 
+        if ($user->timecreated) {
+            $strtimecreated = date('Y-m-d', $user->timecreated);
+        } else {
+            $strtimecreated = get_string('never');
+        }
         if ($user->lastaccess) {
             $strlastaccess = format_time(time() - $user->lastaccess);
         } else {
@@ -602,6 +630,7 @@ if (!$users) {
                             "$user->departmentname",
                             "$user->city",
                             "$user->country",
+                            $strtimecreated,
                             $strlastaccess);
     }
 }

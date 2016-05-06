@@ -615,6 +615,9 @@ class iomad {
             case "email":
                 $sqlsort .= " ORDER BY u.email $dir ";
             break;
+            case "timecreated":
+                $sqlsort .= " ORDER BY u.timecreated $dir ";
+            break;
             case "timeenrolled":
                 $sqlsort .= " ORDER BY cc.timeenrolled $dir ";
             break;
@@ -800,6 +803,7 @@ class iomad {
                 u.firstname AS firstname,
                 u.lastname AS lastname,
                 u.email AS email,
+                u.timecreated AS timecreated,
                 '{$shortname}' AS coursename,
                 '$courseid' AS courseid,
                 cc.timeenrolled AS timeenrolled,
@@ -875,6 +879,7 @@ class iomad {
                 u.firstname AS firstname,
                 u.lastname AS lastname,
                 u.email AS email,
+                u.timecreated AS timecreated,
                 co.shortname AS coursename,
                 co.id AS courseid,
                 cc.timeenrolled AS timeenrolled,
