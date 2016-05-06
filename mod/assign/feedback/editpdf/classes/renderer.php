@@ -48,6 +48,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             'comment' => 'z',
             'commentcolour' => 'x',
             'select' => 'c',
+            'drag' => 'd',
             'pen' => 'y',
             'line' => 'u',
             'rectangle' => 'i',
@@ -168,6 +169,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             $toolbar1 = html_writer::div($toolbar1, 'toolbar', array('role'=>'toolbar'));
 
             // Select Tool.
+            $toolbar2 .= $this->render_toolbar_button('drag', 'drag', $this->get_shortcut('drag'));
             $toolbar2 .= $this->render_toolbar_button('select', 'select', $this->get_shortcut('select'));
             $toolbar2 = html_writer::div($toolbar2, 'toolbar', array('role'=>'toolbar'));
 
