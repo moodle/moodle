@@ -85,6 +85,8 @@ class tool_recyclebin_course_bin_tests extends advanced_testcase {
     public function test_restore() {
         global $DB;
 
+        $startcount = $DB->count_records('course_modules');
+
         // Delete the course module.
         course_delete_module($this->quiz->cmid);
 
@@ -95,7 +97,7 @@ class tool_recyclebin_course_bin_tests extends advanced_testcase {
         }
 
         // Check that it was restored and removed from the recycle bin.
-        $this->assertEquals(1, $DB->count_records('course_modules'));
+        $this->assertEquals($startcount, $DB->count_records('course_modules'));
         $this->assertEquals(0, count($recyclebin->get_items()));
     }
 
@@ -104,6 +106,8 @@ class tool_recyclebin_course_bin_tests extends advanced_testcase {
      */
     public function test_delete() {
         global $DB;
+
+        $startcount = $DB->count_records('course_modules');
 
         // Delete the course module.
         course_delete_module($this->quiz->cmid);
@@ -115,7 +119,7 @@ class tool_recyclebin_course_bin_tests extends advanced_testcase {
         }
 
         // Item was deleted, so no course module was restored.
-        $this->assertEquals(0, $DB->count_records('course_modules'));
+        $this->assertEquals($startcount - 1, $DB->count_records('course_modules'));
         $this->assertEquals(0, count($recyclebin->get_items()));
     }
 
