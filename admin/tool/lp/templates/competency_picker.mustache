@@ -3,7 +3,7 @@
 <h3>{{#str}}competencyframeworks, tool_lp{{/str}}</h3>
 <select data-action="chooseframework">
 {{#frameworks}}
-<option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{shortname}} <em>{{idnumber}}</em></option>
+<option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{{shortname}}} <em>{{idnumber}}</em></option>
 {{/frameworks}}
 </select>
 {{/singleFramework}}
@@ -15,7 +15,7 @@
     <button>{{#pix}}a/search, ,{{#str}}search{{/str}}{{/pix}}</button>
 </form>
 <ul data-enhance="linktree" style="display: none;">
-    <li><span>{{framework.shortname}}</span>
+    <li><span>{{{framework.shortname}}}</span>
         <ul>
             {{#competencies}}
                 {{> tool_lp/competencies_tree }}

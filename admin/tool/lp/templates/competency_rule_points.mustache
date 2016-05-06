@@ -10,9 +10,15 @@
         <tbody>
             {{#children}}
             <tr data-competency="{{id}}">
-                <th scope="row">{{shortname}}</th>
-                <td><input type="number" min="0" value="{{points}}" name="points" aria-label="{{#str}}pointsgivenfor, tool_lp, {{competency.shortname}}{{/str}}"></td>
-                <td><input type="checkbox" value="1" name="required" {{#required}}checked{{/required}} aria-label="{{#str}}aisrequired, tool_lp, {{competency.shortname}}{{/str}}"></td>
+                <th scope="row">{{{shortname}}}</th>
+                <td>
+                    <label class="accesshide" for="pointsforcompetency-{{id}}">{{#str}}pointsgivenfor, tool_lp, {{{competency.shortname}}}{{/str}}</label>
+                    <input id="pointsforcompetency-{{id}}" type="number" min="0" value="{{points}}" name="points" />
+                </td>
+                <td>
+                    <label class="accesshide" for="competency-{{id}}-isrequired">{{#str}}aisrequired, tool_lp, {{{competency.shortname}}}{{/str}}</label>
+                    <input id="competency-{{id}}-isrequired" type="checkbox" value="1" name="required" {{#required}}checked{{/required}} />
+                </td>
             </tr>
             {{/children}}
         </tbody>

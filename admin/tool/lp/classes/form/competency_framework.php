@@ -65,7 +65,7 @@ class competency_framework extends persistent {
         $mform->setType('description', PARAM_RAW);
         // ID number.
         $mform->addElement('text', 'idnumber', get_string('idnumber', 'tool_lp'), 'maxlength="100"');
-        $mform->setType('idnumber', PARAM_TEXT);
+        $mform->setType('idnumber', PARAM_RAW);
         $mform->addRule('idnumber', null, 'required', null, 'client');
         $mform->addRule('idnumber', get_string('maximumchars', '', 100), 'maxlength', 100, 'client');
 

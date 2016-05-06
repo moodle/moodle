@@ -39,10 +39,10 @@
 }}
 <nav id="competency-path-{{uniqid}}">
     <small>
-        <a href="{{pluginbaseurl}}/competencies.php?competencyframeworkid={{framework.id}}&pagecontextid={{pagecontextid}}" >{{framework.name}}</a>
+        <a href="{{pluginbaseurl}}/competencies.php?competencyframeworkid={{framework.id}}&pagecontextid={{pagecontextid}}" >{{{framework.name}}}</a>
         /
         {{#ancestors}}
-            <a data-action="competency-dialogue" href="#" data-id="{{id}}">{{name}}</a>
+            <a data-action="competency-dialogue" href="#" data-id="{{id}}">{{{name}}}</a>
             {{^last}}<span> / </span>{{/last}}
         {{/ancestors}}
     </small>

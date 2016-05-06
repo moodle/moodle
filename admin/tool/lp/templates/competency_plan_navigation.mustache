@@ -4,7 +4,7 @@
 <label for="competency-nav-{{uniqid}}" class="accesshide">{{#str}}jumptocompetency, tool_lp{{/str}}</label>
 <select id="competency-nav-{{uniqid}}">
 {{#competencies}}
-<option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{shortname}} {{idnumber}}</option>
+<option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{{shortname}}} {{idnumber}}</option>
 {{/competencies}}
 </select>
 </span>
