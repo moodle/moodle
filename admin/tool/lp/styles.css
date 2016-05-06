@@ -113,7 +113,8 @@
     display: table-cell;
 }
 .path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-outcome"] select,
-.path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-type"] select {
+.path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-type"] select,
+.path-admin-tool-lp [data-region="competencylinktree"] select {
     width: 100%;
 }
 
