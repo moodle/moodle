@@ -41,6 +41,12 @@ if ($requests === null) {
 }
 $responses = array();
 
+// Defines the external settings required for Ajax processing.
+$settings = external_settings::get_instance();
+$settings->set_file('pluginfile.php');
+$settings->set_fileurl(true);
+$settings->set_filter(true);
+$settings->set_raw(false);
 
 foreach ($requests as $request) {
     $response = array();
