@@ -119,6 +119,8 @@ information provided here is intended especially for developers.
 * table_sql download process is using the new data formats plugin which you can't use if you are buffering any output
     * flexible_table::get_download_menu(), considered private, has been deleted. Use
       $OUTPUT->download_dataformat_selector() instead.
+  when building Xpath, or pass the unescaped value when using the named selector.
+* Add new file_is_executable(), to consistently check for executables even in Windows (PHP bug #41062).
 
 === 3.0 ===
 
