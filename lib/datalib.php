@@ -1187,7 +1187,6 @@ function make_default_scale() {
     $defaultscale->timemodified = time();
 
     $defaultscale->id = $DB->insert_record('scale', $defaultscale);
-    $DB->execute("UPDATE {forum} SET scale = ?", array($defaultscale->id));
 }
 
 
