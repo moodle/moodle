@@ -493,6 +493,8 @@ class restore_gradebook_structure_step extends restore_structure_step {
         $gradebookcalculationsfreeze = get_config('core', 'gradebook_calculations_freeze_' . $this->get_courseid());
         preg_match('/(\d{8})/', $this->get_task()->get_info()->moodle_release, $matches);
         $backupbuild = (int)$matches[1];
+        // The function floatval will return a float even if there is text mixed with the release number.
+        $backuprelease = floatval($this->get_task()->get_info()->backup_release);
 
         // Extra credits need adjustments only for backups made between 2.8 release (20141110) and the fix release (20150619).
         if (!$gradebookcalculationsfreeze && $backupbuild >= 20141110 && $backupbuild < 20150619) {
@@ -504,6 +506,14 @@ class restore_gradebook_structure_step extends restore_structure_step {
             require_once($CFG->libdir . '/db/upgradelib.php');
             upgrade_calculated_grade_items($this->get_courseid());
         }
+        // Courses from before 3.1 (20160511) may have a letter boundary problem and should be checked for this issue.
+        // Backups from before and including 2.9 could have a build number that is greater than 20160511 and should
+        // be checked for this problem.
+        if (!$gradebookcalculationsfreeze && ($backupbuild < 20160511 || $backuprelease <= 2.9)) {
+            require_once($CFG->libdir . '/db/upgradelib.php');
+            upgrade_course_letter_boundary($this->get_courseid());
+        }
+
     }
 
     /**
