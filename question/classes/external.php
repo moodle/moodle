@@ -86,9 +86,7 @@ class core_question_external extends external_api {
         );
 
         $warnings = array();
-
-        // Check user is logged in.
-        require_login(null, false, null, false, true);
+        self::validate_context(context_system::instance());
 
         // The checksum will be checked to provide security flagging other users questions.
         question_flags::update_flag($params['qubaid'], $params['questionid'], $params['qaid'], $params['slot'], $params['checksum'],

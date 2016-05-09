@@ -191,9 +191,9 @@ class core_tag_external extends external_api {
         // Validate and normalize parameters.
         $tags = self::validate_parameters(self::get_tags_parameters(), array('tags' => $tags));
 
-        require_login(null, false, null, false, true);
-
         $systemcontext = context_system::instance();
+        self::validate_context($systemcontext);
+
         $canmanage = has_capability('moodle/tag:manage', $systemcontext);
         $canedit = has_capability('moodle/tag:edit', $systemcontext);
 
@@ -300,7 +300,6 @@ class core_tag_external extends external_api {
 
         // Login to the course / module if applicable.
         $context = $params['ctx'] ? context::instance_by_id($params['ctx']) : context_system::instance();
-        require_login(null, false, null, false, true);
         self::validate_context($context);
 
         $tag = core_tag_tag::get_by_name($params['tc'], $params['tag'], '*', MUST_EXIST);

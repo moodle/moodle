@@ -651,9 +651,7 @@ class core_enrol_external extends external_api {
         global $DB;
 
         $params = self::validate_parameters(self::get_course_enrolment_methods_parameters(), array('courseid' => $courseid));
-
-        // Note that we can't use validate_context because the user is not enrolled in the course.
-        require_login(null, false, null, false, true);
+        self::validate_context(context_system::instance());
 
         $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
         $context = context_course::instance($course->id);
