@@ -93,9 +93,8 @@ class collaborative_page extends \core_search\area\base_mod {
             $content = wiki_refresh_cachedcontent($page);
             $page = $content['page'];
         }
-        // Convert to HTML, then to text. Makes sure content is cleaned.
-        $html = format_text($page->cachedcontent, FORMAT_MOODLE, array('overflowdiv' => true, 'allowid' => true));
-        $content = content_to_text($page->cachedcontent, FORMAT_HTML);
+        // Convert to text.
+        $content = content_to_text($page->cachedcontent, FORMAT_MOODLE);
 
         // Prepare associative array with data from DB.
         $doc = \core_search\document_factory::instance($record->id, $this->componentname, $this->areaname);
