@@ -508,7 +508,8 @@ class user_competency extends persistent {
             $sql = "competencyid $insql";
         }
 
-        return self::get_records_select("userid = :userid AND $sql", $params);
+        // Order by ID to prevent random ordering.
+        return self::get_records_select("userid = :userid AND $sql", $params, 'id ASC');
     }
 
     /**

@@ -71,7 +71,8 @@ class plan_competency extends persistent {
                   JOIN {' . self::TABLE . '} plancomp
                     ON plancomp.competencyid = comp.id
                  WHERE plancomp.planid = ?
-              ORDER BY plancomp.sortorder ASC';
+              ORDER BY plancomp.sortorder ASC,
+                       plancomp.id ASC';
         $params = array($planid);
 
         // TODO MDL-52229 Handle hidden competencies.

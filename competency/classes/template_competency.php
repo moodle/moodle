@@ -202,7 +202,8 @@ class template_competency extends persistent {
                   JOIN {' . self::TABLE . '} tplcomp
                     ON tplcomp.competencyid = comp.id
                  WHERE tplcomp.templateid = ?
-              ORDER BY tplcomp.sortorder ASC';
+              ORDER BY tplcomp.sortorder ASC,
+                       tplcomp.id ASC';
         $params = array($templateid);
 
         $results = $DB->get_records_sql($sql, $params);

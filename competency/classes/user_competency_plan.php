@@ -189,7 +189,8 @@ class user_competency_plan extends persistent {
                     ON ucp.competencyid = c.id
                    AND ucp.userid = :userid
                  WHERE ucp.planid = :planid
-              ORDER BY ucp.sortorder ASC';
+              ORDER BY ucp.sortorder ASC,
+                       ucp.id ASC';
         $params = array('userid' => $userid, 'planid' => $planid);
 
         $results = $DB->get_recordset_sql($sql, $params);
@@ -258,7 +259,8 @@ class user_competency_plan extends persistent {
             $sql = "competencyid $insql";
         }
 
-        return static::get_records_select("userid = :userid AND planid = :planid AND $sql", $params);
+        // Order by ID to prevent random ordering.
+        return static::get_records_select("userid = :userid AND planid = :planid AND $sql", $params, 'id ASC');
     }
 
     /**

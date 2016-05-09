@@ -3961,7 +3961,6 @@ class core_competency_api_testcase extends advanced_testcase {
         $dg = $this->getDataGenerator();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
-        $currenttime = time();
         $syscontext = context_system::instance();
 
         // Create users.
@@ -3979,10 +3978,8 @@ class core_competency_api_testcase extends advanced_testcase {
         $pc1 = $lpg->create_plan_competency(array('planid' => $p1->get_id(), 'competencyid' => $c1->get_id()));
         $pc2 = $lpg->create_plan_competency(array('planid' => $p2->get_id(), 'competencyid' => $c1->get_id()));
 
-        // Create user competency. Add user_evidence and associate it to the user competency.
+        // Create user competency and add an evidence.
         $uc = $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $c1->get_id()));
-        $ue = $lpg->create_user_evidence(array('userid' => $user->id));
-        $uec = $lpg->create_user_evidence_competency(array('userevidenceid' => $ue->get_id(), 'competencyid' => $c1->get_id()));
         $e1 = $lpg->create_evidence(array('usercompetencyid' => $uc->get_id()));
 
         // Check both plans as one evidence.
@@ -3990,24 +3987,18 @@ class core_competency_api_testcase extends advanced_testcase {
         $this->assertEquals(1, count(api::list_evidence($user->id, $c1->get_id(), $p2->get_id())));
 
         // Complete second plan.
-        $currenttime += 1;
         $p2->set_status(plan::STATUS_COMPLETE);
         $p2->update();
-        $plansql = "UPDATE {" . plan::TABLE . "} SET timemodified = :currenttime WHERE id = :planid";
-        $DB->execute($plansql, array('currenttime' => $currenttime, 'planid' => $p2->get_id()));
 
-        // Add an other user evidence for the same competency.
-        $currenttime += 1;
-        $ue2 = $lpg->create_user_evidence(array('userid' => $user->id));
-        $uec2 = $lpg->create_user_evidence_competency(array('userevidenceid' => $ue2->get_id(), 'competencyid' => $c1->get_id()));
+        // Add another evidence for the same competency, but in the future (time + 1).
         $e2 = $lpg->create_evidence(array('usercompetencyid' => $uc->get_id()));
         $evidencesql = "UPDATE {" . evidence::TABLE . "} SET timecreated = :currenttime WHERE id = :evidenceid";
-        $DB->execute($evidencesql, array('currenttime' => $currenttime, 'evidenceid' => $e2->get_id()));
+        $DB->execute($evidencesql, array('currenttime' => time() + 1, 'evidenceid' => $e2->get_id()));
 
-        // Check first plan which is not completed as all evidences.
+        // Check that the first plan, which is not completed, has all the evidence.
         $this->assertEquals(2, count(api::list_evidence($user->id, $c1->get_id(), $p1->get_id())));
 
-        // Check second plan completed before the new evidence as only the first evidence.
+        // Check that the second plan, completed before the new evidence, only has the first piece of evidence.
         $listevidences = api::list_evidence($user->id, $c1->get_id(), $p2->get_id());
         $this->assertEquals(1, count($listevidences));
         $this->assertEquals($e1->get_id(), $listevidences[$e1->get_id()]->get_id());
