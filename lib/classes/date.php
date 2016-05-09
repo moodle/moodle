@@ -72,8 +72,12 @@ class core_date {
 
         if (is_numeric($currentvalue)) {
             // UTC offset.
-            $modifier = ($currentvalue > 0) ? '+' : '';
-            $a = 'UTC' . $modifier . number_format($currentvalue, 1);
+            if ($currentvalue == 0) {
+                $a = 'UTC';
+            } else {
+                $modifier = ($currentvalue > 0) ? '+' : '';
+                $a = 'UTC' . $modifier . number_format($currentvalue, 1);
+            }
             $timezones[$currentvalue] = get_string('timezoneinvalid', 'core_admin', $a);
         } else {
             // Some string we don't recognise.
@@ -508,7 +512,7 @@ class core_date {
         );
 
         // Legacy GMT fallback.
-        for ($i = -14; $i <= 13; $i++) {
+        for ($i = -12; $i <= 14; $i++) {
             $off = abs($i);
             if ($i < 0) {
                 $mapto = 'Etc/GMT+' . $off;
