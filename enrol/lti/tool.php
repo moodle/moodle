@@ -204,8 +204,15 @@ if ($ltirequest->valid) {
     // Finalise the user log in.
     complete_user_login($user);
 
-    // All done, redirect the user to where they want to go.
-    redirect($urltogo);
+    if (empty($CFG->allowframembedding)) {
+        // Provide an alternative link.
+        $stropentool = get_string('opentool', 'enrol_lti');
+        echo html_writer::tag('p', get_string('framembeddingnotenabled', 'enrol_lti'));
+        echo html_writer::link($urltogo, $stropentool, array('target' => '_blank'));
+    } else {
+        // All done, redirect the user to where they want to go.
+        redirect($urltogo);
+    }
 } else {
     echo $ltirequest->message;
 }

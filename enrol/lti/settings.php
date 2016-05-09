@@ -29,6 +29,12 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('enrol_lti_user_default_values',
         get_string('userdefaultvalues', 'enrol_lti'), ''));
 
+    if (empty($CFG->allowframembedding)) {
+        $notify = new \core\output\notification(get_string('allowframembedding', 'enrol_lti'),
+            \core\output\notification::NOTIFY_WARNING);
+        $settings->add(new admin_setting_heading('enrol_lti_enable_embedding', '', $OUTPUT->render($notify)));
+    }
+
     $choices = array(0 => get_string('emaildisplayno'),
                      1 => get_string('emaildisplayyes'),
                      2 => get_string('emaildisplaycourse'));

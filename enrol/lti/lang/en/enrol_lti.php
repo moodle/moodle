@@ -22,6 +22,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['allowframembedding'] = 'In order to avoid problems embedding this site, please enable the \'Allow frame embedding\' setting in Admin > Security > HTTP security.';
 $string['enrolenddate'] = 'End date';
 $string['enrolenddate_help'] = 'If enabled, users can access until this date only.';
 $string['enrolenddateerror'] = 'Enrolment end date cannot be earlier than start date';
@@ -32,6 +33,7 @@ $string['enrolmentfinished'] = 'Enrolment finished.';
 $string['enrolmentnotstarted'] = 'Enrolment has not started.';
 $string['enrolstartdate'] = 'Start date';
 $string['enrolstartdate_help'] = 'If enabled, users can access from this date onward only.';
+$string['framembeddingnotenabled'] = 'The site you are connecting to does not have frame embedding enabled. To access the resource please click on the link below.';
 $string['globalsharedsecret'] = 'Global shared secret';
 $string['gradesync'] = 'Grade synchronisation';
 $string['gradesync_help'] = 'This determines if we want grade synchronisation to occur.';
@@ -48,6 +50,7 @@ $string['membersyncmodeunenrolmissing'] = 'Unenrol missing members';
 $string['notoolsprovided'] = 'No tools provided';
 $string['lti:config'] = 'Configure LTI enrol instances';
 $string['lti:unenrol'] = 'Unenrol users from the course';
+$string['opentool'] = 'Open tool';
 $string['pluginname'] = 'Shared external tool';
 $string['pluginname_desc'] = 'The shared external tool plugin allows externals users to access a course or an activity via a unique link - this requires the LTI authentication plugin to be enabled.';
 $string['remotesystem'] = 'Remote system';
