@@ -337,8 +337,8 @@ class core_user {
                 'choices' => array_merge(array('' => ''), \core_calendar\type_factory::get_list_of_calendar_types()));
         $fields['theme'] = array('type' => PARAM_THEME, 'null' => NULL_NOT_ALLOWED,
                 'default' => theme_config::DEFAULT_THEME, 'choices' => array_merge(array('' => ''), get_list_of_themes()));
-        $fields['timezone'] = array('type' => PARAM_TIMEZONE, 'null' => NULL_NOT_ALLOWED, 'default' => $CFG->timezone,
-                'choices' => core_date::get_list_of_timezones(null, true));
+        $fields['timezone'] = array('type' => PARAM_TIMEZONE, 'null' => NULL_NOT_ALLOWED,
+                'default' => core_date::get_server_timezone()); // Must not use choices here: timezones can come and go.
         $fields['firstaccess'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED);
         $fields['lastaccess'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED);
         $fields['lastlogin'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED);
@@ -528,7 +528,7 @@ class core_user {
      * Get the choices of the property.
      *
      * This is a helper method to validate a value against a list of acceptable choices.
-     * For instance: country, timezone, language, themes and etc.
+     * For instance: country, language, themes and etc.
      *
      * @param string $property property name to be retrieved.
      * @throws coding_exception if the requested property name is invalid or if it does not has a list of choices.

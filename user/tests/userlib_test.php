@@ -99,7 +99,7 @@ class core_userliblib_testcase extends advanced_testcase {
         $user->country = 'WW';
         $user->lang = 'xy';
         $user->theme = 'somewrongthemename';
-        $user->timezone = 'Paris';
+        $user->timezone = '30.5';
         $user->url = 'wwww.somewrong@#$url.com.aus';
         $debugmessages = $this->getDebuggingMessages();
         user_update_user($user, true, false);
@@ -182,7 +182,7 @@ class core_userliblib_testcase extends advanced_testcase {
         $user['country'] = 'WW';
         $user['lang'] = 'xy';
         $user['theme'] = 'somewrongthemename';
-        $user['timezone'] = 'Paris';
+        $user['timezone'] = '-30.5';
         $user['url'] = 'wwww.somewrong@#$url.com.aus';
         $debugmessages = $this->getDebuggingMessages();
         $user['id'] = user_create_user($user, true, false);
@@ -190,7 +190,7 @@ class core_userliblib_testcase extends advanced_testcase {
         $dbuser = $DB->get_record('user', array('id' => $user['id']));
         $this->assertEquals($dbuser->country, 0);
         $this->assertEquals($dbuser->lang, 'en');
-        $this->assertEquals($dbuser->timezone, 'Australia/Perth');
+        $this->assertEquals($dbuser->timezone, '');
 
         // Now, with valid user data.
         $user['username'] = 'johndoe321';

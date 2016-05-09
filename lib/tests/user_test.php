@@ -363,15 +363,6 @@ class core_user_testcase extends advanced_testcase {
         $this->assertArrayNotHasKey('unknowntheme', $choices);
         $this->assertArrayNotHasKey('wrongtheme', $choices);
 
-        // Test against timezone property choices.
-        $choices = core_user::get_property_choices('timezone');
-        $this->assertArrayHasKey('America/Sao_Paulo', $choices);
-        $this->assertArrayHasKey('Australia/Perth', $choices);
-        $this->assertArrayHasKey('99', $choices);
-        $this->assertArrayHasKey('UTC', $choices);
-        $this->assertArrayNotHasKey('North Korea', $choices);
-        $this->assertArrayNotHasKey('New york', $choices);
-
         // Try to fetch type of a non-existent properties.
         $nonexistingproperty = 'language';
         $this->setExpectedException('coding_exception', 'Invalid property requested: ' . $nonexistingproperty);
@@ -386,6 +377,7 @@ class core_user_testcase extends advanced_testcase {
      */
     public function test_get_property_default() {
         global $CFG;
+        $this->resetAfterTest();
 
         $country = core_user::get_property_default('country');
         $this->assertEquals($CFG->country, $country);
@@ -400,12 +392,14 @@ class core_user_testcase extends advanced_testcase {
         $lang = core_user::get_property_default('lang');
         $this->assertEquals($CFG->lang, $lang);
 
-        $timezone = core_user::get_property_default('timezone');
-        $this->assertEquals($CFG->timezone, $timezone);
-        set_config('timezone', 99);
+        $this->setTimezone('Europe/London', 'Pacific/Auckland');
         core_user::reset_caches();
         $timezone = core_user::get_property_default('timezone');
-        $this->assertEquals(99, $timezone);
+        $this->assertEquals('Europe/London', $timezone);
+        $this->setTimezone('99', 'Pacific/Auckland');
+        core_user::reset_caches();
+        $timezone = core_user::get_property_default('timezone');
+        $this->assertEquals('Pacific/Auckland', $timezone);
 
         $this->setExpectedException('coding_exception', 'Invalid property requested, or the property does not has a default value.');
         core_user::get_property_default('firstname');
