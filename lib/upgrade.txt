@@ -121,6 +121,13 @@ information provided here is intended especially for developers.
       $OUTPUT->download_dataformat_selector() instead.
   when building Xpath, or pass the unescaped value when using the named selector.
 * Add new file_is_executable(), to consistently check for executables even in Windows (PHP bug #41062).
+* Introduced new hooks for plugin developers.
+  * pre_course_category_delete($category)
+  * pre_course_delete($course)
+  * pre_course_module_delete($cm)
+  * pre_block_delete($instance)
+  * pre_user_delete($user)
+  These hooks allow developers to use the item in question before it is deleted by core.
 
 === 3.0 ===
 
