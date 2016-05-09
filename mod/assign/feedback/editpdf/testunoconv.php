@@ -20,8 +20,11 @@
  * @copyright 2016 Simey Lameze
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require('../../../../config.php');
-global $PAGE, $OUTPUT;
+require(dirname(__FILE__) . '/../../../../config.php');
+require_once($CFG->libdir . '/filelib.php');
+
+$sendpdf = optional_param('sendpdf', 0, PARAM_BOOL);
+
 $PAGE->set_url(new moodle_url('/mod/assign/feedback/editpdf/testunoconv.php'));
 $PAGE->set_context(context_system::instance());
 
@@ -34,39 +37,38 @@ $PAGE->navbar->add(get_string('plugins', 'admin'));
 $PAGE->navbar->add(get_string('assignmentplugins', 'mod_assign'));
 $PAGE->navbar->add(get_string('feedbackplugins', 'mod_assign'));
 $PAGE->navbar->add(get_string('pluginname', 'assignfeedback_editpdf'),
-        new moodle_url('/admin/settings.php?section=assignfeedback_editpdf'));
+        new moodle_url('/admin/settings.php', array('section' => 'assignfeedback_editpdf')));
 $PAGE->navbar->add($strheading);
 $PAGE->set_heading($strheading);
 $PAGE->set_title($strheading);
-$sendpdf = optional_param('sendpdf', 0, PARAM_BOOL);
 if ($sendpdf) {
+    require_sesskey();
     // Serve the generated test pdf.
-    assignfeedback_editpdf\pdf::send_test_pdf();
+    file_storage::send_test_pdf();
     die();
 }
 
-$result = assignfeedback_editpdf\pdf::test_unoconv_path();
+$result = file_storage::test_unoconv_path();
 switch ($result->status) {
-
-    case assignfeedback_editpdf\pdf::UNOCONVPATH_OK:
-        $msg = get_string('test_unoconv_ok', 'assignfeedback_editpdf');
+    case file_storage::UNOCONVPATH_OK:
+        $msg = get_string('test_unoconvok', 'assignfeedback_editpdf');
         $msg .= html_writer::empty_tag('br');
-        $pdflink = new moodle_url($PAGE->url, array('sendpdf' => 1));
-        $msg .= $OUTPUT->single_button($pdflink, get_string('download'));
+        $pdflink = new moodle_url($PAGE->url, array('sendpdf' => 1, 'sesskey' => sesskey()));
+        $msg .= html_writer::link($pdflink, get_string('test_unoconvdownload', 'assignfeedback_editpdf'));
         $msg .= html_writer::empty_tag('br');
         break;
 
-    case assignfeedback_editpdf\pdf::UNOCONVPATH_ERROR:
+    case file_storage::UNOCONVPATH_ERROR:
         $msg = $result->message;
         break;
 
     default:
-        $msg = get_string("test_unoconv_{$result->status}", 'assignfeedback_editpdf');
+        $msg = get_string("test_unoconv{$result->status}", 'assignfeedback_editpdf');
         break;
 }
 $returl = new moodle_url('/admin/settings.php', array('section' => 'assignfeedback_editpdf'));
 $msg .= $OUTPUT->continue_button($returl);
 
 echo $OUTPUT->header();
-echo $OUTPUT->box($msg, 'generalbox ');
+echo $OUTPUT->box($msg, 'generalbox');
 echo $OUTPUT->footer();
