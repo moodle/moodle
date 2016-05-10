@@ -2686,17 +2686,17 @@ class core_competency_api_testcase extends advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $user = $dg->create_user();
 
-        $dg->create_scale(array("id" => "1", "scale" => "value1, value2"));
-        $dg->create_scale(array("id" => "2", "scale" => "value3, value4, value5, value6"));
+        $s1 = $dg->create_scale(array("scale" => "value1, value2"));
+        $s2 = $dg->create_scale(array("scale" => "value3, value4, value5, value6"));
 
-        $scaleconfiguration1 = '[{"scaleid":"1"},{"name":"value1","id":1,"scaledefault":1,"proficient":0},' .
+        $scaleconfiguration1 = '[{"scaleid":"'.$s1->id.'"},{"name":"value1","id":1,"scaledefault":1,"proficient":0},' .
                 '{"name":"value2","id":2,"scaledefault":0,"proficient":1}]';
-        $scaleconfiguration2 = '[{"scaleid":"2"},{"name":"value3","id":1,"scaledefault":1,"proficient":0},'
+        $scaleconfiguration2 = '[{"scaleid":"'.$s2->id.'"},{"name":"value3","id":1,"scaledefault":1,"proficient":0},'
                 . '{"name":"value4","id":2,"scaledefault":0,"proficient":1}]';
 
         // Create a framework with scale configuration1.
         $frm = array(
-            'scaleid' => 1,
+            'scaleid' => $s1->id,
             'scaleconfiguration' => $scaleconfiguration1
         );
         $framework = $lpg->create_framework($frm);
@@ -2704,7 +2704,7 @@ class core_competency_api_testcase extends advanced_testcase {
 
         // Create competency with its own scale configuration.
         $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(),
-                                            'scaleid' => 2,
+                                            'scaleid' => $s2->id,
                                             'scaleconfiguration' => $scaleconfiguration2
                                         ));
 

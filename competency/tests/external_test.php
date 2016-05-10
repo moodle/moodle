@@ -69,6 +69,18 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
     /** @var int User role id */
     protected $userrole = null;
 
+    /** @var stdClass $scale1 Scale */
+    protected $scale1 = null;
+
+    /** @var stdClass $scale2 Scale */
+    protected $scale2 = null;
+
+    /** @var stdClass $scale3 Scale */
+    protected $scale3 = null;
+
+    /** @var stdClass $scale4 Scale */
+    protected $scale4 = null;
+
     /** @var string scaleconfiguration */
     protected $scaleconfiguration1 = null;
 
@@ -153,31 +165,36 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $this->category = $category;
         $this->othercategory = $othercategory;
 
-        $this->getDataGenerator()->create_scale(array("id" => "1", "scale" => "value1, value2"));
-        $this->getDataGenerator()->create_scale(array("id" => "2", "scale" => "value3, value4"));
-        $this->getDataGenerator()->create_scale(array("id" => "3", "scale" => "value5, value6"));
-        $this->getDataGenerator()->create_scale(array("id" => "4", "scale" => "value7, value8"));
+        $this->scale1 = $this->getDataGenerator()->create_scale(array("scale" => "value1, value2"));
+        $this->scale2 = $this->getDataGenerator()->create_scale(array("scale" => "value3, value4"));
+        $this->scale3 = $this->getDataGenerator()->create_scale(array("scale" => "value5, value6"));
+        $this->scale4 = $this->getDataGenerator()->create_scale(array("scale" => "value7, value8"));
 
-        $this->scaleconfiguration1 = '[{"scaleid":"1"},{"name":"value1","id":1,"scaledefault":1,"proficient":0},' .
+        $this->scaleconfiguration1 = '[{"scaleid":"'.$this->scale1->id.'"},' .
+                '{"name":"value1","id":1,"scaledefault":1,"proficient":0},' .
                 '{"name":"value2","id":2,"scaledefault":0,"proficient":1}]';
-        $this->scaleconfiguration2 = '[{"scaleid":"2"},{"name":"value3","id":1,"scaledefault":1,"proficient":0},' .
+        $this->scaleconfiguration2 = '[{"scaleid":"'.$this->scale2->id.'"},' .
+                '{"name":"value3","id":1,"scaledefault":1,"proficient":0},' .
                 '{"name":"value4","id":2,"scaledefault":0,"proficient":1}]';
-        $this->scaleconfiguration3 = '[{"scaleid":"3"},{"name":"value5","id":1,"scaledefault":1,"proficient":0},' .
+        $this->scaleconfiguration3 = '[{"scaleid":"'.$this->scale3->id.'"},' .
+                '{"name":"value5","id":1,"scaledefault":1,"proficient":0},' .
                 '{"name":"value6","id":2,"scaledefault":0,"proficient":1}]';
-        $this->scaleconfiguration4 = '[{"scaleid":"4"},{"name":"value8","id":1,"scaledefault":1,"proficient":0},' .
+        $this->scaleconfiguration4 = '[{"scaleid":"'.$this->scale4->id.'"},'.
+                '{"name":"value8","id":1,"scaledefault":1,"proficient":0},' .
                 '{"name":"value8","id":2,"scaledefault":0,"proficient":1}]';
         accesslib_clear_all_caches_for_unit_testing();
     }
 
 
     protected function create_competency_framework($number = 1, $system = true) {
+        $scalename = 'scale' . $number;
         $scalepropname = 'scaleconfiguration' . $number;
         $framework = array(
             'shortname' => 'shortname' . $number,
             'idnumber' => 'idnumber' . $number,
             'description' => 'description' . $number,
             'descriptionformat' => FORMAT_HTML,
-            'scaleid' => $number,
+            'scaleid' => $this->$scalename->id,
             'scaleconfiguration' => $this->$scalepropname,
             'visible' => true,
             'contextid' => $system ? context_system::instance()->id : context_coursecat::instance($this->category->id)->id
@@ -241,6 +258,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
     }
 
     protected function update_competency_framework($id, $number = 1, $system = true) {
+        $scalename = 'scale' . $number;
         $scalepropname = 'scaleconfiguration' . $number;
         $framework = array(
             'id' => $id,
@@ -248,7 +266,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
             'idnumber' => 'idnumber' . $number,
             'description' => 'description' . $number,
             'descriptionformat' => FORMAT_HTML,
-            'scaleid' => $number,
+            'scaleid' => $this->$scalename->id,
             'scaleconfiguration' => $this->$scalepropname,
             'visible' => true,
             'contextid' => $system ? context_system::instance()->id : context_coursecat::instance($this->category->id)->id
@@ -316,7 +334,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('idnumber1', $result->idnumber);
         $this->assertEquals('description1', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
-        $this->assertEquals(1, $result->scaleid);
+        $this->assertEquals($this->scale1->id, $result->scaleid);
         $this->assertEquals($this->scaleconfiguration1, $result->scaleconfiguration);
         $this->assertEquals(true, $result->visible);
     }
@@ -335,7 +353,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('idnumber1', $result->idnumber);
         $this->assertEquals('description1', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
-        $this->assertEquals(1, $result->scaleid);
+        $this->assertEquals($this->scale1->id, $result->scaleid);
         $this->assertEquals($this->scaleconfiguration1, $result->scaleconfiguration);
         $this->assertEquals(true, $result->visible);
 
@@ -358,7 +376,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
             'idnumber' => 'id;"number',
             'description' => 'de<>\\..scription',
             'descriptionformat' => FORMAT_HTML,
-            'scaleid' => 1,
+            'scaleid' => $this->scale1->id,
             'scaleconfiguration' => $this->scaleconfiguration1,
             'visible' => true,
             'contextid' => context_system::instance()->id
@@ -384,7 +402,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('idnumber1', $result->idnumber);
         $this->assertEquals('description1', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
-        $this->assertEquals(1, $result->scaleid);
+        $this->assertEquals($this->scale1->id, $result->scaleid);
         $this->assertEquals($this->scaleconfiguration1, $result->scaleconfiguration);
         $this->assertEquals(true, $result->visible);
     }
@@ -410,7 +428,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('idnumber2', $result->idnumber);
         $this->assertEquals('description2', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
-        $this->assertEquals(2, $result->scaleid);
+        $this->assertEquals($this->scale2->id, $result->scaleid);
         $this->assertEquals($this->scaleconfiguration2, $result->scaleconfiguration);
         $this->assertEquals(true, $result->visible);
 
@@ -444,7 +462,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('idnumber1', $result->idnumber);
         $this->assertEquals('description1', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
-        $this->assertEquals(1, $result->scaleid);
+        $this->assertEquals($this->scale1->id, $result->scaleid);
         $this->assertEquals($this->scaleconfiguration1, $result->scaleconfiguration);
         $this->assertEquals(true, $result->visible);
     }
@@ -470,7 +488,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('idnumber2', $result->idnumber);
         $this->assertEquals('description2', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
-        $this->assertEquals(2, $result->scaleid);
+        $this->assertEquals($this->scale2->id, $result->scaleid);
         $this->assertEquals($this->scaleconfiguration2, $result->scaleconfiguration);
         $this->assertEquals(true, $result->visible);
 
@@ -579,12 +597,12 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
         $s1 = $this->getDataGenerator()->create_scale();
 
-        $f1 = $lpg->create_framework(array('scaleid' => 1));
-        $f2 = $lpg->create_framework(array('scaleid' => 1));
+        $f1 = $lpg->create_framework(array('scaleid' => $s1->id));
+        $f2 = $lpg->create_framework(array('scaleid' => $s1->id));
         $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
         $c2 = $lpg->create_competency(array('competencyframeworkid' => $f2->get_id()));
 
-        $this->assertEquals(1, $f1->get_scaleid());
+        $this->assertEquals($s1->id, $f1->get_scaleid());
 
         // Make the scale of f2 being used.
         $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c2->get_id()));
@@ -593,7 +611,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $result = $this->update_competency_framework($f1->get_id(), 3, true);
 
         $f1 = new \core_competency\competency_framework($f1->get_id());
-        $this->assertEquals(3, $f1->get_scaleid());
+        $this->assertEquals($this->scale3->id, $f1->get_scaleid());
 
         // Changing the framework where the scale is used.
         try {
@@ -645,7 +663,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('idnumber1', $result->idnumber);
         $this->assertEquals('description1', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
-        $this->assertEquals(1, $result->scaleid);
+        $this->assertEquals($this->scale1->id, $result->scaleid);
         $this->assertEquals($this->scaleconfiguration1, $result->scaleconfiguration);
         $this->assertEquals(true, $result->visible);
     }
@@ -732,7 +750,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('idnumber1', $result->idnumber);
         $this->assertEquals('description1', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
-        $this->assertEquals(1, $result->scaleid);
+        $this->assertEquals($this->scale1->id, $result->scaleid);
         $this->assertEquals($this->scaleconfiguration1, $result->scaleconfiguration);
         $this->assertEquals(true, $result->visible);
     }
