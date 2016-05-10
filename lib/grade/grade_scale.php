@@ -259,12 +259,21 @@ class grade_scale extends grade_object {
     }
 
     /**
+     * Checks if this is the last scale on the site.
+     *
+     * @return bool
+     */
+    public function is_last_global_scale() {
+        return ($this->courseid == 0) && (count(self::fetch_all_global()) == 1);
+    }
+
+    /**
      * Checks if scale can be deleted.
      *
      * @return bool
      */
     public function can_delete() {
-        return !$this->is_used();
+        return !$this->is_used() && !$this->is_last_global_scale();
     }
 
     /**
