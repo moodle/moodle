@@ -1582,7 +1582,7 @@ class core_moodlelib_testcase extends advanced_testcase {
                 'expectedoutput' => '1309485600'
             ),
             array(
-                'usertimezone' => '14', // Server time.
+                'usertimezone' => '-14', // Server time.
                 'year' => '2011',
                 'month' => '7',
                 'day' => '1',
