@@ -139,7 +139,7 @@ Feature: Enable the calendar block in a course and test it's functionality
       | student2 | G2 |
     When I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Edit settings" node in "Course administration" 
+    And I navigate to "Edit settings" node in "Course administration"
     And I set the following fields to these values:
       | id_groupmode | Separate groups |
       | id_groupmodeforce | Yes |
@@ -173,7 +173,7 @@ Feature: Enable the calendar block in a course and test it's functionality
       | student2 | G2 |
     When I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Edit settings" node in "Course administration" 
+    And I navigate to "Edit settings" node in "Course administration"
     And I set the following fields to these values:
       | id_groupmode | Separate groups |
       | id_groupmodeforce | Yes |
