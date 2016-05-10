@@ -27,10 +27,6 @@
 /** Prevent direct access to this script */
 defined('MOODLE_INTERNAL') || die();
 
-if (! class_exists('qtype_with_combined_feedback_renderer')) { // Moodle 2.0
-    require_once($CFG->dirroot.'/question/type/ordering/legacy/rendererbase.php');
-}
-
 /**
  * Generates the output for ORDERING questions
  *

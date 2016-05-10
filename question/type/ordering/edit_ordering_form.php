@@ -339,65 +339,15 @@ class qtype_ordering_edit_form extends question_edit_form {
     }
 
     protected function add_ordering_feedback_fields($shownumpartscorrect = false) {
-        if (method_exists($this, 'add_combined_feedback_fields')) {
-            // Moodle >= 2.1
-            $this->add_combined_feedback_fields($shownumpartscorrect);
-        } else {
-            // Moodle 2.0
-            $mform = $this->_form;
-            $names = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
-            foreach ($names as $name) {
-                $label = get_string($name, 'qtype_multichoice'); // borrow string from standard core
-                $mform->addElement('editor', $name, $label, array('rows' => 10), $this->editoroptions);
-                $mform->setType($name, PARAM_RAW);
-            }
-        }
+        $this->add_combined_feedback_fields($shownumpartscorrect);
     }
 
     protected function add_ordering_interactive_settings($clearwrong=false, $shownumpartscorrect=false) {
-        if (method_exists($this, 'add_interactive_settings')) {
-            // Moodle >= 2.1
-            $this->add_interactive_settings($clearwrong, $shownumpartscorrect);
-        }
+        $this->add_interactive_settings($clearwrong, $shownumpartscorrect);
     }
 
     protected function data_preprocessing_ordering_feedback($question, $shownumcorrect=false) {
-        if (method_exists($this, 'data_preprocessing_combined_feedback')) {
-            // Moodle >= 2.1
-            $question = $this->data_preprocessing_combined_feedback($question, $shownumcorrect);
-        } else {
-            // Moodle 2.0
-            $names = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
-            foreach ($names as $name) {
-                $draftid = file_get_submitted_draft_itemid($name);
-
-                if (isset($question->id)) {
-                    $itemid = $question->id;
-                } else {
-                    $itemid = null;
-                }
-
-                if (isset($question->options->$name)) {
-                    $text = $question->options->$name;
-                } else {
-                    $text = '';
-                }
-
-                $text = file_prepare_draft_area($draftid, $this->context->id, 'qtype_ordering',
-                                                $name, $itemid, $this->editoroptions, $text);
-
-                $format = $name.'format';
-                if (isset($question->options->$format)) {
-                    $format = $question->options->$format;
-                } else {
-                    $format = FORMAT_MOODLE;
-                }
-
-                $question->$name = array('text'   => $text,
-                                         'format' => $format,
-                                         'itemid' => $draftid);
-            }
-        }
+        $question = $this->data_preprocessing_combined_feedback($question, $shownumcorrect);
         return $question;
     }
 

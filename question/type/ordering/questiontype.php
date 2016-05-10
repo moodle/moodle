@@ -25,13 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-if (class_exists('question_type')) {
-    $register_ordering_questiontype = false;
-} else {
-    $register_ordering_questiontype = true; // Moodle 2.0
-    require_once($CFG->dirroot.'/question/type/ordering/legacy/questiontypebase.php');
-}
-
 /**
  * The ORDERING question type.
  *
@@ -107,7 +100,7 @@ class qtype_ordering extends question_type {
 
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
-        $this->initialise_ordering_feedback($question, $questiondata);
+        $this->initialise_combined_feedback($question, $questiondata);
     }
 
     public function save_question_options($question) {
@@ -213,7 +206,7 @@ class qtype_ordering extends question_type {
             'selectcount' => $question->selectcount,
             'gradingtype' => $question->gradingtype
         );
-        $options = $this->save_ordering_feedback_helper($options, $question, $context, true);
+        $options = $this->save_combined_feedback_helper($options, $question, $context, true);
         $this->save_hints($question, false);
 
         // add/update $options for this ordering question
@@ -242,24 +235,6 @@ class qtype_ordering extends question_type {
         return true;
     }
 
-    protected function initialise_ordering_feedback($question, $questiondata, $shownumcorrect=false) {
-        if (method_exists($this, 'initialise_combined_feedback')) {
-            // Moodle >= 2.1
-            $options = $this->initialise_combined_feedback($question, $questiondata, $shownumcorrect);
-        } else {
-            // Moodle 2.0
-            foreach ($this->feedback_fields as $field) {
-                $format = $field.'format';
-                $question->$field = $questiondata->options->$field;
-                $question->$format = $questiondata->options->$format;
-            }
-            if ($shownumcorrect) {
-                $question->shownumcorrect = $questiondata->options->shownumcorrect;
-            }
-        }
-        return $options;
-    }
-
     public function get_possible_responses($questiondata) {
         $responses = array();
         $question = $this->make_question($questiondata);
@@ -271,25 +246,6 @@ class qtype_ordering extends question_type {
             1 => implode(', ', $responses)
         );
         return ;
-    }
-
-    protected function save_ordering_feedback_helper($options, $question, $context, $shownumcorrect=false) {
-        if (method_exists($this, 'save_combined_feedback_helper')) {
-            // Moodle >= 2.1
-            $options = $this->save_combined_feedback_helper($options, $question, $context, $shownumcorrect);
-        } else {
-            // Moodle 2.0
-            foreach ($this->feedback_fields as $field) {
-                $text = $question->$field;
-                $format = $field.'format';
-                $options->$field = $this->import_or_save_files($text, $context, 'qtype_ordering', $field, $question->id);
-                $options->$format = $text['format'];
-            }
-            if ($shownumcorrect) {
-                $options->shownumcorrect = (isset($question->shownumcorrect) && $question->shownumcorrect);
-            }
-        }
-        return $options;
     }
 
     public function is_not_blank($value) {
@@ -749,10 +705,3 @@ class qtype_ordering extends question_type {
         $question->gradingtype = $gradingtype;
     }
 }
-
-if ($register_ordering_questiontype) {
-    class question_ordering_qtype extends qtype_ordering {
-    }
-    question_register_questiontype(new question_ordering_qtype());
-}
-unset($register_ordering_questiontype);
