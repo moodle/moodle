@@ -77,6 +77,8 @@ if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
 }
 $PAGE->set_course($course);
 
+$usespost = true;
+
 if ($repo_id) {
     // Get repository instance information
     $repooptions = array(
@@ -87,12 +89,14 @@ if ($repo_id) {
 
     // Check permissions
     $repo->check_capability();
+
+    $usespost = $repo->uses_post_requests();
 }
 
 $context = context::instance_by_id($contextid);
 
 // Make sure maxbytes passed is within site filesize limits.
-$maxbytes = get_user_max_upload_file_size($context, $CFG->maxbytes, $course->maxbytes, $maxbytes);
+$maxbytes = get_user_max_upload_file_size($context, $CFG->maxbytes, $course->maxbytes, $maxbytes, null, $usespost);
 
 $params = array('ctx_id' => $contextid, 'itemid' => $itemid, 'env' => $env, 'course'=>$courseid, 'maxbytes'=>$maxbytes, 'areamaxbytes'=>$areamaxbytes, 'maxfiles'=>$maxfiles, 'subdirs'=>$subdirs, 'sesskey'=>sesskey());
 $params['action'] = 'browse';
