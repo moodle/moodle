@@ -316,6 +316,7 @@ function xmldb_main_install() {
     set_config('numerical_sortorder', 5, 'question');
     set_config('essay_sortorder', 6, 'question');
 
-    require_once($CFG->libdir . '/datalib.php');
+    require_once($CFG->libdir . '/db/upgradelib.php');
     make_default_scale();
+    make_competence_scale();
 }

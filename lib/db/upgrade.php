@@ -2045,5 +2045,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016042600.01);
     }
 
+    if ($oldversion < 2016051300.00) {
+        // Add a default competency rating scale.
+        make_competence_scale();
+
+        // Savepoint reached.
+        upgrade_main_savepoint(true, 2016051300.00);
+    }
+
     return true;
 }

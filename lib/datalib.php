@@ -1161,34 +1161,6 @@ function get_my_remotehosts() {
     return false;
 }
 
-/**
- * This function creates a default separated/connected scale
- *
- * This function creates a default separated/connected scale
- * so there's something in the database.  The locations of
- * strings and files is a bit odd, but this is because we
- * need to maintain backward compatibility with many different
- * existing language translations and older sites.
- *
- * @global object
- * @return void
- */
-function make_default_scale() {
-    global $DB;
-
-    $defaultscale = new stdClass();
-    $defaultscale->courseid = 0;
-    $defaultscale->userid = 0;
-    $defaultscale->name  = get_string('separateandconnected');
-    $defaultscale->description = get_string('separateandconnectedinfo');
-    $defaultscale->scale = get_string('postrating1', 'forum').','.
-                           get_string('postrating2', 'forum').','.
-                           get_string('postrating3', 'forum');
-    $defaultscale->timemodified = time();
-
-    $defaultscale->id = $DB->insert_record('scale', $defaultscale);
-}
-
 
 /**
  * Returns a menu of all available scales from the site as well as the given course
@@ -1206,13 +1178,7 @@ function get_scales_menu($courseid=0) {
           ORDER BY courseid ASC, name ASC";
     $params = array($courseid);
 
-    if ($scales = $DB->get_records_sql_menu($sql, $params)) {
-        return $scales;
-    }
-
-    make_default_scale();
-
-    return $DB->get_records_sql_menu($sql, $params);
+    return $scales = $DB->get_records_sql_menu($sql, $params);
 }
 
 /**
