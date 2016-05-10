@@ -1446,17 +1446,19 @@ class assign {
     }
 
     /**
-     * Get the submission status/grading status for all submissions in this assignment.
+     * Get the submission status/grading status for all submissions in this assignment for the
+     * given paticipants.
+     *
      * These statuses match the available filters (requiregrading, submitted, notsubmitted).
      * If this is a group assignment, group info is also returned.
      *
-     * @param int $currentgroup
-     * @return array List of user records with extra fields 'submitted', 'notsubmitted', 'requiregrading', 'groupid', 'groupname'
+     * @param array $participants an associative array where the key is the participant id and
+     *                            the value is the participant record.
+     * @return array an associative array where the key is the participant id and the value is
+     *               the participant record.
      */
-    public function list_participants_with_filter_status_and_group($currentgroup) {
+    private function get_submission_info_for_participants($participants) {
         global $DB;
-
-        $participants = $this->list_participants($currentgroup, false);
 
         if (empty($participants)) {
             return $participants;
@@ -1524,6 +1526,24 @@ class assign {
     }
 
     /**
+     * Get the submission status/grading status for all submissions in this assignment.
+     * These statuses match the available filters (requiregrading, submitted, notsubmitted).
+     * If this is a group assignment, group info is also returned.
+     *
+     * @param int $currentgroup
+     * @return array List of user records with extra fields 'submitted', 'notsubmitted', 'requiregrading', 'groupid', 'groupname'
+     */
+    public function list_participants_with_filter_status_and_group($currentgroup) {
+        $participants = $this->list_participants($currentgroup, false);
+
+        if (empty($participants)) {
+            return $participants;
+        } else {
+            return $this->get_submission_info_for_participants($participants);
+        }
+    }
+
+    /**
      * Load a list of users enrolled in the current course with the specified permission and group.
      * 0 for no group.
      *
@@ -1562,6 +1582,29 @@ class assign {
             return $idslist;
         }
         return $this->participants[$key];
+    }
+
+    /**
+     * Load a user if they are enrolled in the current course. Populated with submission
+     * status for this assignment.
+     *
+     * @param int $userid
+     * @return null|stdClass user record
+     */
+    public function get_participant($userid) {
+        global $DB;
+
+        $participant = $DB->get_record('user', array('id' => $userid));
+        if (!$participant) {
+            return null;
+        }
+
+        if (!is_enrolled($this->context, $participant, 'mod/assign:submit', $this->show_only_active_users())) {
+            return null;
+        }
+
+        $result = $this->get_submission_info_for_participants(array($participant->id => $participant));
+        return $result[$participant->id];
     }
 
     /**
@@ -3779,6 +3822,11 @@ class assign {
         $o .= $this->get_renderer()->header();
 
         $userid = optional_param('userid', 0, PARAM_INT);
+        $blindid = optional_param('blindid', 0, PARAM_INT);
+
+        if (!$userid && $blindid) {
+            $userid = $this->get_user_id_for_uniqueid($blindid);
+        }
 
         $currentgroup = groups_get_activity_group($this->get_course_module(), true);
         $framegrader = new grading_app($userid, $currentgroup, $this);

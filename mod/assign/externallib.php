@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/externallib.php");
+require_once("$CFG->dirroot/user/externallib.php");
 require_once("$CFG->dirroot/mod/assign/locallib.php");
 
 /**
@@ -2761,5 +2762,106 @@ class mod_assign_external extends external_api {
                 'groupname' => new external_value(PARAM_NOTAGS, 'for group assignments this is the group name', VALUE_OPTIONAL),
             ))
         );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function get_participant_parameters() {
+        return new external_function_parameters(
+            array(
+                'assignid' => new external_value(PARAM_INT, 'assign instance id'),
+                'userid' => new external_value(PARAM_INT, 'user id'),
+                'embeduser' => new external_value(PARAM_BOOL, 'user id', VALUE_DEFAULT, false),
+            )
+        );
+    }
+
+    /**
+     * Get the user participating in the given assignment. An error with code 'usernotincourse'
+     * is thrown is the user isn't a participant of the given assignment.
+     *
+     * @param int $assignid the assign instance id
+     * @param int $userid the user id
+     * @param bool $embeduser return user details (only applicable if not blind marking)
+     * @return array of warnings and status result
+     * @since Moodle 3.1
+     * @throws moodle_exception
+     */
+    public static function get_participant($assignid, $userid, $embeduser) {
+        global $DB, $CFG;
+        require_once($CFG->dirroot . "/mod/assign/locallib.php");
+        require_once($CFG->dirroot . "/user/lib.php");
+
+        $params = self::validate_parameters(self::get_participant_parameters(), array(
+            'assignid' => $assignid,
+            'userid' => $userid,
+            'embeduser' => $embeduser
+        ));
+
+        // Request and permission validation.
+        $assign = $DB->get_record('assign', array('id' => $params['assignid']), 'id', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($assign, 'assign');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        $assign = new assign($context, null, null);
+        $assign->require_view_grades();
+
+        $participant = $assign->get_participant($params['userid']);
+        if (!$participant) {
+            // No participant found so we can return early.
+            throw new moodle_exception('usernotincourse');
+        }
+
+        $return = array(
+            'id' => $participant->id,
+            'fullname' => $participant->fullname,
+            'submitted' => $participant->submitted,
+            'requiregrading' => $participant->requiregrading,
+            'blindmarking' => $assign->is_blind_marking(),
+        );
+
+        if (!empty($participant->groupid)) {
+            $return['groupid'] = $participant->groupid;
+        }
+        if (!empty($participant->groupname)) {
+            $return['groupname'] = $participant->groupname;
+        }
+
+        // Skip the expensive lookup of user detail if we're blind marking or the caller
+        // hasn't asked for user details to be embedded.
+        if (!$assign->is_blind_marking() && $embeduser) {
+            $return['user'] = user_get_user_details($participant, $course);
+        }
+
+        return $return;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.1
+     */
+    public static function get_participant_returns() {
+        $userdescription = core_user_external::user_description();
+        $userdescription->default = [];
+        $userdescription->required = VALUE_OPTIONAL;
+
+        return new external_single_structure(array(
+            'id' => new external_value(PARAM_INT, 'ID of the user'),
+            'fullname' => new external_value(PARAM_NOTAGS, 'The fullname of the user'),
+            'submitted' => new external_value(PARAM_BOOL, 'have they submitted their assignment'),
+            'requiregrading' => new external_value(PARAM_BOOL, 'is their submission waiting for grading'),
+            'blindmarking' => new external_value(PARAM_BOOL, 'is blind marking enabled for this assignment'),
+            'groupid' => new external_value(PARAM_INT, 'for group assignments this is the group id', VALUE_OPTIONAL),
+            'groupname' => new external_value(PARAM_NOTAGS, 'for group assignments this is the group name', VALUE_OPTIONAL),
+            'user' => $userdescription,
+        ));
     }
 }

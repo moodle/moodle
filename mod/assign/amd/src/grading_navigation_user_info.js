@@ -34,7 +34,7 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
     var UserInfo = function(selector) {
         this._regionSelector = selector;
         this._region = $(selector);
-        this._userCache = [];
+        this._userCache = {};
 
         $(document).on('user-changed', this._refreshUserInfo.bind(this));
     };
@@ -50,6 +50,17 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
 
     /** @type {Integer} Remember the last user id to prevent unnessecary reloads. */
     UserInfo.prototype._lastUserId = 0;
+
+    /**
+     * Get the assignment id
+     *
+     * @private
+     * @method _getAssignmentId
+     * @return int assignment id
+     */
+    UserInfo.prototype._getAssignmentId = function() {
+        return this._region.attr('data-assignmentid');
+    };
 
     /**
      * Get the user context - re-render the template in the page.
@@ -92,18 +103,21 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
                 promise.resolve(this._userCache[userid]);
             } else {
                 // Load context from ajax.
+                var assignmentId = this._getAssignmentId();
                 var requests = ajax.call([{
-                    methodname: 'core_user_get_users_by_field',
-                    args: { field: 'id', values: [ userid ] }
+                    methodname: 'mod_assign_get_participant',
+                    args: {
+                        userid: userid,
+                        assignid: assignmentId,
+                        embeduser: true
+                    }
                 }]);
 
-                requests[0].done(function(result) {
-                    if (result.length < 1) {
+                requests[0].done(function(participant) {
+                    if (!participant.hasOwnProperty('id')) {
                         promise.reject('No users');
                     } else {
-                        $.each(result, function(index, user) {
-                            this._userCache[user.id] = user;
-                        }.bind(this));
+                        this._userCache[userid] = participant;
                         promise.resolve(this._userCache[userid]);
                     }
                 }.bind(this)).fail(notification.exception);
@@ -114,14 +128,22 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
                     identity = [];
                 // Render the template.
                 context.courseid = $('[data-region="grading-navigation-panel"]').attr('data-courseid');
-                // Build a string for the visible identity fields listed in showuseridentity config setting.
-                $.each(identityfields, function(i, k) {
-                    if (typeof context[k] !== 'undefined' && context[k] !== '') {
-                        context.hasidentity = true;
-                        identity.push(context[k]);
+
+                if (context.user) {
+                    // Build a string for the visible identity fields listed in showuseridentity config setting.
+                    $.each(identityfields, function(i, k) {
+                        if (typeof context.user[k] !== 'undefined' && context.user[k] !== '') {
+                            context.hasidentity = true;
+                            identity.push(context.user[k]);
+                        }
+                    });
+                    context.identity = identity.join(', ');
+
+                    // Add profile image url to context.
+                    if (context.user.profileimageurl) {
+                        context.profileimageurl = context.user.profileimageurl;
                     }
-                });
-                context.identity = identity.join(', ');
+                }
 
                 templates.render('mod_assign/grading_navigation_user_summary', context).done(function(html, js) {
                     // Update the page.
@@ -139,7 +161,8 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
                         this._region.fadeIn("fast");
                     }.bind(this));
                 }.bind(this)).fail(notification.exception);
-            });
+            }
+            .bind(this));
         }.bind(this)).fail(notification.exception);
     };
 
