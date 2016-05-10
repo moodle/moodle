@@ -63,5 +63,5 @@ Y.extend(DRAGREORDER, M.core.dragdrop, {
 
 M.tool_lp = M.tool_lp || {};
 M.tool_lp.dragdrop_reorder = function(params) {
-    new DRAGREORDER(params);
+    return new DRAGREORDER(params);
 };
