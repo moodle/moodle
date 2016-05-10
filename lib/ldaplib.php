@@ -75,6 +75,14 @@ function ldap_getdefaults() {
                         'ad' => 'cn',
                         'default' => 'cn'
                         );
+    $default['suspended_attribute'] = array(
+                        'edir' => '',
+                        'rfc2307' => '',
+                        'rfc2307bis' => '',
+                        'samba' => '',
+                        'ad' => '',
+                        'default' => ''
+                        );
     $default['memberattribute'] = array(
                         'edir' => 'member',
                         'rfc2307' => 'member',

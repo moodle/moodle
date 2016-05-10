@@ -937,7 +937,9 @@ class auth_plugin_ldap extends auth_plugin_base {
                 // It isn't possible to just rely on the configured suspension attribute since
                 // things like active directory use bit masks, other things using LDAP might
                 // do different stuff as well.
-                $user->suspended = $this->is_user_suspended($user);
+                //
+                // The cast to int is a workaround for MDL-53959.
+                $user->suspended = (int)$this->is_user_suspended($user);
                 if (empty($user->lang)) {
                     $user->lang = $CFG->lang;
                 }
@@ -1012,7 +1014,8 @@ class auth_plugin_ldap extends auth_plugin_base {
             if (!empty($updatekeys)) {
                 $newuser = new stdClass();
                 $newuser->id = $userid;
-                $newuser->suspended = $this->is_user_suspended((object) $newinfo);
+                // The cast to int is a workaround for MDL-53959.
+                $newuser->suspended = (int)$this->is_user_suspended((object) $newinfo);
 
                 foreach ($updatekeys as $key) {
                     if (isset($newinfo[$key])) {
