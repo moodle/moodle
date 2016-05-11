@@ -651,6 +651,11 @@ class qtype_ordering_question extends question_graded_automatically {
                     $prependsubset = true;
                     $appendtosubset = true;
                     break;
+
+                default: // shouldn't happen !!
+                    $tailsets = array();
+                    $prependsubset = false;
+                    $appendtosubset = false;
             }
 
             // Append any $tailsets that were found.
