@@ -101,9 +101,11 @@ abstract class restore_dbops {
 
             // If included, add it
             if ($included) {
-                $includedtasks[] = $task;
+                $includedtasks[] = clone($task); // A clone is enough. In fact we only need the basepath.
             }
         }
+        $rc->destroy(); // Always need to destroy.
+
         return $includedtasks;
     }
 
@@ -1510,8 +1512,12 @@ abstract class restore_dbops {
         // Calculate the context we are going to use for capability checking
         $context = context_course::instance($courseid);
 
+        // TODO: Some day we must kill this dependency and change the process
+        // to pass info around without loading a controller copy.
         // When conflicting users are detected we may need original site info.
-        $restoreinfo = restore_controller_dbops::load_controller($restoreid)->get_info();
+        $rc = restore_controller_dbops::load_controller($restoreid);
+        $restoreinfo = $rc->get_info();
+        $rc->destroy(); // Always need to destroy.
 
         // Calculate if we have perms to create users, by checking:
         // to 'moodle/restore:createuser' and 'moodle/restore:userinfo'

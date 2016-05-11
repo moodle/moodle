@@ -170,6 +170,8 @@ class restore_controller extends base_controller {
     public function destroy() {
         // Only need to destroy circulars under the plan. Delegate to it.
         $this->plan->destroy();
+        // Loggers may have also chained references, destroy them. Also closing resources when needed.
+        $this->logger->destroy();
     }
 
     public function finish_ui() {
@@ -196,7 +198,7 @@ class restore_controller extends base_controller {
             $this->save_controller();
             $tbc = self::load_controller($this->restoreid);
             $this->logger = $tbc->logger; // wakeup loggers
-            $tbc->destroy(); // Clean temp controller structures
+            $tbc->plan->destroy(); // Clean plan controller structures, keeping logger alive.
 
         } else if ($status == backup::STATUS_FINISHED_OK) {
             // If the operation has ended without error (backup::STATUS_FINISHED_OK)
