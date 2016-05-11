@@ -15,11 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * ORDERING question renderer class.
- * (originally based on the TRUE-FALSE renderer)
+ * Ordering question renderer class.
  *
- * @package    qtype
- * @subpackage ordering
+ * @package    qtype_ordering
  * @copyright  2013 Gordon Bateson (gordonbateson@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Generates the output for ORDERING questions
+ * Generates the output for ordering questions
  *
  * @copyright  2013 Gordon Bateson
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

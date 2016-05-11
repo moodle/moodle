@@ -15,11 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * ORDERING question definition classes.
+ * Ordering question definition classes.
  *
- * @package    qtype
- * @subpackage ordering
- * @copyright  2009 The Open University
+ * @package    qtype_ordering
+ * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,9 +26,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Represents an ORDERING question.
+ * Represents an ordering question.
  *
- * @copyright  2009 The Open University
+ * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ordering_question extends question_graded_automatically {

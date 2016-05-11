@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * ORDERING question settings page.
+ * Ordering question settings page.
  *
- * @package    qtype
- * @subpackage ordering
+ * @package    qtype_ordering
  * @copyright  2016 Vadim Dvorovenko
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -15,11 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the ORDERING question type
+ * Version information for the ordering question type
  *
- * @package    qtype
- * @subpackage ordering
- * @copyright  2010 Thomas Robb
+ * @package    qtype_ordering
+ * @copyright  2013 Gordon Bateson (gordonbateson@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

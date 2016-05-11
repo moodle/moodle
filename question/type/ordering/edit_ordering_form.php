@@ -15,11 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the editing form for the multiple choice question type.
+ * Defines the editing form for the ordering question type.
  *
- * @package    qtype
- * @subpackage ordering
- * @copyright  2007 Jamie Pratt
+ * @package    qtype_ordering
+ * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -31,9 +30,8 @@ require_once($CFG->dirroot.'/question/type/ordering/question.php');
 
 /**
  * Ordering editing form definition
- * (originally based on mutiple choice form)
  *
- * @copyright  2007 Jamie Pratt
+ * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ordering_edit_form extends question_edit_form {
