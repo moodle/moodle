@@ -123,10 +123,10 @@ class qtype_ordering_edit_form extends question_edit_form {
         $this->adjust_html_editors($mform, $name, $repeats);
 
         // Adding feedback fields.
-        $this->add_ordering_feedback_fields(false);
+        $this->add_combined_feedback_fields(false);
 
         // Adding interactive settings.
-        $this->add_ordering_interactive_settings(false, false);
+        $this->add_interactive_settings(false, false);
     }
 
     protected function get_answer_repeats($question) {
@@ -245,7 +245,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         $question = $this->data_preprocessing_answers($question, true);
 
         // Preprocess feedback.
-        $question = $this->data_preprocessing_ordering_feedback($question);
+        $question = $this->data_preprocessing_combined_feedback($question);
         $question = $this->data_preprocessing_hints($question, false, false);
 
         // Preprocess answers and fractions.
@@ -333,19 +333,6 @@ class qtype_ordering_edit_form extends question_edit_form {
         }
 
         return $errors;
-    }
-
-    protected function add_ordering_feedback_fields($shownumpartscorrect = false) {
-        $this->add_combined_feedback_fields($shownumpartscorrect);
-    }
-
-    protected function add_ordering_interactive_settings($clearwrong=false, $shownumpartscorrect=false) {
-        $this->add_interactive_settings($clearwrong, $shownumpartscorrect);
-    }
-
-    protected function data_preprocessing_ordering_feedback($question, $shownumcorrect=false) {
-        $question = $this->data_preprocessing_combined_feedback($question, $shownumcorrect);
-        return $question;
     }
 
     /**
