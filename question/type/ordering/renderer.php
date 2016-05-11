@@ -39,7 +39,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
     protected $currentinfo = null;
     protected $itemscores = array();
 
-    protected $all_correct = null;
+    protected $allcorrect = null;
 
     public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
         global $CFG, $DB;
@@ -51,46 +51,49 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         $currentresponse = $question->currentresponse;
         $correctresponse = $question->correctresponse;
 
-        // generate fieldnames and ids
-        //   response_fieldname : 1_response_319
-        //   response_name      : q27:1_response_319
-        //   response_id        : id_q27_1_response_319
-        //   sortable_id        : id_sortable_q27_1_response_319
-        $response_fieldname = $question->get_response_fieldname();
-        $response_name      = $qa->get_qt_field_name($response_fieldname);
-        $response_id        = 'id_'.preg_replace('/[^a-zA-Z0-9]+/', '_', $response_name);
-        $sortable_id        = 'id_sortable_'.$question->id;
-        $ablock_id          = 'id_ablock_'.$question->id;
+        // Generate fieldnames and ids
+        // response_fieldname : 1_response_319
+        // response_name      : q27:1_response_319
+        // response_id        : id_q27_1_response_319
+        // sortable_id        : id_sortable_q27_1_response_319.
+        $responsefieldname = $question->get_response_fieldname();
+        $responsename      = $qa->get_qt_field_name($responsefieldname);
+        $responseid        = 'id_'.preg_replace('/[^a-zA-Z0-9]+/', '_', $responsename);
+        $sortableid        = 'id_sortable_'.$question->id;
+        $ablockid          = 'id_ablock_'.$question->id;
 
         switch ($question->options->layouttype) {
-            case qtype_ordering_question::LAYOUT_VERTICAL   : $axis = 'y'; break;
-            case qtype_ordering_question::LAYOUT_HORIZONTAL : $axis = '';  break;
+            case qtype_ordering_question::LAYOUT_VERTICAL:
+                $axis = 'y';
+                break;
+            case qtype_ordering_question::LAYOUT_HORIZONTAL:
+                $axis = '';
+                break;
             default: $axis = '';
         }
 
         $result = '';
 
-        if ($options->readonly || $options->correctness) {
-            // don't allow items to be dragged and dropped
-        } else {
+        // Don't allow items to be dragged and dropped in readonly mode.
+        if (!($options->readonly || $options->correctness)) {
             $script = "\n";
             $script .= "//<![CDATA[\n";
             $script .= "if (window.$) {\n";
             $script .= "    $(function() {\n";
-            $script .= "        $('#$sortable_id').sortable({\n";
+            $script .= "        $('#$sortableid').sortable({\n";
             $script .= "            axis: '$axis',\n";
-            $script .= "            containment: '#$ablock_id',\n";
+            $script .= "            containment: '#$ablockid',\n";
             $script .= "            opacity: 0.6,\n";
             $script .= "            update: function(event, ui) {\n";
             $script .= "                var ItemsOrder = $(this).sortable('toArray').toString();\n";
-            $script .= "                $('#$response_id').attr('value', ItemsOrder);\n";
+            $script .= "                $('#$responseid').attr('value', ItemsOrder);\n";
             $script .= "            }\n";
             $script .= "        });\n";
-            $script .= "        $('#$sortable_id').disableSelection();\n";
+            $script .= "        $('#$sortableid').disableSelection();\n";
             $script .= "    });\n";
             $script .= "    $(document).ready(function() {\n";
-            $script .= "        var ItemsOrder = $('#$sortable_id').sortable('toArray').toString();\n";
-            $script .= "        $('#$response_id').attr('value', ItemsOrder);\n";
+            $script .= "        var ItemsOrder = $('#$sortableid').sortable('toArray').toString();\n";
+            $script .= "        $('#$responseid').attr('value', ItemsOrder);\n";
             $script .= "    });\n";
             $script .= "}\n";
             $script .= "//]]>\n";
@@ -102,27 +105,27 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         $printeditems = false;
         if (count($currentresponse)) {
 
-            // set layout class
+            // Set layout class.
             $layoutclass = $question->get_ordering_layoutclass();
 
-            // generate ordering items
+            // Generate ordering items.
             foreach ($currentresponse as $position => $answerid) {
 
-                if (! array_key_exists($answerid, $question->answers)) {
-                    continue; // shouldn't happen !!
+                if (!array_key_exists($answerid, $question->answers)) {
+                    continue; // Shouldn't happen !!
                 }
-                if (! array_key_exists($position, $correctresponse)) {
-                    continue; // shouldn't happen !!
+                if (!array_key_exists($position, $correctresponse)) {
+                    continue; // Shouldn't happen !!
                 }
 
-                if ($printeditems==false) {
+                if ($printeditems == false) {
                     $printeditems = true;
-                    $result .= html_writer::start_tag('div', array('class' => 'ablock', 'id' => $ablock_id));
+                    $result .= html_writer::start_tag('div', array('class' => 'ablock', 'id' => $ablockid));
                     $result .= html_writer::start_tag('div', array('class' => 'answer ordering'));
-                    $result .= html_writer::start_tag('ul',  array('class' => 'sortablelist', 'id' => $sortable_id));
+                    $result .= html_writer::start_tag('ul',  array('class' => 'sortablelist', 'id' => $sortableid));
                 }
 
-                // set the CSS class and correctness img for this response
+                // Set the CSS class and correctness img for this response.
                 if ($options->correctness) {
                     $score = $this->get_ordering_item_score($question, $position, $answerid);
                     list($score, $maxscore, $fraction, $percent, $class, $img) = $score;
@@ -132,11 +135,11 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                 }
                 $class = "$class $layoutclass";
 
-                // the original "id" revealed the correct order of the answers
-                // because $answer->fraction holds the correct order number
-                // $id = 'ordering_item_'.$answerid.'_'.intval($question->answers[$answerid]->fraction);
+                // The original "id" revealed the correct order of the answers
+                // because $answer->fraction holds the correct order number.
                 $answer = $question->answers[$answerid];
-                $answer->answer = $question->format_text($answer->answer, $answer->answerformat, $qa, 'question', 'answer', $answerid);
+                $answer->answer = $question->format_text($answer->answer, $answer->answerformat, $qa, 'question', 'answer',
+                        $answerid);
                 $params = array('class' => $class, 'id' => $answer->md5key);
                 $result .= html_writer::tag('li', $img.$answer->answer, $params);
             }
@@ -144,15 +147,13 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
         if ($printeditems) {
             $result .= html_writer::end_tag('ul');
-            $result .= html_writer::end_tag('div'); // answer
-            $result .= html_writer::end_tag('div'); // ablock
+            $result .= html_writer::end_tag('div'); // Close answer tag.
+            $result .= html_writer::end_tag('div'); // Close ablock tag.
 
             $result .= html_writer::empty_tag('input', array('type'  => 'hidden',
-                                                             'name'  => $response_name,
-                                                             'id'    => $response_id,
+                                                             'name'  => $responsename,
+                                                             'id'    => $responseid,
                                                              'value' => ''));
-            // the following DIV is not necessary if we use "overflow: auto;" on the "answer" DIV
-            //$result .= html_writer::tag('div', '', array('style' => 'clear:both;'));
         }
 
         return $result;
@@ -168,25 +169,25 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         $gradedetails = '';
         $scoredetails = '';
 
-        // if required, add explanation of grade calculation
+        // If required, add explanation of grade calculation.
         if ($step = $qa->get_last_step()) {
             $state = $step->get_state();
-            if ($state=='gradedpartial' || $state=='gradedwrong') {
+            if ($state == 'gradedpartial' || $state == 'gradedwrong') {
 
                 $plugin = 'qtype_ordering';
                 $question = $qa->get_question();
 
-                // fetch grading type
+                // Fetch grading type.
                 $gradingtype = $question->options->gradingtype;
                 $gradingtype = qtype_ordering_question::get_grading_types($gradingtype);
 
-                // format grading type, e.g. Grading type: Relative to next item, excluding last item
+                // Format grading type, e.g. Grading type: Relative to next item, excluding last item.
                 if ($gradingtype) {
                     $gradingtype = get_string('gradingtype', $plugin).': '.$gradingtype;
                     $gradingtype = html_writer::tag('p', $gradingtype, array('class' => 'gradingtype'));
                 }
 
-                // fetch grade details and score details
+                // Fetch grade details and score details.
                 if ($currentresponse = $question->currentresponse) {
 
                     $totalscore = 0;
@@ -198,13 +199,13 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                     $scoredetails .= html_writer::tag('p', get_string('scoredetails', $plugin));
                     $scoredetails .= html_writer::start_tag('ol', array('class' => 'scoredetails'));
 
-                    // format scoredetails, e.g. 1 /2 = 50%, for each item
+                    // Format scoredetails, e.g. 1 /2 = 50%, for each item.
                     foreach ($currentresponse as $position => $answerid) {
                         if (array_key_exists($answerid, $question->answers)) {
                             $answer = $question->answers[$answerid];
                             $score = $this->get_ordering_item_score($question, $position, $answerid);
                             list($score, $maxscore, $fraction, $percent, $class, $img) = $score;
-                            if ($maxscore===null) {
+                            if ($maxscore === null) {
                                 $score = get_string('noscore', $plugin);
                             } else {
                                 $totalscore += $score;
@@ -212,20 +213,16 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                                 $score = "$score / $maxscore = $percent%";
                             }
                             $scoredetails .= html_writer::tag('li', $score, $params);
-                        } else {
-                            // Oops, the md5 key is not recognized !!
-                            // Maybe the password salt has changed
-                            // because we restored to a new server?
                         }
                     }
 
                     $scoredetails .= html_writer::end_tag('ol');
 
-                    if ($totalmaxscore==0) {
-                        $scoredetails = ''; // ALL_OR_NOTHING
+                    if ($totalmaxscore == 0) {
+                        $scoredetails = ''; // ALL_OR_NOTHING.
                     } else {
-                        // format gradedetails, e.g. 4 /6 = 67%
-                        if ($totalscore==0) {
+                        // Format gradedetails, e.g. 4 /6 = 67%.
+                        if ($totalscore == 0) {
                             $gradedetails = 0;
                         } else {
                             $gradedetails = round(100 * $totalscore / $totalmaxscore, 0);
@@ -253,9 +250,15 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         } else {
             if ($step = $qa->get_last_step()) {
                 switch ($step->get_state()) {
-                    case 'gradedright'  : $showcorrect = false; break;
-                    case 'gradedpartial': $showcorrect = true;  break;
-                    case 'gradedwrong'  : $showcorrect = true;  break;
+                    case 'gradedright':
+                        $showcorrect = false;
+                        break;
+                    case 'gradedpartial':
+                        $showcorrect = true;
+                        break;
+                    case 'gradedwrong':
+                        $showcorrect = true;
+                        break;
                 }
             }
         }
@@ -274,9 +277,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         return $output;
     }
 
-    /////////////////////////////////////
-    // custom methods
-    /////////////////////////////////////
+    // Custom methods.
 
     protected function get_response_info($question) {
 
@@ -291,23 +292,27 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
             case qtype_ordering_question::GRADING_RELATIVE_NEXT_EXCLUDE_LAST:
             case qtype_ordering_question::GRADING_RELATIVE_NEXT_INCLUDE_LAST:
-                $this->correctinfo = $question->get_next_answerids($question->correctresponse, $gradingtype==2);
-                $this->currentinfo = $question->get_next_answerids($question->currentresponse, $gradingtype==2);
+                $this->correctinfo = $question->get_next_answerids($question->correctresponse,
+                        $gradingtype == qtype_ordering_question::GRADING_RELATIVE_NEXT_INCLUDE_LAST);
+                $this->currentinfo = $question->get_next_answerids($question->currentresponse,
+                        $gradingtype == qtype_ordering_question::GRADING_RELATIVE_NEXT_INCLUDE_LAST);
                 break;
 
             case qtype_ordering_question::GRADING_RELATIVE_ONE_PREVIOUS_AND_NEXT:
             case qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT:
-                $this->correctinfo = $question->get_previous_and_next_answerids($question->correctresponse, $gradingtype==4);
-                $this->currentinfo = $question->get_previous_and_next_answerids($question->currentresponse, $gradingtype==4);
+                $this->correctinfo = $question->get_previous_and_next_answerids($question->correctresponse,
+                        $gradingtype == qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT);
+                $this->currentinfo = $question->get_previous_and_next_answerids($question->currentresponse,
+                        $gradingtype == qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT);
                 break;
 
             case qtype_ordering_question::GRADING_LONGEST_ORDERED_SUBSET:
             case qtype_ordering_question::GRADING_LONGEST_CONTIGUOUS_SUBSET:
                 $this->correctinfo = $question->correctresponse;
                 $this->currentinfo = $question->currentresponse;
-                $subset = $question->get_ordered_subset($gradingtype==6);
+                $subset = $question->get_ordered_subset($gradingtype == qtype_ordering_question::GRADING_LONGEST_CONTIGUOUS_SUBSET);
                 foreach ($this->currentinfo as $position => $answerid) {
-                    if (array_search($position, $subset)===false) {
+                    if (array_search($position, $subset) === false) {
                         $this->currentinfo[$position] = 0;
                     } else {
                         $this->currentinfo[$position] = 1;
@@ -321,19 +326,19 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
         if (! isset($this->itemscores[$position])) {
 
-            if ($this->correctinfo===null || $this->currentinfo===null) {
+            if ($this->correctinfo === null || $this->currentinfo === null) {
                 $this->get_response_info($question);
             }
 
             $correctinfo = $this->correctinfo;
             $currentinfo = $this->currentinfo;
 
-            $score    = 0;    // actual score for this item
-            $maxscore = null; // max score for this item
-            $fraction = 0.0;  // $score / $maxscore
-            $percent  = 0;    // 100 * $fraction
-            $class    = '';   // CSS class
-            $img      = '';   // icon to show correctness
+            $score    = 0;    // Actual score for this item.
+            $maxscore = null; // Max score for this item.
+            $fraction = 0.0;  // Fraction $score / $maxscore.
+            $percent  = 0;    // 100 * $fraction.
+            $class    = '';   // CSS class.
+            $img      = '';   // Icon to show correctness.
 
             switch ($question->options->gradingtype) {
 
@@ -346,7 +351,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
                 case qtype_ordering_question::GRADING_ABSOLUTE_POSITION:
                     if (isset($correctinfo[$position])) {
-                        if ($correctinfo[$position]==$answerid) {
+                        if ($correctinfo[$position] == $answerid) {
                             $score = 1;
                         }
                         $maxscore = 1;
@@ -356,7 +361,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                 case qtype_ordering_question::GRADING_RELATIVE_NEXT_EXCLUDE_LAST:
                 case qtype_ordering_question::GRADING_RELATIVE_NEXT_INCLUDE_LAST:
                     if (isset($correctinfo[$answerid])) {
-                        if (isset($currentinfo[$answerid]) && $currentinfo[$answerid]==$correctinfo[$answerid]) {
+                        if (isset($currentinfo[$answerid]) && $currentinfo[$answerid] == $correctinfo[$answerid]) {
                             $score = 1;
                         }
                         $maxscore = 1;
@@ -389,14 +394,14 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                     break;
             }
 
-            if ($maxscore===null) {
-                // an unscored item is either an illegal item
+            if ($maxscore === null) {
+                // An unscored item is either an illegal item
                 // or last item of RELATIVE_NEXT_EXCLUDE_LAST
                 // or an item in an incorrect ALL_OR_NOTHING
-                // or an item from an unrecognized grading type
+                // or an item from an unrecognized grading type.
                 $class = 'unscored';
             } else {
-                if ($maxscore==0) {
+                if ($maxscore == 0) {
                     $fraction = 0.0;
                     $percent = 0;
                 } else {
@@ -404,11 +409,21 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                     $percent = round(100 * $fraction, 0);
                 }
                 switch (true) {
-                    case ($fraction > 0.999999): $class = 'correct';   break;
-                    case ($fraction < 0.000001): $class = 'incorrect'; break;
-                    case ($fraction >= 0.66):    $class = 'partial66'; break;
-                    case ($fraction >= 0.33):    $class = 'partial33'; break;
-                    default:                     $class = 'partial00'; break;
+                    case ($fraction > 0.999999):
+                        $class = 'correct';
+                        break;
+                    case ($fraction < 0.000001):
+                        $class = 'incorrect';
+                        break;
+                    case ($fraction >= 0.66):
+                        $class = 'partial66';
+                        break;
+                    case ($fraction >= 0.33):
+                        $class = 'partial33';
+                        break;
+                    default:
+                        $class = 'partial00';
+                        break;
                 }
                 $img = $this->feedback_image($fraction);
             }
@@ -421,10 +436,10 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
     }
 
     protected function is_all_correct() {
-        if ($this->all_correct===null) {
-            // use "==" to determine if the two "info" arrays are identical
-            $this->all_correct = ($this->correctinfo==$this->currentinfo);
+        if ($this->allcorrect === null) {
+            // Use "==" to determine if the two "info" arrays are identical.
+            $this->allcorrect = ($this->correctinfo == $this->currentinfo);
         }
-        return $this->all_correct;
+        return $this->allcorrect;
     }
 }

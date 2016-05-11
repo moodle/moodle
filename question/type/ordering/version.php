@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,12 +23,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// prevent direct access to this script
+// Prevent direct access to this script.
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->cron      = 0;
 $plugin->component = 'qtype_ordering';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->requires  = 2011070100; // Moodle 2.1
+$plugin->requires  = 2011070100; // Moodle 2.1.
 $plugin->version   = 2016050252;
 $plugin->release   = '2016-05-02 (52)';

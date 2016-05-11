@@ -39,15 +39,15 @@ class restore_qtype_ordering_plugin extends restore_qtype_plugin {
 
         $paths = array();
 
-        // This qtype uses question_answers, add them
+        // This qtype uses question_answers, add them.
         $this->add_question_question_answers($paths);
 
-        // Add own qtype stuff
+        // Add own qtype stuff.
         $elename = 'ordering';
-        $elepath = $this->get_pathfor('/ordering'); // we used get_recommended_name() so this works
+        $elepath = $this->get_pathfor('/ordering'); // We used get_recommended_name() so this works.
         $paths[] = new restore_path_element($elename, $elepath);
 
-        return $paths; // And we return the interesting paths
+        return $paths; // And we return the interesting paths.
     }
 
     /**
@@ -60,13 +60,13 @@ class restore_qtype_ordering_plugin extends restore_qtype_plugin {
         $oldid = $data->id;
 
         // Detect if the question is created or mapped
-        // "question" is the XML tag name, not the DB field name
+        // "question" is the XML tag name, not the DB field name.
         $oldquestionid   = $this->get_old_parentid('question');
         $newquestionid   = $this->get_new_parentid('question');
 
         // If the question has been created by restore,
         // we need to create a "qtype_ordering_options" record
-        // and create a mapping from the $oldid to the $newid
+        // and create a mapping from the $oldid to the $newid.
         if ($this->get_mappingid('question_created', $oldquestionid)) {
             $data->questionid = $newquestionid;
             $newid = $DB->insert_record('qtype_ordering_options', $data);

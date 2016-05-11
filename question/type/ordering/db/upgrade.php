@@ -1,7 +1,28 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package    moodlecore
+ * @subpackage backup-moodle2
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 // This file keeps track of upgrades to
-// the calculated qtype plugin
+// the calculated qtype plugin.
 //
 // Sometimes, changes between versions involve
 // alterations to database structures and other
@@ -15,7 +36,7 @@
 // will tell you what you need to do.
 //
 // The commands in here will all be database-neutral,
-// using the methods of database_manager class
+// using the methods of database_manager class.
 //
 // Please do not forget to use upgrade_set_timeout()
 // before any action that may take longer time to finish.
@@ -36,8 +57,8 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
         if ($questions = $DB->get_records_sql("SELECT $select FROM $from WHERE $where", $params)) {
             foreach ($questions as $question) {
                 if ($answers = $DB->get_records('question_answers', array('question' => $question->id))) {
-                    // add "options" for this ordering question
-                    $question_ordering = (object)array(
+                    // Add "options" for this ordering question.
+                    $questionordering = (object) array(
                         'question'   => $question->id,
                         'logical'    => 1,
                         'studentsee' => min(6, count($answers)),
@@ -45,9 +66,9 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
                         'partiallycorrectfeedback' => '',
                         'incorrectfeedback' => ''
                     );
-                    $question_ordering->id = $DB->insert_record('question_ordering', $question_ordering);
+                    $questionordering->id = $DB->insert_record('question_ordering', $questionordering);
                 } else {
-                    // this is a faulty ordering question - remove it
+                    // This is a faulty ordering question - remove it.
                     $DB->delete_records('question', array('id' => $question->id));
                     if ($dbman->table_exists('quiz_question_instances')) {
                         $DB->delete_records('quiz_question_instances', array('question' => $question->id));
@@ -64,7 +85,7 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
     $newversion = 2015011915;
     if ($oldversion < $newversion) {
 
-        // rename "ordering" table for Moodle >= 2.5
+        // Rename "ordering" table for Moodle >= 2.5.
         $oldname = 'question_ordering';
         $newname = 'qtype_ordering_options';
 
@@ -77,8 +98,7 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
             }
         }
 
-        // remove index on question(id) field
-        // (because we want to modify the field)
+        // Remove index on question(id) field (because we want to modify the field).
         $table = new xmldb_table('qtype_ordering_options');
         $fields = array('question', 'questionid');
         foreach ($fields as $field) {
@@ -90,25 +110,26 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
             }
         }
 
-        // rename "question"   -> "questionid"
-        // rename "logical"    -> "selecttype"
-        // rename "studentsee" -> "selectcount"
-        // add    "(xxx)feedbackformat" fields
+        // Rename "question"   -> "questionid".
+        // Rename "logical"    -> "selecttype".
+        // Rename "studentsee" -> "selectcount".
+        // Add    "(xxx)feedbackformat" fields.
         $table = new xmldb_table('qtype_ordering_options');
         $fields = array(
-            'questionid'                     => new xmldb_field('question',                       XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '0', 'id'),
-            'selecttype'                     => new xmldb_field('logical',                        XMLDB_TYPE_INTEGER,  '4', null, XMLDB_NOTNULL, null, '0', 'questionid'),
-            'selectcount'                    => new xmldb_field('studentsee',                     XMLDB_TYPE_INTEGER,  '4', null, XMLDB_NOTNULL, null, '0', 'selecttype'),
-            'correctfeedbackformat'          => new xmldb_field('correctfeedbackformat',          XMLDB_TYPE_INTEGER,  '2', null, XMLDB_NOTNULL, null, '0', 'correctfeedback'),
-            'incorrectfeedbackformat'        => new xmldb_field('incorrectfeedbackformat',        XMLDB_TYPE_INTEGER,  '2', null, XMLDB_NOTNULL, null, '0', 'incorrectfeedback'),
-            'partiallycorrectfeedbackformat' => new xmldb_field('partiallycorrectfeedbackformat', XMLDB_TYPE_INTEGER,  '2', null, XMLDB_NOTNULL, null, '0', 'partiallycorrectfeedback')
+            'questionid' => new xmldb_field('question', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '0', 'id'),
+            'selecttype' => new xmldb_field('logical', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'questionid'),
+            'selectcount' => new xmldb_field('studentsee', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'selecttype'),
+            'correctfeedbackformat' => new xmldb_field('correctfeedbackformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null,
+                    '0', 'correctfeedback'),
+            'incorrectfeedbackformat' => new xmldb_field('incorrectfeedbackformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL,
+                    null, '0', 'incorrectfeedback'),
+            'partiallycorrectfeedbackformat' => new xmldb_field('partiallycorrectfeedbackformat', XMLDB_TYPE_INTEGER, '2', null,
+                    XMLDB_NOTNULL, null, '0', 'partiallycorrectfeedback')
         );
         foreach ($fields as $newname => $field) {
             $oldexists = $dbman->field_exists($table, $field);
             $newexists = $dbman->field_exists($table, $newname);
-            if ($field->getName()==$newname) {
-                // same field name
-            } else if ($oldexists) {
+            if ($field->getName() != $newname && $oldexists) {
                 if ($newexists) {
                     $dbman->drop_field($table, $field);
                 } else {
@@ -125,7 +146,7 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
             }
         }
 
-        // make sure there are no duplicate "questionid" fields in "qtype_ordering_options" table
+        // Make sure there are no duplicate "questionid" fields in "qtype_ordering_options" table.
         $select = 'questionid, COUNT(*) AS countduplicates, MAX(id) AS maxid';
         $from   = '{qtype_ordering_options}';
         $group  = 'questionid';
@@ -139,7 +160,7 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
             }
         }
 
-        // restore index on questionid field
+        // Restore index on questionid field.
         $table = new xmldb_table('qtype_ordering_options');
         $index = new xmldb_index('qtypordeopti_que_uix', XMLDB_INDEX_UNIQUE, array('questionid'));
         if (! $dbman->index_exists($table, $index)) {
@@ -177,8 +198,8 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
                 $dbman->change_field_type($table, $field);
             } else {
                 $dbman->add_field($table, $field);
-                // when adding this field to existing records,
-                // the gradingtype is set to whatever the selecttype is
+                // When adding this field to existing records,
+                // the gradingtype is set to whatever the selecttype is.
                 $DB->execute('UPDATE {qtype_ordering_options} SET gradingtype = selecttype', array());
             }
         }
@@ -199,15 +220,15 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
                 list($select, $params) = $DB->get_in_or_equal($questions);
                 $select = "questionid $select";
                 $table = 'qtype_ordering_options';
-                $DB->set_field_select($table, 'layouttype',  0, $select, $params); // VERTICAL
-                $DB->set_field_select($table, 'selecttype',  1, $select, $params); // RANDOM
-                $DB->set_field_select($table, 'gradingtype', 1, $select, $params); // RELATIVE
+                $DB->set_field_select($table, 'layouttype',  0, $select, $params); // VERTICAL.
+                $DB->set_field_select($table, 'selecttype',  1, $select, $params); // RANDOM.
+                $DB->set_field_select($table, 'gradingtype', 1, $select, $params); // RELATIVE.
 
-                // for selectcount, we only fix the value, if it is zero (=ALL)
-                // because Ordering questions for some low level books use 4
+                // For selectcount, we only fix the value, if it is zero (=ALL)
+                // because Ordering questions for some low level books use 4.
                 $select .= ' AND selectcount = ?';
                 $params[] = 0;
-                $DB->set_field_select($table, 'selectcount', 6, $select, $params); // 6
+                $DB->set_field_select($table, 'selectcount', 6, $select, $params); // Six.
             }
         }
     }

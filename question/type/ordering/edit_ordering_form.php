@@ -23,10 +23,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/** Prevent direct access to this script */
+// Prevent direct access to this script.
 defined('MOODLE_INTERNAL') || die();
 
-/** Include required files */
+// Include required files.
 require_once($CFG->dirroot.'/question/type/ordering/question.php');
 
 /**
@@ -38,11 +38,11 @@ require_once($CFG->dirroot.'/question/type/ordering/question.php');
  */
 class qtype_ordering_edit_form extends question_edit_form {
 
-    const NUM_ANS_ROWS    =  2;
-    const NUM_ANS_COLS    = 60;
-    const NUM_ANS_DEFAULT =  6;
-    const NUM_ANS_MIN     =  3;
-    const NUM_ANS_ADD     =  3;
+    const NUM_ANS_ROWS = 2;
+    const NUM_ANS_COLS = 60;
+    const NUM_ANS_DEFAULT = 6;
+    const NUM_ANS_MIN = 3;
+    const NUM_ANS_ADD = 3;
 
     /**
      * unique name for this question type
@@ -58,30 +58,30 @@ class qtype_ordering_edit_form extends question_edit_form {
      */
     public function definition_inner($mform) {
 
-        // cache this plugins name
+        // Cache this plugins name.
         $plugin = 'qtype_ordering';
 
-        // layouttype
+        // Field for layouttype.
         $name = 'layouttype';
         $label = get_string($name, $plugin);
         $options = qtype_ordering_question::get_layout_types();
         $mform->addElement('select', $name, $label, $options);
         $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, $this->get_default_value($name, 0)); // 0 = VERTICAL
+        $mform->setDefault($name, $this->get_default_value($name, qtype_ordering_question::LAYOUT_VERTICAL));
 
-        // selecttype
+        // Field for selecttype.
         $name = 'selecttype';
         $label = get_string($name, $plugin);
         $options = qtype_ordering_question::get_select_types();
         $mform->addElement('select', $name, $label, $options);
         $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, $this->get_default_value($name, 0)); // 0 = ALL
+        $mform->setDefault($name, $this->get_default_value($name, qtype_ordering_question::SELECT_ALL));
 
-        // selectcount
+        // Field for selectcount.
         $name = 'selectcount';
         $label = get_string($name, $plugin);
         $options = array(0 => get_string('all'));
-        for ($i=3; $i <= 20; $i++) {
+        for ($i = 3; $i <= 20; $i++) {
             $options[$i] = $i;
         }
         $mform->addElement('select', $name, $label, $options);
@@ -89,17 +89,14 @@ class qtype_ordering_edit_form extends question_edit_form {
         $mform->addHelpButton($name, $name, $plugin);
         $mform->setDefault($name, 6);
 
-        // gradingtype
+        // Field for gradingtype.
         $name = 'gradingtype';
         $label = get_string($name, $plugin);
         $options = qtype_ordering_question::get_grading_types();
         $mform->addElement('select', $name, $label, $options);
         $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, $this->get_default_value($name, 0)); // 0 = ABSOLUTE
+        $mform->setDefault($name, $this->get_default_value($name, qtype_ordering_question::GRADING_ABSOLUTE_POSITION));
 
-        // answers (=items)
-        //     get_per_answer_fields()
-        //     add_per_answer_fields()
         $elements = array();
         $options = array();
 
@@ -110,24 +107,25 @@ class qtype_ordering_edit_form extends question_edit_form {
 
         $name = 'answer';
         $elements[] = $mform->createElement('editor', $name, $label, $this->get_editor_attributes(), $this->get_editor_options());
-        $elements[] = $mform->createElement('submit', $name.'removeeditor', get_string('removeeditor', $plugin), array('onclick' => 'skipClientValidation = true;'));
+        $elements[] = $mform->createElement('submit', $name . 'removeeditor', get_string('removeeditor', $plugin),
+                array('onclick' => 'skipClientValidation = true;'));
         $options[$name] = array('type' => PARAM_RAW);
 
         $repeats = $this->get_answer_repeats($this->question);
-        $label = get_string('addmoreanswers', $plugin, self::NUM_ANS_ADD); // button text
+        $label = get_string('addmoreanswers', $plugin, self::NUM_ANS_ADD); // Button text.
         $this->repeat_elements($elements, $repeats, $options, 'countanswers', 'addanswers', self::NUM_ANS_ADD, $label);
 
         if (optional_param('addanswers', 0, PARAM_RAW)) {
             $repeats += self::NUM_ANS_ADD;
         }
 
-        // adjust HTML editor and removal buttons
+        // Adjust HTML editor and removal buttons.
         $this->adjust_html_editors($mform, $name, $repeats);
 
-        // feedback
+        // Adding feedback fields.
         $this->add_ordering_feedback_fields(false);
 
-        // interactive
+        // Adding interactive settings.
         $this->add_ordering_interactive_settings(false, false);
     }
 
@@ -179,8 +177,8 @@ class qtype_ordering_edit_form extends question_edit_form {
      */
     protected function adjust_html_editors($mform, $name, $repeats) {
 
-        // cache the number of formats supported
-        // by the preferred editor for each format
+        // Cache the number of formats supported
+        // by the preferred editor for each format.
         $count = array();
 
         if (isset($this->question->options->answers)) {
@@ -191,9 +189,9 @@ class qtype_ordering_edit_form extends question_edit_form {
 
         $defaultanswerformat = get_config('qtype_ordering', 'defaultanswerformat');
 
-        for ($i=0; $i<$repeats; $i++) {
+        for ($i = 0; $i < $repeats; $i++) {
 
-            $editor = $name.'['.$i.']';
+            $editor = $name . '[' . $i . ']';
             if ($mform->elementExists($editor)) {
                 $editor = $mform->getElement($editor);
 
@@ -203,24 +201,23 @@ class qtype_ordering_edit_form extends question_edit_form {
                     $id = 0;
                 }
 
-                // the old/new name of the button to remove the HTML editor
+                // The old/new name of the button to remove the HTML editor
                 // old : the name of the button when added by repeat_elements
-                // new : the simplified name of the button to satisfy
-                //       "no_submit_button_pressed()" in lib/formslib.php
+                // new : the simplified name of the button to satisfy "no_submit_button_pressed()" in lib/formslib.php.
                 $oldname = $name.'removeeditor['.$i.']';
                 $newname = $name.'removeeditor_'.$i;
 
-                // remove HTML editor, if necessary
+                // Remove HTML editor, if necessary.
                 if (optional_param($newname, 0, PARAM_RAW)) {
                     $format = $this->reset_editor_format($editor, FORMAT_MOODLE);
-                    $_POST['answer'][$i]['format'] = $format; // overwrite incoming data
+                    $_POST['answer'][$i]['format'] = $format; // Overwrite incoming data.
                 } else if ($id) {
                     $format = $this->question->options->answers[$id]->answerformat;
                 } else {
                     $format = $this->reset_editor_format($editor, $defaultanswerformat);
                 }
 
-                // check we have a submit button - it should always be there !!
+                // Check we have a submit button - it should always be there !!
                 if ($mform->elementExists($oldname)) {
                     if (! isset($count[$format])) {
                         $editor = editors_get_preferred_editor($format);
@@ -245,13 +242,13 @@ class qtype_ordering_edit_form extends question_edit_form {
     public function data_preprocessing($question) {
 
         $question = parent::data_preprocessing($question);
-        //$question = $this->data_preprocessing_answers($question, true);
+        $question = $this->data_preprocessing_answers($question, true);
 
-        // feedback
+        // Preprocess feedback.
         $question = $this->data_preprocessing_ordering_feedback($question);
         $question = $this->data_preprocessing_hints($question, false, false);
 
-        // answers and fractions
+        // Preprocess answers and fractions.
         $question->answer     = array();
         $question->fraction   = array();
 
@@ -263,7 +260,7 @@ class qtype_ordering_edit_form extends question_edit_form {
 
         $defaultanswerformat = get_config('qtype_ordering', 'defaultanswerformat');
         $repeats = $this->get_answer_repeats($question);
-        for ($i=0; $i<$repeats; $i++) {
+        for ($i = 0; $i < $repeats; $i++) {
 
             if ($answerid = array_shift($answerids)) {
                 $answer = $question->options->answers[$answerid];
@@ -287,12 +284,12 @@ class qtype_ordering_edit_form extends question_edit_form {
             $question->fraction[$i] = ($i + 1);
         }
 
+        // Defining default values.
         $names = array(
-            // $name => $default value
-            'layouttype'  => 0, // VERTICAL
-            'selecttype'  => 0, // ALL
-            'selectcount' => 0, // ALL
-            'gradingtype' => 0, // ABSOLUTE
+            'layouttype'  => qtype_ordering_question::LAYOUT_VERTICAL,
+            'selecttype'  => qtype_ordering_question::SELECT_ALL,
+            'selectcount' => 0, // 0 means all.
+            'gradingtype' => qtype_ordering_question::GRADING_ABSOLUTE_POSITION
         );
         foreach ($names as $name => $default) {
             if (isset($question->options->$name)) {
@@ -310,12 +307,12 @@ class qtype_ordering_edit_form extends question_edit_form {
         $plugin = 'qtype_ordering';
 
         $answercount = 0;
-        foreach ($data['answer'] as $answer){
+        foreach ($data['answer'] as $answer) {
             if (is_array($answer)) {
                 $answer = $answer['text'];
             }
-            if (trim($answer)=='') {
-                continue; // skip empty answer
+            if (trim($answer) == '') {
+                continue; // Skip empty answer.
             }
             $answercount++;
         }
@@ -325,7 +322,7 @@ class qtype_ordering_edit_form extends question_edit_form {
             case 1: $errors['answer[1]'] = get_string('notenoughanswers', $plugin, 2);
         }
 
-        // if adding a new ordering question, update defaults
+        // If adding a new ordering question, update defaults.
         if (empty($errors) && empty($data['id'])) {
             $fields = array('layouttype', 'selecttype', 'selectcount', 'gradingtype');
             foreach ($fields as $field) {

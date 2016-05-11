@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/** Prevent direct access to this script */
+// Prevent direct access to this script.
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -34,21 +34,19 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_ordering_question extends question_graded_automatically {
 
-    const SELECT_ALL        = 0;
-    const SELECT_RANDOM     = 1;
+    const SELECT_ALL = 0;
+    const SELECT_RANDOM = 1;
     const SELECT_CONTIGUOUS = 2;
-
-    const LAYOUT_VERTICAL   = 0;
+    const LAYOUT_VERTICAL = 0;
     const LAYOUT_HORIZONTAL = 1;
-
-    const GRADING_ALL_OR_NOTHING                 = -1;
-    const GRADING_ABSOLUTE_POSITION              =  0;
-    const GRADING_RELATIVE_NEXT_EXCLUDE_LAST     =  1;
-    const GRADING_RELATIVE_NEXT_INCLUDE_LAST     =  2;
-    const GRADING_RELATIVE_ONE_PREVIOUS_AND_NEXT =  3;
-    const GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT =  4;
-    const GRADING_LONGEST_ORDERED_SUBSET         =  5;
-    const GRADING_LONGEST_CONTIGUOUS_SUBSET      =  6;
+    const GRADING_ALL_OR_NOTHING = -1;
+    const GRADING_ABSOLUTE_POSITION = 0;
+    const GRADING_RELATIVE_NEXT_EXCLUDE_LAST = 1;
+    const GRADING_RELATIVE_NEXT_INCLUDE_LAST = 2;
+    const GRADING_RELATIVE_ONE_PREVIOUS_AND_NEXT = 3;
+    const GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT = 4;
+    const GRADING_LONGEST_ORDERED_SUBSET = 5;
+    const GRADING_LONGEST_CONTIGUOUS_SUBSET = 6;
 
     /** fields from "qtype_ordering_options" */
     public $correctfeedback;
@@ -76,23 +74,27 @@ class qtype_ordering_question extends question_graded_automatically {
 
         $countanswers = count($answers);
 
-        // sanitize "selecttype"
+        // Sanitize "selecttype".
         $selecttype = $options->selecttype;
         $selecttype = max(0, $selecttype);
         $selecttype = min(2, $selecttype);
 
-        // sanitize "selectcount"
+        // Sanitize "selectcount".
         $selectcount = $options->selectcount;
         $selectcount = max(3, $selectcount);
         $selectcount = min($countanswers, $selectcount);
 
-        // ensure consistency between "selecttype" and "selectcount"
+        // Ensure consistency between "selecttype" and "selectcount".
         switch (true) {
-            case ($selecttype==self::SELECT_ALL): $selectcount = $countanswers; break;
-            case ($selectcount==$countanswers): $selecttype = self::SELECT_ALL; break;
+            case ($selecttype == self::SELECT_ALL):
+                $selectcount = $countanswers;
+                break;
+            case ($selectcount == $countanswers):
+                $selecttype = self::SELECT_ALL;
+                break;
         }
 
-        // extract answer ids
+        // Extract answer ids.
         switch ($selecttype) {
             case self::SELECT_ALL:
                 $answerids = array_keys($answers);
@@ -161,7 +163,7 @@ class qtype_ordering_question extends question_graded_automatically {
 
     public function is_same_response(array $old, array $new) {
         $name = $this->get_response_fieldname();
-        return (isset($old[$name]) && isset($new[$name]) && $old[$name]==$new[$name]);
+        return (isset($old[$name]) && isset($new[$name]) && $old[$name] == $new[$name]);
     }
 
     public function grade_response(array $response) {
@@ -180,24 +182,26 @@ class qtype_ordering_question extends question_graded_automatically {
                 $currentresponse = $this->currentresponse;
                 foreach ($correctresponse as $position => $answerid) {
                     if (isset($currentresponse[$position])) {
-                        if ($currentresponse[$position]==$answerid) {
+                        if ($currentresponse[$position] == $answerid) {
                             $countcorrect++;
                         }
                     }
                     $countanswers++;
                 }
-                if ($gradingtype==self::GRADING_ALL_OR_NOTHING && $countcorrect < $countanswers) {
+                if ($gradingtype == self::GRADING_ALL_OR_NOTHING && $countcorrect < $countanswers) {
                     $countcorrect = 0;
                 }
                 break;
 
             case self::GRADING_RELATIVE_NEXT_EXCLUDE_LAST:
             case self::GRADING_RELATIVE_NEXT_INCLUDE_LAST:
-                $currentresponse = $this->get_next_answerids($this->currentresponse, ($gradingtype==self::GRADING_RELATIVE_NEXT_INCLUDE_LAST));
-                $correctresponse = $this->get_next_answerids($this->correctresponse, ($gradingtype==self::GRADING_RELATIVE_NEXT_INCLUDE_LAST));
+                $currentresponse = $this->get_next_answerids($this->currentresponse,
+                        ($gradingtype == self::GRADING_RELATIVE_NEXT_INCLUDE_LAST));
+                $correctresponse = $this->get_next_answerids($this->correctresponse,
+                        ($gradingtype == self::GRADING_RELATIVE_NEXT_INCLUDE_LAST));
                 foreach ($correctresponse as $thisanswerid => $nextanswerid) {
                     if (isset($currentresponse[$thisanswerid])) {
-                        if ($currentresponse[$thisanswerid]==$nextanswerid) {
+                        if ($currentresponse[$thisanswerid] == $nextanswerid) {
                             $countcorrect++;
                         }
                     }
@@ -207,8 +211,10 @@ class qtype_ordering_question extends question_graded_automatically {
 
             case self::GRADING_RELATIVE_ONE_PREVIOUS_AND_NEXT:
             case self::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT:
-                $currentresponse = $this->get_previous_and_next_answerids($this->currentresponse, ($gradingtype==self::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT));
-                $correctresponse = $this->get_previous_and_next_answerids($this->correctresponse, ($gradingtype==self::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT));
+                $currentresponse = $this->get_previous_and_next_answerids($this->currentresponse,
+                        ($gradingtype == self::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT));
+                $correctresponse = $this->get_previous_and_next_answerids($this->correctresponse,
+                        ($gradingtype == self::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT));
                 foreach ($correctresponse as $thisanswerid => $answerids) {
                     if (isset($currentresponse[$thisanswerid])) {
                         $prev = $currentresponse[$thisanswerid]->prev;
@@ -225,12 +231,12 @@ class qtype_ordering_question extends question_graded_automatically {
 
             case self::GRADING_LONGEST_ORDERED_SUBSET:
             case self::GRADING_LONGEST_CONTIGUOUS_SUBSET:
-                $subset = $this->get_ordered_subset($gradingtype==self::GRADING_LONGEST_CONTIGUOUS_SUBSET);
+                $subset = $this->get_ordered_subset($gradingtype == self::GRADING_LONGEST_CONTIGUOUS_SUBSET);
                 $countcorrect = count($subset);
                 $countanswers = count($this->currentresponse);
                 break;
         }
-        if ($countanswers==0) {
+        if ($countanswers == 0) {
             $fraction = 0;
         } else {
             $fraction = ($countcorrect / $countanswers);
@@ -239,26 +245,24 @@ class qtype_ordering_question extends question_graded_automatically {
     }
 
     public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
-        if ($component=='question') {
-            if ($filearea=='answer') {
-                $answerid = reset($args); // "itemid" is answer id
+        if ($component == 'question') {
+            if ($filearea == 'answer') {
+                $answerid = reset($args); // Value of "itemid" is answer id.
                 return array_key_exists($answerid, $this->answers);
-
             }
-            if (in_array($filearea, $this->qtype->feedback_fields)) {
+            if (in_array($filearea, $this->qtype->feedbackfields)) {
                 return $this->check_combined_feedback_file_access($qa, $options, $filearea);
-
             }
-            if ($filearea=='hint') {
+            if ($filearea == 'hint') {
                 return $this->check_hint_file_access($qa, $options, $args);
             }
         }
         return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
     }
 
-    ////////////////////////////////////////////////////////////////////
-    // custom methods
-    ////////////////////////////////////////////////////////////////////
+    /**
+     * Custom methods
+     */
 
     public function get_response_fieldname() {
         return 'response_'.$this->id;
@@ -270,7 +274,7 @@ class qtype_ordering_question extends question_graded_automatically {
             $ids = explode(',', $response[$name]);
             foreach ($ids as $i => $id) {
                 foreach ($this->answers as $answer) {
-                    if ($id==$answer->md5key) {
+                    if ($id == $answer->md5key) {
                         $ids[$i] = $answer->id;
                         break;
                     }
@@ -282,21 +286,21 @@ class qtype_ordering_question extends question_graded_automatically {
 
     public function get_ordering_options() {
         global $DB;
-        if ($this->options===null) {
+        if ($this->options === null) {
             $this->options = $DB->get_record('qtype_ordering_options', array('questionid' => $this->id));
             if (empty($this->options)) {
                 $this->options = (object)array(
                     'questionid' => $this->id,
-                    'layouttype' => 0, // vertical
-                    'selecttype' => 0, // all answers
+                    'layouttype' => self::LAYOUT_VERTICAL,
+                    'selecttype' => self::SELECT_ALL,
                     'selectcount' => 0,
-                    'gradingtype' => 0, // absolute
+                    'gradingtype' => self::GRADING_ABSOLUTE_POSITION,
                     'correctfeedback' => '',
-                    'correctfeedbackformat' => FORMAT_MOODLE, // =0
+                    'correctfeedbackformat' => FORMAT_MOODLE,
                     'incorrectfeedback' => '',
-                    'incorrectfeedbackformat' => FORMAT_MOODLE, // =0
+                    'incorrectfeedbackformat' => FORMAT_MOODLE,
                     'partiallycorrectfeedback' => '',
-                    'partiallycorrectfeedbackformat' => FORMAT_MOODLE // =0
+                    'partiallycorrectfeedbackformat' => FORMAT_MOODLE
                 );
                 $this->options->id = $DB->insert_record('qtype_ordering_options', $this->options);
             }
@@ -306,13 +310,13 @@ class qtype_ordering_question extends question_graded_automatically {
 
     public function get_ordering_answers() {
         global $CFG, $DB;
-        if ($this->answers===null) {
+        if ($this->answers === null) {
             $this->answers = $DB->get_records('question_answers', array('question' => $this->id), 'fraction,id');
             if ($this->answers) {
                 if (isset($CFG->passwordsaltmain)) {
                     $salt = $CFG->passwordsaltmain;
                 } else {
-                    $salt = ''; // complex_random_string()
+                    $salt = '';
                 }
                 foreach ($this->answers as $answerid => $answer) {
                     $this->answers[$answerid]->md5key = 'ordering_item_'.md5($salt.$answer->answer);
@@ -327,23 +331,26 @@ class qtype_ordering_question extends question_graded_automatically {
     public function get_ordering_layoutclass() {
         $options = $this->get_ordering_options();
         switch ($options->layouttype) {
-            case 0:  return 'vertical';
-            case 1:  return 'horizontal';
-            default: return ''; // shouldn't happen !!
+            case self::LAYOUT_VERTICAL:
+                return 'vertical';
+            case self::LAYOUT_HORIZONTAL:
+                return 'horizontal';
+            default:
+                return ''; // Shouldn't happen !!
         }
     }
 
-    public function get_next_answerids($answerids, $last_item=false) {
+    public function get_next_answerids($answerids, $lastitem = false) {
         $nextanswerids = array();
-        $i_max = count($answerids);
-        $i_max--;
-        if ($last_item) {
+        $imax = count($answerids);
+        $imax--;
+        if ($lastitem) {
             $nextanswerid = 0;
         } else {
-            $nextanswerid = $answerids[$i_max];
-            $i_max--;
+            $nextanswerid = $answerids[$imax];
+            $imax--;
         }
-        for ($i=$i_max; $i>=0; $i--) {
+        for ($i = $imax; $i >= 0; $i--) {
             $thisanswerid = $answerids[$i];
             $nextanswerids[$thisanswerid] = $nextanswerid;
             $nextanswerid = $thisanswerid;
@@ -351,7 +358,7 @@ class qtype_ordering_question extends question_graded_automatically {
         return $nextanswerids;
     }
 
-    public function get_previous_and_next_answerids($answerids, $all=false) {
+    public function get_previous_and_next_answerids($answerids, $all = false) {
         $prevnextanswerids = array();
         $next = $answerids;
         $prev = array();
@@ -381,12 +388,12 @@ class qtype_ordering_question extends question_graded_automatically {
                                               $contiguous,
                                               count($positions));
 
-        // the best subset (longest and leftmost)
+        // The best subset (longest and leftmost).
         $bestsubset = array();
 
-        // the length of the best subset
+        // The length of the best subset
         // initializing this to 1 means
-        // we ignore single item subsets
+        // we ignore single item subsets.
         $bestcount = 1;
 
         foreach ($subsets as $subset) {
@@ -412,80 +419,80 @@ class qtype_ordering_question extends question_graded_automatically {
      *
      * @param array   $positions
      * @param boolean $contiguous TRUE if searching only for contiguous subsets; otherwise FALSE
-     * @param integer $i_max the length of the $positions array
-     * @param integer $i_min (optional, default = 0) the index in $position at which to start checking values
+     * @param integer $imax the length of the $positions array
+     * @param integer $imin (optional, default = 0) the index in $position at which to start checking values
      * @param integer $previous (optional, default = -1) the minimum allowed value. Any values less than this will be skipped.
      */
-    public function get_ordered_subsets($positions, $contiguous, $i_max, $i_min=0, $previous=-1) {
+    public function get_ordered_subsets($positions, $contiguous, $imax, $imin=0, $previous=-1) {
 
-        // $subsets is the collection of all subsets within $positions
+        // Var $subsets is the collection of all subsets within $positions.
         $subsets = array();
 
-        // $subset is the main (=earliest or leftmost) subset within $positions
+        // Var $subset is the main (=earliest or leftmost) subset within $positions.
         $subset = array();
 
-        for ($i=$i_min; $i<$i_max; $i++) {
+        for ($i = $imin; $i < $imax; $i++) {
             $current = $positions[$i];
 
             switch (true) {
 
-                case ($previous < 0 || $current==($previous + 1)):
-                    // first item, or next item in a contiguous sequence
-                    // there is no need to search for $tailsets
+                case ($previous < 0 || $current == ($previous + 1)):
+                    // First item, or next item in a contiguous sequence
+                    // there is no need to search for $tailsets.
                     $tailsets = array();
-                    $prepend_subset = false;
-                    $append_to_subset = true;
+                    $prependsubset = false;
+                    $appendtosubset = true;
                     break;
 
                 case ($current < $previous || ($contiguous && $current > ($previous + 1))):
-                    // $current breaks the sequence, so look for subsets that start here
-                    $tailsets = $this->get_ordered_subsets($positions, $contiguous, $i_max, $i);
-                    $prepend_subset = false;
-                    $append_to_subset = false;
+                    // Here $current breaks the sequence, so look for subsets that start here.
+                    $tailsets = $this->get_ordered_subsets($positions, $contiguous, $imax, $i);
+                    $prependsubset = false;
+                    $appendtosubset = false;
                     break;
 
                 case ($current > $previous):
-                    // a non-contiguous sequence,
-                    // so search for subsets in the tail
-                    $tailsets = $this->get_ordered_subsets($positions, $contiguous, $i_max, $i+1, $previous);
-                    $prepend_subset = true;
-                    $append_to_subset = true;
+                    // A non-contiguous sequence,
+                    // so search for subsets in the tail.
+                    $tailsets = $this->get_ordered_subsets($positions, $contiguous, $imax, $i + 1, $previous);
+                    $prependsubset = true;
+                    $appendtosubset = true;
                     break;
             }
 
-            // append any $tailsets that were found
+            // Append any $tailsets that were found.
             foreach ($tailsets as $tailset) {
-                if ($prepend_subset) {
-                    // prepend $subset-so-far to each tail subset
+                if ($prependsubset) {
+                    // Prepend $subset-so-far to each tail subset.
                     $subsets[] = array_merge($subset, $tailset);
                 } else {
-                    // add this tail subset
+                    // Add this tail subset.
                     $subsets[] = $tailset;
                 }
             }
 
-            // add $i to the main subset
-            // update the $previous value
-            if ($append_to_subset) {
+            // Add $i to the main subset
+            // update the $previous value.
+            if ($appendtosubset) {
                 $subset[] = $i;
                 $previous = $current;
             }
         }
         if (count($subset)) {
-            // put the main $subset first
+            // Put the main $subset first.
             array_unshift($subsets, $subset);
         }
         return $subsets;
     }
 
     static public function get_types($types, $type) {
-        if ($type===null) {
-            return $types; // return all $types
+        if ($type === null) {
+            return $types; // Return all $types.
         }
         if (array_key_exists($type, $types)) {
-            return $types[$type]; // one $type
+            return $types[$type]; // One $type.
         }
-        return $type; // shouldn't happen !!
+        return $type; // Shouldn't happen !!
     }
 
     static public function get_select_types($type=null) {
