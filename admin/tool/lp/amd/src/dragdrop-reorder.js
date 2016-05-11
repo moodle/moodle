@@ -22,8 +22,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['core/str', 'core/yui'], function(str, Y) {
-
     // Private variables and functions.
+
+    /**
+     * Store the current instance of the core drag drop.
+     *
+     * @property dragDropInstance M.tool_lp.dragdrop_reorder
+     */
+    var dragDropInstance = null;
 
     /**
      * Translate the drophit event from YUI
@@ -70,7 +76,10 @@ define(['core/str', 'core/yui'], function(str, Y) {
                     var context = {
                         callback: callback
                     };
-                    M.tool_lp.dragdrop_reorder({
+                    if (dragDropInstance) {
+                        dragDropInstance.destroy();
+                    }
+                    dragDropInstance = M.tool_lp.dragdrop_reorder({
                         group: group,
                         dragHandleText: dragHandleText,
                         sameNodeText: sameNodeText,
