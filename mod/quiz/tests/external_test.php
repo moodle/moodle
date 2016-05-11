@@ -1278,8 +1278,12 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
 
         // Now, force the quiz with QUIZ_NAVMETHOD_SEQ (sequencial) navigation method.
         $DB->set_field('quiz', 'navmethod', QUIZ_NAVMETHOD_SEQ, array('id' => $quiz->id));
+        // Quiz requiring preflightdata.
+        $DB->set_field('quiz', 'password', 'abcdef', array('id' => $quiz->id));
+        $preflightdata = array(array("name" => "quizpassword", "value" => 'abcdef'));
+
         // See next page.
-        $result = mod_quiz_external::view_attempt($attempt->id, 1);
+        $result = mod_quiz_external::view_attempt($attempt->id, 1, $preflightdata);
         $result = external_api::clean_returnvalue(mod_quiz_external::view_attempt_returns(), $result);
         $this->assertTrue($result['status']);
 
@@ -1311,7 +1315,7 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
 
-        $result = mod_quiz_external::view_attempt_summary($attempt->id, 0);
+        $result = mod_quiz_external::view_attempt_summary($attempt->id);
         $result = external_api::clean_returnvalue(mod_quiz_external::view_attempt_summary_returns(), $result);
         $this->assertTrue($result['status']);
 
@@ -1326,6 +1330,14 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($moodlequiz, $event->get_url());
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
+
+        // Quiz requiring preflightdata.
+        $DB->set_field('quiz', 'password', 'abcdef', array('id' => $quiz->id));
+        $preflightdata = array(array("name" => "quizpassword", "value" => 'abcdef'));
+
+        $result = mod_quiz_external::view_attempt_summary($attempt->id, $preflightdata);
+        $result = external_api::clean_returnvalue(mod_quiz_external::view_attempt_summary_returns(), $result);
+        $this->assertTrue($result['status']);
 
     }
 
