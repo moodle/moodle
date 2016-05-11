@@ -235,25 +235,29 @@ class gradingform_guide_renderer extends plugin_renderer_base {
             // Grading remark text area.
             $input = html_writer::tag('textarea', s($currentremark), $remarkparams);
 
-            // Frequently used comments chooser.
-            $chooserbuttonid = 'criteria-' . $criterion['id'] . '-commentchooser';
-            $commentchooserparams = array('id' => $chooserbuttonid, 'class' => 'commentchooser');
-            $commentchooser = html_writer::tag('button', get_string('insertcomment', 'gradingform_guide'), $commentchooserparams);
+            // Show the frequently-used comments chooser only if there are defined entries.
+            if (!empty($comments)) {
+                // Frequently used comments chooser.
+                $chooserbuttonid = 'criteria-' . $criterion['id'] . '-commentchooser';
+                $commentchooserparams = array('id' => $chooserbuttonid, 'class' => 'commentchooser');
+                $commentchooser = html_writer::tag('button', get_string('insertcomment', 'gradingform_guide'),
+                    $commentchooserparams);
 
-            // Option items for the frequently used comments chooser dialog.
-            $commentoptions = array();
-            foreach ($comments as $id => $comment) {
-                $commentoption = new stdClass();
-                $commentoption->id = $id;
-                $commentoption->description = s($comment['description']);
-                $commentoptions[] = $commentoption;
+                // Option items for the frequently used comments chooser dialog.
+                $commentoptions = array();
+                foreach ($comments as $id => $comment) {
+                    $commentoption = new stdClass();
+                    $commentoption->id = $id;
+                    $commentoption->description = s($comment['description']);
+                    $commentoptions[] = $commentoption;
+                }
+
+                // Include string for JS for the comment chooser title.
+                $PAGE->requires->string_for_js('insertcomment', 'gradingform_guide');
+                // Include comment_chooser module.
+                $PAGE->requires->js_call_amd('gradingform_guide/comment_chooser', 'initialise',
+                    array($criterion['id'], $chooserbuttonid, $remarkid, $commentoptions));
             }
-
-            // Include string for JS for the comment chooser title.
-            $PAGE->requires->string_for_js('insertcomment', 'gradingform_guide');
-            // Include comment_chooser module.
-            $PAGE->requires->js_call_amd('gradingform_guide/comment_chooser', 'initialise',
-                                         array($criterion['id'], $chooserbuttonid, $remarkid, $commentoptions));
 
             // Hidden marking guide remark label.
             $remarklabelparams = array(
