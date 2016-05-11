@@ -3295,7 +3295,7 @@ EDITOR.prototype = {
      * @method refresh_button_state
      */
     refresh_button_state : function() {
-        var button, currenttoolnode, imgurl;
+        var button, currenttoolnode, imgurl, drawingregion;
 
         // Initalise the colour buttons.
         button = this.get_dialogue_element(SELECTOR.COMMENTCOLOURBUTTON);
@@ -3316,6 +3316,8 @@ EDITOR.prototype = {
         currenttoolnode = this.get_dialogue_element(TOOLSELECTOR[this.currentedit.tool]);
         currenttoolnode.addClass('assignfeedback_editpdf_selectedbutton');
         currenttoolnode.setAttribute('aria-pressed', 'true');
+        drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
+        drawingregion.setAttribute('data-currenttool', this.currentedit.tool);
 
         button = this.get_dialogue_element(SELECTOR.STAMPSBUTTON);
         button.one('img').setAttrs({'src': this.get_stamp_image_url(this.currentedit.stamp),
@@ -3729,6 +3731,7 @@ EDITOR.prototype = {
         currenttoolnode.removeClass('assignfeedback_editpdf_selectedbutton');
         currenttoolnode.setAttribute('aria-pressed', 'false');
         this.currentedit.tool = tool;
+
         if (tool !== "comment" && tool !== "select" && tool !== "drag" && tool !== "stamp") {
             this.lastannotationtool = tool;
         }

@@ -18,6 +18,12 @@
 .assignfeedback_editpdf_widget .moodle-dialogue-bd .drawingregion {
     position: inherit;
 }
+.assignfeedback_editpdf_widget .drawingregion[data-currenttool=drag] .drawingcanvas {
+    cursor: move;
+}
+.assignfeedback_editpdf_widget .drawingregion[data-currenttool=select] .drawingcanvas {
+    cursor: pointer;
+}
 .assignfeedback_editpdf_widget .drawingregion {
     border: 1px solid #ccc;
     left: 1em;
