@@ -252,19 +252,20 @@ class core_tag_events_testcase extends advanced_testcase {
         $events = $sink->get_events();
 
         // There will be two events - one for each wiki instance removed.
-        $event1 = reset($events);
-        $event2 = $events[1];
+        $this->assertCount(2, $events);
+        $contexts = [context_module::instance($wiki->cmid), context_module::instance($wiki2->cmid)];
+        $this->assertNotEquals($events[0]->contextid, $events[1]->contextid);
 
         // Check that the tags were removed from the wiki pages.
         $this->assertEquals(0, $DB->count_records('tag_instance'));
 
         // Check the first event data is valid.
-        $this->assertInstanceOf('\core\event\tag_removed', $event1);
-        $this->assertEquals(context_module::instance($wiki->cmid), $event1->get_context());
+        $this->assertInstanceOf('\core\event\tag_removed', $events[0]);
+        $this->assertContains($events[0]->get_context(), $contexts);
 
         // Check that the second event data is valid.
-        $this->assertInstanceOf('\core\event\tag_removed', $event2);
-        $this->assertEquals(context_module::instance($wiki2->cmid), $event2->get_context());
+        $this->assertInstanceOf('\core\event\tag_removed', $events[1]);
+        $this->assertContains($events[1]->get_context(), $contexts);
     }
 
     /**
