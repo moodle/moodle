@@ -694,7 +694,7 @@ class qformat_gift extends qformat_default {
                 $expout .= $this->write_questiontext($question->questiontext, $question->questiontextformat);
                 $expout .= "{\n";
                 foreach ($question->options->answers as $answer) {
-                    if ($answer->fraction == 1) {
+                    if ($answer->fraction == 1 && $question->options->single) {
                         $answertext = '=';
                     } else if ($answer->fraction == 0) {
                         $answertext = '~';
