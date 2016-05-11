@@ -38,9 +38,11 @@ require_once(__DIR__ . '/fixtures/testable_core_search.php');
 class search_manager_testcase extends advanced_testcase {
 
     protected $forumpostareaid = null;
+    protected $mycoursesareaid = null;
 
     public function setUp() {
         $this->forumpostareaid = \core_search\manager::generate_areaid('mod_forum', 'post');
+        $this->mycoursesareaid = \core_search\manager::generate_areaid('core_course', 'mycourse');
     }
 
     public function test_search_enabled() {
@@ -159,7 +161,9 @@ class search_manager_testcase extends advanced_testcase {
 
         $frontpage = $DB->get_record('course', array('id' => SITEID));
         $course1 = $this->getDataGenerator()->create_course();
+        $course1ctx = context_course::instance($course1->id);
         $course2 = $this->getDataGenerator()->create_course();
+        $course2ctx = context_course::instance($course2->id);
         $teacher = $this->getDataGenerator()->create_user();
         $student = $this->getDataGenerator()->create_user();
         $noaccess = $this->getDataGenerator()->create_user();
@@ -180,20 +184,27 @@ class search_manager_testcase extends advanced_testcase {
         $this->setAdminUser();
         $this->assertTrue($search->get_areas_user_accesses());
 
+        $sitectx = \context_course::instance(SITEID);
+
         // Can access the frontpage ones.
         $this->setUser($noaccess);
         $contexts = $search->get_areas_user_accesses();
         $this->assertEquals(array($frontpageforumcontext->id => $frontpageforumcontext->id), $contexts[$this->forumpostareaid]);
+        $this->assertEquals(array($sitectx->id => $sitectx->id), $contexts[$this->mycoursesareaid]);
 
         $this->setUser($teacher);
         $contexts = $search->get_areas_user_accesses();
         $frontpageandcourse1 = array($frontpageforumcontext->id => $frontpageforumcontext->id, $context1->id => $context1->id,
             $context2->id => $context2->id);
         $this->assertEquals($frontpageandcourse1, $contexts[$this->forumpostareaid]);
+        $this->assertEquals(array($sitectx->id => $sitectx->id, $course1ctx->id => $course1ctx->id),
+            $contexts[$this->mycoursesareaid]);
 
         $this->setUser($student);
         $contexts = $search->get_areas_user_accesses();
         $this->assertEquals($frontpageandcourse1, $contexts[$this->forumpostareaid]);
+        $this->assertEquals(array($sitectx->id => $sitectx->id, $course1ctx->id => $course1ctx->id),
+            $contexts[$this->mycoursesareaid]);
 
         // Hide the activity.
         set_coursemodule_visible($forum2->cmid, 0);
@@ -208,17 +219,23 @@ class search_manager_testcase extends advanced_testcase {
         $allcontexts = array($frontpageforumcontext->id => $frontpageforumcontext->id, $context1->id => $context1->id,
             $context2->id => $context2->id, $context3->id => $context3->id);
         $this->assertEquals($allcontexts, $contexts[$this->forumpostareaid]);
+        $this->assertEquals(array($sitectx->id => $sitectx->id, $course1ctx->id => $course1ctx->id,
+            $course2ctx->id => $course2ctx->id), $contexts[$this->mycoursesareaid]);
 
         $contexts = $search->get_areas_user_accesses(array($course1->id, $course2->id));
         $allcontexts = array($context1->id => $context1->id, $context2->id => $context2->id, $context3->id => $context3->id);
         $this->assertEquals($allcontexts, $contexts[$this->forumpostareaid]);
+        $this->assertEquals(array($course1ctx->id => $course1ctx->id,
+            $course2ctx->id => $course2ctx->id), $contexts[$this->mycoursesareaid]);
 
         $contexts = $search->get_areas_user_accesses(array($course2->id));
         $allcontexts = array($context3->id => $context3->id);
         $this->assertEquals($allcontexts, $contexts[$this->forumpostareaid]);
+        $this->assertEquals(array($course2ctx->id => $course2ctx->id), $contexts[$this->mycoursesareaid]);
 
         $contexts = $search->get_areas_user_accesses(array($course1->id));
         $allcontexts = array($context1->id => $context1->id, $context2->id => $context2->id);
         $this->assertEquals($allcontexts, $contexts[$this->forumpostareaid]);
+        $this->assertEquals(array($course1ctx->id => $course1ctx->id), $contexts[$this->mycoursesareaid]);
     }
 }

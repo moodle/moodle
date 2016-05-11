@@ -35,6 +35,13 @@ defined('MOODLE_INTERNAL') || die();
 class mycourse extends \core_search\area\base {
 
     /**
+     * The context levels the search implementation is working on.
+     *
+     * @var array
+     */
+    protected static $levels = [CONTEXT_COURSE];
+
+    /**
      * Returns recordset containing required data for indexing courses.
      *
      * @param int $modifiedfrom timestamp
