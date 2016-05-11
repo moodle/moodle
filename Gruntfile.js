@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /* jshint node: true, browser: false */
+/* eslint-env node */
 
 /**
  * @copyright  2014 Andrew Nicols
@@ -67,6 +68,15 @@ module.exports = function(grunt) {
         jshint: {
             options: {jshintrc: '.jshintrc'},
             amd: { src: amdSrc }
+        },
+        eslint: {
+            // Even though warnings dont stop the build we don't display warnings by default because:
+            // * At this moment we've got too many core warnings
+            // * It will complain about ignored files (https://github.com/sindresorhus/grunt-eslint/issues/119)
+            // * It's better experience to use editor integrations or eslint natively
+            options: { quiet: !grunt.option('show-lint-warnings') },
+            // Check AMD files with standard config
+            amd: { src: amdSrc },
         },
         uglify: {
             amd: {
@@ -238,10 +248,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-eslint');
 
     // Register JS tasks.
     grunt.registerTask('shifter', 'Run Shifter against the current directory', tasks.shifter);
-    grunt.registerTask('amd', ['jshint', 'uglify']);
+    grunt.registerTask('amd', ['eslint:amd', 'jshint', 'uglify']);
     grunt.registerTask('js', ['amd', 'shifter']);
 
     // Register CSS taks.
