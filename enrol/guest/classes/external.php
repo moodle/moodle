@@ -71,7 +71,7 @@ class enrol_guest_external extends external_api {
             throw new moodle_exception('invaliddata', 'error');
         }
 
-        require_login(null, false, null, false, true);
+        self::validate_context(context_system::instance());
         $enrolinstance = $DB->get_record('enrol', array('id' => $params['instanceid']), '*', MUST_EXIST);
 
         $course = $DB->get_record('course', array('id' => $enrolinstance->courseid), '*', MUST_EXIST);

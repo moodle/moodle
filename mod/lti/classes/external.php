@@ -638,7 +638,6 @@ class mod_lti_external extends external_api {
         $context = context_system::instance();
 
         self::validate_context($context);
-        $PAGE->set_context($context);
         require_capability('moodle/site:config', $context);
 
         if (!empty($toolproxyid)) {
