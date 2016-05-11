@@ -29,6 +29,8 @@ manageofficialtags,core_tag
 settypeofficial,core_tag
 filetoolarge,core
 maxbytesforfile,core
+modchooserenable,core
+modchooserdisable,core
 maxbytes,core_error
 downloadcsv,core_table
 downloadexcel,core_table

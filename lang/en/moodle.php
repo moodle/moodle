@@ -322,6 +322,7 @@ $string['courseformats'] = 'Course formats';
 $string['courseformatoptions'] = 'Formatting options for {$a}';
 $string['courseformatudpate'] = 'Update format';
 $string['courseprofiles'] = 'Course profiles';
+$string['coursepreferences'] = 'Course preferences';
 $string['coursegrades'] = 'Course grades';
 $string['coursehelpcategory'] = 'Position the course on the course listing and may make it easier for students to find it.';
 $string['coursehelpforce'] = 'Force the course group mode to every activity in the course.';
@@ -1157,8 +1158,6 @@ $string['moodlelogo'] = 'Moodle logo';
 $string['month'] = 'Month';
 $string['months'] = 'Months';
 $string['modified'] = 'Modified';
-$string['modchooserenable'] = 'Activity chooser on';
-$string['modchooserdisable'] = 'Activity chooser off';
 $string['moduleintro'] = 'Description';
 $string['modulesetup'] = 'Setting up module tables';
 $string['modulesuccess'] = '{$a} tables have been set up correctly';
@@ -2023,3 +2022,7 @@ $string['zippingbackup'] = 'Zipping backup';
 // Deprecated since Moodle 3.1.
 $string['filetoolarge'] = 'is too large to upload';
 $string['maxbytesforfile'] = 'The file {$a} is larger than the maximum size allowed.';
+
+// Deprecated since Moodle 3.2.
+$string['modchooserenable'] = 'Activity chooser on';
+$string['modchooserdisable'] = 'Activity chooser off';

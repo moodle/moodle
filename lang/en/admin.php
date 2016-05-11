@@ -126,6 +126,7 @@ $string['componentinstalled'] = 'Component installed';
 $string['computedfromlogs'] = 'Computed from logs since {$a}.';
 $string['condifmodeditdefaults'] = 'Default values are used in the settings form when creating a new activity or resource.';
 $string['confeditorhidebuttons'] = 'Select the buttons that should be hidden in the HTML editor.';
+$string['configenableactivitychooser'] = 'The activity chooser is a dialog box with a short description of each activity and resource. If disabled, separate resource and activity dropdown menus are provided instead.';
 $string['configallcountrycodes'] = 'This is the list of countries that may be selected in various places, for example in a user\'s profile. If blank (the default) the list in countries.php in the standard English language pack is used. That is the list from ISO 3166-1. Otherwise, you can specify a comma-separated list of codes, for example \'GB,FR,ES\'. If you add new, non-standard codes here, you will need to add them to countries.php in \'en\' and your language pack.';
 $string['configallowassign'] = 'You can allow people who have the roles on the left side to assign some of the column roles to other people';
 $string['configallowblockstodock'] = 'If enabled and supported by the selected theme users can choose to move blocks to a special dock.';
@@ -458,6 +459,7 @@ $string['emoticons_desc'] = 'This form defines the emoticons (or smileys) used a
 * Alternative text (optional) - String identifier and component of the alternative text of the emoticon.';
 $string['emoticonsreset'] = 'Reset emoticons setting to default values';
 $string['emptysettingvalue'] = 'Empty';
+$string['enableactivitychooser'] = 'Enable activity chooser';
 $string['enableblogs'] = 'Enable blogs';
 $string['enablecalendarexport'] = 'Enable calendar export';
 $string['enablecomments'] = 'Enable comments';
