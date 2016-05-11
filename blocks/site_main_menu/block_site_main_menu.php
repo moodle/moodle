@@ -75,7 +75,7 @@ class block_site_main_menu extends block_list {
                         $content = $cm->get_formatted_content(array('overflowdiv' => true, 'noclean' => true));
                     }
 
-                    $this->content->items[] = $indent . $content;
+                    $this->content->items[] = $indent . html_writer::div($content, 'main-menu-content');
                 }
             }
             return $this->content;
@@ -142,7 +142,7 @@ class block_site_main_menu extends block_list {
                     } else {
                         $content = html_writer::div($courserenderer->course_section_cm_name($mod), ' activity');
                     }
-                    $this->content->items[] = $indent. $content . $editbuttons;
+                    $this->content->items[] = $indent . html_writer::div($content . $editbuttons, 'main-menu-content');
                 }
             }
         }
