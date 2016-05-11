@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_ordering extends question_type {
 
-    /** combined feedback fields */
+    /** @var array Combined feedback fields */
     public $feedbackfields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
 
     /**
@@ -97,11 +97,24 @@ class qtype_ordering extends question_type {
         }
     }
 
+    /**
+     * Initialise the common question_definition fields.
+     * @param question_definition $question the question_definition we are creating.
+     * @param object $questiondata the question data loaded from the database.
+     */
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
         $this->initialise_combined_feedback($question, $questiondata);
     }
 
+    /**
+     * Saves question-type specific options
+     *
+     * This is called by {@link save_question()} to save the question-type specific data
+     * @return object $result->error or $result->notice
+     * @param object $question  This holds the information from the editing form,
+     *      it is not a standard question object.
+     */
     public function save_question_options($question) {
         global $DB;
 
@@ -234,6 +247,33 @@ class qtype_ordering extends question_type {
         return true;
     }
 
+    /**
+     * This method should return all the possible types of response that are
+     * recognised for this question.
+     *
+     * The question is modelled as comprising one or more subparts. For each
+     * subpart, there are one or more classes that that students response
+     * might fall into, each of those classes earning a certain score.
+     *
+     * For example, in a shortanswer question, there is only one subpart, the
+     * text entry field. The response the student gave will be classified according
+     * to which of the possible $question->options->answers it matches.
+     *
+     * For the matching question type, there will be one subpart for each
+     * question stem, and for each stem, each of the possible choices is a class
+     * of student's response.
+     *
+     * A response is an object with two fields, ->responseclass is a string
+     * presentation of that response, and ->fraction, the credit for a response
+     * in that class.
+     *
+     * Array keys have no specific meaning, but must be unique, and must be
+     * the same if this function is called repeatedly.
+     *
+     * @param object $questiondata the question definition data.
+     * @return array keys are subquestionid, values are arrays of possible
+     *      responses to that subquestion.
+     */
     public function get_possible_responses($questiondata) {
         $responses = array();
         $question = $this->make_question($questiondata);
@@ -247,6 +287,12 @@ class qtype_ordering extends question_type {
         return;
     }
 
+    /**
+     * Callback function for filtering answers with array_filter
+     *
+     * @param mixed $value
+     * @return bool If true, this item should be saved.
+     */
     public function is_not_blank($value) {
         if (is_array($value)) {
             $value = $value['text'];
@@ -255,6 +301,18 @@ class qtype_ordering extends question_type {
         return ($value || $value === '0');
     }
 
+    /**
+     * Loads the question type specific options for the question.
+     *
+     * This function loads any question type specific options for the
+     * question from the database into the question object. This information
+     * is placed in the $question->options field. A question type is
+     * free, however, to decide on a internal structure of the options field.
+     * @return bool            Indicates success or failure.
+     * @param object $question The question object for the question. This object
+     *                         should be updated to include the question type
+     *                         specific information (it is passed by reference).
+     */
     public function get_question_options($question) {
         global $DB, $OUTPUT;
 
@@ -275,6 +333,12 @@ class qtype_ordering extends question_type {
         return true;
     }
 
+    /**
+     * Deletes the question-type specific data when a question is deleted.
+     *
+     * @param int $questionid The id of question being deleted.
+     * @param int $contextid the context this quesiotn belongs to.
+     */
     public function delete_question($questionid, $contextid) {
         global $DB;
         $DB->delete_records('qtype_ordering_options', array('questionid' => $questionid));
@@ -282,13 +346,13 @@ class qtype_ordering extends question_type {
     }
 
     /**
-     * import_from_gift
+     * Import question from GIFT format
      *
-     * @param array         $data
-     * @param stdClass      $question
+     * @param array $lines
+     * @param object $question
      * @param qformat_gift $format
-     * @param string        $extra (optional, default=null)
-     * @todo Finish documenting this function
+     * @param string $extra (optional, default=null)
+     * @return object Question instance
      */
     public function import_from_gift($lines, $question, $format, $extra=null) {
         global $CFG;
@@ -379,10 +443,9 @@ class qtype_ordering extends question_type {
     }
 
     /**
-     * check_ordering_combined_feedback
+     * Check that the required feedback fields exist
      *
-     * @param stdClass $question (passed by reference)
-     * @todo Finish documenting this function
+     * @param object $question
      */
     protected function check_ordering_combined_feedback(&$question) {
         foreach ($this->feedbackfields as $field) {
@@ -393,10 +456,11 @@ class qtype_ordering extends question_type {
     }
 
     /**
-     * extract_layout_select_count_grading
+     * Given question object, returns array with array layouttype, selecttype, selectcount, gradingtype, where
+     * layouttype, selecttype, gradingtype are string representation.
      *
-     * @param stdClass $question
-     * @todo Finish documenting this function
+     * @param object $question
+     * @return array(layouttype, selecttype, selectcount, gradingtype)
      */
     public function extract_layout_select_count_grading($question) {
 
@@ -461,12 +525,12 @@ class qtype_ordering extends question_type {
     }
 
     /**
-     * export_to_gift
+     * Exports question to GIFT format
      *
-     * @param stdClass      $question
+     * @param object $question
      * @param qformat_gift $format
-     * @param string        $extra (optional, default=null)
-     * @todo Finish documenting this function
+     * @param string $extra (optional, default=null)
+     * @return string GIFT representation of question
      */
     public function export_to_gift($question, $format, $extra=null) {
         global $CFG;
@@ -485,12 +549,12 @@ class qtype_ordering extends question_type {
     }
 
     /**
-     * export_to_xml
+     * Exports question to XML format
      *
-     * @param stdClass    $question
+     * @param object $question
      * @param qformat_xml $format
-     * @param string      $extra (optional, default=null)
-     * @todo Finish documenting this function
+     * @param string $extra (optional, default=null)
+     * @return string XML representation of question
      */
     public function export_to_xml($question, qformat_xml $format, $extra=null) {
         global $CFG;
@@ -521,16 +585,17 @@ class qtype_ordering extends question_type {
         return $output;
     }
 
-    /*
+    /**
      * Imports question from the Moodle XML format
      *
      * Imports question using information from extra_question_fields function
      * If some of you fields contains id's you'll need to reimplement this
      *
-     * @param array          $data
+     * @param array $data
      * @param qtype_ordering $question (or null)
-     * @param qformat_xml    $format
-     * @param string         $extra (optional, default=null)
+     * @param qformat_xml $format
+     * @param string $extra (optional, default=null)
+     * @return object New question object
      */
     public function import_from_xml($data, $question, qformat_xml $format, $extra=null) {
         global $CFG;
@@ -587,12 +652,13 @@ class qtype_ordering extends question_type {
         return $newquestion;
     }
 
-    /*
-     * fix_questionname
+    /**
+     * Fix empty or long question name
      *
      * @param string $name
      * @param string $defaultname (optional, default='')
      * @param integer $maxnamelength (optional, default=42)
+     * @return string Fixed name
      */
     public function fix_questionname($name, $defaultname='', $maxnamelength = 42) {
         if (trim($name) == '') {
@@ -612,14 +678,14 @@ class qtype_ordering extends question_type {
         return $name;
     }
 
-    /*
-     * set_layout_select_count_grading
+    /**
+     * Set layouttype, selecttype, selectcount, gradingtype based on their textual representation
      *
      * @param object $question (passed by reference)
-     * @param integer $layout the layout type
-     * @param integer $select the select type
-     * @param integer $count the number of items to display
-     * @param integer $grading the grading type
+     * @param string $layout the layout type
+     * @param string $select the select type
+     * @param string $count the number of items to display
+     * @param string $grading the grading type
      */
     public function set_layout_select_count_grading(&$question, $layout, $select, $count, $grading) {
 

@@ -52,6 +52,8 @@ class restore_qtype_ordering_plugin extends restore_qtype_plugin {
 
     /**
      * Process the qtype/ordering element
+     *
+     * @param array $data
      */
     public function process_ordering($data) {
         global $DB;
@@ -76,9 +78,10 @@ class restore_qtype_ordering_plugin extends restore_qtype_plugin {
 
     /**
      * Given one question_states record, return the answer
-     * recoded pointing to all the restored stuff for ordering questions
+     * recoded pointing to all the restored stuff for ordering questions.
+     * If not empty, answer is one question_answers->id.
      *
-     * if not empty, answer is one question_answers->id
+     * @param object $state
      */
     public function recode_legacy_state_answer($state) {
         $answer = $state->answer;

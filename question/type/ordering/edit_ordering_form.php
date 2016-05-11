@@ -36,14 +36,26 @@ require_once($CFG->dirroot.'/question/type/ordering/question.php');
  */
 class qtype_ordering_edit_form extends question_edit_form {
 
+    /** Rows count in answer field */
     const NUM_ANS_ROWS = 2;
+
+    /** Cols count in answer field */
     const NUM_ANS_COLS = 60;
+
+    /** Number of answers in question by default */
     const NUM_ANS_DEFAULT = 6;
+
+    /** Minimal number of answers to show */
     const NUM_ANS_MIN = 3;
+
+    /** Number of answers to add on demand */
     const NUM_ANS_ADD = 3;
 
     /**
-     * unique name for this question type
+     * Unique name for this question type
+     *
+     * @return the question type name, should be the same as the name() method
+     *      in the question type class.
      */
     public function qtype() {
         return 'ordering';
@@ -127,6 +139,12 @@ class qtype_ordering_edit_form extends question_edit_form {
         $this->add_interactive_settings(false, false);
     }
 
+    /**
+     * Returns answer repeats count
+     *
+     * @param object $question
+     * @return int
+     */
     protected function get_answer_repeats($question) {
         if (isset($question->id)) {
             $repeats = count($question->options->answers);
@@ -140,7 +158,9 @@ class qtype_ordering_edit_form extends question_edit_form {
     }
 
     /**
-     * get_editor_attributes
+     * Returns editor attributes
+     *
+     * @return array
      */
     protected function get_editor_attributes() {
         return array(
@@ -150,7 +170,9 @@ class qtype_ordering_edit_form extends question_edit_form {
     }
 
     /**
-     * get_editor_options
+     * Returns editor options
+     *
+     * @return array
      */
     protected function get_editor_options() {
         return array(
@@ -161,7 +183,11 @@ class qtype_ordering_edit_form extends question_edit_form {
     }
 
     /**
-     * reset_editor_format
+     * Resets editor format to specified
+     *
+     * @param object $editor
+     * @param int $format
+     * @return int
      */
     protected function reset_editor_format($editor, $format=FORMAT_MOODLE) {
         $value = $editor->getValue();
@@ -171,7 +197,11 @@ class qtype_ordering_edit_form extends question_edit_form {
     }
 
     /**
-     * adjust_html_editors
+     * Adjust HTML editor and removal buttons.
+     *
+     * @param object $mform
+     * @param string $name
+     * @param int $repeats
      */
     protected function adjust_html_editors($mform, $name, $repeats) {
 
@@ -235,7 +265,10 @@ class qtype_ordering_edit_form extends question_edit_form {
     }
 
     /**
-     * data_preprocessing
+     * Perform an preprocessing needed on the data passed to {@link set_data()}
+     * before it is used to initialise the form.
+     * @param object $question the data being passed to the form.
+     * @return object $question the modified data.
      */
     public function data_preprocessing($question) {
 
@@ -300,6 +333,14 @@ class qtype_ordering_edit_form extends question_edit_form {
         return $question;
     }
 
+    /**
+     * Form validation
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK (true allowed for backwards compatibility too).
+     */
     public function validation($data, $files) {
         $errors = array();
         $plugin = 'qtype_ordering';
@@ -334,29 +375,29 @@ class qtype_ordering_edit_form extends question_edit_form {
     }
 
     /**
-     * get_default_value
+     * Returns default value for item
      *
-     * @param $name
-     * @param $default (optional, default = null)
-     * @return default value for field with this $name
+     * @param string $name Item name
+     * @param string|mixed|null $default Default value (optional, default = null)
+     * @return string|mixed|null Default value for field with this $name
      */
     protected function get_default_value($name, $default=null) {
         return get_user_preferences("qtype_ordering_$name", $default);
     }
 
     /**
-     * get_default_value
+     * Saves default value for item
      *
-     * @param $name
-     * @param $default (optional, default = null)
-     * @return default value for field with this $name
+     * @param string $name Item name
+     * @param string|mixed|null $value
+     * @return bool Always true or exception
      */
     protected function set_default_value($name, $value) {
         return set_user_preferences(array("qtype_ordering_$name" => $value));
     }
 
     /**
-     * this javascript could be useful for inserting buttons
+     * This javascript could be useful for inserting buttons
      * into the form once it has loaded in the browser
      * however this means that the buttons are not recognized
      * by the Moodle Form API

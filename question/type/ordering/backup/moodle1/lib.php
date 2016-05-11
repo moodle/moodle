@@ -33,7 +33,10 @@ defined('MOODLE_INTERNAL') || die();
 class moodle1_qtype_ordering_handler extends moodle1_qtype_handler {
 
     /**
-     * @return array
+     * Returns the list of paths within one <QUESTION> that this qtype needs to have included
+     * in the grouped question structure
+     *
+     * @return array of strings
      */
     public function get_question_subpaths() {
         return array(
@@ -43,7 +46,10 @@ class moodle1_qtype_ordering_handler extends moodle1_qtype_handler {
     }
 
     /**
-     * Appends the ordering specific information to the question
+     * Gives the qtype handler a chance to write converted data into questions.xml
+     *
+     * @param array $data grouped question data
+     * @param array $raw grouped raw QUESTION data
      */
     public function process_question(array $data, array $raw) {
 

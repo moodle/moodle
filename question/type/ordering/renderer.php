@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/** Prevent direct access to this script */
+// Prevent direct access to this script.
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -33,12 +33,28 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
+    /** @var array of answerids in correct order */
     protected $correctinfo = null;
+
+    /** @var array of answerids in order of current answer*/
     protected $currentinfo = null;
+
+    /** @var array of scored for every item */
     protected $itemscores = array();
 
+    /** @var bool True if answer is 100% correct */
     protected $allcorrect = null;
 
+    /**
+     * Generate the display of the formulation part of the question. This is the
+     * area that contains the quetsion text, and the controls for students to
+     * input their answers. Some question types also embed bits of feedback, for
+     * example ticks and crosses, in this area.
+     *
+     * @param question_attempt $qa the question attempt to display.
+     * @param question_display_options $options controls what should and should not be displayed.
+     * @return string HTML fragment.
+     */
     public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
         global $CFG, $DB;
 
@@ -157,6 +173,13 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         return $result;
     }
 
+    /**
+     * Generate the specific feedback. This is feedback that varies according to
+     * the response the student gave.
+     *
+     * @param question_attempt $qa the question attempt to display.
+     * @return string HTML fragment.
+     */
     public function specific_feedback(question_attempt $qa) {
 
         if ($feedback = $this->combined_feedback($qa)) {
@@ -236,6 +259,14 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         return $feedback.$gradingtype.$gradedetails.$scoredetails;
     }
 
+    /**
+     * Gereate an automatic description of the correct response to this question.
+     * Not all question types can do this. If it is not possible, this method
+     * should just return an empty string.
+     *
+     * @param question_attempt $qa the question attempt to display.
+     * @return string HTML fragment.
+     */
     public function correct_response(question_attempt $qa) {
         global $DB;
 
@@ -277,6 +308,11 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
     // Custom methods.
 
+    /**
+     * Fills $this->correctinfo and $this->currentinfo depending on question options.
+     *
+     * @param object $question
+     */
     protected function get_response_info($question) {
 
         $gradingtype = $question->options->gradingtype;
@@ -320,6 +356,14 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         }
     }
 
+    /**
+     * Returns score for one item depending on correctness and question settings.
+     *
+     * @param object $question
+     * @param int $position
+     * @param int $answerid
+     * @return array (score, maxscore, fraction, percent, class, img)
+     */
     protected function get_ordering_item_score($question, $position, $answerid) {
 
         if (! isset($this->itemscores[$position])) {
@@ -433,6 +477,11 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         return $this->itemscores[$position];
     }
 
+    /**
+     * Return true if answer is 100% correct.
+     *
+     * @return bool
+     */
     protected function is_all_correct() {
         if ($this->allcorrect === null) {
             // Use "==" to determine if the two "info" arrays are identical.
