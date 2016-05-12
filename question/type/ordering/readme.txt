@@ -1,14 +1,24 @@
-==========================================
-The Ordering question type for Moodle 2.x
-==========================================
+============================================
+The Ordering question type for Moodle >= 2.x
+============================================
 
-The ordering question type displays several short sentences in a random order which 
-are to be dragged into the correct sequential order. It was developed for the ordering 
-questions used in the Reader activity module for Moodle 2.x
+The ordering question type displays several items in a random order 
+which the user then drags into the correct sequential order.
 
-==========================================
+    * an ordering question can display all items or a subset of items
+
+    * items can be plain text or formatted HTML, including text,
+      images, audio and video.
+
+    * items can be listed vertically or horizontally
+
+    * several grading methods are available, ranging from a simple
+      all-or-nothing grade, to more complex partial grades that
+      consider the placement of each item relative to other items
+
+============================================
 To INSTALL or UPDATE this plugin
-==========================================
+============================================
 
     1. get the files for this plugin from any one of the following locations:
 
@@ -25,9 +35,9 @@ To INSTALL or UPDATE this plugin
         if install/upgrade does not begin automatically, you can initiate it manually by navigating to the following link:
         Settings -> Site administration -> Notifications
 
-==========================================
+============================================
 Further information
-==========================================
+============================================
 
     For more information, tutorials and online discussion forums, please visit:
     http://moodlereader.org/
@@ -35,3 +45,18 @@ Further information
     This plugin uses JQuery framework and plugins:
     http://jqueryui.com/sortable/
     http://touchpunch.furf.com/
+
+============================================
+Development history and credits
+============================================
+
+This plugin was originally developed by Thomas Robb (Kyoto Sangyo University, Japan)
+and Serafim Panov for the ordering questions in the Reader activity module for Moodle 1.x. 
+
+Moodle 2.x development was passed Gordon Bateson (Kochi University of Technology, Japan)
+funded by the Moodle Association of Japan, with partial funding from Sapporo Gakuin University.
+
+Coding enhancements and standardization in preparation for future merging in to Moodle core
+were undertaken by Vadim Dvorovenko (Kemerovo State University of Culture and Arts, Russia).
+
+many thanks to all concerned!
