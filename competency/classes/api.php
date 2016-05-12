@@ -1332,8 +1332,8 @@ class api {
         }
 
         $capability = 'moodle/competency:usercompetencyreview';
-        $ucfields = user_competency::get_sql_fields('uc');
-        $compfields = competency::get_sql_fields('c');
+        $ucfields = user_competency::get_sql_fields('uc', 'uc_');
+        $compfields = competency::get_sql_fields('c', 'c_');
         $usercols = array('id') + get_user_fieldnames();
         $userfields = array();
         foreach ($usercols as $field) {
@@ -1376,8 +1376,8 @@ class api {
         $records = $DB->get_recordset_sql($getsql, $params, $skip, $limit);
         foreach ($records as $record) {
             $objects = (object) array(
-                'usercompetency' => new user_competency(0, user_competency::extract_record($record)),
-                'competency' => new competency(0, competency::extract_record($record)),
+                'usercompetency' => new user_competency(0, user_competency::extract_record($record, 'uc_')),
+                'competency' => new competency(0, competency::extract_record($record, 'c_')),
                 'user' => persistent::extract_record($record, 'usr_'),
             );
             $competencies[] = $objects;
@@ -2369,8 +2369,8 @@ class api {
             $userid = $USER->id;
         }
 
-        $planfields = plan::get_sql_fields('p');
-        $tplfields = template::get_sql_fields('t');
+        $planfields = plan::get_sql_fields('p', 'plan_');
+        $tplfields = template::get_sql_fields('t', 'tpl_');
         $usercols = array('id') + get_user_fieldnames();
         $userfields = array();
         foreach ($usercols as $field) {
@@ -2412,11 +2412,11 @@ class api {
         $plans = array();
         $records = $DB->get_recordset_sql($select . $sql, $params, $skip, $limit);
         foreach ($records as $record) {
-            $plan = new plan(0, plan::extract_record($record));
+            $plan = new plan(0, plan::extract_record($record, 'plan_'));
             $template = null;
 
             if ($plan->is_based_on_template()) {
-                $template = new template(0, template::extract_record($record));
+                $template = new template(0, template::extract_record($record, 'tpl_'));
             }
 
             $plans[] = (object) array(
