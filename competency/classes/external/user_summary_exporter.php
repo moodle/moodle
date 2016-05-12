@@ -69,30 +69,30 @@ class user_summary_exporter extends exporter {
     public static function define_properties() {
         return array(
             'id' => array(
-                'type' => PARAM_INT,
+                'type' => \core_user::get_property_type('id'),
             ),
             'email' => array(
-                'type' => PARAM_TEXT,
+                'type' => \core_user::get_property_type('email'),
                 'default' => ''
             ),
             'idnumber' => array(
-                'type' => PARAM_NOTAGS,
+                'type' => \core_user::get_property_type('idnumber'),
                 'default' => ''
             ),
             'phone1' => array(
-                'type' => PARAM_NOTAGS,
+                'type' => \core_user::get_property_type('phone1'),
                 'default' => ''
             ),
             'phone2' => array(
-                'type' => PARAM_NOTAGS,
+                'type' => \core_user::get_property_type('phone2'),
                 'default' => ''
             ),
             'department' => array(
-                'type' => PARAM_TEXT,
+                'type' => \core_user::get_property_type('department'),
                 'default' => ''
             ),
             'institution' => array(
-                'type' => PARAM_TEXT,
+                'type' => \core_user::get_property_type('institution'),
                 'default' => ''
             )
         );
@@ -101,10 +101,10 @@ class user_summary_exporter extends exporter {
     public static function define_other_properties() {
         return array(
             'fullname' => array(
-                'type' => PARAM_TEXT
+                'type' => PARAM_RAW
             ),
             'identity' => array(
-                'type' => PARAM_TEXT
+                'type' => PARAM_RAW
             ),
             'profileurl' => array(
                 'type' => PARAM_URL
