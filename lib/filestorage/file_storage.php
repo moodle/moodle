@@ -238,8 +238,9 @@ class file_storage {
             return false;
         }
 
-        // Copy the file to the local tmp dir.
-        $tmp = make_request_directory();
+        // Copy the file to the tmp dir.
+        $uniqdir = "core_file/conversions/" . uniqid($file->get_id() . "-", true);
+        $tmp = make_temp_directory($uniqdir);
         $localfilename = $file->get_filename();
         // Safety.
         $localfilename = clean_param($localfilename, PARAM_FILE);
@@ -266,6 +267,8 @@ class file_storage {
         $result = exec($cmd, $output);
         chdir($currentdir);
         if (!file_exists($newtmpfile)) {
+            remove_dir($uniqdir);
+            // Cleanup.
             return false;
         }
 
@@ -279,7 +282,10 @@ class file_storage {
             'filename'  => $file->get_contenthash(),
         );
 
-        return $this->create_file_from_pathname($record, $newtmpfile);
+        $convertedfile = $this->create_file_from_pathname($record, $newtmpfile);
+        // Cleanup.
+        remove_dir($uniqdir);
+        return $convertedfile;
     }
 
     /**
