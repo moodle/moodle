@@ -331,6 +331,7 @@ $string['savesettings'] = 'Save settings';
 $string['savesuccess'] = 'Saved successfully. Your preset will now be available across the site.';
 $string['savetemplate'] = 'Save template';
 $string['search'] = 'Search';
+$string['search:activity'] = 'Database - activity information';
 $string['selectedrequired'] = 'All selected required';
 $string['showall'] = 'Show all entries';
 $string['single'] = 'View single';
