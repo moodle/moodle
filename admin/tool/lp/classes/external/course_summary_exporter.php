@@ -58,7 +58,7 @@ class course_summary_exporter extends \core_competency\external\exporter {
                 'type' => PARAM_TEXT,
             ),
             'idnumber' => array(
-                'type' => PARAM_TEXT,
+                'type' => PARAM_RAW,
             )
         );
     }
