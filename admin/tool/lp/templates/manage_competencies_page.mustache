@@ -32,7 +32,7 @@
 }}
 <div data-region="managecompetencies">
 <h2>
-    {{framework.shortname}}
+    {{{framework.shortname}}}
     {{#canmanage}}
             <a href="{{pluginbaseurl}}/editcompetencyframework.php?id={{framework.id}}&pagecontextid={{pagecontextid}}&return=competencies">{{#pix}}t/edit, core, {{#str}}editcompetencyframework, tool_lp{{/str}}{{/pix}}</a>
     {{/canmanage}}
@@ -121,7 +121,7 @@ require(['tool_lp/tree', 'tool_lp/competencytree', 'tool_lp/competencyactions', 
         function(ariatree, treeModel, actions, $) {
 
     treeModel.init({{framework.id}},
-                   '{{framework.shortname}}',
+                   {{#quote}} {{{framework.shortname}}} {{/quote}},
                    '{{search}}',
                    '[data-enhance=tree]',
                    {{canmanage}});

@@ -87,7 +87,7 @@ class competency_framework extends persistent {
                 'type' => PARAM_TEXT
             ),
             'idnumber' => array(
-                'type' => PARAM_TEXT
+                'type' => PARAM_RAW
             ),
             'description' => array(
                 'type' => PARAM_RAW,

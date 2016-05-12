@@ -53,7 +53,7 @@
     <tbody>
         {{#evidence}}
         <tr data-region='user-evidence-node' data-id="{{id}}" data-userid="{{userid}}">
-            <td><a href="{{pluginbaseurl}}/user_evidence.php?id={{id}}">{{name}}</a></td>
+            <td><a href="{{pluginbaseurl}}/user_evidence.php?id={{id}}">{{{name}}}</a></td>
             <td>
                 {{^hasurlorfiles}}
                     -
@@ -77,7 +77,7 @@
                     <ul class="user-evidence-competencies">
                     {{#usercompetencies}}
                         <li>
-                            {{competency.shortname}} <small><em>{{competency.idnumber}}</em></small> ({{usercompetency.statusname}}{{#usercompetency.reviewer.fullname}} / {{usercompetency.reviewer.fullname}}{{/usercompetency.reviewer.fullname}})
+                            {{{competency.shortname}}} <small><em>{{competency.idnumber}}</em></small> ({{usercompetency.statusname}}{{#usercompetency.reviewer.fullname}} / {{usercompetency.reviewer.fullname}}{{/usercompetency.reviewer.fullname}})
                         </li>
                     {{/usercompetencies}}
                     </ul>

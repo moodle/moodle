@@ -64,7 +64,7 @@ class competency extends persistent {
                 'type' => PARAM_TEXT
             ),
             'idnumber' => array(
-                'type' => PARAM_TEXT
+                'type' => PARAM_RAW
             ),
             'description' => array(
                 'default' => '',

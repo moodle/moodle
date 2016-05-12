@@ -31,7 +31,7 @@
 {{#userevidence}}
 <div data-region="user-evidence-page" data-id="{{id}}" data-userid="{{userid}}">
     <h2>
-        {{name}}
+        {{{name}}}
         {{#canmanage}}
             <a href="{{pluginbaseurl}}/user_evidence_edit.php?id={{id}}&amp;userid={{userid}}">{{#pix}}t/edit, core, {{#str}}editthisuserevidence, tool_lp{{/str}}{{/pix}}</a>
         {{/canmanage}}
@@ -78,7 +78,7 @@
                 {{#usercompetencies}}
                 <tr data-id="{{competency.id}}">
                     <td>
-                        <a href="{{pluginbaseurl}}/user_competency.php?id={{usercompetency.id}}" data-id="{{usercompetency.id}}">{{competency.shortname}}</a>
+                        <a href="{{pluginbaseurl}}/user_competency.php?id={{usercompetency.id}}" data-id="{{usercompetency.id}}">{{{competency.shortname}}}</a>
                     </td>
                      <td>
                         {{usercompetency.statusname}} {{#usercompetency.reviewer.fullname}} / {{usercompetency.reviewer.fullname}}{{/usercompetency.reviewer.fullname}}
