@@ -74,6 +74,7 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
         'oval': '.ovalbutton',
         'stamp': '.stampbutton',
         'select': '.selectbutton',
+        'drag': '.dragbutton',
         'highlight': '.highlightbutton'
     },
     STROKEWEIGHT = 4;
@@ -360,7 +361,7 @@ var EDIT = function() {
      * @type String
      * @public
      */
-    this.tool = "comment";
+    this.tool = "drag";
 
     /**
      * The currently comment colour
@@ -3294,7 +3295,7 @@ EDITOR.prototype = {
      * @method refresh_button_state
      */
     refresh_button_state : function() {
-        var button, currenttoolnode, imgurl;
+        var button, currenttoolnode, imgurl, drawingregion;
 
         // Initalise the colour buttons.
         button = this.get_dialogue_element(SELECTOR.COMMENTCOLOURBUTTON);
@@ -3315,6 +3316,8 @@ EDITOR.prototype = {
         currenttoolnode = this.get_dialogue_element(TOOLSELECTOR[this.currentedit.tool]);
         currenttoolnode.addClass('assignfeedback_editpdf_selectedbutton');
         currenttoolnode.setAttribute('aria-pressed', 'true');
+        drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
+        drawingregion.setAttribute('data-currenttool', this.currentedit.tool);
 
         button = this.get_dialogue_element(SELECTOR.STAMPSBUTTON);
         button.one('img').setAttrs({'src': this.get_stamp_image_url(this.currentedit.stamp),
@@ -3728,7 +3731,8 @@ EDITOR.prototype = {
         currenttoolnode.removeClass('assignfeedback_editpdf_selectedbutton');
         currenttoolnode.setAttribute('aria-pressed', 'false');
         this.currentedit.tool = tool;
-        if (tool !== "comment" && tool !== "select" && tool !== "stamp") {
+
+        if (tool !== "comment" && tool !== "select" && tool !== "drag" && tool !== "stamp") {
             this.lastannotationtool = tool;
         }
         this.refresh_button_state();
@@ -3890,9 +3894,12 @@ EDITOR.prototype = {
         e.preventDefault();
         var bounds = this.get_canvas_bounds(),
             canvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS),
+            drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION),
             clientpoint = new M.assignfeedback_editpdf.point(e.clientX + canvas.get('docScrollX'),
                                                              e.clientY + canvas.get('docScrollY')),
-            point = this.get_canvas_coordinates(clientpoint);
+            point = this.get_canvas_coordinates(clientpoint),
+            diffX,
+            diffY;
 
         // Ignore events out of the canvas area.
         if (point.x < 0 || point.x > bounds.width || point.y < 0 || point.y > bounds.height) {
@@ -3908,6 +3915,13 @@ EDITOR.prototype = {
                 this.currentannotation.move( this.currentedit.annotationstart.x + point.x - this.currentedit.start.x,
                                              this.currentedit.annotationstart.y + point.y - this.currentedit.start.y);
             }
+        } else if (this.currentedit.tool === 'drag') {
+            diffX = point.x - this.currentedit.start.x;
+            diffY = point.y - this.currentedit.start.y;
+
+            drawingregion.getDOMNode().scrollLeft -= diffX;
+            drawingregion.getDOMNode().scrollTop -= diffY;
+
         } else {
             if (this.currentedit.start) {
                 this.currentedit.end = point;
