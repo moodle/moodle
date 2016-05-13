@@ -207,7 +207,7 @@ if ($ltirequest->valid) {
     if (empty($CFG->allowframembedding)) {
         // Provide an alternative link.
         $stropentool = get_string('opentool', 'enrol_lti');
-        echo html_writer::tag('p', get_string('framembeddingnotenabled', 'enrol_lti'));
+        echo html_writer::tag('p', get_string('frameembeddingnotenabled', 'enrol_lti'));
         echo html_writer::link($urltogo, $stropentool, array('target' => '_blank'));
     } else {
         // All done, redirect the user to where they want to go.
