@@ -1,6 +1,0 @@
-theme/bootstrapbase/amd/src/bootstrap.js
-lib/amd/src/mustache.js
-lib/amd/src/loglevel.js
-lib/editor/atto/yui/src/rangy/
-**/yui/src/*/meta/*.js
-lib/yui/src/notification/js/shared.js

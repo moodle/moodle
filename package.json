@@ -10,6 +10,8 @@
     "grunt-contrib-uglify": "0.11.0",
     "grunt-contrib-watch": "0.6.1",
     "grunt-eslint": "^18.1.0",
-    "shifter": "0.5.0"
+    "shifter": "0.5.0",
+    "xmldom": "^0.1.22",
+    "xpath": "0.0.23"
   }
 }
