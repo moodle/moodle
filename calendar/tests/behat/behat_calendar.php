@@ -96,6 +96,7 @@ class behat_calendar extends behat_base {
         $dayofmonth   = "a[{$daycontains}]";
         return array(
             new Given('I hover "//' . $currentmonth . '/descendant::' . $daycell . '/' . $dayofmonth . '" "xpath_element"'),
+            new Given('I wait until the page is ready'),
         );
     }
 
