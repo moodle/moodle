@@ -1126,7 +1126,7 @@ function lti_get_types_for_add_instance() {
  *
  * @param int $courseid The id of the course to retieve types for
  * @param int $sectionreturn section to return to for forming the URLs
- * @return array Array of lti types. Each element is object with properties: name, title, icon, help, link
+ * @return array Array of lti types. Each element is object with properties: name, title, icon, help, helplink, link
  */
 function lti_get_configured_types($courseid, $sectionreturn = 0) {
     global $OUTPUT;
@@ -1138,6 +1138,11 @@ function lti_get_configured_types($courseid, $sectionreturn = 0) {
         $type->modclass = MOD_CLASS_ACTIVITY;
         $type->name     = 'lti_type_' . $ltitype->id;
         $type->title    = $ltitype->name;
+        $trimmeddescription = trim($ltitype->description);
+        if ($trimmeddescription != '') {
+            $type->help     = $trimmeddescription;
+            $type->helplink = get_string('modulename_shortcut_link', 'lti');
+        }
         if (empty($ltitype->icon)) {
             $type->icon = $OUTPUT->pix_icon('icon', '', 'lti', array('class' => 'icon'));
         } else {

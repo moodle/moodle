@@ -206,7 +206,8 @@ function lti_delete_instance($id) {
  *
  * @param stdClass $defaultitem default item that would be added to the activity chooser if this callback was not present.
  *     It has properties: archetype, name, title, help, icon, link
- * @return array An array of aliases for this activity. Each element is an object with same list of properties as $defaultitem.
+ * @return array An array of aliases for this activity. Each element is an object with same list of properties as $defaultitem,
+ *     plus an additional property, helplink.
  *     Properties title and link are required
  **/
 function lti_get_shortcuts($defaultitem) {
