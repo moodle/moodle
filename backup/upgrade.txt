@@ -1,6 +1,14 @@
 This files describes API changes in /backup/*,
 information provided here is intended especially for developers.
 
+=== 3.1 ===
+
+* New close() method added to loggers so they can close any open resource. Previously
+  any backup and restore operation using the file logger may be leaving unclosed files.
+* New destroy() method added to loggers, normally called from backup and restore controllers
+  own destroy() method to ensure that all references in the chained loggers are deleted
+  and any open resource within them is closed properly.
+
 === 3.0 ===
 
 * The backup_auto_keep setting, in automated backups configuration, is now

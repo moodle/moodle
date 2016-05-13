@@ -130,6 +130,9 @@ class course_bin extends base_bin {
             throw new \moodle_exception('Failed to backup activity prior to deletion.');
         }
 
+        // Have finished with the controller, let's destroy it, freeing mem and resources.
+        $controller->destroy();
+
         // Grab the filename.
         $file = $result['backup_destination'];
         if (!$file->get_contenthash()) {
@@ -245,6 +248,9 @@ class course_bin extends base_bin {
 
         // Run the import.
         $controller->execute_plan();
+
+        // Have finished with the controller, let's destroy it, freeing mem and resources.
+        $controller->destroy();
 
         // Fire event.
         $event = \tool_recyclebin\event\course_bin_item_restored::create(array(
