@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * Strings for component 'install', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   install
+ * @package   core
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -40,6 +39,7 @@ $string['admindirsettingsub'] = 'A very few webhosts use /admin as a special URL
     This will fix admin links in Moodle.';
 $string['availablelangs'] = 'Available language packs';
 $string['caution'] = 'Caution';
+$string['cliadminemail'] = 'New admin user email address';
 $string['cliadminpassword'] = 'New admin user password';
 $string['cliadminusername'] = 'Admin account username';
 $string['clialreadyconfigured'] = 'The configuration file config.php already exists. Please use admin/cli/install_database.php to install Moodle for this site.';
@@ -47,6 +47,7 @@ $string['clialreadyinstalled'] = 'The configuration file config.php already exis
 $string['cliinstallfinished'] = 'Installation completed successfully.';
 $string['cliinstallheader'] = 'Moodle {$a} command line installation program';
 $string['climustagreelicense'] = 'In non interactive mode you must agree to license by specifying --agree-license option';
+$string['cliskipdatabase'] = 'Skipping database installation.';
 $string['clitablesexist'] = 'Database tables already present, cli installation can not continue.';
 $string['compatibilitysettings'] = 'Checking your PHP settings ...';
 $string['compatibilitysettingshead'] = 'Checking your PHP settings ...';

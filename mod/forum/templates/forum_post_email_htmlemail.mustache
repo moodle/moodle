@@ -1,0 +1,103 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_forum/forum_post_email_htmlemail
+
+    Template which defines a forum post for sending in a single-post HTML email.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * courselink
+    * coursename
+    * forumindexlink
+    * forumviewlink
+    * forumname
+    * discussionlink
+    * discussionname
+    * showdiscussionname
+    * firstpost
+    * subject
+    * authorlink
+    * authorpicture
+    * authorfullname
+    * postdate
+    * grouppicture
+    * attachments
+    * message
+    * parentpostlink
+    * canreply
+    * replylink
+    * permalink
+    * unsubscribeforumlink
+    * unsubscribediscussionlink
+
+    Example context (json):
+    {
+        "courselink": "https://example.com/course/view.php?id=2",
+        "coursename": "Example course",
+        "forumindexlink": "https://example.com/mod/forum/index.php?id=2",
+        "forumviewlink": "https://example.com/mod/forum/view.php?f=2",
+        "forumname": "Lorem ipsum dolor",
+        "discussionlink": "https://example.com/mod/forum/discuss.php?d=70",
+        "discussionname": "Is Lorem ipsum Latin?",
+        "showdiscussionname": 1,
+        "firstpost": 1,
+        "subject": "Is Lorem ipsum Latin?",
+        "authorlink": "https://example.com/user/view.php?id=2&course=2",
+        "authorpicture": "<a href=\"https://example.com/user/view.php?id=2&amp;course=6\"><img src=\"https://example.com/theme/image.php?theme=clean&amp;component=core&amp;image=u%2Ff2&amp;svg=0\" alt=\"Picture of Admin User\" title=\"Picture of Admin User\" class=\"userpicture defaultuserpic\" width=\"35\" height=\"35\" /></a>",
+        "authorfullname": "Lucius Caecilius lucundus",
+        "postdate": "Sunday, 13 September 2015, 2:22 pm",
+        "grouppicture": "",
+        "attachments": "",
+        "message": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum et auctor libero. Quisque porta egestas neque, et bibendum libero dignissim at. Nulla facilisi. Morbi eget accumsan felis. Nunc et vulputate odio, vel venenatis nisl. Nunc maximus ipsum sed tincidunt mollis. Integer nunc erat, luctus sit amet arcu tincidunt, volutpat dignissim mi. Sed ut magna quam.  Mauris accumsan porta turpis sed aliquam. Etiam at justo tristique, imperdiet augue quis, consectetur sapien. Ut nec erat malesuada sem suscipit lobortis. Vivamus posuere nibh eu ipsum porta fringilla.  Sed vitae dapibus ipsum, ac condimentum enim. Sed dignissim ante at elit mollis, ac tempor lacus iaculis. Etiam nec lectus vitae nibh vulputate volutpat. Nulla quis tellus aliquam, commodo nisi et, dictum est.</p><p><br /></p>",
+        "parentpostlink": "",
+        "canreply": 1,
+        "replylink": "https://example.com/mod/forum/post.php?reply=2",
+        "permalink": "https://example.com/mod/forum/discuss.php?d=2#2",
+        "unsubscribeforumlink": "https://example.com/mod/forum/subscribe.php?id=2",
+        "unsubscribediscussionlink": "https://example.com/mod/discussion/subscribe.php?id=2&d=2"
+    }
+}}
+<div class="navbar">
+    <a target="_blank" href="{{{ courselink }}}">{{{ coursename }}}</a>
+    &raquo;
+    <a target="_blank" href="{{{ forumindexlink }}}">{{# str }} forums, forum {{/ str }}</a>
+    &raquo;
+    <a target="_blank" href="{{{ forumviewlink }}}">{{{ forumname }}}</a>
+{{# showdiscussionname }}
+    &raquo;
+    <a target="_blank" href="{{{ discussionlink }}}">{{{ discussionname }}}</a>
+{{/ showdiscussionname }}
+</div>
+
+{{> mod_forum/forum_post_email_htmlemail_body }}
+
+<hr />
+<div class="mdl-align unsubscribelink">
+{{# unsubscribeforumlink }}
+    <a href="{{{ unsubscribeforumlink }}}">{{# str }} unsubscribe, forum {{/ str }}</a>&nbsp;
+{{/ unsubscribeforumlink }}
+{{# unsubscribediscussionlink }}
+    <a href="{{{ unsubscribediscussionlink }}}">{{# str }} unsubscribediscussion, forum {{/ str }}</a>&nbsp;
+{{/ unsubscribediscussionlink }}
+    <a href="{{{ forumindexlink }}}">{{# str }} digestmailpost, forum {{/ str }}</a>
+</div>

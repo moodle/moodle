@@ -65,6 +65,12 @@ M.core_comment = {
                 var scope = this;
                 var value = ta.get('value');
                 if (value && value != M.util.get_string('addcomment', 'moodle')) {
+                    ta.set('disabled', true);
+                    ta.setStyles({
+                        'backgroundImage': 'url(' + M.util.image_url('i/loading_small', 'core') + ')',
+                        'backgroundRepeat': 'no-repeat',
+                        'backgroundPosition': 'center center'
+                    });
                     var params = {'content': value};
                     this.request({
                         action: 'add',
@@ -75,6 +81,8 @@ M.core_comment = {
                             var cid = scope.client_id;
                             var ta = Y.one('#dlg-content-'+cid);
                             ta.set('value', '');
+                            ta.set('disabled', false);
+                            ta.setStyle('backgroundImage', 'none');
                             scope.toggle_textarea(false);
                             var container = Y.one('#comment-list-'+cid);
                             var result = scope.render([obj], true);

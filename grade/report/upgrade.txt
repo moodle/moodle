@@ -1,5 +1,11 @@
 This files describes API changes in /grade/report/*,
 information provided here is intended especially for developers.
+=== 2.9 ===
+* Deprecating grade_report_grader:get_collapsing_icon.
+* A new web service function gradereport_user_get_grades_table has been added which will allow external system to retrieve grade information ready to be formatted as a table similar to the gradebook user report one.
+
+=== 2.8.2 ===
+* gradereport_singleview::__construct doesn't need groupid parameter anymore, so it was renamed to $unused.
 
 === 2.6.5, 2.7.2 ===
 

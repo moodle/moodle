@@ -1,0 +1,12 @@
+{
+    "name": "moodle-core_message-messenger",
+    "builds": {
+        "moodle-core_message-messenger": {
+            "jsfiles": [
+                "constants.js",
+                "manager.js",
+                "sendmessage.js"
+            ]
+        }
+    }
+}

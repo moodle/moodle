@@ -79,9 +79,8 @@ if (!isset($USER->grade_last_report)) {
 }
 $USER->grade_last_report[$course->id] = 'user';
 
-
-//first make sure we have proper final grades - this must be done before constructing of the grade tree
-grade_regrade_final_grades($courseid);
+// First make sure we have proper final grades.
+grade_regrade_final_grades_if_required($course);
 
 if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all student reports
     $groupmode    = groups_get_course_groupmode($course);   // Groups are being used
@@ -134,7 +133,9 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
         $report = new grade_report_user($courseid, $gpr, $context, $userid);
 
         $studentnamelink = html_writer::link(new moodle_url('/user/view.php', array('id' => $report->user->id, 'course' => $courseid)), fullname($report->user));
-        print_grade_page_head($courseid, 'report', 'user', get_string('pluginname', 'gradereport_user') . ' - ' . $studentnamelink);
+        print_grade_page_head($courseid, 'report', 'user', get_string('pluginname', 'gradereport_user') . ' - ' . $studentnamelink,
+                false, false, true, null, null, $report->user);
+
         groups_print_course_menu($course, $gpr->get_return_url('index.php?id='.$courseid, array('userid'=>0)));
 
         if ($user_selector) {
@@ -164,13 +165,12 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
     }
 }
 
-$event = \gradereport_user\event\grade_report_viewed::create(
-    array(
-        'context' => $context,
-        'courseid' => $courseid,
-        'relateduserid' => $userid,
-    )
-);
-$event->trigger();
+if (isset($report)) {
+    // Trigger report viewed event.
+    $report->viewed();
+} else {
+    echo html_writer::tag('div', '', array('class' => 'clearfix'));
+    echo $OUTPUT->notification(get_string('nostudentsyet'));
+}
 
 echo $OUTPUT->footer();

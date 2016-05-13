@@ -1,0 +1,5 @@
+This files describes API changes in /mod/wiki/*,
+information provided here is intended especially for developers.
+
+=== 3.1 ===
+ * Added a new param $sort to wiki_get_page_list function. Default value behaves exactly like before (sort by title ASC).

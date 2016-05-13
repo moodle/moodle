@@ -1,8 +1,0 @@
-AMFTester.mxml can be compiled as a Flex application in Flex builder or using the Flex SDK.
-
-Copy the following into a Flex project source folder :
-
-* customValidators folder and contents
-* AMFTester.mxml
-
-Then you need to use either the compiled Flex library or the source for the open source library as3corelib available here : http://code.google.com/p/as3corelib/downloads/list

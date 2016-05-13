@@ -1,5 +1,6 @@
 .path-grade-report-user #graded_users_selector {
     float: right;
+    margin-bottom: 5px;
 }
 .path-grade-report-user #graded_users_selector .singleselect label {
     display: inline-block;
@@ -18,6 +19,12 @@
 .path-grade-report-user .user-grade td {
     min-width: 4.5em;
     vertical-align: top;
+}
+.dir-rtl.path-grade-report-user .user-grade td {
+    direction: ltr;
+}
+.dir-rtl.path-grade-report-user table.user-grade {
+    border-collapse: separate;
 }
 .path-grade-report-user .user-grade .b1l {
     padding: 0;

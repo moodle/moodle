@@ -252,7 +252,7 @@ M.mod_quiz.autosave = {
      * @param {Number} repeatcount The number of attempts made so far.
      */
     init_tinymce: function(repeatcount) {
-        if (typeof tinyMCE === 'undefined') {
+        if (typeof window.tinyMCE === 'undefined') {
             if (repeatcount > 0) {
                 Y.later(this.TINYMCE_DETECTION_DELAY, this, this.init_tinymce, [repeatcount - 1]);
             } else {
@@ -263,7 +263,7 @@ M.mod_quiz.autosave = {
 
         Y.log('Found TinyMCE.', 'debug', 'moodle-mod_quiz-autosave');
         this.editor_change_handler = Y.bind(this.editor_changed, this);
-        tinyMCE.onAddEditor.add(Y.bind(this.init_tinymce_editor, this));
+        window.tinyMCE.onAddEditor.add(Y.bind(this.init_tinymce_editor, this));
     },
 
     /**
@@ -332,8 +332,8 @@ M.mod_quiz.autosave = {
         }
 
         Y.log('Doing a save.', 'debug', 'moodle-mod_quiz-autosave');
-        if (typeof tinyMCE !== 'undefined') {
-            tinyMCE.triggerSave();
+        if (typeof window.tinyMCE !== 'undefined') {
+            window.tinyMCE.triggerSave();
         }
         this.save_transaction = Y.io(this.AUTOSAVE_HANDLER, {
             method:  'POST',

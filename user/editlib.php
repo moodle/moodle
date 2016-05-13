@@ -34,6 +34,96 @@ function cancel_email_update($userid) {
 }
 
 /**
+ * Performs the common access checks and page setup for all
+ * user preference pages.
+ *
+ * @param int $userid The user id to edit taken from the page params.
+ * @param int $courseid The optional course id if we came from a course context.
+ * @return array containing the user and course records.
+ */
+function useredit_setup_preference_page($userid, $courseid) {
+    global $PAGE, $SESSION, $DB, $CFG, $OUTPUT, $USER;
+
+    // Guest can not edit.
+    if (isguestuser()) {
+        print_error('guestnoeditprofile');
+    }
+
+    if (!$course = $DB->get_record('course', array('id' => $courseid))) {
+        print_error('invalidcourseid');
+    }
+
+    if ($course->id != SITEID) {
+        require_login($course);
+    } else if (!isloggedin()) {
+        if (empty($SESSION->wantsurl)) {
+            $SESSION->wantsurl = $CFG->httpswwwroot.'/user/preferences.php';
+        }
+        redirect(get_login_url());
+    } else {
+        $PAGE->set_context(context_system::instance());
+    }
+
+    // The user profile we are editing.
+    if (!$user = $DB->get_record('user', array('id' => $userid))) {
+        print_error('invaliduserid');
+    }
+
+    // Guest can not be edited.
+    if (isguestuser($user)) {
+        print_error('guestnoeditprofile');
+    }
+
+    // Remote users cannot be edited.
+    if (is_mnet_remote_user($user)) {
+        if (user_not_fully_set_up($user)) {
+            $hostwwwroot = $DB->get_field('mnet_host', 'wwwroot', array('id' => $user->mnethostid));
+            print_error('usernotfullysetup', 'mnet', '', $hostwwwroot);
+        }
+        redirect($CFG->wwwroot . "/user/view.php?course={$course->id}");
+    }
+
+    $systemcontext   = context_system::instance();
+    $personalcontext = context_user::instance($user->id);
+
+    // Check access control.
+    if ($user->id == $USER->id) {
+        // Editing own profile - require_login() MUST NOT be used here, it would result in infinite loop!
+        if (!has_capability('moodle/user:editownprofile', $systemcontext)) {
+            print_error('cannotedityourprofile');
+        }
+
+    } else {
+        // Teachers, parents, etc.
+        require_capability('moodle/user:editprofile', $personalcontext);
+
+        // No editing of primary admin!
+        if (is_siteadmin($user) and !is_siteadmin($USER)) {  // Only admins may edit other admins.
+            print_error('useradmineditadmin');
+        }
+    }
+
+    if ($user->deleted) {
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('userdeleted'));
+        echo $OUTPUT->footer();
+        die;
+    }
+
+    $PAGE->set_pagelayout('admin');
+    $PAGE->set_context($personalcontext);
+    if ($USER->id != $user->id) {
+        $PAGE->navigation->extend_for_user($user);
+    } else {
+        if ($node = $PAGE->navigation->find('myprofile', navigation_node::TYPE_ROOTNODE)) {
+            $node->force_open();
+        }
+    }
+
+    return array($user, $course);
+}
+
+/**
  * Loads the given users preferences into the given user object.
  *
  * @param stdClass $user The user object, modified by reference.
@@ -174,28 +264,37 @@ function useredit_update_trackforums($user, $usernew) {
  * @param array $interests
  */
 function useredit_update_interests($user, $interests) {
-    tag_set('user', $user->id, $interests, 'core', context_user::instance($user->id)->id);
+    core_tag_tag::set_item_tags('core', 'user', $user->id,
+            context_user::instance($user->id), $interests);
 }
 
 /**
  * Powerful function that is used by edit and editadvanced to add common form elements/rules/etc.
  *
  * @param moodleform $mform
- * @param array|null $editoroptions
- * @param array|null $filemanageroptions
+ * @param array $editoroptions
+ * @param array $filemanageroptions
+ * @param stdClass $user
  */
-function useredit_shared_definition(&$mform, $editoroptions = null, $filemanageroptions = null) {
+function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions, $user) {
     global $CFG, $USER, $DB;
 
-    $user = $DB->get_record('user', array('id' => $USER->id));
-    useredit_load_preferences($user, false);
+    if ($user->id > 0) {
+        useredit_load_preferences($user, false);
+    }
 
     $strrequired = get_string('required');
+    $stringman = get_string_manager();
 
     // Add the necessary names.
     foreach (useredit_get_required_name_fields() as $fullname) {
         $mform->addElement('text', $fullname,  get_string($fullname),  'maxlength="100" size="30"');
-        $mform->addRule($fullname, $strrequired, 'required', null, 'client');
+        if ($stringman->string_exists('missing'.$fullname, 'core')) {
+            $strmissingfield = get_string('missing'.$fullname, 'core');
+        } else {
+            $strmissingfield = $strrequired;
+        }
+        $mform->addRule($fullname, $strmissingfield, 'required', null, 'client');
         $mform->setType($fullname, PARAM_NOTAGS);
     }
 
@@ -207,7 +306,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     }
 
     // Do not show email field if change confirmation is pending.
-    if (!empty($CFG->emailchangeconfirmation) and !empty($user->preference_newemail)) {
+    if ($user->id > 0 and !empty($CFG->emailchangeconfirmation) and !empty($user->preference_newemail)) {
         $notice = get_string('emailchangepending', 'auth', $user);
         $notice .= '<br /><a href="edit.php?cancelemailchange=1&amp;id='.$user->id.'">'
                 . get_string('emailchangecancel', 'auth') . '</a>';
@@ -215,8 +314,15 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     } else {
         $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="30"');
         $mform->addRule('email', $strrequired, 'required', null, 'client');
-        $mform->setType('email', PARAM_EMAIL);
+        $mform->setType('email', PARAM_RAW_TRIMMED);
     }
+
+    $choices = array();
+    $choices['0'] = get_string('emaildisplayno');
+    $choices['1'] = get_string('emaildisplayyes');
+    $choices['2'] = get_string('emaildisplaycourse');
+    $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
+    $mform->setDefault('maildisplay', core_user::get_property_default('maildisplay'));
 
     $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="21"');
     $mform->setType('city', PARAM_TEXT);
@@ -228,16 +334,17 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     $choices = array('' => get_string('selectacountry') . '...') + $choices;
     $mform->addElement('select', 'country', get_string('selectacountry'), $choices);
     if (!empty($CFG->country)) {
-        $mform->setDefault('country', $CFG->country);
+        $mform->setDefault('country', core_user::get_property_default('country'));
     }
 
-    $choices = get_list_of_timezones();
-    $choices['99'] = get_string('serverlocaltime');
-    if ($CFG->forcetimezone != 99) {
+    if (isset($CFG->forcetimezone) and $CFG->forcetimezone != 99) {
+        $choices = core_date::get_list_of_timezones($CFG->forcetimezone);
         $mform->addElement('static', 'forcedtimezone', get_string('timezone'), $choices[$CFG->forcetimezone]);
+        $mform->addElement('hidden', 'timezone');
+        $mform->setType('timezone', core_user::get_property_type('timezone'));
     } else {
+        $choices = core_date::get_list_of_timezones($user->timezone, true);
         $mform->addElement('select', 'timezone', get_string('timezone'), $choices);
-        $mform->setDefault('timezone', '99');
     }
 
     // Multi-Calendar Support - see MDL-18375.
@@ -264,11 +371,9 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     $mform->setType('description_editor', PARAM_CLEANHTML);
     $mform->addHelpButton('description_editor', 'userdescription');
 
-    $mform->addElement('header', 'moodle_userpreferences', get_string('preferences'));
-    useredit_shared_definition_preferences($user, $mform, $editoroptions, $filemanageroptions);
-
     if (empty($USER->newadminuser)) {
         $mform->addElement('header', 'moodle_picture', get_string('pictureofuser'));
+        $mform->setExpanded('moodle_picture', true);
 
         if (!empty($CFG->enablegravatar)) {
             $mform->addElement('html', html_writer::tag('p', get_string('gravatarenabled')));
@@ -297,9 +402,10 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
         }
     }
 
-    if (!empty($CFG->usetags) and empty($USER->newadminuser)) {
+    if (core_tag_tag::is_enabled('core', 'user') and empty($USER->newadminuser)) {
         $mform->addElement('header', 'moodle_interests', get_string('interests'));
-        $mform->addElement('tags', 'interests', get_string('interestslist'), array('display' => 'noofficial'));
+        $mform->addElement('tags', 'interests', get_string('interestslist'),
+            array('itemtype' => 'user', 'component' => 'core'));
         $mform->addHelpButton('interests', 'interestslist');
     }
 
@@ -307,122 +413,40 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     $mform->addElement('header', 'moodle_optional', get_string('optional', 'form'));
 
     $mform->addElement('text', 'url', get_string('webpage'), 'maxlength="255" size="50"');
-    $mform->setType('url', PARAM_URL);
+    $mform->setType('url', core_user::get_property_type('url'));
 
     $mform->addElement('text', 'icq', get_string('icqnumber'), 'maxlength="15" size="25"');
-    $mform->setType('icq', PARAM_NOTAGS);
+    $mform->setType('icq', core_user::get_property_type('icq'));
 
     $mform->addElement('text', 'skype', get_string('skypeid'), 'maxlength="50" size="25"');
-    $mform->setType('skype', PARAM_NOTAGS);
+    $mform->setType('skype', core_user::get_property_type('skype'));
 
     $mform->addElement('text', 'aim', get_string('aimid'), 'maxlength="50" size="25"');
-    $mform->setType('aim', PARAM_NOTAGS);
+    $mform->setType('aim', core_user::get_property_type('aim'));
 
     $mform->addElement('text', 'yahoo', get_string('yahooid'), 'maxlength="50" size="25"');
-    $mform->setType('yahoo', PARAM_NOTAGS);
+    $mform->setType('yahoo', core_user::get_property_type('yahoo'));
 
     $mform->addElement('text', 'msn', get_string('msnid'), 'maxlength="50" size="25"');
-    $mform->setType('msn', PARAM_NOTAGS);
+    $mform->setType('msn', core_user::get_property_type('msn'));
 
     $mform->addElement('text', 'idnumber', get_string('idnumber'), 'maxlength="255" size="25"');
-    $mform->setType('idnumber', PARAM_NOTAGS);
+    $mform->setType('idnumber', core_user::get_property_type('idnumber'));
 
     $mform->addElement('text', 'institution', get_string('institution'), 'maxlength="255" size="25"');
-    $mform->setType('institution', PARAM_TEXT);
+    $mform->setType('institution', core_user::get_property_type('institution'));
 
     $mform->addElement('text', 'department', get_string('department'), 'maxlength="255" size="25"');
-    $mform->setType('department', PARAM_TEXT);
+    $mform->setType('department', core_user::get_property_type('department'));
 
-    $mform->addElement('text', 'phone1', get_string('phone'), 'maxlength="20" size="25"');
-    $mform->setType('phone1', PARAM_NOTAGS);
+    $mform->addElement('text', 'phone1', get_string('phone1'), 'maxlength="20" size="25"');
+    $mform->setType('phone1', core_user::get_property_type('phone1'));
 
     $mform->addElement('text', 'phone2', get_string('phone2'), 'maxlength="20" size="25"');
-    $mform->setType('phone2', PARAM_NOTAGS);
+    $mform->setType('phone2', core_user::get_property_type('phone2'));
 
     $mform->addElement('text', 'address', get_string('address'), 'maxlength="255" size="25"');
-    $mform->setType('address', PARAM_TEXT);
-}
-
-/**
- * Adds user preferences elements to user edit form.
- *
- * @param stdClass $user
- * @param moodleform $mform
- * @param array|null $editoroptions
- * @param array|null $filemanageroptions
- */
-function useredit_shared_definition_preferences($user, &$mform, $editoroptions = null, $filemanageroptions = null) {
-    global $CFG;
-
-    $choices = array();
-    $choices['0'] = get_string('emaildisplayno');
-    $choices['1'] = get_string('emaildisplayyes');
-    $choices['2'] = get_string('emaildisplaycourse');
-    $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
-    $mform->setDefault('maildisplay', $CFG->defaultpreference_maildisplay);
-
-    $choices = array();
-    $choices['0'] = get_string('textformat');
-    $choices['1'] = get_string('htmlformat');
-    $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);
-    $mform->setDefault('mailformat', $CFG->defaultpreference_mailformat);
-
-    if (!empty($CFG->allowusermailcharset)) {
-        $choices = array();
-        $charsets = get_list_of_charsets();
-        if (!empty($CFG->sitemailcharset)) {
-            $choices['0'] = get_string('site').' ('.$CFG->sitemailcharset.')';
-        } else {
-            $choices['0'] = get_string('site').' (UTF-8)';
-        }
-        $choices = array_merge($choices, $charsets);
-        $mform->addElement('select', 'preference_mailcharset', get_string('emailcharset'), $choices);
-    }
-
-    $choices = array();
-    $choices['0'] = get_string('emaildigestoff');
-    $choices['1'] = get_string('emaildigestcomplete');
-    $choices['2'] = get_string('emaildigestsubjects');
-    $mform->addElement('select', 'maildigest', get_string('emaildigest'), $choices);
-    $mform->setDefault('maildigest', $CFG->defaultpreference_maildigest);
-    $mform->addHelpButton('maildigest', 'emaildigest');
-
-    $choices = array();
-    $choices['1'] = get_string('autosubscribeyes');
-    $choices['0'] = get_string('autosubscribeno');
-    $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
-    $mform->setDefault('autosubscribe', $CFG->defaultpreference_autosubscribe);
-
-    if (!empty($CFG->forum_trackreadposts)) {
-        $choices = array();
-        $choices['0'] = get_string('trackforumsno');
-        $choices['1'] = get_string('trackforumsyes');
-        $mform->addElement('select', 'trackforums', get_string('trackforums'), $choices);
-        $mform->setDefault('trackforums', $CFG->defaultpreference_trackforums);
-    }
-
-    $editors = editors_get_enabled();
-    if (count($editors) > 1) {
-        $choices = array('' => get_string('defaulteditor'));
-        $firsteditor = '';
-        foreach (array_keys($editors) as $editor) {
-            if (!$firsteditor) {
-                $firsteditor = $editor;
-            }
-            $choices[$editor] = get_string('pluginname', 'editor_' . $editor);
-        }
-        $mform->addElement('select', 'preference_htmleditor', get_string('textediting'), $choices);
-        $mform->setDefault('preference_htmleditor', '');
-    } else {
-        // Empty string means use the first chosen text editor.
-        $mform->addElement('hidden', 'preference_htmleditor');
-        $mform->setDefault('preference_htmleditor', '');
-        $mform->setType('preference_htmleditor', PARAM_PLUGIN);
-    }
-
-    $mform->addElement('select', 'lang', get_string('preferredlanguage'), get_string_manager()->get_list_of_translations());
-    $mform->setDefault('lang', $CFG->lang);
-
+    $mform->setType('address', core_user::get_property_type('address'));
 }
 
 /**

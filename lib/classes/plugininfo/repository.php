@@ -67,4 +67,34 @@ class repository extends base {
     public static function get_manage_url() {
         return new moodle_url('/admin/repository.php');
     }
+
+    /**
+     * Defines if there should be a way to uninstall the plugin via the administration UI.
+     * @return boolean
+     */
+    public function is_uninstall_allowed() {
+        if ($this->name === 'upload' || $this->name === 'coursefiles' || $this->name === 'user' || $this->name === 'recent') {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Pre-uninstall hook.
+     * This is intended for disabling of plugin, some DB table purging, etc.
+     * Converts all linked files to standard files when repository is removed
+     * and cleans up all records in the DB for that repository.
+     */
+    public function uninstall_cleanup() {
+        global $CFG;
+        require_once($CFG->dirroot.'/repository/lib.php');
+
+        $repo = \repository::get_type_by_typename($this->name);
+        if ($repo) {
+            $repo->delete(true);
+        }
+
+        parent::uninstall_cleanup();
+    }
 }

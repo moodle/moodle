@@ -313,7 +313,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         $fullname = fullname($users[$post->userid], $viewfullnames);
         $by = new stdClass();
         $by->name = $fullname;
-        $by->date = userdate($post->modified, '', $this->user->timezone);
+        $by->date = userdate($post->modified, '', core_date::get_user_timezone($this->user));
         $output .= '<div class="author">'.get_string('bynameondate', 'forum', $by).'</div>';
 
         $output .= '</td></tr>';

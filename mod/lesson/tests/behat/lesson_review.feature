@@ -4,12 +4,11 @@ Feature: In a lesson activity, students can review the answers they gave to ques
   As a student
   I need to complete a lesson answering all of the questions.
 
-  @javascript
   Scenario: Student answers questions and then reviews them.
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -44,7 +43,7 @@ Feature: In a lesson activity, students can review the answers they gave to ques
       | id_response_editor_1 | Incorrect answer |
       | id_jumpto_1 | This page |
     And I press "Save page"
-    And I set the field "qtype" to "Question"
+    And I select "Question" from the "qtype" singleselect
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
     And I set the following fields to these values:

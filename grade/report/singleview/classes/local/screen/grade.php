@@ -72,6 +72,14 @@ class grade extends tablelike implements selectable_items, filterable_items {
     }
 
     /**
+     * Get the label for the select box that chooses items for this page.
+     * @return string
+     */
+    public function select_label() {
+        return get_string('selectuser', 'gradereport_singleview');
+    }
+
+    /**
      * Get the description of this page
      * @return string
      */
@@ -121,17 +129,9 @@ class grade extends tablelike implements selectable_items, filterable_items {
      * @param bool $selfitemisempty True if we have not selected a user.
      */
     public function init($selfitemisempty = false) {
-        $roleids = explode(',', get_config('moodle', 'gradebookroles'));
 
-        $this->items = array();
-        foreach ($roleids as $roleid) {
-            // Keeping the first user appearance.
-            $this->items = $this->items + get_role_users(
-                $roleid, $this->context, false, '',
-                'u.lastname, u.firstname', null, $this->groupid);
-        }
-
-        $this->totalitemcount = count_role_users($roleids, $this->context);
+        $this->items = $this->load_users();
+        $this->totalitemcount = count($this->items);
 
         if ($selfitemisempty) {
             return;
@@ -273,7 +273,7 @@ class grade extends tablelike implements selectable_items, filterable_items {
             new moodle_url('/grade/report/singleview/index.php', array(
                 'perpage' => $this->perpage,
                 'id' => $this->courseid,
-                'groupid' => $this->groupid,
+                'group' => $this->groupid,
                 'itemid' => $this->itemid,
                 'item' => 'grade'
             ))
@@ -286,7 +286,7 @@ class grade extends tablelike implements selectable_items, filterable_items {
      * @return string
      */
     public function heading() {
-        return $this->item->get_name();
+        return get_string('gradeitem', 'gradereport_singleview', $this->item->get_name());
     }
 
     /**
@@ -333,18 +333,16 @@ class grade extends tablelike implements selectable_items, filterable_items {
 
                     $data->$field = empty($grade) ? $null : $grade->finalgrade;
                     $data->{"old$field"} = $data->$field;
-
-                    preg_match('/_(\d+)_(\d+)/', $field, $oldoverride);
-                    $oldoverride = 'oldoverride' . $oldoverride[0];
-                    if (empty($data->$oldoverride)) {
-                        $data->$field = (!isset($grade->rawgrade)) ? $null : $grade->rawgrade;
-                    }
                 }
             }
 
             foreach ($data as $varname => $value) {
-                if (preg_match('/override_(\d+)_(\d+)/', $varname, $matches)) {
-                    $data->$matches[0] = '1';
+                if (preg_match('/^oldoverride_(\d+)_(\d+)/', $varname, $matches)) {
+                    // If we've selected overriding all grades.
+                    if ($filter == 'all') {
+                        $override = "override_{$matches[1]}_{$matches[2]}";
+                        $data->$override = '1';
+                    }
                 }
                 if (!preg_match('/^finalgrade_(\d+)_/', $varname, $matches)) {
                     continue;

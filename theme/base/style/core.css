@@ -79,6 +79,9 @@ a.dimmed_text:visited,
 a.autolink.glossary:hover {cursor: help;}
 /* Block which is hidden if javascript enabled, prevents flickering, visible when JS from footer used! */
 .collapsibleregioncaption {white-space: nowrap;}
+.pagelayout-mydashboard.jsenabled .collapsibleregioncaption {
+    cursor: pointer;
+}
 .collapsibleregioncaption img {vertical-align: middle;}
 .jsenabled .hiddenifjs {display: none;}
 .visibleifjs {display: none;}
@@ -153,6 +156,17 @@ h6 img.icon,
 h6 img.iconhelp {
     vertical-align: middle;
     padding: 4px;
+}
+
+/** Table caption support */
+table caption {
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 42px;
+    text-align: left;
+}
+.dir-rtl table caption {
+    text-align: right;
 }
 
 /** The 1-pixel padding is there to avoid phantom scroll bars on OS X (FF, Safari and Chrome)**/
@@ -461,14 +475,17 @@ a.skip:active {position: static;display: block;}
 .mform .fitem .fitemtitle div {display: inline;}
 .mform .fitem .felement {border-width: 0;width:80%;margin-left:16%;}
 .mform .fitem fieldset.felement {margin-left:15%;padding-left:1%;margin-bottom:0}
+#adminsettings span.error,
 .mform .error,
 .mform .required {color:#A00;}
+#adminsettings span.error,
 .mform span.error {display: inline-block;padding: 4px;margin-bottom: 4px;background-color: #F2DEDE;border: 1px solid #EED3D7;}
 .mform .required .fgroup span label {color:#000;}
 .mform .fdescription.required {color:#A00;text-align:right;}
 .dir-rtl .mform .fdescription.required {text-align:left;}
 .mform .fpassword .unmask {display:inline;margin-left:0.5em;}
 .mform .ftextarea #id_alltext {width: 100%;}
+.mform .fstaticlabel {font-weight:bold;}
 .mform ul.file-list {padding:0;margin:0;list-style:none;}
 .mform label { display: inline-block; }
 .mform .iconhelp { margin-left: 4px; }
@@ -717,67 +734,53 @@ table.mod_index {width:100%;}
 /**
  * Tags
  */
-#page-tag-coursetags_edit .coursetag_edit_centered {position: relative;width: 600px;margin: 20px auto;}
-#page-tag-coursetags_edit .coursetag_edit_row {clear:both;}
-#page-tag-coursetags_edit .coursetag_edit_row .coursetag_edit_left {float:left;width:50%;text-align:right;}
-#page-tag-coursetags_edit .coursetag_edit_row .coursetag_edit_right {margin-left:50%;}
-#page-tag-coursetags_edit .coursetag_edit_input3 {display: none;}
-#page-tag-coursetags_more .coursetag_more_large {font-size: 120%;}
-#page-tag-coursetags_more .coursetag_more_small {font-size: 80%;}
-#page-tag-coursetags_more .coursetag_more_link {font-size: 80%;}
-#tag-description,
-#tag-blogs {width:100%;}
 #tag-management-box {margin-bottom:10px;line-height:20px;}
-#tag-user-table {padding:3px;clear: both;width:100%;}
-#tag-user-table:after {content:".";display:block;clear:both;visibility:hidden;height:0;overflow:hidden;}
 img.user-image {height:100px;width:100px;}
-#small-tag-cloud-box {width:300px;margin:0 auto;}
-#big-tag-cloud-box {width:600px;margin:0 auto;float:none;}
-ul#tag-cloud-list {list-style:none;padding:5px;margin:0;}
-ul#tag-cloud-list li {margin:0;display:inline;list-style-type:none;}
 #tag-search-box {text-align:center;margin:10px auto;}
-#tag-search-results-container {padding:0;width:100%;}
-#tag-search-results {padding:0;margin: 15px 20% 0 20%;float:left;width:60%;display:block;}
-#tag-search-results li {width:30%;float:left;padding-left:1%;text-align:left;line-height:20px;padding-right:1%;list-style:none;}
+.tagarea {clear:both;overflow:hidden;}
+.tagarea .controls {text-align: center;}
+.tagarea .controls .gotopage.nextpage {float: right;}
+.tagarea .controls .gotopage.prevpage {float: left;}
+.tagarea .controls .exclusivemode {display: inline-block;}
+.dir-rtl .tagarea .controls .gotopage.nextpage {float: left;}
+.dir-rtl .tagarea .controls .gotopage.prevpage {float: right;}
+.tagarea .controls.controls-bottom {margin-top: 5px;}
 span.flagged-tag,
-span.flagged-tag a {color:#FF0000;}
-table#tag-management-list {text-align:left;width:100%;}
-table#tag-management-list td,
-table#tag-management-list th {vertical-align: middle;text-align: left;padding: 4px;}
-.tag-management-form {text-align:center;}
-#relatedtags-autocomplete-container {margin-left:auto;margin-right:auto;min-height:4.6em;width:100%;}
-#relatedtags-autocomplete {position:relative;display:block;width:60%;margin-left:auto;margin-right:auto;}
-#relatedtags-autocomplete .yui-ac-content {position:absolute;width:420px;left:20%;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-#relatedtags-autocomplete .ysearchquery {position:absolute;right:10px;color:#808080;z-index:10;}
-#relatedtags-autocomplete .yui-ac-shadow {position:absolute;margin:.3em;width:100%;background:#a0a0a0;z-index:9049;}
-#relatedtags-autocomplete ul {padding:0;width:100%;margin:0;list-style-type:none;}
-#relatedtags-autocomplete li {padding:0 5px;cursor:default;white-space:nowrap;}
-#relatedtags-autocomplete li.yui-ac-highlight{background:#FFFFCC;}
-h2.tag-heading,
-div#tag-description,
-div#tag-blogs,
-body.tag .managelink {padding: 5px;}
-.tag_cloud .s20 {font-size: 1.5em;font-weight: bold;}
-.tag_cloud .s19 {font-size: 1.5em;}
-.tag_cloud .s18 {font-size: 1.4em;font-weight: bold;}
-.tag_cloud .s17 {font-size: 1.4em;}
-.tag_cloud .s16 {font-size: 1.3em;font-weight: bold;}
-.tag_cloud .s15 {font-size: 1.3em;}
-.tag_cloud .s14 {font-size: 1.2em;font-weight: bold;}
-.tag_cloud .s13 {font-size: 1.2em;}
-.tag_cloud .s12,
-.tag_cloud .s11 {font-size: 1.1em;font-weight: bold;}
-.tag_cloud .s10,
-.tag_cloud .s9 {font-size: 1.1em;}
-.tag_cloud .s8,
-.tag_cloud .s7 {font-size: 1em;font-weight: bold;}
-.tag_cloud .s6,
-.tag_cloud .s5 {font-size: 1em;}
-.tag_cloud .s4,
-.tag_cloud .s3 {font-size: 0.9em;font-weight: bold;}
-.tag_cloud .s2,
-.tag_cloud .s1 {font-size: 0.9em;}
-.tag_cloud .s0 {font-size: 0.8em;}
+tr.flagged-tag,
+span.flagged-tag a,
+tr.flagged-tag a {color:#FF0000;}
+.tag-management-table td,
+.tag-management-table th {vertical-align: middle;padding: 4px;}
+.tag-management-table .inplaceeditable.inplaceeditingon input {width: 150px;}
+.tag_feed .media, .tag_feed .media-body {overflow: hidden;}
+.tag_feed.media-list .media .itemimage {float: left;}
+.dir-rtl .tag_feed.media-list .media .itemimage {float: right;}
+.tag_feed.media-list .media .itemimage img {height: 35px;width: 35px;}
+.tag_feed.media-list .media .media-body {padding-right: 10px;padding-left: 10px;}
+.tag_cloud {text-align: center;}
+.tag_cloud .inline-list li {padding: 0px 0.2em;}
+.tag_cloud .tag_overflow {margin-top: 1em;font-style: italic;}
+.tag_cloud .s20 {font-size: 2.7em;}
+.tag_cloud .s19 {font-size: 2.6em;}
+.tag_cloud .s18 {font-size: 2.5em;}
+.tag_cloud .s17 {font-size: 2.4em;}
+.tag_cloud .s16 {font-size: 2.3em;}
+.tag_cloud .s15 {font-size: 2.2em;}
+.tag_cloud .s14 {font-size: 2.1em;}
+.tag_cloud .s13 {font-size: 2em;}
+.tag_cloud .s12 {font-size: 1.9em;}
+.tag_cloud .s11 {font-size: 1.8em;}
+.tag_cloud .s10 {font-size: 1.7em;}
+.tag_cloud .s9 {font-size: 1.6em;}
+.tag_cloud .s8 {font-size: 1.5em;}
+.tag_cloud .s7 {font-size: 1.4em;}
+.tag_cloud .s6 {font-size: 1.3em;}
+.tag_cloud .s5 {font-size: 1.2em;}
+.tag_cloud .s4 {font-size: 1.1em;}
+.tag_cloud .s3 {font-size: 1em;}
+.tag_cloud .s2 {font-size: 0.9em;}
+.tag_cloud .s1 {font-size: 0.8em;}
+.tag_cloud .s0 {font-size: 0.7em;}
 
 /*
  * Backup and Restore CSS
@@ -1290,6 +1293,10 @@ sup {vertical-align: super;}
 
 .course-content ul.weeks .content .summary ul,
 .course-content ul.topics .content .summary ul {list-style: disc outside none;}
+.course-content ul.weeks .content .summary ul ul,
+.course-content ul.topics .content .summary ul ul {list-style: circle outside none;}
+.course-content ul.weeks .content .summary ul ul ul,
+.course-content ul.topics .content .summary ul ul ul {list-style: square outside none;}
 
 .course-content ul.weeks .content .summary ol,
 .course-content ul.topics .content .summary ol {list-style: decimal outside none;}
@@ -1621,6 +1628,14 @@ sup {vertical-align: super;}
     -webkit-box-shadow: inset 0px 0px 30px 0px #CCCCCC;
     -moz-box-shadow: inset 0px 0px 30px 0px #CCCCCC;
 }
+.jschooser .choosercontainer #chooseform .alloptions .option input[type=radio],
+.jschooser .choosercontainer #chooseform .alloptions .option .modicon {
+    display: inline-block;
+}
+.jschooser .choosercontainer #chooseform .alloptions .option .typename {
+    display: inline-block;
+    width: 65%;
+}
 .dir-rtl.jschooser .choosercontainer #chooseform .alloptions {
     max-width: 18.3em;
 }
@@ -1950,6 +1965,8 @@ img#persona_signin { cursor: pointer; }
 .moodle-actionmenu > ul,
 .moodle-actionmenu > ul > li {display: inline-block;}
 .moodle-actionmenu ul {padding: 0;margin: 0;list-style-type: none;}
+.section_action_menu .moodle-actionmenu ul.menubar {margin: 0;}
+.section_action_menu .moodle-actionmenu ul.menu {margin: 0 10px 10px 0;}
 #page .moodle-actionmenu a.hidden {display: none;}
 .moodle-actionmenu .toggle-display,
 .moodle-actionmenu .menu-action-text {display: none;}
@@ -2313,4 +2330,38 @@ body.lockscroll {
 /* IE10 only fix for calendar titling */
 .ie10 .yui3-calendar-header-label {
     display: inline-block;
+}
+
+.inplaceeditable.inplaceeditingon {
+    position: relative;
+}
+.inplaceeditable.inplaceeditingon .editinstructions {
+    margin-top: -30px;
+    font-weight: normal;
+    margin-right: -300px;
+    margin-left: 0;
+}
+.dir-rtl .inplaceeditable.inplaceeditingon .editinstructions {
+    margin-left: -300px;
+    margin-right: 0;
+}
+.inplaceeditable .quickeditlink .quickediticon img {
+    opacity: 0.2;
+}
+.inplaceeditable a.quickeditlink {
+    color: inherit;
+    text-decoration: inherit;
+}
+.inplaceeditable:hover .quickeditlink .quickediticon img,
+.inplaceeditable .quickeditlink:focus .quickediticon img {
+    opacity: 1;
+}
+.inplaceeditable.inplaceeditable-toggle .quickediticon {
+    display: none;
+}
+.inplaceeditable.inplaceeditingon input {
+    width: 330px;
+    height: 16px;
+    vertical-align: text-bottom;
+    margin-bottom: 0;
 }

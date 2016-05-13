@@ -3,8 +3,6 @@
       // If not, it obtains the corresponding TeX expression from the cache_tex db table
       // and uses mimeTeX to create the image file
 
-    define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
-
     require_once("../../config.php");
 
     if (!filter_is_enabled('algebra')) {
@@ -14,20 +12,21 @@
     require_once($CFG->libdir.'/filelib.php');
     require_once($CFG->dirroot.'/filter/tex/lib.php');
 
+    $action = optional_param('action', '', PARAM_ALPHANUM);
+    $algebra = optional_param('algebra', '', PARAM_RAW);
+
     require_login();
     require_capability('moodle/site:config', context_system::instance());
+    if ($action || $algebra) {
+        require_sesskey();
+    }
 
-    $query = urldecode($_SERVER['QUERY_STRING']);
-
-    if ($query) {
-      $output = $query;
-      $splitpos = strpos($query,'&')-8;
-      $algebra = substr($query,8,$splitpos);
+    if ($algebra && $action) {
       $md5 = md5($algebra);
-      if (strpos($query,'ShowDB') || strpos($query,'DeleteDB')) {
+      if ($action == 'ShowDB' || $action == 'DeleteDB') {
         $texcache = $DB->get_record("cache_filters", array("filter"=>"algebra", "md5key"=>$md5));
       }
-      if (strpos($query,'ShowDB')) {
+      if ($action == 'ShowDB') {
         if ($texcache) {
           $output = "DB cache_filters entry for $algebra\n";
           $output .= "id = $texcache->id\n";
@@ -40,7 +39,7 @@
           $output = "DB cache_filters entry for $algebra not found\n";
         }
       }
-      if (strpos($query,'DeleteDB')) {
+      if ($action == 'DeleteDB') {
         if ($texcache) {
           $output = "Deleting DB cache_filters entry for $algebra\n";
           $result =  $DB->delete_records("cache_filters", array("id"=>$texcache->id));
@@ -54,17 +53,17 @@
           $output = "Could not delete DB cache_filters entry for $algebra\nbecause it could not be found.\n";
         }
       }
-      if (strpos($query,'TeXStage1')) {
+      if ($action == 'TeXStage1') {
         $output = algebra2tex($algebra);
       }
-      if (strpos($query,'TeXStage2')) {
+      if ($action == 'TexStage2') {
         $output = algebra2tex($algebra);
         $output = refineTeX($output);
       }
-      if (strpos($query,'ShowImage')||strpos($query,'SlashArguments')) {
+      if ($action == 'ShowImage'|| $action == 'SlashArguments') {
         $output = algebra2tex($algebra);
         $output = refineTeX($output);
-        if (strpos($query,'ShowImage')) {
+        if ($action == 'ShowImage') {
           tex2image($output, $md5);
         } else {
           slasharguments($output, $md5);
@@ -285,19 +284,20 @@ function slasharguments($texexp, $md5) {
                     value="sin(z)/(x^2+y^2)" />
             </center>
            <ol>
-           <li>First click on this button <input type="submit" name="ShowDB" value="Show DB Entry" />
+           <li>First click on this button <button type="submit" name="action" value="ShowDB">Show DB Entry</button>
                to see the cache_filters database entry for this expression.</li>
            <li>If the database entry looks corrupt, click on this button to delete it:
-               <input type="submit" name="DeleteDB" value="Delete DB Entry" /></li>
-           <li>Now click on this button <input type="submit" name="TeXStage1" value="First Stage Tex Translation" />.
+               <button type="submit" name="action" value="DeleteDB">Delete DB Entry</button></li>
+           <li>Now click on this button <button type="submit" name="action" value="TeXStage1">First Stage Tex Translation</button>.
                A preliminary translation into TeX will appear in the box below.</li>
-           <li>Next click on this button <input type="submit" name="TeXStage2" value="Second Stage Tex Translation" />.
+           <li>Next click on this button <button type="submit" name="action" value="TexStage2">Second Stage Tex Translation</button>.
                A more refined translation into TeX will appear in the box below.</li>
-           <li>Then click on this button <input type="submit" name="ShowImage" value="Show Image" />
+           <li>Then click on this button <button type="submit" name="action" value="ShowImage">Show Image</button>
                to show a graphic image of the algebraic expression.</li>
            <li>Finally check your slash arguments setting
-               <input type="submit" name="SlashArguments" value="Check Slash Arguments" /></li>
+               <button type="submit" name="action" value="SlashArguments">Check Slash Arguments</button></li>
            </ol>
+           <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
           </form> <br /> <br />
        <center>
           <iframe name="inlineframe" align="middle" width="80%" height="200">

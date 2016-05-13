@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,8 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    core
- * @subpackage tag
+ * Managing tags, tag areas and tags collections
+ *
+ * @package    core_tag
  * @copyright  2007 Luiz Cruz <luiz.laydner@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,296 +31,231 @@ define('SHOW_ALL_PAGE_SIZE', 50000);
 define('DEFAULT_PAGE_SIZE', 30);
 
 $tagschecked = optional_param_array('tagschecked', array(), PARAM_INT);
-$newnames    = optional_param_array('newname', array(), PARAM_TAG);
-$tagtypes    = optional_param_array('tagtypes', array(), PARAM_ALPHA);
+$tagid       = optional_param('tagid', null, PARAM_INT);
+$isstandard  = optional_param('isstandard', null, PARAM_INT);
 $action      = optional_param('action', '', PARAM_ALPHA);
 $perpage     = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);
-
-require_login();
-
-if (empty($CFG->usetags)) {
-    print_error('tagsaredisabled', 'tag');
-}
+$page        = optional_param('page', 0, PARAM_INT);
+$tagcollid   = optional_param('tc', 0, PARAM_INT);
+$tagareaid   = optional_param('ta', null, PARAM_INT);
+$filter      = optional_param('filter', '', PARAM_NOTAGS);
 
 $params = array();
 if ($perpage != DEFAULT_PAGE_SIZE) {
     $params['perpage'] = $perpage;
 }
-admin_externalpage_setup('managetags', '', $params, '', array('pagelayout' => 'standard'));
+if ($page > 0) {
+    $params['page'] = $page;
+}
+if ($tagcollid) {
+    $params['tc'] = $tagcollid;
+}
+if ($filter !== '') {
+    $params['filter'] = $filter;
+}
+
+admin_externalpage_setup('managetags', '', $params, '', array('pagelayout' => 'report'));
+
+if (empty($CFG->usetags)) {
+    print_error('tagsaredisabled', 'tag');
+}
+
+$tagobject = null;
+if ($tagid) {
+    $tagobject = core_tag_tag::get($tagid, '*', MUST_EXIST);
+    $tagcollid = $tagobject->tagcollid;
+}
+$tagcoll = core_tag_collection::get_by_id($tagcollid);
+$tagarea = core_tag_area::get_by_id($tagareaid);
+$manageurl = new moodle_url('/tag/manage.php');
+if ($tagcoll) {
+    // We are inside a tag collection - add it to the breadcrumb.
+    $PAGE->navbar->add(core_tag_collection::display_name($tagcoll),
+            new moodle_url($manageurl, array('tc' => $tagcoll->id)));
+}
 
 $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
-$PAGE->navbar->add(get_string('tags', 'tag'), new moodle_url('/tag/search.php'));
-$PAGE->navbar->add(get_string('managetags', 'tag'));
-
-echo $OUTPUT->header();
-
-$err_notice = '';
-$notice = '';
-
-// get all the possible tag types from db
-$existing_tagtypes = array();
-if ($ptypes = $DB->get_records_sql("SELECT DISTINCT(tagtype) FROM {tag}")) {
-    foreach ($ptypes as $ptype) {
-        $existing_tagtypes[$ptype->tagtype] = $ptype->tagtype;
-    }
-}
-$existing_tagtypes['official'] = get_string('tagtype_official', 'tag');
-$existing_tagtypes['default'] = get_string('tagtype_default', 'tag');
 
 switch($action) {
 
+    case 'colladd':
+        require_sesskey();
+        $name = required_param('name', PARAM_NOTAGS);
+        $searchable = required_param('searchable', PARAM_BOOL);
+        core_tag_collection::create(array('name' => $name, 'searchable' => $searchable));
+        redirect($manageurl);
+        break;
+
+    case 'colldelete':
+        if ($tagcoll && !$tagcoll->component) {
+            require_sesskey();
+            core_tag_collection::delete($tagcoll);
+            \core\notification::success(get_string('changessaved', 'core_tag'));
+        }
+        redirect($manageurl);
+        break;
+
+    case 'collmoveup':
+        if ($tagcoll) {
+            require_sesskey();
+            core_tag_collection::change_sortorder($tagcoll, -1);
+            redirect($manageurl, get_string('changessaved', 'core_tag'), null, \core\output\notification::NOTIFY_SUCCESS);
+        }
+        redirect($manageurl);
+        break;
+
+    case 'collmovedown':
+        if ($tagcoll) {
+            require_sesskey();
+            core_tag_collection::change_sortorder($tagcoll, 1);
+            redirect($manageurl, get_string('changessaved', 'core_tag'), null, \core\output\notification::NOTIFY_SUCCESS);
+        }
+        redirect($manageurl);
+        break;
+
     case 'delete':
-        if (!data_submitted() or !confirm_sesskey()) {
-            break;
+        if ($tagid) {
+            require_sesskey();
+            core_tag_tag::delete_tags(array($tagid));
+            \core\notification::success(get_string('deleted', 'core_tag'));
         }
-
-        $str_tagschecked = implode(', ', tag_get_name($tagschecked));
-        tag_delete($tagschecked);
-        $notice = $str_tagschecked.' --  '.get_string('deleted','tag');
+        redirect($PAGE->url);
         break;
 
-    case 'reset':
-        if (!data_submitted() or !confirm_sesskey()) {
-            break;
-        }
-        $str_tagschecked = implode(', ', tag_get_name($tagschecked));
-        tag_unset_flag($tagschecked);
-        $notice = $str_tagschecked .' -- '. get_string('reset', 'tag');
-        break;
-
-    case 'changetype':
-        if (!data_submitted() or !confirm_sesskey()) {
-            break;
-        }
-
-        $changed = array();
-        foreach ($tagschecked as $tag_id) {
-            if (!array_key_exists($tagtypes[$tag_id], $existing_tagtypes)) {
-                //can not add new types here!!
-                continue;
+    case 'bulk':
+        if (optional_param('bulkdelete', null, PARAM_RAW) !== null) {
+            if ($tagschecked) {
+                require_sesskey();
+                core_tag_tag::delete_tags($tagschecked);
+                \core\notification::success(get_string('deleted', 'core_tag'));
             }
-
-            // update tag type;
-            if (tag_type_set($tag_id, $tagtypes[$tag_id])) {
-                $changed[] = $tag_id;
-            }
-        }
-
-        if (!empty($changed)) {
-            $str_changed = implode(', ', tag_get_name($changed));
-            $notice = $str_changed .' --  '. get_string('typechanged','tag');
-        }
-        break;
-
-    case 'changename':
-        if (!data_submitted() or !confirm_sesskey()) {
-            break;
-        }
-
-        $tags_names_changed = array();
-        foreach ($tagschecked as $tag_id) {
-            if ($newnames[$tag_id] != '') {
-                if (! $tags_names_updated[] = tag_rename($tag_id, $newnames[$tag_id]) ) {
-                    // if tag already exists, or is not a valid tag name, etc.
-                    $err_notice .= $newnames[$tag_id]. '-- ' . get_string('namesalreadybeeingused','tag').'<br />';
+            redirect($PAGE->url);
+        } else if (optional_param('bulkcombine', null, PARAM_RAW) !== null) {
+            $tags = core_tag_tag::get_bulk($tagschecked, '*');
+            if (count($tags) > 1) {
+                require_sesskey();
+                if (($maintag = optional_param('maintag', 0, PARAM_INT)) && array_key_exists($maintag, $tags)) {
+                    $tag = $tags[$maintag];
                 } else {
-                    $tags_names_changed[$tag_id] = $newnames[$tag_id];
+                    $tag = array_shift($tags);
                 }
+                $tag->combine_tags($tags);
+                \core\notification::success(get_string('combined', 'core_tag'));
             }
-        }
-
-        //notice to inform what tags had their names effectively updated
-        if ($tags_names_changed){
-            $notice = implode($tags_names_changed, ', ');
-            $notice .= ' -- ' . get_string('updated','tag');
+            redirect($PAGE->url);
         }
         break;
-    case 'addofficialtag':
-        if (!data_submitted() or !confirm_sesskey()) {
-            break;
-        }
 
-        $new_otags = explode(',', optional_param('otagsadd', '', PARAM_TAG));
-        $notice = '';
-        foreach ( $new_otags as $new_otag ) {
-            if ( $new_otag_id = tag_get_id($new_otag) ) {
-                // tag exists, change the type
-                tag_type_set($new_otag_id, 'official');
+    case 'renamecombine':
+        // Allows to rename the tag and if the tag with the new name already exists these tags will be combined.
+        if ($tagid && ($newname = required_param('newname', PARAM_TAG))) {
+            require_sesskey();
+            $tag = core_tag_tag::get($tagid, '*', MUST_EXIST);
+            $targettag = core_tag_tag::get_by_name($tag->tagcollid, $newname, '*');
+            if ($targettag) {
+                $targettag->combine_tags(array($tag));
+                \core\notification::success(get_string('combined', 'core_tag'));
             } else {
-                require_capability('moodle/tag:create', context_system::instance());
-                tag_add($new_otag, 'official');
+                $tag->update(array('rawname' => $newname));
+                \core\notification::success(get_string('changessaved', 'core_tag'));
             }
-            $notice .= get_string('addedotag', 'tag', $new_otag) .' ';
         }
+        redirect($PAGE->url);
+        break;
+
+    case 'addstandardtag':
+        require_sesskey();
+        $tagobjects = array();
+        if ($tagcoll) {
+            $tagslist = optional_param('tagslist', '', PARAM_RAW);
+            $newtags = preg_split('/\s*,\s*/', trim($tagslist), -1, PREG_SPLIT_NO_EMPTY);
+            $tagobjects = core_tag_tag::create_if_missing($tagcoll->id, $newtags, true);
+        }
+        foreach ($tagobjects as $tagobject) {
+            if (!$tagobject->isstandard) {
+                $tagobject->update(array('isstandard' => 1));
+            }
+        }
+        redirect($PAGE->url, $tagobjects ? get_string('added', 'core_tag') : null,
+                null, \core\output\notification::NOTIFY_SUCCESS);
         break;
 }
 
-if ($err_notice) {
-    echo $OUTPUT->notification($err_notice, 'red');
-}
-if ($notice) {
-    echo $OUTPUT->notification($notice, 'green');
+echo $OUTPUT->header();
+
+if (!$tagcoll) {
+    // Tag collection is not specified. Display the overview of tag collections and tag areas.
+    $tagareastable = new core_tag_areas_table($manageurl);
+    $colltable = new core_tag_collections_table($manageurl);
+
+    echo $OUTPUT->heading(get_string('tagcollections', 'core_tag') . $OUTPUT->help_icon('tagcollection', 'tag'), 3);
+    echo html_writer::table($colltable);
+    $url = new moodle_url($manageurl, array('action' => 'colladd'));
+    echo html_writer::div(html_writer::link('#', get_string('addtagcoll', 'tag'), array('data-url' => $url)),
+            'mdl-right addtagcoll');
+
+    echo $OUTPUT->heading(get_string('tagareas', 'core_tag'), 3);
+    echo html_writer::table($tagareastable);
+
+    $PAGE->requires->js_call_amd('core/tag', 'initManageCollectionsPage', array());
+
+    echo $OUTPUT->footer();
+    exit;
 }
 
-// small form to add an official tag
-print('<form class="tag-management-form" method="post" action="'.$CFG->wwwroot.'/tag/manage.php">');
-print('<input type="hidden" name="action" value="addofficialtag" />');
-print('<div class="tag-management-form generalbox"><label class="accesshide" for="id_otagsadd">'. get_string('addotags', 'tag') .'</label>'.
-    '<input name="otagsadd" id="id_otagsadd" type="text" />'.
-    '<input type="hidden" name="sesskey" value="'.sesskey().'">'.
-    '<input name="addotags" value="'. get_string('addotags', 'tag') .'" onclick="skipClientValidation = true;" id="id_addotags" type="submit" />'.
+// Tag collection is specified. Manage tags in this collection.
+echo $OUTPUT->heading(core_tag_collection::display_name($tagcoll));
+
+// Form to filter tags.
+print('<form class="tag-filter-form" method="get" action="'.$CFG->wwwroot.'/tag/manage.php">');
+print('<div class="tag-management-form generalbox"><label class="accesshide" for="id_tagfilter">'. get_string('search') .'</label>'.
+    '<input type="hidden" name="tc" value="'.$tagcollid.'" />'.
+    '<input type="hidden" name="perpage" value="'.$perpage.'" />'.
+    '<input id="id_tagfilter" name="filter" type="text" value=' . s($filter) . '>'.
+    '<input value="'. s(get_string('search')) .'" type="submit"> '.
+    ($filter !== '' ? html_writer::link(new moodle_url($PAGE->url, array('filter' => null)),
+        get_string('resetfilter', 'tag'), array('class' => 'resetfilterlink')) : '').
     '</div>');
 print('</form>');
 
-//setup table
+// Link to add an standard tags.
+$img = $OUTPUT->pix_icon('t/add', '');
+echo '<div class="addstandardtags visibleifjs">' .
+    html_writer::link('#', $img . get_string('addotags', 'tag'), array('data-action' => 'addstandardtag')) .
+    '</div>';
 
-$tablecolumns = array('id', 'name', 'fullname', 'count', 'flag', 'timemodified', 'rawname', 'tagtype', '');
-$tableheaders = array(get_string('id', 'tag'),
-                      get_string('name', 'tag'),
-                      get_string('owner', 'tag'),
-                      get_string('count', 'tag'),
-                      get_string('flag', 'tag'),
-                      get_string('timemodified', 'tag'),
-                      get_string('newname', 'tag'),
-                      get_string('tagtype', 'tag'),
-                      get_string('select', 'tag'));
+$table = new core_tag_manage_table($tagcollid);
+echo '<form class="tag-management-form" method="post" action="'.$CFG->wwwroot.'/tag/manage.php">';
+echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'tc', 'value' => $tagcollid));
+echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
+echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'action', 'value' => 'bulk'));
+echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'perpage', 'value' => $perpage));
+echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'page', 'value' => $page));
+echo $table->out($perpage, true);
 
-$table = new flexible_table('tag-management-list-'.$USER->id);
-
-$baseurl = $CFG->wwwroot.'/tag/manage.php?perpage='.$perpage;
-
-$table->define_columns($tablecolumns);
-$table->define_headers($tableheaders);
-$table->define_baseurl($baseurl);
-
-$table->sortable(true, 'flag', SORT_DESC);
-
-$table->set_attribute('cellspacing', '0');
-$table->set_attribute('id', 'tag-management-list');
-$table->set_attribute('class', 'admintable generaltable');
-
-$table->set_control_variables(array(
-TABLE_VAR_SORT    => 'ssort',
-TABLE_VAR_HIDE    => 'shide',
-TABLE_VAR_SHOW    => 'sshow',
-TABLE_VAR_IFIRST  => 'sifirst',
-TABLE_VAR_ILAST   => 'silast',
-TABLE_VAR_PAGE    => 'spage'
-));
-
-$table->setup();
-
-if ($table->get_sql_sort()) {
-    $sort = 'ORDER BY '. $table->get_sql_sort();
-} else {
-    $sort = '';
+if ($table->rawdata) {
+    echo html_writer::start_tag('p');
+    echo html_writer::tag('button', get_string('deleteselected', 'tag'),
+            array('id' => 'tag-management-delete', 'type' => 'submit', 'class' => 'tagdeleteselected', 'name' => 'bulkdelete'));
+    echo html_writer::tag('button', get_string('combineselected', 'tag'),
+        array('id' => 'tag-management-combine', 'type' => 'submit', 'class' => 'tagcombineselected', 'name' => 'bulkcombine'));
+    echo html_writer::end_tag('p');
 }
+echo '</form>';
 
-list($where, $params) = $table->get_sql_where();
-if ($where) {
-    $where = 'WHERE '. $where;
-}
-
-$allusernames = get_all_user_name_fields(true, 'u');
-$query = "
-        SELECT tg.id, tg.name, tg.rawname, tg.tagtype, tg.flag, tg.timemodified,
-               u.id AS owner, $allusernames,
-               COUNT(ti.id) AS count
-          FROM {tag} tg
-     LEFT JOIN {tag_instance} ti ON ti.tagid = tg.id
-     LEFT JOIN {user} u ON u.id = tg.userid
-               $where
-      GROUP BY tg.id, tg.name, tg.rawname, tg.tagtype, tg.flag, tg.timemodified,
-               u.id, $allusernames
-         $sort";
-
-$totalcount = $DB->count_records_sql("
-        SELECT COUNT(DISTINCT(tg.id))
-          FROM {tag} tg
-     LEFT JOIN {user} u ON u.id = tg.userid
-        $where", $params);
-
-$table->initialbars(true); // always initial bars
-$table->pagesize($perpage, $totalcount);
-
-//@todo MDL-35474 convert to mform
-echo '<form class="tag-management-form" method="post" action="'.$CFG->wwwroot.'/tag/manage.php"><div>';
-
-//retrieve tags from DB
-if ($tagrecords = $DB->get_records_sql($query, $params, $table->get_page_start(),  $table->get_page_size())) {
-
-    //populate table with data
-    foreach ($tagrecords as $tag) {
-        $id             = $tag->id;
-        $params         = array('id' => $tag->id);
-        $taglink        = new moodle_url($CFG->wwwroot . '/tag/index.php', $params);
-        $name           = html_writer::link($taglink, tag_display_name($tag));
-        $params         = array('id' => $tag->owner);
-        $ownerlink      = new moodle_url($CFG->wwwroot . '/user/view.php', $params);
-        $owner          = html_writer::link($ownerlink, fullname($tag));
-        $count          = $tag->count;
-        $flag           = $tag->flag;
-        $timemodified   = format_time(time() - $tag->timemodified);
-        $checkbox       = html_writer::tag('input', '', array('type' => 'checkbox', 'name' => 'tagschecked[]', 'value' => $tag->id));
-        $attrs          = array('type' => 'text', 'id' => 'newname_' . $tag->id, 'name' => 'newname['.$tag->id.']');
-        $text           = html_writer::label(get_string('newname', 'tag'), 'newname_' . $tag->id, false, array('class' => 'accesshide'));
-        $text          .= html_writer::empty_tag('input', $attrs);
-        $tagtype        = html_writer::label(get_string('tagtype', 'tag'), 'menutagtypes'. $tag->id, false, array('class' => 'accesshide'));
-        $tagtype       .= html_writer::select($existing_tagtypes, 'tagtypes['.$tag->id.']', $tag->tagtype, false, array('id' => 'menutagtypes'. $tag->id));
-
-        //if the tag if flagged, highlight it
-        if ($tag->flag > 0) {
-            $id = html_writer::tag('span', $id, array('class' => 'flagged-tag'));
-            $name = html_writer::tag('span', $name, array('class' => 'flagged-tag'));
-            $owner = html_writer::tag('span', $owner, array('class' => 'flagged-tag'));
-            $count = html_writer::tag('span', $count, array('class' => 'flagged-tag'));
-            $flag = html_writer::tag('span', $flag, array('class' => 'flagged-tag'));
-            $timemodified = html_writer::tag('span', $timemodified, array('class' => 'flagged-tag'));
-            $tagtype = html_writer::tag('span', $tagtype, array('class' => 'flagged-tag'));
-        }
-
-        $data = array($id, $name, $owner, $count, $flag, $timemodified, $text, $tagtype, $checkbox);
-
-        $table->add_data($data);
-    }
-
-    echo html_writer::empty_tag('input', array('type' => 'button', 'onclick' => 'checkall()', 'value' => get_string('selectall')));
-    echo html_writer::empty_tag('input', array('type' => 'button', 'onclick' => 'checknone()', 'value' => get_string('deselectall')));
-    echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
-    echo html_writer::empty_tag('br');
-    echo html_writer::empty_tag('br');
-
-    echo html_writer::label(get_string('withselectedtags', 'tag'), 'menuformaction', false, array('class' => 'accesshide'));
-    $options = array('' => get_string('withselectedtags', 'tag'),
-                     'reset' => get_string('resetflag', 'tag'),
-                     'delete' => get_string('delete', 'tag'),
-                     'changetype' => get_string('changetype', 'tag'),
-                     'changename' => get_string('changename', 'tag'));
-    echo html_writer::select($options, 'action', '', array(), array('id' => 'menuformaction'));
-
-    echo html_writer::tag('button', get_string('ok'), array('id' => 'tag-management-submit', 'type' => 'submit'));
-}
-
-$table->print_html();
-
-//@todo MDL-35474 convert to mform
-echo '</div></form>';
-
+$totalcount = $table->totalcount;
 if ($perpage == SHOW_ALL_PAGE_SIZE) {
     echo html_writer::start_tag('div', array('id' => 'showall'));
-    $params = array('perpage' => DEFAULT_PAGE_SIZE);
-    $url = new moodle_url($baseurl, $params);
+    $params = array('perpage' => DEFAULT_PAGE_SIZE, 'page' => 0);
+    $url = new moodle_url($PAGE->url, $params);
     echo html_writer::link($url, get_string('showperpage', '', DEFAULT_PAGE_SIZE));
     echo html_writer::end_tag('div');
-
 } else if ($totalcount > 0 and $perpage < $totalcount) {
     echo html_writer::start_tag('div', array('id' => 'showall'));
-    $params = array('perpage' => SHOW_ALL_PAGE_SIZE);
-    $url = new moodle_url($baseurl, $params);
+    $params = array('perpage' => SHOW_ALL_PAGE_SIZE, 'page' => 0);
+    $url = new moodle_url($PAGE->url, $params);
     echo html_writer::link($url, get_string('showall', '', $totalcount));
     echo html_writer::end_tag('div');
 }
-
-echo html_writer::empty_tag('br');
 
 echo $OUTPUT->footer();

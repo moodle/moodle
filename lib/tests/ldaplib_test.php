@@ -64,8 +64,8 @@ class core_ldaplib_testcase extends advanced_testcase {
                 'expected' => 'James\\20\\22Jim\22\\20\\3d\\20Smith\\2c\\20III',
             ),
             array (
-                'test' => '  <jsmith@test.local> ',
-                'expected' => '\\20\\20\\3cjsmith@test.local\\3e\\20',
+                'test' => '  <jsmith@example.com> ',
+                'expected' => '\\20\\20\\3cjsmith@example.com\\3e\\20',
             ),
         );
 
@@ -149,12 +149,12 @@ class core_ldaplib_testcase extends advanced_testcase {
                 'expected' => 'James "Jim" = Smith, III',
             ),
             array (
-                'test' => '\\20\\20\\3cjsmith@test.local\\3e\\20',
-                'expected' => '  <jsmith@test.local> ',
+                'test' => '\\20\\20\\3cjsmith@example.com\\3e\\20',
+                'expected' => '  <jsmith@example.com> ',
             ),
             array (
-                'test' => '\\ \\<jsmith@test.local\\>\\ ',
-                'expected' => ' <jsmith@test.local> ',
+                'test' => '\\ \\<jsmith@example.com\\>\\ ',
+                'expected' => ' <jsmith@example.com> ',
             ),
             array (
                 'test' => 'Lu\\C4\\8Di\\C4\\87',
@@ -165,5 +165,46 @@ class core_ldaplib_testcase extends advanced_testcase {
         foreach ($tests as $test) {
             $this->assertSame($test['expected'], ldap_stripslashes($test['test']));
         }
+    }
+
+    /**
+     * Tests for ldap_normalise_objectclass.
+     *
+     * @dataProvider ldap_normalise_objectclass_provider
+     * @param array $args Arguments passed to ldap_normalise_objectclass
+     * @param string $expected The expected objectclass filter
+     */
+    public function test_ldap_normalise_objectclass($args, $expected) {
+        $this->assertEquals($expected, call_user_func_array('ldap_normalise_objectclass', $args));
+    }
+
+    /**
+     * Data provider for the test_ldap_normalise_objectclass testcase.
+     *
+     * @return array of testcases.
+     */
+    public function ldap_normalise_objectclass_provider() {
+        return array(
+            'Empty value' => array(
+                array(null),
+                '(objectClass=*)',
+            ),
+            'Empty value with different default' => array(
+                array(null, 'lion'),
+                '(objectClass=lion)',
+            ),
+            'Supplied unwrapped objectClass' => array(
+                array('objectClass=tiger'),
+                '(objectClass=tiger)',
+            ),
+            'Supplied string value' => array(
+                array('leopard'),
+                '(objectClass=leopard)',
+            ),
+            'Supplied complex' => array(
+                array('(&(objectClass=cheetah)(enabledMoodleUser=1))'),
+                '(&(objectClass=cheetah)(enabledMoodleUser=1))',
+            ),
+        );
     }
 }

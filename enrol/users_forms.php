@@ -99,7 +99,8 @@ class enrol_users_addmember_form extends moodleform {
 
         $mform->addElement('header','general', fullname($user));
 
-        $mform->addElement('select', 'groupid', get_string('addgroup', 'group'), $options);
+        $mform->addElement('select', 'groupids', get_string('addgroup', 'group'), $options, array('multiple' => 'multiple'));
+        $mform->addRule('groupids', null, 'required');
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
@@ -166,6 +167,7 @@ class enrol_users_filter_form extends moodleform {
         // Filter by group.
         $allgroups = $manager->get_all_groups();
         $groupsmenu[0] = get_string('allparticipants');
+        $groupsmenu[-1] = get_string('nogroup', 'enrol');
         foreach($allgroups as $gid => $unused) {
             $groupsmenu[$gid] = $allgroups[$gid]->name;
         }
@@ -190,5 +192,7 @@ class enrol_users_filter_form extends moodleform {
         // Add hidden fields required by page.
         $mform->addElement('hidden', 'id', $this->_customdata['id']);
         $mform->setType('id', PARAM_INT);
+        $mform->addElement('hidden', 'newcourse', $this->_customdata['newcourse']);
+        $mform->setType('newcourse', PARAM_BOOL);
     }
 }

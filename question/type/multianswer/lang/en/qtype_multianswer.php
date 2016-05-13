@@ -35,6 +35,7 @@ $string['layoutundefined'] = 'Undefined layout';
 $string['layoutvertical'] = 'Vertical column of radio buttons';
 $string['nooptionsforsubquestion'] = 'Unable to get options for question part # {$a->sub} (question->id={$a->id})';
 $string['noquestions'] = 'The Cloze(multianswer) question "<strong>{$a}</strong>" does not contain any question';
+$string['pleaseananswerallparts'] = 'Please answer all parts of the question.';
 $string['pluginname'] = 'Embedded answers (Cloze)';
 $string['pluginname_help'] = 'Embedded answers (Cloze) questions consist of a passage of text with questions such as multiple-choice and short answer embedded within it.';
 $string['pluginname_link'] = 'question/type/multianswer';
@@ -58,7 +59,7 @@ $string['questionsmore'] = '{$a} question(s) more than in the multianswer questi
 $string['questionnotfound'] = 'Unable to find question of question part #{$a}';
 $string['questionsaveasedited'] = 'The question will be saved as edited';
 $string['questiontypechanged'] = 'Question type changed';
-$string['questiontypechangedcomment'] = 'At least one question type has been changed.<br \>Did you add, delete or move a question?<br \>Look ahead.';
+$string['questiontypechangedcomment'] = 'At least one question type has been changed.<br />Did you add, delete or move a question?<br />Look ahead.';
 $string['questionusedinquiz'] = 'This question is used in {$a->nb_of_quiz} quiz(s), total attempt(s) : {$a->nb_of_attempts} ';
 $string['storedqtype'] = 'Stored question type {$a}';
 $string['subqresponse'] = 'part {$a->i}: {$a->response}';

@@ -83,7 +83,6 @@ SEARCH.prototype = {
         div.append(label).append(this.input);
 
         this.select.insert(div, 'before');
-        this.select.one('option').setStyle('display', 'none');
 
         this.input.on('keyup', this.typed, this);
         this.select.on('change', this.validate, this);

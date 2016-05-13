@@ -177,6 +177,8 @@ function core_login_process_password_reset_request() {
  */
 function core_login_process_password_set($token) {
     global $DB, $CFG, $OUTPUT, $PAGE, $SESSION;
+    require_once($CFG->dirroot.'/user/lib.php');
+
     $pwresettime = isset($CFG->pwresettime) ? $CFG->pwresettime : 1800;
     $sql = "SELECT u.*, upr.token, upr.timerequested, upr.id as tokenid
               FROM {user} u
@@ -215,7 +217,7 @@ function core_login_process_password_set($token) {
     }
 
     // Token is correct, and unexpired.
-    $mform = new login_set_password_form(null, null, 'post', '', 'autocomplete="yes"');
+    $mform = new login_set_password_form(null, $user, 'post', '', 'autocomplete="yes"');
     $data = $mform->get_data();
     if (empty($data)) {
         // User hasn't submitted form, they got here directly from email link.
@@ -239,6 +241,7 @@ function core_login_process_password_set($token) {
         if (!$userauth->user_update_password($user, $data->password)) {
             print_error('errorpasswordupdate', 'auth');
         }
+        user_add_password_history($user->id, $data->password);
         if (!empty($CFG->passwordchangelogout)) {
             \core\session\manager::kill_user_sessions($user->id, session_id());
         }

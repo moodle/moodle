@@ -50,7 +50,7 @@ class logstore_legacy_store_testcase extends advanced_testcase {
         $this->assertEquals(array('logstore_legacy'), array_keys($stores));
         $store = $stores['logstore_legacy'];
         $this->assertInstanceOf('logstore_legacy\log\store', $store);
-        $this->assertInstanceOf('core\log\sql_select_reader', $store);
+        $this->assertInstanceOf('core\log\sql_reader', $store);
         $this->assertTrue($store->is_logging());
 
         $logs = $DB->get_records('log', array(), 'id ASC');
@@ -272,5 +272,34 @@ class logstore_legacy_store_testcase extends advanced_testcase {
         foreach ($expectedreports as $expectedreport) {
             $this->assertContains($expectedreport, $reports);
         }
+    }
+
+    /**
+     * Test that the legacy log cleanup works correctly.
+     */
+    public function test_cleanup_task() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create some records spread over various days; test multiple iterations in cleanup.
+        $record = (object) array('time' => time());
+        $DB->insert_record('log', $record);
+        $record->time -= 3600 * 24 * 30;
+        $DB->insert_record('log', $record);
+        $record->time -= 3600 * 24 * 30;
+        $DB->insert_record('log', $record);
+        $record->time -= 3600 * 24 * 30;
+        $DB->insert_record('log', $record);
+        $this->assertEquals(4, $DB->count_records('log'));
+
+        // Remove all logs before "today".
+        set_config('loglifetime', 1);
+
+        $this->expectOutputString(" Deleted old legacy log records\n");
+        $clean = new \logstore_legacy\task\cleanup_task();
+        $clean->execute();
+
+        $this->assertEquals(1, $DB->count_records('log'));
     }
 }

@@ -26,10 +26,10 @@
 require_once("../config.php");
 require_once("lib.php");
 require_once($CFG->libdir . '/formslib.php');
-require_once($CFG->libdir . '/conditionlib.php');
 
 $id = required_param('id', PARAM_INT);    // course_sections.id
 $sectionreturn = optional_param('sr', 0, PARAM_INT);
+$deletesection = optional_param('delete', 0, PARAM_BOOL);
 
 $PAGE->set_url('/course/editsection.php', array('id'=>$id, 'sr'=> $sectionreturn));
 
@@ -44,9 +44,53 @@ require_capability('moodle/course:update', $context);
 // Get section_info object with all availability options.
 $sectioninfo = get_fast_modinfo($course)->get_section_info($sectionnum);
 
+// Deleting the section.
+if ($deletesection) {
+    $cancelurl = course_get_url($course, $sectioninfo, array('sr' => $sectionreturn));
+    if (course_can_delete_section($course, $sectioninfo)) {
+        $confirm = optional_param('confirm', false, PARAM_BOOL) && confirm_sesskey();
+        if ($confirm) {
+            course_delete_section($course, $sectioninfo, true);
+            $courseurl = course_get_url($course, 0, array('sr' => $sectionreturn));
+            redirect($courseurl);
+        } else {
+            if (get_string_manager()->string_exists('deletesection', 'format_' . $course->format)) {
+                $strdelete = get_string('deletesection', 'format_' . $course->format);
+            } else {
+                $strdelete = get_string('deletesection');
+            }
+            $PAGE->navbar->add($strdelete);
+            $PAGE->set_title($strdelete);
+            $PAGE->set_heading($course->fullname);
+            echo $OUTPUT->header();
+            echo $OUTPUT->box_start('noticebox');
+            $optionsyes = array('id' => $id, 'confirm' => 1, 'delete' => 1, 'sesskey' => sesskey());
+            $deleteurl = new moodle_url('/course/editsection.php', $optionsyes);
+            $formcontinue = new single_button($deleteurl, get_string('delete'));
+            $formcancel = new single_button($cancelurl, get_string('cancel'), 'get');
+            echo $OUTPUT->confirm(get_string('confirmdeletesection', '',
+                get_section_name($course, $sectioninfo)), $formcontinue, $formcancel);
+            echo $OUTPUT->box_end();
+            echo $OUTPUT->footer();
+            exit;
+        }
+    } else {
+        notice(get_string('nopermissions', 'error', get_string('deletesection')), $cancelurl);
+    }
+}
+
 $editoroptions = array('context'=>$context ,'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);
-$mform = course_get_format($course->id)->editsection_form($PAGE->url,
-        array('cs' => $sectioninfo, 'editoroptions' => $editoroptions));
+
+$courseformat = course_get_format($course);
+$defaultsectionname = $courseformat->get_default_section_name($section);
+
+$customdata = array(
+    'cs' => $sectioninfo,
+    'editoroptions' => $editoroptions,
+    'defaultsectionname' => $defaultsectionname
+);
+$mform = $courseformat->editsection_form($PAGE->url, $customdata);
+
 // set current value, make an editable copy of section_info object
 // this will retrieve all format-specific options as well
 $initialdata = convert_to_array($sectioninfo);
@@ -70,28 +114,7 @@ if ($mform->is_cancelled()){
             $data->availability = null;
         }
     }
-    $DB->update_record('course_sections', $data);
-    rebuild_course_cache($course->id, true);
-    if (isset($data->section)) {
-        // Usually edit form does not change relative section number but just in case.
-        $sectionnum = $data->section;
-    }
-    course_get_format($course->id)->update_section_format_options($data);
-
-    // Set section info, as this might not be present in form_data.
-    if (!isset($data->section))  {
-        $data->section = $sectionnum;
-    }
-    // Trigger an event for course section update.
-    $event = \core\event\course_section_updated::create(
-            array(
-                'objectid' => $data->id,
-                'courseid' => $course->id,
-                'context' => $context,
-                'other' => array('sectionnum' => $data->section)
-            )
-        );
-    $event->trigger();
+    course_update_section($course, $section, $data);
 
     $PAGE->navigation->clear_cache();
     redirect(course_get_url($course, $section, array('sr' => $sectionreturn)));

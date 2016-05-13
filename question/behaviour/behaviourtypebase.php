@@ -60,6 +60,15 @@ abstract class question_behaviour_type {
     }
 
     /**
+     * With this behaviour, is it possible that a question might finish as the student
+     * interacts with it, without a call to the {@link question_attempt::finish()} method?
+     * @return bool whether with this behaviour, questions may finish naturally.
+     */
+    public function can_questions_finish_during_the_attempt() {
+        return false;
+    }
+
+    /**
      * Adjust a random guess score for a question using this model. You have to
      * do this without knowing details of the specific question, or which usage
      * it is in.

@@ -46,6 +46,10 @@ class qbehaviour_immediatefeedback extends question_behaviour_with_save {
         return $question instanceof question_automatically_gradable;
     }
 
+    public function can_finish_during_attempt() {
+        return true;
+    }
+
     public function get_min_fraction() {
         return $this->question->get_min_fraction();
     }

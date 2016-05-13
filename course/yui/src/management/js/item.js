@@ -138,7 +138,8 @@ Item.prototype = {
         } else {
             // Aha it succeeded but this is the top item in the list. Pagination is in play!
             // Refresh to update the state of things.
-            Y.log(this.get('itemname')+' cannot be moved up as its the top item on this page.', 'info', 'moodle-course-management');
+            Y.log(this.get('itemname') + ' cannot be moved up as its the top item on this page.',
+                    'info', 'moodle-course-management');
             window.location.reload();
         }
     },
@@ -206,7 +207,8 @@ Item.prototype = {
         } else {
             // Aha it succeeded but this is the bottom item in the list. Pagination is in play!
             // Refresh to update the state of things.
-            Y.log(this.get('itemname')+' cannot be moved down as its the top item on this page.', 'info', 'moodle-course-management');
+            Y.log(this.get('itemname') + ' cannot be moved down as its the top item on this page.',
+                    'info', 'moodle-course-management');
             window.location.reload();
         }
     },

@@ -286,6 +286,26 @@ class core_blocklib_testcase extends advanced_testcase {
         $this->assertContainsBlocksOfType(array($blockname, $blockname), $blocks);
     }
 
+    public function test_adding_blocks() {
+        $this->purge_blocks();
+
+        // Set up fixture.
+        $regionname = 'a-region';
+        $blockname = $this->get_a_known_block_type();
+        $context = context_system::instance();
+
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+            $context, 'page-type');
+
+        $blockmanager->add_blocks(array($regionname => array($blockname, $blockname)), null, null, false, 3);
+        $blockmanager->load_blocks();
+
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+
+        $this->assertEquals('3', $blocks[0]->instance->weight);
+        $this->assertEquals('4', $blocks[1]->instance->weight);
+    }
+
     public function test_block_not_included_in_different_context() {
         $this->purge_blocks();
 
@@ -408,6 +428,120 @@ class core_blocklib_testcase extends advanced_testcase {
         $blocks = $blockmanager->get_blocks_for_region($regionname);
         $this->assertContainsBlocksOfType(array($blockname), $blocks);
     }
+
+    public function test_matching_page_type_patterns_from_pattern() {
+        $pattern = '*';
+        $expected = array('*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'admin-*';
+        $expected = array('admin-*', 'admin', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'blog-index';
+        $expected = array('blog-index', 'blog-index-*', 'blog-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'course-index-*';
+        $expected = array('course-index-*', 'course-index', 'course-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'course-index-category';
+        $expected = array('course-index-category', 'course-index-category-*', 'course-index-*', 'course-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'mod-assign-view';
+        $expected = array('mod-assign-view', 'mod-*-view', 'mod-assign-view-*', 'mod-assign-*', 'mod-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'mod-assign-index';
+        $expected = array('mod-assign-index', 'mod-*-index', 'mod-assign-index-*', 'mod-assign-*', 'mod-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'mod-forum-*';
+        $expected = array('mod-forum-*', 'mod-forum', 'mod-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'mod-*-view';
+        $expected = array('mod-*-view', 'mod', 'mod-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'mod-*-index';
+        $expected = array('mod-*-index', 'mod', 'mod-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'my-index';
+        $expected = array('my-index', 'my-index-*', 'my-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'user-profile';
+        $expected = array('user-profile', 'user-profile-*', 'user-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+    }
+
+    public function test_delete_instances() {
+        global $DB;
+        $this->purge_blocks();
+        $this->setAdminUser();
+
+        $regionname = 'a-region';
+        $blockname = $this->get_a_known_block_type();
+        $context = context_system::instance();
+
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+            $context, 'page-type');
+
+        $blockmanager->add_blocks(array($regionname => array($blockname, $blockname, $blockname)), null, null, false, 3);
+        $blockmanager->load_blocks();
+
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+        $blockids = array();
+        $preferences = array();
+
+        // Create block related data.
+        foreach ($blocks as $block) {
+            $instance = $block->instance;
+            $pref = 'block' . $instance->id . 'hidden';
+            set_user_preference($pref, '123', 123);
+            $preferences[] = $pref;
+            $pref = 'docked_block_instance_' . $instance->id;
+            set_user_preference($pref, '123', 123);
+            $preferences[] = $pref;
+            blocks_set_visibility($instance, $page, 1);
+            $blockids[] = $instance->id;
+        }
+
+        // Confirm what has been set.
+        $this->assertCount(3, $blockids);
+        list($insql, $inparams) = $DB->get_in_or_equal($blockids);
+        $this->assertEquals(3, $DB->count_records_select('block_positions', "blockinstanceid $insql", $inparams));
+        list($insql, $inparams) = $DB->get_in_or_equal($preferences);
+        $this->assertEquals(6, $DB->count_records_select('user_preferences', "name $insql", $inparams));
+
+        // Keep a block on the side.
+        $allblockids = $blockids;
+        $tokeep = array_pop($blockids);
+
+        // Delete and confirm what should have happened.
+        blocks_delete_instances($blockids);
+
+        // Reload the manager.
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+            $context, 'page-type');
+        $blockmanager->load_blocks();
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+
+        $this->assertCount(1, $blocks);
+        list($insql, $inparams) = $DB->get_in_or_equal($allblockids);
+        $this->assertEquals(1, $DB->count_records_select('block_positions', "blockinstanceid $insql", $inparams));
+        list($insql, $inparams) = $DB->get_in_or_equal($preferences);
+        $this->assertEquals(2, $DB->count_records_select('user_preferences', "name $insql", $inparams));
+
+        $this->assertFalse(context_block::instance($blockids[0], IGNORE_MISSING));
+        $this->assertFalse(context_block::instance($blockids[1], IGNORE_MISSING));
+        context_block::instance($tokeep);   // Would throw an exception if it was deleted.
+    }
+
 }
 
 /**

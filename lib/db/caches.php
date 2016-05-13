@@ -31,22 +31,22 @@ $definitions = array(
     // Used to store processed lang files.
     // The keys used are the revision, lang and component of the string file.
     // The static acceleration size has been based upon student access of the site.
-    // NOTE: this data may be safely stored in local caches on cluster nodes.
     'string' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
         'staticacceleration' => true,
-        'staticaccelerationsize' => 30
+        'staticaccelerationsize' => 30,
+        'canuselocalstore' => true,
     ),
 
     // Used to store cache of all available translations.
-    // NOTE: this data may be safely stored in local caches on cluster nodes.
     'langmenu' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
         'staticacceleration' => true,
+        'canuselocalstore' => true,
     ),
 
     // Used to store database meta information.
@@ -58,6 +58,7 @@ $definitions = array(
         'requireidentifiers' => array(
             'dbfamily'
         ),
+        'simpledata' => true, // This is a read only class, so leaving references in place is safe.
         'staticacceleration' => true,
         'staticaccelerationsize' => 15
     ),
@@ -91,9 +92,9 @@ $definitions = array(
     // This caches the html purifier cleaned text. This is done because the text is usually cleaned once for every user
     // and context combo. Text caching handles caching for the combination, this cache is responsible for caching the
     // cleaned text which is shareable.
-    // NOTE: this data may be safely stored in local caches on cluster nodes.
     'htmlpurifier' => array(
         'mode' => cache_store::MODE_APPLICATION,
+        'canuselocalstore' => true,
     ),
 
     // Used to store data from the config + config_plugins table in the database.
@@ -124,6 +125,16 @@ $definitions = array(
         'simplekeys' => true,
         'simpledata' => true,
         'staticacceleration' => true,
+    ),
+
+    // Cache the capabilities list DB table. See get_all_capabilities in accesslib.
+    'capabilities' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 1,
+        'ttl' => 3600, // Just in case.
     ),
 
     // YUI Module cache.
@@ -179,6 +190,7 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'staticacceleration' => true,
         'simplekeys' => true,
+        'ttl' => 3600,
     ),
     // Used to store data for repositories to avoid repetitive DB queries within one request.
     'repositories' => array(
@@ -195,6 +207,7 @@ $definitions = array(
     'coursemodinfo' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
+        'canuselocalstore' => true,
     ),
     // This is the session user selections cache.
     // It's a special cache that is used to record user selections that should persist for the lifetime of the session.
@@ -205,12 +218,14 @@ $definitions = array(
         'simplekeys' => true,
         'simpledata' => true
     ),
-    // Used to cache user grades for conditional availability purposes.
-    'gradecondition' => array(
+
+    // Used to cache activity completion status.
+    'completion' => array(
         'mode' => cache_store::MODE_APPLICATION,
-        'staticacceleration' => true,
-        'staticaccelerationsize' => 2, // Should not be required for more than one user at a time.
+        'simplekeys' => true,
         'ttl' => 3600,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 2, // Should be current course and site course.
     ),
 
     // A simple cache that stores whether a user can expand a course in the navigation.
@@ -229,5 +244,51 @@ $definitions = array(
         'mode' => cache_store::MODE_REQUEST,
         'simplekeys' => true,
         'simpledata' => true,
+    ),
+
+    // Caches plugins existing functions by function name and file.
+    // Set static acceleration size to 5 to load a few functions.
+    'plugin_functions' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 5
+    ),
+
+    // Caches data about tag collections and areas.
+    'tags' => array(
+        'mode' => cache_store::MODE_REQUEST,
+        'simplekeys' => true,
+        'staticacceleration' => true,
+    ),
+
+    // Grade categories. Stored at session level as invalidation is very aggressive.
+    'grade_categories' => array(
+        'mode' => cache_store::MODE_SESSION,
+        'simplekeys' => true,
+        'invalidationevents' => array(
+            'changesingradecategories',
+        )
+    ),
+
+    // Store temporary tables information.
+    'temp_tables' => array(
+        'mode' => cache_store::MODE_REQUEST,
+        'simplekeys' => true,
+        'simpledata' => true
+    ),
+
+    // Caches tag index builder results.
+    'tagindexbuilder' => array(
+        'mode' => cache_store::MODE_SESSION,
+        'simplekeys' => true,
+        'simplevalues' => true,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 10,
+        'ttl' => 900, // 15 minutes.
+        'invalidationevents' => array(
+            'resettagindexbuilder',
+        ),
     ),
 );

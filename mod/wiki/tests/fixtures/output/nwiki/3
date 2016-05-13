@@ -1,5 +1,5 @@
-<h1><a name="toc-1"></a>Lists</h1>
-<h2><a name="toc-2"></a>Unordered lists</h2>
+<h3><a name="toc-1"></a>Lists</h3>
+<h4><a name="toc-2"></a>Unordered lists</h4>
 <ul>
 <li>1
 <ul>
@@ -20,7 +20,7 @@
 </li>
 <li><em>italic</em></li>
 </ul>
-<h2><a name="toc-3"></a>Ordered lists</h2>
+<h4><a name="toc-3"></a>Ordered lists</h4>
 <ol>
 <li>1
 <ol>

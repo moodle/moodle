@@ -71,13 +71,16 @@ class core_webservice_external extends external_api {
      * @since Moodle 2.2
      */
     public static function get_site_info($serviceshortnames = array()) {
-        global $USER, $SITE, $CFG, $DB;
+        global $USER, $SITE, $CFG, $DB, $PAGE;
 
         $params = self::validate_parameters(self::get_site_info_parameters(),
                       array('serviceshortnames'=>$serviceshortnames));
 
-        $profileimageurl = moodle_url::make_pluginfile_url(
-                context_user::instance($USER->id)->id, 'user', 'icon', null, '/', 'f1');
+        $context = context_user::instance($USER->id);
+
+        $userpicture = new user_picture($USER);
+        $userpicture->size = 1; // Size f1.
+        $profileimageurl = $userpicture->get_url($PAGE);
 
         // Site information.
         $siteinfo =  array(
@@ -139,6 +142,7 @@ class core_webservice_external extends external_api {
                 if (is_readable($versionpath)) {
                     // We store the component version once retrieved (so we don't load twice the version.php).
                     if (!isset($componentversions[$function->component])) {
+                        $plugin = new stdClass();
                         include($versionpath);
                         $componentversions[$function->component] = $plugin->version;
                         $version = $plugin->version;
@@ -159,6 +163,38 @@ class core_webservice_external extends external_api {
 
         // Mobile CSS theme and alternative login url.
         $siteinfo['mobilecssurl'] = $CFG->mobilecssurl;
+
+        // Retrieve some advanced features. Only enable/disable ones (bool).
+        $advancedfeatures = array("usecomments", "usetags", "enablenotes", "messaging", "enableblogs",
+                                    "enablecompletion", "enablebadges");
+        foreach ($advancedfeatures as $feature) {
+            if (isset($CFG->{$feature})) {
+                $siteinfo['advancedfeatures'][] = array(
+                    'name' => $feature,
+                    'value' => (int) $CFG->{$feature}
+                );
+            }
+        }
+        // Special case mnet_dispatcher_mode.
+        $siteinfo['advancedfeatures'][] = array(
+            'name' => 'mnet_dispatcher_mode',
+            'value' => ($CFG->mnet_dispatcher_mode == 'strict') ? 1 : 0
+        );
+
+        // User can manage own files.
+        $siteinfo['usercanmanageownfiles'] = has_capability('moodle/user:manageownfiles', $context);
+
+        // User quota. 0 means user can ignore the quota.
+        $siteinfo['userquota'] = 0;
+        if (!has_capability('moodle/user:ignoreuserquota', $context)) {
+            $siteinfo['userquota'] = $CFG->userquota;
+        }
+
+        // User max upload file size. -1 means the user can ignore the upload file size.
+        $siteinfo['usermaxuploadfilesize'] = get_user_max_upload_file_size($context, $CFG->maxbytes);
+
+        // User home page.
+        $siteinfo['userhomepage'] = get_home_page();
 
         return $siteinfo;
     }
@@ -200,61 +236,29 @@ class core_webservice_external extends external_api {
                                                        VALUE_OPTIONAL),
                 'release'  => new external_value(PARAM_TEXT, 'Moodle release number', VALUE_OPTIONAL),
                 'version'  => new external_value(PARAM_TEXT, 'Moodle version number', VALUE_OPTIONAL),
-                'mobilecssurl'  => new external_value(PARAM_URL, 'Mobile custom CSS theme', VALUE_OPTIONAL)
+                'mobilecssurl'  => new external_value(PARAM_URL, 'Mobile custom CSS theme', VALUE_OPTIONAL),
+                'advancedfeatures' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name'  => new external_value(PARAM_ALPHANUMEXT, 'feature name'),
+                            'value' => new external_value(PARAM_INT, 'feature value. Usually 1 means enabled.')
+                        ),
+                        'Advanced features availability'
+                    ),
+                    'Advanced features availability',
+                    VALUE_OPTIONAL
+                ),
+                'usercanmanageownfiles' => new external_value(PARAM_BOOL,
+                                            'true if the user can manage his own files', VALUE_OPTIONAL),
+                'userquota' => new external_value(PARAM_INT,
+                                    'user quota (bytes). 0 means user can ignore the quota', VALUE_OPTIONAL),
+                'usermaxuploadfilesize' => new external_value(PARAM_INT,
+                                            'user max upload file size (bytes). -1 means the user can ignore the upload file size',
+                                            VALUE_OPTIONAL),
+                'userhomepage' => new external_value(PARAM_INT,
+                                                        'the default home page for the user: 0 for the site home, 1 for dashboard',
+                                                        VALUE_OPTIONAL)
             )
         );
-    }
-}
-
-/**
- * Deprecated web service related functions
- *
- * @package    core_webservice
- * @category   external
- * @copyright  2011 Jerome Mouneyrac <jerome@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @deprecated Moodle 2.2 MDL-29106 - please do not use this class any more.
- * @see core_webservice_external
- * @since Moodle 2.1
- */
-class moodle_webservice_external extends external_api {
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @deprecated Moodle 2.2 - please do not use this function any more.
-     * @see core_webservice_external::get_site_info_parameters
-     * @since Moodle 2.1
-     */
-    public static function get_siteinfo_parameters() {
-        return core_webservice_external::get_site_info_parameters();
-    }
-
-    /**
-     * Return user information including profile picture + basic site information
-     * Note:
-     * - no capability checking because we return just known information by logged user
-     *
-     * @param array $serviceshortnames of service shortnames - the functions of these services will be returned
-     * @return array
-     * @deprecated Moodle 2.2 - please do not use this function any more.
-     * @see core_webservice_external::get_site_info
-     * @since Moodle 2.1
-     */
-    public function get_siteinfo($serviceshortnames = array()) {
-        return core_webservice_external::get_site_info($serviceshortnames);
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_single_structure
-     * @deprecated Moodle 2.2 - please do not use this function any more.
-     * @see core_webservice_external::get_site_info_returns
-     * @since Moodle 2.1
-     */
-    public static function get_siteinfo_returns() {
-        return core_webservice_external::get_site_info_returns();
     }
 }

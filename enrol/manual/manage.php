@@ -28,7 +28,7 @@ require_once($CFG->dirroot.'/enrol/manual/locallib.php');
 $enrolid      = required_param('enrolid', PARAM_INT);
 $roleid       = optional_param('roleid', -1, PARAM_INT);
 $extendperiod = optional_param('extendperiod', 0, PARAM_INT);
-$extendbase   = optional_param('extendbase', 3, PARAM_INT);
+$extendbase   = optional_param('extendbase', 0, PARAM_INT);
 
 $instance = $DB->get_record('enrol', array('id'=>$enrolid, 'enrol'=>'manual'), '*', MUST_EXIST);
 $course = $DB->get_record('course', array('id'=>$instance->courseid), '*', MUST_EXIST);
@@ -83,24 +83,31 @@ for ($i=1; $i<=365; $i++) {
     $seconds = $i * 86400;
     $periodmenu[$seconds] = get_string('numdays', '', $i);
 }
-// Work out the apropriate default setting.
+// Work out the apropriate default settings.
 if ($extendperiod) {
     $defaultperiod = $extendperiod;
 } else {
     $defaultperiod = $instance->enrolperiod;
 }
+if (empty($extendbase)) {
+    if (!$extendbase = get_config('enrol_manual', 'enrolstart')) {
+        // Default to now if there is no system setting.
+        $extendbase = 4;
+    }
+}
 
 // Build the list of options for the starting from dropdown.
-$timeformat = get_string('strftimedatefullshort');
-$today = time();
-$today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
+$now = time();
+$today = make_timestamp(date('Y', $now), date('m', $now), date('d', $now), 0, 0, 0);
+$dateformat = get_string('strftimedatefullshort');
 
 // Enrolment start.
 $basemenu = array();
 if ($course->startdate > 0) {
-    $basemenu[2] = get_string('coursestart') . ' (' . userdate($course->startdate, $timeformat) . ')';
+    $basemenu[2] = get_string('coursestart') . ' (' . userdate($course->startdate, $dateformat) . ')';
 }
-$basemenu[3] = get_string('today') . ' (' . userdate($today, $timeformat) . ')' ;
+$basemenu[3] = get_string('today') . ' (' . userdate($today, $dateformat) . ')';
+$basemenu[4] = get_string('now', 'enrol_manual') . ' (' . userdate($now, get_string('strftimedatetimeshort')) . ')';
 
 // Process add and removes.
 if ($canenrol && optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
@@ -110,6 +117,11 @@ if ($canenrol && optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) 
             switch($extendbase) {
                 case 2:
                     $timestart = $course->startdate;
+                    break;
+                case 4:
+                    // We mimic get_enrolled_sql round(time(), -2) but always floor as we want users to always access their
+                    // courses once they are enrolled.
+                    $timestart = intval(substr($now, 0, 8) . '00') - 1;
                     break;
                 case 3:
                 default:

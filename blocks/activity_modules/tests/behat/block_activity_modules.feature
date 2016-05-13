@@ -4,11 +4,6 @@ Feature: Block activity modules
   As a manager
   I can add activities block in a course or on the frontpage
 
-  Background:
-    Given I log in as "admin"
-    And I navigate to "Manage activities" node in "Site administration > Plugins > Activity modules"
-    And I click on "//a[@title=\"Show\"]" "xpath_element" in the "Feedback" "table_row"
-
   Scenario: Add activities block on the frontpage
     Given the following "activities" exist:
       | activity   | name                        | intro                              | course               | idnumber    |
@@ -34,48 +29,49 @@ Feature: Block activity modules
       | wiki       | Frontpage wiki name         | Frontpage wiki description         | Acceptance test site | wiki0       |
       | workshop   | Frontpage workshop name     | Frontpage workshop description     | Acceptance test site | workshop0   |
 
-    And I am on homepage
-    When I follow "Turn editing on"
+    When I log in as "admin"
+    And I am on site homepage
+    And I follow "Turn editing on"
     And I add the "Activities" block
     And I click on "Assignments" "link" in the "Activities" "block"
     Then I should see "Frontpage assignment name"
-    And I am on homepage
+    And I am on site homepage
     And I click on "Chats" "link" in the "Activities" "block"
     And I should see "Frontpage chat name"
-    And I am on homepage
+    And I am on site homepage
     And I click on "Choices" "link" in the "Activities" "block"
     And I should see "Frontpage choice name"
-    And I am on homepage
+    And I am on site homepage
     And I click on "Databases" "link" in the "Activities" "block"
     And I should see "Frontpage database name"
-    And I am on homepage
+    And I am on site homepage
     And I click on "Feedback" "link" in the "Activities" "block"
     And I should see "Frontpage feedback name"
-    And I am on homepage
+    And I am on site homepage
     And I click on "Forums" "link" in the "Activities" "block"
     And I should see "Frontpage forum name"
-    And I am on homepage
+    And I am on site homepage
     And I click on "External tools" "link" in the "Activities" "block"
     And I should see "Frontpage lti name"
-    And I am on homepage
+    And I am on site homepage
     And I click on "Quizzes" "link" in the "Activities" "block"
     And I should see "Frontpage quiz name"
-    And I am on homepage
+    And I am on site homepage
     And I click on "Glossaries" "link" in the "Activities" "block"
     And I should see "Frontpage glossary name"
-    And I am on homepage
+    And I am on site homepage
     And I click on "SCORM packages" "link" in the "Activities" "block"
     And I should see "Frontpage scorm name"
-    And I am on homepage
+    And I am on site homepage
     And I click on "Lessons" "link" in the "Activities" "block"
     And I should see "Frontpage lesson name"
-    And I am on homepage
+    And I am on site homepage
     And I click on "Wikis" "link" in the "Activities" "block"
     And I should see "Frontpage wiki name"
-    And I am on homepage
+    And I am on site homepage
     And I click on "Workshop" "link" in the "Activities" "block"
     And I should see "Frontpage workshop name"
-    And I am on homepage
+    And I am on site homepage
     And I click on "Resources" "link" in the "Activities" "block"
     And I should see "Frontpage book name"
     And I should see "Frontpage page name"
@@ -112,7 +108,8 @@ Feature: Block activity modules
       | wiki       | Test wiki name         | Test wiki description         | C1     | wiki1       |
       | workshop   | Test workshop name     | Test workshop description     | C1     | workshop1   |
 
-    When I follow "Courses"
+    When I log in as "admin"
+    And I follow "Courses"
     And I follow "Course 1"
     And I turn editing mode on
     And I add the "Activities" block

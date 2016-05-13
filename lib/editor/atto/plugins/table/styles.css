@@ -9,3 +9,31 @@ div.editor_atto_content caption {
 div.editor_atto_content caption {
     height: auto;
 }
+
+div.availablecolors {
+    max-width: 55%;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+div.availablecolors label:not(.hideborder) {
+    border: 1px solid #ddd;
+}
+
+div.availablecolors label {
+    border-radius: 4px;
+    display: inline-block;
+    font-size: 0.1em;
+    padding: 2px;
+    padding-left: 22px;
+}
+
+div.availablecolors label input[type="radio"] {
+    float: none;
+    margin: 0;
+    margin-left: -15px;
+}
+
+input[name="bordersize"], input[name="width"] {
+    margin-right: 0.3em;
+}

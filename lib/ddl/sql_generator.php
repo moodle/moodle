@@ -226,11 +226,13 @@ abstract class sql_generator {
             $tablename = $table->getName();
         }
 
-        // get all tables in moodle database
-        $tables = $this->mdb->get_tables();
-        $exists = in_array($tablename, $tables);
+        if ($this->temptables->is_temptable($tablename)) {
+            return true;
+        }
 
-        return $exists;
+        // Get all tables in moodle database.
+        $tables = $this->mdb->get_tables();
+        return isset($tables[$tablename]);
     }
 
     /**

@@ -116,7 +116,11 @@ class auth_plugin_base {
         'department',
         'phone1',
         'phone2',
-        'address'
+        'address',
+        'firstnamephonetic',
+        'lastnamephonetic',
+        'middlename',
+        'alternatename'
     );
 
     /**
@@ -206,6 +210,15 @@ class auth_plugin_base {
     function is_internal() {
         //override if needed
         return true;
+    }
+
+    /**
+     * Returns false if this plugin is enabled but not configured.
+     *
+     * @return bool
+     */
+    public function is_configured() {
+        return false;
     }
 
     /**
@@ -432,6 +445,26 @@ class auth_plugin_base {
     }
 
     /**
+     * Hook for overriding behaviour before going to the login page.
+     *
+     * This method is called from require_login from potentially any page for
+     * all enabled auth plugins and gives each plugin a chance to redirect
+     * directly to an external login page, or to instantly login a user where
+     * possible.
+     *
+     * If an auth plugin implements this hook, it must not rely on ONLY this
+     * hook in order to work, as there are many ways a user can browse directly
+     * to the standard login page. As a general rule in this case you should
+     * also implement the loginpage_hook as well.
+     *
+     */
+    function pre_loginpage_hook() {
+        // override if needed, eg by redirecting to an external login page
+        // or logging in a user:
+        // complete_user_login($user);
+    }
+
+    /**
      * Post authentication hook.
      * This method is called from authenticate_user_login() for all enabled auth plugins.
      *
@@ -503,7 +536,7 @@ class auth_plugin_base {
     }
 
     /**
-     * Returns whether or not the captcha element is enabled, and the admin settings fulfil its requirements.
+     * Returns whether or not the captcha element is enabled.
      *
      * @abstract Implement in child classes
      * @return bool

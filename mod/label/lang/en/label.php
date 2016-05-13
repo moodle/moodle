@@ -45,3 +45,4 @@ $string['modulename_link'] = 'mod/label/view';
 $string['modulenameplural'] = 'Labels';
 $string['pluginadministration'] = 'Label administration';
 $string['pluginname'] = 'Label';
+$string['search:activity'] = 'Label activities';

@@ -61,8 +61,8 @@ Moodle Configuration with Dual login
 --
 
    Also see:
-   https://spaces.internet2.edu/display/SHIB2/NativeSPRequestMapper and
-   https://spaces.internet2.edu/display/SHIB2/NativeSPAccessControl
+   https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPRequestMapper and
+   https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPAccessControl
 
 2. As Moodle admin, go to the 'Administrations >> Users >> Authentication' and
    click on the the 'Shibboleth' settings.
@@ -101,8 +101,8 @@ Moodle Configuration with Dual login
     to the same host. If no SessionInitiator URL is given, the default one
     '/Shibboleth.sso' (only works for Shibboleth 1.3.x) will be used. For
     Shibboleth 2.x you have to add '/Shibboleth.sso/DS' as a SessionInitiator.
-    Also see https://spaces.internet2.edu/display/SHIB/SessionInitiator
-    and https://spaces.internet2.edu/display/SHIB2/NativeSPSessionInitiator
+    Also see https://wiki.shibboleth.net/confluence/display/SHIB/SessionInitiator
+    and https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPSessionInitiator
 
     Important Note: If you upgraded from a previous version of Moodle and now
                     want to use the integrated WAYF, you have to make sure that
@@ -324,8 +324,8 @@ logout. Hopefully, the Moodle logout helps to motivate the developers to
 implement SLO. On the other hand, the easiest and safest way to log out
 still is to tell users to quit their web browsers :)
 
-Also see https://spaces.internet2.edu/display/SHIB2/SLOIssues and
-https://spaces.internet2.edu/display/SHIB2/NativeSPLogoutInitiator for some
+Also see https://wiki.shibboleth.net/confluence/display/SHIB2/SLOIssues and
+https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLogoutInitiator for some
 background information on this topic.
 
 --------------------------------------------------------------------------------

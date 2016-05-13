@@ -26,7 +26,7 @@
  * @class annotationrectangle
  * @extends M.assignfeedback_editpdf.annotation
  */
-ANNOTATIONRECTANGLE = function(config) {
+var ANNOTATIONRECTANGLE = function(config) {
     ANNOTATIONRECTANGLE.superclass.constructor.apply(this, [config]);
 };
 
@@ -42,6 +42,7 @@ Y.extend(ANNOTATIONRECTANGLE, M.assignfeedback_editpdf.annotation, {
      */
     draw : function() {
         var drawable,
+            bounds,
             shape;
 
         drawable = new M.assignfeedback_editpdf.drawable(this.editor);

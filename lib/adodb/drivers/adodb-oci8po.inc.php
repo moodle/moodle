@@ -1,6 +1,8 @@
 <?php
 /*
-V5.19  23-Apr-2014  (c) 2000-2014 John Lim. All rights reserved.
+@version   v5.20.3  01-Jan-2016
+@copyright (c) 2000-2013 John Lim. All rights reserved.
+@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
@@ -28,7 +30,7 @@ class ADODB_oci8po extends ADODB_oci8 {
 	var $metaColumnsSQL = "select lower(cname),coltype,width, SCALE, PRECISION, NULLS, DEFAULTVAL from col where tname='%s' order by colno"; //changed by smondino@users.sourceforge. net
 	var $metaTablesSQL = "select lower(table_name),table_type from cat where table_type in ('TABLE','VIEW')";
 
-	function ADODB_oci8po()
+	function __construct()
 	{
 		$this->_hasOCIFetchStatement = ADODB_PHPVER >= 0x4200;
 		# oci8po does not support adodb extension: adodb_movenext()
@@ -64,11 +66,22 @@ class ADODB_oci8po extends ADODB_oci8 {
 					$arr['bind'.$i++] = $v;
 				}
 			} else {
+				// Need to identify if the ? is inside a quoted string, and if
+				// so not use it as a bind variable
+				preg_match_all('/".*\??"|\'.*\?.*?\'/', $sql, $matches);
+				foreach($matches[0] as $qmMatch){
+					$qmReplace = str_replace('?', '-QUESTIONMARK-', $qmMatch);
+					$sql = str_replace($qmMatch, $qmReplace, $sql);
+				}
+
 				$sqlarr = explode('?',$sql);
 				$sql = $sqlarr[0];
+
 				foreach($inputarr as $k => $v) {
 					$sql .=  ":$k" . $sqlarr[++$i];
 				}
+
+				$sql = str_replace('-QUESTIONMARK-', '?', $sql);
 			}
 		}
 		return ADODB_oci8::_query($sql,$inputarr);
@@ -83,9 +96,9 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 
 	var $databaseType = 'oci8po';
 
-	function ADORecordset_oci8po($queryID,$mode=false)
+	function __construct($queryID,$mode=false)
 	{
-		$this->ADORecordset_oci8($queryID,$mode);
+		parent::__construct($queryID,$mode);
 	}
 
 	function Fields($colname)
@@ -105,32 +118,22 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 	// lowercase field names...
 	function _FetchField($fieldOffset = -1)
 	{
-		 $fld = new ADOFieldObject;
- 		 $fieldOffset += 1;
-		 $fld->name = OCIcolumnname($this->_queryID, $fieldOffset);
-		 if (ADODB_ASSOC_CASE == 0) $fld->name = strtolower($fld->name);
-		 $fld->type = OCIcolumntype($this->_queryID, $fieldOffset);
-		 $fld->max_length = OCIcolumnsize($this->_queryID, $fieldOffset);
-		 if ($fld->type == 'NUMBER') {
-		 	//$p = OCIColumnPrecision($this->_queryID, $fieldOffset);
+		$fld = new ADOFieldObject;
+		$fieldOffset += 1;
+		$fld->name = OCIcolumnname($this->_queryID, $fieldOffset);
+		if (ADODB_ASSOC_CASE == ADODB_ASSOC_CASE_LOWER) {
+			$fld->name = strtolower($fld->name);
+		}
+		$fld->type = OCIcolumntype($this->_queryID, $fieldOffset);
+		$fld->max_length = OCIcolumnsize($this->_queryID, $fieldOffset);
+		if ($fld->type == 'NUMBER') {
 			$sc = OCIColumnScale($this->_queryID, $fieldOffset);
-			if ($sc == 0) $fld->type = 'INT';
-		 }
-		 return $fld;
+			if ($sc == 0) {
+				$fld->type = 'INT';
+			}
+		}
+		return $fld;
 	}
-	/*
-	function MoveNext()
-	{
-		if (@OCIfetchinto($this->_queryID,$this->fields,$this->fetchMode)) {
-			$this->_currentRow += 1;
-			return true;
-		}
-		if (!$this->EOF) {
-			$this->_currentRow += 1;
-			$this->EOF = true;
-		}
-		return false;
-	}*/
 
 	// 10% speedup to move MoveNext to child class
 	function MoveNext()
@@ -138,8 +141,8 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 		if(@OCIfetchinto($this->_queryID,$this->fields,$this->fetchMode)) {
 		global $ADODB_ANSI_PADDING_OFF;
 			$this->_currentRow++;
+			$this->_updatefields();
 
-			if ($this->fetchMode & OCI_ASSOC) $this->_updatefields();
 			if (!empty($ADODB_ANSI_PADDING_OFF)) {
 				foreach($this->fields as $k => $v) {
 					if (is_string($v)) $this->fields[$k] = rtrim($v);
@@ -170,7 +173,7 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 			$arr = array();
 			return $arr;
 		}
-		if ($this->fetchMode & OCI_ASSOC) $this->_updatefields();
+		$this->_updatefields();
 		$results = array();
 		$cnt = 0;
 		while (!$this->EOF && $nrows != $cnt) {
@@ -181,38 +184,19 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 		return $results;
 	}
 
-	// Create associative array
-	function _updatefields()
-	{
-		if (ADODB_ASSOC_CASE == 2) return; // native
-
-		$arr = array();
-		$lowercase = (ADODB_ASSOC_CASE == 0);
-
-		foreach($this->fields as $k => $v) {
-			if (is_integer($k)) $arr[$k] = $v;
-			else {
-				if ($lowercase)
-					$arr[strtolower($k)] = $v;
-				else
-					$arr[strtoupper($k)] = $v;
-			}
-		}
-		$this->fields = $arr;
-	}
-
 	function _fetch()
 	{
-		$ret = @OCIfetchinto($this->_queryID,$this->fields,$this->fetchMode);
-		if ($ret) {
 		global $ADODB_ANSI_PADDING_OFF;
 
-				if ($this->fetchMode & OCI_ASSOC) $this->_updatefields();
-				if (!empty($ADODB_ANSI_PADDING_OFF)) {
-					foreach($this->fields as $k => $v) {
-						if (is_string($v)) $this->fields[$k] = rtrim($v);
-					}
+		$ret = @OCIfetchinto($this->_queryID,$this->fields,$this->fetchMode);
+		if ($ret) {
+			$this->_updatefields();
+
+			if (!empty($ADODB_ANSI_PADDING_OFF)) {
+				foreach($this->fields as $k => $v) {
+					if (is_string($v)) $this->fields[$k] = rtrim($v);
 				}
+			}
 		}
 		return $ret;
 	}

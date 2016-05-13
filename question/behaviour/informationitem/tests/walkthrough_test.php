@@ -18,12 +18,11 @@
  * This file contains tests that walks a question through the information item
  * behaviour.
  *
- * @package    qbehaviour
- * @subpackage informationitem
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qbehaviour_informationitem
+ * @category  test
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,10 +34,10 @@ require_once(dirname(__FILE__) . '/../../../engine/tests/helpers.php');
 /**
  * Unit tests for the information item behaviour.
  *
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbehaviour_informationitem_walkthrough_test extends qbehaviour_walkthrough_test_base {
+class qbehaviour_informationitem_walkthrough_testcase extends qbehaviour_walkthrough_test_base {
     public function test_informationitem_feedback_description() {
 
         // Create a true-false question with correct answer true.
@@ -49,9 +48,16 @@ class qbehaviour_informationitem_walkthrough_test extends qbehaviour_walkthrough
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
         $this->check_current_output($this->get_contains_question_text_expectation($description),
-                new question_contains_tag_with_attributes('input', array('type' => 'hidden',
-                'name' => $this->quba->get_field_prefix($this->slot) . '-seen', 'value' => 1)),
+                $this->get_contains_hidden_expectation(
+                        $this->quba->get_field_prefix($this->slot) . '-seen', 1),
                 $this->get_does_not_contain_feedback_expectation());
+
+        // Check no hidden input when read-only.
+        $this->displayoptions->readonly = true;
+        $this->check_current_output($this->get_contains_question_text_expectation($description),
+                $this->get_does_not_contain_hidden_expectation(
+                        $this->quba->get_field_prefix($this->slot) . '-seen', 1));
+        $this->displayoptions->readonly = false;
 
         // Process a submission indicating this question has been seen.
         $this->process_submission(array('-seen' => 1));

@@ -52,8 +52,8 @@ function report_log_print_graph($course, $userid, $type, $date=0, $logreader='')
     } else {
         $reader = $readers[$logreader];
     }
-    // If reader is not a sql_internal_reader and not legacy store then don't show graph.
-    if (!($reader instanceof \core\log\sql_internal_reader) && !($reader instanceof logstore_legacy\log\store)) {
+    // If reader is not a sql_internal_table_reader and not legacy store then don't show graph.
+    if (!($reader instanceof \core\log\sql_internal_table_reader) && !($reader instanceof logstore_legacy\log\store)) {
         return array();
     }
 
@@ -82,8 +82,8 @@ function report_log_usercourse($userid, $courseid, $coursestart, $logreader = ''
         $reader = $readers[$logreader];
     }
 
-    // If reader is not a sql_internal_reader and not legacy store then return.
-    if (!($reader instanceof \core\log\sql_internal_reader) && !($reader instanceof logstore_legacy\log\store)) {
+    // If reader is not a sql_internal_table_reader and not legacy store then return.
+    if (!($reader instanceof \core\log\sql_internal_table_reader) && !($reader instanceof logstore_legacy\log\store)) {
         return array();
     }
 
@@ -134,8 +134,8 @@ function report_log_userday($userid, $courseid, $daystart, $logreader = '') {
         $reader = $readers[$logreader];
     }
 
-    // If reader is not a sql_internal_reader and not legacy store then return.
-    if (!($reader instanceof \core\log\sql_internal_reader) && !($reader instanceof logstore_legacy\log\store)) {
+    // If reader is not a sql_internal_table_reader and not legacy store then return.
+    if (!($reader instanceof \core\log\sql_internal_table_reader) && !($reader instanceof logstore_legacy\log\store)) {
         return array();
     }
 

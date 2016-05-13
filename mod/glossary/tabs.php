@@ -20,22 +20,32 @@
         $tab = $defaulttab;
     }
 
+    // Get visible tabs for the format and check tab needs to be displayed.
+    $dt = glossary_get_visible_tabs($dp);
 
-    $browserow[] = new tabobject(GLOSSARY_STANDARD_VIEW,
-                                 $CFG->wwwroot.'/mod/glossary/view.php?id='.$id.'&amp;mode=letter',
-                                 get_string('standardview', 'glossary'));
+    if (in_array(GLOSSARY_STANDARD, $dt)) {
+        $browserow[] = new tabobject(GLOSSARY_STANDARD_VIEW,
+            $CFG->wwwroot.'/mod/glossary/view.php?id='.$id.'&amp;mode=letter',
+            get_string('standardview', 'glossary'));
+    }
 
-    $browserow[] = new tabobject(GLOSSARY_CATEGORY_VIEW,
-                                 $CFG->wwwroot.'/mod/glossary/view.php?id='.$id.'&amp;mode=cat',
-                                 get_string('categoryview', 'glossary'));
+    if (in_array(GLOSSARY_CATEGORY, $dt)) {
+        $browserow[] = new tabobject(GLOSSARY_CATEGORY_VIEW,
+            $CFG->wwwroot.'/mod/glossary/view.php?id='.$id.'&amp;mode=cat',
+            get_string('categoryview', 'glossary'));
+    }
 
-    $browserow[] = new tabobject(GLOSSARY_DATE_VIEW,
-                                 $CFG->wwwroot.'/mod/glossary/view.php?id='.$id.'&amp;mode=date',
-                                 get_string('dateview', 'glossary'));
+    if (in_array(GLOSSARY_DATE, $dt)) {
+        $browserow[] = new tabobject(GLOSSARY_DATE_VIEW,
+            $CFG->wwwroot.'/mod/glossary/view.php?id='.$id.'&amp;mode=date',
+            get_string('dateview', 'glossary'));
+    }
 
-    $browserow[] = new tabobject(GLOSSARY_AUTHOR_VIEW,
-                                 $CFG->wwwroot.'/mod/glossary/view.php?id='.$id.'&amp;mode=author',
-                                 get_string('authorview', 'glossary'));
+    if (in_array(GLOSSARY_AUTHOR, $dt)) {
+        $browserow[] = new tabobject(GLOSSARY_AUTHOR_VIEW,
+            $CFG->wwwroot.'/mod/glossary/view.php?id='.$id.'&amp;mode=author',
+            get_string('authorview', 'glossary'));
+    }
 
     if ($tab < GLOSSARY_STANDARD_VIEW || $tab > GLOSSARY_AUTHOR_VIEW) {   // We are on second row
         $inactive = array('edit');
@@ -52,12 +62,15 @@
         $tabrows[] = $toolsrow;
     }
 
-
 ?>
   <div class="glossarydisplay">
 
 
-<?php if ($showcommonelements) { print_tabs($tabrows, $tab, $inactive, $activated); } ?>
+<?php
+if ($showcommonelements && (count($tabrows[0]) > 1)) {
+    print_tabs($tabrows, $tab, $inactive, $activated);
+}
+?>
 
   <div class="entrybox">
 

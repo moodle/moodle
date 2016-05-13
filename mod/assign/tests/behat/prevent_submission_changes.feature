@@ -10,9 +10,9 @@ Feature: Prevent or allow assignment submission changes
       | Course 1 | C1 | 0 | 1 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
-      | student2 | Student | 2 | student2@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -45,7 +45,7 @@ Feature: Prevent or allow assignment submission changes
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    When I follow "View/grade all submissions"
+    When I follow "View all submissions"
     And I click on "Edit" "link" in the "Student 1" "table_row"
     And I follow "Prevent submission changes"
     Then I should see "Submission changes not allowed"
@@ -59,7 +59,7 @@ Feature: Prevent or allow assignment submission changes
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View/grade all submissions"
+    And I follow "View all submissions"
     And I click on "Edit" "link" in the "Student 1" "table_row"
     And I follow "Allow submission changes"
     And I should not see "Submission changes not allowed"
@@ -98,7 +98,7 @@ Feature: Prevent or allow assignment submission changes
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    When I follow "View/grade all submissions"
+    When I follow "View all submissions"
     And I set the field "selectall" to "1"
     And I click on "Go" "button" confirming the dialogue
     Then I should see "Submission changes not allowed" in the "Student 1" "table_row"
@@ -112,7 +112,7 @@ Feature: Prevent or allow assignment submission changes
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View/grade all submissions"
+    And I follow "View all submissions"
     And I set the field "selectall" to "1"
     And I set the field "id_operation" to "Unlock submissions"
     And I click on "Go" "button" confirming the dialogue

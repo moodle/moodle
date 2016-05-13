@@ -11,6 +11,10 @@
         </td>
     </tr>
     <tr>
+        <td class="c0"><label for="required"><?php echo get_string('requiredfield', 'data'); ?></label></td>
+        <td class="c1"><input class="requiredfield" type="checkbox" name="required" id="required" <?php p($this->field->required?"checked=\"checked\"":""); ?>/></td>
+    </tr>
+    <tr>
         <td class="c0"><label for="param2">
             <?php echo get_string('fieldwidth', 'data'); ?></label></td>
         <td class="c1">

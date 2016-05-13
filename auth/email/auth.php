@@ -34,9 +34,19 @@ class auth_plugin_email extends auth_plugin_base {
     /**
      * Constructor.
      */
-    function auth_plugin_email() {
+    public function __construct() {
         $this->authtype = 'email';
         $this->config = get_config('auth/email');
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function auth_plugin_email() {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct();
     }
 
     /**
@@ -89,12 +99,15 @@ class auth_plugin_email extends auth_plugin_base {
         require_once($CFG->dirroot.'/user/profile/lib.php');
         require_once($CFG->dirroot.'/user/lib.php');
 
+        $plainpassword = $user->password;
         $user->password = hash_internal_user_password($user->password);
         if (empty($user->calendartype)) {
             $user->calendartype = $CFG->calendartype;
         }
 
         $user->id = user_create_user($user, false, false);
+
+        user_add_password_history($user->id, $plainpassword);
 
         // Save any custom profile field information.
         profile_save_data($user);
@@ -139,11 +152,11 @@ class auth_plugin_email extends auth_plugin_base {
         $user = get_complete_user_data('username', $username);
 
         if (!empty($user)) {
-            if ($user->confirmed) {
-                return AUTH_CONFIRM_ALREADY;
-
-            } else if ($user->auth != $this->authtype) {
+            if ($user->auth != $this->authtype) {
                 return AUTH_CONFIRM_ERROR;
+
+            } else if ($user->secret == $confirmsecret && $user->confirmed) {
+                return AUTH_CONFIRM_ALREADY;
 
             } else if ($user->secret == $confirmsecret) {   // They have provided the secret key to get in
                 $DB->set_field("user", "confirmed", 1, array("id"=>$user->id));
@@ -232,12 +245,11 @@ class auth_plugin_email extends auth_plugin_base {
     }
 
     /**
-     * Returns whether or not the captcha element is enabled, and the admin settings fulfil its requirements.
+     * Returns whether or not the captcha element is enabled.
      * @return bool
      */
     function is_captcha_enabled() {
-        global $CFG;
-        return isset($CFG->recaptchapublickey) && isset($CFG->recaptchaprivatekey) && get_config("auth/{$this->authtype}", 'recaptcha');
+        return get_config("auth/{$this->authtype}", 'recaptcha');
     }
 
 }

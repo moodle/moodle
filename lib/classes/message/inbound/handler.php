@@ -141,6 +141,18 @@ abstract class handler {
     }
 
     /**
+     * Whether the current handler allows changes to expiry of the generated email address.
+     *
+     * By default this will return true, but for some handlers it may be
+     * necessary to disallow such changes.
+     *
+     * @return boolean
+     */
+    public function can_change_defaultexpiration() {
+        return true;
+    }
+
+    /**
      * Whether this handler can be disabled (or enabled).
      *
      * By default this will return true, but for some handlers it may be
@@ -225,4 +237,70 @@ abstract class handler {
         return false;
     }
 
+    /**
+     * Remove quoted message string from the text (NOT HTML) message.
+     *
+     * @param \stdClass $messagedata The Inbound Message record
+     *
+     * @return array message and message format to use.
+     */
+    protected static function remove_quoted_text($messagedata) {
+        if (!empty($messagedata->plain)) {
+            $text = $messagedata->plain;
+        } else {
+            $text = html_to_text($messagedata->html);
+        }
+        $messageformat = FORMAT_PLAIN;
+
+        $splitted = preg_split("/\n|\r/", $text);
+        if (empty($splitted)) {
+            return array($text, $messageformat);
+        }
+
+        $i = 0;
+        $flag = false;
+        foreach ($splitted as $i => $element) {
+            if (stripos($element, ">") === 0) {
+                // Quoted text found.
+                $flag = true;
+                // Remove 2 non empty line before this.
+                for ($j = $i - 1; ($j >= 0); $j--) {
+                    $element = $splitted[$j];
+                    if (!empty($element)) {
+                        unset($splitted[$j]);
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        if ($flag) {
+            // Quoted text was found.
+            // Retrieve everything from the start until the line before the quoted text.
+            $splitted = array_slice($splitted, 0, $i-1);
+
+            // Strip out empty lines towards the end, since a lot of clients add a huge chunk of empty lines.
+            $reverse = array_reverse($splitted);
+            foreach ($reverse as $i => $line) {
+                if (empty($line)) {
+                    unset($reverse[$i]);
+                } else {
+                    // Non empty line found.
+                    break;
+                }
+            }
+
+            $replaced = implode(PHP_EOL, array_reverse($reverse));
+            $message = trim($replaced);
+        } else {
+            // No quoted text, fallback to original text.
+            if (!empty($messagedata->html)) {
+                $message = $messagedata->html;
+                $messageformat = FORMAT_HTML;
+            } else {
+                $message = $messagedata->plain;
+            }
+        }
+        return array($message, $messageformat);
+    }
 }

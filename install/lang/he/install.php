@@ -32,8 +32,8 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'ספריית מנהל המערכת';
 $string['availablelangs'] = 'חבילות שפה זמינות';
-$string['chooselanguagehead'] = 'בחר שפה';
-$string['chooselanguagesub'] = 'אנא בחר שפה עבור ההתקנה בלבד. תוכל לבחור בשפה שונה לאתר ולמשתמש באחד מהמסכים הבאים.';
+$string['chooselanguagehead'] = 'בחירת שפה';
+$string['chooselanguagesub'] = 'יש לבחור שפה עבור ההתקנה בלבד. תוכל לבחור בשפה שונה לאתר ולמשתמש באחד מהמסכים הבאים.';
 $string['clialreadyconfigured'] = 'קובץ config.php כבר קיים, אנא השתמש ב
 admin/cli/install_database.php
 אם ברצונך להתקין את אתר זה.';
@@ -42,7 +42,7 @@ $string['clialreadyinstalled'] = 'קובץ ה-config.php קיים כבר, אנא
 $string['cliinstallheader'] = 'תוכנית התקנת Moodle {$a} בשורת הפקודה';
 $string['databasehost'] = 'מסד הנתונים המארח (host)';
 $string['databasename'] = 'שם מסד הנתונים';
-$string['databasetypehead'] = 'בחר התקן מסד הנתונים';
+$string['databasetypehead'] = 'בחירת התקן מסד הנתונים';
 $string['dataroot'] = 'ספריית הנתונים';
 $string['datarootpermission'] = 'הרשאות תיקיות bתונים (data)';
 $string['dbprefix'] = 'Tables prefix';
@@ -104,7 +104,7 @@ $string['welcomep50'] = 'השימוש בכל היישומים בחבילה זו 
 <a href="http://www.opensource.org/docs/definition_plain.html">קוד פתוח</a>
 והיא מופצת תחת רשיון
 <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>';
-$string['welcomep60'] = 'העמודים הבאים יובילו אותך בצורה פשוטה דרך כמה צעדים לעיצוב הגדרות <strong>Moodle</strong> במחשבך.
-תוכל לאשר את הגדרות  ברירת המחדל או, באפשרותך, לשנותם לפי צרכיך.';
+$string['welcomep60'] = 'העמודים הבאים יובילו אותך בצורה פשוטה דרך כמה צעדים לקביעת הגדרות <strong>Moodle</strong> בשרת.
+ניתן לאשר הגדרות בררת־המחדל או לשנותם לפי צרכיך.';
 $string['welcomep70'] = 'הקש על לחצן ה"המשך" למטה כדי להמשיך עם הגדרת ה-<strong>Moodle</strong>';
 $string['wwwroot'] = 'כתובת האתר';

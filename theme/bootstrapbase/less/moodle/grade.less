@@ -1,5 +1,5 @@
 // The class gradetreebox matches the pages displaying the gradebook
-// "Categories and items" > "Simple view" and "Full view".
+// "Gradebook setup" > "Simple view" and "Full view".
 .gradetreebox {
     h4 {
         // Force back the base font-size to minimise width.
@@ -14,6 +14,13 @@
     select {
         // Remove the bottom margin to gain height.
         margin-bottom: 0;
+    }
+}
+
+// Grade upgrade notice.
+.core_grades_notices {
+    .singlebutton {
+        display: inline-block;
     }
 }
 
@@ -439,6 +446,9 @@
         .floater .cell,
         .avg {
             background-color: @tableBackgroundAccent;
+        }
+        table .clickable {
+            cursor: pointer;
         }
     }
  }

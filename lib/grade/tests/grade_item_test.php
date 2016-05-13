@@ -50,6 +50,7 @@ class core_grade_item_testcase extends grade_base_testcase {
         $this->sub_test_grade_item_load_item_category();
         $this->sub_test_grade_item_regrade_final_grades();
         $this->sub_test_grade_item_adjust_raw_grade();
+        $this->sub_test_grade_item_rescale_grades_keep_percentage();
         $this->sub_test_grade_item_set_locked();
         $this->sub_test_grade_item_is_locked();
         $this->sub_test_grade_item_set_hidden();
@@ -369,6 +370,46 @@ class core_grade_item_testcase extends grade_base_testcase {
         $grade_item->plusfactor = -3;
 
         $this->assertEquals(round(1.6), round($grade_item->adjust_raw_grade($grade_raw->rawgrade, $grade_raw->grademin, $grade_raw->grademax)));
+    }
+
+    protected function sub_test_grade_item_rescale_grades_keep_percentage() {
+        global $DB;
+        $gradeitem = new grade_item($this->grade_items[10], false); // 10 is the manual grade item.
+
+        // Create some grades to go with the grade item.
+        $gradeids = array();
+        $grade = new stdClass();
+        $grade->itemid = $gradeitem->id;
+        $grade->userid = $this->user[2]->id;
+        $grade->finalgrade = 10;
+        $grade->rawgrademax = $gradeitem->grademax;
+        $grade->rawgrademin = $gradeitem->grademin;
+        $grade->timecreated = time();
+        $grade->timemodified = time();
+        $gradeids[] = $DB->insert_record('grade_grades', $grade);
+
+        $grade->userid = $this->user[3]->id;
+        $grade->finalgrade = 50;
+        $grade->rawgrademax = $gradeitem->grademax;
+        $grade->rawgrademin = $gradeitem->grademin;
+        $gradeids[] = $DB->insert_record('grade_grades', $grade);
+
+        // Run the function.
+        $gradeitem->grademax = 33;
+        $gradeitem->grademin = 3;
+        $gradeitem->update();
+        $gradeitem->rescale_grades_keep_percentage(0, 100, 3, 33, 'test');
+
+        // Check that the grades were updated to match the grade item.
+        $grade = $DB->get_record('grade_grades', array('id' => $gradeids[0]));
+        $this->assertEquals($gradeitem->grademax, $grade->rawgrademax, 'Max grade mismatch', 0.0001);
+        $this->assertEquals($gradeitem->grademin, $grade->rawgrademin, 'Min grade mismatch', 0.0001);
+        $this->assertEquals(6, $grade->finalgrade, 'Min grade mismatch', 0.0001);
+
+        $grade = $DB->get_record('grade_grades', array('id' => $gradeids[1]));
+        $this->assertEquals($gradeitem->grademax, $grade->rawgrademax, 'Max grade mismatch', 0.0001);
+        $this->assertEquals($gradeitem->grademin, $grade->rawgrademin, 'Min grade mismatch', 0.0001);
+        $this->assertEquals(18, $grade->finalgrade, 'Min grade mismatch', 0.0001);
     }
 
     protected function sub_test_grade_item_set_locked() {
@@ -734,4 +775,182 @@ class core_grade_item_testcase extends grade_base_testcase {
 
         return $DB->get_record('grade_items', array('id' => $item->id));
     }
+
+    public function test_set_aggregation_fields_for_aggregation() {
+        $course = $this->getDataGenerator()->create_course();
+        $gi = new grade_item(array('courseid' => $course->id, 'itemtype' => 'manual'), false);
+
+        $methods = array(GRADE_AGGREGATE_MEAN, GRADE_AGGREGATE_MEDIAN, GRADE_AGGREGATE_MIN, GRADE_AGGREGATE_MAX,
+            GRADE_AGGREGATE_MODE, GRADE_AGGREGATE_WEIGHTED_MEAN, GRADE_AGGREGATE_WEIGHTED_MEAN2,
+            GRADE_AGGREGATE_EXTRACREDIT_MEAN, GRADE_AGGREGATE_SUM);
+
+        // Switching from and to the same aggregation using the defaults.
+        foreach ($methods as $method) {
+            $defaults = grade_category::get_default_aggregation_coefficient_values($method);
+            $gi->aggregationcoef = $defaults['aggregationcoef'];
+            $gi->aggregationcoef2 = $defaults['aggregationcoef2'];
+            $gi->weightoverride = $defaults['weightoverride'];
+            $this->assertFalse($gi->set_aggregation_fields_for_aggregation($method, $method));
+            $this->assertEquals($defaults['aggregationcoef'], $gi->aggregationcoef);
+            $this->assertEquals($defaults['aggregationcoef2'], $gi->aggregationcoef2);
+            $this->assertEquals($defaults['weightoverride'], $gi->weightoverride);
+        }
+
+        // Extra credit is kept across aggregation methods that support it.
+        foreach ($methods as $from) {
+            $fromsupportsec = grade_category::aggregation_uses_extracredit($from);
+            $fromdefaults = grade_category::get_default_aggregation_coefficient_values($from);
+
+            foreach ($methods as $to) {
+                $tosupportsec = grade_category::aggregation_uses_extracredit($to);
+                $todefaults = grade_category::get_default_aggregation_coefficient_values($to);
+
+                // Set the item to be extra credit, if supported.
+                if ($fromsupportsec) {
+                    $gi->aggregationcoef = 1;
+                } else {
+                    $gi->aggregationcoef = $fromdefaults['aggregationcoef'];
+                }
+
+                // We ignore those fields, we know it is never used for extra credit.
+                $gi->aggregationcoef2 = $todefaults['aggregationcoef2'];
+                $gi->weightoverride = $todefaults['weightoverride'];
+
+                if ($fromsupportsec && $tosupportsec) {
+                    $this->assertFalse($gi->set_aggregation_fields_for_aggregation($from, $to), "From: $from, to: $to");
+                    $this->assertEquals(1, $gi->aggregationcoef);
+
+                } else if ($fromsupportsec && !$tosupportsec) {
+                    if ($to == GRADE_AGGREGATE_WEIGHTED_MEAN) {
+                        // Special case, aggregationcoef is used but for weights.
+                        $this->assertFalse($gi->set_aggregation_fields_for_aggregation($from, $to), "From: $from, to: $to");
+                        $this->assertEquals($todefaults['aggregationcoef'], $gi->aggregationcoef);
+                    } else {
+                        $this->assertTrue($gi->set_aggregation_fields_for_aggregation($from, $to), "From: $from, to: $to");
+                        $this->assertEquals($todefaults['aggregationcoef'], $gi->aggregationcoef);
+                    }
+                } else {
+                    // The source does not support extra credit, everything will be reset.
+                    if (($from == GRADE_AGGREGATE_WEIGHTED_MEAN || $to == GRADE_AGGREGATE_WEIGHTED_MEAN) && $from != $to) {
+                        // Special case, aggregationcoef is used but for weights.
+                        $this->assertTrue($gi->set_aggregation_fields_for_aggregation($from, $to), "From: $from, to: $to");
+                        $this->assertEquals($todefaults['aggregationcoef'], $gi->aggregationcoef);
+                    } else {
+                        $this->assertFalse($gi->set_aggregation_fields_for_aggregation($from, $to), "From: $from, to: $to");
+                        $this->assertEquals($todefaults['aggregationcoef'], $gi->aggregationcoef);
+                    }
+                }
+            }
+        }
+
+        // Extra credit can be higher than one for GRADE_AGGREGATE_EXTRACREDIT_MEAN, but will be normalised for others.
+        $from = GRADE_AGGREGATE_EXTRACREDIT_MEAN;
+        $fromdefaults = grade_category::get_default_aggregation_coefficient_values($from);
+
+        foreach ($methods as $to) {
+            if (!grade_category::aggregation_uses_extracredit($to)) {
+                continue;
+            }
+
+            $todefaults = grade_category::get_default_aggregation_coefficient_values($to);
+            $gi->aggregationcoef = 8;
+
+            // Ignore those fields, they are not used for extra credit.
+            $gi->aggregationcoef2 = $todefaults['aggregationcoef2'];
+            $gi->weightoverride = $todefaults['weightoverride'];
+
+            if ($to == $from) {
+                $this->assertFalse($gi->set_aggregation_fields_for_aggregation($from, $to), "From: $from, to: $to");
+                $this->assertEquals(8, $gi->aggregationcoef);
+            } else {
+                $this->assertTrue($gi->set_aggregation_fields_for_aggregation($from, $to), "From: $from, to: $to");
+                $this->assertEquals(1, $gi->aggregationcoef);
+            }
+        }
+
+        // Weights are reset.
+        $from = GRADE_AGGREGATE_SUM;
+        $fromdefaults = grade_category::get_default_aggregation_coefficient_values($from);
+
+        $gi->aggregationcoef = $fromdefaults['aggregationcoef'];
+        $gi->aggregationcoef2 = 0.321;
+        $gi->weightoverride = $fromdefaults['weightoverride'];
+
+        $to = GRADE_AGGREGATE_WEIGHTED_MEAN;
+        $todefaults = grade_category::get_default_aggregation_coefficient_values($to);
+
+        $this->assertTrue($gi->set_aggregation_fields_for_aggregation($from, $to), "From: $from, to: $to");
+        $this->assertEquals($todefaults['aggregationcoef'], $gi->aggregationcoef);
+        $this->assertEquals($todefaults['aggregationcoef2'], $gi->aggregationcoef2);
+        $this->assertEquals($todefaults['weightoverride'], $gi->weightoverride);
+
+        $gi->aggregationcoef = $fromdefaults['aggregationcoef'];
+        $gi->aggregationcoef2 = 0.321;
+        $gi->weightoverride = $fromdefaults['weightoverride'];
+
+        $to = GRADE_AGGREGATE_SUM;
+        $todefaults = grade_category::get_default_aggregation_coefficient_values($to);
+
+        $this->assertTrue($gi->set_aggregation_fields_for_aggregation($from, $to), "From: $from, to: $to");
+        $this->assertEquals($todefaults['aggregationcoef'], $gi->aggregationcoef);
+        $this->assertEquals($todefaults['aggregationcoef2'], $gi->aggregationcoef2);
+        $this->assertEquals($todefaults['weightoverride'], $gi->weightoverride);
+
+        // Weight is kept when using SUM with weight override.
+        $from = GRADE_AGGREGATE_SUM;
+        $fromdefaults = grade_category::get_default_aggregation_coefficient_values($from);
+
+        $gi->aggregationcoef = $fromdefaults['aggregationcoef'];
+        $gi->aggregationcoef2 = 0.321;
+        $gi->weightoverride = 1;
+
+        $to = GRADE_AGGREGATE_SUM;
+        $todefaults = grade_category::get_default_aggregation_coefficient_values($to);
+
+        $this->assertFalse($gi->set_aggregation_fields_for_aggregation($from, $to), "From: $from, to: $to");
+        $this->assertEquals($todefaults['aggregationcoef'], $gi->aggregationcoef);
+        $this->assertEquals(0.321, $gi->aggregationcoef2);
+        $this->assertEquals(1, $gi->weightoverride);
+
+        $gi->aggregationcoef2 = 0.321;
+        $gi->aggregationcoef = $fromdefaults['aggregationcoef'];
+        $gi->weightoverride = 1;
+
+        $to = GRADE_AGGREGATE_WEIGHTED_MEAN;
+        $todefaults = grade_category::get_default_aggregation_coefficient_values($to);
+
+        $this->assertTrue($gi->set_aggregation_fields_for_aggregation($from, $to), "From: $from, to: $to");
+        $this->assertEquals($todefaults['aggregationcoef'], $gi->aggregationcoef);
+        $this->assertEquals($todefaults['aggregationcoef2'], $gi->aggregationcoef2);
+        $this->assertEquals($todefaults['weightoverride'], $gi->weightoverride);
+
+        // Weight is kept when staying in weighted mean.
+        $from = GRADE_AGGREGATE_WEIGHTED_MEAN;
+        $fromdefaults = grade_category::get_default_aggregation_coefficient_values($from);
+
+        $gi->aggregationcoef = 18;
+        $gi->aggregationcoef2 = $fromdefaults['aggregationcoef2'];
+        $gi->weightoverride = $fromdefaults['weightoverride'];
+
+        $to = GRADE_AGGREGATE_WEIGHTED_MEAN;
+        $todefaults = grade_category::get_default_aggregation_coefficient_values($to);
+
+        $this->assertFalse($gi->set_aggregation_fields_for_aggregation($from, $to), "From: $from, to: $to");
+        $this->assertEquals(18, $gi->aggregationcoef);
+        $this->assertEquals($todefaults['aggregationcoef2'], $gi->aggregationcoef2);
+        $this->assertEquals($todefaults['weightoverride'], $gi->weightoverride);
+
+        $gi->aggregationcoef = 18;
+        $gi->aggregationcoef2 = $fromdefaults['aggregationcoef2'];
+        $gi->weightoverride = $fromdefaults['weightoverride'];
+
+        $to = GRADE_AGGREGATE_SUM;
+        $todefaults = grade_category::get_default_aggregation_coefficient_values($to);
+
+        $this->assertTrue($gi->set_aggregation_fields_for_aggregation($from, $to), "From: $from, to: $to");
+        $this->assertEquals($todefaults['aggregationcoef'], $gi->aggregationcoef);
+        $this->assertEquals($todefaults['aggregationcoef2'], $gi->aggregationcoef2);
+        $this->assertEquals($todefaults['weightoverride'], $gi->weightoverride);
+    }
+
 }

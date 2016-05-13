@@ -7,8 +7,8 @@ Feature: A teacher can choose one of 4 options for publishing choice results
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -20,7 +20,6 @@ Feature: A teacher can choose one of 4 options for publishing choice results
     And I follow "Course 1"
     And I turn editing mode on
 
-  @javascript
   Scenario: Do not publish results to students
     Given I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice 1 |
@@ -36,7 +35,6 @@ Feature: A teacher can choose one of 4 options for publishing choice results
     And I should not see "Responses"
     And I should not see "Graph display"
 
-  @javascript
   Scenario: Show results to students after they answer
     Given I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice 1 |
@@ -56,7 +54,6 @@ Feature: A teacher can choose one of 4 options for publishing choice results
     And I should see "Responses"
     And I should see "Graph display"
 
-  @javascript
   Scenario: Show results to students only after the choice is closed
     Given I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice 1 |
@@ -88,7 +85,6 @@ Feature: A teacher can choose one of 4 options for publishing choice results
     And I should see "Responses"
     And I should see "Graph display"
 
-  @javascript
   Scenario: Always show results to students
     Given I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice 1 |

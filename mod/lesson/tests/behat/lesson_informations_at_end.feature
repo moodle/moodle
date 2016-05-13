@@ -2,12 +2,11 @@
 Feature: In a lesson activity, if custom scoring is not enabled, student should see
   some informations at the end of lesson: questions answered, correct answers, grade, score
 
-  @javascript
   Scenario: Informations at end of lesson if custom scoring not enabled
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -30,7 +29,7 @@ Feature: In a lesson activity, if custom scoring is not enabled, student should 
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I set the field "qtype" to "Question"
+    And I select "Question" from the "qtype" singleselect
     And I set the field "Select a question type" to "Numerical"
     And I press "Add a question page"
     And I set the following fields to these values:

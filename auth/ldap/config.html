@@ -22,6 +22,12 @@ if (!isset($config->user_type)) {
 if (!isset($config->user_attribute)) {
     $config->user_attribute = '';
 }
+if (!isset($config->suspended_attribute)) {
+    $config->suspended_attribute = '';
+}
+if (!isset($config->sync_suspended)) {
+    $config->sync_suspended = '';
+}
 if (!isset($config->search_sub)) {
     $config->search_sub = '';
 }
@@ -307,6 +313,18 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
 </tr>
 <tr valign="top" class="required">
     <td align="right">
+        <label for="suspended_attribute"><?php print_string('auth_ldap_suspended_attribute_key', 'auth_ldap') ?></label>
+    </td>
+    <td>
+        <input name="suspended_attribute" id="suspended_attribute" type="text" size="30" value="<?php echo $config->suspended_attribute?>" />
+        <?php if (isset($err['suspended_attribute'])) { echo $OUTPUT->error_text($err['suspended_attribute']); } ?>
+    </td>
+    <td>
+        <?php print_string('auth_ldap_suspended_attribute', 'auth_ldap') ?>
+    </td>
+</tr>
+<tr valign="top" class="required">
+    <td align="right">
         <label for="memberattribute"><?php print_string('auth_ldap_memberattribute_key', 'auth_ldap') ?></label>
     </td>
     <td>
@@ -532,6 +550,17 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
     </td>
     <td>
         <?php print_string('auth_remove_user', 'auth') ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right">
+        <label for="menusync_suspended"><?php print_string('auth_sync_suspended_key', 'auth') ?></label>
+    </td>
+    <td>
+        <?php echo html_writer::select($yesno, 'sync_suspended', $config->sync_suspended, false); ?>
+    </td>
+    <td>
+        <?php print_string('auth_sync_suspended', 'auth'); ?>
     </td>
 </tr>
 <tr>

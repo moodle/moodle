@@ -211,7 +211,8 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
     public static function get_supported_features(array $configuration = array()) {
         $supported = self::SUPPORTS_DATA_GUARANTEE +
                      self::SUPPORTS_NATIVE_TTL +
-                     self::IS_SEARCHABLE;
+                     self::IS_SEARCHABLE +
+                     self::DEREFERENCES_OBJECTS;
         return $supported;
     }
 
@@ -341,8 +342,8 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
             $maxtime = cache::now() - $ttl;
         }
         $readfile = false;
-        if ($this->prescan && array_key_exists($key, $this->keys)) {
-            if (!$ttl || $this->keys[$filename] >= $maxtime && file_exists($file)) {
+        if ($this->prescan && array_key_exists($filename, $this->keys)) {
+            if ((!$ttl || $this->keys[$filename] >= $maxtime) && file_exists($file)) {
                 $readfile = true;
             } else {
                 $this->delete($key);

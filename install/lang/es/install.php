@@ -31,11 +31,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Directorio Admin';
-$string['availablelangs'] = 'Lista de idiomas disponibles';
+$string['availablelangs'] = 'Packs de idiomas disponibles';
 $string['chooselanguagehead'] = 'Seleccionar idioma';
 $string['chooselanguagesub'] = 'Por favor, seleccione un idioma para el proceso de instalación. Este idioma se usará también como idioma por defecto del sitio, si bien puede cambiarse más adelante.';
-$string['clialreadyconfigured'] = 'El archivo config.php ya existe. Por favor, utilice admin/cli/upgrade.php si desea actualizar su sitio web.';
-$string['clialreadyinstalled'] = 'El archivo config.php ya existe. Por favor, utilice admin/cli/upgrade.php si desea actualizar su sitio web.';
+$string['clialreadyconfigured'] = 'El archivo de configuración config.php ya existe. Por favor, utilice admin/cli/install_database.php para instalar Moodle en este sitio.';
+$string['clialreadyinstalled'] = 'El archivo de configuración config.php ya existe. Por favor, utilice admin/cli/install_database.php para actualizar el Moodle en este sitio.';
 $string['cliinstallheader'] = 'Programa de instalación Moodle de línea de comando {$a}';
 $string['databasehost'] = 'Servidor de la base de datos';
 $string['databasename'] = 'Nombre de la base de datos';
@@ -43,13 +43,13 @@ $string['databasetypehead'] = 'Seleccione el controlador de la base de datos';
 $string['dataroot'] = 'Directorio de Datos';
 $string['datarootpermission'] = 'Permiso directorios de datos';
 $string['dbprefix'] = 'Prefijo de tablas';
-$string['dirroot'] = 'Directorio Moodle';
+$string['dirroot'] = 'Directorio de Moodle';
 $string['environmenthead'] = 'Comprobando su entorno';
 $string['environmentsub2'] = 'Cada versión de Moodle tiene algún requisito mínimo de la versión de PHP y un número obligatorio de extensiones de PHP.
 Una comprobación del entorno completo se realiza antes de cada instalación y actualización. Por favor, póngase en contacto con el administrador del servidor si no sabes cómo instalar la nueva versión o habilitar las extensiones PHP.';
 $string['errorsinenvironment'] = 'La comprobación del entorno fallo!';
 $string['installation'] = 'Instalación';
-$string['langdownloaderror'] = 'El idioma "{$a}" no pudo ser instalado. El proceso de instalación continuará en inglés.';
+$string['langdownloaderror'] = 'El idioma "{$a}" no pudo ser descargado. El proceso de instalación continuará en Inglés.';
 $string['memorylimithelp'] = '<p>El límite de memoria PHP en su servidor es actualmente {$a}.</p>
 
 <p>Esto puede ocasionar que Moodle tenga problemas de memoria más adelante, especialmente si usted tiene activados muchos módulos y/o muchos usuarios.</p>
@@ -74,7 +74,7 @@ $string['pathsroparentdataroot'] = 'El directorio padre ({$a->parent}) no tiene 
 $string['pathssubadmindir'] = 'Muy pocos servidores web usan /admin como un URL especial para acceder a un
 panel de control o algo similar. Lamentablemente, esto entra en conflicto con la ubicación estándar para las páginas de administración de Moodle. Usted puede solucionar este problema, renombrando el directorio admin en su instalación Moodle, poniendo un nuevo nombre aquí. Por ejemplo: <em> moodleadmin </em>. Esto solucionará los enlaces de administración en instalación Moodle.';
 $string['pathssubdataroot'] = 'Usted necesita un espacio donde Moodle puede guardar los archivos subidos. En este directorio debe poder LEER y ESCRIBIR el usuario del servidor web (por lo general \'nobody\',  \'apache\' o \'www-data\'), pero no debe poderse acceder a esta carpeta directamente a través de la web. El instalador tratará de crearla si no existe.';
-$string['pathssubdirroot'] = 'Ruta completa del directorio de instalación de Moodle.';
+$string['pathssubdirroot'] = '<p>Ruta completa del directorio que contiene el código de  Moodle.</p>';
 $string['pathssubwwwroot'] = 'Dirección web completa para acceder a Moodle. No es posible acceder a Moodle utilizando múltiples direcciones. Si su sitio tiene varias direcciones públicas debe configurar redirecciones permanentes en todas ellas, excepto en ésta. Si su sitio web es accesible tanto desde una intranet como desde Internet, escriba aquí la dirección pública y configure su DNS para que los usuarios de su intranet puedan también utilizar la dirección pública.';
 $string['pathsunsecuredataroot'] = 'La ubicación de dataroot no es segura';
 $string['pathswrongadmindir'] = 'El directorio admin no existe';

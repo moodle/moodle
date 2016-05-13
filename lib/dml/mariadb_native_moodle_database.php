@@ -101,24 +101,4 @@ class mariadb_native_moodle_database extends mysqli_native_moodle_database {
         }
         return true;
     }
-
-    /**
-     * Returns the current db engine.
-     *
-     * MyISAM is NOT supported!
-     *
-     * @return string or null MySQL engine name
-     */
-    public function get_dbengine() {
-        if ($this->external) {
-            return null;
-        }
-
-        $engine = parent::get_dbengine();
-        if ($engine === 'MyISAM') {
-            debugging('MyISAM tables are not supported in MariaDB driver!');
-            $engine = 'XtraDB';
-        }
-        return $engine;
-    }
 }

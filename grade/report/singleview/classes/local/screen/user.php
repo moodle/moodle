@@ -53,6 +53,14 @@ class user extends tablelike implements selectable_items {
     private $requirespaging = true;
 
     /**
+     * Get the label for the select box that chooses items for this page.
+     * @return string
+     */
+    public function select_label() {
+        return get_string('selectgrade', 'gradereport_singleview');
+    }
+
+    /**
      * Get the description for the screen.
      *
      * @return string
@@ -84,15 +92,6 @@ class user extends tablelike implements selectable_items {
     }
 
     /**
-     * Should we show the group selector on this screen?
-     *
-     * @return bool
-     */
-    public function display_group_selector() {
-        return false;
-    }
-
-    /**
      * Init the screen
      *
      * @param bool $selfitemisempty Have we selected an item yet?
@@ -101,18 +100,19 @@ class user extends tablelike implements selectable_items {
         global $DB;
 
         if (!$selfitemisempty) {
-            $this->item = $DB->get_record('user', array('id' => $this->itemid));
+            $validusers = $this->load_users();
+            if (!isset($validusers[$this->itemid])) {
+                // If the passed user id is not valid, show the first user from the list instead.
+                $this->item = reset($validusers);
+                $this->itemid = $this->item->id;
+            } else {
+                $this->item = $validusers[$this->itemid];
+            }
         }
 
         $params = array('courseid' => $this->courseid);
 
         $seq = new grade_seq($this->courseid, true);
-        foreach ($seq->items as $key => $item) {
-            if (isset($item->itemmodule)) {
-                list($courseid, $cmid) = get_course_and_cm_from_instance($item->iteminstance, $item->itemmodule);
-                $seq->items[$key]->cmid = $cmid->id;
-            }
-        }
 
         $this->items = array();
         foreach ($seq->items as $itemid => $item) {
@@ -173,11 +173,6 @@ class user extends tablelike implements selectable_items {
              $lockicon = $OUTPUT->pix_icon('t/locked', 'grade is locked');
         }
 
-        $realmodid = '';
-        if (isset($item->cmid)) {
-            $realmodid = $item->cmid;
-        }
-
         $iconstring = get_string('filtergrades', 'gradereport_singleview', $item->get_name());
 
         // Create a fake gradetreeitem so we can call get_element_header().
@@ -193,12 +188,6 @@ class user extends tablelike implements selectable_items {
 
         $itemlabel = $this->structure->get_element_header($gradetreeitem, true, false, false, false, true);
         $grade->label = $item->get_name();
-
-        $itemlabel = $item->get_name();
-        if (!empty($realmodid)) {
-            $url = new moodle_url('/mod/' . $item->itemmodule . '/view.php', array('id' => $realmodid));
-            $itemlabel = html_writer::link($url, $item->get_name());
-        }
 
         $line = array(
             $OUTPUT->action_icon($this->format_link('grade', $item->id), new pix_icon('t/editstring', $iconstring)),
@@ -278,7 +267,7 @@ class user extends tablelike implements selectable_items {
      * @return string
      */
     public function heading() {
-        return fullname($this->item);
+        return get_string('gradeuser', 'gradereport_singleview', fullname($this->item));
     }
 
     /**
@@ -307,7 +296,7 @@ class user extends tablelike implements selectable_items {
             new moodle_url('/grade/report/singleview/index.php', array(
                 'perpage' => $this->perpage,
                 'id' => $this->courseid,
-                'groupid' => $this->groupid,
+                'group' => $this->groupid,
                 'itemid' => $this->itemid,
                 'item' => 'user'
             ))
@@ -346,25 +335,36 @@ class user extends tablelike implements selectable_items {
                     continue;
                 }
 
+                $oldfinalgradefield = "oldfinalgrade_{$gradeitem->id}_{$this->itemid}";
+                // Bulk grade changes for all grades need to be processed and shouldn't be skipped if they had a previous grade.
+                if ($gradeitem->is_course_item() || ($filter != 'all' && !empty($data->$oldfinalgradefield))) {
+                    if ($gradeitem->is_course_item()) {
+                        // The course total should not be overridden.
+                        unset($data->$field);
+                        unset($data->oldfinalgradefield);
+                        $oldoverride = "oldoverride_{$gradeitem->id}_{$this->itemid}";
+                        unset($data->$oldoverride);
+                        $oldfeedback = "oldfeedback_{$gradeitem->id}_{$this->itemid}";
+                        unset($data->$oldfeedback);
+                    }
+                    continue;
+                }
                 $grade = grade_grade::fetch(array(
-                    'itemid' => $this->itemid,
+                    'itemid' => $gradeitemid,
                     'userid' => $userid
                 ));
 
                 $data->$field = empty($grade) ? $null : $grade->finalgrade;
                 $data->{"old$field"} = $data->$field;
-
-                preg_match('/_(\d+)_(\d+)/', $field, $oldoverride);
-                $oldoverride = 'oldoverride' . $oldoverride[0];
-                if (empty($data->$oldoverride)) {
-                    $data->$field = (!isset($grade->rawgrade)) ? $null : $grade->rawgrade;
-                }
-
             }
 
             foreach ($data as $varname => $value) {
-                if (preg_match('/override_(\d+)_(\d+)/', $varname, $matches)) {
-                    $data->$matches[0] = '1';
+                if (preg_match('/^oldoverride_(\d+)_(\d+)/', $varname, $matches)) {
+                    // If we've selected overriding all grades.
+                    if ($filter == 'all') {
+                        $override = "override_{$matches[1]}_{$matches[2]}";
+                        $data->$override = '1';
+                    }
                 }
                 if (!preg_match('/^finalgrade_(\d+)_(\d+)/', $varname, $matches)) {
                     continue;

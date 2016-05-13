@@ -33,10 +33,9 @@ M.availability_profile.form.initInner = function(standardFields, customFields) {
 
 M.availability_profile.form.getNode = function(json) {
     // Create HTML structure.
-    var strings = M.str.availability_profile;
-    var html = '<span class="availability-group"><label>' + strings.conditiontitle + ' ' +
+    var html = '<span class="availability-group"><label>' + M.util.get_string('conditiontitle', 'availability_profile') + ' ' +
             '<select name="field">' +
-            '<option value="choose">' + M.str.moodle.choosedots + '</option>';
+            '<option value="choose">' + M.util.get_string('choosedots', 'moodle') + '</option>';
     var fieldInfo;
     for (var i = 0; i < this.standardFields.length; i++) {
         fieldInfo = this.standardFields[i];
@@ -48,17 +47,17 @@ M.availability_profile.form.getNode = function(json) {
         // String has already been escaped using format_string.
         html += '<option value="cf_' + fieldInfo.field + '">' + fieldInfo.display + '</option>';
     }
-    html += '</select></label> <label><span class="accesshide">' + strings.label_operator +
-            ' </span><select name="op" title="' + strings.label_operator + '">';
+    html += '</select></label> <label><span class="accesshide">' + M.util.get_string('label_operator', 'availability_profile') +
+            ' </span><select name="op" title="' + M.util.get_string('label_operator', 'availability_profile') + '">';
     var operators = ['isequalto', 'contains', 'doesnotcontain', 'startswith', 'endswith',
             'isempty', 'isnotempty'];
     for (i = 0; i < operators.length; i++) {
         html += '<option value="' + operators[i] + '">' +
-                strings['op_' + operators[i]] + '</option>';
+                M.util.get_string('op_' + operators[i], 'availability_profile') + '</option>';
     }
-    html += '</select></label> <label><span class="accesshide">' + strings.label_value +
+    html += '</select></label> <label><span class="accesshide">' + M.util.get_string('label_value', 'availability_profile') +
             '</span><input name="value" type="text" style="width: 10em" title="' +
-            strings.label_value + '"/></label></span>';
+            M.util.get_string('label_value', 'availability_profile') + '"/></label></span>';
     var node = Y.Node.create('<span>' + html + '</span>');
 
     // Set initial values if specified.

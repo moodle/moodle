@@ -237,7 +237,24 @@ abstract class grade_export {
         if (is_array($this->displaytype) && !is_null($gradedisplayconst)) {
             $displaytype = $gradedisplayconst;
         }
-        return grade_format_gradevalue($grade->finalgrade, $this->grade_items[$grade->itemid], false, $displaytype, $this->decimalpoints);
+
+        $gradeitem = $this->grade_items[$grade->itemid];
+
+        // We are going to store the min and max so that we can "reset" the grade_item for later.
+        $grademax = $gradeitem->grademax;
+        $grademin = $gradeitem->grademin;
+
+        // Updating grade_item with this grade_grades min and max.
+        $gradeitem->grademax = $grade->get_grade_max();
+        $gradeitem->grademin = $grade->get_grade_min();
+
+        $formattedgrade = grade_format_gradevalue($grade->finalgrade, $gradeitem, false, $displaytype, $this->decimalpoints);
+
+        // Resetting the grade item in case it is reused.
+        $gradeitem->grademax = $grademax;
+        $gradeitem->grademin = $grademin;
+
+        return $formattedgrade;
     }
 
     /**
@@ -383,16 +400,30 @@ abstract class grade_export {
             $itemidsparam = '-1';
         }
 
-        $params = array('id'                =>$this->course->id,
-                        'groupid'           =>$this->groupid,
-                        'itemids'           =>$itemidsparam,
-                        'export_letters'    =>$this->export_letters,
-                        'export_feedback'   =>$this->export_feedback,
-                        'updatedgradesonly' =>$this->updatedgradesonly,
-                        'displaytype'       =>$this->displaytype,
-                        'decimalpoints'     =>$this->decimalpoints,
-                        'export_onlyactive' =>$this->onlyactive,
-                        'usercustomfields'  =>$this->usercustomfields);
+        // We have a single grade display type constant.
+        if (!is_array($this->displaytype)) {
+            $displaytypes = $this->displaytype;
+        } else {
+            // Implode the grade display types array as moodle_url function doesn't accept arrays.
+            $displaytypes = implode(',', $this->displaytype);
+        }
+
+        if (!empty($this->updatedgradesonly)) {
+            $updatedgradesonly = $this->updatedgradesonly;
+        } else {
+            $updatedgradesonly = 0;
+        }
+        $params = array('id'                => $this->course->id,
+                        'groupid'           => $this->groupid,
+                        'itemids'           => $itemidsparam,
+                        'export_letters'    => $this->export_letters,
+                        'export_feedback'   => $this->export_feedback,
+                        'updatedgradesonly' => $updatedgradesonly,
+                        'decimalpoints'     => $this->decimalpoints,
+                        'export_onlyactive' => $this->onlyactive,
+                        'usercustomfields'  => $this->usercustomfields,
+                        'displaytype'       => $displaytypes,
+                        'key'               => $this->userkey);
 
         return $params;
     }
@@ -436,6 +467,151 @@ abstract class grade_export {
 
         return;
     }
+
+    /**
+     * Generate the export url.
+     *
+     * Get submitted form data and create the url to be used on the grade publish feature.
+     *
+     * @return moodle_url the url of grade publishing export.
+     */
+    public function get_export_url() {
+        return new moodle_url('/grade/export/'.$this->plugin.'/dump.php', $this->get_export_params());
+    }
+
+    /**
+     * Convert the grade display types parameter into the required array to grade exporting class.
+     *
+     * In order to export, the array key must be the display type name and the value must be the grade display type
+     * constant.
+     *
+     * Note: Added support for combined display types constants like the (GRADE_DISPLAY_TYPE_PERCENTAGE_REAL) as
+     *       the $CFG->grade_export_displaytype config is still used on 2.7 in case of missing displaytype url param.
+     *       In these cases, the file will be exported with a column for each display type.
+     *
+     * @param string $displaytypes can be a single or multiple display type constants comma separated.
+     * @return array $types
+     */
+    public static function convert_flat_displaytypes_to_array($displaytypes) {
+        $types = array();
+
+        // We have a single grade display type constant.
+        if (is_int($displaytypes)) {
+            $displaytype = clean_param($displaytypes, PARAM_INT);
+
+            // Let's set a default value, will be replaced below by the grade display type constant.
+            $display[$displaytype] = 1;
+        } else {
+            // Multiple grade display types constants.
+            $display = array_flip(explode(',', $displaytypes));
+        }
+
+        // Now, create the array in the required format by grade exporting class.
+        foreach ($display as $type => $value) {
+            $type = clean_param($type, PARAM_INT);
+            if ($type == GRADE_DISPLAY_TYPE_LETTER) {
+                $types['letter'] = GRADE_DISPLAY_TYPE_LETTER;
+            } else if ($type == GRADE_DISPLAY_TYPE_PERCENTAGE) {
+                $types['percentage'] = GRADE_DISPLAY_TYPE_PERCENTAGE;
+            } else if ($type == GRADE_DISPLAY_TYPE_REAL) {
+                $types['real'] = GRADE_DISPLAY_TYPE_REAL;
+            } else if ($type == GRADE_DISPLAY_TYPE_REAL_PERCENTAGE) {
+                $types['real'] = GRADE_DISPLAY_TYPE_REAL;
+                $types['percentage'] = GRADE_DISPLAY_TYPE_PERCENTAGE;
+            } else if ($type == GRADE_DISPLAY_TYPE_REAL_LETTER) {
+                $types['real'] = GRADE_DISPLAY_TYPE_REAL;
+                $types['letter'] = GRADE_DISPLAY_TYPE_LETTER;
+            } else if ($type == GRADE_DISPLAY_TYPE_LETTER_REAL) {
+                $types['letter'] = GRADE_DISPLAY_TYPE_LETTER;
+                $types['real'] = GRADE_DISPLAY_TYPE_REAL;
+            } else if ($type == GRADE_DISPLAY_TYPE_LETTER_PERCENTAGE) {
+                $types['letter'] = GRADE_DISPLAY_TYPE_LETTER;
+                $types['percentage'] = GRADE_DISPLAY_TYPE_PERCENTAGE;
+            } else if ($type == GRADE_DISPLAY_TYPE_PERCENTAGE_LETTER) {
+                $types['percentage'] = GRADE_DISPLAY_TYPE_PERCENTAGE;
+                $types['letter'] = GRADE_DISPLAY_TYPE_LETTER;
+            } else if ($type == GRADE_DISPLAY_TYPE_PERCENTAGE_REAL) {
+                $types['percentage'] = GRADE_DISPLAY_TYPE_PERCENTAGE;
+                $types['real'] = GRADE_DISPLAY_TYPE_REAL;
+            }
+        }
+        return $types;
+    }
+
+    /**
+     * Convert the item ids parameter into the required array to grade exporting class.
+     *
+     * In order to export, the array key must be the grade item id and all values must be one.
+     *
+     * @param string $itemids can be a single item id or many item ids comma separated.
+     * @return array $items correctly formatted array.
+     */
+    public static function convert_flat_itemids_to_array($itemids) {
+        $items = array();
+
+        // We just have one single item id.
+        if (is_int($itemids)) {
+            $itemid = clean_param($itemids, PARAM_INT);
+            $items[$itemid] = 1;
+        } else {
+            // Few grade items.
+            $items = array_flip(explode(',', $itemids));
+            foreach ($items as $itemid => $value) {
+                $itemid = clean_param($itemid, PARAM_INT);
+                $items[$itemid] = 1;
+            }
+        }
+        return $items;
+    }
+
+    /**
+     * Create the html code of the grade publishing feature.
+     *
+     * @return string $output html code of the grade publishing.
+     */
+    public function get_grade_publishing_url() {
+        $url = $this->get_export_url();
+        $output =  html_writer::start_div();
+        $output .= html_writer::tag('p', get_string('gradepublishinglink', 'grades', html_writer::link($url, $url)));
+        $output .=  html_writer::end_div();
+        return $output;
+    }
+
+    /**
+     * Create a stdClass object from URL parameters to be used by grade_export class.
+     *
+     * @param int $id course id.
+     * @param string $itemids grade items comma separated.
+     * @param bool $exportfeedback export feedback option.
+     * @param bool $onlyactive only enrolled active students.
+     * @param string $displaytype grade display type constants comma separated.
+     * @param int $decimalpoints grade decimal points.
+     * @param null $updatedgradesonly recently updated grades only (Used by XML exporting only).
+     * @param null $separator separator character: tab, comma, colon and semicolon (Used by TXT exporting only).
+     *
+     * @return stdClass $formdata
+     */
+    public static function export_bulk_export_data($id, $itemids, $exportfeedback, $onlyactive, $displaytype,
+                                                   $decimalpoints, $updatedgradesonly = null, $separator = null) {
+
+        $formdata = new \stdClass();
+        $formdata->id = $id;
+        $formdata->itemids = self::convert_flat_itemids_to_array($itemids);
+        $formdata->exportfeedback = $exportfeedback;
+        $formdata->export_onlyactive = $onlyactive;
+        $formdata->display = self::convert_flat_displaytypes_to_array($displaytype);
+        $formdata->decimals = $decimalpoints;
+
+        if (!empty($updatedgradesonly)) {
+            $formdata->updatedgradesonly = $updatedgradesonly;
+        }
+
+        if (!empty($separator)) {
+            $formdata->separator = $separator;
+        }
+
+        return $formdata;
+    }
 }
 
 /**
@@ -449,9 +625,19 @@ class grade_export_update_buffer {
     /**
      * Constructor - creates the buffer and initialises the time stamp
      */
-    public function grade_export_update_buffer() {
+    public function __construct() {
         $this->update_list = array();
         $this->export_time = time();
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function grade_export_update_buffer() {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct();
     }
 
     public function flush($buffersize) {
@@ -513,8 +699,7 @@ class grade_export_update_buffer {
  * @param $courseid int The course being exported
  */
 function export_verify_grades($courseid) {
-    $regraderesult = grade_regrade_final_grades($courseid);
-    if (is_array($regraderesult)) {
-        throw new moodle_exception('gradecantregrade', 'error', '', implode(', ', array_unique($regraderesult)));
+    if (grade_needs_regrade_final_grades($courseid)) {
+        throw new moodle_exception('gradesneedregrading', 'grades');
     }
 }

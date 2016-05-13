@@ -42,12 +42,13 @@ Feature: A privileged user can create cohorts using a CSV file
       | Cat 1         | cohort name 4 | cohortid4 |                   | 0           | Created manually |
       | Cat 2         | cohort name 5 | cohortid5 |                   | 0           | Created manually |
       | Cat 3         | cohort name 6 | cohortid6 |                   | 0           | Created manually |
-    And the "class" attribute of "cohort name 1" "table_row" should not contain "dimmed_text"
-    And the "class" attribute of "cohort name 2" "table_row" should not contain "dimmed_text"
+    And ".dimmed_text" "css_element" should not exist in the "cohort name 1" "table_row"
+    And ".dimmed_text" "css_element" should not exist in the "cohort name 2" "table_row"
+    And ".dimmed_text" "css_element" should exist in the "cohort name 3" "table_row"
     And the "class" attribute of "cohort name 3" "table_row" should contain "dimmed_text"
-    And the "class" attribute of "cohort name 4" "table_row" should not contain "dimmed_text"
+    And ".dimmed_text" "css_element" should not exist in the "cohort name 4" "table_row"
     And the "class" attribute of "cohort name 5" "table_row" should contain "dimmed_text"
-    And the "class" attribute of "cohort name 6" "table_row" should not contain "dimmed_text"
+    And ".dimmed_text" "css_element" should not exist in the "cohort name 6" "table_row"
 
   @javascript
   Scenario: Upload cohorts with default category context as admin
@@ -84,7 +85,7 @@ Feature: A privileged user can create cohorts using a CSV file
   Scenario: Upload cohorts with default category context as manager
     Given the following "users" exist:
       | username | firstname | lastname | email                  |
-      | user1    | User      | 1        | user1@moodlemoodle.com |
+      | user1    | User      | 1        | user1@example.com |
     And the following "role assigns" exist:
       | user  | role    | contextlevel | reference |
       | user1 | manager | Category     | CAT1      |

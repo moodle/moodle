@@ -62,7 +62,6 @@ $string['error_nonexistingcourse'] = 'The specified course does not exist';
 $string['error_nopageinstances'] = 'The selected course does not contain page module instances';
 $string['error_notdebugging'] = 'Not available on this server because debugging is not set to DEVELOPER';
 $string['error_nouserspassword'] = 'You need to set $CFG->tool_generator_users_password in config.php to generate the test plan';
-$string['firstname'] = 'Test course user';
 $string['fullname'] = 'Test course: {$a->size}';
 $string['maketestcourse'] = 'Make test course';
 $string['maketestplan'] = 'Make JMeter test plan';

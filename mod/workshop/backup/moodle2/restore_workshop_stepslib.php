@@ -204,6 +204,7 @@ class restore_workshop_activity_structure_step extends restore_activity_structur
         $data->timegraded = $this->apply_date_offset($data->timegraded);
 
         $newitemid = $DB->insert_record('workshop_aggregations', $data);
+        $this->set_mapping('workshop_aggregation', $oldid, $newitemid, true);
     }
 
     protected function after_execute() {

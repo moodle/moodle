@@ -29,6 +29,7 @@ $string['filelockedmail'] = 'The text file you are using for file-based enrolmen
 $string['filelockedmailsubject'] = 'Important error: Enrolment file';
 $string['flatfile:manage'] = 'Manage user enrolments manually';
 $string['flatfile:unenrol'] = 'Unenrol users from the course manually';
+$string['flatfilesync'] = 'Flat file enrolment sync';
 $string['location'] = 'File location';
 $string['location_desc'] = 'Specify full path to the enrolment file. The file is automatically deleted after processing.';
 $string['notifyadmin'] = 'Notify administrator';

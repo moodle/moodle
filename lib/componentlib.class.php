@@ -190,7 +190,7 @@ class component_installer {
      *               be expanded (default='' = moodledataitself)
      * @return object
      */
-    function component_installer ($sourcebase, $zippath, $zipfilename, $md5filename='', $destpath='') {
+    public function __construct($sourcebase, $zippath, $zipfilename, $md5filename='', $destpath='') {
 
         $this->sourcebase   = $sourcebase;
         $this->zippath      = $zippath;
@@ -204,6 +204,16 @@ class component_installer {
         $this->cachedmd5components = array();
 
         $this->check_requisites();
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function component_installer($sourcebase, $zippath, $zipfilename, $md5filename='', $destpath='') {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($sourcebase, $zippath, $zipfilename, $md5filename, $destpath);
     }
 
     /**
@@ -323,8 +333,11 @@ class component_installer {
     /// Move current revision to a safe place
         $destinationdir = $CFG->dataroot.'/'.$this->destpath;
         $destinationcomponent = $destinationdir.'/'.$this->componentname;
-        @remove_dir($destinationcomponent.'_old');     //Deleting possible old components before
-        @rename ($destinationcomponent, $destinationcomponent.'_old');  //Moving to a safe place
+        @remove_dir($destinationcomponent.'_old');     // Deleting a possible old version.
+
+        // Moving to a safe place.
+        @rename($destinationcomponent, $destinationcomponent.'_old');
+
     /// Unzip new version
         if (!unzip_file($zipfile, $destinationdir, false)) {
         /// Error so, go back to the older

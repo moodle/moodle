@@ -8,9 +8,9 @@ Feature: Rename roles within a course
   Scenario: Rename roles within a course
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | teacher2 | Teacher | 2 | teacher2@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | teacher2 | Teacher | 2 | teacher2@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
@@ -25,7 +25,7 @@ Feature: Rename roles within a course
     And I set the following fields to these values:
       | Your word for 'Non-editing teacher' | Tutor |
       | Your word for 'Student' | Learner |
-    And I press "Save changes"
+    And I press "Save and display"
     And I expand "Switch role to..." node
     Then I should see "Tutor"
     And I should see "Learner"
@@ -37,7 +37,7 @@ Feature: Rename roles within a course
     And I set the following fields to these values:
       | Your word for 'Non-editing teacher' | |
       | Your word for 'Student' | |
-    And I press "Save changes"
+    And I press "Save and display"
     And I expand "Switch role to..." node
     And I should see "Teacher"
     And I should see "Student"

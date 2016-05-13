@@ -141,7 +141,7 @@ M.mod_chat_ajax.init = function(Y, cfg) {
 
         send : function(e, beep) {
             if((this.messageinput.get('value') != '') || (typeof beep != 'undefined')) {
-                this.sendbutton.set('value', M.str.chat.sending);
+                this.sendbutton.set('value', M.util.get_string('sending', 'chat'));
                 var data = {
                     chat_message : (!beep) ? this.messageinput.get('value') : '',
                     chat_sid : this.cfg.sid,
@@ -169,7 +169,7 @@ M.mod_chat_ajax.init = function(Y, cfg) {
             } catch (ex) {
                 return;
             }
-            this.sendbutton.set('value', M.str.chat.send);
+            this.sendbutton.set('value', M.util.get_string('send', 'chat'));
             this.messageinput.set('value', '');
             clearInterval(this.interval);
             this.update_messages();
@@ -243,9 +243,9 @@ M.mod_chat_ajax.init = function(Y, cfg) {
                     li.all('td').item(1).append(Y.Node.create('<strong><a target="_blank" href="' + users[i].url + '">' + users[i].name + '</a></strong>'));
                 } else {
                     li.all('td').item(1).append(Y.Node.create('<div><a target="_blank" href="' + users[i].url + '">' + users[i].name + '</a></div>'));
-                    var talk = Y.Node.create('<a href="###">' + M.str.chat.talk + '</a>');
+                    var talk = Y.Node.create('<a href="###">' + M.util.get_string('talk', 'chat') + '</a>');
                     talk.on('click', this.talkto, this, users[i].name);
-                    var beep = Y.Node.create('<a href="###">' + M.str.chat.beep + '</a>');
+                    var beep = Y.Node.create('<a href="###">' + M.util.get_string('beep', 'chat') + '</a>');
                     beep.on('click', this.send, this, users[i].id);
                     li.all('td').item(1).append(Y.Node.create('<div></div>').append(talk).append('&nbsp;').append(beep));
                 }

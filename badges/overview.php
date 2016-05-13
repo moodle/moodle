@@ -61,6 +61,8 @@ $PAGE->set_heading($badge->name);
 $PAGE->set_title($badge->name);
 $PAGE->navbar->add($badge->name);
 
+require_capability('moodle/badges:viewbadges', $context);
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading(print_badge_image($badge, $context, 'small') . ' ' . $badge->name);
 

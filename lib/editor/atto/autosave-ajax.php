@@ -25,6 +25,7 @@
 define('AJAX_SCRIPT', true);
 
 require_once(dirname(__FILE__) . '/../../../config.php');
+require_once($CFG->libdir . '/filestorage/file_storage.php');
 
 $contextid = required_param('contextid', PARAM_INT);
 $elementid = required_param('elementid', PARAM_ALPHANUMEXT);
@@ -42,6 +43,14 @@ $PAGE->set_context($context);
 
 require_login($course, false, $cm);
 require_sesskey();
+
+if (isguestuser()) {
+    print_error('accessdenied', 'admin');
+}
+
+if (!in_array('atto', explode(',', get_config('core', 'texteditors')))) {
+    print_error('accessdenied', 'admin');
+}
 
 $action = required_param('action', PARAM_ALPHA);
 
@@ -114,34 +123,49 @@ if ($action === 'save') {
         $stale = $record->timemodified < $before;
         require_once($CFG->libdir . '/filelib.php');
 
-        // This function copies all the files in one draft area, to another area (in this case it's
-        // another draft area). It also rewrites the text to @@PLUGINFILE@@ links.
-        $newdrafttext = file_save_draft_area_files($record->draftid,
-                                                   $usercontext->id,
-                                                   'user',
-                                                   'draft',
-                                                   $newdraftid,
-                                                   array(),
-                                                   $record->drafttext);
+        $fs = get_file_storage();
+        $files = $fs->get_directory_files($usercontext->id, 'user', 'draft', $newdraftid, '/', true, true);
 
-        // Final rewrite to the new draft area (convert the @@PLUGINFILES@@ again).
-        $newdrafttext = file_rewrite_pluginfile_urls($newdrafttext,
-                                                     'draftfile.php',
-                                                     $usercontext->id,
-                                                     'user',
-                                                     'draft',
-                                                     $newdraftid);
-        $record->drafttext = $newdrafttext;
+        $lastfilemodified = 0;
+        foreach ($files as $file) {
+            $lastfilemodified = max($lastfilemodified, $file->get_timemodified());
+        }
+        if ($record->timemodified < $lastfilemodified) {
+            $stale = true;
+        }
 
-        $record->pageinstance = $pageinstance;
-        $record->draftid = $newdraftid;
-        $record->timemodified = time();
-        $DB->update_record('editor_atto_autosave', $record);
-
-        // A response means the draft has been restored and here is the auto-saved text.
         if (!$stale) {
+            // This function copies all the files in one draft area, to another area (in this case it's
+            // another draft area). It also rewrites the text to @@PLUGINFILE@@ links.
+            $newdrafttext = file_save_draft_area_files($record->draftid,
+                                                       $usercontext->id,
+                                                       'user',
+                                                       'draft',
+                                                       $newdraftid,
+                                                       array(),
+                                                       $record->drafttext);
+
+            // Final rewrite to the new draft area (convert the @@PLUGINFILES@@ again).
+            $newdrafttext = file_rewrite_pluginfile_urls($newdrafttext,
+                                                         'draftfile.php',
+                                                         $usercontext->id,
+                                                         'user',
+                                                         'draft',
+                                                         $newdraftid);
+            $record->drafttext = $newdrafttext;
+
+            $record->pageinstance = $pageinstance;
+            $record->draftid = $newdraftid;
+            $record->timemodified = time();
+            $DB->update_record('editor_atto_autosave', $record);
+
+            // A response means the draft has been restored and here is the auto-saved text.
             $response['result'] = $record->drafttext;
             echo json_encode($response);
+        } else {
+            $DB->delete_records('editor_atto_autosave', array('id' => $record->id));
+
+            // No response means no error.
         }
         die();
     }

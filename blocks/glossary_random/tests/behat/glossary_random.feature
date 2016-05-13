@@ -10,8 +10,8 @@ Feature: Random glossary entry block is used in a course
       | Course 1 | C1        |
     And the following "users" exist:
       | username | firstname | lastname | email             |
-      | student1 | Sam1      | Student1 | student1@test.com |
-      | teacher1 | Terry1    | Teacher1 | teacher1@test.com |
+      | student1 | Sam1      | Student1 | student1@example.com |
+      | teacher1 | Terry1    | Teacher1 | teacher1@example.com |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | student1 | C1     | student        |

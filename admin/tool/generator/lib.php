@@ -53,7 +53,7 @@ function tool_generator_pluginfile($course, $cm, $context, $filearea, $args, $fo
     $file = $fs->get_file($context->id, 'tool_generator', $filearea, $args[0], '/', $args[1]);
 
     // Send the file, always forcing download, we don't want options.
-    session_get_instance()->write_close();
+    \core\session\manager::write_close();
     send_stored_file($file, 0, 0, true);
 }
 

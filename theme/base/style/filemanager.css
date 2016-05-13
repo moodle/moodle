@@ -96,8 +96,6 @@ background:#E2E2E2;filter:progid:DXImageTransform.Microsoft.gradient(startColors
 .file-picker .fp-clear-left {clear:left;}
 
 /* over ride hover rule from core.css*/
-.dir-rtl .filemanager-toolbar .fp-vb-icons a:hover {background:url('[[pix:theme|fp/view_icon_selected]]');}
-.dir-rtl .filemanager-toolbar .fp-vb-icons.checked a:hover {background:url('[[pix:theme|fp/view_icon_active]]') no-repeat 0 0;}
 .dir-rtl .fp-vb-details a:hover {background:none;border:20px solid black}
 .dir-rtl .fp-vb-details.checked a:hover {background:none;border:40px solid black}
 .dir-rtl .fp-vb-tree a:hover {background:none;border:30px solid black}
@@ -253,6 +251,7 @@ a.ygtvspacer:hover {color:transparent;text-decoration:none;}
 .file-picker.fp-select.loading .fp-select-loading {display:block;}
 .file-picker.fp-select.loading form {display:none;}
 .fp-select .fp-dimensions.fp-unknown {display:none;}
+.fp-select .fp-size.fp-unknown {display:none;}
 
  /*
  * File Manager
@@ -462,9 +461,9 @@ a.ygtvspacer:hover {color:transparent;text-decoration:none;}
 /**
  * Responsive styles for the filepicker
  */
-@media (max-width:873px) {
+@media (max-width:767px) {
     .file-picker .fp-repo-area {width:100%;height:auto;max-height:220px;y-scroll:auto;float:none;border:0px;}
-    .file-picker .fp-repo-items {width:100%;float:none;}
+    .file-picker .fp-repo-items {width:100%;float:none;margin-left:0;}
     .file-picker .fp-login-form .fp-login-input .label {text-align:left;}
     .dir-rtl .file-picker .fp-login-form .fp-login-input .label {text-align:right;}
     .file-picker .fp-content form td {display:block;width:100%;text-align:left;}

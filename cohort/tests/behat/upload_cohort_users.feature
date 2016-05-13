@@ -15,10 +15,11 @@ Feature: Upload users to a cohort
       | Course 1 | C1 | 0 |
       | Course 2 | C2 | 0 |
     And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I add "Cohort sync" enrolment method with:
       | Cohort | Cohort 1 |
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 2"
     And I add "Cohort sync" enrolment method with:
       | Cohort | Cohort 2 |
@@ -35,14 +36,14 @@ Feature: Upload users to a cohort
     And I click on "Assign" "link" in the "Cohort 2" "table_row"
     And the "Current users" select box should contain "Mary Smith (marysmith@example.com)"
     And the "Current users" select box should contain "Alice Smith (alicesmith@example.com)"
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 1"
     And I expand "Users" node
     And I follow "Enrolled users"
     And I should see "Tom Jones"
     And I should see "Bob Jones"
     And I should not see "Mary Smith"
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 2"
     And I expand "Users" node
     And I follow "Enrolled users"

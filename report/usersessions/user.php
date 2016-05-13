@@ -47,12 +47,19 @@ $delete = optional_param('delete', 0, PARAM_INT);
 $PAGE->set_url('/report/usersessions/user.php');
 $PAGE->set_context($context);
 $PAGE->set_title(get_string('navigationlink', 'report_usersessions'));
+$PAGE->set_heading(fullname($USER));
 $PAGE->set_pagelayout('admin');
 
 if ($delete and confirm_sesskey()) {
     report_usersessions_kill_session($delete);
     redirect($PAGE->url);
 }
+
+// Create the breadcrumb.
+$PAGE->add_report_nodes($USER->id, array(
+        'name' => get_string('navigationlink', 'report_usersessions'),
+        'url' => new moodle_url('/report/usersessions/user.php')
+    ));
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('mysessions', 'report_usersessions'));

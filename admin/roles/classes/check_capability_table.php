@@ -79,6 +79,6 @@ class core_role_check_capability_table extends core_role_capability_table_base {
         $a->fullname = $this->fullname;
         $a->capability = $capability->name;
         $a->context = $this->contextname;
-        echo '<td>' . $result . '</td>';
+        return '<td>' . $result . '</td>';
     }
 }

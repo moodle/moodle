@@ -131,4 +131,15 @@ class grade_deleted extends base {
             throw new \coding_exception('The \'overridden\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'grade_grades', 'restore' => 'grade_grades');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['itemid'] = array('db' => 'grade_items', 'restore' => 'grade_item');
+
+        return $othermapped;
+    }
 }

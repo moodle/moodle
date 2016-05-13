@@ -46,7 +46,8 @@ class repository_url extends repository {
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()){
         global $CFG;
         parent::__construct($repositoryid, $context, $options);
-        $this->file_url = optional_param('file', '', PARAM_URL);
+        $this->file_url = optional_param('file', '', PARAM_RAW);
+        $this->file_url = $this->escape_url($this->file_url);
     }
 
     public function check_login() {
@@ -93,12 +94,16 @@ EOD;
      * @return array
      */
     public function get_listing($path='', $page='') {
-        global $CFG, $OUTPUT;
         $ret = array();
         $ret['list'] = array();
         $ret['nosearch'] = true;
         $ret['norefresh'] = true;
         $ret['nologin'] = true;
+
+        $this->file_url = clean_param($this->file_url, PARAM_URL);
+        if (empty($this->file_url)) {
+            throw new repository_exception('validfiletype', 'repository_url');
+        }
 
         $this->parse_file(null, $this->file_url, $ret, true);
         return $ret;
@@ -215,6 +220,26 @@ EOD;
         } else {
             return $matches[1];
         }
+    }
+
+    /**
+     * Escapes a url by replacing spaces with %20.
+     *
+     * Note: In general moodle does not automatically escape urls, but for the purposes of making this plugin more user friendly
+     * and make it consistent with some other areas in moodle (such as mod_url), urls will automatically be escaped.
+     *
+     * If moodle_url or PARAM_URL is changed to clean characters that need to be escaped, then this function can be removed
+     *
+     * @param string $url An unescaped url.
+     * @return string The escaped url
+     */
+    protected function escape_url($url) {
+        $url = str_replace('"', '%22', $url);
+        $url = str_replace('\'', '%27', $url);
+        $url = str_replace(' ', '%20', $url);
+        $url = str_replace('<', '%3C', $url);
+        $url = str_replace('>', '%3E', $url);
+        return $url;
     }
 
     public function supported_returntypes() {

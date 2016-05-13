@@ -936,6 +936,28 @@ abstract class gradingform_instance {
     abstract public function get_grade();
 
     /**
+     * Determines whether the submitted form was empty.
+     *
+     * @param array $elementvalue value of element submitted from the form
+     * @return boolean true if the form is empty
+     */
+    public function is_empty_form($elementvalue) {
+        return false;
+    }
+
+    /**
+     * Removes the attempt from the gradingform_*_fillings table.
+     * This function is not abstract as to not break plugins that might
+     * use advanced grading.
+     * @param array $data the attempt data
+     */
+    public function clear_attempt($data) {
+        // This function is empty because the way to clear a grade
+        // attempt will be different depending on the grading method.
+        return;
+    }
+
+    /**
      * Called when teacher submits the grading form:
      * updates the instance in DB, marks it as ACTIVE and returns the grade to be pushed to the gradebook.
      * $itemid must be specified here (it was not required when the instance was
@@ -947,11 +969,15 @@ abstract class gradingform_instance {
      */
     public function submit_and_get_grade($elementvalue, $itemid) {
         $elementvalue['itemid'] = $itemid;
+        if ($this->is_empty_form($elementvalue)) {
+            $this->clear_attempt($elementvalue);
+            $this->make_active();
+            return -1;
+        }
         $this->update($elementvalue);
         $this->make_active();
         return $this->get_grade();
     }
-
 
     /**
      * Returns html for form element of type 'grading'. If there is a form input element

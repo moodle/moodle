@@ -50,6 +50,7 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
         $group1['description'] = 'Group Test 1 description';
         $group1['descriptionformat'] = FORMAT_MOODLE;
         $group1['enrolmentkey'] = 'Test group enrol secret phrase';
+        $group1['idnumber'] = 'TEST1';
         $group2 = array();
         $group2['courseid'] = $course->id;
         $group2['name'] = 'Group Test 2';
@@ -58,6 +59,11 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
         $group3['courseid'] = $course->id;
         $group3['name'] = 'Group Test 3';
         $group3['description'] = 'Group Test 3 description';
+        $group3['idnumber'] = 'TEST1';
+        $group4 = array();
+        $group4['courseid'] = $course->id;
+        $group4['name'] = 'Group Test 4';
+        $group4['description'] = 'Group Test 4 description';
 
         // Set the required capabilities by the external function
         $context = context_course::instance($course->id);
@@ -80,6 +86,7 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
                     $groupcourseid = $group1['courseid'];
                     $this->assertEquals($dbgroup->descriptionformat, $group1['descriptionformat']);
                     $this->assertEquals($dbgroup->enrolmentkey, $group1['enrolmentkey']);
+                    $this->assertEquals($dbgroup->idnumber, $group1['idnumber']);
                     break;
                 case $group2['name']:
                     $groupdescription = $group2['description'];
@@ -93,10 +100,19 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
             $this->assertEquals($dbgroup->courseid, $groupcourseid);
         }
 
+        try {
+            $froups = core_group_external::create_groups(array($group3));
+            $this->fail('Exception expected due to already existing idnumber.');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('invalid_parameter_exception', $e);
+            $this->assertEquals('Invalid parameter value detected (Group with the same idnumber already exists)',
+                $e->getMessage());
+        }
+
         // Call without required capability
         $this->unassignUserCapability('moodle/course:managegroups', $context->id, $roleid);
         $this->setExpectedException('required_capability_exception');
-        $froups = core_group_external::create_groups(array($group3));
+        $froups = core_group_external::create_groups(array($group4));
     }
 
     /**
@@ -114,6 +130,7 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
         $group1data['description'] = 'Group Test 1 description';
         $group1data['descriptionformat'] = FORMAT_MOODLE;
         $group1data['enrolmentkey'] = 'Test group enrol secret phrase';
+        $group1data['idnumber'] = 'TEST1';
         $group2data = array();
         $group2data['courseid'] = $course->id;
         $group2data['name'] = 'Group Test 2';
@@ -142,6 +159,7 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
                     $groupcourseid = $group1->courseid;
                     $this->assertEquals($dbgroup->descriptionformat, $group1->descriptionformat);
                     $this->assertEquals($dbgroup->enrolmentkey, $group1->enrolmentkey);
+                    $this->assertEquals($dbgroup->idnumber, $group1->idnumber);
                     break;
                 case $group2->name:
                     $groupdescription = $group2->description;
@@ -207,6 +225,67 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
         $this->unassignUserCapability('moodle/course:managegroups', $context->id, $roleid);
         $this->setExpectedException('required_capability_exception');
         $froups = core_group_external::delete_groups(array($group3->id));
+    }
+
+    /**
+     * Test create and update groupings.
+     * @return void
+     */
+    public function test_create_update_groupings() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+
+        $course = self::getDataGenerator()->create_course();
+
+        $grouping1data = array();
+        $grouping1data['courseid'] = $course->id;
+        $grouping1data['name'] = 'Grouping 1 Test';
+        $grouping1data['description'] = 'Grouping 1 Test description';
+        $grouping1data['descriptionformat'] = FORMAT_MOODLE;
+        $grouping1data['idnumber'] = 'TEST';
+
+        $grouping1 = self::getDataGenerator()->create_grouping($grouping1data);
+
+        $grouping1data['name'] = 'Another group';
+
+        try {
+            $groupings = core_group_external::create_groupings(array($grouping1data));
+            $this->fail('Exception expected due to already existing idnumber.');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('invalid_parameter_exception', $e);
+            $this->assertEquals('Invalid parameter value detected (Grouping with the same idnumber already exists)',
+                $e->getMessage());
+        }
+
+        // No exception should be triggered.
+        $grouping1data['id'] = $grouping1->id;
+        $grouping1data['idnumber'] = 'CHANGED';
+        unset($grouping1data['courseid']);
+        core_group_external::update_groupings(array($grouping1data));
+
+        $grouping2data = array();
+        $grouping2data['courseid'] = $course->id;
+        $grouping2data['name'] = 'Grouping 2 Test';
+        $grouping2data['description'] = 'Grouping 2 Test description';
+        $grouping2data['descriptionformat'] = FORMAT_MOODLE;
+        $grouping2data['idnumber'] = 'TEST';
+
+        $grouping2 = self::getDataGenerator()->create_grouping($grouping2data);
+
+        $grouping2data['id'] = $grouping2->id;
+        $grouping2data['idnumber'] = 'CHANGED';
+        unset($grouping2data['courseid']);
+        try {
+            $groupings = core_group_external::update_groupings(array($grouping2data));
+            $this->fail('Exception expected due to already existing idnumber.');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('invalid_parameter_exception', $e);
+            $this->assertEquals('Invalid parameter value detected (A different grouping with the same idnumber already exists)',
+                $e->getMessage());
+        }
     }
 
     /**
@@ -284,5 +363,230 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
             $this->assertEquals($dbgroup->description, $groupdescription);
             $this->assertEquals($dbgroup->courseid, $groupcourseid);
         }
+    }
+
+    /**
+     * Test get_groups
+     */
+    public function test_get_course_user_groups() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $student1 = self::getDataGenerator()->create_user();
+        $student2 = self::getDataGenerator()->create_user();
+        $teacher = self::getDataGenerator()->create_user();
+
+        $course = self::getDataGenerator()->create_course();
+        $emptycourse = self::getDataGenerator()->create_course();
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student1->id, $course->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($student2->id, $course->id, $studentrole->id);
+
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
+        $this->getDataGenerator()->enrol_user($teacher->id, $emptycourse->id, $teacherrole->id);
+
+        $group1data = array();
+        $group1data['courseid'] = $course->id;
+        $group1data['name'] = 'Group Test 1';
+        $group1data['description'] = 'Group Test 1 description';
+        $group1data['idnumber'] = 'TEST1';
+        $group2data = array();
+        $group2data['courseid'] = $course->id;
+        $group2data['name'] = 'Group Test 2';
+        $group2data['description'] = 'Group Test 2 description';
+        $group1 = self::getDataGenerator()->create_group($group1data);
+        $group2 = self::getDataGenerator()->create_group($group2data);
+
+        groups_add_member($group1->id, $student1->id);
+        groups_add_member($group1->id, $student2->id);
+        groups_add_member($group2->id, $student1->id);
+
+        $this->setUser($student1);
+
+        $groups = core_group_external::get_course_user_groups($course->id, $student1->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        // Check that I see my groups.
+        $this->assertCount(2, $groups['groups']);
+
+        $this->setUser($student2);
+        $groups = core_group_external::get_course_user_groups($course->id, $student2->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        // Check that I see my groups.
+        $this->assertCount(1, $groups['groups']);
+
+        $this->assertEquals($group1data['name'], $groups['groups'][0]['name']);
+        $this->assertEquals($group1data['description'], $groups['groups'][0]['description']);
+        $this->assertEquals($group1data['idnumber'], $groups['groups'][0]['idnumber']);
+
+        $this->setUser($teacher);
+        $groups = core_group_external::get_course_user_groups($course->id, $student1->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        // Check that a teacher can see student groups.
+        $this->assertCount(2, $groups['groups']);
+
+        $groups = core_group_external::get_course_user_groups($course->id, $student2->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        // Check that a teacher can see student groups.
+        $this->assertCount(1, $groups['groups']);
+
+        // Check permissions.
+        $this->setUser($student1);
+        try {
+            $groups = core_group_external::get_course_user_groups($course->id, $student2->id);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('accessdenied', $e->errorcode);
+        }
+
+        try {
+            $groups = core_group_external::get_course_user_groups($emptycourse->id, $student2->id);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
+        $this->setUser($teacher);
+        // Check warnings.
+        $groups = core_group_external::get_course_user_groups($emptycourse->id, $student1->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $this->assertCount(1, $groups['warnings']);
+
+    }
+
+    /**
+     * Test get_activity_allowed_groups
+     */
+    public function test_get_activity_allowed_groups() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $generator = self::getDataGenerator();
+
+        $student = $generator->create_user();
+        $otherstudent = $generator->create_user();
+        $teacher = $generator->create_user();
+        $course = $generator->create_course();
+        $othercourse = $generator->create_course();
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $generator->enrol_user($student->id, $course->id, $studentrole->id);
+        $generator->enrol_user($otherstudent->id, $othercourse->id, $studentrole->id);
+        $generator->enrol_user($teacher->id, $course->id, $teacherrole->id);
+
+        $forum1 = $generator->create_module("forum", array('course' => $course->id), array('groupmode' => VISIBLEGROUPS));
+        $forum2 = $generator->create_module("forum", array('course' => $othercourse->id));
+        $forum3 = $generator->create_module("forum", array('course' => $course->id), array('visible' => 0));
+
+        // Request data for tests.
+        $cm1 = get_coursemodule_from_instance("forum", $forum1->id);
+        $cm2 = get_coursemodule_from_instance("forum", $forum2->id);
+        $cm3 = get_coursemodule_from_instance("forum", $forum3->id);
+
+        $group1data = array();
+        $group1data['courseid'] = $course->id;
+        $group1data['name'] = 'Group Test 1';
+        $group1data['description'] = 'Group Test 1 description';
+        $group1data['idnumber'] = 'TEST1';
+        $group2data = array();
+        $group2data['courseid'] = $course->id;
+        $group2data['name'] = 'Group Test 2';
+        $group2data['description'] = 'Group Test 2 description';
+        $group2data['idnumber'] = 'TEST2';
+        $group1 = $generator->create_group($group1data);
+        $group2 = $generator->create_group($group2data);
+
+        groups_add_member($group1->id, $student->id);
+        groups_add_member($group2->id, $student->id);
+
+        $this->setUser($student);
+
+        // First try possible errors.
+        try {
+            $data = core_group_external::get_activity_allowed_groups($cm2->id);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
+        try {
+            $data = core_group_external::get_activity_allowed_groups($cm3->id);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
+        // Retrieve my groups.
+        $groups = core_group_external::get_activity_allowed_groups($cm1->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
+        $this->assertCount(2, $groups['groups']);
+
+        foreach ($groups['groups'] as $group) {
+            if ($group['name'] == $group1data['name']) {
+                $this->assertEquals($group1data['description'], $group['description']);
+                $this->assertEquals($group1data['idnumber'], $group['idnumber']);
+            } else {
+                $this->assertEquals($group2data['description'], $group['description']);
+                $this->assertEquals($group2data['idnumber'], $group['idnumber']);
+            }
+        }
+
+        $this->setUser($teacher);
+        // Retrieve other users groups.
+        $groups = core_group_external::get_activity_allowed_groups($cm1->id, $student->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
+        $this->assertCount(2, $groups['groups']);
+
+        // Check warnings. Trying to get groups for a user not enrolled in course.
+        $groups = core_group_external::get_activity_allowed_groups($cm1->id, $otherstudent->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
+        $this->assertCount(1, $groups['warnings']);
+
+    }
+
+    /**
+     * Test get_activity_groupmode
+     */
+    public function test_get_activity_groupmode() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $generator = self::getDataGenerator();
+
+        $student = $generator->create_user();
+        $course = $generator->create_course();
+        $othercourse = $generator->create_course();
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $generator->enrol_user($student->id, $course->id, $studentrole->id);
+
+        $forum1 = $generator->create_module("forum", array('course' => $course->id), array('groupmode' => VISIBLEGROUPS));
+        $forum2 = $generator->create_module("forum", array('course' => $othercourse->id));
+        $forum3 = $generator->create_module("forum", array('course' => $course->id), array('visible' => 0));
+
+        // Request data for tests.
+        $cm1 = get_coursemodule_from_instance("forum", $forum1->id);
+        $cm2 = get_coursemodule_from_instance("forum", $forum2->id);
+        $cm3 = get_coursemodule_from_instance("forum", $forum3->id);
+
+        $this->setUser($student);
+
+        $data = core_group_external::get_activity_groupmode($cm1->id);
+        $data = external_api::clean_returnvalue(core_group_external::get_activity_groupmode_returns(), $data);
+        $this->assertEquals(VISIBLEGROUPS, $data['groupmode']);
+
+        try {
+            $data = core_group_external::get_activity_groupmode($cm2->id);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
+        try {
+            $data = core_group_external::get_activity_groupmode($cm3->id);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
     }
 }

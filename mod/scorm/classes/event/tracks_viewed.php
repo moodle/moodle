@@ -118,4 +118,12 @@ class tracks_viewed extends \core\event\base {
             throw new \coding_exception('The \'scoid\' value must be set in other.');
         }
     }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['instanceid'] = array('db' => 'scorm', 'restore' => 'scorm');
+        $othermapped['scoid'] = array('db' => 'scorm_scoes', 'restore' => 'scorm_scoe');
+
+        return $othermapped;
+    }
 }

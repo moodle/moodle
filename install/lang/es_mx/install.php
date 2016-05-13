@@ -90,7 +90,7 @@ $string['phpversionhelp'] = '<p>Moodle requiere al menos una versión de PHP 4.3
 <p>¡Debe actualizar PHP o trasladarse a otro servidor con una versión más reciente de PHP!<br />
 (En caso de 5.0.x podría también revertir a la versión 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = 'Si está viendo esta página es porque ha podido ejecutar el paquete <strong>{$a->packname} {$a->packversion}</strong> en su computadora. !Enhorabuena!';
+$string['welcomep20'] = 'Si está viendo esta página es porque ha podido instalar y ejecutar exitosamente el paquete <strong>{$a->packname} {$a->packversion}</strong> en su computadora. !Enhorabuena!';
 $string['welcomep30'] = 'Esta versión de <strong>{$a->installername}</strong> incluye las aplicaciones necesarias para que <strong>Moodle</strong> funcione en su computadora,  principalmente:';
 $string['welcomep40'] = 'El paquete también incluye <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'El uso de todas las aplicaciones del paquete está gobernado por sus respectivas

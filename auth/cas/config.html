@@ -33,6 +33,9 @@ if (!isset ($config->certificate_check)) {
 if (!isset ($config->certificate_path)) {
     $config->certificate_path = '';
 }
+if (!isset($config->curl_ssl_version)) {
+    $config->curl_ssl_version = '';
+}
 if (!isset($config->logout_return_url)) {
     $config->logout_return_url = '';
 }
@@ -214,6 +217,38 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
     </td>
     <td>
         <?php print_string('auth_cas_certificate_path', 'auth_cas') ?>
+    </td>
+</tr>
+<tr valign="top" class="required">
+    <td align="right"><label for="curl_ ssl_version"><?php print_string('auth_cas_curl_ssl_version_key', 'auth_cas') ?>: </label></td>
+    <td>
+        <?php
+            $sslversions = array();
+            $sslversions[''] = get_string('auth_cas_curl_ssl_version_default', 'auth_cas');
+            if (defined('CURL_SSLVERSION_TLSv1')) {
+                $sslversions[CURL_SSLVERSION_TLSv1] = get_string('auth_cas_curl_ssl_version_TLSv1x', 'auth_cas');
+            }
+            if (defined('CURL_SSLVERSION_TLSv1_0')) {
+                $sslversions[CURL_SSLVERSION_TLSv1_0] = get_string('auth_cas_curl_ssl_version_TLSv10', 'auth_cas');
+            }
+            if (defined('CURL_SSLVERSION_TLSv1_1')) {
+                $sslversions[CURL_SSLVERSION_TLSv1_1] = get_string('auth_cas_curl_ssl_version_TLSv11', 'auth_cas');
+            }
+            if (defined('CURL_SSLVERSION_TLSv1_2')) {
+                $sslversions[CURL_SSLVERSION_TLSv1_2] = get_string('auth_cas_curl_ssl_version_TLSv12', 'auth_cas');
+            }
+            if (defined('CURL_SSLVERSION_SSLv2')) {
+                $sslversions[CURL_SSLVERSION_SSLv2] = get_string('auth_cas_curl_ssl_version_SSLv2', 'auth_cas');
+            }
+            if (defined('CURL_SSLVERSION_SSLv3')) {
+                $sslversions[CURL_SSLVERSION_SSLv3] = get_string('auth_cas_curl_ssl_version_SSLv3', 'auth_cas');
+            }
+            echo html_writer::select($sslversions, 'curl_ssl_version', $config->curl_ssl_version, false);
+            if (isset($err['curl_ssl_version'])) echo $OUTPUT->error_text($err['curl_ssl_version']);
+        ?>
+    </td>
+    <td>
+        <?php print_string('auth_cas_curl_ssl_version', 'auth_cas') ?>
     </td>
 </tr>
 <tr valign="top" class="required">

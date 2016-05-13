@@ -2,6 +2,13 @@ This files describes API changes in /availability/*.
 
 The information here is intended only for developers.
 
+=== 2.9 ===
+
+* Condition plugins can now implement a new include_after_restore function to
+  indicate that they should be removed during the restore process. (This is
+  implemented so that group and grouping conditions are removed if groups are
+  not restored.)
+
 === 2.8 ===
 
 * There is a new API function in the info_module/info_section objects (and

@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/tablelib.php');
+require_once($CFG->libdir . '/tests/fixtures/testable_flexible_table.php');
 
 /**
  * Test some of tablelib.
@@ -361,7 +362,247 @@ class core_tablelib_testcase extends basic_testcase {
         $table->define_columns($columns);
         $table->define_headers($headers);
         $table->define_baseurl('/invalid.php');
+
         $row = $table->get_row_html($data);
         $this->assertRegExp('/row 0 col 0/', $row);
+        $this->assertRegExp('/<tr class=""/', $row);
+        $this->assertRegExp('/<td class="cell c0"/', $row);
+    }
+
+    public function test_persistent_table() {
+        global $SESSION;
+
+        $data = $this->generate_data(5, 5);
+        $columns = $this->generate_columns(5);
+        $headers = $this->generate_headers(5);
+
+        // Testing without persistence first to verify that the results are different.
+        $table1 = new flexible_table('tablelib_test');
+        $table1->define_columns($columns);
+        $table1->define_headers($headers);
+        $table1->define_baseurl('/invalid.php');
+
+        $table1->sortable(true);
+        $table1->collapsible(true);
+
+        $table1->is_persistent(false);
+        $_GET['thide'] = 'column0';
+        $_GET['tsort'] = 'column1';
+        $_GET['tifirst'] = 'A';
+        $_GET['tilast'] = 'Z';
+
+        foreach ($data as $row) {
+            $table1->add_data_keyed($row);
+        }
+        $table1->setup();
+
+        // Clear session data between each new table.
+        unset($SESSION->flextable);
+
+        $table2 = new flexible_table('tablelib_test');
+        $table2->define_columns($columns);
+        $table2->define_headers($headers);
+        $table2->define_baseurl('/invalid.php');
+
+        $table2->sortable(true);
+        $table2->collapsible(true);
+
+        $table2->is_persistent(false);
+        unset($_GET);
+
+        foreach ($data as $row) {
+            $table2->add_data_keyed($row);
+        }
+        $table2->setup();
+
+        $this->assertNotEquals($table1, $table2);
+
+        unset($SESSION->flextable);
+
+        // Now testing with persistence to check that the tables are the same.
+        $table3 = new flexible_table('tablelib_test');
+        $table3->define_columns($columns);
+        $table3->define_headers($headers);
+        $table3->define_baseurl('/invalid.php');
+
+        $table3->sortable(true);
+        $table3->collapsible(true);
+
+        $table3->is_persistent(true);
+        $_GET['thide'] = 'column0';
+        $_GET['tsort'] = 'column1';
+        $_GET['tifirst'] = 'A';
+        $_GET['tilast'] = 'Z';
+
+        foreach ($data as $row) {
+            $table3->add_data_keyed($row);
+        }
+        $table3->setup();
+
+        unset($SESSION->flextable);
+
+        $table4 = new flexible_table('tablelib_test');
+        $table4->define_columns($columns);
+        $table4->define_headers($headers);
+        $table4->define_baseurl('/invalid.php');
+
+        $table4->sortable(true);
+        $table4->collapsible(true);
+
+        $table4->is_persistent(true);
+        unset($_GET);
+
+        foreach ($data as $row) {
+            $table4->add_data_keyed($row);
+        }
+        $table4->setup();
+
+        $this->assertEquals($table3, $table4);
+
+        unset($SESSION->flextable);
+
+        // Finally, another test with no persistence, but without clearing the session data.
+        $table5 = new flexible_table('tablelib_test');
+        $table5->define_columns($columns);
+        $table5->define_headers($headers);
+        $table5->define_baseurl('/invalid.php');
+
+        $table5->sortable(true);
+        $table5->collapsible(true);
+
+        $table5->is_persistent(true);
+        $_GET['thide'] = 'column0';
+        $_GET['tsort'] = 'column1';
+        $_GET['tifirst'] = 'A';
+        $_GET['tilast'] = 'Z';
+
+        foreach ($data as $row) {
+            $table5->add_data_keyed($row);
+        }
+        $table5->setup();
+
+        $table6 = new flexible_table('tablelib_test');
+        $table6->define_columns($columns);
+        $table6->define_headers($headers);
+        $table6->define_baseurl('/invalid.php');
+
+        $table6->sortable(true);
+        $table6->collapsible(true);
+
+        $table6->is_persistent(true);
+        unset($_GET);
+
+        foreach ($data as $row) {
+            $table6->add_data_keyed($row);
+        }
+        $table6->setup();
+
+        $this->assertEquals($table5, $table6);
+    }
+
+    /**
+     * Helper method for preparing tables instances in {@link self::test_can_be_reset()}.
+     *
+     * @param string $tableid
+     * @return testable_flexible_table
+     */
+    protected function prepare_table_for_reset_test($tableid) {
+        global $SESSION;
+
+        unset($SESSION->flextable[$tableid]);
+
+        $data = $this->generate_data(25, 3);
+        $columns = array('column0', 'column1', 'column2');
+        $headers = $this->generate_headers(3);
+
+        $table = new testable_flexible_table($tableid);
+        $table->define_baseurl('/invalid.php');
+        $table->define_columns($columns);
+        $table->define_headers($headers);
+        $table->collapsible(true);
+        $table->is_persistent(false);
+
+        return $table;
+    }
+
+    public function test_can_be_reset() {
+
+        // Table in its default state (as if seen for the first time), nothing to reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $table->setup();
+        $this->assertFalse($table->can_be_reset());
+
+        // Table in its default state with default sorting defined, nothing to reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $table->sortable(true, 'column1', SORT_DESC);
+        $table->setup();
+        $this->assertFalse($table->can_be_reset());
+
+        // Table explicitly sorted by the default column (reverses the order), can be reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $table->sortable(true, 'column1', SORT_DESC);
+        $_GET['tsort'] = 'column1';
+        $table->setup();
+        unset($_GET['tsort']);
+        $this->assertTrue($table->can_be_reset());
+
+        // Table explicitly sorted twice by the default column (puts back to default order), nothing to reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $table->sortable(true, 'column1', SORT_DESC);
+        $_GET['tsort'] = 'column1';
+        $table->setup();
+        $table->setup(); // Set up again to simulate the second page request.
+        unset($_GET['tsort']);
+        $this->assertFalse($table->can_be_reset());
+
+        // Table sorted by other than default column, can be reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $table->sortable(true, 'column1', SORT_DESC);
+        $_GET['tsort'] = 'column2';
+        $table->setup();
+        unset($_GET['tsort']);
+        $this->assertTrue($table->can_be_reset());
+
+        // Table sorted by the default column after another sorting previously selected.
+        // This leads to different ORDER BY than just having a single sort defined, can be reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $table->sortable(true, 'column1', SORT_DESC);
+        $_GET['tsort'] = 'column0';
+        $table->setup();
+        $_GET['tsort'] = 'column1';
+        $table->setup();
+        unset($_GET['tsort']);
+        $this->assertTrue($table->can_be_reset());
+
+        // Table having some column collapsed, can be reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $_GET['thide'] = 'column2';
+        $table->setup();
+        unset($_GET['thide']);
+        $this->assertTrue($table->can_be_reset());
+
+        // Table having some column explicitly expanded, nothing to reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $_GET['tshow'] = 'column2';
+        $table->setup();
+        unset($_GET['tshow']);
+        $this->assertFalse($table->can_be_reset());
+
+        // Table after expanding a collapsed column, nothing to reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $_GET['thide'] = 'column0';
+        $table->setup();
+        $_GET['tshow'] = 'column0';
+        $table->setup();
+        unset($_GET['thide']);
+        unset($_GET['tshow']);
+        $this->assertFalse($table->can_be_reset());
+
+        // Table with some name filtering enabled, can be reset.
+        $table = $this->prepare_table_for_reset_test(uniqid('tablelib_test_'));
+        $_GET['tifirst'] = 'A';
+        $table->setup();
+        unset($_GET['tifirst']);
+        $this->assertTrue($table->can_be_reset());
     }
 }

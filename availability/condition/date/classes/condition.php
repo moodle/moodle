@@ -234,4 +234,68 @@ class condition extends \core_availability\condition {
         }
         return false;
     }
+
+    /**
+     * Changes all date restrictions on a course by the specified shift amount.
+     * Used by the course reset feature.
+     *
+     * @param int $courseid Course id
+     * @param int $timeshift Offset in seconds
+     */
+    public static function update_all_dates($courseid, $timeshift) {
+        global $DB;
+
+        $modinfo = get_fast_modinfo($courseid);
+        $anychanged = false;
+
+        // Adjust dates from all course modules.
+        foreach ($modinfo->cms as $cm) {
+            if (!$cm->availability) {
+                continue;
+            }
+            $info = new \core_availability\info_module($cm);
+            $tree = $info->get_availability_tree();
+            $dates = $tree->get_all_children('availability_date\condition');
+            $changed = false;
+            foreach ($dates as $date) {
+                $date->time += $timeshift;
+                $changed = true;
+            }
+
+            // Save the updated course module.
+            if ($changed) {
+                $DB->set_field('course_modules', 'availability', json_encode($tree->save()),
+                        array('id' => $cm->id));
+                $anychanged = true;
+            }
+        }
+
+        // Adjust dates from all course sections.
+        foreach ($modinfo->get_section_info_all() as $section) {
+            if (!$section->availability) {
+                continue;
+            }
+
+            $info = new \core_availability\info_section($section);
+            $tree = $info->get_availability_tree();
+            $dates = $tree->get_all_children('availability_date\condition');
+            $changed = false;
+            foreach ($dates as $date) {
+                $date->time += $timeshift;
+                $changed = true;
+            }
+
+            // Save the updated course module.
+            if ($changed) {
+                $DB->set_field('course_sections', 'availability', json_encode($tree->save()),
+                        array('id' => $section->id));
+                $anychanged = true;
+            }
+        }
+
+        // Ensure course cache is cleared if required.
+        if ($anychanged) {
+            rebuild_course_cache($courseid, true);
+        }
+    }
 }

@@ -10,6 +10,8 @@
 .message .heading {
     font-size: 1em;
     font-weight: bold;
+    clear: both;
+    word-wrap: break-word;
 }
 .message .author {
     font-weight: bold;
@@ -36,6 +38,9 @@
 #page-message-send td.fixeditor {
     text-align: center;
 }
+.message {
+    overflow: hidden;
+}
 .message .note {
     padding: 10px;
 }
@@ -43,26 +48,139 @@ table.message .searchresults td {
     padding: 5px;
 }
 .message .contactselector {
-    width: 24%;
-    float: left;
+    @maxwidth: 240px;
+
+    max-width: 380px;
+    margin: 0 auto;
+
+    @media screen and (min-width: 1000px) {
+        float: left;
+        padding: 0 8px 0 0;
+    }
+    width: auto;
+    .singleselect {
+        width: @maxwidth;
+    }
+    .paging {
+        z-index: 1;
+        position: relative;
+    }
+
+    #message_participants {
+        max-width: @maxwidth;
+    }
+
+    .message-contacts {
+        list-style-type: none;
+        margin: 0;
+
+        li {
+            clear: both;
+            position: relative;
+            min-height: 23px;
+            padding: 2px;
+            &:nth-child(odd) {
+                background: rgba(120, 120, 255, 0.1);
+            }
+            > div {
+                display: block;
+                height: 100%;
+                > * {
+                    vertical-align: middle;
+                    display: inline-block;
+                }
+
+                &.pix {
+                    position: relative;
+                    float: left;
+                }
+                &.link {
+                    white-space: nowrap;
+                    width: 60px;
+                    position: relative;
+                    float: right;
+                    text-align: right;
+                }
+                &.contact {
+                    position: relative;
+                    word-break: break-all;
+                    a {
+                        line-height: 22px;
+                    }
+                }
+            }
+        }
+    }
 }
-.message .contactselector .contact {
-    text-align: left;
+.dir-ltr {
+    .message .message-contacts li {
+        text-align: left;
+        > div {
+            &.pix {
+                float: left;
+            }
+            &.link {
+                float: right;
+                text-align: right;
+            }
+            &.contact {
+                margin: 0 60px 0 24px;
+                &.nolinks {
+                    margin: 0 0 0 24px;
+                }
+            }
+        }
+    }
 }
-.message .contactselector .messageselecteduser {
-    font-weight: bold;
-}
-.message .contactselector .paging {
-    z-index: 1;
-    position: relative;
+.dir-rtl {
+    .message .message-contacts li {
+        text-align: right;
+        > div {
+            &.pix {
+                float: right;
+            }
+            &.link {
+                float: left;
+                text-align: left;
+            }
+            &.contact {
+                margin: 0 24px 0 60px;
+                &.nolinks {
+                    margin: 0 24px 0 0;
+                }
+            }
+        }
+    }
+
+    .message .contactselector {
+        @media screen and (min-width: 1000px) {
+            float: right;
+        }
+    }
 }
 .message .messagearea  {
-    padding-left: 1%;
-    border-left: 1px solid @tableBorder;
-    width: 74%;
-    float: right;
+    @media screen and (min-width: 1000px) {
+        border-left: 1px solid @tableBorder;
+        padding: 0 8px;
+    }
+    @media screen and (max-width: 1000px) {
+        width: 100%;
+    }
+    float: none;
+    overflow: hidden;
     min-height: 200px;
+    min-width: 300px;
 }
+
+#message_user_pictures {
+    text-align: center;
+
+    .dir-rtl & {
+        direction: rtl;
+    }
+}
+
+
 .message .messagearea .messagehistorytype {
     clear: both;
     padding-bottom: 20px;
@@ -71,17 +189,35 @@ table.message .searchresults td {
     vertical-align: top;
     width: 45%;
     min-width: 100px;
-    float: left;
+    display: inline-block;
 }
 .message .messagearea .messagehistory .user > div {
     text-align: center;
 }
 .message .messagearea .messagehistory .between {
-    float: left;
+    display: inline-block;
     width: 16px;
     margin: 0 1%;
     padding-top: 40px;
 }
+
+@media screen and (max-width: 320px) {
+
+    .message .messagearea {
+        min-width: 0;
+    }
+
+    .message .messagearea .messagehistory .user {
+        max-width: 70px;
+        min-width: 0;
+    }
+
+    .message .messagearea .messagehistory .user .userpicture {
+        width: 50px;
+        height: auto;
+    }
+}
+
 @media screen and (min-width: 800px) {
     .message .messagearea .messagehistory .between {
         margin: 0 3%;
@@ -89,65 +225,35 @@ table.message .searchresults td {
     .message .messagearea .messagehistory .user {
         width: 32%
     }
-    .message .messagearea .messagehistory .user:first-child {
-        margin-left: 13%;
-    }
-    .message .messagearea .messagehistory .user:last-child {
-        margin-right: 13%;
-    }
-    .dir-rtl .message .messagearea .messagehistory .user:first-child {
-        margin-right: 13%;
-        margin-left: 0%
-    }
-    .dir-rtl .message .messagearea .messagehistory .user:last-child {
-        margin-left: 13%;
-        margin-right: 0%;
-    }
 }
 @media screen and (min-width: 1200px) {
     .message .messagearea .messagehistory .user {
         width: 25%
     }
-    .message .messagearea .messagehistory .user:first-child {
-        margin-left: 20%;
-    }
-    .message .messagearea .messagehistory .user:last-child {
-        margin-right: 20%;
-    }
-    .dir-rtl .message .messagearea .messagehistory .user:first-child {
-        margin-left: 0;
-        margin-right: 20%;
-    }
-    .dir-rtl .message .messagearea .messagehistory .user:last-child {
-        margin-right: 0%;
-        margin-left: 20%;
-    }
-}
-.dir-rtl .message .messagearea .messagehistory .between,
-.dir-rtl .message .messagearea .messagehistory .user {
-    float: right;
 }
 .message .messagearea .messagehistory .heading {
     width: 100%;
     clear: both;
 }
 .message .messagearea .messagehistory .left {
-    padding-bottom: 10px;
+    margin-bottom: 10px;
     width: 50%;
     float: left;
+    position: relative;
     clear: both;
 }
 .dir-rtl .message .messagearea .messagehistory .left {
-    float:right;
+    float: right;
 }
 .message .messagearea .messagehistory .right {
-    padding-bottom: 10px;
+    margin-bottom: 10px;
     width: 50%;
     float: right;
+    position: relative;
     clear: both;
 }
 .dir-rtl .message .messagearea .messagehistory .right {
-    float:left;
+    float: left;
 }
 .message .messagearea .messagehistory .notification {
     .well;
@@ -155,12 +261,39 @@ table.message .searchresults td {
     margin-bottom: 0;
     margin-top: 5px;
 }
+.dir-ltr .message .messagearea .messagehistory .message {
+    margin-right: 20px;
+}
+.dir-ltr .message .messagearea .messagehistory .right .message {
+    margin-left: 20px;
+}
+.dir-rtl .message .messagearea .messagehistory .message {
+    margin-left: 20px;
+}
+.dir-rtl .message .messagearea .messagehistory .right .message {
+    margin-right: 20px;
+}
+.message .messagearea .messagehistory .messageactive {
+  background-color: @tableBackgroundHover;
+}
+.message .messagearea .messagehistory .messagecontent .deleteicon {
+    width: 20px;
+    position: absolute;
+    top: -2px;
+}
+.dir-ltr .message .messagearea .messagehistory .messagecontent .deleteicon {
+    right: 0;
+}
+.dir-rtl .message .messagearea .messagehistory .messagecontent .deleteicon {
+    left: 0;
+}
 .message .messagearea .messagesend {
     padding-top: 20px;
     clear: both;
 }
 .message .messagearea .messagesend .messagesendbox {
     width: 100%;
+    box-sizing: border-box;
 }
 .message .messagearea .messagesend fieldset {
     padding: 0;
@@ -228,4 +361,64 @@ table.message .searchresults td {
 /* Widen the plain text editor on the bulk message screen */
 #page-user-action_redir #edit-messagebody {
     width:auto;
+}
+
+/** Messenger send message dialog */
+.core_message-messenger-sendmessage-hidden {
+    display:none;
+}
+.core_message-messenger-sendmessage {
+    .message-actions {
+        position: relative;
+    }
+    .message-area {
+        height: 240px;
+        max-height: 100%;
+        position: relative;
+        margin-bottom: 10px;
+    }
+    .message-input {
+        width: 100%;
+        height: 100%;
+        .box-sizing(border-box);
+    }
+    .message-send {
+        margin: 0;
+        float: right;
+    }
+    .message-notice-area {
+        display: table;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .message-notice {
+        display: table-cell;
+        vertical-align: middle;
+        text-align: center;
+        > div {
+            background: #eee;
+            padding: 5px;
+            font-size: 12px;
+        }
+    }
+    .message-footer {
+        margin-top: 3px;
+        line-height: 20px;
+    }
+    .message-history {
+        position: absolute;
+        bottom: 0;
+    }
+}
+.dir-rtl {
+    .core_message-messenger-sendmessage {
+        .message-send {
+            float: left;
+        }
+    }
 }

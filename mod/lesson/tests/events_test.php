@@ -54,6 +54,122 @@ class mod_lesson_events_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the page created event.
+     *
+     */
+    public function test_page_created() {
+
+        // Set up a generator to create content.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $pagerecord = $generator->create_content($this->lesson);
+        $page = $this->lesson->load_page($pagerecord->id);
+
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\page_created', $event);
+        $this->assertEquals($page->id, $event->objectid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the page created event.
+     *
+     */
+    public function test_page_moved() {
+
+        // Set up a generator to create content.
+        // paga3 is the first one and page1 the last one.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+        $pagerecord1 = $generator->create_content($this->lesson);
+        $page1 = $this->lesson->load_page($pagerecord1->id);
+        $pagerecord2 = $generator->create_content($this->lesson);
+        $page2 = $this->lesson->load_page($pagerecord2->id);
+        $pagerecord3 = $generator->create_content($this->lesson);
+        $page3 = $this->lesson->load_page($pagerecord3->id);
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $this->lesson->resort_pages($page3->id, $pagerecord2->id);
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        $this->assertCount(1, $events);
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\page_moved', $event);
+        $this->assertEquals($page3->id, $event->objectid);
+        $this->assertEquals($pagerecord1->id, $event->other['nextpageid']);
+        $this->assertEquals($pagerecord2->id, $event->other['prevpageid']);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the page deleted event.
+     *
+     */
+    public function test_page_deleted() {
+
+        // Set up a generator to create content.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+        // Create a content page.
+        $pagerecord = $generator->create_content($this->lesson);
+        // Get the lesson page information.
+        $page = $this->lesson->load_page($pagerecord->id);
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $page->delete();
+
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\page_deleted', $event);
+        $this->assertEquals($page->id, $event->objectid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the page updated event.
+     *
+     * There is no external API for updateing a page, so the unit test will simply
+     * create and trigger the event and ensure data is returned as expected.
+     */
+    public function test_page_updated() {
+
+        // Trigger an event: page updated.
+        $eventparams = array(
+            'context' => context_module::instance($this->lesson->properties()->cmid),
+            'objectid' => 25,
+            'other' => array(
+                'pagetype' => 'True/false'
+                )
+        );
+
+        $event = \mod_lesson\event\page_updated::create($eventparams);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\page_updated', $event);
+        $this->assertEquals(25, $event->objectid);
+        $this->assertEquals('True/false', $event->other['pagetype']);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
      * Test the essay attempt viewed event.
      *
      * There is no external API for viewing an essay attempt, so the unit test will simply
@@ -84,79 +200,6 @@ class mod_lesson_events_testcase extends advanced_testcase {
     }
 
     /**
-     * Test the highscore added event.
-     *
-     * There is no external API for adding a highscore, so the unit test will simply create
-     * and trigger the event and ensure the legacy log data is returned as expected.
-     */
-    public function test_highscore_added() {
-        global $DB;
-
-        // Create a highscore.
-        $newhighscore = new stdClass;
-        $newhighscore->lessonid = $this->lesson->id;
-        $newhighscore->userid = 3;
-        $newhighscore->gradeid = 70;
-        $newhighscore->nickname = 'noob';
-
-        $newhighscore->id = $DB->insert_record('lesson_high_scores', $newhighscore);
-
-        // Create a highscore added event.
-        $event = \mod_lesson\event\highscore_added::create(array(
-            'objectid' => $newhighscore->id,
-            'context' => context_module::instance($this->lesson->properties()->cmid),
-            'courseid' => $this->course->id,
-            'other' => array(
-                'lessonid' => $this->lesson->id,
-                'nickname' => 'noob'
-            )
-        ));
-
-        // Trigger and capture the event.
-        $sink = $this->redirectEvents();
-        $event->trigger();
-        $events = $sink->get_events();
-        $event = reset($events);
-
-        // Check that the event data is valid.
-        $this->assertInstanceOf('\mod_lesson\event\highscore_added', $event);
-        $this->assertEquals(context_module::instance($this->lesson->properties()->cmid), $event->get_context());
-        $expected = array($this->course->id, 'lesson', 'update highscores', 'highscores.php?id=' . $this->lesson->properties()->cmid,
-            'noob', $this->lesson->properties()->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
-        $this->assertEventContextNotUsed($event);
-    }
-
-    /**
-     * Test the highscores viewed event.
-     *
-     * There is no external API for viewing highscores, so the unit test will simply create
-     * and trigger the event and ensure the legacy log data is returned as expected.
-     */
-    public function test_highscores_viewed() {
-        // Create a highscore viewed event.
-        $event = \mod_lesson\event\highscores_viewed::create(array(
-            'objectid' => $this->lesson->id,
-            'context' => context_module::instance($this->lesson->properties()->cmid),
-            'courseid' => $this->course->id
-        ));
-
-        // Trigger and capture the event.
-        $sink = $this->redirectEvents();
-        $event->trigger();
-        $events = $sink->get_events();
-        $event = reset($events);
-
-        // Check that the event data is valid.
-        $this->assertInstanceOf('\mod_lesson\event\highscores_viewed', $event);
-        $this->assertEquals(context_module::instance($this->lesson->properties()->cmid), $event->get_context());
-        $expected = array($this->course->id, 'lesson', 'view highscores', 'highscores.php?id=' . $this->lesson->properties()->cmid,
-            $this->lesson->properties()->name, $this->lesson->properties()->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
-        $this->assertEventContextNotUsed($event);
-    }
-
-    /**
      * Test the lesson started event.
      */
     public function test_lesson_started() {
@@ -175,6 +218,51 @@ class mod_lesson_events_testcase extends advanced_testcase {
         $this->assertEventContextNotUsed($event);
     }
 
+    /**
+     * Test the lesson restarted event.
+     */
+    public function test_lesson_restarted() {
+
+        // Initialize timer.
+        $this->lesson->start_timer();
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $this->lesson->update_timer(true);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\lesson_restarted', $event);
+        $this->assertEquals(context_module::instance($this->lesson->properties()->cmid), $event->get_context());
+        $expected = array($this->course->id, 'lesson', 'start', 'view.php?id=' . $this->lesson->properties()->cmid,
+            $this->lesson->properties()->id, $this->lesson->properties()->cmid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+
+    }
+
+    /**
+     * Test the lesson restarted event.
+     */
+    public function test_lesson_resumed() {
+
+        // Initialize timer.
+        $this->lesson->start_timer();
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $this->lesson->update_timer(true, true);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\lesson_resumed', $event);
+        $this->assertEquals(context_module::instance($this->lesson->properties()->cmid), $event->get_context());
+        $expected = array($this->course->id, 'lesson', 'start', 'view.php?id=' . $this->lesson->properties()->cmid,
+            $this->lesson->properties()->id, $this->lesson->properties()->cmid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+
+    }
     /**
      * Test the lesson ended event.
      */
@@ -237,6 +325,276 @@ class mod_lesson_events_testcase extends advanced_testcase {
         $expected = array($this->course->id, 'lesson', 'update grade', 'essay.php?id=' . $this->lesson->properties()->cmid,
                 $this->lesson->name, $this->lesson->properties()->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the content page viewed event.
+     *
+     */
+    public function test_content_page_viewed() {
+        global $DB, $PAGE;
+
+        // Set up a generator to create content.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+        // Create a content page.
+        $pagerecord = $generator->create_content($this->lesson);
+        // Get the lesson page information.
+        $page = $this->lesson->load_page($pagerecord->id);
+        // Get the coursemodule record to setup the $PAGE->cm.
+        $coursemodule = $DB->get_record('course_modules', array('id' => $this->lesson->properties()->cmid));
+        // Set the $PAGE->cm.
+        $PAGE->set_cm($coursemodule);
+        // Get the appropriate renderer.
+        $lessonoutput = $PAGE->get_renderer('mod_lesson');
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        // Fire the function that leads to the triggering of our event.
+        $lessonoutput->display_page($this->lesson, $page, false);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\content_page_viewed', $event);
+        $this->assertEquals($page->id, $event->objectid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the question viewed event.
+     *
+     */
+    public function test_question_viewed() {
+        global $DB, $PAGE;
+
+        // Set up a generator to create content.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+        // Create a question page.
+        $pagerecord = $generator->create_question_truefalse($this->lesson);
+        // Get the lesson page information.
+        $page = $this->lesson->load_page($pagerecord->id);
+        // Get the coursemodule record to setup the $PAGE->cm.
+        $coursemodule = $DB->get_record('course_modules', array('id' => $this->lesson->properties()->cmid));
+        // Set the $PAGE->cm.
+        $PAGE->set_cm($coursemodule);
+        // Get the appropriate renderer.
+        $lessonoutput = $PAGE->get_renderer('mod_lesson');
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        // Fire the function that leads to the triggering of our event.
+        $lessonoutput->display_page($this->lesson, $page, false);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\question_viewed', $event);
+        $this->assertEquals($page->id, $event->objectid);
+        $this->assertEquals('True/false', $event->other['pagetype']);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the question answered event.
+     *
+     * There is no external API for answering an truefalse question, so the unit test will simply
+     * create and trigger the event and ensure data is returned as expected.
+     */
+    public function test_question_answered() {
+
+        // Trigger an event: truefalse question answered.
+        $eventparams = array(
+            'context' => context_module::instance($this->lesson->properties()->cmid),
+            'objectid' => 25,
+            'other' => array(
+                'pagetype' => 'True/false'
+                )
+        );
+
+        $event = \mod_lesson\event\question_answered::create($eventparams);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\question_answered', $event);
+        $this->assertEquals(25, $event->objectid);
+        $this->assertEquals('True/false', $event->other['pagetype']);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the user override created event.
+     *
+     * There is no external API for creating a user override, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_user_override_created() {
+
+        $params = array(
+            'objectid' => 1,
+            'relateduserid' => 2,
+            'context' => context_module::instance($this->lesson->properties()->cmid),
+            'other' => array(
+                'lessonid' => $this->lesson->id
+            )
+        );
+        $event = \mod_lesson\event\user_override_created::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\user_override_created', $event);
+        $this->assertEquals(context_module::instance($this->lesson->properties()->cmid), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the group override created event.
+     *
+     * There is no external API for creating a group override, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_group_override_created() {
+
+        $params = array(
+            'objectid' => 1,
+            'context' => context_module::instance($this->lesson->properties()->cmid),
+            'other' => array(
+                'lessonid' => $this->lesson->id,
+                'groupid' => 2
+            )
+        );
+        $event = \mod_lesson\event\group_override_created::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\group_override_created', $event);
+        $this->assertEquals(context_module::instance($this->lesson->properties()->cmid), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the user override updated event.
+     *
+     * There is no external API for updating a user override, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_user_override_updated() {
+
+        $params = array(
+            'objectid' => 1,
+            'relateduserid' => 2,
+            'context' => context_module::instance($this->lesson->properties()->cmid),
+            'other' => array(
+                'lessonid' => $this->lesson->id
+            )
+        );
+        $event = \mod_lesson\event\user_override_updated::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\user_override_updated', $event);
+        $this->assertEquals(context_module::instance($this->lesson->properties()->cmid), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the group override updated event.
+     *
+     * There is no external API for updating a group override, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_group_override_updated() {
+
+        $params = array(
+            'objectid' => 1,
+            'context' => context_module::instance($this->lesson->properties()->cmid),
+            'other' => array(
+                'lessonid' => $this->lesson->id,
+                'groupid' => 2
+            )
+        );
+        $event = \mod_lesson\event\group_override_updated::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\group_override_updated', $event);
+        $this->assertEquals(context_module::instance($this->lesson->properties()->cmid), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the user override deleted event.
+     */
+    public function test_user_override_deleted() {
+        global $DB;
+
+        // Create an override.
+        $override = new stdClass();
+        $override->lesson = $this->lesson->id;
+        $override->userid = 2;
+        $override->id = $DB->insert_record('lesson_overrides', $override);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $this->lesson->delete_override($override->id);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\user_override_deleted', $event);
+        $this->assertEquals(context_module::instance($this->lesson->properties()->cmid), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the group override deleted event.
+     */
+    public function test_group_override_deleted() {
+        global $DB;
+
+        // Create an override.
+        $override = new stdClass();
+        $override->lesson = $this->lesson->id;
+        $override->groupid = 2;
+        $override->id = $DB->insert_record('lesson_overrides', $override);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $this->lesson->delete_override($override->id);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\group_override_deleted', $event);
+        $this->assertEquals(context_module::instance($this->lesson->properties()->cmid), $event->get_context());
         $this->assertEventContextNotUsed($event);
     }
 }

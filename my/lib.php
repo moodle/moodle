@@ -58,7 +58,7 @@ function my_get_page($userid, $private=MY_PAGE_PRIVATE) {
 function my_copy_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') {
     global $DB;
 
-    if ($customised = $DB->record_exists('my_pages', array('userid' => $userid, 'private' => $private))) {
+    if ($customised = $DB->get_record('my_pages', array('userid' => $userid, 'private' => $private))) {
         return $customised;  // We're done!
     }
 
@@ -81,11 +81,17 @@ function my_copy_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') {
                                                                 'pagetypepattern' => $pagetype,
                                                                 'subpagepattern' => $systempage->id));
     foreach ($blockinstances as $instance) {
+        $originalid = $instance->id;
         unset($instance->id);
         $instance->parentcontextid = $usercontext->id;
         $instance->subpagepattern = $page->id;
         $instance->id = $DB->insert_record('block_instances', $instance);
         $blockcontext = context_block::instance($instance->id);  // Just creates the context record
+        $block = block_instance($instance->blockname, $instance);
+        if (!$block->instance_copy($originalid)) {
+            debugging("Unable to copy block-specific data for original block instance: $originalid
+                to new block instance: $instance->id", DEBUG_DEVELOPER);
+        }
     }
 
     // FIXME: block position overrides should be merged in with block instance
@@ -128,6 +134,57 @@ function my_reset_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') 
         return false; // error
     }
     return $systempage;
+}
+
+/**
+ * Resets the page customisations for all users.
+ *
+ * @param int $private Either MY_PAGE_PRIVATE or MY_PAGE_PUBLIC.
+ * @param string $pagetype Either my-index or user-profile.
+ * @return void
+ */
+function my_reset_page_for_all_users($private = MY_PAGE_PRIVATE, $pagetype = 'my-index') {
+    global $DB;
+
+    // Find all the user pages.
+    $where = 'userid IS NOT NULL AND private = :private';
+    $params = array('private' => $private);
+    $pages = $DB->get_recordset_select('my_pages', $where, $params, 'id, userid');
+    $pageids = array();
+    $blockids = array();
+
+    foreach ($pages as $page) {
+        $pageids[] = $page->id;
+        $usercontext = context_user::instance($page->userid);
+
+        // Find all block instances in that page.
+        $blocks = $DB->get_recordset('block_instances', array('parentcontextid' => $usercontext->id,
+            'pagetypepattern' => $pagetype), '', 'id, subpagepattern');
+        foreach ($blocks as $block) {
+            if (is_null($block->subpagepattern) || $block->subpagepattern == $page->id) {
+                $blockids[] = $block->id;
+            }
+        }
+        $blocks->close();
+    }
+    $pages->close();
+
+    // Wrap the SQL queries in a transaction.
+    $transaction = $DB->start_delegated_transaction();
+
+    // Delete the block instances.
+    if (!empty($blockids)) {
+        blocks_delete_instances($blockids);
+    }
+
+    // Finally delete the pages.
+    if (!empty($pageids)) {
+        list($insql, $inparams) = $DB->get_in_or_equal($pageids);
+        $DB->delete_records_select('my_pages', "id $insql", $pageids);
+    }
+
+    // We should be good to go now.
+    $transaction->allow_commit();
 }
 
 class my_syspage_block_manager extends block_manager {

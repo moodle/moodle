@@ -42,6 +42,12 @@ if ( $mode == 'visible' and confirm_sesskey()) {
     $displayformat->sortkey     = $form->sortkey;
     $displayformat->sortorder   = $form->sortorder;
 
+    // Extract visible tabs from array into comma separated list.
+    $visibletabs = implode(',', $form->visibletabs);
+    // Include 'standard' tab by default along with other tabs.
+    // This way we don't run into the risk of users not selecting any tab for displayformat.
+    $displayformat->showtabs = GLOSSARY_STANDARD.','.$visibletabs;
+
     $DB->update_record("glossary_formats",$displayformat);
     redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=modsettingglossary#glossary_formats_header");
     die;
@@ -246,6 +252,37 @@ echo '<table width="90%" align="center" class="generalbox">';
     </td>
     <td width="60%">
     <?php print_string("cnfshowgroup", "glossary") ?><br /><br />
+    </td>
+</tr>
+<tr>
+    <td align="right" width="20%"><label for="visibletabs"><?php print_string("visibletabs", "glossary"); ?></label></td>
+    <td>
+        <?php
+        // Get all glossary tabs.
+        $glossarytabs = glossary_get_all_tabs();
+        // Extract showtabs value in an array.
+        $visibletabs = glossary_get_visible_tabs($displayformat);
+        $size = min(10, count($glossarytabs));
+        ?>
+    <select id="visibletabs" name="visibletabs[]" size="<?php echo $size ?>" multiple="multiple">
+<?php
+    $selected = "";
+foreach ($glossarytabs as $tabkey => $tabvalue) {
+    if (in_array($tabkey, $visibletabs)) {
+?>
+    <option value="<?php echo $tabkey ?>" selected="selected"><?php echo $tabvalue ?></option>
+    <?php
+    } else {
+    ?>
+    <option value="<?php echo $tabkey ?>"><?php echo $tabvalue ?></option>
+    <?php
+    }
+}
+    ?>
+    </select>
+    </td>
+    <td width="60%">
+        <?php print_string("cnftabs", "glossary") ?><br/><br/>
     </td>
 </tr>
 <tr>

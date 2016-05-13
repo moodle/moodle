@@ -32,13 +32,13 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'y';
-$string['cliincorrectvalueerror'] = 'Error, valor incorrecte « {$a->value} » per lo paramètre « {$a->option} »';
-$string['cliincorrectvalueretry'] = 'Valor incorrecte, veuillez réessayer';
+$string['cliincorrectvalueerror'] = 'Error, valor incorrècta « {$a->value} » pel paramètre « {$a->option} »';
+$string['cliincorrectvalueretry'] = 'Valor incorrècta, ensajar tornamai';
 $string['clitypevalue'] = 'tipe valor';
 $string['clitypevaluedefault'] = 'tipe valor, tapez Entrée per utilizar la valor per defaut ({$a})';
-$string['cliunknowoption'] = 'Options non reconnues :
+$string['cliunknowoption'] = 'Options non reconegudas :
  {$a}.
 Utilisez l\'option --help.';
-$string['cliyesnoprompt'] = 'Tapez y (pour oui) o n (pour non)';
-$string['environmentrequireinstall'] = 'doit être installé e activé';
-$string['environmentrequireversion'] = 'la version {$a->needed} es requise ; vous utilisez actualament la version {$a->current}';
+$string['cliyesnoprompt'] = 'Picatz y (per òc) o n (per non)';
+$string['environmentrequireinstall'] = 'doit èsser installat e activat';
+$string['environmentrequireversion'] = 'la version {$a->needed} es requesida ; vous utilisez actualament la version {$a->current}';

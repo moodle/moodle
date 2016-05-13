@@ -103,4 +103,13 @@ class phase_switched extends \core\event\base {
             throw new \coding_exception('The \'workshopphase\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'workshop', 'restore' => 'workshop');
+    }
+
+    public static function get_other_mapping() {
+        // Nothing to map.
+        return false;
+    }
 }

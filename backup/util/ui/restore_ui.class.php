@@ -185,11 +185,11 @@ class restore_ui extends base_ui {
      * there are long-running tasks even though there is no restore controller
      * in use.
      *
-     * @return \core\progress\null
+     * @return \core\progress\none
      */
     public function get_progress_reporter() {
         if (!$this->progressreporter) {
-            $this->progressreporter = new \core\progress\null();
+            $this->progressreporter = new \core\progress\none();
         }
         return $this->progressreporter;
     }

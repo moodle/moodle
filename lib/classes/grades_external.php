@@ -155,6 +155,8 @@ class core_grades_external extends external_api {
                     continue;
                 }
 
+                $context = $coursecontext;
+
                 if ($activitygrade->itemtype == 'course') {
                     $item = grade_get_course_grades($course->id, $params['userids']);
                     $item->itemnumber = 0;
@@ -166,6 +168,8 @@ class core_grades_external extends external_api {
                 } else {
                     $cm = $activityinstances[$activitygrade->itemmodule][$activitygrade->iteminstance];
                     $instance = $cm->instance;
+                    $context = context_module::instance($cm->id, IGNORE_MISSING);
+
                     $grades = grade_get_grades($params['courseid'], $activitygrade->itemtype,
                                                 $activitygrade->itemmodule, $instance, $params['userids']);
                 }
@@ -211,7 +215,7 @@ class core_grades_external extends external_api {
                             if ($gradeiteminstance->itemtype != 'course' and !empty($studentgrade->feedback)) {
                                 list($studentgrade->feedback, $studentgrade->feedbackformat) =
                                     external_format_text($studentgrade->feedback, $studentgrade->feedbackformat,
-                                    $cm->id, $params['component'], 'feedback', null);
+                                    $context->id, $params['component'], 'feedback', null);
                             }
 
                             $gradeitemarray['grades'][$studentid] = (array)$studentgrade;
@@ -265,7 +269,7 @@ class core_grades_external extends external_api {
                             if (!empty($studentgrade->feedback)) {
                                 list($studentgrade->feedback, $studentgrade->feedbackformat) =
                                     external_format_text($studentgrade->feedback, $studentgrade->feedbackformat,
-                                    $cm->id, $params['component'], 'feedback', null);
+                                    $context->id, $params['component'], 'feedback', null);
                             }
 
                             $gradesarray['outcomes'][$cm->id]['grades'][$studentid] = (array)$studentgrade;

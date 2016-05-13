@@ -1,6 +1,16 @@
 This files describes API changes in /mod/forum/*,
 information provided here is intended especially for developers.
 
+=== 3.1 ===
+ * The inteface to forum_get_email_message_id() has changed and no longer needs the $host argument.
+
+=== 3.0 ===
+ * External function get_forums_by_courses now returns and additional field "cancreatediscussions" that indicates if the user
+   can create discussions in the forum.
+ * A new optional parameter (groupid) has been added to get_forum_discussions.
+   This parameter can override the automatically calculated current group.
+ * New constant FORUM_POSTS_ALL_USER_GROUPS, to be used as parameter in functions where we'd need to retrieve all the user posts.
+
 === 2.8 ===
  * The following functions have all been marked as deprecated. Many of
    these have not been supported in many releases and should not be relied
@@ -32,6 +42,8 @@ information provided here is intended especially for developers.
    * forum_get_subscribed_forums
    * forum_get_optional_subscribed_forums
    * forum_get_potential_subscribers
+ * External function mod_forum_external::get_forum_discussions has been deprecated.
+   Use mod_forum_external::get_forum_discussions_paginated instead.
 
 === 2.6 ===
 

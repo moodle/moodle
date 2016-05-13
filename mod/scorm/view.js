@@ -38,7 +38,7 @@ M.mod_scormform.init = function(Y) {
         }
         // Hide the intro and display a message to the user if the window is closed.
         var scormintro = Y.one('#intro');
-        scormintro.setHTML('<a href="' + course_url + '">' + M.str.scorm.popuplaunched + '</a>');
+        scormintro.setHTML('<a href="' + course_url + '">' + M.util.get_string('popuplaunched', 'scorm') + '</a>');
     }
 
     // When pop-up is closed return to course homepage.
@@ -60,7 +60,7 @@ M.mod_scormform.init = function(Y) {
         setTimeout(function() {
             if (!winobj) {
                 var scormintro = Y.one('#intro');
-                scormintro.setHTML(M.str.scorm.popupsblocked);
+                scormintro.setHTML(M.util.get_string('popupsblocked', 'scorm'));
             }}, 800);
     }
 
@@ -83,6 +83,7 @@ M.mod_scormform.init = function(Y) {
         winobj = window.open(launch_url,'Popup', poptions);
         this.target = 'Popup';
         scormredirect(winobj);
+        winobj.opener = null;
     }
     // Listen for view form submit and generate popup on user interaction.
     if (scormform) {
@@ -91,6 +92,7 @@ M.mod_scormform.init = function(Y) {
             winobj = window.open(launch_url, 'Popup', poptions);
             this.target = 'Popup';
             scormredirect(winobj);
+            winobj.opener = null;
             e.preventDefault();
         }, scormform);
     }

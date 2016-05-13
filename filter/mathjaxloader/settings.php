@@ -33,14 +33,14 @@ if ($ADMIN->fulltree) {
     $item = new admin_setting_configtext('filter_mathjaxloader/httpurl',
                                          new lang_string('httpurl', 'filter_mathjaxloader'),
                                          new lang_string('httpurl_help', 'filter_mathjaxloader'),
-                                         'http://cdn.mathjax.org/mathjax/2.3-latest/MathJax.js',
+                                         'http://cdn.mathjax.org/mathjax/2.6-latest/MathJax.js',
                                          PARAM_RAW);
     $settings->add($item);
 
     $item = new admin_setting_configtext('filter_mathjaxloader/httpsurl',
                                          new lang_string('httpsurl', 'filter_mathjaxloader'),
                                          new lang_string('httpsurl_help', 'filter_mathjaxloader'),
-                                         'https://cdn.mathjax.org/mathjax/2.3-latest/MathJax.js',
+                                         'https://cdn.mathjax.org/mathjax/2.6-latest/MathJax.js',
                                          PARAM_RAW);
     $settings->add($item);
 
@@ -52,17 +52,7 @@ if ($ADMIN->fulltree) {
 
     $default = '
 MathJax.Hub.Config({
-    config: ["MMLorHTML.js", "Safe.js"],
-    jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
-    extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
-    TeX: {
-        extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
-    },
-    menuSettings: {
-        zoom: "Double-Click",
-        mpContext: true,
-        mpMouse: true
-    },
+    config: ["Accessible.js", "Safe.js"],
     errorSettings: { message: ["!"] },
     skipStartupTypeset: true,
     messageStyle: "none"

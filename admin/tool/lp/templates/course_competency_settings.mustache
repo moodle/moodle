@@ -1,0 +1,21 @@
+<form data-region="coursecompetencysettings">
+    <input type="hidden" name="courseid" value="{{courseid}}"/>
+    <fieldset>
+        <p>{{#str}}coursecompetencyratingsquestion, tool_lp{{/str}}</p>
+        <label><input type="radio" value="0" name="pushratingstouserplans"
+                {{^settings.pushratingstouserplans}}checked{{/settings.pushratingstouserplans}}>
+            {{#str}}ratingaffectsonlycourse, tool_lp{{/str}}
+        </label>
+        <label><input type="radio" value="1" name="pushratingstouserplans"
+                {{#settings.pushratingstouserplans}}checked{{/settings.pushratingstouserplans}}>
+            {{#str}}ratingaffectsuserplans, tool_lp{{/str}}
+        </label>
+
+    </fieldset>
+    <fieldset>
+        <center>
+        <input type="button" data-action="save" value="{{#str}}savechanges{{/str}}"/>
+        <input type="button" data-action="cancel" value="{{#str}}cancel{{/str}}"/>
+        </center>
+    </fieldset>
+</form>

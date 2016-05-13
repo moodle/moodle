@@ -113,41 +113,27 @@ class auth_plugin_ldap extends auth_plugin_base {
         }
 
         // Hack prefix to objectclass
-        if (empty($this->config->objectclass)) {
-            // Can't send empty filter
-            $this->config->objectclass = '(objectClass=*)';
-        } else if (stripos($this->config->objectclass, 'objectClass=') === 0) {
-            // Value is 'objectClass=some-string-here', so just add ()
-            // around the value (filter _must_ have them).
-            $this->config->objectclass = '('.$this->config->objectclass.')';
-        } else if (strpos($this->config->objectclass, '(') !== 0) {
-            // Value is 'some-string-not-starting-with-left-parentheses',
-            // which is assumed to be the objectClass matching value.
-            // So build a valid filter with it.
-            $this->config->objectclass = '(objectClass='.$this->config->objectclass.')';
-        } else {
-            // There is an additional possible value
-            // '(some-string-here)', that can be used to specify any
-            // valid filter string, to select subsets of users based
-            // on any criteria. For example, we could select the users
-            // whose objectClass is 'user' and have the
-            // 'enabledMoodleUser' attribute, with something like:
-            //
-            //   (&(objectClass=user)(enabledMoodleUser=1))
-            //
-            // In this particular case we don't need to do anything,
-            // so leave $this->config->objectclass as is.
-        }
+        $this->config->objectclass = ldap_normalise_objectclass($this->config->objectclass);
     }
 
     /**
      * Constructor with initialisation.
      */
-    function auth_plugin_ldap() {
+    public function __construct() {
         $this->authtype = 'ldap';
         $this->roleauth = 'auth_ldap';
         $this->errorlogtag = '[AUTH LDAP] ';
         $this->init_plugin($this->authtype);
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function auth_plugin_ldap() {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct();
     }
 
     /**
@@ -534,11 +520,13 @@ class auth_plugin_ldap extends auth_plugin_base {
      *
      * @param object $user new user object
      * @param boolean $notify print notice with link and terminate
+     * @return boolean success
      */
     function user_signup($user, $notify=true) {
         global $CFG, $DB, $PAGE, $OUTPUT;
 
         require_once($CFG->dirroot.'/user/profile/lib.php');
+        require_once($CFG->dirroot.'/user/lib.php');
 
         if ($this->user_exists($user->username)) {
             print_error('auth_ldap_user_exists', 'auth_ldap');
@@ -552,6 +540,8 @@ class auth_plugin_ldap extends auth_plugin_base {
         }
 
         $user->id = user_create_user($user, false, false);
+
+        user_add_password_history($user->id, $plainslashedpassword);
 
         // Save any custom profile field information
         profile_save_data($user);
@@ -604,11 +594,11 @@ class auth_plugin_ldap extends auth_plugin_base {
         $user = get_complete_user_data('username', $username);
 
         if (!empty($user)) {
-            if ($user->confirmed) {
-                return AUTH_CONFIRM_ALREADY;
-
-            } else if ($user->auth != $this->authtype) {
+            if ($user->auth != $this->authtype) {
                 return AUTH_CONFIRM_ERROR;
+
+            } else if ($user->secret == $confirmsecret && $user->confirmed) {
+                return AUTH_CONFIRM_ALREADY;
 
             } else if ($user->secret == $confirmsecret) {   // They have provided the secret key to get in
                 if (!$this->user_activate($username)) {
@@ -739,7 +729,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                     } while ($entry = ldap_next_entry($ldapconnection, $entry));
                 }
                 unset($ldap_result); // Free mem.
-            } while ($ldap_pagedresults && !empty($ldap_cookie));
+            } while ($ldap_pagedresults && $ldap_cookie !== null && $ldap_cookie != '');
         }
 
         // If LDAP paged results were used, the current connection must be completely
@@ -859,6 +849,9 @@ class auth_plugin_ldap extends auth_plugin_base {
                     }
                 }
             }
+            if ($this->config->suspended_attribute && $this->config->sync_suspended) {
+                $updatekeys[] = 'suspended';
+            }
             unset($all_keys); unset($key);
 
         } else {
@@ -886,7 +879,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
                 foreach ($users as $user) {
                     echo "\t"; print_string('auth_dbupdatinguser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id));
-                    if (!$this->update_user_record($user->username, $updatekeys)) {
+                    if (!$this->update_user_record($user->username, $updatekeys, true)) {
                         echo ' - '.get_string('skipped');
                     }
                     echo "\n";
@@ -941,6 +934,10 @@ class auth_plugin_ldap extends auth_plugin_base {
                 // get_userinfo_asobj() might have replaced $user->username with the value
                 // from the LDAP server (which can be mixed-case). Make sure it's lowercase
                 $user->username = trim(core_text::strtolower($user->username));
+                // It isn't possible to just rely on the configured suspension attribute since
+                // things like active directory use bit masks, other things using LDAP might
+                // do different stuff as well.
+                $user->suspended = $this->is_user_suspended($user);
                 if (empty($user->lang)) {
                     $user->lang = $CFG->lang;
                 }
@@ -984,8 +981,11 @@ class auth_plugin_ldap extends auth_plugin_base {
      *
      * @param string $username username
      * @param boolean $updatekeys true to update the local record with the external LDAP values.
+     * @param bool $triggerevent set false if user_updated event should not be triggered.
+     *             This will not affect user_password_updated event triggering.
+     * @return stdClass|bool updated user record or false if there is no new info to update.
      */
-    function update_user_record($username, $updatekeys = false) {
+    function update_user_record($username, $updatekeys = false, $triggerevent = false) {
         global $CFG, $DB;
 
         // Just in case check text case
@@ -1012,6 +1012,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             if (!empty($updatekeys)) {
                 $newuser = new stdClass();
                 $newuser->id = $userid;
+                $newuser->suspended = $this->is_user_suspended((object) $newinfo);
 
                 foreach ($updatekeys as $key) {
                     if (isset($newinfo[$key])) {
@@ -1027,7 +1028,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                         }
                     }
                 }
-                user_update_user($newuser, false, false);
+                user_update_user($newuser, false, $triggerevent);
             }
         } else {
             return false;
@@ -1511,6 +1512,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             }
         }
         $moodleattributes['username'] = core_text::strtolower(trim($this->config->user_attribute));
+        $moodleattributes['suspended'] = core_text::strtolower(trim($this->config->suspended_attribute));
         return $moodleattributes;
     }
 
@@ -1635,7 +1637,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
         if (($_SERVER['REQUEST_METHOD'] === 'GET'         // Only on initial GET of loginpage
              || ($_SERVER['REQUEST_METHOD'] === 'POST'
-                 && (get_referer() != strip_querystring(qualified_me()))))
+                 && (get_local_referer() != strip_querystring(qualified_me()))))
                                                           // Or when POSTed from another place
                                                           // See MDL-14071
             && !empty($this->config->ntlmsso_enabled)     // SSO enabled
@@ -1646,12 +1648,15 @@ class auth_plugin_ldap extends auth_plugin_base {
 
             // First, let's remember where we were trying to get to before we got here
             if (empty($SESSION->wantsurl)) {
-                $SESSION->wantsurl = (array_key_exists('HTTP_REFERER', $_SERVER) &&
-                                      $_SERVER['HTTP_REFERER'] != $CFG->wwwroot &&
-                                      $_SERVER['HTTP_REFERER'] != $CFG->wwwroot.'/' &&
-                                      $_SERVER['HTTP_REFERER'] != $CFG->httpswwwroot.'/login/' &&
-                                      $_SERVER['HTTP_REFERER'] != $CFG->httpswwwroot.'/login/index.php')
-                    ? $_SERVER['HTTP_REFERER'] : NULL;
+                $SESSION->wantsurl = null;
+                $referer = get_local_referer(false);
+                if ($referer &&
+                        $referer != $CFG->wwwroot &&
+                        $referer != $CFG->wwwroot . '/' &&
+                        $referer != $CFG->httpswwwroot . '/login/' &&
+                        $referer != $CFG->httpswwwroot . '/login/index.php') {
+                    $SESSION->wantsurl = $referer;
+                }
             }
 
             // Now start the whole NTLM machinery.
@@ -1676,7 +1681,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         // we don't want to use at all. As we can't get rid of it, just point
         // $SESSION->wantsurl to $CFG->wwwroot (after all, we came from there).
         if (empty($SESSION->wantsurl)
-            && (get_referer() == $CFG->httpswwwroot.'/auth/ldap/ntlmsso_finish.php')) {
+            && (get_local_referer() == $CFG->httpswwwroot.'/auth/ldap/ntlmsso_finish.php')) {
 
             $SESSION->wantsurl = $CFG->wwwroot;
         }
@@ -1852,6 +1857,12 @@ class auth_plugin_ldap extends auth_plugin_base {
         if (!isset($config->user_attribute)) {
              $config->user_attribute = '';
         }
+        if (!isset($config->suspended_attribute)) {
+            $config->suspended_attribute = '';
+        }
+        if (!isset($config->sync_suspended)) {
+            $config->sync_suspended = false;
+        }
         if (!isset($config->search_sub)) {
              $config->search_sub = '';
         }
@@ -1948,6 +1959,8 @@ class auth_plugin_ldap extends auth_plugin_base {
         set_config('contexts', $config->contexts, $this->pluginconfig);
         set_config('user_type', core_text::strtolower(trim($config->user_type)), $this->pluginconfig);
         set_config('user_attribute', core_text::strtolower(trim($config->user_attribute)), $this->pluginconfig);
+        set_config('suspended_attribute', core_text::strtolower(trim($config->suspended_attribute)), $this->pluginconfig);
+        set_config('sync_suspended', $config->sync_suspended, $this->pluginconfig);
         set_config('search_sub', $config->search_sub, $this->pluginconfig);
         set_config('opt_deref', $config->opt_deref, $this->pluginconfig);
         set_config('preventpassindb', $config->preventpassindb, $this->pluginconfig);
@@ -2061,7 +2074,23 @@ class auth_plugin_ldap extends auth_plugin_base {
         $entry = ldap_get_entries_moodle($ldapconn, $sr);
         $info = array_change_key_case($entry[0], CASE_LOWER);
         $maxpwdage = $info['maxpwdage'][0];
+        if ($sr = ldap_read($ldapconn, $user_dn, '(objectClass=*)', array('msDS-ResultantPSO'))) {
+            if ($entry = ldap_get_entries_moodle($ldapconn, $sr)) {
+                $info = array_change_key_case($entry[0], CASE_LOWER);
+                $userpso = $info['msds-resultantpso'][0];
 
+                // If a PSO exists, FGPP is being utilized.
+                // Grab the new maxpwdage from the msDS-MaximumPasswordAge attribute of the PSO.
+                if (!empty($userpso)) {
+                    $sr = ldap_read($ldapconn, $userpso, '(objectClass=*)', array('msDS-MaximumPasswordAge'));
+                    if ($entry = ldap_get_entries_moodle($ldapconn, $sr)) {
+                        $info = array_change_key_case($entry[0], CASE_LOWER);
+                        // Default value of msds-maximumpasswordage is 42 and is always set.
+                        $maxpwdage = $info['msds-maximumpasswordage'][0];
+                    }
+                }
+            }
+        }
         // ----------------------------------------------------------------
         // MSDN says that "pwdLastSet contains the number of 100 nanosecond
         // intervals since January 1, 1601 (UTC), stored in a 64 bit integer".
@@ -2258,6 +2287,26 @@ class auth_plugin_ldap extends auth_plugin_base {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Check if a user is suspended. This function is intended to be used after calling
+     * get_userinfo_asobj. This is needed because LDAP doesn't have a notion of disabled
+     * users, however things like MS Active Directory support it and expose information
+     * through a field.
+     *
+     * @param object $user the user object returned by get_userinfo_asobj
+     * @return boolean
+     */
+    protected function is_user_suspended($user) {
+        if (!$this->config->suspended_attribute || !isset($user->suspended)) {
+            return false;
+        }
+        if ($this->config->suspended_attribute == 'useraccountcontrol' && $this->config->user_type == 'ad') {
+            return (bool)($user->suspended & AUTH_AD_ACCOUNTDISABLE);
+        }
+
+        return (bool)$user->suspended;
     }
 
 } // End of the class

@@ -25,5 +25,5 @@
 defined('MOODLE_INTERNAL') || die;
 
 $plugin->component = 'booktool_print'; // Full name of the plugin (used for diagnostics)
-$plugin->version   = 2014111000; // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2014110400; // Requires this Moodle version
+$plugin->version   = 2015111600; // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2015111000; // Requires this Moodle version.

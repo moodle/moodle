@@ -65,8 +65,9 @@ if ($l) {  // Two ways to specify the module.
 
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
-$tool = lti_get_tool_by_url_match($lti->toolurl);
-if ($tool) {
+if (!empty($lti->typeid)) {
+    $toolconfig = lti_get_type_config($lti->typeid);
+} else if ($tool = lti_get_tool_by_url_match($lti->toolurl)) {
     $toolconfig = lti_get_type_config($tool->id);
 } else {
     $toolconfig = array();
@@ -92,20 +93,6 @@ if ($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
 } else {
     $PAGE->set_pagelayout('incourse');
 }
-
-// Mark viewed by user (if required).
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
-
-$params = array(
-    'context' => $context,
-    'objectid' => $lti->id
-);
-$event = \mod_lti\event\course_module_viewed::create($params);
-$event->add_record_snapshot('course_modules', $cm);
-$event->add_record_snapshot('course', $course);
-$event->add_record_snapshot('lti', $lti);
-$event->trigger();
 
 $pagetitle = strip_tags($course->shortname.': '.format_string($lti->name));
 $PAGE->set_title($pagetitle);

@@ -1,0 +1,10 @@
+{
+  "moodle-qtype_ddimageortext-dd": {
+    "requires": [
+        "node",
+        "dd",
+        "dd-drop",
+        "dd-constrain"
+    ]
+  }
+}

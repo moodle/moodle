@@ -41,5 +41,19 @@ if ($ADMIN->fulltree) {
             ENROL_EXT_REMOVED_SUSPENDNOROLES => get_string('extremovedsuspendnoroles', 'core_enrol'),
         );
         $settings->add(new admin_setting_configselect('enrol_meta/unenrolaction', get_string('extremovedaction', 'enrol'), get_string('extremovedaction_help', 'enrol'), ENROL_EXT_REMOVED_SUSPENDNOROLES, $options));
+
+        $sortoptions = array(
+            'sortorder' => new lang_string('sort_sortorder', 'admin'),
+            'fullname' => new lang_string('sort_fullname', 'admin'),
+            'shortname' => new lang_string('sort_shortname', 'admin'),
+            'idnumber' => new lang_string('sort_idnumber', 'admin'),
+        );
+        $settings->add(new admin_setting_configselect(
+            'enrol_meta/coursesort',
+            new lang_string('coursesort', 'enrol_meta'),
+            new lang_string('coursesort_help', 'enrol_meta'),
+            'sortorder',
+            $sortoptions
+        ));
     }
 }

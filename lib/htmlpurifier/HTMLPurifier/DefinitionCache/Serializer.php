@@ -219,9 +219,15 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
             } elseif (!$this->_testPermissions($base, $chmod)) {
                 return false;
             }
-            $old = umask(0000);
             mkdir($directory, $chmod);
-            umask($old);
+            if (!$this->_testPermissions($directory, $chmod)) {
+                trigger_error(
+                    'Base directory ' . $base . ' does not exist,
+                    please create or change using %Cache.SerializerPath',
+                    E_USER_WARNING
+                );
+                return false;
+            }
         } elseif (!$this->_testPermissions($directory, $chmod)) {
             return false;
         }

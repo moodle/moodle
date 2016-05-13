@@ -27,27 +27,24 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
     /** @var custom_menu_item language The language menu if created */
     protected $language = null;
 
-    /*
-     * This renders a notification message.
-     * Uses bootstrap compatible html.
+    /**
+     * The standard tags that should be included in the <head> tag
+     * including a meta description for the front page
+     *
+     * @return string HTML fragment.
      */
-    public function notification($message, $classes = 'notifyproblem') {
-        $message = clean_text($message);
-        $type = '';
+    public function standard_head_html() {
+        global $SITE, $PAGE;
 
-        if (($classes == 'notifyproblem') || ($classes == 'notifytiny')) {
-            $type = 'alert alert-error';
+        $output = parent::standard_head_html();
+        if ($PAGE->pagelayout == 'frontpage') {
+            $summary = s(strip_tags(format_text($SITE->summary, FORMAT_HTML)));
+            if (!empty($summary)) {
+                $output .= "<meta name=\"description\" content=\"$summary\" />\n";
+            }
         }
-        if ($classes == 'notifysuccess') {
-            $type = 'alert alert-success';
-        }
-        if ($classes == 'notifymessage') {
-            $type = 'alert alert-info';
-        }
-        if ($classes == 'redirectmessage') {
-            $type = 'alert alert-block alert-info';
-        }
-        return "<div class=\"$type\">$message</div>";
+
+        return $output;
     }
 
     /*
@@ -59,6 +56,7 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
         if (empty($items)) {
             return '';
         }
+
         $breadcrumbs = array();
         foreach ($items as $item) {
             $item->hideicon = true;
@@ -66,8 +64,9 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
         }
         $divider = '<span class="divider">'.get_separator().'</span>';
         $list_items = '<li>'.join(" $divider</li><li>", $breadcrumbs).'</li>';
-        $title = '<span class="accesshide">'.get_string('pagepath').'</span>';
-        return $title . "<ul class=\"breadcrumb\">$list_items</ul>";
+        $title = '<span class="accesshide" id="navbar-label">'.get_string('pagepath').'</span>';
+        return $title . '<nav aria-labelledby="navbar-label"><ul class="breadcrumb">' .
+                $list_items . '</ul></nav>';
     }
 
     /*
@@ -93,21 +92,14 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
     protected function render_custom_menu(custom_menu $menu) {
         global $CFG;
 
-        // TODO: eliminate this duplicated logic, it belongs in core, not
-        // here. See MDL-39565.
-        $addlangmenu = true;
         $langs = get_string_manager()->get_list_of_translations();
-        if (count($langs) < 2
-            or empty($CFG->langmenu)
-            or ($this->page->course != SITEID and !empty($this->page->course->lang))) {
-            $addlangmenu = false;
-        }
+        $haslangmenu = $this->lang_menu() != '';
 
-        if (!$menu->has_children() && $addlangmenu === false) {
+        if (!$menu->has_children() && !$haslangmenu) {
             return '';
         }
 
-        if ($addlangmenu) {
+        if ($haslangmenu) {
             $strlang =  get_string('language');
             $currentlang = current_language();
             if (isset($langs[$currentlang])) {
@@ -188,6 +180,30 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
     }
 
     /**
+     * This code renders the navbar button to control the display of the custom menu
+     * on smaller screens.
+     *
+     * Do not display the button if the menu is empty.
+     *
+     * @return string HTML fragment
+     */
+    protected function navbar_button() {
+        global $CFG;
+
+        if (empty($CFG->custommenuitems) && $this->lang_menu() == '') {
+            return '';
+        }
+
+        $iconbar = html_writer::tag('span', '', array('class' => 'icon-bar'));
+        $button = html_writer::tag('a', $iconbar . "\n" . $iconbar. "\n" . $iconbar, array(
+            'class'       => 'btn btn-navbar',
+            'data-toggle' => 'collapse',
+            'data-target' => '.nav-collapse'
+        ));
+        return $button;
+    }
+
+    /**
      * Renders tabtree
      *
      * @param tabtree $tabtree
@@ -247,34 +263,4 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class theme_bootstrapbase_core_renderer_maintenance extends core_renderer_maintenance {
-    /**
-     * Renders notifications for maintenance scripts.
-     *
-     * We need to override this method in the same way we do for the core_renderer maintenance method
-     * found above.
-     * Please note this isn't required of every function, only functions used during maintenance.
-     * In this case notification is used to print errors and we want pretty errors.
-     *
-     * @param string $message
-     * @param string $classes
-     * @return string
-     */
-    public function notification($message, $classes = 'notifyproblem') {
-        $message = clean_text($message);
-        $type = '';
-
-        if (($classes == 'notifyproblem') || ($classes == 'notifytiny')) {
-            $type = 'alert alert-error';
-        }
-        if ($classes == 'notifysuccess') {
-            $type = 'alert alert-success';
-        }
-        if ($classes == 'notifymessage') {
-            $type = 'alert alert-info';
-        }
-        if ($classes == 'redirectmessage') {
-            $type = 'alert alert-block alert-info';
-        }
-        return "<div class=\"$type\">$message</div>";
-    }
 }

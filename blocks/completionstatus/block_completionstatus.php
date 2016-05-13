@@ -57,6 +57,8 @@ class block_completionstatus extends block_base {
 
         // Create empty content.
         $this->content = new stdClass();
+        $this->content->text = '';
+        $this->content->footer = '';
 
         // Can edit settings?
         $can_edit = has_capability('moodle/course:update', $context);
@@ -67,13 +69,13 @@ class block_completionstatus extends block_base {
         // Don't display if completion isn't enabled!
         if (!completion_info::is_enabled_for_site()) {
             if ($can_edit) {
-                $this->content->text = get_string('completionnotenabledforsite', 'completion');
+                $this->content->text .= get_string('completionnotenabledforsite', 'completion');
             }
             return $this->content;
 
         } else if (!$info->is_enabled()) {
             if ($can_edit) {
-                $this->content->text = get_string('completionnotenabledforcourse', 'completion');
+                $this->content->text .= get_string('completionnotenabledforcourse', 'completion');
             }
             return $this->content;
         }
@@ -84,7 +86,7 @@ class block_completionstatus extends block_base {
         // Check if this course has any criteria.
         if (empty($completions)) {
             if ($can_edit) {
-                $this->content->text = get_string('nocriteriaset', 'completion');
+                $this->content->text .= get_string('nocriteriaset', 'completion');
             }
             return $this->content;
         }
@@ -230,11 +232,11 @@ class block_completionstatus extends block_base {
             $rows = array_merge($rows, $srows);
 
             $table->data = $rows;
-            $this->content->text = html_writer::table($table);
+            $this->content->text .= html_writer::table($table);
 
             // Display link to detailed view.
             $details = new moodle_url('/blocks/completionstatus/details.php', array('course' => $course->id));
-            $this->content->footer = html_writer::link($details, get_string('moredetails', 'completion'));
+            $this->content->footer .= html_writer::link($details, get_string('moredetails', 'completion'));
         } else {
             // If user is not enrolled, show error.
             $this->content->text = get_string('nottracked', 'completion');

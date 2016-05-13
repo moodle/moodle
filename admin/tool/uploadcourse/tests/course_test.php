@@ -261,6 +261,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
             'groupmode' => '2',
             'groupmodeforce' => '1',
             'enablecompletion' => '1',
+            'tags' => 'Cat, Dog',
 
             'role_teacher' => 'Knight',
             'role_manager' => 'Jedi',
@@ -297,6 +298,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertEquals($data['groupmode'], $course->groupmode);
         $this->assertEquals($data['groupmodeforce'], $course->groupmodeforce);
         $this->assertEquals($data['enablecompletion'], $course->enablecompletion);
+        $this->assertEquals($data['tags'], join(', ', core_tag_tag::get_item_tags_array('core', 'course', $course->id)));
 
         // Roles.
         $roleids = array();

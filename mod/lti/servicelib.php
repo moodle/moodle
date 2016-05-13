@@ -57,6 +57,10 @@ function lti_get_response_xml($codemajor, $description, $messageref, $messagetyp
 }
 
 function lti_parse_message_id($xml) {
+    if (empty($xml->imsx_POXHeader)) {
+        return '';
+    }
+
     $node = $xml->imsx_POXHeader->imsx_POXRequestHeaderInfo->imsx_messageIdentifier;
     $messageid = (string)$node;
 
@@ -217,13 +221,10 @@ function lti_read_grade($ltiinstance, $userid) {
     if (!empty($ltigrade) && isset($grades) && isset($grades->items[0]) && is_array($grades->items[0]->grades)) {
         foreach ($grades->items[0]->grades as $agrade) {
             $grade = $agrade->grade;
-            $grade = $grade / $ltigrade;
-            break;
+            if (isset($grade)) {
+                return $grade / $ltigrade;
+            }
         }
-    }
-
-    if (isset($grade)) {
-        return $grade;
     }
 }
 
@@ -285,29 +286,14 @@ function lti_verify_sourcedid($ltiinstance, $parsed) {
 function lti_extend_lti_services($data) {
     $plugins = get_plugin_list_with_function('ltisource', $data->messagetype);
     if (!empty($plugins)) {
-        try {
-            // There can only be one.
-            if (count($plugins) > 1) {
-                throw new coding_exception('More than one ltisource plugin handler found');
-            }
-            $data->xml = new SimpleXMLElement($data->body);
-            $callback = current($plugins);
-            call_user_func($callback, $data);
-        } catch (moodle_exception $e) {
-            $error = $e->getMessage();
-            if (debugging('', DEBUG_DEVELOPER)) {
-                $error .= ' '.format_backtrace(get_exception_info($e)->backtrace);
-            }
-            $responsexml = lti_get_response_xml(
-                'failure',
-                $error,
-                $data->messageid,
-                $data->messagetype
-            );
-
-            header('HTTP/1.0 400 bad request');
-            echo $responsexml->asXML();
+        // There can only be one.
+        if (count($plugins) > 1) {
+            throw new coding_exception('More than one ltisource plugin handler found');
         }
+        $data->xml = new SimpleXMLElement($data->body);
+        $callback = current($plugins);
+        call_user_func($callback, $data);
+
         return true;
     }
     return false;

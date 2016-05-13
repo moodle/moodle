@@ -271,6 +271,9 @@ class block_manager {
      * @return boolean true if this region exists on this page.
      */
     public function is_known_region($region) {
+        if (empty($region)) {
+            return false;
+        }
         return array_key_exists($region, $this->regions);
     }
 
@@ -486,6 +489,11 @@ class block_manager {
             return false;
         }
 
+        // Block regions should not be docked during editing when all the blocks are hidden.
+        if ($this->page->user_is_editing() && $this->page->user_can_edit_blocks()) {
+            return false;
+        }
+
         $this->check_is_loaded();
         $this->ensure_content_created($region, $output);
         if (!$this->region_has_content($region, $output)) {
@@ -493,7 +501,7 @@ class block_manager {
             return false;
         }
         foreach ($this->visibleblockcontent[$region] as $instance) {
-            if (!empty($instance->content) && !get_user_preferences('docked_block_instance_'.$instance->blockinstanceid, 0)) {
+            if (!get_user_preferences('docked_block_instance_'.$instance->blockinstanceid, 0)) {
                 return false;
             }
         }
@@ -573,7 +581,7 @@ class block_manager {
         }
 
         $context = $this->page->context;
-        $contexttest = 'bi.parentcontextid = :contextid2';
+        $contexttest = 'bi.parentcontextid IN (:contextid2, :contextid3)';
         $parentcontextparams = array();
         $parentcontextids = $context->get_parent_context_ids();
         if ($parentcontextids) {
@@ -589,12 +597,14 @@ class block_manager {
         $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
         $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = bi.id AND ctx.contextlevel = :contextlevel)";
 
+        $systemcontext = context_system::instance();
         $params = array(
             'contextlevel' => CONTEXT_BLOCK,
             'subpage1' => $this->page->subpage,
             'subpage2' => $this->page->subpage,
             'contextid1' => $context->id,
             'contextid2' => $context->id,
+            'contextid3' => $systemcontext->id,
             'pagetype' => $this->page->pagetype,
         );
         if ($this->page->subpage === '') {
@@ -745,19 +755,23 @@ class block_manager {
     }
 
     /**
-     * Convenience method, calls add_block repeatedly for all the blocks in $blocks.
+     * Convenience method, calls add_block repeatedly for all the blocks in $blocks. Optionally, a starting weight
+     * can be used to decide the starting point that blocks are added in the region, the weight is passed to {@link add_block}
+     * and incremented by the position of the block in the $blocks array
      *
      * @param array $blocks array with array keys the region names, and values an array of block names.
-     * @param string $pagetypepattern optional. Passed to @see add_block()
-     * @param string $subpagepattern optional. Passed to @see add_block()
+     * @param string $pagetypepattern optional. Passed to {@link add_block()}
+     * @param string $subpagepattern optional. Passed to {@link add_block()}
+     * @param boolean $showinsubcontexts optional. Passed to {@link add_block()}
+     * @param integer $weight optional. Determines the starting point that the blocks are added in the region.
      */
     public function add_blocks($blocks, $pagetypepattern = NULL, $subpagepattern = NULL, $showinsubcontexts=false, $weight=0) {
+        $initialweight = $weight;
         $this->add_regions(array_keys($blocks), false);
         foreach ($blocks as $region => $regionblocks) {
-            $weight = 0;
-            foreach ($regionblocks as $blockname) {
+            foreach ($regionblocks as $offset => $blockname) {
+                $weight = $initialweight + $offset;
                 $this->add_block($blockname, $region, $weight, $showinsubcontexts, $pagetypepattern, $subpagepattern);
-                $weight += 1;
             }
         }
     }
@@ -1081,21 +1095,34 @@ class block_manager {
             $controls[] = new action_menu_link_secondary($url, $icon, $str, $attributes);
         }
 
-        // Assign roles icon.
-        if (has_capability('moodle/role:assign', $block->context)) {
-            //TODO: please note it is sloppy to pass urls through page parameters!!
+        // Display either "Assign roles" or "Permissions" or "Change permissions" icon (whichever first is available).
+        $rolesurl = null;
+
+        if (get_assignable_roles($block->context, ROLENAME_SHORT)) {
+            $rolesurl = new moodle_url('/admin/roles/assign.php', array('contextid' => $block->context->id));
+            $str = new lang_string('assignrolesinblock', 'block', $blocktitle);
+            $icon = 'i/assignroles';
+        } else if (has_capability('moodle/role:review', $block->context) or get_overridable_roles($block->context)) {
+            $rolesurl = new moodle_url('/admin/roles/permissions.php', array('contextid' => $block->context->id));
+            $str = get_string('permissions', 'role');
+            $icon = 'i/permissions';
+        } else if (has_any_capability(array('moodle/role:safeoverride', 'moodle/role:override', 'moodle/role:assign'), $block->context)) {
+            $rolesurl = new moodle_url('/admin/roles/check.php', array('contextid' => $block->context->id));
+            $str = get_string('checkpermissions', 'role');
+            $icon = 'i/checkpermissions';
+        }
+
+        if ($rolesurl) {
+            // TODO: please note it is sloppy to pass urls through page parameters!!
             //      it is shortened because some web servers (e.g. IIS by default) give
             //      a 'security' error if you try to pass a full URL as a GET parameter in another URL.
             $return = $this->page->url->out(false);
             $return = str_replace($CFG->wwwroot . '/', '', $return);
+            $rolesurl->param('returnurl', $return);
 
-            $rolesurl = new moodle_url('/admin/roles/assign.php', array('contextid'=>$block->context->id,
-                                                                         'returnurl'=>$return));
-            // Delete icon.
-            $str = new lang_string('assignrolesinblock', 'block', $blocktitle);
             $controls[] = new action_menu_link_secondary(
                 $rolesurl,
-                new pix_icon('t/assignroles', $str, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+                new pix_icon($icon, $str, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 $str,
                 array('class' => 'editing_roles')
             );
@@ -1471,10 +1498,10 @@ class block_manager {
             if ($bits[0] == 'tag' && !empty($this->page->subpage)) {
                 // better navbar for tag pages
                 $editpage->navbar->add(get_string('tags'), new moodle_url('/tag/'));
-                $tag = tag_get('id', $this->page->subpage, '*');
+                $tag = core_tag_tag::get($this->page->subpage);
                 // tag search page doesn't have subpageid
                 if ($tag) {
-                    $editpage->navbar->add($tag->name, new moodle_url('/tag/index.php', array('id'=>$tag->id)));
+                    $editpage->navbar->add($tag->get_display_name(), $tag->get_view_url());
                 }
             }
             $editpage->navbar->add($block->get_title());
@@ -1590,8 +1617,10 @@ class block_manager {
         if ($bestgap < $newweight) {
             $newweight = floor($newweight);
             for ($weight = $bestgap + 1; $weight <= $newweight; $weight++) {
-                foreach ($usedweights[$weight] as $biid) {
-                    $this->reposition_block($biid, $newregion, $weight - 1);
+                if (array_key_exists($weight, $usedweights)) {
+                    foreach ($usedweights[$weight] as $biid) {
+                        $this->reposition_block($biid, $newregion, $weight - 1);
+                    }
                 }
             }
             $this->reposition_block($block->instance->id, $newregion, $newweight);
@@ -1718,6 +1747,30 @@ function matching_page_type_patterns($pagetype) {
         array_pop($bits);
     }
     $patterns[] = '*';
+    return $patterns;
+}
+
+/**
+ * Give an specific pattern, return all the page type patterns that would also match it.
+ *
+ * @param  string $pattern the pattern, e.g. 'mod-forum-*' or 'mod-quiz-view'.
+ * @return array of all the page type patterns matching.
+ */
+function matching_page_type_patterns_from_pattern($pattern) {
+    $patterns = array($pattern);
+    if ($pattern === '*') {
+        return $patterns;
+    }
+
+    // Only keep the part before the star because we will append -* to all the bits.
+    $star = strpos($pattern, '-*');
+    if ($star !== false) {
+        $pattern = substr($pattern, 0, $star);
+    }
+
+    $patterns = array_merge($patterns, matching_page_type_patterns($pattern));
+    $patterns = array_unique($patterns);
+
     return $patterns;
 }
 
@@ -1991,6 +2044,15 @@ function blocks_name_allowed_in_format($name, $pageformat) {
 function blocks_delete_instance($instance, $nolongerused = false, $skipblockstables = false) {
     global $DB;
 
+    // Allow plugins to use this block before we completely delete it.
+    if ($pluginsfunction = get_plugins_with_function('pre_block_delete')) {
+        foreach ($pluginsfunction as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                $pluginfunction($instance);
+            }
+        }
+    }
+
     if ($block = block_instance($instance->blockname, $instance)) {
         $block->instance_delete();
     }
@@ -2001,6 +2063,31 @@ function blocks_delete_instance($instance, $nolongerused = false, $skipblockstab
         $DB->delete_records('block_instances', array('id' => $instance->id));
         $DB->delete_records_list('user_preferences', 'name', array('block'.$instance->id.'hidden','docked_block_instance_'.$instance->id));
     }
+}
+
+/**
+ * Delete multiple blocks at once.
+ *
+ * @param array $instanceids A list of block instance ID.
+ */
+function blocks_delete_instances($instanceids) {
+    global $DB;
+
+    $instances = $DB->get_recordset_list('block_instances', 'id', $instanceids);
+    foreach ($instances as $instance) {
+        blocks_delete_instance($instance, false, true);
+    }
+    $instances->close();
+
+    $DB->delete_records_list('block_positions', 'blockinstanceid', $instanceids);
+    $DB->delete_records_list('block_instances', 'id', $instanceids);
+
+    $preferences = array();
+    foreach ($instanceids as $instanceid) {
+        $preferences[] = 'block' . $instanceid . 'hidden';
+        $preferences[] = 'docked_block_instance_' . $instanceid;
+    }
+    $DB->delete_records_list('user_preferences', 'name', $preferences);
 }
 
 /**
@@ -2094,12 +2181,12 @@ function blocks_find_block($blockid, $blocksarray) {
 
 // Functions for programatically adding default blocks to pages ================
 
-/**
- * Parse a list of default blocks. See config-dist for a description of the format.
- *
- * @param string $blocksstr
- * @return array
- */
+ /**
+  * Parse a list of default blocks. See config-dist for a description of the format.
+  *
+  * @param string $blocksstr Determines the starting point that the blocks are added in the region.
+  * @return array the parsed list of default blocks
+  */
 function blocks_parse_default_blocks_list($blocksstr) {
     $blocks = array();
     $bits = explode(':', $blocksstr);
@@ -2110,7 +2197,7 @@ function blocks_parse_default_blocks_list($blocksstr) {
         }
     }
     if (!empty($bits)) {
-        $rightbits =trim(array_shift($bits));
+        $rightbits = trim(array_shift($bits));
         if ($rightbits != '') {
             $blocks[BLOCK_POS_RIGHT] = explode(',', $rightbits);
         }
@@ -2185,6 +2272,6 @@ function blocks_add_default_system_blocks() {
     }
 
     $newblocks = array('private_files', 'online_users', 'badges', 'calendar_month', 'calendar_upcoming');
-    $newcontent = array('course_overview');
+    $newcontent = array('lp', 'course_overview');
     $page->blocks->add_blocks(array(BLOCK_POS_RIGHT => $newblocks, 'content' => $newcontent), 'my-index', $subpagepattern);
 }

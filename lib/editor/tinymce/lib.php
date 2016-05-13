@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 class tinymce_texteditor extends texteditor {
     /** @var string active version - this is the directory name where to find tinymce code */
-    public $version = '3.5.10';
+    public $version = '3.5.11';
 
     /**
      * Is the current browser supported by this editor?
@@ -106,6 +106,13 @@ class tinymce_texteditor extends texteditor {
         $config = get_config('editor_tinymce');
         if (!isset($config->disabledsubplugins)) {
             $config->disabledsubplugins = '';
+        }
+
+        // Remove the manage files button if requested.
+        if (isset($options['enable_filemanagement']) && !$options['enable_filemanagement']) {
+            if (!strpos($config->disabledsubplugins, 'managefiles')) {
+                $config->disabledsubplugins .= ',managefiles';
+            }
         }
 
         $fontselectlist = empty($config->fontselectlist) ? '' : $config->fontselectlist;

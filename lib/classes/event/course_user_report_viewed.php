@@ -114,4 +114,9 @@ class course_user_report_viewed extends base {
             throw new \coding_exception('The \'mode\' value must be set in other.');
         }
     }
+
+    public static function get_other_mapping() {
+        // Nothing to map.
+        return false;
+    }
 }

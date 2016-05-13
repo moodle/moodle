@@ -53,6 +53,8 @@ if (empty($CFG->authloginviaemail)) {
               </div>
               <?php } ?>
           <div class="clearer"><!-- --></div>
+          <input id="anchor" type="hidden" name="anchor" value="" />
+          <script>document.getElementById('anchor').value = location.hash</script>
           <input type="submit" id="loginbtn" value="<?php print_string("login") ?>" />
           <div class="forgetpass"><a href="forgot_password.php"><?php print_string("forgotten") ?></a></div>
         </form>

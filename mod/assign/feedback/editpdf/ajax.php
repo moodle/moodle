@@ -91,6 +91,13 @@ if ($action == 'loadallpages') {
                                                      '/',
                                                      $pagefile->get_filename())->out();
         $page->comments = $comments;
+        if ($imageinfo = $pagefile->get_imageinfo()) {
+            $page->width = $imageinfo['width'];
+            $page->height = $imageinfo['height'];
+        } else {
+            $page->width = 0;
+            $page->height = 0;
+        }
         $annotations = page_editor::get_annotations($grade->id, $index, $draft);
         $page->annotations = $annotations;
         array_push($response->pages, $page);

@@ -128,9 +128,9 @@ div.c1.btn {
     text-shadow: inherit;
     background-color: inherit;
     background-image: none;
-    background-repeat: none;
+    background-repeat: no-repeat;
     border: none;
-    border-radius: none;
+    border-radius: 0;
     box-shadow: none;
 }
 /* .container vs .container
@@ -188,4 +188,17 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
     display: block;
     max-height: 150px;
     overflow-y: auto;
+}
+
+// Extends bootstrapbase/less/bootstrap/type.less
+// to enable ol lists to use a larger number set.
+
+ol {
+    margin: 0 0 @baseLineHeight / 2 2.5em;
+}
+
+.dir-rtl {
+    ol {
+        margin: 0 2.5em @baseLineHeight / 2 0;
+    }
 }

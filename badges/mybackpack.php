@@ -47,9 +47,9 @@ if (empty($CFG->badges_allowexternalbackpack)) {
 $PAGE->set_url(new moodle_url('/badges/mybackpack.php'));
 $PAGE->set_context($context);
 
-$title = get_string('mybackpack', 'badges');
+$title = get_string('backpackdetails', 'badges');
 $PAGE->set_title($title);
-$PAGE->set_heading($title);
+$PAGE->set_heading(fullname($USER));
 $PAGE->set_pagelayout('mydashboard');
 
 $backpack = $DB->get_record('badge_backpack', array('userid' => $USER->id));
@@ -131,5 +131,6 @@ if ($backpack) {
 }
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading($title);
 $form->display();
 echo $OUTPUT->footer();

@@ -189,7 +189,7 @@ function survey_user_complete($course, $user, $mod, $survey) {
                 } else {
                     $answertext = "No answer";
                 }
-                $table->data[] = array("<b>$questiontext</b>", $answertext);
+                $table->data[] = array("<b>$questiontext</b>", s($answertext));
             }
             echo html_writer::table($table);
 
@@ -535,7 +535,7 @@ function survey_print_multi($question) {
 
     echo "<tr><th scope=\"col\" colspan=\"7\">$question->intro</th></tr>\n";
 
-    $subquestions = $DB->get_records_list("survey_questions", "id", explode(',', $question->multi));
+    $subquestions = survey_get_subquestions($question);
 
     foreach ($subquestions as $q) {
         $qnum++;
@@ -837,4 +837,182 @@ function survey_extend_settings_navigation($settings, $surveynode) {
 function survey_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-survey-*'=>get_string('page-mod-survey-x', 'survey'));
     return $module_pagetype;
+}
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $survey     survey object
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ * @param  string $viewed       which page viewed
+ * @since Moodle 3.0
+ */
+function survey_view($survey, $course, $cm, $context, $viewed) {
+
+    // Trigger course_module_viewed event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $survey->id,
+        'courseid' => $course->id,
+        'other' => array('viewed' => $viewed)
+    );
+
+    $event = \mod_survey\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('survey', $survey);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}
+
+/**
+ * Helper function for ordering a set of questions by the given ids.
+ *
+ * @param  array $questions     array of questions objects
+ * @param  array $questionorder array of questions ids indicating the correct order
+ * @return array                list of questions ordered
+ * @since Moodle 3.0
+ */
+function survey_order_questions($questions, $questionorder) {
+
+    $finalquestions = array();
+    foreach ($questionorder as $qid) {
+        $finalquestions[] = $questions[$qid];
+    }
+    return $finalquestions;
+}
+
+/**
+ * Translate the question texts and options.
+ *
+ * @param  stdClass $question question object
+ * @return stdClass question object with all the text fields translated
+ * @since Moodle 3.0
+ */
+function survey_translate_question($question) {
+
+    if ($question->text) {
+        $question->text = get_string($question->text, "survey");
+    }
+
+    if ($question->shorttext) {
+        $question->shorttext = get_string($question->shorttext, "survey");
+    }
+
+    if ($question->intro) {
+        $question->intro = get_string($question->intro, "survey");
+    }
+
+    if ($question->options) {
+        $question->options = get_string($question->options, "survey");
+    }
+    return $question;
+}
+
+/**
+ * Returns the questions for a survey (ordered).
+ *
+ * @param  stdClass $survey survey object
+ * @return array list of questions ordered
+ * @since Moodle 3.0
+ * @throws  moodle_exception
+ */
+function survey_get_questions($survey) {
+    global $DB;
+
+    $questionids = explode(',', $survey->questions);
+    if (! $questions = $DB->get_records_list("survey_questions", "id", $questionids)) {
+        throw new moodle_exception('cannotfindquestion', 'survey');
+    }
+
+    return survey_order_questions($questions, $questionids);
+}
+
+/**
+ * Returns subquestions for a given question (ordered).
+ *
+ * @param  stdClass $question questin object
+ * @return array list of subquestions ordered
+ * @since Moodle 3.0
+ */
+function survey_get_subquestions($question) {
+    global $DB;
+
+    $questionids = explode(',', $question->multi);
+    $questions = $DB->get_records_list("survey_questions", "id", $questionids);
+
+    return survey_order_questions($questions, $questionids);
+}
+
+/**
+ * Save the answer for the given survey
+ *
+ * @param  stdClass $survey   a survey object
+ * @param  array $answersrawdata the answers to be saved
+ * @param  stdClass $course   a course object (required for trigger the submitted event)
+ * @param  stdClass $context  a context object (required for trigger the submitted event)
+ * @since Moodle 3.0
+ */
+function survey_save_answers($survey, $answersrawdata, $course, $context) {
+    global $DB, $USER;
+
+    $answers = array();
+
+    // Sort through the data and arrange it.
+    // This is necessary because some of the questions may have two answers, eg Question 1 -> 1 and P1.
+    foreach ($answersrawdata as $key => $val) {
+        if ($key != "userid" && $key != "id") {
+            if (substr($key, 0, 1) == "q") {
+                $key = clean_param(substr($key, 1), PARAM_ALPHANUM);   // Keep everything but the 'q', number or P number.
+            }
+            if (substr($key, 0, 1) == "P") {
+                $realkey = (int) substr($key, 1);
+                $answers[$realkey][1] = $val;
+            } else {
+                $answers[$key][0] = $val;
+            }
+        }
+    }
+
+    // Now store the data.
+    $timenow = time();
+    $answerstoinsert = array();
+    foreach ($answers as $key => $val) {
+        if ($key != 'sesskey') {
+            $newdata = new stdClass();
+            $newdata->time = $timenow;
+            $newdata->userid = $USER->id;
+            $newdata->survey = $survey->id;
+            $newdata->question = $key;
+            if (!empty($val[0])) {
+                $newdata->answer1 = $val[0];
+            } else {
+                $newdata->answer1 = "";
+            }
+            if (!empty($val[1])) {
+                $newdata->answer2 = $val[1];
+            } else {
+                $newdata->answer2 = "";
+            }
+
+            $answerstoinsert[] = $newdata;
+        }
+    }
+
+    if (!empty($answerstoinsert)) {
+        $DB->insert_records("survey_answers", $answerstoinsert);
+    }
+
+    $params = array(
+        'context' => $context,
+        'courseid' => $course->id,
+        'other' => array('surveyid' => $survey->id)
+    );
+    $event = \mod_survey\event\response_submitted::create($params);
+    $event->trigger();
 }

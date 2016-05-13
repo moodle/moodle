@@ -49,6 +49,7 @@ function atto_image_strings_for_js() {
         'presentationoraltrequired',
         'size',
         'width',
+        'uploading',
     );
 
     $PAGE->requires->strings_for_js($strings, 'atto_image');

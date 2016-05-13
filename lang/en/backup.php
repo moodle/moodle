@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * This file contains the strings used by backup
  *
- * @package   moodlecore
+ * @package   core
  * @copyright 2010 Eloy
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,6 +30,11 @@ $string['automatedbackupschedule'] = 'Schedule';
 $string['automatedbackupschedulehelp'] = 'Choose which days of the week to perform automated backups.';
 $string['automatedbackupsinactive'] = 'Automated backups haven\'t been enabled by the site admin';
 $string['automatedbackupstatus'] = 'Automated backup status';
+$string['automateddeletedays'] = 'Delete backups older than';
+$string['automatedmaxkept'] = 'Maximum number of backups kept';
+$string['automatedmaxkepthelp'] = 'This specifies the maximum number of recent automated backups to be kept for each course. Older backups will be deleted automatically.';
+$string['automatedminkept'] = 'Minimum number of backups kept';
+$string['automatedminkepthelp'] = 'If backups older than a specified number of days are deleted, it can happen that an inactive course ends up with no backup. To prevent this, a minimum number of backups kept should be specified.';
 $string['automatedsetup'] = 'Automated backup setup';
 $string['automatedsettings'] = 'Automated backup settings';
 $string['automatedstorage'] = 'Automated backup storage';
@@ -88,6 +92,7 @@ $string['configgeneralfilters'] = 'Sets the default for including filters in a b
 $string['configgeneralhistories'] = 'Sets the default for including user history within a backup.';
 $string['configgenerallogs'] = 'If enabled logs will be included in backups by default.';
 $string['configgeneralquestionbank'] = 'If enabled the question bank will be included in backups by default. PLEASE NOTE: Disabling this setting will disable the backup of activities which use the question bank, such as the quiz.';
+$string['configgeneralgroups'] = 'Sets the default for including groups and groupings in a backup.';
 $string['configgeneralroleassignments'] = 'If enabled by default roles assignments will also be backed up.';
 $string['configgeneraluserscompletion'] = 'If enabled user completion information will be included in backups by default.';
 $string['configgeneralusers'] = 'Sets the default for whether to include users in backups.';
@@ -139,6 +144,7 @@ $string['generalhistories'] = 'Include histories';
 $string['generalgradehistories'] = 'Include histories';
 $string['generallogs'] = 'Include logs';
 $string['generalquestionbank'] = 'Include question bank';
+$string['generalgroups'] = 'Include groups and groupings';
 $string['generalroleassignments'] = 'Include role assignments';
 $string['generalsettings'] = 'General backup settings';
 $string['generaluserscompletion'] = 'Include user completion information';
@@ -147,6 +153,8 @@ $string['hidetypes'] = 'Hide type options';
 $string['importgeneralsettings'] = 'General import defaults';
 $string['importgeneralmaxresults'] = 'Maximum number of courses listed for import';
 $string['importgeneralmaxresults_desc'] = 'This controls the number of courses that are listed during the first step of the import process';
+$string['importgeneralduplicateadminallowed'] = 'Allow admin conflict resolution';
+$string['importgeneralduplicateadminallowed_desc'] = 'If the site has an account with username \'admin\', then attempting to restore a backup file containing an account with username \'admin\' can cause a conflict. If this setting is enabled, the conflict will be resolved by changing the username in the backup file to \'admin_xyz\'.';
 $string['importfile'] = 'Import a backup file';
 $string['importbackupstage1action'] = 'Next';
 $string['importbackupstage2action'] = 'Next';
@@ -229,6 +237,7 @@ $string['rootsettingroleassignments'] = 'Include user role assignments';
 $string['rootsettingactivities'] = 'Include activities and resources';
 $string['rootsettingbadges'] = 'Include badges';
 $string['rootsettingblocks'] = 'Include blocks';
+$string['rootsettingcompetencies'] = 'Include competencies';
 $string['rootsettingfilters'] = 'Include filters';
 $string['rootsettingcomments'] = 'Include comments';
 $string['rootsettingcalendarevents'] = 'Include calendar events';
@@ -236,6 +245,7 @@ $string['rootsettinguserscompletion'] = 'Include user completion details';
 $string['rootsettingquestionbank'] = 'Include question bank';
 $string['rootsettinglogs'] = 'Include course logs';
 $string['rootsettinggradehistories'] = 'Include grade history';
+$string['rootsettinggroups'] = 'Include groups and groupings';
 $string['rootsettingimscc1'] = 'Convert to IMS Common Cartridge 1.0';
 $string['rootsettingimscc11'] = 'Convert to IMS Common Cartridge 1.1';
 $string['sitecourseformatwarning'] = 'This is a front page backup, note that they can only be restored on the front page';

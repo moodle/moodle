@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -27,39 +26,36 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Define the complete imscp structure for backup, with file and id annotations
+ *
+ * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_imscp_activity_structure_step extends backup_activity_structure_step {
 
     protected function define_structure() {
 
-        // To know if we are including userinfo
+        // To know if we are including userinfo.
         $userinfo = $this->get_setting_value('userinfo');
 
-        // Define each element separated
+        // Define each element separated.
         $imscp = new backup_nested_element('imscp', array('id'), array(
             'name', 'intro', 'introformat', 'revision',
             'keepold', 'structure', 'timemodified'));
 
-        // Build the tree
-        // (love this)
+        // Build the tree.
 
-        // Define sources
+        // Define sources.
         $imscp->set_source_table('imscp', array('id' => backup::VAR_ACTIVITYID));
 
-        // Define id annotations
-        // (none)
+        // Define id annotations - (none).
 
         // Define file annotations
-        $imscp->annotate_files('mod_imscp', 'intro', null); // This file area hasn't itemid
-        $imscp->annotate_files('mod_imscp', 'backup', null); // This file area hasn't itemid
-        /**
-         * I don't like itemid used for "imaginative" things like "revisions"!
-         * I don't like itemid used for "imaginative" things like "revisions"!
-         * I don't like itemid used for "imaginative" things like "revisions"!
-         */
-        $imscp->annotate_files('mod_imscp', 'content', null); // Horrible use of itemid here. Ignoring for backup/restore purposes
+        $imscp->annotate_files('mod_imscp', 'intro', null); // This file area hasn't itemid.
+        $imscp->annotate_files('mod_imscp', 'backup', null); // This file area hasn't itemid.
+        // Eloy Lafuente: I don't like itemid used for "imaginative" things like "revisions"!
+        $imscp->annotate_files('mod_imscp', 'content', null); // Horrible use of itemid here. Ignoring for backup/restore purposes.
 
-        // Return the root element (imscp), wrapped into standard activity structure
+        // Return the root element (imscp), wrapped into standard activity structure.
         return $this->prepare_activity_structure($imscp);
     }
 }

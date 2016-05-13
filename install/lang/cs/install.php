@@ -34,8 +34,8 @@ $string['admindirname'] = 'Adresář se soubory pro správu serveru';
 $string['availablelangs'] = 'Dostupné jazykové balíčky';
 $string['chooselanguagehead'] = 'Vyberte jazyk';
 $string['chooselanguagesub'] = 'Zvolte si jazyk tohoto průvodce instalací. Vybraný jazyk bude též nastaven jako výchozí jazyk stránek, ale to půjde případně později změnit.';
-$string['clialreadyconfigured'] = 'Soubor config.php již existuje. Spusťte admin/cli/install_database.php, pokud chcete provést instalaci databáze.';
-$string['clialreadyinstalled'] = 'Soubor config.php již existuje. Spusťte admin/cli/upgrade.php, pokud chcete provést upgrade vašich stránek.';
+$string['clialreadyconfigured'] = 'Konfigurační soubor config.php již existuje. Spusťte admin/cli/install_database.php, pokud chcete provést instalaci databáze.';
+$string['clialreadyinstalled'] = 'Konfigurační soubor config.php již existuje. Spusťte admin/cli/upgrade.php, pokud chcete provést upgrade vašich stránek.';
 $string['cliinstallheader'] = 'Moodle {$a} - průvodce instalací z příkazové řádky';
 $string['databasehost'] = 'Databázový server';
 $string['databasename'] = 'Název databáze';
@@ -49,19 +49,19 @@ $string['environmentsub2'] = 'Každé vydání Moodle vyžaduje určitou minimá
 $string['errorsinenvironment'] = 'Kontrola serverového prostředí selhala!';
 $string['installation'] = 'Instalace';
 $string['langdownloaderror'] = 'Bohužel, jazyk "{$a}" se nepodařilo nainstalovat. Instalace bude pokračovat v angličtine.';
-$string['memorylimithelp'] = '<p>Limit paměti pro PHP skripty je na vašem serveru momentálně nastaven na hodnotu {$a}.</p>
+$string['memorylimithelp'] = '<p>Limit paměti pro PHP skripty je na vašem serveru momentálně nastaven na {$a}.</p>
 
 <p>To může později způsobovat Moodlu problémy, zvláště při větším množství modulů a/nebo uživatelů.</p>
 
-<p>Je-li to možné, doporučujeme vám nastavit v PHP vyšší limit, např. 40M. Můžete to provést několika způsoby:
+<p>Je-li to možné, doporučujeme vám nastavit v PHP vyšší limit, např. 40M. Můžete to provést několika způsoby:</p>
 <ol>
 <li>Můžete-li, překompilujte PHP s volbou <i>--enable-memory-limit</i>.
 Moodle si tak bude sám moci nastavit potřebný limit.</li>
 <li>Máte-li přístup k souboru php.ini, změňte nastavení <b>memory_limit</b>
 na hodnotu blízkou 40M. Nemáte-li taková práva, požádejte správce vašeho webového serveru, aby toto nastavení provedl on.</li>
 <li>Na některých serverech můžete v kořenovém adresáři Moodlu vytvořit soubor .htaccess s následujícím řádkem:
-<p><blockquote>php_value memory_limit 40M</blockquote></p>
-<p>Bohužel, v některých případech tím vyřadíte z provozu <b>všechny</b> PHP stránky (při jejich prohlížení uvidíte chybová hlášení), takže budete muset soubor .htaccess zase odstranit.</li>
+<blockquote><div>php_value memory_limit 40M</div></blockquote>
+<p>Bohužel, v některých případech tím vyřadíte z provozu <b>všechny</b> PHP stránky (při jejich prohlížení uvidíte chybová hlášení), takže budete muset soubor .htaccess zase odstranit.</p></li>
 </ol>';
 $string['paths'] = 'Cesty';
 $string['pathserrcreatedataroot'] = 'Datový adresář ({$a->dataroot}) nemůže být tímto průvodcem instalací vytvořen.';
@@ -70,7 +70,7 @@ $string['pathsrodataroot'] = 'Do datového adresáře nelze zapisovat.';
 $string['pathsroparentdataroot'] = 'Do nadřazeného adresáře ({$a->parent}) nelze zapisovat. Datový adresář ({$a->dataroot}) nemůže být tímto průvodcem instalací vytvořen.';
 $string['pathssubadmindir'] = 'Na některých serverech je URL adresa /admin vyhrazena pro speciální účely (např. pro ovládací panel). Na takových serverech může dojít ke kolizi se standardním umístěním stránek pro správu Moodle. Máte-li tento problém, přejmenujte adresář <eM>admin</em> ve vaší instalaci Moodle a sem zadejte jeho nový název - například <em>moodleadmin</em>. Všechny generované odkazy na stránky správy Moodle budou používat tento nový název.';
 $string['pathssubdataroot'] = 'Moodle potřebuje prostor, kam si bude ukládat nahrané soubory a další údaje. K tomuto adresáři musí mít proces webového serveru právo ke čtení i k zápisu (webový server bývá většinou spouštěn pod uživatelem "www-data" nebo "apache"). Tento adresář ale zároveň nesmí být dostupný přímo přes webové rozhraní. Instalační skript se pokusí tento adresář vytvořit, pokud nebude existovat.';
-$string['pathssubdirroot'] = 'Absolutní cesta k adresáři s instalací Moodle';
+$string['pathssubdirroot'] = '<p>Absolutní cesta k adresáři s instalací Moodle.</p>';
 $string['pathssubwwwroot'] = 'Zadejte úplnou webovou adresu, na níž bude Moodle dostupný. Moodle potřebuje jedinečnou adresu, není možné jej provozovat na několika URL současně. Používáte-li několik veřejných domén, musíte si sami nastavit permanentní přesměrování na jednu z nich a tu pak použít. Pokud je váš server dostupný z vnější a z vnitřní sítě pod různými IP adresami, použijte jeho veřejnou adresu a nastavte si váš DNS server tak, že ji mohou používat i uživatelé z vnitřní sítě.';
 $string['pathsunsecuredataroot'] = 'Umístění datového adresáře není bezpečné';
 $string['pathswrongadmindir'] = 'Adresář pro správu serveru (admin) neexistuje';
@@ -79,7 +79,7 @@ $string['phpversion'] = 'Verze PHP';
 $string['phpversionhelp'] = '<p>Moodle vyžaduje PHP alespoň verze 4.3.0 nebo 5.1.0 (PHP 5.0.x obsahuje množství chyb).</p>
 <p>Nyní používáte PHP verze {$a}.</p>
 <p>Musíte PHP upgradovat, nebo přejít k hostiteli s vyšší verzí!<br />
-(U PHP 5.0.x můžete také přejít na nižší verzi 4.4.x či 4.3.x.)</p>';
+(U PHP 5.0.x můžete také přejít na nižší verzi 4.4.x )</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Podařilo se vám úspěšně nainstalovat a spustit balíček <strong>{$a->packname} {$a->packversion}</strong>. Gratulujeme!';
 $string['welcomep30'] = '<strong>{$a->installername}</strong> obsahuje aplikace k vytvoření prostředí, ve kterém bude provozován váš <strong>Moodle</strong>. Jmenovitě se jedná o:';

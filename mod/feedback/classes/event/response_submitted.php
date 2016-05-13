@@ -58,6 +58,29 @@ class response_submitted extends \core\event\base {
     }
 
     /**
+     * Creates an instance from the record from db table feedback_completed
+     *
+     * @param stdClass $completed
+     * @param stdClass|cm_info $cm
+     * @return self
+     */
+    public static function create_from_record($completed, $cm) {
+        $event = self::create(array(
+            'relateduserid' => $completed->userid,
+            'objectid' => $completed->id,
+            'context' => \context_module::instance($cm->id),
+            'anonymous' => ($completed->anonymous_response == FEEDBACK_ANONYMOUS_YES),
+            'other' => array(
+                'cmid' => $cm->id,
+                'instanceid' => $completed->feedback,
+                'anonymous' => $completed->anonymous_response // Deprecated.
+            )
+        ));
+        $event->add_record_snapshot('feedback_completed', $completed);
+        return $event;
+    }
+
+    /**
      * Returns localised general event name.
      *
      * @return string
@@ -72,8 +95,8 @@ class response_submitted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' created feedback for the user with id '$this->relateduserid' " .
-            "for the feedback activity with course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' submitted response for 'feedback' activity with "
+                . "course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -81,12 +104,12 @@ class response_submitted extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        if ($this->other['anonymous'] == FEEDBACK_ANONYMOUS_YES) {
-            return new \moodle_url('/mod/feedback/show_entries.php' , array('id' => $this->other['cmid'],
-                    'do_show' => 'showoneentry' , 'userid' => $this->relateduserid));
+        if ($this->anonymous) {
+            return new \moodle_url('/mod/feedback/show_entries.php', array('id' => $this->other['cmid'],
+                    'showcompleted' => $this->objectid));
         } else {
-            return new \moodle_url('/mod/feedback/show_entries_anonym.php', array('id' => $this->other['cmid'],
-                    'do_show' => 'showoneentry', 'showall' => 1, 'showcompleted' => $this->objectid));
+            return new \moodle_url('/mod/feedback/show_entries.php' , array('id' => $this->other['cmid'],
+                    'userid' => $this->userid, 'showcompleted' => $this->objectid));
         }
     }
 
@@ -147,6 +170,18 @@ class response_submitted extends \core\event\base {
         if (!isset($this->other['instanceid'])) {
             throw new \coding_exception('The \'instanceid\' value must be set in other.');
         }
+    }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'feedback_completed', 'restore' => 'feedback_completed');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['cmid'] = array('db' => 'course_modules', 'restore' => 'course_module');
+        $othermapped['instanceid'] = array('db' => 'feedback', 'restore' => 'feedback');
+
+        return $othermapped;
     }
 }
 

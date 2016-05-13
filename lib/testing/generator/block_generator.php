@@ -66,7 +66,8 @@ abstract class testing_block_generator extends component_generator_base {
     }
 
     /**
-     * Fill in record defaults
+     * Fill in record defaults.
+     *
      * @param stdClass $record
      * @return stdClass
      */
@@ -76,19 +77,19 @@ abstract class testing_block_generator extends component_generator_base {
             $record->parentcontextid = context_system::instance()->id;
         }
         if (!isset($record->showinsubcontexts)) {
-            $record->showinsubcontexts = 1;
+            $record->showinsubcontexts = 0;
         }
         if (!isset($record->pagetypepattern)) {
-            $record->pagetypepattern = '';
+            $record->pagetypepattern = '*';
         }
         if (!isset($record->subpagepattern)) {
             $record->subpagepattern = null;
         }
         if (!isset($record->defaultregion)) {
-            $record->defaultregion = '';
+            $record->defaultregion = 'side-pre';
         }
         if (!isset($record->defaultweight)) {
-            $record->defaultweight = '';
+            $record->defaultweight = 5;
         }
         if (!isset($record->configdata)) {
             $record->configdata = null;
@@ -97,10 +98,44 @@ abstract class testing_block_generator extends component_generator_base {
     }
 
     /**
-     * Create a test block
-     * @param array|stdClass $record
-     * @param array $options
-     * @return stdClass activity record
+     * Create a test block instance.
+     *
+     * The $record passed in becomes the basis for the new row added to the
+     * block_instances table. You only need to supply the values of interest.
+     * Any missing values have sensible defaults filled in.
+     *
+     * The $options array provides additional data, not directly related to what
+     * will be inserted in the block_instance table, which may affect the block
+     * that is created. The meanings of any data passed here depends on the particular
+     * type of block being created.
+     *
+     * @param array|stdClass $record forms the basis for the entry to be inserted in the block_instances table.
+     * @param array $options further, block-specific options to control how the block is created.
+     * @return stdClass the block_instance record that has just been created.
      */
-    abstract public function create_instance($record = null, array $options = null);
+    public function create_instance($record = null, $options = array()) {
+        global $DB;
+
+        $this->instancecount++;
+
+        $record = (object)(array)$record;
+        $this->preprocess_record($record, $options);
+        $record = $this->prepare_record($record);
+
+        $id = $DB->insert_record('block_instances', $record);
+        context_block::instance($id);
+
+        $instance = $DB->get_record('block_instances', array('id' => $id), '*', MUST_EXIST);
+        return $instance;
+    }
+
+    /**
+     * Can be overridden to do block-specific processing. $record can be modified
+     * in-place.
+     *
+     * @param stdClass $record the data, before defaults are filled in.
+     * @param array $options further, block-specific options, as passed to {@link create_instance()}.
+     */
+    protected function preprocess_record(stdClass $record, array $options) {
+    }
 }

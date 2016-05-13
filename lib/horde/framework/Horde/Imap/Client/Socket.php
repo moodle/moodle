@@ -3245,7 +3245,7 @@ class Horde_Imap_Client_Socket extends Horde_Imap_Client_Base
 
             if (is_string($val)) {
                 // These entries are text fields.
-                $ret->$env_data[$key] = substr($val, 0, $env_str);
+                $ret->{$env_data[$key]} = substr($val, 0, $env_str);
             } else {
                 // These entries are address structures.
                 $group = null;
@@ -3287,7 +3287,7 @@ class Horde_Imap_Client_Socket extends Horde_Imap_Client_Base
                     }
                 }
 
-                $ret->$env_data[$key] = $tmp;
+                $ret->{$env_data[$key]} = $tmp;
             }
 
             ++$key;

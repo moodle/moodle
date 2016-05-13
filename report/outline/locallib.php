@@ -87,8 +87,8 @@ function report_outline_get_common_log_variables() {
                 $uselegacyreader = true;
             }
 
-            // If sql_internal_reader is preferred reader.
-            if ($reader instanceof \core\log\sql_internal_reader) {
+            // If sql_internal_table_reader is preferred reader.
+            if ($reader instanceof \core\log\sql_internal_table_reader) {
                 $useinternalreader = true;
                 $logtable = $reader->get_internal_log_table_name();
                 $minloginternalreader = $DB->get_field_sql('SELECT min(timecreated) FROM {' . $logtable . '}');
@@ -144,7 +144,7 @@ function report_outline_user_outline($userid, $cmid, $module, $instanceid) {
         }
     }
 
-    // Get record from sql_internal_reader and combine with the number of views from the legacy log table (if needed).
+    // Get record from sql_internal_table_reader and combine with the number of views from the legacy log table (if needed).
     if ($useinternalreader) {
         $params = array('userid' => $userid, 'contextlevel' => CONTEXT_MODULE, 'contextinstanceid' => $cmid, 'crud' => 'r',
             'edulevel1' => core\event\base::LEVEL_PARTICIPATING, 'edulevel2' => core\event\base::LEVEL_TEACHING,
@@ -223,7 +223,7 @@ function report_outline_user_complete($userid, $cmid, $module, $instanceid) {
         }
     }
 
-    // Get record from sql_internal_reader and combine with the number of views from the legacy log table (if needed).
+    // Get record from sql_internal_table_reader and combine with the number of views from the legacy log table (if needed).
     if ($useinternalreader) {
         $params = array('userid' => $userid, 'contextlevel' => CONTEXT_MODULE, 'contextinstanceid' => $cmid, 'crud' => 'r',
             'edulevel1' => core\event\base::LEVEL_PARTICIPATING, 'edulevel2' => core\event\base::LEVEL_TEACHING,

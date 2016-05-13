@@ -117,30 +117,30 @@ class mod_forum_post_form extends moodleform {
         $manageactivities = has_capability('moodle/course:manageactivities', $coursecontext);
 
         if (\mod_forum\subscriptions::is_forcesubscribed($forum)) {
-
-            $mform->addElement('static', 'subscribemessage', get_string('subscription', 'forum'), get_string('everyoneissubscribed', 'forum'));
-            $mform->addElement('hidden', 'subscribe');
-            $mform->setType('subscribe', PARAM_INT);
-            $mform->addHelpButton('subscribemessage', 'forcesubscribed', 'forum');
+            $mform->addElement('checkbox', 'discussionsubscribe', get_string('discussionsubscription', 'forum'));
+            $mform->freeze('discussionsubscribe');
+            $mform->setDefaults('discussionsubscribe', 0);
+            $mform->addHelpButton('discussionsubscribe', 'forcesubscribed', 'forum');
 
         } else if (\mod_forum\subscriptions::subscription_disabled($forum) && !$manageactivities) {
-            $mform->addElement('static', 'subscribemessage', get_string('subscription', 'forum'), get_string('disallowsubscribe', 'forum'));
-            $mform->addElement('hidden', 'discussionsubscribe');
-            $mform->setType('discussionsubscribe', PARAM_INT);
-            $mform->addHelpButton('subscribemessage', 'disallowsubscription', 'forum');
+            $mform->addElement('checkbox', 'discussionsubscribe', get_string('discussionsubscription', 'forum'));
+            $mform->freeze('discussionsubscribe');
+            $mform->setDefaults('discussionsubscribe', 0);
+            $mform->addHelpButton('discussionsubscribe', 'disallowsubscription', 'forum');
 
         } else {
-            $options = array();
-            $options[0] = get_string('discussionsubscribestop', 'forum');
-            $options[1] = get_string('discussionsubscribestart', 'forum');
-
-            $mform->addElement('select', 'discussionsubscribe', get_string('discussionsubscription', 'forum'), $options);
+            $mform->addElement('checkbox', 'discussionsubscribe', get_string('discussionsubscription', 'forum'));
             $mform->addHelpButton('discussionsubscribe', 'discussionsubscription', 'forum');
         }
 
         if (!empty($forum->maxattachments) && $forum->maxbytes != 1 && has_capability('mod/forum:createattachment', $modcontext))  {  //  1 = No attachments at all
             $mform->addElement('filemanager', 'attachments', get_string('attachment', 'forum'), null, self::attachment_options($forum));
             $mform->addHelpButton('attachments', 'attachment', 'forum');
+        }
+
+        if (!$post->parent && has_capability('mod/forum:pindiscussions', $modcontext)) {
+            $mform->addElement('checkbox', 'pinned', get_string('discussionpinned', 'forum'));
+            $mform->addHelpButton('pinned', 'discussionpinned', 'forum');
         }
 
         if (empty($post->id) && $manageactivities) {
@@ -150,10 +150,10 @@ class mod_forum_post_form extends moodleform {
         if (!empty($CFG->forum_enabletimedposts) && !$post->parent && has_capability('mod/forum:viewhiddentimedposts', $coursecontext)) { // hack alert
             $mform->addElement('header', 'displayperiod', get_string('displayperiod', 'forum'));
 
-            $mform->addElement('date_selector', 'timestart', get_string('displaystart', 'forum'), array('optional'=>true));
+            $mform->addElement('date_time_selector', 'timestart', get_string('displaystart', 'forum'), array('optional' => true));
             $mform->addHelpButton('timestart', 'displaystart', 'forum');
 
-            $mform->addElement('date_selector', 'timeend', get_string('displayend', 'forum'), array('optional'=>true));
+            $mform->addElement('date_time_selector', 'timeend', get_string('displayend', 'forum'), array('optional' => true));
             $mform->addHelpButton('timeend', 'displayend', 'forum');
 
         } else {
@@ -164,24 +164,67 @@ class mod_forum_post_form extends moodleform {
             $mform->setConstants(array('timestart'=> 0, 'timeend'=>0));
         }
 
-        if ($groupmode = groups_get_activity_groupmode($cm, $course)) { // hack alert
+        if ($groupmode = groups_get_activity_groupmode($cm, $course)) {
             $groupdata = groups_get_activity_allowed_groups($cm);
-            $groupcount = count($groupdata);
-            $groupinfo = array();
-            $modulecontext = context_module::instance($cm->id);
 
-            // Check whether the user has access to all groups in this forum from the accessallgroups cap.
-            if ($groupmode == VISIBLEGROUPS || has_capability('moodle/site:accessallgroups', $modulecontext)) {
-                // Only allow posting to all groups if the user has access to all groups.
-                $groupinfo = array('0' => get_string('allparticipants'));
+            $groupinfo = array();
+            foreach ($groupdata as $groupid => $group) {
+                // Check whether this user can post in this group.
+                // We must make this check because all groups are returned for a visible grouped activity.
+                if (forum_user_can_post_discussion($forum, $groupid, null, $cm, $modcontext)) {
+                    // Build the data for the groupinfo select.
+                    $groupinfo[$groupid] = $group->name;
+                } else {
+                    unset($groupdata[$groupid]);
+                }
+            }
+            $groupcount = count($groupinfo);
+
+            // Check whether a user can post to all of their own groups.
+
+            // Posts to all of my groups are copied to each group that the user is a member of. Certain conditions must be met.
+            // 1) It only makes sense to allow this when a user is in more than one group.
+            // Note: This check must come before we consider adding accessallgroups, because that is not a real group.
+            $canposttoowngroups = empty($post->edit) && $groupcount > 1;
+
+            // 2) Important: You can *only* post to multiple groups for a top level post. Never any reply.
+            $canposttoowngroups = $canposttoowngroups && empty($post->parent);
+
+            // 3) You also need the canposttoowngroups capability.
+            $canposttoowngroups = $canposttoowngroups && has_capability('mod/forum:canposttomygroups', $modcontext);
+            if ($canposttoowngroups) {
+                // This user is in multiple groups, and can post to all of their own groups.
+                // Note: This is not the same as accessallgroups. This option will copy a post to all groups that a
+                // user is a member of.
+                $mform->addElement('checkbox', 'posttomygroups', get_string('posttomygroups', 'forum'));
+                $mform->addHelpButton('posttomygroups', 'posttomygroups', 'forum');
+                $mform->disabledIf('groupinfo', 'posttomygroups', 'checked');
+            }
+
+            // Check whether this user can post to all groups.
+            // Posts to the 'All participants' group go to all groups, not to each group in a list.
+            // It makes sense to allow this, even if there currently aren't any groups because there may be in the future.
+            if (forum_user_can_post_discussion($forum, -1, null, $cm, $modcontext)) {
+                // Note: We must reverse in this manner because array_unshift renumbers the array.
+                $groupinfo = array_reverse($groupinfo, true );
+                $groupinfo[-1] = get_string('allparticipants');
+                $groupinfo = array_reverse($groupinfo, true );
                 $groupcount++;
             }
 
-            $contextcheck = has_capability('mod/forum:movediscussions', $modulecontext) && empty($post->parent) && $groupcount > 1;
-            if ($contextcheck) {
-                foreach ($groupdata as $grouptemp) {
-                    $groupinfo[$grouptemp->id] = $grouptemp->name;
-                }
+            // Determine whether the user can select a group from the dropdown. The dropdown is available for several reasons.
+            // 1) This is a new post (not an edit), and there are at least two groups to choose from.
+            $canselectgroupfornew = empty($post->edit) && $groupcount > 1;
+
+            // 2) This is editing of an existing post and the user is allowed to movediscussions.
+            // We allow this because the post may have been moved from another forum where groups are not available.
+            // We show this even if no groups are available as groups *may* have been available but now are not.
+            $canselectgroupformove = $groupcount && !empty($post->edit) && has_capability('mod/forum:movediscussions', $modcontext);
+
+            // Important: You can *only* change the group for a top level post. Never any reply.
+            $canselectgroup = empty($post->parent) && ($canselectgroupfornew || $canselectgroupformove);
+
+            if ($canselectgroup) {
                 $mform->addElement('select','groupinfo', get_string('group'), $groupinfo);
                 $mform->setDefault('groupinfo', $post->groupid);
                 $mform->setType('groupinfo', PARAM_INT);
@@ -201,6 +244,7 @@ class mod_forum_post_form extends moodleform {
         } else {
             $submit_string = get_string('posttoforum', 'forum');
         }
+
         $this->add_action_buttons(true, $submit_string);
 
         $mform->addElement('hidden', 'course');

@@ -250,7 +250,7 @@ class course_modinfo {
         $modnames = get_module_types_names($plural);
         $modnamesused = array();
         foreach ($this->get_cms() as $cmid => $mod) {
-            if (isset($modnames[$mod->modname]) && $mod->uservisible) {
+            if (!isset($modnamesused[$mod->modname]) && isset($modnames[$mod->modname]) && $mod->uservisible) {
                 $modnamesused[$mod->modname] = $modnames[$mod->modname];
             }
         }
@@ -492,7 +492,7 @@ class course_modinfo {
         // Loop through each piece of module data, constructing it
         static $modexists = array();
         foreach ($coursemodinfo->modinfo as $mod) {
-            if (empty($mod->name)) {
+            if (!isset($mod->name) || strval($mod->name) === '') {
                 // something is wrong here
                 continue;
             }
@@ -1065,9 +1065,7 @@ class cm_info implements IteratorAggregate {
         'added' => false,
         'availability' => false,
         'available' => 'get_available',
-        'availablefrom' => 'get_deprecated_available_date',
         'availableinfo' => 'get_available_info',
-        'availableuntil' => 'get_deprecated_available_date',
         'completion' => false,
         'completionexpected' => false,
         'completiongradeitemnumber' => false,
@@ -1095,7 +1093,6 @@ class cm_info implements IteratorAggregate {
         'score' => false,
         'section' => false,
         'sectionnum' => false,
-        'showavailability' => 'get_show_availability',
         'showdescription' => false,
         'uservisible' => 'get_user_visible',
         'visible' => false,
@@ -1185,9 +1182,6 @@ class cm_info implements IteratorAggregate {
 
         // Do not iterate over deprecated properties.
         $props = self::$standardproperties;
-        unset($props['showavailability']);
-        unset($props['availablefrom']);
-        unset($props['availableuntil']);
         unset($props['groupmembersonly']);
 
         foreach ($props as $key => $unused) {
@@ -1798,7 +1792,6 @@ class cm_info implements IteratorAggregate {
         $this->state = self::STATE_BUILDING_DYNAMIC;
 
         if (!empty($CFG->enableavailability)) {
-            require_once($CFG->libdir. '/conditionlib.php');
             // Get availability information.
             $ci = new \core_availability\info_module($this);
 
@@ -1848,35 +1841,6 @@ class cm_info implements IteratorAggregate {
     }
 
     /**
-     * Getter method for property $showavailability. Works by checking the
-     * availableinfo property to see if it's empty or not.
-     *
-     * @return int
-     * @deprecated Since Moodle 2.7
-     */
-    private function get_show_availability() {
-        debugging('$cm->showavailability property has been deprecated. You ' .
-                'can replace it by checking if $cm->availableinfo has content.',
-                DEBUG_DEVELOPER);
-        return ($this->get_available_info() !== '') ? 1 : 0;
-    }
-
-    /**
-     * Getter method for $availablefrom and $availableuntil. Just returns zero
-     * as these are no longer supported.
-     *
-     * @return int Zero
-     * @deprecated Since Moodle 2.7
-     */
-    private function get_deprecated_available_date() {
-        debugging('$cm->availablefrom and $cm->availableuntil have been deprecated. This ' .
-                'information is no longer available as the system provides more complex ' .
-                'options (for example, there might be different dates for different users).',
-                DEBUG_DEVELOPER);
-        return 0;
-    }
-
-    /**
      * Getter method for $availablefrom and $availableuntil. Just returns zero
      * as these are no longer supported.
      *
@@ -1906,7 +1870,6 @@ class cm_info implements IteratorAggregate {
      *
      * If the activity is unavailable, additional checks are required to determine if its hidden or greyed out
      *
-     * @see is_user_access_restricted_by_conditional_access()
      * @return void
      */
     private function update_user_visible() {
@@ -1975,33 +1938,13 @@ class cm_info implements IteratorAggregate {
      * Checks whether the module's conditional access settings mean that the
      * user cannot see the activity at all
      *
-     * This is deprecated because it is confusing (name sounds like it's about
-     * access restriction but it is actually about display), is not used
-     * anywhere, and is not necessary. Nobody (outside conditional libraries)
-     * should care what it is that restricted something.
-     *
-     * @return bool True if the user cannot see the module. False if the activity is either available or should be greyed out.
-     * @deprecated since 2.7
+     * @deprecated since 2.7 MDL-44070
      */
     public function is_user_access_restricted_by_conditional_access() {
-        global $CFG;
-        debugging('cm_info::is_user_access_restricted_by_conditional_access() ' .
-                'is deprecated; this function is not needed (use $cm->uservisible ' .
+        throw new coding_exception('cm_info::is_user_access_restricted_by_conditional_access() ' .
+                'can not be used any more; this function is not needed (use $cm->uservisible ' .
                 'and $cm->availableinfo to decide whether it should be available ' .
-                'or appear)', DEBUG_DEVELOPER);
-
-        if (empty($CFG->enableavailability)) {
-            return false;
-        }
-
-        $userid = $this->modinfo->get_user_id();
-        if ($userid == -1) {
-            return null;
-        }
-
-        // Return false if user can access the activity, or if its availability
-        // info is set (= should be displayed even though not accessible).
-        return !$this->get_user_visible() && !$this->get_available_info();
+                'or appear)');
     }
 
     /**
@@ -2698,7 +2641,6 @@ class section_info implements IteratorAggregate {
         $this->_available = true;
         $this->_availableinfo = '';
         if (!empty($CFG->enableavailability)) {
-            require_once($CFG->libdir. '/conditionlib.php');
             // Get availability information.
             $ci = new \core_availability\info_section($this);
             $this->_available = $ci->is_available($this->_availableinfo, true,
@@ -2770,62 +2712,6 @@ class section_info implements IteratorAggregate {
             }
         }
         return $this->_uservisible;
-    }
-
-    /**
-     * Getter method for property $showavailability. Works by checking the
-     * availableinfo property to see if it's empty or not.
-     *
-     * @return int
-     * @deprecated Since Moodle 2.7
-     */
-    private function get_showavailability() {
-        debugging('$section->showavailability property has been deprecated. You ' .
-                'can replace it by checking if $section->availableinfo has content.',
-                DEBUG_DEVELOPER);
-        return ($this->get_availableinfo() !== '') ? 1 : 0;
-    }
-
-    /**
-     * Getter method for $availablefrom. Just returns zero as no longer supported.
-     *
-     * @return int Zero
-     * @deprecated Since Moodle 2.7
-     */
-    private function get_availablefrom() {
-        debugging('$section->availablefrom has been deprecated. This ' .
-                'information is no longer available as the system provides more complex ' .
-                'options (for example, there might be different dates for different users).',
-                DEBUG_DEVELOPER);
-        return 0;
-    }
-
-    /**
-     * Getter method for $availablefrom. Just returns zero as no longer supported.
-     *
-     * @return int Zero
-     * @deprecated Since Moodle 2.7
-     */
-    private function get_availableuntil() {
-        debugging('$section->availableuntil has been deprecated. This ' .
-                'information is no longer available as the system provides more complex ' .
-                'options (for example, there might be different dates for different users).',
-                DEBUG_DEVELOPER);
-        return 0;
-    }
-
-    /**
-     * Getter method for $groupingid. Just returns zero as no longer supported.
-     *
-     * @return int Zero
-     * @deprecated Since Moodle 2.7
-     */
-    private function get_groupingid() {
-        debugging('$section->groupingid has been deprecated. This ' .
-                'information is no longer available as the system provides more complex ' .
-                'options (for example, combining multiple groupings).',
-                DEBUG_DEVELOPER);
-        return 0;
     }
 
     /**

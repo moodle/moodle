@@ -4,10 +4,6 @@
  * @module moodle-message_airnotifier-toolboxes
  */
 
-WAITICON = {
-    'pix':"i/loading_small",
-    'component':'moodle'
-};
 // The CSS selectors we use.
 var CSS = {
     AIRNOTIFIERCONTENT : 'fieldset#messageprocessor_airnotifier',

@@ -95,11 +95,10 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
                 $this->get_contains_mc_radio_expectation($wrongindex, false, true),
                 $this->get_contains_mc_radio_expectation(($wrongindex + 1) % 3, false, false),
                 $this->get_contains_mc_radio_expectation(($wrongindex + 1) % 3, false, false),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
-                new question_pattern_expectation('/' .
-                        preg_quote(get_string('notcomplete', 'qbehaviour_interactive'), '/') . '/'),
+                new question_pattern_expectation('/Tries remaining: 2/'),
                 $this->get_contains_hint_expectation('This is the first hint'));
 
         // Check that, if we review in this state, the try again button is disabled.
@@ -136,7 +135,7 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
                 $this->get_contains_mc_radio_expectation($rightindex, false, true),
                 $this->get_contains_mc_radio_expectation(($rightindex + 1) % 3, false, false),
                 $this->get_contains_mc_radio_expectation(($rightindex + 1) % 3, false, false),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_correct_expectation(),
                 $this->get_no_hint_visible_expectation());
 
@@ -220,11 +219,10 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
                 $this->get_contains_mc_radio_expectation($wrongindex, false, true),
                 $this->get_contains_mc_radio_expectation(($wrongindex + 1) % 3, false, false),
                 $this->get_contains_mc_radio_expectation(($wrongindex + 1) % 3, false, false),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
-                new question_pattern_expectation('/' .
-                        preg_quote(get_string('notcomplete', 'qbehaviour_interactive'), '/') . '/'),
+                new question_pattern_expectation('/Tries remaining: 1/'),
                 $this->get_contains_hint_expectation('This is the first hint'));
 
         // Finish the attempt.
@@ -285,11 +283,10 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
         $this->check_current_mark(null);
         $this->check_current_output(
                 $this->get_contains_marked_out_of_summary(),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_does_not_contain_validation_error_expectation(),
                 $this->get_contains_try_again_button_expectation(true),
-                new question_pattern_expectation('/' .
-                        preg_quote(get_string('notcomplete', 'qbehaviour_interactive'), '/') . '/'),
+                new question_pattern_expectation('/Tries remaining: 2/'),
                 $this->get_contains_hint_expectation('This is the first hint'));
         $this->assertEquals('newt',
                 $this->quba->get_response_summary($this->slot));
@@ -330,7 +327,7 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
         $this->check_current_mark(0.6666667);
         $this->check_current_output(
                 $this->get_contains_mark_summary(0.6666667),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_correct_expectation(),
                 $this->get_does_not_contain_validation_error_expectation(),
                 $this->get_no_hint_visible_expectation());
@@ -383,11 +380,10 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
                 $this->get_contains_mc_checkbox_expectation($right[1], false, false),
                 $this->get_contains_mc_checkbox_expectation($wrong[0], false, true),
                 $this->get_contains_mc_checkbox_expectation($wrong[1], false, false),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
-                new question_pattern_expectation('/' .
-                        preg_quote(get_string('notcomplete', 'qbehaviour_interactive'), '/') . '/'),
+                new question_pattern_expectation('/Tries remaining: 2/'),
                 $this->get_contains_hint_expectation('This is the first hint'),
                 $this->get_contains_num_parts_correct(1),
                 $this->get_contains_standard_incorrect_combined_feedback_expectation(),

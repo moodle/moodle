@@ -114,7 +114,7 @@ class restore_controller extends base_controller {
         if ($progress) {
             $this->progress = $progress;
         } else {
-            $this->progress = new \core\progress\null();
+            $this->progress = new \core\progress\none();
         }
         $this->progress->start_progress('Constructing restore_controller');
 

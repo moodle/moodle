@@ -58,6 +58,11 @@ class auth_plugin_db extends auth_plugin_base {
     function user_login($username, $password) {
         global $CFG, $DB;
 
+        if ($this->is_configured() === false) {
+            debugging(get_string('auth_notconfigured', 'auth', $this->authtype));
+            return false;
+        }
+
         $extusername = core_text::convert($username, 'utf-8', $this->config->extencoding);
         $extpassword = core_text::convert($password, 'utf-8', $this->config->extencoding);
 
@@ -105,7 +110,7 @@ class auth_plugin_db extends auth_plugin_base {
 
             $authdb = $this->db_init();
 
-            $rs = $authdb->Execute("SELECT {$this->config->fieldpass} AS userpass
+            $rs = $authdb->Execute("SELECT {$this->config->fieldpass}
                                       FROM {$this->config->table}
                                      WHERE {$this->config->fielduser} = '".$this->ext_addslashes($extusername)."'");
             if (!$rs) {
@@ -120,7 +125,7 @@ class auth_plugin_db extends auth_plugin_base {
             }
 
             $fields = array_change_key_case($rs->fields, CASE_LOWER);
-            $fromdb = $fields['userpass'];
+            $fromdb = $fields[strtolower($this->config->fieldpass)];
             $rs->Close();
             $authdb->Close();
 
@@ -144,8 +149,13 @@ class auth_plugin_db extends auth_plugin_base {
      * Connect to external database.
      *
      * @return ADOConnection
+     * @throws moodle_exception
      */
     function db_init() {
+        if ($this->is_configured() === false) {
+            throw new moodle_exception('auth_dbcantconnect', 'auth_db');
+        }
+
         // Connect to the external database (forcing new connection).
         $authdb = ADONewConnection($this->config->type);
         if (!empty($this->config->debugauthdb)) {
@@ -168,7 +178,15 @@ class auth_plugin_db extends auth_plugin_base {
      */
     function db_attributes() {
         $moodleattributes = array();
-        foreach ($this->userfields as $field) {
+        // If we have custom fields then merge them with user fields.
+        $customfields = $this->get_custom_user_profile_fields();
+        if (!empty($customfields) && !empty($this->userfields)) {
+            $userfields = array_merge($this->userfields, $customfields);
+        } else {
+            $userfields = $this->userfields;
+        }
+
+        foreach ($userfields as $field) {
             if (!empty($this->config->{"field_map_$field"})) {
                 $moodleattributes[$field] = $this->config->{"field_map_$field"};
             }
@@ -199,18 +217,21 @@ class auth_plugin_db extends auth_plugin_base {
         if ($selectfields) {
             $select = array();
             foreach ($selectfields as $localname=>$externalname) {
-                $select[] = "$externalname AS $localname";
+                $select[] = "$externalname";
             }
             $select = implode(', ', $select);
             $sql = "SELECT $select
                       FROM {$this->config->table}
                      WHERE {$this->config->fielduser} = '".$this->ext_addslashes($extusername)."'";
+
             if ($rs = $authdb->Execute($sql)) {
                 if (!$rs->EOF) {
-                    $fields_obj = $rs->FetchObj();
-                    $fields_obj = (object)array_change_key_case((array)$fields_obj , CASE_LOWER);
-                    foreach ($selectfields as $localname=>$externalname) {
-                        $result[$localname] = core_text::convert($fields_obj->{$localname}, $this->config->extencoding, 'utf-8');
+                    $fields = $rs->FetchRow();
+                    // Convert the associative array to an array of its values so we don't have to worry about the case of its keys.
+                    $fields = array_values($fields);
+                    foreach (array_keys($selectfields) as $index => $localname) {
+                        $value = $fields[$index];
+                        $result[$localname] = core_text::convert($value, $this->config->extencoding, 'utf-8');
                      }
                  }
                  $rs->Close();
@@ -469,15 +490,15 @@ class auth_plugin_db extends auth_plugin_base {
         $authdb = $this->db_init();
 
         // Fetch userlist.
-        $rs = $authdb->Execute("SELECT {$this->config->fielduser} AS username
+        $rs = $authdb->Execute("SELECT {$this->config->fielduser}
                                   FROM {$this->config->table} ");
 
         if (!$rs) {
             print_error('auth_dbcantconnect','auth_db');
         } else if (!$rs->EOF) {
             while ($rec = $rs->FetchRow()) {
-                $rec = (object)array_change_key_case((array)$rec , CASE_LOWER);
-                array_push($result, $rec->username);
+                $rec = array_change_key_case((array)$rec, CASE_LOWER);
+                array_push($result, $rec[strtolower($this->config->fielduser)]);
             }
         }
 
@@ -603,6 +624,10 @@ class auth_plugin_db extends auth_plugin_base {
                 continue;
             }
             $nuvalue = $newuser->$key;
+            // Support for textarea fields.
+            if (isset($nuvalue['text'])) {
+                $nuvalue = $nuvalue['text'];
+            }
             if ($nuvalue != $value) {
                 $update[] = $this->config->{"field_map_$key"}."='".$this->ext_addslashes(core_text::convert($nuvalue, 'utf-8', $this->config->extencoding))."'";
             }
@@ -647,6 +672,18 @@ class auth_plugin_db extends auth_plugin_base {
             return true;
         }
         return ($this->config->passtype === 'internal');
+    }
+
+    /**
+     * Returns false if this plugin is enabled but not configured.
+     *
+     * @return bool
+     */
+    public function is_configured() {
+        if (!empty($this->config->type)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -868,6 +905,18 @@ class auth_plugin_db extends auth_plugin_base {
         ini_set('display_errors', $olddisplay);
         error_reporting($CFG->debug);
         ob_end_flush();
+    }
+
+    /**
+     * Clean the user data that comes from an external database.
+     * @deprecated since 3.1, please use core_user::clean_data() instead.
+     * @param array $user the user data to be validated against properties definition.
+     * @return stdClass $user the cleaned user data.
+     */
+    public function clean_data($user) {
+        debugging('The method clean_data() has been deprecated, please use core_user::clean_data() instead.',
+            DEBUG_DEVELOPER);
+        return core_user::clean_data($user);
     }
 }
 

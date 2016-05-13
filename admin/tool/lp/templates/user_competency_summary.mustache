@@ -1,0 +1,103 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_lp/user_competency_page
+
+    Moodle template for the the summary of a user competency
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * usercompetencysummary - object containing:
+        * showrelatedcompetencies - boolean
+        * cangrade - boolean
+        * competency - competency summary record
+        * user - user record
+        * usercompetency - user competency record
+        * evidence - array of evidence
+
+    This template does not have an example context because it includes ajax functionality.
+}}
+<div data-region="user-competency-full-info" data-node="user-competency" data-competencyid="{{usercompetency.competencyid}}" data-userid="{{usercompetency.userid}}" data-region-id="{{uniqid}}">
+<div data-region="competency-summary">
+    {{#competency}}
+        {{> tool_lp/competency_summary }}
+    {{/competency}}
+    <dl>
+        {{#usercompetency}}
+        <dt>{{#str}}reviewstatus, tool_lp{{/str}}</dt>
+        <dd data-region="user-competency-status">{{statusname}}
+
+            {{#isstatusinreview}}
+                - {{reviewer.fullname}}
+            {{/isstatusinreview}}
+
+            {{#isrequestreviewallowed}}<button data-action="request-review">{{#str}}requestreview, tool_lp{{/str}}</button>{{/isrequestreviewallowed}}
+            {{#iscancelreviewrequestallowed}}<button data-action="cancel-review-request">{{#str}}cancelreviewrequest, tool_lp{{/str}}</button>{{/iscancelreviewrequestallowed}}
+            {{#isstartreviewallowed}}<button data-action="start-review">{{#str}}startreview, tool_lp{{/str}}</button>{{/isstartreviewallowed}}
+            {{#isstopreviewallowed}}<button data-action="stop-review">{{#str}}stopreview, tool_lp{{/str}}</button>{{/isstopreviewallowed}}
+        </dd>
+        <dt>{{#str}}proficient, tool_lp{{/str}}</dt>
+        <dd>
+            <span class="label{{^proficiency}} label-important{{/proficiency}} pull-left">
+                {{proficiencyname}}
+            </span>
+        </dd>
+        <dt>{{#str}}rating, tool_lp{{/str}}</dt>
+        <dd>{{gradename}}
+            {{#cangrade}}
+                <buttn class="btn" id="rate_{{uniqid}}">{{#str}}rate, tool_lp{{/str}}</button>
+            {{/cangrade}}
+        </dd>
+        {{#js}}
+        require(['jquery', 'tool_lp/grade_user_competency_inline', 'tool_lp/user_competency_info', 'tool_lp/user_competency_workflow'], function($, mod, info, UserCompWorkflow) {
+
+            var competencyElement = $('[data-region-id="{{uniqid}}"]');
+            var infoReloader = new info(competencyElement, '{{competency.competency.id}}', '{{user.id}}');
+
+            var ucw = new UserCompWorkflow();
+            ucw.registerEvents('[data-region="user-competency-status"]');
+            ucw.on('status-changed', infoReloader.reload.bind(infoReloader));
+            ucw.on('error-occured', infoReloader.reload.bind(infoReloader));
+
+            var inlineGrader = new mod('#rate_{{uniqid}}', '{{competency.scaleid}}', '{{competency.competency.id}}', '{{user.id}}', '{{plan.id}}', '', '{{#str}}chooserating, tool_lp{{/str}}');
+            inlineGrader.on('competencyupdated', infoReloader.reload.bind(infoReloader));
+        });
+        {{/js}}
+        {{/usercompetency}}
+    </dl>
+    {{#commentarea}}
+        {{#canpostorhascomments}}
+            {{>tool_lp/comment_area}}
+        {{/canpostorhascomments}}
+    {{/commentarea}}
+    <dl data-region="evidence-listing">
+        <dt>{{#str}}evidence, tool_lp{{/str}}</dt>
+        <dd>
+            {{#evidence}}
+                {{> tool_lp/evidence_summary }}
+            {{/evidence}}
+            {{^evidence}}
+                <p>{{#str}}noevidence, tool_lp{{/str}}</p>
+            {{/evidence}}
+        </dd>
+    </dl>
+</div>

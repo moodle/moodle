@@ -63,6 +63,18 @@ class quizaccess_timelimit extends quiz_access_rule_base {
             return false;
         }
         return $endtime - $timenow;
+    }
 
+    public function is_preflight_check_required($attemptid) {
+        // Warning only required if the attempt is not already started.
+        return $attemptid === null;
+    }
+
+    public function add_preflight_check_form_fields(mod_quiz_preflight_check_form $quizform,
+            MoodleQuickForm $mform, $attemptid) {
+        $mform->addElement('header', 'honestycheckheader',
+                get_string('confirmstartheader', 'quizaccess_timelimit'));
+        $mform->addElement('static', 'honestycheckmessage', '',
+                get_string('confirmstart', 'quizaccess_timelimit', format_time($this->quiz->timelimit)));
     }
 }

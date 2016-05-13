@@ -52,6 +52,7 @@ Options:
 --lang=CODE           Installation and default site language. Default is en.
 --adminuser=USERNAME  Username for the moodle admin account. Default is admin.
 --adminpass=PASSWORD  Password for the moodle admin account.
+--adminemail=STRING   Email address for the moodle admin account.
 --agree-license       Indicates agreement with software license.
 --fullname=STRING     Name of the site
 --shortname=STRING    Name of the site
@@ -102,6 +103,7 @@ list($options, $unrecognized) = cli_get_params(
         'lang'              => 'en',
         'adminuser'         => 'admin',
         'adminpass'         => '',
+        'adminemail'        => '',
         'fullname'          => '',
         'shortname'         => '',
         'agree-license'     => false,
@@ -124,6 +126,12 @@ if (!$options['agree-license']) {
 
 if ($options['adminpass'] === true or $options['adminpass'] === '') {
     cli_error('You have to specify admin password. --help prints out the help'); // TODO: localize
+}
+
+// Validate that the address provided was an e-mail address.
+if (!empty($options['adminemail']) && !validate_email($options['adminemail'])) {
+    $a = (object) array('option' => 'adminemail', 'value' => $options['adminemail']);
+    cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
 }
 
 $options['lang'] = clean_param($options['lang'], PARAM_SAFEDIR);

@@ -249,5 +249,28 @@ class restore_root_task extends restore_task {
         // The restore does not process the grade histories when some activities are ignored.
         // So let's define a dependency to prevent false expectations from our users.
         $activities->add_dependency($gradehistories);
+
+        // Define groups and groupings.
+        $defaultvalue = false;
+        $changeable = false;
+        if (isset($rootsettings['groups']) && $rootsettings['groups']) { // Only enabled when available.
+            $defaultvalue = true;
+            $changeable = true;
+        } else if (!isset($rootsettings['groups'])) {
+            // It is likely this is an older backup that does not contain information on the group setting,
+            // in which case groups should be restored and this setting can be changed.
+            $defaultvalue = true;
+            $changeable = true;
+        }
+        $groups = new restore_groups_setting('groups', base_setting::IS_BOOLEAN, $defaultvalue);
+        $groups->set_ui(new backup_setting_ui_checkbox($groups, get_string('rootsettinggroups', 'backup')));
+        $groups->get_ui()->set_changeable($changeable);
+        $this->add_setting($groups);
+
+        // Competencies restore setting. Show when competencies is enabled and the setting is available.
+        $hascompetencies = !empty($rootsettings['competencies']);
+        $competencies = new restore_competencies_setting($hascompetencies);
+        $competencies->set_ui(new backup_setting_ui_checkbox($competencies, get_string('rootsettingcompetencies', 'backup')));
+        $this->add_setting($competencies);
     }
 }

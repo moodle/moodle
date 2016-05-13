@@ -26,7 +26,7 @@
  * @class annotationline
  * @extends M.assignfeedback_editpdf.annotation
  */
-ANNOTATIONLINE = function(config) {
+var ANNOTATIONLINE = function(config) {
     ANNOTATIONLINE.superclass.constructor.apply(this, [config]);
 };
 

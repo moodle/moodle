@@ -74,4 +74,9 @@ class rule_updated extends \core\event\base {
         return new \moodle_url('/admin/tool/monitor/edit.php', array('ruleid' => $this->objectid,
             'courseid' => $this->courseid));
     }
+
+    public static function get_objectid_mapping() {
+        // No mapping required for this event because event monitor rules are not backed up.
+        return array('db' => 'tool_monitor_rules', 'restore' => \core\event\base::NOT_MAPPED);
+    }
 }

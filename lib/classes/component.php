@@ -100,6 +100,9 @@ class core_component {
             $newclassname = self::$classmaprenames[$classname];
             $debugging = "Class '%s' has been renamed for the autoloader and is now deprecated. Please use '%s' instead.";
             debugging(sprintf($debugging, $classname, $newclassname), DEBUG_DEVELOPER);
+            if (PHP_VERSION_ID >= 70000 && preg_match('#\\\null(\\\|$)#', $classname)) {
+                throw new \coding_exception("Cannot alias $classname to $newclassname");
+            }
             class_alias($newclassname, $classname);
             return;
         }
@@ -338,6 +341,7 @@ $cache = '.var_export($cache, true).';
         $info = array(
             'access'      => null,
             'admin'       => $CFG->dirroot.'/'.$CFG->admin,
+            'antivirus'   => $CFG->dirroot . '/lib/antivirus',
             'auth'        => $CFG->dirroot.'/auth',
             'availability' => $CFG->dirroot . '/availability',
             'backup'      => $CFG->dirroot.'/backup/util/ui',
@@ -348,7 +352,9 @@ $cache = '.var_export($cache, true).';
             'cache'       => $CFG->dirroot.'/cache',
             'calendar'    => $CFG->dirroot.'/calendar',
             'cohort'      => $CFG->dirroot.'/cohort',
-            'completion'  => null,
+            'comment'     => $CFG->dirroot.'/comment',
+            'competency'  => $CFG->dirroot.'/competency',
+            'completion'  => $CFG->dirroot.'/completion',
             'countries'   => null,
             'course'      => $CFG->dirroot.'/course',
             'currencies'  => null,
@@ -393,7 +399,7 @@ $cache = '.var_export($cache, true).';
             'repository'  => $CFG->dirroot.'/repository',
             'rss'         => $CFG->dirroot.'/rss',
             'role'        => $CFG->dirroot.'/'.$CFG->admin.'/roles',
-            'search'      => null,
+            'search'      => $CFG->dirroot.'/search',
             'table'       => null,
             'tag'         => $CFG->dirroot.'/tag',
             'timezones'   => null,
@@ -413,6 +419,7 @@ $cache = '.var_export($cache, true).';
         global $CFG;
 
         $types = array(
+            'antivirus'     => $CFG->dirroot . '/lib/antivirus',
             'availability'  => $CFG->dirroot . '/availability/condition',
             'qtype'         => $CFG->dirroot.'/question/type',
             'mod'           => $CFG->dirroot.'/mod',
@@ -424,6 +431,7 @@ $cache = '.var_export($cache, true).';
             'filter'        => $CFG->dirroot.'/filter',
             'editor'        => $CFG->dirroot.'/lib/editor',
             'format'        => $CFG->dirroot.'/course/format',
+            'dataformat'    => $CFG->dirroot.'/dataformat',
             'profilefield'  => $CFG->dirroot.'/user/profile/field',
             'report'        => $CFG->dirroot.'/report',
             'coursereport'  => $CFG->dirroot.'/course/report', // Must be after system reports.
@@ -435,6 +443,7 @@ $cache = '.var_export($cache, true).';
             'webservice'    => $CFG->dirroot.'/webservice',
             'repository'    => $CFG->dirroot.'/repository',
             'portfolio'     => $CFG->dirroot.'/portfolio',
+            'search'        => $CFG->dirroot.'/search/engine',
             'qbehaviour'    => $CFG->dirroot.'/question/behaviour',
             'qformat'       => $CFG->dirroot.'/question/format',
             'plagiarism'    => $CFG->dirroot.'/plagiarism',
@@ -647,6 +656,13 @@ $cache = '.var_export($cache, true).';
             return;
         }
 
+        if (!is_readable($fulldir)) {
+            // TODO: MDL-51711 We should generate some diagnostic debugging information in this case
+            // because its pretty likely to lead to a missing class error further down the line.
+            // But our early setup code can't handle errors this early at the moment.
+            return;
+        }
+
         $items = new \DirectoryIterator($fulldir);
         foreach ($items as $item) {
             if ($item->isDot()) {
@@ -706,12 +722,12 @@ $cache = '.var_export($cache, true).';
      */
     protected static function load_psr_classes($basedir, $subdir = null) {
         if ($subdir) {
-            $fulldir = implode(DIRECTORY_SEPARATOR, array($basedir, $subdir));
-            $classnameprefix = preg_replace('/\//', '_', $subdir);
+            $fulldir = realpath($basedir . DIRECTORY_SEPARATOR . $subdir);
+            $classnameprefix = preg_replace('#' . preg_quote(DIRECTORY_SEPARATOR) . '#', '_', $subdir);
         } else {
             $fulldir = $basedir;
         }
-        if (!is_dir($fulldir)) {
+        if (!$fulldir || !is_dir($fulldir)) {
             return;
         }
 
@@ -884,6 +900,39 @@ $cache = '.var_export($cache, true).';
         }
 
         return $pluginfiles;
+    }
+
+    /**
+     * Returns all classes in a component matching the provided namespace.
+     *
+     * It checks that the class exists.
+     *
+     * e.g. get_component_classes_in_namespace('mod_forum', 'event')
+     *
+     * @param string $component A valid moodle component (frankenstyle)
+     * @param string $namespace Namespace from the component name.
+     * @return array The full class name as key and the class path as value.
+     */
+    public static function get_component_classes_in_namespace($component, $namespace = '') {
+
+        // We will add them later.
+        $namespace = ltrim($namespace, '\\');
+
+        // We need add double backslashes as it is how classes are stored into self::$classmap.
+        $namespace = implode('\\\\', explode('\\', $namespace));
+
+        $regex = '/^' . $component . '\\\\' . $namespace . '/';
+        $it = new RegexIterator(new ArrayIterator(self::$classmap), $regex, RegexIterator::GET_MATCH, RegexIterator::USE_KEY);
+
+        // We want to be sure that they exist.
+        $classes = array();
+        foreach ($it as $classname => $classpath) {
+            if (class_exists($classname)) {
+                $classes[$classname] = $classpath;
+            }
+        }
+
+        return $classes;
     }
 
     /**
@@ -1101,7 +1150,7 @@ $cache = '.var_export($cache, true).';
                 $plugin = new stdClass();
                 $plugin->version = null;
                 $module = $plugin;
-                @include($fullplug.'/version.php');
+                include($fullplug.'/version.php');
                 $versions[$type.'_'.$plug] = $plugin->version;
             }
         }

@@ -33,96 +33,6 @@ if (!defined('MOODLE_INTERNAL')) {
 class core_calendar_renderer extends plugin_renderer_base {
 
     /**
-     * Creates a basic export form
-     *
-     * @param bool $allowthisweek
-     * @param bool $allownextweek
-     * @param bool $allownextmonth
-     * @param int $userid
-     * @param string $authtoken
-     * @return string
-     */
-    public function basic_export_form($allowthisweek, $allownextweek, $allownextmonth, $userid, $authtoken) {
-        global $CFG;
-
-        $output  = html_writer::tag('div', get_string('export', 'calendar'), array('class'=>'header'));
-        $output .= html_writer::start_tag('fieldset');
-        $output .= html_writer::tag('legend', get_string('commontasks', 'calendar'));
-        $output .= html_writer::start_tag('form', array('action'=>new moodle_url('/calendar/export_execute.php'), 'method'=>'get'));
-
-        $output .= html_writer::tag('div', get_string('iwanttoexport', 'calendar'));
-
-        $output .= html_writer::start_tag('div', array('class'=>'indent'));
-        $output .= html_writer::empty_tag('input', array('type'=>'radio', 'name'=>'preset_what', 'id'=>'pw_all', 'value'=>'all', 'checked'=>'checked'));
-        $output .= html_writer::tag('label', get_string('eventsall', 'calendar'), array('for'=>'pw_all'));
-        $output .= html_writer::empty_tag('br');
-        $output .= html_writer::empty_tag('input', array('type'=>'radio', 'name'=>'preset_what', 'id'=>'pw_course', 'value'=>'courses'));
-        $output .= html_writer::tag('label', get_string('eventsrelatedtocourses', 'calendar'), array('for'=>'pw_course'));
-        $output .= html_writer::empty_tag('br');
-        $output .= html_writer::end_tag('div');
-
-        $output .= html_writer::tag('div', get_string('for', 'calendar').':');
-
-        $output .= html_writer::start_tag('div', array('class'=>'indent'));
-        if ($allowthisweek) {
-            $output .= html_writer::empty_tag('input', array('type'=>'radio', 'name'=>'preset_time', 'id'=>'pt_wknow', 'value'=>'weeknow', 'checked'=>'checked'));
-            $output .= html_writer::tag('label', get_string('weekthis', 'calendar'), array('for'=>'pt_wknow'));
-            $output .= html_writer::empty_tag('br');
-        }
-        if ($allownextweek) {
-            $output .= html_writer::empty_tag('input', array('type'=>'radio', 'name'=>'preset_time', 'id'=>'pt_wknext', 'value'=>'weeknext'));
-            $output .= html_writer::tag('label', get_string('weeknext', 'calendar'), array('for'=>'pt_wknext'));
-            $output .= html_writer::empty_tag('br');
-        }
-        $output .= html_writer::empty_tag('input', array('type'=>'radio', 'name'=>'preset_time', 'id'=>'pt_monnow', 'value'=>'monthnow'));
-        $output .= html_writer::tag('label', get_string('monththis', 'calendar'), array('for'=>'pt_monnow'));
-        $output .= html_writer::empty_tag('br');
-        if ($allownextmonth) {
-            $output .= html_writer::empty_tag('input', array('type'=>'radio', 'name'=>'preset_time', 'id'=>'pt_monnext', 'value'=>'monthnext'));
-            $output .= html_writer::tag('label', get_string('monthnext', 'calendar'), array('for'=>'pt_monnext'));
-            $output .= html_writer::empty_tag('br');
-        }
-        $output .= html_writer::empty_tag('input', array('type'=>'radio', 'name'=>'preset_time', 'id'=>'pt_recupc', 'value'=>'recentupcoming'));
-        $output .= html_writer::tag('label', get_string('recentupcoming', 'calendar'), array('for'=>'pt_recupc'));
-        $output .= html_writer::empty_tag('br');
-
-        if ($CFG->calendar_customexport) {
-            $a = new stdClass();
-            $now = time();
-            $time = $now - $CFG->calendar_exportlookback * DAYSECS;
-            $a->timestart = userdate($time, get_string('strftimedatefullshort', 'langconfig'));
-            $time = $now + $CFG->calendar_exportlookahead * DAYSECS;
-            $a->timeend = userdate($time, get_string('strftimedatefullshort', 'langconfig'));
-            $output .= html_writer::empty_tag('input', array('type' => 'radio', 'name' => 'preset_time', 'id' => 'pt_custom', 'value' => 'custom'));
-            $output .= html_writer::tag('label', get_string('customexport', 'calendar', $a), array('for' => 'pt_custom'));
-            $output .= html_writer::empty_tag('br');
-        }
-
-        $output .= html_writer::end_tag('div');
-        $output .= html_writer::start_tag('div', array('class'=>'rightalign'));
-        $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'cal_d', 'value'=>''));
-        $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'cal_m', 'value'=>''));
-        $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'cal_y', 'value'=>''));
-        $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'userid', 'value'=>$userid));
-        $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'authtoken', 'value'=>$authtoken));
-
-        $output .= html_writer::empty_tag('input', array('type'=>'submit', 'name' => 'generateurl', 'id'=>'generateurl', 'value'=>get_string('generateurlbutton', 'calendar')));
-        $output .= html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('exportbutton', 'calendar')));
-
-        $output .= html_writer::end_tag('div');
-
-        $output .= html_writer::end_tag('form');
-        $output .= html_writer::end_tag('fieldset');
-
-        $output .= html_writer::start_tag('div', array('id'=>'urlbox', 'style'=>'display:none;'));
-        $output .= html_writer::tag('p', get_string('urlforical', 'calendar'));
-        $output .= html_writer::tag('div', '', array('id'=>'url', 'style'=>'overflow:scroll;width:650px;'));
-        $output .= html_writer::end_tag('div');
-
-        return $output;
-    }
-
-    /**
      * Starts the standard layout for the page
      *
      * @return string
@@ -266,7 +176,7 @@ class core_calendar_renderer extends plugin_renderer_base {
 
         if (empty($events)) {
             // There is nothing to display today.
-            $output .= $this->output->heading(get_string('daywithnoevents', 'calendar'), 3);
+            $output .= html_writer::span(get_string('daywithnoevents', 'calendar'), 'calendar-information calendar-no-results');
         } else {
             $output .= html_writer::start_tag('div', array('class' => 'eventlist'));
             $underway = array();
@@ -284,7 +194,8 @@ class core_calendar_renderer extends plugin_renderer_base {
 
             // Then, show a list of all events that just span this day
             if (!empty($underway)) {
-                $output .= $this->output->heading(get_string('spanningevents', 'calendar'), 3);
+                $output .= html_writer::span(get_string('spanningevents', 'calendar'),
+                    'calendar-information calendar-span-multiple-days');
                 foreach ($underway as $event) {
                     $event->time = calendar_format_event_time($event, time(), null, false, $calendar->timestamp_today());
                     $output .= $this->event($event);
@@ -626,7 +537,7 @@ class core_calendar_renderer extends plugin_renderer_base {
             }
             $output .= html_writer::end_tag('div');
         } else {
-            $output .= $this->output->heading(get_string('noupcomingevents', 'calendar'));
+            $output .= html_writer::span(get_string('noupcomingevents', 'calendar'), 'calendar-information calendar-no-results');
         }
 
         return $output;
@@ -701,7 +612,7 @@ class core_calendar_renderer extends plugin_renderer_base {
 
         if (empty($subscriptions)) {
             $cell = new html_table_cell(get_string('nocalendarsubscriptions', 'calendar'));
-            $cell->colspan = 4;
+            $cell->colspan = 5;
             $table->data[] = new html_table_row(array($cell));
         }
         $strnever = new lang_string('never', 'calendar');

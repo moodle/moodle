@@ -23,6 +23,7 @@
  */
 
 require(dirname(__FILE__).'/../../config.php');
+require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/locallib.php');
 require_once($CFG->libdir.'/completionlib.php');
 
@@ -75,7 +76,8 @@ if ($allowedit and !$chapters) {
 }
 // Check chapterid and read chapter data
 if ($chapterid == '0') { // Go to first chapter if no given.
-    \mod_book\event\course_module_viewed::create_from_book($book, $context)->trigger();
+    // Trigger course module viewed event.
+    book_view($book, null, false, $course, $cm, $context);
 
     foreach ($chapters as $ch) {
         if ($edit) {
@@ -108,10 +110,6 @@ $PAGE->set_url('/mod/book/view.php', array('id'=>$id, 'chapterid'=>$chapterid));
 unset($id);
 unset($bid);
 unset($chapterid);
-
-// Security checks END.
-
-\mod_book\event\chapter_viewed::create_from_chapter($book, $context, $chapter)->trigger();
 
 // Read standard strings.
 $strbooks = get_string('modulenameplural', 'mod_book');
@@ -147,7 +145,7 @@ foreach ($chapters as $ch) {
     $last = $ch->id;
 }
 
-
+$islastchapter = false;
 if ($book->navstyle) {
     $navprevicon = right_to_left() ? 'nav_next' : 'nav_prev';
     $navnexticon = right_to_left() ? 'nav_prev' : 'nav_next';
@@ -195,18 +193,18 @@ if ($book->navstyle) {
                 '<span class="chaptername">' . $navexit . '&nbsp;' . $OUTPUT->uarrow() . '</span></a>';
         }
 
-        // We cheat a bit here in assuming that viewing the last page means the user viewed the whole book.
-        $completion = new completion_info($course);
-        $completion->set_module_viewed($cm);
+        $islastchapter = true;
     }
 }
+
+book_view($book, $chapter, $islastchapter, $course, $cm, $context);
 
 // =====================================================
 // Book display HTML code
 // =====================================================
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($book->name);
+echo $OUTPUT->heading(format_string($book->name));
 
 $navclasses = book_get_nav_classes();
 

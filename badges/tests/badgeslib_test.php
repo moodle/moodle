@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/badgeslib.php');
+require_once($CFG->dirroot . '/badges/lib.php');
 
 class core_badges_badgeslib_testcase extends advanced_testcase {
     protected $badgeid;
@@ -152,6 +153,28 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         $this->assertCount(2, $badge->get_criteria());
     }
 
+    public function test_add_badge_criteria_description() {
+        $criteriaoverall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $this->badgeid));
+        $criteriaoverall->save(array(
+                'agg' => BADGE_CRITERIA_AGGREGATION_ALL,
+                'description' => 'Overall description',
+                'descriptionformat' => FORMAT_HTML
+        ));
+
+        $criteriaprofile = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_PROFILE, 'badgeid' => $this->badgeid));
+        $params = array(
+                'agg' => BADGE_CRITERIA_AGGREGATION_ALL,
+                'field_address' => 'address',
+                'description' => 'Description',
+                'descriptionformat' => FORMAT_HTML
+        );
+        $criteriaprofile->save($params);
+
+        $badge = new badge($this->badgeid);
+        $this->assertEquals('Overall description', $badge->criteria[BADGE_CRITERIA_TYPE_OVERALL]->description);
+        $this->assertEquals('Description', $badge->criteria[BADGE_CRITERIA_TYPE_PROFILE]->description);
+    }
+
     public function test_delete_badge_criteria() {
         $criteria_overall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $this->badgeid));
         $criteria_overall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ALL));
@@ -176,6 +199,95 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         $this->assertTrue($badge->is_issued($user2->id));
 
         $this->assertCount(2, $badge->get_awards());
+    }
+
+    /**
+     * Test the {@link badges_get_user_badges()} function in lib/badgeslib.php
+     */
+    public function test_badges_get_user_badges() {
+        global $DB;
+
+        // Messaging is not compatible with transactions.
+        $this->preventResetByRollback();
+
+        $badges = array();
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        // Record the current time, we need to be precise about a couple of things.
+        $now = time();
+        // Create 11 badges with which to test.
+        for ($i = 1; $i <= 11; $i++) {
+            // Mock up a badge.
+            $badge = new stdClass();
+            $badge->id = null;
+            $badge->name = "Test badge $i";
+            $badge->description = "Testing badges $i";
+            $badge->timecreated = $now - 12;
+            $badge->timemodified = $now - 12;
+            $badge->usercreated = $user1->id;
+            $badge->usermodified = $user1->id;
+            $badge->issuername = "Test issuer";
+            $badge->issuerurl = "http://issuer-url.domain.co.nz";
+            $badge->issuercontact = "issuer@example.com";
+            $badge->expiredate = null;
+            $badge->expireperiod = null;
+            $badge->type = BADGE_TYPE_SITE;
+            $badge->courseid = null;
+            $badge->messagesubject = "Test message subject for badge $i";
+            $badge->message = "Test message body for badge $i";
+            $badge->attachment = 1;
+            $badge->notification = 0;
+            $badge->status = BADGE_STATUS_INACTIVE;
+
+            $badgeid = $DB->insert_record('badge', $badge, true);
+            $badges[$badgeid] = new badge($badgeid);
+            $badges[$badgeid]->issue($user2->id, true);
+            // Check it all actually worked.
+            $this->assertCount(1, $badges[$badgeid]->get_awards());
+
+            // Hack the database to adjust the time each badge was issued.
+            // The alternative to this is sleep which is a no-no in unit tests.
+            $DB->set_field('badge_issued', 'dateissued', $now - 11 + $i, array('userid' => $user2->id, 'badgeid' => $badgeid));
+        }
+
+        // Make sure the first user has no badges.
+        $result = badges_get_user_badges($user1->id);
+        $this->assertInternalType('array', $result);
+        $this->assertCount(0, $result);
+
+        // Check that the second user has the expected 11 badges.
+        $result = badges_get_user_badges($user2->id);
+        $this->assertCount(11, $result);
+
+        // Test pagination.
+        // Ordering is by time issued desc, so things will come out with the last awarded badge first.
+        $result = badges_get_user_badges($user2->id, 0, 0, 4);
+        $this->assertCount(4, $result);
+        $lastbadgeissued = reset($result);
+        $this->assertSame('Test badge 11', $lastbadgeissued->name);
+        // Page 2. Expecting 4 results again.
+        $result = badges_get_user_badges($user2->id, 0, 1, 4);
+        $this->assertCount(4, $result);
+        $lastbadgeissued = reset($result);
+        $this->assertSame('Test badge 7', $lastbadgeissued->name);
+        // Page 3. Expecting just three results here.
+        $result = badges_get_user_badges($user2->id, 0, 2, 4);
+        $this->assertCount(3, $result);
+        $lastbadgeissued = reset($result);
+        $this->assertSame('Test badge 3', $lastbadgeissued->name);
+        // Page 4.... there is no page 4.
+        $result = badges_get_user_badges($user2->id, 0, 3, 4);
+        $this->assertCount(0, $result);
+
+        // Test search.
+        $result = badges_get_user_badges($user2->id, 0, 0, 0, 'badge 1');
+        $this->assertCount(3, $result);
+        $lastbadgeissued = reset($result);
+        $this->assertSame('Test badge 11', $lastbadgeissued->name);
+        // The term Totara doesn't appear anywhere in the badges.
+        $result = badges_get_user_badges($user2->id, 0, 0, 0, 'Totara');
+        $this->assertCount(0, $result);
     }
 
     public function data_for_message_from_template() {
@@ -233,6 +345,11 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         $criteria_overall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_ACTIVITY, 'badgeid' => $badge->id));
         $criteria_overall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ANY, 'module_'.$this->module->cmid => $this->module->cmid));
 
+        // Assert the badge will not be issued to the user as is.
+        $badge = new badge($this->coursebadge);
+        $badge->review_all_criteria();
+        $this->assertFalse($badge->is_issued($this->user->id));
+
         // Set completion for forum activity.
         $c = new completion_info($this->course);
         $activities = $c->get_activities();
@@ -268,6 +385,11 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
 
         $ccompletion = new completion_completion(array('course' => $this->course->id, 'userid' => $this->user->id));
 
+        // Assert the badge will not be issued to the user as is.
+        $badge = new badge($this->coursebadge);
+        $badge->review_all_criteria();
+        $this->assertFalse($badge->is_issued($this->user->id));
+
         // Mark course as complete.
         $sink = $this->redirectEmails();
         $ccompletion->mark_complete();
@@ -283,18 +405,33 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
      * Test badges observer when user_updated event is fired.
      */
     public function test_badges_observer_profile_criteria_review() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot.'/user/profile/lib.php');
+
+        // Add a custom field of textarea type.
+        $customprofileid = $DB->insert_record('user_info_field', array(
+            'shortname' => 'newfield', 'name' => 'Description of new field', 'categoryid' => 1,
+            'datatype' => 'textarea'));
+
         $this->preventResetByRollback(); // Messaging is not compatible with transactions.
         $badge = new badge($this->coursebadge);
-        $this->assertFalse($badge->is_issued($this->user->id));
 
         $criteria_overall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $badge->id));
         $criteria_overall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ANY));
         $criteria_overall1 = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_PROFILE, 'badgeid' => $badge->id));
-        $criteria_overall1->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ALL, 'field_address' => 'address', 'field_aim' => 'aim'));
+        $criteria_overall1->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ALL, 'field_address' => 'address', 'field_aim' => 'aim',
+            'field_' . $customprofileid => $customprofileid));
 
+        // Assert the badge will not be issued to the user as is.
+        $badge = new badge($this->coursebadge);
+        $badge->review_all_criteria();
+        $this->assertFalse($badge->is_issued($this->user->id));
+
+        // Set the required fields and make sure the badge got issued.
         $this->user->address = 'Test address';
         $this->user->aim = '999999999';
         $sink = $this->redirectEmails();
+        profile_save_data((object)array('id' => $this->user->id, 'profile_field_newfield' => 'X'));
         user_update_user($this->user, false);
         $this->assertCount(1, $sink->get_messages());
         $sink->close();
@@ -335,5 +472,70 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         $this->assertStringMatchesFormat($testassertion->badge, json_encode($assertion->get_badge_assertion()));
         $this->assertStringMatchesFormat($testassertion->class, json_encode($assertion->get_badge_class()));
         $this->assertStringMatchesFormat($testassertion->issuer, json_encode($assertion->get_issuer()));
+    }
+
+    /**
+     * Tests the core_badges_myprofile_navigation() function.
+     */
+    public function test_core_badges_myprofile_navigation() {
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $this->setAdminUser();
+        $badge = new badge($this->badgeid);
+        $badge->issue($this->user->id, true);
+        $iscurrentuser = true;
+        $course = null;
+
+        // Enable badges.
+        set_config('enablebadges', true);
+
+        // Check the node tree is correct.
+        core_badges_myprofile_navigation($tree, $this->user, $iscurrentuser, $course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('localbadges', $nodes->getValue($tree));
+    }
+
+    /**
+     * Tests the core_badges_myprofile_navigation() function with badges disabled..
+     */
+    public function test_core_badges_myprofile_navigation_badges_disabled() {
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $this->setAdminUser();
+        $badge = new badge($this->badgeid);
+        $badge->issue($this->user->id, true);
+        $iscurrentuser = false;
+        $course = null;
+
+        // Disable badges.
+        set_config('enablebadges', false);
+
+        // Check the node tree is correct.
+        core_badges_myprofile_navigation($tree, $this->user, $iscurrentuser, $course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayNotHasKey('localbadges', $nodes->getValue($tree));
+    }
+
+    /**
+     * Tests the core_badges_myprofile_navigation() function with a course badge.
+     */
+    public function test_core_badges_myprofile_navigation_with_course_badge() {
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $this->setAdminUser();
+        $badge = new badge($this->coursebadge);
+        $badge->issue($this->user->id, true);
+        $iscurrentuser = false;
+
+        // Check the node tree is correct.
+        core_badges_myprofile_navigation($tree, $this->user, $iscurrentuser, $this->course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+        $this->assertArrayHasKey('localbadges', $nodes->getValue($tree));
     }
 }

@@ -41,6 +41,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         }
         $target = new moodle_url('/mod/choice/view.php');
         $attributes = array('method'=>'POST', 'action'=>$target, 'class'=> $layoutclass);
+        $disabled = empty($options['previewonly']) ? array() : array('disabled' => 'disabled');
 
         $html = html_writer::start_tag('form', $attributes);
         $html .= html_writer::start_tag('ul', array('class'=>'choices' ));
@@ -65,7 +66,7 @@ class mod_choice_renderer extends plugin_renderer_base {
                 $availableoption--;
             }
 
-            $html .= html_writer::empty_tag('input', (array)$option->attributes);
+            $html .= html_writer::empty_tag('input', (array)$option->attributes + $disabled);
             $html .= html_writer::tag('label', $labeltext, array('for'=>$option->attributes->id));
             $html .= html_writer::end_tag('li');
         }
@@ -73,21 +74,26 @@ class mod_choice_renderer extends plugin_renderer_base {
         $html .= html_writer::end_tag('ul');
         $html .= html_writer::tag('div', '', array('class'=>'clearfloat'));
         $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
+        $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'action', 'value'=>'makechoice'));
         $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'id', 'value'=>$coursemoduleid));
 
-        if (!empty($options['hascapability']) && ($options['hascapability'])) {
-            if ($availableoption < 1) {
-               $html .= html_writer::tag('label', get_string('choicefull', 'choice'));
-            } else {
-                $html .= html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('savemychoice','choice'), 'class'=>'button'));
-            }
+        if (empty($options['previewonly'])) {
+            if (!empty($options['hascapability']) && ($options['hascapability'])) {
+                if ($availableoption < 1) {
+                    $html .= html_writer::tag('label', get_string('choicefull', 'choice'));
+                } else {
+                    $html .= html_writer::empty_tag('input',
+                            array('type' => 'submit', 'value' => get_string('savemychoice', 'choice'), 'class' => 'button'));
+                }
 
-            if (!empty($options['allowupdate']) && ($options['allowupdate'])) {
-                $url = new moodle_url('view.php', array('id'=>$coursemoduleid, 'action'=>'delchoice', 'sesskey'=>sesskey()));
-                $html .= html_writer::link($url, get_string('removemychoice','choice'));
+                if (!empty($options['allowupdate']) && ($options['allowupdate'])) {
+                    $url = new moodle_url('view.php',
+                            array('id' => $coursemoduleid, 'action' => 'delchoice', 'sesskey' => sesskey()));
+                    $html .= html_writer::link($url, get_string('removemychoice', 'choice'));
+                }
+            } else {
+                $html .= html_writer::tag('label', get_string('havetologin', 'choice'));
             }
-        } else {
-            $html .= html_writer::tag('label', get_string('havetologin', 'choice'));
         }
 
         $html .= html_writer::end_tag('ul');
@@ -372,7 +378,6 @@ class mod_choice_renderer extends plugin_renderer_base {
 
         $header = html_writer::tag('h3',format_string(get_string("responses", "choice")));
         $html .= html_writer::tag('div', $header, array('class'=>'responseheader'));
-        $html .= html_writer::tag('a', get_string('skipresultgraph', 'choice'), array('href'=>'#skipresultgraph', 'class'=>'skip-block'));
         $html .= html_writer::tag('div', html_writer::table($table), array('class'=>'response'));
 
         return $html;

@@ -1,6 +1,14 @@
 This files describes API changes in /portfolio/ portfolio system,
 information provided here is intended especially for developers.
 
+=== 3.1 ===
+
+* The following functions, previously used (exclusively) by upgrade steps are not available
+  anymore because of the upgrade cleanup performed for this version. See MDL-51580 for more info:
+    - portfolio_picasa_admin_upgrade_notification()
+    - portfolio_googledocs_admin_upgrade_notification()
+    - portfolio_boxnet_admin_upgrade_notification()
+
 === 2.4 ===
 
 The set_callback_options function's third parameter has been changed from a file path

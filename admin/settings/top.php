@@ -11,7 +11,7 @@ $hassiteconfig = has_capability('moodle/site:config', $systemcontext);
 $ADMIN->add('root', new admin_externalpage('adminnotifications', new lang_string('notifications'), "$CFG->wwwroot/$CFG->admin/index.php"));
 
 $ADMIN->add('root', new admin_externalpage('registrationmoodleorg', new lang_string('registration', 'admin'),
-        "$CFG->wwwroot/$CFG->admin/registration/register.php?huburl=" . HUB_MOODLEORGHUBURL . "&hubname=Moodle.org"));
+        "$CFG->wwwroot/$CFG->admin/registration/register.php?huburl=" . HUB_MOODLEORGHUBURL . "&hubname=Moodle.org&sesskey=" . sesskey()));
 $ADMIN->add('root', new admin_externalpage('registrationhub', new lang_string('registerwith', 'hub'),
         "$CFG->wwwroot/$CFG->admin/registration/register.php", 'moodle/site:config', true));
 $ADMIN->add('root', new admin_externalpage('registrationhubs', new lang_string('hubs', 'admin'),
@@ -30,6 +30,7 @@ if ($hassiteconfig) {
 $ADMIN->add('root', new admin_category('users', new lang_string('users','admin')));
 $ADMIN->add('root', new admin_category('courses', new lang_string('courses','admin')));
 $ADMIN->add('root', new admin_category('grades', new lang_string('grades')));
+$ADMIN->add('root', new admin_category('competencies', new lang_string('competencies', 'core_competency')));
 $ADMIN->add('root', new admin_category('badges', new lang_string('badges'), empty($CFG->enablebadges)));
 $ADMIN->add('root', new admin_category('location', new lang_string('location','admin')));
 $ADMIN->add('root', new admin_category('language', new lang_string('language')));

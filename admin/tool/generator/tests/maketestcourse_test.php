@@ -34,14 +34,33 @@ class tool_generator_maketestcourse_testcase extends advanced_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
 
+        $expectedshortname = 'TOOL_MAKELARGECOURSE_XS';
+        $expectedfullname = 'Ridiculous fullname';
+        $expectedsummary = 'who even knows what this is about';
+
         // Create the XS course.
-        $backend = new tool_generator_course_backend('TOOL_MAKELARGECOURSE_XS', 0, false, false, false);
+        $backend = new tool_generator_course_backend(
+            $expectedshortname,
+            0,
+            false,
+            false,
+            false,
+            $expectedfullname,
+            $expectedsummary
+        );
         $courseid = $backend->make();
 
         // Get course details.
         $course = get_course($courseid);
         $context = context_course::instance($courseid);
         $modinfo = get_fast_modinfo($course);
+
+        // Check course names.
+        $this->assertEquals($expectedshortname, $course->shortname);
+        $this->assertEquals($expectedfullname, $course->fullname);
+
+        // Check course summary.
+        $this->assertEquals($expectedsummary, $course->summary);
 
         // Check sections (just section 0 plus one other).
         $this->assertEquals(2, count($modinfo->get_section_info_all()));
@@ -136,7 +155,7 @@ class tool_generator_maketestcourse_testcase extends advanced_testcase {
         $lastusernumber = 0;
         $discussionstarters = array();
         foreach ($discussions as $discussion) {
-            $usernumber = intval($discussion->lastname);
+            $usernumber = core_user::get_user($discussion->userid, 'id, idnumber')->idnumber;
 
             // Checks that the users are odd numbers.
             $this->assertEquals(1, $usernumber % 2);

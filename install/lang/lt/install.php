@@ -30,70 +30,45 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['admindirname'] = 'Administratoriaus aplankas';
-$string['availablelangs'] = 'Galimų kalbų sąrašas';
+$string['admindirname'] = 'Administratoriaus katalogas';
+$string['availablelangs'] = 'Galimi kalbų paketai';
 $string['chooselanguagehead'] = 'Pasirinkite kalbą';
-$string['chooselanguagesub'] = 'Prašome pasirinkti diegimo kalbą. Ši kalba taip pat taps numatytąją svetainės kalba. Tačiau vėliau, jei norėsite, Jūs galėsite ją pakeisti.';
-$string['clialreadyconfigured'] = 'config.php failas jau egzistuoja. Prašome naudotis admin/cli/install_database.php, jei Jūs norite įdiegti šią svetainę.';
-$string['clialreadyinstalled'] = 'config.php failas jau egzistuoja. Prašome naudoti admin/cli/upgrade.php jei Jūs norite išplėtoti šią svetainę.';
-$string['cliinstallheader'] = '"Moodle" {$a} komandinės eilutės įdiegimo programa';
-$string['databasehost'] = 'Duomenų bazės serveris';
+$string['chooselanguagesub'] = 'Pasirinkite diegimo kalbą. Ši kalba bus naudojama ir kaip numatytoji svetainės kalba, nors vėliau ją bus galima pakeisti.';
+$string['clialreadyconfigured'] = 'Failas config.php jau yra, prašau naudoti admin/cli/install_database.php jei norite įrašyti šią svetainę.';
+$string['clialreadyinstalled'] = 'Failas config.php jau yra. Jei norite atnaujinti svetainę, naudokite admin/cli/upgrade.php.';
+$string['cliinstallheader'] = '„Moodle“ {$a} komandų eilutės diegimo programa';
+$string['databasehost'] = 'Duomenų bazės pagrindinis kompiuteris';
 $string['databasename'] = 'Duomenų bazės pavadinimas';
 $string['databasetypehead'] = 'Pasirinkite duomenų bazės tvarkyklę';
-$string['dataroot'] = 'Duomenų aplankas';
-$string['datarootpermission'] = 'Duomenų aplanko leidimai';
-$string['dbprefix'] = 'Lentelių priešdėlis';
-$string['dirroot'] = '"Moodle" aplankas';
-$string['environmenthead'] = 'Tikrinama Jūsų aplinka...';
-$string['environmentsub2'] = 'Kiekviena "Moodle" laida turi kai kuriuos minimalius reikalavimus PHP versijai ir tam tikrą privalomų PHP plėtinių skaičių.
-Pilnas aplinkos patikrinimas yra padaromas prieš kiekvieną įdiegimą ar plėtotę. Prašome susisiekti su serverio administratoriumi, jeigu Jūs nežinote kaip įdiegti naują versiją ar įgalinti PHP plėtinius.';
-$string['errorsinenvironment'] = 'Aplinkos patikrinimas nesėkmingas!';
-$string['installation'] = 'Įdiegimas';
-$string['langdownloaderror'] = 'Deja "{$a}" kalba negali būti parsiųsta. Diegimo procesas bus tęsiamas anglų kalba.';
-$string['memorylimithelp'] = '<p>Šiuo metu Jūsų serverio PHP atminties limitas yra {$a}.</p>
-
-<p>Vėliau tai gali sukelti atminties trūkumo problemų "Moodle", ypač jei Jūs turite daug įgalintų modulių ir/ar daug vartotojų.</p>
-
-<p>Mes rekomenduojame suderinti PHP taip, kad jis turėtų kiek galima didesnį limitą, pvz.: 40MB.
- Tam yra keletas būdų, kuriuos Jūs galite pabandyti:</p>
-<ol>
-<li>Jei Jūs galite, sukompiliuokite iš naujo PHP panaudodami <i>--enable-memory-limit</i> raktą.
-   Tai leis nustatyti atminties limitą pačiai "Moodle".</li>
-<li>Jei Jūs turite galimybę koreguoti Jūsų "php.ini" failą, tada pakeiskite <b>memory_limit</b> nuostatą į kažką artimo 40MB. Jei Jūs negalite koreguoti, tuomet gal galite paprašyti, kad Jūsų serverio administratorius tai padarytų už Jus.</li>
-<li>Kai kuriuose PHP serveriuose Jūs galite sukurti ".htaccess" failą "Moodle" aplanke ir įrašykite į jį šią eilutę:
-<blockquote><div>php_value memory_limit 40M</div></blockquote>
-<p>Tačiau kai kuriuose serveriuose tai neleis veikti <b>visiems</b> PHP puslapiams (Jūs matysite klaidas bandydami peržiūrėti tinklapius). Taigi Jums gali tekti pašalinti ".htaccess" failą.</p></li>
-</ol>';
+$string['dataroot'] = 'Duomenų katalogas';
+$string['datarootpermission'] = 'Duomenų katalogo leidimai';
+$string['dbprefix'] = 'Lentelių priešvardis';
+$string['dirroot'] = '„Moodle“ katalogas';
+$string['environmenthead'] = 'Tikrinama aplinka...';
+$string['environmentsub2'] = 'Kiekvienas „Moodle“ leidimas turi minimalius PHP versijos ir privalomų PHP plėtinių skaičiaus reikalavimus. Prieš kiekvieną diegimą ir versijos naujinimą, išsamiai tikrinama aplinka. Jei nežinote, kaip įdiegti naują versiją arba įjungti PHP plėtinius, kreipkitės į serverio administratorių.';
+$string['errorsinenvironment'] = 'Aplinkos patikra nepavyko!';
+$string['installation'] = 'Diegimas';
+$string['langdownloaderror'] = 'Deja, {$a} kalbos atsisiųsti nepavyko. Diegimo procesas bus tęsiamas anglų kalba.';
+$string['memorylimithelp'] = '<p>Serverio PHP atminties limitas dabar nustatytas kaip {$a}.</p> <p>Vėliau dėl to „Moodle“ gali iškilti atminties problemų, ypač jei įjungta daug modulių ir (arba) yra daug naudotojų.</p> <p>Rekomenduojame sukonfigūruoti didesnį PHP limitą, jei galima, pvz., 40M. Galite pabandyti tai atlikti keliais būdais:</p> <ol> <li>Jei galite, pakartotinai sukompiliuokite PHP naudodami <i>--enable-memory-limit</i>. Taip „Moodle“ pati galės nustatyti atminties limitą.</li> <li>Jei turite prieigą prie php.ini failo, galite pakeisti <b>memory_limit</b> parametro reikšmę į 40M ar pan. Jei prieigos neturite, galite paprašyti, kad tai padarytų administratorius.</li> <li>Kai kuriuose PHP serveriuose „Moodle“ kataloge galite sukurti .htaccess failą, kuriame būtų ši eilutė : <blockquote><div>php_value memory_limit 40M</div></blockquote> <p>Tačiau kai kuriuose serveriuose dėl to neveiks <b>visi</b> PHP puslapiai (peržiūrėdami puslapius matysite klaidą), todėl the .htaccess failą teks pašalinti.</p></li> </ol>';
 $string['paths'] = 'Keliai';
-$string['pathserrcreatedataroot'] = 'Diegiklis negali sukurti duomenų katalogo ({$a->dataroot}).';
-$string['pathshead'] = 'Patvirtinkite kelius';
-$string['pathsrodataroot'] = 'Dataroot katalogas yra neįrašomas';
-$string['pathsroparentdataroot'] = 'Virškatalogis ({$a->parent}) yra neįrašomas. Diegiklis negali sukurti duomenų katalogo ({$a->dataroot}).';
-$string['pathssubadmindir'] = 'Nedaugelis interneto paslaugų tiekėjų naudoja /admin kaip specialų URL skirtą prisijungti prie valdymo skydo ar panašiai. Deja tai kelia konfliktus su įprastais Moodle administravimo puslapių talpinimo keliais. Jūs galite tai pataisyti
-pervardydami admin katalogą Jūsų diegime bei įrašydami naują pavadinimą čia. Pavyzdžiui: <em>moodleadmin</em>. Tai pakeis visas admin nuorodas Moodle diegime.';
-$string['pathssubdataroot'] = 'Jums reikia vietos kur Moodle gali išsaugoti įkeliamus failus. Šis katalogas turi būti skaitomas IR ĮRAŠOMAS web serverio naudotojo
-(dažniausiai tai \'nobody\' arba \'apache\'), tačiau jis neturi būti pasiekiamas tiesiogiai per internetą. Diegiklis pabandys sukurti katalogą, jei tokio nėra.';
-$string['pathssubdirroot'] = 'Pilnas kelias iki Moodle diegimo vietos.';
-$string['pathssubwwwroot'] = 'Pilnas internetinis adresas, kuriuo bus pasiekiamas Moodle.
-Pasiekti Moodle naudojantis keliais adresais yra neįmanoma.
-Jei Jūsų svetainėje yra keletas viešų adresų, Jūs turite visuose adresuose nustatyti pastovų peradresavimą į šį adresą.
-Jei Jūsų svetainė yra pasiekiama ir iš Intraneto, ir iš Interneto - panaudokite viešą adresą čia ir nustatykite DNS taip, kad Intraneto naudotojai taip pat galėtų matyti viešą adresą.
-Jei adresas neteisingas - prašome pakeisti URL Jūsų naršyklėje ir pradėti diegimą su nauju adresu.';
-$string['pathsunsecuredataroot'] = 'Dataroot katalogo vieta yra nesaugi.';
-$string['pathswrongadmindir'] = 'Admin katalogas neegzistuoja';
+$string['pathserrcreatedataroot'] = 'Diegimo programa negali sukurti duomenų katalogo ({$a->dataroot}).';
+$string['pathshead'] = 'Patvirtinti kelius';
+$string['pathsrodataroot'] = 'Į šakninį duomenų katalogą negalima įrašyti.';
+$string['pathsroparentdataroot'] = 'Į pirminį katalogą ({$a->parent}) negalima įrašyti. Diegimo programa negali sukurti katalogo ({$a->dataroot}).';
+$string['pathssubadmindir'] = 'Labai mažai žiniatinklio pagrindinių kompiuterių naudoja /admin kaip specialų URL, kad galėtumėte pasiekti valdymo skydą ar pan. Deja, dėl to kyla konfliktas su „Moodle“ administratoriaus puslapių standartine vieta. Tai galite ištaisyti, jei diegdami pervardysite administratoriaus katalogą ir tą naują pavadinimą įdėsite čia. Pavyzdžiui, <em>moodleadmin</em>. Taip bus ištaisyti administratoriaus saitai „Moodle“.';
+$string['pathssubdataroot'] = 'Reikalinga vieta, kur „Moodle“ galėtų saugoti įkeltus failus. Iš šio katalogo turi galėti skaityti IR Į JĮ  ĮRAŠYTI žiniatinklio serverio naudotojas (paprastai „nobody“ arba „apache“), bet jis neturi būti tiesiogiai pasiekiamas per žiniatinklį. Diegimo programa bandys jį sukurti, jei jo dar nėra.';
+$string['pathssubdirroot'] = 'Visas „Moodle“ diegimo katalogo kelias.';
+$string['pathssubwwwroot'] = 'Visas žiniatinklio adresas, kur bus galima pasiekti „Moodle“. „Moodle“ negalima pasiekti naudojant kelis adresus. Jei jūsų svetainė turi kelis viešuosius adresus, turite nustatyti nuolatinį peradresavimą iš jų visų, išskyrus šį vieną. Jei svetainę galima pasiekti tiek iš intraneto, tiek iš interneto, čia naudokite viešąjį adresą ir nustatykite DNS, kad intraneto naudotojai taip pat galėtų naudoti viešąjį adresą. Jei adresas klaidingas, naršyklėje pakeiskite URL, kad pakartotinai paleidus diegti būtų naudojama kita reikšmė.';
+$string['pathsunsecuredataroot'] = 'Šakninio duomenų katalogo kelias nesaugus';
+$string['pathswrongadmindir'] = 'Nėra administratoriaus katalogo';
 $string['phpextension'] = '{$a} PHP plėtinys';
 $string['phpversion'] = 'PHP versija';
-$string['phpversionhelp'] = '<p>Moodle reikalauja, kad būtų įdiegta bent 4.3.0 arba 5.1.0 PHP versija (5.0.x versija turi keletą žymių problemų).
-</p>
-<p>Jūs šiuo metu naudojate {$a} versiją</p>
-<p>Jūs turite išplėtoti turimą PHP versiją iki naujesnės arba persikelti pas kitą interneto paslaugų tiekėją, turintį naujesnę PHP versiją!<br/>
-(Turint 5.0.x versiją, Jūs turėtumėte pereiti prie žemesnės 4.4.x versijos)</p>';
+$string['phpversionhelp'] = '<p>„Moodle“ reikalauja, kad PHP versija būtų bent 4.3.0 arba 5.1.0 (5.0.x versijoje yra daug problemų).</p> <p>Dabar naudojate versiją {$a}</p> <p>Turite atnaujinti PHP versiją arba perkelti į pagrindinį kompiuterį, kuriame veikia naujesnė PHP versija!<br /> (Jei naudojate 5.0.x versiją, taip pat galite paleisti senesnę 4.4.x versiją)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = 'Jūs matote šį puslapį, nes sėkmingai įdiegėte ir užkrovėte <strong>{$a->packname} {$a->packversion}</strong> paketą savo kompiuteryje.
-Sveikiname!';
-$string['welcomep30'] = 'Šis <strong>{$a->installername}</strong> leidimas turi programas skirtas sukurti aplinką, kurioje <strong>Moodle</strong> veiks. Būtent:';
-$string['welcomep40'] = 'Šis paketas taip pat turi  <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
-$string['welcomep50'] = 'Pakete esančių programų naudojimas yra reguliuojamas atitinkamų licencijų. Pilnas <strong>{$a->installername}</strong> paketas  yra <a href="http://www.opensource.org/docs/definition_plain.html">atviro kodo</a> ir platinamas remiantis <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> licencija.';
-$string['welcomep60'] = 'Sekantys puslapiai ves Jus per keletą lengvų žingsnių, kurie padės sukonfigūruoti ir nustatyti <strong>Moodle</strong> Jūsų kompiuteryje. Jūs galite priimti nustatymus pagal nutylėjimą arba, pasirinktinai, pakeisti juos pagal savo poreikius.';
-$string['welcomep70'] = 'Spauskite "Toliau" mygtuką, norėdami tęsti <strong>Moodle</strong> nustatymą.';
-$string['wwwroot'] = 'Interneto adresas';
+$string['welcomep20'] = 'Matote šį puslapį, nes į kompiuterį sėkmingai įdiegėte ir paleidote <strong>{$a->packname} {$a->packversion}</strong> paketą. Sveikiname!';
+$string['welcomep30'] = 'Šiame <strong>{$a->installername}</strong> leidime yra taikomosios programos, skirtos aplinkai, kurioje veiks <strong>Moodle</strong>, sukurti:';
+$string['welcomep40'] = 'Pakete taip pat yra <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
+$string['welcomep50'] = 'Visoms šio paketo taikomosioms programoms taikomos atitinkamos licencijos. Visas <strong>{$a->installername}</strong> paketas yra <a href="http://www.opensource.org/docs/definition_plain.html">atvirojo kodo</a> ir platinamas pagal <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> licenciją.';
+$string['welcomep60'] = 'Šiuose puslapiuose bus pateikta keletas paprastų veiksmų, kad būtų galima sukonfigūruoti ir nustatyti <strong>Moodle</strong> kompiuteryje. Galite priimti numatytuosius parametrus arba pasirinktinai juos pakeisti, kad atitiktų jūsų poreikius.';
+$string['welcomep70'] = 'Norėdami tęsti <strong>Moodle</strong> sąranką, spustelėkite žemiau esantį mygtuką Kitas.';
+$string['wwwroot'] = 'Žiniatinklio adresas';

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -44,4 +43,5 @@ $string['page-mod-imscp-x'] = 'Any IMS content package module page';
 $string['packagefile'] = 'Package file';
 $string['pluginadministration'] = 'IMSCP administration';
 $string['pluginname'] = 'IMS content package';
+$string['search:activity'] = 'IMS content package activities';
 $string['toc'] = 'TOC';

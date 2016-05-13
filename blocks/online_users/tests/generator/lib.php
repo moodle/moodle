@@ -37,27 +37,54 @@ defined('MOODLE_INTERNAL') || die();
 class block_online_users_generator extends testing_block_generator {
 
     /**
-     * Create new block instance
-     * @param array|stdClass $record
-     * @param array $options
-     * @return stdClass activity record with extra cmid field
+     * Create (simulated) logged in users and add some of them to groups in a course
      */
-    public function create_instance($record = null, array $options = null) {
-        global $DB, $CFG;
-        require_once("$CFG->dirroot/mod/page/locallib.php");
+    public function create_logged_in_users() {
+        global $DB;
 
-        $this->instancecount++;
+        $generator = advanced_testcase::getDataGenerator();
+        $data = array();
 
-        $record = (object)(array)$record;
-        $options = (array)$options;
+        // Create 2 courses.
+        $course1 = $generator->create_course();
+        $data['course1'] = $course1;
+        $course2 = $generator->create_course();
+        $data['course2'] = $course2;
 
-        $record = $this->prepare_record($record);
+        // Create 9 (simulated) logged in users enroled into $course1.
+        for ($i = 1; $i <= 9; $i++) {
+            $user = $generator->create_user();
+            $DB->set_field('user', 'lastaccess', time(), array('id' => $user->id));
+            $generator->enrol_user($user->id, $course1->id);
+            $DB->insert_record('user_lastaccess', array('userid' => $user->id, 'courseid' => $course1->id, 'timeaccess' => time()));
+            $data['user' . $i] = $user;
+        }
+        // Create 3 (simulated) logged in users who are not enroled into $course1.
+        for ($i = 10; $i <= 12; $i++) {
+            $user = $generator->create_user();
+            $DB->set_field('user', 'lastaccess', time(), array('id' => $user->id));
+            $data['user' . $i] = $user;
+        }
 
-        $id = $DB->insert_record('block_instances', $record);
-        context_block::instance($id);
+        // Create 3 groups in course 1.
+        $group1 = $generator->create_group(array('courseid' => $course1->id));
+        $data['group1'] = $group1;
+        $group2 = $generator->create_group(array('courseid' => $course1->id));
+        $data['group2'] = $group2;
+        $group3 = $generator->create_group(array('courseid' => $course1->id));
+        $data['group3'] = $group3;
 
-        $instance = $DB->get_record('block_instances', array('id'=>$id), '*', MUST_EXIST);
+        // Add 3 users to course group 1.
+        $generator->create_group_member(array('groupid' => $group1->id, 'userid' => $data['user1']->id));
+        $generator->create_group_member(array('groupid' => $group1->id, 'userid' => $data['user2']->id));
+        $generator->create_group_member(array('groupid' => $group1->id, 'userid' => $data['user3']->id));
 
-        return $instance;
+        // Add 4 users to course group 2.
+        $generator->create_group_member(array('groupid' => $group2->id, 'userid' => $data['user3']->id));
+        $generator->create_group_member(array('groupid' => $group2->id, 'userid' => $data['user4']->id));
+        $generator->create_group_member(array('groupid' => $group2->id, 'userid' => $data['user5']->id));
+        $generator->create_group_member(array('groupid' => $group2->id, 'userid' => $data['user6']->id));
+
+        return $data; // Return the user, course and group objects.
     }
 }

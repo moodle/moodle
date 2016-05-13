@@ -494,7 +494,8 @@ class core_media_player_vimeo extends core_media_player_external {
         $output = <<<OET
 <span class="mediaplugin mediaplugin_vimeo">
 <iframe title="$info" src="https://player.vimeo.com/video/$videoid"
-  width="$width" height="$height" frameborder="0"></iframe>
+  width="$width" height="$height" frameborder="0"
+  webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 </span>
 OET;
 
@@ -536,13 +537,67 @@ class core_media_player_youtube extends core_media_player_external {
 
         self::pick_video_size($width, $height);
 
+        $params = '';
+        $start = self::get_start_time($url);
+        if ($start > 0) {
+            $params .= "start=$start&";
+        }
+
+        $listid = $url->param('list');
+        // Check for non-empty but valid playlist ID.
+        if (!empty($listid) && !preg_match('/[^a-zA-Z0-9\-_]/', $listid)) {
+            // This video is part of a playlist, and we want to embed it as such.
+            $params .= "list=$listid&";
+        }
+
         return <<<OET
 <span class="mediaplugin mediaplugin_youtube">
 <iframe title="$info" width="$width" height="$height"
-  src="https://www.youtube.com/embed/$videoid?rel=0&wmode=transparent" frameborder="0" allowfullscreen="1"></iframe>
+  src="https://www.youtube.com/embed/$videoid?{$params}rel=0&wmode=transparent" frameborder="0" allowfullscreen="1"></iframe>
 </span>
 OET;
 
+    }
+
+    /**
+     * Check for start time parameter.  Note that it's in hours/mins/secs in the URL,
+     * but the embedded player takes only a number of seconds as the "start" parameter.
+     * @param moodle_url $url URL of video to be embedded.
+     * @return int Number of seconds video should start at.
+     */
+    protected static function get_start_time($url) {
+        $matches = array();
+        $seconds = 0;
+
+        $rawtime = $url->param('t');
+        if (empty($rawtime)) {
+            $rawtime = $url->param('start');
+        }
+
+        if (is_numeric($rawtime)) {
+            // Start time already specified as a number of seconds; ensure it's an integer.
+            $seconds = $rawtime;
+        } else if (preg_match('/(\d+?h)?(\d+?m)?(\d+?s)?/i', $rawtime, $matches)) {
+            // Convert into a raw number of seconds, as that's all embedded players accept.
+            for ($i = 1; $i < count($matches); $i++) {
+                if (empty($matches[$i])) {
+                    continue;
+                }
+                $part = str_split($matches[$i], strlen($matches[$i]) - 1);
+                switch ($part[1]) {
+                    case 'h':
+                        $seconds += 3600 * $part[0];
+                        break;
+                    case 'm':
+                        $seconds += 60 * $part[0];
+                        break;
+                    default:
+                        $seconds += $part[0];
+                }
+            }
+        }
+
+        return intval($seconds);
     }
 
     protected function get_regex() {
@@ -757,7 +812,7 @@ class core_media_player_wmp extends core_media_player {
         <param name="ShowGotoBar" value="false" />
         <param name="EnableFullScreenControls" value="true" />
         <param name="uimode" value="full" />
-        <!--[if !IE]>-->
+        <!--[if !IE]><!-->
         <object data="$url" type="$mimetype" $size>
             <param name="src" value="$url" />
             <param name="controller" value="true" />
@@ -766,7 +821,7 @@ class core_media_player_wmp extends core_media_player {
             <param name="resize" value="scale" />
         <!--<![endif]-->
             $fallback
-        <!--[if !IE]>-->
+        <!--[if !IE]><!-->
         </object>
         <!--<![endif]-->
     </object>
@@ -821,7 +876,7 @@ class core_media_player_qt extends core_media_player {
         <param name="autoplay" value="false" />
         <param name="autostart" value="false" />
         <param name="scale" value="aspect" />
-        <!--[if !IE]>-->
+        <!--[if !IE]><!-->
         <object data="$url" type="$mimetype" $size>
             <param name="src" value="$url" />
             <param name="pluginurl" value="http://www.apple.com/quicktime/download/" />
@@ -832,7 +887,7 @@ class core_media_player_qt extends core_media_player {
             <param name="scale" value="aspect" />
         <!--<![endif]-->
             $fallback
-        <!--[if !IE]>-->
+        <!--[if !IE]><!-->
         </object>
         <!--<![endif]-->
     </object>
@@ -845,7 +900,7 @@ OET;
     }
 
     public function get_rank() {
-        return 50;
+        return 10;
     }
 }
 
@@ -880,14 +935,14 @@ class core_media_player_rm extends core_media_player {
             data="$url" width="$width" height="$height"">
         <param name="src" value="$url" />
         <param name="controls" value="All" />
-        <!--[if !IE]>-->
+        <!--[if !IE]><!-->
         <object title="$info" type="audio/x-pn-realaudio-plugin"
                 data="$url" width="$width" height="$height">
             <param name="src" value="$url" />
             <param name="controls" value="All" />
         <!--<![endif]-->
             $fallback
-        <!--[if !IE]>-->
+        <!--[if !IE]><!-->
         </object>
         <!--<![endif]-->
   </object>
@@ -935,7 +990,8 @@ class core_media_player_swf extends core_media_player {
     <param name="scale" value="aspect" />
     <param name="base" value="." />
     <param name="allowscriptaccess" value="never" />
-<!--[if !IE]>-->
+    <param name="allowfullscreen" value="true" />
+<!--[if !IE]><!-->
     <object type="application/x-shockwave-flash" data="$url" width="$width" height="$height">
       <param name="controller" value="true" />
       <param name="autoplay" value="true" />
@@ -943,9 +999,10 @@ class core_media_player_swf extends core_media_player {
       <param name="scale" value="aspect" />
       <param name="base" value="." />
       <param name="allowscriptaccess" value="never" />
+      <param name="allowfullscreen" value="true" />
 <!--<![endif]-->
 $fallback
-<!--[if !IE]>-->
+<!--[if !IE]><!-->
     </object>
 <!--<![endif]-->
   </object>
@@ -1087,7 +1144,7 @@ OET;
     }
 
     public function get_rank() {
-        return 20;
+        return 50;
     }
 }
 
@@ -1120,7 +1177,7 @@ class core_media_player_html5audio extends core_media_player {
         $fallback = core_media_player::PLACEHOLDER;
 
         return <<<OET
-<audio controls="true" $size class="mediaplugin mediaplugin_html5audio" preload="no" title="$title">
+<audio controls="true" $size class="mediaplugin mediaplugin_html5audio" preload="none" title="$title">
 $sources
 $fallback
 </audio>
@@ -1168,7 +1225,7 @@ OET;
     }
 
     public function get_rank() {
-        return 10;
+        return 20;
     }
 }
 

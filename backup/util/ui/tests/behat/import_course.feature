@@ -4,7 +4,6 @@ Feature: Import course's contents into another course
   As a teacher
   I need to import a course contents into another course selecting what I want to import
 
-  @javascript
   Scenario: Import course's contents to another course
     Given the following "courses" exist:
       | fullname | shortname | category |
@@ -12,7 +11,7 @@ Feature: Import course's contents into another course
       | Course 2 | C2 | 0 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |

@@ -115,6 +115,9 @@ abstract class backup_general_helper extends backup_helper {
      */
     public static function get_backup_information($tempdir) {
         global $CFG;
+        // Make a request cache and store the data in there.
+        static $cachesha1 = null;
+        static $cache = null;
 
         $info = new stdclass(); // Final information goes here
 
@@ -122,6 +125,12 @@ abstract class backup_general_helper extends backup_helper {
         if (!file_exists($moodlefile)) { // Shouldn't happen ever, but...
             throw new backup_helper_exception('missing_moodle_backup_xml_file', $moodlefile);
         }
+
+        $moodlefilesha1 = sha1_file($moodlefile);
+        if ($moodlefilesha1 === $cachesha1) {
+            return clone $cache;
+        }
+
         // Load the entire file to in-memory array
         $xmlparser = new progressive_parser();
         $xmlparser->set_file($moodlefile);
@@ -221,11 +230,14 @@ abstract class backup_general_helper extends backup_helper {
                 case 'activity':
                     $info->activities[$setting['activity']]->settings[$setting['name']] = $setting['value'];
                     break;
-                default: // Shouldn't happen
-                    throw new backup_helper_exception('wrong_setting_level_moodle_backup_xml_file', $setting['level']);
+                default: // Shouldn't happen but tolerated for portability of customized backups.
+                    debugging("Unknown backup setting level: {$setting['level']}", DEBUG_DEVELOPER);
+                    break;
             }
         }
 
+        $cache = clone $info;
+        $cachesha1 = $moodlefilesha1;
         return $info;
     }
 

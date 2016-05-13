@@ -350,8 +350,7 @@ class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
         $this->info['scrollbar-highlight-color'] = new HTMLPurifier_AttrDef_CSS_Color();
         $this->info['scrollbar-shadow-color'] = new HTMLPurifier_AttrDef_CSS_Color();
 
-        // technically not proprietary, but CSS3, and no one supports it
-        $this->info['opacity'] = new HTMLPurifier_AttrDef_CSS_AlphaValue();
+        // vendor specific prefixes of opacity
         $this->info['-moz-opacity'] = new HTMLPurifier_AttrDef_CSS_AlphaValue();
         $this->info['-khtml-opacity'] = new HTMLPurifier_AttrDef_CSS_AlphaValue();
 
@@ -404,6 +403,7 @@ class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
             array('visible', 'hidden', 'collapse')
         );
         $this->info['overflow'] = new HTMLPurifier_AttrDef_Enum(array('visible', 'hidden', 'auto', 'scroll'));
+        $this->info['opacity'] = new HTMLPurifier_AttrDef_CSS_AlphaValue();
     }
 
     /**

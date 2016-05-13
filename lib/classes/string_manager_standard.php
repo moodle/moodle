@@ -256,7 +256,8 @@ class core_string_manager_standard implements core_string_manager {
     public function string_deprecated($identifier, $component) {
         $deprecated = $this->load_deprecated_strings();
         list($plugintype, $pluginname) = core_component::normalize_component($component);
-        return isset($deprecated[$identifier . ',' . $plugintype . '_' . $pluginname]);
+        $normcomponent = $pluginname ? ($plugintype . '_' . $pluginname) : $plugintype;
+        return isset($deprecated[$identifier . ',' . $normcomponent]);
     }
 
     /**
@@ -383,7 +384,8 @@ class core_string_manager_standard implements core_string_manager {
             // Display a debugging message if sting exists but was deprecated.
             if ($this->string_deprecated($identifier, $component)) {
                 list($plugintype, $pluginname) = core_component::normalize_component($component);
-                debugging("String [{$identifier},{$plugintype}_{$pluginname}] is deprecated. ".
+                $normcomponent = $pluginname ? ($plugintype . '_' . $pluginname) : $plugintype;
+                debugging("String [{$identifier},{$normcomponent}] is deprecated. ".
                     'Either you should no longer be using that string, or the string has been incorrectly deprecated, in which case you should report this as a bug. '.
                     'Please refer to https://docs.moodle.org/dev/String_deprecation', DEBUG_DEVELOPER);
             }
@@ -530,6 +532,11 @@ class core_string_manager_standard implements core_string_manager {
         $langdirs = get_list_of_plugins('', 'en', $this->otherroot);
         $langdirs["$CFG->dirroot/lang/en"] = 'en';
 
+        // We use left to right mark to demark the shortcodes contained in LTR brackets, but we need to do
+        // this hacky thing to have the utf8 char until we go php7 minimum and can simply put \u200E in
+        // a double quoted string.
+        $lrm = json_decode('"\u200E"');
+
         // Loop through all langs and get info.
         foreach ($langdirs as $lang) {
             if (strrpos($lang, '_local') !== false) {
@@ -546,7 +553,7 @@ class core_string_manager_standard implements core_string_manager {
             }
             $string = $this->load_component_strings('langconfig', $lang);
             if (!empty($string['thislanguage'])) {
-                $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
+                $languages[$lang] = $string['thislanguage'].' '.$lrm.'('. $lang .')'.$lrm;
             }
         }
 

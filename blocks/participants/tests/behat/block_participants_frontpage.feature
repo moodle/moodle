@@ -7,17 +7,20 @@ Feature: People Block used on frontpage
   Background:
     Given the following "users" exist:
       | username    | firstname | lastname | email            |
-      | student1    | Sam       | Student  | student1@asd.com |
+      | student1    | Sam       | Student  | student1@example.com |
     And I log in as "admin"
+    And I am on site homepage
     And I navigate to "Turn editing on" node in "Front page settings"
     And I add the "People" block
     And I log out
 
   Scenario: Admin can view site participants link
     When I log in as "admin"
+    And I am on site homepage
     Then "People" "block" should exist
     And I should see "Participants" in the "People" "block"
 
   Scenario: Student can not follow participants link on frontpage
     When I log in as "student1"
+    And I am on site homepage
     Then "People" "block" should not exist

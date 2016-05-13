@@ -214,17 +214,19 @@ These two functions both need to be defined within /local/nicehack/lib.php.
 
 sample code
 <?php
-function local_nicehack_extends_navigation(global_navigation $nav) {
+function local_nicehack_extend_navigation(global_navigation $nav) {
     // $nav is the global navigation instance.
     // Here you can add to and manipulate the navigation structure as you like.
     // This callback was introduced in 2.0 as nicehack_extends_navigation(global_navigation $nav)
-    // In 2.3 support was added for the now preferred local_nicehack_extends_navigation(global_navigation $nav).
+    // In 2.3 support was added for local_nicehack_extends_navigation(global_navigation $nav).
+    // In 2.9 the name was corrected to local_nicehack_extend_navigation() for consistency
 }
-function local_nicehack_extends_settings_navigation(settings_navigation $nav, context $context) {
+function local_nicehack_extend_settings_navigation(settings_navigation $nav, context $context) {
     // $nav is the settings navigation instance.
     // $context is the context the settings have been loaded for (settings is context specific)
     // Here you can add to and manipulate the settings structure as you like.
-    // This callback was introduced in 2.3
+    // This callback was introduced in 2.3, originally as local_nicehack_extends_settings_navigation()
+    // In 2.9 the name was corrected to the imperative mood ('extend', not 'extends')
 }
 
 Other local customisation files

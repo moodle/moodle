@@ -64,6 +64,9 @@ class behat_block_comments extends behat_base {
             $commentstextarea->setValue($comment);
 
             $this->find_link(get_string('savecomment'))->click();
+            // Delay after clicking so that additional comments will have unique time stamps.
+            // We delay 1 second which is all we need.
+            $this->getSession()->wait(1000, false);
 
         } else {
 
@@ -89,7 +92,7 @@ class behat_block_comments extends behat_base {
         $exception = new ElementNotFoundException($this->getSession(), '"' . $comment . '" comment ');
 
         // Using xpath liternal to avoid possible problems with comments containing quotes.
-        $commentliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($comment);
+        $commentliteral = behat_context_helper::escape($comment);
 
         $commentxpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' block_comments ')]" .
             "/descendant::div[@class='comment-message'][contains(., $commentliteral)]";

@@ -8,7 +8,7 @@
  */
 class Less_VisitorReplacing extends Less_Visitor{
 
-	function visitObj( $node ){
+	public function visitObj( $node ){
 
 		$funcName = 'visit'.$node->type;
 		if( isset($this->_visitFnCache[$funcName]) ){
@@ -34,7 +34,7 @@ class Less_VisitorReplacing extends Less_Visitor{
 		return $node;
 	}
 
-	function visitArray( $nodes ){
+	public function visitArray( $nodes ){
 
 		$newNodes = array();
 		foreach($nodes as $node){
@@ -50,7 +50,7 @@ class Less_VisitorReplacing extends Less_Visitor{
 		return $newNodes;
 	}
 
-	function flatten( $arr, &$out ){
+	public function flatten( $arr, &$out ){
 
 		foreach($arr as $item){
 			if( !is_array($item) ){

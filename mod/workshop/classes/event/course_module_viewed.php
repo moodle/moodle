@@ -71,4 +71,8 @@ class course_module_viewed extends \core\event\course_module_viewed {
         $workshop = new \workshop($workshop, $cm, $course);
         return (object)array('workshop' => $workshop, 'user' => $USER);
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'workshop', 'restore' => 'workshop');
+    }
 }

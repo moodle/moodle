@@ -34,7 +34,7 @@ class core_component_testcase extends advanced_testcase {
     // To be changed if number of subsystems increases/decreases,
     // this is defined here to annoy devs that try to add more without any thinking,
     // always verify that it does not collide with any existing add-on modules and subplugins!!!
-    const SUBSYSTEMCOUNT = 62;
+    const SUBSYSTEMCOUNT = 65;
 
     public function test_get_core_subsystems() {
         global $CFG;
@@ -450,5 +450,23 @@ class core_component_testcase extends advanced_testcase {
         // Test missing.
         $list = core_component::get_plugin_list_with_file('report', 'idontexist.php', true);
         $this->assertEquals(array(), array_keys($list));
+    }
+
+    public function test_get_component_classes_int_namespace() {
+
+        // Unexisting.
+        $this->assertCount(0, core_component::get_component_classes_in_namespace('core_unexistingcomponent', 'something'));
+        $this->assertCount(0, core_component::get_component_classes_in_namespace('auth_cas', 'something'));
+
+        // Prefix with backslash if it doesn\'t come prefixed.
+        $this->assertCount(1, core_component::get_component_classes_in_namespace('auth_cas', 'task'));
+        $this->assertCount(1, core_component::get_component_classes_in_namespace('auth_cas', '\\task'));
+
+        // Core as a component works.
+        $this->assertCount(7, core_component::get_component_classes_in_namespace('core', 'update'));
+
+        // Multiple levels.
+        $this->assertCount(5, core_component::get_component_classes_in_namespace('core_user', '\\output\\myprofile\\'));
+        $this->assertCount(5, core_component::get_component_classes_in_namespace('core_user', '\\output\\myprofile'));
     }
 }

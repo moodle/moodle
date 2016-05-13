@@ -1,6 +1,29 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.1 ===
+
+* Old /mod/MODULENAME/pix/icon.gif and enrol/paypal/pix/icon.gif GIF icons have been removed. Please use pix_icon
+  renderable instead.
+* Callback get_types() is deprecated, instead activity modules can define callback get_shortcuts().
+  See source code for get_module_metadata().
+
+=== 3.0 ===
+
+* Dropped support for the $module in mod/xxx/version.php files (deprecated
+  since 2.7). All activity modules must use the $plugin syntax now. See
+  https://docs.moodle.org/dev/version.php for details (MDL-43896).
+* Modules using rating component must implement a callback mod_x_rating_can_see_item_ratings(). Refer
+  to mod_forum_rating_can_see_item_ratings() for example.
+
+=== 2.9 ===
+
+* Added Grade to pass field to mod_form for activities that support grading.
+* The method moodleform_mod::add_intro_editor() used in mod_form.php form
+  definitions has been deprecated. Replace it with the new
+  moodleform_mod::standard_intro_elements() method that takes the new site
+  configuration requiremodintro into account (MDL-49101).
+
 === 2.8 ===
 
 * Constant FEATURE_GROUPMEMBERSONLY is deprecated. Modules should remove this

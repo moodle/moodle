@@ -27,12 +27,14 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 require_once($CFG->dirroot . '/repository/lib.php');
 
-$cmid   = required_param('cmid', PARAM_INT);            // course module id
-$id     = optional_param('id', 0, PARAM_INT);           // submission id
-$edit   = optional_param('edit', false, PARAM_BOOL);    // open for editing?
-$assess = optional_param('assess', false, PARAM_BOOL);  // instant assessment required
+$cmid = required_param('cmid', PARAM_INT); // Course module id.
+$id = optional_param('id', 0, PARAM_INT); // Submission id.
+$edit = optional_param('edit', false, PARAM_BOOL); // Open the page for editing?
+$assess = optional_param('assess', false, PARAM_BOOL); // Instant assessment required.
+$delete = optional_param('delete', false, PARAM_BOOL); // Submission removal requested.
+$confirm = optional_param('confirm', false, PARAM_BOOL); // Submission removal request confirmed.
 
-$cm     = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
+$cm = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_login($course, false, $cm);
@@ -85,9 +87,11 @@ $cansubmit      = has_capability('mod/workshop:submit', $workshop->context);
 $canallocate    = has_capability('mod/workshop:allocate', $workshop->context);
 $canpublish     = has_capability('mod/workshop:publishsubmissions', $workshop->context);
 $canoverride    = (($workshop->phase == workshop::PHASE_EVALUATION) and has_capability('mod/workshop:overridegrades', $workshop->context));
+$candeleteall   = has_capability('mod/workshop:deletesubmissions', $workshop->context);
 $userassessment = $workshop->get_assessment_of_submission_by_user($submission->id, $USER->id);
 $isreviewer     = !empty($userassessment);
 $editable       = ($cansubmit and $ownsubmission);
+$deletable      = $candeleteall;
 $ispublished    = ($workshop->phase == workshop::PHASE_CLOSED
                     and $submission->published == 1
                     and has_capability('mod/workshop:viewpublishedsubmissions', $workshop->context));
@@ -127,6 +131,36 @@ if ($editable and $workshop->useexamples and $workshop->examplesmode == workshop
 }
 $edit = ($editable and $edit);
 
+if (!$candeleteall and $ownsubmission and $editable) {
+    // Only allow the student to delete their own submission if it's still editable and hasn't been assessed.
+    if (count($workshop->get_assessments_of_submission($submission->id)) > 0) {
+        $deletable = false;
+    } else {
+        $deletable = true;
+    }
+}
+
+if ($submission->id and $delete and $confirm and $deletable) {
+    require_sesskey();
+    $workshop->delete_submission($submission);
+
+    // Event information.
+    $params = array(
+        'context' => $workshop->context,
+        'courseid' => $workshop->course->id,
+        'relateduserid' => $submission->authorid,
+        'other' => array(
+            'submissiontitle' => $submission->title
+        )
+    );
+    $params['objectid'] = $submission->id;
+    $event = \mod_workshop\event\submission_deleted::create($params);
+    $event->add_record_snapshot('workshop', $workshoprecord);
+    $event->trigger();
+
+    redirect($workshop->view_url());
+}
+
 $seenaspublished = false; // is the submission seen as a published submission?
 
 if ($submission->id and ($ownsubmission or $canviewall or $isreviewer)) {
@@ -149,25 +183,14 @@ if ($assess and $submission->id and !$isreviewer and $canallocate and $workshop-
 if ($edit) {
     require_once(dirname(__FILE__).'/submission_form.php');
 
-    $maxfiles       = $workshop->nattachments;
-    $maxbytes       = $workshop->maxbytes;
-    $contentopts    = array(
-                        'trusttext' => true,
-                        'subdirs'   => false,
-                        'maxfiles'  => $maxfiles,
-                        'maxbytes'  => $maxbytes,
-                        'context'   => $workshop->context,
-                        'return_types' => FILE_INTERNAL | FILE_EXTERNAL
-                      );
+    $submission = file_prepare_standard_editor($submission, 'content', $workshop->submission_content_options(),
+        $workshop->context, 'mod_workshop', 'submission_content', $submission->id);
 
-    $attachmentopts = array('subdirs' => true, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes, 'return_types' => FILE_INTERNAL);
-    $submission     = file_prepare_standard_editor($submission, 'content', $contentopts, $workshop->context,
-                                        'mod_workshop', 'submission_content', $submission->id);
-    $submission     = file_prepare_standard_filemanager($submission, 'attachment', $attachmentopts, $workshop->context,
-                                        'mod_workshop', 'submission_attachment', $submission->id);
+    $submission = file_prepare_standard_filemanager($submission, 'attachment', $workshop->submission_attachment_options(),
+        $workshop->context, 'mod_workshop', 'submission_attachment', $submission->id);
 
-    $mform          = new workshop_submission_form($PAGE->url, array('current' => $submission, 'workshop' => $workshop,
-                                                    'contentopts' => $contentopts, 'attachmentopts' => $attachmentopts));
+    $mform = new workshop_submission_form($PAGE->url, array('current' => $submission, 'workshop' => $workshop,
+        'contentopts' => $workshop->submission_content_options(), 'attachmentopts' => $workshop->submission_attachment_options()));
 
     if ($mform->is_cancelled()) {
         redirect($workshop->view_url());
@@ -220,11 +243,14 @@ if ($edit) {
             }
         }
         $params['objectid'] = $submission->id;
-        // save and relink embedded images and save attachments
-        $formdata = file_postupdate_standard_editor($formdata, 'content', $contentopts, $workshop->context,
-                                                      'mod_workshop', 'submission_content', $submission->id);
-        $formdata = file_postupdate_standard_filemanager($formdata, 'attachment', $attachmentopts, $workshop->context,
-                                                           'mod_workshop', 'submission_attachment', $submission->id);
+
+        // Save and relink embedded images and save attachments.
+        $formdata = file_postupdate_standard_editor($formdata, 'content', $workshop->submission_content_options(),
+            $workshop->context, 'mod_workshop', 'submission_content', $submission->id);
+
+        $formdata = file_postupdate_standard_filemanager($formdata, 'attachment', $workshop->submission_attachment_options(),
+            $workshop->context, 'mod_workshop', 'submission_attachment', $submission->id);
+
         if (empty($formdata->attachment)) {
             // explicit cast to zero integer
             $formdata->attachment = 0;
@@ -313,6 +339,18 @@ if ($edit) {
     die();
 }
 
+// Confirm deletion (if requested).
+if ($deletable and $delete) {
+    $prompt = get_string('submissiondeleteconfirm', 'workshop');
+    if ($candeleteall) {
+        $count = count($workshop->get_assessments_of_submission($submission->id));
+        if ($count > 0) {
+            $prompt = get_string('submissiondeleteconfirmassess', 'workshop', ['count' => $count]);
+        }
+    }
+    echo $output->confirm($prompt, new moodle_url($PAGE->url, ['delete' => 1, 'confirm' => 1]), $workshop->view_url());
+}
+
 // else display the submission
 
 if ($submission->id) {
@@ -326,20 +364,28 @@ if ($submission->id) {
     echo $output->box(get_string('noyoursubmission', 'workshop'));
 }
 
-if ($editable) {
-    if ($submission->id) {
-        $btnurl = new moodle_url($PAGE->url, array('edit' => 'on', 'id' => $submission->id));
-        $btntxt = get_string('editsubmission', 'workshop');
-    } else {
-        $btnurl = new moodle_url($PAGE->url, array('edit' => 'on'));
-        $btntxt = get_string('createsubmission', 'workshop');
+// If not at removal confirmation screen, some action buttons can be displayed.
+if (!$delete) {
+    if ($editable) {
+        if ($submission->id) {
+            $btnurl = new moodle_url($PAGE->url, array('edit' => 'on', 'id' => $submission->id));
+            $btntxt = get_string('editsubmission', 'workshop');
+        } else {
+            $btnurl = new moodle_url($PAGE->url, array('edit' => 'on'));
+            $btntxt = get_string('createsubmission', 'workshop');
+        }
+        echo $output->single_button($btnurl, $btntxt, 'get');
     }
-    echo $output->single_button($btnurl, $btntxt, 'get');
-}
 
-if ($submission->id and !$edit and !$isreviewer and $canallocate and $workshop->assessing_allowed($USER->id)) {
-    $url = new moodle_url($PAGE->url, array('assess' => 1));
-    echo $output->single_button($url, get_string('assess', 'workshop'), 'post');
+    if ($submission->id and $deletable) {
+        $url = new moodle_url($PAGE->url, array('delete' => 1));
+        echo $output->single_button($url, get_string('deletesubmission', 'workshop'), 'get');
+    }
+
+    if ($submission->id and !$edit and !$isreviewer and $canallocate and $workshop->assessing_allowed($USER->id)) {
+        $url = new moodle_url($PAGE->url, array('assess' => 1));
+        echo $output->single_button($url, get_string('assess', 'workshop'), 'post');
+    }
 }
 
 if (($workshop->phase == workshop::PHASE_CLOSED) and ($ownsubmission or $canviewall)) {

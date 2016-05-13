@@ -27,6 +27,9 @@ define('NO_MOODLE_COOKIES', true);
 
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 
+// Allow CORS requests.
+header('Access-Control-Allow-Origin: *');
+
 $username = required_param('username', PARAM_USERNAME);
 $password = required_param('password', PARAM_RAW);
 $serviceshortname  = required_param('service',  PARAM_ALPHANUMEXT);
@@ -61,6 +64,15 @@ if (!empty($user)) {
         $days2expire = $userauth->password_expire($user->username);
         if (intval($days2expire) < 0 ) {
             throw new moodle_exception('passwordisexpired', 'webservice');
+        }
+    }
+
+    // Check whether the user should be changing password.
+    if (get_user_preferences('auth_forcepasswordchange', false, $user)) {
+        if ($userauth->can_change_password()) {
+            throw new moodle_exception('forcepasswordchangenotice');
+        } else {
+            throw new moodle_exception('nopasswordchangeforced', 'auth');
         }
     }
 
@@ -193,5 +205,5 @@ if (!empty($user)) {
     $usertoken->token = $token->token;
     echo json_encode($usertoken);
 } else {
-    throw new moodle_exception('usernamenotfound', 'moodle');
+    throw new moodle_exception('invalidlogin');
 }

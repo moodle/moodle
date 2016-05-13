@@ -1,114 +1,216 @@
 /* styles using by feedback */
-.feedback_switchrequired img{
+.path-mod-feedback span.feedback_info {
+    font-weight:bold;
 }
 
-span.feedback_info {
-	font-weight:bold;
-}
-div.feedback_item_box_left, div.feedback_item_box_right {
+.path-mod-feedback div.feedback_is_dependent {
+    background:#DDDDDD;
 }
 
-div.feedback_depend {
-	background:#DDDDDD;
+.path-mod-feedback span.feedback_depend {
+    color:#ff0000;
 }
 
-div.feedback_complete_depend {
-	background:#EEEEEE;
+.path-mod-feedback hr.feedback_pagebreak {
+    height:4px;
+    color:#aaaaaa;
+    background-color:#aaaaaa;
+    border: 0;
+    margin: 0;
 }
 
-span.feedback_depend {
-	color:#ff0000;
+.path-mod-feedback .drag_target_active {
+    opacity: .25;
 }
 
-div.feedback_item_number_left, div.feedback_item_left {
-	float:left;
-}
-div.feedback_item_number_right, div.feedback_item_right {
-	float:right;
+.path-mod-feedback .drag_item_active {
+    opacity: .5;
 }
 
-div.feedback_item_commands_left {
-	float:right;
-	text-align:right;
-}
-
-div.feedback_item_commands_right {
-	float:left;
-	text-align:left;
-}
-
-li.feedback_item_check_h_left,
-li.feedback_item_check_h_right,
-li.feedback_item_radio_h_left,
-li.feedback_item_radio_h_right {
-	list-style-type:none;
-	display:inline;
-}
-
-div.feedback_item_select_h_left,
-div.feedback_item_select_h_right {
-    display:block;
-}
-
-li.feedback_item_check_v_left,
-li.feedback_item_check_v_right,
-li.feedback_item_radio_v_left,
-li.feedback_item_radio_v_right {
-	list-style-type:none;
-	display:block;
-}
-
-div.feedback_item_select_v_left,
-div.feedback_item_select_v_right {
-    display:block;
-}
-
-div.feedback_items label{
-    display: inline;
-}
-
-div.feedback_item_captcha_text_left,
-div.feedback_item_captcha_img_left {
-	display:inline;
-	margin: 5px;
-}
-div.feedback_item_captcha_text_right,
-div.feedback_item_captcha_img_right {
-	display:inline;
-	margin: 5px;
-}
-
-hr.feedback_pagebreak {
-	height:8px;
-	color:#aaaaaa;
-	background-color:#aaaaaa;
-	border:0px;
-}
-
-.drag_target_active {
-        opacity: .25;
-}
-
-.drag_item_active {
-        opacity: .5;
-}
-
-ul#feedback_draglist {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-}
-
-div#feedback_dragarea {
-    width:95%;
-}
-
-div img.feedback_bar_image {
+.path-mod-feedback .feedback_bar_image {
     height: 10px;
 }
 
-.path-mod-feedback input,
-.path-mod-feedback textarea,
-.path-mod-feedback .uneditable-input {
+.path-mod-feedback #analysis-form label { display: inline; }
+
+.path-mod-feedback .mform.feedback_form .fitem .fitemtitle {
+    display: block;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    text-align: left;
+    width: 100%;
+}
+
+.path-mod-feedback .mform.feedback_form .fitem .felement {
+    margin-left: 0;
+    width: 100%;
+    float: left;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.path-mod-feedback .mform.feedback_form .fitem .fstatic:empty {
+    display: none;
+}
+
+.path-mod-feedback .mform.feedback_form .fitem .fcheckbox > span,
+.path-mod-feedback .mform.feedback_form .fitem .fradio > span,
+.path-mod-feedback .mform.feedback_form .fitem .fgroup > span {
+    margin-top: 4px;
+}
+
+body.path-mod-feedback #region-main .mform.feedback_form .femptylabel .fitemtitle {
+    display: inline-block;
     width: auto;
+    margin-right: 0;
+}
+
+.path-mod-feedback .mform.feedback_form .femptylabel .felement {
+    display: inline-block;
+    margin-top: 4px;
+    padding-top: 5px;
+    width: auto;
+}
+
+body.path-mod-feedback #region-main .mform.feedback_form .feedback-item-pagebreak .felement {
+    width: 100%;
+}
+
+.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .fitemtitle,
+.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .felement {
+    display: inline-block;
+    width: auto;
+}
+
+.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .felement {
+    padding: 6px;
+}
+
+body.dir-rtl.path-mod-feedback #region-main .mform.feedback_form .femptylabel .fitemtitle {
+    margin-right: 0px;
+    margin-left: 0;
+}
+
+.dir-rtl.path-mod-feedback .mform.feedback_form .fitem .fitemtitle {
+    text-align: right;
+}
+
+.dir-rtl.path-mod-feedback .mform.feedback_form .fitem .felement {
+    margin-right: 0;
+    float: right;
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.dir-rtl.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .felement {
+    float: right;
+}
+
+.path-mod-feedback .mform.feedback_form#feedback_viewresponse_form .fitem.feedback_hasvalue:not(.feedback-item-captcha) .felement {
+    background: #FBFBF1;
+    min-height: 1em;
+    box-sizing: border-box;
+    padding: 3px;
+    border: 1px solid #ddd
+}
+
+.path-mod-feedback .mform.feedback_form .fitem.feedback_hasvalue .fstatic:empty {
+    display: inherit;
+}
+
+.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem:hover {
+    background: #f5f5f5;
+}
+
+.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem .fitemtitle label {
+    width: 100%;
+}
+
+.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem .fitemtitle .itemtitle {
+    position: relative;
+    width: 100%;
+}
+
+.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem .fitemtitle .itemtitle .itemdd,
+.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem .fitemtitle .itemtitle .itemname {
+    float: left;
+}
+
+.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem .fitemtitle .itemtitle .itemactions {
+    float: right;
+}
+
+.path-mod-feedback .templateslist td.cell.action,
+.path-mod-feedback .templateslist th.header.action {
+    width: 10%;
+}
+
+/* Analysis page */
+.path-mod-feedback table.analysis {
+    width: 100%;
+    border-top: 1px solid #aaaaaa;
+    margin-top: 10px;
+}
+
+.path-mod-feedback table.analysis tr:first-child th {
+    padding-top:10px;
+}
+
+.path-mod-feedback table.analysis tr:hover {
+    background: #f5f5f5;
+}
+
+.path-mod-feedback table.analysis td.singlevalue:before,
+.path-mod-feedback table.analysis td.optionname:before {
+    content:'- ';
+}
+
+.path-mod-feedback table.analysis.itemtype_textarea td {
+    padding: 4px 0;
+}
+
+.path-mod-feedback table.analysis tr.isempty {
+    display:none;
+}
+
+/* Responses list */
+.path-mod-feedback #showentrytable td.cell.completed_timemodified,
+.path-mod-feedback #showentryanontable td.cell.random_response {
+    font-weight: bold;
+}
+
+.path-mod-feedback #showentrytable td.cell.userpic,
+.path-mod-feedback #showentrytable td.cell.deleteentry,
+.path-mod-feedback #showentryanontable td.cell.deleteentry {
+    width: 10px;
+}
+
+/* Responses navigation */
+.path-mod-feedback .response_navigation {
+    margin: .5em 0;
+}
+.path-mod-feedback .response_navigation a {
+    display: inline-block;
+}
+.path-mod-feedback .response_navigation a.back_to_list {
+    margin: auto;
+    float: right;
+    left: -50%;
+    position: relative;
+}
+.dir-rtl.path-mod-feedback .response_navigation .next_response:after,
+.path-mod-feedback .response_navigation .prev_response:before {
+    content: ' ◄ ';
+}
+.dir-rtl.path-mod-feedback .response_navigation .prev_response:before,
+.path-mod-feedback .response_navigation .next_response:after {
+    content: ' ► ';
+}
+.dir-rtl.path-mod-feedback .response_navigation .prev_response,
+.path-mod-feedback .response_navigation .next_response {
+    float: right;
+}
+.dir-rtl.path-mod-feedback .response_navigation .next_response,
+.path-mod-feedback .response_navigation .prev_response {
+    float: left;
 }

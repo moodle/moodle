@@ -141,4 +141,32 @@ class qtype_shortanswer_test extends advanced_testcase {
             }
         }
     }
+
+    public function test_question_saving_trims_answers() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $questiondata = test_question_maker::get_question_data('shortanswer');
+        $formdata = test_question_maker::get_question_form_data('shortanswer');
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $generator->create_question_category(array());
+
+        $formdata->category = "{$cat->id},{$cat->contextid}";
+        $formdata->answer[0] = '   frog   ';
+        qtype_shortanswer_edit_form::mock_submit((array)$formdata);
+
+        $form = qtype_shortanswer_test_helper::get_question_editing_form($cat, $questiondata);
+
+        $this->assertTrue($form->is_validated());
+
+        $fromform = $form->get_data();
+
+        $returnedfromsave = $this->qtype->save_question($questiondata, $fromform);
+        $actualquestionsdata = question_load_questions(array($returnedfromsave->id));
+        $actualquestiondata = end($actualquestionsdata);
+
+        $firstsavedanswer = reset($questiondata->options->answers);
+        $this->assertEquals('frog', $firstsavedanswer->answer);
+    }
 }

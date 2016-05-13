@@ -275,10 +275,8 @@
                 if ($question->multi) {
                     echo $OUTPUT->heading($question->text . ':', 4);
 
-                    $subquestions = $DB->get_records_list("survey_questions", "id", explode(',', $question->multi));
-                    $subquestionorder = explode(",", $question->multi);
-                    foreach ($subquestionorder as $key => $val) {
-                        $subquestion = $subquestions[$val];
+                    $subquestions = survey_get_subquestions($question);
+                    foreach ($subquestions as $subquestion) {
                         if ($subquestion->type > 0) {
                             echo "<p class=\"centerpara\">";
                             echo "<a title=\"$strseemoredetail\" href=\"report.php?action=question&amp;id=$id&amp;qid=$subquestion->id\">";
@@ -303,7 +301,7 @@
                         foreach ($aaa as $a) {
                             $contents .= "<tr>";
                             $contents .= '<td class="fullnamecell">'.fullname($a).'</td>';
-                            $contents .= '<td valign="top">'.$a->answer1.'</td>';
+                            $contents .= '<td valign="top">'.s($a->answer1).'</td>';
                             $contents .= "</tr>";
                         }
                     }
@@ -358,7 +356,7 @@
                        $OUTPUT->user_picture($a, array('courseid'=>$course->id)),
                        "<a href=\"report.php?id=$id&amp;action=student&amp;student=$a->userid\">".fullname($a)."</a>",
                        userdate($a->time),
-                       $answer1, $answer2);
+                       s($answer1), s($answer2));
 
             }
         }
@@ -402,7 +400,7 @@
              }
          }
 
-         echo "<p <p class=\"centerpara\">";
+         echo "<p class=\"centerpara\">";
          echo $OUTPUT->user_picture($user, array('courseid'=>$course->id));
          echo "</p>";
 
@@ -411,7 +409,7 @@
 
          if ($showscales) {
              // Print overall summary
-             echo "<p <p class=\"centerpara\">>";
+            echo "<p class=\"centerpara\">";
              survey_print_graph("id=$id&amp;sid=$student&amp;type=student.png");
              echo "</p>";
 
@@ -448,7 +446,16 @@
                     $table = new html_table();
                      $table->head = array(get_string($question->text, "survey"));
                      $table->align = array ("left");
-                     $table->data[] = array(s($answer->answer1)); // no html here, just plain text
+                    if (!empty($question->options) && $answer->answer1 > 0) {
+                        $answers = explode(',', get_string($question->options, 'survey'));
+                        if ($answer->answer1 <= count($answers)) {
+                            $table->data[] = array(s($answers[$answer->answer1 - 1])); // No html here, just plain text.
+                        } else {
+                            $table->data[] = array(s($answer->answer1)); // No html here, just plain text.
+                        }
+                    } else {
+                         $table->data[] = array(s($answer->answer1)); // No html here, just plain text.
+                    }
                      echo html_writer::table($table);
                      echo $OUTPUT->spacer(array('height'=>30));
                  }

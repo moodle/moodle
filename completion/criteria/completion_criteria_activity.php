@@ -60,7 +60,11 @@ class completion_criteria_activity extends completion_criteria {
      * @param stdClass $data details of various modules
      */
     public function config_form_display(&$mform, $data = null) {
-        $mform->addElement('checkbox', 'criteria_activity['.$data->id.']', ucfirst(self::get_mod_name($data->module)).' - '.$data->name);
+        $modnames = get_module_types_names();
+        $mform->addElement('checkbox', 'criteria_activity['.$data->id.']',
+                $modnames[self::get_mod_name($data->module)].
+                ' - '.
+                format_string($data->name));
 
         if ($this->id) {
             $mform->setDefault('criteria_activity['.$data->id.']', 1);
@@ -147,7 +151,7 @@ class completion_criteria_activity extends completion_criteria {
         $data = $info->get_data($cm, false, $completion->userid);
 
         // If the activity is complete
-        if (in_array($data->completionstate, array(COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS))) {
+        if (in_array($data->completionstate, array(COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS, COMPLETION_COMPLETE_FAIL))) {
             if ($mark) {
                 $completion->mark_complete();
             }
@@ -177,7 +181,8 @@ class completion_criteria_activity extends completion_criteria {
         $module = $DB->get_record('course_modules', array('id' => $this->moduleinstance));
         $activity = $DB->get_record($this->module, array('id' => $module->instance));
 
-        return shorten_text(urldecode($activity->name));
+        return shorten_text(format_string($activity->name, true,
+                array('context' => context_module::instance($module->id))));
     }
 
     /**
@@ -229,6 +234,7 @@ class completion_criteria_activity extends completion_criteria {
             AND (
                 mc.completionstate = '.COMPLETION_COMPLETE.'
              OR mc.completionstate = '.COMPLETION_COMPLETE_PASS.'
+             OR mc.completionstate = '.COMPLETION_COMPLETE_FAIL.'
                 )
         ';
 
@@ -281,5 +287,16 @@ class completion_criteria_activity extends completion_criteria {
         $details['status'] = '';
 
         return $details;
+    }
+
+    /**
+     * Return pix_icon for display in reports.
+     *
+     * @param string $alt The alt text to use for the icon
+     * @param array $attributes html attributes
+     * @return pix_icon
+     */
+    public function get_icon($alt, array $attributes = null) {
+        return new pix_icon('icon', $alt, 'mod_'.$this->module, $attributes);
     }
 }

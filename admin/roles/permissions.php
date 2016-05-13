@@ -59,8 +59,9 @@ require_capability('moodle/role:review', $context);
 $PAGE->set_url($url);
 
 if ($context->contextlevel == CONTEXT_USER and $USER->id != $context->instanceid) {
+    $PAGE->navbar->includesettingsbase = true;
     $PAGE->navigation->extend_for_user($user);
-    $PAGE->set_context(context_course::instance($course->id));
+    $PAGE->set_context(context_user::instance($user->id));
 } else {
     $PAGE->set_context($context);
 }
@@ -194,6 +195,15 @@ if ($capability && ($allowoverrides || ($allowsafeoverrides && is_safe_capabilit
 echo $OUTPUT->header();
 echo $OUTPUT->heading($title);
 
+$adminurl = new moodle_url('/admin/');
+$arguments = array('contextid' => $contextid,
+                'contextname' => $contextname,
+                'adminurl' => $adminurl->out());
+$PAGE->requires->strings_for_js(
+                                array('roleprohibitinfo', 'roleprohibitheader', 'roleallowinfo', 'roleallowheader',
+                                    'confirmunassigntitle', 'confirmroleunprohibit', 'confirmroleprevent', 'confirmunassignyes',
+                                    'confirmunassignno'), 'core_role');
+$PAGE->requires->js_call_amd('core/permissionmanager', 'initialize', array($arguments));
 $table = new core_role_permissions_table($context, $contextname, $allowoverrides, $allowsafeoverrides, $overridableroles);
 echo $OUTPUT->box_start('generalbox capbox');
 // Print link to advanced override page.

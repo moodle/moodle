@@ -34,15 +34,12 @@ Feature: display_availability
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable conditional access | 1 |
-    And I log out
 
   @javascript
   Scenario: Activity availability display
     # Set up.
     Given I log in as "teacher1"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
 
@@ -76,7 +73,7 @@ Feature: display_availability
     And I press "Add restriction..."
     And I click on "User profile" "button" in the "Add restriction..." "dialogue"
     And I set the field "User profile field" to "Email address"
-    And I set the field "Value to compare against" to "email@example.org"
+    And I set the field "Value to compare against" to "email@example.com"
     And I set the field "Method of comparison" to "is equal to"
     And I press "Save and return to course"
 
@@ -105,26 +102,28 @@ Feature: display_availability
     # Change to student view.
     Given I log out
     And I log in as "student1"
+    And I am on site homepage
     And I follow "Course 1"
 
     # Page 1 display still there but should be dimmed and not a link.
     Then I should see "Page 1" in the "#section-1 .dimmed_text" "css_element"
-    And ".activityinstance a" "css_element" should not exist in the "#section-1" "css_element"
+    And ".activityinstance a" "css_element" should not exist in the "Topic 1" "section"
 
     # Date display should be present.
-    And I should see "Available until" in the "#section-1" "css_element"
+    And I should see "Available until" in the "Topic 1" "section"
 
     # Page 2 display not there at all
     And I should not see "Page 2" in the "region-main" "region"
 
     # Page 3 display and link
     And I should see "Page 3" in the "region-main" "region"
-    And ".activityinstance a" "css_element" should exist in the "#section-3" "css_element"
+    And ".activityinstance a" "css_element" should exist in the "Topic 3" "section"
 
   @javascript
   Scenario: Section availability display
     # Set up.
     Given I log in as "teacher1"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
 
@@ -148,7 +147,7 @@ Feature: display_availability
     And I press "Save changes"
 
     # This is necessary because otherwise it fails in Chrome, see MDL-44959
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 1"
 
     # Add Pages to each section.
@@ -173,6 +172,7 @@ Feature: display_availability
     # Change to student view.
     Given I log out
     And I log in as "student1"
+    And I am on site homepage
     And I follow "Course 1"
 
     # The contents of both sections should be hidden.

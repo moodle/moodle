@@ -113,4 +113,9 @@ class langpack_removed extends \core\event\base {
             throw new \coding_exception('The \'langcode\' value must be set to a valid language code');
         }
     }
+
+    public static function get_other_mapping() {
+        // No mapping required for this event because this event is not backed up.
+        return false;
+    }
 }

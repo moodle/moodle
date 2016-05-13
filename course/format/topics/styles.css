@@ -1,9 +1,12 @@
 .course-content ul.topics {margin:0;}
 .course-content ul.topics li.section {list-style: none;margin:0 0 5px 0;padding:0;}
 .course-content ul.topics li.section .content {margin:0 40px;}
-.course-content ul.topics li.section .left {float:left;}
-.course-content ul.topics li.section .right {float:right;}
 .course-content ul.topics li.section .left,
-.course-content ul.topics li.section .right {width:40px;text-align:center;padding: 6px 0;}
+.course-content ul.topics li.section .right {width:40px;padding: 0 6px;}
 .course-content ul.topics li.section .right img.icon { padding: 0 0 4px 0;}
+.course-content ul.topics li.section .left {padding-top:22px;text-align: right;}
+.jsenabled .course-content ul.topics li.section .left,
+.jsenabled .course-content ul.topics li.section .right {width:auto;}
 .course-content ul.topics li.section .left .section-handle img.icon { padding:0; vertical-align: baseline; }
+.course-content ul.topics li.section .section_action_menu .textmenu,
+.course-content ul.topics li.section .section_action_menu .menu-action-text { white-space: nowrap; }

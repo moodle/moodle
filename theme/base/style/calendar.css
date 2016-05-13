@@ -55,6 +55,7 @@
 .block .minicalendar {width:100%;margin:10px auto;}
 .block .minicalendar th,
 .block .minicalendar td {padding:2px;font-size:0.8em;}
+.block .minicalendar caption {font-size: inherit;font-weight: inherit;line-height: inherit;text-align: center;}
 .block .minicalendar td.weekend {color:#A00;}
 .block .calendar-controls .previous {text-align: left;display: block;float: left;width: 12%;}
 .block .calendar-controls .current {float:left;text-align: center;display: block;width:76%;}

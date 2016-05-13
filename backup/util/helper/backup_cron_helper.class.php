@@ -61,6 +61,13 @@ abstract class backup_cron_automated_helper {
     const AUTO_BACKUP_ENABLED = 1;
     const AUTO_BACKUP_MANUAL = 2;
 
+    /** Automated backup storage in course backup filearea */
+    const STORAGE_COURSE = 0;
+    /** Automated backup storage in specified directory */
+    const STORAGE_DIRECTORY = 1;
+    /** Automated backup storage in course backup filearea and specified directory */
+    const STORAGE_COURSE_AND_DIRECTORY = 2;
+
     /**
      * Runs the automated backups if required
      *
@@ -114,7 +121,7 @@ abstract class backup_cron_automated_helper {
             core_php_time_limit::raise();
             raise_memory_limit(MEMORY_EXTRA);
 
-            $nextstarttime = backup_cron_automated_helper::calculate_next_automated_backup($admin->timezone, $now);
+            $nextstarttime = backup_cron_automated_helper::calculate_next_automated_backup(null, $now);
             $showtime = "undefined";
             if ($nextstarttime > 0) {
                 $showtime = date('r', $nextstarttime);
@@ -174,42 +181,42 @@ abstract class backup_cron_automated_helper {
                     $backupcourse->nextstarttime = $nextstarttime;
                     $DB->update_record('backup_courses', $backupcourse);
                     mtrace('Skipping ' . $course->fullname . ' (Not scheduled for backup until ' . $showtime . ')');
-                } else if ($skipped) { // Must have been skipped for a reason.
-                    $backupcourse->laststatus = self::BACKUP_STATUS_SKIPPED;
-                    $backupcourse->nextstarttime = $nextstarttime;
-                    $DB->update_record('backup_courses', $backupcourse);
-                    mtrace('Skipping ' . $course->fullname . ' (' . $skippedmessage . ')');
-                    mtrace('Backup of \'' . $course->fullname . '\' is scheduled on ' . $showtime);
                 } else {
-                    // Backup every non-skipped courses.
-                    mtrace('Backing up '.$course->fullname.'...');
-
-                    // We have to send an email because we have included at least one backup.
-                    $emailpending = true;
-
-                    // Only make the backup if laststatus isn't 2-UNFINISHED (uncontrolled error).
-                    if ($backupcourse->laststatus != self::BACKUP_STATUS_UNFINISHED) {
-                        // Set laststarttime.
-                        $starttime = time();
-
-                        $backupcourse->laststarttime = time();
-                        $backupcourse->laststatus = self::BACKUP_STATUS_UNFINISHED;
-                        $DB->update_record('backup_courses', $backupcourse);
-
-                        $backupcourse->laststatus = backup_cron_automated_helper::launch_automated_backup($course, $backupcourse->laststarttime, $admin->id);
-                        $backupcourse->lastendtime = time();
+                    if ($skipped) { // Must have been skipped for a reason.
+                        $backupcourse->laststatus = self::BACKUP_STATUS_SKIPPED;
                         $backupcourse->nextstarttime = $nextstarttime;
-
                         $DB->update_record('backup_courses', $backupcourse);
+                        mtrace('Skipping ' . $course->fullname . ' (' . $skippedmessage . ')');
+                        mtrace('Backup of \'' . $course->fullname . '\' is scheduled on ' . $showtime);
+                    } else {
+                        // Backup every non-skipped courses.
+                        mtrace('Backing up '.$course->fullname.'...');
 
-                        if ($backupcourse->laststatus === self::BACKUP_STATUS_OK) {
-                            // Clean up any excess course backups now that we have
-                            // taken a successful backup.
-                            $removedcount = backup_cron_automated_helper::remove_excess_backups($course);
+                        // We have to send an email because we have included at least one backup.
+                        $emailpending = true;
+
+                        // Only make the backup if laststatus isn't 2-UNFINISHED (uncontrolled error).
+                        if ($backupcourse->laststatus != self::BACKUP_STATUS_UNFINISHED) {
+                            // Set laststarttime.
+                            $starttime = time();
+
+                            $backupcourse->laststarttime = time();
+                            $backupcourse->laststatus = self::BACKUP_STATUS_UNFINISHED;
+                            $DB->update_record('backup_courses', $backupcourse);
+
+                            $backupcourse->laststatus = self::launch_automated_backup($course, $backupcourse->laststarttime,
+                                    $admin->id);
+                            $backupcourse->lastendtime = time();
+                            $backupcourse->nextstarttime = $nextstarttime;
+
+                            $DB->update_record('backup_courses', $backupcourse);
+
+                            mtrace("complete - next execution: $showtime");
                         }
                     }
 
-                    mtrace("complete - next execution: $showtime");
+                    // Remove excess backups.
+                    $removedcount = self::remove_excess_backups($course, $now);
                 }
             }
             $rs->close();
@@ -315,24 +322,24 @@ abstract class backup_cron_automated_helper {
     /**
      * Works out the next time the automated backup should be run.
      *
-     * @param mixed $timezone user timezone
+     * @param mixed $ignoredtimezone all settings are in server timezone!
      * @param int $now timestamp, should not be in the past, most likely time()
      * @return int timestamp of the next execution at server time
      */
-    public static function calculate_next_automated_backup($timezone, $now) {
+    public static function calculate_next_automated_backup($ignoredtimezone, $now) {
 
-        $result = 0;
         $config = get_config('backup');
-        $autohour = $config->backup_auto_hour;
-        $automin = $config->backup_auto_minute;
 
-        // Gets the user time relatively to the server time.
-        $date = usergetdate($now, $timezone);
-        $usertime = mktime($date['hours'], $date['minutes'], $date['seconds'], $date['mon'], $date['mday'], $date['year']);
-        $diff = $now - $usertime;
+        $backuptime = new DateTime('@' . $now);
+        $backuptime->setTimezone(core_date::get_server_timezone_object());
+        $backuptime->setTime($config->backup_auto_hour, $config->backup_auto_minute);
 
-        // Get number of days (from user's today) to execute backups.
-        $automateddays = substr($config->backup_auto_weekdays, $date['wday']) . $config->backup_auto_weekdays;
+        while ($backuptime->getTimestamp() < $now) {
+            $backuptime->add(new DateInterval('P1D'));
+        }
+
+        // Get number of days from backup date to execute backups.
+        $automateddays = substr($config->backup_auto_weekdays, $backuptime->format('w')) . $config->backup_auto_weekdays;
         $daysfromnow = strpos($automateddays, "1");
 
         // Error, there are no days to schedule the backup for.
@@ -340,25 +347,11 @@ abstract class backup_cron_automated_helper {
             return 0;
         }
 
-        // Checks if the date would happen in the future (of the user).
-        $userresult = mktime($autohour, $automin, 0, $date['mon'], $date['mday'] + $daysfromnow, $date['year']);
-        if ($userresult <= $usertime) {
-            // If not, we skip the first scheduled day, that should fix it.
-            $daysfromnow = strpos($automateddays, "1", 1);
-            $userresult = mktime($autohour, $automin, 0, $date['mon'], $date['mday'] + $daysfromnow, $date['year']);
+        if ($daysfromnow > 0) {
+            $backuptime->add(new DateInterval('P' . $daysfromnow . 'D'));
         }
 
-        // Now we generate the time relative to the server.
-        $result = $userresult + $diff;
-
-        // If that time is past, call the function recursively to obtain the next valid day.
-        if ($result <= $now) {
-            // Checking time() in here works, but makes PHPUnit Tests extremely hard to predict.
-            // $now should never be earlier than time() anyway...
-            $result = self::calculate_next_automated_backup($timezone, $now + DAYSECS);
-        }
-
-        return $result;
+        return $backuptime->getTimestamp();
     }
 
     /**
@@ -396,18 +389,31 @@ abstract class backup_cron_automated_helper {
             $results = $bc->get_results();
             $outcome = self::outcome_from_results($results);
             $file = $results['backup_destination']; // May be empty if file already moved to target location.
-            if (!file_exists($dir) || !is_dir($dir) || !is_writable($dir)) {
+
+            // If we need to copy the backup file to an external dir and it is not writable, change status to error.
+            // This is a feature to prevent moodledata to be filled up and break a site when the admin misconfigured
+            // the automated backups storage type and destination directory.
+            if ($storage !== 0 && (empty($dir) || !file_exists($dir) || !is_dir($dir) || !is_writable($dir))) {
+                $bc->log('Specified backup directory is not writable - ', backup::LOG_ERROR, $dir);
                 $dir = null;
+                $outcome = self::BACKUP_STATUS_ERROR;
             }
+
             // Copy file only if there was no error.
             if ($file && !empty($dir) && $storage !== 0 && $outcome != self::BACKUP_STATUS_ERROR) {
                 $filename = backup_plan_dbops::get_default_backup_filename($format, $type, $course->id, $users, $anonymised,
                         !$config->backup_shortname);
                 if (!$file->copy_content_to($dir.'/'.$filename)) {
+                    $bc->log('Attempt to copy backup file to the specified directory failed - ',
+                            backup::LOG_ERROR, $dir);
                     $outcome = self::BACKUP_STATUS_ERROR;
                 }
                 if ($outcome != self::BACKUP_STATUS_ERROR && $storage === 1) {
-                    $file->delete();
+                    if (!$file->delete()) {
+                        $outcome = self::BACKUP_STATUS_WARNING;
+                        $bc->log('Attempt to delete the backup file from course automated backup area failed - ',
+                                backup::LOG_WARNING, $file->get_filename());
+                    }
                 }
             }
 
@@ -538,98 +544,177 @@ abstract class backup_cron_automated_helper {
     }
 
     /**
-     * Removes excess backups from the external system and the local file system.
+     * Removes excess backups from a specified course.
      *
-     * The number of backups keep comes from $config->backup_auto_keep.
-     *
-     * @param stdClass $course object
-     * @return bool
+     * @param stdClass $course Course object
+     * @param int $now Starting time of the process
+     * @return bool Whether or not backups is being removed
      */
-    public static function remove_excess_backups($course) {
+    public static function remove_excess_backups($course, $now = null) {
         $config = get_config('backup');
-        $keep =     (int)$config->backup_auto_keep;
-        $storage =  $config->backup_auto_storage;
-        $dir =      $config->backup_auto_destination;
+        $maxkept = (int)$config->backup_auto_max_kept;
+        $storage = $config->backup_auto_storage;
+        $deletedays = (int)$config->backup_auto_delete_days;
 
-        if ($keep == 0) {
-            // Means keep all backup files.
+        if ($maxkept == 0 && $deletedays == 0) {
+            // Means keep all backup files and never delete backup after x days.
             return true;
         }
 
-        if (!file_exists($dir) || !is_dir($dir) || !is_writable($dir)) {
-            $dir = null;
+        if (!isset($now)) {
+            $now = time();
         }
 
         // Clean up excess backups in the course backup filearea.
-        if ($storage == 0 || $storage == 2) {
-            $fs = get_file_storage();
-            $context = context_course::instance($course->id);
-            $component = 'backup';
-            $filearea = 'automated';
-            $itemid = 0;
-            $files = array();
-            // Store all the matching files into timemodified => stored_file array.
-            foreach ($fs->get_area_files($context->id, $component, $filearea, $itemid) as $file) {
-                $files[$file->get_timemodified()] = $file;
-            }
-            if (count($files) <= $keep) {
-                // There are less matching files than the desired number to keep there is nothing to clean up.
-                return 0;
-            }
-            // Sort by keys descending (newer to older filemodified).
-            krsort($files);
-            $remove = array_splice($files, $keep);
-            foreach ($remove as $file) {
-                $file->delete();
-            }
-            //mtrace('Removed '.count($remove).' old backup file(s) from the automated filearea');
+        $deletedcoursebackups = false;
+        if ($storage == self::STORAGE_COURSE || $storage == self::STORAGE_COURSE_AND_DIRECTORY) {
+            $deletedcoursebackups = self::remove_excess_backups_from_course($course, $now);
         }
 
         // Clean up excess backups in the specified external directory.
-        if (!empty($dir) && ($storage == 1 || $storage == 2)) {
-            // Calculate backup filename regex, ignoring the date/time/info parts that can be
-            // variable, depending of languages, formats and automated backup settings.
-            $filename = backup::FORMAT_MOODLE . '-' . backup::TYPE_1COURSE . '-' . $course->id . '-';
-            $regex = '#' . preg_quote($filename, '#') . '.*\.mbz$#';
-
-            // Store all the matching files into filename => timemodified array.
-            $files = array();
-            foreach (scandir($dir) as $file) {
-                // Skip files not matching the naming convention.
-                if (!preg_match($regex, $file, $matches)) {
-                    continue;
-                }
-
-                // Read the information contained in the backup itself.
-                try {
-                    $bcinfo = backup_general_helper::get_backup_information_from_mbz($dir . '/' . $file);
-                } catch (backup_helper_exception $e) {
-                    mtrace('Error: ' . $file . ' does not appear to be a valid backup (' . $e->errorcode . ')');
-                    continue;
-                }
-
-                // Make sure this backup concerns the course and site we are looking for.
-                if ($bcinfo->format === backup::FORMAT_MOODLE &&
-                        $bcinfo->type === backup::TYPE_1COURSE &&
-                        $bcinfo->original_course_id == $course->id &&
-                        backup_general_helper::backup_is_samesite($bcinfo)) {
-                    $files[$file] = $bcinfo->backup_date;
-                }
-            }
-            if (count($files) <= $keep) {
-                // There are less matching files than the desired number to keep there is nothing to clean up.
-                return 0;
-            }
-            // Sort by values descending (newer to older filemodified).
-            arsort($files);
-            $remove = array_splice($files, $keep);
-            foreach (array_keys($remove) as $file) {
-                unlink($dir . '/' . $file);
-            }
-            //mtrace('Removed '.count($remove).' old backup file(s) from external directory');
+        $deleteddirectorybackups = false;
+        if ($storage == self::STORAGE_DIRECTORY || $storage == self::STORAGE_COURSE_AND_DIRECTORY) {
+            $deleteddirectorybackups = self::remove_excess_backups_from_directory($course, $now);
         }
 
-        return true;
+        if ($deletedcoursebackups || $deleteddirectorybackups) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Removes excess backups in the course backup filearea from a specified course.
+     *
+     * @param stdClass $course Course object
+     * @param int $now Starting time of the process
+     * @return bool Whether or not backups are being removed
+     */
+    protected static function remove_excess_backups_from_course($course, $now) {
+        $fs = get_file_storage();
+        $context = context_course::instance($course->id);
+        $component = 'backup';
+        $filearea = 'automated';
+        $itemid = 0;
+        $backupfiles = array();
+        $backupfilesarea = $fs->get_area_files($context->id, $component, $filearea, $itemid, 'timemodified DESC', false);
+        // Store all the matching files into timemodified => stored_file array.
+        foreach ($backupfilesarea as $backupfile) {
+            $backupfiles[$backupfile->get_timemodified()] = $backupfile;
+        }
+
+        $backupstodelete = self::get_backups_to_delete($backupfiles, $now);
+        if ($backupstodelete) {
+            foreach ($backupstodelete as $backuptodelete) {
+                $backuptodelete->delete();
+            }
+            mtrace('Deleted ' . count($backupstodelete) . ' old backup file(s) from the automated filearea');
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Removes excess backups in the specified external directory from a specified course.
+     *
+     * @param stdClass $course Course object
+     * @param int $now Starting time of the process
+     * @return bool Whether or not backups are being removed
+     */
+    protected static function remove_excess_backups_from_directory($course, $now) {
+        $config = get_config('backup');
+        $dir = $config->backup_auto_destination;
+
+        $isnotvaliddir = !file_exists($dir) || !is_dir($dir) || !is_writable($dir);
+        if ($isnotvaliddir) {
+            mtrace('Error: ' . $dir . ' does not appear to be a valid directory');
+            return false;
+        }
+
+        // Calculate backup filename regex, ignoring the date/time/info parts that can be
+        // variable, depending of languages, formats and automated backup settings.
+        $filename = backup::FORMAT_MOODLE . '-' . backup::TYPE_1COURSE . '-' . $course->id . '-';
+        $regex = '#' . preg_quote($filename, '#') . '.*\.mbz$#';
+
+        // Store all the matching files into filename => timemodified array.
+        $backupfiles = array();
+        foreach (scandir($dir) as $backupfile) {
+            // Skip files not matching the naming convention.
+            if (!preg_match($regex, $backupfile)) {
+                continue;
+            }
+
+            // Read the information contained in the backup itself.
+            try {
+                $bcinfo = backup_general_helper::get_backup_information_from_mbz($dir . '/' . $backupfile);
+            } catch (backup_helper_exception $e) {
+                mtrace('Error: ' . $backupfile . ' does not appear to be a valid backup (' . $e->errorcode . ')');
+                continue;
+            }
+
+            // Make sure this backup concerns the course and site we are looking for.
+            if ($bcinfo->format === backup::FORMAT_MOODLE &&
+                    $bcinfo->type === backup::TYPE_1COURSE &&
+                    $bcinfo->original_course_id == $course->id &&
+                    backup_general_helper::backup_is_samesite($bcinfo)) {
+                $backupfiles[$bcinfo->backup_date] = $backupfile;
+            }
+        }
+
+        $backupstodelete = self::get_backups_to_delete($backupfiles, $now);
+        if ($backupstodelete) {
+            foreach ($backupstodelete as $backuptodelete) {
+                unlink($dir . '/' . $backuptodelete);
+            }
+            mtrace('Deleted ' . count($backupstodelete) . ' old backup file(s) from external directory');
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Get the list of backup files to delete depending on the automated backup settings.
+     *
+     * @param array $backupfiles Existing backup files
+     * @param int $now Starting time of the process
+     * @return array Backup files to delete
+     */
+    protected static function get_backups_to_delete($backupfiles, $now) {
+        $config = get_config('backup');
+        $maxkept = (int)$config->backup_auto_max_kept;
+        $deletedays = (int)$config->backup_auto_delete_days;
+        $minkept = (int)$config->backup_auto_min_kept;
+
+        // Sort by keys descending (newer to older filemodified).
+        krsort($backupfiles);
+        $tokeep = $maxkept;
+        if ($deletedays > 0) {
+            $deletedayssecs = $deletedays * DAYSECS;
+            $tokeep = 0;
+            $backupfileskeys = array_keys($backupfiles);
+            foreach ($backupfileskeys as $timemodified) {
+                $mustdeletebackup = $timemodified < ($now - $deletedayssecs);
+                if ($mustdeletebackup || $tokeep >= $maxkept) {
+                    break;
+                }
+                $tokeep++;
+            }
+
+            if ($tokeep < $minkept) {
+                $tokeep = $minkept;
+            }
+        }
+
+        if (count($backupfiles) <= $tokeep) {
+            // There are less or equal matching files than the desired number to keep, there is nothing to clean up.
+            return false;
+        } else {
+            $backupstodelete = array_splice($backupfiles, $tokeep);
+            return $backupstodelete;
+        }
     }
 
     /**
@@ -643,7 +728,7 @@ abstract class backup_cron_automated_helper {
      */
     protected static function is_course_modified($courseid, $since) {
         $logmang = get_log_manager();
-        $readers = $logmang->get_readers('core\log\sql_select_reader');
+        $readers = $logmang->get_readers('core\log\sql_reader');
         $where = "courseid = :courseid and timecreated > :since and crud <> 'r'";
         $params = array('courseid' => $courseid, 'since' => $since);
         foreach ($readers as $reader) {

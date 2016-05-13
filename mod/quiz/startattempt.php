@@ -62,71 +62,14 @@ if (!$quizobj->has_questions()) {
 // Create an object to manage all the other (non-roles) access rules.
 $timenow = time();
 $accessmanager = $quizobj->get_access_manager($timenow);
-if ($quizobj->is_preview_user() && $forcenew) {
-    $accessmanager->current_attempt_finished();
-}
 
-// Check capabilities.
-if (!$quizobj->is_preview_user()) {
-    $quizobj->require_capability('mod/quiz:attempt');
-}
-
-// Check to see if a new preview was requested.
-if ($quizobj->is_preview_user() && $forcenew) {
-    // To force the creation of a new preview, we mark the current attempt (if any)
-    // as finished. It will then automatically be deleted below.
-    $DB->set_field('quiz_attempts', 'state', quiz_attempt::FINISHED,
-            array('quiz' => $quizobj->get_quizid(), 'userid' => $USER->id));
-}
-
-// Look for an existing attempt.
-$attempts = quiz_get_user_attempts($quizobj->get_quizid(), $USER->id, 'all', true);
-$lastattempt = end($attempts);
-
-// If an in-progress attempt exists, check password then redirect to it.
-if ($lastattempt && ($lastattempt->state == quiz_attempt::IN_PROGRESS ||
-        $lastattempt->state == quiz_attempt::OVERDUE)) {
-    $currentattemptid = $lastattempt->id;
-    $messages = $accessmanager->prevent_access();
-
-    // If the attempt is now overdue, deal with that.
-    $quizobj->create_attempt_object($lastattempt)->handle_if_time_expired($timenow, true);
-
-    // And, if the attempt is now no longer in progress, redirect to the appropriate place.
-    if ($lastattempt->state == quiz_attempt::ABANDONED || $lastattempt->state == quiz_attempt::FINISHED) {
-        redirect($quizobj->review_url($lastattempt->id));
-    }
-
-    // If the page number was not explicitly in the URL, go to the current page.
-    if ($page == -1) {
-        $page = $lastattempt->currentpage;
-    }
-
-} else {
-    while ($lastattempt && $lastattempt->preview) {
-        $lastattempt = array_pop($attempts);
-    }
-
-    // Get number for the next or unfinished attempt.
-    if ($lastattempt) {
-        $attemptnumber = $lastattempt->attempt + 1;
-    } else {
-        $lastattempt = false;
-        $attemptnumber = 1;
-    }
-    $currentattemptid = null;
-
-    $messages = $accessmanager->prevent_access() +
-            $accessmanager->prevent_new_attempt(count($attempts), $lastattempt);
-
-    if ($page == -1) {
-        $page = 0;
-    }
-}
+// Validate permissions for creating a new attempt and start a new preview attempt if required.
+list($currentattemptid, $attemptnumber, $lastattempt, $messages, $page) =
+    quiz_validate_new_attempt($quizobj, $accessmanager, $forcenew, $page, true);
 
 // Check access.
-$output = $PAGE->get_renderer('mod_quiz');
 if (!$quizobj->is_preview_user() && $messages) {
+    $output = $PAGE->get_renderer('mod_quiz');
     print_error('attempterror', 'quiz', $quizobj->view_url(),
             $output->access_messages($messages));
 }
@@ -137,7 +80,7 @@ if ($accessmanager->is_preflight_check_required($currentattemptid)) {
             $quizobj->start_attempt_url($page), $currentattemptid);
 
     if ($mform->is_cancelled()) {
-        $accessmanager->back_to_view_page($output);
+        $accessmanager->back_to_view_page($PAGE->get_renderer('mod_quiz'));
 
     } else if (!$mform->get_data()) {
 
@@ -145,6 +88,7 @@ if ($accessmanager->is_preflight_check_required($currentattemptid)) {
         $PAGE->set_url($quizobj->start_attempt_url($page));
         $PAGE->set_title($quizobj->get_quiz_name());
         $accessmanager->setup_attempt_page($PAGE);
+        $output = $PAGE->get_renderer('mod_quiz');
         if (empty($quizobj->get_quiz()->showblocks)) {
             $PAGE->blocks->show_only_fake_blocks();
         }
@@ -164,27 +108,7 @@ if ($currentattemptid) {
     }
 }
 
-// Delete any previous preview attempts belonging to this user.
-quiz_delete_previews($quizobj->get_quiz(), $USER->id);
-
-$quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
-$quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
-
-// Create the new attempt and initialize the question sessions
-$timenow = time(); // Update time now, in case the server is running really slowly.
-$attempt = quiz_create_attempt($quizobj, $attemptnumber, $lastattempt, $timenow, $quizobj->is_preview_user());
-
-if (!($quizobj->get_quiz()->attemptonlast && $lastattempt)) {
-    $attempt = quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timenow);
-} else {
-    $attempt = quiz_start_attempt_built_on_last($quba, $attempt, $lastattempt);
-}
-
-$transaction = $DB->start_delegated_transaction();
-
-$attempt = quiz_attempt_save_started($quizobj, $quba, $attempt);
-
-$transaction->allow_commit();
+$attempt = quiz_prepare_and_start_new_attempt($quizobj, $attemptnumber, $lastattempt);
 
 // Redirect to the attempt page.
 redirect($quizobj->attempt_url($attempt->id, $page));

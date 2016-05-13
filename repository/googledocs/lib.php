@@ -27,7 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/repository/lib.php');
 require_once($CFG->libdir . '/google/lib.php');
-require_once($CFG->libdir . '/google/Google/Service/Drive.php');
 
 /**
  * Google Docs Plugin

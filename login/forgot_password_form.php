@@ -54,7 +54,7 @@ class login_forgot_password_form extends moodleform {
         $mform->addElement('header', 'searchbyemail', get_string('searchbyemail'), '');
 
         $mform->addElement('text', 'email', get_string('email'));
-        $mform->setType('email', PARAM_RAW);
+        $mform->setType('email', PARAM_RAW_TRIMMED);
 
         $submitlabel = get_string('search');
         $mform->addElement('submit', 'submitbuttonemail', $submitlabel);

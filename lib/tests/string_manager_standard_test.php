@@ -75,11 +75,11 @@ class core_string_manager_standard_testcase extends advanced_testcase {
         $this->assertFalse($stringman->string_deprecated('hidden', 'grades'));
 
         // Check deprecated string.
-        $this->assertTrue($stringman->string_deprecated('hidden', 'repository'));
-        $this->assertTrue($stringman->string_exists('hidden', 'repository'));
+        $this->assertTrue($stringman->string_deprecated('timelimitmin', 'mod_quiz'));
+        $this->assertTrue($stringman->string_exists('timelimitmin', 'mod_quiz'));
         $this->assertDebuggingNotCalled();
-        $this->assertEquals('Hidden', get_string('hidden', 'repository'));
-        $this->assertDebuggingCalled('String [hidden,core_repository] is deprecated. '.
+        $this->assertEquals('Time limit (minutes)', get_string('timelimitmin', 'mod_quiz'));
+        $this->assertDebuggingCalled('String [timelimitmin,mod_quiz] is deprecated. '.
             'Either you should no longer be using that string, or the string has been incorrectly deprecated, in which case you should report this as a bug. '.
             'Please refer to https://docs.moodle.org/dev/String_deprecation');
     }
@@ -101,7 +101,8 @@ class core_string_manager_standard_testcase extends advanced_testcase {
                 $this->fail('String "'.$string.'" appearing in one of the lang/en/deprecated.txt files does not have correct syntax');
             }
             list($pluginttype, $pluginname) = core_component::normalize_component($matches[2]);
-            if ($matches[2] !== $pluginttype . '_' . $pluginname) {
+            $normcomponent = $pluginname ? ($pluginttype . '_' . $pluginname) : $pluginttype;
+            if ($matches[2] !== $normcomponent) {
                 $this->fail('String "'.$string.'" appearing in one of the lang/en/deprecated.txt files does not have normalised component name');
             }
             if (!$stringman->string_exists($matches[1], $matches[2])) {

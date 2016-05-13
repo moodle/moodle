@@ -29,6 +29,19 @@
     display: inline-block;
 }
 
+.section .side.left {
+    float: left;
+}
+.dir-rtl .section .side.left {
+    float: right;
+}
+.section .side.right {
+    float: right;
+}
+.dir-rtl .section .side.right {
+    float: left;
+}
+
 .section .activity .editing_move {
     position: absolute;
     left: 0;
@@ -64,6 +77,16 @@
 .dir-rtl .section .activity .actions {
     left: 0;
     right: auto;
+}
+
+.course-content  li.section li.activity ul {
+    list-style: disc;
+}
+.course-content  li.section li.activity ul ul {
+    list-style: circle;
+}
+.course-content  li.section li.activity ul ul ul {
+    list-style: square;
 }
 
 .sitetopic .section .activity .activityinstance div,
@@ -142,6 +165,9 @@
     display: block;
 }
 .section .activity .moodle-actionmenu[data-enhanced] .menu {margin-left: -2.8em;}
+.section .activity .moodle-actionmenu:not([data-enhanced]) .menubar > li .toggle-display {
+    display: none;
+}
 .section img.iconsmall {
     vertical-align: text-bottom;
     width: 16px;

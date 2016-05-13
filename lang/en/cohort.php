@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * Strings for component 'cohort', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package    moodlecore
+ * @package    core_cohort
  * @subpackage cohort
  * @copyright  2010 Petr Skoda (info@skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -51,6 +50,8 @@ $string['description'] = 'Description';
 $string['displayedrows'] = '{$a->displayed} rows displayed out of {$a->total}.';
 $string['duplicateidnumber'] = 'Cohort with the same ID number already exists';
 $string['editcohort'] = 'Edit cohort';
+$string['editcohortidnumber'] = 'Edit cohort ID';
+$string['editcohortname'] = 'Edit cohort name';
 $string['eventcohortcreated'] = 'Cohort created';
 $string['eventcohortdeleted'] = 'Cohort deleted';
 $string['eventcohortmemberadded'] = 'User added to a cohort';
@@ -62,6 +63,8 @@ $string['memberscount'] = 'Cohort size';
 $string['name'] = 'Name';
 $string['namecolumnmissing'] = 'There is something wrong with the format of the CSV file. Please check that it includes column names.';
 $string['namefieldempty'] = 'Field name can not be empty';
+$string['newnamefor'] = 'New name for cohort {$a}';
+$string['newidnumberfor'] = 'New ID number for cohort {$a}';
 $string['nocomponent'] = 'Created manually';
 $string['potusers'] = 'Potential users';
 $string['potusersmatching'] = 'Potential matching users';

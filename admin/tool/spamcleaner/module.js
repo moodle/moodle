@@ -6,7 +6,7 @@ M.tool_spamcleaner = {
     del_all: function() {
         var context = M.tool_spamcleaner;
 
-        var yes = confirm(M.str.tool_spamcleaner.spamdeleteallconfirm);
+        var yes = confirm(M.util.get_string('spamdeleteallconfirm', 'tool_spamcleaner'));
         if (yes) {
             var cfg = {
                 method: "POST",
@@ -15,7 +15,7 @@ M.tool_spamcleaner = {
                         try {
                             var resp = context.Y.JSON.parse(o.responseText);
                         } catch(e) {
-                            alert(M.str.tool_spamcleaner.spaminvalidresult);
+                            alert(M.util.get_string('spaminvalidresult', 'tool_spamcleaner'));
                             return;
                         }
                         if (resp == true) {
@@ -36,7 +36,7 @@ M.tool_spamcleaner = {
             return;
         }
 
-        var yes = confirm(M.str.tool_spamcleaner.spamdeleteconfirm);
+        var yes = confirm(M.util.get_string('spamdeleteconfirm', 'tool_spamcleaner'));
         if (yes) {
             context.row = obj;
             var cfg = {
@@ -46,7 +46,7 @@ M.tool_spamcleaner = {
                         try {
                             var resp = context.Y.JSON.parse(o.responseText);
                         } catch(e) {
-                            alert(M.str.tool_spamcleaner.spaminvalidresult);
+                            alert(M.util.get_string('spaminvalidresult', 'tool_spamcleaner'));
                             return;
                         }
                         if (context.row) {
@@ -57,7 +57,7 @@ M.tool_spamcleaner = {
                                 context.row.parentNode.removeChild(context.row);
                                 context.row = null;
                             } else {
-                                alert(M.str.tool_spamcleaner.spamcannotdelete);
+                                alert(M.util.get_string('spamcannotdelete', 'tool_spamcleaner'));
                             }
                         }
                     }
@@ -83,7 +83,7 @@ M.tool_spamcleaner = {
                     try {
                         var resp = context.Y.JSON.parse(o.responseText);
                     } catch(e) {
-                        alert(M.str.tool_spamcleaner.spaminvalidresult);
+                        alert(M.util.get_string('spaminvalidresult', 'tool_spamcleaner'));
                         return;
                     }
                     if (context.row) {

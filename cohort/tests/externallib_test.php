@@ -69,6 +69,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         // Call the external function.
         $this->setCurrentTimeStart();
         $createdcohorts = core_cohort_external::create_cohorts(array($cohort1, $cohort2));
+        $createdcohorts = external_api::clean_returnvalue(core_cohort_external::create_cohorts_returns(), $createdcohorts);
 
         // Check we retrieve the good total number of created cohorts + no error on capability.
         $this->assertEquals(2, count($createdcohorts));
@@ -155,6 +156,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         // Call the external function.
         $returnedcohorts = core_cohort_external::get_cohorts(array(
             $cohort1->id, $cohort2->id));
+        $returnedcohorts = external_api::clean_returnvalue(core_cohort_external::get_cohorts_returns(), $returnedcohorts);
 
         // Check we retrieve the good total number of enrolled cohorts + no error on capability.
         $this->assertEquals(2, count($returnedcohorts));
@@ -173,6 +175,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
         // Call the external function.
         $returnedcohorts = core_cohort_external::get_cohorts(array(
             $cohort1->id, $cohort2->id));
+        $returnedcohorts = external_api::clean_returnvalue(core_cohort_external::get_cohorts_returns(), $returnedcohorts);
 
         // Check we retrieve the good total number of enrolled cohorts + no error on capability.
         $this->assertEquals(2, count($returnedcohorts));
@@ -367,6 +370,7 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
 
         // Call the external function.
         $addcohortmembers = core_cohort_external::add_cohort_members(array($cohort1));
+        $addcohortmembers = external_api::clean_returnvalue(core_cohort_external::add_cohort_members_returns(), $addcohortmembers);
 
         // Check we retrieve the good total number of created cohorts + no error on capability.
         $this->assertEquals(1, count($addcohortmembers));
@@ -408,11 +412,14 @@ class core_cohort_externallib_testcase extends externallib_advanced_testcase {
             'usertype' => array('type' => 'id', 'value' => $user1->id)
             );
         $cohortmembers1 = core_cohort_external::add_cohort_members(array($cohortaddmember1));
+        $cohortmembers1 = external_api::clean_returnvalue(core_cohort_external::add_cohort_members_returns(), $cohortmembers1);
+
         $cohortaddmember2 = array(
             'cohorttype' => array('type' => 'id', 'value' => $cohort2->id),
             'usertype' => array('type' => 'id', 'value' => $user2->id)
             );
         $cohortmembers2 = core_cohort_external::add_cohort_members(array($cohortaddmember2));
+        $cohortmembers2 = external_api::clean_returnvalue(core_cohort_external::add_cohort_members_returns(), $cohortmembers2);
 
         // Check we retrieve no cohorts + no error on capability.
         $this->assertEquals(2, $DB->count_records_select('cohort_members', ' ((cohortid = :idcohort1 AND userid = :iduser1)

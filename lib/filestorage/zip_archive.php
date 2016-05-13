@@ -191,7 +191,7 @@ class zip_archive extends file_archive {
         }
 
         if ($this->emptyziphack) {
-            $this->za->close();
+            @$this->za->close();
             $this->za = null;
             $this->mode = null;
             $this->namelookup = null;
@@ -202,7 +202,7 @@ class zip_archive extends file_archive {
 
         } else if ($this->za->numFiles == 0) {
             // PHP can not create empty archives, so let's fake it.
-            $this->za->close();
+            @$this->za->close();
             $this->za = null;
             $this->mode = null;
             $this->namelookup = null;
@@ -656,6 +656,7 @@ class zip_archive extends file_archive {
                             case 'ISO-8859-6': $encoding = 'CP720'; break;
                             case 'ISO-8859-7': $encoding = 'CP737'; break;
                             case 'ISO-8859-8': $encoding = 'CP862'; break;
+                            case 'EUC-JP':
                             case 'UTF-8':
                                 if ($winchar = get_string('localewincharset', 'langconfig')) {
                                     // Most probably works only for zh_cn,

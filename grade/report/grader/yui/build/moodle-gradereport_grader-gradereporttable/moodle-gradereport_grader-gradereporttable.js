@@ -620,13 +620,25 @@ FloatingHeaders.prototype = {
 
         // Generate the new fields.
         userColumn.each(function(node) {
+            var height = node.getComputedStyle(HEIGHT);
+            // Nasty hack to account for Internet Explorer
+            if(Y.UA.ie !== 0) {
+                var allHeight = node.get('offsetHeight');
+                var marginHeight = parseInt(node.getComputedStyle('marginTop'),10) +
+                    parseInt(node.getComputedStyle('marginBottom'),10);
+                var paddingHeight = parseInt(node.getComputedStyle('paddingTop'),10) +
+                    parseInt(node.getComputedStyle('paddingBottom'),10);
+                var borderHeight = parseInt(node.getComputedStyle('borderTopWidth'),10) +
+                    parseInt(node.getComputedStyle('borderBottomWidth'),10);
+                height = allHeight - marginHeight - paddingHeight - borderHeight;
+            }
             // Create and configure the new container.
             var containerNode = Y.Node.create('<div></div>');
             containerNode.set('innerHTML', node.get('innerHTML'))
                     .setAttribute('class', node.getAttribute('class'))
                     .setAttribute('data-uid', node.ancestor('tr').getData('uid'))
                     .setStyles({
-                        height: node.getComputedStyle(HEIGHT),
+                        height: height,
                         width:  node.getComputedStyle(WIDTH)
                     });
 
@@ -660,7 +672,8 @@ FloatingHeaders.prototype = {
         this.headerCell = Y.one(SELECTORS.STUDENTHEADER);
 
         // Create the floating row and cell.
-        var floatingUserHeaderRow = Y.Node.create('<div aria-hidden="true" role="presentation" class="floater sideonly heading"></div>'),
+        var floatingUserHeaderRow = Y.Node.create('<div aria-hidden="true" role="presentation" ' +
+                                                   'class="floater sideonly heading"></div>'),
             floatingUserHeaderCell = Y.Node.create('<div></div>'),
             nodepos = this._getRelativeXY(this.headerCell)[0],
             coordinates = this._getRelativeXY(this.headerRow),
@@ -921,7 +934,7 @@ FloatingHeaders.prototype = {
         }
 
         // User column position.
-        if (right_to_left()) {
+        if (window.right_to_left()) {
             floatingUserTriggerPoint = Y.config.win.innerWidth + Y.config.win.pageXOffset - this.dockWidth;
             floatingUserRelativePoint = floatingUserTriggerPoint - this.firstUserCellWidth;
             userFloats = floatingUserTriggerPoint < (this.firstUserCellLeft + this.firstUserCellWidth);
@@ -1061,9 +1074,24 @@ FloatingHeaders.prototype = {
         var userCells = Y.all(SELECTORS.USERCELL);
         this.userColumnHeader.one('.cell').setStyle('width', userWidth);
         this.userColumn.all('.cell').each(function(cell, idx) {
+            var height = userCells.item(idx).getComputedStyle(HEIGHT);
+            // Nasty hack to account for Internet Explorer
+            if(Y.UA.ie !== 0) {
+                var node = userCells.item(idx);
+                var allHeight = node.getDOMNode ?
+                    node.getDOMNode().getBoundingClientRect().height :
+                    node.get('offsetHeight');
+                var marginHeight = parseInt(node.getComputedStyle('marginTop'),10) +
+                    parseInt(node.getComputedStyle('marginBottom'),10);
+                var paddingHeight = parseInt(node.getComputedStyle('paddingTop'),10) +
+                    parseInt(node.getComputedStyle('paddingBottom'),10);
+                var borderHeight = parseInt(node.getComputedStyle('borderTopWidth'),10) +
+                    parseInt(node.getComputedStyle('borderBottomWidth'),10);
+                height = allHeight - marginHeight - paddingHeight - borderHeight;
+            }
             cell.setStyles({
                 width: userWidth,
-                height: userCells.item(idx).getComputedStyle(HEIGHT)
+                height: height
             });
         }, this);
 

@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/question/type/questionbase.php');
 
 /**
  * Represents a matching question.
@@ -71,6 +72,25 @@ class qtype_match_question extends question_graded_automatically_with_countback 
     public function apply_attempt_state(question_attempt_step $step) {
         $this->stemorder = explode(',', $step->get_qt_var('_stemorder'));
         $this->set_choiceorder(explode(',', $step->get_qt_var('_choiceorder')));
+
+        // Add any missing subquestions. Sometimes people edit questions after they
+        // have been attempted which breaks things.
+        foreach ($this->stemorder as $stemid) {
+            if (!isset($this->stems[$stemid])) {
+                $this->stems[$stemid] = html_writer::span(
+                        get_string('deletedsubquestion', 'qtype_match'), 'notifyproblem');
+                $this->stemformat[$stemid] = FORMAT_HTML;
+                $this->right[$stemid] = 0;
+            }
+        }
+
+        // Add any missing choices. Sometimes people edit questions after they
+        // have been attempted which breaks things.
+        foreach ($this->choiceorder as $choiceid) {
+            if (!isset($this->choices[$choiceid])) {
+                $this->choices[$choiceid] = get_string('deletedchoice', 'qtype_match');
+            }
+        }
     }
 
     /**
@@ -80,8 +100,8 @@ class qtype_match_question extends question_graded_automatically_with_countback 
      */
     protected function set_choiceorder($choiceorder) {
         $this->choiceorder = array();
-        foreach ($choiceorder as $key => $value) {
-            $this->choiceorder[$key + 1] = $value;
+        foreach ($choiceorder as $key => $choiceid) {
+            $this->choiceorder[$key + 1] = $choiceid;
         }
     }
 
@@ -115,25 +135,34 @@ class qtype_match_question extends question_graded_automatically_with_countback 
     }
 
     public function classify_response(array $response) {
-        $selectedchoices = array();
+        $selectedchoicekeys = array();
         foreach ($this->stemorder as $key => $stemid) {
             if (array_key_exists($this->field($key), $response) && $response[$this->field($key)]) {
-                $selectedchoices[$stemid] = $this->choiceorder[$response[$this->field($key)]];
+                $selectedchoicekeys[$stemid] = $this->choiceorder[$response[$this->field($key)]];
             } else {
-                $selectedchoices[$stemid] = 0;
+                $selectedchoicekeys[$stemid] = 0;
             }
         }
 
         $parts = array();
         foreach ($this->stems as $stemid => $stem) {
-            if (empty($selectedchoices[$stemid])) {
+            if ($this->right[$stemid] == 0 || !isset($selectedchoicekeys[$stemid])) {
+                // Choice for a deleted subquestion, ignore. (See apply_attempt_state.)
+                continue;
+            }
+            $selectedchoicekey = $selectedchoicekeys[$stemid];
+            if (empty($selectedchoicekey)) {
                 $parts[$stemid] = question_classified_response::no_response();
                 continue;
             }
-            $choice = $this->choices[$selectedchoices[$stemid]];
+            $choice = $this->choices[$selectedchoicekey];
+            if ($choice == get_string('deletedchoice', 'qtype_match')) {
+                // Deleted choice, ignore. (See apply_attempt_state.)
+                continue;
+            }
             $parts[$stemid] = new question_classified_response(
-                    $selectedchoices[$stemid], $choice,
-                    ($selectedchoices[$stemid] == $this->right[$stemid]) / count($this->stems));
+                    $selectedchoicekey, $choice,
+                    ($selectedchoicekey == $this->right[$stemid]) / count($this->stems));
         }
         return $parts;
     }

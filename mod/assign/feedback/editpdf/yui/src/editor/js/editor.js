@@ -28,7 +28,7 @@
  * @constructor
  * @extends Y.Base
  */
-EDITOR = function() {
+var EDITOR = function() {
     EDITOR.superclass.constructor.apply(this, arguments);
 };
 EDITOR.prototype = {
@@ -41,6 +41,15 @@ EDITOR.prototype = {
      * @protected
      */
     dialogue : null,
+
+    /**
+     * The panel used for all action menu displays.
+     *
+     * @property type
+     * @type Y.Node
+     * @protected
+     */
+    panel : null,
 
     /**
      * The number of pages in the pdf.
@@ -203,11 +212,24 @@ EDITOR.prototype = {
             link.on('click', this.link_handler, this);
             link.on('key', this.link_handler, 'down:13', this);
 
-            this.currentedit.start = false;
-            this.currentedit.end = false;
-            if (!this.get('readonly')) {
-                this.quicklist = new M.assignfeedback_editpdf.quickcommentlist(this);
-            }
+            // We call the amd module to see if we can take control of the review panel.
+            require(['mod_assign/grading_review_panel'], function(ReviewPanelManager) {
+                var panelManager = new ReviewPanelManager();
+
+                var panel = panelManager.getReviewPanel('assignfeedback_editpdf');
+                if (panel) {
+                    panel = Y.one(panel);
+                    panel.empty();
+                    link.ancestor('.fitem').hide();
+                    this.open_in_panel(panel);
+                }
+                this.currentedit.start = false;
+                this.currentedit.end = false;
+                if (!this.get('readonly')) {
+                    this.quicklist = new M.assignfeedback_editpdf.quickcommentlist(this);
+                }
+            }.bind(this));
+
         }
     },
 
@@ -219,7 +241,7 @@ EDITOR.prototype = {
         var button, currenttoolnode, imgurl;
 
         // Initalise the colour buttons.
-        button = Y.one(SELECTOR.COMMENTCOLOURBUTTON);
+        button = this.get_dialogue_element(SELECTOR.COMMENTCOLOURBUTTON);
 
         imgurl = M.util.image_url('background_colour_' + this.currentedit.commentcolour, 'assignfeedback_editpdf');
         button.one('img').setAttribute('src', imgurl);
@@ -230,15 +252,15 @@ EDITOR.prototype = {
             button.one('img').setStyle('borderStyle', 'solid');
         }
 
-        button = Y.one(SELECTOR.ANNOTATIONCOLOURBUTTON);
+        button = this.get_dialogue_element(SELECTOR.ANNOTATIONCOLOURBUTTON);
         imgurl = M.util.image_url('colour_' + this.currentedit.annotationcolour, 'assignfeedback_editpdf');
         button.one('img').setAttribute('src', imgurl);
 
-        currenttoolnode = Y.one(TOOLSELECTOR[this.currentedit.tool]);
+        currenttoolnode = this.get_dialogue_element(TOOLSELECTOR[this.currentedit.tool]);
         currenttoolnode.addClass('assignfeedback_editpdf_selectedbutton');
         currenttoolnode.setAttribute('aria-pressed', 'true');
 
-        button = Y.one(SELECTOR.STAMPSBUTTON);
+        button = this.get_dialogue_element(SELECTOR.STAMPSBUTTON);
         button.one('img').setAttrs({'src': this.get_stamp_image_url(this.currentedit.stamp),
                                     'height': '16',
                                     'width': '16'});
@@ -249,7 +271,7 @@ EDITOR.prototype = {
      * @method get_canvas_bounds
      */
     get_canvas_bounds : function() {
-        var canvas = Y.one(SELECTOR.DRAWINGCANVAS),
+        var canvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS),
             offsetcanvas = canvas.getXY(),
             offsetleft = offsetcanvas[0],
             offsettop = offsetcanvas[1],
@@ -287,11 +309,41 @@ EDITOR.prototype = {
     },
 
     /**
+     * Open the edit-pdf editor in the panel in the page instead of a popup.
+     * @method open_in_panel
+     */
+    open_in_panel : function(panel) {
+        var drawingcanvas, drawingregion;
+
+        this.panel = panel;
+        panel.append(this.get('body'));
+        panel.addClass(CSS.DIALOGUE);
+
+        this.loadingicon = this.get_dialogue_element(SELECTOR.LOADINGICON);
+
+        drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
+        this.graphic = new Y.Graphic({render : drawingcanvas});
+
+        drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
+        drawingregion.on('scroll', this.move_canvas, this);
+
+        if (!this.get('readonly')) {
+            drawingcanvas.on('gesturemovestart', this.edit_start, null, this);
+            drawingcanvas.on('gesturemove', this.edit_move, null, this);
+            drawingcanvas.on('gesturemoveend', this.edit_end, null, this);
+
+            this.refresh_button_state();
+        }
+
+        this.load_all_pages();
+    },
+
+    /**
      * Called to open the pdf editing dialogue.
      * @method link_handler
      */
     link_handler : function(e) {
-        var drawingcanvas;
+        var drawingcanvas, drawingregion, resize = true;
         e.preventDefault();
 
         if (!this.dialogue) {
@@ -308,10 +360,13 @@ EDITOR.prototype = {
             // Add custom class for styling.
             this.dialogue.get('boundingBox').addClass(CSS.DIALOGUE);
 
-            this.loadingicon = Y.one(SELECTOR.LOADINGICON);
+            this.loadingicon = this.get_dialogue_element(SELECTOR.LOADINGICON);
 
-            drawingcanvas = Y.one(SELECTOR.DRAWINGCANVAS);
-            this.graphic = new Y.Graphic({render : SELECTOR.DRAWINGCANVAS});
+            drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
+            this.graphic = new Y.Graphic({render : drawingcanvas});
+
+            drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
+            drawingregion.on('scroll', this.move_canvas, this);
 
             if (!this.get('readonly')) {
                 drawingcanvas.on('gesturemovestart', this.edit_start, null, this);
@@ -322,10 +377,18 @@ EDITOR.prototype = {
             }
 
             this.load_all_pages();
+            drawingcanvas.on('windowresize', this.resize, this);
+
+            resize = false;
         }
         this.dialogue.centerDialogue();
         this.dialogue.show();
-        drawingcanvas.on('windowresize', this.resize, this);
+
+        // Redraw when the dialogue is moved, to ensure the absolute elements are all positioned correctly.
+        this.dialogue.dd.on('drag:end', this.redraw, this);
+        if (resize) {
+            this.resize(); // When re-opening the dialog call redraw, to make sure the size + layout is correct.
+        }
     },
 
     /**
@@ -382,7 +445,7 @@ EDITOR.prototype = {
                             var pagetotal = this.get('pagetotal');
 
                             // Update the progress bar.
-                            var progressbarcontainer = Y.one(SELECTOR.PROGRESSBARCONTAINER);
+                            var progressbarcontainer = this.get_dialogue_element(SELECTOR.PROGRESSBARCONTAINER);
                             var progressbar = progressbarcontainer.one('.bar');
                             if (progressbar) {
                                 // Calculate progress.
@@ -430,14 +493,18 @@ EDITOR.prototype = {
         try {
             data = Y.JSON.parse(responsetext);
             if (data.error || !data.pagecount) {
-                this.dialogue.hide();
+                if (this.dialogue) {
+                    this.dialogue.hide();
+                }
                 // Display alert dialogue.
                 error = new M.core.alert({ message: M.util.get_string('cannotopenpdf', 'assignfeedback_editpdf') });
                 error.show();
                 return;
             }
         } catch (e) {
-            this.dialogue.hide();
+            if (this.dialogue) {
+                this.dialogue.hide();
+            }
             // Display alert dialogue.
             error = new M.core.alert({ title: M.util.get_string('cannotopenpdf', 'assignfeedback_editpdf')});
             error.show();
@@ -509,7 +576,7 @@ EDITOR.prototype = {
             picker,
             filename;
 
-        searchcommentsbutton = Y.one(SELECTOR.SEARCHCOMMENTSBUTTON);
+        searchcommentsbutton = this.get_dialogue_element(SELECTOR.SEARCHCOMMENTSBUTTON);
         searchcommentsbutton.on('click', this.open_search_comments, this);
         searchcommentsbutton.on('key', this.open_search_comments, 'down:13', this);
 
@@ -518,7 +585,7 @@ EDITOR.prototype = {
         }
         // Setup the tool buttons.
         Y.each(TOOLSELECTOR, function(selector, tool) {
-            toolnode = Y.one(selector);
+            toolnode = this.get_dialogue_element(selector);
             toolnode.on('click', this.handle_tool_button, this, tool);
             toolnode.on('key', this.handle_tool_button, 'down:13', this, tool);
             toolnode.setAttribute('aria-pressed', 'false');
@@ -526,7 +593,7 @@ EDITOR.prototype = {
 
         // Set the default tool.
 
-        commentcolourbutton = Y.one(SELECTOR.COMMENTCOLOURBUTTON);
+        commentcolourbutton = this.get_dialogue_element(SELECTOR.COMMENTCOLOURBUTTON);
         picker = new M.assignfeedback_editpdf.colourpicker({
             buttonNode: commentcolourbutton,
             colours: COMMENTCOLOUR,
@@ -542,7 +609,7 @@ EDITOR.prototype = {
             context: this
         });
 
-        annotationcolourbutton = Y.one(SELECTOR.ANNOTATIONCOLOURBUTTON);
+        annotationcolourbutton = this.get_dialogue_element(SELECTOR.ANNOTATIONCOLOURBUTTON);
         picker = new M.assignfeedback_editpdf.colourpicker({
             buttonNode: annotationcolourbutton,
             iconprefix: 'colour_',
@@ -564,11 +631,11 @@ EDITOR.prototype = {
 
         stampfiles = this.get('stampfiles');
         if (stampfiles.length <= 0) {
-            Y.one(TOOLSELECTOR.stamp).ancestor().hide();
+            this.get_dialogue_element(TOOLSELECTOR.stamp).ancestor().hide();
         } else {
             filename = stampfiles[0].substr(stampfiles[0].lastIndexOf('/') + 1);
             this.currentedit.stamp = filename;
-            currentstampbutton = Y.one(SELECTOR.STAMPSBUTTON);
+            currentstampbutton = this.get_dialogue_element(SELECTOR.STAMPSBUTTON);
 
             picker = new M.assignfeedback_editpdf.stamppicker({
                 buttonNode: currentstampbutton,
@@ -601,7 +668,7 @@ EDITOR.prototype = {
         e.preventDefault();
 
         // Change style of the pressed button.
-        currenttoolnode = Y.one(TOOLSELECTOR[this.currentedit.tool]);
+        currenttoolnode = this.get_dialogue_element(TOOLSELECTOR[this.currentedit.tool]);
         currenttoolnode.removeClass('assignfeedback_editpdf_selectedbutton');
         currenttoolnode.setAttribute('aria-pressed', 'false');
         this.currentedit.tool = tool;
@@ -663,6 +730,19 @@ EDITOR.prototype = {
     },
 
     /**
+     * Find an element within the dialogue.
+     * @protected
+     * @method get_dialogue_element
+     */
+    get_dialogue_element : function(selector) {
+        if (this.panel) {
+            return this.panel.one(selector);
+        } else {
+            return this.dialogue.get('boundingBox').one(selector);
+        }
+    },
+
+    /**
      * Redraw the active edit.
      * @protected
      * @method redraw_active_edit
@@ -682,7 +762,7 @@ EDITOR.prototype = {
      */
     edit_start : function(e) {
         e.preventDefault();
-        var canvas = Y.one(SELECTOR.DRAWINGCANVAS),
+        var canvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS),
             offset = canvas.getXY(),
             scrolltop = canvas.get('docScrollY'),
             scrollleft = canvas.get('docScrollX'),
@@ -709,9 +789,9 @@ EDITOR.prototype = {
         this.currentedit.end = {x : point.x, y : point.y};
 
         if (this.currentedit.tool === 'select') {
-            x = this.currentedit.end.x;
-            y = this.currentedit.end.y;
-            annotations = this.pages[this.currentpage].annotations;
+            var x = this.currentedit.end.x,
+                y = this.currentedit.end.y,
+                annotations = this.pages[this.currentpage].annotations;
             // Find the first annotation whose bounds encompass the click.
             Y.each(annotations, function(annotation) {
                 if (((x - annotation.x) * (x - annotation.endx)) <= 0 &&
@@ -753,7 +833,7 @@ EDITOR.prototype = {
     edit_move : function(e) {
         e.preventDefault();
         var bounds = this.get_canvas_bounds(),
-            canvas = Y.one(SELECTOR.DRAWINGCANVAS),
+            canvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS),
             clientpoint = new M.assignfeedback_editpdf.point(e.clientX + canvas.get('docScrollX'),
                                                              e.clientY + canvas.get('docScrollY')),
             point = this.get_canvas_coordinates(clientpoint);
@@ -838,7 +918,25 @@ EDITOR.prototype = {
      * @method resize
      */
     resize : function() {
-        this.dialogue.centerDialogue();
+        var drawingregion, drawregionheight;
+
+        if (this.dialogue) {
+            if (!this.dialogue.get('visible')) {
+                return;
+            }
+            this.dialogue.centerDialogue();
+        }
+
+        // Make sure the dialogue box is not bigger than the max height of the viewport.
+        drawregionheight = Y.one('body').get('winHeight') - 120; // Space for toolbar + titlebar.
+        if (drawregionheight < 100) {
+            drawregionheight = 100;
+        }
+        drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
+        if (this.dialogue) {
+            drawingregion.setStyle('maxHeight', drawregionheight +'px');
+        }
+        this.redraw();
         return true;
     },
 
@@ -896,7 +994,16 @@ EDITOR.prototype = {
                         if (jsondata.error) {
                             return new M.core.ajaxException(jsondata);
                         }
-                        Y.one(SELECTOR.UNSAVEDCHANGESDIV).addClass('haschanges');
+                        Y.one(SELECTOR.UNSAVEDCHANGESINPUT).set('value', 'true');
+                        Y.one(SELECTOR.UNSAVEDCHANGESDIV).setStyle('opacity', 1);
+                        Y.one(SELECTOR.UNSAVEDCHANGESDIV).setStyle('display', 'inline-block');
+                        Y.one(SELECTOR.UNSAVEDCHANGESDIV).transition({
+                            duration: 1,
+                            delay: 2,
+                            opacity: 0
+                        }, function() {
+                            Y.one(SELECTOR.UNSAVEDCHANGESDIV).setStyle('display', 'none');
+                        });
                     } catch (e) {
                         return new M.core.exception(e);
                     }
@@ -939,6 +1046,9 @@ EDITOR.prototype = {
             page;
 
         page = this.pages[this.currentpage];
+        if (page === undefined) {
+            return; // Can happen if a redraw is triggered by an event, before the page has been selected.
+        }
         while (this.drawables.length > 0) {
             this.drawables.pop().erase();
         }
@@ -957,13 +1067,13 @@ EDITOR.prototype = {
      * @method change_page
      */
     change_page : function() {
-        var drawingcanvas = Y.one(SELECTOR.DRAWINGCANVAS),
+        var drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS),
             page,
             previousbutton,
             nextbutton;
 
-        previousbutton = Y.one(SELECTOR.PREVIOUSBUTTON);
-        nextbutton = Y.one(SELECTOR.NEXTBUTTON);
+        previousbutton = this.get_dialogue_element(SELECTOR.PREVIOUSBUTTON);
+        nextbutton = this.get_dialogue_element(SELECTOR.NEXTBUTTON);
 
         if (this.currentpage > 0) {
             previousbutton.removeAttribute('disabled');
@@ -979,11 +1089,13 @@ EDITOR.prototype = {
         page = this.pages[this.currentpage];
         this.loadingicon.hide();
         drawingcanvas.setStyle('backgroundImage', 'url("' + page.url + '")');
+        drawingcanvas.setStyle('width', page.width + 'px');
+        drawingcanvas.setStyle('height', page.height + 'px');
 
         // Update page select.
-        Y.one(SELECTOR.PAGESELECT).set('value', this.currentpage);
+        this.get_dialogue_element(SELECTOR.PAGESELECT).set('value', this.currentpage);
 
-        this.redraw();
+        this.resize(); // Internally will call 'redraw', after checking the dialogue size.
     },
 
     /**
@@ -995,18 +1107,20 @@ EDITOR.prototype = {
     setup_navigation : function() {
         var pageselect,
             i,
+            strinfo,
             option,
             previousbutton,
             nextbutton;
 
-        pageselect = Y.one(SELECTOR.PAGESELECT);
+        pageselect = this.get_dialogue_element(SELECTOR.PAGESELECT);
 
-        options = pageselect.all('option');
+        var options = pageselect.all('option');
         if (options.size() <= 1) {
             for (i = 0; i < this.pages.length; i++) {
                 option = Y.Node.create('<option/>');
                 option.setAttribute('value', i);
-                option.setHTML(M.util.get_string('pagenumber', 'assignfeedback_editpdf', i+1));
+                strinfo = {page: i+1, total: this.pages.length};
+                option.setHTML(M.util.get_string('pagexofy', 'assignfeedback_editpdf', strinfo));
                 pageselect.append(option);
             }
         }
@@ -1016,8 +1130,8 @@ EDITOR.prototype = {
             this.change_page();
         }, this);
 
-        previousbutton = Y.one(SELECTOR.PREVIOUSBUTTON);
-        nextbutton = Y.one(SELECTOR.NEXTBUTTON);
+        previousbutton = this.get_dialogue_element(SELECTOR.PREVIOUSBUTTON);
+        nextbutton = this.get_dialogue_element(SELECTOR.NEXTBUTTON);
 
         previousbutton.on('click', this.previous_page, this);
         previousbutton.on('key', this.previous_page, 'down:13', this);
@@ -1051,9 +1165,24 @@ EDITOR.prototype = {
             this.currentpage = this.pages.length - 1;
         }
         this.change_page();
+    },
+
+    /**
+     * Update any absolutely positioned nodes, within each drawable, when the drawing canvas is scrolled
+     * @protected
+     * @method move_canvas
+     */
+    move_canvas: function() {
+        var drawingregion, x, y, i;
+
+        drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
+        x = parseInt(drawingregion.get('scrollLeft'), 10);
+        y = parseInt(drawingregion.get('scrollTop'), 10);
+
+        for (i = 0; i < this.drawables.length; i++) {
+            this.drawables[i].scroll_update(x, y);
+        }
     }
-
-
 
 };
 
@@ -1117,5 +1246,6 @@ M.assignfeedback_editpdf.editor = M.assignfeedback_editpdf.editor || {};
  * @param {Object} params
  */
 M.assignfeedback_editpdf.editor.init = M.assignfeedback_editpdf.editor.init || function(params) {
-    return new EDITOR(params);
+    M.assignfeedback_editpdf.instance =  new EDITOR(params);
+    return M.assignfeedback_editpdf.instance;
 };

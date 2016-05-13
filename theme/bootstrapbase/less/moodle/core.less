@@ -16,6 +16,7 @@
     display:none;
 }
 
+/** Start Legacy styles. Deprecated since Moodle 2.9. See MDL-48160 for further information. **/
 .content-only #region-main.span9, // Two column layout with no block or all blocks docked.
 .empty-region-side-post #region-bs-main-and-pre.span9, // LTR with no post area.
 .empty-region-side-pre #region-bs-main-and-post.span9, // RTL with no pre area.
@@ -28,25 +29,70 @@
 
 .empty-region-side-pre #region-bs-main-and-pre.span9 #region-main, // LTR with no pre area.
 .jsenabled.docked-region-side-pre #region-bs-main-and-pre.span9 #region-main { // LTR with all pre blocks docked.
-    float:none;
-    width:100%;
-}
-
-.empty-region-side-post.used-region-side-pre, // Post region is empty and pre region is in use.
-.jsenabled.docked-region-side-post.used-region-side-pre { // All post blocks docked and pre region is in use.
-    #region-main.span8 {
-        /** Increase the span size by 1 **/
-        .fluid-span(9);
-    }
-    #block-region-side-pre.span4 {
-        /** Decrease the span size by 1 **/
-        .fluid-span(3);
-    }
+    float: none;
+    width: 100%;
 }
 
 .empty-region-side-pre #region-bs-main-and-post.span9 #region-main.span8, // RTL with no pre area.
 .jsenabled.docked-region-side-pre #region-bs-main-and-post.span9 #region-main.span8 { // RTL with all pre blocks docked.
     float: right;
+}
+/** End Legacy styles **/
+
+
+/* Default Three Columns - All
+------------------------------*/
+
+.content-only {
+    #region-main-box,
+    #region-main {
+        width: 100%;
+    }
+}
+.empty-region-side-pre {
+    &.used-region-side-post {
+        #region-main {
+            width: 100%;
+        }
+    }
+}
+.empty-region-side-post {
+    &.used-region-side-pre {
+        #region-main-box {
+            width: 100%;
+        }
+    }
+}
+.jsenabled {
+    &.docked-region-side-pre {
+        &.empty-region-side-pre {
+            &.used-region-side-post {
+                #region-main {
+                    width: 100%;
+                }
+            }
+        }
+    }
+    &.docked-region-side-post {
+        &.empty-region-side-post {
+            &.used-region-side-pre {
+                #region-main-box {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+.empty-region-side-post.used-region-side-pre, // Post region is empty and pre region is in use.
+.jsenabled.docked-region-side-post.used-region-side-pre { // All post blocks docked and pre region is in use.
+    #region-main.span8 {
+    /** Increase the span size by 1 **/
+        .fluid-span(9);
+    }
+    #block-region-side-pre.span4 {
+    /** Decrease the span size by 1 **/
+        .fluid-span(3);
+    }
 }
 
 /** Page layout CSS ends **/
@@ -133,9 +179,13 @@ a.autolink.glossary:hover {
 .collapsibleregioncaption {
     white-space: nowrap;
 }
+.pagelayout-mydashboard.jsenabled .collapsibleregioncaption {
+    cursor: pointer;
+}
 .collapsibleregioncaption img {
     vertical-align: middle;
 }
+
 .jsenabled .hiddenifjs {
     display: none;
 }
@@ -451,6 +501,17 @@ a.skip:active {
 .groupselector label {
     display: inline-block;
 }
+// Data format selector
+.dataformatselector {
+    margin: 1em 0;
+}
+.dataformatselector label {
+    display: inline-block;
+    margin: 0 5px 10px 0;
+    line-height: 30px;
+    vertical-align: top;
+}
+
 // Login
 .loginbox {
     margin: 15px;
@@ -697,228 +758,235 @@ table.mod_index {
 /**
 * Tags
 */
-#page-tag-coursetags_edit .coursetag_edit_centered {
-    position: relative;
-    width: 600px;
-    margin: 20px auto;
-}
-#page-tag-coursetags_edit .coursetag_edit_row {
-    clear: both;
-}
-#page-tag-coursetags_edit .coursetag_edit_row .coursetag_edit_left {
-    float: left;
-    width: 50%;
-    text-align: right;
-}
-#page-tag-coursetags_edit .coursetag_edit_row .coursetag_edit_right {
-    margin-left: 50%;
-}
-#page-tag-coursetags_edit .coursetag_edit_input3 {
-    display: none;
-}
-#page-tag-coursetags_more .coursetag_more_large {
-    font-size: 120%;
-}
-#page-tag-coursetags_more .coursetag_more_small {
-    font-size: 80%;
-}
-#page-tag-coursetags_more .coursetag_more_link {
-    font-size: 80%;
-}
-#tag-description,
-#tag-blogs {
-    width: 100%;
-}
-#tag-management-box {
-    margin-bottom: 10px;
-    line-height: 20px;
-}
-#tag-user-table {
-    padding: 3px;
-    clear: both;
-    width: 100%;
-}
-#tag-user-table {
-    .clearfix
-}
 img.user-image {
     height: 100px;
     width: 100px;
-}
-#small-tag-cloud-box {
-    width: 300px;
-    margin: 0 auto;
-}
-#big-tag-cloud-box {
-    width: 600px;
-    margin: 0 auto;
-    float: none;
-}
-ul#tag-cloud-list {
-    list-style: none;
-    padding: 5px;
-    margin: 0;
-}
-ul#tag-cloud-list li {
-    margin: 0;
-    display: inline;
-    list-style-type: none;
 }
 #tag-search-box {
     text-align: center;
     margin: 10px auto;
 }
-#tag-search-results-container {
-    padding: 0;
-    width: 100%;
+
+.path-tag .tag-index-items .tagarea {
+    border: 1px solid #E3E3E3;
+    border-radius: 4px;
+    padding: 10px;
+    margin-top: 10px;
 }
-#tag-search-results {
-    padding: 0;
-    margin: 15px 20% 0 20%;
-    float: left;
-    width: 60%;
+
+.path-tag .tag-index-items .tagarea h3 {
     display: block;
-}
-#tag-search-results li {
-    width: 30%;
-    float: left;
-    padding-left: 1%;
-    text-align: left;
+    padding: 3px 0 10px 0;
+    margin: 0px;
+    font-size: 1.1em;
+    font-weight: bold;
     line-height: 20px;
-    padding-right: 1%;
-    list-style: none;
+    color: #999;
+    text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    word-wrap: break-word;
+    border-bottom: solid 1px #E3E3E3;
+    margin-bottom: 10px;
 }
-span.flagged-tag,
-span.flagged-tag a {
-    color: @errorText;
+
+.path-tag .tagarea .controls,
+.path-tag .tagarea .taggeditems {
+    .clearfix();
 }
-table#tag-management-list {
-    text-align: left;
-    width: 100%;
-}
-table#tag-management-list td,
-table#tag-management-list th {
-    vertical-align: middle;
-    text-align: left;
-    padding: 4px;
-}
-.tag-management-form {
+.path-tag .tagarea .controls,
+.path-tag .tag-backtoallitems {
     text-align: center;
 }
-#relatedtags-autocomplete-container {
-    margin-left: auto;
-    margin-right: auto;
-    min-height: 4.6em;
-    width: 100%;
+.path-tag .tagarea .controls .gotopage.nextpage {
+    float: right;
 }
-#relatedtags-autocomplete {
-    position: relative;
-    display: block;
-    width: 60%;
-    margin-left: auto;
-    margin-right: auto;
+.path-tag .tagarea .controls .gotopage.prevpage {
+    float: left;
 }
-#relatedtags-autocomplete .yui-ac-content {
-    position: absolute;
-    width: 420px;
-    left: 20%;
-    border: 1px solid @dropdownBorder;
-    background: @dropdownBackground;
-    overflow: hidden;
-    z-index: 9050;
+.path-tag .tagarea .controls .exclusivemode {
+    display: inline-block;
 }
-#relatedtags-autocomplete .ysearchquery {
-    position: absolute;
-    right: 10px;
-    color: #808080;
-    z-index: 10;
+.dir-rtl.path-tag  .tagarea .controls .gotopage.nextpage {
+    float: left;
 }
-#relatedtags-autocomplete .yui-ac-shadow {
-    position: absolute;
-    margin: .3em;
-    width: 100%;
-    background: #a0a0a0;
-    z-index: 9049;
+.dir-rtl.path-tag  .tagarea .controls .gotopage.prevpage {
+    float: right;
 }
-#relatedtags-autocomplete ul {
-    padding: 0;
-    width: 100%;
-    margin: 0;
-    list-style-type: none;
+.path-tag .tagarea .controls.controls-bottom {
+    margin-top: 5px;
 }
-#relatedtags-autocomplete li {
-    padding: 0 5px;
-    cursor: default;
-    white-space: nowrap;
+.path-tag .tagarea .controls .gotopage.nextpage::after {
+    padding-right: 5px;
+    padding-left: 5px;
+    content: "»";
 }
-#relatedtags-autocomplete li.yui-ac-highlight{
-    background: @dropdownLinkBackgroundHover;
-    color: @dropdownLinkColorHover;
+.path-tag .tagarea .controls .gotopage.prevpage::before {
+    padding-right: 5px;
+    padding-left: 5px;
+    content: "«";
 }
-h2.tag-heading,
-div#tag-description,
-div#tag-blogs,
-body.tag .managelink {
-    padding: 5px;
+
+span.flagged-tag,
+tr.flagged-tag,
+span.flagged-tag a,
+tr.flagged-tag a {
+    color: @errorText;
+}
+.tag-management-table td,
+.tag-management-table th {
+    vertical-align: middle;
+    padding: 4px;
+}
+.tag-management-table .inplaceeditable.inplaceeditingon input {
+    width: 150px;
+}
+.path-admin-tag .addstandardtags {
+    float: right;
+    img {
+        margin: 0 5px;
+    }
+}
+.dir-rtl.path-admin-tag .addstandardtags {
+    float: left;
+}
+.path-tag .tag-relatedtags {
+    padding-top: 10px;
+}
+.path-tag .tag-management-box {
+    text-align: right;
+}
+.path-tag .tag-index-toc {
+    padding: 10px;
+    text-align: center;
+}
+.path-tag .tag-index-toc li,
+.path-tag .tag-management-box li {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+.path-tag .tag-management-box li a.edittag {
+    background-image: url([[pix:moodle|i/settings]]);
+}
+.path-tag .tag-management-box li a.flagasinappropriate {
+    background-image: url([[pix:moodle|i/flagged]]);
+}
+.path-tag .tag-management-box li a.removefrommyinterests {
+    background-image: url([[pix:moodle|t/delete]]);
+}
+.path-tag .tag-management-box li a.addtomyinterests {
+    background-image: url([[pix:moodle|t/add]]);
+}
+.path-tag .tag-management-box li a {
+    background-repeat: no-repeat;
+    background-position: left;
+    padding-left: 17px;
+}
+.tag_feed.media-list .media .itemimage {
+    float: left;
+}
+.dir-rtl .tag_feed.media-list .media .itemimage {
+    float: right;
+}
+.tag_feed.media-list .media .itemimage img {
+    height: 35px;
+    width: 35px;
+}
+.tag_feed.media-list .media .media-body {
+    padding-right: 10px;
+    padding-left: 10px;
+}
+.tag_feed .media .muted a {
+    .muted();
+}
+.tag_cloud {
+    text-align: center;
+}
+.tag_cloud .inline-list li {
+    padding: 0px 0.2em;
+}
+.tag_cloud .tag_overflow {
+    margin-top: 1em;
+    font-style: italic;
 }
 .tag_cloud .s20 {
-    font-size: 1.5em;
-    font-weight: bold;
+    font-size: 2.7em;
 }
 .tag_cloud .s19 {
-    font-size: 1.5em;
+    font-size: 2.6em;
 }
 .tag_cloud .s18 {
-    font-size: 1.4em;
-    font-weight: bold;
+    font-size: 2.5em;
 }
 .tag_cloud .s17 {
-    font-size: 1.4em;
+    font-size: 2.4em;
 }
 .tag_cloud .s16 {
-    font-size: 1.3em;
-    font-weight: bold;
+    font-size: 2.3em;
 }
 .tag_cloud .s15 {
-    font-size: 1.3em;
+    font-size: 2.2em;
 }
 .tag_cloud .s14 {
-    font-size: 1.2em;
-    font-weight: bold;
+    font-size: 2.1em;
 }
 .tag_cloud .s13 {
+    font-size: 2em;
+}
+.tag_cloud .s12 {
+    font-size: 1.9em;
+}
+.tag_cloud .s11 {
+    font-size: 1.8em;
+}
+.tag_cloud .s10 {
+    font-size: 1.7em;
+}
+.tag_cloud .s9 {
+    font-size: 1.6em;
+}
+.tag_cloud .s8 {
+    font-size: 1.5em;
+}
+.tag_cloud .s7 {
+    font-size: 1.4em;
+}
+.tag_cloud .s6 {
+    font-size: 1.3em;
+}
+.tag_cloud .s5 {
     font-size: 1.2em;
 }
-.tag_cloud .s12,
-.tag_cloud .s11 {
-    font-size: 1.1em;
-    font-weight: bold;
-}
-.tag_cloud .s10,
-.tag_cloud .s9 {
+.tag_cloud .s4 {
     font-size: 1.1em;
 }
-.tag_cloud .s8,
-.tag_cloud .s7 {
-    font-size: 1em;
-    font-weight: bold;
-}
-.tag_cloud .s6,
-.tag_cloud .s5 {
-    font-size: 1em;
-}
-.tag_cloud .s4,
 .tag_cloud .s3 {
-    font-size: 0.9em;
-    font-weight: bold;
+    font-size: 1em;
 }
-.tag_cloud .s2,
+.tag_cloud .s2 {
+    font-size: 0.9em;
+}
 .tag_cloud .s1 {
-    font-size: 0.9em;
-}
-.tag_cloud .s0 {
     font-size: 0.8em;
 }
+.tag_cloud .s0 {
+    font-size: 0.7em;
+}
+.tag_list ul {
+    display: inline;
+}
+.tag_list.hideoverlimit .overlimit {
+    display:none;
+}
+.tag_list .tagmorelink {
+    display:none;
+}
+.tag_list.hideoverlimit .tagmorelink {
+    display:inline;
+}
+.tag_list.hideoverlimit .taglesslink {
+    display:none;
+}
+
 /**
 * Web Service
 */
@@ -1032,8 +1100,12 @@ body.tag .managelink {
 .userenrolment .subfield {
     margin-right: 5px;
 }
+.userenrolment .col_userdetails .subfield {
+    margin-left: 40px;
+}
 .userenrolment .col_userdetails .subfield_picture {
     float: left;
+    margin-left: 0;
 }
 .userenrolment .col_lastseen {
     width: 150px;
@@ -1062,7 +1134,7 @@ body.tag .managelink {
     float: right;
     padding: 3px;
     margin: 3px;
-    > *:hover {
+    > a:hover {
         border-bottom:1px solid #666;
     }
 }
@@ -1146,8 +1218,13 @@ body.tag .managelink {
 .dir-rtl {
     &#page-enrol-users {
         .col_userdetails {
+            .subfield {
+                margin-right: 40px;
+                margin-left: 5px;
+            }
             .subfield_picture {
                 float: right;
+                margin-right: 0;
             }
         }
         .enrol_user_buttons {
@@ -1171,6 +1248,10 @@ body.tag .managelink {
             }
         }
     }
+}
+
+#page-enrol-users .enrol-users-page-action input {
+    margin-left: 0
 }
 
 /**
@@ -1658,6 +1739,18 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     overflow-y: auto;
     max-width: 20.3em;
     .box-shadow(inset 0 0 30px 0px #ccc);
+    .option {
+        input[type=radio] {
+            display: inline-block;
+        }
+        .modicon {
+            display: inline-block;
+        }
+        .typename {
+            display: inline-block;
+            width: 65%;
+        }
+    }
 }
 .dir-rtl.jschooser .choosercontainer #chooseform .alloptions {
     max-width: 18.3em;
@@ -1735,7 +1828,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     left: 20.3em;
     margin: 0;
     padding: 1.6em;
-    background-color: @bodyBackground;
+    background-color: #fff;
     overflow-x: hidden;
     overflow-y: auto;
     line-height: 2em;
@@ -1752,7 +1845,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     display: block;
 }
 .choosercontainer #chooseform .selected {
-    background-color: @bodyBackground;
+    background-color: #fff;
     .box-shadow(0px 0 10px 0 #ccc);
 }
 .section-modchooser-link img.smallicon {
@@ -1847,6 +1940,13 @@ table.collection .description {
     width: 25%;
     text-align: left;
 }
+.dir-rtl table.collection {
+    .name,
+    .criteria,
+    .description  {
+        text-align: right;
+    }
+}
 table.collection .actions {
     width: 11em;
     text-align: center;
@@ -1857,6 +1957,12 @@ a.criteria-action {
     padding: 0px 3px;
     float: right;
 }
+div.criteria-description {
+    padding: 10px 15px;
+    margin: 5px 0px;
+    background: none repeat scroll 0 0 #f9f9f9;
+    border: 1px solid #EEE;
+}
 ul.badges {
     margin: 0;
     list-style: none;
@@ -1864,7 +1970,7 @@ ul.badges {
 .badges li {
     position: relative;
     display: inline-block;
-    padding-bottom: 2em;
+    padding-top: 1em;
     text-align: center;
     vertical-align: top;
     width: 150px;
@@ -2037,6 +2143,72 @@ img#persona_signin {
     margin: 0;
 }
 
+/** Header-bar styles **/
+.page-context-header {
+    // We need to be explicit about the height of the header.
+    @pageHeaderHeight: 140px;
+
+    // Do not remove these rules.
+    overflow: hidden;
+
+    .page-header-image,
+    .page-header-headings {
+        display: block;
+        position: relative;
+    }
+    .page-header-image {
+        margin-bottom: 1em;
+    }
+    .page-header-headings {
+        margin-top: 30px;
+        margin-bottom: 10px;
+
+        h1 {
+            display: block;
+        }
+    }
+
+    .page-header-headings,
+    .header-button-group {
+        position: relative;
+        line-height: 24px;
+        vertical-align: middle;
+    }
+
+    .header-button-group {
+        display: block;
+
+        a {
+            position: relative;
+
+            // Don't touch it unless you know exactly what you are doing.
+            top: -0.4em;
+        }
+    }
+}
+
+.dir-ltr .page-context-header {
+    .page-header-image {
+        float: left;
+        margin-right: 1em;
+    }
+
+    .header-button-group {
+        float: left;
+    }
+}
+
+.dir-rtl .page-context-header {
+    .page-header-image {
+        float: right;
+        margin-left: 1em;
+    }
+
+    .header-button-group {
+        float: right;
+    }
+}
+
 /** Action menu component styles **/
 .moodle-actionmenu,
 .moodle-actionmenu > ul,
@@ -2048,6 +2220,14 @@ img#persona_signin {
     padding: 0;
     margin: 0;
     list-style-type: none;
+}
+
+.section_action_menu .moodle-actionmenu ul.menubar {
+    margin: 0;
+}
+
+.section_action_menu .moodle-actionmenu ul.menu {
+    margin: 0 10px 10px 0;
 }
 
 .moodle-actionmenu .toggle-display,
@@ -2255,7 +2435,7 @@ body.lockscroll {
 .dir-rtl {
     // Bootstrap sets right margin to 0. Fail.
     // They set left margin to 25px so we will copy that.
-    ul, ol {
+    ul {
         margin-left: 0;
         margin-right: 25px;
     }
@@ -2278,4 +2458,81 @@ dd:after {
 }
 dd:after {
   clear: both;
+}
+
+// Active tabs with links should have a different
+// cursor to indicate they are clickable.
+.nav-tabs > .active > a[href],
+.nav-tabs > .active > a[href]:hover,
+.nav-tabs > .active > a[href]:focus {
+    cursor: pointer;
+}
+
+span.inplaceeditable.inplaceeditingon {
+    position: relative;
+}
+span.inplaceeditable.inplaceeditingon span.editinstructions {
+    margin-top: -30px;
+    font-weight: normal;
+    margin-right: -300px;
+    margin-left: 0;
+}
+.dir-rtl span.inplaceeditable.inplaceeditingon span.editinstructions {
+    margin-left: -300px;
+    margin-right: 0;
+}
+
+.inplaceeditable {
+
+    &.inplaceeditingon {
+        position: relative;
+
+        .editinstructions {
+            margin-top: -30px;
+            font-weight: normal;
+            margin-right: -300px;
+            margin-left: 0;
+        }
+
+        input {
+            width: 330px;
+            height: 16px;
+            vertical-align: text-bottom;
+            margin-bottom: 0;
+        }
+
+        select {
+            margin-bottom: 0;
+        }
+    }
+
+    .quickediticon img {
+        opacity: 0.2;
+    }
+
+    .quickeditlink {
+        color: inherit;
+        text-decoration: inherit;
+    }
+
+    &:hover .quickeditlink .quickediticon img,
+    .quickeditlink:focus .quickediticon img {
+        opacity: 1;
+    }
+
+    &.inplaceeditable-toggle .quickediticon {
+        display: none;
+    }
+}
+
+.dir-rtl .inplaceeditable {
+    &.inplaceeditingon {
+        .editinstructions {
+            margin-left: -300px;
+            margin-right: 0;
+        }
+    }
+}
+h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
+    margin-top: -20px;
 }

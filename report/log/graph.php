@@ -123,15 +123,16 @@ if ($type === "usercourse.png") {
 
     $rawlogs = report_log_usercourse($user->id, $courseselect, $coursestart, $logreader);
 
-    if (empty($rawlogs)) {
-        return;
-    }
-
     foreach ($rawlogs as $rawlog) {
         $logs[$rawlog->day] = $rawlog->num;
     }
 
     $graph = new graph(750, 400);
+
+    if (empty($rawlogs)) {
+        $graph->parameter['y_axis_gridlines'] = 2;
+        $graph->parameter['y_max_left'] = 1;
+    }
 
     $a = new stdClass();
     $a->coursename = format_string($course->shortname, true, array('context' => $coursecontext));
@@ -142,6 +143,16 @@ if ($type === "usercourse.png") {
 
     $graph->y_data['logs']   = $logs;
     $graph->y_order = array('logs');
+
+    // Make sure the Y-axis gridlines correspond to the integer values.
+    if (count($logs) && ($ymax = max($logs)) && ($graph->parameter['y_axis_gridlines'] > 1)) {
+        if ($ymax < $graph->parameter['y_axis_gridlines'] - 1) {
+            $graph->parameter['y_axis_gridlines'] = $ymax + 1;
+        } else if ($ymax % ($graph->parameter['y_axis_gridlines'] - 1)) {
+            $graph->parameter['y_max_left'] = $graph->parameter['y_max_right'] =
+                ceil($ymax/($graph->parameter['y_axis_gridlines'] - 1)) * ($graph->parameter['y_axis_gridlines'] - 1);
+        }
+    }
 
     if (!empty($CFG->preferlinegraphs)) {
         $graph->y_format['logs'] = array('colour' => 'blue', 'line' => 'line');
@@ -187,15 +198,16 @@ if ($type === "usercourse.png") {
 
     $rawlogs = report_log_userday($user->id, $courseselect, $daystart, $logreader);
 
-    if (empty($rawlogs)) {
-        return;
-    }
-
     foreach ($rawlogs as $rawlog) {
         $logs[$rawlog->hour] = $rawlog->num;
     }
 
     $graph = new graph(750, 400);
+
+    if (empty($rawlogs)) {
+        $graph->parameter['y_axis_gridlines'] = 2;
+        $graph->parameter['y_max_left'] = 1;
+    }
 
     $a = new stdClass();
     $a->coursename = format_string($course->shortname, true, array('context' => $coursecontext));
@@ -205,6 +217,16 @@ if ($type === "usercourse.png") {
     $graph->x_data = $hours;
     $graph->y_data['logs'] = $logs;
     $graph->y_order = array('logs');
+
+    // Make sure the Y-axis gridlines correspond to the integer values.
+    if (count($logs) && ($ymax = max($logs)) && ($graph->parameter['y_axis_gridlines'] > 1)) {
+        if ($ymax < $graph->parameter['y_axis_gridlines'] - 1) {
+            $graph->parameter['y_axis_gridlines'] = $ymax + 1;
+        } else if ($ymax % ($graph->parameter['y_axis_gridlines'] - 1)) {
+            $graph->parameter['y_max_left'] = $graph->parameter['y_max_right'] =
+                ceil($ymax/($graph->parameter['y_axis_gridlines'] - 1)) * ($graph->parameter['y_axis_gridlines'] - 1);
+        }
+    }
 
     if (!empty($CFG->preferlinegraphs)) {
         $graph->y_format['logs'] = array('colour' => 'blue', 'line' => 'line');

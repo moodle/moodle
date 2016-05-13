@@ -42,6 +42,11 @@ $PAGE->set_pagelayout('popup');
 $PAGE->set_context(context_system::instance());
 
 $data = get_formatted_help_string($identifier, $component, false);
+if (!empty($data->heading)) {
+    $PAGE->set_title($data->heading);
+} else {
+    $PAGE->set_title(get_string('help'));
+}
 echo $OUTPUT->header();
 if (!empty($data->heading)) {
     echo $OUTPUT->heading($data->heading, 1, 'helpheading');

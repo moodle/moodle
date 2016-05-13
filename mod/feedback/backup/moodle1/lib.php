@@ -85,6 +85,8 @@ class moodle1_mod_feedback_handler extends moodle1_mod_handler {
      * data available
      */
     public function process_feedback($data) {
+        global $CFG;
+
         // get the course module id and context id
         $instanceid     = $data['id'];
         $cminfo         = $this->get_cminfo($instanceid);
@@ -98,6 +100,12 @@ class moodle1_mod_feedback_handler extends moodle1_mod_handler {
         $this->fileman->filearea = 'intro';
         $this->fileman->itemid   = 0;
         $data['intro'] = moodle1_converter::migrate_referenced_files($data['intro'], $this->fileman);
+
+        // Convert the introformat if necessary.
+        if ($CFG->texteditors !== 'textarea') {
+            $data['intro'] = text_to_html($data['intro'], false, false, true);
+            $data['introformat'] = FORMAT_HTML;
+        }
 
         // start writing feedback.xml
         $this->open_xml_writer("activities/feedback_{$this->moduleid}/feedback.xml");

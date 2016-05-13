@@ -1,0 +1,218 @@
+# PLEASE NOTE: Travis is not currently utilised by the Moodle core integration
+# process (which uses our internal CI system) this file is here for the benefit
+# of community developers git clones - see MDL-51458.
+
+sudo: false
+
+# We currently disable Travis notifications entirely until https://github.com/travis-ci/travis-ci/issues/4976
+# is fixed.
+notifications:
+  email: false
+
+language: php
+
+php:
+    # We only run the highest and lowest supported versions to reduce the load on travis-ci.org.
+    - 7.0
+    # - 5.6
+    # - 5.5
+    - 5.4
+
+env:
+    # Although we want to run these jobs and see failures as quickly as possible, we also want to get the slowest job to
+    # start first so that the total run time is not too high.
+    #
+    # We only run MySQL on PHP 5.6, so run that first.
+    # CI Tests should be second-highest in priority as these only take <= 60 seconds to run under normal circumstances.
+    # Postgres is significantly is pretty reasonable in its run-time.
+
+    # Run unit tests on MySQL
+    - DB=mysqli   PHPUNIT=true    INSTALL=false   CITEST=false
+
+    # Run CI Tests without running PHPUnit.
+    - DB=none     PHPUNIT=false   INSTALL=false   CITEST=true
+
+    # Run unit tests on Postgres
+    - DB=pgsql    PHPUNIT=true    INSTALL=false   CITEST=false
+
+    # Perform an upgrade test too.
+    - DB=pgsql    PHPUNIT=false   INSTALL=true   CITEST=false   UPGRADE=true
+
+matrix:
+    # Enable fast finish.
+    # This will fail the build if a single job fails (except those in allow_failures).
+    # It will not stop the jobs from running.
+    fast_finish: true
+
+    exclude:
+        # MySQL - it's just too slow.
+        # Exclude it on all versions except for 7.0
+        # - env: DB=mysqli   PHPUNIT=true    INSTALL=false   CITEST=false
+        #   php: 5.6
+        #
+        # - env: DB=mysqli   PHPUNIT=true    INSTALL=false   CITEST=false
+        #   php: 5.5
+
+        - env: DB=mysqli   PHPUNIT=true    INSTALL=false   CITEST=false
+          php: 5.4
+
+        # Moodle 2.7 is not compatible with PHP 7 for the upgrade test.
+        - env: DB=pgsql    PHPUNIT=false   INSTALL=true   CITEST=false   UPGRADE=true
+          php: 7.0
+
+cache:
+    directories:
+      - $HOME/.composer/cache
+
+install:
+    # Disable xdebug. We aren't generating code coverage, and it has a huge impact upon test performance.
+    - rm /home/travis/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+
+    # Set the encrypted GITHUB_TOKEN if it's available to raise the API limit.
+    - if [ -n "$GITHUB_APITOKEN" ]; then composer config github-oauth.github.com $GITHUB_APITOKEN; fi
+
+    # Install composer dependencies.
+    # We need --no-interaction in case we hit API limits for composer. This causes it to fall back to a standard clone.
+    # Typically it should be able to use the Composer cache if any other job has already completed before we started here.
+    - travis_retry composer install --prefer-dist --no-interaction
+
+before_script:
+    - >
+      if [ "$INSTALL" = 'true' -o "$PHPUNIT" = 'true' ];
+      then
+        # Copy generic configuration in place.
+        cp config-dist.php config.php ;
+
+        # Create the moodledata directory.
+        mkdir -p "$HOME"/roots/base
+
+        # The database name and password.
+        sed -i \
+          -e "s%= 'moodle'%= 'travis_ci_test'%" \
+          -e "s%= 'password'%= ''%" \
+          config.php ;
+
+        # The wwwroot and dataroot.
+        sed -i \
+          -e "s%http://example.com/moodle%http://localhost%" \
+          -e "s%/home/example/moodledata%/home/travis/roots/base%" \
+          config.php ;
+
+        if [ "$DB" = 'pgsql' ];
+        then
+          # Postgres-specific setup.
+          sed -i \
+            -e "s%= 'username'%= 'postgres'%" \
+            config.php ;
+
+          psql -c 'CREATE DATABASE travis_ci_test;' -U postgres;
+        fi
+
+        if [ "$DB" = 'mysqli' ];
+        then
+          # MySQL-specific setup.
+          sed -i \
+            -e "s%= 'pgsql'%= 'mysqli'%" \
+            -e "s%= 'username'%= 'travis'%" \
+            config.php;
+
+          mysql -u root -e 'SET GLOBAL innodb_file_format=barracuda;' ;
+          mysql -u root -e 'SET GLOBAL innodb_file_per_table=ON;' ;
+          mysql -e 'CREATE DATABASE travis_ci_test DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_bin;' ;
+        fi
+
+        if [ "$PHPUNIT" = 'true' ];
+        then
+          # Create a directory for the phpunit dataroot.
+          mkdir -p "$HOME"/roots/phpunit
+
+          # The phpunit dataroot and prefix..
+          sed -i \
+            -e "/require_once/i \\\$CFG->phpunit_dataroot = '\/home\/travis\/roots\/phpunit';" \
+            -e "/require_once/i \\\$CFG->phpunit_prefix = 'p_';" \
+            config.php ;
+
+          # Initialise PHPUnit for Moodle.
+          php admin/tool/phpunit/cli/init.php
+        fi
+      fi
+
+script:
+    ########################################################################
+    # PHPUnit
+    ########################################################################
+    - >
+      if [ "$PHPUNIT" = 'true' ];
+      then
+        vendor/bin/phpunit;
+      fi
+
+    ########################################################################
+    # CI Tests
+    ########################################################################
+    - >
+      if [ "$CITEST" = 'true' ];
+      then
+        # Note - this is deliberately placed in the script section as we
+        # should not add any code until after phpunit has run.
+
+        # The following repositories are required.
+        # The local_ci repository does the actual checking.
+        git clone https://github.com/moodlehq/moodle-local_ci.git local/ci
+
+        # We need the official upstream for comparison
+        git remote add upstream https://github.com/moodle/moodle.git;
+
+        git fetch upstream master;
+        export GIT_PREVIOUS_COMMIT="`git merge-base FETCH_HEAD $TRAVIS_COMMIT`";
+        export GIT_COMMIT="$TRAVIS_COMMIT";
+        export UPSTREAM_FETCH_HEAD=`git rev-parse FETCH_HEAD`
+
+        # Variables required by our linter.
+        export gitcmd=`which git`;
+        export gitdir="$TRAVIS_BUILD_DIR";
+        export phpcmd=`which php`;
+      fi
+
+    # Actually run the CI Tests - do this outside of the main test to make output clearer.
+    - >
+      if [ "$CITEST" = 'true' ];
+      then
+        bash local/ci/php_lint/php_lint.sh;
+      fi
+
+    ########################################################################
+    # Upgrade test
+    ########################################################################
+    - >
+      if [ "$UPGRADE" = 'true' ];
+      then
+        # We need the official upstream.
+        git remote add upstream https://github.com/moodle/moodle.git;
+
+        # Checkout 27 STABLE branch.
+        git fetch upstream MOODLE_27_STABLE;
+        git checkout MOODLE_27_STABLE;
+
+        # Perform the upgrade
+        php admin/cli/install_database.php --agree-license --adminpass=Password --adminemail=admin@example.com --fullname="Upgrade test" --shortname=Upgrade;
+
+        # Return to the previous commit
+        git checkout -;
+
+        # Perform the upgrade
+        php admin/cli/upgrade.php --non-interactive --allow-unstable ;
+
+        # The local_ci repository can be used to check upgrade savepoints.
+        git clone https://github.com/moodlehq/moodle-local_ci.git local/ci ;
+
+        cp local/ci/check_upgrade_savepoints/check_upgrade_savepoints.php ./check_upgrade_savepoints.php
+        result=`php check_upgrade_savepoints.php`;
+        # Check if there are problems
+        count=`echo "$result" | grep -P "ERROR|WARN" | wc -l` ;
+        if (($count > 0));
+        then
+          echo "$result"
+          exit 1 ;
+        fi
+      fi

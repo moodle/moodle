@@ -61,11 +61,8 @@ class restore_final_task extends restore_task {
             $this->add_step(new restore_grade_history_structure_step('grade_history', 'grade_history.xml'));
         }
 
-        // Course completion, executed conditionally if restoring to new course
-        if ($this->get_target() !== backup::TARGET_CURRENT_ADDING &&
-            $this->get_target() !== backup::TARGET_EXISTING_ADDING) {
-            $this->add_step(new restore_course_completion_structure_step('course_completion', 'completion.xml'));
-        }
+        // Course completion.
+        $this->add_step(new restore_course_completion_structure_step('course_completion', 'completion.xml'));
 
         // Conditionally restore course badges.
         if ($this->get_setting_value('badges')) {
@@ -85,9 +82,12 @@ class restore_final_task extends restore_task {
         $this->add_step(new restore_decode_interlinks('decode_interlinks'));
 
         // Restore course logs (conditionally). They are restored here because we need all
-        // the activities to be already restored
+        // the activities to be already restored.
         if ($this->get_setting_value('logs')) {
+            // Legacy logs.
             $this->add_step(new restore_course_logs_structure_step('course_logs', 'course/logs.xml'));
+            // New log stores.
+            $this->add_step(new restore_course_logstores_structure_step('course_logstores', 'course/logstores.xml'));
         }
 
         // Review all the executed tasks having one after_restore method

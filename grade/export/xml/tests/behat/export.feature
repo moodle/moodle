@@ -10,8 +10,8 @@ Feature: I need to export grades as xml
       | Course 1 | C1 | 0 | 1 |
     And the following "users" exist:
       | username | firstname | lastname | email | idnumber |
-      | teacher1 | Teacher | 1 | teacher1@asd.com | t1 |
-      | student1 | Student | 1 | student1@asd.com | s1 |
+      | teacher1 | Teacher | 1 | teacher1@example.com | t1 |
+      | student1 | Student | 1 | student1@example.com | s1 |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -21,7 +21,7 @@ Feature: I need to export grades as xml
       | assign | C1 | a1 | Test assignment name | Submit something! |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment name"
     And I press "Save changes"

@@ -10,12 +10,12 @@ Feature: Block appearances
       | Course 1 | C1 | 0 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | teacher | 1 | teacher1@asd.com |
+      | teacher1 | teacher | 1 | teacher1@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "admin"
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 1"
     And I follow "Turn editing on"
     And I add a "Survey" to section "1" and I fill the form with:

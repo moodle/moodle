@@ -25,7 +25,7 @@
 class data_field_file extends data_field_base {
     var $type = 'file';
 
-    function display_add_field($recordid=0) {
+    function display_add_field($recordid = 0, $formdata = null) {
         global $CFG, $DB, $OUTPUT, $PAGE, $USER;
 
         $file        = false;
@@ -36,7 +36,10 @@ class data_field_file extends data_field_base {
         $itemid = null;
 
         // editing an existing database entry
-        if ($recordid){
+        if ($formdata) {
+            $fieldname = 'field_' . $this->field->id . '_file';
+            $itemid = clean_param($formdata->$fieldname, PARAM_INT);
+        } else if ($recordid) {
             if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
 
                 file_prepare_draft_area($itemid, $this->context->id, 'mod_data', 'content', $content->id);
@@ -62,13 +65,21 @@ class data_field_file extends data_field_base {
             $itemid = file_get_unused_draft_itemid();
         }
 
-        $html = '';
         // database entry label
-        $html .= '<div title="'.s($this->field->description).'">';
-        $html .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
+        $html = '<div title="' . s($this->field->description) . '">';
+        $html .= '<fieldset><legend><span class="accesshide">'.$this->field->name;
+
+        if ($this->field->required) {
+            $html .= '&nbsp;' . get_string('requiredelement', 'form') . '</span></legend>';
+            $image = html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
+                                     array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+            $html .= html_writer::div($image, 'inline-req');
+        } else {
+            $html .= '</span></legend>';
+        }
 
         // itemid element
-        $html .= '<input type="hidden" name="field_'.$this->field->id.'_file" value="'.$itemid.'" />';
+        $html .= '<input type="hidden" name="field_'.$this->field->id.'_file" value="'.s($itemid).'" />';
 
         $options = new stdClass();
         $options->maxbytes = $this->field->param3;
@@ -82,8 +93,9 @@ class data_field_file extends data_field_base {
         // Print out file manager.
 
         $output = $PAGE->get_renderer('core', 'files');
+        $html .= '<div class="mod-data-input">';
         $html .= $output->render($fm);
-
+        $html .= '</div>';
         $html .= '</fieldset>';
         $html .= '</div>';
 
@@ -92,7 +104,7 @@ class data_field_file extends data_field_base {
 
     function display_search_field($value = '') {
         return '<label class="accesshide" for="f_' . $this->field->id . '">' . $this->field->name . '</label>' .
-               '<input type="text" size="16" id="f_'.$this->field->id.'" name="f_'.$this->field->id.'" value="'.$value.'" />';
+               '<input type="text" size="16" id="f_'.$this->field->id.'" name="f_'.$this->field->id.'" value="'.s($value).'" />';
     }
 
     function generate_sql($tablealias, $value) {
@@ -164,36 +176,22 @@ class data_field_file extends data_field_base {
             $content = $DB->get_record('data_content', array('id'=>$id));
         }
 
-        // delete existing files
-        $fs->delete_area_files($this->context->id, 'mod_data', 'content', $content->id);
+        file_save_draft_area_files($value, $this->context->id, 'mod_data', 'content', $content->id);
 
         $usercontext = context_user::instance($USER->id);
-        $files = $fs->get_area_files($usercontext->id, 'user', 'draft', $value, 'timecreated DESC');
+        $files = $fs->get_area_files($this->context->id, 'mod_data', 'content', $content->id, 'itemid, filepath, filename', false);
 
-        if (count($files)<2) {
-            // no file
+        // We expect no or just one file (maxfiles = 1 option is set for the form_filemanager).
+        if (count($files) == 0) {
+            $content->content = null;
         } else {
-            foreach ($files as $draftfile) {
-                if (!$draftfile->is_directory()) {
-                    $file_record = array(
-                        'contextid' => $this->context->id,
-                        'component' => 'mod_data',
-                        'filearea' => 'content',
-                        'itemid' => $content->id,
-                        'filepath' => '/',
-                        'filename' => $draftfile->get_filename(),
-                    );
-
-                    $content->content = $file_record['filename'];
-
-                    $fs->create_file_from_storedfile($file_record, $draftfile);
-                    $DB->update_record('data_content', $content);
-
-                    // Break from the loop now to avoid overwriting the uploaded file record
-                    break;
-                }
+            $content->content = array_values($files)[0]->get_filename();
+            if (count($files) > 1) {
+                // This should not happen with a consistent database. Inform admins/developers about the inconsistency.
+                debugging('more then one file found in mod_data instance {$this->data->id} file field (field id: {$this->field->id}) area during update data record {$recordid} (content id: {$content->id})', DEBUG_NORMAL);
             }
         }
+        $DB->update_record('data_content', $content);
     }
 
     function text_export_supported() {
@@ -204,6 +202,24 @@ class data_field_file extends data_field_base {
         return true;
     }
 
+    /**
+     * Custom notempty function
+     *
+     * @param string $value
+     * @param string $name
+     * @return bool
+     */
+    function notemptyfield($value, $name) {
+        global $USER;
+
+        $names = explode('_', $name);
+        if ($names[2] == 'file') {
+            $usercontext = context_user::instance($USER->id);
+            $fs = get_file_storage();
+            $files = $fs->get_area_files($usercontext->id, 'user', 'draft', $value);
+            return count($files) >= 2;
+        }
+        return false;
+    }
+
 }
-
-

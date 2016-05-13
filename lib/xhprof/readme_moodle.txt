@@ -21,9 +21,6 @@ Our changes:  Look for "moodle" in code (commit #3 - always mimic from current m
  * xhprof_lib/utils/callgraph_utils.php: Modified to use $CFG->pathtodot
 
 TODO:
- * with the 3 reports (index, callgraph and typeahead), close seesion asap,
-       so user can continue working with moodle while the report (specially
-       the graph is being generated).
  * improvements to the listing mode: various commodity details like:
        - allow to filter by various criteria
        - inline (and ajax) editing of reference/comment and deleting

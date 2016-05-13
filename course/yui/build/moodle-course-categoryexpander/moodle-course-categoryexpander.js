@@ -193,6 +193,7 @@ NS._toggle_category_expansion = function(e) {
  * @param {Object} config
  */
 NS._toggle_generic_expansion = function(config) {
+    var spinner;
     if (config.spinnerhandle) {
       // Add a spinner to give some feedback to the user.
       spinner = M.util.add_spinner(Y, config.parentnode.one(config.spinnerhandle)).show();

@@ -23,8 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once 'Zend/XmlRpc/Client.php';
-
 /**
  * Moodle XML-RPC client
  *
@@ -34,10 +32,13 @@ require_once 'Zend/XmlRpc/Client.php';
  * @copyright  2010 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class webservice_xmlrpc_client extends Zend_XmlRpc_Client {
+class webservice_xmlrpc_client {
 
-    /** @var string server url e.g. https://yyyyy.com/server.php */
-    private $serverurl;
+    /** @var moodle_url The XML-RPC server url. */
+    protected $serverurl;
+
+    /** @var string The token for the XML-RPC call. */
+    protected $token;
 
     /**
      * Constructor
@@ -46,9 +47,8 @@ class webservice_xmlrpc_client extends Zend_XmlRpc_Client {
      * @param string $token the token used to do the web service call
      */
     public function __construct($serverurl, $token) {
-        $this->serverurl = $serverurl;
-        $serverurl = $serverurl . '?wstoken=' . $token;
-        parent::__construct($serverurl);
+        $this->serverurl = new moodle_url($serverurl);
+        $this->token = $token;
     }
 
     /**
@@ -57,26 +57,47 @@ class webservice_xmlrpc_client extends Zend_XmlRpc_Client {
      * @param string $token the token used to do the web service call
      */
     public function set_token($token) {
-        $this->_serverAddress = $this->serverurl . '?wstoken=' . $token;
+        $this->token = $token;
     }
 
     /**
      * Execute client WS request with token authentication
      *
      * @param string $functionname the function name
-     * @param array $params the parameters of the function
-     * @return mixed
+     * @param array $params An associative array containing the the parameters of the function being called.
+     * @return mixed The decoded XML RPC response.
+     * @throws moodle_exception
      */
-    public function call($functionname, $params=array()) {
-        global $DB, $CFG;
+    public function call($functionname, $params = array()) {
+        if ($this->token) {
+            $this->serverurl->param('wstoken', $this->token);
+        }
 
-        //zend expects 0 based array with numeric indexes
-        $params = array_values($params);
+        // Set output options.
+        $outputoptions = array(
+            'encoding' => 'utf-8'
+        );
 
-        //traditional Zend soap client call (integrating the token into the URL)
-        $result = parent::call($functionname, $params);
+        // Encode the request.
+        $request = xmlrpc_encode_request($functionname, $params, $outputoptions);
+
+        // Set the headers.
+        $headers = array(
+            'Content-Length' => strlen($request),
+            'Content-Type' => 'text/xml; charset=utf-8',
+            'Host' => $this->serverurl->get_host(),
+            'User-Agent' => 'Moodle XML-RPC Client/1.0',
+        );
+
+        // Get the response.
+        $response = download_file_content($this->serverurl, $headers, $request);
+
+        // Decode the response.
+        $result = xmlrpc_decode($response);
+        if (is_array($result) && xmlrpc_is_fault($result)) {
+            throw new Exception($result['faultString'], $result['faultCode']);
+        }
 
         return $result;
     }
-
 }

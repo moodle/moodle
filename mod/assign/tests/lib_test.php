@@ -103,23 +103,83 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
 
     public function test_assign_print_overview() {
         global $DB;
+
+        // Create one more assignment instance.
+        $this->setAdminUser();
         $courses = $DB->get_records('course', array('id' => $this->course->id));
+        // Past assignments should not show up.
+        $pastassign = $this->create_instance(array('duedate' => time(),
+                                                   'cutoffdate' => time() - 370000,
+                                                   'nosubmissions' => 0,
+                                                   'assignsubmission_onlinetext_enabled' => 1));
+        // Open assignments should show up only if relevant.
+        $openassign = $this->create_instance(array('duedate' => time(),
+                                                   'cutoffdate' => time() + 370000,
+                                                   'nosubmissions' => 0,
+                                                   'assignsubmission_onlinetext_enabled' => 1));
+        $pastsubmission = $pastassign->get_user_submission($this->students[0]->id, true);
+        $opensubmission = $openassign->get_user_submission($this->students[0]->id, true);
 
         // Check the overview as the different users.
+        // For students , open assignments should show only when there are no valid submissions.
         $this->setUser($this->students[0]);
         $overview = array();
         assign_print_overview($courses, $overview);
-        $this->assertEquals(count($overview), 1);
+        $this->assertEquals(1, count($overview));
+        $this->assertRegExp('/.*Assignment 4.*/', $overview[$this->course->id]['assign']); // No valid submission.
+        $this->assertNotRegExp('/.*Assignment 1.*/', $overview[$this->course->id]['assign']); // Has valid submission.
+
+        // And now submit the submission.
+        $opensubmission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+        $openassign->testable_update_submission($opensubmission, $this->students[0]->id, true, false);
+
+        $overview = array();
+        assign_print_overview($courses, $overview);
+        $this->assertEquals(0, count($overview));
 
         $this->setUser($this->teachers[0]);
         $overview = array();
         assign_print_overview($courses, $overview);
-        $this->assertEquals(count($overview), 1);
+        $this->assertEquals(1, count($overview));
+        // Submissions without a grade.
+        $this->assertRegExp('/.*Assignment 4.*/', $overview[$this->course->id]['assign']);
+        $this->assertRegExp('/.*Assignment 2.*/', $overview[$this->course->id]['assign']);
 
         $this->setUser($this->editingteachers[0]);
         $overview = array();
         assign_print_overview($courses, $overview);
         $this->assertEquals(1, count($overview));
+        // Submissions without a grade.
+        $this->assertRegExp('/.*Assignment 4.*/', $overview[$this->course->id]['assign']);
+        $this->assertRegExp('/.*Assignment 2.*/', $overview[$this->course->id]['assign']);
+
+        // Let us grade a submission.
+        $this->setUser($this->teachers[0]);
+        $data = new stdClass();
+        $data->grade = '50.0';
+        $openassign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
+        $overview = array();
+        assign_print_overview($courses, $overview);
+        $this->assertEquals(1, count($overview));
+        // Now assignment 4 should not show up.
+        $this->assertNotRegExp('/.*Assignment 4.*/', $overview[$this->course->id]['assign']);
+        $this->assertRegExp('/.*Assignment 2.*/', $overview[$this->course->id]['assign']);
+
+        $this->setUser($this->editingteachers[0]);
+        $overview = array();
+        assign_print_overview($courses, $overview);
+        $this->assertEquals(1, count($overview));
+        // Now assignment 4 should not show up.
+        $this->assertNotRegExp('/.*Assignment 4.*/', $overview[$this->course->id]['assign']);
+        $this->assertRegExp('/.*Assignment 2.*/', $overview[$this->course->id]['assign']);
+
+        // Open offline assignments should not show any notification to students.
+        $openassign = $this->create_instance(array('duedate' => time(),
+                                                   'cutoffdate' => time() + 370000));
+        $this->setUser($this->students[0]);
+        $overview = array();
+        assign_print_overview($courses, $overview);
+        $this->assertEquals(0, count($overview));
     }
 
     public function test_print_recent_activity() {
@@ -160,6 +220,30 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->editingteachers[0]);
         $this->expectOutputRegex('/submitted:/');
         set_config('fullnamedisplay', 'firstname, lastnamephonetic');
+        assign_print_recent_activity($this->course, false, time() - 3600);
+
+        $sink->close();
+    }
+
+    /** Make sure blind marking shows participant \d+ not fullname when assign_print_recent_activity is triggered. */
+    public function test_print_recent_activity_fullname_blind_marking() {
+        // Submitting an assignment generates a notification in blind marking.
+        $this->preventResetByRollback();
+        $sink = $this->redirectMessages();
+
+        $this->setUser($this->editingteachers[0]);
+        $assign = $this->create_instance(array('blindmarking' => 1));
+
+        $data = new stdClass();
+        $data->userid = $this->students[0]->id;
+        $notices = array();
+        $this->setUser($this->students[0]);
+        $assign->submit_for_grading($data, $notices);
+
+        $this->setUser($this->editingteachers[0]);
+        $uniqueid = $assign->get_uniqueid_for_user($data->userid);
+        $expectedstr = preg_quote(get_string('participant', 'mod_assign'), '/') . '.*' . $uniqueid;
+        $this->expectOutputRegex("/{$expectedstr}/");
         assign_print_recent_activity($this->course, false, time() - 3600);
 
         $sink->close();
@@ -241,6 +325,45 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $result = assign_get_completion_state($this->course, $assign->get_course_module(), $this->students[0]->id, false);
 
         $this->assertTrue($result);
+    }
+
+    /**
+     * Tests for mod_assign_refresh_events.
+     */
+    public function test_assign_refresh_events() {
+        global $DB;
+        $duedate = time();
+        $this->setAdminUser();
+
+        $assign = $this->create_instance(array('duedate' => $duedate));
+
+        // Normal case, with existing course.
+        $this->assertTrue(assign_refresh_events($this->course->id));
+
+        $instance = $assign->get_instance();
+        $eventparams = array('modulename' => 'assign', 'instance' => $instance->id);
+        $event = $DB->get_record('event', $eventparams, '*', MUST_EXIST);
+        $this->assertEquals($event->timestart, $duedate);
+
+        // In case the course ID is passed as a numeric string.
+        $this->assertTrue(assign_refresh_events('' . $this->course->id));
+
+        // Course ID not provided.
+        $this->assertTrue(assign_refresh_events());
+
+        $eventparams = array('modulename' => 'assign');
+        $events = $DB->get_records('event', $eventparams);
+        foreach ($events as $event) {
+            if ($event->modulename === 'assign' && $event->instance === $instance->id) {
+                $this->assertEquals($event->timestart, $duedate);
+            }
+        }
+
+        // Non-existing course ID.
+        $this->assertFalse(assign_refresh_events(-1));
+
+        // Invalid course ID.
+        $this->assertFalse(assign_refresh_events('aaa'));
     }
 
 }

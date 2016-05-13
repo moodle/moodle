@@ -1,7 +1,50 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 3.1 ===
+
+* A new search box for global search has been added to bootstrap and clean layout files, if
+  your theme is overwriting columns1.php, columns2.php or columns3.php you will need to add a
+  call to core_renderer::search_box to display it.
+* Notification templates have been renamed to better suit types of alert
+  rather than uses. The following changes have been made:
+  * notification_problem.mustache => notification_error.mustache
+  * notification_message          => notification_info
+  * notification_redirect         => notification_warning
+* Method core_course_renderer::course_section_cm_name() is split into two methods, custom themes that override
+  this method must be modified or otherwise editing functionality may become broken. This method is now also used by
+  social activities block and site menu block to display activities names.
+
+=== 3.0 ===
+
+* The renderer function core_availability_renderer::multiple_messages was changed to
+  render_core_availability_multiple_messages, requiring a parameter of the new
+  \core_availability\multiple_messages type.
+* Meta description is now included in standard_head_html for homepage in bootstrapbase.
+  If your theme includes a meta description directly in a layout for the frontpage,
+  you will need to remove it or override the standard_head_html instead.
+* Themes Clean and More have been updated to use a new navbar_button function, which shows the
+  hamburguer icon (responsive menu) or not depending on custom and language menus settings;
+  themes extending bootstrapbase and overriding its layouts can call replace their "a.btn-navbar"
+  node for a call to this function.
+* Themes Clean and More page header logo only displays on front page and login page.
+* A new function navbar_home has been added to theme_clean and theme_more to display the navigation bar link
+  to the site home. Two new settings have been added to control if the link should be a small logo image, text
+  or both. It defaults to the current behaviour, only a text link.
+
+=== 2.9 ===
+
+* Themes Bootstrapbase, Clean and More have undergone some changes for RTL layouts see - MDL-48160.
+
+* Themes Clean amd More page header background logo, if loaded, no longer links to the home page.
+* Themes Clean and More have been updated to use the renderer full_header(). This renderer (when in a user context) displays a message button
+  and consequently the link to message users have been removed from various pages. It is recommended that theme developers use this
+  renderer to ensure that they do not suffer from a reduction in access to this feature.
+* $OUTPUT->context_header() has been introduced to produce headers similar to what full_header() creates. This renderer is used for creating
+  subsequent headers in a page. If provided with user information, this render will also display a message button like full_header().
+
 === 2.8 ===
+
 * Themes Base and Canvas layout/embedded.php has changed.
   The div id="content" has been changed to id="page-content" - see MDL-47915.
 * All mod_assign CSS selectors have been qualified with ".path-mod-assign". This means any custom CSS
@@ -13,20 +56,24 @@ information provided here is intended especially for theme designer.
 * The functions search_listing() and search_pagination() in the core_course_management_renderer class take the searched string
   as an extra parameter - see MDL-46902.
 * Themes with non-fixed headers must have the .navbar class in their navbar in order for floating headers in the grader report to work - see MDL-46658.
+* To accomodate the new gradebook, use of overflow: hidden or overflow-x: hidden CSS rules on DOM elements containing the
+  #user-grades table, visible at [Course administration -> Grades] is not recommended. Please use overflow: auto or
+  overflow: scroll instead, as this will handle medium to large courses with multiple activities better (more information available at https://docs.moodle.org/dev/Theme_upgrade_notes ).
+* The new user menu can be added to themes by calling $OUTPUT->user_menu(); we recommend doing so in a backwards-compatible way (see https://docs.moodle.org/dev/Theme_upgrade_notes for more information).
 
 === 2.7 ===
 
 * CSS related functions in theme class and csslib.php were refactored, addons that are
   using this private API need to be updated
-* Please update your css to use 'tr:nth-of-type(odd/even)' instead of '.ro/.r1' to apply tr specific css for various tables.
+* Please update your css to use 'tr:nth-of-type(odd/even)' instead of '.r0/.r1' to apply tr specific css for various tables.
   These classes are deprecated now and will be removed in Moodle 2.9. This has done to better support styling tables that will be altered by JavaScript.
   Here is an example to update your css:
   Old code:
     table.generaltable .r0 {background-color: #F0F0F0;}
     table.generaltable .r1 {background-color: #F0F0F0;}
   New code:
-    table.generaltable > tbody > tr:nth-of-type(odd) {background-color: #F0F0F0;}
     table.generaltable > tbody > tr:nth-of-type(even) {background-color: #F0F0F0;}
+    table.generaltable > tbody > tr:nth-of-type(odd) {background-color: #F0F0F0;}
 
 Removed themes:
 * afterburner, anomaly, arialist, binarius, boxxie, brick, formal_white, formfactor, fusion, leatherbound,

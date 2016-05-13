@@ -21,10 +21,31 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 require_once($CFG->libdir.'/portfolio/plugin.php');
-require_once($CFG->libdir.'/googleapi.php');
+require_once($CFG->libdir . '/google/lib.php');
 
 class portfolio_plugin_googledocs extends portfolio_plugin_push_base {
-    private $googleoauth = null;
+    /**
+     * Google Client.
+     * @var Google_Client
+     */
+    private $client = null;
+
+    /**
+     * Google Drive Service.
+     * @var Google_Service_Drive
+     */
+    private $service = null;
+
+    /**
+     * URL to redirect Google to.
+     * @var string
+     */
+    const REDIRECTURL = '/admin/oauth2callback.php';
+    /**
+     * Key in session which stores token (_drive_file is access level).
+     * @var string
+     */
+    const SESSIONKEY = 'googledrive_accesstoken_drive_file';
 
     public function supported_formats() {
         return array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_RICHHTML);
@@ -40,7 +61,7 @@ class portfolio_plugin_googledocs extends portfolio_plugin_push_base {
     }
 
     public function get_interactive_continue_url() {
-        return 'http://docs.google.com/';
+        return 'http://drive.google.com/';
     }
 
     public function expected_time($callertime) {
@@ -50,16 +71,50 @@ class portfolio_plugin_googledocs extends portfolio_plugin_push_base {
     }
 
     public function send_package() {
-        if (!$this->googleoauth) {
+        if (!$this->client) {
             throw new portfolio_plugin_exception('noauthtoken', 'portfolio_googledocs');
         }
 
-        $gdocs = new google_docs($this->googleoauth);
         foreach ($this->exporter->get_tempfiles() as $file) {
-            if (!$gdocs->send_file($file)) {
+            try {
+                // Create drivefile object and fill it with data.
+                $drivefile = new Google_Service_Drive_DriveFile();
+                $drivefile->setTitle($file->get_filename());
+                $drivefile->setMimeType($file->get_mimetype());
+
+                $filecontent = $file->get_content();
+                $createdfile = $this->service->files->insert($drivefile,
+                                                            array('data' => $filecontent,
+                                                                  'mimeType' => $file->get_mimetype(),
+                                                                  'uploadType' => 'multipart'));
+            } catch ( Exception $e ) {
                 throw new portfolio_plugin_exception('sendfailed', 'portfolio_gdocs', $file->get_filename());
             }
         }
+        return true;
+    }
+    /**
+     * Gets the access token from session and sets it to client.
+     *
+     * @return null|string null or token.
+     */
+    private function get_access_token() {
+        global $SESSION;
+        if (isset($SESSION->{self::SESSIONKEY}) && $SESSION->{self::SESSIONKEY}) {
+            $this->client->setAccessToken($SESSION->{self::SESSIONKEY});
+            return $SESSION->{self::SESSIONKEY};
+        }
+        return null;
+    }
+    /**
+     * Sets the access token to session
+     *
+     * @param string $token access token in json format
+     * @return
+     */
+    private function set_access_token($token) {
+        global $SESSION;
+        $SESSION->{self::SESSIONKEY} = $token;
     }
 
     public function steal_control($stage) {
@@ -69,23 +124,30 @@ class portfolio_plugin_googledocs extends portfolio_plugin_push_base {
         }
 
         $this->initialize_oauth();
-        if ($this->googleoauth->is_logged_in()) {
-            return false;
-        } else {
-            return $this->googleoauth->get_login_url();
+        if ($this->get_access_token()) {
+            // Ensure that token is not expired.
+            if (!$this->client->isAccessTokenExpired()) {
+                return false;
+            }
         }
+        return $this->client->createAuthUrl();
+
     }
 
     public function post_control($stage, $params) {
         if ($stage != PORTFOLIO_STAGE_CONFIG) {
             return;
         }
-
-        $this->initialize_oauth();
-        if ($this->googleoauth->is_logged_in()) {
-            return false;
+        // Get the authentication code send by Google.
+        $code = isset($params['oauth2code']) ? $params['oauth2code'] : null;
+        // Try to authenticate (throws exception which is catched higher).
+        $this->client->authenticate($code);
+        // Make sure we accually have access token at this time
+        // ...and store it for further use.
+        if ($accesstoken = $this->client->getAccessToken()) {
+            $this->set_access_token($accesstoken);
         } else {
-            return $this->googleoauth->get_login_url();
+            throw new portfolio_plugin_exception('nosessiontoken', 'portfolio_gdocs');
         }
     }
 
@@ -104,7 +166,7 @@ class portfolio_plugin_googledocs extends portfolio_plugin_push_base {
     public static function admin_config_form(&$mform) {
         $a = new stdClass;
         $a->docsurl = get_docs_url('Google_OAuth_2.0_setup');
-        $a->callbackurl = google_oauth::callback_url()->out(false);
+        $a->callbackurl = (new moodle_url(self::REDIRECTURL))->out(false);
 
         $mform->addElement('static', null, '', get_string('oauthinfo', 'portfolio_googledocs', $a));
 
@@ -119,6 +181,7 @@ class portfolio_plugin_googledocs extends portfolio_plugin_push_base {
     }
 
     private function initialize_oauth() {
+        $redirecturi = new moodle_url(self::REDIRECTURL);
         $returnurl = new moodle_url('/portfolio/add.php');
         $returnurl->param('postcontrol', 1);
         $returnurl->param('id', $this->exporter->get('id'));
@@ -127,7 +190,17 @@ class portfolio_plugin_googledocs extends portfolio_plugin_push_base {
         $clientid = $this->get_config('clientid');
         $secret = $this->get_config('secret');
 
-        $this->googleoauth = new google_oauth($clientid, $secret, $returnurl, google_docs::REALM);
+        // Setup Google client.
+        $this->client = get_google_client();
+        $this->client->setClientId($clientid);
+        $this->client->setClientSecret($secret);
+        $this->client->setScopes(array(Google_Service_Drive::DRIVE_FILE));
+        $this->client->setRedirectUri($redirecturi->out(false));
+        // URL to be called when redirecting from authentication.
+        $this->client->setState($returnurl->out_as_local_url(false));
+        // Setup drive upload service.
+        $this->service = new Google_Service_Drive($this->client);
+
     }
 
     public function instance_sanity_check() {

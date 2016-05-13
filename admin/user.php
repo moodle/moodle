@@ -78,8 +78,12 @@
             echo $OUTPUT->header();
             $fullname = fullname($user, true);
             echo $OUTPUT->heading(get_string('deleteuser', 'admin'));
+
             $optionsyes = array('delete'=>$delete, 'confirm'=>md5($delete), 'sesskey'=>sesskey());
-            echo $OUTPUT->confirm(get_string('deletecheckfull', '', "'$fullname'"), new moodle_url($returnurl, $optionsyes), $returnurl);
+            $deleteurl = new moodle_url($returnurl, $optionsyes);
+            $deletebutton = new single_button($deleteurl, get_string('delete'), 'post');
+
+            echo $OUTPUT->confirm(get_string('deletecheckfull', '', "'$fullname'"), $deletebutton, $returnurl);
             echo $OUTPUT->footer();
             die;
         } else if (data_submitted() and !$user->deleted) {
@@ -190,9 +194,14 @@
     // We don't need to check the fullnamedisplay setting here as the fullname function call further down has
     // the override parameter set to true.
     $fullnamesetting = $CFG->alternativefullnameformat;
-    // If we are using language or it is empty, then retrieve all of the user's names.
+    // If we are using language or it is empty, then retrieve the default user names of just 'firstname' and 'lastname'.
     if ($fullnamesetting == 'language' || empty($fullnamesetting)) {
-        $fullnamesetting = implode(' ', $allusernamefields);
+        // Set $a variables to return 'firstname' and 'lastname'.
+        $a = new stdClass();
+        $a->firstname = 'firstname';
+        $a->lastname = 'lastname';
+        // Getting the fullname display will ensure that the order in the language file is maintained.
+        $fullnamesetting = get_string('fullnamedisplay', null, $a);
     }
 
     // Order in string will ensure that the name columns are in the correct order.

@@ -164,29 +164,32 @@ class renderable extends \table_sql implements \renderable {
      */
     public function col_manage(\tool_monitor\rule $rule) {
         global $OUTPUT, $CFG;
+
         $manage = '';
-        // We don't need to check for capability at course level since, user is never shown this page,
-        // if he doesn't have the capability.
+
+        // Do not allow the user to edit the rule unless they have the system capability, or we are viewing the rules
+        // for a course, and not the site. Note - we don't need to check for the capability at a course level since
+        // the user is never shown this page otherwise.
         if ($this->hassystemcap || ($rule->courseid != 0)) {
-            // There might be site rules which the user can not manage.
             $editurl = new \moodle_url($CFG->wwwroot. '/admin/tool/monitor/edit.php', array('ruleid' => $rule->id,
                     'courseid' => $rule->courseid, 'sesskey' => sesskey()));
-            $copyurl = new \moodle_url($CFG->wwwroot. '/admin/tool/monitor/managerules.php',
-                    array('ruleid' => $rule->id, 'action' => 'copy', 'courseid' => $this->courseid, 'sesskey' => sesskey()));
-            $deleteurl = new \moodle_url($CFG->wwwroot. '/admin/tool/monitor/managerules.php', array('ruleid' => $rule->id,
-                    'action' => 'delete', 'courseid' => $rule->courseid, 'sesskey' => sesskey()));
-
             $icon = $OUTPUT->render(new \pix_icon('t/edit', get_string('editrule', 'tool_monitor')));
             $manage .= \html_writer::link($editurl, $icon, array('class' => 'action-icon'));
+        }
 
-            $icon = $OUTPUT->render(new \pix_icon('t/copy', get_string('duplicaterule', 'tool_monitor')));
-            $manage .= \html_writer::link($copyurl, $icon, array('class' => 'action-icon'));
+        // The user should always be able to copy the rule if they are able to view the page.
+        $copyurl = new \moodle_url($CFG->wwwroot. '/admin/tool/monitor/managerules.php',
+                array('ruleid' => $rule->id, 'action' => 'copy', 'courseid' => $this->courseid, 'sesskey' => sesskey()));
+        $icon = $OUTPUT->render(new \pix_icon('t/copy', get_string('duplicaterule', 'tool_monitor')));
+        $manage .= \html_writer::link($copyurl, $icon, array('class' => 'action-icon'));
 
+        if ($this->hassystemcap || ($rule->courseid != 0)) {
+            $deleteurl = new \moodle_url($CFG->wwwroot. '/admin/tool/monitor/managerules.php', array('ruleid' => $rule->id,
+                    'action' => 'delete', 'courseid' => $rule->courseid, 'sesskey' => sesskey()));
             $icon = $OUTPUT->render(new \pix_icon('t/delete', get_string('deleterule', 'tool_monitor')));
             $manage .= \html_writer::link($deleteurl, $icon, array('class' => 'action-icon'));
-        } else {
-            $manage = get_string('nopermission', 'tool_monitor');
         }
+
         return $manage;
     }
 

@@ -90,7 +90,7 @@ if (!empty($options['info'])) {
     $problem = false;
     foreach ($DB->get_tables(false) as $table) {
         $columns = $DB->get_columns($table, false);
-        $size = $generator->guess_antolope_row_size($columns);
+        $size = $generator->guess_antelope_row_size($columns);
         $format = $DB->get_row_format($table);
         if ($size <= $generator::ANTELOPE_MAX_ROW_SIZE) {
             continue;
@@ -120,7 +120,7 @@ if (!empty($options['info'])) {
     $fixtables = array();
     foreach ($DB->get_tables(false) as $table) {
         $columns = $DB->get_columns($table, false);
-        $size = $generator->guess_antolope_row_size($columns);
+        $size = $generator->guess_antelope_row_size($columns);
         $format = $DB->get_row_format($table);
         if ($size <= $generator::ANTELOPE_MAX_ROW_SIZE) {
             continue;
@@ -169,7 +169,7 @@ if (!empty($options['info'])) {
 
     foreach ($DB->get_tables(false) as $table) {
         $columns = $DB->get_columns($table, false);
-        $size = $generator->guess_antolope_row_size($columns);
+        $size = $generator->guess_antelope_row_size($columns);
         $format = $DB->get_row_format($table);
         if ($size <= $generator::ANTELOPE_MAX_ROW_SIZE) {
             continue;

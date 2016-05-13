@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -42,7 +41,7 @@ $string['completed'] = 'Completed';
 $string['completedunlocked'] = 'Completion options unlocked';
 $string['completedunlockedtext'] = 'When you save changes, completion state for all students will be erased. If you change your mind about this, do not save the form.';
 $string['completedwarning'] = 'Completion options locked';
-$string['completedwarningtext'] = 'One or more students ({$a}) has already marked this activity as completed. Changing completion options will erase their completion state and may cause confusion. Thus the options have been locked and should not be unlocked unless absolutely necessary.';
+$string['completedwarningtext'] = 'This activity has already been marked as completed for {$a} participant(s). Changing completion options will erase their completion state and may cause confusion. Thus the options have been locked and should not be unlocked unless absolutely necessary.';
 $string['completion'] = 'Completion tracking';
 $string['completion-alt-auto-enabled'] = 'The system marks this item complete according to conditions: {$a}';
 $string['completion-alt-auto-fail'] = 'Completed: {$a} (did not achieve pass grade)';
@@ -165,6 +164,7 @@ $string['restoringcompletiondata'] = 'Writing completion data';
 $string['roleaggregation'] = 'Condition requires';
 $string['roleaggregation_all'] = 'ALL selected roles to mark when the condition is met';
 $string['roleaggregation_any'] = 'ANY selected roles to mark when the condition is met';
+$string['roleidnotfound'] = 'Role ID {$a} not found';
 $string['saved'] = 'Saved';
 $string['seedetails'] = 'See details';
 $string['self'] = 'Self';

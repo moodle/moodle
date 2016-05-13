@@ -327,8 +327,8 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $repositorypluginname = 'user';
         // Override repository permission.
         $capability = 'repository/' . $repositorypluginname . ':view';
-        $allroles = $DB->get_records_menu('role', array(), 'id', 'archetype, id');
-        assign_capability($capability, CAP_ALLOW, $allroles['guest'], $syscontext->id, true);
+        $guestroleid = $DB->get_field('role', 'id', array('shortname' => 'guest'));
+        assign_capability($capability, CAP_ALLOW, $guestroleid, $syscontext->id, true);
 
         $args = array();
         $args['type'] = $repositorypluginname;
@@ -984,6 +984,69 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $filerecord['filename'] = 'testimage-convereted-nosize.jpg';
         $converted = $fs->convert_image($filerecord, $original);
         $this->assertInstanceOf('stored_file', $converted);
+    }
+
+    public function test_convert_image_png() {
+        global $CFG;
+
+        $this->resetAfterTest(false);
+
+        $filepath = $CFG->dirroot.'/lib/filestorage/tests/fixtures/testimage.png';
+        $syscontext = context_system::instance();
+        $filerecord = array(
+            'contextid' => $syscontext->id,
+            'component' => 'core',
+            'filearea'  => 'unittest',
+            'itemid'    => 0,
+            'filepath'  => '/images/',
+            'filename'  => 'testimage.png',
+        );
+
+        $fs = get_file_storage();
+        $original = $fs->create_file_from_pathname($filerecord, $filepath);
+
+        // Vanilla test.
+        $filerecord['filename'] = 'testimage-converted-nosize.png';
+        $vanilla = $fs->convert_image($filerecord, $original);
+        $this->assertInstanceOf('stored_file', $vanilla);
+        // Assert that byte 25 has the ascii value 6 for PNG-24.
+        $this->assertTrue(ord(substr($vanilla->get_content(), 25, 1)) == 6);
+
+        // 10x10 resize test; also testing for a ridiculous quality setting, which
+        // we should if necessary scale to the 0 - 9 range.
+        $filerecord['filename'] = 'testimage-converted-10x10.png';
+        $converted = $fs->convert_image($filerecord, $original, 10, 10, true, 100);
+        $this->assertInstanceOf('stored_file', $converted);
+        // Assert that byte 25 has the ascii value 6 for PNG-24.
+        $this->assertTrue(ord(substr($converted->get_content(), 25, 1)) == 6);
+
+        // Transparency test.
+        $filerecord['filename'] = 'testimage-converted-102x31.png';
+        $converted = $fs->convert_image($filerecord, $original, 102, 31, true, 9);
+        $this->assertInstanceOf('stored_file', $converted);
+        // Assert that byte 25 has the ascii value 6 for PNG-24.
+        $this->assertTrue(ord(substr($converted->get_content(), 25, 1)) == 6);
+
+        $originalfile = imagecreatefromstring($original->get_content());
+        $convertedfile = imagecreatefromstring($converted->get_content());
+        $vanillafile = imagecreatefromstring($vanilla->get_content());
+
+        $originalcolors = imagecolorsforindex($originalfile, imagecolorat($originalfile, 0, 0));
+        $convertedcolors = imagecolorsforindex($convertedfile, imagecolorat($convertedfile, 0, 0));
+        $vanillacolors = imagecolorsforindex($vanillafile, imagecolorat($vanillafile, 0, 0));
+        $this->assertEquals(count($originalcolors), 4);
+        $this->assertEquals(count($convertedcolors), 4);
+        $this->assertEquals(count($vanillacolors), 4);
+        $this->assertEquals($originalcolors['red'], $convertedcolors['red']);
+        $this->assertEquals($originalcolors['green'], $convertedcolors['green']);
+        $this->assertEquals($originalcolors['blue'], $convertedcolors['blue']);
+        $this->assertEquals($originalcolors['alpha'], $convertedcolors['alpha']);
+        $this->assertEquals($originalcolors['red'], $vanillacolors['red']);
+        $this->assertEquals($originalcolors['green'], $vanillacolors['green']);
+        $this->assertEquals($originalcolors['blue'], $vanillacolors['blue']);
+        $this->assertEquals($originalcolors['alpha'], $vanillacolors['alpha']);
+        $this->assertEquals($originalcolors['alpha'], 127);
+
     }
 
     private function generate_file_record() {

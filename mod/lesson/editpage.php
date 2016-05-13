@@ -32,6 +32,11 @@ $pageid = required_param('pageid', PARAM_INT);
 $id     = required_param('id', PARAM_INT);         // Course Module ID
 $qtype  = optional_param('qtype', 0, PARAM_INT);
 $edit   = optional_param('edit', false, PARAM_BOOL);
+$returnto = optional_param('returnto', null, PARAM_URL);
+if (empty($returnto)) {
+    $returnto = new moodle_url('/mod/lesson/edit.php', array('id' => $id));
+    $returnto->set_anchor('lesson-' . $pageid);
+}
 
 $cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -43,6 +48,7 @@ $context = context_module::instance($cm->id);
 require_capability('mod/lesson:edit', $context);
 
 $PAGE->set_url('/mod/lesson/editpage.php', array('pageid'=>$pageid, 'id'=>$id, 'qtype'=>$qtype));
+$PAGE->set_pagelayout('admin');
 
 if ($edit) {
     $editpage = lesson_page::load($pageid, $lesson);
@@ -65,17 +71,31 @@ $editoroptions = array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'max
 // the Question type selection was cancelled. For this reason, a dummy form
 // is created here solely to check whether the selection was cancelled.
 if ($qtype) {
-    $mformdummy = $manager->get_page_form(0, array('editoroptions'=>$editoroptions, 'jumpto'=>$jumpto, 'lesson'=>$lesson, 'edit'=>$edit, 'maxbytes'=>$PAGE->course->maxbytes));
+    $mformdummy = $manager->get_page_form(0, array(
+        'editoroptions' => $editoroptions,
+        'jumpto'        => $jumpto,
+        'lesson'        => $lesson,
+        'edit'          => $edit,
+        'maxbytes'      => $PAGE->course->maxbytes,
+        'returnto'      => $returnto
+    ));
     if ($mformdummy->is_cancelled()) {
-        redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$id");
+        redirect($returnto);
         exit;
     }
 }
 
-$mform = $manager->get_page_form($qtype, array('editoroptions'=>$editoroptions, 'jumpto'=>$jumpto, 'lesson'=>$lesson, 'edit'=>$edit, 'maxbytes'=>$PAGE->course->maxbytes));
+$mform = $manager->get_page_form($qtype, array(
+    'editoroptions' => $editoroptions,
+    'jumpto'        => $jumpto,
+    'lesson'        => $lesson,
+    'edit'          => $edit,
+    'maxbytes'      => $PAGE->course->maxbytes,
+    'returnto'      => $returnto
+));
 
 if ($mform->is_cancelled()) {
-    redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$id");
+    redirect($returnto);
     exit;
 }
 
@@ -92,20 +112,28 @@ if ($edit) {
         $answereditor = 'answer_editor['.$answerscount.']';
         if (is_array($data->$answereditor)) {
             $answerdata = $data->$answereditor;
-            $answerdraftid = file_get_submitted_draft_itemid($answereditor);
-            $answertext = file_prepare_draft_area($answerdraftid, $PAGE->cm->context->id,
-                    'mod_lesson', 'page_answers', $answer->id, $editoroptions, $answerdata['text']);
-            $data->$answereditor = array('text' => $answertext, 'format' => $answerdata['format'], 'itemid' => $answerdraftid);
+            if ($mform->get_answer_format() === LESSON_ANSWER_HTML) {
+                $answerdraftid = file_get_submitted_draft_itemid($answereditor);
+                $answertext = file_prepare_draft_area($answerdraftid, $PAGE->cm->context->id,
+                        'mod_lesson', 'page_answers', $answer->id, $editoroptions, $answerdata['text']);
+                $data->$answereditor = array('text' => $answertext, 'format' => $answerdata['format'], 'itemid' => $answerdraftid);
+            } else {
+                $data->$answereditor = $answerdata['text'];
+            }
         }
 
         $responseeditor = 'response_editor['.$answerscount.']';
         if (is_array($data->$responseeditor)) {
             $responsedata = $data->$responseeditor;
-            $responsedraftid = file_get_submitted_draft_itemid($responseeditor);
-            $responsetext = file_prepare_draft_area($responsedraftid, $PAGE->cm->context->id,
-                    'mod_lesson', 'page_responses', $answer->id, $editoroptions, $responsedata['text']);
-            $data->$responseeditor = array('text' => $responsetext, 'format' => $responsedata['format'],
-                    'itemid' => $responsedraftid);
+            if ($mform->get_response_format() === LESSON_ANSWER_HTML) {
+                $responsedraftid = file_get_submitted_draft_itemid($responseeditor);
+                $responsetext = file_prepare_draft_area($responsedraftid, $PAGE->cm->context->id,
+                        'mod_lesson', 'page_responses', $answer->id, $editoroptions, $responsedata['text']);
+                $data->$responseeditor = array('text' => $responsetext, 'format' => $responsedata['format'],
+                        'itemid' => $responsedraftid);
+            } else {
+                $data->$responseeditor = $responsedata['text'];
+            }
         }
         $answerscount++;
     }
@@ -145,7 +173,7 @@ if ($data = $mform->get_data()) {
     } else {
         $editpage = lesson_page::create($data, $lesson, $context, $PAGE->course->maxbytes);
     }
-    redirect(new moodle_url('/mod/lesson/edit.php', array('id'=>$cm->id)));
+    redirect($returnto);
 }
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');

@@ -142,11 +142,10 @@ class tool_behat_manager_testcase extends advanced_testcase {
         // YAML decides when is is necessary to wrap strings between single quotes, so not controlled
         // values like paths should not be asserted including the key name as they would depend on the
         // directories values.
-        $this->assertContains($CFG->dirroot . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'behat' . DIRECTORY_SEPARATOR . 'features', $contents);
+        $this->assertContains($CFG->dirroot, $contents);
 
         // Not quoted strings.
         $this->assertContains('micarro: /me/lo/robaron', $contents);
-        $this->assertContains('class: behat_init_context', $contents);
 
         // YAML uses single quotes to wrap URL strings.
         $this->assertContains("base_url: '" . $CFG->behat_wwwroot . "'", $contents);

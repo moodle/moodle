@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * Strings for component 'calendar', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   calendar
+ * @package   core_calendar
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -217,6 +216,3 @@ $string['weekthis'] = 'This week';
 $string['yesterday'] = 'Yesterday';
 $string['youcandeleteallrepeats'] = 'This event is part of a repeating event series. You can delete this event only, or all {$a} events in the series at once.';
 
-// Deprecated since Moodle 2.8.
-
-$string['hidden'] = 'hidden';

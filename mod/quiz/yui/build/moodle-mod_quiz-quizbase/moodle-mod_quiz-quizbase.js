@@ -79,7 +79,7 @@ M.mod_quiz.edit.swap_sections = function(Y, node1, node2) {
         SECTIONADDMENUS : 'section_add_menus'
     };
 
-    var sectionlist = Y.Node.all('.' + CSS.COURSECONTENT + ' ' + M.mod_quiz.edit.get_section_selector(Y));
+    var sectionlist = Y.Node.all('.' + CSS.COURSECONTENT + ' li.section');
     // Swap menus.
     sectionlist.item(node1).one('.' + CSS.SECTIONADDMENUS).swap(sectionlist.item(node2).one('.' + CSS.SECTIONADDMENUS));
 };
@@ -135,131 +135,6 @@ M.mod_quiz.edit.process_sections = function(Y, sectionlist, response, sectionfro
             // Add current class to the required section.
             sectionlist.item(response.current).addClass('current');
         }
-    }
-};
-
-/**
-* Get sections config for this format, for examples see function definition
-* in the formats.
-*
-* @return {object} section list configuration
-*/
-M.mod_quiz.edit.get_config = function() {
-    return {
-        container_node : 'ul',
-        container_class : 'slots',
-        section_node : 'li',
-        section_class : 'section'
-    };
-};
-
-/**
- * Get section list for this format (usually items inside container_node.container_class selector)
- *
- * @param {YUI} Y YUI3 instance
- * @return {string} section selector
- */
-M.mod_quiz.edit.get_section_selector = function() {
-    var config = M.mod_quiz.edit.get_config();
-    if (config.section_node && config.section_class) {
-        return config.section_node + '.' + config.section_class;
-    }
-    return null;
-};
-
-/**
- * Get section wraper for this format (only used in case when each
- * container_node.container_class node is wrapped in some other element).
- *
- * @param {YUI} Y YUI3 instance
- * @return {string} section wrapper selector or M.mod_quiz.format.get_section_selector
- * if section_wrapper_node and section_wrapper_class are not defined in the format config.
- */
-M.mod_quiz.edit.get_section_wrapper = function(Y) {
-    var config = M.mod_quiz.edit.get_config();
-    if (config.section_wrapper_node && config.section_wrapper_class) {
-        return config.section_wrapper_node + '.' + config.section_wrapper_class;
-    }
-    return M.mod_quiz.edit.get_section_selector(Y);
-};
-
-/**
- * Get the tag of container node
- *
- * @return {string} tag of container node.
- */
-M.mod_quiz.edit.get_containernode = function() {
-    var config = M.mod_quiz.edit.get_config();
-    if (config.container_node) {
-        return config.container_node;
-    } else {
-    }
-};
-
-/**
- * Get the class of container node
- *
- * @return {string} class of the container node.
- */
-M.mod_quiz.edit.get_containerclass = function() {
-    var config = M.mod_quiz.edit.get_config();
-    if (config.container_class) {
-        return config.container_class;
-    } else {
-    }
-};
-
-/**
- * Get the tag of draggable node (section wrapper if exists, otherwise section)
- *
- * @return {string} tag of the draggable node.
- */
-M.mod_quiz.edit.get_sectionwrappernode = function() {
-    var config = M.mod_quiz.edit.get_config();
-    if (config.section_wrapper_node) {
-        return config.section_wrapper_node;
-    } else {
-        return config.section_node;
-    }
-};
-
-/**
- * Get the class of draggable node (section wrapper if exists, otherwise section)
- *
- * @return {string} class of the draggable node.
- */
-M.mod_quiz.edit.get_sectionwrapperclass = function() {
-    var config = M.mod_quiz.edit.get_config();
-    if (config.section_wrapper_class) {
-        return config.section_wrapper_class;
-    } else {
-        return config.section_class;
-    }
-};
-
-/**
- * Get the tag of section node
- *
- * @return {string} tag of section node.
- */
-M.mod_quiz.edit.get_sectionnode = function() {
-    var config = M.mod_quiz.edit.get_config();
-    if (config.section_node) {
-        return config.section_node;
-    } else {
-    }
-};
-
-/**
- * Get the class of section node
- *
- * @return {string} class of the section node.
- */
-M.mod_quiz.edit.get_sectionclass = function() {
-    var config = M.mod_quiz.edit.get_config();
-    if (config.section_class) {
-        return config.section_class;
-    } else {
     }
 };
 

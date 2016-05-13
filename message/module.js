@@ -102,7 +102,7 @@ M.core_message.init_defaultoutputs = function(Y) {
                 }, this);
                 parentnode.addClass('dimmed_text');
             } else {
-                parentnode.all('select').each(function(node) {
+                parentnode.all('select[disabled]').each(function(node) {
                     node.removeAttribute('disabled');
                     node.set('value', 'permitted');
                     defaultoutputs.updateCheckboxes(node.ancestor('td'), 0, 0);

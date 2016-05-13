@@ -65,11 +65,31 @@ class mod_folder_renderer extends plugin_renderer_base {
                 'generalbox foldertree');
 
         // Do not append the edit button on the course page.
-        if ($folder->display != FOLDER_DISPLAY_INLINE && has_capability('mod/folder:managefiles', $context)) {
-            $output .= $this->output->container(
-                    $this->output->single_button(new moodle_url('/mod/folder/edit.php',
-                    array('id' => $cm->id)), get_string('edit')),
+        if ($folder->display != FOLDER_DISPLAY_INLINE) {
+            $containercontents = '';
+            $downloadable = folder_archive_available($folder, $cm);
+
+            if ($downloadable) {
+                $downloadbutton = $this->output->single_button(
+                    new moodle_url('/mod/folder/download_folder.php', array('id' => $cm->id)),
+                    get_string('downloadfolder', 'folder')
+                );
+
+                $output .= $this->output->container(
+                    $downloadbutton,
+                    'mdl-align folder-download-button');
+            }
+
+            if (has_capability('mod/folder:managefiles', $context)) {
+                $editbutton = $this->output->single_button(
+                    new moodle_url('/mod/folder/edit.php', array('id' => $cm->id)),
+                    get_string('edit')
+                );
+
+                $output .= $this->output->container(
+                    $editbutton,
                     'mdl-align folder-edit-button');
+            }
         }
         return $output;
     }

@@ -90,7 +90,7 @@ class Minify_YUICompressor {
     {
         self::_prepare();
         if (! ($tmpFile = tempnam(self::$tempDir, 'yuic_'))) {
-            throw new Exception('Minify_YUICompressor : could not create temp file.');
+            throw new Exception('Minify_YUICompressor : could not create temp file in "'.self::$tempDir.'".');
         }
         file_put_contents($tmpFile, $content);
         exec(self::_getCmd($options, $type, $tmpFile), $output, $result_code);

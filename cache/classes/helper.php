@@ -318,6 +318,8 @@ class cache_helper {
                 $definitionkey = $definition->get_component().'/'.$definition->get_area();
                 if (isset($inuse[$definitionkey])) {
                     $inuse[$definitionkey]->purge();
+                } else {
+                    cache::make($definition->get_component(), $definition->get_area())->purge();
                 }
 
                 // We should only log events for application and session caches.
@@ -346,24 +348,28 @@ class cache_helper {
     /**
      * Ensure that the stats array is ready to collect information for the given store and definition.
      * @param string $store
-     * @param string $definition
+     * @param string $definition A string that identifies the definition.
+     * @param int $mode One of cache_store::MODE_*. Since 2.9.
      */
-    protected static function ensure_ready_for_stats($store, $definition) {
+    protected static function ensure_ready_for_stats($store, $definition, $mode = cache_store::MODE_APPLICATION) {
         // This function is performance-sensitive, so exit as quickly as possible
         // if we do not need to do anything.
-        if (isset(self::$stats[$definition][$store])) {
+        if (isset(self::$stats[$definition]['stores'][$store])) {
             return;
         }
         if (!array_key_exists($definition, self::$stats)) {
             self::$stats[$definition] = array(
-                $store => array(
-                    'hits' => 0,
-                    'misses' => 0,
-                    'sets' => 0,
+                'mode' => $mode,
+                'stores' => array(
+                    $store => array(
+                        'hits' => 0,
+                        'misses' => 0,
+                        'sets' => 0,
+                    )
                 )
             );
-        } else if (!array_key_exists($store, self::$stats[$definition])) {
-            self::$stats[$definition][$store] = array(
+        } else if (!array_key_exists($store, self::$stats[$definition]['stores'])) {
+            self::$stats[$definition]['stores'][$store] = array(
                 'hits' => 0,
                 'misses' => 0,
                 'sets' => 0,
@@ -372,42 +378,79 @@ class cache_helper {
     }
 
     /**
+     * Returns a string to describe the definition.
+     *
+     * This method supports the definition as a string due to legacy requirements.
+     * It is backwards compatible when a string is passed but is not accurate.
+     *
+     * @since 2.9
+     * @param cache_definition|string $definition
+     * @return string
+     */
+    protected static function get_definition_stat_id_and_mode($definition) {
+        if (!($definition instanceof cache_definition)) {
+            // All core calls to this method have been updated, this is the legacy state.
+            // We'll use application as the default as that is the most common, really this is not accurate of course but
+            // at this point we can only guess and as it only affects calls to cache stat outside of core (of which there should
+            // be none) I think that is fine.
+            debugging('Please update you cache stat calls to pass the definition rather than just its ID.', DEBUG_DEVELOPER);
+            return array((string)$definition, cache_store::MODE_APPLICATION);
+        }
+        return array($definition->get_id(), $definition->get_mode());
+    }
+
+    /**
      * Record a cache hit in the stats for the given store and definition.
      *
+     * In Moodle 2.9 the $definition argument changed from accepting only a string to accepting a string or a
+     * cache_definition instance. It is preferable to pass a cache definition instance.
+     *
      * @internal
-     * @param string $store
-     * @param string $definition
+     * @param cache_definition $store
+     * @param cache_definition $definition You used to be able to pass a string here, however that is deprecated please pass the
+     *      actual cache_definition object now.
      * @param int $hits The number of hits to record (by default 1)
      */
     public static function record_cache_hit($store, $definition, $hits = 1) {
-        self::ensure_ready_for_stats($store, $definition);
-        self::$stats[$definition][$store]['hits'] += $hits;
+        list($definitionstr, $mode) = self::get_definition_stat_id_and_mode($definition);
+        self::ensure_ready_for_stats($store, $definitionstr, $mode);
+        self::$stats[$definitionstr]['stores'][$store]['hits'] += $hits;
     }
 
     /**
      * Record a cache miss in the stats for the given store and definition.
      *
+     * In Moodle 2.9 the $definition argument changed from accepting only a string to accepting a string or a
+     * cache_definition instance. It is preferable to pass a cache definition instance.
+     *
      * @internal
      * @param string $store
-     * @param string $definition
+     * @param cache_definition $definition You used to be able to pass a string here, however that is deprecated please pass the
+     *      actual cache_definition object now.
      * @param int $misses The number of misses to record (by default 1)
      */
     public static function record_cache_miss($store, $definition, $misses = 1) {
-        self::ensure_ready_for_stats($store, $definition);
-        self::$stats[$definition][$store]['misses'] += $misses;
+        list($definitionstr, $mode) = self::get_definition_stat_id_and_mode($definition);
+        self::ensure_ready_for_stats($store, $definitionstr, $mode);
+        self::$stats[$definitionstr]['stores'][$store]['misses'] += $misses;
     }
 
     /**
      * Record a cache set in the stats for the given store and definition.
      *
+     * In Moodle 2.9 the $definition argument changed from accepting only a string to accepting a string or a
+     * cache_definition instance. It is preferable to pass a cache definition instance.
+     *
      * @internal
      * @param string $store
-     * @param string $definition
+     * @param cache_definition $definition You used to be able to pass a string here, however that is deprecated please pass the
+     *      actual cache_definition object now.
      * @param int $sets The number of sets to record (by default 1)
      */
     public static function record_cache_set($store, $definition, $sets = 1) {
-        self::ensure_ready_for_stats($store, $definition);
-        self::$stats[$definition][$store]['sets'] += $sets;
+        list($definitionstr, $mode) = self::get_definition_stat_id_and_mode($definition);
+        self::ensure_ready_for_stats($store, $definitionstr, $mode);
+        self::$stats[$definitionstr]['stores'][$store]['sets'] += $sets;
     }
 
     /**

@@ -1,6 +1,10 @@
 /*** Grades ***/
 .allcoursegrades {width: 100%;text-align: right;padding: 4px 0px 5px 0px;}
 
+.core_grades_notices .singlebutton {
+    display: inline-block;
+}
+
 .path-grade-edit .buttons {text-align:center;}
 .path-grade-edit-tree .idnumber {margin-left: 15px;}
 .path-grade-edit-tree .movetarget {position: relative;width: 80px;height: 16px;}
@@ -260,6 +264,9 @@
 .has_dock.path-grade-report-grader .gradeparent .sideonly.floating > .cell,
 .has_dock.path-grade-report-grader .gradeparent .sideonly.floating > .cell {
     padding-left: 35px;
+}
+.path-grade-report-grader .gradeparent .clickable {
+    cursor: pointer;
 }
 
 .dir-rtl.has_dock.path-grade-report-grader .gradeparent .sideonly.floating > .cell,

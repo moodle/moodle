@@ -544,7 +544,7 @@ class quiz_statistics_report extends quiz_default_report {
     public function get_all_stats_and_analysis($quiz, $whichattempts, $whichtries, $groupstudents, $questions, $progress = null) {
 
         if ($progress === null) {
-            $progress = new \core\progress\null();
+            $progress = new \core\progress\none();
         }
 
         $qubaids = quiz_statistics_qubaids_condition($quiz->id, $groupstudents, $whichattempts);
@@ -595,7 +595,7 @@ class quiz_statistics_report extends quiz_default_report {
                 $this->progress = new \core\progress\display_if_slow(get_string('calculatingallstats', 'quiz_statistics'));
                 $this->progress->set_display_names();
             } else {
-                $this->progress = new \core\progress\null();
+                $this->progress = new \core\progress\none();
             }
         }
         return $this->progress;
@@ -613,7 +613,7 @@ class quiz_statistics_report extends quiz_default_report {
     protected function analyse_responses_for_all_questions_and_subquestions($questions, $subquestions, $qubaids,
                                                                             $whichtries, $progress = null) {
         if ($progress === null) {
-            $progress = new \core\progress\null();
+            $progress = new \core\progress\none();
         }
 
         // Starting response analysis tasks.
@@ -643,7 +643,7 @@ class quiz_statistics_report extends quiz_default_report {
             return array();
         }
         if ($progress === null) {
-            $progress = new \core\progress\null();
+            $progress = new \core\progress\none();
         }
         $progress->start_progress('', $countquestions, $countquestions);
         foreach ($questions as $question) {
@@ -667,21 +667,10 @@ class quiz_statistics_report extends quiz_default_report {
      * @return string HTML.
      */
     protected function everything_download_options() {
-        $downloadoptions = $this->table->get_download_menu();
+        global $OUTPUT;
 
-        $downloadelements = new stdClass();
-        $downloadelements->formatsmenu = html_writer::select($downloadoptions, 'download',
-                $this->table->defaultdownloadformat, false);
-        $downloadelements->downloadbutton = '<input type="submit" value="' .
-                get_string('download') . '"/>';
-
-        $output = '<form action="'. $this->table->baseurl .'" method="post">';
-        $output .= '<div class="mdl-align">';
-        $output .= '<input type="hidden" name="everything" value="1"/>';
-        $output .= html_writer::tag('label', get_string('downloadeverything', 'quiz_statistics', $downloadelements));
-        $output .= '</div></form>';
-
-        return $output;
+        return $OUTPUT->download_dataformat_selector(get_string('downloadeverything', 'quiz_statistics'),
+            $this->table->baseurl->out_omit_querystring(), 'download', $this->table->baseurl->params() + array('everything' => 1));
     }
 
     /**

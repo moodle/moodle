@@ -45,14 +45,26 @@ class qtype_multianswer_renderer extends qtype_renderer {
         $question = $qa->get_question();
 
         $output = '';
+        $subquestions = array();
         foreach ($question->textfragments as $i => $fragment) {
             if ($i > 0) {
                 $index = $question->places[$i];
-                $output .= $this->subquestion($qa, $options, $index,
+                $token = 'qtypemultianswer' . $i . 'marker';
+                $token = '<span class="nolink">' . $token . '</span>';
+                $output .= $token;
+                $subquestions[$token] = $this->subquestion($qa, $options, $index,
                         $question->subquestions[$index]);
             }
-            $output .= $question->format_text($fragment, $question->questiontextformat,
-                    $qa, 'question', 'questiontext', $question->id);
+            $output .= $fragment;
+        }
+        $output = $question->format_text($output, $question->questiontextformat,
+                $qa, 'question', 'questiontext', $question->id);
+        $output = str_replace(array_keys($subquestions), array_values($subquestions), $output);
+
+        if ($qa->get_state() == question_state::$invalid) {
+            $output .= html_writer::nonempty_tag('div',
+                    $question->get_validation_error($qa->get_last_qt_data()),
+                    array('class' => 'validationerror'));
         }
 
         $this->page->requires->js_init_call('M.qtype_multianswer.init',
@@ -141,7 +153,7 @@ abstract class qtype_multianswer_subq_renderer_base extends qtype_renderer {
                 && (!is_null($fraction) || $feedback)) {
             $a = new stdClass();
             $a->mark = format_float($fraction * $subq->maxmark, $options->markdp);
-            $a->max =  format_float($subq->maxmark, $options->markdp);
+            $a->max = format_float($subq->maxmark, $options->markdp);
             $feedback[] = get_string('markoutofmax', 'question', $a);
         }
 
@@ -193,7 +205,7 @@ class qtype_multianswer_textfield_renderer extends qtype_multianswer_subq_render
         foreach ($subq->answers as $ans) {
             $size = max($size, core_text::strlen(trim($ans->answer)));
         }
-        $size = min(60, round($size + rand(0, $size*0.15)));
+        $size = min(60, round($size + rand(0, $size * 0.15)));
         // The rand bit is to make guessing harder.
 
         $inputattributes = array(
@@ -377,7 +389,7 @@ class qtype_multianswer_multichoice_vertical_renderer extends qtype_multianswer_
                 $subq->maxmark > 0) {
             $a = new stdClass();
             $a->mark = format_float($fraction * $subq->maxmark, $options->markdp);
-            $a->max =  format_float($subq->maxmark, $options->markdp);
+            $a->max = format_float($subq->maxmark, $options->markdp);
 
             $feedback[] = html_writer::tag('div', get_string('markoutofmax', 'question', $a));
         }

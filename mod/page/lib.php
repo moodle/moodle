@@ -338,14 +338,20 @@ function page_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
             return false;
         }
 
-        // remove @@PLUGINFILE@@/
-        $content = str_replace('@@PLUGINFILE@@/', '', $page->content);
-
+        // We need to rewrite the pluginfile URLs so the media filters can work.
+        $content = file_rewrite_pluginfile_urls($page->content, 'webservice/pluginfile.php', $context->id, 'mod_page', 'content',
+                                                $page->revision);
         $formatoptions = new stdClass;
         $formatoptions->noclean = true;
         $formatoptions->overflowdiv = true;
         $formatoptions->context = $context;
         $content = format_text($content, $page->contentformat, $formatoptions);
+
+        // Remove @@PLUGINFILE@@/.
+        $options = array('reverse' => true);
+        $content = file_rewrite_pluginfile_urls($content, 'webservice/pluginfile.php', $context->id, 'mod_page', 'content',
+                                                $page->revision, $options);
+        $content = str_replace('@@PLUGINFILE@@/', '', $content);
 
         send_file($content, $filename, 0, 0, true, true);
     } else {
@@ -473,4 +479,32 @@ function page_dndupload_handle($uploadinfo) {
     $data->printintro = $config->printintro;
 
     return page_add_instance($data, null);
+}
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $page       page object
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ * @since Moodle 3.0
+ */
+function page_view($page, $course, $cm, $context) {
+
+    // Trigger course_module_viewed event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $page->id
+    );
+
+    $event = \mod_page\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('page', $page);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
 }

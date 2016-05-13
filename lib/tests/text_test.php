@@ -180,6 +180,56 @@ class core_text_testcase extends advanced_testcase {
     }
 
     /**
+     * Test unicode safe string truncation.
+     */
+    public function test_str_max_bytes() {
+        // These are all 3 byte characters, so this is a 12-byte string.
+        $str = '言語設定';
+
+        $this->assertEquals(12, strlen($str));
+
+        // Step back, shortening the string 1 byte at a time. Should remove in 1 char chunks.
+        $conv = core_text::str_max_bytes($str, 12);
+        $this->assertEquals(12, strlen($conv));
+        $this->assertSame('言語設定', $conv);
+        $conv = core_text::str_max_bytes($str, 11);
+        $this->assertEquals(9, strlen($conv));
+        $this->assertSame('言語設', $conv);
+        $conv = core_text::str_max_bytes($str, 10);
+        $this->assertEquals(9, strlen($conv));
+        $this->assertSame('言語設', $conv);
+        $conv = core_text::str_max_bytes($str, 9);
+        $this->assertEquals(9, strlen($conv));
+        $this->assertSame('言語設', $conv);
+        $conv = core_text::str_max_bytes($str, 8);
+        $this->assertEquals(6, strlen($conv));
+        $this->assertSame('言語', $conv);
+
+        // Now try a mixed byte string.
+        $str = '言語設a定';
+
+        $this->assertEquals(13, strlen($str));
+
+        $conv = core_text::str_max_bytes($str, 11);
+        $this->assertEquals(10, strlen($conv));
+        $this->assertSame('言語設a', $conv);
+        $conv = core_text::str_max_bytes($str, 10);
+        $this->assertEquals(10, strlen($conv));
+        $this->assertSame('言語設a', $conv);
+        $conv = core_text::str_max_bytes($str, 9);
+        $this->assertEquals(9, strlen($conv));
+        $this->assertSame('言語設', $conv);
+        $conv = core_text::str_max_bytes($str, 8);
+        $this->assertEquals(6, strlen($conv));
+        $this->assertSame('言語', $conv);
+
+        // Test 0 byte case.
+        $conv = core_text::str_max_bytes($str, 0);
+        $this->assertEquals(0, strlen($conv));
+        $this->assertSame('', $conv);
+    }
+
+    /**
      * Tests the static strtolower method.
      */
     public function test_strtolower() {
@@ -366,28 +416,6 @@ class core_text_testcase extends advanced_testcase {
     public function test_strtotitle() {
         $str = "žluťoučký koníček";
         $this->assertSame("Žluťoučký Koníček", core_text::strtotitle($str));
-    }
-
-    public function test_deprecated_textlib() {
-        $this->assertSame(textlib::strtolower('HUH'), core_text::strtolower('HUH'));
-        $this->assertDebuggingCalled(null, null, 'This fails if any other test uses the deprecated textlib class.');
-    }
-
-    /**
-     * Tests the deprecated method of textlib that still require an instance.
-     */
-    public function test_deprecated_textlib_get_instance() {
-        $textlib = textlib_get_instance();
-        $this->assertDebuggingCalled();
-        $this->assertSame($textlib->substr('abc', 1, 1), 'b');
-        $this->assertSame($textlib->strlen('abc'), 3);
-        $this->assertSame($textlib->strtoupper('Abc'), 'ABC');
-        $this->assertSame($textlib->strtolower('Abc'), 'abc');
-        $this->assertSame($textlib->strpos('abc', 'a'), 0);
-        $this->assertSame($textlib->strpos('abc', 'd'), false);
-        $this->assertSame($textlib->strrpos('abcabc', 'a'), 3);
-        $this->assertSame($textlib->specialtoascii('ábc'), 'abc');
-        $this->assertSame($textlib->strtotitle('abc ABC'), 'Abc Abc');
     }
 
     /**

@@ -114,6 +114,9 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('scorm/autocommit',
     get_string('autocommit', 'scorm'), get_string('autocommitdesc', 'scorm'), 0, $yesno));
 
+    $settings->add(new admin_setting_configselect('scorm/masteryoverride',
+        get_string('masteryoverride', 'scorm'), get_string('masteryoverridedesc', 'scorm'), 1, $yesno));
+
     $settings->add(new admin_setting_configselect('scorm/lastattemptlock',
         get_string('lastattemptlock', 'scorm'), get_string('lastattemptlockdesc', 'scorm'), 0, $yesno));
 
@@ -147,11 +150,17 @@ if ($ADMIN->fulltree) {
         get_string('aicchacpkeepsessiondata', 'scorm'), get_string('aicchacpkeepsessiondata_desc', 'scorm'),
         1, PARAM_INT));
 
+    $settings->add(new admin_setting_configcheckbox('scorm/aiccuserid', get_string('aiccuserid', 'scorm'),
+                                                    get_string('aiccuserid_desc', 'scorm'), 1));
+
     $settings->add(new admin_setting_configcheckbox('scorm/forcejavascript', get_string('forcejavascript', 'scorm'),
                                                     get_string('forcejavascript_desc', 'scorm'), 1));
 
     $settings->add(new admin_setting_configcheckbox('scorm/allowapidebug', get_string('allowapidebug', 'scorm'), '', 0));
 
     $settings->add(new admin_setting_configtext('scorm/apidebugmask', get_string('apidebugmask', 'scorm'), '', '.*'));
+
+    $settings->add(new admin_setting_configcheckbox('scorm/protectpackagedownloads', get_string('protectpackagedownloads', 'scorm'),
+                                                    get_string('protectpackagedownloads_desc', 'scorm'), 0));
 
 }

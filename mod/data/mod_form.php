@@ -24,13 +24,18 @@ class mod_data_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
-        $this->add_intro_editor(true, get_string('intro', 'data'));
+        $this->standard_intro_elements(get_string('intro', 'data'));
 
         // ----------------------------------------------------------------------
         $mform->addElement('header', 'entrieshdr', get_string('entries', 'data'));
 
         $mform->addElement('selectyesno', 'approval', get_string('requireapproval', 'data'));
         $mform->addHelpButton('approval', 'requireapproval', 'data');
+
+        $mform->addElement('selectyesno', 'manageapproved', get_string('manageapproved', 'data'));
+        $mform->addHelpButton('manageapproved', 'manageapproved', 'data');
+        $mform->setDefault('manageapproved', 1);
+        $mform->disabledIf('manageapproved', 'approval', 'eq', 0);
 
         $mform->addElement('selectyesno', 'comments', get_string('allowcomments', 'data'));
 

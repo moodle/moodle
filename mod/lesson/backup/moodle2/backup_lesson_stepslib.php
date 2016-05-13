@@ -20,27 +20,27 @@
  *
  * This is the "graphical" structure of the lesson module:
  *
- *                  lesson ------------>---------------|-------------->-----------|------------->------------|
- *               (CL,pk->id)                           |                          |                          |
- *                     |                               |                          |                          |
- *                     |                         lesson_grades              lesson_high_scores         lesson_timer
- *                     |                  (UL, pk->id,fk->lessonid)    (UL, pk->id,fk->lessonid)   (UL, pk->id,fk->lessonid)
- *                     |                               |
- *                     |                               |
- *                     |                               |
- *                     |                               |
- *              lesson_pages----------->---------lesson_branch
- *          (CL,pk->id,fk->lessonid)       (UL, pk->id,fk->pageid)
- *                     |
- *                     |
- *                     |
- *               lesson_answers
- *            (CL,pk->id,fk->pageid)
- *                     |
- *                     |
- *                     |
- *               lesson_attempts
- *          (UL,pk->id,fk->answerid)
+ *         lesson ---------->-------------|------------>---------|----------->----------|
+ *      (CL,pk->id)                       |                      |                      |
+ *            |                           |                      |                      |
+ *            |                     lesson_grades           lesson_timer           lesson_overrides
+ *            |            (UL, pk->id,fk->lessonid)  (UL, pk->id,fk->lessonid) (UL, pk->id,fk->lessonid)
+ *            |                           |
+ *            |                           |
+ *            |                           |
+ *            |                           |
+ *      lesson_pages-------->-------lesson_branch
+ *   (CL,pk->id,fk->lessonid)     (UL, pk->id,fk->pageid)
+ *            |
+ *            |
+ *            |
+ *      lesson_answers
+ *   (CL,pk->id,fk->pageid)
+ *            |
+ *            |
+ *            |
+ *      lesson_attempts
+ *  (UL,pk->id,fk->answerid)
  *
  * Meaning: pk->primary key field of the table
  *          fk->foreign key to link with parent
@@ -67,19 +67,18 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         // The lesson table
         // This table contains all of the goodness for the lesson module, quite
         // alot goes into it but nothing relational other than course when will
-        // need to be corrected upon restore
+        // need to be corrected upon restore.
         $lesson = new backup_nested_element('lesson', array('id'), array(
-            'course','name','practice','modattempts','usepassword','password',
-            'dependency','conditions','grade','custom','ongoing','usemaxgrade',
-            'maxanswers','maxattempts','review','nextpagedefault','feedback',
-            'minquestions','maxpages','timed','maxtime','retake','activitylink',
-            'mediafile','mediaheight','mediawidth','mediaclose','slideshow',
-            'width','height','bgcolor','displayleft','displayleftif','progressbar',
-            'showhighscores','maxhighscores','available','deadline','timemodified'
+            'course', 'name', 'intro', 'introformat', 'practice', 'modattempts',
+            'usepassword', 'password',
+            'dependency', 'conditions', 'grade', 'custom', 'ongoing', 'usemaxgrade',
+            'maxanswers', 'maxattempts', 'review', 'nextpagedefault', 'feedback',
+            'minquestions', 'maxpages', 'timelimit', 'retake', 'activitylink',
+            'mediafile', 'mediaheight', 'mediawidth', 'mediaclose', 'slideshow',
+            'width', 'height', 'bgcolor', 'displayleft', 'displayleftif', 'progressbar',
+            'available', 'deadline', 'timemodified',
+            'completionendreached', 'completiontimespent'
         ));
-        // Tell the lesson element about the showhighscores elements mapping to the highscores
-        // database field.
-        $lesson->set_source_alias('highscores', 'showhighscores');
 
         // The lesson_pages table
         // Grouped within a `pages` element, important to note that page is relational
@@ -118,7 +117,7 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         // and user.
         $branches = new backup_nested_element('branches');
         $branch = new backup_nested_element('branch', array('id'), array(
-            'userid','retry','flag','timeseen'
+             'userid', 'retry', 'flag', 'timeseen', 'nextpageid'
         ));
 
         // The lesson_grades table
@@ -128,20 +127,17 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
             'userid','grade','late','completed'
         ));
 
-        // The lesson_high_scores table
-        // Grouped by a highscores element this is relational to the lesson, user,
-        // and possibly a grade.
-        $highscores = new backup_nested_element('highscores');
-        $highscore = new backup_nested_element('highscore', array('id'), array(
-            'gradeid','userid','nickname'
-        ));
-
         // The lesson_timer table
         // Grouped by a `timers` element this is relational to the lesson and user.
         $timers = new backup_nested_element('timers');
         $timer = new backup_nested_element('timer', array('id'), array(
-            'userid','starttime','lessontime'
+            'userid', 'starttime', 'lessontime', 'completed'
         ));
+
+        $overrides = new backup_nested_element('overrides');
+        $override = new backup_nested_element('override', array('id'), array(
+            'groupid', 'userid', 'available', 'deadline', 'timelimit',
+            'review', 'maxattempts', 'retake', 'password'));
 
         // Now that we have all of the elements created we've got to put them
         // together correctly.
@@ -155,10 +151,10 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         $branches->add_child($branch);
         $lesson->add_child($grades);
         $grades->add_child($grade);
-        $lesson->add_child($highscores);
-        $highscores->add_child($highscore);
         $lesson->add_child($timers);
         $timers->add_child($timer);
+        $lesson->add_child($overrides);
+        $overrides->add_child($override);
 
         // Set the source table for the elements that aren't reliant on the user
         // at this point (lesson, lesson_pages, lesson_answers)
@@ -169,29 +165,38 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         // We use SQL here as answers must be ordered by id so that the restore gets them in the right order
         $answer->set_source_table('lesson_answers', array('pageid' => backup::VAR_PARENTID), 'id ASC');
 
+        // Lesson overrides to backup are different depending of user info.
+        $overrideparams = array('lessonid' => backup::VAR_PARENTID);
+
         // Check if we are also backing up user information
         if ($this->get_setting_value('userinfo')) {
             // Set the source table for elements that are reliant on the user
-            // lesson_attempts, lesson_branch, lesson_grades, lesson_high_scores, lesson_timer
+            // lesson_attempts, lesson_branch, lesson_grades, lesson_timer.
             $attempt->set_source_table('lesson_attempts', array('answerid' => backup::VAR_PARENTID));
             $branch->set_source_table('lesson_branch', array('pageid' => backup::VAR_PARENTID));
             $grade->set_source_table('lesson_grades', array('lessonid'=>backup::VAR_PARENTID));
-            $highscore->set_source_table('lesson_high_scores', array('lessonid' => backup::VAR_PARENTID));
             $timer->set_source_table('lesson_timer', array('lessonid' => backup::VAR_PARENTID));
+        } else {
+            $overrideparams['userid'] = backup_helper::is_sqlparam(null); //  Without userinfo, skip user overrides.
         }
+
+        $override->set_source_table('lesson_overrides', $overrideparams);
 
         // Annotate the user id's where required.
         $attempt->annotate_ids('user', 'userid');
         $branch->annotate_ids('user', 'userid');
         $grade->annotate_ids('user', 'userid');
-        $highscore->annotate_ids('user', 'userid');
         $timer->annotate_ids('user', 'userid');
+        $override->annotate_ids('user', 'userid');
+        $override->annotate_ids('group', 'groupid');
 
         // Annotate the file areas in user by the lesson module.
+        $lesson->annotate_files('mod_lesson', 'intro', null);
         $lesson->annotate_files('mod_lesson', 'mediafile', null);
         $page->annotate_files('mod_lesson', 'page_contents', 'id');
         $answer->annotate_files('mod_lesson', 'page_answers', 'id');
         $answer->annotate_files('mod_lesson', 'page_responses', 'id');
+        $attempt->annotate_files('mod_lesson', 'essay_responses', 'id');
 
         // Prepare and return the structure we have just created for the lesson module.
         return $this->prepare_activity_structure($lesson);

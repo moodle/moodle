@@ -4,11 +4,8 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     // "locations" settingpage
     $temp = new admin_settingpage('locationsettings', new lang_string('locationsettings', 'admin'));
-    $options = get_list_of_timezones();
-    $options[99] = new lang_string('serverlocaltime');
-    $temp->add(new admin_setting_configselect('timezone', new lang_string('timezone','admin'), new lang_string('configtimezone', 'admin'), 99, $options));
-    $options[99] = new lang_string('timezonenotforced', 'admin');
-    $temp->add(new admin_setting_configselect('forcetimezone', new lang_string('forcetimezone', 'admin'), new lang_string('helpforcetimezone', 'admin'), 99, $options));
+    $temp->add(new admin_setting_servertimezone());
+    $temp->add(new admin_setting_forcetimezone());
     $temp->add(new admin_settings_country_select('country', new lang_string('country', 'admin'), new lang_string('configcountry', 'admin'), 0));
     $temp->add(new admin_setting_configtext('defaultcity', new lang_string('defaultcity', 'admin'), new lang_string('defaultcity_help', 'admin'), ''));
 

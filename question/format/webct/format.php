@@ -323,7 +323,7 @@ class qformat_webct extends qformat_default {
                 return file($dirfiles[1]);
             } else {
                 $this->error(get_string('cannotunzip', 'question'));
-                fulldelete($this->temp_dir);
+                fulldelete($this->tempdir);
             }
         } else {
             $this->error(get_string('cannotreaduploadfile', 'error'));

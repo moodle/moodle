@@ -40,6 +40,11 @@ class mssql_native_moodle_database extends moodle_database {
     protected $mssql     = null;
     protected $last_error_reporting; // To handle mssql driver default verbosity
     protected $collation;  // current DB collation cache
+    /**
+     * Does the used db version support ANSI way of limiting (2012 and higher)
+     * @var bool
+     */
+    protected $supportsoffsetfetch;
 
     /**
      * Detects if all needed PHP stuff installed.
@@ -96,6 +101,37 @@ class mssql_native_moodle_database extends moodle_database {
      */
     public function get_configuration_help() {
         return get_string('nativemssqlhelp', 'install');
+    }
+
+    /**
+     * Diagnose database and tables, this function is used
+     * to verify database and driver settings, db engine types, etc.
+     *
+     * @return string null means everything ok, string means problem found.
+     */
+    public function diagnose() {
+        // Verify the database is running with READ_COMMITTED_SNAPSHOT enabled.
+        // (that's required to get snapshots/row versioning on READ_COMMITED mode).
+        $correctrcsmode = false;
+        $sql = "SELECT is_read_committed_snapshot_on
+                  FROM sys.databases
+                 WHERE name = '{$this->dbname}'";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = mssql_query($sql, $this->mssql);
+        $this->query_end($result);
+        if ($result) {
+            if ($row = mssql_fetch_assoc($result)) {
+                $correctrcsmode = (bool)reset($row);
+            }
+        }
+        $this->free_result($result);
+
+        if (!$correctrcsmode) {
+            return get_string('mssqlrcsmodemissing', 'error');
+        }
+
+        // Arrived here, all right.
+        return null;
     }
 
     /**
@@ -197,6 +233,10 @@ class mssql_native_moodle_database extends moodle_database {
         $this->query_end($result);
 
         $this->free_result($result);
+
+        $serverinfo = $this->get_server_info();
+        // Fetch/offset is supported staring from SQL Server 2012.
+        $this->supportsoffsetfetch = $serverinfo['version'] > '11';
 
         // Connection stabilised and configured, going to instantiate the temptables controller
         $this->temptables = new mssql_native_moodle_temptables($this);
@@ -398,10 +438,14 @@ class mssql_native_moodle_database extends moodle_database {
     public function get_columns($table, $usecache=true) {
 
         if ($usecache) {
-            $properties = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
-            $cache = cache::make('core', 'databasemeta', $properties);
-            if ($data = $cache->get($table)) {
-                return $data;
+            if ($this->temptables->is_temptable($table)) {
+                if ($data = $this->get_temp_tables_cache()->get($table)) {
+                    return $data;
+                }
+            } else {
+                if ($data = $this->get_metacache()->get($table)) {
+                    return $data;
+                }
             }
         }
 
@@ -496,7 +540,11 @@ class mssql_native_moodle_database extends moodle_database {
         $this->free_result($result);
 
         if ($usecache) {
-            $cache->set($table, $structure);
+            if ($this->temptables->is_temptable($table)) {
+                $this->get_temp_tables_cache()->set($table, $structure);
+            } else {
+                $this->get_metacache()->set($table, $structure);
+            }
         }
 
         return $structure;
@@ -596,10 +644,11 @@ class mssql_native_moodle_database extends moodle_database {
     /**
      * Do NOT use in code, to be used by database_manager only!
      * @param string|array $sql query
+     * @param array|null $tablenames an array of xmldb table names affected by this request.
      * @return bool true
      * @throws ddl_change_structure_exception A DDL specific exception is thrown for any errors.
      */
-    public function change_database_structure($sql) {
+    public function change_database_structure($sql, $tablenames = null) {
         $this->get_manager(); // Includes DDL exceptions classes ;-)
         $sqls = (array)$sql;
 
@@ -610,11 +659,11 @@ class mssql_native_moodle_database extends moodle_database {
                 $this->query_end($result);
             }
         } catch (ddl_change_structure_exception $e) {
-            $this->reset_caches();
+            $this->reset_caches($tablenames);
             throw $e;
         }
 
-        $this->reset_caches();
+        $this->reset_caches($tablenames);
         return true;
     }
 
@@ -706,13 +755,28 @@ class mssql_native_moodle_database extends moodle_database {
         list($limitfrom, $limitnum) = $this->normalise_limit_from_num($limitfrom, $limitnum);
 
         if ($limitfrom or $limitnum) {
-            if ($limitnum >= 1) { // Only apply TOP clause if we have any limitnum (limitfrom offset is handled later)
-                $fetch = $limitfrom + $limitnum;
-                if (PHP_INT_MAX - $limitnum < $limitfrom) { // Check PHP_INT_MAX overflow
-                    $fetch = PHP_INT_MAX;
+            if (!$this->supportsoffsetfetch) {
+                if ($limitnum >= 1) { // Only apply TOP clause if we have any limitnum (limitfrom offset is handled later).
+                    $fetch = $limitfrom + $limitnum;
+                    if (PHP_INT_MAX - $limitnum < $limitfrom) { // Check PHP_INT_MAX overflow.
+                        $fetch = PHP_INT_MAX;
+                    }
+                    $sql = preg_replace('/^([\s(])*SELECT([\s]+(DISTINCT|ALL))?(?!\s*TOP\s*\()/i',
+                                        "\\1SELECT\\2 TOP $fetch", $sql);
                 }
-                $sql = preg_replace('/^([\s(])*SELECT([\s]+(DISTINCT|ALL))?(?!\s*TOP\s*\()/i',
-                                    "\\1SELECT\\2 TOP $fetch", $sql);
+            } else {
+                $sql = (substr($sql, -1) === ';') ? substr($sql, 0, -1) : $sql;
+                // We need order by to use FETCH/OFFSET.
+                // Ordering by first column shouldn't break anything if there was no order in the first place.
+                if (!strpos(strtoupper($sql), "ORDER BY")) {
+                    $sql .= " ORDER BY 1";
+                }
+
+                $sql .= " OFFSET ".$limitfrom." ROWS ";
+
+                if ($limitnum > 0) {
+                    $sql .= " FETCH NEXT ".$limitnum." ROWS ONLY";
+                }
             }
         }
 
@@ -723,7 +787,7 @@ class mssql_native_moodle_database extends moodle_database {
         $result = mssql_query($rawsql, $this->mssql);
         $this->query_end($result);
 
-        if ($limitfrom) { // Skip $limitfrom records
+        if ($limitfrom && !$this->supportsoffsetfetch) { // Skip $limitfrom records.
             if (!@mssql_data_seek($result, $limitfrom)) {
                 // Nothing, most probably seek past the end.
                 mssql_free_result($result);
@@ -1207,11 +1271,7 @@ class mssql_native_moodle_database extends moodle_database {
         for ($n=count($elements)-1; $n > 0 ; $n--) {
             array_splice($elements, $n, 0, $separator);
         }
-        $s = implode(' + ', $elements);
-        if ($s === '') {
-            return " '' ";
-        }
-        return " $s ";
+        return call_user_func_array(array($this, 'sql_concat'), $elements);
     }
 
    public function sql_isempty($tablename, $fieldname, $nullablefield, $textfield) {
@@ -1257,9 +1317,9 @@ class mssql_native_moodle_database extends moodle_database {
 s only returning name of SQL substring function, it now requires all parameters.');
         }
         if ($length === false) {
-            return "SUBSTRING($expr, $start, (LEN($expr) - $start + 1))";
+            return "SUBSTRING($expr, " . $this->sql_cast_char2int($start) . ", 2^31-1)";
         } else {
-            return "SUBSTRING($expr, $start, $length)";
+            return "SUBSTRING($expr, " . $this->sql_cast_char2int($start) . ", " . $this->sql_cast_char2int($length) . ")";
         }
     }
 

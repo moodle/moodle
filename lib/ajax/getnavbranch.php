@@ -32,6 +32,10 @@ require_once(dirname(__FILE__) . '/../../config.php');
 /** Include course lib for its functions */
 require_once($CFG->dirroot.'/course/lib.php');
 
+if (!empty($CFG->forcelogin)) {
+    require_login();
+}
+
 try {
     // Start buffer capture so that we can `remove` any errors
     ob_start();

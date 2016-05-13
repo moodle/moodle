@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * Strings for component 'error', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   error
+ * @package   core
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -76,6 +75,7 @@ $string['cannoteditcomment'] = 'This comment is not yours to edit!';
 $string['cannoteditcommentexpired'] = 'You can\'t edit this. The time has expired!';
 $string['cannoteditpostorblog'] = 'You cannot post or edit blogs';
 $string['cannoteditsiteform'] = 'You cannot edit the site course using this form';
+$string['cannotedituserpreferences'] = 'Cannot edit this user\'s preferences';
 $string['cannotedityourprofile'] = 'Sorry, you cannot edit own profile';
 $string['cannotexecduringupgrade'] = 'Cannot be executed during upgrade';
 $string['cannotfindcategory'] = 'Cannot find category record from database by ID - {$a}';
@@ -123,6 +123,7 @@ $string['cannotreadfile'] = 'Cannot read file ({$a})';
 $string['cannotreadtmpfile'] = 'Error reading temporary file';
 $string['cannotreaduploadfile'] = 'Could not read uploaded file';
 $string['cannotremovefrommeta'] = 'Could not remove the selected course from this meta course!';
+$string['cannotreprocessgrades'] = 'Could not reprocess grades for this activity {$a}';
 $string['cannotresetguestpwd'] = 'You cannot reset the guest password';
 $string['cannotresetmail'] = 'Error resetting password and mailing you';
 $string['cannotresetthisrole'] = 'Cannot reset this role';
@@ -145,6 +146,7 @@ $string['cannotsetupblock'] = 'Blocks tables could NOT be set up successfully!';
 $string['cannotsetupcapformod'] = 'Could not set up the capabilities for {$a}';
 $string['cannotsetupcapforplugin'] = 'Could not set up the capabilities for {$a}';
 $string['cannotshowhidecoursesincategory'] = 'Cannot show/hide the courses in category {$a}.';
+$string['cannotsignup'] = 'You cannot create a new account because you are already logged in as {$a}.';
 $string['cannotunassigncap'] = 'Could not unassign deprecated capability {$a->cap} from role {$a->role}';
 $string['cannotunassignrolefrom'] = 'Cannot unassign this user from role id: {$a}';
 $string['cannotunzipfile'] = 'Cannot unzip file';
@@ -230,6 +232,7 @@ $string['errorcreatingfile'] = 'Error creating file "{$a}"';
 $string['errorcreatingrole'] = 'Error creating role';
 $string['errorfetchingrssfeed'] = 'Error fetching RSS feed.';
 $string['erroronline'] = 'Error on line {$a}';
+$string['erroroutput'] = 'Error output, so disabling automatic redirect.';
 $string['errorparsingxml'] = 'Error parsing XML: {$a->errorstring} at line {$a->errorline}, char {$a->errorchar}';
 $string['errorreadingfile'] = 'Error reading file "{$a}"';
 $string['errorsavingrequest'] = 'An error occurred when trying to save your request.';
@@ -251,6 +254,7 @@ $string['filternotinstalled'] = 'Filter {$a} is not currently installed';
 $string['forumblockingtoomanyposts'] = 'You have exceeded the posting threshold set for this forum';
 $string['generalexceptionmessage'] = 'Exception - {$a}';
 $string['gradepubdisable'] = 'Grade publishing disabled';
+$string['gradesneedregrading'] = 'The course grades need to be recalculated';
 $string['gradecantregrade'] = 'An error occurred during grade calculation: {$a}';
 $string['groupalready'] = 'User already belongs to group {$a}';
 $string['groupexistforcourse'] = 'Group "{$a}" already exists for this course';
@@ -275,6 +279,7 @@ $string['idnumbertaken'] = 'This ID number is already in use';
 $string['idnumbertoolong'] = 'ID number is too long';
 $string['importformatnotimplement'] = 'Sorry, importing this format is not yet implemented!';
 $string['incorrectext'] = 'File has an incorrect extension';
+$string['inplaceeditableerror'] = 'Error calling update processor';
 $string['installproblem'] = 'It is usually not possible to recover from errors triggered during installation, you may need to create a new database or use a different database prefix if you want to retry the installation.';
 $string['internalauthpassworderror'] = 'Missing password or invalid password policy for internal authentication';
 $string['invalidaccess'] = 'This page was not accessed correctly';
@@ -299,10 +304,11 @@ $string['invalidcontext'] = 'Invalid context';
 $string['invalidcourse'] = 'Invalid course';
 $string['invalidcourseid'] = 'You are trying to use an invalid course ID';
 $string['invalidcourselevel'] = 'Incorrect context level';
+$string['invalidcourseformat'] = 'Invalid course format';
 $string['invalidcoursemodule'] = 'Invalid course module ID';
 $string['invalidcoursenameshort'] = 'Invalid short course name';
 $string['invaliddata'] = 'Data submitted is invalid';
-$string['invaliddatarootpermissions'] = 'Invalid permissions detected in $CFG->dataroot directory, administrator has to fix permissions.';
+$string['invaliddatarootpermissions'] = 'Invalid permissions detected when trying to create a directory. Turn debugging on for further details.';
 $string['invaliddevicetype'] = 'Invalid device type';
 $string['invalidelementid'] = 'Incorrect element id!';
 $string['invalidentry'] = 'This is not valid entry!';
@@ -346,6 +352,7 @@ $string['invalidurl'] = 'Invalid URL';
 $string['invaliduser'] = 'Invalid user';
 $string['invaliduserid'] = 'Invalid user id';
 $string['invaliduserfield'] = 'Invalid user field: {$a}';
+$string['invaliduserdata'] = 'Invalid user data: {$a}';
 $string['invalidusername'] = 'The given username contains invalid characters';
 $string['invalidxmlfile'] = '"{$a}" is not a valid XML file';
 $string['iplookupfailed'] = 'Cannot find geo information about this IP address {$a}';
@@ -362,7 +369,7 @@ $string['listupdatefail'] = 'DB operation failed when editing list hierarchy';
 $string['logfilenotavailable'] = 'Logs not available';
 $string['loginasnoenrol'] = 'You cannot use enrol or unenrol when in course "Login as" session';
 $string['loginasonecourse'] = 'You cannot enter this course.<br /> You have to terminate the "Login as" session before entering any other course.';
-$string['maxbytes'] = 'The file is larger than the maximum size allowed.';
+$string['maxbytesfile'] = 'The file {$a->file} is too large. The maximum size you can upload is {$a->size}.';
 $string['maxareabytes'] = 'The file is larger than the space remaining in this area.';
 $string['messagingdisable'] = 'Messaging is disabled on this site';
 $string['mimetexisnotexist'] = 'Your system is not configured to run mimeTeX. You need to download the appropriate executable for you PHP_OS platform from <a href="http://moodle.org/download/mimetex/">http://moodle.org/download/mimetex/</a>, or obtain the C source from <a href="http://www.forkosh.com/mimetex.zip"> http://www.forkosh.com/mimetex.zip</a>, compile it and put the executable into your moodle/filter/tex/ directory.';
@@ -377,7 +384,7 @@ $string['missingvarname'] = 'Required variable name is missing!';
 $string['missing_moodle_backup_xml_file'] = 'Backup is missing XML file: {$a}';
 $string['mixedtypesqlparam'] = 'ERROR: Mixed types of sql query parameters!!';
 $string['mnetdisable'] = 'MNET is disabled';
-$string['mnetlocal'] = 'Remote MNET users cannot login locally';
+$string['mnetlocal'] = 'Remote MNET users cannot log in locally';
 $string['moduledisable'] = 'This module ({$a}) has been disabled for this particular course';
 $string['moduledoesnotexist'] = 'This module does not exist';
 $string['moduleinstancedoesnotexist'] = 'The instance of this module does not exist';
@@ -386,6 +393,7 @@ $string['movecatcontentstoroot'] = 'Moving the category content to root is not a
 $string['movecategorynotpossible'] = 'You cannot move category \'{$a}\' into the selected category.';
 $string['movecategoryownparent'] = 'You cannot make category \'{$a}\' a parent of itself.';
 $string['movecategoryparentconflict'] = 'You cannot make category \'{$a}\' a subcategory of one of its own subcategories.';
+$string['mssqlrcsmodemissing'] = 'The database is not using the expected READ_COMMITTED_SNAPSHOT mode which can lead to wrong results, especially under high concurrency scenarios. Please enable it for correct behaviour. For further information, see the documentation <a href="https://docs.moodle.org/en/Installing_MSSQL_for_PHP">Installing MSSQL for PHP</a>.';
 $string['multiplerecordsfound'] = 'Multiple records found, only one record expected.';
 $string['multiplerestorenotallow'] = 'Multiple restore execution not allowed!';
 $string['mustbeloggedin'] = 'You must be logged in to do this';
@@ -407,7 +415,7 @@ $string['nofolder'] = 'Requested directory does not exist';
 $string['noformdesc'] = 'No formslib form description file found for this activity.';
 $string['noguest'] = 'No guests here!';
 $string['noinstances'] = 'There are no instances of {$a} in this course!';
-$string['nologinas'] = 'You are not allowed to login as that user';
+$string['nologinas'] = 'You are not allowed to log in as that user';
 $string['nonmeaningfulcontent'] = 'Non meaningful content';
 $string['noparticipants'] = 'No participants found for this course';
 $string['noparticipatorycms'] = 'Sorry, but you have no participatory course modules to report on';
@@ -447,6 +455,7 @@ $string['prefixcannotbeempty'] = '<p>Error: database table prefix cannot be empt
 <p>The site administrator must fix this problem.</p>';
 $string['prefixtoolong'] = '<p>Error: database table prefix is too long ({$a->dbfamily})</p>
 <p>The site administrator must fix this problem. Maximum length for table prefixes in {$a->dbfamily} is {$a->maxlength} characters.</p>';
+$string['privatefilesupload'] = 'Uploading directly to user private files area is no longer supported. Upload to a draft area and then move the files with core_user::add_user_private_files';
 $string['processingstops'] = 'Processing stops here. Remaining records ignored.';
 $string['querystringcannotbeempty'] = 'The query string cannot be empty.';
 $string['redirecterrordetected'] = 'Unsupported redirect detected, script execution terminated';
@@ -472,10 +481,10 @@ $string['serverconnection'] = 'Error connecting to the server';
 $string['servicedonotexist'] = 'The service does not exist';
 $string['sessionwaiterr'] = 'Timed out while waiting for session lock.<br />Wait for your current requests to finish and try again later.';
 $string['sessioncookiesdisable'] = 'Incorrect use of require_key_login() - session cookies must be disabled!';
-$string['sessiondiskfull'] = 'The session partition is full. It is not possible to login at this time. Please notify the server administrator.';
+$string['sessiondiskfull'] = 'The session partition is full. It is not possible to log in at this time. Please notify the server administrator.';
 $string['sessionhandlerproblem'] = 'Session handler is misconfigured';
-$string['sessionerroruser'] = 'Your session has timed out.  Please login again.';
-$string['sessionerroruser2'] = 'A server error that affects your login session was detected. Please login again or restart your browser.';
+$string['sessionerroruser'] = 'Your session has timed out. Please log in again.';
+$string['sessionerroruser2'] = 'A server error that affects your login session was detected. Please log in again or restart your browser.';
 $string['sessionipnomatch'] = 'Sorry, but your IP number seems to have changed from when you first logged in.  This security feature prevents crackers stealing your identity while logged in to this site.  Normal users should not be seeing this message - please ask the site administrator for help.';
 $string['sessionipnomatch2'] = '<p>Sorry, but your IP number seems to have changed from when you first logged in. This security feature prevents crackers stealing your identity while logged in to this site. You may see this error if you use wireless networks or if you are roaming between different networks. Please ask the site administrator for more help.</p>
 <p>If you want to continue please press F5 key to refresh this page.</p>';
@@ -489,7 +498,7 @@ $string['statsdisable'] = 'Statistics are not enabled.';
 $string['statsnodata'] = 'There is no available data for that combination of course and time period';
 $string['storedfilecannotcreatefile'] = 'Can not create local file pool file, please verify permissions in dataroot and available disk space.';
 $string['storedfilecannotcreatefiledirs'] = 'Can not create local file pool directories, please verify permissions in dataroot.';
-$string['storedfilecannotread'] = 'Can not read file, either file does not exist or there are permission problems';
+$string['storedfilecannotread'] = 'Cannot read file. Either the file does not exist or there is a permission problem.';
 $string['storedfilenotcreated'] = 'Can not create file "{$a->contextid}/{$a->component}/{$a->filearea}/{$a->itemid}{$a->filepath}{$a->filename}"';
 $string['storedfileproblem'] = 'Unknown exception related to local files ({$a})';
 $string['tagdisabled'] = 'Tags are disabled!';
@@ -571,3 +580,6 @@ $string['xmldberror'] = 'XMLDB error!';
 $string['alreadyloggedin'] = 'You are already logged in as {$a}, you need to log out before logging in as different user.';
 $string['youcannotdeletecategory'] = 'You cannot delete category \'{$a}\' because you can neither delete the contents, nor move them elsewhere.';
 $string['protected_cc_not_supported'] = 'Protected cartridges not supported.';
+
+// Deprecated since Moodle 3.1.
+$string['maxbytes'] = 'The file is larger than the maximum size allowed.';

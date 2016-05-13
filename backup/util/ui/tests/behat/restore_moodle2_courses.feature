@@ -15,6 +15,7 @@ Feature: Restore Moodle 2 course backups
       | assign | C3 | assign1 | Test assign name | Assign description | 1 |
       | data | C3 | data1 | Test database name | Database description | 2 |
     And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
@@ -90,7 +91,7 @@ Feature: Restore Moodle 2 course backups
       | id_startdate_month | January |
       | id_startdate_year | 2020 |
       | id_format | Weekly format |
-    And I press "Save changes"
+    And I press "Save and display"
     And I should see "1 January - 7 January"
     And I should see "Test forum name"
     And I click on "Edit settings" "link" in the "Administration" "block"
@@ -98,7 +99,7 @@ Feature: Restore Moodle 2 course backups
     And the field "id_format" matches value "Weekly format"
     And I set the following fields to these values:
       | id_format | Social format |
-    And I press "Save changes"
+    And I press "Save and display"
     And I should see "An open forum for chatting about anything you want to"
     And I click on "Edit settings" "link" in the "Administration" "block"
     And I expand all fieldsets
@@ -126,5 +127,5 @@ Feature: Restore Moodle 2 course backups
     And section "3" should be hidden
     And section "7" should be hidden
     And section "15" should be visible
-    And I should see "Test URL name" in the "#section-3" "css_element"
-    And I should see "Test forum name" in the "#section-1" "css_element"
+    And I should see "Test URL name" in the "Topic 3" "section"
+    And I should see "Test forum name" in the "Topic 1" "section"

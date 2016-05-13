@@ -57,8 +57,8 @@ if ($perpage !== 0) {
 }
 
 $PAGE->set_url($url);
-$PAGE->set_title("$course->fullname: $fullname: $strportfolios");
-$PAGE->set_heading($course->fullname);
+$PAGE->set_title(get_string('logs', 'portfolio'));
+$PAGE->set_heading($fullname);
 $PAGE->set_context(context_user::instance($user->id));
 $PAGE->set_pagelayout('report');
 

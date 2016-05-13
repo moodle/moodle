@@ -63,7 +63,14 @@ define('MEMORY_HUGE', -4);
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since 2.0
  */
-class object extends stdClass {};
+class object extends stdClass {
+    /**
+     * Constructor.
+     */
+    public function __construct() {
+        debugging("'object' class has been deprecated, please use stdClass instead.", DEBUG_DEVELOPER);
+    }
+};
 
 /**
  * Base Moodle Exception class
@@ -161,6 +168,24 @@ class require_login_exception extends moodle_exception {
      */
     function __construct($debuginfo) {
         parent::__construct('requireloginerror', 'error', '', NULL, $debuginfo);
+    }
+}
+
+/**
+ * Session timeout exception.
+ *
+ * This exception is thrown from require_login()
+ *
+ * @package    core_access
+ * @copyright  2015 Andrew Nicols <andrew@nicols.co.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class require_login_session_timeout_exception extends require_login_exception {
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        moodle_exception::__construct('sessionerroruser', 'error');
     }
 }
 
@@ -328,7 +353,7 @@ class file_serving_exception extends moodle_exception {
 }
 
 /**
- * Default exception handler, uncaught exceptions are equivalent to error() in 1.9 and earlier
+ * Default exception handler.
  *
  * @param Exception $ex
  * @return void -does not return. Terminates execution!
@@ -360,7 +385,14 @@ function default_exception_handler($ex) {
                 $DB->set_debug(0);
             }
             echo $OUTPUT->fatal_error($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo);
-        } catch (Exception $out_ex) {
+        } catch (Exception $e) {
+            $out_ex = $e;
+        } catch (Throwable $e) {
+            // Engine errors in PHP7 throw exceptions of type Throwable (this "catch" will be ignored in PHP5).
+            $out_ex = $e;
+        }
+
+        if (isset($out_ex)) {
             // default exception handler MUST not throw any exceptions!!
             // the problem here is we do not know if page already started or not, we only know that somebody messed up in outputlib or theme
             // so we just print at least something instead of "Exception thrown without a stack frame in Unknown on line 0":-(
@@ -557,10 +589,16 @@ function get_exception_info($ex) {
         }
     }
 
-    // when printing an error the continue button should never link offsite
-    if (stripos($link, $CFG->wwwroot) === false &&
-        stripos($link, $CFG->httpswwwroot) === false) {
-        $link = $CFG->wwwroot.'/';
+    // When printing an error the continue button should never link offsite.
+    // We cannot use clean_param() here as it is not guaranteed that it has been loaded yet.
+    $httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
+    if (stripos($link, $CFG->wwwroot) === 0) {
+        // Internal HTTP, all good.
+    } else if (!empty($CFG->loginhttps) && stripos($link, $httpswwwroot) === 0) {
+        // Internal HTTPS, all good.
+    } else {
+        // External link spotted!
+        $link = $CFG->wwwroot . '/';
     }
 
     $info = new stdClass();
@@ -573,6 +611,52 @@ function get_exception_info($ex) {
     $info->debuginfo   = $debuginfo;
 
     return $info;
+}
+
+/**
+ * Generate a uuid.
+ *
+ * Unique is hard. Very hard. Attempt to use the PECL UUID functions if available, and if not then revert to
+ * constructing the uuid using mt_rand.
+ *
+ * It is important that this token is not solely based on time as this could lead
+ * to duplicates in a clustered environment (especially on VMs due to poor time precision).
+ *
+ * @return string The uuid.
+ */
+function generate_uuid() {
+    $uuid = '';
+
+    if (function_exists("uuid_create")) {
+        $context = null;
+        uuid_create($context);
+
+        uuid_make($context, UUID_MAKE_V4);
+        uuid_export($context, UUID_FMT_STR, $uuid);
+    } else {
+        // Fallback uuid generation based on:
+        // "http://www.php.net/manual/en/function.uniqid.php#94959".
+        $uuid = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+
+            // 32 bits for "time_low".
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+
+            // 16 bits for "time_mid".
+            mt_rand(0, 0xffff),
+
+            // 16 bits for "time_hi_and_version",
+            // four most significant bits holds version number 4.
+            mt_rand(0, 0x0fff) | 0x4000,
+
+            // 16 bits, 8 bits for "clk_seq_hi_res",
+            // 8 bits for "clk_seq_low",
+            // two most significant bits holds zero and one for variant DCE1.1.
+            mt_rand(0, 0x3fff) | 0x8000,
+
+            // 48 bits for "node".
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff));
+    }
+    return trim($uuid);
 }
 
 /**
@@ -881,6 +965,29 @@ function setup_get_remote_url() {
         //Apache server
         $rurl['fullpath'] = $_SERVER['REQUEST_URI'];
 
+        // Fixing a known issue with:
+        // - Apache versions lesser than 2.4.11
+        // - PHP deployed in Apache as PHP-FPM via mod_proxy_fcgi
+        // - PHP versions lesser than 5.6.3 and 5.5.18.
+        if (isset($_SERVER['PATH_INFO']) && (php_sapi_name() === 'fpm-fcgi') && isset($_SERVER['SCRIPT_NAME'])) {
+            $pathinfodec = rawurldecode($_SERVER['PATH_INFO']);
+            $lenneedle = strlen($pathinfodec);
+            // Checks whether SCRIPT_NAME ends with PATH_INFO, URL-decoded.
+            if (substr($_SERVER['SCRIPT_NAME'], -$lenneedle) === $pathinfodec) {
+                // This is the "Apache 2.4.10- running PHP-FPM via mod_proxy_fcgi" fingerprint,
+                // at least on CentOS 7 (Apache/2.4.6 PHP/5.4.16) and Ubuntu 14.04 (Apache/2.4.7 PHP/5.5.9)
+                // => SCRIPT_NAME contains 'slash arguments' data too, which is wrongly exposed via PATH_INFO as URL-encoded.
+                // Fix both $_SERVER['PATH_INFO'] and $_SERVER['SCRIPT_NAME'].
+                $lenhaystack = strlen($_SERVER['SCRIPT_NAME']);
+                $pos = $lenhaystack - $lenneedle;
+                // Here $pos is greater than 0 but let's double check it.
+                if ($pos > 0) {
+                    $_SERVER['PATH_INFO'] = $pathinfodec;
+                    $_SERVER['SCRIPT_NAME'] = substr($_SERVER['SCRIPT_NAME'], 0, $pos);
+                }
+            }
+        }
+
     } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'iis') !== false) {
         //IIS - needs a lot of tweaking to make it work
         $rurl['fullpath'] = $_SERVER['SCRIPT_NAME'];
@@ -984,7 +1091,10 @@ function workaround_max_input_vars() {
         return;
     }
 
-    if (count($_POST, COUNT_RECURSIVE) < $max) {
+    // Worst case is advanced checkboxes which use up to two max_input_vars
+    // slots for each entry in $_POST, because of sending two fields with the
+    // same name. So count everything twice just in case.
+    if (count($_POST, COUNT_RECURSIVE) * 2 < $max) {
         return;
     }
 
@@ -999,6 +1109,15 @@ function workaround_max_input_vars() {
     $delim = '&';
     $fun = create_function('$p', 'return implode("'.$delim.'", $p);');
     $chunks = array_map($fun, array_chunk(explode($delim, $str), $max));
+
+    // Clear everything from existing $_POST array, otherwise it might be included
+    // twice (this affects array params primarily).
+    foreach ($_POST as $key => $value) {
+        unset($_POST[$key]);
+        // Also clear from request array - but only the things that are in $_POST,
+        // that way it will leave the things from a get request if any.
+        unset($_REQUEST[$key]);
+    }
 
     foreach ($chunks as $chunk) {
         $values = array();
@@ -1208,26 +1327,23 @@ function get_real_size($size = 0) {
     if (!$size) {
         return 0;
     }
-    $scan = array();
-    $scan['GB'] = 1073741824;
-    $scan['Gb'] = 1073741824;
-    $scan['G'] = 1073741824;
-    $scan['MB'] = 1048576;
-    $scan['Mb'] = 1048576;
-    $scan['M'] = 1048576;
-    $scan['m'] = 1048576;
-    $scan['KB'] = 1024;
-    $scan['Kb'] = 1024;
-    $scan['K'] = 1024;
-    $scan['k'] = 1024;
 
-    while (list($key) = each($scan)) {
-        if ((strlen($size)>strlen($key))&&(substr($size, strlen($size) - strlen($key))==$key)) {
-            $size = substr($size, 0, strlen($size) - strlen($key)) * $scan[$key];
-            break;
-        }
+    static $binaryprefixes = array(
+        'K' => 1024,
+        'k' => 1024,
+        'M' => 1048576,
+        'm' => 1048576,
+        'G' => 1073741824,
+        'g' => 1073741824,
+        'T' => 1099511627776,
+        't' => 1099511627776,
+    );
+
+    if (preg_match('/^([0-9]+)([KMGT])/i', $size, $matches)) {
+        return $matches[1] * $binaryprefixes[$matches[2]];
     }
-    return $size;
+
+    return (int) $size;
 }
 
 /**
@@ -1344,6 +1460,50 @@ function check_dir_exists($dir, $create = true, $recursive = true) {
 }
 
 /**
+ * Create a new unique directory within the specified directory.
+ *
+ * @param string $basedir The directory to create your new unique directory within.
+ * @param bool $exceptiononerror throw exception if error encountered
+ * @return string The created directory
+ * @throws invalid_dataroot_permissions
+ */
+function make_unique_writable_directory($basedir, $exceptiononerror = true) {
+    if (!is_dir($basedir) || !is_writable($basedir)) {
+        // The basedir is not writable. We will not be able to create the child directory.
+        if ($exceptiononerror) {
+            throw new invalid_dataroot_permissions($basedir . ' is not writable. Unable to create a unique directory within it.');
+        } else {
+            return false;
+        }
+    }
+
+    do {
+        // Generate a new (hopefully unique) directory name.
+        $uniquedir = $basedir . DIRECTORY_SEPARATOR . generate_uuid();
+    } while (
+            // Ensure that basedir is still writable - if we do not check, we could get stuck in a loop here.
+            is_writable($basedir) &&
+
+            // Make the new unique directory. If the directory already exists, it will return false.
+            !make_writable_directory($uniquedir, $exceptiononerror) &&
+
+            // Ensure that the directory now exists
+            file_exists($uniquedir) && is_dir($uniquedir)
+        );
+
+    // Check that the directory was correctly created.
+    if (!file_exists($uniquedir) || !is_dir($uniquedir) || !is_writable($uniquedir)) {
+        if ($exceptiononerror) {
+            throw new invalid_dataroot_permissions('Unique directory creation failed.');
+        } else {
+            return false;
+        }
+    }
+
+    return $uniquedir;
+}
+
+/**
  * Create a directory and make sure it is writable.
  *
  * @private
@@ -1365,7 +1525,7 @@ function make_writable_directory($dir, $exceptiononerror = true) {
     umask($CFG->umaskpermissions);
 
     if (!file_exists($dir)) {
-        if (!mkdir($dir, $CFG->directorypermissions, true)) {
+        if (!@mkdir($dir, $CFG->directorypermissions, true)) {
             clearstatcache();
             // There might be a race condition when creating directory.
             if (!is_dir($dir)) {
@@ -1435,8 +1595,61 @@ function make_upload_directory($directory, $exceptiononerror = true) {
 }
 
 /**
+ * Get a per-request storage directory in the tempdir.
+ *
+ * The directory is automatically cleaned up during the shutdown handler.
+ *
+ * @param bool $exceptiononerror throw exception if error encountered
+ * @return string|false Returns full path to directory if successful, false if not; may throw exception
+ */
+function get_request_storage_directory($exceptiononerror = true) {
+    global $CFG;
+
+    static $requestdir = null;
+
+    if (!$requestdir || !file_exists($requestdir) || !is_dir($requestdir) || !is_writable($requestdir)) {
+        if ($CFG->localcachedir !== "$CFG->dataroot/localcache") {
+            check_dir_exists($CFG->localcachedir, true, true);
+            protect_directory($CFG->localcachedir);
+        } else {
+            protect_directory($CFG->dataroot);
+        }
+
+        if ($requestdir = make_unique_writable_directory($CFG->localcachedir, $exceptiononerror)) {
+            // Register a shutdown handler to remove the directory.
+            \core_shutdown_manager::register_function('remove_dir', array($requestdir));
+        }
+    }
+
+    return $requestdir;
+}
+
+/**
+ * Create a per-request directory and make sure it is writable.
+ * This can only be used during the current request and will be tidied away
+ * automatically afterwards.
+ *
+ * A new, unique directory is always created within the current request directory.
+ *
+ * @param bool $exceptiononerror throw exception if error encountered
+ * @return string full path to directory if successful, false if not; may throw exception
+ */
+function make_request_directory($exceptiononerror = true) {
+    $basedir = get_request_storage_directory($exceptiononerror);
+    return make_unique_writable_directory($basedir, $exceptiononerror);
+}
+
+/**
  * Create a directory under tempdir and make sure it is writable.
- * Temporary files should be used during the current request only!
+ *
+ * Where possible, please use make_request_directory() and limit the scope
+ * of your data to the current HTTP request.
+ *
+ * Do not use for storing cache files - see make_cache_directory(), and
+ * make_localcache_directory() instead for this purpose.
+ *
+ * Temporary files must be on a shared storage, and heavy usage is
+ * discouraged due to the performance impact upon clustered environments.
  *
  * @param string $directory  the full path of the directory to be created under $CFG->tempdir
  * @param bool $exceptiononerror throw exception if error encountered
@@ -1523,45 +1736,6 @@ function make_localcache_directory($directory, $exceptiononerror = true) {
     }
 
     return make_writable_directory("$CFG->localcachedir/$directory", $exceptiononerror);
-}
-
-/**
- * Checks if current user is a web crawler.
- *
- * This list can not be made complete, this is not a security
- * restriction, we make the list only to help these sites
- * especially when automatic guest login is disabled.
- *
- * If admin needs security they should enable forcelogin
- * and disable guest access!!
- *
- * @return bool
- */
-function is_web_crawler() {
-    if (!empty($_SERVER['HTTP_USER_AGENT'])) {
-        if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== false ) {
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'google.com') !== false ) { // Google
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'Yahoo! Slurp') !== false ) {  // Yahoo
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], '[ZSEBOT]') !== false ) {  // Zoomspider
-            return true;
-        } else if (stripos($_SERVER['HTTP_USER_AGENT'], 'msnbot') !== false ) {  // MSN Search
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'bingbot') !== false ) {  // Bing
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'Yandex') !== false ) {
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'AltaVista') !== false ) {
-            return true;
-        } else if (stripos($_SERVER['HTTP_USER_AGENT'], 'baiduspider') !== false ) {  // Baidu
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'Teoma') !== false ) {  // Ask.com
-            return true;
-        }
-    }
-    return false;
 }
 
 /**

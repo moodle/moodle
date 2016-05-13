@@ -89,7 +89,13 @@ class block_news_items extends block_base {
 
         /// Get all the recent discussions we're allowed to see
 
-            if (! $discussions = forum_get_discussions($cm, 'p.modified DESC', false,
+            // This block displays the most recent posts in a forum in
+            // descending order. The call to default sort order here will use
+            // that unless the discussion that post is in has a timestart set
+            // in the future.
+            // This sort will ignore pinned posts as we want the most recent.
+            $sort = forum_get_default_sort_order(true, 'p.modified', 'd', false);
+            if (! $discussions = forum_get_discussions($cm, $sort, false,
                                                        $currentgroup, $this->page->course->newsitems) ) {
                 $text .= '('.get_string('nonews', 'forum').')';
                 $this->content->text = $text;

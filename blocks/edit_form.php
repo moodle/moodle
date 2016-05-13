@@ -54,7 +54,7 @@ class block_edit_form extends moodleform {
         global $CFG;
         $this->block = $block;
         $this->page = $page;
-        parent::moodleform($actionurl);
+        parent::__construct($actionurl);
     }
 
     function definition() {
@@ -84,6 +84,12 @@ class block_edit_form extends moodleform {
         $weightoptions[$last] = get_string('bracketlast', 'block', $last);
 
         $regionoptions = $this->page->theme->get_all_block_regions();
+        foreach ($this->page->blocks->get_regions() as $region) {
+            // Make sure to add all custom regions of this particular page too.
+            if (!isset($regionoptions[$region])) {
+                $regionoptions[$region] = $region;
+            }
+        }
 
         $parentcontext = context::instance_by_id($this->block->instance->parentcontextid);
         $mform->addElement('hidden', 'bui_parentcontextid', $parentcontext->id);

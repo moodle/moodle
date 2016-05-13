@@ -29,7 +29,7 @@ require_once('lib.php');
 
 require_login();
 $context = context_system::instance();
-$PAGE->set_context($context);
+$PAGE->set_context(context_user::instance($USER->id));
 $PAGE->set_url(new moodle_url('/blog/external_blogs.php'));
 require_capability('moodle/blog:manageexternal', $context);
 
@@ -61,7 +61,7 @@ if ($delete && confirm_sesskey()) {
 
 $blogs = $DB->get_records('blog_external', array('userid' => $USER->id));
 
-$PAGE->set_heading("$SITE->shortname: $strblogs: $strexternalblogs", $SITE->fullname);
+$PAGE->set_heading(fullname($USER));
 $PAGE->set_title("$SITE->shortname: $strblogs: $strexternalblogs");
 $PAGE->set_pagelayout('standard');
 
@@ -94,14 +94,16 @@ if (!empty($blogs)) {
         $editurl = new moodle_url('/blog/external_blog_edit.php', array('id' => $blog->id));
         $editicon = $OUTPUT->action_icon($editurl, new pix_icon('t/edit', get_string('editexternalblog', 'blog')));
 
-        $deletelink = new moodle_url('/blog/external_blogs.php', array('delete' => $blog->id, 'sesskey'=>sesskey()));
-        $deleteicon = $OUTPUT->action_icon($deletelink, new pix_icon('t/delete', get_string('deleteexternalblog', 'blog')));
+        $deletelink = new moodle_url('/blog/external_blogs.php', array('delete' => $blog->id, 'sesskey' => sesskey()));
+        $action = new confirm_action(get_string('externalblogdeleteconfirm', 'blog'));
+        $deleteicon = $OUTPUT->action_icon($deletelink, new pix_icon('t/delete', get_string('deleteexternalblog', 'blog')),
+                                           $action);
 
         $table->data[] = new html_table_row(array($blog->name,
                                                   $blog->url,
                                                   userdate($blog->timefetched),
                                                   $validicon,
-                                                  $editicon . '&nbsp'. $deleteicon));
+                                                  $editicon . $deleteicon));
     }
     echo html_writer::table($table);
 }

@@ -57,7 +57,11 @@ if (empty($component) or $component === 'moodle' or $component === 'core') {
     $component = 'core';
 }
 
-if (preg_match('/^[a-z0-9_-]+\.woff$/i', $font, $matches)) {
+if (preg_match('/^[a-z0-9_-]+\.woff2$/i', $font, $matches)) {
+    $font = $matches[0];
+    $mimetype = 'application/font-woff2';
+
+} else if (preg_match('/^[a-z0-9_-]+\.woff$/i', $font, $matches)) {
     // This is the real standard!
     $font = $matches[0];
     $mimetype = 'application/font-woff';

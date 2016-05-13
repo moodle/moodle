@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * Strings for component 'core_enrol', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package    core
+ * @package    core_enrol
  * @subpackage enrol
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,6 +25,7 @@
 
 $string['actenrolshhdr'] = 'Available course enrolment plugins';
 $string['addinstance'] = 'Add method';
+$string['addinstanceanother'] = 'Add method and create another';
 $string['ajaxoneuserfound'] = '1 user found';
 $string['ajaxxusersfound'] = '{$a} users found';
 $string['ajaxnext25'] = 'Next 25...';
@@ -48,6 +48,9 @@ $string['enrolcandidates'] = 'Not enrolled users';
 $string['enrolcandidatesmatching'] = 'Matching not enrolled users';
 $string['enrolcohort'] = 'Enrol cohort';
 $string['enrolcohortusers'] = 'Enrol users';
+$string['eventenrolinstancecreated'] = 'Enrolment instance created';
+$string['eventenrolinstancedeleted'] = 'Enrolment instance deleted';
+$string['eventenrolinstanceupdated'] = 'Enrolment instance updated';
 $string['enrollednewusers'] = 'Successfully enrolled {$a} new users';
 $string['enrolledusers'] = 'Enrolled users';
 $string['enrolledusersmatching'] = 'Matching enrolled users';
@@ -61,6 +64,7 @@ $string['enrolnotpermitted'] = 'You do not have permission or are not allowed to
 $string['enrolperiod'] = 'Enrolment duration';
 $string['enrolusage'] = 'Instances / enrolments';
 $string['enrolusers'] = 'Enrol users';
+$string['enrolxusers'] = 'Enrol {$a} users';
 $string['enroltimecreated'] = 'Enrolment created';
 $string['enroltimeend'] = 'Enrolment ends';
 $string['enroltimestart'] = 'Enrolment starts';
@@ -82,6 +86,8 @@ $string['expirynotifyhour'] = 'Hour to send enrolment expiry notifications';
 $string['expirythreshold'] = 'Notification threshold';
 $string['expirythreshold_help'] = 'How long before enrolment expiry should users be notified?';
 $string['finishenrollingusers'] = 'Finish enrolling users';
+$string['foundxcohorts'] = 'Found {$a} cohorts';
+$string['instanceadded'] = 'Method added';
 $string['instanceeditselfwarning'] = 'Warning:';
 $string['instanceeditselfwarningtext'] = 'You are enrolled into this course through this enrolment method, changes may affect your access to this course.';
 $string['invalidenrolinstance'] = 'Invalid enrolment instance';
@@ -91,7 +97,8 @@ $string['manageinstance'] = 'Manage';
 $string['migratetomanual'] = 'Migrate to manual enrolments';
 $string['nochange'] = 'No change';
 $string['noexistingparticipants'] = 'No existing participants';
-$string['noguestaccess'] = 'Guests can not access this course, please try to log in.';
+$string['nogroup'] = 'No group';
+$string['noguestaccess'] = 'Guests cannot access this course. Please log in.';
 $string['none'] = 'None';
 $string['notenrollable'] = 'You can not enrol yourself in this course.';
 $string['notenrolledusers'] = 'Other users';
@@ -103,6 +110,7 @@ $string['periodend'] = 'until {$a}';
 $string['periodnone'] = 'enrolled {$a}';
 $string['periodstart'] = 'from {$a}';
 $string['periodstartend'] = 'from {$a->start} until {$a->end}';
+$string['proceedtocourse'] = 'Proceed to course content';
 $string['recovergrades'] = 'Recover user\'s old grades if possible';
 $string['rolefromthiscourse'] = '{$a->role} (Assigned in this course)';
 $string['rolefrommetacourse'] = '{$a->role} (Inherited from parent course)';

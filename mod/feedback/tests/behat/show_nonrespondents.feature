@@ -33,12 +33,6 @@ Feature: Show users who have not responded to the feedback survey
     And the following "grouping groups" exist:
       | grouping | group  |
       | GXI1     | GI1    |
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable conditional access | 1 |
-    And I navigate to "Manage activities" node in "Site administration > Plugins > Activity modules"
-    And I click on "Show" "link" in the "Feedback" "table_row"
-    And I log out
 
   @javascript
   Scenario: See users who have not responded
@@ -53,7 +47,7 @@ Feature: Show users who have not responded to the feedback survey
       | Access restrictions | Grouping: GX1                                     |
     And I follow "Frogs"
     And I follow "Edit questions"
-    And I set the field "id_typ" to "Short text answer"
+    And I set the field "Add question" to "Short text answer"
     And I set the following fields to these values:
       | Question | Y/N? |
     And I press "Save question"

@@ -72,11 +72,14 @@ class manager {
         try {
             self::$handler->init();
             self::prepare_cookies();
-            $newsid = empty($_COOKIE[session_name()]);
+            $isnewsession = empty($_COOKIE[session_name()]);
 
-            self::$handler->start();
+            if (!self::$handler->start()) {
+                // Could not successfully start/recover session.
+                throw new \core\session\exception(get_string('servererror'));
+            }
 
-            self::initialise_user_session($newsid);
+            self::initialise_user_session($isnewsession);
             self::check_security();
 
             // Link global $USER and $SESSION,
@@ -90,7 +93,6 @@ class manager {
             $_SESSION['SESSION'] =& $GLOBALS['SESSION'];
 
         } catch (\Exception $ex) {
-            @session_write_close();
             self::init_empty_session();
             self::$sessionactive = false;
             throw $ex;
@@ -157,10 +159,19 @@ class manager {
     public static function init_empty_session() {
         global $CFG;
 
+        if (isset($GLOBALS['SESSION']->notifications)) {
+            // Backup notifications. These should be preserved across session changes until the user fetches and clears them.
+            $notifications = $GLOBALS['SESSION']->notifications;
+        }
         $GLOBALS['SESSION'] = new \stdClass();
 
         $GLOBALS['USER'] = new \stdClass();
         $GLOBALS['USER']->id = 0;
+
+        if (!empty($notifications)) {
+            // Restore notifications.
+            $GLOBALS['SESSION']->notifications = $notifications;
+        }
         if (isset($CFG->mnet_localhost_id)) {
             $GLOBALS['USER']->mnethostid = $CFG->mnet_localhost_id;
         } else {
@@ -377,14 +388,15 @@ class manager {
         $user = null;
 
         if (!empty($CFG->opentogoogle)) {
-            if (is_web_crawler()) {
+            if (\core_useragent::is_web_crawler()) {
                 $user = guest_user();
             }
-            if (!empty($CFG->guestloginbutton) and !$user and !empty($_SERVER['HTTP_REFERER'])) {
+            $referer = get_local_referer(false);
+            if (!empty($CFG->guestloginbutton) and !$user and !empty($referer)) {
                 // Automatically log in users coming from search engine results.
-                if (strpos($_SERVER['HTTP_REFERER'], 'google') !== false ) {
+                if (strpos($referer, 'google') !== false ) {
                     $user = guest_user();
-                } else if (strpos($_SERVER['HTTP_REFERER'], 'altavista') !== false ) {
+                } else if (strpos($referer, 'altavista') !== false ) {
                     $user = guest_user();
                 }
             }
@@ -428,6 +440,7 @@ class manager {
      * Do various session security checks.
      *
      * WARNING: $USER and $SESSION are set up later, do not use them yet!
+     * @throws \core\session\exception
      */
     protected static function check_security() {
         global $CFG;
@@ -511,11 +524,23 @@ class manager {
      * Unblocks the sessions, other scripts may start executing in parallel.
      */
     public static function write_close() {
-        if (self::$sessionactive) {
-            session_write_close();
+        if (version_compare(PHP_VERSION, '5.6.0', '>=')) {
+            // More control over whether session data
+            // is persisted or not.
+            if (self::$sessionactive && session_id()) {
+                // Write session and release lock only if
+                // indication session start was clean.
+                session_write_close();
+            } else {
+                // Otherwise, if possibile lock exists want
+                // to clear it, but do not write session.
+                @session_abort();
+            }
         } else {
-            if (session_id()) {
-                @session_write_close();
+            // Any indication session was started, attempt
+            // to close it.
+            if (self::$sessionactive || session_id()) {
+                session_write_close();
             }
         }
         self::$sessionactive = false;
@@ -847,4 +872,41 @@ class manager {
         \core\session\manager::set_user($user);
         $event->trigger();
     }
+
+    /**
+     * Add a JS session keepalive to the page.
+     *
+     * A JS session keepalive script will be called to update the session modification time every $frequency seconds.
+     *
+     * Upon failure, the specified error message will be shown to the user.
+     *
+     * @param string $identifier The string identifier for the message to show on failure.
+     * @param string $component The string component for the message to show on failure.
+     * @param int $frequency The update frequency in seconds.
+     * @throws coding_exception IF the frequency is longer than the session lifetime.
+     */
+    public static function keepalive($identifier = 'sessionerroruser', $component = 'error', $frequency = null) {
+        global $CFG, $PAGE;
+
+        if ($frequency) {
+            if ($frequency > $CFG->sessiontimeout) {
+                // Sanity check the frequency.
+                throw new \coding_exception('Keepalive frequency is longer than the session lifespan.');
+            }
+        } else {
+            // A frequency of sessiontimeout / 3 allows for one missed request whilst still preserving the session.
+            $frequency = $CFG->sessiontimeout / 3;
+        }
+
+        // Add the session keepalive script to the list of page output requirements.
+        $sessionkeepaliveurl = new \moodle_url('/lib/sessionkeepalive_ajax.php');
+        $PAGE->requires->string_for_js($identifier, $component);
+        $PAGE->requires->yui_module('moodle-core-checknet', 'M.core.checknet.init', array(array(
+            // The JS config takes this is milliseconds rather than seconds.
+            'frequency' => $frequency * 1000,
+            'message' => array($identifier, $component),
+            'uri' => $sessionkeepaliveurl->out(),
+        )));
+    }
+
 }

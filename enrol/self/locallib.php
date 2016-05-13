@@ -26,6 +26,32 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/formslib.php");
 
+/**
+ * Check if the given password match a group enrolment key in the specified course.
+ *
+ * @param  int $courseid            course id
+ * @param  string $enrolpassword    enrolment password
+ * @return bool                     True if match
+ * @since  Moodle 3.0
+ */
+function enrol_self_check_group_enrolment_key($courseid, $enrolpassword) {
+    global $DB;
+
+    $found = false;
+    $groups = $DB->get_records('groups', array('courseid' => $courseid), 'id ASC', 'id, enrolmentkey');
+
+    foreach ($groups as $group) {
+        if (empty($group->enrolmentkey)) {
+            continue;
+        }
+        if ($group->enrolmentkey === $enrolpassword) {
+            $found = true;
+            break;
+        }
+    }
+    return $found;
+}
+
 class enrol_self_enrol_form extends moodleform {
     protected $instance;
     protected $toomany = false;
@@ -41,6 +67,7 @@ class enrol_self_enrol_form extends moodleform {
     }
 
     public function definition() {
+        global $USER, $OUTPUT, $CFG;
         $mform = $this->_form;
         $instance = $this->_customdata;
         $this->instance = $instance;
@@ -53,6 +80,26 @@ class enrol_self_enrol_form extends moodleform {
             // Change the id of self enrolment key input as there can be multiple self enrolment methods.
             $mform->addElement('passwordunmask', 'enrolpassword', get_string('password', 'enrol_self'),
                     array('id' => 'enrolpassword_'.$instance->id));
+            $context = context_course::instance($this->instance->courseid);
+            $keyholders = get_users_by_capability($context, 'enrol/self:holdkey', user_picture::fields('u'));
+            $keyholdercount = 0;
+            foreach ($keyholders as $keyholder) {
+                $keyholdercount++;
+                if ($keyholdercount === 1) {
+                    $mform->addElement('static', 'keyholder', '', get_string('keyholder', 'enrol_self'));
+                }
+                $keyholdercontext = context_user::instance($keyholder->id);
+                if ($USER->id == $keyholder->id || has_capability('moodle/user:viewdetails', context_system::instance()) ||
+                        has_coursecontact_role($keyholder->id)) {
+                    $profilelink = '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $keyholder->id . '&amp;course=' .
+                    $this->instance->courseid . '">' . fullname($keyholder) . '</a>';
+                } else {
+                    $profilelink = fullname($keyholder);
+                }
+                $profilepic = $OUTPUT->user_picture($keyholder, array('size' => 35, 'courseid' => $this->instance->courseid));
+                $mform->addElement('static', 'keyholder'.$keyholdercount, '', $profilepic . $profilelink);
+            }
+
         } else {
             $mform->addElement('static', 'nokey', '', get_string('nopassword', 'enrol_self'));
         }
@@ -82,18 +129,8 @@ class enrol_self_enrol_form extends moodleform {
         if ($instance->password) {
             if ($data['enrolpassword'] !== $instance->password) {
                 if ($instance->customint1) {
-                    $groups = $DB->get_records('groups', array('courseid'=>$instance->courseid), 'id ASC', 'id, enrolmentkey');
-                    $found = false;
-                    foreach ($groups as $group) {
-                        if (empty($group->enrolmentkey)) {
-                            continue;
-                        }
-                        if ($group->enrolmentkey === $data['enrolpassword']) {
-                            $found = true;
-                            break;
-                        }
-                    }
-                    if (!$found) {
+                    // Check group enrolment key.
+                    if (!enrol_self_check_group_enrolment_key($instance->courseid, $data['enrolpassword'])) {
                         // We can not hint because there are probably multiple passwords.
                         $errors['enrolpassword'] = get_string('passwordinvalid', 'enrol_self');
                     }

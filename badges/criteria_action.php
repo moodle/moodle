@@ -61,6 +61,9 @@ $PAGE->set_heading($badge->name);
 $PAGE->set_title($badge->name);
 
 if ($delete && has_capability('moodle/badges:configurecriteria', $context)) {
+    if ($type == BADGE_CRITERIA_TYPE_OVERALL) {
+        redirect($return, get_string('error:cannotdeletecriterion', 'badges'));
+    }
     if (!$confirm) {
         $optionsyes = array('confirm' => 1, 'sesskey' => sesskey(), 'badgeid' => $badgeid, 'delete' => true, 'type' => $type);
 

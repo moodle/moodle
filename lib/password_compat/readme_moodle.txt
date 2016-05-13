@@ -1,7 +1,7 @@
 Description of password_compat import into Moodle:
 ==================================================
 
-Imported from: https://github.com/ircmaxell/password_compat/commit/c91b1168bc53c26f56fc65f16958b5be45ca5dc9
+Imported from: https://github.com/ircmaxell/password_compat/releases/tag/v1.0.4
 Copyright: (c) 2012 Anthony Ferrara
 License: MIT License
 
@@ -16,6 +16,8 @@ Our changes:
 * Added the following require_once() to the test files:
     global $CFG;
     require_once($CFG->dirroot . '/lib/password_compat/lib/password.php');
+* tests/PasswordHashTest.php supresses debugging from using salt in password_hash()
+  see MDL-52283
 
 Library description:
 ====================

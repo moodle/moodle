@@ -1,6 +1,8 @@
 <?php
 /**
-* @version V5.19  23-Apr-2014  (c) 2000-2014 John Lim (jlim#natsoft.com). All rights reserved.
+* @version   v5.20.3  01-Jan-2016
+* @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
+* @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
 * Released under both BSD license and Lesser GPL library license.
 * Whenever there is any discrepancy between the two licenses,
 * the BSD license will take precedence.
@@ -28,12 +30,7 @@ class ADODB_mssqlpo extends ADODB_mssql {
 	var $databaseType = "mssqlpo";
 	var $concat_operator = '||';
 
-	function ADODB_mssqlpo()
-	{
-		ADODB_mssql::ADODB_mssql();
-	}
-
-	function PrepareSP($sql)
+	function PrepareSP($sql, $param = true)
 	{
 		if (!$this->_has_mssql_init) {
 			ADOConnection::outp( "PrepareSP: mssql_init only available since PHP 4.1.0");
@@ -54,8 +51,8 @@ class ADODB_mssqlpo extends ADODB_mssql {
 
 class ADORecordset_mssqlpo extends ADORecordset_mssql {
 	var $databaseType = "mssqlpo";
-	function ADORecordset_mssqlpo($id,$mode=false)
+	function __construct($id,$mode=false)
 	{
-		$this->ADORecordset_mssql($id,$mode);
+		parent::__construct($id,$mode);
 	}
 }

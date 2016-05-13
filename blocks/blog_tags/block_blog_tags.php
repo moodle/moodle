@@ -75,7 +75,7 @@ class block_blog_tags extends block_base {
             }
             return $this->content;
 
-        } else if (empty($CFG->usetags)) {
+        } else if (!core_tag_tag::is_enabled('core', 'post')) {
             $this->content = new stdClass();
             $this->content->text = '';
             if ($this->page->user_is_editing()) {
@@ -121,11 +121,12 @@ class block_blog_tags extends block_base {
             $type = " AND (p.publishstate = 'site' or p.publishstate='public')";
         }
 
-        $sql  = "SELECT t.id, t.tagtype, t.rawname, t.name, COUNT(DISTINCT ti.id) AS ct
+        $sql  = "SELECT t.id, t.isstandard, t.rawname, t.name, COUNT(DISTINCT ti.id) AS ct
                    FROM {tag} t, {tag_instance} ti, {post} p, {blog_association} ba
                   WHERE t.id = ti.tagid AND p.id = ti.itemid
                         $type
                         AND ti.itemtype = 'post'
+                        AND ti.component = 'core'
                         AND ti.timemodified > $timewithin";
 
         if ($context->contextlevel == CONTEXT_MODULE) {
@@ -135,7 +136,7 @@ class block_blog_tags extends block_base {
         }
 
         $sql .= "
-               GROUP BY t.id, t.tagtype, t.name, t.rawname
+               GROUP BY t.id, t.isstandard, t.name, t.rawname
                ORDER BY ct DESC, t.name ASC";
 
         if ($tags = $DB->get_records_sql($sql, null, 0, $this->config->numberoftags)) {
@@ -164,7 +165,7 @@ class block_blog_tags extends block_base {
                     $size = 20 - ( (int)((($currenttag - 1) / $totaltags) * 20) );
                 }
 
-                $tag->class = "$tag->tagtype s$size";
+                $tag->class = ($tag->isstandard ? "standardtag " : "") . "s$size";
                 $etags[] = $tag;
 
             }
@@ -195,7 +196,9 @@ class block_blog_tags extends block_base {
                 }
 
                 $blogurl->param('tagid', $tag->id);
-                $link = html_writer::link($blogurl, tag_display_name($tag), array('class'=>$tag->class, 'title'=>get_string('numberofentries','blog',$tag->ct)));
+                $link = html_writer::link($blogurl, core_tag_tag::make_display_name($tag),
+                        array('class' => $tag->class,
+                            'title' => get_string('numberofentries', 'blog', $tag->ct)));
                 $this->content->text .= '<li>' . $link . '</li> ';
             }
             $this->content->text .= "\n</ul>\n";

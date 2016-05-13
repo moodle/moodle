@@ -2,9 +2,14 @@
 /* COURSE CONTENT */
 .section_add_menus {
     text-align: right;
+    clear: both;
+}
+.section-modchooser {
+    clear: both;
 }
 .dir-rtl .section_add_menus {
     text-align: left;
+    clear: both;
 }
 .section_add_menus .horizontal div,
 .section_add_menus .horizontal form {
@@ -41,6 +46,14 @@
     margin: 1em;
 }
 .section {
+    .side {
+        &.left {
+            float: left;
+        }
+        &.right {
+            float: right;
+        }
+    }
     .spinner {
         height: 16px;
         width: 16px;
@@ -130,6 +143,14 @@
 }
 
 .dir-rtl .section {
+    .side {
+        &.left {
+            float: right;
+        }
+        &.right {
+            float: left;
+        }
+    }
     .activity {
         .spinner {
             left: auto;
@@ -317,7 +338,16 @@
     margin-top: 0;
 }
 .course-content ul li.section.hidden {
-    opacity: 0.5;
+    .sectionname > span,
+    .content > div,  /* All the divs but the activities which are in a UL. */
+    .activity .activityinstance {
+        opacity: .5;
+    }
+    .sectionname > span,
+    .activity .activityinstance {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
 }
 .course-content ul.topics li.section .content,
 .course-content ul.weeks li.section .content {
@@ -338,6 +368,33 @@
     margin-left: 25px;
 }
 
+.course-content li {
+    &.section {
+        ul {
+            list-style: disc;
+            ul {
+                list-style: circle;
+                ul {
+                    list-style: square;
+                }
+            }
+        }
+        li {
+            &.activity {
+                ul {
+                    list-style: disc;
+                    ul {
+                        list-style: circle;
+                        ul {
+                            list-style: square;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 .path-course-view .completionprogress {
     margin-left: 25px
 }
@@ -347,7 +404,6 @@
     float: right;
     height: 20px;
     position: relative;
-    z-index: 1000;
 }
 
 #page-site-index .subscribelink {
@@ -539,26 +595,28 @@ span.editinstructions {
 }
 
 .coursebox > .info > .coursename a {
-    display:block;
+    display: block;
     background-image:url([[pix:moodle|i/course]]);
     background-repeat: no-repeat;
-    padding-left:21px;
-    background-position: left 0.5em;
+    padding-left: 21px;
+    background-position: left 0.2em;
 }
 .dir-rtl .coursebox > .info > .coursename a {
     padding-left: 0;
     padding-right: 21px;
-    background-position: right;
+    background-position: right 0.2em;
 }
-.coursebox.remotehost > .info > .categoryname a {
-    background-image:url([[pix:moodle|i/mnethost]]);
+.coursebox > .info > .coursename,
+.coursebox .content .teachers,
+.coursebox .content .courseimage,
+.coursebox .content .coursefile {
+    float: left;
+    clear: left;
 }
 .coursebox .content .teachers,
 .coursebox .content .courseimage,
 .coursebox .content .coursefile {
-    float:left;
-    width:40%;
-    clear:left;
+    width: 40%;
 }
 .dir-rtl .coursebox > .info > .coursename,
 .dir-rtl .coursebox .teachers,
@@ -569,6 +627,7 @@ span.editinstructions {
 }
 .coursebox > .info > h3.coursename {
     margin: 5px;
+    line-height: 1;
 }
 .coursebox > .info > .coursename {
     margin: 5px;
@@ -619,6 +678,10 @@ span.editinstructions {
 .coursebox.remotecoursebox .remotecourseinfo {
     margin:3px 5px;
     padding:0;
+}
+
+.coursebox.remotehost > .info > .categoryname a {
+    background-image:url([[pix:moodle|i/mnethost]]);
 }
 
 .dir-rtl .coursebox > .info > .categoryname a {
@@ -875,11 +938,12 @@ span.editinstructions {
         text-align:center;
         padding:0.4rem 0.3rem 0.3rem;
         line-height:2.2em;
+        > a,
         > .moodle-actionmenu {
             display:inline-block;
-            .menu a {
-                padding-left:1rem;
-            }
+        }
+        > .moodle-actionmenu .menu a {
+             padding-left:1rem;
         }
         .moodle-actionmenu:not([data-enhanced]) {
             li {line-height:normal;}

@@ -14,6 +14,10 @@
     text-align: left;
 }
 
+.dir-rtl.path-admin .admintable .leftalign {
+    text-align: right;
+}
+
 .environmenttable {
     p.warn {
         background-color : @warningBackground;
@@ -224,14 +228,11 @@ img.iconsmall {
     display: block;
 }
 
-
-#page-admin-index .updateplugin div,
-#page-admin-plugins .updateplugin div {
+#page-admin-index .updateplugin div {
     margin-bottom: 0.5em;
 }
 
-#page-admin-index .updateplugin .updatepluginconfirmexternal,
-#page-admin-plugins .updateplugin .updatepluginconfirmexternal {
+#page-admin-index .updateplugin .updatepluginconfirmexternal {
     padding: 1em;
     background-color: @errorBackground;
     border: 1px solid @errorBorder;
@@ -528,170 +529,262 @@ img.iconsmall {
     text-align: right
 }
 
-// Plugins check.
 #page-admin-index #notice .checkforupdates {
     text-align: center;
 }
 
-#plugins-check-info {
-    text-align: center;
-    margin: 1em;
-}
-
-#plugins-check .displayname .pluginicon {
-    width: 16px;
-}
-
-#plugins-check .status-new .status {
-    background-color: @successBackground;
-}
-
-#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release,
-#plugins-check .status-upgrade .status,
-#plugins-check .status-delete .status {
+#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release {
     background-color: @infoBackground;
 }
 
-#plugins-control-panel .extension .source,
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity100 .info.release,
-#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity150 .info.release,
-.pluginupdateinfo.maturity100,
-.pluginupdateinfo.maturity150,
-#plugins-check .extension .source {
+#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity150 .info.release {
     background-color: @warningBackground;
 }
 
-#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity50 .info.release,
-.pluginupdateinfo.maturity50,
-#plugins-check .requires-failed,
-#plugins-check .missingfromdisk .displayname,
-#plugins-check .status-missing .status,
-#plugins-check .status-downgrade .status {
+#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity50 .info.release {
     background-color: @errorBackground;
 }
 
-#plugins-control-panel .statusmsg {
-    background-color: @grayLighter;
-    padding: 3px;
-    .border-radius(5px);
+// Plugins overview page at admin/plugins.php
+#page-admin-plugins {
+
+    #plugins-overview-panel {
+        .info {
+            display: inline-block;
+            margin-right: 1em;
+        }
+    }
+
+    .checkforupdates {
+        margin: 10px 0;
+        .singlebutton {
+            margin: 5px 0;
+            padding: 0;
+            div, input {
+                margin: 0 3px 0 0;
+            }
+        }
+    }
+
+    .updateavailableinstallall {
+        margin: 5px 0;
+        padding: 0;
+        div, input {
+            margin: 0 3px 5px 0;
+        }
+    }
+
+    #plugins-control-panel {
+        .status-missing td {
+            background-color: @errorBackground;
+        }
+        .pluginname {
+            .displayname img.icon {
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+            .componentname {
+                font-size: @fontSizeSmall;
+                .muted;
+                margin-left: 22px;
+            }
+        }
+        .version {
+            .versionnumber {
+                font-size: @fontSizeSmall;
+                .muted;
+            }
+            .release {
+            }
+        }
+        .availability {
+        }
+        .settings {
+        }
+        .uninstall {
+            a {
+                color: @errorText;
+            }
+        }
+        .notes {
+            .label {
+                margin-right: 3px;
+            }
+            .requiredby {
+                font-size: @fontSizeSmall;
+                .muted;
+            }
+        }
+    }
 }
 
-#plugins-control-panel .status-missing .pluginname {
-    background-color: @errorBackground;
+
+// Plugins check page displayed during upgrade.
+#plugins-check-page {
+
+    .page-description {
+        .muted;
+    }
+
+    // Check for updates.
+    .checkforupdates {
+        .singlebutton {
+            margin: 5px 0;
+            padding: 0;
+            div, input {
+                margin: 0 3px 0 0;
+            }
+        }
+    }
+
+    // Section before the plugins check table.
+    #plugins-check-info {
+        .actions {
+            > div {
+                display: inline-block;
+                margin-right: 1em;
+            }
+            .singlebutton {
+                margin: 5px 0;
+                padding: 0;
+                div, input {
+                    margin: 0 3px 0 0;
+                }
+            }
+        }
+    }
+
+    // Plugins check table.
+    #plugins-check {
+        .requires-ok {
+            .muted;
+        }
+
+        .status-missing, .status-downgrade {
+            td {
+                background-color: @errorBackground;
+            }
+        }
+
+        .displayname {
+            .pluginicon {
+                margin-right: 5px;
+                width: 16px;
+            }
+            .plugindir {
+                .muted;
+                font-size: @fontSizeSmall;
+            }
+        }
+
+        .requires ul {
+            margin-left: 13px; // To undo the default 25px, does not look that great inside a table cell;
+        }
+
+        .status {
+            .actionbutton {
+                margin: 5px 0px;
+                padding: 0;
+                input {
+                    margin: 0;
+                }
+            }
+        }
+    }
+
+    .plugins-check-dependencies-actions {
+        > div {
+            display: inline-block;
+            margin-right: 1em;
+        }
+        .singlebutton {
+            margin: 5px 0;
+            padding: 0;
+            div, input {
+                margin: 0 3px 0 0;
+            }
+        }
+    }
+
+    // List of available dependencies on the plugins check page.
+    #plugins-check-available-dependencies {
+        .displayname .component {
+            font-size: @fontSizeSmall;
+            .muted;
+        }
+        .info .actions {
+            > div {
+                display: inline-block;
+                margin-right: 1em;
+            }
+            .dependencyinstall {
+                display: block;
+                margin: 5px 0;
+                padding: 0;
+                input {
+                    margin: 0;
+                }
+            }
+        }
+    }
 }
 
-#plugins-control-panel .status-missing .statusmsg {
-    color: @errorText;
+// Available plugin update notification.
+
+#plugins-check-page, #plugins-control-panel {
+    .pluginupdateinfo {
+        background-color: @infoBackground;
+        &.maturity50 {
+            background-color: @errorBackground;
+        }
+        &.maturity100, &.maturity150 {
+            background-color: @warningBackground;
+        }
+        padding: 5px;
+        margin: 10px 0;
+        .border-radius(5px);
+        .info {
+            display: inline-block;
+        }
+        .separator:after {
+            content: " | ";
+        }
+        .singlebutton {
+            margin: 5px 0;
+            padding: 0;
+            div, input {
+                margin: 0 3px 0 0;
+            }
+        }
+    }
 }
 
-#plugins-control-panel .status-new .pluginname {
-    background-color: @successBackground;
+.plugins-management-confirm-buttons {
+    > div {
+        display: inline-block;
+        margin: 1em 1em 1em 0;
+    }
+    .continue {
+        padding: 0;
+        div, input {
+            margin: 0;
+        }
+    }
 }
 
-#plugins-control-panel .status-new .statusmsg {
-    color: @successText;
+.uninstalldeleteconfirmexternal {
+    background-color: @warningBackground;
+    padding: 0.5em 1em;
+    margin: 5px 0 10px 0;
 }
-
-#plugins-control-panel .disabled .availability {
-    background-color: @inputDisabledBackground;
-}
-
-#plugins-check .standard .source,
-#plugins-check .status-nodb .status,
-#plugins-check .status-uptodate .status,
-#plugins-check .requires-ok {
-    .muted
-}
-
-#plugins-check .requires ul {
-    font-size: @fontSizeMini;
-    margin: 0;
-}
-
-#plugins-check .status .pluginupdateinfo {
-    padding: 5px 10px;
-    margin: 10px;
-    background-color: @infoBackground;
-    .border-radius(10px);
-}
-
-#plugins-check .status .pluginupdateinfo span,
-#plugins-check .status .pluginupdateinfo a {
-    padding-right: 1em;
-}
-
 
 #page-admin-index .upgradepluginsinfo {
     text-align: center;
 }
 
-#page-admin-plugins .checkforupdates {
-    margin: 0 auto 1em;
-    text-align: center;
-}
-
-#plugins-control-panel .requiredby,
-#plugins-control-panel .pluginname .componentname {
-    font-size: @fontSizeSmall;
-    .muted
-}
-
-#plugins-control-panel .pluginname .componentname {
-    margin-left: 22px;
-}
-
-#plugins-overview-filter .filter-item,
-#plugins-overview-panel .info {
-    padding: 0 10px;
-}
-
-#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo .separator,
-#plugins-check .status .pluginupdateinfo .separator,
-#page-admin-plugins .separator {
-    border-left: 1px dotted @grayLight;
-}
-
-#plugins-control-panel .msg td {
-    text-align: center;
-}
-
-#plugins-overview-filter,
-#plugins-overview-panel {
-    margin: 1em auto;
-    text-align: center;
-}
-
-#plugins-overview-panel .info.updatable {
-    margin-left: 10px;
-    background-color: @infoBackground;
-    font-weight: bold;
-    .border-radius(10px);
-}
-
-#plugins-overview-filter .filter-item.active {
-    font-weight: bold;
-}
-
-#plugins-control-panel .displayname img.icon {
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
-#plugins-control-panel .uninstall a {
-    color: @errorText;
-}
-
-#plugins-control-panel .notes .pluginupdateinfo {
-    padding: 5px 10px;
-    margin: 10px;
-    background-color: @infoBackground;
-    .border-radius(10px);
-}
-
-
-#plugins-control-panel .notes .pluginupdateinfo span,
-#plugins-control-panel .notes .pluginupdateinfo a {
-    padding-right: 1em;
+#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo .separator:after {
+    content: " | ";
 }
 
 .dir-rtl {
@@ -700,7 +793,6 @@ img.iconsmall {
         direction: ltr;
     }
 
-    #plugins-check .rootdir,
     #plugins-check .requires-ok {
         text-align: left;
         direction: ltr;

@@ -69,8 +69,12 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->addRule('lti_typename', null, 'required', null, 'client');
 
         $mform->addElement('text', 'lti_toolurl', get_string('toolurl', 'lti'), array('size' => '64'));
-        $mform->setType('lti_toolurl', PARAM_TEXT);
+        $mform->setType('lti_toolurl', PARAM_URL);
         $mform->addHelpButton('lti_toolurl', 'toolurl', 'lti');
+
+        $mform->addElement('textarea', 'lti_description', get_string('tooldescription', 'lti'), array('rows' => 4, 'cols' => 60));
+        $mform->setType('lti_description', PARAM_TEXT);
+        $mform->addHelpButton('lti_description', 'tooldescription', 'lti');
         if (!$istool) {
             $mform->addRule('lti_toolurl', null, 'required', null, 'client');
         } else {
@@ -101,6 +105,7 @@ class mod_lti_edit_types_form extends moodleform{
         if (!$istool && !empty($this->_customdata->isadmin)) {
             $mform->addElement('checkbox', 'lti_coursevisible', '&nbsp;', ' ' . get_string('show_in_course', 'lti'));
             $mform->addHelpButton('lti_coursevisible', 'show_in_course', 'lti');
+            $mform->setDefault('lti_coursevisible', '1');
         } else {
             $mform->addElement('hidden', 'lti_coursevisible', '1');
         }
@@ -119,6 +124,19 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->setDefault('lti_launchcontainer', LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS);
         $mform->addHelpButton('lti_launchcontainer', 'default_launch_container', 'lti');
         $mform->setType('lti_launchcontainer', PARAM_INT);
+
+        $mform->addElement('hidden', 'oldicon');
+        $mform->setType('oldicon', PARAM_URL);
+
+        $mform->addElement('text', 'lti_icon', get_string('icon_url', 'lti'), array('size' => '64'));
+        $mform->setType('lti_icon', PARAM_URL);
+        $mform->setAdvanced('lti_icon');
+        $mform->addHelpButton('lti_icon', 'icon_url', 'lti');
+
+        $mform->addElement('text', 'lti_secureicon', get_string('secure_icon_url', 'lti'), array('size' => '64'));
+        $mform->setType('lti_secureicon', PARAM_URL);
+        $mform->setAdvanced('lti_secureicon');
+        $mform->addHelpButton('lti_secureicon', 'secure_icon_url', 'lti');
 
         if (!$istool) {
             // Add privacy preferences fieldset where users choose whether to send their data.
@@ -171,7 +189,7 @@ class mod_lti_edit_types_form extends moodleform{
                 $mform->addHelpButton('lti_organizationid', 'organizationid', 'lti');
 
                 $mform->addElement('text', 'lti_organizationurl', get_string('organizationurl', 'lti'));
-                $mform->setType('lti_organizationurl', PARAM_TEXT);
+                $mform->setType('lti_organizationurl', PARAM_URL);
                 $mform->addHelpButton('lti_organizationurl', 'organizationurl', 'lti');
             }
         }

@@ -114,8 +114,35 @@ function report_outline_page_type_list($pagetype, $parentcontext, $currentcontex
  * @return bool returns true if the store is supported by the report, false otherwise.
  */
 function report_outline_supports_logstore($instance) {
-    if ($instance instanceof \core\log\sql_internal_reader || $instance instanceof \logstore_legacy\log\store) {
+    if ($instance instanceof \core\log\sql_internal_table_reader || $instance instanceof \logstore_legacy\log\store) {
         return true;
     }
     return false;
+}
+
+/**
+ * Add nodes to myprofile page.
+ *
+ * @param \core_user\output\myprofile\tree $tree Tree object
+ * @param stdClass $user user object
+ * @param bool $iscurrentuser
+ * @param stdClass $course Course object
+ *
+ * @return bool
+ */
+function report_outline_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+    if (empty($course)) {
+        // We want to display these reports under the site context.
+        $course = get_fast_modinfo(SITEID)->get_course();
+    }
+    if (report_outline_can_access_user_report($user, $course)) {
+        $url = new moodle_url('/report/outline/user.php',
+                array('id' => $user->id, 'course' => $course->id, 'mode' => 'outline'));
+        $node = new core_user\output\myprofile\node('reports', 'outline', get_string('outlinereport'), null, $url);
+        $tree->add_node($node);
+        $url = new moodle_url('/report/outline/user.php',
+            array('id' => $user->id, 'course' => $course->id, 'mode' => 'complete'));
+        $node = new core_user\output\myprofile\node('reports', 'complete', get_string('completereport'), null, $url);
+        $tree->add_node($node);
+    }
 }

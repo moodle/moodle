@@ -1,0 +1,21 @@
+.dir-rtl.path-report-competency [data-region="competency-breakdown-report"] .row-fluid [class*="span"] {
+    float: right;
+}
+
+/** Broader RTL changes. */
+.dir-rtl.path-report-competency .pull-left {
+    float: right;
+}
+.dir-rtl.path-report-competency .pull-right {
+    float: left;
+}
+.dir-rtl.path-report-competency dd {
+    margin-right: 10px;
+}
+.dir-rtl.path-report-competency ul.inline {
+    margin-right: 0;
+}
+.dir-rtl.path-report-competency .table th,
+.dir-rtl.path-report-competency .table td {
+    text-align: right;
+}

@@ -137,7 +137,7 @@ function resource_display_frame($resource, $cm, $course, $file) {
         $navurl = "$CFG->wwwroot/mod/resource/view.php?id=$cm->id&amp;frameset=top";
         $title = strip_tags(format_string($course->shortname.': '.$resource->name));
         $framesize = $config->framesize;
-        $contentframetitle = format_string($resource->name);
+        $contentframetitle = s(format_string($resource->name));
         $modulename = s(get_string('modulename','resource'));
         $dir = get_string('thisdirection', 'langconfig');
 
@@ -270,13 +270,75 @@ function resource_print_heading($resource, $cm, $course, $notused = false) {
     echo $OUTPUT->heading(format_string($resource->name), 2);
 }
 
+
+/**
+ * Gets details of the file to cache in course cache to be displayed using {@link resource_get_optional_details()}
+ *
+ * @param object $resource Resource table row (only property 'displayoptions' is used here)
+ * @param object $cm Course-module table row
+ * @return string Size and type or empty string if show options are not enabled
+ */
+function resource_get_file_details($resource, $cm) {
+    $options = empty($resource->displayoptions) ? array() : @unserialize($resource->displayoptions);
+    $filedetails = array();
+    if (!empty($options['showsize']) || !empty($options['showtype']) || !empty($options['showdate'])) {
+        $context = context_module::instance($cm->id);
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder DESC, id ASC', false);
+        // For a typical file resource, the sortorder is 1 for the main file
+        // and 0 for all other files. This sort approach is used just in case
+        // there are situations where the file has a different sort order.
+        $mainfile = $files ? reset($files) : null;
+        if (!empty($options['showsize'])) {
+            $filedetails['size'] = 0;
+            foreach ($files as $file) {
+                // This will also synchronize the file size for external files if needed.
+                $filedetails['size'] += $file->get_filesize();
+                if ($file->get_repository_id()) {
+                    // If file is a reference the 'size' attribute can not be cached.
+                    $filedetails['isref'] = true;
+                }
+            }
+        }
+        if (!empty($options['showtype'])) {
+            if ($mainfile) {
+                $filedetails['type'] = get_mimetype_description($mainfile);
+                // Only show type if it is not unknown.
+                if ($filedetails['type'] === get_mimetype_description('document/unknown')) {
+                    $filedetails['type'] = '';
+                }
+            } else {
+                $filedetails['type'] = '';
+            }
+        }
+        if (!empty($options['showdate'])) {
+            if ($mainfile) {
+                // Modified date may be up to several minutes later than uploaded date just because
+                // teacher did not submit the form promptly. Give teacher up to 5 minutes to do it.
+                if ($mainfile->get_timemodified() > $mainfile->get_timecreated() + 5 * MINSECS) {
+                    $filedetails['modifieddate'] = $mainfile->get_timemodified();
+                } else {
+                    $filedetails['uploadeddate'] = $mainfile->get_timecreated();
+                }
+                if ($mainfile->get_repository_id()) {
+                    // If main file is a reference the 'date' attribute can not be cached.
+                    $filedetails['isref'] = true;
+                }
+            } else {
+                $filedetails['uploadeddate'] = '';
+            }
+        }
+    }
+    return $filedetails;
+}
+
 /**
  * Gets optional details for a resource, depending on resource settings.
  *
  * Result may include the file size and type if those settings are chosen,
  * or blank if none.
  *
- * @param object $resource Resource table row
+ * @param object $resource Resource table row (only property 'displayoptions' is used here)
  * @param object $cm Course-module table row
  * @return string Size and type or empty string if show options are not enabled
  */
@@ -285,43 +347,50 @@ function resource_get_optional_details($resource, $cm) {
 
     $details = '';
 
-    $options = empty($resource->displayoptions) ? array() : unserialize($resource->displayoptions);
-    if (!empty($options['showsize']) || !empty($options['showtype'])) {
-        $context = context_module::instance($cm->id);
+    $options = empty($resource->displayoptions) ? array() : @unserialize($resource->displayoptions);
+    if (!empty($options['showsize']) || !empty($options['showtype']) || !empty($options['showdate'])) {
+        if (!array_key_exists('filedetails', $options)) {
+            $filedetails = resource_get_file_details($resource, $cm);
+        } else {
+            $filedetails = $options['filedetails'];
+        }
         $size = '';
         $type = '';
-        $fs = get_file_storage();
-        $files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder DESC, id ASC', false);
-        if (!empty($options['showsize']) && count($files)) {
-            $sizebytes = 0;
-            foreach ($files as $file) {
-                // this will also synchronize the file size for external files if needed
-                $sizebytes += $file->get_filesize();
-            }
-            if ($sizebytes) {
-                $size = display_size($sizebytes);
+        $date = '';
+        $langstring = '';
+        $infodisplayed = 0;
+        if (!empty($options['showsize'])) {
+            if (!empty($filedetails['size'])) {
+                $size = display_size($filedetails['size']);
+                $langstring .= 'size';
+                $infodisplayed += 1;
             }
         }
-        if (!empty($options['showtype']) && count($files)) {
-            // For a typical file resource, the sortorder is 1 for the main file
-            // and 0 for all other files. This sort approach is used just in case
-            // there are situations where the file has a different sort order
-            $mainfile = reset($files);
-            $type = get_mimetype_description($mainfile);
-            // Only show type if it is not unknown
-            if ($type === get_mimetype_description('document/unknown')) {
-                $type = '';
+        if (!empty($options['showtype'])) {
+            if (!empty($filedetails['type'])) {
+                $type = $filedetails['type'];
+                $langstring .= 'type';
+                $infodisplayed += 1;
             }
+        }
+        if (!empty($options['showdate']) && (!empty($filedetails['modifieddate']) || !empty($filedetails['uploadeddate']))) {
+            if (!empty($filedetails['modifieddate'])) {
+                $date = get_string('modifieddate', 'mod_resource', userdate($filedetails['modifieddate'],
+                    get_string('strftimedatetimeshort', 'langconfig')));
+            } else if (!empty($filedetails['uploadeddate'])) {
+                $date = get_string('uploadeddate', 'mod_resource', userdate($filedetails['uploadeddate'],
+                    get_string('strftimedatetimeshort', 'langconfig')));
+            }
+            $langstring .= 'date';
+            $infodisplayed += 1;
         }
 
-        if ($size && $type) {
-            // Depending on language it may be necessary to show both options in
-            // different order, so use a lang string
-            $details = get_string('resourcedetails_sizetype', 'resource',
-                    (object)array('size'=>$size, 'type'=>$type));
+        if ($infodisplayed > 1) {
+            $details = get_string("resourcedetails_{$langstring}", 'resource',
+                    (object)array('size' => $size, 'type' => $type, 'date' => $date));
         } else {
-            // Either size or type is set, but not both, so just append
-            $details = $size . $type;
+            // Only one of size, type and date is set, so just append.
+            $details = $size . $type . $date;
         }
     }
 

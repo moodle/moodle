@@ -11,9 +11,9 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
       | Course 1 | C1 | 0 | 1 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
-      | student2 | Student | 2 | student2@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -40,31 +40,35 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View/grade all submissions"
-    And I click on "Grade Student 2" "link" in the "Student 2" "table_row"
+    And I follow "View all submissions"
+    And I click on "Grade" "link" in the "Student 2" "table_row"
     And I set the following fields to these values:
       | Grade | 49 |
       | Feedback comments | I'm the teacher first feedback |
       | Allow another attempt | Yes |
     And I press "Save changes"
+    And I click on "Ok" "button"
+    And I click on "Edit settings" "link"
     And I log out
     And I log in as "student2"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I click on ".mod-assign-history-link" "css_element"
     And I should see "I'm the teacher first feedback" in the "Feedback comments" "table_row"
     And I log out
     When I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View/grade all submissions"
-    And I click on "Grade Student 2" "link" in the "Student 2" "table_row"
-    And I click on ".mod-assign-history-link" "css_element"
-    And I follow "Edit the grade and feedback for attempt number 1"
+    And I follow "View all submissions"
+    And I click on "Grade" "link" in the "Student 2" "table_row"
+    And I click on "View a different attempt" "link"
+    And I click on "//div[contains(concat(' ', normalize-space(@class), ' '), ' confirmation-dialogue ')]//input[@value='0']" "xpath_element"
+    And I click on "View" "button"
     And I set the following fields to these values:
       | Grade | 50 |
       | Feedback comments | I'm the teacher second feedback |
     And I press "Save changes"
+    And I click on "Ok" "button"
+    And I click on "Edit settings" "link"
     And I log out
     Then I log in as "student2"
     And I follow "Course 1"

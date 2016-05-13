@@ -283,14 +283,6 @@ class core_collator_testcase extends advanced_testcase {
         $this->assertSame($c, $b);
     }
 
-    public function test_legacy_collatorlib() {
-        $arr = array('b' => 'ab', 1 => 'aa', 0 => 'cc');
-        $result = collatorlib::asort($arr);
-        $this->assertDebuggingCalled(null, null, 'This fails if any other test uses the deprecated collatorlib class.');
-        $this->assertSame(array('aa', 'ab', 'cc'), array_values($arr));
-        $this->assertSame(array(1, 'b', 0), array_keys($arr));
-        $this->assertTrue($result);
-    }
 }
 
 

@@ -7,9 +7,9 @@ Feature: A teacher can choose whether to publish choice activity results anonymo
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
-      | student2 | Student | 2 | student2@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -22,7 +22,6 @@ Feature: A teacher can choose whether to publish choice activity results anonymo
     And I follow "Course 1"
     And I turn editing mode on
 
-  @javascript
   Scenario: Publish anonymous results
     Given I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice 1 |
@@ -41,9 +40,8 @@ Feature: A teacher can choose whether to publish choice activity results anonymo
     And I follow "Choice 1"
     Then I should not see "Student 1"
     And I should not see "Users who chose this option"
-    And I hover ".results .graph img" "css_element"
+    And ".results .graph img" "css_element" should exist
 
-  @javascript
   Scenario: Publish full results
     Given I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice 1 |

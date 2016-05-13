@@ -136,4 +136,13 @@ class course_category_deleted extends base {
             throw new \coding_exception('The \'name\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // Categories are not backed up, so no need to map them on restore.
+        return array('db' => 'course_categories', 'restore' => base::NOT_MAPPED);
+    }
+
+    public static function get_other_mapping() {
+        return false;
+    }
 }

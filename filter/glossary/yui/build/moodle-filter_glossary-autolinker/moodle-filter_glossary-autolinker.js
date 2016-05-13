@@ -19,49 +19,62 @@ AUTOLINKER = function() {
 };
 Y.extend(AUTOLINKER, Y.Base, {
     overlay : null,
+    alertpanels: {},
     initializer : function() {
         var self = this;
-        Y.delegate('click', function(e){
-            e.preventDefault();
+        require(['core/event'], function(event) {
+            Y.delegate('click', function(e){
+                e.preventDefault();
 
-            //display a progress indicator
-            var title = '',
-                content = Y.Node.create('<div id="glossaryfilteroverlayprogress"><img src="'+M.cfg.loadingicon+'" class="spinner" /></div>'),
-                o = new Y.Overlay({
-                    headerContent :  title,
-                    bodyContent : content
-                }),
-                fullurl,
-                cfg;
-            self.overlay = o;
-            o.render(Y.one(document.body));
+                //display a progress indicator
+                var title = '',
+                    content = Y.Node.create('<div id="glossaryfilteroverlayprogress">' +
+                                            '<img src="' + M.cfg.loadingicon + '" class="spinner" />' +
+                                            '</div>'),
+                    o = new Y.Overlay({
+                        headerContent :  title,
+                        bodyContent : content
+                    }),
+                    fullurl,
+                    cfg;
+                self.overlay = o;
+                o.render(Y.one(document.body));
 
-            //Switch over to the ajax url and fetch the glossary item
-            fullurl = this.getAttribute('href').replace('showentry.php','showentry_ajax.php');
-            cfg = {
-                method: 'get',
-                context : self,
-                on: {
-                    success: function(id, o) {
-                        this.display_callback(o.responseText);
-                    },
-                    failure: function(id, o) {
-                        var debuginfo = o.statusText;
-                        if (M.cfg.developerdebug) {
-                            o.statusText += ' (' + fullurl + ')';
+                //Switch over to the ajax url and fetch the glossary item
+                fullurl = this.getAttribute('href').replace('showentry.php','showentry_ajax.php');
+                cfg = {
+                    method: 'get',
+                    context : self,
+                    on: {
+                        success: function(id, o) {
+                            this.display_callback(o.responseText, event);
+                        },
+                        failure: function(id, o) {
+                            var debuginfo = o.statusText;
+                            if (M.cfg.developerdebug) {
+                                o.statusText += ' (' + fullurl + ')';
+                            }
+                            new M.core.exception({ message: debuginfo });
                         }
-                        this.display_callback('bodyContent',debuginfo);
                     }
-                }
-            };
-            Y.io(fullurl, cfg);
+                };
+                Y.io(fullurl, cfg);
 
-        }, Y.one(document.body), 'a.glossary.autolink.concept');
+            }, Y.one(document.body), 'a.glossary.autolink.concept');
+        });
     },
-    display_callback : function(content) {
+    /**
+     * @method display_callback
+     * @param {String} content - Content to display
+     * @param {Object} event The amd event module used to fire events for jquery and yui.
+     */
+    display_callback : function(content, event) {
         var data,
             key,
-            alertpanel;
+            alertpanel,
+            alertpanelid,
+            definition,
+            position;
         try {
             data = Y.JSON.parse(content);
             if (data.success){
@@ -69,12 +82,23 @@ Y.extend(AUTOLINKER, Y.Base, {
 
                 for (key in data.entries) {
                     definition = data.entries[key].definition + data.entries[key].attachments;
-                    alertpanel = new M.core.alert({title:data.entries[key].concept,
+                    alertpanel = new M.core.alert({title:data.entries[key].concept, draggable: true,
                         message:definition, modal:false, yesLabel: M.util.get_string('ok', 'moodle')});
-                    alertpanel.show();
-                    Y.fire(M.core.event.FILTER_CONTENT_UPDATED, {nodes: (new Y.NodeList(alertpanel.get('boundingBox')))});
-
+                    // Notify the filters about the modified nodes.
+                    event.notifyFilterContentUpdated(alertpanel.get('boundingBox').getDOMNode());
                     Y.Node.one('#id_yuialertconfirm-' + alertpanel.get('COUNT')).focus();
+
+                    // Register alertpanel for stacking.
+                    alertpanelid = '#moodle-dialogue-' + alertpanel.get('COUNT');
+                    alertpanel.on('complete', this._deletealertpanel, this, alertpanelid);
+
+                    // We already have some windows opened, so set the right position...
+                    if (!Y.Object.isEmpty(this.alertpanels)){
+                        position = this._getLatestWindowPosition();
+                        Y.Node.one(alertpanelid).setXY([position[0] + 10, position[1] + 10]);
+                    }
+
+                    this.alertpanels[alertpanelid] = Y.Node.one(alertpanelid).getXY();
                 }
 
                 return true;
@@ -85,6 +109,18 @@ Y.extend(AUTOLINKER, Y.Base, {
             new M.core.exception(e);
         }
         return false;
+    },
+    _getLatestWindowPosition : function() {
+        var lastPosition = [0, 0];
+        Y.Object.each(this.alertpanels, function(position) {
+            if (position[0] > lastPosition[0]){
+                lastPosition = position;
+            }
+        });
+        return lastPosition;
+    },
+    _deletealertpanel : function(ev, alertpanelid) {
+        delete this.alertpanels[alertpanelid];
     }
 }, {
     NAME : AUTOLINKERNAME,
@@ -144,6 +180,8 @@ M.filter_glossary.init_filter_autolinking = function(config) {
         "event-delegate",
         "overlay",
         "moodle-core-event",
-        "moodle-core-notification-alert"
+        "moodle-core-notification-alert",
+        "moodle-core-notification-exception",
+        "moodle-core-notification-ajaxexception"
     ]
 });

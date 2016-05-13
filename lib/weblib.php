@@ -85,7 +85,7 @@ define('URL_MATCH_EXACT', 2);
  * Add quotes to HTML characters.
  *
  * Returns $var with HTML characters (like "<", ">", etc.) properly quoted.
- * This function is very similar to {@link p()}
+ * Related function {@link p()} simply prints the output of this function.
  *
  * @param string $var the string potentially containing HTML characters
  * @return string
@@ -106,17 +106,14 @@ function s($var) {
  * Add quotes to HTML characters.
  *
  * Prints $var with HTML characters (like "<", ">", etc.) properly quoted.
- * This function simply calls {@link s()}
+ * This function simply calls & displays {@link s()}.
  * @see s()
  *
- * @todo Remove obsolete param $obsolete if not used anywhere
- *
  * @param string $var the string potentially containing HTML characters
- * @param boolean $obsolete no longer used.
  * @return string
  */
-function p($var, $obsolete = false) {
-    echo s($var, $obsolete);
+function p($var) {
+    echo s($var);
 }
 
 /**
@@ -158,24 +155,6 @@ function strip_querystring($url) {
         return substr($url, 0, $commapos);
     } else {
         return $url;
-    }
-}
-
-/**
- * Returns the URL of the HTTP_REFERER, less the querystring portion if required.
- *
- * @param boolean $stripquery if true, also removes the query part of the url.
- * @return string The resulting referer or empty string.
- */
-function get_referer($stripquery=true) {
-    if (isset($_SERVER['HTTP_REFERER'])) {
-        if ($stripquery) {
-            return strip_querystring($_SERVER['HTTP_REFERER']);
-        } else {
-            return $_SERVER['HTTP_REFERER'];
-        }
-    } else {
-        return '';
     }
 }
 
@@ -235,6 +214,25 @@ function is_https() {
     global $CFG;
 
     return (strpos($CFG->httpswwwroot, 'https://') === 0);
+}
+
+/**
+ * Returns the cleaned local URL of the HTTP_REFERER less the URL query string parameters if required.
+ *
+ * @param bool $stripquery if true, also removes the query part of the url.
+ * @return string The resulting referer or empty string.
+ */
+function get_local_referer($stripquery = true) {
+    if (isset($_SERVER['HTTP_REFERER'])) {
+        $referer = clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL);
+        if ($stripquery) {
+            return strip_querystring($referer);
+        } else {
+            return $referer;
+        }
+    } else {
+        return '';
+    }
 }
 
 /**
@@ -555,6 +553,38 @@ class moodle_url {
      * @return string Resulting URL
      */
     public function out($escaped = true, array $overrideparams = null) {
+
+        global $CFG;
+
+        if (!is_bool($escaped)) {
+            debugging('Escape parameter must be of type boolean, '.gettype($escaped).' given instead.');
+        }
+
+        $url = $this;
+
+        // Allow url's to be rewritten by a plugin.
+        if (isset($CFG->urlrewriteclass) && !isset($CFG->upgraderunning)) {
+            $class = $CFG->urlrewriteclass;
+            $pluginurl = $class::url_rewrite($url);
+            if ($pluginurl instanceof moodle_url) {
+                $url = $pluginurl;
+            }
+        }
+
+        return $url->raw_out($escaped, $overrideparams);
+
+    }
+
+    /**
+     * Output url without any rewrites
+     *
+     * This is identical in signature and use to out() but doesn't call the rewrite handler.
+     *
+     * @param bool $escaped Use &amp; as params separator instead of plain &
+     * @param array $overrideparams params to add to the output url, these override existing ones with the same name.
+     * @return string Resulting URL
+     */
+    public function raw_out($escaped = true, array $overrideparams = null) {
         if (!is_bool($escaped)) {
             debugging('Escape parameter must be of type boolean, '.gettype($escaped).' given instead.');
         }
@@ -675,6 +705,20 @@ class moodle_url {
     }
 
     /**
+     * Sets the scheme for the URI (the bit before ://)
+     *
+     * @param string $scheme
+     */
+    public function set_scheme($scheme) {
+        // See http://www.ietf.org/rfc/rfc3986.txt part 3.1.
+        if (preg_match('/^[a-zA-Z][a-zA-Z0-9+.-]*$/', $scheme)) {
+            $this->scheme = $scheme;
+        } else {
+            throw new coding_exception('Bad URL scheme.');
+        }
+    }
+
+    /**
      * Sets the url slashargument value.
      *
      * @param string $path usually file path
@@ -685,7 +729,7 @@ class moodle_url {
     public function set_slashargument($path, $parameter = 'file', $supported = null) {
         global $CFG;
         if (is_null($supported)) {
-            $supported = $CFG->slasharguments;
+            $supported = !empty($CFG->slasharguments);
         }
 
         if ($supported) {
@@ -716,7 +760,7 @@ class moodle_url {
         if ($forcedownload) {
             $params['forcedownload'] = 1;
         }
-
+        $path = rtrim($path, '/');
         $url = new moodle_url($urlbase, $params);
         $url->set_slashargument($path);
         return $url;
@@ -1207,8 +1251,13 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
     if ($options['filter']) {
         $filtermanager = filter_manager::instance();
         $filtermanager->setup_page_for_filters($PAGE, $context); // Setup global stuff filters may have.
+        $filteroptions = array(
+            'originalformat' => $format,
+            'noclean' => $options['noclean'],
+        );
     } else {
         $filtermanager = new null_filter_manager();
+        $filteroptions = array();
     }
 
     switch ($format) {
@@ -1216,10 +1265,7 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
             if (!$options['noclean']) {
                 $text = clean_text($text, FORMAT_HTML, $options);
             }
-            $text = $filtermanager->filter_text($text, $context, array(
-                'originalformat' => FORMAT_HTML,
-                'noclean' => $options['noclean']
-            ));
+            $text = $filtermanager->filter_text($text, $context, $filteroptions);
             break;
 
         case FORMAT_PLAIN:
@@ -1242,10 +1288,7 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
             if (!$options['noclean']) {
                 $text = clean_text($text, FORMAT_HTML, $options);
             }
-            $text = $filtermanager->filter_text($text, $context, array(
-                'originalformat' => FORMAT_MARKDOWN,
-                'noclean' => $options['noclean']
-            ));
+            $text = $filtermanager->filter_text($text, $context, $filteroptions);
             break;
 
         default:  // FORMAT_MOODLE or anything else.
@@ -1253,10 +1296,7 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
             if (!$options['noclean']) {
                 $text = clean_text($text, FORMAT_HTML, $options);
             }
-            $text = $filtermanager->filter_text($text, $context, array(
-                'originalformat' => $format,
-                'noclean' => $options['noclean']
-            ));
+            $text = $filtermanager->filter_text($text, $context, $filteroptions);
             break;
     }
     if ($options['filter']) {
@@ -1360,6 +1400,9 @@ function format_string($string, $striplinks = true, $options = null) {
     } else if (is_numeric($options['context'])) {
         $options['context'] = context::instance_by_id($options['context']);
     }
+    if (!isset($options['filter'])) {
+        $options['filter'] = true;
+    }
 
     if (!$options['context']) {
         // We did not find any context? weird.
@@ -1378,7 +1421,7 @@ function format_string($string, $striplinks = true, $options = null) {
     // Regular expression moved to its own method for easier unit testing.
     $string = replace_ampersands_not_followed_by_entity($string);
 
-    if (!empty($CFG->filterall)) {
+    if (!empty($CFG->filterall) && $options['filter']) {
         $filtermanager = filter_manager::instance();
         $filtermanager->setup_page_for_filters($PAGE, $options['context']); // Setup global stuff filters may have.
         $string = $filtermanager->filter_string($string, $options['context']);
@@ -1711,7 +1754,7 @@ function purify_html($text, $options = array()) {
         $config = HTMLPurifier_Config::createDefault();
 
         $config->set('HTML.DefinitionID', 'moodlehtml');
-        $config->set('HTML.DefinitionRev', 2);
+        $config->set('HTML.DefinitionRev', 4);
         $config->set('Cache.SerializerPath', $cachedir);
         $config->set('Cache.SerializerPermissions', $CFG->directorypermissions);
         $config->set('Core.NormalizeNewlines', false);
@@ -1750,6 +1793,12 @@ function purify_html($text, $options = array()) {
             $def->addElement('algebra', 'Inline', 'Inline', array());                   // Algebra syntax, equivalent to @@xx@@.
             $def->addElement('lang', 'Block', 'Flow', array(), array('lang'=>'CDATA')); // Original multilang style - only our hacked lang attribute.
             $def->addAttribute('span', 'xxxlang', 'CDATA');                             // Current very problematic multilang.
+
+            // Use the built-in Ruby module to add annotation support.
+            $def->manager->addModule(new HTMLPurifier_HTMLModule_Ruby());
+
+            // Use the custom Noreferrer module.
+            $def->manager->addModule(new HTMLPurifier_HTMLModule_Noreferrer());
         }
 
         $purifier = new HTMLPurifier($config);
@@ -1850,15 +1899,43 @@ function markdown_to_html($text) {
  * @return string plain text equivalent of the HTML.
  */
 function html_to_text($html, $width = 75, $dolinks = true) {
-
     global $CFG;
 
-    require_once($CFG->libdir .'/html2text.php');
+    require_once($CFG->libdir .'/html2text/lib.php');
 
-    $h2t = new html2text($html, false, $dolinks, $width);
-    $result = $h2t->get_text();
+    $options = array(
+        'width'     => $width,
+        'do_links'  => 'table',
+    );
+
+    if (empty($dolinks)) {
+        $options['do_links'] = 'none';
+    }
+    $h2t = new core_html2text($html, $options);
+    $result = $h2t->getText();
 
     return $result;
+}
+
+/**
+ * Converts content introduced in an editor to plain text.
+ *
+ * @param string $content The text as entered by the user
+ * @param int $contentformat The text format: FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN or FORMAT_MARKDOWN
+ * @return string Plain text.
+ */
+function content_to_text($content, $contentformat) {
+
+    switch ($contentformat) {
+        case FORMAT_PLAIN:
+            return $content;
+        case FORMAT_MARKDOWN:
+            $html = markdown_to_html($content);
+            return html_to_text($html, 75, false);
+        default:
+            // FORMAT_HTML and FORMAT_MOODLE.
+            return html_to_text($content, 75, false);
+    }
 }
 
 /**
@@ -2522,14 +2599,19 @@ function notice ($message, $link='', $course=null) {
  * @param moodle_url|string $url A moodle_url to redirect to. Strings are not to be trusted!
  * @param string $message The message to display to the user
  * @param int $delay The delay before redirecting
+ * @param string $messagetype The type of notification to show the message in. See constants on \core\output\notification.
  * @throws moodle_exception
  */
-function redirect($url, $message='', $delay=-1) {
+function redirect($url, $message='', $delay=null, $messagetype = \core\output\notification::NOTIFY_INFO) {
     global $OUTPUT, $PAGE, $CFG;
 
     if (CLI_SCRIPT or AJAX_SCRIPT) {
         // This is wrong - developers should not use redirect in these scripts but it should not be very likely.
         throw new moodle_exception('redirecterrordetected', 'error');
+    }
+
+    if ($delay === null) {
+        $delay = -1;
     }
 
     // Prevent debug errors - make sure context is properly initialised.
@@ -2547,6 +2629,16 @@ function redirect($url, $message='', $delay=-1) {
     do {
         if (defined('DEBUGGING_PRINTED')) {
             // Some debugging already printed, no need to look more.
+            $debugdisableredirect = true;
+            break;
+        }
+
+        if (core_useragent::is_msword()) {
+            // Clicking a URL from MS Word sends a request to the server without cookies. If that
+            // causes a redirect Word will open a browser pointing the new URL. If not, the URL that
+            // was clicked is opened. Because the request from Word is without cookies, it almost
+            // always results in a redirect to the login page, even if the user is logged in in their
+            // browser. This is not what we want, so prevent the redirect for requests from Word.
             $debugdisableredirect = true;
             break;
         }
@@ -2583,7 +2675,7 @@ function redirect($url, $message='', $delay=-1) {
     // Technically, HTTP/1.1 requires Location: header to contain the absolute path.
     // (In practice browsers accept relative paths - but still, might as well do it properly.)
     // This code turns relative into absolute.
-    if (!preg_match('|^[a-z]+:|', $url)) {
+    if (!preg_match('|^[a-z]+:|i', $url)) {
         // Get host name http://www.wherever.com.
         $hostpart = preg_replace('|^(.*?[^:/])/.*$|', '$1', $CFG->wwwroot);
         if (preg_match('|^/|', $url)) {
@@ -2612,10 +2704,18 @@ function redirect($url, $message='', $delay=-1) {
     $url = str_replace('&amp;', '&', $encodedurl);
 
     if (!empty($message)) {
-        if ($delay === -1 || !is_numeric($delay)) {
-            $delay = 3;
+        if (!$debugdisableredirect && !headers_sent()) {
+            // A message has been provided, and the headers have not yet been sent.
+            // Display the message as a notification on the subsequent page.
+            \core\notification::add($message, $messagetype);
+            $message = null;
+            $delay = 0;
+        } else {
+            if ($delay === -1 || !is_numeric($delay)) {
+                $delay = 3;
+            }
+            $message = clean_text($message);
         }
-        $message = clean_text($message);
     } else {
         $message = get_string('pageshouldredirect');
         $delay = 0;
@@ -2636,7 +2736,7 @@ function redirect($url, $message='', $delay=-1) {
     // Include a redirect message, even with a HTTP redirect, because that is recommended practice.
     if ($PAGE) {
         $CFG->docroot = false; // To prevent the link to moodle docs from being displayed on redirect page.
-        echo $OUTPUT->redirect_message($encodedurl, $message, $delay, $debugdisableredirect);
+        echo $OUTPUT->redirect_message($encodedurl, $message, $delay, $debugdisableredirect, $messagetype);
         exit;
     } else {
         echo bootstrap_renderer::early_redirect_message($encodedurl, $message, $delay);
@@ -3553,4 +3653,14 @@ function get_formatted_help_string($identifier, $component, $ajax = false, $a = 
             html_writer::tag('strong', 'TODO') . ": missing help string [{$identifier}_help, {$component}]");
     }
     return $data;
+}
+
+/**
+ * Renders a hidden password field so that browsers won't incorrectly autofill password fields with the user's password.
+ *
+ * @since 3.0
+ * @return string HTML to prevent password autofill
+ */
+function prevent_form_autofill_password() {
+    return '<div class="hide"><input type="text" class="ignoredirty" /><input type="password" class="ignoredirty" /></div>';
 }

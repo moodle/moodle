@@ -54,4 +54,41 @@ class portfolio extends base {
     public static function get_manage_url() {
         return new moodle_url('/admin/portfolio.php');
     }
+
+    /**
+     * Defines if there should be a way to uninstall the plugin via the administration UI.
+     * @return boolean
+     */
+    public function is_uninstall_allowed() {
+        return true;
+    }
+
+    /**
+     * Pre-uninstall hook.
+     * This is intended for disabling of plugin, some DB table purging, etc.
+     */
+    public function uninstall_cleanup() {
+        global $DB;
+
+        // Get all instances of this portfolio.
+        $count = $DB->count_records('portfolio_instance', array('plugin' => $this->name));
+        if ($count > 0) {
+            // This portfolio is in use, get the it's ID.
+            $rec = $DB->get_record('portfolio_instance', array('plugin' => $this->name));
+
+            // Remove all records from portfolio_instance_config.
+            $DB->delete_records('portfolio_instance_config', array('instance' => $rec->id));
+            // Remove all records from portfolio_instance_user.
+            $DB->delete_records('portfolio_instance_user', array('instance' => $rec->id));
+            // Remove all records from portfolio_log.
+            $DB->delete_records('portfolio_log', array('portfolio' => $rec->id));
+            // Remove all records from portfolio_tempdata.
+            $DB->delete_records('portfolio_tempdata', array('instance' => $rec->id));
+
+            // Remove the record from the portfolio_instance table.
+            $DB->delete_records('portfolio_instance', array('id' => $rec->id));
+        }
+
+        parent::uninstall_cleanup();
+    }
 }

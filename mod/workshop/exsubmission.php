@@ -115,24 +115,14 @@ if ($id and $assess and $canassess) {
 if ($edit and $canmanage) {
     require_once(dirname(__FILE__).'/submission_form.php');
 
-    $maxfiles       = $workshop->nattachments;
-    $maxbytes       = $workshop->maxbytes;
-    $contentopts    = array(
-                        'trusttext' => true,
-                        'subdirs'   => false,
-                        'maxfiles'  => $maxfiles,
-                        'maxbytes'  => $maxbytes,
-                        'context'   => $workshop->context
-                      );
+    $example = file_prepare_standard_editor($example, 'content', $workshop->submission_content_options(),
+        $workshop->context, 'mod_workshop', 'submission_content', $example->id);
 
-    $attachmentopts = array('subdirs' => true, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes);
-    $example        = file_prepare_standard_editor($example, 'content', $contentopts, $workshop->context,
-                                        'mod_workshop', 'submission_content', $example->id);
-    $example        = file_prepare_standard_filemanager($example, 'attachment', $attachmentopts, $workshop->context,
-                                        'mod_workshop', 'submission_attachment', $example->id);
+    $example = file_prepare_standard_filemanager($example, 'attachment', $workshop->submission_attachment_options(),
+        $workshop->context, 'mod_workshop', 'submission_attachment', $example->id);
 
-    $mform          = new workshop_submission_form($PAGE->url, array('current' => $example, 'workshop' => $workshop,
-                                                    'contentopts' => $contentopts, 'attachmentopts' => $attachmentopts));
+    $mform = new workshop_submission_form($PAGE->url, array('current' => $example, 'workshop' => $workshop,
+        'contentopts' => $workshop->submission_content_options(), 'attachmentopts' => $workshop->submission_attachment_options()));
 
     if ($mform->is_cancelled()) {
         redirect($workshop->view_url());

@@ -1,0 +1,12 @@
+This files describes API changes in /mod/choice/*,
+information provided here is intended especially for developers.
+
+=== 3.0 ===
+
+* External function mod_choice_external::get_choices_by_courses returned parameter "name" and
+  mod_choice_external::get_choice_results "text" have been changed to PARAM_RAW.
+  This is because the new external_format_string function may return raw data if the global moodlewssettingraw parameter is used.
+
+=== 2.9 ===
+
+* custom renderers must be updated to include action=makechoice field in display_options()

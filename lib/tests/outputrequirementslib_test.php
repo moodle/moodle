@@ -63,4 +63,42 @@ class core_outputrequirementslib_testcase extends advanced_testcase {
         $this->assertTrue($secondpage->requires->should_create_one_time_item_now('test_item'));
     }
 
+    /**
+     * Test for the jquery_plugin method.
+     *
+     * Test to make sure that backslashes are not generated with either slasharguments set to on or off.
+     */
+    public function test_jquery_plugin() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        // With slasharguments on.
+        $CFG->slasharguments = 1;
+
+        $page = new moodle_page();
+        $requirements = $page->requires;
+        // Assert successful method call.
+        $this->assertTrue($requirements->jquery_plugin('jquery'));
+        $this->assertTrue($requirements->jquery_plugin('ui'));
+
+        // Get the code containing the required jquery plugins.
+        $requirecode = $requirements->get_top_of_body_code();
+        // Make sure that the generated code does not contain backslashes.
+        $this->assertFalse(strpos($requirecode, '\\'), "Output contains backslashes: " . $requirecode);
+
+        // With slasharguments off.
+        $CFG->slasharguments = 0;
+
+        $page = new moodle_page();
+        $requirements = $page->requires;
+        // Assert successful method call.
+        $this->assertTrue($requirements->jquery_plugin('jquery'));
+        $this->assertTrue($requirements->jquery_plugin('ui'));
+
+        // Get the code containing the required jquery plugins.
+        $requirecode = $requirements->get_top_of_body_code();
+        // Make sure that the generated code does not contain backslashes.
+        $this->assertFalse(strpos($requirecode, '\\'), "Output contains backslashes: " . $requirecode);
+    }
 }

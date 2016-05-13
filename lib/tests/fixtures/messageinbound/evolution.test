@@ -1,0 +1,131 @@
+----CLIENT----
+OS: Ubuntu 14.04
+Mail Client: Evolution
+Client Version: 31.6.0
+Date: 30/04/2015
+
+----EXPECTEDPLAIN----
+An ion meets his atom friend on the street and says he's lost an
+electron. "Are you sure?" asks the atom. The ion replies, "I'm
+positive."
+
+----EXPECTEDHTML----
+An ion meets his atom friend on the street and says he's lost an
+electron. "Are you sure?" asks the atom. The ion replies, "I'm positive."
+
+----FULLSOURCE----
+Message-ID: <1430198383.10608.0.camel@jean>
+Subject: Re: [DIVERTED t1@localhost] test: Re: test
+From: ankit <ankit@localhost>
+To: ankit+AAAAAAAAAAIAAAAAAAAADQAAAAAAAAA3xIUdg5K043cciDEJ@localhost
+Date: Tue, 28 Apr 2015 10:49:43 +0530
+In-Reply-To: <77abfbf3eea680a5bd9cd88d2ca74e602b2168c7684d404d5049289f49f30e0f@localhost>
+References:
+          <cc33da86ad1b5b11e72155da74ca23c92e5e295c534f724162172905dee7a2fb@localhost>
+         <77abfbf3eea680a5bd9cd88d2ca74e602b2168c7684d404d5049289f49f30e0f@localhost>
+Content-Type: multipart/alternative; boundary="=-HCcF2t8PQgHyHwzJsOEP"
+X-Mailer: Evolution 3.10.4-0ubuntu2
+Mime-Version: 1.0
+X-Evolution-Identity: 1416821596.2740.0@jean
+X-Evolution-Fcc: folder://local/Sent
+X-Evolution-Transport: 1416821597.2740.10@jean
+X-Evolution-Source-Folder: folder://1416821596.2740.2%40jean/INBOX
+X-Evolution-Source-Message: 298
+X-Evolution-Source-Flags: ANSWERED SEEN
+X-Evolution-Format: text/html
+X-Evolution-Source:
+
+
+--=-HCcF2t8PQgHyHwzJsOEP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+
+An ion meets his atom friend on the street and says he's lost an
+electron. "Are you sure?" asks the atom. The ion replies, "I'm
+positive."
+On Tue, 2015-04-28 at 13:18 +0800, Admin User wrote:
+> test » Forums » Forum » test
+>
+> Picture of Admin User
+> Re: test
+> by Admin User - Tuesday, 28 April
+> 2015, 1:17 PM
+>
+> Tell me a joke
+>
+>
+> Show parent | Reply
+> See this post in context
+>
+> ______________________________________________________________________
+>
+> Unsubscribe from this discussion Unsubscribe from all forums Change
+> your forum digest preferences
+>
+>
+> You can reply to this forum post via email.
+>
+
+
+
+--=-HCcF2t8PQgHyHwzJsOEP
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 TRANSITIONAL//EN">
+<HTML>
+<HEAD>
+  <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=UTF-8">
+  <META NAME="GENERATOR" CONTENT="GtkHTML/4.6.6">
+</HEAD>
+<BODY>
+An ion meets his atom friend on the street and says he's lost an<BR>
+electron. &quot;Are you sure?&quot; asks the atom. The ion replies, &quot;I'm positive.&quot;<BR>
+On Tue, 2015-04-28 at 13:18 +0800, Admin User wrote:
+<BLOCKQUOTE TYPE=CITE>
+    <A HREF="http://localhost/stable_master_forum/course/view.php?id=2">test</A> &#187; <A HREF="http://localhost/stable_master_forum/mod/forum/index.php?id=2">Forums</A> &#187; <A HREF="http://localhost/stable_master_forum/mod/forum/view.php?f=2">Forum</A> &#187; <A HREF="http://localhost/stable_master_forum/mod/forum/discuss.php?d=1">test</A>
+</BLOCKQUOTE>
+<BLOCKQUOTE TYPE=CITE>
+    <TABLE CELLSPACING="0" CELLPADDING="3">
+<TR>
+<TD WIDTH="35" VALIGN="top">
+<A HREF="http://localhost/stable_master_forum/user/view.php?id=2&amp;course=2"><IMG SRC="http://localhost/stable_master_forum/theme/image.php?theme=clean&amp;component=core&amp;image=u%2Ff2&amp;svg=0" WIDTH="35" HEIGHT="35" ALIGN="bottom" ALT="Picture of Admin User"></A>
+</TD>
+<TD>
+Re: test
+by <A HREF="http://localhost/stable_master_forum/user/view.php?id=2&amp;course=2">Admin User</A> - Tuesday, 28 April 2015, 1:17 PM
+</TD>
+</TR>
+<TR>
+<TD VALIGN="top">
+&nbsp;
+</TD>
+<TD>
+Tell me a joke<BR>
+<BR>
+<BR>
+<A HREF="http://localhost/stable_master_forum/mod/forum/discuss.php?d=1&amp;parent=1">Show parent</A> | <A HREF="http://localhost/stable_master_forum/mod/forum/post.php?reply=55">Reply</A>
+<A HREF="http://localhost/stable_master_forum/mod/forum/discuss.php?d=1#p55">See this post in context</A>
+</TD>
+</TR>
+</TABLE>
+
+<HR ALIGN="center">
+
+</BLOCKQUOTE>
+<BLOCKQUOTE TYPE=CITE>
+    <A HREF="http://localhost/stable_master_forum/mod/forum/subscribe.php?id=2&amp;d=1">Unsubscribe from this discussion</A>&nbsp;<A HREF="http://localhost/stable_master_forum/mod/forum/unsubscribeall.php">Unsubscribe from all forums</A>&nbsp;<A HREF="http://localhost/stable_master_forum/mod/forum/index.php?id=2">Change your forum digest preferences</A>
+</BLOCKQUOTE>
+<BLOCKQUOTE TYPE=CITE>
+    <BR>
+    You can reply to this forum post via email.<BR>
+    <BR>
+</BLOCKQUOTE>
+<BR>
+</BODY>
+</HTML>
+
+
+--=-HCcF2t8PQgHyHwzJsOEP--
+
+

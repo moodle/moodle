@@ -12,16 +12,16 @@ class Less_Tree_DetachedRuleset extends Less_Tree{
 	public $frames;
 	public $type = 'DetachedRuleset';
 
-	function __construct( $ruleset, $frames = null ){
+    public function __construct( $ruleset, $frames = null ){
 		$this->ruleset = $ruleset;
 		$this->frames = $frames;
 	}
 
-	function accept($visitor) {
+    public function accept($visitor) {
 		$this->ruleset = $visitor->visitObj($this->ruleset);
 	}
 
-	function compile($env){
+    public function compile($env){
 		if( $this->frames ){
 			$frames = $this->frames;
 		}else{
@@ -30,7 +30,7 @@ class Less_Tree_DetachedRuleset extends Less_Tree{
 		return new Less_Tree_DetachedRuleset($this->ruleset, $frames);
 	}
 
-	function callEval($env) {
+    public function callEval($env) {
 		if( $this->frames ){
 			return $this->ruleset->compile( $env->copyEvalEnv( array_merge($this->frames,$env->frames) ) );
 		}

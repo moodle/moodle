@@ -383,5 +383,251 @@ class mod_scorm_event_testcase extends advanced_testcase {
             $this->assertInstanceOf('coding_exception', $e);
         }
     }
-}
 
+    /**
+     * dataProvider for test_scoreraw_submitted_event().
+     */
+    public function get_scoreraw_submitted_event_provider() {
+        return array(
+            // SCORM 1.2.
+            // - cmi.core.score.raw.
+            'cmi.core.score.raw => 100' => array('cmi.core.score.raw', '100'),
+            'cmi.core.score.raw => 90' => array('cmi.core.score.raw', '90'),
+            'cmi.core.score.raw => 50' => array('cmi.core.score.raw', '50'),
+            'cmi.core.score.raw => 10' => array('cmi.core.score.raw', '10'),
+            // Check an edge case (PHP empty() vs isset()): score value equals to '0'.
+            'cmi.core.score.raw => 0' => array('cmi.core.score.raw', '0'),
+            // SCORM 1.3 AKA 2004.
+            // - cmi.score.raw.
+            'cmi.score.raw => 100' => array('cmi.score.raw', '100'),
+            'cmi.score.raw => 90' => array('cmi.score.raw', '90'),
+            'cmi.score.raw => 50' => array('cmi.score.raw', '50'),
+            'cmi.score.raw => 10' => array('cmi.score.raw', '10'),
+            // Check an edge case (PHP empty() vs isset()): score value equals to '0'.
+            'cmi.score.raw => 0' => array('cmi.score.raw', '0'),
+        );
+    }
+
+    /**
+     * Tests for score submitted event.
+     *
+     * There is no api involved so the best we can do is test data by triggering event manually.
+     *
+     * @dataProvider get_scoreraw_submitted_event_provider
+     *
+     * @param string $cmielement a valid CMI raw score element
+     * @param string $cmivalue a valid CMI raw score value
+     */
+    public function test_scoreraw_submitted_event($cmielement, $cmivalue) {
+        $this->resetAfterTest();
+        $event = \mod_scorm\event\scoreraw_submitted::create(array(
+            'other' => array('attemptid' => '2', 'cmielement' => $cmielement, 'cmivalue' => $cmivalue),
+            'objectid' => $this->eventscorm->id,
+            'context' => context_module::instance($this->eventcm->id),
+            'relateduserid' => $this->eventuser->id
+        ));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $sink->close();
+        $event = reset($events);
+        $this->assertEquals(2, $event->other['attemptid']);
+        $this->assertEquals($cmielement, $event->other['cmielement']);
+        $this->assertEquals($cmivalue, $event->other['cmivalue']);
+
+        // Check that no legacy log data is provided.
+        $this->assertEventLegacyLogData(null, $event);
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * dataProvider for test_scoreraw_submitted_event_validations().
+     */
+    public function get_scoreraw_submitted_event_validations() {
+        return array(
+            'scoreraw_submitted => missing cmielement' => array(
+                null, '50',
+                "Event validation should not allow \\mod_scorm\\event\\scoreraw_submitted " .
+                    "to be triggered without other['cmielement']",
+                'Coding error detected, it must be fixed by a programmer: ' .
+                    "The 'cmielement' must be set in other."
+            ),
+            'scoreraw_submitted => missing cmivalue' => array(
+                'cmi.core.score.raw', null,
+                "Event validation should not allow \\mod_scorm\\event\\scoreraw_submitted " .
+                    "to be triggered without other['cmivalue']",
+                'Coding error detected, it must be fixed by a programmer: ' .
+                    "The 'cmivalue' must be set in other."
+            ),
+            'scoreraw_submitted => wrong CMI element' => array(
+                'cmi.core.lesson_status', '50',
+                "Event validation should not allow \\mod_scorm\\event\\scoreraw_submitted " .
+                    'to be triggered with a CMI element not representing a raw score',
+                'Coding error detected, it must be fixed by a programmer: ' .
+                    "The 'cmielement' must represents a valid CMI raw score (cmi.core.lesson_status)."
+            ),
+        );
+    }
+
+    /**
+     * Tests for score submitted event validations.
+     *
+     * @dataProvider get_scoreraw_submitted_event_validations
+     *
+     * @param string $cmielement a valid CMI raw score element
+     * @param string $cmivalue a valid CMI raw score value
+     * @param string $failmessage the message used to fail the test in case of missing to violate a validation rule
+     * @param string $excmessage the exception message when violating the validations rules
+     */
+    public function test_scoreraw_submitted_event_validations($cmielement, $cmivalue, $failmessage, $excmessage) {
+        $this->resetAfterTest();
+        try {
+            $data = array(
+                'context' => context_module::instance($this->eventcm->id),
+                'courseid' => $this->eventcourse->id,
+                'other' => array('attemptid' => 2)
+            );
+            if ($cmielement != null) {
+                $data['other']['cmielement'] = $cmielement;
+            }
+            if ($cmivalue != null) {
+                $data['other']['cmivalue'] = $cmivalue;
+            }
+            \mod_scorm\event\scoreraw_submitted::create($data);
+            $this->fail($failmessage);
+        } catch (Exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+            $this->assertEquals($excmessage, $e->getMessage());
+        }
+    }
+
+    /**
+     * dataProvider for test_status_submitted_event().
+     */
+    public function get_status_submitted_event_provider() {
+        return array(
+            // SCORM 1.2.
+            // 1. Status: cmi.core.lesson_status.
+            'cmi.core.lesson_status => passed' => array('cmi.core.lesson_status', 'passed'),
+            'cmi.core.lesson_status => completed' => array('cmi.core.lesson_status', 'completed'),
+            'cmi.core.lesson_status => failed' => array('cmi.core.lesson_status', 'failed'),
+            'cmi.core.lesson_status => incomplete' => array('cmi.core.lesson_status', 'incomplete'),
+            'cmi.core.lesson_status => browsed' => array('cmi.core.lesson_status', 'browsed'),
+            'cmi.core.lesson_status => not attempted' => array('cmi.core.lesson_status', 'not attempted'),
+            // SCORM 1.3 AKA 2004.
+            // 1. Completion status: cmi.completion_status.
+            'cmi.completion_status => completed' => array('cmi.completion_status', 'completed'),
+            'cmi.completion_status => incomplete' => array('cmi.completion_status', 'incomplete'),
+            'cmi.completion_status => not attempted' => array('cmi.completion_status', 'not attempted'),
+            'cmi.completion_status => unknown' => array('cmi.completion_status', 'unknown'),
+            // 2. Success status: cmi.success_status.
+            'cmi.success_status => passed' => array('cmi.success_status', 'passed'),
+            'cmi.success_status => failed' => array('cmi.success_status', 'failed'),
+            'cmi.success_status => unknown' => array('cmi.success_status', 'unknown')
+        );
+    }
+
+    /**
+     * Tests for status submitted event.
+     *
+     * There is no api involved so the best we can do is test data by triggering event manually.
+     *
+     * @dataProvider get_status_submitted_event_provider
+     *
+     * @param string $cmielement a valid CMI status element
+     * @param string $cmivalue a valid CMI status value
+     */
+    public function test_status_submitted_event($cmielement, $cmivalue) {
+        $this->resetAfterTest();
+        $event = \mod_scorm\event\status_submitted::create(array(
+            'other' => array('attemptid' => '2', 'cmielement' => $cmielement, 'cmivalue' => $cmivalue),
+            'objectid' => $this->eventscorm->id,
+            'context' => context_module::instance($this->eventcm->id),
+            'relateduserid' => $this->eventuser->id
+        ));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $sink->close();
+        $event = reset($events);
+        $this->assertEquals(2, $event->other['attemptid']);
+        $this->assertEquals($cmielement, $event->other['cmielement']);
+        $this->assertEquals($cmivalue, $event->other['cmivalue']);
+
+        // Check that no legacy log data is provided.
+        $this->assertEventLegacyLogData(null, $event);
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * dataProvider for test_status_submitted_event_validations().
+     */
+    public function get_status_submitted_event_validations() {
+        return array(
+            'status_submitted => missing cmielement' => array(
+                null, 'passed',
+                "Event validation should not allow \\mod_scorm\\event\\status_submitted " .
+                    "to be triggered without other['cmielement']",
+                'Coding error detected, it must be fixed by a programmer: ' .
+                    "The 'cmielement' must be set in other."
+            ),
+            'status_submitted => missing cmivalue' => array(
+                'cmi.core.lesson_status', null,
+                "Event validation should not allow \\mod_scorm\\event\\status_submitted " .
+                    "to be triggered without other['cmivalue']",
+                'Coding error detected, it must be fixed by a programmer: ' .
+                    "The 'cmivalue' must be set in other."
+            ),
+            'status_submitted => wrong CMI element' => array(
+                'cmi.core.score.raw', 'passed',
+                "Event validation should not allow \\mod_scorm\\event\\status_submitted " .
+                    'to be triggered with a CMI element not representing a valid CMI status element',
+                'Coding error detected, it must be fixed by a programmer: ' .
+                    "The 'cmielement' must represents a valid CMI status element (cmi.core.score.raw)."
+            ),
+            'status_submitted => wrong CMI value' => array(
+                'cmi.core.lesson_status', 'blahblahblah',
+                "Event validation should not allow \\mod_scorm\\event\\status_submitted " .
+                    'to be triggered with a CMI element not representing a valid CMI status',
+                'Coding error detected, it must be fixed by a programmer: ' .
+                    "The 'cmivalue' must represents a valid CMI status value (blahblahblah)."
+            ),
+        );
+    }
+
+    /**
+     * Tests for status submitted event validations.
+     *
+     * @dataProvider get_status_submitted_event_validations
+     *
+     * @param string $cmielement a valid CMI status element
+     * @param string $cmivalue a valid CMI status value
+     * @param string $failmessage the message used to fail the test in case of missing to violate a validation rule
+     * @param string $excmessage the exception message when violating the validations rules
+     */
+    public function test_status_submitted_event_validations($cmielement, $cmivalue, $failmessage, $excmessage) {
+        $this->resetAfterTest();
+        try {
+            $data = array(
+                'context' => context_module::instance($this->eventcm->id),
+                'courseid' => $this->eventcourse->id,
+                'other' => array('attemptid' => 2)
+            );
+            if ($cmielement != null) {
+                $data['other']['cmielement'] = $cmielement;
+            }
+            if ($cmivalue != null) {
+                $data['other']['cmivalue'] = $cmivalue;
+            }
+            \mod_scorm\event\status_submitted::create($data);
+            $this->fail($failmessage);
+        } catch (Exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+            $this->assertEquals($excmessage, $e->getMessage());
+        }
+    }
+}

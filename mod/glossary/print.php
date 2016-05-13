@@ -187,26 +187,26 @@ echo html_writer::tag('div', $modname, array('class' => 'modname'));
 if ( $allentries ) {
     foreach ($allentries as $entry) {
 
-        // Setting the pivot for the current entry
-        $pivot = $entry->glossarypivot;
-        $upperpivot = core_text::strtoupper($pivot);
-        $pivottoshow = core_text::strtoupper(format_string($pivot, true, $fmtoptions));
-        // Reduce pivot to 1cc if necessary
-        if ( !$fullpivot ) {
-            $upperpivot = core_text::substr($upperpivot, 0, 1);
-            $pivottoshow = core_text::substr($pivottoshow, 0, 1);
-        }
+        // Setting the pivot for the current entry.
+        if ($printpivot) {
 
-        // If there's  group break
-        if ( $currentpivot != $upperpivot ) {
+            $pivot = $entry->{$pivotkey};
+            $upperpivot = core_text::strtoupper($pivot);
+            $pivottoshow = core_text::strtoupper(format_string($pivot, true, $fmtoptions));
 
-            // print the group break if apply
-            if ( $printpivot )  {
+            // Reduce pivot to 1cc if necessary.
+            if (!$fullpivot) {
+                $upperpivot = core_text::substr($upperpivot, 0, 1);
+                $pivottoshow = core_text::substr($pivottoshow, 0, 1);
+            }
+
+            // If there's a group break.
+            if ($currentpivot != $upperpivot) {
                 $currentpivot = $upperpivot;
 
-                if ( isset($entry->userispivot) ) {
-                    // printing the user icon if defined (only when browsing authors)
-                    $user = $DB->get_record("user", array("id"=>$entry->userid));
+                if ($userispivot) {
+                    // Printing the user icon if defined (only when browsing authors).
+                    $user = mod_glossary_entry_query_builder::get_user_from_record($entry);
                     $pivottoshow = fullname($user);
                 }
                 echo html_writer::tag('div', clean_text($pivottoshow), array('class' => 'mdl-align strong'));

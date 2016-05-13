@@ -54,6 +54,7 @@ class restore_lesson_activity_task extends restore_activity_task {
     static public function define_decode_contents() {
         $contents = array();
 
+        $contents[] = new restore_decode_content('lesson', array('intro'), 'lesson');
         $contents[] = new restore_decode_content('lesson_pages', array('contents'), 'lesson_page');
         $contents[] = new restore_decode_content('lesson_answers', array('answer', 'response'), 'lesson_answer');
 
@@ -69,7 +70,6 @@ class restore_lesson_activity_task extends restore_activity_task {
 
         $rules[] = new restore_decode_rule('LESSONEDIT', '/mod/lesson/edit.php?id=$1', 'course_module');
         $rules[] = new restore_decode_rule('LESSONESAY', '/mod/lesson/essay.php?id=$1', 'course_module');
-        $rules[] = new restore_decode_rule('LESSONHIGHSCORES', '/mod/lesson/highscores.php?id=$1', 'course_module');
         $rules[] = new restore_decode_rule('LESSONREPORT', '/mod/lesson/report.php?id=$1', 'course_module');
         $rules[] = new restore_decode_rule('LESSONMEDIAFILE', '/mod/lesson/mediafile.php?id=$1', 'course_module');
         $rules[] = new restore_decode_rule('LESSONVIEWBYID', '/mod/lesson/view.php?id=$1', 'course_module');
@@ -98,8 +98,6 @@ class restore_lesson_activity_task extends restore_activity_task {
         $rules[] = new restore_log_rule('lesson', 'view grade', 'essay.php?id={course_module}', '[name]');
         $rules[] = new restore_log_rule('lesson', 'update grade', 'essay.php?id={course_module}', '[name]');
         $rules[] = new restore_log_rule('lesson', 'update email essay grade', 'essay.php?id={course_module}', '[name]');
-        $rules[] = new restore_log_rule('lesson', 'update highscores', 'highscores.php?id={course_module}', '[name]');
-        $rules[] = new restore_log_rule('lesson', 'view highscores', 'highscores.php?id={course_module}', '[name]');
 
         return $rules;
     }

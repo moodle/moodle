@@ -550,6 +550,62 @@ class core_formslib_testcase extends advanced_testcase {
         $data = $mform->get_data();
         $this->assertSame($expectedvalues, (array) $data);
     }
+
+    /**
+     * MDL-52873
+     */
+    public function test_multiple_modgrade_fields() {
+        $this->resetAfterTest(true);
+
+        $form = new formslib_multiple_modgrade_form();
+        ob_start();
+        $form->display();
+        $html = ob_get_clean();
+
+        $this->assertTag(array('id' => 'fgroup_id_grade1'), $html);
+        $this->assertTag(array('id' => 'id_grade1_modgrade_type'), $html);
+        $this->assertTag(array('id' => 'id_grade1_modgrade_point'), $html);
+        $this->assertTag(array('id' => 'id_grade1_modgrade_scale'), $html);
+
+        $this->assertTag(array('id' => 'fgroup_id_grade2'), $html);
+        $this->assertTag(array('id' => 'id_grade2_modgrade_type'), $html);
+        $this->assertTag(array('id' => 'id_grade2_modgrade_point'), $html);
+        $this->assertTag(array('id' => 'id_grade2_modgrade_scale'), $html);
+
+        $this->assertTag(array('id' => 'fgroup_id_grade_3'), $html);
+        $this->assertTag(array('id' => 'id_grade_3_modgrade_type'), $html);
+        $this->assertTag(array('id' => 'id_grade_3_modgrade_point'), $html);
+        $this->assertTag(array('id' => 'id_grade_3_modgrade_scale'), $html);
+    }
+
+    /**
+     * Test persistant freeze elements have different id's.
+     */
+    public function test_persistantrreeze_element() {
+        $this->resetAfterTest(true);
+
+        $form = new formslib_persistantrreeze_element();
+        ob_start();
+        $form->display();
+        $html = ob_get_clean();
+
+        // Test advcheckbox id's.
+        $this->assertTag(array('id' => 'id_advcheckboxpersistant'), $html);
+        $this->assertTag(array('id' => 'id_advcheckboxpersistant_persistant'), $html);
+        $this->assertTag(array('id' => 'id_advcheckboxnotpersistant'), $html);
+        $this->assertNotTag(array('id' => 'id_advcheckboxnotpersistant_persistant'), $html);
+        $this->assertTag(array('id' => 'id_advcheckboxfrozen'), $html);
+        $this->assertTag(array('id' => 'id_advcheckboxfrozen_persistant'), $html);
+
+        // Check text element id's.
+        $this->assertTag(array('id' => 'id_textpersistant'), $html);
+        $this->assertTag(array('id' => 'id_textpersistant_persistant'), $html);
+        $this->assertTag(array('id' => 'id_textnotpersistant'), $html);
+        $this->assertNotTag(array('id' => 'id_textnotpersistant_persistant'), $html);
+        $this->assertTag(array('id' => 'id_textfrozen'), $html);
+        $this->assertNotTag(array('id' => 'id_textfrozen_persistant'), $html);
+
+    }
 }
 
 
@@ -820,5 +876,56 @@ class formslib_clean_value extends moodleform {
         $group = $mform->createElement('group', 'repeatnamedgroup', 'repeatnamedgroup', $groupelements, null, true);
         $this->repeat_elements(array($group), 2, array('repeatnamedgroup[repeatnamedgroupel1]' => array('type' => PARAM_INT),
             'repeatnamedgroup[repeatnamedgroupel2]' => array('type' => PARAM_INT)), 'repeatablenamedgroup', 'add', 0);
+    }
+}
+
+/**
+ * Used to test that modgrade fields get unique id attributes.
+ */
+class formslib_multiple_modgrade_form extends moodleform {
+    public function definition() {
+        $mform = $this->_form;
+        $mform->addElement('modgrade', 'grade1', 'Grade 1');
+        $mform->addElement('modgrade', 'grade2', 'Grade 2');
+        $mform->addElement('modgrade', 'grade[3]', 'Grade 3');
+    }
+}
+
+/**
+ * Used to test frozen elements get unique id attributes.
+ */
+class formslib_persistantrreeze_element extends moodleform {
+    public function definition() {
+        $mform = $this->_form;
+
+        // Create advanced checkbox.
+        // Persistant.
+        $advcheckboxpersistant = $mform->addElement('advcheckbox', 'advcheckboxpersistant', 'advcheckbox');
+        $mform->setType('advcheckboxpersistant', PARAM_BOOL);
+        $advcheckboxpersistant->setChecked(true);
+        $advcheckboxpersistant->freeze();
+        $advcheckboxpersistant->setPersistantFreeze(true);
+        // Frozen.
+        $advcheckboxfrozen = $mform->addElement('advcheckbox', 'advcheckboxfrozen', 'advcheckbox');
+        $mform->setType('advcheckboxfrozen', PARAM_BOOL);
+        $advcheckboxfrozen->setChecked(true);
+        $advcheckboxfrozen->freeze();
+        // Neither persistant nor Frozen.
+        $mform->addElement('advcheckbox', 'advcheckboxnotpersistant', 'advcheckbox');
+        $mform->setType('advcheckboxnotpersistant', PARAM_BOOL);
+
+        // Create text fields.
+        // Persistant.
+        $elpersistant = $mform->addElement('text', 'textpersistant', 'test', 'test');
+        $mform->setType('textpersistant', PARAM_TEXT);
+        $elpersistant->freeze();
+        $elpersistant->setPersistantFreeze(true);
+        // Frozen.
+        $elfrozen = $mform->addElement('text', 'textfrozen', 'test', 'test');
+        $mform->setType('textfrozen', PARAM_TEXT);
+        $elfrozen->freeze();
+        // Neither persistant nor Frozen.
+        $mform->addElement('text', 'textnotpersistant', 'test', 'test');
+        $mform->setType('textnotpersistant', PARAM_TEXT);
     }
 }

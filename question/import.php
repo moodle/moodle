@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/question/import_form.php');
 require_once($CFG->dirroot . '/question/format.php');
 
 list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
-        question_edit_setup('import', '/question/import.php', false, false);
+        question_edit_setup('import', '/question/import.php');
 
 // get display strings
 $txt = new stdClass();

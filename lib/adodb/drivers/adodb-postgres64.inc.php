@@ -1,6 +1,8 @@
 <?php
 /*
- V5.19  23-Apr-2014  (c) 2000-2014 John Lim (jlim#natsoft.com). All rights reserved.
+ @version   v5.20.3  01-Jan-2016
+ @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
+ @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
@@ -145,19 +147,21 @@ class ADODB_postgres64 extends ADOConnection{
 	// get the last id - never tested
 	function pg_insert_id($tablename,$fieldname)
 	{
-		$result=pg_exec($this->_connectionID, "SELECT last_value FROM ${tablename}_${fieldname}_seq");
+		$result=pg_query($this->_connectionID, 'SELECT last_value FROM '. $tablename .'_'. $fieldname .'_seq');
 		if ($result) {
 			$arr = @pg_fetch_row($result,0);
-			pg_freeresult($result);
+			pg_free_result($result);
 			if (isset($arr[0])) return $arr[0];
 		}
 		return false;
 	}
 
-/* Warning from http://www.php.net/manual/function.pg-getlastoid.php:
-Using a OID as a unique identifier is not generally wise.
-Unless you are very careful, you might end up with a tuple having
-a different OID if a database must be reloaded. */
+	/**
+	 * Warning from http://www.php.net/manual/function.pg-getlastoid.php:
+	 * Using a OID as a unique identifier is not generally wise.
+	 * Unless you are very careful, you might end up with a tuple having
+	 * a different OID if a database must be reloaded.
+	 */
 	function _insertid($table,$column)
 	{
 		if (!is_resource($this->_resultid) || get_resource_type($this->_resultid) !== 'pgsql result') return false;
@@ -166,21 +170,21 @@ a different OID if a database must be reloaded. */
 		return empty($table) || empty($column) ? $oid : $this->GetOne("SELECT $column FROM $table WHERE oid=".(int)$oid);
 	}
 
-// I get this error with PHP before 4.0.6 - jlim
-// Warning: This compilation does not support pg_cmdtuples() in adodb-postgres.inc.php on line 44
 	function _affectedrows()
 	{
 		if (!is_resource($this->_resultid) || get_resource_type($this->_resultid) !== 'pgsql result') return false;
-		return pg_cmdtuples($this->_resultid);
+		return pg_affected_rows($this->_resultid);
 	}
 
 
-		// returns true/false
+	/**
+	 * @return true/false
+	 */
 	function BeginTrans()
 	{
 		if ($this->transOff) return true;
 		$this->transCnt += 1;
-		return @pg_Exec($this->_connectionID, "begin ".$this->_transmode);
+		return pg_query($this->_connectionID, 'begin '.$this->_transmode);
 	}
 
 	function RowLock($tables,$where,$col='1 as adodbignore')
@@ -196,7 +200,7 @@ a different OID if a database must be reloaded. */
 		if (!$ok) return $this->RollbackTrans();
 
 		$this->transCnt -= 1;
-		return @pg_Exec($this->_connectionID, "commit");
+		return pg_query($this->_connectionID, 'commit');
 	}
 
 	// returns true/false
@@ -204,7 +208,7 @@ a different OID if a database must be reloaded. */
 	{
 		if ($this->transOff) return true;
 		$this->transCnt -= 1;
-		return @pg_Exec($this->_connectionID, "rollback");
+		return pg_query($this->_connectionID, 'rollback');
 	}
 
 	function MetaTables($ttype=false,$showSchema=false,$mask=false)
@@ -354,7 +358,7 @@ a different OID if a database must be reloaded. */
 	*/
 	function UpdateBlobFile($table,$column,$path,$where,$blobtype='BLOB')
 	{
-		pg_exec ($this->_connectionID, "begin");
+		pg_query($this->_connectionID, 'begin');
 
 		$fd = fopen($path,'r');
 		$contents = fread($fd,filesize($path));
@@ -366,7 +370,7 @@ a different OID if a database must be reloaded. */
 		pg_lo_close($handle);
 
 		// $oid = pg_lo_import ($path);
-		pg_exec($this->_connectionID, "commit");
+		pg_query($this->_connectionID, 'commit');
 		$rs = ADOConnection::UpdateBlob($table,$column,$oid,$where,$blobtype);
 		$rez = !empty($rs);
 		return $rez;
@@ -382,9 +386,9 @@ a different OID if a database must be reloaded. */
 	*/
 	function BlobDelete( $blob )
 	{
-		pg_exec ($this->_connectionID, "begin");
+		pg_query($this->_connectionID, 'begin');
 		$result = @pg_lo_unlink($blob);
-		pg_exec ($this->_connectionID, "commit");
+		pg_query($this->_connectionID, 'commit');
 		return( $result );
 	}
 
@@ -413,16 +417,16 @@ a different OID if a database must be reloaded. */
 	{
 		if (!$this->GuessOID($blob)) return $blob;
 
-		if ($hastrans) @pg_exec($this->_connectionID,"begin");
-		$fd = @pg_lo_open($this->_connectionID,$blob,"r");
+		if ($hastrans) pg_query($this->_connectionID,'begin');
+		$fd = @pg_lo_open($this->_connectionID,$blob,'r');
 		if ($fd === false) {
-			if ($hastrans) @pg_exec($this->_connectionID,"commit");
+			if ($hastrans) pg_query($this->_connectionID,'commit');
 			return $blob;
 		}
 		if (!$maxsize) $maxsize = $this->maxblobsize;
-		$realblob = @pg_loread($fd,$maxsize);
+		$realblob = @pg_lo_read($fd,$maxsize);
 		@pg_loclose($fd);
-		if ($hastrans) @pg_exec($this->_connectionID,"commit");
+		if ($hastrans) pg_query($this->_connectionID,'commit');
 		return $realblob;
 	}
 
@@ -470,13 +474,28 @@ a different OID if a database must be reloaded. */
 		#return "($date+interval'$dayFraction days')";
 	}
 
+	/**
+	 * Generate the SQL to retrieve MetaColumns data
+	 * @param string $table Table name
+	 * @param string $schema Schema name (can be blank)
+	 * @return string SQL statement to execute
+	 */
+	protected function _generateMetaColumnsSQL($table, $schema)
+	{
+		if ($schema) {
+			return sprintf($this->metaColumnsSQL1, $table, $table, $schema);
+		}
+		else {
+			return sprintf($this->metaColumnsSQL, $table, $table, $schema);
+		}
+	}
 
 	// for schema support, pass in the $table param "$schema.$tabname".
 	// converts field names to lowercase, $upper is ignored
 	// see http://phplens.com/lens/lensforum/msgs.php?id=14018 for more info
 	function MetaColumns($table,$normalize=true)
 	{
-	global $ADODB_FETCH_MODE;
+		global $ADODB_FETCH_MODE;
 
 		$schema = false;
 		$false = false;
@@ -488,8 +507,7 @@ a different OID if a database must be reloaded. */
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 		if ($this->fetchMode !== false) $savem = $this->SetFetchMode(false);
 
-		if ($schema) $rs = $this->Execute(sprintf($this->metaColumnsSQL1,$table,$table,$schema));
-		else $rs = $this->Execute(sprintf($this->metaColumnsSQL,$table,$table,$table));
+		$rs = $this->Execute($this->_generateMetaColumnsSQL($table, $schema));
 		if (isset($savem)) $this->SetFetchMode($savem);
 		$ADODB_FETCH_MODE = $save;
 
@@ -721,7 +739,7 @@ a different OID if a database must be reloaded. */
 		# PHP does not handle 'hex' properly ('x74657374' is returned as 't657374')
 		# https://bugs.php.net/bug.php?id=59831 states this is in fact not a bug,
 		# so we manually set bytea_output
-		if (version_compare($info['version'], '9.0', '>=')) {
+		if ( !empty($this->connection->noBlobs) && version_compare($info['version'], '9.0', '>=')) {
 			$this->Execute('set bytea_output=escape');
 		}
 
@@ -759,9 +777,6 @@ a different OID if a database must be reloaded. */
 
 			with plan = 1.51861286163 secs
 			no plan =   1.26903700829 secs
-
-
-
 		*/
 			$plan = 'P'.md5($sql);
 
@@ -779,7 +794,7 @@ a different OID if a database must be reloaded. */
 			else $exsql = "EXECUTE $plan";
 
 
-			$rez = @pg_exec($this->_connectionID,$exsql);
+			$rez = @pg_execute($this->_connectionID,$exsql);
 			if (!$rez) {
 			# Perhaps plan does not exist? Prepare/compile plan.
 				$params = '';
@@ -803,19 +818,19 @@ a different OID if a database must be reloaded. */
 				}
 				$s = "PREPARE $plan ($params) AS ".substr($sql,0,strlen($sql)-2);
 				//adodb_pr($s);
-				$rez = pg_exec($this->_connectionID,$s);
+				$rez = pg_execute($this->_connectionID,$s);
 				//echo $this->ErrorMsg();
 			}
 			if ($rez)
-				$rez = pg_exec($this->_connectionID,$exsql);
+				$rez = pg_execute($this->_connectionID,$exsql);
 		} else {
 			//adodb_backtrace();
-			$rez = pg_exec($this->_connectionID,$sql);
+			$rez = pg_query($this->_connectionID,$sql);
 		}
 		// check if no data returned, then no need to create real recordset
-		if ($rez && pg_numfields($rez) <= 0) {
+		if ($rez && pg_num_fields($rez) <= 0) {
 			if (is_resource($this->_resultid) && get_resource_type($this->_resultid) === 'pgsql result') {
-				pg_freeresult($this->_resultid);
+				pg_free_result($this->_resultid);
 			}
 			$this->_resultid = $rez;
 			return true;
@@ -864,7 +879,7 @@ a different OID if a database must be reloaded. */
 	{
 		if ($this->transCnt) $this->RollbackTrans();
 		if ($this->_resultid) {
-			@pg_freeresult($this->_resultid);
+			@pg_free_result($this->_resultid);
 			$this->_resultid = false;
 		}
 		@pg_close($this->_connectionID);
@@ -919,12 +934,14 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 		$this->adodbFetchMode = $mode;
 
 		// Parent's constructor
-		$this->ADORecordSet($queryID);
+		parent::__construct($queryID);
 	}
 
-	function GetRowAssoc($upper=true)
+	function GetRowAssoc($upper = ADODB_ASSOC_CASE)
 	{
-		if ($this->fetchMode == PGSQL_ASSOC && !$upper) return $this->fields;
+		if ($this->fetchMode == PGSQL_ASSOC && $upper == ADODB_ASSOC_CASE_LOWER) {
+			return $this->fields;
+		}
 		$row = ADORecordSet::GetRowAssoc($upper);
 		return $row;
 	}
@@ -934,15 +951,15 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 	{
 	global $ADODB_COUNTRECS;
 		$qid = $this->_queryID;
-		$this->_numOfRows = ($ADODB_COUNTRECS)? @pg_numrows($qid):-1;
-		$this->_numOfFields = @pg_numfields($qid);
+		$this->_numOfRows = ($ADODB_COUNTRECS)? @pg_num_rows($qid):-1;
+		$this->_numOfFields = @pg_num_fields($qid);
 
 		// cache types for blob decode check
-		// apparently pg_fieldtype actually performs an sql query on the database to get the type.
+		// apparently pg_field_type actually performs an sql query on the database to get the type.
 		if (empty($this->connection->noBlobs))
 		for ($i=0, $max = $this->_numOfFields; $i < $max; $i++) {
-			if (pg_fieldtype($qid,$i) == 'bytea') {
-				$this->_blobArr[$i] = pg_fieldname($qid,$i);
+			if (pg_field_type($qid,$i) == 'bytea') {
+				$this->_blobArr[$i] = pg_field_name($qid,$i);
 			}
 		}
 	}
@@ -967,8 +984,8 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 		// offsets begin at 0
 
 		$o= new ADOFieldObject();
-		$o->name = @pg_fieldname($this->_queryID,$off);
-		$o->type = @pg_fieldtype($this->_queryID,$off);
+		$o->name = @pg_field_name($this->_queryID,$off);
+		$o->type = @pg_field_type($this->_queryID,$off);
 		$o->max_length = @pg_fieldsize($this->_queryID,$off);
 		return $o;
 	}
@@ -1032,7 +1049,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 
 	function _close()
 	{
-		return @pg_freeresult($this->_queryID);
+		return @pg_free_result($this->_queryID);
 	}
 
 	function MetaType($t,$len=-1,$fieldobj=false)

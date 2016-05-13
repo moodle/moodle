@@ -11,7 +11,7 @@
 //    echo "<script type=\"text/javascript\">\n";
 //        echo "var starttime = ". $timer->starttime . ";\n";
 //        echo "var servertime = ". time() . ";\n";
-//        echo "var testlength = ". $lesson->maxtime * 60 .";\n";
+//        echo "var testlength = ". $lesson->timelimit .";\n";
 //        echo "document.write('<script type=\"text/javascript\" src=\"liveclock_lite.js\"><\/script>');\n";
 //        echo "window.onload = function () { show_clock(); }";
 //    echo "</script>\n";

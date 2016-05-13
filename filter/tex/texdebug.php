@@ -41,6 +41,9 @@
 
     require_login();
     require_capability('moodle/site:config', context_system::instance(), $USER->id); /// Required cap to run this. MDL-18552
+    if ($action || $texexp) {
+        require_sesskey();
+    }
 
     $output = '';
 
@@ -89,6 +92,7 @@
     // Action: Check Slasharguments
     if ($action=='SlashArguments') {
         slasharguments($texexp);
+        exit;
     }
 
     // Action: Show Tex command line output
@@ -335,6 +339,7 @@
                <label for="SlashArguments">Check slasharguments setting.</label></li>
            </ol>
            <input type="submit" value="Do it!" />
+           <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
           </form> <br /> <br />
        <center>
           <iframe name="inlineframe" align="middle" width="80%" height="200">

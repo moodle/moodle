@@ -75,10 +75,30 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
                     cssleft.appendChild(this.get_drag_handle(title, CSS.SECTIONHANDLE, 'icon', true));
 
                     if (moveup) {
-                        moveup.remove();
+                        if (moveup.previous('br')) {
+                            moveup.previous('br').remove();
+                        } else if (moveup.next('br')) {
+                            moveup.next('br').remove();
+                        }
+
+                        if (moveup.ancestor('.section_action_menu')) {
+                            moveup.ancestor('li').remove();
+                        } else {
+                            moveup.remove();
+                        }
                     }
                     if (movedown) {
-                        movedown.remove();
+                        if (movedown.previous('br')) {
+                            movedown.previous('br').remove();
+                        } else if (movedown.next('br')) {
+                            movedown.next('br').remove();
+                        }
+
+                        if (movedown.ancestor('.section_action_menu')) {
+                            movedown.ancestor('li').remove();
+                        } else {
+                            movedown.remove();
+                        }
                     }
 
                     // This section can be moved - add the class to indicate this to Y.DD.
@@ -95,9 +115,11 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
         // Get our drag object
         var drag = e.target;
         // Creat a dummy structure of the outer elemnents for clean styles application
-        var containernode = Y.Node.create('<' + M.course.format.get_containernode() + '></' + M.course.format.get_containernode() + '>');
+        var containernode = Y.Node.create('<' + M.course.format.get_containernode() +
+                '></' + M.course.format.get_containernode() + '>');
         containernode.addClass(M.course.format.get_containerclass());
-        var sectionnode = Y.Node.create('<' + M.course.format.get_sectionwrappernode() + '></' + M.course.format.get_sectionwrappernode() + '>');
+        var sectionnode = Y.Node.create('<' + M.course.format.get_sectionwrappernode() +
+                '></' + M.course.format.get_sectionwrappernode() + '>');
         sectionnode.addClass( M.course.format.get_sectionwrapperclass());
         sectionnode.setStyle('margin', 0);
         sectionnode.setContent(drag.get('node').get('innerHTML'));

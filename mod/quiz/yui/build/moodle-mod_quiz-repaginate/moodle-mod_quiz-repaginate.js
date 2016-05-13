@@ -44,7 +44,7 @@ Y.extend(POPUP, Y.Base, {
     body: null,
 
     initializer : function() {
-        rpcontainerclass = Y.one(CSS.REPAGINATECONTAINERCLASS);
+        var rpcontainerclass = Y.one(CSS.REPAGINATECONTAINERCLASS);
 
         // Set popup header and body.
         this.header = rpcontainerclass.getAttribute(PARAMS.HEADER);

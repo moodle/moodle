@@ -29,14 +29,12 @@ define('AJAX_SCRIPT', true);
 require_once(dirname(__FILE__) . '/../../config.php');
 
 // This should be accessed by only valid logged in user.
-if (!isloggedin() or isguestuser()) {
-    die('Invalid access.');
-}
+require_login(null, false);
 
 // This identifies the type of the branch we want to get. Make sure it's SITE_ADMIN.
 $branchtype = required_param('type', PARAM_INT);
 if ($branchtype !== navigation_node::TYPE_SITE_ADMIN) {
-    die('Wrong node type passed.');
+    throw new coding_exception('Incorrect node type passed');
 }
 
 // Start capturing output in case of broken plugins.

@@ -6,9 +6,9 @@ Feature: Add a quiz
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email               |
-      | teacher1 | Terry1    | Teacher1 | teacher1@moodle.com |
-      | student1 | Sam1      | Student1 | student1@moodle.com |
+      | username | firstname | lastname | email                |
+      | teacher1 | Terry1    | Teacher1 | teacher1@example.com |
+      | student1 | Sam1      | Student1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -37,7 +37,7 @@ Feature: Add a quiz
     Then I should see "Question 1"
     And I should see "Answer the first question"
     And I set the field "True" to "1"
-    And I press "Next"
+    And I press "Finish attempt ..."
     And I should see "Answer saved"
     And I press "Submit all and finish"
 

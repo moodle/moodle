@@ -53,7 +53,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
     /** @var array options provided to initalize filepicker */
     protected $_options = array('subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 0, 'changeformat' => 0,
             'areamaxbytes' => FILE_AREA_MAX_BYTES_UNLIMITED, 'context' => null, 'noclean' => 0, 'trusttext' => 0,
-            'return_types' => 7);
+            'return_types' => 7, 'enable_filemanagement' => true);
     // $_options['return_types'] = FILE_INTERNAL | FILE_EXTERNAL | FILE_REFERENCE
 
     /** @var array values for editor */
@@ -68,7 +68,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
      *              or an associative array
      * @param array $options set of options to initalize filepicker
      */
-    function MoodleQuickForm_editor($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
+    public function __construct($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG, $PAGE;
 
         $options = (array)$options;
@@ -89,12 +89,22 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             }
         }
         $this->_options['trusted'] = trusttext_trusted($this->_options['context']);
-        parent::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
+        parent::__construct($elementName, $elementLabel, $attributes);
 
         // Note: for some reason the code using this setting does not like bools.
         $this->_options['subdirs'] = (int)($this->_options['subdirs'] == 1);
 
         editors_head_setup();
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function MoodleQuickForm_editor($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($elementName, $elementLabel, $attributes, $options);
     }
 
     /**
@@ -377,6 +387,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         }
 
         // print text area - TODO: add on-the-fly switching, size configuration, etc.
+        $editor->set_text($text);
         $editor->use_editor($id, $this->_options, $fpoptions);
 
         $rows = empty($this->_attributes['rows']) ? 15 : $this->_attributes['rows'];

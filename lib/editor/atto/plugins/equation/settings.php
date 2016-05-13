@@ -151,6 +151,7 @@ if ($ADMIN->fulltree) {
     $desc = new lang_string('librarygroup4_desc', 'atto_equation');
     $default = '
 \sum{a,b}
+\sqrt[a]{b+c}
 \int_{a}^{b}{c}
 \iint_{a}^{b}{c}
 \iiint_{a}^{b}{c}
@@ -159,6 +160,11 @@ if ($ADMIN->fulltree) {
 [a]
 \lbrace{a}\rbrace
 \left| \begin{matrix} a_1 & a_2 \\ a_3 & a_4 \end{matrix} \right|
+\frac{a}{b+c}
+\vec{a}
+\binom {a} {b}
+{a \brack b}
+{a \brace b}
 ';
     $setting = new admin_setting_configtextarea('atto_equation/librarygroup4',
                                                 $name,

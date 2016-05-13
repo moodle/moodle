@@ -23,7 +23,8 @@ form {
 .mform fieldset.error {
     border: 1px solid @errorText;
 }
-.mform span.error {
+.mform span.error,
+#adminsettings span.error {
     display: inline-block;
     border: 1px solid @errorBorder;
     border-radius: 4px;
@@ -55,6 +56,7 @@ form {
 .mform .fitem .fitemtitle div {
     display: inline;
 }
+#adminsettings .error,
 .loginpanel .error,
 .mform .error {
     color: @errorText;
@@ -96,6 +98,11 @@ form {
 }
 .mform .fcheckbox input {
     margin-left: 0;
+}
+.mform .fcheckbox > span,
+.mform .fradio > span,
+.mform .fgroup > span {
+    display: inline-block;
     margin-top: 5px;
 }
 .mform .fitem fieldset.fgroup label,
@@ -185,6 +192,9 @@ input#id_externalurl {
 }
 .form-item .form-description {
     padding-top: 0;
+}
+.fitem .fstaticlabel {
+    font-weight: bold;
 }
 
 // Pale grey container for submit buttons.
@@ -409,6 +419,12 @@ fieldset.coursesearchbox label {
             .fstatic:empty {
                 display: none;
             }
+            .fcheckbox > span,
+            .fradio > span,
+            .fgroup > span {
+                margin-top: 4px;
+            }
+
         }
         .femptylabel {
             .fitemtitle {
@@ -464,6 +480,8 @@ fieldset.coursesearchbox label {
         .makeFormsVertical;
     }
 }
+
+
 
 /**
  * Make forms vertical when the screen is less than 1474px AND both side-pre and side-post contain blocks.
@@ -640,4 +658,62 @@ fieldset.coursesearchbox label {
 textarea[cols],
 input[size] {
     width: auto;
+}
+
+/* Custom styles for autocomplete form element */
+.form-autocomplete-selection {
+    margin: 0.2em;
+    min-height: 21px;
+}
+.form-autocomplete-multiple [role=listitem] {
+    cursor: pointer;
+}
+
+.form-autocomplete-suggestions {
+    position: absolute;
+    background-color: white;
+    border: 2px solid @grayLighter;
+    border-radius: 3px;
+    min-width: 206px;
+    max-height: 20em;
+    overflow: auto;
+    margin: 0px;
+    padding: 0px;
+    margin-top: -0.2em;
+    z-index: 1;
+}
+.form-autocomplete-suggestions li {
+    list-style-type: none;
+    padding: 0.2em;
+    margin: 0;
+    cursor: pointer;
+    color: @textColor;
+}
+.form-autocomplete-suggestions li:hover {
+    background-color: lighten(@dropdownLinkBackgroundActive, 15%);
+    color: @dropdownLinkColorActive;
+}
+.form-autocomplete-suggestions li[aria-selected=true] {
+    background-color: darken(@navbarBackground, 5%);
+    color: @gray;
+}
+
+.form-autocomplete-downarrow {
+    color: @textColor;
+    position: relative;
+    top: -0.3em;
+    left: -1.5em;
+    cursor: pointer;
+}
+.dir-rtl .form-autocomplete-downarrow {
+    right: -1.5em;
+    left: inherit;
+}
+
+.form-autocomplete-selection:focus {
+    outline: none;
+}
+.form-autocomplete-selection [data-active-selection=true] {
+    padding: 0.5em;
+    font-size: large;
 }

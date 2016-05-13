@@ -61,9 +61,19 @@ class MoodleQuickForm_grading extends HTML_QuickForm_input{
      * @param mixed $elementLabel Label(s) for the input field
      * @param mixed $attributes Either a typical HTML attribute string or an associative array
      */
-    public function MoodleQuickForm_grading($elementName=null, $elementLabel=null, $attributes=null) {
-        parent::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
+    public function __construct($elementName=null, $elementLabel=null, $attributes=null) {
+        parent::__construct($elementName, $elementLabel, $attributes);
         $this->gradingattributes = $attributes;
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function MoodleQuickForm_grading($elementName=null, $elementLabel=null, $attributes=null) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($elementName, $elementLabel, $attributes);
     }
 
     /**
@@ -138,11 +148,14 @@ class MoodleQuickForm_grading extends HTML_QuickForm_input{
      * Function registered as rule for this element and is called when this element is being validated.
      * This is a wrapper to pass the validation to the method gradingform_instance::validate_grading_element
      *
-     * @param mixed $elementValue value of element to be validated
+     * @param mixed $elementvalue value of element to be validated
      * @param array $attributes element attributes
      * @return MoodleQuickForm_grading
      */
-    static function _validate($elementValue, $attributes = null) {
-        return $attributes['gradinginstance']->validate_grading_element($elementValue);
+    public static function _validate($elementvalue, $attributes = null) {
+        if (!$attributes['gradinginstance']->is_empty_form($elementvalue)) {
+            return $attributes['gradinginstance']->validate_grading_element($elementvalue);
+        }
+        return true;
     }
 }

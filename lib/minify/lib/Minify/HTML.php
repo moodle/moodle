@@ -63,8 +63,6 @@ class Minify_HTML {
      *
      * 'xhtml' : (optional boolean) should content be treated as XHTML1.0? If
      * unset, minify will sniff for an XHTML doctype.
-     *
-     * @return null
      */
     public function __construct($html, $options = array())
     {
@@ -133,7 +131,7 @@ class Minify_HTML {
         
         // remove ws around block/undisplayed elements
         $this->_html = preg_replace('/\\s+(<\\/?(?:area|base(?:font)?|blockquote|body'
-            .'|caption|center|cite|col(?:group)?|dd|dir|div|dl|dt|fieldset|form'
+            .'|caption|center|col(?:group)?|dd|dir|div|dl|dt|fieldset|form'
             .'|frame(?:set)?|h[1-6]|head|hr|html|legend|li|link|map|menu|meta'
             .'|ol|opt(?:group|ion)|p|param|t(?:able|body|head|d|h||r|foot|itle)'
             .'|ul)\\b[^>]*>)/i', '$1', $this->_html);

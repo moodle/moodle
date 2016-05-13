@@ -33,7 +33,7 @@ if (file_exists(dirname(dirname(__FILE__)).'/config.php')) {
 // MDL-43839 IE9 cannot handle all of our css.
 // Once IE9 is no longer supported we can include 'bootstrapbase/style/moodle.css'
 // and remove some of the CSS in $content.
-$files = array('');
+$files = array();
 
 $content = '';
 

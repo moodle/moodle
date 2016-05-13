@@ -506,10 +506,11 @@ function wiki_get_missing_or_empty_pages($swid) {
 /**
  * Get pages list in wiki
  * @param int $swid sub wiki id
+ * @param string $sort How to sort the pages. By default, title ASC.
  */
-function wiki_get_page_list($swid) {
+function wiki_get_page_list($swid, $sort = 'title ASC') {
     global $DB;
-    $records = $DB->get_records('wiki_pages', array('subwikiid' => $swid), 'title ASC');
+    $records = $DB->get_records('wiki_pages', array('subwikiid' => $swid), $sort);
     return $records;
 }
 
@@ -908,7 +909,7 @@ function wiki_user_can_edit($subwiki) {
             // There is one wiki per group.
             //
             // Only members of subwiki group could edit that wiki
-            if ($subwiki->groupid == groups_get_activity_group($cm)) {
+            if (groups_is_member($subwiki->groupid)) {
                 // Only edit capability needed
                 return has_capability('mod/wiki:editpage', $context);
             } else { // User is not part of that group
@@ -1163,8 +1164,6 @@ function wiki_delete_pages($context, $pageids = null, $subwikiid = null) {
         return;
     }
 
-    require_once($CFG->dirroot . '/tag/lib.php');
-
     /// Delete page and all it's relevent data
     foreach ($pageids as $pageid) {
         if (is_object($pageid)) {
@@ -1178,10 +1177,7 @@ function wiki_delete_pages($context, $pageids = null, $subwikiid = null) {
         }
 
         //Delete page tags
-        $tags = tag_get_tags_array('wiki_pages', $pageid);
-        foreach ($tags as $tagid => $tagvalue) {
-            tag_delete_instance('wiki_pages', $pageid, $tagid);
-        }
+        core_tag_tag::remove_all_item_tags('mod_wiki', 'wiki_pages', $pageid);
 
         //Delete Synonym
         wiki_delete_synonym($subwikiid, $pageid);
@@ -1386,18 +1382,8 @@ function wiki_print_page_content($page, $context, $subwikiid) {
     $html = format_text($html, FORMAT_MOODLE, array('overflowdiv'=>true, 'allowid'=>true));
     echo $OUTPUT->box($html);
 
-    if (!empty($CFG->usetags)) {
-        $tags = tag_get_tags_array('wiki_pages', $page->id);
-        echo $OUTPUT->container_start('wiki-tags');
-        echo '<span class="wiki-tags-title">'.get_string('tags').': </span>';
-        $links = array();
-        foreach ($tags as $tagid=>$tag) {
-            $url = new moodle_url('/tag/index.php', array('tag'=>$tag));
-            $links[] = html_writer::link($url, $tag, array('title'=>get_string('tagtitle', 'wiki', $tag)));
-        }
-        echo join($links, ", ");
-        echo $OUTPUT->container_end();
-    }
+    echo $OUTPUT->tag_list(core_tag_tag::get_item_tags('mod_wiki', 'wiki_pages', $page->id),
+            null, 'wiki-tags');
 
     wiki_increment_pageviews($page);
 }
@@ -1565,4 +1551,301 @@ function wiki_get_updated_pages_by_subwiki($swid) {
             WHERE subwikiid = ? AND timemodified > ?
             ORDER BY timemodified DESC";
     return $DB->get_records_sql($sql, array($swid, $USER->lastlogin));
+}
+
+/**
+ * Check if the user can create pages in a certain wiki.
+ * @param context $context Wiki's context.
+ * @param integer|stdClass $user A user id or object. By default (null) checks the permissions of the current user.
+ * @return bool True if user can create pages, false otherwise.
+ * @since Moodle 3.1
+ */
+function wiki_can_create_pages($context, $user = null) {
+    return has_capability('mod/wiki:createpage', $context, $user);
+}
+
+/**
+ * Get a sub wiki instance by wiki id, group id and user id.
+ * If the wiki doesn't exist in DB it will return an isntance with id -1.
+ *
+ * @param int $wikiid  Wiki ID.
+ * @param int $groupid Group ID.
+ * @param int $userid  User ID.
+ * @return object      Subwiki instance.
+ * @since Moodle 3.1
+ */
+function wiki_get_possible_subwiki_by_group($wikiid, $groupid, $userid = 0) {
+    if (!$subwiki = wiki_get_subwiki_by_group($wikiid, $groupid, $userid)) {
+        $subwiki = new stdClass();
+        $subwiki->id = -1;
+        $subwiki->wikiid = $wikiid;
+        $subwiki->groupid = $groupid;
+        $subwiki->userid = $userid;
+    }
+    return $subwiki;
+}
+
+/**
+ * Get all the possible subwikis visible to the user in a wiki.
+ * It will return all the subwikis that can be created in a wiki, even if they don't exist in DB yet.
+ *
+ * @param  stdClass $wiki          Wiki to get the subwikis from.
+ * @param  cm_info|stdClass $cm    Optional. The course module object.
+ * @param  context_module $context Optional. Context of wiki module.
+ * @return array                   List of subwikis.
+ * @since Moodle 3.1
+ */
+function wiki_get_visible_subwikis($wiki, $cm = null, $context = null) {
+    global $USER;
+
+    $subwikis = array();
+
+    if (empty($wiki) or !is_object($wiki)) {
+        // Wiki not valid.
+        return $subwikis;
+    }
+
+    if (empty($cm)) {
+        $cm = get_coursemodule_from_instance('wiki', $wiki->id);
+    }
+    if (empty($context)) {
+        $context = context_module::instance($cm->id);
+    }
+
+    if (!has_capability('mod/wiki:viewpage', $context)) {
+        return $subwikis;
+    }
+
+    $manage = has_capability('mod/wiki:managewiki', $context);
+
+    if (!$groupmode = groups_get_activity_groupmode($cm)) {
+        // No groups.
+        if ($wiki->wikimode == 'collaborative') {
+            // Only 1 subwiki.
+            $subwikis[] = wiki_get_possible_subwiki_by_group($wiki->id, 0, 0);
+        } else if ($wiki->wikimode == 'individual') {
+            // There's 1 subwiki per user.
+            if ($manage) {
+                // User can view all subwikis.
+                $users = get_enrolled_users($context);
+                foreach ($users as $user) {
+                    $subwikis[] = wiki_get_possible_subwiki_by_group($wiki->id, 0, $user->id);
+                }
+            } else {
+                // User can only see his subwiki.
+                $subwikis[] = wiki_get_possible_subwiki_by_group($wiki->id, 0, $USER->id);
+            }
+        }
+    } else {
+        if ($wiki->wikimode == 'collaborative') {
+            // 1 subwiki per group.
+            $aag = has_capability('moodle/site:accessallgroups', $context);
+            if ($aag || $groupmode == VISIBLEGROUPS) {
+                // User can see all groups.
+                $allowedgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid);
+                $allparticipants = new stdClass();
+                $allparticipants->id = 0;
+                array_unshift($allowedgroups, $allparticipants); // Add all participants.
+            } else {
+                // User can only see the groups he belongs to.
+                $allowedgroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid);
+            }
+
+            foreach ($allowedgroups as $group) {
+                $subwikis[] = wiki_get_possible_subwiki_by_group($wiki->id, $group->id, 0);
+            }
+        } else if ($wiki->wikimode == 'individual') {
+            // 1 subwiki per user and group.
+
+            if ($manage || $groupmode == VISIBLEGROUPS) {
+                // User can view all subwikis.
+                $users = get_enrolled_users($context);
+                foreach ($users as $user) {
+                    // Get all the groups this user belongs to.
+                    $groups = groups_get_all_groups($cm->course, $user->id);
+                    if (!empty($groups)) {
+                        foreach ($groups as $group) {
+                            $subwikis[] = wiki_get_possible_subwiki_by_group($wiki->id, $group->id, $user->id);
+                        }
+                    } else {
+                        // User doesn't belong to any group, add it to group 0.
+                        $subwikis[] = wiki_get_possible_subwiki_by_group($wiki->id, 0, $user->id);
+                    }
+                }
+            } else {
+                // The user can only see the subwikis of the groups he belongs.
+                $allowedgroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid);
+                foreach ($allowedgroups as $group) {
+                    $users = groups_get_members($group->id);
+                    foreach ($users as $user) {
+                        $subwikis[] = wiki_get_possible_subwiki_by_group($wiki->id, $group->id, $user->id);
+                    }
+                }
+            }
+        }
+    }
+
+    return $subwikis;
+}
+
+/**
+ * Utility function for getting a subwiki by group and user, validating that the user can view it.
+ * If the subwiki doesn't exists in DB yet it'll have id -1.
+ *
+ * @param stdClass $wiki The wiki.
+ * @param int $groupid Group ID. 0 means the subwiki doesn't use groups.
+ * @param int $userid User ID. 0 means the subwiki doesn't use users.
+ * @return stdClass Subwiki. If it doesn't exists in DB yet it'll have id -1. If the user can't view the
+ *                  subwiki this function will return false.
+ * @since  Moodle 3.1
+ * @throws moodle_exception
+ */
+function wiki_get_subwiki_by_group_and_user_with_validation($wiki, $groupid, $userid) {
+    global $USER, $DB;
+
+    // Get subwiki based on group and user.
+    if (!$subwiki = wiki_get_subwiki_by_group($wiki->id, $groupid, $userid)) {
+
+        // The subwiki doesn't exist.
+        // Validate if user is valid.
+        if ($userid != 0) {
+            $user = core_user::get_user($userid, '*', MUST_EXIST);
+            core_user::require_active_user($user);
+        }
+
+        // Validate that groupid is valid.
+        if ($groupid != 0 && !groups_group_exists($groupid)) {
+            throw new moodle_exception('cannotfindgroup', 'error');
+        }
+
+        // Valid data but subwiki not found. We'll simulate a subwiki object to check if the user would be able to see it
+        // if it existed. If he's able to see it then we'll return an empty array because the subwiki has no pages.
+        $subwiki = new stdClass();
+        $subwiki->id = -1;
+        $subwiki->wikiid = $wiki->id;
+        $subwiki->userid = $userid;
+        $subwiki->groupid = $groupid;
+    }
+
+    // Check that the user can view the subwiki. This function checks capabilities.
+    if (!wiki_user_can_view($subwiki, $wiki)) {
+        return false;
+    }
+
+    return $subwiki;
+}
+
+/**
+ * Returns wiki pages tagged with a specified tag.
+ *
+ * This is a callback used by the tag area mod_wiki/wiki_pages to search for wiki pages
+ * tagged with a specific tag.
+ *
+ * @param core_tag_tag $tag
+ * @param bool $exclusivemode if set to true it means that no other entities tagged with this tag
+ *             are displayed on the page and the per-page limit may be bigger
+ * @param int $fromctx context id where the link was displayed, may be used by callbacks
+ *            to display items in the same context first
+ * @param int $ctx context id where to search for records
+ * @param bool $rec search in subcontexts as well
+ * @param int $page 0-based number of page being displayed
+ * @return \core_tag\output\tagindex
+ */
+function mod_wiki_get_tagged_pages($tag, $exclusivemode = false, $fromctx = 0, $ctx = 0, $rec = 1, $page = 0) {
+    global $OUTPUT;
+    $perpage = $exclusivemode ? 20 : 5;
+
+    // Build the SQL query.
+    $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
+    $query = "SELECT wp.id, wp.title, ws.userid, ws.wikiid, ws.id AS subwikiid, ws.groupid, w.wikimode,
+                    cm.id AS cmid, c.id AS courseid, c.shortname, c.fullname, $ctxselect
+                FROM {wiki_pages} wp
+                JOIN {wiki_subwikis} ws ON wp.subwikiid = ws.id
+                JOIN {wiki} w ON w.id = ws.wikiid
+                JOIN {modules} m ON m.name='wiki'
+                JOIN {course_modules} cm ON cm.module = m.id AND cm.instance = w.id
+                JOIN {tag_instance} tt ON wp.id = tt.itemid
+                JOIN {course} c ON cm.course = c.id
+                JOIN {context} ctx ON ctx.instanceid = cm.id AND ctx.contextlevel = :coursemodulecontextlevel
+               WHERE tt.itemtype = :itemtype AND tt.tagid = :tagid AND tt.component = :component
+                 AND wp.id %ITEMFILTER% AND c.id %COURSEFILTER%";
+
+    $params = array('itemtype' => 'wiki_pages', 'tagid' => $tag->id, 'component' => 'mod_wiki',
+        'coursemodulecontextlevel' => CONTEXT_MODULE);
+
+    if ($ctx) {
+        $context = $ctx ? context::instance_by_id($ctx) : context_system::instance();
+        $query .= $rec ? ' AND (ctx.id = :contextid OR ctx.path LIKE :path)' : ' AND ctx.id = :contextid';
+        $params['contextid'] = $context->id;
+        $params['path'] = $context->path.'/%';
+    }
+
+    $query .= " ORDER BY ";
+    if ($fromctx) {
+        // In order-clause specify that modules from inside "fromctx" context should be returned first.
+        $fromcontext = context::instance_by_id($fromctx);
+        $query .= ' (CASE WHEN ctx.id = :fromcontextid OR ctx.path LIKE :frompath THEN 0 ELSE 1 END),';
+        $params['fromcontextid'] = $fromcontext->id;
+        $params['frompath'] = $fromcontext->path.'/%';
+    }
+    $query .= ' c.sortorder, cm.id, wp.id';
+
+    $totalpages = $page + 1;
+
+    // Use core_tag_index_builder to build and filter the list of items.
+    $builder = new core_tag_index_builder('mod_wiki', 'wiki_pages', $query, $params, $page * $perpage, $perpage + 1);
+    while ($item = $builder->has_item_that_needs_access_check()) {
+        context_helper::preload_from_record($item);
+        $courseid = $item->courseid;
+        if (!$builder->can_access_course($courseid)) {
+            $builder->set_accessible($item, false);
+            continue;
+        }
+        $modinfo = get_fast_modinfo($builder->get_course($courseid));
+        // Set accessibility of this item and all other items in the same course.
+        $builder->walk(function ($taggeditem) use ($courseid, $modinfo, $builder) {
+            if ($taggeditem->courseid == $courseid) {
+                $accessible = false;
+                if (($cm = $modinfo->get_cm($taggeditem->cmid)) && $cm->uservisible) {
+                    $subwiki = (object)array('id' => $taggeditem->subwikiid, 'groupid' => $taggeditem->groupid,
+                        'userid' => $taggeditem->userid, 'wikiid' => $taggeditem->wikiid);
+                    $wiki = (object)array('id' => $taggeditem->wikiid, 'wikimode' => $taggeditem->wikimode,
+                        'course' => $cm->course);
+                    $accessible = wiki_user_can_view($subwiki, $wiki);
+                }
+                $builder->set_accessible($taggeditem, $accessible);
+            }
+        });
+    }
+
+    $items = $builder->get_items();
+    if (count($items) > $perpage) {
+        $totalpages = $page + 2; // We don't need exact page count, just indicate that the next page exists.
+        array_pop($items);
+    }
+
+    // Build the display contents.
+    if ($items) {
+        $tagfeed = new core_tag\output\tagfeed();
+        foreach ($items as $item) {
+            context_helper::preload_from_record($item);
+            $modinfo = get_fast_modinfo($item->courseid);
+            $cm = $modinfo->get_cm($item->cmid);
+            $pageurl = new moodle_url('/mod/wiki/view.php', array('pageid' => $item->id));
+            $pagename = format_string($item->title, true, array('context' => context_module::instance($item->cmid)));
+            $pagename = html_writer::link($pageurl, $pagename);
+            $courseurl = course_get_url($item->courseid, $cm->sectionnum);
+            $cmname = html_writer::link($cm->url, $cm->get_formatted_name());
+            $coursename = format_string($item->fullname, true, array('context' => context_course::instance($item->courseid)));
+            $coursename = html_writer::link($courseurl, $coursename);
+            $icon = html_writer::link($pageurl, html_writer::empty_tag('img', array('src' => $cm->get_icon_url())));
+            $tagfeed->add($icon, $pagename, $cmname.'<br>'.$coursename);
+        }
+
+        $content = $OUTPUT->render_from_template('core_tag/tagfeed',
+                $tagfeed->export_for_template($OUTPUT));
+
+        return new core_tag\output\tagindex($tag, 'mod_wiki', 'wiki_pages', $content,
+                $exclusivemode, $fromctx, $ctx, $rec, $page, $totalpages);
+    }
 }

@@ -49,7 +49,7 @@ $assertion = filter_input(
 // Audience is the site url scheme + host + port only.
 $wwwparts = parse_url($CFG->wwwroot);
 $audience = $wwwparts['scheme'] . '://' . $wwwparts['host'];
-$audience .= isset($wwwparts['port']) ? $wwwparts['port'] : '';
+$audience .= isset($wwwparts['port']) ? ':' . $wwwparts['port'] : '';
 $params = 'assertion=' . urlencode($assertion) . '&audience=' .
            urlencode($audience);
 
@@ -87,7 +87,7 @@ if (!isset($data->status) || $data->status != 'okay') {
 
 // Make sure email matches a backpack.
 $check = new stdClass();
-$check->backpackurl = 'http://' . BADGE_BACKPACKURL;
+$check->backpackurl = BADGE_BACKPACKURL;
 $check->email = $data->email;
 
 $bp = new OpenBadgesBackpackHandler($check);
@@ -106,7 +106,7 @@ if (isset($request->status) && $request->status == 'missing') {
 $obj = new stdClass();
 $obj->userid = $USER->id;
 $obj->email = $data->email;
-$obj->backpackurl = 'http://' . BADGE_BACKPACKURL;
+$obj->backpackurl = BADGE_BACKPACKURL;
 $obj->backpackuid = $backpackuid;
 $obj->autosync = 0;
 $obj->password = '';

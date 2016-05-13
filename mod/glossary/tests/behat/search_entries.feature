@@ -7,8 +7,8 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -16,12 +16,11 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activities" exist:
+      | activity | name               | intro                     | displayformat  | course | idnumber |
+      | glossary | Test glossary name | Test glossary description | fullwithauthor | C1     | g1       |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I turn editing mode on
-    And I add a "Glossary" to section "1" and I fill the form with:
-      | Name | Test glossary name |
-      | Description | Test glossary description |
     And I follow "Test glossary name"
     And I add a glossary entries category named "The ones I like"
     And I add a glossary entries category named "All for you"
@@ -48,7 +47,6 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
     And I press "Search"
     Then I should see "Sweet cucumber"
     And I should see "Search: cucumber"
-    And I follow "Browse by alphabet"
     And I click on "E" "link" in the ".entrybox" "css_element"
     And I should see "Sour eggplants"
     And I should not see "Sweet cucumber"

@@ -46,9 +46,6 @@
 }
 
 /* toc style NONE */
-.path-mod-book .book_toc_none {
-  font-size: 0.8em;
-}
 .path-mod-book .book_toc_none ul ul,
 .dir-rtl.path-mod-book .book_toc_none ul ul {
     margin-left: 0;
@@ -56,9 +53,6 @@
 }
 
 /*toc style BULLETS */
-.path-mod-book .book_toc_bullets {
-  font-size: 0.8em;
-}
 .path-mod-book .book_toc_bullets ul ul {
     margin-left: 20px;
 }
@@ -70,10 +64,11 @@
     list-style: circle;
 }
 
-/* toc style INDENTED*/
-.path-mod-book .book_toc_indented {
-  font-size: 0.8em;
+.path-mod-book .book_toc_bullets li li:before {
+    display: none;
 }
+
+/* toc style INDENTED*/
 .path-mod-book .book_toc_indented ul {
     margin-left: 5px;
 }

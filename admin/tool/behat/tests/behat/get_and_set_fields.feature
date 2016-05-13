@@ -10,9 +10,9 @@ Feature: Verify that all form fields values can be get and set
       | Course 1 | C1 | 0 |
     And the following "users" exist:
       | username | email | firstname | lastname |
-      | student1 | s1@asd.com | Student | 1 |
-      | student2 | s2@asd.com | Student | 2 |
-      | student3 | s3@asd.com | Student | 3 |
+      | student1 | s1@example.com | Student | 1 |
+      | student2 | s2@example.com | Student | 2 |
+      | student3 | s3@example.com | Student | 3 |
     And the following "course enrolments" exist:
       | user | course | role |
       | student1 | C1 | student |
@@ -35,53 +35,33 @@ Feature: Verify that all form fields values can be get and set
     And I log in as "admin"
     And I expand "Site administration" node
     And I expand "Appearance" node
-    And I follow "Manage tags"
-    # Select (multi-select) - We will check "I set the field...".
-    And I set the field "otagsadd" to "OT1, OT2, OT3, OT4, OT5"
-    And I press "Add official tags"
-    And I am on homepage
+    And I am on site homepage
+    And I follow "Course 1"
+    And I follow "Reset"
+    # Select (multi-select) - Checking "the select box should contain".
+    And I expand all fieldsets
+    And the "Unenrol users" select box should contain "No roles"
+    And the "Unenrol users" select box should contain "Student"
+    And the "Unenrol users" select box should contain "Non-editing teacher"
+    And the "Unenrol users" select box should contain "Teacher"
+    And the "Unenrol users" select box should contain "Manager"
+    And the "Unenrol users" select box should contain "No roles, Student, Non-editing teacher, Teacher, Manager"
+    And the "Unenrol users" select box should contain "Manager, Teacher, Non-editing teacher, Student, No roles"
+    And the "Unenrol users" select box should not contain "President"
+    And the "Unenrol users" select box should not contain "Baker"
+    And the "Unenrol users" select box should not contain "President, Baker"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     And I follow "Test this one"
     And I press "Create page"
-    # Select (multi-select) - Checking "the select box should contain".
-    And the "tags[officialtags][]" select box should contain "OT1"
-    And the "tags[officialtags][]" select box should contain "OT2"
-    And the "tags[officialtags][]" select box should contain "OT3"
-    And the "tags[officialtags][]" select box should contain "OT4"
-    And the "tags[officialtags][]" select box should contain "OT5"
-    And the "tags[officialtags][]" select box should contain "OT1, OT2, OT3, OT4, OT5"
-    And the "tags[officialtags][]" select box should contain "OT5, OT4, OT3, OT2, OT1"
-    And the "tags[officialtags][]" select box should not contain "OT6"
-    And the "tags[officialtags][]" select box should not contain "OT7"
-    And the "tags[officialtags][]" select box should not contain "OT6, OT7"
     # Text (textarea & editor) & Select (multi-select) - Checking "I set the following fields to these values".
     When I set the following fields to these values:
-      | HTML format | Student page contents to be tagged |
-      | tags[officialtags][] | OT1, OT3, OT5 |
+      | HTML format | Student page contents |
     And I press "Save"
-    Then I should see "Student page contents to be tagged" in the "region-main" "region"
-    And I should see "OT1" in the ".wiki-tags" "css_element"
-    And I should see "OT3" in the ".wiki-tags" "css_element"
-    And I should see "OT5" in the ".wiki-tags" "css_element"
-    And I should not see "OT2" in the ".wiki-tags" "css_element"
-    And I should not see "OT4" in the ".wiki-tags" "css_element"
+    Then I should see "Student page contents" in the "region-main" "region"
     And I follow "Edit"
     # Select (multi-select) - Checking "I set the field".
-    And I set the field "tags[officialtags][]" to "OT2, OT4"
-    And I press "Save"
-    And I should see "OT2" in the ".wiki-tags" "css_element"
-    And I should see "OT4" in the ".wiki-tags" "css_element"
-    And I should not see "OT1" in the ".wiki-tags" "css_element"
-    And I should not see "OT3" in the ".wiki-tags" "css_element"
-    And I should not see "OT5" in the ".wiki-tags" "css_element"
-    And I follow "Edit"
-    # Select (multi-select) - Checking "the field matches value" and "the field does not match value".
-    And the field "tags[officialtags][]" matches value "OT2, OT4"
-    And the field "tags[officialtags][]" does not match value "OT4"
-    And the field "tags[officialtags][]" does not match value "OT2"
-    And the field "tags[officialtags][]" does not match value "OT1, OT3, OT5"
-    And I press "Cancel"
     And I follow "Edit settings"
     And I expand all fieldsets
     # Checkbox - Checking "I set the field".
@@ -137,6 +117,17 @@ Feature: Verify that all form fields values can be get and set
     And I press "Save my choice"
     And the field "one" matches value "1"
     And the field "two" matches value ""
+    # Check if field xpath set/match works.
+    And I am on site homepage
+    And I follow "Course 1"
+    And I navigate to "Edit settings" node in "Course administration"
+    And I set the field with xpath "//input[@id='id_idnumber']" to "Course id number"
+    And the field with xpath "//input[@name='idnumber']" matches value "Course id number"
+    And the field with xpath "//input[@name='idnumber']" does not match value ""
+    And I press "Save and display"
+    And I navigate to "Edit settings" node in "Course administration"
+    And the field "Course ID number" matches value "Course id number"
+
 
   Scenario: with JS disabled all form fields getters and setters works as expected
 

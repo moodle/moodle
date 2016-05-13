@@ -26,7 +26,7 @@
  * @class annotationpen
  * @extends M.assignfeedback_editpdf.annotation
  */
-ANNOTATIONPEN = function(config) {
+var ANNOTATIONPEN = function(config) {
     ANNOTATIONPEN.superclass.constructor.apply(this, [config]);
 };
 

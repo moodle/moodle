@@ -60,10 +60,11 @@ if (!wiki_user_can_view($subwiki, $wiki)) {
 require_capability('mod/wiki:managefiles', $context);
 
 if (empty($returnurl)) {
-    if (!empty($_SERVER["HTTP_REFERER"])) {
-        $returnurl = $_SERVER["HTTP_REFERER"];
+    $referer = get_local_referer(false);
+    if (!empty($referer)) {
+        $returnurl = $referer;
     } else {
-        $returnurl = new moodle_url('/mod/wiki/files.php', array('subwiki'=>$subwiki->id));
+        $returnurl = new moodle_url('/mod/wiki/files.php', array('subwiki' => $subwiki->id, 'pageid' => $pageid));
     }
 }
 
@@ -95,7 +96,7 @@ if ($mform->is_cancelled()) {
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($wiki->name);
+echo $OUTPUT->heading(format_string($wiki->name));
 echo $OUTPUT->box(format_module_intro('wiki', $wiki, $PAGE->cm->id), 'generalbox', 'intro');
 echo $OUTPUT->box_start('generalbox');
 $mform->display();

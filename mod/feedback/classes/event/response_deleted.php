@@ -55,6 +55,32 @@ class response_deleted extends \core\event\base {
     }
 
     /**
+     * Creates an instance from the record from db table feedback_completed
+     *
+     * @param stdClass $completed
+     * @param stdClass|cm_info $cm
+     * @param stdClass $feedback
+     * @return self
+     */
+    public static function create_from_record($completed, $cm, $feedback) {
+        $event = self::create(array(
+            'relateduserid' => $completed->userid,
+            'objectid' => $completed->id,
+            'courseid' => $cm->course,
+            'context' => \context_module::instance($cm->id),
+            'anonymous' => ($completed->anonymous_response == FEEDBACK_ANONYMOUS_YES),
+            'other' => array(
+                'cmid' => $cm->id,
+                'instanceid' => $feedback->id,
+                'anonymous' => $completed->anonymous_response) // Deprecated.
+        ));
+
+        $event->add_record_snapshot('feedback_completed', $completed);
+        $event->add_record_snapshot('feedback', $feedback);
+        return $event;
+    }
+
+    /**
      * Returns localised general event name.
      *
      * @return string
@@ -125,6 +151,18 @@ class response_deleted extends \core\event\base {
         if (!isset($this->other['instanceid'])) {
             throw new \coding_exception('The \'instanceid\' value must be set in other.');
         }
+    }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'feedback_completed', 'restore' => 'feedback_completed');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['cmid'] = array('db' => 'course_modules', 'restore' => 'course_module');
+        $othermapped['instanceid'] = array('db' => 'feedback', 'restore' => 'feedback');
+
+        return $othermapped;
     }
 }
 

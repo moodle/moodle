@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * Strings for component 'langconfig', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   langconfig
+ * @package   core
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,7 +25,7 @@
 $string['alphabet'] = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z';
 $string['backupnameformat'] = '%Y%m%d-%H%M';
 $string['decsep'] = '.';
-$string['firstdayofweek'] = '0';
+$string['firstdayofweek'] = '1';
 $string['iso6391'] = 'en';
 $string['iso6392'] = 'eng';
 $string['labelsep'] = ': ';

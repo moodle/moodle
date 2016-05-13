@@ -86,7 +86,12 @@ class behat_field_manager {
 
         // Get the field type if is part of a moodleform.
         if (self::is_moodleform_field($fieldnode)) {
-            $type = self::get_field_node_type($fieldnode, $session);
+            // This might go out of scope, finding element beyond the dom and fail. So fallback to guessing type.
+            try {
+                $type = self::get_field_node_type($fieldnode, $session);
+            } catch (WebDriver\Exception\InvalidSelector $e) {
+                $type = 'field';
+            }
         }
 
         // If is not a moodleforms field use the base field type.

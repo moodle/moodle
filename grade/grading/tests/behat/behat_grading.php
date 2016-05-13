@@ -27,9 +27,7 @@
 
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
-use Behat\Gherkin\Node\TableNode as TableNode,
-    Behat\Behat\Context\Step\Given as Given,
-    Behat\Behat\Context\Step\When as When;
+use Behat\Gherkin\Node\TableNode as TableNode;
 
 /**
  * Generic grading methods step definitions.
@@ -46,13 +44,12 @@ class behat_grading extends behat_base {
      *
      * @Given /^I go to "(?P<activity_name_string>(?:[^"]|\\")*)" advanced grading page$/
      * @param string $activityname
-     * @return Given[]
      */
     public function i_go_to_advanced_grading_page($activityname) {
-        return array(
-            new Given('I follow "' . $this->escape($activityname) . '"'),
-            new Given('I follow "' . get_string('gradingmanagement', 'grading') . '"'),
-        );
+
+        $this->execute('behat_general::click_link', $this->escape($activityname));
+
+        $this->execute('behat_general::click_link', get_string('gradingmanagement', 'grading'));
     }
 
     /**
@@ -60,22 +57,20 @@ class behat_grading extends behat_base {
      *
      * @Given /^I go to "(?P<activity_name_string>(?:[^"]|\\")*)" advanced grading definition page$/
      * @param string $activityname
-     * @return Given[]
      */
     public function i_go_to_advanced_grading_definition_page($activityname) {
 
         // Transforming to literals, probably not necessary, just in case.
-        $newactionliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral(get_string("manageactionnew", "grading"));
-        $editactionliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral(get_string("manageactionedit", "grading"));
+        $newactionliteral = behat_context_helper::escape(get_string("manageactionnew", "grading"));
+        $editactionliteral = behat_context_helper::escape(get_string("manageactionedit", "grading"));
 
         // Working both when adding and editing.
         $definitionxpath = "//a[@class='action']" .
             "[./descendant::*[contains(., $newactionliteral) or contains(., $editactionliteral)]]";
 
-        return array(
-            new Given('I go to "' . $this->escape($activityname) . '" advanced grading page'),
-            new Given('I click on "' . $this->escape($definitionxpath) . '" "xpath_element"'),
-        );
+        $this->execute('behat_grading::i_go_to_advanced_grading_page', $this->escape($activityname));
+
+        $this->execute("behat_general::i_click_on", array($this->escape($definitionxpath), "xpath_element"));
     }
     /**
      * Goes to the student's advanced grading page.
@@ -83,25 +78,23 @@ class behat_grading extends behat_base {
      * @Given /^I go to "(?P<user_fullname_string>(?:[^"]|\\")*)" "(?P<activity_name_string>(?:[^"]|\\")*)" activity advanced grading page$/
      * @param string $userfullname The user full name including firstname and lastname.
      * @param string $activityname The activity name
-     * @return Given[]
      */
     public function i_go_to_activity_advanced_grading_page($userfullname, $activityname) {
 
         // Step to access the user grade page from the grading page.
-        $usergradetext = get_string('gradeuser', 'assign', $userfullname);
-        $gradeuserstep = new Given('I follow "' . $this->escape($usergradetext) . '"');
+        $gradetext = get_string('grade');
 
-        // Shortcut in case we already are in the grading page.
-        $usergradetextliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($usergradetext);
-        if ($this->getSession()->getPage()->find('named', array('link', $usergradetextliteral))) {
-            return $gradeuserstep;
-        }
+        $this->execute('behat_general::click_link', $this->escape($activityname));
 
-        return array(
-            new Given('I follow "' . $this->escape($activityname) . '"'),
-            new Given('I follow "' . $this->escape(get_string('viewgrading', 'assign')) . '"'),
-            $gradeuserstep
-        );
+        $this->execute('behat_general::click_link', $this->escape(get_string('viewgrading', 'assign')));
+
+        $this->execute('behat_general::i_click_on_in_the',
+                       array(
+                           $this->escape($gradetext),
+                           'link',
+                           $this->escape($userfullname),
+                           'table_row'
+                       ));
     }
 
     /**
@@ -109,15 +102,14 @@ class behat_grading extends behat_base {
      *
      * @Given /^I publish "(?P<activity_name_string>(?:[^"]|\\")*)" grading form definition as a public template$/
      * @param string $activityname
-     * @return Given[]
      */
     public function i_publish_grading_form_definition_as_a_public_template($activityname) {
 
-        return array(
-            new Given('I go to "' . $this->escape($activityname) . '" advanced grading page'),
-            new Given('I click on "' . $this->escape(get_string("manageactionshare", "grading")) . '" "link"'),
-            new Given('I press "' . get_string('continue') . '"')
-        );
+        $this->execute('behat_grading::i_go_to_advanced_grading_page', $this->escape($activityname));
+
+        $this->execute("behat_general::i_click_on", array($this->escape(get_string("manageactionshare", "grading")), "link"));
+
+        $this->execute('behat_forms::press_button', get_string('continue'));
     }
 
     /**
@@ -126,43 +118,46 @@ class behat_grading extends behat_base {
      * @Given /^I set "(?P<activity_name_string>(?:[^"]|\\")*)" activity to use "(?P<grading_form_template_string>(?:[^"]|\\")*)" grading form$/
      * @param string $activityname
      * @param string $templatename
-     * @return Given[]
      */
     public function i_set_activity_to_use_grading_form($activityname, $templatename) {
 
-        $templateliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($templatename);
+        $templateliteral = behat_context_helper::escape($templatename);
 
         $templatexpath = "//h2[@class='template-name'][contains(., $templateliteral)]/" .
             "following-sibling::div[contains(concat(' ', normalize-space(@class), ' '), ' template-actions ')]";
 
         // Should work with both templates and own forms.
-        $literaltemplate = $this->getSession()->getSelectorsHandler()->xpathLiteral(get_string('templatepick', 'grading'));
-        $literalownform = $this->getSession()->getSelectorsHandler()->xpathLiteral(get_string('templatepickownform', 'grading'));
+        $literaltemplate = behat_context_helper::escape(get_string('templatepick', 'grading'));
+        $literalownform = behat_context_helper::escape(get_string('templatepickownform', 'grading'));
         $usetemplatexpath = "/a[./descendant::div[text()=$literaltemplate]]|" .
             "/a[./descendant::div[text()=$literalownform]]";
 
-        return array(
-            new Given('I go to "' . $this->escape($activityname) . '" advanced grading page'),
-            new Given('I follow "' . $this->escape(get_string('manageactionclone', 'grading')) . '"'),
-            new Given('I set the field "' . get_string('searchownforms', 'grading') . '" to "1"'),
-            new Given('I click on "' . get_string('search') . '" "button" in the "region-main" "region"'),
-            new Given('I click on "' . $this->escape($usetemplatexpath) . '" "xpath_element" ' .
-                'in the "' . $this->escape($templatexpath) . '" "xpath_element"'),
-            new Given('I press "' . get_string('continue') . '"')
+        $this->execute('behat_grading::i_go_to_advanced_grading_page', $this->escape($activityname));
+
+        $this->execute('behat_general::click_link', $this->escape(get_string('manageactionclone', 'grading')));
+        $this->execute('behat_forms::i_set_the_field_to', array(get_string('searchownforms', 'grading'), 1));
+        $this->execute('behat_general::i_click_on_in_the',
+            array(get_string('search'), "button", "region-main", "region")
         );
+        $this->execute('behat_general::i_click_on_in_the',
+            array($this->escape($usetemplatexpath), "xpath_element", $this->escape($templatexpath), "xpath_element")
+        );
+        $this->execute('behat_forms::press_button', get_string('continue'));
+
     }
 
     /**
      * Saves the current page advanced grading form.
      *
      * @When /^I save the advanced grading form$/
-     * @return When[]
      */
     public function i_save_the_advanced_grading_form() {
-        return array(
-            new When('I press "' . get_string('savechanges') . '"'),
-            new When('I press "' . get_string('continue') . '"')
-        );
+
+        $this->execute('behat_forms::press_button', get_string('savechanges'));
+        $this->execute('behat_forms::press_button', 'Ok');
+        $this->execute('behat_general::i_click_on', array($this->escape(get_string('editsettings')), 'link'));
+        $this->execute('behat_forms::press_button', get_string('cancel'));
+        $this->execute('behat_general::i_click_on', array($this->escape(get_string('viewgrading', 'mod_assign')), 'link'));
     }
 
     /**
@@ -170,12 +165,9 @@ class behat_grading extends behat_base {
      *
      * @Given /^I complete the advanced grading form with these values:$/
      * @param TableNode $data
-     * @return Given[]
      */
     public function i_complete_the_advanced_grading_form_with_these_values(TableNode $data) {
-        return array(
-            new Given('I set the following fields to these values:', $data),
-            new Given('I save the advanced grading form')
-        );
+        $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $data);
+        $this->execute('behat_grading::i_save_the_advanced_grading_form');
     }
 }

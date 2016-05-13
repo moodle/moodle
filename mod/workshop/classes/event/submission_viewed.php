@@ -102,4 +102,15 @@ class submission_viewed extends \core\event\base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'workshop_submissions', 'restore' => 'workshop_submission');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['workshopid'] = array('db' => 'workshop', 'restore' => 'workshop');
+
+        return $othermapped;
+    }
 }

@@ -49,13 +49,20 @@ class data_field_textarea extends data_field_base {
         return $options;
     }
 
-    function display_add_field($recordid=0) {
+    function display_add_field($recordid = 0, $formdata = null) {
         global $CFG, $DB, $OUTPUT, $PAGE;
 
         $text   = '';
         $format = 0;
-
-        $str = '<div title="'.$this->field->description.'">';
+        $str = '<div title="' . s($this->field->description) . '">';
+        $str .= '<label for="field_' . $this->field->id . '">';
+        $str .= html_writer::span($this->field->name, "accesshide");
+        if ($this->field->required) {
+            $image = html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
+                                     array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+            $str .= html_writer::div($image, 'inline-req');
+        }
+        $str .= '</label>';
 
         editors_head_setup();
         $options = $this->get_options();
@@ -63,7 +70,25 @@ class data_field_textarea extends data_field_base {
         $itemid = $this->field->id;
         $field = 'field_'.$itemid;
 
-        if ($recordid && $content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))){
+        if ($formdata) {
+            $fieldname = 'field_' . $this->field->id . '_content1';
+            if (isset($formdata->$fieldname)) {
+                $format = $formdata->$fieldname;
+            } else {
+                $format = file_get_unused_draft_itemid();
+            }
+            $fieldname = 'field_' . $this->field->id . '_itemid';
+            if (isset($formdata->$fieldname)) {
+                $draftitemid = clean_param($formdata->$fieldname, PARAM_INT);
+            } else {
+                $draftitemid = file_get_unused_draft_itemid();
+            }
+            $fieldname = 'field_' . $this->field->id;
+            if (isset($formdata->$fieldname)) {
+                $text = $formdata->$fieldname;
+            }
+        } else if ($recordid &&
+                   $content = $DB->get_record('data_content', array('fieldid' => $this->field->id, 'recordid' => $recordid))) {
             $format = $content->content1;
             $text = clean_text($content->content, $format);
             $text = file_prepare_draft_area($draftitemid, $this->context->id, 'mod_data', 'content', $content->id, $options, $text);
@@ -119,8 +144,10 @@ class data_field_textarea extends data_field_base {
         foreach ($formats as $fid) {
             $formats[$fid] = $strformats[$fid];
         }
+        $editor->set_text($text);
         $editor->use_editor($field, $options, $fpoptions);
-        $str .= '<input type="hidden" name="'.$field.'_itemid" value="'.$draftitemid.'" />';
+        $str .= '<input type="hidden" name="'.$field.'_itemid" value="'.s($draftitemid).'" />';
+        $str .= '<div class="mod-data-input">';
         $str .= '<div><textarea id="'.$field.'" name="'.$field.'" rows="'.$this->field->param3.'" cols="'.$this->field->param2.'" spellcheck="true">'.s($text).'</textarea></div>';
         $str .= '<div><label class="accesshide" for="' . $field . '_content1">' . get_string('format') . '</label>';
         $str .= '<select id="' . $field . '_content1" name="'.$field.'_content1">';
@@ -129,8 +156,9 @@ class data_field_textarea extends data_field_base {
             $str .= '<option value="'.s($key).'" '.$selected.'>'.$desc.'</option>';
         }
         $str .= '</select>';
-        $str .= '</div>';
 
+        $str .= '</div>';
+        $str .= '</div>';
         $str .= '</div>';
         return $str;
     }
@@ -138,7 +166,7 @@ class data_field_textarea extends data_field_base {
 
     function display_search_field($value = '') {
         return '<label class="accesshide" for="f_' . $this->field->id . '">' . $this->field->name . '</label>' .
-               '<input type="text" size="16" id="f_'.$this->field->id.'" name="f_'.$this->field->id.'" value="'.$value.'" />';
+               '<input type="text" size="16" id="f_'.$this->field->id.'" name="f_'.$this->field->id.'" value="'.s($value).'" />';
     }
 
     function parse_search_field() {
@@ -171,7 +199,7 @@ class data_field_textarea extends data_field_base {
                 // the value will be retrieved by file_get_submitted_draft_itemid, do not need to save in DB
                 return true;
             } else {
-                $content->$names[2] = clean_param($value, PARAM_NOTAGS);  // content[1-4]
+                $content->{$names[2]} = clean_param($value, PARAM_NOTAGS);  // content[1-4]
             }
         } else {
             $content->content = clean_param($value, PARAM_CLEAN);
@@ -230,5 +258,21 @@ class data_field_textarea extends data_field_base {
     function file_ok($relativepath) {
         return true;
     }
-}
 
+    /**
+     * Only look at the first item (second is format)
+     *
+     * @param string $value
+     * @param string $name
+     * @return bool
+     */
+    function notemptyfield($value, $name) {
+        $names = explode('_', $name);
+        // Clean first.
+        if (count($names) == 2) {
+            // Don't assume that this is coming from a text editor with tags.
+            return strval($value) !== '';
+        }
+        return false;
+    }
+}

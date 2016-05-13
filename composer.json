@@ -1,13 +1,7 @@
 {
-    "repositories" : [
-        {
-            "type": "vcs",
-            "url": "https://github.com/moodlehq/moodle-behat-extension"
-        }
-    ],
     "require-dev": {
-        "phpunit/phpunit": "3.7.*",
-        "phpunit/dbUnit": "1.2.*",
-        "moodlehq/behat-extension": "1.29.1"
+        "phpunit/phpunit": "4.8.*",
+        "phpunit/dbUnit": "1.4.*",
+        "moodlehq/behat-extension": "3.31.2"
     }
 }

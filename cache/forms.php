@@ -65,13 +65,13 @@ class cachestore_addinstance_form extends moodleform {
         }
 
         if (is_array($locks)) {
-            $form->addElement('select', 'lock', get_string('lockmethod', 'cache'), $locks);
-            $form->addHelpButton('lock', 'lockmethod', 'cache');
+            $form->addElement('select', 'lock', get_string('locking', 'cache'), $locks);
+            $form->addHelpButton('lock', 'locking', 'cache');
             $form->setType('lock', PARAM_ALPHANUMEXT);
         } else {
             $form->addElement('hidden', 'lock', '');
             $form->setType('lock', PARAM_ALPHANUMEXT);
-            $form->addElement('static', 'lock-value', get_string('lockmethod', 'cache'),
+            $form->addElement('static', 'lock-value', get_string('locking', 'cache'),
                     '<em>'.get_string('nativelocking', 'cache').'</em>');
         }
 
@@ -132,6 +132,8 @@ class cache_definition_mappings_form extends moodleform {
      * The definition of the form
      */
     protected final function definition() {
+        global $OUTPUT;
+
         $definition = $this->_customdata['definition'];
         $form = $this->_form;
 
@@ -139,6 +141,14 @@ class cache_definition_mappings_form extends moodleform {
         list($currentstores, $storeoptions, $defaults) =
                 cache_administration_helper::get_definition_store_options($component, $area);
 
+        $storedata = cache_administration_helper::get_definition_summaries();
+        if ($storedata[$definition]['mode'] != cache_store::MODE_REQUEST) {
+            if (isset($storedata[$definition]['canuselocalstore']) && $storedata[$definition]['canuselocalstore']) {
+                $form->addElement('html', $OUTPUT->notification(get_string('localstorenotification', 'cache'), 'notifymessage'));
+            } else {
+                $form->addElement('html', $OUTPUT->notification(get_string('sharedstorenotification', 'cache'), 'notifymessage'));
+            }
+        }
         $form->addElement('hidden', 'definition', $definition);
         $form->setType('definition', PARAM_SAFEPATH);
         $form->addElement('hidden', 'action', 'editdefinitionmapping');
