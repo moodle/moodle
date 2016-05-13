@@ -980,20 +980,17 @@ function load_course_context($userid, context_course $coursecontext, &$accessdat
     }
 
     // now get overrides of interesting roles in all interesting contexts (this course + children + parents)
-    $params = array('c'=>$coursecontext->id);
+    $params = array('pathprefix' => $coursecontext->path . '/%');
     list($parentsaself, $rparams) = $DB->get_in_or_equal($coursecontext->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'pc_');
     $params = array_merge($params, $rparams);
     list($roleids, $rparams) = $DB->get_in_or_equal($roles, SQL_PARAMS_NAMED, 'r_');
     $params = array_merge($params, $rparams);
 
     $sql = "SELECT ctx.path, rc.roleid, rc.capability, rc.permission
-                 FROM {role_capabilities} rc
-                 JOIN {context} ctx
-                      ON (ctx.id = rc.contextid)
-                 JOIN {context} cctx
-                      ON (cctx.id = :c
-                          AND (ctx.id $parentsaself OR ctx.path LIKE ".$DB->sql_concat('cctx.path',"'/%'")."))
+                 FROM {context} ctx
+                 JOIN {role_capabilities} rc ON rc.contextid = ctx.id
                 WHERE rc.roleid $roleids
+                  AND (ctx.id $parentsaself OR ctx.path LIKE :pathprefix)
              ORDER BY rc.capability"; // fixed capability order is necessary for rdef dedupe
     $rs = $DB->get_recordset_sql($sql, $params);
 
