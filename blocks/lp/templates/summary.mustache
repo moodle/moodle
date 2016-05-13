@@ -42,7 +42,7 @@
             {{#hasactiveplans}}
                 <ul>
                     {{#activeplans}}
-                        <li><a href="{{url}}">{{name}}</a></li>
+                        <li><a href="{{url}}">{{{name}}}</a></li>
                     {{/activeplans}}
                     {{#hasmoreplans}}
                         <li class="more"><a href="{{plansurl}}">{{#str}}viewmore, block_lp{{/str}}</a></li>
@@ -60,7 +60,7 @@
             <ul>
                 {{#compstoreview}}
                     <li>
-                        <a href="{{usercompetency.url}}">{{competency.shortname}}</a> ({{user.fullname}}) - {{usercompetency.statusname}}
+                        <a href="{{usercompetency.url}}">{{{competency.shortname}}}</a> ({{user.fullname}}) - {{usercompetency.statusname}}
                     </li>
                 {{/compstoreview}}
                 {{#hasmorecompstoreview}}
@@ -75,7 +75,7 @@
             <ul>
                 {{#planstoreview}}
                     <li>
-                        <a href="{{plan.url}}">{{plan.name}}</a> ({{user.fullname}}) - {{plan.statusname}}
+                        <a href="{{plan.url}}">{{{plan.name}}}</a> ({{user.fullname}}) - {{plan.statusname}}
                     </li>
                 {{/planstoreview}}
                 {{#hasmoreplanstoreview}}
