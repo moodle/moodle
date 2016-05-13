@@ -391,7 +391,7 @@ may not require a resource key.';
 $string['resourceurl'] = 'Resource URL';
 $string['return_to_course'] = 'Click <a href="{$a->link}" target="_top">here</a> to return to the course.';
 $string['saveallfeedback'] = 'Save all my feedback';
-$string['search:activity'] = 'LTI activities';
+$string['search:activity'] = 'External tool - activity information';
 $string['secure_icon_url'] = 'Secure icon URL';
 $string['secure_icon_url_help'] = 'Similar to the icon URL, but used if the user accessing Moodle securely through SSL. The main purpose for this field is to prevent
 the browser from warning the user if the underlying page was accessed over SSL, but requesting to show an unsecure image.';
