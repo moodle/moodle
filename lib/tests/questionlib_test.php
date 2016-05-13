@@ -52,13 +52,6 @@ class core_questionlib_testcase extends advanced_testcase {
     }
 
     /**
-     * Tidy up open files that may be left open.
-     */
-    protected function tearDown() {
-        gc_collect_cycles();
-    }
-
-    /**
      * Return true and false to test functions with feedback on and off.
      *
      * @return array Test data
@@ -248,7 +241,6 @@ class core_questionlib_testcase extends advanced_testcase {
         $filepath = $CFG->dataroot . '/temp/backup/test-restore-course';
         $file->extract_to_pathname($fp, $filepath);
         $bc->destroy();
-        unset($bc);
 
         // Now restore the course.
         $rc = new restore_controller('test-restore-course', $course2->id, backup::INTERACTIVE_NO,
@@ -262,6 +254,8 @@ class core_questionlib_testcase extends advanced_testcase {
 
         // Check that there are two questions in the restored to course's context.
         $this->assertEquals(2, $DB->count_records('question', array('category' => $restoredcategory->id)));
+
+        $rc->destroy();
     }
 
     /**

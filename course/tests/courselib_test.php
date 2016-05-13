@@ -33,13 +33,6 @@ require_once($CFG->dirroot . '/enrol/imsenterprise/tests/imsenterprise_test.php'
 class core_course_courselib_testcase extends advanced_testcase {
 
     /**
-     * Tidy up open files that may be left open.
-     */
-    protected function tearDown() {
-        gc_collect_cycles();
-    }
-
-    /**
      * Set forum specific test values for calling create_module().
      *
      * @param object $moduleinfo - the moduleinfo to add some specific values - passed in reference.
@@ -1917,7 +1910,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $filepath = $CFG->dataroot . '/temp/backup/test-restore-course-event';
         $file->extract_to_pathname($fp, $filepath);
         $bc->destroy();
-        unset($bc);
 
         // Now we want to catch the restore course event.
         $sink = $this->redirectEvents();
@@ -1955,7 +1947,6 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         // Destroy the resource controller since we are done using it.
         $rc->destroy();
-        unset($rc);
     }
 
     /**

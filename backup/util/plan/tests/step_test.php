@@ -88,6 +88,7 @@ class backup_step_testcase extends advanced_testcase {
         $this->assertTrue($bs instanceof backup_step);
         $this->assertEquals($bs->get_name(), 'stepname');
 
+        $bc->destroy();
     }
 
     /**
@@ -127,6 +128,8 @@ class backup_step_testcase extends advanced_testcase {
         $this->assertTrue(strpos($contents, '<field1>value1</field1>') !== false);
         $this->assertTrue(strpos($contents, '<field2>value2</field2>') !== false);
         $this->assertTrue(strpos($contents, '</test>') !== false);
+
+        $bc->destroy();
 
         unlink($file); // delete file
 

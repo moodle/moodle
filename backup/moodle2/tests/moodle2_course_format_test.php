@@ -40,13 +40,6 @@ require_once($CFG->libdir . '/completionlib.php');
 class core_backup_moodle2_course_format_testcase extends advanced_testcase {
 
     /**
-     * Tidy up open files that may be left open.
-     */
-    protected function tearDown() {
-        gc_collect_cycles();
-    }
-
-    /**
      * Tests a backup and restore adds the required section option data
      * when the same course format is used.
      */
