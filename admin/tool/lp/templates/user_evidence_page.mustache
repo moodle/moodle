@@ -94,6 +94,11 @@
                 {{/usercompetencies}}
             </tbody>
         </table>
+        {{^usercompetencies}}
+            <p class="alert alert-info">
+                {{#str}}nocompetenciesinevidence, tool_lp{{/str}}
+            </p>
+        {{/usercompetencies}}
     </div>
 </div>
 
