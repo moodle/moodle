@@ -310,8 +310,6 @@ function upgrade_course_tags() {
 
 /**
  * This function creates a default separated/connected scale
- *
- * This function creates a default separated/connected scale
  * so there's something in the database.  The locations of
  * strings and files is a bit odd, but this is because we
  * need to maintain backward compatibility with many different
