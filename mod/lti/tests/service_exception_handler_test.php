@@ -79,7 +79,7 @@ class mod_lti_service_exception_handler_testcase extends advanced_testcase {
         ob_end_clean();
 
         $this->assertTrue(is_dir($CFG->dataroot.'/temp/mod_lti'));
-        $files = glob($CFG->dataroot.'/temp/mod_lti/mod_lti_response*');
+        $files = glob($CFG->dataroot.'/temp/mod_lti/mod*');
         $this->assertEquals(1, count($files));
     }
 }
