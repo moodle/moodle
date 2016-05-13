@@ -3,7 +3,7 @@
     <h3>{{#str}}learningplans, tool_lp{{/str}}</h3>
     <select data-action="chooseplan">
     {{#plans}}
-        <option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{name}}</em></option>
+        <option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{{name}}}</option>
     {{/plans}}
     </select>
 {{/singlePlan}}
@@ -17,7 +17,7 @@
 </form>
 
 <ul data-enhance="linktree" style="display: none;">
-    <li><span>{{plan.name}}</span>
+    <li><span>{{{plan.name}}}</span>
         <ul>
             {{#competencies}}
                 {{> tool_lp/competencies_tree }}
