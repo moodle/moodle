@@ -128,7 +128,6 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
                 break;
             case 'move':
             case 'update':
-            case 'duplicate':
             case 'assignroles':
                 break;
             default:
