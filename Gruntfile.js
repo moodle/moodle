@@ -75,13 +75,15 @@ module.exports = function(grunt) {
             // * It will complain about ignored files (https://github.com/sindresorhus/grunt-eslint/issues/119)
             // * It's better experience to use editor integrations or eslint natively
             options: { quiet: !grunt.option('show-lint-warnings') },
-            // Check AMD files with standard config
-            amd: { src: amdSrc },
-            // Some rules disabled for YUI config, because we don't do rollup magic, so its able to be accurate
-            // about undefined items.
+            // Check AMD files. We add some stricter rules which we can't apply to the default configuration due
+            // to YUI rollups.
+            amd: {
+              src: amdSrc,
+              options: { rules: {'no-undef': 'error', 'no-unused-vars': 'error', 'no-empty': 'error', 'no-unused-expressions': 'error'} }
+            },
+            // Check YUI module source files.
             yui: {
-               src: ['**/yui/src/**/*.js'],
-               options: {globals: ['Y', 'YUI'], rules: {'no-undef': 'off', 'no-unused-vars': 'off', 'no-empty': 'off'} }
+               src: ['**/yui/src/**/*.js']
             }
         },
         uglify: {
