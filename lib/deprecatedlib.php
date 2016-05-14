@@ -6569,3 +6569,78 @@ function calendar_cron() {
 
     return true;
 }
+
+
+/**
+ * Previous internal API, it was not supposed to be used anywhere.
+ *
+ * @access private
+ * @deprecated since Moodle 3.4 and removed immediately. MDL-49398.
+ * @param int $userid the id of the user
+ * @param context_course $coursecontext course context
+ * @param array $accessdata accessdata array (modified)
+ * @return void modifies $accessdata parameter
+ */
+function load_course_context($userid, context_course $coursecontext, &$accessdata) {
+    throw new coding_exception('load_course_context() is removed. Please do not use accesslib private functions or data structures.');
+}
+
+/**
+ * Previous internal API, it was not supposed to be used anywhere.
+ *
+ * @access private
+ * @deprecated since Moodle 3.4 and removed immediately. MDL-49398.
+ * @param int $roleid the id of the user
+ * @param context $context needs path!
+ * @param array $accessdata accessdata array (is modified)
+ * @return array
+ */
+function load_role_access_by_context($roleid, context $context, &$accessdata) {
+    throw new coding_exception('load_role_access_by_context() is removed. Please do not use accesslib private functions or data structures.');
+}
+
+/**
+ * Previous internal API, it was not supposed to be used anywhere.
+ *
+ * @access private
+ * @deprecated since Moodle 3.4 and removed immediately. MDL-49398.
+ * @return void
+ */
+function dedupe_user_access() {
+    throw new coding_exception('dedupe_user_access() is removed. Please do not use accesslib private functions or data structures.');
+}
+
+/**
+ * Previous internal API, it was not supposed to be used anywhere.
+ * Return a nested array showing role assignments
+ * and all relevant role capabilities for the user.
+ *
+ * [ra]   => [/path][roleid]=roleid
+ * [rdef] => ["$contextpath:$roleid"][capability]=permission
+ *
+ * @access private
+ * @deprecated since Moodle 3.4. MDL-49398.
+ * @param int $userid - the id of the user
+ * @return array access info array
+ */
+function get_user_access_sitewide($userid) {
+    debugging('get_user_access_sitewide() is deprecated. Please do not use accesslib private functions or data structures.', DEBUG_DEVELOPER);
+
+    $accessdata = get_user_accessdata($userid);
+    $accessdata['rdef'] = array();
+    $roles = array();
+
+    foreach ($accessdata['ra'] as $path => $pathroles) {
+        $roles = array_merge($pathroles, $roles);
+    }
+
+    $rdefs = get_role_definitions($roles);
+
+    foreach ($rdefs as $roleid => $rdef) {
+        foreach ($rdef as $path => $caps) {
+            $accessdata['rdef']["$path:$roleid"] = $caps;
+        }
+    }
+
+    return $accessdata;
+}

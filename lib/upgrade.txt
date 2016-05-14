@@ -1,6 +1,12 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.4 ===
+
+* Removed accesslib private functions: load_course_context(), load_role_access_by_context(), dedupe_user_access() (MDL-49398).
+* Internal "accessdata" structure format has changed to improve ability to perform role definition caching (MDL-49398).
+* Role definitions are no longer cached in user session (MDL-49398).
+
 === 3.3.1 ===
 
 * ldap_get_entries_moodle() now always returns lower-cased attribute names in the returned entries.

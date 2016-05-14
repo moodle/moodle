@@ -247,6 +247,15 @@ $definitions = array(
         'simpledata' => true,
     ),
 
+    // Cache system-wide role definitions.
+    'roledefs' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 30,
+    ),
+
     // Caches plugins existing functions by function name and file.
     // Set static acceleration size to 5 to load a few functions.
     'plugin_functions' => array(
