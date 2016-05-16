@@ -47,22 +47,20 @@ class block_rss_client_edit_form extends block_edit_form {
             $mform->setDefault('config_shownumentries', 5);
         }
 
+        $params = array('userid' => $USER->id);
         $rssconfig = unserialize(base64_decode($this->block->instance->configdata));
-        list($insql, $inparams) = $DB->get_in_or_equal($rssconfig->rssid);
+        list($insql, $inparams) = $DB->get_in_or_equal($rssconfig->rssid, SQL_PARAMS_NAMED);
+        $params += $inparams;
 
-        $queryparams = array('', $USER->id);
-        foreach ($inparams as $paramid) {
-            $queryparams[] = $paramid;
-        }
-        $queryparams[] = '';
+        $titlesql = "CASE WHEN preferredtitle = '' THEN {$DB->sql_compare_text('title', 64)} ELSE preferredtitle END";
 
-        $rssfeeds = $DB->get_records_sql_menu('
-                SELECT id,
-                       CASE WHEN preferredtitle = ? THEN ' . $DB->sql_compare_text('title', 64) .' ELSE preferredtitle END
-                FROM {block_rss_client}
-                WHERE userid = ? OR shared = 1 OR id '.$insql.'
-                ORDER BY CASE WHEN preferredtitle = ? THEN ' . $DB->sql_compare_text('title', 64) . ' ELSE preferredtitle END ',
-                $queryparams);
+        $rssfeeds = $DB->get_records_sql_menu("
+                SELECT id, $titlesql
+                  FROM {block_rss_client}
+                 WHERE userid = :userid OR shared = 1 OR id $insql
+                 ORDER BY $titlesql",
+                $params);
+
         if ($rssfeeds) {
             $select = $mform->addElement('select', 'config_rssid', get_string('choosefeedlabel', 'block_rss_client'), $rssfeeds);
             $select->setMultiple(true);
