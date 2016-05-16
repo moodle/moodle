@@ -91,17 +91,13 @@
             {{/description}}
             <dt>{{#str}}progress, tool_lp{{/str}}</dt>
             <dd>
-                <div class="span4">
-                    <div class="progresstext">
-                        {{#str}}xcompetenciesproficientoutofy, tool_lp, { "x": "{{proficientcompetencycount}}", "y": "{{competencycount}}" }{{/str}}
-                    </div>
-                </div>
-                <div class="span4">
-                    <span class="pull-right label label-info">{{proficientcompetencypercentageformatted}} %</span>
-                    <div class="progress">
-                        <div class="bar" style="width: {{proficientcompetencypercentage}}%;"></div>
-                    </div>
-                </div>
+            {{< tool_lp/progress_bar}}
+                {{$progresstext}}
+                    {{#str}}xcompetenciesproficientoutofy, tool_lp, { "x": "{{proficientcompetencycount}}", "y": "{{competencycount}}" }{{/str}}
+                {{/progresstext}}
+                {{$percentage}}{{proficientcompetencypercentage}}{{/percentage}}
+                {{$percentlabel}}{{proficientcompetencypercentageformatted}}&nbsp;%{{/percentlabel}}
+            {{/tool_lp/progress_bar}}
             </dd>
         </dl>
     </div>

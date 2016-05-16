@@ -6,13 +6,14 @@
 }
 .path-admin-tool-lp .progresstext {
     display: inline-block;
-    height: 40px;
     vertical-align: top;
 }
 .path-admin-tool-lp .progress {
     width: 100%;
     display: inline-block;
-    margin-right: 2em;
+}
+.path-admin-tool-lp .progress .bar {
+    min-width: 3em;
 }
 .dir-rtl.path-admin-tool-lp .progress .bar {
     float: right;
