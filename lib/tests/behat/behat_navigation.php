@@ -63,8 +63,8 @@ class behat_navigation extends behat_base {
         $nodetextliteral = behat_context_helper::escape($text);
         $hasblocktree = "[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]";
         $hasbranch = "[contains(concat(' ', normalize-space(@class), ' '), ' branch ')]";
-        $hascollapsed = "li[@aria-expanded='false']";
-        $notcollapsed = "li[@aria-expanded='true']";
+        $hascollapsed = "p[@aria-expanded='false']";
+        $notcollapsed = "p[@aria-expanded='true']";
         $match = "[normalize-space(.)={$nodetextliteral}]";
 
         // Avoid problems with quotes.
@@ -74,18 +74,18 @@ class behat_navigation extends behat_base {
         } else if ($collapsed === false) {
             $iscollapsed = $notcollapsed;
         } else {
-            $iscollapsed = 'li';
+            $iscollapsed = 'p';
         }
 
         // First check root nodes, it can be a span or link.
-        $xpath  = "//ul{$hasblocktree}/$hascollapsed/p{$isbranch}/span{$match}|";
-        $xpath  .= "//ul{$hasblocktree}/$hascollapsed/p{$isbranch}/a{$match}|";
+        $xpath  = "//ul{$hasblocktree}/li/{$hascollapsed}{$isbranch}/span{$match}|";
+        $xpath  .= "//ul{$hasblocktree}/li/{$hascollapsed}{$isbranch}/a{$match}|";
 
         // Next search for the node containing the text within a link.
-        $xpath .= "//ul{$hasblocktree}//ul/{$iscollapsed}/p{$isbranch}/a{$match}|";
+        $xpath .= "//ul{$hasblocktree}//ul/li/{$iscollapsed}{$isbranch}/a{$match}|";
 
         // Finally search for the node containing the text within a span.
-        $xpath .= "//ul{$hasblocktree}//ul/{$iscollapsed}/p{$isbranch}/span{$match}";
+        $xpath .= "//ul{$hasblocktree}//ul/li/{$iscollapsed}{$isbranch}/span{$match}";
 
         $node = $this->find('xpath', $xpath, $exception);
         $this->ensure_node_is_visible($node);
@@ -262,33 +262,33 @@ class behat_navigation extends behat_base {
                 $node = $this->get_navigation_node($parentnodes[$i], $node);
             }
 
+            // The p node contains the aria jazz.
+            $pnodexpath = "/p[contains(concat(' ', normalize-space(@class), ' '), ' tree_item ')]";
+            $pnode = $node->find('xpath', $pnodexpath);
+
             // Keep expanding all sub-parents if js enabled.
-            if ($this->running_javascript() && $node->hasAttribute('aria-expanded') &&
-                ($node->getAttribute('aria-expanded') == "false")) {
+            if ($pnode && $this->running_javascript() && $pnode->hasAttribute('aria-expanded') &&
+                ($pnode->getAttribute('aria-expanded') == "false")) {
 
-                $xpath = "/p[contains(concat(' ', normalize-space(@class), ' '), ' tree_item ')]";
-                $nodetoexpand = $node->find('xpath', $xpath);
-
-                $this->ensure_node_is_visible($nodetoexpand);
+                $this->ensure_node_is_visible($pnode);
 
                 // If node is a link then some driver click in the middle of the node, which click on link and
                 // page gets redirected. To ensure expansion works in all cases, check if the node to expand is a
                 // link and if yes then click on link and wait for it to navigate to next page with node expanded.
                 $nodetoexpandliteral = behat_context_helper::escape($parentnodes[$i]);
-                $nodetoexpandxpathlink = $xpath . "/a[normalize-space(.)=" . $nodetoexpandliteral . "]";
+                $nodetoexpandxpathlink = $pnodexpath . "/a[normalize-space(.)=" . $nodetoexpandliteral . "]";
 
                 if ($nodetoexpandlink = $node->find('xpath', $nodetoexpandxpathlink)) {
                     $behatgeneralcontext = behat_context_helper::get('behat_general');
                     $nodetoexpandlink->click();
                     $behatgeneralcontext->wait_until_the_page_is_ready();
                 } else {
-                    $nodetoexpand->click();
+                    $pnode->click();
                 }
 
                 // Wait for node to load, if not loaded before.
-                $linode = $nodetoexpand->getParent();
-                if ($linode && $linode->hasAttribute('data-loaded') && $linode->getAttribute('data-loaded') == "false") {
-                    $jscondition = '(document.evaluate("' . $linode->getXpath() . '", document, null, '.
+                if ($pnode->hasAttribute('data-loaded') && $pnode->getAttribute('data-loaded') == "false") {
+                    $jscondition = '(document.evaluate("' . $pnode->getXpath() . '", document, null, '.
                         'XPathResult.ANY_TYPE, null).iterateNext().getAttribute(\'data-loaded\') == "true")';
 
                     $this->getSession()->wait(self::EXTENDED_TIMEOUT * 1000, $jscondition);

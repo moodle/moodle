@@ -44,6 +44,7 @@ define(['jquery'], function($) {
     function buildDOM(rootElement, nodes) {
         var ul = $('<ul></ul>');
         ul.attr('role', 'group');
+        ul.attr('aria-hidden', true);
 
         $.each(nodes, function(index, node) {
             if (typeof node !== 'object') {
@@ -52,23 +53,26 @@ define(['jquery'], function($) {
 
             var li = $('<li></li>');
             var p = $('<p></p>');
+            var id = node.id || node.key + '_tree_item';
             var icon = null;
             var isBranch = (node.expandable || node.haschildren) ? true : false;
 
             p.addClass('tree_item');
-            p.attr('id', node.id);
-            li.attr('role', 'treeitem');
+            p.attr('id', id);
+            p.attr('role', 'treeitem');
+            // Negative tab index to allow it to receive focus.
+            p.attr('tabindex', '-1');
 
             if (node.requiresajaxloading) {
-                li.attr('data-requires-ajax', true);
-                li.attr('data-node-id', node.id);
-                li.attr('data-node-key', node.key);
-                li.attr('data-node-type', node.type);
+                p.attr('data-requires-ajax', true);
+                p.attr('data-node-id', node.id);
+                p.attr('data-node-key', node.key);
+                p.attr('data-node-type', node.type);
             }
 
             if (isBranch) {
                 li.addClass('collapsed contains_branch');
-                li.attr('aria-expanded', false);
+                p.attr('aria-expanded', false);
                 p.addClass('branch');
             }
 
@@ -121,14 +125,18 @@ define(['jquery'], function($) {
             ul.append(li);
 
             if (node.children && node.children.length) {
-                buildDOM(li, node.children);
+                buildDOM(p, node.children);
             } else if (isBranch && !node.requiresajaxloading) {
                 li.removeClass('contains_branch');
-                li.addClass('emptybranch');
+                p.addClass('emptybranch');
             }
         });
 
-        rootElement.append(ul);
+        rootElement.parent().append(ul);
+        var id = rootElement.attr('id') + '_group';
+        ul.attr('id', id);
+        rootElement.attr('aria-owns', id);
+        rootElement.attr('role', 'treeitem');
     }
 
     return {
@@ -136,9 +144,16 @@ define(['jquery'], function($) {
             // The first element of the response is the existing node so we start with processing the children.
             if (nodes.children && nodes.children.length) {
                 buildDOM(element, nodes.children);
+
+                var item = element.children("[role='treeitem']").first();
+                var group = element.find('#' + item.attr('aria-owns'));
+
+                item.attr('aria-expanded', true);
+                group.attr('aria-hidden', false);
             } else {
-                if (element.hasClass('contains_branch')) {
-                    element.removeClass('contains_branch').addClass('emptybranch');
+                if (element.parent().hasClass('contains_branch')) {
+                    element.parent().removeClass('contains_branch');
+                    element.addClass('emptybranch');
                 }
             }
         }
