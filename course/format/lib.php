@@ -984,14 +984,14 @@ abstract class format_base {
         }
         if (!is_object($section)) {
             $section = $DB->get_record('course_sections', array('course' => $this->get_courseid(), 'section' => $section),
-                'id,section,sequence');
+                'id,section,sequence,summary');
         }
         if (!$section || !$section->section) {
             // Not possible to delete 0-section.
             return false;
         }
 
-        if (!$forcedeleteifnotempty && !empty($section->sequence)) {
+        if (!$forcedeleteifnotempty && (!empty($section->sequence) || !empty($section->summary))) {
             return false;
         }
 
