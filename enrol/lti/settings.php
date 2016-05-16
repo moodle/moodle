@@ -35,7 +35,7 @@ if ($ADMIN->fulltree) {
     }
 
     if (empty($CFG->allowframembedding)) {
-        $notify = new \core\output\notification(get_string('allowframembedding', 'enrol_lti'),
+        $notify = new \core\output\notification(get_string('allowframeembedding', 'enrol_lti'),
             \core\output\notification::NOTIFY_WARNING);
         $settings->add(new admin_setting_heading('enrol_lti_enable_embedding', '', $OUTPUT->render($notify)));
     }

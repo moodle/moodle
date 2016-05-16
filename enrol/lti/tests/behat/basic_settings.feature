@@ -17,8 +17,8 @@ Feature: Check that settings are adhered to when creating an enrolment plugin
       | teacher1 | C1 | editingteacher |
     And I log in as "admin"
     And I navigate to "Manage enrol plugins" node in "Site administration > Plugins > Enrolments"
-    And I click on "Enable" "link" in the "Shared external tool" "table_row"
-    And I navigate to "Shared external tool" node in "Site administration > Plugins > Enrolments"
+    And I click on "Enable" "link" in the "Publish as LTI tool" "table_row"
+    And I navigate to "Publish as LTI tool" node in "Site administration > Plugins > Enrolments"
     And I set the following fields to these values:
       | Email display       | Allow everyone to see my email address |
       | City/town           | Perth                                  |
@@ -32,7 +32,7 @@ Feature: Check that settings are adhered to when creating an enrolment plugin
     Given I log in as "teacher1"
     And I follow "Course 1"
     And I navigate to "Enrolment methods" node in "Course administration > Users"
-    And I select "Shared external tool" from the "Add method" singleselect
+    And I select "Publish as LTI tool" from the "Add method" singleselect
     When I expand all fieldsets
     Then the field "Email display" matches value "Allow everyone to see my email address"
     And the field "City/town" matches value "Perth"
@@ -46,7 +46,7 @@ Feature: Check that settings are adhered to when creating an enrolment plugin
       | Timezone            | America/Vancouver                   |
       | Institution         | Moodle Pty Ltd - remote             |
     And I press "Add method"
-    And I click on "Edit" "link" in the "Shared external tool" "table_row"
+    And I click on "Edit" "link" in the "Publish as LTI tool" "table_row"
     And the field "Email display" matches value "Hide my email address from everyone"
     And the field "City/town" matches value "Whistler"
     And the field "Select a country" matches value "Canada"
