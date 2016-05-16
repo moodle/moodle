@@ -67,7 +67,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I follow "Outcomes"
     And I follow "Edit outcomes"
     And I press "Add a new outcome"
-    And I press "Continue"
+    And I follow "Add a new scale"
     And I set the following fields to these values:
       | Name | 1337dom scale |
       | Scale | Noob, Nub, 1337, HaXor |
