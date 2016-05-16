@@ -184,6 +184,11 @@
                 {{/competencies}}
             </tbody>
         </table>
+        {{^competencies}}
+            <p class="alert alert-info">
+                {{#str}}nocompetenciesinlearningplan, tool_lp{{/str}}
+            </p>
+        {{/competencies}}
     </div>
 </div>
 {{#js}}
