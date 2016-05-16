@@ -56,6 +56,24 @@ class file_storage {
     /** @var array List of formats supported by unoconv */
     private $unoconvformats;
 
+    // Unoconv constants.
+    /** No errors */
+    const UNOCONVPATH_OK = 'ok';
+    /** Not set */
+    const UNOCONVPATH_EMPTY = 'empty';
+    /** Does not exist */
+    const UNOCONVPATH_DOESNOTEXIST = 'doesnotexist';
+    /** Is a dir */
+    const UNOCONVPATH_ISDIR = 'isdir';
+    /** Not executable */
+    const UNOCONVPATH_NOTEXECUTABLE = 'notexecutable';
+    /** Test file missing */
+    const UNOCONVPATH_NOTESTFILE = 'notestfile';
+    /** Version not supported */
+    const UNOCONVPATH_VERSIONNOTSUPPORTED = 'versionnotsupported';
+    /** Any other error */
+    const UNOCONVPATH_ERROR = 'error';
+
 
     /**
      * Constructor - do not use directly use {@link get_file_storage()} call instead.
@@ -213,6 +231,94 @@ class file_storage {
         return in_array($sanitized, $this->unoconvformats);
     }
 
+    /**
+     * Check if the installed version of unoconv is supported.
+     *
+     * @return bool true if the present version is supported, false otherwise.
+     */
+    public static function can_convert_documents() {
+        global $CFG;
+        $unoconvbin = \escapeshellarg($CFG->pathtounoconv);
+        $command = "$unoconvbin --version";
+        exec($command, $output);
+        preg_match('/([0-9]+\.[0-9]+)/', $output[0], $matches);
+        $currentversion = (float)$matches[0];
+        $supportedversion = 0.7;
+        if ($currentversion < $supportedversion) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * If the test pdf has been generated correctly and send it direct to the browser.
+     */
+    public static function send_test_pdf() {
+        global $CFG;
+        require_once($CFG->libdir . '/filelib.php');
+
+        $filerecord = array(
+            'contextid' => \context_system::instance()->id,
+            'component' => 'test',
+            'filearea' => 'assignfeedback_editpdf',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filename' => 'unoconv_test.docx'
+        );
+
+        // Get the fixture doc file content and generate and stored_file object.
+        $fs = get_file_storage();
+        $fixturefile = $CFG->libdir . '/tests/fixtures/unoconv-source.docx';
+        $fixturedata = file_get_contents($fixturefile);
+        $testdocx = $fs->get_file($filerecord['contextid'], $filerecord['component'], $filerecord['filearea'],
+                $filerecord['itemid'], $filerecord['filepath'], $filerecord['filename']);
+        if (!$testdocx) {
+            $testdocx = $fs->create_file_from_string($filerecord, $fixturedata);
+
+        }
+
+        // Convert the doc file to pdf and send it direct to the browser.
+        $result = $fs->get_converted_document($testdocx, 'pdf');
+        readfile_accel($result, 'application/pdf', true);
+    }
+
+    /**
+     * Check if unoconv configured path is correct and working.
+     *
+     * @return \stdClass an object with the test status and the UNOCONVPATH_ constant message.
+     */
+    public static function test_unoconv_path() {
+        global $CFG;
+        $unoconvpath = $CFG->pathtounoconv;
+
+        $ret = new \stdClass();
+        $ret->status = self::UNOCONVPATH_OK;
+        $ret->message = null;
+
+        if (empty($unoconvpath)) {
+            $ret->status = self::UNOCONVPATH_EMPTY;
+            return $ret;
+        }
+        if (!file_exists($unoconvpath)) {
+            $ret->status = self::UNOCONVPATH_DOESNOTEXIST;
+            return $ret;
+        }
+        if (is_dir($unoconvpath)) {
+            $ret->status = self::UNOCONVPATH_ISDIR;
+            return $ret;
+        }
+        if (!file_is_executable($unoconvpath)) {
+            $ret->status = self::UNOCONVPATH_NOTEXECUTABLE;
+            return $ret;
+        }
+        if (!\file_storage::can_convert_documents()) {
+            $ret->status = self::UNOCONVPATH_VERSIONNOTSUPPORTED;
+            return $ret;
+        }
+
+        return $ret;
+    }
 
     /**
      * Perform a file format conversion on the specified document.

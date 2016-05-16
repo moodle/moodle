@@ -1073,6 +1073,7 @@ $string['unbookmarkthispage'] = 'Unbookmark this page';
 $string['unicoderequired'] = 'It is required that you store all your data in Unicode format (UTF-8). New installations must be performed into databases that have their default character set as Unicode.  If you are upgrading, you should perform the UTF-8 migration process (see the Admin page).';
 $string['uninstallplugin'] = 'Uninstall';
 $string['unlockaccount'] = 'Unlock account';
+$string['unoconvwarning'] = 'The installed version of your unoconv is not supported, the required version to support assignment grading features is 0.7.';
 $string['unsettheme'] = 'Unset theme';
 $string['unsupported'] = 'Unsupported';
 $string['unsupporteddbstorageengine'] = 'The database storage engine being used is no longer supported.';
