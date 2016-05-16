@@ -445,23 +445,25 @@ class quiz_overview_report extends quiz_attempts_report {
         if ($groupstudents) {
             list($usql, $uparams) = $DB->get_in_or_equal($groupstudents);
             $where .= " AND quiza.userid $usql";
-            $params += $uparams;
+            $params = array_merge($params, $uparams);
         }
 
-        $toregrade = $DB->get_records_sql("
+        $toregrade = $DB->get_recordset_sql("
                 SELECT quiza.uniqueid, qqr.slot
                 FROM {quiz_attempts} quiza
                 JOIN {quiz_overview_regrades} qqr ON qqr.questionusageid = quiza.uniqueid
                 WHERE $where", $params);
 
-        if (!$toregrade) {
-            return;
-        }
-
         $attemptquestions = array();
         foreach ($toregrade as $row) {
             $attemptquestions[$row->uniqueid][] = $row->slot;
         }
+        $toregrade->close();
+
+        if (!$attemptquestions) {
+            return;
+        }
+
         $attempts = $DB->get_records_list('quiz_attempts', 'uniqueid',
                 array_keys($attemptquestions));
 
