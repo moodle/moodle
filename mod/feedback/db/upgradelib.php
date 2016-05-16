@@ -56,11 +56,18 @@ function mod_feedback_upgrade_courseid($tmp = false) {
     }
 
     // Part 2. Update courseid in the completed table.
-    $sql = "UPDATE {feedback_completed$suffix} "
+    if ($DB->get_dbfamily() !== 'mysql') {
+        $sql = "UPDATE {feedback_completed$suffix} "
             . "SET courseid = (SELECT COALESCE(MIN(v.course_id), 0) "
             . "FROM {feedback_value$suffix} v "
             . "WHERE v.completed = {feedback_completed$suffix}.id)";
-    $DB->execute($sql);
+        $DB->execute($sql);
+    } else {
+        $sql = "UPDATE {feedback_completed$suffix} c, {feedback_value$suffix} v "
+            . "SET c.courseid = v.course_id "
+            . "WHERE v.completed = c.id AND v.course_id <> 0";
+        $DB->execute($sql);
+    }
 }
 
 /**
