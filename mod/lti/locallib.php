@@ -1463,8 +1463,7 @@ function lti_prepare_type_for_save($type, $config) {
         $type->name = $config->lti_typename;
     }
     if (isset($config->lti_coursevisible)) {
-        $type->coursevisible = !empty($config->lti_coursevisible) ? $config->lti_coursevisible : 0;
-        $config->lti_coursevisible = $type->coursevisible;
+        $type->coursevisible = $config->lti_coursevisible;
     }
 
     if (isset($config->lti_icon)) {
