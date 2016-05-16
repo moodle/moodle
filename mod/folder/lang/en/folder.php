@@ -52,7 +52,7 @@ Also note that participants view actions can not be logged in this case.';
 $string['displaypage'] = 'On a separate page';
 $string['displayinline'] = 'Inline on a course page';
 $string['noautocompletioninline'] = 'Automatic completion on viewing of activity can not be selected together with "Display inline" option';
-$string['search:activity'] = 'Folder activities';
+$string['search:activity'] = 'Folder';
 $string['showdownloadfolder'] = 'Show download folder button';
 $string['showdownloadfolder_help'] = 'If set to \'yes\', a button will be displayed allowing the contents of the folder to be downloaded as a zip file.';
 $string['showexpanded'] = 'Show subfolders expanded';
