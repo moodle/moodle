@@ -88,7 +88,7 @@ $functions = array(
         'methodname' => 'delete_cohort_members',
         'classpath' => 'cohort/externallib.php',
         'description' => 'Deletes cohort members.',
-        'type' => 'delete',
+        'type' => 'write',
         'capabilities' => 'moodle/cohort:assign'
     ),
     'core_cohort_delete_cohorts' => array(
@@ -96,7 +96,7 @@ $functions = array(
         'methodname' => 'delete_cohorts',
         'classpath' => 'cohort/externallib.php',
         'description' => 'Deletes all specified cohorts.',
-        'type' => 'delete',
+        'type' => 'write',
         'capabilities' => 'moodle/cohort:manage'
     ),
     'core_cohort_get_cohort_members' => array(
@@ -458,7 +458,7 @@ $functions = array(
         'methodname' => 'delete_group_members',
         'classpath' => 'group/externallib.php',
         'description' => 'Deletes group members.',
-        'type' => 'delete',
+        'type' => 'write',
         'capabilities' => 'moodle/course:managegroups'
     ),
     'core_group_delete_groupings' => array(
@@ -473,7 +473,7 @@ $functions = array(
         'methodname' => 'delete_groups',
         'classpath' => 'group/externallib.php',
         'description' => 'Deletes all specified groups.',
-        'type' => 'delete',
+        'type' => 'write',
         'capabilities' => 'moodle/course:managegroups'
     ),
     'core_group_get_activity_allowed_groups' => array(
