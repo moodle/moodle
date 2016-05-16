@@ -27,7 +27,7 @@
 
 .search-input-wrapper > div {
     float: left;
-    margin: 9px 0 10px 0;
+    margin: 10px 0 9px 0;
 }
 
 .dir-rtl .search-input-wrapper {
@@ -40,12 +40,12 @@
 }
 
 .dir-rtl .search-input-wrapper > form {
-    margin: 7px 25px 7px 0;
+    margin: 5px 25px 5px 0;
 }
 
 .search-input-wrapper > form {
     opacity: 0;
-    margin: 7px 0 7px 25px;
+    margin: 5px 0 5px 25px;
     transition: opacity 0.5s ease-in-out;
 }
 
@@ -59,4 +59,13 @@
 
 .search-input-wrapper.expanded {
     width: 158px;
+}
+
+// When it is displayed in the navbar we want it aligned with .usermenu .
+.dir-rtl .navbar .search-input-wrapper > form {
+    margin: 7px 25px 3px 0;
+}
+
+.navbar .search-input-wrapper > form {
+    margin: 7px 0 3px 25px;
 }
