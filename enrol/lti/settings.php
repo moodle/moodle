@@ -26,14 +26,22 @@ defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
 
-    $settings->add(new admin_setting_heading('enrol_lti_user_default_values',
-        get_string('userdefaultvalues', 'enrol_lti'), ''));
+    $settings->add(new admin_setting_heading('enrol_lti_settings', '', get_string('pluginname_desc', 'enrol_lti')));
+
+    if (!is_enabled_auth('lti')) {
+        $notify = new \core\output\notification(get_string('authltimustbeenabled', 'enrol_lti'),
+            \core\output\notification::NOTIFY_WARNING);
+        $settings->add(new admin_setting_heading('enrol_lti_enable_auth_lti', '', $OUTPUT->render($notify)));
+    }
 
     if (empty($CFG->allowframembedding)) {
         $notify = new \core\output\notification(get_string('allowframembedding', 'enrol_lti'),
             \core\output\notification::NOTIFY_WARNING);
         $settings->add(new admin_setting_heading('enrol_lti_enable_embedding', '', $OUTPUT->render($notify)));
     }
+
+    $settings->add(new admin_setting_heading('enrol_lti_user_default_values',
+        get_string('userdefaultvalues', 'enrol_lti'), ''));
 
     $choices = array(0 => get_string('emaildisplayno'),
                      1 => get_string('emaildisplayyes'),
