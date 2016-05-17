@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_restore_backup_testcase extends advanced_testcase {
+class core_course_restore_testcase extends advanced_testcase {
 
     /**
      * Backup a course and return its backup ID.
