@@ -51,19 +51,18 @@ if ($sendpdf) {
 $result = file_storage::test_unoconv_path();
 switch ($result->status) {
     case file_storage::UNOCONVPATH_OK:
-        $msg = get_string('test_unoconvok', 'assignfeedback_editpdf');
-        $msg .= html_writer::empty_tag('br');
+        $msg = $OUTPUT->notification(get_string('test_unoconvok', 'assignfeedback_editpdf'), 'success');
         $pdflink = new moodle_url($PAGE->url, array('sendpdf' => 1, 'sesskey' => sesskey()));
         $msg .= html_writer::link($pdflink, get_string('test_unoconvdownload', 'assignfeedback_editpdf'));
         $msg .= html_writer::empty_tag('br');
         break;
 
     case file_storage::UNOCONVPATH_ERROR:
-        $msg = $result->message;
+        $msg = $OUTPUT->notification($result->message, 'warning');
         break;
 
     default:
-        $msg = get_string("test_unoconv{$result->status}", 'assignfeedback_editpdf');
+        $msg = $OUTPUT->notification(get_string("test_unoconv{$result->status}", 'assignfeedback_editpdf'), 'warning');
         break;
 }
 $returl = new moodle_url('/admin/settings.php', array('section' => 'assignfeedback_editpdf'));
