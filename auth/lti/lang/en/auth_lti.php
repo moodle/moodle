@@ -22,5 +22,5 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['auth_ltidescription'] = 'The LTI authentication plugin enables your site to behave as an LTI provider - this plugin works in conjunction with the LTI enrolment plugin by allowing external users to access a course or individual activities.';
+$string['auth_ltidescription'] = 'The LTI authentication plugin, together with the \'Publish as LTI tool\' enrolment plugin, allows remote users to access selected courses and activities. In other words, Moodle functions as an LTI tool provider.';
 $string['pluginname'] = 'LTI';
