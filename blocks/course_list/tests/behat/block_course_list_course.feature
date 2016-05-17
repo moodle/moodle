@@ -71,7 +71,7 @@ Feature: Enable the course_list block on a course page and view it's contents
     And I follow "Course 1"
     And I turn editing mode on
     When I add the "Courses" block
-    Then I should not see "Miscellaneous" in the "My courses" "block"
+    Then I should not see "All courses" in the "My courses" "block"
 
   Scenario: View the course list block on course page with admin sees own course enabled
     Given the following config values are set as admin:
