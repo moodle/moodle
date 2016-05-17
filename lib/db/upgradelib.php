@@ -710,39 +710,47 @@ function upgrade_course_letter_boundary($courseid = null) {
         $params['courseid'] = $courseid;
     }
 
-    $contextselect = context_helper::get_preload_record_columns_sql('ctx');
+    // Check to see if the system letter boundaries are borked.
+    $systemcontext = context_system::instance();
+    $systemneedsfreeze = upgrade_letter_boundary_needs_freeze($systemcontext);
 
     // 3, 13, 23, 31, and 32 are the grade display types that incorporate showing letters. See lib/grade/constants/php.
-    if (isset($CFG->grade_displaytype) && in_array($CFG->grade_displaytype, array(3, 13, 23, 31, 32))) {
-        // Check to see if the system letter boundaries are borked.
-        $systemcontext = context_system::instance();
-        if (upgrade_letter_boundary_needs_freeze($systemcontext)) {
-            // Select courses with no grade setting for display and a grade item that is using the default display,
-            // but have not altered the course letter boundary configuration. These courses are definitely affected.
-            $sql = "SELECT DISTINCT c.id AS courseid
-                      FROM {grade_items} gi
-                      JOIN {course} c ON c.id = gi.courseid
-                 LEFT JOIN {grade_settings} gs ON gs.courseid = c.id AND name = 'displaytype'
-                 LEFT JOIN (SELECT DISTINCT c.id
-                              FROM {grade_letters} gl
-                              JOIN {context} ctx ON gl.contextid = ctx.id
-                              JOIN {course} c ON ctx.instanceid = c.id
-                             WHERE ctx.contextlevel = :contextlevel) gl ON gl.id = c.id
-                     WHERE (gi.display = 0 AND (gs.value is NULL))
-                     AND gl.id is NULL $coursesql";
-            $affectedcourseids = $DB->get_recordset_sql($sql, $params);
-            foreach ($affectedcourseids as $courseid) {
-                set_config('gradebook_calculations_freeze_' . $courseid->courseid, 20160511);
-            }
-            $affectedcourseids->close();
+    $systemletters = (isset($CFG->grade_displaytype) && in_array($CFG->grade_displaytype, array(3, 13, 23, 31, 32)));
+
+    $contextselect = context_helper::get_preload_record_columns_sql('ctx');
+
+    if ($systemletters && $systemneedsfreeze) {
+        // Select courses with no grade setting for display and a grade item that is using the default display,
+        // but have not altered the course letter boundary configuration. These courses are definitely affected.
+
+        $sql = "SELECT DISTINCT c.id AS courseid
+                  FROM {grade_items} gi
+                  JOIN {course} c ON c.id = gi.courseid
+             LEFT JOIN {grade_settings} gs ON gs.courseid = c.id AND gs.name = 'displaytype'
+             LEFT JOIN (SELECT DISTINCT c.id
+                          FROM {grade_letters} gl
+                          JOIN {context} ctx ON gl.contextid = ctx.id
+                          JOIN {course} c ON ctx.instanceid = c.id
+                         WHERE ctx.contextlevel = :contextlevel) gl ON gl.id = c.id
+                 WHERE (gi.display = 0 AND (gs.value is NULL))
+                 AND gl.id is NULL $coursesql";
+        $affectedcourseids = $DB->get_recordset_sql($sql, $params);
+        foreach ($affectedcourseids as $courseid) {
+            set_config('gradebook_calculations_freeze_' . $courseid->courseid, 20160516);
         }
+        $affectedcourseids->close();
+
+    }
+
+    if ($systemletters || $systemneedsfreeze) {
+
         // If the system letter boundary is okay proceed to check grade item and course grade display settings.
         $params['contextlevel2'] = CONTEXT_COURSE;
         $sql = "SELECT DISTINCT c.id AS courseid, $contextselect
                   FROM {course} c
                   JOIN {context} ctx ON ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel
                   JOIN {grade_items} gi ON c.id = gi.courseid
-             LEFT JOIN {grade_settings} gs ON c.id = gs.courseid AND name = 'displaytype'
+             LEFT JOIN {grade_settings} gs ON c.id = gs.courseid AND gs.name = 'displaytype'
              LEFT JOIN (SELECT DISTINCT c.id
                           FROM {grade_letters} gl
                           JOIN {context} ctx ON gl.contextid = ctx.id
@@ -753,13 +761,14 @@ function upgrade_course_letter_boundary($courseid = null) {
                     OR gl.id is NOT NULL)
                        $coursesql";
     } else {
+
         // There is no site setting for letter grades. Just check the modified letter boundaries.
         $sql = "SELECT DISTINCT c.id AS courseid, $contextselect
-                  FROM {grade_letters} l, {course} c
-                  JOIN {context} ctx ON ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel
-                 WHERE l.contextid = ctx.id
-                   AND ctx.instanceid = c.id
-                       $coursesql";
+              FROM {grade_letters} l, {course} c
+              JOIN {context} ctx ON ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel
+             WHERE l.contextid = ctx.id
+               AND ctx.instanceid = c.id
+                   $coursesql";
     }
 
     $potentialcourses = $DB->get_recordset_sql($sql, $params);
