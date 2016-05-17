@@ -59,6 +59,9 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
     protected function define_structure() {
 
         $paths = array();
+        // To know if we are including userinfo.
+        $userinfo = $this->get_setting_value('userinfo');
+
         $lti = new restore_path_element('lti', '/activity/lti');
         $paths[] = $lti;
         $paths[] = new restore_path_element('ltitype', '/activity/lti/ltitype');
@@ -67,6 +70,11 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
             '/activity/lti/ltitype/ltitypesconfigs/ltitypesconfigencrypted');
         $paths[] = new restore_path_element('ltitoolproxy', '/activity/lti/ltitype/ltitoolproxy');
         $paths[] = new restore_path_element('ltitoolsetting', '/activity/lti/ltitype/ltitoolproxy/ltitoolsettings/ltitoolsetting');
+
+        if ($userinfo) {
+            $submission = new restore_path_element('ltisubmission', '/activity/lti/ltisubmissions/ltisubmission');
+            $paths[] = $submission;
+        }
 
         // Add support for subplugin structures.
         $this->add_subplugin_structure('ltisource', $lti);
@@ -241,6 +249,29 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
         $data->course = $this->get_courseid();
         $data->coursemoduleid = $this->task->get_moduleid();
         $DB->insert_record('lti_tool_settings', $data);
+    }
+
+    /**
+     * Process a submission restore
+     * @param mixed $data The data from backup XML file
+     */
+    protected function process_ltisubmission($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        $data->ltiid = $this->get_new_parentid('lti');
+
+        $data->datesubmitted = $this->apply_date_offset($data->datesubmitted);
+        $data->dateupdated = $this->apply_date_offset($data->dateupdated);
+        if ($data->userid > 0) {
+            $data->userid = $this->get_mappingid('user', $data->userid);
+        }
+
+        $newitemid = $DB->insert_record('lti_submission', $data);
+
+        $this->set_mapping('ltisubmission', $oldid, $newitemid);
     }
 
     protected function after_execute() {
