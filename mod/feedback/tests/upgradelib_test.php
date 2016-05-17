@@ -77,7 +77,7 @@ class mod_feedback_upgradelib_testcase extends advanced_testcase {
             'item' => 1, 'value' => 1]);
         $DB->insert_record('feedback_value',
             ['completed' => $completed1, 'course_id' => $this->course1->id,
-            'item' => 1, 'value' => 2]);
+            'item' => 2, 'value' => 2]);
 
         $this->assertCount(1, $DB->get_records('feedback_completed'));
         $this->assertEquals(2, $DB->count_records_sql($this->testsql)); // We have errors!
@@ -123,7 +123,7 @@ class mod_feedback_upgradelib_testcase extends advanced_testcase {
             'item' => 1, 'value' => 1]);
         $DB->insert_record('feedback_valuetmp',
             ['completed' => $completed1, 'course_id' => $this->course1->id,
-            'item' => 1, 'value' => 2]);
+            'item' => 2, 'value' => 2]);
 
         $this->assertCount(1, $DB->get_records('feedback_completedtmp'));
         $this->assertEquals(2, $DB->count_records_sql($this->testsqltmp)); // We have errors!
@@ -171,5 +171,131 @@ class mod_feedback_upgradelib_testcase extends advanced_testcase {
         $this->assertCount(1, $DB->get_records('feedback_completed')); // Number of records is the same.
         $record2 = $DB->get_record('feedback_completed', []);
         $this->assertEquals($record1, $record2);
+    }
+
+    public function test_upgrade_remove_duplicates_no_duplicates() {
+        global $DB;
+
+        $completed1 = $DB->insert_record('feedback_completed',
+            ['feedback' => $this->feedback->id, 'userid' => $this->user->id]);
+        $DB->insert_record('feedback_value',
+            ['completed' => $completed1, 'course_id' => $this->course1->id,
+                'item' => 1, 'value' => 1]);
+        $DB->insert_record('feedback_value',
+            ['completed' => $completed1, 'course_id' => $this->course1->id,
+                'item' => 2, 'value' => 2]);
+        $DB->insert_record('feedback_value',
+            ['completed' => $completed1, 'course_id' => $this->course1->id,
+                'item' => 3, 'value' => 1]);
+        $DB->insert_record('feedback_value',
+            ['completed' => $completed1, 'course_id' => $this->course2->id,
+                'item' => 3, 'value' => 2]);
+
+        $this->assertCount(1, $DB->get_records('feedback_completed'));
+        $this->assertEquals(4, $DB->count_records('feedback_value'));
+        mod_feedback_upgrade_delete_duplicate_values();
+        $this->assertCount(1, $DB->get_records('feedback_completed'));
+        $this->assertEquals(4, $DB->count_records('feedback_value')); // Same number of records, no changes made.
+    }
+
+    public function test_upgrade_remove_duplicates() {
+        global $DB;
+
+        // Remove the index that was added in the upgrade.php AFTER running mod_feedback_upgrade_delete_duplicate_values().
+        $dbman = $DB->get_manager();
+        $table = new xmldb_table('feedback_value');
+        $index = new xmldb_index('completed_item', XMLDB_INDEX_UNIQUE, array('completed', 'item', 'course_id'));
+        $dbman->drop_index($table, $index);
+
+        // Insert duplicated values.
+        $completed1 = $DB->insert_record('feedback_completed',
+            ['feedback' => $this->feedback->id, 'userid' => $this->user->id]);
+        $DB->insert_record('feedback_value',
+            ['completed' => $completed1, 'course_id' => $this->course1->id,
+                'item' => 1, 'value' => 1]);
+        $DB->insert_record('feedback_value',
+            ['completed' => $completed1, 'course_id' => $this->course1->id,
+                'item' => 1, 'value' => 2]); // This is a duplicate with another value.
+        $DB->insert_record('feedback_value',
+            ['completed' => $completed1, 'course_id' => $this->course1->id,
+                'item' => 3, 'value' => 1]);
+        $DB->insert_record('feedback_value',
+            ['completed' => $completed1, 'course_id' => $this->course2->id,
+                'item' => 3, 'value' => 2]); // This is not a duplicate because course id is different.
+
+        $this->assertCount(1, $DB->get_records('feedback_completed'));
+        $this->assertEquals(4, $DB->count_records('feedback_value'));
+        mod_feedback_upgrade_delete_duplicate_values(true); // Running script for temp tables.
+        $this->assertCount(1, $DB->get_records('feedback_completed'));
+        $this->assertEquals(4, $DB->count_records('feedback_value')); // Nothing changed.
+        mod_feedback_upgrade_delete_duplicate_values();
+        $this->assertCount(1, $DB->get_records('feedback_completed')); // Number of records is the same.
+        $this->assertEquals(3, $DB->count_records('feedback_value')); // Duplicate was deleted.
+        $this->assertEquals(1, $DB->get_field('feedback_value', 'value', ['item' => 1]));
+
+        $dbman->add_index($table, $index);
+    }
+
+    public function test_upgrade_remove_duplicates_no_duplicates_tmp() {
+        global $DB;
+
+        $completed1 = $DB->insert_record('feedback_completedtmp',
+            ['feedback' => $this->feedback->id, 'userid' => $this->user->id]);
+        $DB->insert_record('feedback_valuetmp',
+            ['completed' => $completed1, 'course_id' => $this->course1->id,
+                'item' => 1, 'value' => 1]);
+        $DB->insert_record('feedback_valuetmp',
+            ['completed' => $completed1, 'course_id' => $this->course1->id,
+                'item' => 2, 'value' => 2]);
+        $DB->insert_record('feedback_valuetmp',
+            ['completed' => $completed1, 'course_id' => $this->course1->id,
+                'item' => 3, 'value' => 1]);
+        $DB->insert_record('feedback_valuetmp',
+            ['completed' => $completed1, 'course_id' => $this->course2->id,
+                'item' => 3, 'value' => 2]);
+
+        $this->assertCount(1, $DB->get_records('feedback_completedtmp'));
+        $this->assertEquals(4, $DB->count_records('feedback_valuetmp'));
+        mod_feedback_upgrade_delete_duplicate_values(true);
+        $this->assertCount(1, $DB->get_records('feedback_completedtmp'));
+        $this->assertEquals(4, $DB->count_records('feedback_valuetmp')); // Same number of records, no changes made.
+    }
+
+    public function test_upgrade_remove_duplicates_tmp() {
+        global $DB;
+
+        // Remove the index that was added in the upgrade.php AFTER running mod_feedback_upgrade_delete_duplicate_values().
+        $dbman = $DB->get_manager();
+        $table = new xmldb_table('feedback_valuetmp');
+        $index = new xmldb_index('completed_item', XMLDB_INDEX_UNIQUE, array('completed', 'item', 'course_id'));
+        $dbman->drop_index($table, $index);
+
+        // Insert duplicated values.
+        $completed1 = $DB->insert_record('feedback_completedtmp',
+            ['feedback' => $this->feedback->id, 'userid' => $this->user->id]);
+        $DB->insert_record('feedback_valuetmp',
+            ['completed' => $completed1, 'course_id' => $this->course1->id,
+                'item' => 1, 'value' => 1]);
+        $DB->insert_record('feedback_valuetmp',
+            ['completed' => $completed1, 'course_id' => $this->course1->id,
+                'item' => 1, 'value' => 2]); // This is a duplicate with another value.
+        $DB->insert_record('feedback_valuetmp',
+            ['completed' => $completed1, 'course_id' => $this->course1->id,
+                'item' => 3, 'value' => 1]);
+        $DB->insert_record('feedback_valuetmp',
+            ['completed' => $completed1, 'course_id' => $this->course2->id,
+                'item' => 3, 'value' => 2]); // This is not a duplicate because course id is different.
+
+        $this->assertCount(1, $DB->get_records('feedback_completedtmp'));
+        $this->assertEquals(4, $DB->count_records('feedback_valuetmp'));
+        mod_feedback_upgrade_delete_duplicate_values(); // Running script for non-temp tables.
+        $this->assertCount(1, $DB->get_records('feedback_completedtmp'));
+        $this->assertEquals(4, $DB->count_records('feedback_valuetmp')); // Nothing changed.
+        mod_feedback_upgrade_delete_duplicate_values(true);
+        $this->assertCount(1, $DB->get_records('feedback_completedtmp')); // Number of records is the same.
+        $this->assertEquals(3, $DB->count_records('feedback_valuetmp')); // Duplicate was deleted.
+        $this->assertEquals(1, $DB->get_field('feedback_valuetmp', 'value', ['item' => 1]));
+
+        $dbman->add_index($table, $index);
     }
 }

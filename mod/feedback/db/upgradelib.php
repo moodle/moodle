@@ -56,9 +56,34 @@ function mod_feedback_upgrade_courseid($tmp = false) {
     }
 
     // Part 2. Update courseid in the completed table.
-    $sql = "UPDATE {feedback_completed$suffix} "
+    if ($DB->get_dbfamily() !== 'mysql') {
+        $sql = "UPDATE {feedback_completed$suffix} "
             . "SET courseid = (SELECT COALESCE(MIN(v.course_id), 0) "
             . "FROM {feedback_value$suffix} v "
             . "WHERE v.completed = {feedback_completed$suffix}.id)";
-    $DB->execute($sql);
+        $DB->execute($sql);
+    } else {
+        $sql = "UPDATE {feedback_completed$suffix} c, {feedback_value$suffix} v "
+            . "SET c.courseid = v.course_id "
+            . "WHERE v.completed = c.id AND v.course_id <> 0";
+        $DB->execute($sql);
+    }
+}
+
+/**
+ * Ensure tables feedback_value and feedback_valuetmp have unique entries for each pair (completed,item).
+ *
+ * @param bool $tmp use for temporary table
+ */
+function mod_feedback_upgrade_delete_duplicate_values($tmp = false) {
+    global $DB;
+    $suffix = $tmp ? 'tmp' : '';
+
+    $sql = "SELECT MIN(id) AS id, completed, item, course_id " .
+            "FROM {feedback_value$suffix} GROUP BY completed, item, course_id HAVING count(id)>1";
+    $records = $DB->get_records_sql($sql);
+    foreach ($records as $record) {
+        $DB->delete_records_select("feedback_value$suffix",
+            "completed = :completed AND item = :item AND course_id = :course_id AND id > :id", (array)$record);
+    }
 }

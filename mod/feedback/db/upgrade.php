@@ -75,7 +75,39 @@ function xmldb_feedback_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2016040100, 'feedback');
     }
 
-    if ($oldversion < 2016040300) {
+    if ($oldversion < 2016051103) {
+
+        // Define index completed_item (unique) to be added to feedback_value.
+        $table = new xmldb_table('feedback_value');
+        $index = new xmldb_index('completed_item', XMLDB_INDEX_UNIQUE, array('completed', 'item', 'course_id'));
+
+        // Conditionally launch add index completed_item.
+        if (!$dbman->index_exists($table, $index)) {
+            mod_feedback_upgrade_delete_duplicate_values();
+            $dbman->add_index($table, $index);
+        }
+
+        // Feedback savepoint reached.
+        upgrade_mod_savepoint(true, 2016051103, 'feedback');
+    }
+
+    if ($oldversion < 2016051104) {
+
+        // Define index completed_item (unique) to be added to feedback_valuetmp.
+        $table = new xmldb_table('feedback_valuetmp');
+        $index = new xmldb_index('completed_item', XMLDB_INDEX_UNIQUE, array('completed', 'item', 'course_id'));
+
+        // Conditionally launch add index completed_item.
+        if (!$dbman->index_exists($table, $index)) {
+            mod_feedback_upgrade_delete_duplicate_values(true);
+            $dbman->add_index($table, $index);
+        }
+
+        // Feedback savepoint reached.
+        upgrade_mod_savepoint(true, 2016051104, 'feedback');
+    }
+
+    if ($oldversion < 2016051105) {
 
         // Define field courseid to be added to feedback_completed.
         $table = new xmldb_table('feedback_completed');
@@ -84,6 +116,8 @@ function xmldb_feedback_upgrade($oldversion) {
         // Conditionally launch add field courseid.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
+            // Run upgrade script to fill the new field courseid with the data from feedback_value table.
+            mod_feedback_upgrade_courseid(false);
         }
 
         // Define field courseid to be added to feedback_completedtmp.
@@ -93,6 +127,8 @@ function xmldb_feedback_upgrade($oldversion) {
         // Conditionally launch add field courseid.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
+            // Run upgrade script to fill the new field courseid with the data from feedback_valuetmp table.
+            mod_feedback_upgrade_courseid(true);
         }
 
         // Define table feedback_tracking to be dropped.
@@ -103,12 +139,8 @@ function xmldb_feedback_upgrade($oldversion) {
             $dbman->drop_table($table);
         }
 
-        // Run upgrade script to fill the new field courseid with the data from feedback_value* tables.
-        mod_feedback_upgrade_courseid(false);
-        mod_feedback_upgrade_courseid(true);
-
         // Feedback savepoint reached.
-        upgrade_mod_savepoint(true, 2016040300, 'feedback');
+        upgrade_mod_savepoint(true, 2016051105, 'feedback');
     }
 
     return true;
