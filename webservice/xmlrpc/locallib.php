@@ -78,16 +78,15 @@ class webservice_xmlrpc_server extends webservice_base_server {
 
         // Decode the request to get the decoded parameters and the name of the method to be called.
         $decodedparams = xmlrpc_decode_request($rawpostdata, $methodname);
+        $methodinfo = external_api::external_function_info($methodname);
+        $methodparams = array_keys($methodinfo->parameters_desc->keys);
 
         // Add the decoded parameters to the methodvariables array.
         if (is_array($decodedparams)) {
-            foreach ($decodedparams as $param) {
-                // Check if decoded param is an associative array.
-                if (is_array($param) && array_keys($param) !== range(0, count($param) - 1)) {
-                    $methodvariables = array_merge($methodvariables, $param);
-                } else {
-                    $methodvariables[] = $param;
-                }
+            foreach ($decodedparams as $index => $param) {
+                // See MDL-53962 - XML-RPC requests will usually be sent as an array (as in, one with indicies).
+                // We need to use a bit of "magic" to add the correct index back. Zend used to do this for us.
+                $methodvariables[$methodparams[$index]] = $param;
             }
         }
 
