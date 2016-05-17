@@ -1,6 +1,6 @@
 @mod @mod_lti
 Feature: Configure tool types
-  In order to allow teachers to add LTI tools
+  In order to allow teachers to add external LTI tools
   As an admin
   I need to be able to add, remove and configure tool types
 
@@ -17,7 +17,7 @@ Feature: Configure tool types
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "admin"
-    And I navigate to "Manage tools" node in "Site administration > Plugins > Activity modules > LTI"
+    And I navigate to "Manage tools" node in "Site administration > Plugins > Activity modules > External tool"
 
   @javascript
   Scenario: Add a tool type from a cartridge URL

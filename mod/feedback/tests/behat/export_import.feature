@@ -28,7 +28,7 @@ Feature: Exporting and importing feedbacks
     And I add a "Information" question to the feedback with:
       | Question         | this is an information question |
       | Label            | info                            |
-      | Information-Type | Course                          |
+      | Information type | Course                          |
     And I add a "Label" question to the feedback with:
       | Contents | label text |
     And I add a "Longer text answer" question to the feedback with:

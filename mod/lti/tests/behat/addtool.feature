@@ -15,12 +15,12 @@ Feature: Add tools
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "admin"
-    And I navigate to "Manage tools" node in "Site administration > Plugins > Activity modules > LTI"
+    And I navigate to "Manage tools" node in "Site administration > Plugins > Activity modules > External tool"
     And I follow "Manage preconfigured tools"
     And I follow "Add preconfigured tool"
     And I set the following fields to these values:
       | Tool name | Teaching Tool 1 |
-    And I set the field "Tool base URL/Cartridge URL" to local url "/mod/lti/tests/fixtures/tool_provider.html"
+    And I set the field "Tool base URL/cartridge URL" to local url "/mod/lti/tests/fixtures/tool_provider.html"
     And I press "Save changes"
     And I log out
 

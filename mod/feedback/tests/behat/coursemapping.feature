@@ -41,7 +41,7 @@ Feature: Mapping courses in a feedback
     And I add a "Information" question to the feedback with:
       | Question         | this is an information question |
       | Label            | info                            |
-      | Information-Type | Course                          |
+      | Information type | Course                          |
     And I add a "Multiple choice (rated)" question to the feedback with:
       | Question               | this is a multiple choice rated    |
       | Label                  | multichoicerated                   |
