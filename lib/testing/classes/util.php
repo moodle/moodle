@@ -1106,6 +1106,7 @@ abstract class testing_util {
         $dbtype = $CFG->dbtype;
         $dbinfo = $DB->get_server_info();
         $dbversion = $dbinfo['version'];
+        $env['dbtype'] = $dbtype;
         $env['dbversion'] = $dbversion;
 
         // OS details.
