@@ -103,9 +103,9 @@ class company_user {
             set_user_preference('create_password', 1, $user->id);
             $user->newpassword = generate_password();
             if (!empty($CFG->iomad_email_senderisreal)) {
-                EmailTemplate::send('user_create', array('user' => $user, 'sender' => $USER));
+                EmailTemplate::send('user_create', array('user' => $user, 'sender' => $USER, 'due' => $data->due));
             } else if (is_siteadmin($USER->id)) {
-                EmailTemplate::send('user_create', array('user' => $user,));
+                EmailTemplate::send('user_create', array('user' => $user, 'due' => $data->due));
             } else {
                 EmailTemplate::send('user_create',
                                      array('user' => $user,

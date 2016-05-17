@@ -119,6 +119,7 @@ class EmailTemplate {
         $user = array_key_exists('user', $options) ? $options['user'] : null;
         $course = array_key_exists('course', $options) ? $options['course'] : null;
         $this->invoice = array_key_exists('invoice', $options) ? $options['invoice'] : null;
+        $this->due = array_key_exists('due', $options) ? $options['due'] : time();
         $sender = array_key_exists('sender', $options) ? $options['sender'] : null;
         $approveuser = array_key_exists('approveuser', $options) ? $options['approveuser'] : null;
         $event = array_key_exists('event',$options) ? $options['event'] : null;
@@ -217,6 +218,7 @@ class EmailTemplate {
             $email->body = $this->body();
             $email->varsreplaced = 1;
             $email->userid = $this->user->id;
+            $email->due = $this->due;
             if ($this->course) {
                 $email->courseid = $this->course->id;
             }

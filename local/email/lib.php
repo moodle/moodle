@@ -23,10 +23,12 @@ function email_cron() {
 
     // Delete emails older than 6 months to prevent the email table from clogging up the database.
     $halfyearagoish = time() - 6 * 30 * 24 * 60 * 60;
-    $DB->delete_records_select('email', "modifiedtime < $halfyearagoish");
+    $now = time();
+    $DB->delete_records_select('email', "modifiedtime < $halfyearagoish AND due < $now");
 
     // Send emails.
-    if ($emails = $DB->get_records('email', array('sent' => null), null, '*')) {
+echo "Processign email cron\n";
+    if ($emails = $DB->get_records_select('email', "sent IS NULL AND due < $now")) {
         foreach ($emails as $email) {
             EmailTemplate::send_to_user($email);
             // Adding a sleep to ensure there is no processing confusion.

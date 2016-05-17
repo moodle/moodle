@@ -179,6 +179,9 @@ class company_course_users_form extends moodleform {
                             get_string('company_users_for', 'block_iomad_company_admin',
                             $this->course->fullname ));
 
+        $mform->addElement('date_time_selector', 'due', get_string('senddate', 'block_iomad_company_admin'));
+        $mform->addHelpButton('due', 'senddate', 'block_iomad_company_admin');
+
         $mform->addElement('html', '<table summary="" class="companycourseuserstable'.
                                    ' addremovetable generaltable generalbox'.
                                    ' boxaligncenter" cellspacing="0">
@@ -232,11 +235,18 @@ class company_course_users_form extends moodleform {
                     }
 
                     if ($allow) {
+                        $due = optional_param_array('due', array(), PARAM_INT);
+                        if (!empty($due)) {
+                            $duedate = strtotime($due['year'] . '-' . $due['month'] . '-' . $due['day'] . ' ' . $due['hour'] . ':' . $due['minute']);
+                        } else {
+                            $duedate = 0;
+                        }
                         company_user::enrol($adduser, array($this->course->id),
                                                             $this->selectedcompany);
                         EmailTemplate::send('user_added_to_course',
                                              array('course' => $this->course,
-                                                   'user' => $adduser));
+                                                   'user' => $adduser,
+                                                   'due' => $duedate));
                     }
                 }
 

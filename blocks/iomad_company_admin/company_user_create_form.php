@@ -137,6 +137,10 @@ class user_edit_form extends company_moodleform {
         $mform->setDefault('sendnewpasswordemails', 1);
         $mform->disabledIf('sendnewpasswordemails', 'newpassword', 'eq', '');
 
+        $mform->addElement('date_time_selector', 'due', get_string('senddate', 'block_iomad_company_admin'));
+        $mform->disabledIf('due', 'sendnewpasswordemails', 'eq', '0');
+        $mform->addHelpButton('due', 'senddate', 'block_iomad_company_admin');
+
         // Deal with company optional fields.
         $mform->addElement('header', 'category_id', format_string(get_string('companyprofilefields', 'block_iomad_company_admin')));
         // Department drop down.
@@ -455,7 +459,7 @@ if ($data = $mform->get_data()) {
     // Enrol the user on the courses.
     if (!empty($createcourses)) {
         $userdata = $DB->get_record('user', array('id' => $userid));
-        company_user::enrol($userdata, $createcourses, $companyid);
+        company_user::enrol($userdata, $createcourses, $companyid, $data->due);
     }
     // Assign and licenses.
     if (!empty($data->licensecourses)) {
@@ -485,6 +489,7 @@ if ($data = $mform->get_data()) {
             $license->valid = date('d M Y', $licenserecord['expirydate']);
             EmailTemplate::send('license_allocated', array('course' => $licensecourse,
                                                            'user' => $userdata,
+                                                           'due' => $data->due,
                                                            'license' => $license));
         }
 

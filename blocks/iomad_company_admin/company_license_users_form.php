@@ -153,6 +153,10 @@ class company_license_users_form extends moodleform {
             $mform->addElement('html', '('.($this->license->allocation - $this->license->used).' / '.
             $this->license->allocation.get_string('licensetotal', 'block_iomad_company_admin').')');
         }
+
+        $mform->addElement('date_time_selector', 'due', get_string('senddate', 'block_iomad_company_admin'));
+        $mform->addHelpButton('due', 'senddate', 'block_iomad_company_admin');
+
         $mform->addElement('html', '<table summary=""
                                      class="companycourseuserstable addremovetable generaltable generalbox boxaligncenter"
                                      cellspacing="0">
@@ -233,12 +237,19 @@ class company_license_users_form extends moodleform {
                                 $count++;
                             }
                         }
+                        $due = optional_param_array('due', array(), PARAM_INT);
+                        if (!empty($due)) {
+                            $duedate = strtotime($due['year'] . '-' . $due['month'] . '-' . $due['day'] . ' ' . $due['hour'] . ':' . $due['minute']);
+                        } else {
+                            $duedate = 0;
+                        }
                         // Create an email event.
                         $license = new stdclass();
                         $license->length = $licenserecord['validlength'];
                         $license->valid = date('d M Y', $licenserecord['expirydate']);
                         EmailTemplate::send('license_allocated', array('course' => $course,
                                                                        'user' => $adduser,
+                                                                       'due' => $duedate,
                                                                        'license' => $license));
                     }
                 }

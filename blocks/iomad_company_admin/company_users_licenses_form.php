@@ -130,6 +130,9 @@ class company_users_course_form extends moodleform {
 
         $mform->addElement('html', '<h4>' . get_string('user_courses_for', 'block_iomad_company_admin', fullname($this->user)) . '</h4>');
 
+        $mform->addElement('date_time_selector', 'due', get_string('senddate', 'block_iomad_company_admin'));
+        $mform->addHelpButton('due', 'senddate', 'block_iomad_company_admin');
+
         $mform->addElement('html', '<table summary=""
                                     class="companycourseuserstable addremovetable generaltable generalbox boxaligncenter"
                                     cellspacing="0"
@@ -184,6 +187,12 @@ class company_users_course_form extends moodleform {
                     if ($licenserecord['used'] + count($coursestoassign) > $licenserecord['allocation']) {
                         echo "<div class='mform'><span class='error'>" . get_string('triedtoallocatetoomanylicenses', 'block_iomad_company_admin') . "</span></div>";
                     } else {
+                        $due = optional_param_array('due', array(), PARAM_INT);
+                        if (!empty($due)) {
+                            $duedate = strtotime($due['year'] . '-' . $due['month'] . '-' . $due['day'] . ' ' . $due['hour'] . ':' . $due['minute']);
+                        } else {
+                            $duedate = 0;
+                        }
                         foreach ($coursestoassign as $addcourse) {
                             $DB->insert_record('companylicense_users',
                                                array('userid' => $this->userid,
@@ -196,6 +205,7 @@ class company_users_course_form extends moodleform {
                             $license->valid = date('d M Y', $licenserecord['expirydate']);
                             EmailTemplate::send('license_allocated', array('course' => $addcourse,
                                                                            'user' => $this->user,
+                                                                           'due' => $duedate,
                                                                            'license' => $license));
                             $licenserecord['used'] = $DB->count_records('companylicense_users', array('licenseid' => $licenserecord['id']));
                             $DB->update_record('companylicense', $licenserecord);

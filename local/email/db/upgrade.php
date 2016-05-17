@@ -128,6 +128,21 @@ function xmldb_local_email_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2012092600, 'local', 'email');
     }
 
+    if ($oldversion < 2016051601) {
+
+        // Define field due to be added to email.
+        $table = new xmldb_table('email');
+        $field = new xmldb_field('due', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0', 'headers');
+
+        // Conditionally launch add field due.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Email savepoint reached.
+        upgrade_plugin_savepoint(true, 2016051601, 'local', 'email');
+    }
+
     return $result;
 
 }

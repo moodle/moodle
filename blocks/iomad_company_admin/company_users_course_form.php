@@ -107,6 +107,8 @@ class company_users_course_form extends moodleform {
 
         $company = new company($this->selectedcompany);
         $mform->addElement('header', 'header', get_string('user_courses_for', 'block_iomad_company_admin', fullname($this->user)));
+        $mform->addElement('date_time_selector', 'due', get_string('senddate', 'block_iomad_company_admin'));
+        $mform->addHelpButton('due', 'senddate', 'block_iomad_company_admin');
 
         $mform->addElement('html', '<table summary=""
                                     class="companycourseuserstable addremovetable generaltable generalbox boxaligncenter"
@@ -156,8 +158,14 @@ class company_users_course_form extends moodleform {
                     $allow = true;
 
                     if ($allow) {
-                        company_user::enrol($this->user, array($addcourse->id), $this->selectedcompany);
-                        EmailTemplate::send('user_added_to_course', array('course' => $addcourse, 'user' => $this->user));
+                        $due = optional_param_array('due', array(), PARAM_INT);
+                        if (!empty($due)) {
+                            $duedate = strtotime($due['year'] . '-' . $due['month'] . '-' . $due['day'] . ' ' . $due['hour'] . ':' . $due['minute']);
+                        } else {
+                            $duedate = 0;
+                        }
+                        company_user::enrol($this->user, array($addcourse->id));
+                        EmailTemplate::send('user_added_to_course', array('course' => $addcourse, 'user' => $this->user, 'due' => $duedate));
                     }
                 }
 
