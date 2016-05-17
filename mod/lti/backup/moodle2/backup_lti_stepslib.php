@@ -133,6 +133,17 @@ class backup_lti_activity_structure_step extends backup_activity_structure_step 
             )
         );
 
+        $ltisubmissions = new backup_nested_element('ltisubmissions');
+        $ltisubmission = new backup_nested_element('ltisubmission', array('id'), array(
+            'userid',
+            'datesubmitted',
+            'dateupdated',
+            'gradepercent',
+            'originalgrade',
+            'launchid',
+            'state'
+        ));
+
         // Build the tree
         $lti->add_child($ltitype);
         $ltitype->add_child($ltitypesconfigs);
@@ -141,6 +152,8 @@ class backup_lti_activity_structure_step extends backup_activity_structure_step 
         $ltitype->add_child($ltitoolproxy);
         $ltitoolproxy->add_child($ltitoolsettings);
         $ltitoolsettings->add_child($ltitoolsetting);
+        $lti->add_child($ltisubmissions);
+        $ltisubmissions->add_child($ltisubmission);
 
         // Define sources.
         $ltirecord = $DB->get_record('lti', ['id' => $this->task->get_activityid()]);
@@ -173,9 +186,15 @@ class backup_lti_activity_structure_step extends backup_activity_structure_step 
             $ltitoolproxy->set_source_array([]);
         }
 
+        // All the rest of elements only happen if we are including user info.
+        if ($userinfo) {
+            $ltisubmission->set_source_table('lti_submission', array('ltiid' => backup::VAR_ACTIVITYID));
+        }
+
         // Define id annotations
         $ltitype->annotate_ids('user', 'createdby');
         $ltitype->annotate_ids('course', 'course');
+        $ltisubmission->annotate_ids('user', 'userid');
 
         // Define file annotations.
         $lti->annotate_files('mod_lti', 'intro', null); // This file areas haven't itemid.
