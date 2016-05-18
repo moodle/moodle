@@ -2671,6 +2671,36 @@ class calendar_event {
             return false;
         }
     }
+
+    /**
+     * Format the text using the external API.
+     * This function should we used when text formatting is required in external functions.
+     *
+     * @return array an array containing the text formatted and the text format
+     */
+    public function format_external_text() {
+
+        if ($this->editorcontext === null) {
+            // Switch on the event type to decide upon the appropriate context to use for this event.
+            $this->editorcontext = $this->properties->context;
+
+            if ($this->properties->eventtype != 'user' && $this->properties->eventtype != 'course'
+                    && $this->properties->eventtype != 'site' && $this->properties->eventtype != 'group') {
+                // We don't have a context here, do a normal format_text.
+                return array(format_text($this->properties->description, $this->properties->format), $this->properties->format);
+            }
+        }
+
+        // Work out the item id for the editor, if this is a repeated event then the files will be associated with the original.
+        if (!empty($this->properties->repeatid) && $this->properties->repeatid > 0) {
+            $itemid = $this->properties->repeatid;
+        } else {
+            $itemid = $this->properties->id;
+        }
+
+        return external_format_text($this->properties->description, $this->properties->format, $this->editorcontext->id,
+                                    'calendar', 'event_description', $itemid);
+    }
 }
 
 /**
