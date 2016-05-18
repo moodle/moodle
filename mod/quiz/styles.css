@@ -1,3 +1,4 @@
+/*csslint important:false */
 /** Bits that can appear on any page. */
 .path-mod-quiz .statedetails {
     display: block;
@@ -125,7 +126,6 @@ body.jsenabled .questionflagcheckbox {
     border: 1px solid #bbb;
     background: #ddd;
     text-align: center;
-    vertical-align: middle;
     line-height: 1.5em;
     font-weight: bold;
     text-decoration: none;
@@ -847,7 +847,6 @@ table.quizreviewsummary td.cell {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    word-break: break-word;
     width: 70%;
     display: inline-block;
     height: 20px;
