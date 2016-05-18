@@ -1918,24 +1918,35 @@ function html_to_text($html, $width = 75, $dolinks = true) {
 }
 
 /**
- * Converts content introduced in an editor to plain text.
+ * Converts texts or strings to plain text.
+ *
+ * - When used to convert user input introduced in an editor the text format needs to be passed in $contentformat like we usually
+ *   do in format_text.
+ * - When this function is used for strings that are usually passed through format_string before displaying them
+ *   we need to set $contentformat to false. This will execute html_to_text as these strings can contain multilang tags if
+ *   multilang filter is applied to headings.
  *
  * @param string $content The text as entered by the user
- * @param int $contentformat The text format: FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN or FORMAT_MARKDOWN
+ * @param int|false $contentformat False for strings or the text format: FORMAT_MOODLE/FORMAT_HTML/FORMAT_PLAIN/FORMAT_MARKDOWN
  * @return string Plain text.
  */
 function content_to_text($content, $contentformat) {
 
     switch ($contentformat) {
         case FORMAT_PLAIN:
-            return $content;
+            // Nothing here.
+            break;
         case FORMAT_MARKDOWN:
-            $html = markdown_to_html($content);
-            return html_to_text($html, 75, false);
+            $content = markdown_to_html($content);
+            $content = html_to_text($content, 75, false);
+            break;
         default:
-            // FORMAT_HTML and FORMAT_MOODLE.
-            return html_to_text($content, 75, false);
+            // FORMAT_HTML, FORMAT_MOODLE and $contentformat = false, the later one are strings usually formatted through
+            // format_string, we need to convert them from html because they can contain HTML (multilang filter).
+            $content = html_to_text($content, 75, false);
     }
+
+    return trim($content, "\r\n ");
 }
 
 /**

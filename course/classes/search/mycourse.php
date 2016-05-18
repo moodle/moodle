@@ -70,7 +70,7 @@ class mycourse extends \core_search\area\base {
         }
         // Prepare associative array with data from DB.
         $doc = \core_search\document_factory::instance($record->id, $this->componentname, $this->areaname);
-        $doc->set('title', $record->fullname);
+        $doc->set('title', content_to_text($record->fullname, false));
         $doc->set('content', content_to_text($record->summary, $record->summaryformat));
         $doc->set('contextid', $context->id);
         $doc->set('courseid', $record->id);
