@@ -26,7 +26,7 @@ Feature: Add preconfigured tools via teacher interface
     And I follow "Edit settings" in the open menu
     And I set the field "Launch/Cartridge URL" to local url "/mod/lti/tests/fixtures/ims_cartridge_basic_lti_link.xml"
     And I press "Save and return to course"
-    And I open "Example tool" actions menu
+    And I open "Test tool activity 1" actions menu
     And I follow "Edit settings" in the open menu
     And I expand all fieldsets
     Then the field "Launch/Cartridge URL" matches value "http://www.example.com/lti/provider.php"
