@@ -272,6 +272,97 @@ class core_rating_testcase extends advanced_testcase {
         $this->assertNull($result[0]->rating->rating);
         $this->assertEquals($result[0]->rating->aggregate, 3); // Should still get the aggregate.
     }
+
+    /**
+     * Data provider for get_aggregate_string tests.
+     *
+     * @return array
+     */
+    public function get_aggregate_string_provider() {
+        return [
+            'Non-numeric aggregate produces empty string' => [
+                RATING_AGGREGATE_NONE,
+                'string',
+                null,
+                ['Foo', 'Bar'],
+                '',
+            ],
+            'Aggregate count produces empty string' => [
+                RATING_AGGREGATE_COUNT,
+                0,
+                null,
+                ['Foo', 'Bar'],
+                '',
+            ],
+            'Numeric SUM with non-numeric scale produces returns original value' => [
+                RATING_AGGREGATE_SUM,
+                10,
+                false,
+                ['Foo', 'Bar'],
+                '10',
+            ],
+            'Numeric SUM with non-numeric scale produces returns rounded value' => [
+                RATING_AGGREGATE_SUM,
+                10.45,
+                false,
+                ['Foo', 'Bar'],
+                '10.5',
+            ],
+            'Numeric SUM with numeric scale produces returns rounded value' => [
+                RATING_AGGREGATE_SUM,
+                10.45,
+                true,
+                ['Foo', 'Bar'],
+                '10.5',
+            ],
+            'Numeric AVERAGE with numeric scale produces returns rounded value' => [
+                RATING_AGGREGATE_AVERAGE,
+                10.45,
+                true,
+                ['Foo', 'Bar'],
+                '10.5',
+            ],
+            'Numeric AVERAGE with non-numeric scale produces returns indexed value (0)' => [
+                RATING_AGGREGATE_AVERAGE,
+                0,
+                false,
+                ['Foo', 'Bar'],
+                'Foo',
+            ],
+            'Numeric AVERAGE with non-numeric scale produces returns indexed value (1)' => [
+                RATING_AGGREGATE_AVERAGE,
+                1,
+                false,
+                ['Foo', 'Bar'],
+                'Bar',
+            ],
+        ];
+    }
+
+    /**
+     * Test the value returned by get_aggregate_string().
+     *
+     * @dataProvider get_aggregate_string_provider
+     */
+    public function test_get_aggregate_string($method, $aggregate, $isnumeric, $scaleitems, $expectation) {
+        $options = new stdClass();
+        $options->aggregate = $aggregate;
+        $options->context = null;
+        $options->component = null;
+        $options->ratingarea = null;
+        $options->itemid = null;
+        $options->scaleid = null;
+        $options->userid = null;
+
+        $options->settings = new stdClass();
+        $options->settings->aggregationmethod = $method;
+        $options->settings->scale = new stdClass();
+        $options->settings->scale->isnumeric = $isnumeric;
+        $options->settings->scale->scaleitems = $scaleitems;
+
+        $rating = new rating($options);
+        $this->assertEquals($expectation, $rating->get_aggregate_string());
+    }
 }
 
 /**
