@@ -241,6 +241,9 @@ class core_calendar_external extends external_api {
 
         foreach ($eventlist as $eventid => $eventobj) {
             $event = (array) $eventobj;
+            // Description formatting.
+            $calendareventobj = new calendar_event($event);
+            list($event['description'], $event['format']) = $calendareventobj->format_external_text();
 
             if ($hassystemcap) {
                 // User can see everything, no further check is needed.
