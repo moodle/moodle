@@ -724,19 +724,16 @@ function upgrade_course_letter_boundary($courseid = null) {
         // but have not altered the course letter boundary configuration. These courses are definitely affected.
 
         $sql = "SELECT DISTINCT c.id AS courseid
-                  FROM {grade_items} gi
-                  JOIN {course} c ON c.id = gi.courseid
+                  FROM {course} c
+                  JOIN {grade_items} gi ON c.id = gi.courseid
+                  JOIN {context} ctx ON ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel
              LEFT JOIN {grade_settings} gs ON gs.courseid = c.id AND gs.name = 'displaytype'
-             LEFT JOIN (SELECT DISTINCT c.id
-                          FROM {grade_letters} gl
-                          JOIN {context} ctx ON gl.contextid = ctx.id
-                          JOIN {course} c ON ctx.instanceid = c.id
-                         WHERE ctx.contextlevel = :contextlevel) gl ON gl.id = c.id
-                 WHERE (gi.display = 0 AND (gs.value is NULL))
+             LEFT JOIN {grade_letters} gl ON gl.contextid = ctx.id
+                 WHERE gi.display = 0 AND (gs.value is NULL)
                  AND gl.id is NULL $coursesql";
         $affectedcourseids = $DB->get_recordset_sql($sql, $params);
         foreach ($affectedcourseids as $courseid) {
-            set_config('gradebook_calculations_freeze_' . $courseid->courseid, 20160516);
+            set_config('gradebook_calculations_freeze_' . $courseid->courseid, 20160518);
         }
         $affectedcourseids->close();
 
@@ -745,29 +742,24 @@ function upgrade_course_letter_boundary($courseid = null) {
     if ($systemletters || $systemneedsfreeze) {
 
         // If the system letter boundary is okay proceed to check grade item and course grade display settings.
-        $params['contextlevel2'] = CONTEXT_COURSE;
         $sql = "SELECT DISTINCT c.id AS courseid, $contextselect
                   FROM {course} c
                   JOIN {context} ctx ON ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel
                   JOIN {grade_items} gi ON c.id = gi.courseid
              LEFT JOIN {grade_settings} gs ON c.id = gs.courseid AND gs.name = 'displaytype'
-             LEFT JOIN (SELECT DISTINCT c.id
-                          FROM {grade_letters} gl
-                          JOIN {context} ctx ON gl.contextid = ctx.id
-                          JOIN {course} c ON ctx.instanceid = c.id
-                         WHERE ctx.contextlevel = :contextlevel2) gl ON gl.id = c.id
-                 WHERE (gi.display IN (3, 13, 23, 31, 32)
+             LEFT JOIN {grade_letters} gl ON gl.contextid = ctx.id
+                 WHERE gi.display IN (3, 13, 23, 31, 32)
                     OR (" . $DB->sql_compare_text('gs.value') . " IN ('3', '13', '23', '31', '32'))
-                    OR gl.id is NOT NULL)
+                    OR gl.id is NOT NULL
                        $coursesql";
     } else {
 
         // There is no site setting for letter grades. Just check the modified letter boundaries.
         $sql = "SELECT DISTINCT c.id AS courseid, $contextselect
-              FROM {grade_letters} l, {course} c
-              JOIN {context} ctx ON ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel
-             WHERE l.contextid = ctx.id
-               AND ctx.instanceid = c.id
+                  FROM {grade_letters} l, {course} c
+                  JOIN {context} ctx ON ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel
+                 WHERE l.contextid = ctx.id
+                   AND ctx.instanceid = c.id
                    $coursesql";
     }
 
@@ -785,7 +777,7 @@ function upgrade_course_letter_boundary($courseid = null) {
             if (upgrade_letter_boundary_needs_freeze($coursecontext)) {
                 // We have a course with a possible score standardisation problem. Flag for freeze.
                 // Flag this course as being frozen.
-                set_config('gradebook_calculations_freeze_' . $value->courseid, 20160511);
+                set_config('gradebook_calculations_freeze_' . $value->courseid, 20160518);
             }
         }
     }

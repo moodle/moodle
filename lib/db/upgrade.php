@@ -4646,7 +4646,7 @@ function xmldb_main_upgrade($oldversion) {
     if ($oldversion < 2015111604.07) {
         // This script is included in each major version upgrade process (3.0, 3.1) so make sure we don't run it twice.
         if (empty($CFG->upgrade_letterboundarycourses)) {
-            // MDL-21746. If a grade is being displayed with letters and the grade boundaries are not being adhered to properly
+            // MDL-45390. If a grade is being displayed with letters and the grade boundaries are not being adhered to properly
             // then this course will also be frozen.
             // If the changes are accepted then the display of some grades may change.
             // This is here to freeze the gradebook in affected courses.
