@@ -2508,6 +2508,10 @@ function lti_load_type_from_cartridge($url, $type) {
             "secure_icon_url" => "lti_secureicon"
         )
     );
+    // If an activity name exists, unset the cartridge name so we don't override it.
+    if (isset($type->lti_typename)) {
+        unset($toolinfo['lti_typename']);
+    }
     foreach ($toolinfo as $property => $value) {
         $type->$property = $value;
     }
@@ -2534,6 +2538,10 @@ function lti_load_tool_from_cartridge($url, $lti) {
             "secure_icon_url" => "secureicon"
         )
     );
+    // If an activity name exists, unset the cartridge name so we don't override it.
+    if (isset($lti->name)) {
+        unset($toolinfo['name']);
+    }
     foreach ($toolinfo as $property => $value) {
         $lti->$property = $value;
     }
