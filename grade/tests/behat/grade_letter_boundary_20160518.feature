@@ -9,7 +9,7 @@ Feature: We can customise the letter boundary of a course.
     Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And gradebook calculations for the course "C1" are frozen at version "20160511"
+    And gradebook calculations for the course "C1" are frozen at version "20160518"
     And the following "users" exist:
       | username | firstname | lastname | email | idnumber | alternatename |
       | teacher1 | Teacher | 1 | teacher1@example.com | t1 | Terry         |

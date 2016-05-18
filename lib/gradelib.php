@@ -862,7 +862,7 @@ function grade_format_gradevalue_letter($value, $grade_item) {
     $gradebookcalculationsfreeze = 'gradebook_calculations_freeze_' . $grade_item->courseid;
 
     foreach ($letters as $boundary => $letter) {
-        if (property_exists($CFG, $gradebookcalculationsfreeze) && (int)$CFG->{$gradebookcalculationsfreeze} <= 20160511) {
+        if (property_exists($CFG, $gradebookcalculationsfreeze) && (int)$CFG->{$gradebookcalculationsfreeze} <= 20160518) {
             // Do nothing.
         } else {
             // The boundary is a percentage out of 100 so use 0 as the min and 100 as the max.
