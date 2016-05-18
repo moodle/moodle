@@ -2268,6 +2268,76 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test for mod_assign_external::list_participants().
+     *
+     * @throws coding_exception
+     */
+    public function test_list_participants_user_info_with_special_characters() {
+        global $CFG, $DB;
+        $this->resetAfterTest(true);
+        $CFG->showuseridentity = 'idnumber,email,phone1,phone2,department,institution';
+
+        $data = $this->create_assign_with_student_and_teacher();
+        $assignment = $data['assign'];
+        $teacher = $data['teacher'];
+
+        // Set data for student info that contain special characters.
+        $student = $data['student'];
+        $student->idnumber = '<\'"1am@wesome&c00l"\'>';
+        $student->phone1 = '+63 (999) 888-7777';
+        $student->phone2 = '(011) [15]4-123-4567';
+        $student->department = 'Arts & Sciences & \' " ¢ £ © € ¥ ® < >';
+        $student->institution = 'University of Awesome People & \' " ¢ £ © € ¥ ® < >';
+        // Assert that we have valid user data.
+        $this->assertTrue(core_user::validate($student));
+        // Update the user record.
+        $DB->update_record('user', $student);
+
+        $this->setUser($teacher);
+        $participants = mod_assign_external::list_participants($assignment->id, 0, '', 0, 0);
+        $this->assertCount(1, $participants);
+
+        // Asser that we have a valid response data.
+        $response = external_api::clean_returnvalue(mod_assign_external::list_participants_returns(), $participants);
+        $this->assertEquals($response, $participants);
+
+        // Check participant data.
+        $participant = $participants[0];
+        $this->assertEquals($student->idnumber, $participant['idnumber']);
+        $this->assertEquals($student->email, $participant['email']);
+        $this->assertEquals($student->phone1, $participant['phone1']);
+        $this->assertEquals($student->phone2, $participant['phone2']);
+        $this->assertEquals($student->department, $participant['department']);
+        $this->assertEquals($student->institution, $participant['institution']);
+    }
+
+    /**
+     * Test for the type of the user-related properties in mod_assign_external::list_participants_returns().
+     *
+     * @throws coding_exception
+     */
+    public function test_list_participants_returns_user_property_types() {
+        // User properties defined in list_participants_returns().
+        $userproperties = [
+            'id', 'username', 'firstname', 'lastname', 'idnumber', 'email', 'address', 'phone1', 'phone2', 'icq', 'skype', 'yahoo',
+            'aim', 'msn', 'department', 'institution', 'firstaccess', 'lastaccess', 'description', 'descriptionformat', 'city',
+            'url', 'country'
+        ];
+        $returns = mod_assign_external::list_participants_returns();
+        $this->assertTrue(isset($returns->content));
+        $keydescs = $returns->content->keys;
+        // Get properties from returns description.
+        $keys = array_keys($keydescs);
+        foreach ($userproperties as $property) {
+            // Assert that the property exists in the returns description.
+            $this->assertContains($property, $keys);
+            // Assert that user-related property types match those of the defined in core_user.
+            $desc = $keydescs[$property];
+            $this->assertEquals(core_user::get_property_type($property), $desc->type);
+        }
+    }
+
+    /**
      * Create a a course, assignment module instance, student and teacher and enrol them in
      * the course.
      *
