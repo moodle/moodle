@@ -4372,6 +4372,17 @@ class core_renderer_cli extends core_renderer {
      * footer method to prevent the default footer.
      */
     public function footer() {}
+
+    /**
+     * Render a notification (that is, a status message about something that has
+     * just happened).
+     *
+     * @param \core\output\notification $notification the notification to print out
+     * @return string plain text output
+     */
+    public function render_notification(\core\output\notification $notification) {
+        return $this->notification($notification->get_message(), $notification->get_message_type());
+    }
 }
 
 

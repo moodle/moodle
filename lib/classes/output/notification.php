@@ -158,6 +158,24 @@ class notification implements \renderable, \templatable {
     }
 
     /**
+     * Get the message for this notification.
+     *
+     * @return string message
+     */
+    public function get_message() {
+        return $this->message;
+    }
+
+    /**
+     * Get the message type for this notification.
+     *
+     * @return string message type
+     */
+    public function get_message_type() {
+        return $this->messagetype;
+    }
+
+    /**
      * Export this data so it can be used as the context for a mustache template.
      *
      * @param renderer_base $output typically, the renderer that's calling this function
