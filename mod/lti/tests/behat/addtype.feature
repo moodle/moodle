@@ -24,12 +24,12 @@ Feature: Add preconfigured tools via teacher interface
       | Activity name | Test tool activity 1 |
     And I open "Test tool activity 1" actions menu
     And I follow "Edit settings" in the open menu
-    And I set the field "Launch/Cartridge URL" to local url "/mod/lti/tests/fixtures/ims_cartridge_basic_lti_link.xml"
+    And I set the field "Launch/cartridge URL" to local url "/mod/lti/tests/fixtures/ims_cartridge_basic_lti_link.xml"
     And I press "Save and return to course"
     And I open "Example tool" actions menu
     And I follow "Edit settings" in the open menu
     And I expand all fieldsets
-    Then the field "Launch/Cartridge URL" matches value "http://www.example.com/lti/provider.php"
+    Then the field "Launch/cartridge URL" matches value "http://www.example.com/lti/provider.php"
     And the field "Secure launch URL" matches value "https://www.example.com/lti/provider.php"
     And the field "Icon URL" matches value "http://download.moodle.org/unittest/test.jpg"
     And the field "Secure icon URL" matches value "https://download.moodle.org/unittest/test.jpg"
@@ -46,13 +46,13 @@ Feature: Add preconfigured tools via teacher interface
     And I follow "Add preconfigured tool"
     And I switch to "add_tool" window
     And I set the field "Tool name" to "Placeholder"
-    And I set the field "Tool base URL/Cartridge URL" to local url "/mod/lti/tests/fixtures/ims_cartridge_basic_lti_link.xml"
+    And I set the field "Tool base URL/cartridge URL" to local url "/mod/lti/tests/fixtures/ims_cartridge_basic_lti_link.xml"
     And I press "Save changes"
     And I switch to the main window
     And I wait "2" seconds
     And I follow "Edit preconfigured tool"
     And I switch to "edit_tool" window
-    Then the field "Tool base URL/Cartridge URL" matches value "http://www.example.com/lti/provider.php"
+    Then the field "Tool base URL/cartridge URL" matches value "http://www.example.com/lti/provider.php"
     And the field "Icon URL" matches value "http://download.moodle.org/unittest/test.jpg"
     And the field "Secure icon URL" matches value "https://download.moodle.org/unittest/test.jpg"
     And I press "Cancel"
@@ -67,7 +67,7 @@ Feature: Add preconfigured tools via teacher interface
       | Activity name | Test tool activity 1 |
     And I open "Test tool activity 1" actions menu
     And I follow "Edit settings" in the open menu
-    And I set the field "Launch/Cartridge URL" to local url "/mod/lti/tests/fixtures/tool_provider.html"
+    And I set the field "Launch/cartridge URL" to local url "/mod/lti/tests/fixtures/tool_provider.html"
     And I press "Save and return to course"
     And I follow "Test tool activity 1"
     And I switch to "contentframe" iframe

@@ -25,45 +25,36 @@
 $string['connectionerror'] = 'The specified Solr server is not available or the specified index does not exist';
 $string['connectionsettings'] = 'Connection settings';
 $string['errorcreatingschema'] = 'Error creating the Solr schema: {$a}';
-$string['errorvalidatingschema'] = 'Error validating Solr schema, field {$a->fieldname} does not exist. Please <a href="{$a->setupurl}">follow this link</a> to setup the fields required by Moodle.';
+$string['errorvalidatingschema'] = 'Error validating Solr schema: field {$a->fieldname} does not exist. Please <a href="{$a->setupurl}">follow this link</a> to set up the required fields.';
 $string['extensionerror'] = 'The Apache Solr PHP extension is not installed. Please check the documentation.';
 $string['fileindexing'] = 'Enable file indexing';
 $string['fileindexing_help'] = 'If your Solr install supports it, this feature allows Moodle to send files to be indexed.';
 $string['fileindexsettings'] = 'File indexing settings';
 $string['maxindexfilekb'] = 'Maximum file size to index (kB)';
-$string['maxindexfilekb_help'] = 'Files larger than this number of kilobytes will be skipped for search indexing. 0 to index files of any size.';
+$string['maxindexfilekb_help'] = 'Files larger than this number of kilobytes will not be included in search indexing. If set to zero, files of any size will be indexed.';
 $string['minimumsolr4'] = 'Solr 4.0 is the minimum version required for Moodle';
 $string['missingconfig'] = 'Your Apache Solr server is not yet configured in Moodle.';
-$string['multivaluedfield'] = 'Field "{$a}" returned an array instead of a scalar, the field is probably defined in Solr with "Multivalued" to true, this means that Solr autocreated the field for you when you indexed data because you forgot to run search/engine/solr/cli/setup_schema.php. Please delete the current index, create a new one and run setup_schema.php before indexing data in Solr.';
+$string['multivaluedfield'] = 'Field "{$a}" returned an array instead of a scalar. Please delete the current index, create a new one and run setup_schema.php before indexing data in Solr.';
 $string['nodatafromserver'] = 'No data from server';
 $string['pluginname'] = 'Solr';
 $string['schemafieldautocreated'] = 'Field "{$a}" already exists in Solr schema. You probably forgot to run this script before indexing data and fields were autocreated by Solr. Please delete the current index, create a new one and run setup_schema.php again before indexing data in Solr.';
-$string['schemasetupfromsolr5'] = 'Your Solr server version is lower than 5.0, this script can only set your schema if your Solr version is 5.0 or higher. You need to manually set the fields in your schema according to \\search_solr\\document::get_default_fields_definition()';
+$string['schemasetupfromsolr5'] = 'Your Solr server version is lower than 5.0. This script can only set your schema if your Solr version is 5.0 or higher. You need to manually set the fields in your schema according to \\search_solr\\document::get_default_fields_definition().';
 $string['searchinfo'] = 'Search queries';
-$string['searchinfo_help'] = 'Features you can use while performing search queries:
+$string['searchinfo_help'] = 'The field to be searched may be specified by prefixing the search query with \'title:\', \'content:\', \'name:\', or \'intro:\'. For example, searching for \'title:news\' would return results with the word \'news\' in the title.
 
-* Fields: You can specify which fields you want results from.<br/>
-  * title:(moodle + perth): returns all records that contains both "moodle" and "perth" in the title. Available fields: title, content, name, intro
-* Boolean Operators ("AND", "OR", "NOT"):<br/>
-  * (moodle AND perth) OR (moodle AND australia)
-* Wildcards ("&#42;", "?"):<br/>
-  * "mo??l&#42;" returns both "moodle" and "moodledata".
-* Proximity Searches ("~"):<br/>
-  * mood~2 returns "moodle". (2 alphabets away from "mood").
-  * moodle australia~3 returns results containing "moodle hq at perth australia" (the queried terms were within 3 words of each other)
-* Boosting Terms ("^"): To boost certain words/phrases:<br/>
-  * "perth australia"^5 "australia" will make results with the phrase "perth australia" more relevant.
-';
+Boolean operators (\'AND\', \'OR\', \'NOT\') may be used to combine or exclude keywords.
+
+Wildcard characters (\'*\' or \'?\' ) may be used to represent characters in the search query.';
 $string['setupok'] = 'The schema is ready to be used.';
-$string['solrauthpassword'] = 'HTTP Authentication Password';
-$string['solrauthuser'] = 'HTTP Authentication username';
+$string['solrauthpassword'] = 'HTTP authentication password';
+$string['solrauthuser'] = 'HTTP authentication username';
 $string['solrindexname'] = 'Index name';
 $string['solrhttpconnectionport'] = 'Port';
 $string['solrhttpconnectiontimeout'] = 'Timeout';
 $string['solrhttpconnectiontimeout_desc'] = 'The HTTP connection timeout is the maximum time in seconds allowed for the HTTP data transfer operation.';
 $string['solrinfo'] = 'Solr';
 $string['solrnotselected'] = 'Solr engine is not the configured search engine';
-$string['solrserverhostname'] = 'Host Name';
+$string['solrserverhostname'] = 'Host name';
 $string['solrserverhostname_desc'] = 'Domain name of the Solr server.';
 $string['solrsecuremode'] = 'Secure mode';
 $string['solrsetting'] = 'Solr settings';

@@ -28,11 +28,11 @@ Feature: Test creating different types of feedback questions for non-anonymous f
     And I add a "Information" question to the feedback with:
       | Question         | this is an information question |
       | Label            | info                            |
-      | Information-Type | Course                          |
+      | Information type | Course                          |
     And I add a "Information" question to the feedback with:
       | Question         | this is a response time question |
       | Label            | curtime                          |
-      | Information-Type | Responsestime                    |
+      | Information type | Responsestime                    |
     And I add a "Label" question to the feedback with:
       | Contents | label text |
     And I add a "Longer text answer" question to the feedback with:
