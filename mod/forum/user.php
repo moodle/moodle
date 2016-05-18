@@ -389,8 +389,18 @@ if (isset($courseid) && $courseid != SITEID) {
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($inpageheading);
 echo html_writer::start_tag('div', array('class' => 'user-content'));
+
+if ($isspecificcourse) {
+    $userheading = array(
+        'heading' => fullname($user),
+        'user' => $user,
+        'usercontext' => $usercontext
+    );
+    echo $OUTPUT->context_header($userheading, 2);
+} else {
+    echo $OUTPUT->heading($inpageheading);
+}
 
 if (!empty($postoutput)) {
     echo $OUTPUT->paging_bar($result->totalcount, $page, $perpage, $url);
