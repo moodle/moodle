@@ -731,6 +731,12 @@ class core_tag_taglib_testcase extends advanced_testcase {
         $tagarea = $DB->get_record('tag_area', array('itemtype' => 'user', 'component' => 'core'));
         core_tag_area::update($tagarea, array('tagcollid' => $collid2));
 
+        $tagsaftermove = $DB->get_records('tag');
+        foreach ($tagsaftermove as $tag) {
+            // Confirm that the time modified has not been unset.
+            $this->assertNotEmpty($tag->timemodified);
+        }
+
         $this->assertEquals(array('Tag4'),
                 $DB->get_fieldset_select('tag', 'rawname', 'tagcollid = ? ORDER BY name', array($collid1)));
         $this->assertEquals(array('Tag1', 'Tag2', 'Tag3', 'Tag5'),
@@ -749,6 +755,12 @@ class core_tag_taglib_testcase extends advanced_testcase {
         // Move 'user' area from collection 1 to collection 2, make sure tag Tag2 was moved and tags Tag1 and Tag3 were duplicated.
         $tagareauser = $DB->get_record('tag_area', array('itemtype' => 'user', 'component' => 'core'));
         core_tag_area::update($tagareauser, array('tagcollid' => $collid2));
+
+        $tagsaftermove = $DB->get_records('tag');
+        foreach ($tagsaftermove as $tag) {
+            // Confirm that the time modified has not been unset.
+            $this->assertNotEmpty($tag->timemodified);
+        }
 
         $this->assertEquals(array('Tag1', 'Tag3', 'Tag4'),
                 $DB->get_fieldset_select('tag', 'rawname', 'tagcollid = ? ORDER BY name', array($collid1)));
@@ -774,6 +786,12 @@ class core_tag_taglib_testcase extends advanced_testcase {
         // make sure tag Tag2 was moved and tags Tag1 and Tag3 were merged into existing.
         $tagareauser = $DB->get_record('tag_area', array('itemtype' => 'user', 'component' => 'core'));
         core_tag_area::update($tagareauser, array('tagcollid' => $collid2));
+
+        $tagsaftermove = $DB->get_records('tag');
+        foreach ($tagsaftermove as $tag) {
+            // Confirm that the time modified has not been unset.
+            $this->assertNotEmpty($tag->timemodified);
+        }
 
         $this->assertEquals(array('Tag4'),
                 $DB->get_fieldset_select('tag', 'rawname', 'tagcollid = ? ORDER BY name', array($collid1)));
@@ -801,6 +819,12 @@ class core_tag_taglib_testcase extends advanced_testcase {
         // Move 'user' area from collection 1 to collection 2, make sure tags were moved completely.
         $tagarea = $DB->get_record('tag_area', array('itemtype' => 'user', 'component' => 'core'));
         core_tag_area::update($tagarea, array('tagcollid' => $collid2));
+
+        $tagsaftermove = $DB->get_records('tag');
+        foreach ($tagsaftermove as $tag) {
+            // Confirm that the time modified has not been unset.
+            $this->assertNotEmpty($tag->timemodified);
+        }
 
         $this->assertEquals(array('Tag1', 'Tag2', 'Tag4'),
                 $DB->get_fieldset_select('tag', 'rawname', 'tagcollid = ? ORDER BY name', array($collid1)));
@@ -847,6 +871,12 @@ class core_tag_taglib_testcase extends advanced_testcase {
         // Move user interests tag area into coll2.
         $tagarea = $DB->get_record('tag_area', array('itemtype' => 'user', 'component' => 'core'));
         core_tag_area::update($tagarea, array('tagcollid' => $collid2));
+
+        $tagsaftermove = $DB->get_records('tag');
+        foreach ($tagsaftermove as $tag) {
+            // Confirm that the time modified has not been unset.
+            $this->assertNotEmpty($tag->timemodified);
+        }
 
         // Now all tags are correctly moved to the new collection and both tags 'Tag1' were merged.
         $user1tags = array_values(core_tag_tag::get_item_tags('core', 'user', $user1->id));
