@@ -344,14 +344,23 @@ class file_storage {
             return false;
         }
 
-        // Copy the file to the local tmp dir.
-        $tmp = make_request_directory();
+        // Copy the file to the tmp dir.
+        $uniqdir = "core_file/conversions/" . uniqid($file->get_id() . "-", true);
+        $tmp = make_temp_directory($uniqdir);
         $localfilename = $file->get_filename();
         // Safety.
         $localfilename = clean_param($localfilename, PARAM_FILE);
 
         $filename = $tmp . '/' . $localfilename;
-        $file->copy_content_to($filename);
+        try {
+            // This function can either return false, or throw an exception so we need to handle both.
+            if ($file->copy_content_to($filename) === false) {
+                throw new file_exception('storedfileproblem', 'Could not copy file contents to temp file.');
+            }
+        } catch (file_exception $fe) {
+            remove_dir($uniqdir);
+            throw $fe;
+        }
 
         $newtmpfile = pathinfo($filename, PATHINFO_FILENAME) . '.' . $format;
 
@@ -365,13 +374,14 @@ class file_storage {
                escapeshellarg($newtmpfile) . ' ' .
                escapeshellarg($filename);
 
-        $e = file_exists($filename);
         $output = null;
         $currentdir = getcwd();
         chdir($tmp);
         $result = exec($cmd, $output);
         chdir($currentdir);
         if (!file_exists($newtmpfile)) {
+            remove_dir($uniqdir);
+            // Cleanup.
             return false;
         }
 
@@ -385,7 +395,10 @@ class file_storage {
             'filename'  => $file->get_contenthash(),
         );
 
-        return $this->create_file_from_pathname($record, $newtmpfile);
+        $convertedfile = $this->create_file_from_pathname($record, $newtmpfile);
+        // Cleanup.
+        remove_dir($uniqdir);
+        return $convertedfile;
     }
 
     /**
