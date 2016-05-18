@@ -224,7 +224,7 @@ class rating implements renderable {
 
         // Only display aggregate if aggregation method isn't COUNT.
         $aggregatestr = '';
-        if ($aggregate && $method != RATING_AGGREGATE_COUNT) {
+        if (is_numeric($aggregate) && $method != RATING_AGGREGATE_COUNT) {
             if ($method != RATING_AGGREGATE_SUM && !$this->settings->scale->isnumeric) {
 
                 // Round aggregate as we're using it as an index.
