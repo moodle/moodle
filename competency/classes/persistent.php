@@ -785,6 +785,7 @@ abstract class persistent {
      * @return string The SQL fragment.
      */
     public static function get_sql_fields($alias, $prefix = null) {
+        global $CFG;
         $fields = array();
 
         if ($prefix === null) {
@@ -798,7 +799,14 @@ abstract class persistent {
         $properties = array('id' => $id) + $properties;
 
         foreach ($properties as $property => $definition) {
-            $fields[] = $alias . '.' . $property . ' AS ' . $prefix . $property;
+            $as = $prefix . $property;
+            $fields[] = $alias . '.' . $property . ' AS ' . $as;
+
+            // Warn developers that the query will not always work.
+            if ($CFG->debugdeveloper && strlen($as) > 30) {
+                throw new coding_exception("The alias '$as' for column '$alias.$property' exceeds 30 characters" .
+                    " and will therefore not work across all supported databases.");
+            }
         }
 
         return implode(', ', $fields);

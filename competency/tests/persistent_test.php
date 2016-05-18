@@ -392,6 +392,35 @@ class core_competency_persistent_testcase extends advanced_testcase {
         $this->assertFalse(core_competency_testable_persistent::record_exists($id));
     }
 
+    public function test_get_sql_fields() {
+        $expected = '' .
+            'c.id AS comp_id, ' .
+            'c.shortname AS comp_shortname, ' .
+            'c.idnumber AS comp_idnumber, ' .
+            'c.description AS comp_description, ' .
+            'c.descriptionformat AS comp_descriptionformat, ' .
+            'c.parentid AS comp_parentid, ' .
+            'c.path AS comp_path, ' .
+            'c.sortorder AS comp_sortorder, ' .
+            'c.competencyframeworkid AS comp_competencyframeworkid, ' .
+            'c.ruletype AS comp_ruletype, ' .
+            'c.ruleconfig AS comp_ruleconfig, ' .
+            'c.ruleoutcome AS comp_ruleoutcome, ' .
+            'c.scaleid AS comp_scaleid, ' .
+            'c.scaleconfiguration AS comp_scaleconfiguration, ' .
+            'c.timecreated AS comp_timecreated, ' .
+            'c.timemodified AS comp_timemodified, ' .
+            'c.usermodified AS comp_usermodified';
+        $this->assertEquals($expected, core_competency_testable_persistent::get_sql_fields('c', 'comp_'));
+    }
+
+    /**
+     * @expectedException               coding_exception
+     * @expectedExceptionMessageRegExp  /The alias .+ exceeds 30 characters/
+     */
+    public function test_get_sql_fields_too_long() {
+        core_competency_testable_persistent::get_sql_fields('c');
+    }
 }
 
 /**

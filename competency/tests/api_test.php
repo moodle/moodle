@@ -4405,4 +4405,100 @@ class core_competency_api_testcase extends advanced_testcase {
 
         api::delete_evidence($ev1);
     }
+
+    public function test_list_plans_to_review() {
+        $dg = $this->getDataGenerator();
+        $this->resetAfterTest();
+        $ccg = $dg->get_plugin_generator('core_competency');
+        $sysctx = context_system::instance();
+        $this->setAdminUser();
+
+        $reviewer = $dg->create_user();
+        $roleallow = $dg->create_role();
+        $roleprohibit = $dg->create_role();
+        assign_capability('moodle/competency:planreview', CAP_ALLOW, $roleallow, $sysctx->id);
+        assign_capability('moodle/competency:planreview', CAP_PROHIBIT, $roleprohibit, $sysctx->id);
+        role_assign($roleallow, $reviewer->id, $sysctx->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $f1 = $ccg->create_framework();
+        $comp1 = $ccg->create_competency(['competencyframeworkid' => $f1->get_id()]);
+        $p1a = $ccg->create_plan(['userid' => $u1->id, 'status' => plan::STATUS_WAITING_FOR_REVIEW]);
+        $p1b = $ccg->create_plan(['userid' => $u1->id, 'status' => plan::STATUS_IN_REVIEW, 'reviewerid' => $reviewer->id]);
+        $p1c = $ccg->create_plan(['userid' => $u1->id, 'status' => plan::STATUS_DRAFT]);
+        $p2a = $ccg->create_plan(['userid' => $u2->id, 'status' => plan::STATUS_WAITING_FOR_REVIEW]);
+        $p2b = $ccg->create_plan(['userid' => $u2->id, 'status' => plan::STATUS_IN_REVIEW]);
+        $p2c = $ccg->create_plan(['userid' => $u2->id, 'status' => plan::STATUS_ACTIVE]);
+        $p2d = $ccg->create_plan(['userid' => $u2->id, 'status' => plan::STATUS_ACTIVE]);
+        api::complete_plan($p2d);
+
+        // The reviewer can review all plans waiting for review, or in review where they are the reviewer.
+        $this->setUser($reviewer);
+        $result = api::list_plans_to_review();
+        $this->assertEquals(3, $result['count']);
+        $this->assertEquals($p1a->get_id(), $result['plans'][0]->plan->get_id());
+        $this->assertEquals($p1b->get_id(), $result['plans'][1]->plan->get_id());
+        $this->assertEquals($p2a->get_id(), $result['plans'][2]->plan->get_id());
+
+        // The reviewer cannot view the plans when they do not have the permission in the user's context.
+        role_assign($roleprohibit, $reviewer->id, context_user::instance($u2->id)->id);
+        accesslib_clear_all_caches_for_unit_testing();
+        $result = api::list_plans_to_review();
+        $this->assertEquals(2, $result['count']);
+        $this->assertEquals($p1a->get_id(), $result['plans'][0]->plan->get_id());
+        $this->assertEquals($p1b->get_id(), $result['plans'][1]->plan->get_id());
+    }
+
+    public function test_list_user_competencies_to_review() {
+        $dg = $this->getDataGenerator();
+        $this->resetAfterTest();
+        $ccg = $dg->get_plugin_generator('core_competency');
+        $sysctx = context_system::instance();
+        $this->setAdminUser();
+
+        $reviewer = $dg->create_user();
+        $roleallow = $dg->create_role();
+        $roleprohibit = $dg->create_role();
+        assign_capability('moodle/competency:usercompetencyreview', CAP_ALLOW, $roleallow, $sysctx->id);
+        assign_capability('moodle/competency:usercompetencyreview', CAP_PROHIBIT, $roleprohibit, $sysctx->id);
+        role_assign($roleallow, $reviewer->id, $sysctx->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $f1 = $ccg->create_framework();
+        $c1 = $ccg->create_competency(['competencyframeworkid' => $f1->get_id()]);
+        $c2 = $ccg->create_competency(['competencyframeworkid' => $f1->get_id()]);
+        $c3 = $ccg->create_competency(['competencyframeworkid' => $f1->get_id()]);
+        $uc1a = $ccg->create_user_competency(['userid' => $u1->id, 'competencyid' => $c1->get_id(),
+            'status' => user_competency::STATUS_IDLE]);
+        $uc1b = $ccg->create_user_competency(['userid' => $u1->id, 'competencyid' => $c2->get_id(),
+            'status' => user_competency::STATUS_WAITING_FOR_REVIEW]);
+        $uc1c = $ccg->create_user_competency(['userid' => $u1->id, 'competencyid' => $c3->get_id(),
+            'status' => user_competency::STATUS_IN_REVIEW, 'reviewerid' => $reviewer->id]);
+        $uc2a = $ccg->create_user_competency(['userid' => $u2->id, 'competencyid' => $c1->get_id(),
+            'status' => user_competency::STATUS_WAITING_FOR_REVIEW]);
+        $uc2b = $ccg->create_user_competency(['userid' => $u2->id, 'competencyid' => $c2->get_id(),
+            'status' => user_competency::STATUS_IDLE]);
+        $uc2c = $ccg->create_user_competency(['userid' => $u2->id, 'competencyid' => $c3->get_id(),
+            'status' => user_competency::STATUS_IN_REVIEW]);
+
+        // The reviewer can review all plans waiting for review, or in review where they are the reviewer.
+        $this->setUser($reviewer);
+        $result = api::list_user_competencies_to_review();
+        $this->assertEquals(3, $result['count']);
+        $this->assertEquals($uc2a->get_id(), $result['competencies'][0]->usercompetency->get_id());
+        $this->assertEquals($uc1b->get_id(), $result['competencies'][1]->usercompetency->get_id());
+        $this->assertEquals($uc1c->get_id(), $result['competencies'][2]->usercompetency->get_id());
+
+        // The reviewer cannot view the plans when they do not have the permission in the user's context.
+        role_assign($roleprohibit, $reviewer->id, context_user::instance($u2->id)->id);
+        accesslib_clear_all_caches_for_unit_testing();
+        $result = api::list_user_competencies_to_review();
+        $this->assertEquals(2, $result['count']);
+        $this->assertEquals($uc1b->get_id(), $result['competencies'][0]->usercompetency->get_id());
+        $this->assertEquals($uc1c->get_id(), $result['competencies'][1]->usercompetency->get_id());
+    }
 }
