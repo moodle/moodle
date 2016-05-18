@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir.'/upgradelib.php');
 
-
 /**
  * Tests various classes and functions in upgradelib.php library.
  */
@@ -798,5 +797,259 @@ class core_upgradelib_testcase extends advanced_testcase {
         // Course 1 is mapped to tags 101 and 102.
         $this->assertEquals(array(103, 104), array_values($DB->get_fieldset_select('tag_instance', 'tagid',
                 'itemtype = ? AND itemid = ? ORDER BY tagid', array('course', 3))));
+    }
+
+    /**
+     * Test that the upgrade script correctly flags courses to be frozen due to letter boundary problems.
+     */
+    public function test_upgrade_course_letter_boundary() {
+        global $CFG, $DB;
+        $this->resetAfterTest(true);
+
+        require_once($CFG->libdir . '/db/upgradelib.php');
+
+        // Create a user.
+        $user = $this->getDataGenerator()->create_user();
+
+        // Create some courses.
+        $courses = array();
+        $contexts = array();
+        for ($i = 0; $i < 37; $i++) {
+            $course = $this->getDataGenerator()->create_course();
+            $context = context_course::instance($course->id);
+            if (in_array($i, array(2, 5, 10, 13, 14, 19, 23, 25, 30, 34, 36))) {
+                // Assign good letter boundaries.
+                $this->assign_good_letter_boundary($context->id);
+            }
+            if (in_array($i, array(3, 6, 11, 15, 20, 24, 26, 31, 35))) {
+                // Assign bad letter boundaries.
+                $this->assign_bad_letter_boundary($context->id);
+            }
+
+            if (in_array($i, array(9, 10, 11, 18, 19, 20, 29, 30, 31))) {
+                grade_set_setting($course->id, 'displaytype', '3');
+            } else if (in_array($i, array(8, 17, 28))) {
+                grade_set_setting($course->id, 'displaytype', '2');
+            }
+
+            if ($i >= 7) {
+                $assignrow = $this->getDataGenerator()->create_module('assign', array('course' => $course->id, 'name' => 'Test!'));
+                $gi = grade_item::fetch(
+                        array('itemtype' => 'mod',
+                              'itemmodule' => 'assign',
+                              'iteminstance' => $assignrow->id,
+                              'courseid' => $course->id));
+                if (in_array($i, array(13, 14, 15, 23, 24, 34, 35, 36))) {
+                    grade_item::set_properties($gi, array('display', 3));
+                    $gi->update();
+                } else if (in_array($i, array(12, 21, 32))) {
+                    grade_item::set_properties($gi, array('display', 2));
+                    $gi->update();
+                }
+                $gradegrade = new grade_grade();
+                $gradegrade->itemid = $gi->id;
+                $gradegrade->userid = $user->id;
+                $gradegrade->rawgrade = 55.5563;
+                $gradegrade->finalgrade = 55.5563;
+                $gradegrade->rawgrademax = 100;
+                $gradegrade->rawgrademin = 0;
+                $gradegrade->timecreated = time();
+                $gradegrade->timemodified = time();
+                $gradegrade->insert();
+            }
+
+            $contexts[] = $context;
+            $courses[] = $course;
+        }
+
+        upgrade_course_letter_boundary();
+
+        // No system setting for grade letter boundaries.
+        // [0] A course with no letter boundaries.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[0]->id}));
+        // [1] A course with letter boundaries which are default.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[1]->id}));
+        // [2] A course with letter boundaries which are custom but not affected.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[2]->id}));
+        // [3] A course with letter boundaries which are custom and will be affected.
+        $this->assertEquals(20160518, $CFG->{'gradebook_calculations_freeze_' . $courses[3]->id});
+        // [4] A course with no letter boundaries, but with a grade item with letter boundaries which are default.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[4]->id}));
+        // [5] A course with no letter boundaries, but with a grade item with letter boundaries which are not default, but not affected.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[5]->id}));
+        // [6] A course with no letter boundaries, but with a grade item with letter boundaries which are not default which will be affected.
+        $this->assertEquals(20160518, $CFG->{'gradebook_calculations_freeze_' . $courses[6]->id});
+
+        // System setting for grade letter boundaries (default).
+        set_config('grade_displaytype', '3');
+        for ($i = 0; $i < 37; $i++) {
+            unset_config('gradebook_calculations_freeze_' . $courses[$i]->id);
+        }
+        upgrade_course_letter_boundary();
+
+        // [7] A course with no grade display settings for the course or grade items.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[7]->id}));
+        // [8] A course with grade display settings, but for something that isn't letters.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[8]->id}));
+        // [9] A course with grade display settings of letters which are default.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[9]->id}));
+        // [10] A course with grade display settings of letters which are not default, but not affected.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[10]->id}));
+        // [11] A course with grade display settings of letters which are not default, which will be affected.
+        $this->assertEquals(20160518, $CFG->{'gradebook_calculations_freeze_' . $courses[11]->id});
+        // [12] A grade item with display settings that are not letters.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[12]->id}));
+        // [13] A grade item with display settings of letters which are default.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[13]->id}));
+        // [14] A grade item with display settings of letters which are not default, but not affected.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[14]->id}));
+        // [15] A grade item with display settings of letters which are not default, which will be affected.
+        $this->assertEquals(20160518, $CFG->{'gradebook_calculations_freeze_' . $courses[15]->id});
+
+        // System setting for grade letter boundaries (custom with problem).
+        $systemcontext = context_system::instance();
+        $this->assign_bad_letter_boundary($systemcontext->id);
+        for ($i = 0; $i < 37; $i++) {
+            unset_config('gradebook_calculations_freeze_' . $courses[$i]->id);
+        }
+        upgrade_course_letter_boundary();
+
+        // [16] A course with no grade display settings for the course or grade items.
+        $this->assertEquals(20160518, $CFG->{'gradebook_calculations_freeze_' . $courses[16]->id});
+        // [17] A course with grade display settings, but for something that isn't letters.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[17]->id}));
+        // [18] A course with grade display settings of letters which are default.
+        $this->assertEquals(20160518, $CFG->{'gradebook_calculations_freeze_' . $courses[18]->id});
+        // [19] A course with grade display settings of letters which are not default, but not affected.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[19]->id}));
+        // [20] A course with grade display settings of letters which are not default, which will be affected.
+        $this->assertEquals(20160518, $CFG->{'gradebook_calculations_freeze_' . $courses[20]->id});
+        // [21] A grade item with display settings which are not letters. Grade total will be affected so should be frozen.
+        $this->assertEquals(20160518, $CFG->{'gradebook_calculations_freeze_' . $courses[21]->id});
+        // [22] A grade item with display settings of letters which are default.
+        $this->assertEquals(20160518, $CFG->{'gradebook_calculations_freeze_' . $courses[22]->id});
+        // [23] A grade item with display settings of letters which are not default, but not affected. Course uses new letter boundary setting.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[23]->id}));
+        // [24] A grade item with display settings of letters which are not default, which will be affected.
+        $this->assertEquals(20160518, $CFG->{'gradebook_calculations_freeze_' . $courses[24]->id});
+        // [25] A course which is using the default grade display setting, but has updated the grade letter boundary (not 57) Should not be frozen.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[25]->id}));
+        // [26] A course that is using the default display setting (letters) and altered the letter boundary with 57. Should be frozen.
+        $this->assertEquals(20160518, $CFG->{'gradebook_calculations_freeze_' . $courses[26]->id});
+
+        // System setting not showing letters.
+        set_config('grade_displaytype', '2');
+        for ($i = 0; $i < 37; $i++) {
+            unset_config('gradebook_calculations_freeze_' . $courses[$i]->id);
+        }
+        upgrade_course_letter_boundary();
+
+        // [27] A course with no grade display settings for the course or grade items.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[27]->id}));
+        // [28] A course with grade display settings, but for something that isn't letters.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[28]->id}));
+        // [29] A course with grade display settings of letters which are default.
+        $this->assertEquals(20160518, $CFG->{'gradebook_calculations_freeze_' . $courses[29]->id});
+        // [30] A course with grade display settings of letters which are not default, but not affected.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[30]->id}));
+        // [31] A course with grade display settings of letters which are not default, which will be affected.
+        $this->assertEquals(20160518, $CFG->{'gradebook_calculations_freeze_' . $courses[31]->id});
+        // [32] A grade item with display settings which are not letters.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[32]->id}));
+        // [33] All system defaults.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[33]->id}));
+        // [34] A grade item with display settings of letters which are not default, but not affected. Course uses new letter boundary setting.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[34]->id}));
+        // [35] A grade item with display settings of letters which are not default, which will be affected.
+        $this->assertEquals(20160518, $CFG->{'gradebook_calculations_freeze_' . $courses[35]->id});
+        // [36] A course with grade display settings of letters with modified and good boundary (not 57) Should not be frozen.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[36]->id}));
+    }
+
+    /**
+     * Test upgrade_letter_boundary_needs_freeze function.
+     */
+    public function test_upgrade_letter_boundary_needs_freeze() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        require_once($CFG->libdir . '/db/upgradelib.php');
+
+        $courses = array();
+        $contexts = array();
+        for ($i = 0; $i < 3; $i++) {
+            $courses[] = $this->getDataGenerator()->create_course();
+            $contexts[] = context_course::instance($courses[$i]->id);
+        }
+
+        // Course one is not using a letter boundary.
+        $this->assertFalse(upgrade_letter_boundary_needs_freeze($contexts[0]));
+
+        // Let's make course 2 use the bad boundary.
+        $this->assign_bad_letter_boundary($contexts[1]->id);
+        $this->assertTrue(upgrade_letter_boundary_needs_freeze($contexts[1]));
+        // Course 3 has letter boundaries that are fine.
+        $this->assign_good_letter_boundary($contexts[2]->id);
+        $this->assertFalse(upgrade_letter_boundary_needs_freeze($contexts[2]));
+        // Try the system context not using a letter boundary.
+        $systemcontext = context_system::instance();
+        $this->assertFalse(upgrade_letter_boundary_needs_freeze($systemcontext));
+    }
+
+    /**
+     * Assigns letter boundaries with comparison problems.
+     *
+     * @param int $contextid Context ID.
+     */
+    private function assign_bad_letter_boundary($contextid) {
+        global $DB;
+        $newlettersscale = array(
+                array('contextid' => $contextid, 'lowerboundary' => 90.00000, 'letter' => 'A'),
+                array('contextid' => $contextid, 'lowerboundary' => 85.00000, 'letter' => 'A-'),
+                array('contextid' => $contextid, 'lowerboundary' => 80.00000, 'letter' => 'B+'),
+                array('contextid' => $contextid, 'lowerboundary' => 75.00000, 'letter' => 'B'),
+                array('contextid' => $contextid, 'lowerboundary' => 70.00000, 'letter' => 'B-'),
+                array('contextid' => $contextid, 'lowerboundary' => 65.00000, 'letter' => 'C+'),
+                array('contextid' => $contextid, 'lowerboundary' => 57.00000, 'letter' => 'C'),
+                array('contextid' => $contextid, 'lowerboundary' => 50.00000, 'letter' => 'C-'),
+                array('contextid' => $contextid, 'lowerboundary' => 40.00000, 'letter' => 'D+'),
+                array('contextid' => $contextid, 'lowerboundary' => 25.00000, 'letter' => 'D'),
+                array('contextid' => $contextid, 'lowerboundary' => 0.00000, 'letter' => 'F'),
+            );
+
+        $DB->delete_records('grade_letters', array('contextid' => $contextid));
+        foreach ($newlettersscale as $record) {
+            // There is no API to do this, so we have to manually insert into the database.
+            $DB->insert_record('grade_letters', $record);
+        }
+    }
+
+    /**
+     * Assigns letter boundaries with no comparison problems.
+     *
+     * @param int $contextid Context ID.
+     */
+    private function assign_good_letter_boundary($contextid) {
+        global $DB;
+        $newlettersscale = array(
+                array('contextid' => $contextid, 'lowerboundary' => 90.00000, 'letter' => 'A'),
+                array('contextid' => $contextid, 'lowerboundary' => 85.00000, 'letter' => 'A-'),
+                array('contextid' => $contextid, 'lowerboundary' => 80.00000, 'letter' => 'B+'),
+                array('contextid' => $contextid, 'lowerboundary' => 75.00000, 'letter' => 'B'),
+                array('contextid' => $contextid, 'lowerboundary' => 70.00000, 'letter' => 'B-'),
+                array('contextid' => $contextid, 'lowerboundary' => 65.00000, 'letter' => 'C+'),
+                array('contextid' => $contextid, 'lowerboundary' => 54.00000, 'letter' => 'C'),
+                array('contextid' => $contextid, 'lowerboundary' => 50.00000, 'letter' => 'C-'),
+                array('contextid' => $contextid, 'lowerboundary' => 40.00000, 'letter' => 'D+'),
+                array('contextid' => $contextid, 'lowerboundary' => 25.00000, 'letter' => 'D'),
+                array('contextid' => $contextid, 'lowerboundary' => 0.00000, 'letter' => 'F'),
+            );
+
+        $DB->delete_records('grade_letters', array('contextid' => $contextid));
+        foreach ($newlettersscale as $record) {
+            // There is no API to do this, so we have to manually insert into the database.
+            $DB->insert_record('grade_letters', $record);
+        }
     }
 }

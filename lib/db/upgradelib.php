@@ -688,3 +688,159 @@ function upgrade_course_tags() {
     }
     $DB->execute("DELETE FROM {tag_instance} WHERE itemtype = ? AND tiuserid <> 0", array('course'));
 }
+
+/**
+ * Marks all courses that require rounded grade items be updated.
+ *
+ * Used during upgrade and in course restore process.
+ *
+ * This upgrade script is needed because it has been decided that if a grade is rounded up, and it will changed a letter
+ * grade or satisfy a course completion grade criteria, then it should be set as so, and the letter will be awarded and or
+ * the course completion grade will be awarded.
+ *
+ * @param int $courseid Specify a course ID to run this script on just one course.
+ */
+function upgrade_course_letter_boundary($courseid = null) {
+    global $DB, $CFG;
+
+    $coursesql = '';
+    $params = array('contextlevel' => CONTEXT_COURSE);
+    if (!empty($courseid)) {
+        $coursesql = 'AND c.id = :courseid';
+        $params['courseid'] = $courseid;
+    }
+
+    // Check to see if the system letter boundaries are borked.
+    $systemcontext = context_system::instance();
+    $systemneedsfreeze = upgrade_letter_boundary_needs_freeze($systemcontext);
+
+    // 3, 13, 23, 31, and 32 are the grade display types that incorporate showing letters. See lib/grade/constants/php.
+    $systemletters = (isset($CFG->grade_displaytype) && in_array($CFG->grade_displaytype, array(3, 13, 23, 31, 32)));
+
+    $contextselect = context_helper::get_preload_record_columns_sql('ctx');
+
+    if ($systemletters && $systemneedsfreeze) {
+        // Select courses with no grade setting for display and a grade item that is using the default display,
+        // but have not altered the course letter boundary configuration. These courses are definitely affected.
+
+        $sql = "SELECT DISTINCT c.id AS courseid
+                  FROM {course} c
+                  JOIN {grade_items} gi ON c.id = gi.courseid
+                  JOIN {context} ctx ON ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel
+             LEFT JOIN {grade_settings} gs ON gs.courseid = c.id AND gs.name = 'displaytype'
+             LEFT JOIN {grade_letters} gl ON gl.contextid = ctx.id
+                 WHERE gi.display = 0 AND (gs.value is NULL)
+                 AND gl.id is NULL $coursesql";
+        $affectedcourseids = $DB->get_recordset_sql($sql, $params);
+        foreach ($affectedcourseids as $courseid) {
+            set_config('gradebook_calculations_freeze_' . $courseid->courseid, 20160518);
+        }
+        $affectedcourseids->close();
+
+    }
+
+    if ($systemletters || $systemneedsfreeze) {
+
+        // If the system letter boundary is okay proceed to check grade item and course grade display settings.
+        $sql = "SELECT DISTINCT c.id AS courseid, $contextselect
+                  FROM {course} c
+                  JOIN {context} ctx ON ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel
+                  JOIN {grade_items} gi ON c.id = gi.courseid
+             LEFT JOIN {grade_settings} gs ON c.id = gs.courseid AND gs.name = 'displaytype'
+             LEFT JOIN {grade_letters} gl ON gl.contextid = ctx.id
+                 WHERE gi.display IN (3, 13, 23, 31, 32)
+                    OR (" . $DB->sql_compare_text('gs.value') . " IN ('3', '13', '23', '31', '32'))
+                    OR gl.id is NOT NULL
+                       $coursesql";
+    } else {
+
+        // There is no site setting for letter grades. Just check the modified letter boundaries.
+        $sql = "SELECT DISTINCT c.id AS courseid, $contextselect
+                  FROM {grade_letters} l, {course} c
+                  JOIN {context} ctx ON ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel
+                 WHERE l.contextid = ctx.id
+                   AND ctx.instanceid = c.id
+                   $coursesql";
+    }
+
+    $potentialcourses = $DB->get_recordset_sql($sql, $params);
+
+    foreach ($potentialcourses as $value) {
+        $gradebookfreeze = 'gradebook_calculations_freeze_' . $value->courseid;
+
+        // Check also if this course id has already been frozen.
+        // If we already have this course ID then move on to the next record.
+        if (!property_exists($CFG, $gradebookfreeze)) {
+            // Check for 57 letter grade issue.
+            context_helper::preload_from_record($value);
+            $coursecontext = context_course::instance($value->courseid);
+            if (upgrade_letter_boundary_needs_freeze($coursecontext)) {
+                // We have a course with a possible score standardisation problem. Flag for freeze.
+                // Flag this course as being frozen.
+                set_config('gradebook_calculations_freeze_' . $value->courseid, 20160518);
+            }
+        }
+    }
+    $potentialcourses->close();
+}
+
+/**
+ * Checks the letter boundary of the provided context to see if it needs freezing.
+ * Each letter boundary is tested to see if receiving that boundary number will
+ * result in achieving the cosponsoring letter.
+ *
+ * @param object $context Context object
+ * @return bool if the letter boundary for this context should be frozen.
+ */
+function upgrade_letter_boundary_needs_freeze($context) {
+    global $DB;
+
+    $contexts = $context->get_parent_context_ids();
+    array_unshift($contexts, $context->id);
+
+    foreach ($contexts as $ctxid) {
+
+        $letters = $DB->get_records_menu('grade_letters', array('contextid' => $ctxid), 'lowerboundary DESC',
+                'lowerboundary, letter');
+
+        if (!empty($letters)) {
+            foreach ($letters as $boundary => $notused) {
+                $standardisedboundary = upgrade_standardise_score($boundary, 0, 100, 0, 100);
+                if ($boundary != $standardisedboundary) {
+                    return true;
+                }
+            }
+            // We found letters but we have no boundary problem.
+            return false;
+        }
+    }
+    return false;
+}
+
+/**
+ * Given a float value situated between a source minimum and a source maximum, converts it to the
+ * corresponding value situated between a target minimum and a target maximum. Thanks to Darlene
+ * for the formula :-)
+ *
+ * @param float $rawgrade
+ * @param float $sourcemin
+ * @param float $sourcemax
+ * @param float $targetmin
+ * @param float $targetmax
+ * @return float Converted value
+ */
+function upgrade_standardise_score($rawgrade, $sourcemin, $sourcemax, $targetmin, $targetmax) {
+    if (is_null($rawgrade)) {
+        return null;
+    }
+
+    if ($sourcemax == $sourcemin or $targetmin == $targetmax) {
+        // Prevent division by 0.
+        return $targetmax;
+    }
+
+    $factor = ($rawgrade - $sourcemin) / ($sourcemax - $sourcemin);
+    $diff = $targetmax - $targetmin;
+    $standardisedvalue = $factor * $diff + $targetmin;
+    return $standardisedvalue;
+}
