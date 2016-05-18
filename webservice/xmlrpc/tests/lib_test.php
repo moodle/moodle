@@ -43,6 +43,11 @@ class webservice_xmlrpc_test extends advanced_testcase {
      */
     public function setUp() {
         $this->resetAfterTest();
+
+        // All tests require xmlrpc. Skip tests, if xmlrpc is not installed.
+        if (!function_exists('xmlrpc_decode')) {
+            $this->markTestSkipped('XMLRPC is not installed.');
+        }
     }
 
     /**
