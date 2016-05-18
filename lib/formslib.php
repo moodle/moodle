@@ -2745,13 +2745,19 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     /**
      * Create advance group of elements
      *
-     * @param object $group Passed by reference
+     * @param MoodleQuickForm_group $group Passed by reference
      * @param bool $required if input is required field
      * @param string $error error message to display
      */
     function startGroup(&$group, $required, $error){
         // Make sure the element has an id.
         $group->_generateId();
+
+        // Prepend 'fgroup_' to the ID we generated.
+        $groupid = 'fgroup_' . $group->getAttribute('id');
+
+        // Update the ID.
+        $group->updateAttributes(array('id' => $groupid));
 
         if (method_exists($group, 'getElementTemplateType')){
             $html = $this->_elementTemplates[$group->getElementTemplateType()];
@@ -2772,7 +2778,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         }else{
             $html =str_replace('{help}', '', $html);
         }
-        $html =str_replace('{id}', 'fgroup_' . $group->getAttribute('id'), $html);
+        $html = str_replace('{id}', $group->getAttribute('id'), $html);
         $html =str_replace('{name}', $group->getName(), $html);
         $html =str_replace('{type}', 'fgroup', $html);
         $html =str_replace('{class}', $group->getAttribute('class'), $html);
