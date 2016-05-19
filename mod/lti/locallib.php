@@ -79,6 +79,10 @@ define('LTI_SETTING_NEVER', 0);
 define('LTI_SETTING_ALWAYS', 1);
 define('LTI_SETTING_DELEGATE', 2);
 
+define('LTI_COURSEVISIBLE_NO', 0);
+define('LTI_COURSEVISIBLE_PRECONFIGURED', 1);
+define('LTI_COURSEVISIBLE_ACTIVITYCHOOSER', 2);
+
 /**
  * Return the launch data required for opening the external tool.
  *
@@ -1088,19 +1092,26 @@ function lti_filter_tool_types(array $tools, $state) {
  * Returns all lti types visible in this course
  *
  * @param int $courseid The id of the course to retieve types for
+ * @param array $coursevisible options for 'coursevisible' field,
+ *        default [LTI_COURSEVISIBLE_PRECONFIGURED, LTI_COURSEVISIBLE_ACTIVITYCHOOSER]
  * @return stdClass[] All the lti types visible in the given course
  */
-function lti_get_lti_types_by_course($courseid) {
+function lti_get_lti_types_by_course($courseid, $coursevisible = null) {
     global $DB, $SITE;
 
+    if ($coursevisible === null) {
+        $coursevisible = [LTI_COURSEVISIBLE_PRECONFIGURED, LTI_COURSEVISIBLE_ACTIVITYCHOOSER];
+    }
+
+    list($coursevisiblesql, $coursevisparams) = $DB->get_in_or_equal($coursevisible, SQL_PARAMS_NAMED, 'coursevisible');
     $query = "SELECT *
                 FROM {lti_types}
-               WHERE coursevisible = 1
+               WHERE coursevisible $coursevisiblesql
                  AND (course = :siteid OR course = :courseid)
                  AND state = :active";
 
     return $DB->get_records_sql($query,
-        array('siteid' => $SITE->id, 'courseid' => $courseid, 'active' => LTI_TOOL_STATE_CONFIGURED));
+        array('siteid' => $SITE->id, 'courseid' => $courseid, 'active' => LTI_TOOL_STATE_CONFIGURED) + $coursevisparams);
 }
 
 /**
@@ -1132,7 +1143,7 @@ function lti_get_types_for_add_instance() {
 function lti_get_configured_types($courseid, $sectionreturn = 0) {
     global $OUTPUT;
     $types = array();
-    $admintypes = lti_get_lti_types_by_course($courseid);
+    $admintypes = lti_get_lti_types_by_course($courseid, [LTI_COURSEVISIBLE_ACTIVITYCHOOSER]);
 
     foreach ($admintypes as $ltitype) {
         $type           = new stdClass();

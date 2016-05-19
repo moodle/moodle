@@ -102,14 +102,26 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->setType('lti_customparameters', PARAM_TEXT);
         $mform->addHelpButton('lti_customparameters', 'custom', 'lti');
 
-        if (!$istool && !empty($this->_customdata->isadmin)) {
-            $mform->addElement('advcheckbox', 'lti_coursevisible', '&nbsp;', ' ' . get_string('show_in_course', 'lti'));
-            $mform->addHelpButton('lti_coursevisible', 'show_in_course', 'lti');
+        if (!empty($this->_customdata->isadmin)) {
+            $options = array(
+                LTI_COURSEVISIBLE_NO => get_string('show_in_course_no', 'lti'),
+                LTI_COURSEVISIBLE_PRECONFIGURED => get_string('show_in_course_preconfigured', 'lti'),
+                LTI_COURSEVISIBLE_ACTIVITYCHOOSER => get_string('show_in_course_activity_chooser', 'lti'),
+            );
+            if ($istool) {
+                // LTI2 tools can not be matched by URL, they have to be either in preconfigured tools or in activity chooser.
+                unset($options[LTI_COURSEVISIBLE_NO]);
+                $stringname = 'show_in_course_lti2';
+            } else {
+                $stringname = 'show_in_course_lti1';
+            }
+            $mform->addElement('select', 'lti_coursevisible', get_string($stringname, 'lti'), $options);
+            $mform->addHelpButton('lti_coursevisible', $stringname, 'lti');
             $mform->setDefault('lti_coursevisible', '1');
         } else {
-            $mform->addElement('hidden', 'lti_coursevisible', '1');
+            $mform->addElement('hidden', 'lti_coursevisible', LTI_COURSEVISIBLE_PRECONFIGURED);
         }
-        $mform->setType('lti_coursevisible', PARAM_BOOL);
+        $mform->setType('lti_coursevisible', PARAM_INT);
 
         $mform->addElement('hidden', 'typeid');
         $mform->setType('typeid', PARAM_INT);
