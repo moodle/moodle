@@ -62,7 +62,7 @@ class api {
                         'component' => $component,
                         'version' => $version,
                         'addon' => $addonname,
-                        'dependencies' => !empty($addon['dependencies']) ? $addoninfo['dependencies'] : array(),
+                        'dependencies' => !empty($addoninfo['dependencies']) ? $addoninfo['dependencies'] : array(),
                         'fileurl' => '',
                         'filehash' => '',
                         'filesize' => 0
