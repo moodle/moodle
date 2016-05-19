@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2015111600;
-$plugin->requires  = 2015111000;
+$plugin->version   = 2016052300;
+$plugin->requires  = 2016051900;
 $plugin->component = 'assignsubmission_onlinetext';

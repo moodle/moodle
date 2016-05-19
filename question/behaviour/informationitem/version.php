@@ -26,8 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qbehaviour_informationitem';
-$plugin->version   = 2015111600;
+$plugin->version   = 2016052300;
 
-$plugin->requires  = 2015111000;
+$plugin->requires  = 2016051900;
 
 $plugin->maturity  = MATURITY_STABLE;

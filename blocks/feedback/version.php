@@ -24,8 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2015111600;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2015111000;        // Requires this Moodle version
+$plugin->version   = 2016052300;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2016051900;        // Requires this Moodle version
 $plugin->component = 'block_feedback';  // Full name of the plugin (used for diagnostics)
 
-$plugin->dependencies = array('mod_feedback' => 2015111000);
+$plugin->dependencies = array('mod_feedback' => 2016051900);
