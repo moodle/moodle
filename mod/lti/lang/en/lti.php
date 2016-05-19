@@ -433,10 +433,15 @@ $string['share_roster_admin_help'] = 'Specify whether the tool can access the li
 $string['share_roster_help'] = 'Specify whether the tool can access the list of users enrolled in this course.
 
 Note that this setting may be overridden in the tool configuration.';
-$string['show_in_course'] = 'Show tool in activity chooser';
-$string['show_in_course_help'] = 'If ticked, this tool will be shown in the activity chooser for a teacher to select to add to a course. It will also be shown in the preconfigured tool dropdown menu when adding an external tool to a course.
+$string['show_in_course_activity_chooser'] = 'Show in activity chooser and as preconfigured tool';
+$string['show_in_course_lti1'] = 'Show when creating activities';
+$string['show_in_course_lti1_help'] = 'This tool can be shown in the activity chooser for a teacher to select to add to a course. It also can be shown in the preconfigured tool dropdown menu when adding an external tool to a course.
 
-If left unticked, the tool configuration may be used if the correct launch URL is entered when adding an external tool to a course.';
+Alternatively, the tool configuration may not show up in the forms but only used if the correct launch URL is entered when adding an external tool to a course.';
+$string['show_in_course_lti2'] = 'Show when creating activities';
+$string['show_in_course_lti2_help'] = 'This tool can be shown in the activity chooser for a teacher to select to add to a course or in the preconfigured tool dropdown menu when adding an external tool to a course.';
+$string['show_in_course_no'] = 'Do not show, use for launch URL matching only';
+$string['show_in_course_preconfigured'] = 'Show as preconfigured tool when adding External tool';
 $string['size'] = 'Size parameters';
 $string['submission'] = 'Submission';
 $string['submissions'] = 'Submissions';
