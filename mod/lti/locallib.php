@@ -2499,7 +2499,7 @@ function serialise_tool_proxy(stdClass $proxy) {
     return array(
         'id' => $proxy->id,
         'name' => $proxy->name,
-        'description' => $proxy->regurl . ' You will need to activate this proxy before adding a description',
+        'description' => get_string('activatetoadddescription', 'mod_lti'),
         'urls' => get_tool_proxy_urls($proxy),
         'state' => array(
             'text' => get_string('pending', 'mod_lti'),

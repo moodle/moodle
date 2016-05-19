@@ -63,6 +63,7 @@ Some tool providers support reporting grades back to Moodle based on actions tak
 Note that this setting may be overridden in the tool configuration.';
 $string['action'] = 'Action';
 $string['activate'] = 'Activate';
+$string['activatetoadddescription'] = 'You will need to activate this tool before you can add a description.';
 $string['active'] = 'Active';
 $string['activity'] = 'Activity';
 $string['addnewapp'] = 'Enable external application';
