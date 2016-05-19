@@ -2409,11 +2409,11 @@ class api {
         $sql .= " AND p.userid $insql";
         $params += $inparams;
 
-        // Order by last updated, seconded by ID to prevent random ordering.
-        $sql .= " ORDER BY p.timemodified DESC, p.id ASC";
+        // Order by ID just to have some ordering in place.
+        $ordersql = " ORDER BY p.id ASC";
 
         $plans = array();
-        $records = $DB->get_recordset_sql($select . $sql, $params, $skip, $limit);
+        $records = $DB->get_recordset_sql($select . $sql . $ordersql, $params, $skip, $limit);
         foreach ($records as $record) {
             $plan = new plan(0, plan::extract_record($record, 'plan_'));
             $template = null;
