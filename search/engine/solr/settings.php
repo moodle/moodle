@@ -56,7 +56,7 @@ if ($ADMIN->fulltree) {
                     new lang_string('fileindexing_help', 'search_solr'), 1));
             $settings->add(new admin_setting_configtext('search_solr/maxindexfilekb',
                     new lang_string('maxindexfilekb', 'search_solr'),
-                    new lang_string('maxindexfilekb_help', 'search_solr'), '20197152', PARAM_INT));
+                    new lang_string('maxindexfilekb_help', 'search_solr'), '2097152', PARAM_INT));
         }
     }
 }
