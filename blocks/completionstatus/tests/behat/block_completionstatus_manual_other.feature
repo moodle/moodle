@@ -41,7 +41,10 @@ Feature: Enable Block Completion in a course using manual completion by others
     And I follow "Course 1"
     And I navigate to "Course completion" node in "Reports"
     And I follow "Click to mark user complete"
-    And I trigger cron
+    # Running completion task just after clicking sometimes fail, as record
+    # should be created before the task runs.
+    And I wait "1" seconds
+    And I run the scheduled task "core\task\completion_regular_task"
     And I am on site homepage
     And I log out
     And I log in as "student1"
@@ -89,7 +92,10 @@ Feature: Enable Block Completion in a course using manual completion by others
     And I follow "Course 1"
     And I navigate to "Course completion" node in "Reports"
     And I follow "Click to mark user complete"
-    And I trigger cron
+    # Running completion task just after clicking sometimes fail, as record
+    # should be created before the task runs.
+    And I wait "1" seconds
+    And I run the scheduled task "core\task\completion_regular_task"
     And I am on site homepage
     And I log out
     And I log in as "student1"

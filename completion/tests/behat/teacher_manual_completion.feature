@@ -41,10 +41,10 @@ Feature: Allow teachers to manually mark users as complete when configured
     And I follow "View course report"
     And I should see "Student First"
     And I follow "Click to mark user complete"
-    # Running cron just after clicking sometimes fail, as record
-    # should be created before the cron runs.
+    # Running completion task just after clicking sometimes fail, as record
+    # should be created before the task runs.
     And I wait "1" seconds
-    And I trigger cron
+    And I run the scheduled task "core\task\completion_regular_task"
     And I am on site homepage
     And I log out
     Then I log in as "student1"
