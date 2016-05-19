@@ -34,7 +34,6 @@
 .dir-rtl.path-grade-report-grader .gradeparent table {
     border-left-width: 0;
     border-right-width: 1px;
-    max-width: initial;
 }
 
 /**
@@ -228,7 +227,7 @@
 .path-grade-report-grader .yui3-overlay {
   border: 0;
   background: none;
-  background-color: initial;
+  background-color: inherit;
   min-width: 200px;
 }
 
