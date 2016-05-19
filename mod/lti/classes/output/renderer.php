@@ -56,6 +56,7 @@ class renderer extends plugin_renderer_base {
      * @return string html for the page
      */
     public function render_external_registration_return_page($page) {
-        return '';
+        $data = $page->export_for_template($this);
+        return parent::render_from_template('mod_lti/external_registration_return', $data);
     }
 }

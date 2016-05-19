@@ -41,6 +41,9 @@
 <div id="tool-notools-text" class="container-fluid">{{#str}} no_lti_tools, mod_lti {{/str}}</div>
 {{/tools}}
 <div id="tool-card-container" class="container-fluid">
+    {{#proxies}}
+        {{> mod_lti/tool_proxy_card }}
+    {{/proxies}}
     {{#tools}}
         {{> mod_lti/tool_card }}
     {{/tools}}

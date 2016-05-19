@@ -25,11 +25,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1
  */
-define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/events', 'mod_lti/keys', 'mod_lti/tool_type'],
-        function($, ajax, notification, templates, ltiEvents, KEYS, toolType) {
+define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/events', 'mod_lti/keys', 'mod_lti/tool_type',
+        'mod_lti/tool_proxy', 'core/str'],
+        function($, ajax, notification, templates, ltiEvents, KEYS, toolType, toolProxy, str) {
 
     var SELECTORS = {
-        REGISTRATION_FEEDBACK_CONTAINER: '#registration-feedback-container',
         EXTERNAL_REGISTRATION_CONTAINER: '#external-registration-container',
         EXTERNAL_REGISTRATION_PAGE_CONTAINER: '#external-registration-page-container',
         CARTRIDGE_REGISTRATION_CONTAINER: '#cartridge-registration-container',
@@ -50,17 +50,6 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      */
     var getToolCreateButton = function() {
         return $(SELECTORS.TOOL_CREATE_BUTTON);
-    };
-
-    /**
-     * Get the registration feedback container element.
-     *
-     * @method getRegistrationFeedbackContainer
-     * @private
-     * @return object jQuery object
-     */
-    var getRegistrationFeedbackContainer = function() {
-        return $(SELECTORS.REGISTRATION_FEEDBACK_CONTAINER);
     };
 
     /**
@@ -155,11 +144,10 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      * @method showExternalRegistration
      * @private
      */
-    var showExternalRegistration = function(url) {
+    var showExternalRegistration = function() {
         hideCartridgeRegistration();
         hideRegistrationChoices();
         getExternalRegistrationContainer().removeClass('hidden');
-        getExternalRegistrationContainer().find(SELECTORS.EXTERNAL_REGISTRATION_PAGE_CONTAINER).attr('data-registration-url', url);
         screenReaderAnnounce(getExternalRegistrationContainer());
     };
 
@@ -200,13 +188,6 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      * @private
      */
     var showRegistrationChoices = function() {
-        if (isRegistrationFeedbackVisible()) {
-            // If the registration feedback is visible then we don't need
-            // to do anything because it will display this content when it's
-            // closed.
-            return;
-        }
-
         hideExternalRegistration();
         hideCartridgeRegistration();
         getRegistrationChoiceContainer().removeClass('hidden');
@@ -234,44 +215,17 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
     };
 
     /**
-     * Check if the registration feedback is being displayed.
-     *
-     * @method isRegistrationFeedbackVisible
-     * @private
-     * @return bool
-     */
-    var isRegistrationFeedbackVisible = function() {
-        return $.trim(getRegistrationFeedbackContainer().html());
-    };
-
-    /**
      * Display the registration feedback alert and hide the other panels.
      *
      * @method showRegistrationFeedback
      * @private
      */
     var showRegistrationFeedback = function(data) {
-        templates.render('mod_lti/registration_feedback', data).done(function(html) {
-            hideExternalRegistration();
-            hideCartridgeRegistration();
-            hideRegistrationChoices();
-
-            var container = getRegistrationFeedbackContainer();
-            container.append(html);
-        }).fail(notification.exception);
-    };
-
-    /**
-     * Hide the registration feedback alert and restore the choices panel.
-     *
-     * @method showRegistrationFeedback
-     * @private
-     */
-    var clearRegistrationFeedback = function() {
-        var container = getRegistrationFeedbackContainer();
-        container.empty();
-
-        showRegistrationChoices();
+        var type = data.error ? 'error' : 'success';
+        notification.addNotification({
+            message: '<h4>' + data.status + '</h4><p>' + data.message + '</p>',
+            type: type
+        });
     };
 
     /**
@@ -303,16 +257,29 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      * @private
      */
     var reloadToolList = function() {
+        var promise = $.Deferred();
         var container = getToolListContainer();
         startLoading(container);
 
-        toolType.query().done(function(types) {
-            templates.render('mod_lti/tool_list', {tools: types}).done(function(html, js) {
-                container.empty();
-                container.append(html);
-                templates.runTemplateJS(js);
-            }).fail(notification.exception);
-        }).fail(notification.exception).always(function() { stopLoading(container); });
+        $.when(
+                toolType.query(),
+                toolProxy.query({'orphanedonly': true})
+            )
+            .done(function(types, proxies) {
+                    templates.render('mod_lti/tool_list', {tools: types, proxies: proxies})
+                        .done(function(html, js) {
+                                container.empty();
+                                container.append(html);
+                                templates.runTemplateJS(js);
+                                promise.resolve();
+                            }).fail(promise.reject);
+                })
+            .fail(promise.reject);
+
+        promise.fail(notification.exception)
+            .always(function () {
+                    stopLoading(container);
+                });
     };
 
     /**
@@ -324,7 +291,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      * @return object jQuery deferred object
      */
     var addTool = function() {
-        var url = getToolURL();
+        var url = $.trim(getToolURL());
 
         if (url === "") {
             return $.Deferred().resolve();
@@ -342,14 +309,22 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
                 $(SELECTORS.TOOL_URL).val('');
                 $(document).trigger(ltiEvents.START_CARTRIDGE_REGISTRATION, url);
             } else {
-                showExternalRegistration(url);
-                $(SELECTORS.TOOL_URL).val('');
-                $(document).trigger(ltiEvents.START_EXTERNAL_REGISTRATION);
-                hideToolList();
+                $(document).trigger(ltiEvents.START_EXTERNAL_REGISTRATION, {url: url});
             }
         });
 
-        promise.fail(notification.exception);
+        promise.fail(function () {
+            str.get_strings([{key: 'error', component: 'moodle'},
+                             {key: 'errorbadurl', component: 'mod_lti'}])
+                .done(function (s) {
+                        $(document).trigger(ltiEvents.REGISTRATION_FEEDBACK, {
+                                status: s[0],
+                                message: s[1],
+                                error: true
+                            });
+                    })
+                .fail(notification.exception);
+        });
 
         return promise;
     };
@@ -366,6 +341,12 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
         // the cartridge registration or the external registration url.
         $(document).on(ltiEvents.NEW_TOOL_TYPE, function() {
             reloadToolList();
+        });
+
+        $(document).on(ltiEvents.START_EXTERNAL_REGISTRATION, function() {
+            showExternalRegistration();
+            $(SELECTORS.TOOL_URL).val('');
+            hideToolList();
         });
 
         $(document).on(ltiEvents.STOP_EXTERNAL_REGISTRATION, function() {
@@ -392,19 +373,6 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
             addTool();
         });
 
-        var feedbackContainer = getRegistrationFeedbackContainer();
-        feedbackContainer.click(function(e) {
-            e.preventDefault();
-            clearRegistrationFeedback();
-        });
-        feedbackContainer.keypress(function(e) {
-            if (!e.metaKey && !e.shiftKey && !e.altKey && !e.ctrlKey) {
-                if (e.keyCode == KEYS.ENTER || e.keyCode == KEYS.SPACE) {
-                    e.preventDefault();
-                    clearRegistrationFeedback();
-                }
-            }
-        });
     };
 
     return /** @alias module:mod_lti/cartridge_registration_form */ {

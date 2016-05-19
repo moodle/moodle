@@ -56,7 +56,7 @@ require_once($CFG->dirroot.'/mod/lti/locallib.php');
 $action       = optional_param('action', null, PARAM_ALPHANUMEXT);
 $id           = optional_param('id', null, PARAM_INT);
 $tab          = optional_param('tab', '', PARAM_ALPHAEXT);
-$returnto     = optional_param('returnto', '', PARAM_ALPHANUM);
+$returnto     = optional_param('returnto', '', PARAM_ALPHA);
 
 if ($returnto == 'toolconfigure') {
     $returnurl = new moodle_url($CFG->wwwroot . '/mod/lti/toolconfigure.php');

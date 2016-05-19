@@ -15,35 +15,29 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_lti/registration_feedback
+    @template mod_lti/external_registration_return
 
-    This template provides the layout for a feedback message in the
-    tool configuration page.
+    This template provides the layout for the external tool configuration page in the
+    LTI module.
 
     Classes required for JS:
-    * close
-    * alert
-    * alert-success
-    * alert-error
+    * none
 
     Data attributes required for JS:
     * none
 
     Context variables required for this template:
-    * status
-    * message
-
-    Example context (json):
-    {
-        "status": "Success",
-        "message": "Successfully created a new tool type!"
-    }
+    *
 
 }}
-<div class="alert
-    {{^error}}alert-success{{/error}}
-    {{#error}}alert-error{{/error}}" role="alert">
-    <button type="button" class="close" aria-label="{{#str}} closebuttontitle, moodle {{/str}}">&times;</button>
-    <h4>{{status}}</h4>
-    {{message}}
+<div id="external-registration-return-container">
+    <div class="registration-loading-container loading-screen">
+        {{> mod_lti/loader }}
+        <p class="loading-text">{{#str}} loadinghelp, moodle {{/str}}</p>
+    </div>
 </div>
+{{#js}}
+    require(['mod_lti/external_registration'], function(registration) {
+        registration.init();
+    });
+{{/js}}

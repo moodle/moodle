@@ -42,12 +42,12 @@ require_once($CFG->dirroot . '/mod/lti/locallib.php');
 class mod_lti_external extends external_api {
 
     /**
-     * Returns description of a tool type
+     * Returns structure be used for returning a tool type from a web service.
      *
      * @return external_function_parameters
      * @since Moodle 3.1
      */
-    private static function get_tool_type_return_parameters() {
+    private static function tool_type_return_structure() {
         return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'Tool type id'),
@@ -90,7 +90,7 @@ class mod_lti_external extends external_api {
      * @return external_function_parameters
      * @since Moodle 3.1
      */
-    private static function get_tool_proxy_return_parameters() {
+    private static function tool_proxy_return_structure() {
         return new external_function_parameters(
             array(
                 'id' => new external_value(PARAM_INT, 'Tool proxy id'),
@@ -111,6 +111,59 @@ class mod_lti_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function get_tool_proxies_parameters() {
+        return new external_function_parameters(
+            array(
+                'orphanedonly' => new external_value(PARAM_BOOL, 'Orphaned tool types only', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Returns the tool types.
+     *
+     * @param bool $orphanedonly Retrieve only tool proxies that do not have a corresponding tool type
+     * @return array of tool types
+     * @since Moodle 3.1
+     * @throws moodle_exception
+     */
+    public static function get_tool_proxies($orphanedonly) {
+        global $PAGE;
+        $params = self::validate_parameters(self::get_tool_proxies_parameters(),
+                                            array(
+                                                'orphanedonly' => $orphanedonly
+                                            ));
+        $orphanedonly = $params['orphanedonly'];
+
+        $proxies = array();
+        $context = context_system::instance();
+
+        self::validate_context($context);
+        require_capability('moodle/site:config', $context);
+
+        $proxies = lti_get_tool_proxies($orphanedonly);
+
+        return array_map('serialise_tool_proxy', $proxies);
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     * @since Moodle 3.1
+     */
+    public static function get_tool_proxies_returns() {
+        return new external_multiple_structure(
+            self::tool_type_return_structure()
+        );
+    }
+
+    /**
+     * Returns description of method parameters.
      *
      * @return external_function_parameters
      * @since Moodle 3.0
@@ -495,7 +548,7 @@ class mod_lti_external extends external_api {
      * @since Moodle 3.1
      */
     public static function create_tool_proxy_returns() {
-        return self::get_tool_proxy_return_parameters();
+        return self::tool_proxy_return_structure();
     }
 
     /**
@@ -545,7 +598,7 @@ class mod_lti_external extends external_api {
      * @since Moodle 3.1
      */
     public static function delete_tool_proxy_returns() {
-        return self::get_tool_proxy_return_parameters();
+        return self::tool_proxy_return_structure();
     }
 
     /**
@@ -598,6 +651,7 @@ class mod_lti_external extends external_api {
                 'lti_version' => new external_value(PARAM_ALPHANUMEXT, 'LTI version'),
                 'reg_key' => new external_value(PARAM_TEXT, 'Tool proxy registration key'),
                 'reg_password' => new external_value(PARAM_TEXT, 'Tool proxy registration password'),
+                'reg_url' => new external_value(PARAM_TEXT, 'Tool proxy registration url'),
                 'tc_profile_url' => new external_value(PARAM_URL, 'Tool consumers profile URL'),
                 'launch_presentation_return_url' => new external_value(PARAM_URL, 'URL to redirect on registration completion'),
             )
@@ -657,7 +711,7 @@ class mod_lti_external extends external_api {
      */
     public static function get_tool_types_returns() {
         return new external_multiple_structure(
-            self::get_tool_type_return_parameters()
+            self::tool_type_return_structure()
         );
     }
 
@@ -745,7 +799,7 @@ class mod_lti_external extends external_api {
      * @since Moodle 3.1
      */
     public static function create_tool_type_returns() {
-        return self::get_tool_type_return_parameters();
+        return self::tool_type_return_structure();
     }
 
     /**
@@ -828,7 +882,7 @@ class mod_lti_external extends external_api {
      * @since Moodle 3.1
      */
     public static function update_tool_type_returns() {
-        return self::get_tool_type_return_parameters();
+        return self::tool_type_return_structure();
     }
 
     /**
