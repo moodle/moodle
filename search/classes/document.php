@@ -276,8 +276,8 @@ class document implements \renderable, \templatable {
         if ($fielddata['type'] === 'int' || $fielddata['type'] === 'tdate') {
             $this->data[$fieldname] = intval($value);
         } else {
-            // Clean up line breaks and extra spaces.
-            $this->data[$fieldname] = preg_replace("/\s+/", ' ', trim($value, "\r\n"));
+            // Replace all groups of line breaks and spaces by single spaces.
+            $this->data[$fieldname] = preg_replace("/\s+/", " ", $value);
         }
 
         return $this->data[$fieldname];

@@ -79,7 +79,7 @@ class chapter extends \core_search\area\base_mod {
 
         // Prepare associative array with data from DB.
         $doc = \core_search\document_factory::instance($record->id, $this->componentname, $this->areaname);
-        $doc->set('title', $record->title);
+        $doc->set('title', content_to_text($record->title, false));
         $doc->set('content', content_to_text($record->content, $record->contentformat));
         $doc->set('contextid', $context->id);
         $doc->set('courseid', $record->courseid);

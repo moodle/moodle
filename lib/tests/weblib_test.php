@@ -600,4 +600,41 @@ EXPECTED;
 
     }
 
+    /**
+     * Tests for content_to_text.
+     *
+     * @param string    $content   The content
+     * @param int|false $format    The content format
+     * @param string    $expected  Expected value
+     * @dataProvider provider_content_to_text
+     */
+    public function test_content_to_text($content, $format, $expected) {
+        $content = content_to_text($content, $format);
+        $this->assertEquals($expected, $content);
+    }
+
+    /**
+     * Data provider for test_content_to_text.
+     */
+    public static function provider_content_to_text() {
+        return array(
+            array('asd', false, 'asd'),
+            // Trim '\r\n '.
+            array("Note that:\n\n3 > 1 ", FORMAT_PLAIN, "Note that:\n\n3 > 1"),
+            array("Note that:\n\n3 > 1\r\n", FORMAT_PLAIN, "Note that:\n\n3 > 1"),
+            // Multiple spaces to one.
+            array('<span class="eheh">京都</span>  ->  hehe', FORMAT_HTML, '京都 -> hehe'),
+            array('<span class="eheh">京都</span>  ->  hehe', false, '京都 -> hehe'),
+            array('asd    asd', false, 'asd asd'),
+            // From markdown to html and html to text.
+            array('asd __lera__ con la', FORMAT_MARKDOWN, 'asd LERA con la'),
+            // HTML to text.
+            array('<p class="frogs">This is a <strong class=\'fishes\'>test</strong></p>', FORMAT_HTML, 'This is a TEST'),
+            array("<span lang='en' class='multilang'>english</span>
+<span lang='ca' class='multilang'>català</span>
+<span lang='es' class='multilang'>español</span>
+<span lang='fr' class='multilang'>français</span>", FORMAT_HTML, "english català español français")
+        );
+    }
+
 }

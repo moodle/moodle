@@ -123,7 +123,7 @@ class course_search_testcase extends advanced_testcase {
         $this->assertEquals($course->fullname, $doc->get('title'));
 
         // Not nice. Applying \core_search\document::set line breaks clean up.
-        $summary = preg_replace("/\s+/", ' ', trim(content_to_text($course->summary, $course->summaryformat), "\r\n"));
+        $summary = preg_replace("/\s+/", " ", content_to_text($course->summary, $course->summaryformat));
         $this->assertEquals($summary, $doc->get('content'));
         $this->assertEquals($course->shortname, $doc->get('description1'));
     }
