@@ -191,7 +191,7 @@ Three icons are available after the preconfigured tool dropdown list:
 * **Delete** - Remove the selected course level tool.';
 $string['external_tool_types'] = 'Preconfigured tools';
 $string['failedtoconnect'] = 'Moodle was unable to communicate with the "{$a}" system';
-$string['failedtocreatetooltype'] = 'Failed to create new tool.';
+$string['failedtocreatetooltype'] = 'Failed to create new tool. Please check the url and try again.';
 $string['failedtodeletetoolproxy'] = 'Failed to delete tool registration. You may need to visit "Manage external tool registrations" and delete it manually.';
 $string['filter_basiclti_configlink'] = 'Configure your preferred sites and their passwords';
 $string['filter_basiclti_password'] = 'Password is mandatory';

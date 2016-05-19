@@ -53,6 +53,8 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
         /**
          * Create a tool type in Moodle.
          *
+         * The promise will fail if the URL is not a cartridge, so you must handle the fail result.
+         *
          * See also:
          * mod/lti/classes/external.php create_tool_type_parameters()
          *
@@ -68,8 +70,6 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
             };
 
             var promise = ajax.call([request])[0];
-
-            promise.fail(notification.exception);
 
             return promise;
         },
