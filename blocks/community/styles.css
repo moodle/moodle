@@ -7,14 +7,11 @@
 #page-blocks-community-communitycourse .hubtext {display: block; width: 68%; padding-left: 165px;}
 #page-blocks-community-communitycourse .hubimgandtext {display:table;}
 #page-blocks-community-communitycourse .hubimage {float: left; display: block; width: 100px;}
-#page-blocks-community-communitycourse .hubdescriptiontext {}
 #page-blocks-community-communitycourse .hubstats {padding-top: 10px}
 #page-blocks-community-communitycourse .hubstats .iconhelp {float: left; padding-right: 3px;}
 #page-blocks-community-communitycourse .hubadditionaldesc {color: #666666; font-size: 90%; display:block;}
 #page-blocks-community-communitycourse .hubscreenshot {margin-right: 10px;}
-#page-blocks-community-communitycourse .hubnottrusted {}
 #page-blocks-community-communitycourse .hubtrusted {display:inline;}
-#page-blocks-community-communitycourse .hubnottrusted {}
 #page-blocks-community-communitycourse .trustedtr {background-color: #ffe1c3;}
 #page-blocks-community-communitycourse .prioritisetr {background-color: #ffd4ff;}
 #page-blocks-community-communitycourse .blockdescription {font-size: 80%; color: #555555;}
@@ -25,7 +22,6 @@
 #page-blocks-community-communitycourse .comment-link {font-size: 80%; color: #555555;}
 #page-blocks-community-communitycourse .coursescreenshot {text-align:center;cursor: pointer;}
 #page-blocks-community-communitycourse .hubcourseinfo {margin-left: 15px;}
-#page-blocks-community-communitycourse .coursesitelink {}
 #page-blocks-community-communitycourse .pagingbar {text-align: center;}
 #page-blocks-community-communitycourse .coursecomment {float: right;}
 #page-blocks-community-communitycourse .courseoperations {margin-top:9px; text-align:center}
@@ -87,13 +83,6 @@
     font-size: 95%;
     margin-bottom: 9px;
 }
-#page-blocks-community-communitycourse .comment-list li {
-    background-color:#FFFAFA !important;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
-    padding-right: 4px;
-    padding-bottom: 2px;
-}
 
 /*  STAR RATING  */
 #page-blocks-community-communitycourse .ratingcount {color: #8B8989;font-size: 80%;vertical-align: top;}
@@ -153,7 +142,6 @@
     margin-top:15px;
 }
 #page-blocks-community-communitycourse .hubrateandcomment { font-size: 80%;}
-#page-blocks-community-communitycourse .hubcourseoutcomes {}
 #page-blocks-community-communitycourse .nextlink {text-align: center;margin-top: 6px;}
 #page-blocks-community-communitycourse .textinfo { text-align: center;}
 
