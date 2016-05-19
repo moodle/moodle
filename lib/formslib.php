@@ -2316,6 +2316,9 @@ var skipClientValidation = false;
         } catch(e) {
             return true;
         }
+        if (typeof window.tinyMCE !== \'undefined\') {
+            window.tinyMCE.triggerSave();
+        }
         if (!myValidator()) {
             ev.preventDefault();
         }
