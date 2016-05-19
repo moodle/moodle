@@ -610,6 +610,7 @@ class core_grade_item_testcase extends grade_base_testcase {
         $grade_item->itemtype = 'mod';
         $grade_item->itemmodule = 'quiz';
         $grade_item->iteminfo = 'Grade item used for unit testing';
+        $grade_item->iteminstance = $this->activities[7]->id;
         $grade_item->grademin = $min;
         $grade_item->grademax = $max;
         $grade_item->insert();
