@@ -2409,6 +2409,9 @@ class api {
         $sql .= " AND p.userid $insql";
         $params += $inparams;
 
+        // Order by last updated, seconded by ID to prevent random ordering.
+        $sql .= " ORDER BY p.timemodified DESC, p.id ASC";
+
         $plans = array();
         $records = $DB->get_recordset_sql($select . $sql, $params, $skip, $limit);
         foreach ($records as $record) {
