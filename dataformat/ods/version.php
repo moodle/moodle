@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2016031700;
-$plugin->requires  = 2016031700;  // Requires this Moodle version.
+$plugin->version   = 2016052300;
+$plugin->requires  = 2016051900;  // Requires this Moodle version.
 $plugin->component = 'dataformat_ods';
 
