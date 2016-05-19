@@ -390,7 +390,7 @@ class core_tag_area {
 
         // Find all tags that are related to the tags being moved and make sure they are present in the target tagcoll.
         // This query is a little complicated because Oracle does not allow to run SELECT DISTINCT on CLOB fields.
-        $sql = "SELECT name, rawname, description, descriptionformat, userid, isstandard, flag ".
+        $sql = "SELECT name, rawname, description, descriptionformat, userid, isstandard, flag, timemodified ".
                 "FROM {tag} WHERE id IN ".
                 "(SELECT r.id ".
                 "FROM {tag_instance} ti ". // Instances that need moving.
@@ -424,7 +424,7 @@ class core_tag_area {
 
         // Find all tags that are used for this itemtype/component and are not present in the target tag collection.
         // This query is a little complicated because Oracle does not allow to run SELECT DISTINCT on CLOB fields.
-        $sql = "SELECT id, name, rawname, description, descriptionformat, userid, isstandard, flag
+        $sql = "SELECT id, name, rawname, description, descriptionformat, userid, isstandard, flag, timemodified
                 FROM {tag} WHERE id IN
                 (SELECT t.id
                 FROM {tag_instance} ti
