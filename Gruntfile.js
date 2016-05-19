@@ -38,9 +38,9 @@ module.exports = function(grunt) {
         var root = grunt.option('root');
         if (grunt.file.exists(__dirname, root)) {
             cwd = path.join(__dirname, root);
-            grunt.log.ok('Setting root to '+cwd);
+            grunt.log.ok('Setting root to ' + cwd);
         } else {
-            grunt.fail.fatal('Setting root to '+root+' failed - path does not exist');
+            grunt.fail.fatal('Setting root to ' + root + ' failed - path does not exist');
         }
     }
 
@@ -59,7 +59,7 @@ module.exports = function(grunt) {
      * @param {String} srcPath the  matched src path
      * @return {String} The rewritten destination path.
      */
-    var uglify_rename = function (destPath, srcPath) {
+    var uglifyRename = function(destPath, srcPath) {
         destPath = srcPath.replace('src', 'build');
         destPath = destPath.replace('.js', '.min.js');
         destPath = path.resolve(cwd, destPath);
@@ -76,7 +76,7 @@ module.exports = function(grunt) {
         var thirdpartyfiles = grunt.file.expand('*/**/thirdpartylibs.xml');
         var libs = ['node_modules/', 'vendor/'];
 
-        thirdpartyfiles.forEach( function(file) {
+        thirdpartyfiles.forEach(function(file) {
           var dirname = path.dirname(file);
 
           var doc = new DOMParser().parseFromString(grunt.file.read(file));
@@ -130,7 +130,9 @@ module.exports = function(grunt) {
             amd: {
               src: amdSrc,
               filter: isMoodleFile,
-              options: { rules: {'no-undef': 'error', 'no-unused-vars': 'error', 'no-empty': 'error', 'no-unused-expressions': 'error'} }
+              options: {
+                  rules: {'no-undef': 'error', 'no-unused-vars': 'error', 'no-empty': 'error', 'no-unused-expressions': 'error'}
+              }
             },
             // Check YUI module source files.
             yui: {
@@ -143,7 +145,7 @@ module.exports = function(grunt) {
                 files: [{
                     expand: true,
                     src: amdSrc,
-                    rename: uglify_rename
+                    rename: uglifyRename
                 }]
             }
         },
@@ -204,9 +206,9 @@ module.exports = function(grunt) {
             options = grunt.config('shifter.options');
 
         // Run the shifter processes one at a time to avoid confusing output.
-        async.eachSeries(options.paths, function (src, filedone) {
+        async.eachSeries(options.paths, function(src, filedone) {
             var args = [];
-            args.push( path.normalize(__dirname + '/node_modules/shifter/bin/shifter'));
+            args.push(path.normalize(__dirname + '/node_modules/shifter/bin/shifter'));
 
             // Always ignore the node_modules directory.
             args.push('--excludes', 'node_modules');
@@ -254,7 +256,7 @@ module.exports = function(grunt) {
                     cmd: "node",
                     args: args,
                     opts: {cwd: src, stdio: 'inherit', env: process.env}
-                }, function (error, result, code) {
+                }, function(error, result, code) {
                     if (code) {
                         grunt.fail.fatal('Shifter failed with code: ' + code);
                     } else {
@@ -301,7 +303,7 @@ module.exports = function(grunt) {
     var onChange = grunt.util._.debounce(function() {
           var files = Object.keys(changedFiles);
           grunt.config('jshint.amd.src', files);
-          grunt.config('uglify.amd.files', [{ expand: true, src: files, rename: uglify_rename }]);
+          grunt.config('uglify.amd.files', [{ expand: true, src: files, rename: uglifyRename }]);
           grunt.config('shifter.options.paths', files);
           changedFiles = Object.create(null);
     }, 200);
