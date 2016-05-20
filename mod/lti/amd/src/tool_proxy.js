@@ -75,6 +75,8 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
         /**
          * Create a tool proxy in Moodle.
          *
+         * The promise will fail if the proxy cannot be created, so you must handle the fail result.
+         *
          * See mod/lti/classes/external.php create_tool_proxy_parameters
          *
          * @method create
@@ -89,8 +91,6 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
             };
 
             var promise = ajax.call([request])[0];
-
-            promise.fail(notification.exception);
 
             return promise;
         }
