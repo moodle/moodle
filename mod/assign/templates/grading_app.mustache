@@ -34,18 +34,28 @@
 <div data-region="grading-navigation-panel" data-first-userid="{{userid}}" data-courseid="{{courseid}}" data-showuseridentity="{{showuseridentity}}">
 {{> mod_assign/grading_navigation }}
 </div>
+{{#showreview}}
+<div data-region="review-panel">
+    <a href="#" data-region="review-panel-toggle">
+        <div class="collapse-icon">{{#pix}} t/expanded, core, {{#str}} collapsereviewpanel, mod_assign {{/str}} {{/pix}}</div>
+        <div class="expand-icon">
+            <div class="ltr-icon">{{#pix}} t/collapsed, core, {{#str}} expandreviewpanel, mod_assign {{/str}} {{/pix}}</div>
+            <div class="rtl-icon">{{#pix}} t/collapsed_rtl, core, {{#str}} expandreviewpanel, mod_assign {{/str}} {{/pix}}</div>
+            <div class="toggle-text">{{#str}} clickexpandreviewpanel, mod_assign {{/str}}</div>
+        </div>
+    </a>
+    <div data-region="review-panel-content">
+        <div data-region="review">
+            {{> mod_assign/review_panel }}
+        </div>
+    </div>
+</div>
+{{/showreview}}
 <div data-region="grade-panel" {{^showreview}}class="fullwidth"{{/showreview}}>
 <div data-region="grade" data-contextid="{{contextid}}" data-assignmentid="{{assignmentid}}">
 {{> mod_assign/grading_panel }}
 </div>
 </div>
-{{#showreview}}
-<div data-region="review-panel">
-<div data-region="review">
-{{> mod_assign/review_panel }}
-</div>
-</div>
-{{/showreview}}
 <div data-region="grade-actions-panel">
 <div data-region="grade-actions">
 {{> mod_assign/grading_actions }}
