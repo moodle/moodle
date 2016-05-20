@@ -65,7 +65,60 @@ Feature: Using the activity grade form element
     And I should not see "You must choose whether to rescale existing grades or not"
 
   @javascript
-  Scenario: Attempting to change the scale when grades already exist
+  Scenario: Attempting to change the scale when grades already exist in rating activity
+    Given I log in as "admin"
+    And I navigate to "Scales" node in "Site administration > Grades"
+    And I press "Add a new scale"
+    And I set the following fields to these values:
+      | Name  | ABCDEF |
+      | Scale | F,E,D,C,B,A |
+    And I press "Save changes"
+    And I press "Add a new scale"
+    And I set the following fields to these values:
+      | Name  | Letter scale |
+      | Scale | Disappointing, Good, Very good, Excellent |
+    And I press "Save changes"
+    And I log out
+    And I log in as "teacher1"
+    And I follow "Course 1"
+    And I turn editing mode on
+    And I add a "Forum" to section "1" and I fill the form with:
+      | Forum name | Test forum name |
+      | Forum type | Standard forum for general use |
+      | Description | Test forum description |
+      | Aggregate type | Average of ratings  |
+      | scale[modgrade_type] | Scale |
+      | scale[modgrade_scale] | ABCDEF |
+      | Group mode | No groups |
+    And I log out
+    And I log in as "student1"
+    And I follow "Course 1"
+    And I follow "Test forum name"
+    And I press "Add a new discussion topic"
+    And I set the following fields to these values:
+      | Subject  | Discussion subject |
+      | Message | Discussion message |
+    And I press "Post to forum"
+    And I log out
+    And I log in as "teacher1"
+    And I follow "Course 1"
+    And I follow "Test forum name"
+    And I follow "Discussion subject"
+    And I set the field "rating" to "D"
+    And I click on "Edit settings" "link" in the "Administration" "block"
+    When I expand all fieldsets
+    Then I should see "Some grades have already been awarded, so the grade type and scale cannot be changed"
+    # Try saving the form and visiting it back to verify that everything is working ok.
+    And I press "Save and display"
+    And I should not see "When selecting a ratings aggregate type you must also select"
+    And I click on "Edit settings" "link"
+    And I expand all fieldsets
+    And the field "Aggregate type" matches value "Average of ratings"
+    And the field "scale[modgrade_type]" matches value "Scale"
+    And the field "scale[modgrade_scale]" matches value "ABCDEF"
+
+  @javascript
+  Scenario: Attempting to change the scale when grades already exist in non-rating activity
     Given I log in as "admin"
     And I navigate to "Scales" node in "Site administration > Grades"
     And I press "Add a new scale"
@@ -97,6 +150,12 @@ Feature: Using the activity grade form element
     And I click on "Edit settings" "link"
     When I expand all fieldsets
     Then I should see "Some grades have already been awarded, so the grade type and scale cannot be changed"
+    # Try saving the form and visiting it back to verify everything is working ok.
+    And I press "Save and display"
+    And I click on "Edit settings" "link"
+    And I expand all fieldsets
+    And the field "grade[modgrade_type]" matches value "Scale"
+    And the field "grade[modgrade_scale]" matches value "ABCDEF"
 
   Scenario: Attempting to change the maximum grade when ratings exist
     Given I log in as "teacher1"
