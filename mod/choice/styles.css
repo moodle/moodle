@@ -92,10 +92,6 @@
   text-align: center;
 }
 
-.path-mod-choice .results.anonymous th.header {
-  border: 1px solid inherit;
-}
-
 .path-mod-choice .results.names .header {
   width: 10%;
   white-space: normal;
@@ -147,7 +143,6 @@
 #page-mod-choice-report .downloadreport ul li {
   list-style: none;
   padding: 0 20px;
-  display: inline;
   float: left;
 }
 
