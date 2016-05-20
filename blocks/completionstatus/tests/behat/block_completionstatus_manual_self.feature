@@ -35,7 +35,10 @@ Feature: Enable Block Completion in a course using manual self completion
     And I should see "Confirm self completion"
     And I press "Yes"
     And I should see "Status: In progress" in the "Course completion status" "block"
-    And I trigger cron
+    # Running completion task just after clicking sometimes fail, as record
+    # should be created before the task runs.
+    And I wait "1" seconds
+    And I run the scheduled task "core\task\completion_regular_task"
     And I am on site homepage
     And I follow "Course 1"
     Then I should see "Status: Complete" in the "Course completion status" "block"
