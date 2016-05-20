@@ -279,7 +279,6 @@ ul.assignfeedback_editpdf_menu {
 
 .dir-rtl .assignfeedback_editpdf_widget .commentdrawable a {
     float: left;
-    left: none;
     right: -17px;
     border-left: 0px;
     border-right: 1px solid #ccc;
