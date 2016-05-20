@@ -2313,27 +2313,34 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test for the type of the user-related properties in mod_assign_external::list_participants_returns().
-     *
-     * @throws coding_exception
      */
     public function test_list_participants_returns_user_property_types() {
-        // User properties defined in list_participants_returns().
-        $userproperties = [
-            'id', 'username', 'firstname', 'lastname', 'idnumber', 'email', 'address', 'phone1', 'phone2', 'icq', 'skype', 'yahoo',
-            'aim', 'msn', 'department', 'institution', 'firstaccess', 'lastaccess', 'description', 'descriptionformat', 'city',
-            'url', 'country'
-        ];
-        $returns = mod_assign_external::list_participants_returns();
-        $this->assertTrue(isset($returns->content));
-        $keydescs = $returns->content->keys;
-        // Get properties from returns description.
-        $keys = array_keys($keydescs);
-        foreach ($userproperties as $property) {
-            // Assert that the property exists in the returns description.
-            $this->assertContains($property, $keys);
-            // Assert that user-related property types match those of the defined in core_user.
-            $desc = $keydescs[$property];
-            $this->assertEquals(core_user::get_property_type($property), $desc->type);
+        // Get user properties.
+        $userdesc = core_user_external::user_description();
+        $this->assertTrue(isset($userdesc->keys));
+        $userproperties = array_keys($userdesc->keys);
+
+        // Get returns description for mod_assign_external::list_participants_returns().
+        $listreturns = mod_assign_external::list_participants_returns();
+        $this->assertTrue(isset($listreturns->content));
+        $listreturnsdesc = $listreturns->content->keys;
+
+        // Iterate over list returns description's keys.
+        foreach ($listreturnsdesc as $key => $desc) {
+            // Check if key exists in user properties and the description has a type attribute.
+            if (in_array($key, $userproperties) && isset($desc->type)) {
+                try {
+                    // The core_user::get_property_type() method might throw a coding_exception since
+                    // core_user_external::user_description() might contain properties that are not yet included in
+                    // core_user's $propertiescache.
+                    $propertytype = core_user::get_property_type($key);
+
+                    // Assert that user-related property types match those of the defined in core_user.
+                    $this->assertEquals($propertytype, $desc->type);
+                } catch (coding_exception $e) {
+                    // All good.
+                }
+            }
         }
     }
 
