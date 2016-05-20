@@ -33,7 +33,7 @@
 }}
 <div data-region="grading-navigation" class="row-fluid">
 <div data-region="assignment-info" class="span4">
-<a href="{{config.wwwroot}}/course/view.php?id={{courseid}}">{{coursename}}</a><br/>
+<a href="{{config.wwwroot}}/course/view.php?id={{courseid}}">{{{coursename}}}</a><br/>
 <a href="{{config.wwwroot}}/mod/assign/view.php?id={{cmid}}">{{name}}</a>
 {{#caneditsettings}}
 <a href="{{config.wwwroot}}/course/modedit.php?update={{cmid}}&return=1">{{#pix}}t/edit, core,{{#str}}editsettings{{/str}}{{/pix}}</a>
