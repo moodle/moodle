@@ -21,36 +21,65 @@
  * @copyright 2016 Dan Poltawski <dan@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once('../config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 admin_externalpage_setup('searchareas');
 
-$areaid = optional_param('searcharea', null, PARAM_ALPHAEXT);
+$areaid = optional_param('areaid', null, PARAM_ALPHAEXT);
 $action = optional_param('action', null, PARAM_ALPHA);
+
+try {
+    $searchmanager = \core_search\manager::instance();
+} catch (core_search\engine_exception $searchmanagererror) {
+    // Continue, we return an error later depending on the requested action.
+}
+
+echo $OUTPUT->header();
 
 if ($action) {
     require_sesskey();
 
-    $area = \core_search\manager::get_search_area($areaid);
-
-    if ($area === false) {
-        throw new moodle_exception('invalidrequest');
+    if ($areaid) {
+        // We need to check that the area exists.
+        $area = \core_search\manager::get_search_area($areaid);
+        if ($area === false) {
+            throw new moodle_exception('invalidrequest');
+        }
     }
-    // FIXME: lang strings.
+
+    // All actions but enable/disable need the search engine to be ready.
+    if ($action !== 'enable' && $action !== 'disable') {
+        if (!empty($searchmanagererror)) {
+            throw $searchmanagererror;
+        }
+    }
+
     switch ($action) {
         case 'enable':
             $area->set_enabled(true);
-            redirect($PAGE->url, 'Search area enabled', null, \core\output\notification::NOTIFY_SUCCESS);
+            echo $OUTPUT->notification(get_string('searchareaenabled', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
             break;
         case 'disable':
             $area->set_enabled(false);
-            redirect($PAGE->url, 'Search area disabled', null, \core\output\notification::NOTIFY_SUCCESS);
+            echo $OUTPUT->notification(get_string('searchareadisabled', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
             break;
         case 'delete':
             $search = \core_search\manager::instance();
             $search->delete_index($areaid);
-            redirect($PAGE->url, 'Index deleted', null, \core\output\notification::NOTIFY_SUCCESS);
+            echo $OUTPUT->notification(get_string('searchindexdeleted', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
+            break;
+        case 'indexall':
+            $searchmanager->index();
+            echo $OUTPUT->notification(get_string('searchindexupdated', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
+            break;
+        case 'reindexall':
+            $searchmanager->index(true);
+            echo $OUTPUT->notification(get_string('searchreindexed', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
+            break;
+        case 'deleteall':
+            $searchmanager->delete_index();
+            echo $OUTPUT->notification(get_string('searchalldeleted', 'admin'), \core\output\notification::NOTIFY_SUCCESS);
             break;
         default:
             throw new moodle_exception('invalidaction');
@@ -59,91 +88,93 @@ if ($action) {
 }
 
 $searchareas = \core_search\manager::get_search_areas_list();
-try {
-    $searchmanager = \core_search\manager::instance();
+if (empty($searchmanagererror)) {
     $areasconfig = $searchmanager->get_areas_config($searchareas);
-} catch (core_search\engine_exception $e) {
+} else {
     $areasconfig = false;
 }
 
-$areasbycomponent = array();
-foreach ($searchareas as $area) {
-    $component = $area->get_component_name();
-    if (isset($areasbycomponent[$component])) {
-        $areasbycomponent[$component][] = $area;
-    } else {
-        $areasbycomponent[$component] = array($area);
-    }
+if (!empty($searchmanagererror)) {
+    $errorstr = get_string($searchmanagererror->errorcode, $searchmanagererror->module);
+    echo $OUTPUT->notification($errorstr, \core\output\notification::NOTIFY_ERROR);
+} else {
+    echo $OUTPUT->notification(get_string('indexinginfo', 'admin'), \core\output\notification::NOTIFY_INFO);
 }
-
-echo $OUTPUT->header();
 
 $table = new html_table();
 $table->id = 'core-search-areas';
-// FIXME: lang string moves.
-$table->head = array(get_string('searcharea', 'search'), get_string('enable'),
-    get_string('newestdocindexed', 'report_search'), get_string('lastrun', 'report_search'), 'Index actions');
 
-foreach ($areasbycomponent as $component => $areas) {
-    $header = new html_table_cell(get_string('pluginname', $component));
-    $header->header = true;
-    $header->colspan = count($table->head);
-    $table->data[] = new html_table_row(array($header));
+$table->head = array(get_string('searcharea', 'search'), get_string('enable'), get_string('newestdocindexed', 'admin'),
+    get_string('searchlastrun', 'admin'), get_string('searchindexactions', 'admin'));
 
-    foreach ($areas as $area) {
-        $areaid = $area->get_area_id();
-        $columns = array(new html_table_cell($area->get_visible_name()));
+foreach ($searchareas as $area) {
+    $areaid = $area->get_area_id();
+    $columns = array(new html_table_cell($area->get_visible_name()));
 
-        if ($area->is_enabled()) {
-            $columns[] = $OUTPUT->action_icon(admin_searcharea_action_url($areaid, 'disable'),
-                new pix_icon('t/hide', get_string('disable'), 'moodle', array('title' => '', 'class' => 'iconsmall')),
-                null, array('title' => get_string('disable')));
+    if ($area->is_enabled()) {
+        $columns[] = $OUTPUT->action_icon(admin_searcharea_action_url('disable', $areaid),
+            new pix_icon('t/hide', get_string('disable'), 'moodle', array('title' => '', 'class' => 'iconsmall')),
+            null, array('title' => get_string('disable')));
 
-            if ($areasconfig) {
-                $columns[] = $areasconfig[$areaid]->lastindexrun;
+        if ($areasconfig) {
+            $columns[] = $areasconfig[$areaid]->lastindexrun;
 
-                if ($areasconfig[$areaid]->indexingstart) {
-                    $timediff = $areasconfig[$areaid]->indexingend - $areasconfig[$areaid]->indexingstart;
-                    $laststatus = $timediff . ' , ' .
-                        $areasconfig[$areaid]->docsprocessed . ' , ' .
-                        $areasconfig[$areaid]->recordsprocessed . ' , ' .
-                        $areasconfig[$areaid]->docsignored;
-                } else {
-                    $laststatus = '';
-                }
-                $columns[] = $laststatus;
-                $columns[] = html_writer::link(admin_searcharea_action_url($areaid, 'delete'), 'Delete index');
-
+            if ($areasconfig[$areaid]->indexingstart) {
+                $timediff = $areasconfig[$areaid]->indexingend - $areasconfig[$areaid]->indexingstart;
+                $laststatus = $timediff . ' , ' .
+                    $areasconfig[$areaid]->docsprocessed . ' , ' .
+                    $areasconfig[$areaid]->recordsprocessed . ' , ' .
+                    $areasconfig[$areaid]->docsignored;
             } else {
-                $blankrow = new html_table_cell('Global search is disabled'); // FIXME.
-                $blankrow->colspan = 3;
-                $columns[] = $blankrow;
+                $laststatus = '';
             }
+            $columns[] = $laststatus;
+            $columns[] = html_writer::link(admin_searcharea_action_url('delete', $areaid), 'Delete index');
 
         } else {
-            $columns[] = $OUTPUT->action_icon(admin_searcharea_action_url($areaid, 'enable'),
-                new pix_icon('t/show', get_string('enable'), 'moodle', array('title' => '', 'class' => 'iconsmall')),
-                    null, array('title' => get_string('enable')));
-
-            $blankrow = new html_table_cell('Search area disabled'); // FIXME.
+            $blankrow = new html_table_cell(get_string('searchnotavailable', 'admin'));
             $blankrow->colspan = 3;
             $columns[] = $blankrow;
         }
-        $row = new html_table_row($columns);
-        $table->data[] = $row;
+
+    } else {
+        $columns[] = $OUTPUT->action_icon(admin_searcharea_action_url('enable', $areaid),
+            new pix_icon('t/show', get_string('enable'), 'moodle', array('title' => '', 'class' => 'iconsmall')),
+                null, array('title' => get_string('enable')));
+
+        $blankrow = new html_table_cell(get_string('searchareadisabled', 'admin'));
+        $blankrow->colspan = 3;
+        $columns[] = $blankrow;
     }
+    $row = new html_table_row($columns);
+    $table->data[] = $row;
 }
+
+// Cross-search area tasks.
+$options = array();
+if (!empty($searchmanagererror)) {
+    $options['disabled'] = true;
+}
+echo $OUTPUT->box_start('search-areas-actions');
+echo $OUTPUT->single_button(admin_searcharea_action_url('indexall'), get_string('searchupdateindex', 'admin'), 'get', $options);
+echo $OUTPUT->single_button(admin_searcharea_action_url('reindexall'), get_string('searchreindexindex', 'admin'), 'get', $options);
+echo $OUTPUT->single_button(admin_searcharea_action_url('deleteall'), get_string('searchdeleteindex', 'admin'), 'get', $options);
+echo $OUTPUT->box_end();
 
 echo html_writer::table($table);
 echo $OUTPUT->footer();
 
 /**
- * Helper for generating url for management actions
- * @param $searcharea
- * @param $action
+ * Helper for generating url for management actions.
+ *
+ * @param string $action
+ * @param string $areaid
  * @return moodle_url
  */
-function admin_searcharea_action_url($searcharea, $action) {
-    return new moodle_url('/admin/searchareas.php', array('action' => $action, 'searcharea' => $searcharea,
-        'sesskey' => sesskey()));
+function admin_searcharea_action_url($action, $areaid = false) {
+    $params = array('action' => $action, 'sesskey' => sesskey());
+    if ($areaid) {
+        $params['areaid'] = $areaid;
+    }
+    return new moodle_url('/admin/searchareas.php', $params);
 }

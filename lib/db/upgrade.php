@@ -2072,5 +2072,16 @@ function xmldb_main_upgrade($oldversion) {
     // Moodle v3.1.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2016070700.01) {
+
+        // If someone is emotionally attached to it let's leave the config (basically the version) there.
+        if (!file_exists($CFG->dirroot . '/report/search/classes/output/form.php')) {
+            unset_all_config_for_plugin('report_search');
+        }
+
+        // Savepoint reached.
+        upgrade_main_savepoint(true, 2016070700.01);
+    }
+
     return true;
 }

@@ -66,10 +66,10 @@ class mod_wiki_search_testcase extends advanced_testcase {
         // Enabled by default once global search is enabled.
         $this->assertTrue($searcharea->is_enabled());
 
-        set_config($varname . '_enabled', false, $componentname);
+        set_config($varname . '_enabled', 0, $componentname);
         $this->assertFalse($searcharea->is_enabled());
 
-        set_config($varname . '_enabled', true, $componentname);
+        set_config($varname . '_enabled', 1, $componentname);
         $this->assertTrue($searcharea->is_enabled());
     }
 

@@ -29,8 +29,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Base search implementation.
  *
- * Components and plugins interested in filling the search engine
- * with data should extend this class (or any extension of this class)
+ * Components and plugins interested in filling the search engine with data should extend this class (or any extension of this
+ * class).
  *
  * @package    core_search
  * @copyright  2015 David Monllao {@link http://www.davidmonllao.com}
@@ -180,6 +180,10 @@ abstract class base {
             $config[$varname . $name] = get_config($componentname, $varname . $name);
         }
 
+        // Search areas are enabled by default.
+        if ($config[$varname . '_enabled'] === false) {
+            $config[$varname . '_enabled'] = 1;
+        }
         return $config;
     }
 
@@ -190,7 +194,14 @@ abstract class base {
      */
     public function is_enabled() {
         list($componentname, $varname) = $this->get_config_var_name();
-        return (bool)get_config($componentname, $varname . '_enabled');
+
+        $value = get_config($componentname, $varname . '_enabled');
+
+        // Search areas are enabled by default.
+        if ($value === false) {
+            $value = 1;
+        }
+        return (bool)$value;
     }
 
     public function set_enabled($isenabled) {
