@@ -118,6 +118,9 @@
 .path-admin-tool-lp [data-region="competencylinktree"] select {
     width: 100%;
 }
+.path-admin-tool-lp [data-region] .generaltable.fullwidth {
+    clear: both;
+}
 
 .path-admin-tool-lp .competency-rule-points {
     margin-top: 10px;
