@@ -35,6 +35,7 @@ $url = new moodle_url('/blocks/lp/competencies_to_review.php');
 $PAGE->set_context(context_user::instance($USER->id));
 $PAGE->set_url($url);
 $PAGE->set_title($toreviewstr);
+$PAGE->set_pagelayout('standard');
 $PAGE->navbar->add($toreviewstr, $url);
 
 $output = $PAGE->get_renderer('block_lp');
