@@ -2593,7 +2593,7 @@ class mod_assign_external extends external_api {
     }
 
     /**
-     * Trigger the grading_table_viewed event.
+     * Retrieves the list of students to be graded for the assignment.
      *
      * @param int $assignid the assign instance id
      * @param int $groupid the current group id
@@ -2601,7 +2601,7 @@ class mod_assign_external extends external_api {
      * @param int $skip Number of records to skip
      * @param int $limit Maximum number of records to return
      * @return array of warnings and status result
-     * @since Moodle 3.0
+     * @since Moodle 3.1
      * @throws moodle_exception
      */
     public static function list_participants($assignid, $groupid, $filter, $skip, $limit) {
@@ -2680,88 +2680,70 @@ class mod_assign_external extends external_api {
     }
 
     /**
-     * Returns description of method result value
+     * Returns the description of the results of the mod_assign_external::list_participants() method.
      *
      * @return external_description
-     * @since Moodle 3.0
+     * @since Moodle 3.1
      */
     public static function list_participants_returns() {
-        return new external_multiple_structure(
-            new external_single_structure(array(
-                'id'    => new external_value(PARAM_INT, 'ID of the user'),
-                'username'    => new external_value(PARAM_RAW, 'Username', VALUE_OPTIONAL),
-                'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL),
-                'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
-                'fullname'    => new external_value(PARAM_NOTAGS, 'The fullname of the user'),
-                'idnumber'    => new external_value(PARAM_NOTAGS, 'The idnumber of the user', VALUE_OPTIONAL),
-                'email'       => new external_value(PARAM_TEXT, 'Email address', VALUE_OPTIONAL),
-                'address'     => new external_value(PARAM_MULTILANG, 'Postal address', VALUE_OPTIONAL),
-                'phone1'      => new external_value(PARAM_NOTAGS, 'Phone 1', VALUE_OPTIONAL),
-                'phone2'      => new external_value(PARAM_NOTAGS, 'Phone 2', VALUE_OPTIONAL),
-                'icq'         => new external_value(PARAM_NOTAGS, 'icq number', VALUE_OPTIONAL),
-                'skype'       => new external_value(PARAM_NOTAGS, 'skype id', VALUE_OPTIONAL),
-                'yahoo'       => new external_value(PARAM_NOTAGS, 'yahoo id', VALUE_OPTIONAL),
-                'aim'         => new external_value(PARAM_NOTAGS, 'aim id', VALUE_OPTIONAL),
-                'msn'         => new external_value(PARAM_NOTAGS, 'msn number', VALUE_OPTIONAL),
-                'department'  => new external_value(PARAM_TEXT, 'department', VALUE_OPTIONAL),
-                'institution' => new external_value(PARAM_TEXT, 'institution', VALUE_OPTIONAL),
-                'interests'   => new external_value(PARAM_TEXT, 'user interests (separated by commas)', VALUE_OPTIONAL),
-                'firstaccess' => new external_value(PARAM_INT, 'first access to the site (0 if never)', VALUE_OPTIONAL),
-                'lastaccess'  => new external_value(PARAM_INT, 'last access to the site (0 if never)', VALUE_OPTIONAL),
-                'description' => new external_value(PARAM_RAW, 'User profile description', VALUE_OPTIONAL),
-                'descriptionformat' => new external_value(PARAM_INT, 'User profile description format', VALUE_OPTIONAL),
-                'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
-                'url'         => new external_value(PARAM_URL, 'URL of the user', VALUE_OPTIONAL),
-                'country'     => new external_value(PARAM_ALPHA, 'Country code of the user, such as AU or CZ', VALUE_OPTIONAL),
-                'profileimageurlsmall' => new external_value(PARAM_URL, 'User image profile URL - small', VALUE_OPTIONAL),
-                'profileimageurl' => new external_value(PARAM_URL, 'User image profile URL - big', VALUE_OPTIONAL),
-                'customfields' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'type'  => new external_value(PARAM_ALPHANUMEXT, 'The type of the custom field'),
-                            'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
-                            'name' => new external_value(PARAM_RAW, 'The name of the custom field'),
-                            'shortname' => new external_value(PARAM_RAW, 'The shortname of the custom field'),
-                        )
-                    ), 'User custom fields (also known as user profil fields)', VALUE_OPTIONAL),
-                'groups' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id'  => new external_value(PARAM_INT, 'group id'),
-                            'name' => new external_value(PARAM_RAW, 'group name'),
-                            'description' => new external_value(PARAM_RAW, 'group description'),
-                        )
-                    ), 'user groups', VALUE_OPTIONAL),
-                'roles' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'roleid'       => new external_value(PARAM_INT, 'role id'),
-                            'name'         => new external_value(PARAM_RAW, 'role name'),
-                            'shortname'    => new external_value(PARAM_ALPHANUMEXT, 'role shortname'),
-                            'sortorder'    => new external_value(PARAM_INT, 'role sortorder')
-                        )
-                    ), 'user roles', VALUE_OPTIONAL),
-                'preferences' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preferences'),
-                            'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
-                        )
-                ), 'User preferences', VALUE_OPTIONAL),
-                'enrolledcourses' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id'  => new external_value(PARAM_INT, 'Id of the course'),
-                            'fullname' => new external_value(PARAM_RAW, 'Fullname of the course'),
-                            'shortname' => new external_value(PARAM_RAW, 'Shortname of the course')
-                        )
-                ), 'Courses where the user is enrolled - limited by which courses the user is able to see', VALUE_OPTIONAL),
-                'submitted' => new external_value(PARAM_BOOL, 'have they submitted their assignment'),
-                'requiregrading' => new external_value(PARAM_BOOL, 'is their submission waiting for grading'),
-                'groupid' => new external_value(PARAM_INT, 'for group assignments this is the group id', VALUE_OPTIONAL),
-                'groupname' => new external_value(PARAM_NOTAGS, 'for group assignments this is the group name', VALUE_OPTIONAL),
-            ))
-        );
+        // Get user description.
+        $userdesc = core_user_external::user_description();
+        // List unneeded properties.
+        $unneededproperties = [
+            'auth', 'confirmed', 'lang', 'calendartype', 'theme', 'timezone', 'mailformat'
+        ];
+        // Remove unneeded properties for consistency with the previous version.
+        foreach ($unneededproperties as $prop) {
+            unset($userdesc->keys[$prop]);
+        }
+
+        // Override property attributes for consistency with the previous version.
+        $userdesc->keys['fullname']->type = PARAM_NOTAGS;
+        $userdesc->keys['profileimageurlsmall']->required = VALUE_OPTIONAL;
+        $userdesc->keys['profileimageurl']->required = VALUE_OPTIONAL;
+        $userdesc->keys['email']->desc = 'Email address';
+        $userdesc->keys['email']->desc = 'Email address';
+        $userdesc->keys['idnumber']->desc = 'The idnumber of the user';
+
+        // Define other keys.
+        $otherkeys = [
+            'groups' => new external_multiple_structure(
+                new external_single_structure(
+                    [
+                        'id' => new external_value(PARAM_INT, 'group id'),
+                        'name' => new external_value(PARAM_RAW, 'group name'),
+                        'description' => new external_value(PARAM_RAW, 'group description'),
+                    ]
+                ), 'user groups', VALUE_OPTIONAL
+            ),
+            'roles' => new external_multiple_structure(
+                new external_single_structure(
+                    [
+                        'roleid' => new external_value(PARAM_INT, 'role id'),
+                        'name' => new external_value(PARAM_RAW, 'role name'),
+                        'shortname' => new external_value(PARAM_ALPHANUMEXT, 'role shortname'),
+                        'sortorder' => new external_value(PARAM_INT, 'role sortorder')
+                    ]
+                ), 'user roles', VALUE_OPTIONAL
+            ),
+            'enrolledcourses' => new external_multiple_structure(
+                new external_single_structure(
+                    [
+                        'id' => new external_value(PARAM_INT, 'Id of the course'),
+                        'fullname' => new external_value(PARAM_RAW, 'Fullname of the course'),
+                        'shortname' => new external_value(PARAM_RAW, 'Shortname of the course')
+                    ]
+                ), 'Courses where the user is enrolled - limited by which courses the user is able to see', VALUE_OPTIONAL
+            ),
+            'submitted' => new external_value(PARAM_BOOL, 'have they submitted their assignment'),
+            'requiregrading' => new external_value(PARAM_BOOL, 'is their submission waiting for grading'),
+            'groupid' => new external_value(PARAM_INT, 'for group assignments this is the group id', VALUE_OPTIONAL),
+            'groupname' => new external_value(PARAM_NOTAGS, 'for group assignments this is the group name', VALUE_OPTIONAL),
+        ];
+
+        // Merge keys.
+        $userdesc->keys = array_merge($userdesc->keys, $otherkeys);
+        return new external_multiple_structure($userdesc);
     }
 
     /**
