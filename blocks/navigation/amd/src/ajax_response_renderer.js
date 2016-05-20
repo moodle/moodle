@@ -96,7 +96,7 @@ define(['jquery'], function($) {
                     link.append(icon);
                     link.append('<span class="item-content-wrap">'+node.name+'</span>');
                 } else {
-                    link.text(node.name);
+                    link.append(node.name);
                 }
 
                 if (node.hidden) {
@@ -111,7 +111,7 @@ define(['jquery'], function($) {
                     span.append(icon);
                     span.append('<span class="item-content-wrap">'+node.name+'</span>');
                 } else {
-                    span.text(node.name);
+                    span.append(node.name);
                 }
 
                 if (node.hidden) {
