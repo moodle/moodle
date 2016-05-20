@@ -457,12 +457,77 @@
     top: 85px;
     bottom: 60px;
     left: 0;
-    width: 70%;
+    right: 30%;
+    width: auto;
     box-sizing: border-box;
+    -webkit-transition: right 0.5s, left 0.5s;
+       -moz-transition: right 0.5s, left 0.5s;
+            transition: right 0.5s, left 0.5s;
+}
+
+.path-mod-assign [data-region="review-panel"].grade-panel-collapsed {
+    right: 30px;
+}
+
+.path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] {
+    display: none;
+    height: 30px;
+    width: 30px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: auto;
+    box-sizing: border-box;
+    border-radius: 0 0 0 4px;
+    border: 1px solid #cccccc;
+    border-top: none;
+    background-color: #fff;
+    z-index: 99999;
+}
+
+.path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .expand-icon,
+.path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .collapse-icon {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 30px;
+}
+
+.path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .expand-icon .toggle-text,
+.path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .collapse-icon .toggle-text {
+    visibility: hidden;
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] img {
+    height: 100%;
+    float: right;
+}
+
+.path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .expand-icon {
+    display: none;
+}
+
+.path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .collapse-icon {
+    display: block;
+}
+
+.path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .collapse-icon.full-width {
+    display: none;
 }
 
 .path-mod-assign [data-region="review-panel"] .pageheader {
     border-right: 1px solid #ddd;
+}
+.path-mod-assign [data-region="review-panel"] + [data-region="grade-panel"] [data-region="grade"] {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+    -webkit-transition: max-width 0.5s;
+       -moz-transition: max-width 0.5s;
+            transition: max-width 0.5s;
 }
 
 .path-mod-assign [data-region="review-panel"] .drawingregion {
@@ -471,16 +536,41 @@
     border-color: #ddd;
 }
 
-.path-mod-assign [data-region="grade-panel"].fullwidth {
-    position: absolute;
-    top: 7em;
-    left: 0;
-    right: 0;
-    width: 99%;
-    overflow: auto;
-    bottom: 7em;
+.path-mod-assign [data-region="review-panel"].collapsed {
+    left: calc(30px - 70%);
+    right: calc(100% - 30px);
+    -webkit-transition: right 0.5s, left 0.5s;
+       -moz-transition: right 0.5s, left 0.5s;
+            transition: right 0.5s, left 0.5s;
 }
 
+.path-mod-assign [data-region="review-panel"].collapsed [data-region="review-panel-content"] {
+    visibility: hidden;
+    -webkit-transition: visibility 0s 0.5s;
+       -moz-transition: visibility 0s 0.5s;
+            transition: visibility 0s 0.5s;
+}
+
+.path-mod-assign [data-region="review-panel"].collapsed [data-region="review-panel-toggle"] .expand-icon {
+    display: block;
+}
+
+.path-mod-assign [data-region="review-panel"].collapsed [data-region="review-panel-toggle"] .collapse-icon {
+    display: none;
+}
+
+.path-mod-assign [data-region="review-panel"].collapsed + [data-region="grade-panel"] {
+    position: absolute;
+    left: 30px;
+    right: 0;
+    width: calc(100% - 30px);
+    overflow: auto;
+    -webkit-transition: width 0.5s, right 0.5s, left 0.5s;
+       -moz-transition: width 0.5s, right 0.5s, left 0.5s;
+            transition: width 0.5s, right 0.5s, left 0.5s;
+}
+
+.path-mod-assign [data-region="review-panel"].collapsed + [data-region="grade-panel"] [data-region="grade"],
 .path-mod-assign [data-region="grade-panel"].fullwidth [data-region="grade"] {
     max-width: 800px;
     margin-left: auto;
@@ -492,12 +582,31 @@
     top: 85px;
     bottom: 60px;
     right: 0;
+    left: 70%;
     width: 30%;
     overflow: auto;
     box-sizing: border-box;
     background-color: #f5f5f5;
     padding: 15px;
     padding-top: 0px;
+    -webkit-transition: width 0.5s, right 0.5s, left 0.5s;
+       -moz-transition: width 0.5s, right 0.5s, left 0.5s;
+            transition: width 0.5s, right 0.5s, left 0.5s;
+}
+
+.path-mod-assign [data-region="grade-panel"].collapsed {
+    left: calc(100% - 30px);
+    right: calc(30px - 100%);
+    visibility: hidden;
+    -webkit-transition: right 0.5s, left 0.5s, visibility 0s 0.5s;
+       -moz-transition: right 0.5s, left 0.5s, visibility 0s 0.5s;
+            transition: right 0.5s, left 0.5s, visibility 0s 0.5s;
+}
+
+.path-mod-assign [data-region="grade-panel"].fullwidth {
+    left: 0;
+    width: 100%;
+    overflow: auto;
 }
 
 .path-mod-assign [data-region="grade-panel"] h3 {
@@ -853,6 +962,17 @@
     height: 60px;
 }
 
+.path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
+    position: absolute;
+    top: 0;
+    left: auto;
+    right: 15px;
+    margin: 0;
+    height: 100%;
+    line-height: 60px;
+    direction: ltr;
+}
+
 .path-mod-assign [data-region="grade-actions"] {
     padding: 1em;
     text-align: center;
@@ -890,17 +1010,25 @@
     .path-mod-assign .page-context-header .page-header-headings {
         margin-top: 13px;
     }
+    .path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
+        display: none;
+    }
     .path-mod-assign [data-region="grading-navigation-panel"],
     .path-mod-assign [data-region="review-panel"],
     .path-mod-assign [data-region="grade-panel"],
+    .path-mod-assign [data-region="review-panel"].collapsed + [data-region="grade-panel"],
     .path-mod-assign [data-region="grade-actions-panel"] {
         position: inherit;
         width: 100%;
         top: 0;
         left: 0;
+        right: auto;
         overflow: auto;
         height: auto;
         margin-bottom: 1em;
+    }
+    .path-mod-assign [data-region="grade-panel"].collapsed {
+        visibility: visible;
     }
     .path-mod-assign [data-region="grading-navigation"] {
         padding: 0;
@@ -912,8 +1040,86 @@
     .path-mod-assign [data-region="grade-panel"] [data-region="popout-button"] {
         display: none;
     }
+    .path-mod-assign [data-region="review-panel"] {
+        position: relative;
+        max-height: 2000px;
+        -webkit-transition: max-height 0.25s linear;
+           -moz-transition: max-height 0.25s linear;
+                transition: max-height 0.25s linear;
+    }
     .path-mod-assign [data-region="review-panel"] .pageheader {
         border-right: none;
+        padding-right: 20px;
+        padding-left: 40px;
+    }
+    .path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] {
+        display: block;
+        height: 20px;
+        width: 20px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: auto;
+        box-sizing: border-box;
+        border: 1px solid #cccccc;
+        border-radius: 0 0 4px 0;
+        background-color: #fff;
+        z-index: 99999;
+    }
+    .path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .expand-icon,
+    .path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .collapse-icon {
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        line-height: 30px;
+    }
+    .path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .ltr-icon,
+    .path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .rtl-icon {
+        height: 100%;
+    }
+    .path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .ltr-icon {
+        float: left;
+    }
+    .path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .rtl-icon {
+        float: right;
+    }
+    .path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .expand-icon .toggle-text,
+    .path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .collapse-icon .toggle-text {
+        line-height: 20px;
+        visibility: visible;
+        opacity: 1;
+        height: auto;
+        -webkit-transition: visibility 0s 0.25s, opacity 0s 0.25s;
+           -moz-transition: visibility 0s 0.25s, opacity 0s 0.25s;
+                transition: visibility 0s 0.25s, opacity 0s 0.25s;
+    }
+    .path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .expand-icon .rtl-icon {
+        display: none;
+    }
+    .path-mod-assign [data-region="review-panel"].collapsed {
+        max-height: 20px;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+        -webkit-transition: max-height 0.25s linear;
+           -moz-transition: max-height 0.25s linear;
+                transition: max-height 0.25s linear;
+    }
+    .path-mod-assign [data-region="review-panel"].collapsed [data-region="review-panel-toggle"] {
+        width: 100%;
+        border-radius: 0 0 0 0;
+        -webkit-transition: all 0s 0.25s;
+           -moz-transition: all 0s 0.25s;
+                transition: all 0s 0.25s;
+    }
+    .path-mod-assign [data-region="review-panel"].collapsed [data-region="review-panel-toggle"] img {
+        height: 100%;
+    }
+    .path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .collapse-icon {
+        display: block;
+    }
+    .path-mod-assign [data-region="review-panel"].collapsed [data-region="review-panel-toggle"] .collapse-icon {
+        display: none;
     }
     .path-mod-assign.pagelayout-popup {
         overflow: inherit;
@@ -927,6 +1133,31 @@
     .path-mod-assign [data-region="user-selector"] .alignment {
         float: none;
         margin: 0 auto 10px;
+    }
+    .dir-rtl.path-mod-assign [data-region="review-panel"] .pageheader {
+        padding-right: 40px;
+        padding-left: 20px;
+    }
+    .dir-rtl.path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] {
+        left: auto;
+        right: 0;
+        border-radius: 0 0 0 4px;
+    }
+    .dir-rtl.path-mod-assign [data-region="review-panel"].collapsed {
+        right: 0;
+        left: auto;
+    }
+    .dir-rtl.path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .expand-icon .ltr-icon {
+        display: none;
+    }
+    .dir-rtl.path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .expand-icon .rtl-icon {
+        display: block;
+    }
+    .dir-rtl.path-mod-assign [data-region="review-panel"].collapsed [data-region="review-panel-toggle"] .collapse-icon {
+        display: none;
+    }
+    .dir-rtl.path-mod-assign [data-region="review-panel"].collapsed [data-region="review-panel-toggle"] .expand-icon {
+        display: block;
     }
 }
 
