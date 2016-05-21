@@ -465,10 +465,12 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
                         '[modgrade_rescalegrades]', 'eq', '');
 
                 // A constant value should be given as an int.
-                // The default value should be an int and should really be $CFG->gradepointdefault.
+                // The default value should be an int and be either $CFG->gradepointdefault or whatever was set in set_data().
                 $value = $this->_findValue($caller->_constantValues);
                 if (null === $value) {
-                    if ($caller->isSubmitted()) {
+                    if ($caller->isSubmitted() && $this->_findValue($caller->_submitValues) !== null) {
+                        // Submitted values are array, one value for each individual element in this group.
+                        // When there is submitted data let parent::onQuickFormEvent() process it.
                         break;
                     }
                     $value = $this->_findValue($caller->_defaultValues);
