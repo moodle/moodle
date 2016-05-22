@@ -174,5 +174,8 @@ function xmldb_forum_upgrade($oldversion) {
         // Forum savepoint reached.
         upgrade_mod_savepoint(true, 2015120800, 'forum');
     }
+    // Moodle v3.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
