@@ -46,5 +46,8 @@ function xmldb_gradingform_guide_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2016051100, 'gradingform', 'guide');
     }
 
+    // Moodle v3.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
