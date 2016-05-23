@@ -190,5 +190,8 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2016032600, 'quiz');
     }
 
+    // Moodle v3.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
