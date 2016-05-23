@@ -248,6 +248,233 @@ class enrol_lti_helper_testcase extends advanced_testcase {
     }
 
     /**
+     * Test getting the launch url of a tool
+     */
+    public function test_get_launch_url() {
+        $course1 = $this->getDataGenerator()->create_course();
+        $data = new stdClass();
+        $data->courseid = $course1->id;
+        $tool1 = $this->create_tool($data);
+
+        $id = $tool1->id;
+        $launchurl = \enrol_lti\helper::get_launch_url($id);
+        $this->assertEquals('http://www.example.com/moodle/enrol/lti/tool.php?id=' . $id, $launchurl->out());
+    }
+
+    /**
+     * Test getting the cartridge url of a tool
+     */
+    public function test_get_cartridge_url() {
+        global $CFG;
+
+        $slasharguments = $CFG->slasharguments;
+
+        $CFG->slasharguments = false;
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $data = new stdClass();
+        $data->courseid = $course1->id;
+        $tool1 = $this->create_tool($data);
+
+        $id = $tool1->id;
+        $token = \enrol_lti\helper::generate_tool_token($id);
+        $launchurl = \enrol_lti\helper::get_cartridge_url($tool1);
+        $this->assertEquals('http://www.example.com/moodle/enrol/lti/cartridge.php?id=' . $id . '&amp;token=' . $token,
+                            $launchurl->out());
+
+        $CFG->slasharguments = true;
+
+        $launchurl = \enrol_lti\helper::get_cartridge_url($tool1);
+        $this->assertEquals('http://www.example.com/moodle/enrol/lti/cartridge.php/' . $id . '/' . $token . '/cartridge.xml',
+                            $launchurl->out());
+
+        $CFG->slasharguments = $slasharguments;
+    }
+
+    /**
+     * Test getting the name of a tool
+     */
+    public function test_get_name() {
+        $course1 = $this->getDataGenerator()->create_course();
+        $data = new stdClass();
+        $data->courseid = $course1->id;
+        $tool1 = $this->create_tool($data);
+
+        $name = \enrol_lti\helper::get_name($tool1);
+        $this->assertEquals('Course: Test course 1', $name);
+
+        $tool1->name = 'Shared course';
+        $name = \enrol_lti\helper::get_name($tool1);
+        $this->assertEquals('Shared course', $name);
+    }
+
+    /**
+     * Test getting the description of a tool
+     */
+    public function test_get_description() {
+        $course1 = $this->getDataGenerator()->create_course();
+        $data = new stdClass();
+        $data->courseid = $course1->id;
+        $tool1 = $this->create_tool($data);
+
+        $description = \enrol_lti\helper::get_description($tool1);
+        $this->assertContains('Test course 1 Lorem ipsum dolor sit amet', $description);
+
+        $module1 = $this->getDataGenerator()->create_module('assign', array(
+                'course' => $course1->id
+            ));
+        $data = new stdClass();
+        $data->cmid = $module1->cmid;
+        $tool2 = $this->create_tool($data);
+        $description = \enrol_lti\helper::get_description($tool2);
+        $this->assertContains('Test assign 1', $description);
+    }
+
+    /**
+     * Test verifying a tool token.
+     */
+    public function test_verify_tool_token() {
+        $course1 = $this->getDataGenerator()->create_course();
+        $data = new stdClass();
+        $data->courseid = $course1->id;
+        $tool1 = $this->create_tool($data);
+
+        $token = \enrol_lti\helper::generate_tool_token($tool1->id);
+        $this->assertTrue(\enrol_lti\helper::verify_tool_token($tool1->id, $token));
+        $this->assertFalse(\enrol_lti\helper::verify_tool_token($tool1->id, 'incorrect token!'));
+    }
+
+    /**
+     * Data provider for the set_xpath test
+     */
+    public function set_xpath_provider() {
+        return [
+            "Correct structure" => [
+                "parameters" => [
+                    "/root" => [
+                        "/firstnode" => "Content 1",
+                        "/parentnode" => [
+                            "/childnode" => "Content 2"
+                        ]
+                    ]
+                ],
+                "expected" => "test_correct_xpath-expected.xml"
+            ],
+            "A null value, but no node to remove" => [
+                "parameters" => [
+                    "/root" => [
+                        "/nonexistant" => null,
+                        "/firstnode" => "Content 1"
+                    ]
+                ],
+                "expected" => "test_missing_node-expected.xml"
+            ],
+            "A string value, but no node existing to set" => [
+                "parameters" => [
+                    "/root" => [
+                        "/nonexistant" => "This will not be set",
+                        "/firstnode" => "Content 1"
+                    ]
+                ],
+                "expected" => "test_missing_node-expected.xml"
+            ],
+            "Array but no children exist" => [
+                "parameters" => [
+                    "/root" => [
+                        "/nonexistant" => [
+                            "/alsononexistant" => "This will not be set"
+                        ],
+                        "/firstnode" => "Content 1"
+                    ]
+                ],
+                "expected" => "test_missing_node-expected.xml"
+            ],
+            "Remove nodes" => [
+                "parameters" => [
+                    "/root" => [
+                        "/parentnode" => [
+                            "/childnode" => null
+                        ],
+                        "/firstnode" => null
+                    ]
+                ],
+                "expected" => "test_nodes_removed-expected.xml"
+            ],
+            "Get by attribute" => [
+                "parameters" => [
+                    "/root" => [
+                        "/ambiguous[@id='1']" => 'Content 1'
+                    ]
+                ],
+                "expected" => "test_ambiguous_nodes-expected.xml"
+            ]
+        ];
+    }
+
+    /**
+     * Test set_xpath.
+     * @dataProvider set_xpath_provider
+     * @param array $parameters A hash of parameters represented by a heirarchy of xpath expressions
+     * @param string $expected The name of the fixture file containing the expected result.
+     */
+    public function test_set_xpath($parameters, $expected) {
+        $helper = new ReflectionClass('enrol_lti\\helper');
+        $function = $helper->getMethod('set_xpath');
+        $function->setAccessible(true);
+
+        $document = new \DOMDocument();
+        $document->load(realpath(__DIR__ . '/fixtures/input.xml'));
+        $xpath = new \DOMXpath($document);
+        $function->invokeArgs(null, [$xpath, $parameters]);
+        $result = $document->saveXML();
+        $expected = file_get_contents(realpath(__DIR__ . '/fixtures/' . $expected));
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test set_xpath when an incorrect xpath expression is given.
+     * @expectedException coding_exception
+     */
+    public function test_set_xpath_incorrect_xpath() {
+        $parameters = [
+            "/root" => [
+                "/firstnode" => null,
+                "/parentnode*&#^*#(" => [
+                    "/childnode" => null
+                ],
+            ]
+        ];
+        $helper = new ReflectionClass('enrol_lti\\helper');
+        $function = $helper->getMethod('set_xpath');
+        $function->setAccessible(true);
+
+        $document = new \DOMDocument();
+        $document->load(realpath(__DIR__ . '/fixtures/input.xml'));
+        $xpath = new \DOMXpath($document);
+        $function->invokeArgs(null, [$xpath, $parameters]);
+        $result = $document->saveXML();
+        $expected = file_get_contents(realpath(__DIR__ . '/fixtures/' . $expected));
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test create cartridge.
+     */
+    public function test_create_cartridge() {
+        global $CFG;
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $data = new stdClass();
+        $data->courseid = $course1->id;
+        $tool1 = $this->create_tool($data);
+
+        $cartridge = \enrol_lti\helper::create_cartridge($tool1->id);
+        $this->assertContains('<blti:title>Test LTI</blti:title>', $cartridge);
+        $this->assertContains("<blti:icon>$CFG->wwwroot/theme/image.php/_s/clean/theme/1/favicon</blti:icon>", $cartridge);
+        $this->assertContains("<blti:launch_url>$CFG->wwwroot/enrol/lti/tool.php?id=$tool1->id</blti:launch_url>", $cartridge);
+    }
+
+    /**
      * Helper function used to create a tool.
      *
      * @param array $data
@@ -267,6 +494,12 @@ class enrol_lti_helper_testcase extends advanced_testcase {
             $course = get_course($data->courseid);
         }
 
+        if (!empty($data->cmid)) {
+            $data->contextid = context_module::instance($data->cmid)->id;
+        } else {
+            $data->contextid = context_course::instance($data->courseid)->id;
+        }
+
         // Set it to enabled if no status was specified.
         if (!isset($data->status)) {
             $data->status = ENROL_INSTANCE_ENABLED;
@@ -274,7 +507,6 @@ class enrol_lti_helper_testcase extends advanced_testcase {
 
         // Add some extra necessary fields to the data.
         $data->name = 'Test LTI';
-        $data->contextid = context_course::instance($data->courseid)->id;
         $data->roleinstructor = $studentrole->id;
         $data->rolelearner = $teacherrole->id;
 

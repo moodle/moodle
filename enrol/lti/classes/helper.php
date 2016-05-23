@@ -380,4 +380,219 @@ class helper {
               </imsx_POXBody>
             </imsx_POXEnvelopeRequest>';
     }
+
+    /**
+     * Returns the url to launch the lti tool.
+     *
+     * @param int $toolid the id of the shared tool
+     * @return moodle_url the url to launch the tool
+     * @since Moodle 3.2
+     */
+    public static function get_launch_url($toolid) {
+        return new \moodle_url('/enrol/lti/tool.php', array('id' => $toolid));
+    }
+
+    /**
+     * Returns the name of the lti enrolment instance, or the name of the course/module being shared.
+     *
+     * @param stdClass $tool The lti tool
+     * @return string The name of the tool
+     * @since Moodle 3.2
+     */
+    public static function get_name($tool) {
+        $name = null;
+
+        if (empty($tool->name)) {
+            $toolcontext = \context::instance_by_id($tool->contextid);
+            $name = $toolcontext->get_context_name();
+        } else {
+            $name = $tool->name;
+        };
+
+        return $name;
+    }
+
+    /**
+     * Returns a description of the course or module that this lti instance points to.
+     *
+     * @param stdClass $tool The lti tool
+     * @return string A description of the tool
+     * @since Moodle 3.2
+     */
+    public static function get_description($tool) {
+        global $DB;
+        $description = '';
+        $context = \context::instance_by_id($tool->contextid);
+        if ($context->contextlevel == CONTEXT_COURSE) {
+            $course = $DB->get_record('course', array('id' => $context->instanceid));
+            $description = $course->summary;
+        } else if ($context->contextlevel == CONTEXT_MODULE) {
+            $cmid = $context->instanceid;
+            $cm = get_coursemodule_from_id(false, $context->instanceid, 0, false, MUST_EXIST);
+            $module = $DB->get_record($cm->modname, array('id' => $cm->instance));
+            $description = $module->intro;
+        }
+        return trim(html_to_text($description));
+    }
+
+    /**
+     * Returns the url to the cartridge representing the tool.
+     *
+     * If you have slash arguments enabled, this will be a nice url ending in cartridge.xml.
+     * If not it will be a php page with some parameters passed.
+     *
+     * @param stdClass $tool The lti tool
+     * @return string The url to the cartridge representing the tool
+     * @since Moodle 3.2
+     */
+    public static function get_cartridge_url($tool) {
+        global $CFG;
+        $url = null;
+
+        $id = $tool->id;
+        $token = self::generate_tool_token($tool->id);
+        if ($CFG->slasharguments) {
+            $url = new \moodle_url('/enrol/lti/cartridge.php/' . $id . '/' . $token . '/cartridge.xml');
+        } else {
+            $url = new \moodle_url('/enrol/lti/cartridge.php',
+                    array(
+                        'id' => $id,
+                        'token' => $token
+                    )
+                );
+        }
+        return $url;
+    }
+
+    /**
+     * Returns a unique hash for this site and this enrolment instance.
+     *
+     * Used to verify that the link to the cartridge has not just been guessed.
+     *
+     * @param int $toolid The id of the shared tool
+     * @return string MD5 hash of combined site ID and enrolment instance ID.
+     * @since Moodle 3.2
+     */
+    public static function generate_tool_token($toolid) {
+        $siteidentifier = get_site_identifier();
+        $checkhash = md5($siteidentifier . '_enrol_lti_' . $toolid);
+        return $checkhash;
+    }
+
+    /**
+     * Verifies that the given token matches the token of the given shared tool.
+     *
+     * @param int $toolid The id of the shared tool
+     * @param string $token hash for this site and this enrolment instance
+     * @return boolean True if the token matches, false if it does not
+     * @since Moodle 3.2
+     */
+    public static function verify_tool_token($toolid, $token) {
+        return $token == self::generate_tool_token($toolid);
+    }
+
+    /**
+     * Returns the parameters of the cartridge as an associative array of partial xpath.
+     *
+     * @param int $toolid The id of the shared tool
+     * @return array Recursive associative array with partial xpath to be concatenated into an xpath expression
+     *     before setting the value.
+     * @since Moodle 3.2
+     */
+    protected static function get_cartridge_parameters($toolid) {
+        global $OUTPUT, $PAGE, $SITE;
+        $PAGE->set_context(\context_system::instance());
+
+        // Get the tool.
+        $tool = self::get_lti_tool($toolid);
+
+        // Work out the name of the tool.
+        $title = self::get_name($tool);
+        $launchurl = self::get_launch_url($toolid);
+        $launchurl = $launchurl->out();
+        $icon = $OUTPUT->favicon();
+        $icon = $icon->out();
+        $securelaunchurl = null;
+        $secureicon = null;
+        $vendorurl = new \moodle_url('/');
+        $vendorurl = $vendorurl->out();
+        $description = self::get_description($tool);
+
+        // If we are a https site, we can add the launch url and icon urls as secure equivalents.
+        if (\is_https()) {
+            $securelaunchurl = $launchurl;
+            $secureicon = $icon;
+        }
+
+        return array(
+                "/cc:cartridge_basiclti_link" => array(
+                    "/blti:title" => $title,
+                    "/blti:description" => $description,
+                    "/blti:extensions" => array(
+                            "/lticm:property[@name='icon_url']" => $icon,
+                            "/lticm:property[@name='secure_icon_url']" => $secureicon
+                        ),
+                    "/blti:launch_url" => $launchurl,
+                    "/blti:secure_launch_url" => $securelaunchurl,
+                    "/blti:icon" => $icon,
+                    "/blti:secure_icon" => $secureicon,
+                    "/blti:vendor" => array(
+                            "/lticp:code" => $SITE->shortname,
+                            "/lticp:name" => $SITE->fullname,
+                            "/lticp:description" => trim(html_to_text($SITE->summary)),
+                            "/lticp:url" => $vendorurl
+                        )
+                )
+            );
+    }
+
+    /**
+     * Traverses a recursive associative array, setting the properties of the corresponding
+     * xpath element.
+     *
+     * @param DOMXPath $xpath The xpath with the xml to modify
+     * @param array $parameters The array of xpaths to search through
+     * @param string $prefix The current xpath prefix (gets longer the deeper into the array you go)
+     * @return void
+     * @since Moodle 3.2
+     */
+    protected static function set_xpath($xpath, $parameters, $prefix = '') {
+        foreach ($parameters as $key => $value) {
+            if (is_array($value)) {
+                self::set_xpath($xpath, $value, $prefix . $key);
+            } else {
+                $result = @$xpath->query($prefix . $key);
+                if ($result) {
+                    $node = $result->item(0);
+                    if ($node) {
+                        if (is_null($value)) {
+                            $node->parentNode->removeChild($node);
+                        } else {
+                            $node->nodeValue = $value;
+                        }
+                    }
+                } else {
+                    throw new \coding_exception('Please check your XPATH and try again.');
+                }
+            }
+        }
+    }
+
+    /**
+     * Create an IMS cartridge for the tool.
+     *
+     * @param int $toolid The id of the shared tool
+     * @return string representing the generated cartridge
+     * @since Moodle 3.2
+     */
+    public static function create_cartridge($toolid) {
+        $cartridge = new \DOMDocument();
+        $cartridge->load(realpath(__DIR__ . '/../xml/imslticc.xml'));
+        $xpath = new \DOMXpath($cartridge);
+        $xpath->registerNamespace('cc', 'http://www.imsglobal.org/xsd/imslticc_v1p0');
+        $parameters = self::get_cartridge_parameters($toolid);
+        self::set_xpath($xpath, $parameters);
+
+        return $cartridge->saveXML();
+    }
 }

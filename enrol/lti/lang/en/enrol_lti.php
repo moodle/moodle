@@ -37,6 +37,7 @@ $string['enrolstartdate_help'] = 'If enabled, users can access from this date on
 $string['frameembeddingnotenabled'] = 'To access the tool, please follow the link below.';
 $string['gradesync'] = 'Grade synchronisation';
 $string['gradesync_help'] = 'Whether grades from the tool are sent to the remote system (LTI consumer).';
+$string['incorrecttoken'] = 'Token was incorrect please check the URL and try again, or contact the administrator of this tool.';
 $string['maxenrolled'] = 'Maximum enrolled users';
 $string['maxenrolled_help'] = 'The maximum number of remote users who can access the tool. If set to zero, the number of enrolled users is unlimited.';
 $string['maxenrolledreached'] = 'The maximum number of remote users allowed to access the tool has been reached.';
