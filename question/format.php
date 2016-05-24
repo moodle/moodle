@@ -426,7 +426,7 @@ class qformat_default {
             $result = question_bank::get_qtype($question->qtype)->save_question_options($question);
 
             if (isset($question->tags)) {
-                core_tag_tag::set_item_tags('core_question', 'question', $question->context, $question->id, $question->tags);
+                core_tag_tag::set_item_tags('core_question', 'question', $question->id, $question->context, $question->tags);
             }
 
             if (!empty($result->error)) {
