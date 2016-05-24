@@ -1195,7 +1195,7 @@ OET;
             $ext = core_media::get_extension($url);
             if (in_array($ext, $extensions)) {
                 if ($ext === 'ogg' || $ext === 'oga') {
-                    // Formats .ogg and .oga are not supported in IE or Safari.
+                    // Formats .ogg and .oga are not supported in IE, Edge, or Safari.
                     if (core_useragent::is_ie() || core_useragent::is_edge() || core_useragent::is_safari()) {
                         continue;
                     }
