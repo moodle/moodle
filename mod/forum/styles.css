@@ -121,7 +121,7 @@ span.unread {
 }
 
 /* Forumpost hash anchor target */
-.path-mod-forum :target + :before {
+.path-mod-forum :target ~ .forumpost:before {
     display: block;
     content: '';
     width: 4px;
