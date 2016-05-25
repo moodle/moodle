@@ -99,4 +99,5 @@ $string['subhelp'] = 'Subscription details';
 $string['subhelp_help'] = 'This subscription listens for when the event \'{$a->eventname}\' has been triggered in \'{$a->moduleinstance}\' {$a->frequency} time(s) in {$a->minutes} minute(s).';
 $string['subscribeto'] = 'Subscribe to rule "{$a}"';
 $string['taskcleanevents'] = 'Removes any unnecessary event monitor events';
+$string['taskchecksubscriptions'] = 'Activate/deactivate invalid rule subscriptions';
 $string['unsubscribe'] = 'Unsubscribe';
