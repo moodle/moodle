@@ -362,7 +362,7 @@ function local_kaltura_request_lti_launch($ltirequest, $withblocks = true, $edit
         $endpoint = $lti->securetool;
     }
 
-    $requestparams = lti_build_request((object) $lti, $typeconfig, $ltirequest['course']);
+    $requestparams = array_merge(lti_build_standard_request((object) $lti, null, false), lti_build_request((object) $lti, $typeconfig, $ltirequest['course']));
     if(!isset($requestparams['resource_link_id'])) // fix to moodle 2.8 issue where this function (lti_build_request) does not set resource_link_id value
     {
         $requestparams['resource_link_id'] = $lti->id;
