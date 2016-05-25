@@ -109,6 +109,7 @@ class company_user {
             } else {
                 EmailTemplate::send('user_create',
                                      array('user' => $user,
+                                           'due' => $data->due,
                                            'headers' => serialize(array("Cc:".$USER->email))));
             }
             $sendemail = false;
@@ -124,7 +125,7 @@ class company_user {
 
         if ($storetemppassword) {
             // Store password as temporary password, sendemail if necessary.
-            self::store_temporary_password($user, $sendemail, $user->newpassword);
+            self::store_temporary_password($user, $sendemail, $user->newpassword, false, $data->due);
         }
 
         // Attach user to company.
@@ -401,8 +402,11 @@ Thank you for your request.
      * @param boolean $sendemail
      * @param text $temppassword
      */
-    public static function store_temporary_password($user, $sendemail, $temppassword, $reset = false) {
+    public static function store_temporary_password($user, $sendemail, $temppassword, $reset = false, $due = 0) {
         global $CFG, $USER;
+        if (empty($due)) {
+            $due = time();
+        }
         set_user_preference('iomad_temporary', self::rc4encrypt($temppassword), $user);
         unset_user_preference('create_password', $user);
         if ( $sendemail ) {
@@ -438,6 +442,16 @@ Thank you for your request.
                                          array('user' => $user,
                                          'headers' => serialize(array("Cc:".$USER->email))));
                 }
+=======
+                EmailTemplate::send('user_create', array('user' => $user, 'sender' => $USER, 'due' => $due));
+            } else if (is_siteadmin($USER->id)) {
+                EmailTemplate::send('user_create', array('user' => $user, 'due' => $due));
+            } else {
+                EmailTemplate::send('user_create',
+                                     array('user' => $user,
+                                           'due' => $due,
+                                     'headers' => serialize(array("Cc:".$USER->email))));
+>>>>>>> 1bfc672... IOMAD: user creation not picking up due date when a password is given.  #349
             }
         } else {
             unset_user_preference('iomad_send_password', $user);

@@ -30,6 +30,7 @@ class EmailTemplate {
     protected $headers = null;
     protected $approveuser = null;
     protected $event = null;
+    protected $due = null;
 
     /**
      * Send an email to (a) specified user(s)
