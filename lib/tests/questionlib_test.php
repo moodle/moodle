@@ -397,4 +397,54 @@ class core_questionlib_testcase extends advanced_testcase {
         $criteria = array('category' => $qcat->id);
         $this->assertEquals(0, $DB->count_records('question', $criteria));
     }
+
+    public function test_question_remove_stale_questions_from_category() {
+        global $DB;
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $course = $dg->create_course();
+        $quiz = $dg->create_module('quiz', ['course' => $course->id]);
+
+        $qgen = $dg->get_plugin_generator('core_question');
+        $context = context_system::instance();
+
+        $qcat1 = $qgen->create_question_category(['contextid' => $context->id]);
+        $q1a = $qgen->create_question('shortanswer', null, ['category' => $qcat1->id]);     // Will be hidden.
+        $q1b = $qgen->create_question('random', null, ['category' => $qcat1->id]);          // Will not be used.
+        $DB->set_field('question', 'hidden', 1, ['id' => $q1a->id]);
+
+        $qcat2 = $qgen->create_question_category(['contextid' => $context->id]);
+        $q2a = $qgen->create_question('shortanswer', null, ['category' => $qcat2->id]);     // Will be hidden.
+        $q2b = $qgen->create_question('shortanswer', null, ['category' => $qcat2->id]);     // Will be hidden but used.
+        $q2c = $qgen->create_question('random', null, ['category' => $qcat2->id]);          // Will not be used.
+        $q2d = $qgen->create_question('random', null, ['category' => $qcat2->id]);          // Will be used.
+        $DB->set_field('question', 'hidden', 1, ['id' => $q2a->id]);
+        $DB->set_field('question', 'hidden', 1, ['id' => $q2b->id]);
+        quiz_add_quiz_question($q2b->id, $quiz);
+        quiz_add_quiz_question($q2d->id, $quiz);
+
+        $this->assertEquals(2, $DB->count_records('question', ['category' => $qcat1->id]));
+        $this->assertEquals(4, $DB->count_records('question', ['category' => $qcat2->id]));
+
+        // Non-existing category, nothing will happen.
+        question_remove_stale_questions_from_category(0);
+        $this->assertEquals(2, $DB->count_records('question', ['category' => $qcat1->id]));
+        $this->assertEquals(4, $DB->count_records('question', ['category' => $qcat2->id]));
+
+        // First category, should be empty afterwards.
+        question_remove_stale_questions_from_category($qcat1->id);
+        $this->assertEquals(0, $DB->count_records('question', ['category' => $qcat1->id]));
+        $this->assertEquals(4, $DB->count_records('question', ['category' => $qcat2->id]));
+        $this->assertFalse($DB->record_exists('question', ['id' => $q1a->id]));
+        $this->assertFalse($DB->record_exists('question', ['id' => $q1b->id]));
+
+        // Second category, used questions should be left untouched.
+        question_remove_stale_questions_from_category($qcat2->id);
+        $this->assertEquals(0, $DB->count_records('question', ['category' => $qcat1->id]));
+        $this->assertEquals(2, $DB->count_records('question', ['category' => $qcat2->id]));
+        $this->assertFalse($DB->record_exists('question', ['id' => $q2a->id]));
+        $this->assertTrue($DB->record_exists('question', ['id' => $q2b->id]));
+        $this->assertFalse($DB->record_exists('question', ['id' => $q2c->id]));
+        $this->assertTrue($DB->record_exists('question', ['id' => $q2d->id]));
+    }
 }

@@ -221,6 +221,37 @@ function match_grade_options($gradeoptionsfull, $grade, $matchgrades = 'error') 
 }
 
 /**
+ * Remove stale questions from a category.
+ *
+ * While questions should not be left behind when they are not used any more,
+ * it does happen, maybe via restore, or old logic, or uncovered scenarios. When
+ * this happens, the users are unable to delete the question category unless
+ * they move those stale questions to another one category, but to them the
+ * category is empty as it does not contain anything. The purpose of this function
+ * is to detect the questions that may have gone stale and remove them.
+ *
+ * You will typically use this prior to checking if the category contains questions.
+ *
+ * The stale questions (unused and hidden to the user) handled are:
+ * - hidden questions
+ * - random questions
+ *
+ * @param int $categoryid The category ID.
+ */
+function question_remove_stale_questions_from_category($categoryid) {
+    global $DB;
+
+    $select = 'category = :categoryid AND (qtype = :qtype OR hidden = :hidden)';
+    $params = ['categoryid' => $categoryid, 'qtype' => 'random', 'hidden' => 1];
+    $questions = $DB->get_recordset_select("question", $select, $params, '', 'id');
+    foreach ($questions as $question) {
+        // The function question_delete_question does not delete questions in use.
+        question_delete_question($question->id);
+    }
+    $questions->close();
+}
+
+/**
  * Category is about to be deleted,
  * 1/ All questions are deleted for this question category.
  * 2/ Any questions that can't be deleted are moved to a new category
