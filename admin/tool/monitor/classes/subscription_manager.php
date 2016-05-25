@@ -35,6 +35,10 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class subscription_manager {
+
+    /** @const Period of time, in days, after which an inactive subscription will be removed completely.*/
+    const INACTIVE_SUBSCRIPTION_LIFESPAN_IN_DAYS = 30;
+
     /**
      * Subscribe a user to a given rule.
      *
@@ -455,5 +459,79 @@ class subscription_manager {
         }
 
         return false;
+    }
+
+    /**
+     * Activates a group of subscriptions based on an input array of ids.
+     *
+     * @since 3.0.5
+     * @param array $ids of subscription ids.
+     * @return bool true if the operation was successful, false otherwise.
+     */
+    public static function activate_subscriptions(array $ids) {
+        global $DB;
+        if (!empty($ids)) {
+            list($sql, $params) = $DB->get_in_or_equal($ids);
+            $success = $DB->set_field_select('tool_monitor_subscriptions', 'inactivedate', '0', 'id ' . $sql, $params);
+            return $success;
+        }
+        return false;
+    }
+
+    /**
+     * Deactivates a group of subscriptions based on an input array of ids.
+     *
+     * @since 3.0.5
+     * @param array $ids of subscription ids.
+     * @return bool true if the operation was successful, false otherwise.
+     */
+    public static function deactivate_subscriptions(array $ids) {
+        global $DB;
+        if (!empty($ids)) {
+            $inactivedate = time();
+            list($sql, $params) = $DB->get_in_or_equal($ids);
+            $success = $DB->set_field_select('tool_monitor_subscriptions', 'inactivedate', $inactivedate, 'id ' . $sql,
+                                             $params);
+            return $success;
+        }
+        return false;
+    }
+
+    /**
+     * Deletes subscriptions which have been inactive for a period of time.
+     *
+     * @since 3.0.5
+     * @param int $userid if provided, only this user's stale subscriptions will be deleted.
+     * @return bool true if the operation was successful, false otherwise.
+     */
+    public static function delete_stale_subscriptions($userid = 0) {
+        global $DB;
+        // Get the expiry duration, in days.
+        $cutofftime = strtotime("-" . self::INACTIVE_SUBSCRIPTION_LIFESPAN_IN_DAYS . " days", time());
+
+        if (!empty($userid)) {
+            // Remove any stale subscriptions for the desired user only.
+            $success = $DB->delete_records_select('tool_monitor_subscriptions',
+                                                  'userid = ? AND inactivedate < ? AND inactivedate <> 0',
+                                                  array($userid, $cutofftime));
+
+        } else {
+            // Remove all stale subscriptions.
+            $success = $DB->delete_records_select('tool_monitor_subscriptions',
+                                                  'inactivedate < ? AND inactivedate <> 0',
+                                                  array($cutofftime));
+        }
+        return $success;
+    }
+
+    /**
+     * Check whether a subscription is active.
+     *
+     * @since 3.0.5
+     * @param \tool_monitor\subscription $subscription instance.
+     * @return bool true if the subscription is active, false otherwise.
+     */
+    public static function subscription_is_active(subscription $subscription) {
+        return empty($subscription->inactivedate);
     }
 }
