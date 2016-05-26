@@ -98,6 +98,7 @@ Y.extend(LTITINYMCEPANEL, Y.Base, {
 
         var center = Y.Node.create('<center></center>');
         var iframe = Y.Node.create('<iframe></iframe>');
+        iframe.setAttribute('allowfullscreen', '');
         iframe.setAttribute('width', Y.one('#width').get('value')+'px');
         iframe.setAttribute('height', height+'px');
         iframe.setAttribute('src', Y.one('#source').get('value'));

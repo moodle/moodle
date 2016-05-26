@@ -41,6 +41,7 @@ echo html_writer::tag('h2', get_string('preview', 'local_kaltura'));
     var iframe = Y.Node.create('<iframe></iframe>');
     iframe.setAttribute('src', '<?php echo $playurl; ?>');
     iframe.setAttribute('alt', '<?php echo addcslashes($title, "'"); ?>');
+    iframe.setAttribute('allowfullscreen', '');
     iframe.setStyles({
             height: '<?php echo $height; ?>px',
             border: 'none',
