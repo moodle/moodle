@@ -90,6 +90,7 @@ $metadata = local_kaltura_encode_object_for_storage($metadata);
 
 $PAGE->set_url($serviceurl);
 $PAGE->set_context(context_system::instance());
+$previewltilaunchurl = new moodle_url('/local/kaltura/bsepreview_ltilaunch.php?playurl=' . urlencode($url));
 $params = array(
     'iframeurl' => urlencode($url),
     'width' => $width,
@@ -98,6 +99,7 @@ $params = array(
     'title' => $title,
     'metadata' => $metadata,
     'editor' => $editor,
+    'previewltilauncher' => $previewltilaunchurl->out(),
 );
 if($editor == 'atto')
 {
