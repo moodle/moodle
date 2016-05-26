@@ -404,4 +404,28 @@ class core_user_testcase extends advanced_testcase {
         $this->setExpectedException('coding_exception', 'Invalid property requested, or the property does not has a default value.');
         core_user::get_property_default('firstname');
     }
+
+    /**
+     * Ensure that the noreply user is not cached.
+     */
+    public function test_get_noreply_user() {
+        global $CFG;
+
+        // Create a new fake language 'xx' with the 'noreplyname'.
+        $langfolder = $CFG->dataroot . '/lang/xx';
+        check_dir_exists($langfolder);
+        $langconfig = "<?php\n\defined('MOODLE_INTERNAL') || die();";
+        file_put_contents($langfolder . '/langconfig.php', $langconfig);
+        $langconfig = "<?php\n\$string['noreplyname'] = 'XXX';";
+        file_put_contents($langfolder . '/moodle.php', $langconfig);
+
+        $CFG->lang='en';
+        $enuser = \core_user::get_noreply_user();
+
+        $CFG->lang='xx';
+        $xxuser = \core_user::get_noreply_user();
+
+        $this->assertNotEquals($enuser, $xxuser);
+    }
+
 }
