@@ -64,16 +64,18 @@ Y.extend(LTISERVICE, Y.Base, {
             Y.one(documentElement.getElementById('widescreen')).setAttribute('value', '1');
         }
 
+        var sourceUrl = decodeURIComponent(params.iframeurl);
         if (documentElement.getElementById('video_preview_frame')) {
-            Y.one(documentElement.getElementById('video_preview_frame')).setAttribute('src', params.previewltilauncher);
+            sourceUrl = params.previewltilauncher;
+            Y.one(documentElement.getElementById('video_preview_frame')).setAttribute('src', sourceUrl);
         } else if (documentElement.getElementById('contentframe')) {
-            Y.one(documentElement.getElementById('contentframe')).setAttribute('src', decodeURIComponent(params.iframeurl));
+            Y.one(documentElement.getElementById('contentframe')).setAttribute('src', sourceUrl);
             Y.one(documentElement.getElementById('contentframe')).setStyle('width', params.width + 'px');
             Y.one(documentElement.getElementById('contentframe')).setStyle('height', params.height + 'px');
         }
 
         // This element must exist.
-        Y.one(documentElement.getElementById('source')).setAttribute('value', decodeURIComponent(params.iframeurl));
+        Y.one(documentElement.getElementById('source')).setAttribute('value', sourceUrl);
 
         if (documentElement.getElementById('metadata')) {
             Y.one(documentElement.getElementById('metadata')).setAttribute('value', params.metadata);
