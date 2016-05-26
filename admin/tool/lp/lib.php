@@ -44,7 +44,7 @@ function tool_lp_extend_navigation_course($navigation, $course, $coursecontext) 
                                             navigation_node::TYPE_SETTING,
                                             null,
                                             null,
-                                            new pix_icon('competency', '', 'tool_lp'));
+                                            new pix_icon('i/competencies', ''));
     if (isset($settingsnode)) {
         $navigation->add_node($settingsnode);
     }
@@ -129,7 +129,7 @@ function tool_lp_extend_navigation_category_settings($navigation, $coursecategor
                                                 navigation_node::TYPE_SETTING,
                                                 null,
                                                 null,
-                                                new pix_icon('competency', '', 'tool_lp'));
+                                                new pix_icon('i/competencies', ''));
         if (isset($settingsnode)) {
             $navigation->add_node($settingsnode);
         }
@@ -144,7 +144,7 @@ function tool_lp_extend_navigation_category_settings($navigation, $coursecategor
                                                 navigation_node::TYPE_SETTING,
                                                 null,
                                                 null,
-                                                new pix_icon('competency', '', 'tool_lp'));
+                                                new pix_icon('i/competencies', ''));
         if (isset($settingsnode)) {
             $navigation->add_node($settingsnode);
         }
