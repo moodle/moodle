@@ -209,32 +209,6 @@ class mod_assign_mod_form extends moodleform_mod {
         $this->apply_admin_defaults();
 
         $this->add_action_buttons();
-
-        // Add warning popup/noscript tag, if grades are changed by user.
-        $hasgrade = false;
-        if (!empty($this->_instance)) {
-            $hasgrade = $DB->record_exists_select('assign_grades',
-                                                  'assignment = ? AND grade <> -1',
-                                                  array($this->_instance));
-        }
-
-        if ($mform->elementExists('grade') && $hasgrade) {
-            $module = array(
-                'name' => 'mod_assign',
-                'fullpath' => '/mod/assign/module.js',
-                'requires' => array('node', 'event'),
-                'strings' => array(array('changegradewarning', 'mod_assign'))
-                );
-            $PAGE->requires->js_init_call('M.mod_assign.init_grade_change', null, false, $module);
-
-            // Add noscript tag in case.
-            $noscriptwarning = $mform->createElement('static',
-                                                     'warning',
-                                                     null,
-                                                     html_writer::tag('noscript',
-                                                     get_string('changegradewarning', 'mod_assign')));
-            $mform->insertElementBefore($noscriptwarning, 'grade');
-        }
     }
 
     /**
