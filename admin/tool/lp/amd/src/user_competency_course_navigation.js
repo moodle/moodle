@@ -75,8 +75,6 @@ define(['jquery'], function($) {
     UserCompetencyCourseNavigation.prototype._courseId = null;
     /** @type {String} Plugin base url. */
     UserCompetencyCourseNavigation.prototype._baseUrl = null;
-    /** @type {Boolean} Ignore the first change event for users. */
-    UserCompetencyCourseNavigation.prototype._ignoreFirstUser = null;
     /** @type {Boolean} Ignore the first change event for competencies. */
     UserCompetencyCourseNavigation.prototype._ignoreFirstCompetency = null;
 
