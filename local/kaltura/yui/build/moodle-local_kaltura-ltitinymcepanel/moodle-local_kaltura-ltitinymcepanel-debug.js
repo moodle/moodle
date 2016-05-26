@@ -101,7 +101,7 @@ Y.extend(LTITINYMCEPANEL, Y.Base, {
         var iframe = Y.Node.create('<iframe></iframe>');
         iframe.setAttribute('width', Y.one('#width').get('value')+'px');
         iframe.setAttribute('height', height+'px');
-        iframe.setAttribute('src', Y.one('#source').get('value'));
+        iframe.setAttribute('src', Y.one('#video_preview_frame').getAttribute('src'));
 
         center.append(iframe);
         Y.one('#'+previewiframeid).append(center);
