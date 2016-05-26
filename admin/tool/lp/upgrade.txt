@@ -1,0 +1,6 @@
+This files describes changes in /admin/tool/lp/* - plugins,
+information provided here is intended especially for developers.
+
+=== 3.1.1 ===
+
+* The plugin icon 'competency.png/svg' will be removed in the future use i/competencies instead.
