@@ -104,7 +104,6 @@ $string['blindmarkingenabledwarning'] = 'Blind marking is enabled for this activ
 $string['blindmarking_help'] = 'Blind marking hides the identity of students from markers. Blind marking settings will be locked once a submission or grade has been made in relation to this assignment.';
 $string['changeuser'] = 'Change user';
 $string['changefilters'] = 'Change filters';
-$string['changegradewarning'] = 'This assignment has graded submissions and changing the grade will not automatically re-calculate existing submission grades. You must re-grade all existing submissions, if you wish to change the grade.';
 $string['choosegradingaction'] = 'Grading action';
 $string['choosemarker'] = 'Choose...';
 $string['chooseoperation'] = 'Choose operation';
@@ -503,3 +502,6 @@ $string['viewsubmissiongradingtable'] = 'View submission grading table.';
 $string['viewrevealidentitiesconfirm'] = 'View reveal student identities confirmation page.';
 $string['workflowfilter'] = 'Workflow filter';
 $string['xofy'] = '{$a->x} of {$a->y}';
+
+// Deprecated since Moodle 3.2.
+$string['changegradewarning'] = 'This assignment has graded submissions and changing the grade will not automatically re-calculate existing submission grades. You must re-grade all existing submissions, if you wish to change the grade.';
