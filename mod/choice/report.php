@@ -4,15 +4,12 @@
     require_once("lib.php");
 
     $id         = required_param('id', PARAM_INT);   //moduleid
-    $format     = optional_param('format', CHOICE_PUBLISH_NAMES, PARAM_INT);
     $download   = optional_param('download', '', PARAM_ALPHA);
-    $action     = optional_param('action', '', PARAM_ALPHA);
-    $attemptids = optional_param_array('attemptid', array(), PARAM_INT); //get array of responses to delete.
+    $action     = optional_param('action', '', PARAM_ALPHANUMEXT);
+    $attemptids = optional_param_array('attemptid', array(), PARAM_INT); // Get array of responses to delete or modify.
+    $userids    = optional_param_array('userid', array(), PARAM_INT); // Get array of users whose choices need to be modified.
 
     $url = new moodle_url('/mod/choice/report.php', array('id'=>$id));
-    if ($format !== CHOICE_PUBLISH_NAMES) {
-        $url->param('format', $format);
-    }
     if ($download !== '') {
         $url->param('download', $download);
     }
@@ -52,9 +49,18 @@
     $event = \mod_choice\event\report_viewed::create($eventdata);
     $event->trigger();
 
-    if (data_submitted() && $action == 'delete' && has_capability('mod/choice:deleteresponses',$context) && confirm_sesskey()) {
-        choice_delete_responses($attemptids, $choice, $cm, $course); //delete responses.
-        redirect("report.php?id=$cm->id");
+    if (data_submitted() && has_capability('mod/choice:deleteresponses', $context) && confirm_sesskey()) {
+        if ($action === 'delete') {
+            // Delete responses of other users.
+            choice_delete_responses($attemptids, $choice, $cm, $course);
+            redirect("report.php?id=$cm->id");
+        }
+        if (preg_match('/^choose_(\d+)$/', $action, $actionmatch)) {
+            // Modify responses of other users.
+            $newoptionid = (int)$actionmatch[1];
+            choice_modify_responses($userids, $attemptids, $newoptionid, $choice, $cm, $course);
+            redirect("report.php?id=$cm->id");
+        }
     }
 
     if (!$download) {
@@ -238,15 +244,11 @@
         }
         exit;
     }
-    // Show those who haven't answered the question.
-    if (!empty($choice->showunanswered)) {
-        $choice->option[0] = get_string('notanswered', 'choice');
-        $choice->maxanswers[0] = 0;
-    }
-
+    // Always show those who haven't answered the question.
+    $choice->showunanswered = 1;
     $results = prepare_choice_show_results($choice, $course, $cm, $users);
     $renderer = $PAGE->get_renderer('mod_choice');
-    echo $renderer->display_result($results, has_capability('mod/choice:readresponses', $context));
+    echo $renderer->display_result($results, true);
 
    //now give links for downloading spreadsheets.
     if (!empty($users) && has_capability('mod/choice:downloadresponses',$context)) {

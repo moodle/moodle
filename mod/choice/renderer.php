@@ -171,7 +171,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         $usernumberheader->text = get_string('numberofuser', 'choice');
         $columns['usernumber'][] = $usernumberheader;
 
-
+        $optionsnames = [];
         foreach ($choices->options as $optionid => $options) {
             $celloption = clone($celldefault);
             $cellusernumber = clone($celldefault);
@@ -179,7 +179,7 @@ class mod_choice_renderer extends plugin_renderer_base {
 
             $celltext = '';
             if ($choices->showunanswered && $optionid == 0) {
-                $celltext = format_string(get_string('notanswered', 'choice'));
+                $celltext = get_string('notanswered', 'choice');
             } else if ($optionid > 0) {
                 $celltext = format_string($choices->options[$optionid]->text);
             }
@@ -189,6 +189,7 @@ class mod_choice_renderer extends plugin_renderer_base {
             }
 
             $celloption->text = $celltext;
+            $optionsnames[$optionid] = $celltext;
             $cellusernumber->text = $numberofuser;
 
             $columns['options'][] = $celloption;
@@ -222,10 +223,17 @@ class mod_choice_renderer extends plugin_renderer_base {
                         }
 
                         $userfullname = fullname($user, $choices->fullnamecapability);
-                        if ($choices->viewresponsecapability && $choices->deleterepsonsecapability  && $optionid > 0) {
-                            $attemptaction = html_writer::label($userfullname, 'attempt-user'.$user->id, false, array('class' => 'accesshide'));
-                            $attemptaction .= html_writer::checkbox('attemptid[]', $user->answerid, '', null,
-                                    array('id' => 'attempt-user'.$user->id));
+                        if ($choices->viewresponsecapability && $choices->deleterepsonsecapability) {
+                            $checkboxid = 'attempt-user'.$user->id.'-option'.$optionid;
+                            $attemptaction = html_writer::label($userfullname . ' ' . $optionsnames[$optionid],
+                                    $checkboxid, false, array('class' => 'accesshide'));
+                            if ($optionid > 0) {
+                                $attemptaction .= html_writer::checkbox('attemptid[]', $user->answerid, '', null,
+                                    array('id' => $checkboxid));
+                            } else {
+                                $attemptaction .= html_writer::checkbox('userid[]', $user->id, '', null,
+                                    array('id' => $checkboxid));
+                            }
                             $data .= html_writer::tag('div', $attemptaction, array('class'=>'attemptaction'));
                         }
                         $userimage = $this->output->user_picture($user, array('courseid'=>$choices->courseid));
@@ -252,6 +260,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         if ($choices->viewresponsecapability && $choices->deleterepsonsecapability) {
             $selecturl = new moodle_url('#');
 
+            $actiondata .= html_writer::start_div('selectallnone');
             $selectallactions = new component_action('click',"checkall");
             $selectall = new action_link($selecturl, get_string('selectall'), $selectallactions);
             $actiondata .= $this->output->render($selectall) . ' / ';
@@ -260,11 +269,18 @@ class mod_choice_renderer extends plugin_renderer_base {
             $deselectall = new action_link($selecturl, get_string('deselectall'), $deselectallactions);
             $actiondata .= $this->output->render($deselectall);
 
-            $actiondata .= html_writer::tag('label', ' ' . get_string('withselected', 'choice') . ' ', array('for'=>'menuaction'));
+            $actiondata .= html_writer::end_div();
 
             $actionurl = new moodle_url($PAGE->url, array('sesskey'=>sesskey(), 'action'=>'delete_confirmation()'));
-            $select = new single_select($actionurl, 'action', array('delete'=>get_string('delete')), null, array(''=>get_string('chooseaction', 'choice')), 'attemptsform');
-
+            $actionoptions = array('delete' => get_string('delete'));
+            foreach ($choices->options as $optionid => $option) {
+                if ($optionid > 0) {
+                    $actionoptions['choose_'.$optionid] = get_string('chooseoption', 'choice', $option->text);
+                }
+            }
+            $select = new single_select($actionurl, 'action', $actionoptions, null,
+                    array('' => get_string('chooseaction', 'choice')), 'attemptsform');
+            $select->set_label(get_string('withselected', 'choice'));
             $actiondata .= $this->output->render($select);
         }
         $html .= html_writer::tag('div', $actiondata, array('class'=>'responseaction'));
