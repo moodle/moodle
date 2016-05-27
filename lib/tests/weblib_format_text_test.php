@@ -95,4 +95,56 @@ class core_weblib_format_text_testcase extends advanced_testcase {
         $this->assertEquals('<div class="no-overflow"><p>:-)</p></div>',
                 format_text('<p>:-)</p>', FORMAT_HTML, array('overflowdiv' => true)));
     }
+
+    /**
+     * Test adding blank target attribute to links
+     *
+     * @dataProvider format_text_blanktarget_testcases
+     * @param string $link The link to add target="_blank" to
+     * @param string $expected The expected filter value
+     */
+    public function test_format_text_blanktarget($link, $expected) {
+        $actual = format_text($link, FORMAT_MOODLE, array('blanktarget' => true, 'filter' => false, 'noclean' => true));
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * Data provider for the test_format_text_blanktarget testcase
+     *
+     * @return array of testcases
+     */
+    public function format_text_blanktarget_testcases() {
+        return [
+            'Simple link' =>
+                [
+                    '<a href="https://www.youtube.com/watch?v=JeimE8Wz6e4">Hey, that\'s pretty good!</a>',
+                    '<div class="text_to_html"><a href="https://www.youtube.com/watch?v=JeimE8Wz6e4" target="_blank"' .
+                        ' rel="noreferrer">Hey, that\'s pretty good!</a></div>'
+                ],
+            'Link with rel' =>
+                [
+                    '<a href="https://www.youtube.com/watch?v=JeimE8Wz6e4" rel="nofollow">Hey, that\'s pretty good!</a>',
+                    '<div class="text_to_html"><a href="https://www.youtube.com/watch?v=JeimE8Wz6e4" rel="nofollow noreferrer"' .
+                        ' target="_blank">Hey, that\'s pretty good!</a></div>'
+                ],
+            'Link with rel noreferrer' =>
+                [
+                    '<a href="https://www.youtube.com/watch?v=JeimE8Wz6e4" rel="noreferrer">Hey, that\'s pretty good!</a>',
+                    '<div class="text_to_html"><a href="https://www.youtube.com/watch?v=JeimE8Wz6e4" rel="noreferrer"' .
+                     ' target="_blank">Hey, that\'s pretty good!</a></div>'
+                ],
+            'Link with target' =>
+                [
+                    '<a href="https://www.youtube.com/watch?v=JeimE8Wz6e4" target="_self">Hey, that\'s pretty good!</a>',
+                    '<div class="text_to_html"><a href="https://www.youtube.com/watch?v=JeimE8Wz6e4" target="_self">' .
+                        'Hey, that\'s pretty good!</a></div>'
+                ],
+            'Link with target blank' =>
+                [
+                    '<a href="https://www.youtube.com/watch?v=JeimE8Wz6e4" target="_blank">Hey, that\'s pretty good!</a>',
+                    '<div class="text_to_html"><a href="https://www.youtube.com/watch?v=JeimE8Wz6e4" target="_blank"' .
+                        ' rel="noreferrer">Hey, that\'s pretty good!</a></div>'
+                ]
+        ];
+    }
 }

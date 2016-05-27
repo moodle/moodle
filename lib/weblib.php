@@ -1175,6 +1175,7 @@ function format_text_menu() {
  *                      with the class no-overflow before being returned. Default false.
  *      allowid     :   If true then id attributes will not be removed, even when
  *                      using htmlpurifier. Default false.
+ *      blanktarget :   If true all <a> tags will have target="_blank" added unless target is explicitly specified.
  * </pre>
  *
  * @staticvar array $croncache
@@ -1222,6 +1223,7 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
     if (!isset($options['overflowdiv'])) {
         $options['overflowdiv'] = false;
     }
+    $options['blanktarget'] = !empty($options['blanktarget']);
 
     // Calculate best context.
     if (empty($CFG->version) or $CFG->version < 2013051400 or during_initial_install()) {
@@ -1316,6 +1318,26 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
 
     if (!empty($options['overflowdiv'])) {
         $text = html_writer::tag('div', $text, array('class' => 'no-overflow'));
+    }
+
+    if ($options['blanktarget']) {
+        $domdoc = new DOMDocument();
+        $domdoc->loadHTML($text);
+        foreach ($domdoc->getElementsByTagName('a') as $link) {
+            if ($link->hasAttribute('target') && strpos($link->getAttribute('target'), '_blank') === false) {
+                continue;
+            }
+            $link->setAttribute('target', '_blank');
+            if (strpos($link->getAttribute('rel'), 'noreferrer') === false) {
+                $link->setAttribute('rel', trim($link->getAttribute('rel') . ' noreferrer'));
+            }
+        }
+
+        // This regex is nasty and I don't like it. The correct way to solve this is by loading the HTML like so:
+        // $domdoc->loadHTML($text, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD); however it seems like the libxml
+        // version that travis uses doesn't work properly and ends up leaving <html><body>, so I'm forced to use
+        // this regex to remove those tags.
+        $text = trim(preg_replace('~<(?:!DOCTYPE|/?(?:html|body))[^>]*>\s*~i', '', $domdoc->saveHTML()));
     }
 
     return $text;
