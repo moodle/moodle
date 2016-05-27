@@ -983,6 +983,7 @@ function message_format_message_text($message, $forcetexttohtml = false) {
 
     $options = new stdClass();
     $options->para = false;
+    $options->blanktarget = true;
 
     $format = $message->fullmessageformat;
 
