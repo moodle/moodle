@@ -237,6 +237,10 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                 }
                 select.append(option);
             }
+            if (!index) {
+                select.append(create('<option value="'+defaultvalue+'">'+durationdays.replace('{a}', defaultvalue)+'</option>'));
+                index = ++count;
+            }
             select.set('selectedIndex', index);
         },
         getAssignableRoles : function(){
