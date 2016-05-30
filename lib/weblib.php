@@ -760,7 +760,6 @@ class moodle_url {
         if ($forcedownload) {
             $params['forcedownload'] = 1;
         }
-        $path = rtrim($path, '/');
         $url = new moodle_url($urlbase, $params);
         $url->set_slashargument($path);
         return $url;
