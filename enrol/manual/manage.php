@@ -89,6 +89,9 @@ if ($extendperiod) {
 } else {
     $defaultperiod = $instance->enrolperiod;
 }
+if (!isset($periodmenu[$defaultperiod])) {
+    $periodmenu[$defaultperiod] = get_string('numdays', '', floor($defaultperiod / DAYSECS));
+}
 if (empty($extendbase)) {
     if (!$extendbase = get_config('enrol_manual', 'enrolstart')) {
         // Default to now if there is no system setting.
