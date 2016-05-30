@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.0.5 ==
+
+* New option 'blanktarget' added to format_text. This option adds target="_blank" to links
+
 === 3.0.4 ===
 
 * behat_util::is_server_running() is removed, please use behat_util::check_server_status() instead.
