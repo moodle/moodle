@@ -930,8 +930,11 @@ class backup_gradebook_structure_step extends backup_structure_step {
         $grade_setting = new backup_nested_element('grade_setting', 'id', array(
             'name', 'value'));
 
+        $gradebook_attributes = new backup_nested_element('attributes', null, array('calculations_freeze'));
 
         // Build the tree
+        $gradebook->add_child($gradebook_attributes);
+
         $gradebook->add_child($grade_categories);
         $grade_categories->add_child($grade_category);
 
@@ -946,14 +949,15 @@ class backup_gradebook_structure_step extends backup_structure_step {
         $gradebook->add_child($grade_settings);
         $grade_settings->add_child($grade_setting);
 
+        // Define sources
+
         // Add attribute with gradebook calculation freeze date if needed.
+        $attributes = new stdClass();
         $gradebookcalculationfreeze = get_config('core', 'gradebook_calculations_freeze_' . $this->get_courseid());
         if ($gradebookcalculationfreeze) {
-            $gradebook->add_attributes(array('calculations_freeze'));
-            $gradebook->get_attribute('calculations_freeze')->set_value($gradebookcalculationfreeze);
+            $attributes->calculations_freeze = $gradebookcalculationfreeze;
         }
-
-        // Define sources
+        $gradebook_attributes->set_source_array([$attributes]);
 
         //Include manual, category and the course grade item
         $grade_items_sql ="SELECT * FROM {grade_items}
