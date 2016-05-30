@@ -34,6 +34,11 @@ list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, true, $cm);
 require_sesskey();
 
+if (!$course) {
+    // Require_login() does not set context if called without a $course, do it manually.
+    $PAGE->set_context($context);
+}
+
 $action    = optional_param('action',    '',  PARAM_ALPHA);
 $area      = optional_param('area',      '',  PARAM_AREA);
 $content   = optional_param('content',   '',  PARAM_RAW);
@@ -48,7 +53,9 @@ if ($action !== 'add') {
 
 $cmt = new stdClass;
 $cmt->contextid = $contextid;
-$cmt->courseid  = $course->id;
+if ($course) {
+    $cmt->courseid = $course->id;
+}
 $cmt->cm        = $cm;
 $cmt->area      = $area;
 $cmt->itemid    = $itemid;
