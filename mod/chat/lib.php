@@ -749,6 +749,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     // Parse the text to clean and filter it.
     $options = new stdClass();
     $options->para = false;
+    $options->blanktarget = true;
     $text = format_text($text, FORMAT_MOODLE, $options, $courseid);
 
     // And now check for special cases.
@@ -922,6 +923,7 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
     // Parse the text to clean and filter it.
     $options = new stdClass();
     $options->para = false;
+    $options->blanktarget = true;
     $text = format_text($text, FORMAT_MOODLE, $options, $courseid);
 
     // And now check for special cases.
