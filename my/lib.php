@@ -146,6 +146,9 @@ function my_reset_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') 
 function my_reset_page_for_all_users($private = MY_PAGE_PRIVATE, $pagetype = 'my-index') {
     global $DB;
 
+    // This may take a while. Raise the execution time limit.
+    core_php_time_limit::raise();
+
     // Find all the user pages.
     $where = 'userid IS NOT NULL AND private = :private';
     $params = array('private' => $private);
