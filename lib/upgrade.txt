@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.1.1 ===
+
+* New option 'blanktarget' added to format_text. This option adds target="_blank" to links
+
 === 3.1 ===
 
 * Webservice function core_course_search_courses accepts a new parameter 'limittoenrolled' to filter the results
