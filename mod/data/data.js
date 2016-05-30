@@ -6,9 +6,13 @@ function insert_field_tags(selectlist) {
     var value = selectlist.options[selectlist.selectedIndex].value;
     var editorname = 'template';
     if (typeof tinyMCE == 'undefined') {
-        var element = document.getElementsByName(editorname)[0];
-        // For inserting when in normal textareas
-        insertAtCursor(element, value);
+        if (document.execCommand('insertText')) {
+            document.execCommand('insertText', false, value);
+        } else {
+            var element = document.getElementsByName(editorname)[0];
+            // For inserting when in normal textareas
+            insertAtCursor(element, value);
+        }
     } else {
         tinyMCE.execInstanceCommand(editorname, 'mceInsertContent', false, value);
     }
