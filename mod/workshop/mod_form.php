@@ -99,8 +99,7 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addElement('text', 'submissiongradepass', get_string('gradetopasssubmission', 'workshop'));
         $mform->addHelpButton('submissiongradepass', 'gradepass', 'grades');
         $mform->setDefault('submissiongradepass', '');
-        $mform->setType('submissiongradepass', PARAM_FLOAT);
-        $mform->addRule('submissiongradepass', null, 'numeric', null, 'client');
+        $mform->setType('submissiongradepass', PARAM_RAW);
 
         $label = get_string('gradinggrade', 'workshop');
         $mform->addGroup(array(
@@ -113,8 +112,7 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addElement('text', 'gradinggradepass', get_string('gradetopassgrading', 'workshop'));
         $mform->addHelpButton('gradinggradepass', 'gradepass', 'grades');
         $mform->setDefault('gradinggradepass', '');
-        $mform->setType('gradinggradepass', PARAM_FLOAT);
-        $mform->addRule('gradinggradepass', null, 'numeric', null, 'client');
+        $mform->setType('gradinggradepass', PARAM_RAW);
 
         $options = array();
         for ($i = 5; $i >= 0; $i--) {
@@ -397,11 +395,28 @@ class mod_workshop_mod_form extends moodleform_mod {
             }
         }
 
-        if ($data['submissiongradepass'] > $data['grade']) {
-            $errors['submissiongradepass'] = get_string('gradepassgreaterthangrade', 'grades', $data['grade']);
+        // Check that the submission grade pass is a valid number.
+        if (isset($data['submissiongradepass'])) {
+            $submissiongradefloat = unformat_float($data['submissiongradepass'], true);
+            if ($submissiongradefloat === false || $submissiongradefloat === null) {
+                $errors['submissiongradepass'] = get_string('err_numeric', 'form');
+            } else {
+                if ($submissiongradefloat > $data['grade']) {
+                    $errors['submissiongradepass'] = get_string('gradepassgreaterthangrade', 'grades', $data['grade']);
+                }
+            }
         }
-        if ($data['gradinggradepass'] > $data['gradinggrade']) {
-            $errors['gradinggradepass'] = get_string('gradepassgreaterthangrade', 'grades', $data['gradinggrade']);
+
+        // Check that the grade pass is a valid number.
+        if (isset($data['gradinggradepass'])) {
+            $gradepassfloat = unformat_float($data['gradinggradepass'], true);
+            if ($gradepassfloat === false || $gradepassfloat === null) {
+                $errors['gradinggradepass'] = get_string('err_numeric', 'form');
+            } else {
+                if ($gradepassfloat > $data['gradinggrade']) {
+                    $errors['gradinggradepass'] = get_string('gradepassgreaterthangrade', 'grades', $data['gradinggrade']);
+                }
+            }
         }
 
         return $errors;
