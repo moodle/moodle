@@ -1,0 +1,11 @@
+<div class="row-fluid contact {{#selected}}selected{{/selected}}">
+    <div class="span2 picture">
+        <img height="64" src="{{profileimageurl}}" alt="" />
+    </div>
+    <div class="span10 information">
+        <div class="name">{{fullname}} {{#isonline}}*{{/isonline}}</div>
+        {{#lastmessage}}
+            <p class="lastmessage">{{.}}</p>
+        {{/lastmessage}}
+    </div>
+</div>

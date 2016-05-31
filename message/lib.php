@@ -308,13 +308,19 @@ function message_count_blocked_users($user1=null) {
  * Get the users recent conversations meaning all the people they've recently
  * sent or received a message from plus the most recent message sent to or received from each other user
  *
- * @param object $user the current user
+ * @param object|int $user the current user
  * @param int $limitfrom can be used for paging
  * @param int $limitto can be used for paging
  * @return array
  */
 function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
     global $DB;
+
+    if (is_numeric($user)) {
+        $userid = $user;
+        $user = new stdClass();
+        $user->id = $userid;
+    }
 
     $userfields = user_picture::fields('otheruser', array('lastaccess'));
 

@@ -5765,6 +5765,89 @@ a.ygtvspacer:hover {
   display: inline-block;
   padding-left: 5px;
 }
+/** The message area **/
+.messaging-area {
+  border: 1px solid black;
+}
+.messaging-area .contacts-area {
+  border-right: 1px solid black;
+  height: 800px;
+}
+.messaging-area .contacts-area .searcharea {
+  padding: 5px;
+  text-align: center;
+}
+.messaging-area .contacts-area .contacts {
+  height: 705px;
+  overflow-y: scroll;
+}
+.messaging-area .contacts-area .contacts .contact.selected {
+  background-color: #CCF2FF;
+}
+.messaging-area .contacts-area .contacts .contact:hover {
+  background-color: #CCF2FF;
+  cursor: pointer;
+}
+.messaging-area .contacts-area .contacts .contact .information {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+.messaging-area .contacts-area .contacts .contact .information .name {
+  font-weight: bold;
+}
+.messaging-area .contacts-area .contacts .contact .information .lastmessage {
+  word-wrap: break-word;
+}
+.messaging-area .contacts-area .tabs {
+  border-top: 1px solid black;
+}
+.messaging-area .contacts-area .tabs .tab:hover {
+  background-color: #CCF2FF;
+  cursor: pointer;
+}
+.messaging-area .contacts-area .tabs .tab.selected {
+  background-color: #CCF2FF;
+}
+.messaging-area .contacts-area .tabs .tabconversations {
+  text-align: center;
+  border-right: 1px solid black;
+}
+.messaging-area .contacts-area .tabs .tabcontacts {
+  text-align: center;
+}
+.messaging-area .messages-area .messages {
+  height: 720px;
+  overflow-y: auto;
+}
+.messaging-area .messages-area .messages .name {
+  font-weight: bold;
+}
+.messaging-area .messages-area .messages .blocktime {
+  clear: both;
+  font-weight: bold;
+  text-align: center;
+}
+.messaging-area .messages-area .messages .left {
+  float: left;
+  width: 80%;
+}
+.messaging-area .messages-area .messages .right {
+  float: right;
+  padding-right: 5px;
+  margin-right: 5px;
+  max-width: 80%;
+}
+.messaging-area .messages-area .messages .message {
+  border: 1px solid black;
+  padding-left: 5px;
+  margin-bottom: 5px;
+  clear: both;
+  font-size: 10px;
+  word-wrap: break-word;
+}
+.messaging-area .messages-area .response textarea {
+  width: 80%;
+}
 #newmessageoverlay {
   min-height: 20px;
   padding: 19px;

@@ -1,0 +1,14 @@
+<div class="messages">
+    <div class="name">
+        {{otheruserfullname}}
+    </div>
+    {{#messages}}
+        {{> core_message/message }}
+    {{/messages}}
+</div>
+{{#iscurrentuser}}
+    <div class="response">
+        <textarea id="sendmessagetxt"></textarea>
+        <input class="sendmessagebtn" type="button" value="{{#str}}send, message{{/str}}">
+    </div>
+{{/iscurrentuser}}
