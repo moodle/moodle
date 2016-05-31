@@ -41,12 +41,22 @@ class mod_assign_submission_form extends moodleform {
      * Define this form - called by the parent constructor
      */
     public function definition() {
+        global $USER;
         $mform = $this->_form;
-
         list($assign, $data) = $this->_customdata;
 
-        $assign->add_submission_form_elements($mform, $data);
+        $instance = $assign->get_instance();
+        if ($instance->teamsubmission) {
+            $submission = $assign->get_group_submission($USER->id, 0, true);
+        } else {
+            $submission = $assign->get_user_submission($USER->id, true);
+        }
+        if ($submission) {
+            $mform->addElement('hidden', 'lastmodified', $submission->timemodified);
+            $mform->setType('lastmodified', PARAM_INT);
+        }
 
+        $assign->add_submission_form_elements($mform, $data);
         $this->add_action_buttons(true, get_string('savechanges', 'assign'));
         if ($data) {
             $this->set_data($data);
