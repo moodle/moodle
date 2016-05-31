@@ -480,6 +480,20 @@ class assign_submission_file extends assign_submission_plugin {
     }
 
     /**
+     * Determine if a submission is empty
+     *
+     * This is distinct from is_empty in that it is intended to be used to
+     * determine if a submission made before saving is empty.
+     *
+     * @param stdClass $data The submission data
+     * @return bool
+     */
+    public function submission_is_empty(stdClass $data) {
+        $files = file_get_drafarea_files($data->files_filemanager);
+        return count($files->list) == 0;
+    }
+
+    /**
      * Get file areas returns a list of areas this plugin stores files
      * @return array - An array of fileareas (keys) and descriptions (values)
      */
