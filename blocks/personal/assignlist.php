@@ -24,7 +24,6 @@
  */
 
 require(dirname(__FILE__).'/../../config.php');
-require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot . '/mod/assign/externallib.php');
 require_once($CFG->dirroot . '/blocks/personal/lib.php');
 $result = mod_assign_external::get_assignments();
@@ -48,6 +47,8 @@ foreach ($courses as $course) {
 		$table->data[] = $row;
 	}
 }
+
+$PAGE->set_context(context_user::instance($USER->id));
 
 echo $OUTPUT->header();
 
