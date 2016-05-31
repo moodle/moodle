@@ -155,3 +155,5 @@ $string['update_onlogin'] = 'On every login';
 $string['update_onupdate'] = 'On update';
 $string['user_activatenotsupportusertype'] = 'auth: ldap user_activate() does not support selected usertype: {$a}';
 $string['user_disablenotsupportusertype'] = 'auth: ldap user_disable() does not support selected usertype (..yet)';
+$string['username'] = 'Username';
+$string['username_help'] = 'Please be aware that some authentication plugins will not allow you to change the username.';
