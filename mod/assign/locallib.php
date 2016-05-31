@@ -6403,6 +6403,17 @@ class assign {
         } else {
             $submission = $this->get_user_submission($userid, true);
         }
+
+        // Check that no one has modified the submission since we started looking at it.
+        if (isset($data->lastmodified) && ($submission->timemodified > $data->lastmodified)) {
+            // Another user has submitted something. Notify the current user.
+            if ($submission->status !== ASSIGN_SUBMISSION_STATUS_NEW) {
+                $notices[] = $instance->teamsubmission ? get_string('submissionmodifiedgroup', 'mod_assign')
+                                                       : get_string('submissionmodified', 'mod_assign');
+                return false;
+            }
+        }
+
         if ($instance->submissiondrafts) {
             $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
         } else {
