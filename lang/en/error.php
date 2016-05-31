@@ -223,6 +223,7 @@ $string['duplicateroleshortname'] = 'There is already a role with this short nam
 $string['duplicateusername'] = 'Duplicate username - skipping record';
 $string['emailfail'] = 'Emailing failed';
 $string['error'] = 'Error occurred';
+$string['error_question_answers_missing_in_db'] = 'Failed to find an answer matching "{$a->answer}" in the question_answers database table. This occurred while restoring the question with id {$a->filequestionid} in the backup file, which has been matched to the existing question with id {$a->dbquestionid} in the database.';
 $string['errorprocessingarchive'] = 'Error processing archive file';
 $string['errorcleaningdirectory'] = 'Error cleaning directory "{$a}"';
 $string['errorcopyingfiles'] = 'Error copying files';
