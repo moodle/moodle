@@ -91,9 +91,9 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
                 $url = $userauthplugin->edit_profile_url();
                 if (empty($url)) {
                     if (empty($course)) {
-                        $url = new moodle_url('/user/edit.php', array('userid' => $user->id, 'returnto' => 'profile'));
+                        $url = new moodle_url('/user/edit.php', array('id' => $user->id, 'returnto' => 'profile'));
                     } else {
-                        $url = new moodle_url('/user/edit.php', array('userid' => $user->id, 'course' => $course->id,
+                        $url = new moodle_url('/user/edit.php', array('id' => $user->id, 'course' => $course->id,
                             'returnto' => 'profile'));
                     }
                 }
