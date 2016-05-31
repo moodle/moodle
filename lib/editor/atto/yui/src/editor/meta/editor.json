@@ -15,7 +15,8 @@
             "moodle-core-notification-confirm",
             "moodle-editor_atto-rangy",
             "handlebars",
-            "timers"
+            "timers",
+            "querystring-stringify"
         ]
     },
     "moodle-editor_atto-plugin": {
