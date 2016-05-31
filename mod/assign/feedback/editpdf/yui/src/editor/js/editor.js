@@ -1106,7 +1106,7 @@ EDITOR.prototype = {
         drawingcanvas.setStyle('height', page.height + 'px');
 
         // Update page select.
-        this.get_dialogue_element(SELECTOR.PAGESELECT).set('value', this.currentpage);
+        this.get_dialogue_element(SELECTOR.PAGESELECT).set('selectedIndex', this.currentpage);
 
         this.resize(); // Internally will call 'redraw', after checking the dialogue size.
     },
