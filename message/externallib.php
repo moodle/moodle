@@ -137,7 +137,8 @@ class core_message_external extends external_api {
             if ($success && empty($contactlist[$message['touserid']]) && !empty($blocknoncontacts)) {
                 // The user isn't a contact and they have selected to block non contacts so this message won't be sent.
                 $success = false;
-                $errormessage = get_string('userisblockingyounoncontact', 'message');
+                $errormessage = get_string('userisblockingyounoncontact', 'message',
+                        fullname(core_user::get_user($message['touserid'])));
             }
 
             //now we can send the message (at least try)
