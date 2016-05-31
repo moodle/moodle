@@ -108,8 +108,11 @@ class block_navigation extends block_base {
      */
     function get_required_javascript() {
         parent::get_required_javascript();
+        $arguments = array(
+            'instanceid' => $this->instance->id
+        );
         $this->page->requires->string_for_js('viewallcourses', 'moodle');
-        $this->page->requires->js_call_amd('block_navigation/navblock', 'init', array());
+        $this->page->requires->js_call_amd('block_navigation/navblock', 'init', $arguments);
     }
 
     /**
