@@ -232,7 +232,7 @@ class enrol_manual_plugin extends enrol_plugin {
         $today = make_timestamp(date('Y', $now), date('m', $now), date('d', $now), 0, 0, 0);
         $startdateoptions[3] = get_string('today') . ' (' . userdate($today, $dateformat) . ')';
         $startdateoptions[4] = get_string('now', 'enrol_manual') . ' (' . userdate($now, get_string('strftimedatetimeshort')) . ')';
-        $defaultduration = $instance->enrolperiod > 0 ? $instance->enrolperiod / 86400 : '';
+        $defaultduration = $instance->enrolperiod > 0 ? $instance->enrolperiod / DAYSECS : '';
 
         $modules = array('moodle-enrol_manual-quickenrolment', 'moodle-enrol_manual-quickenrolment-skin');
         $arguments = array(
