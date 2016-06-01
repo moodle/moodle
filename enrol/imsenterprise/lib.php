@@ -310,16 +310,22 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
             $group->coursecode = trim($matches[1]);
         }
 
+        $matches = array();
         if (preg_match('{<description>.*?<long>(.*?)</long>.*?</description>}is', $tagcontents, $matches)) {
             $group->long = trim($matches[1]);
         }
+
+        $matches = array();
         if (preg_match('{<description>.*?<short>(.*?)</short>.*?</description>}is', $tagcontents, $matches)) {
             $group->short = trim($matches[1]);
         }
+
+        $matches = array();
         if (preg_match('{<description>.*?<full>(.*?)</full>.*?</description>}is', $tagcontents, $matches)) {
             $group->full = trim($matches[1]);
         }
 
+        $matches = array();
         if (preg_match('{<org>.*?<orgunit>(.*?)</orgunit>.*?</org>}is', $tagcontents, $matches)) {
             $group->category = trim($matches[1]);
         }
@@ -342,7 +348,7 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
             // Third, check if the course(s) exist.
             foreach ($group->coursecode as $coursecode) {
                 $coursecode = trim($coursecode);
-                $dbcourse = $DB->get_field('course', 'id', array('idnumber' => $coursecode));
+                $dbcourse = $DB->get_record('course', array('idnumber' => $coursecode));
                 if (!$dbcourse) {
                     if (!$createnewcourses) {
                         $this->log_line("Course $coursecode not found in Moodle's course idnumbers.");
@@ -453,9 +459,8 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
                             }
                         }
                         if ($hasupdates) {
-                            $DB->update_record('course', $dbcourse);
+                            update_course($dbcourse);
                             $courseid = $dbcourse->id;
-                            add_to_log(SITEID, "course", "update", "view.php?id=$courseid", "ID $courseid");
                             $this->log_line("Updated course $coursecode in Moodle (Moodle ID is $courseid)");
                         }
                     } else {
@@ -465,10 +470,8 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
                 } else if (($recstatus == self::IMSENTERPRISE_DELETE) && $dbcourse) {
                     // If course does exist, but recstatus==3 (delete), then set the course as hidden.
                     $courseid = $dbcourse->id;
-                    $dbcourse->visible = 0;
-                    $DB->update_record('course', $dbcourse);
-                    add_to_log(SITEID, "course", "update", "view.php?id=$courseid",
-                        "Updated (set to hidden) course $coursecode (Moodle ID is $courseid)");
+                    $show = false;
+                    course_change_visibility($courseid, $show);
                     $this->log_line("Updated (set to hidden) course $coursecode in Moodle (Moodle ID is $courseid)");
                 }
             }
@@ -477,7 +480,8 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
 
     /**
      * Process the person tag. This defines a Moodle user.
-     * @param string $tagconents The raw contents of the XML element
+     * 
+     * @param string $tagcontents The raw contents of the XML element
      */
     protected function process_person_tag($tagcontents) {
         global $CFG, $DB;
@@ -494,32 +498,49 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
         if (preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)) {
             $person->idnumber = trim($matches[1]);
         }
+
+        $matches = array();
         if (preg_match('{<name>.*?<n>.*?<given>(.+?)</given>.*?</n>.*?</name>}is', $tagcontents, $matches)) {
             $person->firstname = trim($matches[1]);
         }
+
+        $matches = array();
         if (preg_match('{<name>.*?<n>.*?<family>(.+?)</family>.*?</n>.*?</name>}is', $tagcontents, $matches)) {
             $person->lastname = trim($matches[1]);
         }
+
+        $matches = array();
         if (preg_match('{<userid.*?>(.*?)</userid>}is', $tagcontents, $matches)) {
             $person->username = trim($matches[1]);
         }
+
+        $matches = array();
         if (preg_match('{<userid\s+authenticationtype\s*=\s*"*(.+?)"*>.*?</userid>}is', $tagcontents, $matches)) {
             $person->auth = trim($matches[1]);
         }
+
         if ($imssourcedidfallback && trim($person->username) == '') {
             // This is the point where we can fall back to useing the "sourcedid" if "userid" is not supplied.
             // NB We don't use an "elseif" because the tag may be supplied-but-empty.
             $person->username = $person->idnumber;
         }
+
+        $matches = array();
         if (preg_match('{<email>(.*?)</email>}is', $tagcontents, $matches)) {
             $person->email = trim($matches[1]);
         }
+
+        $matches = array();
         if (preg_match('{<url>(.*?)</url>}is', $tagcontents, $matches)) {
             $person->url = trim($matches[1]);
         }
+
+        $matches = array();
         if (preg_match('{<adr>.*?<locality>(.+?)</locality>.*?</adr>}is', $tagcontents, $matches)) {
             $person->city = trim($matches[1]);
         }
+
+        $matches = array();
         if (preg_match('{<adr>.*?<country>(.+?)</country>.*?</adr>}is', $tagcontents, $matches)) {
             $person->country = trim($matches[1]);
         }
@@ -570,7 +591,7 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
                 $this->log_line("Ignoring update request for user $person->username");
             }
 
-        } else { // Add or update record.
+        } else { // Add record.
 
             // If the user exists (matching sourcedid) then we don't need to do anything.
             if (!$DB->get_field('user', 'id', array('idnumber' => $person->idnumber)) && $createnewusers) {
@@ -644,9 +665,12 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
             foreach ($membermatches as $mmatch) {
                 $member = new stdClass();
                 $memberstoreobj = new stdClass();
+                $matches = array();
                 if (preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $mmatch[1], $matches)) {
                     $member->idnumber = trim($matches[1]);
                 }
+
+                $matches = array();
                 if (preg_match('{<role\s+roletype=["\'](.+?)["\'].*?>}is', $mmatch[1], $matches)) {
                     // 01 means Student, 02 means Instructor, 3 means ContentDeveloper, and there are more besides.
                     $member->roletype = trim($matches[1]);
@@ -656,6 +680,8 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
                     // and there are more besides.
                     $member->roletype = trim($matches[1]);
                 }
+
+                $matches = array();
                 if (preg_match('{<role\b.*?<status>(.+?)</status>.*?</role>}is', $mmatch[1], $matches)) {
                     // 1 means active, 0 means inactive - treat this as enrol vs unenrol.
                     $member->status = trim($matches[1]);
@@ -670,9 +696,12 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
                 $timeframe = new stdClass();
                 $timeframe->begin = 0;
                 $timeframe->end = 0;
+                $matches = array();
                 if (preg_match('{<role\b.*?<timeframe>(.+?)</timeframe>.*?</role>}is', $mmatch[1], $matches)) {
                     $timeframe = $this->decode_timeframe($matches[1]);
                 }
+
+                $matches = array();
                 if (preg_match('{<role\b.*?<extension>.*?<cohort>(.+?)</cohort>.*?</extension>.*?</role>}is',
                         $mmatch[1], $matches)) {
                     $member->groupname = trim($matches[1]);
@@ -816,6 +845,8 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
         if (preg_match('{<begin\s+restrict="1">(\d\d\d\d)-(\d\d)-(\d\d)</begin>}is', $string, $matches)) {
             $ret->begin = mktime(0, 0, 0, $matches[2], $matches[3], $matches[1]);
         }
+
+        $matches = array();
         if (preg_match('{<end\s+restrict="1">(\d\d\d\d)-(\d\d)-(\d\d)</end>}is', $string, $matches)) {
             $ret->end = mktime(0, 0, 0, $matches[2], $matches[3], $matches[1]);
         }
