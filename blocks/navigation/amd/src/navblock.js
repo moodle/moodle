@@ -23,8 +23,20 @@
  */
 define(['jquery', 'core/tree'], function($, Tree) {
     return {
-        init: function() {
-            new Tree(".block_navigation .block_tree");
+        init: function(instanceid) {
+            var navTree = new Tree(".block_navigation .block_tree");
+            navTree.finishExpandingGroup = function(item) {
+                Tree.prototype.finishExpandingGroup.call(this, item);
+                Y.Global.fire(M.core.globalEvents.BLOCK_CONTENT_UPDATED, {
+                    instanceid: instanceid
+                });
+            };
+            navTree.collapseGroup = function(item) {
+                Tree.prototype.collapseGroup.call(this, item);
+                Y.Global.fire(M.core.globalEvents.BLOCK_CONTENT_UPDATED, {
+                    instanceid: instanceid
+                });
+            };
         }
     };
 });
