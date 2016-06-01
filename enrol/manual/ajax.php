@@ -120,7 +120,7 @@ switch ($action) {
         }
 
         $roleid = optional_param('role', null, PARAM_INT);
-        $duration = optional_param('duration', 0, PARAM_INT);
+        $duration = optional_param('duration', 0, PARAM_FLOAT);
         $startdate = optional_param('startdate', 0, PARAM_INT);
         $recovergrades = optional_param('recovergrades', 0, PARAM_INT);
 
@@ -154,7 +154,7 @@ switch ($action) {
         if ($duration <= 0) {
             $timeend = 0;
         } else {
-            $timeend = $timestart + ($duration*24*60*60);
+            $timeend = $timestart + intval($duration*24*60*60);
         }
 
         $instances = $manager->get_enrolment_instances();
