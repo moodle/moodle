@@ -76,73 +76,71 @@ $url = '';
 $width = 0;
 $height = 0;
 
-if (!has_capability('mod/kalvidassign:gradesubmission', $context)) {
+// Here we can assume that the user has permission to submit no matter what their role is.
+// The old method denied module-level locally assigned instructors the right to submit items,
+// even if they were also students within the course. 
+$param = array('vidassignid' => $kalvidassign->id, 'userid' => $USER->id);
+$submission = $DB->get_record('kalvidassign_submission', $param);
 
-    $param = array('vidassignid' => $kalvidassign->id, 'userid' => $USER->id);
-    $submission = $DB->get_record('kalvidassign_submission', $param);
+// If the entry_id field is not empty but the source field is empty, then the data for this activity has not yet been migrated.
+if (!empty($submission->entry_id) && empty($submission->source)) {
+    notice(get_string('activity_not_migrated', 'kalvidassign'), new moodle_url('/course/view.php', array('id' => $course->id)));
+}
 
-    // If the entry_id field is not empty but the source field is empty, then the data for this activity has not yet been migrated.
-    if (!empty($submission->entry_id) && empty($submission->source)) {
-        notice(get_string('activity_not_migrated', 'kalvidassign'), new moodle_url('/course/view.php', array('id' => $course->id)));
-    }
+echo $renderer->display_video_container_markup($submission, $course->id, $cm->id);
 
-    echo $renderer->display_video_container_markup($submission, $course->id, $cm->id);
+if (kalvidassign_assignemnt_submission_expired($kalvidassign)) {
+    $disabled = true;
+}
 
-    if (kalvidassign_assignemnt_submission_expired($kalvidassign)) {
+if (empty($submission->entry_id) && empty($submission->timecreated)) {
+    echo $renderer->display_student_submit_buttons($cm, $USER->id, $disabled);
+    echo $renderer->display_grade_feedback($kalvidassign, $context);
+} else {
+    if ($disabled || !$kalvidassign->resubmit) {
         $disabled = true;
     }
+    echo $renderer->display_student_resubmit_buttons($cm, $USER->id, $disabled);
+    echo $renderer->display_grade_feedback($kalvidassign, $context);
+}
 
-    if (empty($submission->entry_id) && empty($submission->timecreated)) {
+$params = array(
+    'withblocks' => 0,
+    'courseid' => $course->id,
+    'width' => KALTURA_PANEL_WIDTH,
+    'height' => KALTURA_PANEL_HEIGHT,
+    'cmid' => $cm->id
+);
 
-        echo $renderer->display_student_submit_buttons($cm, $USER->id, $disabled);
+$url = new moodle_url('/mod/kalvidassign/lti_launch.php', $params);
 
-        echo $renderer->display_grade_feedback($kalvidassign, $context);
-    } else {
+$params = array(
+    'addvidbtnid' => 'id_add_video',
+    'ltilaunchurl' => $url->out(false),
+    'height' => KALTURA_PANEL_HEIGHT,
+    'width' => KALTURA_PANEL_WIDTH
+);
 
-        if ($disabled || !$kalvidassign->resubmit) {
-            $disabled = true;
-        }
+$PAGE->requires->yui_module('moodle-local_kaltura-ltipanel', 'M.local_kaltura.initmediaassignment', array($params), null, true);
 
-        echo $renderer->display_student_resubmit_buttons($cm, $USER->id, $disabled);
+// Require a YUI module to make the object tag be as large as possible.
+$params = array(
+    'bodyclass' => $pageclass,
+    'lastheight' => null,
+    'padding' => 15
+);
 
-        echo $renderer->display_grade_feedback($kalvidassign, $context);
-    }
+if(isset($submission->width) && isset($submission->height))
+{
+    $params['width'] = $submission->width;
+    $params['height'] = $submission->height;
+}
 
-    $params = array(
-        'withblocks' => 0,
-        'courseid' => $course->id,
-        'width' => KALTURA_PANEL_WIDTH,
-        'height' => KALTURA_PANEL_HEIGHT,
-        'cmid' => $cm->id
-    );
+$PAGE->requires->yui_module('moodle-local_kaltura-lticontainer', 'M.local_kaltura.init', array($params), null, true);
+$PAGE->requires->string_for_js('replacevideo', 'kalvidassign');
 
-    $url = new moodle_url('/mod/kalvidassign/lti_launch.php', $params);
-
-    $params = array(
-        'addvidbtnid' => 'id_add_video',
-        'ltilaunchurl' => $url->out(false),
-        'height' => KALTURA_PANEL_HEIGHT,
-        'width' => KALTURA_PANEL_WIDTH
-    );
-
-    $PAGE->requires->yui_module('moodle-local_kaltura-ltipanel', 'M.local_kaltura.initmediaassignment', array($params), null, true);
-
-    // Require a YUI module to make the object tag be as large as possible.
-    $params = array(
-        'bodyclass' => $pageclass,
-        'lastheight' => null,
-        'padding' => 15
-    );
-
-    if(isset($submission->width) && isset($submission->height))
-    {
-        $params['width'] = $submission->width;
-        $params['height'] = $submission->height;
-    }
-
-    $PAGE->requires->yui_module('moodle-local_kaltura-lticontainer', 'M.local_kaltura.init', array($params), null, true);
-    $PAGE->requires->string_for_js('replacevideo', 'kalvidassign');
-} else {
+// Limit the instructor buttons to ONLY those users with the role appropriate for them.
+if (has_capability('mod/kalvidassign:gradesubmission', $context)) {
     echo $renderer->display_instructor_buttons($cm, $USER->id);
 }
 
