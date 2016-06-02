@@ -32,14 +32,21 @@ define(['jquery', 'core/tree'], function($, Tree) {
             }
             adminTree.finishExpandingGroup = function(item) {
                 Tree.prototype.finishExpandingGroup.call(this, item);
-                Y.Global.fire(M.core.globalEvents.BLOCK_CONTENT_UPDATED, {
-                    instanceid: instanceid
+                Y.use('moodle-core-event', function() {
+                    Y.Global.fire(M.core.globalEvents.BLOCK_CONTENT_UPDATED, {
+                        instanceid: instanceid
+                    });
                 });
             };
             adminTree.collapseGroup = function(item) {
                 Tree.prototype.collapseGroup.call(this, item);
                 Y.Global.fire(M.core.globalEvents.BLOCK_CONTENT_UPDATED, {
                     instanceid: instanceid
+                });
+                Y.use('moodle-core-event', function() {
+                    Y.Global.fire(M.core.globalEvents.BLOCK_CONTENT_UPDATED, {
+                        instanceid: instanceid
+                    });
                 });
             };
         }
