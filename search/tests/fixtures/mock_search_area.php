@@ -30,6 +30,12 @@ defined('MOODLE_INTERNAL') || die;
 class mock_search_area extends \core_search\area\base {
 
     /**
+     * Multiple context level so we can test get_areas_user_accesses.
+     * @var int[]
+     */
+    protected static $levels = [CONTEXT_SYSTEM, CONTEXT_USER];
+
+    /**
      * To make things easier, base class required config stuff.
      *
      * @return bool

@@ -346,7 +346,16 @@ class manager {
 
             $systemcontextid = \context_system::instance()->id;
             foreach ($areasbylevel[CONTEXT_SYSTEM] as $areaid => $searchclass) {
-                $areascontexts[$areaid][] = $systemcontextid;
+                $areascontexts[$areaid][$systemcontextid] = $systemcontextid;
+            }
+        }
+
+        if (!empty($areasbylevel[CONTEXT_USER])) {
+            if ($usercontext = \context_user::instance($USER->id, IGNORE_MISSING)) {
+                // Extra checking although only logged users should reach this point, guest users have a valid context id.
+                foreach ($areasbylevel[CONTEXT_USER] as $areaid => $searchclass) {
+                    $areascontexts[$areaid][$usercontext->id] = $usercontext->id;
+                }
             }
         }
 
