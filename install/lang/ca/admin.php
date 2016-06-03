@@ -42,3 +42,4 @@ L\'opció --help us orientarà.';
 $string['cliyesnoprompt'] = 'Escriu y (significa Sí) o n (significa No)';
 $string['environmentrequireinstall'] = 'cal instal·lar-lo i habilitar-lo';
 $string['environmentrequireversion'] = 'esteu executant la versió {$a->current} i es requereix la {$a->needed}';
+$string['upgradekeyset'] = 'Clau d\'actualització (deixeu-ho en blanc per no establir-ne cap)';
