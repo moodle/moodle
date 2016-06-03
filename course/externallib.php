@@ -2140,7 +2140,7 @@ class core_course_external extends external_api {
                 'perpage'       => new external_value(PARAM_INT, 'items per page', VALUE_DEFAULT, 0),
                 'requiredcapabilities' => new external_multiple_structure(
                     new external_value(PARAM_CAPABILITY, 'Capability string used to filter courses by permission'),
-                    VALUE_OPTIONAL
+                    'Optional list of required capabilities (used to filter the list)', VALUE_DEFAULT, array()
                 ),
                 'limittoenrolled' => new external_value(PARAM_BOOL, 'limit to enrolled courses', VALUE_DEFAULT, 0),
             )
