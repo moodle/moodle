@@ -86,10 +86,10 @@ $string['pathsunsecuredataroot'] = 'ספריית המידע (Data Directory) ל�
 $string['pathswrongadmindir'] = 'ספריית ה-admin לא קיימת';
 $string['phpextension'] = 'הרחבת PHP {$a}';
 $string['phpversion'] = 'גירסת PHP';
-$string['phpversionhelp'] = '<p>גרסת PHP חייבת להיות לפחות 4.3.0 או 5.1.0 (בגרסאות 5.0.x קיימות מספר בעיות ידועות) </p>
+$string['phpversionhelp'] = '<p>גרסת PHP חייבת להיות לפחות 4.3.0 או 5.1.0 (בגרסאות 5.0 קיימות מספר בעיות ידועות) </p>
 <p> במערכת שלך פועלת כרגע גרסת {$a} </p>
 <p> אתה חייב לשדרג את גרסת ה-PHP שלך או לעבור למחשב מארח עם עם גירסת PHP חדשה! <br/>
-(במקרים של גרסת 5.0.x תוכל גם לרדת בגרסה ל- 4.4.x)
+(במקרים של גרסת 5.0 תוכל גם לרדת בגרסה ל- 4.4)
 </p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'הינך רואה את עמוד זה מפני שהתקנת והפעלת בהלכה את <strong>{$a->packname} {$a->packversion}</strong>
