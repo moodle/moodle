@@ -544,14 +544,14 @@ function quiz_cron() {
 }
 
 /**
- * @param int $quizid the quiz id.
+ * @param int|array $quizids A quiz ID, or an array of quiz IDs.
  * @param int $userid the userid.
  * @param string $status 'all', 'finished' or 'unfinished' to control
  * @param bool $includepreviews
  * @return an array of all the user's attempts at this quiz. Returns an empty
  *      array if there are none.
  */
-function quiz_get_user_attempts($quizid, $userid, $status = 'finished', $includepreviews = false) {
+function quiz_get_user_attempts($quizids, $userid, $status = 'finished', $includepreviews = false) {
     global $DB, $CFG;
     // TODO MDL-33071 it is very annoying to have to included all of locallib.php
     // just to get the quiz_attempt::FINISHED constants, but I will try to sort
@@ -578,15 +578,18 @@ function quiz_get_user_attempts($quizid, $userid, $status = 'finished', $include
             break;
     }
 
+    $quizids = (array) $quizids;
+    list($insql, $inparams) = $DB->get_in_or_equal($quizids, SQL_PARAMS_NAMED);
+    $params += $inparams;
+    $params['userid'] = $userid;
+
     $previewclause = '';
     if (!$includepreviews) {
         $previewclause = ' AND preview = 0';
     }
 
-    $params['quizid'] = $quizid;
-    $params['userid'] = $userid;
     return $DB->get_records_select('quiz_attempts',
-            'quiz = :quizid AND userid = :userid' . $previewclause . $statuscondition,
+            "quiz $insql AND userid = :userid" . $previewclause . $statuscondition,
             $params, 'attempt ASC');
 }
 
@@ -1465,6 +1468,20 @@ function quiz_print_overview($courses, &$htmlarray) {
         return;
     }
 
+    // Get the quizzes attempts.
+    $attemptsinfo = [];
+    $quizids = [];
+    foreach ($quizzes as $quiz) {
+        $quizids[] = $quiz->id;
+        $attemptsinfo[$quiz->id] = ['count' => 0, 'hasfinished' => false];
+    }
+    $attempts = quiz_get_user_attempts($quizids, $USER->id);
+    foreach ($attempts as $attempt) {
+        $attemptsinfo[$attempt->quiz]['count']++;
+        $attemptsinfo[$attempt->quiz]['hasfinished'] = true;
+    }
+    unset($attempts);
+
     // Fetch some language strings outside the main loop.
     $strquiz = get_string('modulename', 'quiz');
     $strnoattempts = get_string('noattempts', 'quiz');
@@ -1474,15 +1491,7 @@ function quiz_print_overview($courses, &$htmlarray) {
     $now = time();
     foreach ($quizzes as $quiz) {
         if ($quiz->timeclose >= $now && $quiz->timeopen < $now) {
-            // Give a link to the quiz, and the deadline.
-            $str = '<div class="quiz overview">' .
-                    '<div class="name">' . $strquiz . ': <a ' .
-                    ($quiz->visible ? '' : ' class="dimmed"') .
-                    ' href="' . $CFG->wwwroot . '/mod/quiz/view.php?id=' .
-                    $quiz->coursemodule . '">' .
-                    $quiz->name . '</a></div>';
-            $str .= '<div class="info">' . get_string('quizcloseson', 'quiz',
-                    userdate($quiz->timeclose)) . '</div>';
+            $str = '';
 
             // Now provide more information depending on the uers's role.
             $context = context_module::instance($quiz->coursemodule);
@@ -1490,30 +1499,48 @@ function quiz_print_overview($courses, &$htmlarray) {
                 // For teacher-like people, show a summary of the number of student attempts.
                 // The $quiz objects returned by get_all_instances_in_course have the necessary $cm
                 // fields set to make the following call work.
-                $str .= '<div class="info">' .
-                        quiz_num_attempt_summary($quiz, $quiz, true) . '</div>';
-            } else if (has_any_capability(array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),
-                    $context)) { // Student
+                $str .= '<div class="info">' . quiz_num_attempt_summary($quiz, $quiz, true) . '</div>';
+
+            } else if (has_any_capability(array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $context)) { // Student
                 // For student-like people, tell them how many attempts they have made.
-                if (isset($USER->id) &&
-                        ($attempts = quiz_get_user_attempts($quiz->id, $USER->id))) {
-                    $numattempts = count($attempts);
-                    $str .= '<div class="info">' .
-                            get_string('numattemptsmade', 'quiz', $numattempts) . '</div>';
+
+                if (isset($USER->id)) {
+                    if ($attemptsinfo[$quiz->id]['hasfinished']) {
+                        // The student's last attempt is finished.
+                        continue;
+                    }
+
+                    if ($attemptsinfo[$quiz->id]['count'] > 0) {
+                        $str .= '<div class="info">' .
+                            get_string('numattemptsmade', 'quiz', $attemptsinfo[$quiz->id]['count']) . '</div>';
+                    } else {
+                        $str .= '<div class="info">' . $strnoattempts . '</div>';
+                    }
+
                 } else {
                     $str .= '<div class="info">' . $strnoattempts . '</div>';
                 }
+
             } else {
                 // For ayone else, there is no point listing this quiz, so stop processing.
                 continue;
             }
 
-            // Add the output for this quiz to the rest.
-            $str .= '</div>';
+            // Give a link to the quiz, and the deadline.
+            $html = '<div class="quiz overview">' .
+                    '<div class="name">' . $strquiz . ': <a ' .
+                    ($quiz->visible ? '' : ' class="dimmed"') .
+                    ' href="' . $CFG->wwwroot . '/mod/quiz/view.php?id=' .
+                    $quiz->coursemodule . '">' .
+                    $quiz->name . '</a></div>';
+            $html .= '<div class="info">' . get_string('quizcloseson', 'quiz',
+                    userdate($quiz->timeclose)) . '</div>';
+            $html .= $str;
+            $html .= '</div>';
             if (empty($htmlarray[$quiz->course]['quiz'])) {
-                $htmlarray[$quiz->course]['quiz'] = $str;
+                $htmlarray[$quiz->course]['quiz'] = $html;
             } else {
-                $htmlarray[$quiz->course]['quiz'] .= $str;
+                $htmlarray[$quiz->course]['quiz'] .= $html;
             }
         }
     }
