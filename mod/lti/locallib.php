@@ -2596,17 +2596,31 @@ function lti_load_type_from_cartridge($url, $type) {
         array(
             "title" => "lti_typename",
             "launch_url" => "lti_toolurl",
-            "description" => "lti_description"
+            "description" => "lti_description",
+            "icon" => "lti_icon",
+            "secure_icon" => "lti_secureicon"
         ),
         array(
-            "icon_url" => "lti_icon",
-            "secure_icon_url" => "lti_secureicon"
+            "icon_url" => "lti_extension_icon",
+            "secure_icon_url" => "lti_extension_secureicon"
         )
     );
     // If an activity name exists, unset the cartridge name so we don't override it.
     if (isset($type->lti_typename)) {
         unset($toolinfo['lti_typename']);
     }
+
+    // Always prefer cartridge core icons first, then, if none are found, look at the extension icons.
+    if (empty($toolinfo['lti_icon']) && !empty($toolinfo['lti_extension_icon'])) {
+        $toolinfo['lti_icon'] = $toolinfo['lti_extension_icon'];
+    }
+    unset($toolinfo['lti_extension_icon']);
+
+    if (empty($toolinfo['lti_secureicon']) && !empty($toolinfo['lti_extension_secureicon'])) {
+        $toolinfo['lti_secureicon'] = $toolinfo['lti_extension_secureicon'];
+    }
+    unset($toolinfo['lti_extension_secureicon']);
+
     foreach ($toolinfo as $property => $value) {
         $type->$property = $value;
     }
@@ -2626,17 +2640,31 @@ function lti_load_tool_from_cartridge($url, $lti) {
             "title" => "name",
             "launch_url" => "toolurl",
             "secure_launch_url" => "securetoolurl",
-            "description" => "intro"
+            "description" => "intro",
+            "icon" => "icon",
+            "secure_icon" => "secureicon"
         ),
         array(
-            "icon_url" => "icon",
-            "secure_icon_url" => "secureicon"
+            "icon_url" => "extension_icon",
+            "secure_icon_url" => "extension_secureicon"
         )
     );
     // If an activity name exists, unset the cartridge name so we don't override it.
     if (isset($lti->name)) {
         unset($toolinfo['name']);
     }
+
+    // Always prefer cartridge core icons first, then, if none are found, look at the extension icons.
+    if (empty($toolinfo['icon']) && !empty($toolinfo['extension_icon'])) {
+        $toolinfo['icon'] = $toolinfo['extension_icon'];
+    }
+    unset($toolinfo['extension_icon']);
+
+    if (empty($toolinfo['secureicon']) && !empty($toolinfo['extension_secureicon'])) {
+        $toolinfo['secureicon'] = $toolinfo['extension_secureicon'];
+    }
+    unset($toolinfo['extension_secureicon']);
+
     foreach ($toolinfo as $property => $value) {
         $lti->$property = $value;
     }
