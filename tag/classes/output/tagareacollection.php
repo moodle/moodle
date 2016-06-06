@@ -43,8 +43,17 @@ class tagareacollection extends \core\output\inplace_editable {
      * @param \stdClass $tagarea
      */
     public function __construct($tagarea) {
+        if (!empty($tagarea->locked)) {
+            // If the tag collection for the current tag area is locked, display the
+            // name of the collection without possibility to edit it.
+            $tagcoll = \core_tag_collection::get_by_id($tagarea->tagcollid);
+            parent::__construct('core_tag', 'tagareacollection', $tagarea->id, false,
+                \core_tag_collection::display_name($tagcoll), $tagarea->tagcollid);
+            return;
+        }
+
         $tagcollections = \core_tag_collection::get_collections_menu(true);
-        $editable = (count($tagcollections) > 1) && empty($tagarea->locked) &&
+        $editable = (count($tagcollections) > 1) &&
                 has_capability('moodle/tag:manage', context_system::instance());
         $areaname = core_tag_area::display_name($tagarea->component, $tagarea->itemtype);
         $edithint = new lang_string('edittagcollection', 'core_tag');
