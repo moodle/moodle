@@ -151,7 +151,7 @@ M.mod_assign.init_grading_options = function(Y) {
 };
 
 M.mod_assign.init_grade_change = function(Y) {
-    var gradenode = Y.one('#id_grade');
+    var gradenode = Y.one('#id_grade_modgrade_point');
     if (gradenode) {
         var originalvalue = gradenode.get('value');
         gradenode.on('change', function() {
