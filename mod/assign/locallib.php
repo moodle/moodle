@@ -5633,7 +5633,12 @@ class assign {
             $this->update_submission($submission, $userid, true, $instance->teamsubmission);
             $completion = new completion_info($this->get_course());
             if ($completion->is_enabled($this->get_course_module()) && $instance->completionsubmit) {
-                $completion->update_state($this->get_course_module(), COMPLETION_COMPLETE, $userid);
+                $this->update_activity_completion_records($instance->teamsubmission,
+                                                          $instance->requireallteammemberssubmit,
+                                                          $submission,
+                                                          $userid,
+                                                          COMPLETION_COMPLETE,
+                                                          $completion);
             }
 
             if (!empty($data->submissionstatement) && $USER->id == $userid) {
@@ -6325,7 +6330,12 @@ class assign {
         }
         $completion = new completion_info($this->get_course());
         if ($completion->is_enabled($this->get_course_module()) && $instance->completionsubmit) {
-            $completion->update_state($this->get_course_module(), $complete, $USER->id);
+            $this->update_activity_completion_records($instance->teamsubmission,
+                                                      $instance->requireallteammemberssubmit,
+                                                      $submission,
+                                                      $USER->id,
+                                                      $complete,
+                                                      $completion);
         }
 
         if (!$instance->submissiondrafts) {
@@ -7991,6 +8001,42 @@ class assign {
         }
         return $this->get_course_module()->id . '_' . $id;
     }
+
+    /**
+     * Updates and creates the completion records in mdl_course_modules_completion.
+     *
+     * @param int $teamsubmission value of 0 or 1 to indicate whether this is a group activity
+     * @param int $requireallteammemberssubmit value of 0 or 1 to indicate whether all group members must click Submit
+     * @param obj $submission the submission
+     * @param int $userid the user id
+     * @param int $complete
+     * @param obj $completion
+     *
+     * @return null
+     */
+    protected function update_activity_completion_records($teamsubmission,
+                                                          $requireallteammemberssubmit,
+                                                          $submission,
+                                                          $userid,
+                                                          $complete,
+                                                          $completion) {
+
+        if (($teamsubmission && $submission->groupid > 0 && !$requireallteammemberssubmit) ||
+            ($teamsubmission && $submission->groupid > 0 && $requireallteammemberssubmit &&
+             $submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED)) {
+
+            $members = groups_get_members($submission->groupid);
+
+            foreach ($members as $member) {
+                $completion->update_state($this->get_course_module(), $complete, $member->id);
+            }
+        } else {
+            $completion->update_state($this->get_course_module(), $complete, $userid);
+        }
+
+        return;
+    }
+
 }
 
 /**
