@@ -3,6 +3,7 @@
 .block_navigation .block_tree ul {margin-left: 18px;}
 .block_navigation .block_tree p.hasicon {text-indent: -21px; padding-left: 21px;}
 .block_navigation .block_tree p.hasicon img {width: 16px; height: 16px; margin-top: 3px; margin-right: 5px; vertical-align: top;}
+.block_navigation .block_tree p.hasicon.visibleifjs {display: block;}
 
 .block_navigation .block_tree .tree_item {cursor:pointer; padding-left: 0;margin:3px 0px; background-position: 0 50%; background-repeat: no-repeat;}
 .block_navigation .block_tree .tree_item.branch {padding-left: 21px;}
