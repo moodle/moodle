@@ -86,8 +86,7 @@ if (!empty($course)) {
     $coursemaxbytes = $course->maxbytes;
 }
 // Make sure maxbytes passed is within site filesize limits.
-$maxbytes = get_user_max_upload_file_size($context, $CFG->maxbytes, $coursemaxbytes, $maxbytes,
-        null, $repo->uses_post_requests());
+$maxbytes = get_user_max_upload_file_size($context, $CFG->maxbytes, $coursemaxbytes, $maxbytes);
 
 // Wait as long as it takes for this script to finish
 core_php_time_limit::raise();
