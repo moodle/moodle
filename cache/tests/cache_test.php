@@ -188,7 +188,9 @@ class core_cache_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests set_identifiers resets identifiers and static cache
+     * Tests set_identifiers fails post cache creation.
+     *
+     * set_identifiers cannot be called after initial cache instantiation, as you need to create a difference cache.
      */
     public function test_set_identifiers() {
         $instance = cache_config_testing::instance();
@@ -204,16 +206,8 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertTrue($cache->set('contest', 'test data 1'));
         $this->assertEquals('test data 1', $cache->get('contest'));
 
+        $this->expectException('coding_exception');
         $cache->set_identifiers(array());
-        $this->assertFalse($cache->get('contest'));
-        $this->assertTrue($cache->set('contest', 'empty ident'));
-        $this->assertEquals('empty ident', $cache->get('contest'));
-
-        $cache->set_identifiers(array('area'));
-        $this->assertEquals('test data 1', $cache->get('contest'));
-
-        $cache->set_identifiers(array());
-        $this->assertEquals('empty ident', $cache->get('contest'));
     }
 
     /**
@@ -2020,6 +2014,16 @@ class core_cache_testcase extends advanced_testcase {
         $returnedinstance2 = $cache->get('a');
         $returnedinstance1->name = 'b';
         $this->assertEquals('b', $returnedinstance2->name);
+    }
+
+    public function test_identifiers_have_separate_caches() {
+        $cachepg = cache::make('core', 'databasemeta', array('dbfamily' => 'pgsql'));
+        $cachepg->set(1, 'here');
+        $cachemy = cache::make('core', 'databasemeta', array('dbfamily' => 'mysql'));
+        $cachemy->set(2, 'there');
+        $this->assertEquals('here', $cachepg->get(1));
+        $this->assertEquals('there', $cachemy->get(2));
+        $this->assertFalse($cachemy->get(1));
     }
 
     public function test_performance_debug() {

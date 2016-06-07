@@ -229,7 +229,8 @@ class cache_helper {
     /**
      * Invalidates a given set of keys by means of an event.
      *
-     * @todo add support for identifiers to be supplied and utilised.
+     * Events cannot determine what identifiers might need to be cleared. Event based purge and invalidation
+     * are only supported on caches without identifiers.
      *
      * @param string $event
      * @param array $keys
@@ -292,8 +293,9 @@ class cache_helper {
         if ($cache instanceof cache_store) {
             $factory = cache_factory::instance();
             $definition = $factory->create_definition($component, $area, null);
-            $definition->set_identifiers($identifiers);
-            $cache->initialise($definition);
+            $cacheddefinition = clone $definition;
+            $cacheddefinition->set_identifiers($identifiers);
+            $cache->initialise($cacheddefinition);
         }
         // Purge baby, purge.
         $cache->purge();
@@ -302,6 +304,9 @@ class cache_helper {
 
     /**
      * Purges a cache of all information on a given event.
+     *
+     * Events cannot determine what identifiers might need to be cleared. Event based purge and invalidation
+     * are only supported on caches without identifiers.
      *
      * @param string $event
      */

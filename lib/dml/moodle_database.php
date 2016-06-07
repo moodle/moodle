@@ -124,6 +124,9 @@ abstract class moodle_database {
     /** @var cache_application for column info */
     protected $metacache;
 
+    /** @var cache_request for column info on temp tables */
+    protected $metacachetemp;
+
     /** @var bool flag marking database instance as disposed */
     protected $disposed;
 
@@ -332,13 +335,14 @@ abstract class moodle_database {
     /**
      * Handle the creation and caching of the databasemeta information for all databases.
      *
-     * TODO MDL-53267 impelement caching of cache::make() results when it's safe to do so.
-     *
      * @return cache_application The databasemeta cachestore to complete operations on.
      */
     protected function get_metacache() {
-        $properties = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
-        return cache::make('core', 'databasemeta', $properties);
+        if (!isset($this->metacache)) {
+            $properties = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
+            $this->metacache = cache::make('core', 'databasemeta', $properties);
+        }
+        return $this->metacache;
     }
 
     /**
@@ -347,9 +351,12 @@ abstract class moodle_database {
      * @return cache_application The temp_tables cachestore to complete operations on.
      */
     protected function get_temp_tables_cache() {
-        // Using connection data to prevent collisions when using the same temp table name with different db connections.
-        $properties = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
-        return cache::make('core', 'temp_tables', $properties);
+        if (!isset($this->metacachetemp)) {
+            // Using connection data to prevent collisions when using the same temp table name with different db connections.
+            $properties = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
+            $this->metacachetemp = cache::make('core', 'temp_tables', $properties);
+        }
+        return $this->metacachetemp;
     }
 
     /**
