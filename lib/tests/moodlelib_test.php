@@ -2216,82 +2216,51 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertArrayHasKey(get_max_upload_file_size(), $result);
     }
 
-    /**
-     * Provider for get_max_upload_file_size.
-     *
-     * @return array
-     */
-    public function get_max_upload_file_size_provider() {
+    public function test_get_max_upload_file_size() {
+        // Get the smallest upload limit from ini settings.
         $inisize = min(array(get_real_size(ini_get('post_max_size')), get_real_size(ini_get('upload_max_filesize'))));
-        return [
-            'POST: inisize smallest' => [
-                $inisize + 10,
-                $inisize + 20,
-                $inisize + 30,
-                true,
-                $inisize,
-            ],
-            'POST: sitebytes smallest' => [
-                $inisize - 30,
-                $inisize - 20,
-                $inisize - 10,
-                true,
-                $inisize - 30,
-            ],
-            'POST: coursebytes smallest' => [
-                $inisize - 20,
-                $inisize - 30,
-                $inisize - 10,
-                true,
-                $inisize - 30,
-            ],
-            'POST: modulebytes smallest' => [
-                $inisize - 20,
-                $inisize - 10,
-                $inisize - 30,
-                true,
-                $inisize - 30,
-            ],
-            'POST: User can ignore site limit (respect ini)' => [
-                USER_CAN_IGNORE_FILE_SIZE_LIMITS,
-                0,
-                0,
-                true,
-                $inisize,
-            ],
-            'NOPOST: inisize smallest' => [
-                $inisize + 10,
-                $inisize + 20,
-                $inisize + 30,
-                false,
-                $inisize + 10,
-            ],
-            'NOPOST: User can ignore site limit (no limit)' => [
-                USER_CAN_IGNORE_FILE_SIZE_LIMITS,
-                0,
-                0,
-                false,
-                USER_CAN_IGNORE_FILE_SIZE_LIMITS,
-            ],
-        ];
-    }
 
-    /**
-     * Test get_max_upload_file_size with various combinations.
-     *
-     * @dataProvider get_max_upload_file_size_provider
-     */
-    public function test_get_max_upload_file_size($sitebytes, $coursebytes, $modulebytes, $ispost, $expectation) {
-        $this->assertEquals($expectation, get_max_upload_file_size($sitebytes, $coursebytes, $modulebytes, $ispost));
-    }
+        // The inisize is the smallest.
+        $sitebytes = $inisize + 10;
+        $coursebytes = $inisize + 20;
+        $modulebytes = $inisize + 30;
+        $this->assertEquals($inisize, get_max_upload_file_size($sitebytes, $coursebytes, $modulebytes));
 
-    /**
-     * Test that when get_max_upload_file_size is called with no sizes, and no post, an exception is thrown.
-     */
-    public function test_get_max_upload_file_size_no_sizes() {
+        // Site limit is the smallest.
+        $sitebytes = $inisize - 30;
+        $coursebytes = $inisize - 20;
+        $modulebytes = $inisize - 10;
+        $this->assertEquals($sitebytes, get_max_upload_file_size($sitebytes, $coursebytes, $modulebytes));
+
+        // Course limit is the smallest.
+        $sitebytes = $inisize - 20;
+        $coursebytes = $inisize - 30;
+        $modulebytes = $inisize - 10;
+        $this->assertEquals($coursebytes, get_max_upload_file_size($sitebytes, $coursebytes, $modulebytes));
+
+        // Module limit is the smallest.
+        $sitebytes = $inisize - 20;
+        $coursebytes = $inisize - 10;
+        $modulebytes = $inisize - 30;
+        $this->assertEquals($modulebytes, get_max_upload_file_size($sitebytes, $coursebytes, $modulebytes));
+
+        // The inisize is the smallest, the upload does not use post.
+        $sitebytes = $inisize + 10;
+        $coursebytes = $inisize + 20;
+        $modulebytes = $inisize + 30;
+        $this->assertEquals($sitebytes, get_max_upload_file_size($sitebytes, $coursebytes, $modulebytes, false));
+
+        // The user can ignore file size limits, the upload does use post.
+        $this->assertEquals($inisize, get_max_upload_file_size(USER_CAN_IGNORE_FILE_SIZE_LIMITS, 0, 0));
+
+        // The user can ignore file size limits, the upload not does use post.
+        $this->assertEquals(USER_CAN_IGNORE_FILE_SIZE_LIMITS,
+                get_max_upload_file_size(USER_CAN_IGNORE_FILE_SIZE_LIMITS, 0, 0, false));
+
         // If not using post we have to provide at least one other limit.
         $this->setExpectedException('coding_exception', 'You must specify at least one filesize limit.');
         get_max_upload_file_size(0, 0, 0, false);
+
     }
 
     /**
