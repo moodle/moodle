@@ -812,7 +812,7 @@ class repository_filesystem extends repository {
     }
 
     /**
-     * Helper function to indicate if this repository uses post requests for uploading files.
+     * Helper funtion to indicate if this repository uses post requests for uploading files.
      *
      * Files are copied from the filesystem so don't rely on POST requests.
      *
