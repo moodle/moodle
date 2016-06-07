@@ -3078,9 +3078,12 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
 
     // String cache
     static $str;
-    // As we should only have one element with the id of unread we keep track of whether this post is the first
-    // unread post.
-    static $firstunread = true;
+    // This is an extremely hacky way to ensure we only print the 'unread' anchor
+    // the first time we encounter an unread post on a page. Ideally this would
+    // be moved into the caller somehow, and be better testable. But at the time
+    // of dealing with this bug, this static workaround was the most surgical and
+    // it fits together with only printing th unread anchor id once on a given page.
+    static $firstunreadanchorprinted = false;
 
     $modcontext = context_module::instance($cm->id);
 
@@ -3296,10 +3299,10 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
             $forumpostclass = ' read';
         } else {
             $forumpostclass = ' unread';
-            // If this is the first unread post then give it an anchor and id of unread.
-            if ($firstunread) {
+            // If this is the first unread post printed then give it an anchor and id of unread.
+            if (!$firstunreadanchorprinted) {
                 $output .= html_writer::tag('a', '', array('id' => 'unread'));
-                $firstunread = false;
+                $firstunreadanchorprinted = true;
             }
         }
     } else {
