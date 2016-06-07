@@ -6253,17 +6253,20 @@ function valid_uploaded_file($newfile) {
  * The php.ini settings are only used if $usespost is true. This allows repositories that do not use post requests, such as
  * repository_filesystem, to copy in files that are larger than post_max_size if the user has permission.
  *
+ * @todo Finish documenting this function
+ *
  * @param int $sitebytes Set maximum size
  * @param int $coursebytes Current course $course->maxbytes (in bytes)
  * @param int $modulebytes Current module ->maxbytes (in bytes)
  * @param bool $usespost Does the upload we're getting the max size for use a post request?
  * @return int The maximum size for uploading files.
  */
-function get_max_upload_file_size($sitebytes = 0, $coursebytes = 0, $modulebytes = 0, $usespost = true) {
+function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0, $usespost = true) {
+
     $sizes = array();
 
     if ($usespost) {
-        if (!$filesize = ini_get('upload_max_filesize')) {
+        if (! $filesize = ini_get('upload_max_filesize')) {
             $filesize = '5M';
         }
         $sizes[] = get_real_size($filesize);
@@ -6276,8 +6279,7 @@ function get_max_upload_file_size($sitebytes = 0, $coursebytes = 0, $modulebytes
             $sizes[] = $sitebytes;
         }
     } else {
-        if ($sitebytes != 0) {
-            // It's for possible that $sitebytes == USER_CAN_IGNORE_FILE_SIZE_LIMITS (-1).
+        if ($sitebytes != 0) { // It's for possible that $sitebytes == USER_CAN_IGNORE_FILE_SIZE_LIMITS (-1).
             $sizes[] = $sitebytes;
         }
     }

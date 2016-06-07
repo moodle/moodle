@@ -2780,9 +2780,9 @@ abstract class repository implements cacheable_object {
     }
 
     /**
-     * Helper function to indicate if this repository uses post requests for uploading files.
+     * Helper funtion to indicate if this repository uses post requests for uploading files.
      *
-     * If the respository doesn't rely on uploading via POST requests, this can be overridden to return false,
+     * If the respository doesn't rely on uploading via POST requests, this can be overridden to return true,
      * allowing users with the right permissions to upload files of any size from this repository.
      *
      * @return bool
