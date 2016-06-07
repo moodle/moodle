@@ -2216,53 +2216,6 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertArrayHasKey(get_max_upload_file_size(), $result);
     }
 
-    public function test_get_max_upload_file_size() {
-        // Get the smallest upload limit from ini settings.
-        $inisize = min(array(get_real_size(ini_get('post_max_size')), get_real_size(ini_get('upload_max_filesize'))));
-
-        // The inisize is the smallest.
-        $sitebytes = $inisize + 10;
-        $coursebytes = $inisize + 20;
-        $modulebytes = $inisize + 30;
-        $this->assertEquals($inisize, get_max_upload_file_size($sitebytes, $coursebytes, $modulebytes));
-
-        // Site limit is the smallest.
-        $sitebytes = $inisize - 30;
-        $coursebytes = $inisize - 20;
-        $modulebytes = $inisize - 10;
-        $this->assertEquals($sitebytes, get_max_upload_file_size($sitebytes, $coursebytes, $modulebytes));
-
-        // Course limit is the smallest.
-        $sitebytes = $inisize - 20;
-        $coursebytes = $inisize - 30;
-        $modulebytes = $inisize - 10;
-        $this->assertEquals($coursebytes, get_max_upload_file_size($sitebytes, $coursebytes, $modulebytes));
-
-        // Module limit is the smallest.
-        $sitebytes = $inisize - 20;
-        $coursebytes = $inisize - 10;
-        $modulebytes = $inisize - 30;
-        $this->assertEquals($modulebytes, get_max_upload_file_size($sitebytes, $coursebytes, $modulebytes));
-
-        // The inisize is the smallest, the upload does not use post.
-        $sitebytes = $inisize + 10;
-        $coursebytes = $inisize + 20;
-        $modulebytes = $inisize + 30;
-        $this->assertEquals($sitebytes, get_max_upload_file_size($sitebytes, $coursebytes, $modulebytes, false));
-
-        // The user can ignore file size limits, the upload does use post.
-        $this->assertEquals($inisize, get_max_upload_file_size(USER_CAN_IGNORE_FILE_SIZE_LIMITS, 0, 0));
-
-        // The user can ignore file size limits, the upload not does use post.
-        $this->assertEquals(USER_CAN_IGNORE_FILE_SIZE_LIMITS,
-                get_max_upload_file_size(USER_CAN_IGNORE_FILE_SIZE_LIMITS, 0, 0, false));
-
-        // If not using post we have to provide at least one other limit.
-        $this->setExpectedException('coding_exception', 'You must specify at least one filesize limit.');
-        get_max_upload_file_size(0, 0, 0, false);
-
-    }
-
     /**
      * Test function password_is_legacy_hash().
      */
