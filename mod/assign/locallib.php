@@ -4992,7 +4992,8 @@ class assign {
      */
     public function send_notification($userfrom, $userto, $messagetype, $eventtype, $updatetime) {
         global $USER;
-        $uniqueid = $this->get_uniqueid_for_user(core_user::is_real_user($userfrom->id) ? $userfrom->id : $USER->id);
+        $userid = core_user::is_real_user($userfrom->id) ? $userfrom->id : $USER->id;
+        $uniqueid = $this->get_uniqueid_for_user($userid);
         self::send_assignment_notification($userfrom,
                                            $userto,
                                            $messagetype,
