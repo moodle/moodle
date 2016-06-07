@@ -4,6 +4,7 @@
     <div class="navbar">
       <div class="navbar-inner">
         <div class="container-fluid">
+          <a href="<?php echo $CFG->wwwroot;?>"><img src="<?php echo get_logo_url(); ?>" width="243" height="77" alt="Academi"></a>
           <a data-target=".navbar-responsive-collapse" data-toggle="collapse" class="btn btn-navbar">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
@@ -26,6 +27,7 @@
       </div>
     </div>
   </div>
+  <!--
   <div class="header-main">
   	<div class="container-fluid">
     	<div class="row-fluid">
@@ -41,5 +43,6 @@
       </div>
     </div>
   </div>
+  -->
 </header>
 <!--E.O.Header-->

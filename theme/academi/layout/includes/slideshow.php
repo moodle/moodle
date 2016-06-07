@@ -43,11 +43,11 @@ if ($numberofslides) { ?>
 															$cls_txt2 = ($s1=="1")?' active':'';
 															$slidecaption = theme_academi_get_setting('slide' . $s1 . 'caption', true);
 															$slidedesc = theme_academi_get_setting('slide' . $s1 . 'desc','format_html');
-
 															$slideimg = theme_academi_render_slideimg($s1,'slide' . $s1 . 'image');
+															$slideurl = theme_academi_get_setting('slide' . $s1 . 'url', true);
 															
 					?>
-      <div class="item<?php echo $cls_txt2; ?>" style="background-image: url(<?php echo $slideimg; ?>);">
+      <div class="item<?php echo $cls_txt2; ?>" style="background-image: url(<?php echo $slideimg; ?>);" onclick="window.open('<?php echo $slideurl; ?>','');">
           <div class="carousel-overlay-content">
             <div class="content-wrap">
               <h2><?php echo $slidecaption; ?></h2><br>

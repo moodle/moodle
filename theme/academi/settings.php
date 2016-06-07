@@ -100,14 +100,14 @@ if (is_siteadmin()) {
     $numberofslides = get_config('theme_academi', 'numberofslides');
     for ($i = 1; $i <= $numberofslides; $i++) {
 				    
-								// This is the descriptor for Slide One
+		// This is the descriptor for Slide One
         $name = 'theme_academi/slide' . $i . 'info';
         $heading = get_string('slideno', 'theme_academi', array('slide' => $i));
         $information = get_string('slidenodesc', 'theme_academi', array('slide' => $i));
         $setting = new admin_setting_heading($name, $heading, $information);
         $temp->add($setting);
 								
-								 // Slide Image.
+		// Slide Image.
         $name = 'theme_academi/slide' . $i . 'image';
         $title = get_string('slideimage', 'theme_academi');
         $description = get_string('slideimagedesc', 'theme_academi');
@@ -124,16 +124,24 @@ if (is_siteadmin()) {
         $setting->set_updatedcallback('theme_reset_all_caches');
         $temp->add($setting);
 								
-								// Slide Description Text.
-								$name = 'theme_academi/slide' . $i . 'desc';
-								$title = get_string('slidedesc', 'theme_academi');
-								$description = get_string('slidedesctext', 'theme_academi');
-								$default = get_string('slidedescdefault','theme_academi');
-								$setting = new admin_setting_confightmleditor($name, $title, $description, $default);
-								$setting->set_updatedcallback('theme_reset_all_caches');
-								$temp->add($setting);
+		// Slide Description Text.
+		$name = 'theme_academi/slide' . $i . 'desc';
+		$title = get_string('slidedesc', 'theme_academi');
+		$description = get_string('slidedesctext', 'theme_academi');
+		$default = get_string('slidedescdefault','theme_academi');
+		$setting = new admin_setting_confightmleditor($name, $title, $description, $default);
+		$setting->set_updatedcallback('theme_reset_all_caches');
+		$temp->add($setting);
+		
+		// Slide URL.
+		$name = 'theme_academi/slide' . $i . 'url';
+		$title = get_string('slideurl', 'theme_academi');
+		$description = get_string('slideurldesc', 'theme_academi');
+		$default = get_string('slideurldefault','theme_academi');
+		$setting = new admin_setting_configtext($name, $title, $description, $default);
+		$temp->add($setting);
 								
-				}
+	}
 				
 				$ADMIN->add('theme_academi', $temp);
 				/* Slideshow Settings End*/
