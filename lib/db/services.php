@@ -1706,6 +1706,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'core_search_get_results' => array(
+        'classname' => 'core_search_external',
+        'methodname' => 'get_results',
+        'classpath' => 'search/classes/external.php',
+        'description' => 'Search contents.',
+        'type' => 'read',
+        'capabilities' => 'moodle/search:query'
+    ),
     'core_tag_get_tagindex' => array(
         'classname' => 'core_tag_external',
         'methodname' => 'get_tagindex',

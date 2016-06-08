@@ -393,6 +393,18 @@ class document implements \renderable, \templatable {
     }
 
     /**
+     * Returns whether a field is required or not.
+     *
+     * Considers engine fields to be optional.
+     *
+     * @param string $fieldname
+     * @return bool
+     */
+    public static function field_is_required(string $fieldname): bool {
+        return (!empty(static::$requiredfields[$fieldname]));
+    }
+
+    /**
      * Formats the timestamp preparing the time fields to be inserted into the search engine.
      *
      * By default it just returns a timestamp so any search engine could just store integers
@@ -603,7 +615,21 @@ class document implements \renderable, \templatable {
     /**
      * Export the document data to be used as a template context.
      *
+     * Just delegates all the processing to export_doc_info, also used by external functions.
      * Adding more info than the required one as people might be interested in extending the template.
+     *
+     * @param renderer_base $output The renderer.
+     * @return array
+     */
+    public function export_for_template(\renderer_base $output) {
+        $docdata = $this->export_doc($output);
+        return $docdata;
+    }
+
+    /**
+     * Returns the current docuement information.
+     *
+     * Adding more info than the required one as themers and ws clients might be interested in showing more stuff.
      *
      * Although content is a required field when setting up the document, it accepts '' (empty) values
      * as they may be the result of striping out HTML.
@@ -611,10 +637,9 @@ class document implements \renderable, \templatable {
      * SECURITY NOTE: It is the responsibility of the document to properly escape any text to be displayed.
      * The renderer will output the content without any further cleaning.
      *
-     * @param renderer_base $output The renderer.
      * @return array
      */
-    public function export_for_template(\renderer_base $output) {
+    public function export_doc(\renderer_base $output) {
         global $USER;
 
         list($componentname, $areaname) = \core_search\manager::extract_areaid_parts($this->get('areaid'));
@@ -623,15 +648,18 @@ class document implements \renderable, \templatable {
         $searcharea = \core_search\manager::get_search_area($this->data['areaid']);
         $title = $this->is_set('title') ? $this->format_text($searcharea->get_document_display_title($this)) : '';
         $data = [
+            'itemid' => $this->get('itemid'),
             'componentname' => $componentname,
             'areaname' => $areaname,
-            'courseurl' => course_get_url($this->get('courseid')),
+            'courseurl' => (course_get_url($this->get('courseid')))->out(false),
             'coursefullname' => format_string($this->get('coursefullname'), true, ['context' => $context->id]),
             'modified' => userdate($this->get('modified')),
+            'timemodified' => $this->get('modified'),
             'title' => ($title !== '') ? $title : get_string('notitle', 'search'),
-            'docurl' => $this->get_doc_url(),
+            'docurl' => ($this->get_doc_url())->out(false),
             'content' => $this->is_set('content') ? $this->format_text($this->get('content')) : null,
-            'contexturl' => $this->get_context_url(),
+            'contextid' => $this->get('contextid'),
+            'contexturl' => ($this->get_context_url())->out(false),
             'description1' => $this->is_set('description1') ? $this->format_text($this->get('description1')) : null,
             'description2' => $this->is_set('description2') ? $this->format_text($this->get('description2')) : null,
         ];
@@ -661,6 +689,7 @@ class document implements \renderable, \templatable {
                     ['id' => $this->get('userid'), 'course' => $this->get('courseid')]
                 );
                 $data['userfullname'] = format_string($this->get('userfullname'), true, ['context' => $context->id]);
+                $data['userid'] = $this->get('userid');
             }
         }
 
@@ -668,6 +697,15 @@ class document implements \renderable, \templatable {
             $data['icon'] = $output->image_url($docicon->get_name(), $docicon->get_component());
         }
 
+        // We need to return the text formatting used for ws stuff.
+        $settings = \core_external\external_settings::get_instance();
+        if ($settings->get_raw()) {
+            // If this is called by a ws client and requests raw text we return the format specified by the search engine.
+            $data['textformat'] = $this->get_text_format();
+        } else {
+            // We convert texts to HTML by default.
+            $data['textformat'] = FORMAT_HTML;
+        }
         return $data;
     }
 
