@@ -64,6 +64,12 @@ function xmldb_local_kaltura_upgrade($oldversion) {
     }
 
     if (!$savePointDone && $oldversion < 2016060130) {
+        if($dbman->table_exists('local_kaltura_log') && $dbman->field_exists('local_kaltura_log', 'endpoint')) {
+            $table = new xmldb_table('local_kaltura_log');
+            $updatedFieldSchema = new xmldb_field('endpoint', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, null);
+            $dbman->change_field_type($table, $updatedFieldSchema);
+        }
+
         // Kaltura savepoint reached.
         upgrade_plugin_savepoint(true, 2016060130, 'local', 'kaltura');
     }
