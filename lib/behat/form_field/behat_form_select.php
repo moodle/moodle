@@ -71,10 +71,9 @@ class behat_form_select extends behat_form_field {
         // Wait for all the possible AJAX requests that have been
         // already triggered by selectOption() to be finished.
         if ($this->running_javascript()) {
-            // Trigger change event as this is needed by some drivers (Phantomjs). Don't do it for
+            // Trigger change event as this is needed by some drivers (Phantomjs, Mac-FF). Don't do it for
             // Singleselect as this will cause multiple event fire and lead to race-around condition.
-            $browser = \Moodle\BehatExtension\Driver\MoodleSelenium2Driver::getBrowser();
-            if (!$singleselect && ($browser == 'phantomjs')) {
+            if (!$singleselect) {
                 $script = "Syn.trigger('change', {}, {{ELEMENT}})";
                 try {
                     $this->session->getDriver()->triggerSynScript($this->field->getXpath(), $script);
