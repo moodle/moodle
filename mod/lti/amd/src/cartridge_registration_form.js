@@ -153,23 +153,19 @@ define(['jquery', 'core/ajax', 'core/notification', 'mod_lti/tool_type', 'mod_lt
         var promise = toolType.create({cartridgeurl: url, key: consumerKey, secret: sharedSecret});
 
         promise.done(function() {
-            str.get_strings([{key: 'success', component: 'moodle'},
-                             {key: 'successfullycreatedtooltype', component: 'mod_lti'}]).done(function (s) {
+            str.get_string('successfullycreatedtooltype', 'mod_lti').done(function (s) {
                 $(document).trigger(ltiEvents.NEW_TOOL_TYPE);
                 $(document).trigger(ltiEvents.STOP_CARTRIDGE_REGISTRATION);
                 $(document).trigger(ltiEvents.REGISTRATION_FEEDBACK, {
-                    status: s[0],
-                    message: s[1]
+                    message: s
                 });
             }).fail(notification.exception);
         }).fail(function() {
-            str.get_strings([{key: 'error', component: 'moodle'},
-                             {key: 'failedtocreatetooltype', component: 'mod_lti'}]).done(function (s) {
+            str.get_string('failedtocreatetooltype', 'mod_lti').done(function (s) {
                 $(document).trigger(ltiEvents.NEW_TOOL_TYPE);
                 $(document).trigger(ltiEvents.STOP_CARTRIDGE_REGISTRATION);
                 $(document).trigger(ltiEvents.REGISTRATION_FEEDBACK, {
-                    status: s[0],
-                    message: s[1],
+                    message: s,
                     error: true
                 });
             }).fail(notification.exception);
