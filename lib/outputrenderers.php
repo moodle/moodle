@@ -566,7 +566,7 @@ class core_renderer extends renderer_base {
     public function standard_top_of_body_html() {
         global $CFG;
         $output = $this->page->requires->get_top_of_body_code();
-        if (!empty($CFG->additionalhtmltopofbody)) {
+        if ($this->page->pagelayout !== 'embedded' && !empty($CFG->additionalhtmltopofbody)) {
             $output .= "\n".$CFG->additionalhtmltopofbody;
         }
         $output .= $this->maintenance_warning();
@@ -689,7 +689,7 @@ class core_renderer extends renderer_base {
         // but some of the content won't be known until later, so we return a placeholder
         // for now. This will be replaced with the real content in {@link core_renderer::footer()}.
         $output = '';
-        if (!empty($CFG->additionalhtmlfooter)) {
+        if ($this->page->pagelayout !== 'embedded' && !empty($CFG->additionalhtmlfooter)) {
             $output .= "\n".$CFG->additionalhtmlfooter;
         }
         $output .= $this->unique_end_html_token;
