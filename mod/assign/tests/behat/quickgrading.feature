@@ -40,6 +40,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I follow "Test assignment name"
     And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I wait until the page is ready
     And I press "Save changes"
     And I press "Ok"
     And I click on "Edit settings" "link"
