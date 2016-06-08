@@ -65,7 +65,7 @@ Y.extend(LTISERVICE, Y.Base, {
         }
 
         if (documentElement.getElementById('video_preview_frame')) {
-            Y.one(documentElement.getElementById('video_preview_frame')).setAttribute('src', decodeURIComponent(params.iframeurl));
+            Y.one(documentElement.getElementById('video_preview_frame')).setAttribute('src', params.previewltilauncher);
         } else if (documentElement.getElementById('contentframe')) {
             Y.one(documentElement.getElementById('contentframe')).setAttribute('src', decodeURIComponent(params.iframeurl));
             Y.one(documentElement.getElementById('contentframe')).setStyle('width', params.width + 'px');
@@ -74,7 +74,7 @@ Y.extend(LTISERVICE, Y.Base, {
 
         // This element must exist.
         Y.one(documentElement.getElementById('source')).setAttribute('value', decodeURIComponent(params.iframeurl));
-
+        
         if (documentElement.getElementById('metadata')) {
             Y.one(documentElement.getElementById('metadata')).setAttribute('value', params.metadata);
         }
