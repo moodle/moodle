@@ -3921,7 +3921,11 @@ class assign {
     public function fullname($user) {
         if ($this->is_blind_marking()) {
             $hasviewblind = has_capability('mod/assign:viewblinddetails', $this->get_context());
-            $uniqueid = $this->get_uniqueid_for_user($user->id);
+            if (empty($user->recordid)) {
+                $uniqueid = $this->get_uniqueid_for_user($user->id);
+            } else {
+                $uniqueid = $user->recordid;
+            }
             if ($hasviewblind) {
                 return get_string('participant', 'assign') . ' ' . $uniqueid . ' (' . fullname($user) . ')';
             } else {
