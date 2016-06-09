@@ -3653,10 +3653,11 @@ function glossary_get_categories($glossary, $from, $limit) {
  *
  * @param array   $terms      Array of terms.
  * @param bool    $fullsearch Whether or not full search should be enabled.
+ * @param int     $glossaryid The ID of a glossary to reduce the search results.
  * @return array The first element being the where clause, the second array of parameters.
  * @since Moodle 3.1
  */
-function glossary_get_search_terms_sql(array $terms, $fullsearch = true) {
+function glossary_get_search_terms_sql(array $terms, $fullsearch = true, $glossaryid = null) {
     global $DB;
     static $i = 0;
 
@@ -3707,6 +3708,12 @@ function glossary_get_search_terms_sql(array $terms, $fullsearch = true) {
         }
     }
 
+    // Reduce the search results by restricting it to one glossary.
+    if (isset($glossaryid)) {
+        $conditions[] = 'AND ge.glossaryid = :glossaryid';
+        $params['glossaryid'] = $glossaryid;
+    }
+
     // When there are no conditions we add a negative one to ensure that we don't return anything.
     if (empty($conditions)) {
         $conditions[] = '1 = 2';
@@ -3746,7 +3753,7 @@ function glossary_get_entries_by_search($glossary, $context, $query, $fullsearch
         }
     }
 
-    list($searchcond, $params) = glossary_get_search_terms_sql($terms, $fullsearch);
+    list($searchcond, $params) = glossary_get_search_terms_sql($terms, $fullsearch, $glossary->id);
 
     $userfields = user_picture::fields('u', null, 'userdataid', 'userdata');
 
