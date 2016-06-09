@@ -47,7 +47,8 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     And the following config values are set as admin:
       | grade_report_showaverages | 0 |
       | grade_report_enableajax | 1 |
-
+    # Floating headers can fail to set value on some OS/Browsers, so do this test on large screens.
+    And I change window size to "large"
 
   @javascript
   Scenario: Use the grader report without editing, with AJAX on and quick feedback off

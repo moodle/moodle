@@ -88,6 +88,8 @@ Feature: The various checks that may happen when an attept is started
     And I should see "The quiz has a time limit of 1 hour. Time will "
     And I should see "The password entered was incorrect"
     And I set the field "Quiz password" to "Frog"
+    # On Mac/FF tab key is needed as text field in dialogue and page have same id.
+    And I press tab key in "Quiz password" "field"
     And I press "Start attempt"
     And I should see "Text of the first question"
 
@@ -110,6 +112,8 @@ Feature: The various checks that may happen when an attept is started
     And I should see "The quiz has a time limit of 1 hour. Time will "
     And I should see "The password entered was incorrect"
     And I set the field "Quiz password" to "Frog"
+    # On Mac/FF tab key is needed as text field in dialogue and page have same id.
+    And I press tab key in "Quiz password" "field"
     And I press "Cancel"
     Then I should see "Quiz 1 description"
     And "Attempt quiz now" "button" should be visible
