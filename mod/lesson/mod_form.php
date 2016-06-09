@@ -426,6 +426,12 @@ class mod_lesson_mod_form extends moodleform_mod {
                 $data->completiontimespent = 0;
             }
         }
+        if (!empty($data->completionunlocked)) {
+            $autocompletion = !empty($data->completion) && $data->completion == COMPLETION_TRACKING_AUTOMATIC;
+            if (empty($data->completionendreached) || !$autocompletion) {
+                $data->completionendreached = 0;
+            }
+        }
         return $data;
     }
 }
