@@ -30,9 +30,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['cannotcreatedboninstall'] = '<p>Impossible de crear la banca de donadas.</p>
-<p>La banca de donadas indicada existís pas e l\'utilizaire especificat a pas las autorizacions que permeton de crear una banca de donadas.</p>.
-<p>L\'administrator del site deu repassar la configuracion de la banca de donadas.</p>';
+$string['cannotcreatedboninstall'] = '<p>Impossible de crear la basa de donadas.</p>
+<p>La banca de donadas indicada existís pas e l\'utilizaire especificat a pas las autorizacions que permeton de crear una basa de donadas.</p>.
+<p>L\'administrator del site deu repassar la configuracion de la basa de donadas.</p>';
 $string['cannotcreatelangdir'] = 'Creacion del dorsièr lang impossible';
 $string['cannotcreatetempdir'] = 'Creacion del dorsièr temp impossibla';
 $string['cannotdownloadcomponents'] = 'Telecargament dels components impossible';
@@ -42,7 +42,7 @@ $string['cannotsavemd5file'] = 'Enregistrament del fichièr md5 impossible';
 $string['cannotsavezipfile'] = 'Enregistrament del fichièr ZIP impossible';
 $string['cannotunzipfile'] = 'Descompression del fichièr ZIP impossibla';
 $string['componentisuptodate'] = 'Lo component es a jorn';
-$string['dmlexceptiononinstall'] = '<p>Una error de banca de donadas s\'es produita [{$a->errorcode}].<br />{$a->debuginfo}</p>';
+$string['dmlexceptiononinstall'] = '<p>Una error de basa de donadas s\'es produita [{$a->errorcode}].<br />{$a->debuginfo}</p>';
 $string['downloadedfilecheckfailed'] = 'La verificacion del fichièr telecargat a fracassat';
 $string['invalidmd5'] = 'Lo còdi de contraròtle md5 es pas valid';
 $string['missingrequiredfield'] = 'Un camp obligatòri es pas completat';
