@@ -2081,18 +2081,19 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
 
         // Check the allocated marker can view the submission.
         $this->setUser($this->teachers[0]);
-        $gradingtable = new assign_grading_table($assign, 100, '', 0, true);
-        $output = $assign->get_renderer()->render($gradingtable);
-        $this->assertEquals(true, strpos($output, $this->students[0]->lastname));
 
+        $users = $assign->list_participants(0, true);
+        $user = reset($users);
+        $this->assertEquals($this->students[0]->id, $user->id);
+
+        $cm = get_coursemodule_from_instance('assign', $assign->get_instance()->id);
+        $context = context_module::instance($cm->id);
+        $assign = new testable_assign($context, $cm, $this->course);
         // Check that other teachers can't view this submission.
         $this->setUser($this->teachers[1]);
-        $gradingtable = new assign_grading_table($assign, 100, '', 0, true);
-        $output = $assign->get_renderer()->render($gradingtable);
-        $this->assertNotEquals(true, strpos($output, $this->students[0]->lastname));
+        $users = $assign->list_participants(0, true);
+        $this->assertEquals(0, count($users));
     }
-
-
 
     public function test_teacher_submit_for_student() {
         global $PAGE;
@@ -2425,26 +2426,31 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
      * Test if the view blind details capability works
      */
     public function test_can_view_blind_details() {
-        global $PAGE, $DB;
-        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
-        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        global $DB;
+        // Note: The shared setUp leads to terrible tests. Please don't use it.
+        $roles = $DB->get_records('role', null, '', 'shortname, id');
+        $course = $this->getDataGenerator()->create_course([]);
 
         $student = $this->students[0];// Get a student user.
+        $this->getDataGenerator()->enrol_user($student->id,
+                                              $course->id,
+                                              $roles['student']->id);
+
         // Create a teacher. Shouldn't be able to view blind marking ID.
         $teacher = $this->getDataGenerator()->create_user();
 
         $this->getDataGenerator()->enrol_user($teacher->id,
-                                              $this->course->id,
-                                              $teacherrole->id);
+                                              $course->id,
+                                              $roles['teacher']->id);
 
         // Create a manager.. Should be able to view blind marking ID.
         $manager = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($manager->id,
-                $this->course->id,
-                $managerrole->id);
+                                              $course->id,
+                                              $roles['manager']->id);
 
         // Generate blind marking assignment.
-        $assign = $this->create_instance(array('blindmarking' => 1));
+        $assign = $this->create_instance(array('course' => $course->id, 'blindmarking' => 1));
         $this->assertEquals(true, $assign->is_blind_marking());
 
         // Test student names are hidden to teacher.
