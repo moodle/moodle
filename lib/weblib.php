@@ -1275,9 +1275,8 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
     }
 
     if ($options['blanktarget']) {
-        $encoding = ini_get('default_charset') ? ini_get('default_charset') : 'utf-8';
         $domdoc = new DOMDocument();
-        $domdoc->loadHTML('<?xml encoding="' . $encoding . '" ?>' . $text);
+        $domdoc->loadHTML('<?xml version="1.0" encoding="UTF-8" ?>' . $text);
         foreach ($domdoc->getElementsByTagName('a') as $link) {
             if ($link->hasAttribute('target') && strpos($link->getAttribute('target'), '_blank') === false) {
                 continue;
