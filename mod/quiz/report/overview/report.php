@@ -302,7 +302,11 @@ class quiz_overview_report extends quiz_attempts_report {
      * @uses exit. This method never returns.
      */
     protected function finish_regrade($nexturl) {
-        redirect($nexturl, get_string('regradecomplete', 'quiz_overview'), null, \core\output\notification::NOTIFY_SUCCESS);
+        global $OUTPUT;
+        \core\notification::success(get_string('regradecomplete', 'quiz_overview'));
+        echo $OUTPUT->continue_button($nexturl);
+        echo $OUTPUT->footer();
+        die();
     }
 
     /**
