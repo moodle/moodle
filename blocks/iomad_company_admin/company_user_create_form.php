@@ -459,7 +459,7 @@ if ($data = $mform->get_data()) {
     // Enrol the user on the courses.
     if (!empty($createcourses)) {
         $userdata = $DB->get_record('user', array('id' => $userid));
-        company_user::enrol($userdata, $createcourses, $companyid, $data->due);
+        company_user::enrol($userdata, $createcourses, $companyid);
     }
     // Assign and licenses.
     if (!empty($data->licensecourses)) {
