@@ -199,14 +199,14 @@ function uninstall_plugin($type, $name) {
     $DB->delete_records('event', array('modulename' => $pluginname));
 
     // Delete scheduled tasks.
-    $DB->delete_records('task_scheduled', array('component' => $pluginname));
+    $DB->delete_records('task_scheduled', array('component' => $component));
 
     // Delete Inbound Message datakeys.
     $DB->delete_records_select('messageinbound_datakeys',
-            'handler IN (SELECT id FROM {messageinbound_handlers} WHERE component = ?)', array($pluginname));
+            'handler IN (SELECT id FROM {messageinbound_handlers} WHERE component = ?)', array($component));
 
     // Delete Inbound Message handlers.
-    $DB->delete_records('messageinbound_handlers', array('component' => $pluginname));
+    $DB->delete_records('messageinbound_handlers', array('component' => $component));
 
     // delete all the logs
     $DB->delete_records('log', array('module' => $pluginname));
