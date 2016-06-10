@@ -153,7 +153,11 @@ class comment {
         } else if (!empty($options->courseid)) {
             $this->courseid = $options->courseid;
         } else {
-            $this->courseid = SITEID;
+            if ($coursecontext = $this->context->get_course_context(false)) {
+                $this->courseid = $coursecontext->instanceid;
+            } else {
+                $this->courseid = SITEID;
+            }
         }
 
         // setup coursemodule
