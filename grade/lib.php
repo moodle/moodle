@@ -1039,7 +1039,8 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
             if (isset($user)) {
                 $output = $OUTPUT->context_header(
                         array(
-                            'heading' => fullname($user),
+                            'heading' => html_writer::link(new moodle_url('/user/view.php', array('id' => $user->id,
+                                'course' => $courseid)), fullname($user)),
                             'user' => $user,
                             'usercontext' => context_user::instance($user->id)
                         ), 2
