@@ -231,6 +231,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertRegExp('@"' . $CFG->wwwroot . '/webservice/pluginfile.php/\d+/mod_assign/intro/intro\.txt"@', $assignment['intro']);
         $this->assertEquals(1, $assignment['markingworkflow']);
         $this->assertEquals(1, $assignment['markingallocation']);
+        $this->assertEquals(0, $assignment['preventsubmissionnotingroup']);
 
         $this->assertCount(1, $assignment['introattachments']);
         $this->assertEquals('introattachment.txt', $assignment['introattachments'][0]['filename']);
@@ -256,6 +257,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertArrayNotHasKey('introattachments', $assignment);
         $this->assertEquals(1, $assignment['markingworkflow']);
         $this->assertEquals(1, $assignment['markingallocation']);
+        $this->assertEquals(0, $assignment['preventsubmissionnotingroup']);
 
         $result = mod_assign_external::get_assignments(array($course2->id));
 
@@ -293,6 +295,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertArrayNotHasKey('introattachments', $assignment);
         $this->assertEquals(1, $assignment['markingworkflow']);
         $this->assertEquals(1, $assignment['markingallocation']);
+        $this->assertEquals(0, $assignment['preventsubmissionnotingroup']);
     }
 
     /**
