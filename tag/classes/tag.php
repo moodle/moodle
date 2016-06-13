@@ -1297,7 +1297,7 @@ class core_tag_tag {
                 require_once($CFG->dirroot . '/' . ltrim($tagarea->callbackfile, '/'));
             }
             $callback = $tagarea->callback;
-            return $callback($this, $exclusivemode, $fromctx, $ctx, $rec, $page);
+            return call_user_func_array($callback, [$this, $exclusivemode, $fromctx, $ctx, $rec, $page]);
         }
         return null;
     }

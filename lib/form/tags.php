@@ -128,6 +128,9 @@ class MoodleQuickForm_tags extends MoodleQuickForm_autocomplete {
      */
     public function onQuickFormEvent($event, $arg, &$caller) {
         if ($event === 'createElement') {
+            if (!is_array($arg[2])) {
+                $arg[2] = [];
+            }
             $arg[2] += array('itemtype' => '', 'component' => '');
         }
         return parent::onQuickFormEvent($event, $arg, $caller);
