@@ -877,7 +877,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
             $type       = $file->get_mimetype();
             $image      = $this->output->pix_icon(file_file_icon($file), get_mimetype_description($file), 'moodle', array('class' => 'icon'));
 
-            $linkhtml   = html_writer::link($fileurl, $image) . substr($filepath, 1) . html_writer::link($fileurl, $filename);
+            $linkhtml   = html_writer::link($fileurl, $image . substr($filepath, 1) . $filename);
             $linktxt    = "$filename [$fileurl]";
 
             if ($format == 'html') {
