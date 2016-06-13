@@ -67,7 +67,13 @@ $event = \mod_kalvidassign\event\grade_submissions_page_viewed::create(array(
 ));
 $event->trigger();
 
-$prefform =  new kalvidassign_gradepreferences_form(null, array('cmid' => $cm->id, 'groupmode' => $cm->groupmode));
+// Ensure we use the appropriate group mode, either course or module
+if (($course->groupmodeforce) == 1) {
+    $prefform =  new kalvidassign_gradepreferences_form(null, array('cmid' => $cm->id, 'groupmode' => $course->groupmode));
+} else {
+     $prefform =  new kalvidassign_gradepreferences_form(null, array('cmid' => $cm->id, 'groupmode' => $cm->groupmode));
+}
+
 $data = null;
 
 if ($data = $prefform->get_data()) {

@@ -36,8 +36,10 @@ $width = required_param('width', PARAM_INT);
 $withblocks = optional_param('withblocks', 0, PARAM_INT);
 $source = required_param('source', PARAM_TEXT);
 
-$context = context_course::instance($courseid);
-require_capability('mod/kalvidassign:gradesubmission', $context);
+// The capability requirement should always be at the course module context.
+// This inherits course context if not set. Otherwise module local role assignments breaks.
+require_capability('mod/kalvidassign:gradesubmission', context_module::instance($cmid));
+
 $course = get_course($courseid);
 
 $launch = array();
