@@ -26,6 +26,9 @@
 require(dirname(__FILE__).'/../../config.php');
 require_once($CFG->dirroot . '/mod/assign/externallib.php');
 require_once($CFG->dirroot . '/blocks/personal/lib.php');
+
+require_login();
+
 $result = mod_assign_external::get_assignments();
 $courses = $result['courses'];
 
