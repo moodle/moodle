@@ -259,6 +259,11 @@ FloatingHeaders.prototype = {
             return this;
         }
 
+        if (M.cfg.behatsiterunning) {
+            // If the behat site is running we don't want floating elements.
+            return;
+        }
+
         // Generate floating elements.
         this._setupFloatingUserColumn();
         this._setupFloatingUserHeader();
