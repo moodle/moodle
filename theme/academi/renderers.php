@@ -49,22 +49,30 @@ class theme_academi_core_course_renderer extends core_course_renderer {
 		$content = '';
 	
 		$content .= html_writer::start_tag('div', array('class' => 'span2', 'style' => 'min-width: 19%; margin: 10px 0px 10px 1%;'));
-		$urlb = new moodle_url('/course/info.php', array('id' => $course->id));
-		$coursename = $chelper->get_course_formatted_name($course);
+		$url_course_info = new moodle_url('/course/info.php', array('id' => $course->id));
+		
 		$content .= html_writer::start_tag('div', array('class' => 'frontpage-coruse'));
 		
+		$coursename = $chelper->get_course_formatted_name($course);
+		
+		$url_pic = '';
 		foreach ($course->get_course_overviewfiles() as $file) {
 			$isimage = $file->is_valid_image();
-			$url = file_encode_url("$CFG->wwwroot/pluginfile.php",
+			$url_pic = file_encode_url("$CFG->wwwroot/pluginfile.php",
 					'/'. $file->get_contextid(). '/'. $file->get_component(). '/'.
 					$file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
 			if ($isimage) {
-				$content .= html_writer::tag('a',
-						html_writer::empty_tag('img', array('src' => $url)),
-						array('href' => $urlb));
 				break;
 			}
 		}
+		$content .= html_writer::tag(
+			'a',
+			html_writer::empty_tag(
+				'img',
+				array('src' => $url_pic, 'alt' => $coursename)
+			),
+			array('href' => $url_course_info)
+		);
 		
 		$content .= html_writer::start_tag('p');
 		$content .= $coursename;
