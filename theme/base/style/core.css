@@ -310,7 +310,7 @@ a.skip:active {position: static;display: block;}
 }
 .jsenabled .usermenu .moodle-actionmenu > .menubar {
     display: block;
-    margin: 0px 0px 2px 0px;
+    margin: 0px;
 }
 .jsenabled .usermenu .moodle-actionmenu > .menu {
     min-width: 160px;
