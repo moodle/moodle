@@ -1,0 +1,15 @@
+.frontpage-coruse {
+    background: #fff;
+    border: 1px solid #e7e7e7;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border-bottom: 3px solid #eee;
+    box-shadow: 5px 5px 5px #888;
+}
+
+.frontpage-coruse img {
+    vertical-align: middle;
+    border: 0;
+    width: 100%;
+    height: 200px;
+}
