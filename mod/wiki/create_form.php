@@ -60,9 +60,9 @@ class mod_wiki_create_form extends moodleform {
                 }
                 $mform->addElement('radio', 'pageformat', '', get_string('format'.$format, 'wiki'), $format, $attr);
             }
+            $mform->addRule('pageformat', get_string('required'), 'required', null, 'client');
         }
         $mform->setType('pageformat', PARAM_ALPHANUMEXT);
-        $mform->addRule('pageformat', get_string('required'), 'required', null, 'client');
 
         if (!empty($this->_customdata['groups']->availablegroups)) {
             foreach ($this->_customdata['groups']->availablegroups as $groupdata) {
