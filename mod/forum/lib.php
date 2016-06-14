@@ -5686,12 +5686,6 @@ function forum_print_posts_flat($course, &$cm, $forum, $discussion, $post, $mode
 
     $link  = false;
 
-    if ($mode == FORUM_MODE_FLATNEWEST) {
-        $sort = "ORDER BY created DESC";
-    } else {
-        $sort = "ORDER BY created ASC";
-    }
-
     foreach ($posts as $post) {
         if (!$post->parent) {
             continue;
