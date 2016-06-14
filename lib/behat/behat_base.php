@@ -605,9 +605,10 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      *   - large: 2560x1600
      *
      * @param string $windowsize size of window.
+     * @param bool $viewport If true, changes viewport rather than window size
      * @throws ExpectationException
      */
-    protected function resize_window($windowsize) {
+    protected function resize_window($windowsize, $viewport = false) {
         // Non JS don't support resize window.
         if (!$this->running_javascript()) {
             return;
@@ -635,6 +636,25 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                 $width = (int) $size[0];
                 $height = (int) $size[1];
         }
+        if ($viewport) {
+            // When setting viewport size, we set it so that the document width will be exactly
+            // as specified, assuming that there is a vertical scrollbar. (In cases where there is
+            // no scrollbar it will be slightly wider. We presume this is rare and predictable.)
+            // The window inner height will be as specified, which means the available viewport will
+            // actually be smaller if there is a horizontal scrollbar. We assume that horizontal
+            // scrollbars are rare so this doesn't matter.
+            $offset = $this->getSession()->getDriver()->evaluateScript(
+                    'return (function() { var before = document.body.style.overflowY;' .
+                    'document.body.style.overflowY = "scroll";' .
+                    'var result = {};' .
+                    'result.x = window.outerWidth - document.body.offsetWidth;' .
+                    'result.y = window.outerHeight - window.innerHeight;' .
+                    'document.body.style.overflowY = before;' .
+                    'return result; })();');
+            $width += $offset['x'];
+            $height += $offset['y'];
+        }
+
         $this->getSession()->getDriver()->resizeWindow($width, $height);
     }
 
