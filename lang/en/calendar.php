@@ -86,7 +86,9 @@ $string['eventsimported'] = 'Events imported: {$a}';
 $string['eventsupdated'] = 'Events updated: {$a}';
 $string['eventsfor'] = '{$a} events';
 $string['eventskey'] = 'Events key';
+$string['eventspersonal'] = 'My personal events';
 $string['eventsrelatedtocourses'] = 'Events related to courses';
+$string['eventsrelatedtogroups'] = 'Events related to groups';
 $string['eventstarttime'] = 'Start time';
 $string['eventtime'] = 'Time';
 $string['eventview'] = 'Event details';
@@ -215,4 +217,3 @@ $string['weeknext'] = 'Next week';
 $string['weekthis'] = 'This week';
 $string['yesterday'] = 'Yesterday';
 $string['youcandeleteallrepeats'] = 'This event is part of a repeating event series. You can delete this event only, or all {$a} events in the series at once.';
-
