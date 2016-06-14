@@ -126,6 +126,7 @@ define(['jquery',
             try {
                 config = JSON.parse(self._competency.ruleconfig);
             } catch (e) {
+                // eslint-disable-line no-empty
             }
         }
 
