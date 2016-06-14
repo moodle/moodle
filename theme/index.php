@@ -28,6 +28,7 @@ $choose = optional_param('choose', '', PARAM_PLUGIN);
 $reset  = optional_param('reset', 0, PARAM_BOOL);
 $device = optional_param('device', '', PARAM_TEXT);
 $unsettheme = optional_param('unsettheme', 0, PARAM_BOOL);
+$confirmation = optional_param('confirmation', 0, PARAM_BOOL);
 
 admin_externalpage_setup('themeselector');
 
@@ -44,6 +45,17 @@ unset($SESSION->theme);
 
 if ($reset and confirm_sesskey()) {
     theme_reset_all_caches();
+} else if ($choose && $confirmation) {
+
+    $theme = theme_config::load($choose);
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('themesaved'));
+    echo $OUTPUT->box_start();
+    echo format_text(get_string('choosereadme', 'theme_'.$theme->name), FORMAT_MOODLE);
+    echo $OUTPUT->box_end();
+    echo $OUTPUT->continue_button($CFG->wwwroot . '/theme/index.php');
+    echo $OUTPUT->footer();
+    exit;
 
 } else if ($choose && $device && !theme_is_device_locked($device) && !$unsettheme && confirm_sesskey()) {
     // Load the theme to make sure it is valid.
@@ -53,27 +65,8 @@ if ($reset and confirm_sesskey()) {
     $themename = core_useragent::get_device_type_cfg_var_name($device);
     set_config($themename, $theme->name);
 
-    // Create a new page for the display of the themes readme.
-    // This ensures that the readme page is shown using the new theme.
-    $confirmpage = new moodle_page();
-    $confirmpage->set_context($PAGE->context);
-    $confirmpage->set_url($PAGE->url);
-    $confirmpage->set_pagelayout($PAGE->pagelayout);
-    $confirmpage->set_pagetype($PAGE->pagetype);
-    $confirmpage->set_title($PAGE->title);
-    $confirmpage->set_heading($PAGE->heading);
-
-    // Get the core renderer for the new theme.
-    $output = $confirmpage->get_renderer('core');
-
-    echo $output->header();
-    echo $output->heading(get_string('themesaved'));
-    echo $output->box_start();
-    echo format_text(get_string('choosereadme', 'theme_'.$theme->name), FORMAT_MOODLE);
-    echo $output->box_end();
-    echo $output->continue_button($CFG->wwwroot . '/theme/index.php');
-    echo $output->footer();
-    exit;
+    $urlconfirm = new moodle_url('/theme/index.php', array('confirmation' => 1, 'choose' => $choose));
+    redirect($urlconfirm);
 } else if ($device && !theme_is_device_locked($device) && $unsettheme && confirm_sesskey() && ($device != 'default')) {
     // Unset the theme and continue.
     unset_config(core_useragent::get_device_type_cfg_var_name($device));
