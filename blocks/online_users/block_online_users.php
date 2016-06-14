@@ -92,12 +92,8 @@ class block_online_users extends block_base {
             $users = array();
         }
 
-        if (count($users) < $userlimit) {
-            $usercount = "";
-        } else {
-            $usercount = $onlineusers->count_users();
-            $usercount = ": $usercount";
-        }
+        $usercount = $onlineusers->count_users();
+        $usercount = ": $usercount";
 
         $this->content->text = "<div class=\"info\">(".get_string("periodnminutes","block_online_users",$minutes)."$usercount)</div>";
 
