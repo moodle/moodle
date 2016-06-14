@@ -24,8 +24,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require(dirname(__FILE__).'/../../../../config.php');
-require_once(dirname(__FILE__).'/locallib.php');
+require(__DIR__.'/../../../../config.php');
+require_once(__DIR__.'/locallib.php');
 require_once($CFG->dirroot.'/mod/book/locallib.php');
 require_once($CFG->libdir.'/filelib.php');
 

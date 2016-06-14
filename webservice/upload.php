@@ -44,7 +44,7 @@ define('AJAX_SCRIPT', true);
  */
 define('NO_MOODLE_COOKIES', true);
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
 $filepath = optional_param('filepath', '/', PARAM_PATH);
 // The default file area is 'private' for user private files. This

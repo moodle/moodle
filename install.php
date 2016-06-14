@@ -162,7 +162,7 @@ if (!empty($_POST)) {
 global $CFG;
 $CFG = new stdClass();
 $CFG->lang                 = $config->lang;
-$CFG->dirroot              = dirname(__FILE__);
+$CFG->dirroot              = __DIR__;
 $CFG->libdir               = "$CFG->dirroot/lib";
 $CFG->wwwroot              = install_guess_wwwroot(); // can not be changed - ppl must use the real address when installing
 $CFG->httpswwwroot         = $CFG->wwwroot;
@@ -252,7 +252,7 @@ if (isset($_GET['help'])) {
 
 //first time here? find out suitable dataroot
 if (is_null($CFG->dataroot)) {
-    $CFG->dataroot = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'moodledata';
+    $CFG->dataroot = __DIR__.'/../moodledata';
 
     $i = 0; //safety check - dirname might return some unexpected results
     while(is_dataroot_insecure()) {

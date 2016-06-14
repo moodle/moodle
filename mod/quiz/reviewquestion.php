@@ -24,7 +24,7 @@
  */
 
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(__DIR__ . '/../../config.php');
 require_once('locallib.php');
 
 $attemptid = required_param('attempt', PARAM_INT);

@@ -38,7 +38,7 @@ if (function_exists('opcache_reset') and !isset($_SERVER['REMOTE_ADDR'])) {
 define('CLI_SCRIPT', true);
 define('CACHE_DISABLE_ALL', true);
 
-require(dirname(dirname(dirname(__FILE__))).'/config.php');
+require(__DIR__.'/../../config.php');
 require_once($CFG->libdir.'/adminlib.php');       // various admin-only functions
 require_once($CFG->libdir.'/upgradelib.php');     // general upgrade/install related functions
 require_once($CFG->libdir.'/clilib.php');         // cli only functions

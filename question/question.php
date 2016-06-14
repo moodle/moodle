@@ -24,8 +24,8 @@
  */
 
 
-require_once(dirname(__FILE__) . '/../config.php');
-require_once(dirname(__FILE__) . '/editlib.php');
+require_once(__DIR__ . '/../config.php');
+require_once(__DIR__ . '/editlib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/formslib.php');
 

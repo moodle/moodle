@@ -26,7 +26,7 @@
 if (!defined('AJAX_SCRIPT')) {
     define('AJAX_SCRIPT', true);
 }
-require_once(dirname(__FILE__) . '/../config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 
 // Initialise ALL the incoming parameters here, up front.

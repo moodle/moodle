@@ -57,7 +57,7 @@ if (!isset($CFG)) {
 
 // We can detect real dirroot path reliably since PHP 4.0.2,
 // it can not be anything else, there is no point in having this in config.php
-$CFG->dirroot = dirname(dirname(__FILE__));
+$CFG->dirroot = dirname(__DIR__);
 
 // File permissions on created directories in the $CFG->dataroot
 if (!isset($CFG->directorypermissions)) {

@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once(dirname(__FILE__).'/lib.php');
+require_once(__DIR__.'/lib.php');
 require_once($CFG->dirroot.'/course/lib.php');
 
 function report_outline_print_row($mod, $instance, $result) {

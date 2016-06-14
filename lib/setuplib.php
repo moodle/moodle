@@ -460,7 +460,7 @@ function is_early_init($backtrace) {
     $dangerouscode = array(
         array('function' => 'header', 'type' => '->'),
         array('class' => 'bootstrap_renderer'),
-        array('file' => dirname(__FILE__).'/setup.php'),
+        array('file' => __DIR__.'/setup.php'),
     );
     foreach ($backtrace as $stackframe) {
         foreach ($dangerouscode as $pattern) {
@@ -735,7 +735,7 @@ function get_docs_url($path = null) {
  */
 function format_backtrace($callers, $plaintext = false) {
     // do not use $CFG->dirroot because it might not be available in destructors
-    $dirroot = dirname(dirname(__FILE__));
+    $dirroot = dirname(__DIR__);
 
     if (empty($callers)) {
         return '';

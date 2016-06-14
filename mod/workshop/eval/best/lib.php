@@ -27,7 +27,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(dirname(__FILE__)) . '/lib.php');  // interface definition
+require_once(__DIR__ . '/../lib.php');  // interface definition
 require_once($CFG->libdir . '/gradelib.php');
 
 /**

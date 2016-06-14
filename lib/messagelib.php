@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(dirname(__FILE__)) . '/message/lib.php');
+require_once(__DIR__ . '/../message/lib.php');
 
 /**
  * Called when a message provider wants to send a message.

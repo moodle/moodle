@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v2 or later
  */
 
-require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php'); //included from messagelib (how to fix?)
+require_once(__DIR__ . '/../../../config.php'); //included from messagelib (how to fix?)
 require_once($CFG->dirroot.'/message/output/lib.php');
 
 /**

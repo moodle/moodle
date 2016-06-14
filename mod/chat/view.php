@@ -16,7 +16,7 @@
 
 // This page prints a particular instance of chat.
 
-require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require(__DIR__.'/../../config.php');
 require_once($CFG->dirroot . '/mod/chat/lib.php');
 require_once($CFG->libdir . '/completionlib.php');
 

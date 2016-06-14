@@ -28,7 +28,7 @@
  */
 define('AJAX_SCRIPT', true);
 
-require_once(dirname(__FILE__) . "/../../config.php");
+require_once(__DIR__ . "/../../config.php");
 require_once($CFG->dirroot . '/mod/lti/locallib.php');
 
 $courseid = required_param('course', PARAM_INT);

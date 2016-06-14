@@ -20,7 +20,7 @@
  * @copyright 2016 Simey Lameze
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require(dirname(__FILE__) . '/../../../../config.php');
+require(__DIR__ . '/../../../../config.php');
 require_once($CFG->libdir . '/filelib.php');
 
 $sendpdf = optional_param('sendpdf', 0, PARAM_BOOL);

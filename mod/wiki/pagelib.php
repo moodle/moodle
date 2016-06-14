@@ -913,7 +913,7 @@ class page_wiki_create extends page_wiki {
         global $PAGE;
         $this->action = $action;
 
-        require_once(dirname(__FILE__) . '/create_form.php');
+        require_once(__DIR__ . '/create_form.php');
         $url = new moodle_url('/mod/wiki/create.php', array('action' => 'create', 'wid' => $PAGE->activityrecord->id, 'group' => $this->gid, 'uid' => $this->uid));
         $formats = wiki_get_formats();
         $options = array('formats' => $formats, 'defaultformat' => $PAGE->activityrecord->defaultformat, 'forceformat' => $PAGE->activityrecord->forceformat, 'groups' => $this->groups);

@@ -29,7 +29,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(__FILE__).'/lib.php');     // we extend this library here
+require_once(__DIR__.'/lib.php');     // we extend this library here
 require_once($CFG->libdir . '/gradelib.php');   // we use some rounding and comparing routines here
 require_once($CFG->libdir . '/filelib.php');
 
@@ -1430,7 +1430,7 @@ class workshop {
         global $CFG;    // because we require other libs here
 
         if (is_null($this->strategyinstance)) {
-            $strategylib = dirname(__FILE__) . '/form/' . $this->strategy . '/lib.php';
+            $strategylib = __DIR__ . '/form/' . $this->strategy . '/lib.php';
             if (is_readable($strategylib)) {
                 require_once($strategylib);
             } else {
@@ -1455,7 +1455,7 @@ class workshop {
     public function set_grading_evaluation_method($method) {
         global $DB;
 
-        $evaluationlib = dirname(__FILE__) . '/eval/' . $method . '/lib.php';
+        $evaluationlib = __DIR__ . '/eval/' . $method . '/lib.php';
 
         if (is_readable($evaluationlib)) {
             $this->evaluationinstance = null;
@@ -1479,13 +1479,13 @@ class workshop {
             if (empty($this->evaluation)) {
                 $this->evaluation = 'best';
             }
-            $evaluationlib = dirname(__FILE__) . '/eval/' . $this->evaluation . '/lib.php';
+            $evaluationlib = __DIR__ . '/eval/' . $this->evaluation . '/lib.php';
             if (is_readable($evaluationlib)) {
                 require_once($evaluationlib);
             } else {
                 // Fall back in case the subplugin is not available.
                 $this->evaluation = 'best';
-                $evaluationlib = dirname(__FILE__) . '/eval/' . $this->evaluation . '/lib.php';
+                $evaluationlib = __DIR__ . '/eval/' . $this->evaluation . '/lib.php';
                 if (is_readable($evaluationlib)) {
                     require_once($evaluationlib);
                 } else {
@@ -1511,7 +1511,7 @@ class workshop {
     public function allocator_instance($method) {
         global $CFG;    // because we require other libs here
 
-        $allocationlib = dirname(__FILE__) . '/allocation/' . $method . '/lib.php';
+        $allocationlib = __DIR__ . '/allocation/' . $method . '/lib.php';
         if (is_readable($allocationlib)) {
             require_once($allocationlib);
         } else {
@@ -2365,7 +2365,7 @@ class workshop {
      */
     public function get_feedbackreviewer_form(moodle_url $actionurl, stdclass $assessment, $options=array()) {
         global $CFG;
-        require_once(dirname(__FILE__) . '/feedbackreviewer_form.php');
+        require_once(__DIR__ . '/feedbackreviewer_form.php');
 
         $current = new stdclass();
         $current->asid                      = $assessment->id;
@@ -2401,7 +2401,7 @@ class workshop {
      */
     public function get_feedbackauthor_form(moodle_url $actionurl, stdclass $submission, $options=array()) {
         global $CFG;
-        require_once(dirname(__FILE__) . '/feedbackauthor_form.php');
+        require_once(__DIR__ . '/feedbackauthor_form.php');
 
         $current = new stdclass();
         $current->submissionid          = $submission->id;

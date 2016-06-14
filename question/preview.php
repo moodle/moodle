@@ -30,9 +30,9 @@
  */
 
 
-require_once(dirname(__FILE__) . '/../config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/questionlib.php');
-require_once(dirname(__FILE__) . '/previewlib.php');
+require_once(__DIR__ . '/previewlib.php');
 
 /**
  * The maximum number of variants previewable. If there are more variants than this for a question

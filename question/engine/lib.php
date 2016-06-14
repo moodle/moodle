@@ -27,19 +27,19 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/filelib.php');
-require_once(dirname(__FILE__) . '/questionusage.php');
-require_once(dirname(__FILE__) . '/questionattempt.php');
-require_once(dirname(__FILE__) . '/questionattemptstep.php');
-require_once(dirname(__FILE__) . '/states.php');
-require_once(dirname(__FILE__) . '/datalib.php');
-require_once(dirname(__FILE__) . '/renderer.php');
-require_once(dirname(__FILE__) . '/bank.php');
-require_once(dirname(__FILE__) . '/../type/questiontypebase.php');
-require_once(dirname(__FILE__) . '/../type/questionbase.php');
-require_once(dirname(__FILE__) . '/../type/rendererbase.php');
-require_once(dirname(__FILE__) . '/../behaviour/behaviourtypebase.php');
-require_once(dirname(__FILE__) . '/../behaviour/behaviourbase.php');
-require_once(dirname(__FILE__) . '/../behaviour/rendererbase.php');
+require_once(__DIR__ . '/questionusage.php');
+require_once(__DIR__ . '/questionattempt.php');
+require_once(__DIR__ . '/questionattemptstep.php');
+require_once(__DIR__ . '/states.php');
+require_once(__DIR__ . '/datalib.php');
+require_once(__DIR__ . '/renderer.php');
+require_once(__DIR__ . '/bank.php');
+require_once(__DIR__ . '/../type/questiontypebase.php');
+require_once(__DIR__ . '/../type/questionbase.php');
+require_once(__DIR__ . '/../type/rendererbase.php');
+require_once(__DIR__ . '/../behaviour/behaviourtypebase.php');
+require_once(__DIR__ . '/../behaviour/behaviourbase.php');
+require_once(__DIR__ . '/../behaviour/rendererbase.php');
 require_once($CFG->libdir . '/questionlib.php');
 
 

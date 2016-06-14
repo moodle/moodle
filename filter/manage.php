@@ -23,7 +23,7 @@
  * @subpackage filter
  */
 
-require_once(dirname(__FILE__) . '/../config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 $contextid = required_param('contextid',PARAM_INT);

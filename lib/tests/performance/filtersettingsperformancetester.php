@@ -27,7 +27,7 @@
 
 die(); //TODO: this needs to be rewritten as standard advanced_testcase
 
-require(dirname(__FILE__) . '/../../../config.php');
+require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/ddllib.php');
 
 require_login();

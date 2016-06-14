@@ -28,7 +28,7 @@
 define('AJAX_SCRIPT', true);
 
 /** Include config */
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(__DIR__ . '/../../config.php');
 /** Include course lib for its functions */
 require_once($CFG->dirroot.'/course/lib.php');
 

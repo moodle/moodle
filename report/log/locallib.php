@@ -30,7 +30,7 @@ if (!defined('REPORT_LOG_MAX_DISPLAY')) {
     define('REPORT_LOG_MAX_DISPLAY', 150); // days
 }
 
-require_once(dirname(__FILE__).'/lib.php');
+require_once(__DIR__.'/lib.php');
 
 /**
  * This function is used to generate and display the log activity graph

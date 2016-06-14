@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(__FILE__) . '/../adaptive/behaviourtype.php');
+require_once(__DIR__ . '/../adaptive/behaviourtype.php');
 
 
 /**

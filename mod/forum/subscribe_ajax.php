@@ -23,7 +23,7 @@
  */
 
 define('AJAX_SCRIPT', true);
-require_once(dirname(dirname(__DIR__)) . '/config.php');
+require(__DIR__.'/../../config.php');
 require_once($CFG->dirroot . '/mod/forum/lib.php');
 
 $forumid        = required_param('forumid', PARAM_INT);             // The forum to subscribe or unsubscribe.

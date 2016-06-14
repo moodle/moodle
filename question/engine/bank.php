@@ -30,7 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(__FILE__) . '/../type/questiontypebase.php');
+require_once(__DIR__ . '/../type/questiontypebase.php');
 
 
 /**

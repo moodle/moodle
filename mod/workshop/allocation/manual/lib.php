@@ -26,8 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(dirname(__FILE__)) . '/lib.php');                  // interface definition
-require_once(dirname(dirname(dirname(__FILE__))) . '/locallib.php');    // workshop internal API
+require_once(__DIR__ . '/../lib.php');            // interface definition
+require_once(__DIR__ . '/../../locallib.php');    // workshop internal API
 
 /**
  * Allows users to allocate submissions for review manually

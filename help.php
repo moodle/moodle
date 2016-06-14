@@ -28,7 +28,7 @@
 
 define('NO_MOODLE_COOKIES', true);
 
-require_once(dirname(__FILE__) . '/config.php');
+require_once(__DIR__ . '/config.php');
 
 $identifier = required_param('identifier', PARAM_STRINGID);
 $component  = required_param('component', PARAM_COMPONENT);
