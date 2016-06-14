@@ -81,14 +81,14 @@ echo $OUTPUT->doctype() ?>
     </header>
     <div id="page-content" class="row-fluid">
 
-        <div id="<?php echo $regionbsid ?>" class="span9">
+        <div id="<?php echo $regionbsid ?>" class="span12">
 					<?php
 						echo $OUTPUT->course_content_header();
 						echo $OUTPUT->main_content();
 						echo $OUTPUT->course_content_footer();
           ?>
         </div>
-				<?php echo $OUTPUT->blocks('side-pre', 'span3'); ?>
+				<?php //echo $OUTPUT->blocks('side-pre', 'span3'); ?>
 
     </div>
 

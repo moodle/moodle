@@ -27,7 +27,7 @@ $THEME->name = 'academi';
 
 $THEME->doctype = 'html5';
 $THEME->parents = array('bootstrapbase');
-$THEME->sheets = array('custom','theme','font-awesome.min');
+$THEME->sheets = array('academi','custom','theme','font-awesome.min');
 $THEME->supportscssoptimisation = false;
 $THEME->yuicssmodules = array();
 $THEME->enable_dock = true;
