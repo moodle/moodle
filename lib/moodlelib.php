@@ -4123,6 +4123,12 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
     if ($user) {
         // Use manual if auth not set.
         $auth = empty($user->auth) ? 'manual' : $user->auth;
+
+        if (in_array($user->auth, $authsenabled)) {
+            $authplugin = get_auth_plugin($user->auth);
+            $authplugin->pre_user_login_hook($user);
+        }
+
         if (!empty($user->suspended)) {
             $failurereason = AUTH_LOGIN_SUSPENDED;
 

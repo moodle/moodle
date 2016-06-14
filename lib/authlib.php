@@ -465,6 +465,18 @@ class auth_plugin_base {
     }
 
     /**
+     * Pre user_login hook.
+     * This method is called from authenticate_user_login() right after the user
+     * object is generated. This gives the auth plugins an option to make adjustments
+     * before the verification process starts.
+     *
+     * @param object $user user object, later used for $USER
+     */
+    public function pre_user_login_hook(&$user) {
+        // Override if needed.
+    }
+
+    /**
      * Post authentication hook.
      * This method is called from authenticate_user_login() for all enabled auth plugins.
      *
