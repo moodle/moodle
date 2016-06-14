@@ -223,7 +223,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
     var showRegistrationFeedback = function(data) {
         var type = data.error ? 'error' : 'success';
         notification.addNotification({
-            message: '<h4>' + data.status + '</h4><p>' + data.message + '</p>',
+            message: data.message,
             type: type
         });
     };
@@ -314,12 +314,10 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
         });
 
         promise.fail(function () {
-            str.get_strings([{key: 'error', component: 'moodle'},
-                             {key: 'errorbadurl', component: 'mod_lti'}])
+            str.get_string('errorbadurl', 'mod_lti')
                 .done(function (s) {
                         $(document).trigger(ltiEvents.REGISTRATION_FEEDBACK, {
-                                status: s[0],
-                                message: s[1],
+                                message: s,
                                 error: true
                             });
                     })
