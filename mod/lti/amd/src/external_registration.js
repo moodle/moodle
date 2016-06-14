@@ -321,11 +321,9 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
             notification.exception(failure);
             finishExternalRegistration();
             stopLoadingCancel();
-            str.get_strings([{key: 'error', component: 'moodle'},
-                             {key: 'failedtodeletetoolproxy', component: 'mod_lti'}]).done(function (s) {
+            str.get_string('failedtodeletetoolproxy', 'mod_lti').done(function (s) {
                 var feedback = {
-                    status: s[0],
-                    message: s[1],
+                    message: s,
                     error: true
                 };
                 $(document).trigger(ltiEvents.REGISTRATION_FEEDBACK, feedback);
@@ -461,16 +459,11 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
                         // Clean up.
                         cancelRegistration();
                         // Let the user know what the error is.
-                        str.get_string('error', 'moodle')
-                            .done(function (s) {
-                                    var feedback = {
-                                        status: s,
-                                        message: exception.message,
-                                        error: true
-                                    };
-                                    $(document).trigger(ltiEvents.REGISTRATION_FEEDBACK, feedback);
-                                })
-                            .fail(notification.exception);
+                        var feedback = {
+                            message: exception.message,
+                            error: true
+                        };
+                        $(document).trigger(ltiEvents.REGISTRATION_FEEDBACK, feedback);
                         promise.reject(exception);
                     });
         }
@@ -571,16 +564,13 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
         window.triggerExternalRegistrationComplete = function(data) {
             var promise = $.Deferred();
             var feedback = {
-                status: data.status,
                 message: "",
                 error: false
             };
 
             if (data.status == "success") {
-                str.get_strings([{key: 'success', component: 'moodle'},
-                                 {key: 'successfullycreatedtooltype', component: 'mod_lti'}]).done(function (s) {
-                    feedback.status = s[0];
-                    feedback.message = s[1];
+                str.get_string('successfullycreatedtooltype', 'mod_lti').done(function (s) {
+                    feedback.message = s;
                 }).fail(notification.exception);
 
                 // Trigger appropriate events when we've completed the necessary requests.
