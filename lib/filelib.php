@@ -776,7 +776,7 @@ function file_restore_source_field_from_draft_file($storedfile) {
     return $storedfile;
 }
 /**
- * Saves files from a draft file area to a real one (merging the list of files).
+ * Saves files from a draft file area to a real one (replacing and removing files in the real file area).
  * Can rewrite URLs in some content at the same time if desired.
  *
  * @category files
