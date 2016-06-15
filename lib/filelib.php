@@ -776,7 +776,7 @@ function file_restore_source_field_from_draft_file($storedfile) {
     return $storedfile;
 }
 /**
- * Saves files from a draft file area to a real one (replacing and removing files in the real file area).
+ * Saves files from a draft file area to a real one (merging the list of files).
  * Can rewrite URLs in some content at the same time if desired.
  *
  * @category files
@@ -2685,6 +2685,145 @@ function file_is_executable($filename) {
         }
     } else {
         return is_executable($filename);
+    }
+}
+
+/**
+ * Overwrite an existing file in a draft area.
+ *
+ * @param  stored_file $newfile      the new file with the new content and meta-data
+ * @param  stored_file $existingfile the file that will be overwritten
+ * @throws moodle_exception
+ * @since Moodle 3.1.1
+ */
+function file_overwrite_existing_draftfile(stored_file $newfile, stored_file $existingfile) {
+    if ($existingfile->get_component() != 'user' or $existingfile->get_filearea() != 'draft') {
+        throw new coding_exception('The file to overwrite is not in a draft area.');
+    }
+
+    $fs = get_file_storage();
+    // Remember original file source field.
+    $source = @unserialize($existingfile->get_source());
+    // Remember the original sortorder.
+    $sortorder = $existingfile->get_sortorder();
+    if ($newfile->is_external_file()) {
+        // New file is a reference. Check that existing file does not have any other files referencing to it
+        if (isset($source->original) && $fs->search_references_count($source->original)) {
+            throw new moodle_exception('errordoublereference', 'repository');
+        }
+    }
+
+    // Delete existing file to release filename.
+    $newfilerecord = array(
+        'contextid' => $existingfile->get_contextid(),
+        'component' => 'user',
+        'filearea' => 'draft',
+        'itemid' => $existingfile->get_itemid(),
+        'timemodified' => time()
+    );
+    $existingfile->delete();
+
+    // Create new file.
+    $newfile = $fs->create_file_from_storedfile($newfilerecord, $newfile);
+    // Preserve original file location (stored in source field) for handling references.
+    if (isset($source->original)) {
+        if (!($newfilesource = @unserialize($newfile->get_source()))) {
+            $newfilesource = new stdClass();
+        }
+        $newfilesource->original = $source->original;
+        $newfile->set_source(serialize($newfilesource));
+    }
+    $newfile->set_sortorder($sortorder);
+}
+
+/**
+ * Add files from a draft area into a final area.
+ *
+ * Most of the time you do not want to use this. It is intended to be used
+ * by asynchronous services which cannot direcly manipulate a final
+ * area through a draft area. Instead they add files to a new draft
+ * area and merge that new draft into the final area when ready.
+ *
+ * @param int $draftitemid the id of the draft area to use.
+ * @param int $contextid this parameter and the next two identify the file area to save to.
+ * @param string $component component name
+ * @param string $filearea indentifies the file area
+ * @param int $itemid identifies the item id or false for all items in the file area
+ * @param array $options area options (subdirs=false, maxfiles=-1, maxbytes=0, areamaxbytes=FILE_AREA_MAX_BYTES_UNLIMITED)
+ * @see file_save_draft_area_files
+ * @since Moodle 3.1.1
+ */
+function file_merge_files_from_draft_area_into_filearea($draftitemid, $contextid, $component, $filearea, $itemid,
+                                                        array $options = null) {
+    // We use 0 here so file_prepare_draft_area creates a new one, finaldraftid will be updated with the new draft id.
+    $finaldraftid = 0;
+    file_prepare_draft_area($finaldraftid, $contextid, $component, $filearea, $itemid, $options);
+    file_merge_draft_area_into_draft_area($draftitemid, $finaldraftid);
+    file_save_draft_area_files($finaldraftid, $contextid, $component, $filearea, $itemid, $options);
+}
+
+/**
+ * Merge files from two draftarea areas.
+ *
+ * This does not handle conflict resolution, files in the destination area which appear
+ * to be more recent will be kept disregarding the intended ones.
+ *
+ * @param int $getfromdraftid the id of the draft area where are the files to merge.
+ * @param int $mergeintodraftid the id of the draft area where new files will be merged.
+ * @throws coding_exception
+ * @since Moodle 3.1.1
+ */
+function file_merge_draft_area_into_draft_area($getfromdraftid, $mergeintodraftid) {
+    global $USER;
+
+    $fs = get_file_storage();
+    $contextid = context_user::instance($USER->id)->id;
+
+    if (!$filestomerge = $fs->get_area_files($contextid, 'user', 'draft', $getfromdraftid)) {
+        throw new coding_exception('Nothing to merge or area does not belong to current user');
+    }
+
+    $currentfiles = $fs->get_area_files($contextid, 'user', 'draft', $mergeintodraftid);
+
+    // Get hashes of the files to merge.
+    $newhashes = array();
+    foreach ($filestomerge as $filetomerge) {
+        $filepath = $filetomerge->get_filepath();
+        $filename = $filetomerge->get_filename();
+
+        $newhash = $fs->get_pathname_hash($contextid, 'user', 'draft', $mergeintodraftid, $filepath, $filename);
+        $newhashes[$newhash] = $filetomerge;
+    }
+
+    // Calculate wich files must be added.
+    foreach ($currentfiles as $file) {
+        $filehash = $file->get_pathnamehash();
+        // One file to be merged already exists.
+        if (isset($newhashes[$filehash])) {
+            $updatedfile = $newhashes[$filehash];
+
+            // Avoid race conditions.
+            if ($file->get_timemodified() > $updatedfile->get_timemodified()) {
+                // The existing file is more recent, do not copy the suposedly "new" one.
+                unset($newhashes[$filehash]);
+                continue;
+            }
+            // Update existing file (not only content, meta-data too).
+            file_overwrite_existing_draftfile($updatedfile, $file);
+            unset($newhashes[$filehash]);
+        }
+    }
+
+    foreach ($newhashes as $newfile) {
+        $newfilerecord = array(
+            'contextid' => $contextid,
+            'component' => 'user',
+            'filearea' => 'draft',
+            'itemid' => $mergeintodraftid,
+            'timemodified' => time()
+        );
+
+        $fs->create_file_from_storedfile($newfilerecord, $newfile);
     }
 }
 
