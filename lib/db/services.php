@@ -214,7 +214,8 @@ $functions = array(
         'classpath' => 'course/externallib.php',
         'description' => 'Return category details',
         'type' => 'read',
-        'capabilities' => 'moodle/category:viewhiddencategories'
+        'capabilities' => 'moodle/category:viewhiddencategories',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_course_get_contents' => array(
         'classname' => 'core_course_external',
