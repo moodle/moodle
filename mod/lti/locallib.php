@@ -1438,7 +1438,15 @@ function lti_update_type($type, $config) {
         }
         require_once($CFG->libdir.'/modinfolib.php');
         if ($clearcache) {
-            rebuild_course_cache();
+            $sql = "SELECT DISTINCT course
+                      FROM {lti}
+                     WHERE typeid = ?";
+
+            $courses = $DB->get_fieldset_sql($sql, array($type->id));
+
+            foreach ($courses as $courseid) {
+                rebuild_course_cache($courseid, true);
+            }
         }
     }
 }
