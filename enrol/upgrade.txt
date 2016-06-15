@@ -1,6 +1,10 @@
 This files describes API changes in /enrol/* - plugins,
 information provided here is intended especially for developers.
 
+=== 3.2 ===
+
+* External function core_enrol_external::get_users_courses now return the category id as an additional optional field.
+
 === 3.1 ===
 
 * core_enrol_external::get_enrolled_users now supports two additional parameters for ordering: sortby and sortdirection.
