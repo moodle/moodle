@@ -403,7 +403,6 @@ $functions = array(
         'methodname' => 'update_grades',
         'description' => 'Update a grade item and associated student grades.',
         'type' => 'write',
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_grading_get_definitions' => array(
         'classname' => 'core_grading_external',
