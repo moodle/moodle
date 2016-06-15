@@ -54,6 +54,9 @@ class behat_mod_feedback extends behat_base {
 
         $this->execute('behat_forms::i_select_from_the_singleselect', array($questiontype, $additem));
 
+        // Wait again, for page to reloaded.
+        $this->execute('behat_general::i_wait_to_be_redirected');
+
         $rows = $questiondata->getRows();
         $modifiedrows = array();
         foreach ($rows as $row) {

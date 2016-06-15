@@ -153,6 +153,7 @@ Feature: Edit quiz page - adding things
 
     # Create the Essay 03 question.
     And I set the field "Select a category" to "Default for C1"
+    And I wait until the page is ready
     When I press "Create a new question ..."
     And I set the field "qtype_qtype_essay" to "1"
     And I press "Add"
