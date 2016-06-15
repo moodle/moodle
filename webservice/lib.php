@@ -460,7 +460,8 @@ class webservice {
                       FROM {external_functions} f
                      WHERE f.name IN (SELECT sf.functionname
                                         FROM {external_services_functions} sf
-                                       WHERE sf.externalserviceid $serviceids)";
+                                       WHERE sf.externalserviceid $serviceids)
+                     ORDER BY f.name ASC";
             $functions = $DB->get_records_sql($sql, $params);
         } else {
             $functions = array();
