@@ -35,7 +35,6 @@ define(['jquery',
      *
      * @param {String} triggerSelector The node on which the click will happen.
      * @param {String} containerSelector The parent node that will be removed and contains the evidence ID.
-     * @return {Void}
      */
     var register = function(triggerSelector, containerSelector) {
         if (typeof selectors[triggerSelector] !== 'undefined') {

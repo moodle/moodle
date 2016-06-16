@@ -64,7 +64,7 @@ define(['jquery',
          * Get the string for an outcome.
          *
          * @param  {Number} id The outcome code.
-         * @return {Promise Resolved with the string.
+         * @return {Promise} Resolved with the string.
          * @method getString
          */
         getString: function(id) {

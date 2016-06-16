@@ -39,7 +39,9 @@ define(['jquery'], function($) {
 
         this._region.find('[name="savechanges"]').on('click', this._trigger.bind(this, 'save-changes'));
         this._region.find('[name="resetbutton"]').on('click', this._trigger.bind(this, 'reset'));
-        this._region.find('form').on('submit', function(e) { e.preventDefault(); });
+        this._region.find('form').on('submit', function(e) {
+          e.preventDefault();
+        });
     };
 
     /** @type {String} Selector for the page region containing the user navigation. */
@@ -58,7 +60,6 @@ define(['jquery'], function($) {
      * @private
      * @param {Event} event
      * @param {Integer} userid
-     * @return {Deferred} promise resolved when the animations are complete.
      */
     GradingActions.prototype._showActionsForm = function(event, userid) {
         var form = this._region.find('[data-region=grading-actions-form]');

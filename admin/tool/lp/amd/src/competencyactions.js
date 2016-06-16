@@ -187,8 +187,13 @@ define(['jquery',
         });
         treeRoot.show();
 
-        body.on('click', '[data-action="move"]', function() { popup.close(); confirmMove(); });
-        body.on('click', '[data-action="cancel"]', function() { popup.close(); });
+        body.on('click', '[data-action="move"]', function() {
+          popup.close();
+          confirmMove();
+        });
+        body.on('click', '[data-action="cancel"]', function() {
+          popup.close();
+        });
     };
 
     /**
@@ -213,6 +218,7 @@ define(['jquery',
 
     /**
      * A node was chosen and "Move" was selected from the menu. Open a popup to select the target.
+     * @param {Event} e
      * @method moveHandler
      */
     var moveHandler = function(e) {
@@ -300,6 +306,7 @@ define(['jquery',
 
     /**
      * Re-render the page with the latest data.
+     * @param {Object} context
      * @method reloadPage
      */
     var reloadPage = function(context) {
@@ -313,6 +320,7 @@ define(['jquery',
 
     /**
      * Perform a search and render the page with the new search results.
+     * @param {Event} e
      * @method updateSearchHandler
      */
     var updateSearchHandler = function(e) {
@@ -528,6 +536,7 @@ define(['jquery',
     /**
      * HTML5 implementation of drag/drop (there is an accesible alternative in the menus).
      * @method dragStart
+     * @param {Event} e
      */
     var dragStart = function(e) {
         e.originalEvent.dataTransfer.setData('text', $(e.target).parent().data('id'));
@@ -536,6 +545,7 @@ define(['jquery',
     /**
      * HTML5 implementation of drag/drop (there is an accesible alternative in the menus).
      * @method allowDrop
+     * @param {Event} e
      */
     var allowDrop = function(e) {
         e.originalEvent.dataTransfer.dropEffect = 'move';
@@ -545,6 +555,7 @@ define(['jquery',
     /**
      * HTML5 implementation of drag/drop (there is an accesible alternative in the menus).
      * @method dragEnter
+     * @param {Event} e
      */
     var dragEnter = function(e) {
         e.preventDefault();
@@ -554,6 +565,7 @@ define(['jquery',
     /**
      * HTML5 implementation of drag/drop (there is an accesible alternative in the menus).
      * @method dragLeave
+     * @param {Event} e
      */
     var dragLeave = function(e) {
         e.preventDefault();
@@ -563,6 +575,7 @@ define(['jquery',
     /**
      * HTML5 implementation of drag/drop (there is an accesible alternative in the menus).
      * @method dropOver
+     * @param {Event} e
      */
     var dropOver = function(e) {
         e.preventDefault();
@@ -614,7 +627,7 @@ define(['jquery',
     /**
      * Log the competency viewed event.
      *
-     * @param  {Object} The competency.
+     * @param  {Object} competency The competency.
      * @method triggerCompetencyViewedEvent
      */
     var triggerCompetencyViewedEvent = function(competency) {
@@ -729,6 +742,7 @@ define(['jquery',
      * @method selectionChanged
      * @param {Event} evt The event that triggered the selection change.
      * @param {Object} params The parameters for the event. Contains a list of selected nodes.
+     * @return {Boolean}
      */
     var selectionChanged = function(evt, params) {
         var node = params.selected,
@@ -781,7 +795,7 @@ define(['jquery',
      * Return the string "Selected <taxonomy>".
      *
      * @function parseTaxonomies
-     * @param  {String} Comma separated list of taxonomies.
+     * @param  {String} taxonomiesstr Comma separated list of taxonomies.
      * @return {Array} of level => taxonomystr
      */
     var parseTaxonomies = function(taxonomiesstr) {

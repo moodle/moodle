@@ -37,7 +37,7 @@ define(['jquery', 'core/yui'], function($, Y) {
         /**
          * Initialise the start attempt button.
          *
-         * @param {String} startButtonId the id of the start attempt button that we will be enhancing.
+         * @param {String} startButton the id of the start attempt button that we will be enhancing.
          * @param {String} confirmationTitle the title of the dialogue.
          * @param {String} confirmationForm selector for the confirmation form to show in the dialogue.
          * @param {String} popupoptions If not null, the quiz should be launced in a pop-up.
@@ -94,6 +94,8 @@ define(['jquery', 'core/yui'], function($, Y) {
 
         /**
          * Event handler for the quiz start attempt button.
+          * @param {Event} e the event being responded to
+          * @param {Object} popupoptions
          */
         launchQuizPopup: function(e, popupoptions) {
             e.halt();

@@ -35,6 +35,7 @@ define(['jquery',
      *
      * @param {Number} itemid
      * @param {String} itemtype
+     * @param {Number} pagectxid
      */
     var competencies = function(itemid, itemtype, pagectxid) {
         this.itemid = itemid;
@@ -106,7 +107,7 @@ define(['jquery',
                 }
             ]);
         } else {
-            return null;
+            return;
         }
 
         requests[0].fail(notification.exception);

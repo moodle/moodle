@@ -61,7 +61,7 @@ define(['jquery', 'core/ajax', 'core/str', 'tool_lp/competencypicker', 'core/tem
     /**
      * Set the parent competency in the competency form.
      *
-     * @param {Object} Data containing selected cmpetency.
+     * @param {Object} data Data containing selected competency.
      * @method setParent
      */
     ParentCompetencyForm.prototype.setParent = function(data) {
@@ -129,7 +129,7 @@ define(['jquery', 'core/ajax', 'core/str', 'tool_lp/competencypicker', 'core/tem
         /**
          * Main initialisation.
          * @param {String} buttonSelector The parent competency button selector.
-         * @param {String} inputHiddenSelector The hidden input field selector.
+         * @param {String} inputSelector The hidden input field selector.
          * @param {String} staticElementSelector The static element displaying the parent competency.
          * @param {Number} frameworkId The competency framework ID.
          * @param {Number} pageContextId The page context ID.

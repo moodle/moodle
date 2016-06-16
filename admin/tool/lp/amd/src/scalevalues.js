@@ -32,7 +32,7 @@ define(['jquery', 'core/ajax'], function($, ajax) {
          * @param {Number} scaleid The scale id
          * @return [] {Promise}
          */
-
+        // eslint-disable-next-line camelcase
         get_values: function(scaleid) {
 
             var deferred = $.Deferred();

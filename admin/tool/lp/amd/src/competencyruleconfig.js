@@ -70,7 +70,6 @@ define(['jquery',
      *
      * Triggered when a change occured.
      *
-     * @return {Void}
      * @method _afterChange
      * @protected
      */
@@ -87,9 +86,10 @@ define(['jquery',
      *
      * Triggered when a change occured in a specific rule config.
      *
-     * @return {Void}
      * @method _afterRuleConfigChange
      * @protected
+     * @param {Event} e
+     * @param {Rule} rule
      */
     RuleConfig.prototype._afterRuleConfigChange = function(e, rule) {
         if (rule != this._getRule()) {
@@ -102,7 +102,6 @@ define(['jquery',
     /**
      * After render hook.
      *
-     * @return {Promise}
      * @method _afterRender
      * @protected
      */
@@ -181,6 +180,7 @@ define(['jquery',
      * Find a node in the dialogue.
      *
      * @param {String} selector
+     * @return {JQuery}
      * @method _find
      * @protected
      */
@@ -444,7 +444,6 @@ define(['jquery',
     /**
      * Set up the instance.
      *
-     * @return {Void}
      * @method _setUp
      * @protected
      */
@@ -482,7 +481,6 @@ define(['jquery',
     /**
      * Called when the user switches outcome.
      *
-     * @return {Void}
      * @method _switchedOutcome
      * @protected
      */
@@ -507,7 +505,6 @@ define(['jquery',
     /**
      * Called when the user switches rule.
      *
-     * @return {Void}
      * @method _switchedRule
      * @protected
      */
@@ -535,7 +532,7 @@ define(['jquery',
      * Trigger an event.
      *
      * @param {String} type The type of event.
-     * @param {Object} The data to pass to the listeners.
+     * @param {Object} data The data to pass to the listeners.
      * @method _trigger
      * @protected
      */

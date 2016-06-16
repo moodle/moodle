@@ -152,8 +152,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
                             doDelete();
                         });
                     }).fail(notification.exception);
-                }
-                else {
+                } else {
                     str.get_strings([
                         { key: 'confirm', component: 'moodle' },
                         { key: 'deletetemplate', component: 'tool_lp', param: template.shortname },

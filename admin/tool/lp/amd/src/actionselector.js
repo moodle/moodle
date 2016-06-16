@@ -138,6 +138,7 @@ define(['jquery',
      * Find a node in the dialogue.
      *
      * @param {String} selector
+     * @return {JQuery} The node
      * @method _find
      */
     ActionSelector.prototype._find = function(selector) {

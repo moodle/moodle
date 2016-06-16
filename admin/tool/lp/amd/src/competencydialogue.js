@@ -43,12 +43,13 @@ define(['jquery',
      *
      */
     var Competencydialogue = function() {
+      // Intentionally left empty.
     };
 
     /**
      * Log the competency viewed event.
      *
-     * @param  {Number} The competency ID.
+     * @param  {Number} competencyId The competency ID.
      * @method triggerCompetencyViewedEvent
      */
     Competencydialogue.prototype.triggerCompetencyViewedEvent = function(competencyId) {
@@ -112,7 +113,7 @@ define(['jquery',
     /**
      * The action on the click event.
      *
-     * @param {Event} event click
+     * @param {Event} e event click
      * @method clickEventHandler
      */
     Competencydialogue.prototype.clickEventHandler = function(e) {
@@ -135,6 +136,7 @@ define(['jquery',
      * Get a promise on data competency.
      *
      * @param {Number} competencyid
+     * @param {Object} options
      * @return {Promise} return promise on data request
      * @method getCompetencyDataPromise
      */
@@ -160,8 +162,6 @@ define(['jquery',
          * Initialise the competency dialogue module.
          *
          * Only the first call matters.
-         *
-         * @return {Void}
          */
         init: function() {
             if (typeof instance !== 'undefined') {

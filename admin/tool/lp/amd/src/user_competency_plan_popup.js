@@ -27,9 +27,9 @@ define(['jquery', 'core/notification', 'core/str', 'core/ajax', 'core/templates'
     /**
      * UserCompetencyPopup
      *
-     * @param {String} The regionSelector
-     * @param {String} The userCompetencySelector
-     * @param {Number} The plan ID
+     * @param {String} regionSelector The regionSelector
+     * @param {String} userCompetencySelector The userCompetencySelector
+     * @param {Number} planId The plan ID
      */
     var UserCompetencyPopup = function(regionSelector, userCompetencySelector, planId) {
         this._regionSelector = regionSelector;

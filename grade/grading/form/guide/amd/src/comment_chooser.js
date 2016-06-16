@@ -34,18 +34,18 @@ define(['jquery', 'core/templates', 'core/notification', 'core/yui'], function($
          * Basically, it performs the binding and handling of the button click event for
          * the 'Insert frequently used comment' button.
          *
-         * @param criterionId The criterion ID.
-         * @param buttonId The element ID of the button which the handler will be bound to.
-         * @param remarkId The element ID of the remark text area where the text of the selected comment will be copied to.
-         * @param commentOptions The array of frequently used comments to be used as options.
+         * @param {Integer} criterionId The criterion ID.
+         * @param {String} buttonId The element ID of the button which the handler will be bound to.
+         * @param {String} remarkId The element ID of the remark text area where the text of the selected comment will be copied to.
+         * @param {Array} commentOptions The array of frequently used comments to be used as options.
          */
         initialise: function(criterionId, buttonId, remarkId, commentOptions) {
             /**
              * Display the chooser dialog using the compiled HTML from the mustache template
              * and binds onclick events for the generated comment options.
              *
-             * @param compiledSource The compiled HTML from the mustache template
-             * @param comments Array containing comments.
+             * @param {String} compiledSource The compiled HTML from the mustache template
+             * @param {Array} comments Array containing comments.
              */
             function displayChooserDialog(compiledSource, comments) {
                 var titleLabel = '<label>' + M.util.get_string('insertcomment', 'gradingform_guide') + '</label>';

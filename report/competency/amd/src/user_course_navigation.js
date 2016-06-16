@@ -26,10 +26,10 @@ define(['jquery'], function($) {
     /**
      * UserCourseNavigation
      *
-     * @param {String} The selector of the user element.
-     * @param {String} The base url for the page (no params).
-     * @param {Number} The course id
-     * @param {Number} The user id
+     * @param {String} userSelector The selector of the user element.
+     * @param {String} baseUrl The base url for the page (no params).
+     * @param {Number} userId The course id
+     * @param {Number} courseId The user id
      */
     var UserCourseNavigation = function(userSelector, baseUrl, userId, courseId) {
         this._baseUrl = baseUrl;
@@ -43,7 +43,7 @@ define(['jquery'], function($) {
      * The user was changed in the select list.
      *
      * @method _userChanged
-     * @param {Event} e
+     * @param {Event} e the event
      */
     UserCourseNavigation.prototype._userChanged = function(e) {
         var newUserId = $(e.target).val();

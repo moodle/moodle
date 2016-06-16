@@ -39,7 +39,6 @@ define(['jquery'], function($) {
      * @method buildDOM
      * @param {Object} rootElement the root element of DOM.
      * @param {object} nodes jquery object representing the nodes to be build.
-     * @return
      */
     function buildDOM(rootElement, nodes) {
         var ul = $('<ul></ul>');

@@ -34,8 +34,8 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
          *
          * @method query
          * @public
-         * @param object Search parameters
-         * @return object jQuery deferred object
+         * @param {Object} args Search parameters
+         * @return {Promise} jQuery Deferred object
          */
         query: function(args) {
             var request = {
@@ -60,8 +60,8 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
          *
          * @method create
          * @public
-         * @param object Tool type properties
-         * @return object jQuery deferred object
+         * @param {Object} args Tool type properties
+         * @return {Promise} jQuery Deferred object
          */
         create: function(args) {
             var request = {
@@ -82,8 +82,8 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
          *
          * @method update
          * @public
-         * @param object Tool type properties
-         * @return object jQuery deferred object
+         * @param {Object} args Tool type properties
+         * @return {Promise} jQuery Deferred object
          */
         update: function(args) {
             var request = {
@@ -103,8 +103,8 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
          *
          * @method delete
          * @public
-         * @param int Tool type ID
-         * @return object jQuery deferred object
+         * @param {Integer} id Tool type ID
+         * @return {Promise} jQuery Deferred object
          */
         delete: function(id) {
             var request = {
@@ -127,8 +127,8 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
          *
          * @method query
          * @public
-         * @param int Tool proxty id
-         * @return object jQuery deferred object
+         * @param {Integer} id Tool type ID
+         * @return {Promise} jQuery Deferred object
          */
         getFromToolProxyId: function(id) {
             return this.query({toolproxyid: id});
@@ -141,8 +141,8 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
          *
          * @method isCartridge
          * @public
-         * @param string URL
-         * @return object jQuery deferred object
+         * @param {String} url
+         * @return {Promise} jQuery Deferred object
          */
         isCartridge: function(url) {
             var request = {

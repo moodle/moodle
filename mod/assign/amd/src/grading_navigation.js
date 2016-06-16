@@ -136,7 +136,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
      *
      * @private
      * @method _checkClickOutsideConfigureFilters
-     * @param {Event}
+     * @param {Event} event
      */
     GradingNavigation.prototype._checkClickOutsideConfigureFilters = function(event) {
         var configPanel = this._region.find('[data-region="configure-filters"]');
@@ -156,7 +156,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
      *
      * @private
      * @method _filterChanged
-     * @param {Event}
+     * @param {Event} event
      */
     GradingNavigation.prototype._filterChanged = function(event) {
         var name = $(event.target).attr('name');
@@ -299,7 +299,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
      *
      * @private
      * @method _toggleExpandFilters
-     * @param {Event}
+     * @param {Event} event
      */
     GradingNavigation.prototype._toggleExpandFilters = function(event) {
         event.preventDefault();
@@ -436,7 +436,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
      *
      * @private
      * @method _handleChangeUser
-     * @param {Event}
+     * @param {Event} event
      */
     GradingNavigation.prototype._handleChangeUser = function() {
         var select = this._region.find('[data-action=change-user]');

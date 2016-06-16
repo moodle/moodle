@@ -28,7 +28,7 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
      * The ajax call has returned with a new list of templates.
      *
      * @method reloadListTemplate
-     * @param String[] templates List of template ids.
+     * @param {String[]} templateList List of template ids.
      */
     var reloadListTemplate = function(templateList) {
         templates.render('tool_templatelibrary/search_results', { templates: templateList })
@@ -63,8 +63,8 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
      * the function will only be executed once.
      *
      * @method queueRefresh
-     * @param function callback
-     * @param int delay The time in milliseconds to delay.
+     * @param {function} callback
+     * @param {Number} delay The time in milliseconds to delay.
      */
     var queueRefresh = function(callback, delay) {
         if (throttle !== null) {

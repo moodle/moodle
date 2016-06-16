@@ -35,11 +35,11 @@ define([], function() {
          * complete behaviour in the parent page and provide the params returned from
          * the external registration page.
          *
-         * @param string message The registration message from the external registration page
-         * @param string error The registration error message from the external registration page, if
+         * @param {String} message The registration message from the external registration page
+         * @param {String} error The registration error message from the external registration page, if
          *                     there was an error.
-         * @param int id The tool proxy id for the external registration.
-         * @param string status Whether the external registration was successful or not.
+         * @param {Integer} id The tool proxy id for the external registration.
+         * @param {String} status Whether the external registration was successful or not.
          */
         init: function(message, error, id, status) {
             if (window.parent) {

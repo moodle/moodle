@@ -39,8 +39,8 @@ define(['jquery',
     /**
      * Competency picker in plan class.
      *
+     * @param {Number} userId
      * @param {Number|false} singlePlan The ID of the plan when limited to one.
-     * @param {String} pageContextIncludes One of 'children', 'parents', 'self'.
      * @param {Boolean} multiSelect Support multi-select in the tree.
      */
     var Picker = function(userId, singlePlan, multiSelect) {
@@ -88,7 +88,7 @@ define(['jquery',
      * @param {Number} planId The planId.
      * @param {String} searchText Limit the competencies to those matching the text.
      * @method _fetchCompetencies
-     * @return {Promise}
+     * @return {Promise} The promise object.
      */
     Picker.prototype._fetchCompetencies = function(planId, searchText) {
         var self = this;

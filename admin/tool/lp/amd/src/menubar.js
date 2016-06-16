@@ -44,7 +44,7 @@ define(['jquery'], function($) {
     /**
      * Constructor
      *
-     * @param {$} Jquery collection matching the root of the menu.
+     * @param {$} menuRoot Jquery collection matching the root of the menu.
      * @param {Function[]} handlers, called when a menu item is chosen.
      */
     var Menubar = function(menuRoot, handlers) {
@@ -144,7 +144,7 @@ define(['jquery'], function($) {
      * @method handleClick
      * @param {Object} item is the jquery object of the item firing the event
      * @param {Event} e is the associated event object
-     * @return boolean Returns false
+     * @return {boolean} Returns false
      */
     Menubar.prototype.handleClick = function(item, e) {
         e.stopPropagation();

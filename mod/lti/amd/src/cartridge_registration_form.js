@@ -43,7 +43,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'mod_lti/tool_type', 'mod_lt
      *
      * @method getCartridgeURL
      * @private
-     * @return string
+     * @return {String}
      */
     var getCartridgeURL = function() {
         return $(SELECTORS.REGISTRATION_FORM).attr('data-cartridge-url');
@@ -54,7 +54,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'mod_lti/tool_type', 'mod_lt
      *
      * @method getSubmitButton
      * @private
-     * @return object jQuery object
+     * @return {JQuery} jQuery object
      */
     var getSubmitButton = function() {
         return $(SELECTORS.REGISTRATION_SUBMIT_BUTTON);
@@ -65,7 +65,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'mod_lti/tool_type', 'mod_lt
      *
      * @method getCancelButton
      * @private
-     * @return object jQuery object
+     * @return {JQuery} jQuery object
      */
     var getCancelButton = function() {
         return $(SELECTORS.REGISTRATION_CANCEL_BUTTON);
@@ -76,7 +76,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'mod_lti/tool_type', 'mod_lt
      *
      * @method getConsumerKey
      * @private
-     * @return string
+     * @return {String} the value entered for consumer key.
      */
     var getConsumerKey = function() {
         return $(SELECTORS.CONSUMER_KEY).val();
@@ -87,7 +87,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'mod_lti/tool_type', 'mod_lt
      *
      * @method getSharedSecret
      * @private
-     * @return string
+     * @return {String} the value entered for shared secret
      */
     var getSharedSecret = function() {
         return $(SELECTORS.SHARED_SECRET).val();
@@ -118,7 +118,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'mod_lti/tool_type', 'mod_lt
      *
      * @method isLoading
      * @private
-     * @return bool
+     * @return {Boolean}
      */
     var isLoading = function() {
         return getSubmitButton().hasClass('loading');
@@ -134,7 +134,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'mod_lti/tool_type', 'mod_lt
      *
      * @method submitCartridgeURL
      * @private
-     * @return object jQuery deferred object
+     * @return {Promise} jQuery Deferred object
      */
     var submitCartridgeURL = function() {
         if (isLoading()) {
@@ -169,7 +169,9 @@ define(['jquery', 'core/ajax', 'core/notification', 'mod_lti/tool_type', 'mod_lt
                     error: true
                 });
             }).fail(notification.exception);
-        }).always(function() { stopLoading(); });
+        }).always(function() {
+          stopLoading();
+        });
 
         return promise;
     };

@@ -92,6 +92,7 @@ define(['core/yui'], function(Y) {
 
     /**
      * Get content.
+     * @return {node}
      */
     dialogue.prototype.getContent = function() {
         return this.yuiDialogue.bodyNode.getDOMNode();
