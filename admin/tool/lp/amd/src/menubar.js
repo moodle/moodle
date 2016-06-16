@@ -166,7 +166,7 @@ define(['jquery'], function($) {
             this.activeItem = null;
 
             // Close the menu.
-            this.menuRoot.find('ul').not('.root-level').attr('aria-hidden','true');
+            this.menuRoot.find('ul').not('.root-level').attr('aria-hidden', 'true');
             // Follow any link, or call the click handlers.
             var anchor = item.find('a').first();
             var clickEvent = new $.Event('click');
@@ -290,7 +290,7 @@ define(['jquery'], function($) {
                 subMenuContainer.css('margin-right', '-' + marginright + 'px');
             }
         } else {
-            if ( pos.left + menuRealWidth > $(window).width()) {
+            if (pos.left + menuRealWidth > $(window).width()) {
                 marginleft = menuRealWidth - widthmenuRoot;
                 subMenuContainer.css('margin-left', '-' + marginleft + 'px');
             }
@@ -319,7 +319,7 @@ define(['jquery'], function($) {
             return true;
         }
 
-        switch(e.keyCode) {
+        switch (e.keyCode) {
             case this.keys.tab: {
 
                 // Hide all menu items and update their aria attributes.
@@ -438,7 +438,7 @@ define(['jquery'], function($) {
             // This is the root level move to next sibling. This will require closing
             // the current child menu and opening the new one.
 
-            if (menuIndex < menuNum-1) {
+            if (menuIndex < menuNum - 1) {
                 // Not the last root menu.
                 newItem = item.next();
             } else { // Wrap to first item.
@@ -501,7 +501,7 @@ define(['jquery'], function($) {
                 menuIndex = this.rootMenus.index(rootItem);
 
                 // If this is not the last root menu item, move to the next one.
-                if (menuIndex < this.rootMenus.length-1) {
+                if (menuIndex < this.rootMenus.length - 1) {
                     newItem = rootItem.next();
                 } else {
                     // Loop.
@@ -687,7 +687,7 @@ define(['jquery'], function($) {
         // to the next item with a title that begins with that character.
         if (startChr) {
             var match = false;
-            var curNdx = menuIndex+1;
+            var curNdx = menuIndex + 1;
 
             // Check if the active item was the last one on the list.
             if (curNdx == menuNum) {
@@ -696,7 +696,7 @@ define(['jquery'], function($) {
 
             // Iterate through the menu items (starting from the current item and wrapping) until a match is found
             // or the loop returns to the current menu item.
-            while (curNdx != menuIndex)  {
+            while (curNdx != menuIndex) {
 
                 var titleChr = menuItems.eq(curNdx).html().charAt(0);
 
@@ -705,7 +705,7 @@ define(['jquery'], function($) {
                     break;
                 }
 
-                curNdx = curNdx+1;
+                curNdx = curNdx + 1;
 
                 if (curNdx == menuNum) {
                     // Reached the end of the list, start again at the beginning.
@@ -724,8 +724,8 @@ define(['jquery'], function($) {
                 return item;
             }
         } else {
-            if (menuIndex < menuNum-1) {
-                newItem = menuItems.eq(menuIndex+1);
+            if (menuIndex < menuNum - 1) {
+                newItem = menuItems.eq(menuIndex + 1);
             } else {
                 newItem = menuItems.first();
             }
@@ -763,7 +763,7 @@ define(['jquery'], function($) {
 
         // If item is not the first item in its menu, move to the previous item.
         if (menuIndex > 0) {
-            newItem = menuItems.eq(menuIndex-1);
+            newItem = menuItems.eq(menuIndex - 1);
         } else {
             // Loop to top of menu.
             newItem = menuItems.last();
@@ -823,7 +823,7 @@ define(['jquery'], function($) {
          *                             { "[data-action='add']" : callAddFunction }
          */
         enhance: function(selector, handler) {
-            $(selector).each(function (index, element) {
+            $(selector).each(function(index, element) {
                 var menuRoot = $(element);
                 // Don't enhance the same menu twice.
                 if (menuRoot.data("menubarEnhanced") !== true) {

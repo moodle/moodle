@@ -32,7 +32,7 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
      */
     var reloadListTemplate = function(templateList) {
         templates.render('tool_templatelibrary/search_results', { templates: templateList })
-            .done(function (result, js) {
+            .done(function(result, js) {
                 templates.replaceNode($('[data-region="searchresults"]'), result, js);
             }).fail(notification.exception);
     };

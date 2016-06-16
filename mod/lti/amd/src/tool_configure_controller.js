@@ -277,7 +277,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
             .fail(promise.reject);
 
         promise.fail(notification.exception)
-            .always(function () {
+            .always(function() {
                     stopLoading(container);
                 });
     };
@@ -313,9 +313,9 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
             }
         });
 
-        promise.fail(function () {
+        promise.fail(function() {
             str.get_string('errorbadurl', 'mod_lti')
-                .done(function (s) {
+                .done(function(s) {
                         $(document).trigger(ltiEvents.REGISTRATION_FEEDBACK, {
                                 message: s,
                                 error: true

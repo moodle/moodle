@@ -45,7 +45,7 @@ define(['jquery', 'core/yui'], function($, Y) {
         init: function(startButton, confirmationTitle, confirmationForm, popupoptions) {
             var finalStartButton = startButton;
 
-            Y.use('moodle-core-notification', 'moodle-core-formchangechecker', 'io-form', function () {
+            Y.use('moodle-core-notification', 'moodle-core-formchangechecker', 'io-form', function() {
                 if (Y.one(confirmationForm)) {
                     t.confirmDialogue = new M.core.dialogue({
                         headerContent: confirmationTitle,

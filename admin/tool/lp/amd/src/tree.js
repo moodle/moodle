@@ -186,12 +186,12 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
             var oneItem = null;
 
             while (lastIndex < currentIndex) {
-                oneItem  = $(this.visibleItems.get(lastIndex));
+                oneItem = $(this.visibleItems.get(lastIndex));
                 oneItem.attr('aria-selected', 'true');
                 lastIndex++;
             }
             while (lastIndex > currentIndex) {
-                oneItem  = $(this.visibleItems.get(lastIndex));
+                oneItem = $(this.visibleItems.get(lastIndex));
                 oneItem.attr('aria-selected', 'true');
                 lastIndex--;
             }
@@ -454,7 +454,7 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
 
                 // Iterate through the menu items (starting from the current item and wrapping) until a match is found
                 // or the loop returns to the current menu item.
-                while (currentIndex != itemIndex)  {
+                while (currentIndex != itemIndex) {
 
                     var currentItem = this.visibleItems.eq(currentIndex);
                     var titleChr = currentItem.text().charAt(0);
@@ -468,7 +468,7 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
                         break;
                     }
 
-                    currentIndex = currentIndex+1;
+                    currentIndex = currentIndex + 1;
                     if (currentIndex == itemCount) {
                         // Reached the end of the list, start again at the beginning.
                         currentIndex = 0;

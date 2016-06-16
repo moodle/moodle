@@ -62,7 +62,7 @@ define(['jquery',
                 { key: 'areyousure', component: 'moodle' },
                 { key: 'delete', component: 'moodle' },
                 { key: 'cancel', component: 'moodle' }
-            ]).done(function (strings) {
+            ]).done(function(strings) {
                 Notification.confirm(
                     strings[0], // Confirm.
                     strings[1], // Are you sure?

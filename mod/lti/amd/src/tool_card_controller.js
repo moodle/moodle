@@ -272,7 +272,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/t
                                         announceFailure(element);
                                         promise.reject(error);
                                     });
-                        }, function () {
+                        }, function() {
                                 stopLoading(element);
                                 promise.resolve();
                             });

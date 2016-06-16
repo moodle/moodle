@@ -69,10 +69,10 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
 
         // We do not allow navigation while ajax requests are pending.
 
-        $(document).bind("start-loading-user", function(){
+        $(document).bind("start-loading-user", function() {
             this._isLoading = true;
         }.bind(this));
-        $(document).bind("finish-loading-user", function(){
+        $(document).bind("finish-loading-user", function() {
             this._isLoading = false;
         }.bind(this));
     };

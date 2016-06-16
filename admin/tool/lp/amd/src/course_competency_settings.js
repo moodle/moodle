@@ -57,7 +57,7 @@ define(['jquery',
         e.preventDefault();
 
         templates.render('tool_lp/course_competency_settings', context).done(function(html) {
-            str.get_string('configurecoursecompetencysettings', 'tool_lp').done(function (title) {
+            str.get_string('configurecoursecompetencysettings', 'tool_lp').done(function(title) {
                 this._dialogue = new Dialogue(
                     title,
                     html,
