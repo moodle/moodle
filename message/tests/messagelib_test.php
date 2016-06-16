@@ -79,6 +79,63 @@ class core_message_messagelib_testcase extends advanced_testcase {
     }
 
     /**
+     * Send a fake unread notification.
+     *
+     * {@link message_send()} does not support transaction, this function will simulate a message
+     * sent from a user to another. We should stop using it once {@link message_send()} will support
+     * transactions. This is not clean at all, this is just used to add rows to the table.
+     *
+     * @param stdClass $userfrom user object of the one sending the message.
+     * @param stdClass $userto user object of the one receiving the message.
+     * @param string $message message to send.
+     * @param int $timecreated time the message was created.
+     * @return int the id of the message
+     */
+    protected function send_fake_unread_notification($userfrom, $userto, $message = 'Hello world!', $timecreated = 0) {
+        global $DB;
+
+        $record = new stdClass();
+        $record->useridfrom = $userfrom->id;
+        $record->useridto = $userto->id;
+        $record->notification = 1;
+        $record->subject = 'No subject';
+        $record->fullmessage = $message;
+        $record->smallmessage = $message;
+        $record->timecreated = $timecreated ? $timecreated : time();
+
+        return $DB->insert_record('message', $record);
+    }
+
+    /**
+     * Send a fake read notification.
+     *
+     * {@link message_send()} does not support transaction, this function will simulate a message
+     * sent from a user to another. We should stop using it once {@link message_send()} will support
+     * transactions. This is not clean at all, this is just used to add rows to the table.
+     *
+     * @param stdClass $userfrom user object of the one sending the message.
+     * @param stdClass $userto user object of the one receiving the message.
+     * @param string $message message to send.
+     * @param int $timecreated time the message was created.
+     * @return int the id of the message
+     */
+    protected function send_fake_read_notification($userfrom, $userto, $message = 'Hello world!', $timecreated = 0, $timeread = 0) {
+        global $DB;
+
+        $record = new stdClass();
+        $record->useridfrom = $userfrom->id;
+        $record->useridto = $userto->id;
+        $record->notification = 1;
+        $record->subject = 'No subject';
+        $record->fullmessage = $message;
+        $record->smallmessage = $message;
+        $record->timecreated = $timecreated ? $timecreated : time();
+        $record->timeread = $timeread ? $timeread : time();
+
+        return $DB->insert_record('message_read', $record);
+    }
+
+    /**
      * Test message_get_blocked_users.
      */
     public function test_message_get_blocked_users() {
@@ -869,5 +926,338 @@ class core_message_messagelib_testcase extends advanced_testcase {
         assign_capability('moodle/site:readallmessages', CAP_PROHIBIT, $roleid, $context);
 
         $this->assertTrue(message_is_user_blocked($recipient, $sender));
+    }
+
+    /**
+     * Test that the message_get_notifications function will return only read notifications if requested.
+     */
+    public function test_message_get_notifications_read_only() {
+        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
+        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
+
+        $this->send_fake_read_notification($sender, $recipient, 'Message 1', 2);
+        $this->send_fake_read_notification($sender, $recipient, 'Message 2', 4);
+
+        $notifications = message_get_notifications($recipient->id, 0, MESSAGE_READ);
+
+        $this->assertEquals($notifications[0]->fullmessage, 'Message 2');
+        $this->assertEquals($notifications[1]->fullmessage, 'Message 1');
+
+        // Check if we request read and unread but there are only read messages, it should
+        // still return those correctly.
+        $notifications = message_get_notifications($recipient->id, 0, '');
+
+        $this->assertEquals($notifications[0]->fullmessage, 'Message 2');
+        $this->assertEquals($notifications[1]->fullmessage, 'Message 1');
+    }
+
+    /**
+     * Test that the message_get_notifications function will return only unread notifications if requested.
+     */
+    public function test_message_get_notifications_unread_only() {
+        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
+        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
+
+        $this->send_fake_unread_notification($sender, $recipient, 'Message 1', 2);
+        $this->send_fake_unread_notification($sender, $recipient, 'Message 2', 4);
+
+        $notifications = message_get_notifications($recipient->id, 0, MESSAGE_UNREAD);
+
+        $this->assertEquals($notifications[0]->fullmessage, 'Message 2');
+        $this->assertEquals($notifications[1]->fullmessage, 'Message 1');
+
+        // Check if we request read and unread but there are only read messages, it should
+        // still return those correctly.
+        $notifications = message_get_notifications($recipient->id, 0, '');
+
+        $this->assertEquals($notifications[0]->fullmessage, 'Message 2');
+        $this->assertEquals($notifications[1]->fullmessage, 'Message 1');
+    }
+
+    /**
+     * Test that the message_get_notifications function will return the correct notifications when both
+     * read and unread notifications are included.
+     */
+    public function test_message_get_notifications_mixed() {
+        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
+        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
+
+        $this->send_fake_read_notification($sender, $recipient, 'Message 1', 1);
+        $this->send_fake_unread_notification($sender, $recipient, 'Message 2', 2);
+        $this->send_fake_read_notification($sender, $recipient, 'Message 3', 3, 1);
+        $this->send_fake_read_notification($sender, $recipient, 'Message 4', 3, 2);
+        $this->send_fake_unread_notification($sender, $recipient, 'Message 5', 4);
+
+        $notifications = message_get_notifications($recipient->id, 0);
+
+        $this->assertEquals($notifications[0]->fullmessage, 'Message 5');
+        $this->assertEquals($notifications[1]->fullmessage, 'Message 4');
+        $this->assertEquals($notifications[2]->fullmessage, 'Message 3');
+        $this->assertEquals($notifications[3]->fullmessage, 'Message 2');
+        $this->assertEquals($notifications[4]->fullmessage, 'Message 1');
+
+        $notifications = message_get_notifications($recipient->id, 0, MESSAGE_READ);
+
+        $this->assertEquals($notifications[0]->fullmessage, 'Message 4');
+        $this->assertEquals($notifications[1]->fullmessage, 'Message 3');
+        $this->assertEquals($notifications[2]->fullmessage, 'Message 1');
+
+        $notifications = message_get_notifications($recipient->id, 0, MESSAGE_UNREAD);
+
+        $this->assertEquals($notifications[0]->fullmessage, 'Message 5');
+        $this->assertEquals($notifications[1]->fullmessage, 'Message 2');
+    }
+
+    /**
+     * Test that the message_get_notifications function works correctly with limiting and offsetting
+     * the result set if requested.
+     */
+    public function test_message_get_notifications_all_with_limit_and_offset() {
+        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
+        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
+
+        $this->send_fake_read_notification($sender, $recipient, 'Message 1', 1);
+        $this->send_fake_unread_notification($sender, $recipient, 'Message 2', 2);
+        $this->send_fake_read_notification($sender, $recipient, 'Message 3', 3, 1);
+        $this->send_fake_read_notification($sender, $recipient, 'Message 4', 3, 2);
+        $this->send_fake_unread_notification($sender, $recipient, 'Message 5', 4);
+        $this->send_fake_unread_notification($sender, $recipient, 'Message 6', 5);
+
+        $notifications = message_get_notifications($recipient->id, 0, '', false, false, 'DESC', 2, 0);
+
+        $this->assertEquals($notifications[0]->fullmessage, 'Message 6');
+        $this->assertEquals($notifications[1]->fullmessage, 'Message 5');
+
+        $notifications = message_get_notifications($recipient->id, 0, '', false, false, 'DESC', 2, 2);
+
+        $this->assertEquals($notifications[0]->fullmessage, 'Message 4');
+        $this->assertEquals($notifications[1]->fullmessage, 'Message 3');
+
+        $notifications = message_get_notifications($recipient->id, 0, '', false, false, 'DESC', 0, 3);
+
+        $this->assertEquals($notifications[0]->fullmessage, 'Message 3');
+        $this->assertEquals($notifications[1]->fullmessage, 'Message 2');
+        $this->assertEquals($notifications[2]->fullmessage, 'Message 1');
+    }
+
+    /**
+     * Test that the message_get_notifications function returns correct values if specifying
+     * a sender.
+     */
+    public function test_message_get_notifications_multiple_senders() {
+        $sender1 = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
+        $sender2 = $this->getDataGenerator()->create_user(array('firstname' => 'Test3', 'lastname' => 'User3'));
+        $recipient1 = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
+        $recipient2 = $this->getDataGenerator()->create_user(array('firstname' => 'Test4', 'lastname' => 'User4'));
+
+        $this->send_fake_read_notification($sender1, $recipient1, 'Message 1', 1);
+        $this->send_fake_unread_notification($sender1, $recipient1, 'Message 2', 2);
+        $this->send_fake_read_notification($sender1, $recipient2, 'Message 3', 3);
+        $this->send_fake_unread_notification($sender1, $recipient2, 'Message 4', 4);
+        $this->send_fake_read_notification($sender2, $recipient1, 'Message 5', 5);
+        $this->send_fake_unread_notification($sender2, $recipient1, 'Message 6', 6);
+        $this->send_fake_read_notification($sender2, $recipient2, 'Message 7', 7);
+        $this->send_fake_unread_notification($sender2, $recipient2, 'Message 8', 8);
+
+        $notifications = message_get_notifications(0, $sender1->id, '', false, false, 'DESC');
+
+        $this->assertEquals($notifications[0]->fullmessage, 'Message 4');
+        $this->assertEquals($notifications[1]->fullmessage, 'Message 3');
+        $this->assertEquals($notifications[2]->fullmessage, 'Message 2');
+        $this->assertEquals($notifications[3]->fullmessage, 'Message 1');
+
+        $notifications = message_get_notifications(0, $sender1->id, '', false, false, 'DESC', 2, 2);
+
+        $this->assertEquals($notifications[0]->fullmessage, 'Message 2');
+        $this->assertEquals($notifications[1]->fullmessage, 'Message 1');
+
+        $notifications = message_get_notifications($recipient1->id, $sender1->id, '', false, false, 'DESC');
+
+        $this->assertEquals($notifications[0]->fullmessage, 'Message 2');
+        $this->assertEquals($notifications[1]->fullmessage, 'Message 1');
+    }
+
+    /**
+     * Test that the message_get_notifications function returns embedded user details for the
+     * sender if requested.
+     */
+    public function test_message_get_notifications_embed_sender() {
+        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
+        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
+
+        $this->send_fake_read_notification($sender, $recipient, 'Message 1', 1);
+        $this->send_fake_unread_notification($sender, $recipient, 'Message 2', 2);
+
+        $notifications = message_get_notifications(0, $sender->id, '', false, true, 'DESC');
+
+        $func = function($type) {
+            return function($notification) use ($type) {
+                $user = new stdClass();
+                $user = username_load_fields_from_object($user, $notification, $type);
+                return $user;
+            };
+        };
+        $senders = array_map($func('userfrom'), $notifications);
+        $recipients = array_map($func('userto'), $notifications);
+
+        $this->assertEquals($senders[0]->firstname, 'Test1');
+        $this->assertEquals($senders[0]->lastname, 'User1');
+        $this->assertEquals($senders[1]->firstname, 'Test1');
+        $this->assertEquals($senders[1]->lastname, 'User1');
+
+        // Make sure we didn't get recipient details when they weren't requested.
+        $this->assertEmpty($recipients[0]->firstname);
+        $this->assertEmpty($recipients[0]->lastname);
+        $this->assertEmpty($recipients[1]->firstname);
+        $this->assertEmpty($recipients[1]->lastname);
+    }
+
+    /**
+     * Test that the message_get_notifications function returns embedded user details for the
+     * recipient if requested.
+     */
+    public function test_message_get_notifications_embed_recipient() {
+        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
+        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
+
+        $this->send_fake_read_notification($sender, $recipient, 'Message 1', 1);
+        $this->send_fake_unread_notification($sender, $recipient, 'Message 2', 2);
+
+        $notifications = message_get_notifications(0, $sender->id, '', true, false, 'DESC');
+
+        $func = function($type) {
+            return function($notification) use ($type) {
+                $user = new stdClass();
+                $user = username_load_fields_from_object($user, $notification, $type);
+                return $user;
+            };
+        };
+        $senders = array_map($func('userfrom'), $notifications);
+        $recipients = array_map($func('userto'), $notifications);
+
+        $this->assertEquals($recipients[0]->firstname, 'Test2');
+        $this->assertEquals($recipients[0]->lastname, 'User2');
+        $this->assertEquals($recipients[1]->firstname, 'Test2');
+        $this->assertEquals($recipients[1]->lastname, 'User2');
+
+        // Make sure we didn't get sender details when they weren't requested.
+        $this->assertEmpty($senders[0]->firstname);
+        $this->assertEmpty($senders[0]->lastname);
+        $this->assertEmpty($senders[1]->firstname);
+        $this->assertEmpty($senders[1]->lastname);
+    }
+
+    /**
+     * Test that the message_get_notifications function returns embedded all user details.
+     */
+    public function test_message_get_notifications_embed_both() {
+        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
+        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
+
+        $this->send_fake_read_notification($sender, $recipient, 'Message 1', 1);
+        $this->send_fake_unread_notification($sender, $recipient, 'Message 2', 2);
+
+        $notifications = message_get_notifications(0, $sender->id, '', true, true, 'DESC');
+
+        $func = function($type) {
+            return function($notification) use ($type) {
+                $user = new stdClass();
+                $user = username_load_fields_from_object($user, $notification, $type);
+                return $user;
+            };
+        };
+        $senders = array_map($func('userfrom'), $notifications);
+        $recipients = array_map($func('userto'), $notifications);
+
+        $this->assertEquals($recipients[0]->firstname, 'Test2');
+        $this->assertEquals($recipients[0]->lastname, 'User2');
+        $this->assertEquals($recipients[1]->firstname, 'Test2');
+        $this->assertEquals($recipients[1]->lastname, 'User2');
+
+        // Make sure we didn't get sender details when they weren't requested.
+        $this->assertEquals($senders[0]->firstname, 'Test1');
+        $this->assertEquals($senders[0]->lastname, 'User1');
+        $this->assertEquals($senders[1]->firstname, 'Test1');
+        $this->assertEquals($senders[1]->lastname, 'User1');
+    }
+
+    /**
+     * Test message_count_unread_notifications.
+     */
+    public function test_message_count_unread_notifications() {
+        $sender1 = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
+        $sender2 = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
+        $recipient1 = $this->getDataGenerator()->create_user(array('firstname' => 'Test3', 'lastname' => 'User3'));
+        $recipient2 = $this->getDataGenerator()->create_user(array('firstname' => 'Test4', 'lastname' => 'User4'));
+
+        $this->send_fake_unread_notification($sender1, $recipient1);
+        $this->send_fake_unread_notification($sender1, $recipient1);
+        $this->send_fake_unread_notification($sender1, $recipient2);
+        $this->send_fake_unread_notification($sender2, $recipient1);
+        $this->send_fake_unread_notification($sender2, $recipient2);
+        $this->send_fake_unread_notification($sender2, $recipient2);
+
+        $this->assertEquals(message_count_unread_notifications($recipient1->id, $sender1->id), 2);
+        $this->assertEquals(message_count_unread_notifications($recipient2->id, $sender1->id), 1);
+        $this->assertEquals(message_count_unread_notifications($recipient1->id, $sender2->id), 1);
+        $this->assertEquals(message_count_unread_notifications($recipient2->id, $sender2->id), 2);
+        $this->assertEquals(message_count_unread_notifications($recipient1->id, 0), 3);
+        $this->assertEquals(message_count_unread_notifications($recipient2->id, 0), 3);
+    }
+
+
+    public function test_message_mark_all_read_for_user_touser() {
+        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
+        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
+
+        $this->send_fake_unread_notification($sender, $recipient);
+        $this->send_fake_unread_notification($sender, $recipient);
+        $this->send_fake_unread_notification($sender, $recipient);
+        $this->send_fake_message($sender, $recipient);
+        $this->send_fake_message($sender, $recipient);
+        $this->send_fake_message($sender, $recipient);
+
+        message_mark_all_read_for_user($recipient->id);
+        $this->assertEquals(message_count_unread_messages($recipient), 0);
+    }
+
+    public function test_message_mark_all_read_for_user_touser_with_fromuser() {
+        $sender1 = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
+        $sender2 = $this->getDataGenerator()->create_user(array('firstname' => 'Test3', 'lastname' => 'User3'));
+        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
+
+        $this->send_fake_unread_notification($sender1, $recipient);
+        $this->send_fake_unread_notification($sender1, $recipient);
+        $this->send_fake_unread_notification($sender1, $recipient);
+        $this->send_fake_message($sender1, $recipient);
+        $this->send_fake_message($sender1, $recipient);
+        $this->send_fake_message($sender1, $recipient);
+        $this->send_fake_unread_notification($sender2, $recipient);
+        $this->send_fake_unread_notification($sender2, $recipient);
+        $this->send_fake_unread_notification($sender2, $recipient);
+        $this->send_fake_message($sender2, $recipient);
+        $this->send_fake_message($sender2, $recipient);
+        $this->send_fake_message($sender2, $recipient);
+
+        message_mark_all_read_for_user($recipient->id, $sender1->id);
+        $this->assertEquals(message_count_unread_messages($recipient), 6);
+    }
+
+    public function test_message_mark_all_read_for_user_touser_with_type() {
+        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
+        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
+
+        $this->send_fake_unread_notification($sender, $recipient);
+        $this->send_fake_unread_notification($sender, $recipient);
+        $this->send_fake_unread_notification($sender, $recipient);
+        $this->send_fake_message($sender, $recipient);
+        $this->send_fake_message($sender, $recipient);
+        $this->send_fake_message($sender, $recipient);
+
+        message_mark_all_read_for_user($recipient->id, 0, MESSAGE_TYPE_NOTIFICATION);
+        $this->assertEquals(message_count_unread_messages($recipient), 3);
+
+        message_mark_all_read_for_user($recipient->id, 0, MESSAGE_TYPE_MESSAGE);
+        $this->assertEquals(message_count_unread_messages($recipient), 0);
     }
 }

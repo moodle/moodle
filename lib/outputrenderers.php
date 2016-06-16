@@ -160,7 +160,16 @@ class renderer_base {
                 throw new moodle_exception('Unknown template: ' . $templatename);
             }
         }
-        return trim($template->render($context));
+
+        $renderedTemplate = trim($template->render($context));
+
+        // If we had an existing uniqid helper then we need to restore it to allow
+        // handle nested calls of render_from_template.
+        if ($uniqidHelper) {
+            $mustache->addHelper('uniqid', $uniqidHelper);
+        }
+
+        return $renderedTemplate;
     }
 
 
