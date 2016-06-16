@@ -1,0 +1,86 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template message/notification_popover
+
+    This template will render the notification popover for the navigation bar.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * userid the logged in user id
+
+    Example context (json):
+    {
+    }
+
+}}
+{{< core/mdl_popover }}
+    {{$classes}}mdl-popover-notifications unread-only{{/classes}}
+    {{$attributes}}id="nav-notification-popover-container" data-userid="{{userid}}"{{/attributes}}
+
+    {{$togglelabel}}{{#str}} shownotificationwindownonew, message {{/str}}{{/togglelabel}}
+    {{$togglecontent}}
+        {{#pix}} i/notifications, core, {{#str}} togglenotificationmenu, message {{/str}} {{/pix}}
+        <div class="count-container hidden"></div>
+    {{/togglecontent}}
+
+    {{$containerlabel}}{{#str}} notificationwindow, message {{/str}}{{/containerlabel}}
+
+    {{$headertext}}{{#str}} notifications, message {{/str}}{{/headertext}}
+    {{$headeractions}}
+        <div class="fancy-toggle on" tabindex="0" aria-label="{{#str}} showallnotifications, message {{/str}}">
+            <div class="slider-container"><div class="slider"></div></div>
+            <div class="off-text">{{#str}} all {{/str}}</div>
+            <div class="on-text">{{#str}} new {{/str}}</div>
+        </div>
+        <a id="mark-all-read-button"
+            href="#"
+            data-toggle="tooltip"
+            data-placement="top"
+            data-original-title="{{#str}} markallread {{/str}}"
+            aria-role="button">
+            <span class="normal-icon">{{#pix}} t/markasread, core, {{#str}} markallread {{/str}} {{/pix}}</span>
+            <span class="loading-icon">{{#pix}} y/loading, core, {{#str}} loading, mod_assign {{/str}} {{/pix}}</span>
+        </a>
+        <a href="{{{urls.preferences}}}"
+            data-toggle="tooltip"
+            data-placement="top"
+            data-original-title="{{#str}} notificationpreferences, message {{/str}}">
+            {{#pix}} i/settings, core, {{#str}} notificationpreferences, message {{/str}} {{/pix}}
+        </a>
+    {{/headeractions}}
+
+    {{$content}}
+        <div class="all-notifications" role="log" aria-busy="false" aria-atomic="false" aria-relevant="additions"></div>
+        <div class="empty-message" tabindex="0">{{#str}} nonotifications, message {{/str}}</div>
+        <div class="unread-notifications" role="log" aria-busy="false" aria-atomic="false" aria-relevant="additions"></div>
+        <div class="empty-message" tabindex="0">{{#str}} nonewnotifications, message {{/str}}</div>
+    {{/content}}
+{{/ core/mdl_popover }}
+{{#js}}
+require(['jquery', 'message/notification_popover_controller'], function($, controller) {
+    var container = $('#nav-notification-popover-container');
+    var controller = new controller(container);
+    controller.registerEventListeners();
+    controller.registerListNavigationEventListeners();
+});
+{{/js}}

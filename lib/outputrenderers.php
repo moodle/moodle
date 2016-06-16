@@ -145,6 +145,14 @@ class renderer_base {
         static $templatecache = array();
         $mustache = $this->get_mustache();
 
+        try {
+            // Grab a copy of the existing helper to be restored later.
+            $uniqidHelper = $mustache->getHelper('uniqid');
+        } catch (Mustache_Exception_UnknownHelperException $e) {
+            // Helper doesn't exist.
+            $uniqidHelper = null;
+        }
+
         // Provide 1 random value that will not change within a template
         // but will be different from template to template. This is useful for
         // e.g. aria attributes that only work with id attributes and must be
@@ -3182,6 +3190,27 @@ EOD;
         $searchinput = html_writer::tag('form', $contents, $formattrs);
 
         return html_writer::tag('div', $searchicon . $searchinput, array('class' => 'search-input-wrapper', 'id' => $id));
+    }
+
+    /**
+     * Returns the noticication menu
+     *
+     * @return string         HTML for the notification menu
+     */
+    public function notification_menu() {
+        global $USER;
+
+        if (isloggedin()) {
+            $context = [
+                'userid' => $USER->id,
+                'urls' => [
+                    'preferences' => (new moodle_url('/message/edit.php', ['id' => $USER->id]))->out(),
+                ],
+            ];
+            return $this->render_from_template('message/notification_popover', $context);
+        } else {
+            return '';
+        }
     }
 
     /**
