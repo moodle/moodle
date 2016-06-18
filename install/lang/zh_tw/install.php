@@ -69,7 +69,9 @@ $string['pathshead'] = '確認路徑';
 $string['pathsrodataroot'] = '資料根目錄是無法寫入的';
 $string['pathsroparentdataroot'] = '上層目錄({$a->parent})是不可寫入的。安裝程式無法建立資料目錄({$a->dataroot})。';
 $string['pathssubadmindir'] = '有些網站主機使用/admin這個網址來瀏覽控制面版或其他功能。很不幸，這個設定和Moodle管理頁面的標準路徑產生衝突。這個問題可以解決，只需在您的安裝目錄中把admin更換名稱，然後把新名稱輸入到這裡。例如<em>moodleadmin</em>這麼做會改變Moodle中的管理連接。';
-$string['pathssubdataroot'] = '你需要有一個地方讓Moodle可以儲存上傳的檔案。這一目錄對於網頁伺服器用戶(通常是"nobody"或"apache")而言，應該是可讀的和<b>可寫的</b>。但是它必須不能經由網頁直接存取。若此目錄不存在，這安裝程式將會試著建立它。';
+$string['pathssubdataroot'] = '<p>你需要有一個目錄讓Moodle可以儲存所有的用戶上傳的檔案。</p><p>這目錄對於網頁伺服器用戶(通常是"www-data"、"nobody"或"apache")而言，應該是可讀的和<b>可寫的</b>。</p>
+<p>它必須是不能透過網際網路直接存取的。</p>
+<p>若此目錄目前不存在，這安裝過程將會試著建立它。</p>';
 $string['pathssubdirroot'] = '包含Moodle程式碼的目錄的完整路徑';
 $string['pathssubwwwroot'] = '可以進入使用Moodle的完整網址，也就是用戶為了要使用Moodle，而需要輸入到瀏覽器的網址列的地址。
 
@@ -87,9 +89,10 @@ $string['phpversionhelp'] = '<p>Moodle 需要的PHP版本至少要4.3.0或是5.1
 <p>您必須更新您的 PHP 或在有更新版本的主機上進行安裝！(若是5.0.x，你可以下降到4.4.x 版本)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = '這個頁面是提醒您已經成功安裝與啟動 <strong>{$a->packname} {$a->packversion}</strong> ，恭喜！';
-$string['welcomep30'] = '<strong>{$a->installername}</strong>包含了可以建立<strong>Moodle</strong>執行環境的應用程序：';
+$string['welcomep30'] = '這一<strong>{$a->installername}</strong>的版本包含了一些可以建立<strong>Moodle</strong>執行環境的應用程序：';
 $string['welcomep40'] = '這個軟體還包含了<strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>。';
 $string['welcomep50'] = '使用本軟體包所包含的所有應用程序時，應遵循它們各自的授權協議。整個<strong>{$a->installername}</strong> 軟體都是<a href="http://www.opensource.org/docs/definition_plain.html">開放原始碼</a> ，並且是在 <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> 授權協議下發佈。';
-$string['welcomep60'] = '接下來的頁面將會透過一些簡單的步驟引導您安裝 <strong>Moodle</strong> 到電腦中，您可以接受預設值，或是針對自己的需求調整修改。';
+$string['welcomep60'] = '接下來的一些頁面將會透過一些簡單的步驟引導您配置和設定在你電腦上的 <strong>Moodle</strong> 。
+您可以接受這些預設值，或是針對你自己的需要來調整。';
 $string['welcomep70'] = '點選 "下一步" 按鈕，繼續設定<strong>Moodle</strong>.';
 $string['wwwroot'] = '網站位址';
