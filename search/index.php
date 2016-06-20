@@ -109,7 +109,7 @@ if ($data) {
 
 if ($errorstr = $search->get_engine()->get_query_error()) {
     echo $OUTPUT->notification(get_string('queryerror', 'search', $errorstr), 'notifyproblem');
-} else if (empty($results) && !empty($data)) {
+} else if (empty($results->totalcount) && !empty($data)) {
     echo $OUTPUT->notification(get_string('noresults', 'search'), 'notifymessage');
 }
 
