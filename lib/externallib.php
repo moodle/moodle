@@ -915,14 +915,16 @@ function external_format_string($str, $contextid, $striplinks = true, $options =
  * @param object/array $options text formatting options
  * @return array text + textformat
  * @since Moodle 2.3
+ * @since Moodle 3.2 component, filearea and itemid are optional parameters
  */
-function external_format_text($text, $textformat, $contextid, $component, $filearea, $itemid, $options = null) {
+function external_format_text($text, $textformat, $contextid, $component = null, $filearea = null, $itemid = null,
+                                $options = null) {
     global $CFG;
 
     // Get settings (singleton).
     $settings = external_settings::get_instance();
 
-    if ($settings->get_fileurl()) {
+    if ($component and $filearea and $settings->get_fileurl()) {
         require_once($CFG->libdir . "/filelib.php");
         $text = file_rewrite_pluginfile_urls($text, $settings->get_file(), $contextid, $component, $filearea, $itemid);
     }

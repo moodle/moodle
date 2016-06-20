@@ -3,6 +3,12 @@ information provided here is intended especially for developers.
 
 This information is intended for authors of webservices, not people writing webservice clients.
 
+=== 3.2 ===
+
+* external_format_text function: component, filearea and itemid are now optional parameters.
+  In some contexts those parameteres are not necessary because is not required to do a file rewrite via
+  file_rewrite_pluginfile_urls.
+
 === 3.1 ===
 
 * The xmlrpc backend has changed, Zend_XmlRpc has been dropped and there might be slight differences in
