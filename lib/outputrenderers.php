@@ -4280,6 +4280,56 @@ EOD;
     public function render_inplace_editable(\core\output\inplace_editable $element) {
         return $this->render_from_template('core/inplace_editable', $element->export_for_template($this));
     }
+
+    /**
+     * Renders a bar chart.
+     *
+     * @param \core\chart_bar $chart The chart.
+     * @return string.
+     */
+    public function render_chart_bar(\core\chart_bar $chart) {
+        return $this->render_chart($chart);
+    }
+
+    /**
+     * Renders a line chart.
+     *
+     * @param \core\chart_line $chart The chart.
+     * @return string.
+     */
+    public function render_chart_line(\core\chart_line $chart) {
+        return $this->render_chart($chart);
+    }
+
+    /**
+     * Renders a pie chart.
+     *
+     * @param \core\chart_pie $chart The chart.
+     * @return string.
+     */
+    public function render_chart_pie(\core\chart_pie $chart) {
+        return $this->render_chart($chart);
+    }
+
+    /**
+     * Renders a chart.
+     *
+     * @param \core\chart_base $chart The chart.
+     * @return string.
+     */
+    public function render_chart(\core\chart_base $chart) {
+        $id = 'chart' . uniqid();
+        // TODO Handle the canvas in the output module rather than here.
+        $canvas = html_writer::tag('canvas', '', ['id' => $id]);
+        $js = "require(['core/chart_builder', 'core/chart_output'], function(Builder, Output) {
+            Builder.make(" . json_encode($chart) . ").then(function(ChartInst) {
+                new Output('#" . $id . "', ChartInst);
+            });
+        });";
+        $this->page->requires->js_init_code($js, true);
+        return $canvas;
+    }
+
 }
 
 /**
