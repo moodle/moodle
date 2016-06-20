@@ -590,7 +590,7 @@ function quiz_get_user_attempts($quizids, $userid, $status = 'finished', $includ
 
     return $DB->get_records_select('quiz_attempts',
             "quiz $insql AND userid = :userid" . $previewclause . $statuscondition,
-            $params, 'attempt ASC');
+            $params, 'quiz, attempt ASC');
 }
 
 /**
