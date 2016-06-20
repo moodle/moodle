@@ -116,7 +116,10 @@ if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
     echo "//]]\n";
     echo "</script>\n";
     echo "<p>".get_string("basiclti_in_new_window", "lti")."</p>\n";
-    echo "<p> <a href='launch.php?id=".$cm->id."' target='_blank'>".get_string("basiclti_in_new_window_open", "lti")."</a></p>\n";
+    $url = new moodle_url('/mod/lti/launch.php', array('id' => $cm->id));
+    echo html_writer::start_tag('p');
+    echo html_writer::link($url, get_string("basiclti_in_new_window_open", "lti"), array('target' => '_blank'));
+    echo html_writer::end_tag('p');
 } else {
     // Request the launch content with an iframe tag.
     echo '<iframe id="contentframe" height="600px" width="100%" src="launch.php?id='.$cm->id.'"></iframe>';
