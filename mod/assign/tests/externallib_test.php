@@ -153,7 +153,8 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         // Create a course.
         $course1 = self::getDataGenerator()->create_course(array(
             'idnumber' => 'idnumbercourse1',
-            'fullname' => 'Lightwork Course 1',
+            'fullname' => '<b>Lightwork Course 1</b>',      // Adding tags here to check that external_format_string works.
+            'shortname' => '<b>Lightwork Course 1</b>',     // Adding tags here to check that external_format_string works.
             'summary' => 'Lightwork Course 1 description',
             'summaryformat' => FORMAT_MOODLE,
             'category' => $category->id
@@ -221,6 +222,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, count($result['courses']));
         $course = $result['courses'][0];
         $this->assertEquals('Lightwork Course 1', $course['fullname']);
+        $this->assertEquals('Lightwork Course 1', $course['shortname']);
         $this->assertEquals(1, count($course['assignments']));
         $assignment = $course['assignments'][0];
         $this->assertEquals($assign1->id, $assignment['id']);

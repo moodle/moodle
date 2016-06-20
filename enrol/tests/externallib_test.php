@@ -363,6 +363,8 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
 
         $coursedata1 = array(
+            'fullname'         => '<b>Course 1</b>',                // Adding tags here to check that external_format_string works.
+            'shortname'         => '<b>Course 1</b>',               // Adding tags here to check that external_format_string works.
             'summary'          => 'Lightwork Course 1 description',
             'summaryformat'    => FORMAT_MOODLE,
             'lang'             => 'en',
@@ -401,6 +403,8 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
 
         // Check there are no differences between $course1 properties and course values returned by the webservice
         // only for those fields listed in the $coursedata1 array.
+        $course1->fullname = external_format_string($course1->fullname, $contexts[$course1->id]->id);
+        $course1->shortname = external_format_string($course1->shortname, $contexts[$course1->id]->id);
         foreach ($enrolledincourses as $courseenrol) {
             if ($courseenrol['id'] == $course1->id) {
                 foreach ($coursedata1 as $fieldname => $value) {
