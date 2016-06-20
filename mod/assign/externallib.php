@@ -341,6 +341,7 @@ class mod_assign_external extends external_api {
                 if (!isset($courses[$cid])) {
                     $courses[$cid] = get_course($cid);
                 }
+                $courses[$cid]->contextid = $context->id;
             } catch (Exception $e) {
                 unset($courses[$cid]);
                 $warnings[] = array(
@@ -473,8 +474,8 @@ class mod_assign_external extends external_api {
             }
             $coursearray[]= array(
                 'id' => $courses[$id]->id,
-                'fullname' => $courses[$id]->fullname,
-                'shortname' => $courses[$id]->shortname,
+                'fullname' => external_format_string($courses[$id]->fullname, $course->contextid),
+                'shortname' => external_format_string($courses[$id]->shortname, $course->contextid),
                 'timemodified' => $courses[$id]->timemodified,
                 'assignments' => $assignmentarray
             );
