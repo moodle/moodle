@@ -3035,7 +3035,7 @@ function require_user_key_login($script, $instance=null) {
  * @param int $userid
  * @param int $instance optional instance id
  * @param string $iprestriction optional ip restricted access
- * @param timestamp $validuntil key valid only until given data
+ * @param int $validuntil key valid only until given data
  * @return string access key value
  */
 function create_user_key($script, $userid, $instance=null, $iprestriction=null, $validuntil=null) {
@@ -3078,7 +3078,7 @@ function delete_user_key($script, $userid) {
  * @param int $userid
  * @param int $instance optional instance id
  * @param string $iprestriction optional ip restricted access
- * @param timestamp $validuntil key valid only until given data
+ * @param int $validuntil key valid only until given date
  * @return string access key value
  */
 function get_user_key($script, $userid, $instance=null, $iprestriction=null, $validuntil=null) {
