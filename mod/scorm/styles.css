@@ -85,7 +85,7 @@
 }
 
 #page-mod-scorm-player #scormpage .scoframe {
-    frameborder: 0;
+    border: 0;
 }
 
 #page-mod-scorm-player #scormpage #scorm_object {
