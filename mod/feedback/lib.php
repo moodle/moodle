@@ -313,21 +313,6 @@ function feedback_delete_instance($id) {
 }
 
 /**
- * this is called after deleting all instances if the course will be deleted.
- * only templates have to be deleted
- *
- * @global object
- * @param object $course
- * @return boolean
- */
-function feedback_delete_course($course) {
-    global $DB;
-
-    //delete all templates of given course
-    return $DB->delete_records('feedback_template', array('course'=>$course->id));
-}
-
-/**
  * Return a small object with summary information about what a
  * user has done with a given particular instance of this module
  * Used for user activity reports.

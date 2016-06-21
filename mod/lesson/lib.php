@@ -275,19 +275,6 @@ function lesson_delete_instance($id) {
 }
 
 /**
- * Given a course object, this function will clean up anything that
- * would be leftover after all the instances were deleted
- *
- * @global object
- * @param object $course an object representing the course that is being deleted
- * @param boolean $feedback to specify if the process must output a summary of its work
- * @return boolean
- */
-function lesson_delete_course($course, $feedback=true) {
-    return true;
-}
-
-/**
  * Return a small object with summary information about what a
  * user has done with a given particular instance of this module
  * Used for user activity reports.

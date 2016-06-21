@@ -15,18 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Feedback version information
+ * Feedback event handler definition.
  *
  * @package mod_feedback
- * @author     Andreas Grabs
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @category event
+ * @copyright 2016 Marina Glancy
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+// List of observers.
+$observers = array(
 
-$plugin->version   = 2016061300;       // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2016051900;    // Requires this Moodle version
-$plugin->component = 'mod_feedback';   // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 0;
+    array(
+        'eventname'   => '\core\event\course_content_deleted',
+        'callback'    => 'mod_feedback_observer::course_content_deleted',
+    ),
 
-$feedback_version_intern = 1; //this version is used for restore older backups
+);

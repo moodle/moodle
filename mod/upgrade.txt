@@ -1,6 +1,10 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.2 ===
+
+* Callback delete_course is deprecated and should be replaced with observer for event \core\event\course_content_deleted
+
 === 3.1 ===
 
 * Old /mod/MODULENAME/pix/icon.gif and enrol/paypal/pix/icon.gif GIF icons have been removed. Please use pix_icon

@@ -4804,6 +4804,9 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
         echo $OUTPUT->notification($strdeleted.get_string('type_block_plural', 'plugin'), 'notifysuccess');
     }
 
+    // Get the list of all modules that are properly installed.
+    $allmodules = $DB->get_records_menu('modules', array(), '', 'name, id');
+
     // Delete every instance of every module,
     // this has to be done before deleting of course level stuff.
     $locations = core_component::get_plugin_list('mod');
@@ -4811,30 +4814,36 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
         if ($modname === 'NEWMODULE') {
             continue;
         }
-        if ($module = $DB->get_record('modules', array('name' => $modname))) {
+        if (array_key_exists($modname, $allmodules)) {
+            $sql = "SELECT cm.*, m.id AS modinstance, m.name, '$modname' AS modname
+              FROM {".$modname."} m
+                   LEFT JOIN {course_modules} cm ON cm.instance = m.id AND cm.module = :moduleid
+             WHERE m.course = :courseid";
+            $instances = $DB->get_records_sql($sql, array('courseid' => $course->id,
+                'modulename' => $modname, 'moduleid' => $allmodules[$modname]));
+
             include_once("$moddir/lib.php");                 // Shows php warning only if plugin defective.
             $moddelete = $modname .'_delete_instance';       // Delete everything connected to an instance.
             $moddeletecourse = $modname .'_delete_course';   // Delete other stray stuff (uncommon).
 
-            if ($instances = $DB->get_records($modname, array('course' => $course->id))) {
-                foreach ($instances as $instance) {
-                    if ($cm = get_coursemodule_from_instance($modname, $instance->id, $course->id)) {
+            if ($instances) {
+                foreach ($instances as $cm) {
+                    if ($cm->id) {
                         // Delete activity context questions and question categories.
                         question_delete_activity($cm,  $showfeedback);
-
                         // Notify the competency subsystem.
                         \core_competency\api::hook_course_module_deleted($cm);
                     }
                     if (function_exists($moddelete)) {
                         // This purges all module data in related tables, extra user prefs, settings, etc.
-                        $moddelete($instance->id);
+                        $moddelete($cm->modinstance);
                     } else {
                         // NOTE: we should not allow installation of modules with missing delete support!
                         debugging("Defective module '$modname' detected when deleting course contents: missing function $moddelete()!");
-                        $DB->delete_records($modname, array('id' => $instance->id));
+                        $DB->delete_records($modname, array('id' => $cm->modinstance));
                     }
 
-                    if ($cm) {
+                    if ($cm->id) {
                         // Delete cm and its context - orphaned contexts are purged in cron in case of any race condition.
                         context_helper::delete_instance(CONTEXT_MODULE, $cm->id);
                         $DB->delete_records('course_modules', array('id' => $cm->id));
@@ -4842,7 +4851,9 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
                 }
             }
             if (function_exists($moddeletecourse)) {
-                // Execute ptional course cleanup callback.
+                // Execute optional course cleanup callback. Deprecated since Moodle 3.2. TODO MDL-53297 remove in 3.6.
+                debugging("Callback delete_course is deprecated. Function $moddeletecourse should be converted " .
+                    'to observer of event \core\event\course_content_deleted', DEBUG_DEVELOPER);
                 $moddeletecourse($course, $showfeedback);
             }
             if ($instances and $showfeedback) {
@@ -4862,12 +4873,13 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
            'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
            array($courseid));
 
-    // Remove course-module data.
+    // Remove course-module data that has not been removed in modules' _delete_instance callbacks.
     $cms = $DB->get_records('course_modules', array('course' => $course->id));
+    $allmodulesbyid = array_flip($allmodules);
     foreach ($cms as $cm) {
-        if ($module = $DB->get_record('modules', array('id' => $cm->module))) {
+        if (array_key_exists($cm->module, $allmodulesbyid)) {
             try {
-                $DB->delete_records($module->name, array('id' => $cm->instance));
+                $DB->delete_records($allmodulesbyid[$cm->module], array('id' => $cm->instance));
             } catch (Exception $e) {
                 // Ignore weird or missing table problems.
             }
@@ -4880,17 +4892,19 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
         echo $OUTPUT->notification($strdeleted.get_string('type_mod_plural', 'plugin'), 'notifysuccess');
     }
 
-    // Cleanup the rest of plugins.
+    // Cleanup the rest of plugins. Deprecated since Moodle 3.2. TODO MDL-53297 remove in 3.6.
     $cleanuplugintypes = array('report', 'coursereport', 'format');
     $callbacks = get_plugins_with_function('delete_course', 'lib.php');
     foreach ($cleanuplugintypes as $type) {
         if (!empty($callbacks[$type])) {
             foreach ($callbacks[$type] as $pluginfunction) {
+                debugging("Callback delete_course is deprecated. Function $pluginfunction should be converted " .
+                    'to observer of event \core\event\course_content_deleted', DEBUG_DEVELOPER);
                 $pluginfunction($course->id, $showfeedback);
             }
-        }
-        if ($showfeedback) {
-            echo $OUTPUT->notification($strdeleted.get_string('type_'.$type.'_plural', 'plugin'), 'notifysuccess');
+            if ($showfeedback) {
+                echo $OUTPUT->notification($strdeleted.get_string('type_'.$type.'_plural', 'plugin'), 'notifysuccess');
+            }
         }
     }
 
