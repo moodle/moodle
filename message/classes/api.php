@@ -101,4 +101,23 @@ class api {
 
         return new \core_message\output\messages($userid, $otheruserid, $arrmessages);
     }
+
+    /**
+     * Returns the most recent message between two users.
+     *
+     * @param int $userid the current user
+     * @param int $otheruserid the other user
+     * @return \core_message\output\message|null
+     */
+    public static function get_most_recent_message($userid, $otheruserid) {
+        // We want two messages here so we get an accurate 'blocktime' value.
+        if ($messages = \core_message\helper::get_messages($userid, $otheruserid, 0, 2, 'timecreated DESC')) {
+            // Swap the order so we now have them in historical order.
+            $messages = array_reverse($messages);
+            $arrmessages = \core_message\helper::create_messages($userid, $messages);
+            return array_pop($arrmessages);
+        }
+
+        return null;
+    }
 }

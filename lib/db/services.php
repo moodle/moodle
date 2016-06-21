@@ -660,6 +660,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true,
     ),
+    'core_message_data_for_messagearea_get_most_recent_message' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'data_for_messagearea_get_most_recent_message',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Retrieve the template data for the most recent message',
+        'type' => 'read',
+        'ajax' => true,
+    ),
     'core_message_get_contacts' => array(
         'classname' => 'core_message_external',
         'methodname' => 'get_contacts',
@@ -699,6 +707,7 @@ $functions = array(
         'description' => 'Send instant messages',
         'type' => 'write',
         'capabilities' => 'moodle/site:sendmessage',
+        'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_unblock_contacts' => array(
