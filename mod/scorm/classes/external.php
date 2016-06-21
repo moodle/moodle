@@ -693,6 +693,7 @@ class mod_scorm_external extends external_api {
                 $module['name']  = external_format_string($scorm->name, $context->id);
                 list($module['intro'], $module['introformat']) =
                     external_format_text($scorm->intro, $scorm->introformat, $context->id, 'mod_scorm', 'intro', $scorm->id);
+                $module['introfiles'] = external_util::get_area_files($context->id, 'mod_scorm', 'intro', false, false);
 
                 // Check if the SCORM open and return warnings if so.
                 list($open, $openwarnings) = scorm_get_availability_status($scorm, true, $context);
@@ -769,6 +770,7 @@ class mod_scorm_external extends external_api {
                             'name' => new external_value(PARAM_RAW, 'SCORM name'),
                             'intro' => new external_value(PARAM_RAW, 'The SCORM intro'),
                             'introformat' => new external_format_value('intro'),
+                            'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
                             'packagesize' => new external_value(PARAM_INT, 'SCORM zip package size', VALUE_OPTIONAL),
                             'packageurl' => new external_value(PARAM_URL, 'SCORM zip package URL', VALUE_OPTIONAL),
                             'version' => new external_value(PARAM_NOTAGS, 'SCORM version (SCORM_12, SCORM_13, SCORM_AICC)',

@@ -649,8 +649,8 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         $result = mod_scorm_external::get_scorms_by_courses(array($course1->id));
         $result = external_api::clean_returnvalue($returndescription, $result);
         $this->assertCount(1, $result['warnings']);
-        // Only 'id', 'coursemodule', 'course', 'name', 'intro', 'introformat'.
-        $this->assertCount(6, $result['scorms'][0]);
+        // Only 'id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles'.
+        $this->assertCount(7, $result['scorms'][0]);
         $this->assertEquals('expired', $result['warnings'][0]['warningcode']);
 
         $scorm1->timeopen = $timenow + DAYSECS;
@@ -660,8 +660,8 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         $result = mod_scorm_external::get_scorms_by_courses(array($course1->id));
         $result = external_api::clean_returnvalue($returndescription, $result);
         $this->assertCount(1, $result['warnings']);
-        // Only 'id', 'coursemodule', 'course', 'name', 'intro', 'introformat'.
-        $this->assertCount(6, $result['scorms'][0]);
+        // Only 'id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles'.
+        $this->assertCount(7, $result['scorms'][0]);
         $this->assertEquals('notopenyet', $result['warnings'][0]['warningcode']);
 
         // Reset times.
@@ -716,6 +716,9 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
 
             // Since we return the fields used as boolean as PARAM_BOOL instead PARAM_INT we need to force casting here.
             // From the returned fields definition we obtain the type expected for the field.
+            if (empty($returndescription->keys['scorms']->content->keys[$field]->type)) {
+                continue;
+            }
             $fieldtype = $returndescription->keys['scorms']->content->keys[$field]->type;
             if ($fieldtype == PARAM_BOOL) {
                 $expected1[$field] = (bool) $scorm1->{$field};
@@ -725,6 +728,8 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
                 $expected2[$field] = $scorm2->{$field};
             }
         }
+        $expected1['introfiles'] = [];
+        $expected2['introfiles'] = [];
 
         $expectedscorms = array();
         $expectedscorms[] = $expected2;

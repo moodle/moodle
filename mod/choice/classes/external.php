@@ -507,6 +507,8 @@ class mod_choice_external extends external_api {
                 list($choicedetails['intro'], $choicedetails['introformat']) =
                     external_format_text($choice->intro, $choice->introformat,
                                             $context->id, 'mod_choice', 'intro', null);
+                    $choicedetails['introfiles'] = external_util::get_area_files($context->id, 'mod_choice', 'intro', false,
+                                                                                    false);
 
                 if (has_capability('mod/choice:choose', $context)) {
                     $choicedetails['publish']  = $choice->publish;
@@ -557,6 +559,7 @@ class mod_choice_external extends external_api {
                             'name' => new external_value(PARAM_RAW, 'Choice name'),
                             'intro' => new external_value(PARAM_RAW, 'The choice intro'),
                             'introformat' => new external_format_value('intro'),
+                            'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
                             'publish' => new external_value(PARAM_BOOL, 'If choice is published', VALUE_OPTIONAL),
                             'showresults' => new external_value(PARAM_INT, '0 never, 1 after answer, 2 after close, 3 always',
                                                                 VALUE_OPTIONAL),

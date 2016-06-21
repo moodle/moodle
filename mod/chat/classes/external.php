@@ -549,6 +549,7 @@ class mod_chat_external extends external_api {
                 // Format intro.
                 list($chatdetails['intro'], $chatdetails['introformat']) =
                     external_format_text($chat->intro, $chat->introformat, $chatcontext->id, 'mod_chat', 'intro', null);
+                $chatdetails['introfiles'] = external_util::get_area_files($chatcontext->id, 'mod_chat', 'intro', false, false);
 
                 if (has_capability('mod/chat:chat', $chatcontext)) {
                     $chatdetails['chatmethod']    = $CFG->chat_method;
@@ -592,6 +593,7 @@ class mod_chat_external extends external_api {
                             'name' => new external_value(PARAM_RAW, 'Chat name'),
                             'intro' => new external_value(PARAM_RAW, 'The Chat intro'),
                             'introformat' => new external_format_value('intro'),
+                            'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
                             'chatmethod' => new external_value(PARAM_ALPHA, 'chat method (sockets, daemon)', VALUE_OPTIONAL),
                             'keepdays' => new external_value(PARAM_INT, 'keep days', VALUE_OPTIONAL),
                             'studentlogs' => new external_value(PARAM_INT, 'student logs visible to everyone', VALUE_OPTIONAL),

@@ -104,6 +104,7 @@ class mod_wiki_external extends external_api {
                 if (has_capability('mod/wiki:viewpage', $context)) {
                     list($module['intro'], $module['introformat']) =
                         external_format_text($wiki->intro, $wiki->introformat, $context->id, 'mod_wiki', 'intro', $wiki->id);
+                    $module['introfiles'] = external_util::get_area_files($context->id, 'mod_wiki', 'intro', false, false);
 
                     $viewablefields = array('firstpagetitle', 'wikimode', 'defaultformat', 'forceformat', 'editbegin', 'editend',
                                             'section', 'visible', 'groupmode', 'groupingid');
@@ -151,6 +152,7 @@ class mod_wiki_external extends external_api {
                             'name' => new external_value(PARAM_RAW, 'Wiki name.'),
                             'intro' => new external_value(PARAM_RAW, 'Wiki intro.', VALUE_OPTIONAL),
                             'introformat' => new external_format_value('Wiki intro format.', VALUE_OPTIONAL),
+                            'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
                             'timecreated' => new external_value(PARAM_INT, 'Time of creation.', VALUE_OPTIONAL),
                             'timemodified' => new external_value(PARAM_INT, 'Time of last modification.', VALUE_OPTIONAL),
                             'firstpagetitle' => new external_value(PARAM_RAW, 'First page title.', VALUE_OPTIONAL),

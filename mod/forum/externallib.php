@@ -92,6 +92,7 @@ class mod_forum_external extends external_api {
                 // Format the intro before being returning using the format setting.
                 list($forum->intro, $forum->introformat) = external_format_text($forum->intro, $forum->introformat,
                                                                                 $context->id, 'mod_forum', 'intro', 0);
+                $forum->introfiles = external_util::get_area_files($context->id, 'mod_forum', 'intro', false, false);
                 // Discussions count. This function does static request cache.
                 $forum->numdiscussions = forum_count_discussions($forum, $cm, $course);
                 $forum->cmid = $forum->coursemodule;
@@ -121,6 +122,7 @@ class mod_forum_external extends external_api {
                     'name' => new external_value(PARAM_RAW, 'Forum name'),
                     'intro' => new external_value(PARAM_RAW, 'The forum intro'),
                     'introformat' => new external_format_value('intro'),
+                    'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
                     'assessed' => new external_value(PARAM_INT, 'Aggregate type'),
                     'assesstimestart' => new external_value(PARAM_INT, 'Assess start time'),
                     'assesstimefinish' => new external_value(PARAM_INT, 'Assess finish time'),

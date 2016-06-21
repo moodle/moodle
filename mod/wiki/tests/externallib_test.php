@@ -172,9 +172,9 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
 
         // Create what we expect to be returned when querying the two courses.
         // First for the student user.
-        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'firstpagetitle', 'wikimode',
-                                'defaultformat', 'forceformat', 'editbegin', 'editend', 'section', 'visible', 'groupmode',
-                                'groupingid');
+        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'firstpagetitle',
+                                'wikimode', 'defaultformat', 'forceformat', 'editbegin', 'editend', 'section', 'visible',
+                                'groupmode', 'groupingid');
 
         // Add expected coursemodule and data.
         $wiki1 = $this->wiki;
@@ -184,6 +184,7 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
         $wiki1->visible = true;
         $wiki1->groupmode = 0;
         $wiki1->groupingid = 0;
+        $wiki1->introfiles = [];
 
         $wiki2->coursemodule = $wiki2->cmid;
         $wiki2->introformat = 1;
@@ -191,6 +192,7 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
         $wiki2->visible = true;
         $wiki2->groupmode = 0;
         $wiki2->groupingid = 0;
+        $wiki2->introfiles = [];
 
         foreach ($expectedfields as $field) {
             $expected1[$field] = $wiki1->{$field};

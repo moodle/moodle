@@ -106,6 +106,8 @@ class mod_survey_external extends external_api {
                     // Format intro.
                     list($surveydetails['intro'], $surveydetails['introformat']) =
                         external_format_text($survey->intro, $survey->introformat, $context->id, 'mod_survey', 'intro', null);
+                    $surveydetails['introfiles'] = external_util::get_area_files($context->id, 'mod_survey', 'intro', false,
+                                                                                    false);
 
                     $surveydetails['template']  = $survey->template;
                     $surveydetails['days']      = $survey->days;
@@ -149,6 +151,7 @@ class mod_survey_external extends external_api {
                             'name' => new external_value(PARAM_RAW, 'Survey name'),
                             'intro' => new external_value(PARAM_RAW, 'The Survey intro', VALUE_OPTIONAL),
                             'introformat' => new external_format_value('intro', VALUE_OPTIONAL),
+                            'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
                             'template' => new external_value(PARAM_INT, 'Survey type', VALUE_OPTIONAL),
                             'days' => new external_value(PARAM_INT, 'Days', VALUE_OPTIONAL),
                             'questions' => new external_value(PARAM_RAW, 'Question ids', VALUE_OPTIONAL),
