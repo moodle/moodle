@@ -283,6 +283,9 @@ class mod_workshop_renderer extends plugin_renderer_base {
     protected function render_workshop_user_plan(workshop_user_plan $plan) {
         $table = new html_table();
         $table->attributes['class'] = 'userplan';
+        $table->attributes['role'] = 'section';
+        $numberofphases = count($plan->phases);
+        $table->attributes['aria-label'] = get_string('userplanaccessibilitytitle', 'workshop', $numberofphases);
         $table->head = array();
         $table->colclasses = array();
         $row = new html_table_row();
