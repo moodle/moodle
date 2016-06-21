@@ -165,7 +165,7 @@ function useredit_update_user_preference($usernew) {
  * Updates the provided users profile picture based upon the expected fields returned from the edit or edit_advanced forms.
  *
  * @deprecated since Moodle 3.2 MDL-51789 - please use core_user::update_picture() instead.
- * @todo MDL-54858 This will be deleted in Moodle 3.5.
+ * @todo MDL-54858 This will be deleted in Moodle 3.6.
  * @see core_user::update_picture()
  *
  * @global moodle_database $DB
