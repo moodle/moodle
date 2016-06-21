@@ -46,7 +46,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      *
      * @method getToolCreateButton
      * @private
-     * @return object jQuery object
+     * @return {Object} jQuery object
      */
     var getToolCreateButton = function() {
         return $(SELECTORS.TOOL_CREATE_BUTTON);
@@ -57,7 +57,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      *
      * @method getToolListContainer
      * @private
-     * @return object jQuery object
+     * @return {Object} jQuery object
      */
     var getToolListContainer = function() {
         return $(SELECTORS.TOOL_LIST_CONTAINER);
@@ -68,7 +68,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      *
      * @method getExternalRegistrationContainer
      * @private
-     * @return object jQuery object
+     * @return {Object} jQuery object
      */
     var getExternalRegistrationContainer = function() {
         return $(SELECTORS.EXTERNAL_REGISTRATION_CONTAINER);
@@ -79,7 +79,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      *
      * @method getCartridgeRegistrationContainer
      * @private
-     * @return object jQuery object
+     * @return {Object} jQuery object
      */
     var getCartridgeRegistrationContainer = function() {
         return $(SELECTORS.CARTRIDGE_REGISTRATION_CONTAINER);
@@ -90,7 +90,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      *
      * @method getRegistrationChoiceContainer
      * @private
-     * @return object jQuery object
+     * @return {Object} jQuery object
      */
     var getRegistrationChoiceContainer = function() {
         return $(SELECTORS.REGISTRATION_CHOICE_CONTAINER);
@@ -101,7 +101,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      *
      * @method getToolURL
      * @private
-     * @return string
+     * @return {String} the tool type url
      */
     var getToolURL = function() {
         return $(SELECTORS.TOOL_URL).val();
@@ -156,6 +156,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      * panels.
      *
      * @method showCartridgeRegistration
+     * @param {String} url
      * @private
      */
     var showCartridgeRegistration = function(url) {
@@ -172,6 +173,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      * This function can be removed once JAWS supports visibility.
      *
      * @method screenReaderAnnounce
+     * @param {Object} element
      * @private
      */
     var screenReaderAnnounce = function(element) {
@@ -218,6 +220,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      * Display the registration feedback alert and hide the other panels.
      *
      * @method showRegistrationFeedback
+     * @param {Object} data
      * @private
      */
     var showRegistrationFeedback = function(data) {
@@ -233,7 +236,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      *
      * @method startLoading
      * @private
-     * @param object jQuery object
+     * @param {Object} element jQuery object
      */
     var startLoading = function(element) {
         element.addClass("loading");
@@ -244,7 +247,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      *
      * @method stopLoading
      * @private
-     * @param object jQuery object
+     * @param {Object} element jQuery object
      */
     var stopLoading = function(element) {
         element.removeClass("loading");
@@ -277,7 +280,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
             .fail(promise.reject);
 
         promise.fail(notification.exception)
-            .always(function () {
+            .always(function() {
                     stopLoading(container);
                 });
     };
@@ -288,7 +291,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
      *
      * @method addTool
      * @private
-     * @return object jQuery deferred object
+     * @return {Promise} jQuery Deferred object
      */
     var addTool = function() {
         var url = $.trim(getToolURL());
@@ -302,7 +305,9 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
 
         var promise = toolType.isCartridge(url);
 
-        promise.always(function() { stopLoading(toolButton); });
+        promise.always(function() {
+          stopLoading(toolButton);
+        });
 
         promise.done(function(result) {
             if (result.iscartridge) {
@@ -313,9 +318,9 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
             }
         });
 
-        promise.fail(function () {
+        promise.fail(function() {
             str.get_string('errorbadurl', 'mod_lti')
-                .done(function (s) {
+                .done(function(s) {
                         $(document).trigger(ltiEvents.REGISTRATION_FEEDBACK, {
                                 message: s,
                                 error: true

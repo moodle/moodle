@@ -66,7 +66,7 @@ define(['jquery',
         var parent = $('[data-region="competencyactions"]').data('competency');
 
         var params = {
-            competencyframeworkid : treeModel.getCompetencyFrameworkId(),
+            competencyframeworkid: treeModel.getCompetencyFrameworkId(),
             pagecontextid: pageContextId
         };
 
@@ -86,7 +86,7 @@ define(['jquery',
                 { key: 'addingcompetencywillresetparentrule', component: 'tool_lp', param: parent.shortname },
                 { key: 'yes', component: 'core' },
                 { key: 'no', component: 'core' }
-            ]).done(function (strings) {
+            ]).done(function(strings) {
                 notification.confirm(
                     strings[0],
                     strings[1],
@@ -157,7 +157,7 @@ define(['jquery',
                 { key: confirmMessage, component: 'tool_lp' },
                 { key: 'yes', component: 'moodle' },
                 { key: 'no', component: 'moodle' }
-            ]).done(function (strings) {
+            ]).done(function(strings) {
                 notification.confirm(
                     strings[0], // Confirm.
                     strings[1], // Delete competency X?
@@ -187,8 +187,13 @@ define(['jquery',
         });
         treeRoot.show();
 
-        body.on('click', '[data-action="move"]', function() { popup.close(); confirmMove(); });
-        body.on('click', '[data-action="cancel"]', function() { popup.close(); });
+        body.on('click', '[data-action="move"]', function() {
+          popup.close();
+          confirmMove();
+        });
+        body.on('click', '[data-action="cancel"]', function() {
+          popup.close();
+        });
     };
 
     /**
@@ -213,6 +218,7 @@ define(['jquery',
 
     /**
      * A node was chosen and "Move" was selected from the menu. Open a popup to select the target.
+     * @param {Event} e
      * @method moveHandler
      */
     var moveHandler = function(e) {
@@ -230,7 +236,7 @@ define(['jquery',
                     competencyframeworkid: competency.competencyframeworkid,
                     searchtext: ''
                 }
-            },{
+            }, {
                 methodname: 'core_competency_read_competency_framework',
                 args: {
                     id: competency.competencyframeworkid
@@ -257,7 +263,7 @@ define(['jquery',
                 { key: 'movecompetency', component: 'tool_lp', param: competency.shortname },
                 { key: 'move', component: 'tool_lp' },
                 { key: 'cancel', component: 'moodle' }
-            ]).done(function (strings) {
+            ]).done(function(strings) {
 
                 var context = {
                     framework: framework,
@@ -288,8 +294,8 @@ define(['jquery',
         var competency = $('[data-region="competencyactions"]').data('competency');
 
         var params = {
-            competencyframeworkid : treeModel.getCompetencyFrameworkId(),
-            id : competency.id,
+            competencyframeworkid: treeModel.getCompetencyFrameworkId(),
+            id: competency.id,
             parentid: competency.parentid,
             pagecontextid: pageContextId
         };
@@ -300,6 +306,7 @@ define(['jquery',
 
     /**
      * Re-render the page with the latest data.
+     * @param {Object} context
      * @method reloadPage
      */
     var reloadPage = function(context) {
@@ -313,6 +320,7 @@ define(['jquery',
 
     /**
      * Perform a search and render the page with the new search results.
+     * @param {Event} e
      * @method updateSearchHandler
      */
     var updateSearchHandler = function(e) {
@@ -381,7 +389,7 @@ define(['jquery',
                 courses: courses
             };
             templates.render('tool_lp/linked_courses_summary', context).done(function(html) {
-                str.get_string('linkedcourses', 'tool_lp').done(function (linkedcourses) {
+                str.get_string('linkedcourses', 'tool_lp').done(function(linkedcourses) {
                     new Dialogue(
                         linkedcourses, // Title.
                         html, // The linked courses.
@@ -413,7 +421,7 @@ define(['jquery',
                     });
                 });
 
-                calls.push( {
+                calls.push({
                     methodname: 'tool_lp_data_for_related_competencies_section',
                     args: { competencyid: relatedTarget.id }
                 });
@@ -486,7 +494,7 @@ define(['jquery',
                 str.get_strings([
                 { key: 'competencycannotbedeleted', component: 'tool_lp', param: competency.shortname },
                 { key: 'cancel', component: 'moodle' }
-                ]).done(function (strings) {
+                ]).done(function(strings) {
                     notification.alert(
                         null,
                         strings[0]
@@ -514,7 +522,7 @@ define(['jquery',
             { key: confirmMessage, component: 'tool_lp', param: competency.shortname },
             { key: 'delete', component: 'moodle' },
             { key: 'cancel', component: 'moodle' }
-        ]).done(function (strings) {
+        ]).done(function(strings) {
             notification.confirm(
                 strings[0], // Confirm.
                 strings[1], // Delete competency X?
@@ -528,6 +536,7 @@ define(['jquery',
     /**
      * HTML5 implementation of drag/drop (there is an accesible alternative in the menus).
      * @method dragStart
+     * @param {Event} e
      */
     var dragStart = function(e) {
         e.originalEvent.dataTransfer.setData('text', $(e.target).parent().data('id'));
@@ -536,6 +545,7 @@ define(['jquery',
     /**
      * HTML5 implementation of drag/drop (there is an accesible alternative in the menus).
      * @method allowDrop
+     * @param {Event} e
      */
     var allowDrop = function(e) {
         e.originalEvent.dataTransfer.dropEffect = 'move';
@@ -545,6 +555,7 @@ define(['jquery',
     /**
      * HTML5 implementation of drag/drop (there is an accesible alternative in the menus).
      * @method dragEnter
+     * @param {Event} e
      */
     var dragEnter = function(e) {
         e.preventDefault();
@@ -554,6 +565,7 @@ define(['jquery',
     /**
      * HTML5 implementation of drag/drop (there is an accesible alternative in the menus).
      * @method dragLeave
+     * @param {Event} e
      */
     var dragLeave = function(e) {
         e.preventDefault();
@@ -563,6 +575,7 @@ define(['jquery',
     /**
      * HTML5 implementation of drag/drop (there is an accesible alternative in the menus).
      * @method dropOver
+     * @param {Event} e
      */
     var dropOver = function(e) {
         e.preventDefault();
@@ -614,7 +627,7 @@ define(['jquery',
     /**
      * Log the competency viewed event.
      *
-     * @param  {Object} The competency.
+     * @param  {Object} competency The competency.
      * @method triggerCompetencyViewedEvent
      */
     var triggerCompetencyViewedEvent = function(competency) {
@@ -729,6 +742,7 @@ define(['jquery',
      * @method selectionChanged
      * @param {Event} evt The event that triggered the selection change.
      * @param {Object} params The parameters for the event. Contains a list of selected nodes.
+     * @return {Boolean}
      */
     var selectionChanged = function(evt, params) {
         var node = params.selected,
@@ -781,7 +795,7 @@ define(['jquery',
      * Return the string "Selected <taxonomy>".
      *
      * @function parseTaxonomies
-     * @param  {String} Comma separated list of taxonomies.
+     * @param  {String} taxonomiesstr Comma separated list of taxonomies.
      * @return {Array} of level => taxonomystr
      */
     var parseTaxonomies = function(taxonomiesstr) {

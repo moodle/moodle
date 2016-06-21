@@ -26,12 +26,12 @@ define(['jquery'], function($) {
     /**
      * UserCompetencyCourseNavigation
      *
-     * @param {String} The selector of the user element.
-     * @param {String} The selector of the competency element.
-     * @param {String} The base url for the page (no params).
-     * @param {Number} The course id
-     * @param {Number} The user id
-     * @param {Number} The competency id
+     * @param {String} userSelector The selector of the user element.
+     * @param {String} competencySelector The selector of the competency element.
+     * @param {String} baseUrl The base url for the page (no params).
+     * @param {Number} userId The user id
+     * @param {Number} competencyId The competency id
+     * @param {Number} courseId The course id
      */
     var UserCompetencyCourseNavigation = function(userSelector, competencySelector, baseUrl, userId, competencyId, courseId) {
         this._baseUrl = baseUrl;

@@ -31,6 +31,7 @@ define(['jquery',
 
     /**
      * Grade dialogue class.
+     * @param {Array} ratingOptions
      */
     var Grade = function(ratingOptions) {
         EventBase.prototype.constructor.apply(this, []);
@@ -46,7 +47,6 @@ define(['jquery',
     /**
      * After render hook.
      *
-     * @return {Promise}
      * @method _afterRender
      * @protected
      */
@@ -118,6 +118,7 @@ define(['jquery',
      *
      * @param {String} selector
      * @method _find
+     * @returns {node} The node
      * @protected
      */
     Grade.prototype._find = function(selector) {

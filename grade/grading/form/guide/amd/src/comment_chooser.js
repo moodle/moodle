@@ -22,7 +22,7 @@
  * @copyright  2015 Jun Pataleta <jun@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
   */
-define(['jquery', 'core/templates', 'core/notification', 'core/yui'], function ($, templates, notification) {
+define(['jquery', 'core/templates', 'core/notification', 'core/yui'], function($, templates, notification) {
 
     // Private variables and functions.
 
@@ -34,18 +34,18 @@ define(['jquery', 'core/templates', 'core/notification', 'core/yui'], function (
          * Basically, it performs the binding and handling of the button click event for
          * the 'Insert frequently used comment' button.
          *
-         * @param criterionId The criterion ID.
-         * @param buttonId The element ID of the button which the handler will be bound to.
-         * @param remarkId The element ID of the remark text area where the text of the selected comment will be copied to.
-         * @param commentOptions The array of frequently used comments to be used as options.
+         * @param {Integer} criterionId The criterion ID.
+         * @param {String} buttonId The element ID of the button which the handler will be bound to.
+         * @param {String} remarkId The element ID of the remark text area where the text of the selected comment will be copied to.
+         * @param {Array} commentOptions The array of frequently used comments to be used as options.
          */
-        initialise: function (criterionId, buttonId, remarkId, commentOptions) {
+        initialise: function(criterionId, buttonId, remarkId, commentOptions) {
             /**
              * Display the chooser dialog using the compiled HTML from the mustache template
              * and binds onclick events for the generated comment options.
              *
-             * @param compiledSource The compiled HTML from the mustache template
-             * @param comments Array containing comments.
+             * @param {String} compiledSource The compiled HTML from the mustache template
+             * @param {Array} comments Array containing comments.
              */
             function displayChooserDialog(compiledSource, comments) {
                 var titleLabel = '<label>' + M.util.get_string('insertcomment', 'gradingform_guide') + '</label>';
@@ -68,11 +68,11 @@ define(['jquery', 'core/templates', 'core/notification', 'core/yui'], function (
                 });
 
                 // Loop over each comment item and bind click events.
-                $.each(comments, function (index, comment) {
+                $.each(comments, function(index, comment) {
                     var commentOptionId = '#comment-option-' + criterionId + '-' + comment.id;
 
                     // Delegate click event for the generated option link.
-                    $(commentOptionId).click(function () {
+                    $(commentOptionId).click(function() {
                         var remarkTextArea = $('#' + remarkId);
                         var remarkText = remarkTextArea.val();
 
@@ -88,7 +88,7 @@ define(['jquery', 'core/templates', 'core/notification', 'core/yui'], function (
                     });
 
                     // Handle keypress on list items.
-                    $(document).off('keypress', commentOptionId).on('keypress', commentOptionId, function () {
+                    $(document).off('keypress', commentOptionId).on('keypress', commentOptionId, function() {
                         var keyCode = event.which || event.keyCode;
 
                         // Enter or space key.
@@ -124,14 +124,14 @@ define(['jquery', 'core/templates', 'core/notification', 'core/yui'], function (
 
                 // Render the template and display the comment chooser dialog.
                 templates.render('gradingform_guide/comment_chooser', context)
-                    .done(function (compiledSource) {
+                    .done(function(compiledSource) {
                         displayChooserDialog(compiledSource, commentOptions);
                     })
                     .fail(notification.exception);
             }
 
             // Bind click event for the comments chooser button.
-            $("#" + buttonId).click(function (e) {
+            $("#" + buttonId).click(function(e) {
                 e.preventDefault();
                 generateCommentsChooser();
             });

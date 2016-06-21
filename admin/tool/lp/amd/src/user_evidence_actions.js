@@ -165,7 +165,7 @@ define(['jquery',
                 { key: 'deleteuserevidence', component: 'tool_lp', param: evidence.name },
                 { key: 'delete', component: 'moodle' },
                 { key: 'cancel', component: 'moodle' }
-            ]).done(function (strings) {
+            ]).done(function(strings) {
                 notification.confirm(
                     strings[0], // Confirm.
                     strings[1], // Delete evidence X?
@@ -320,7 +320,7 @@ define(['jquery',
                 { key: 'sendallcompetenciestoreview', component: 'tool_lp', param: evidence.name },
                 { key: 'confirm', component: 'moodle' },
                 { key: 'cancel', component: 'moodle' }
-            ]).done(function (strings) {
+            ]).done(function(strings) {
                 notification.confirm(
                     strings[0], // Confirm.
                     strings[1], // Send all competencies in review for X?

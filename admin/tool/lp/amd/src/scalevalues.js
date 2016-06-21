@@ -32,7 +32,7 @@ define(['jquery', 'core/ajax'], function($, ajax) {
          * @param {Number} scaleid The scale id
          * @return [] {Promise}
          */
-
+        // eslint-disable-next-line camelcase
         get_values: function(scaleid) {
 
             var deferred = $.Deferred();
@@ -40,7 +40,7 @@ define(['jquery', 'core/ajax'], function($, ajax) {
             if (typeof localCache[scaleid] === 'undefined') {
                 ajax.call([{
                     methodname: 'core_competency_get_scale_values',
-                    args: {scaleid : scaleid},
+                    args: {scaleid: scaleid},
                     done: function(scaleinfo) {
                         localCache[scaleid] = scaleinfo;
                         deferred.resolve(scaleinfo);

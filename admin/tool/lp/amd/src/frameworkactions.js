@@ -93,17 +93,17 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
                 }
             }
         }]);
-        requests[0].done(function (success) {
+        requests[0].done(function(success) {
             if (success === false) {
                 var req = ajax.call([{
                     methodname: 'core_competency_read_competency_framework',
                     args: { id: frameworkid }
                 }]);
-                req[0].done(function (framework) {
+                req[0].done(function(framework) {
                     str.get_strings([
                         { key: 'frameworkcannotbedeleted', component: 'tool_lp', param: framework.shortname },
                         { key: 'cancel', component: 'moodle' }
-                    ]).done(function (strings) {
+                    ]).done(function(strings) {
                         notification.alert(
                             null,
                             strings[0]
@@ -136,7 +136,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
                 { key: 'deletecompetencyframework', component: 'tool_lp', param: framework.shortname },
                 { key: 'delete', component: 'moodle' },
                 { key: 'cancel', component: 'moodle' }
-            ]).done(function (strings) {
+            ]).done(function(strings) {
                 notification.confirm(
                     strings[0], // Confirm.
                     strings[1], // Delete competency framework X?

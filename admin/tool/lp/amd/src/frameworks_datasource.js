@@ -75,7 +75,6 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
          * @param {String} selector The selector of the auto complete element.
          * @param {String} query The query string.
          * @param {Function} callback A callback function receiving an array of results.
-         * @return {Void}
          */
         transport: function(selector, query, callback) {
             var el = $(selector),

@@ -21,7 +21,7 @@
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str','tool_lp/actionselector'],
+define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str', 'tool_lp/actionselector'],
        function($, templates, ajax, notification, str, Actionselector) {
     // Private variables and functions.
 
@@ -135,9 +135,9 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
                         { key: 'unlinkplanstemplate', component: 'tool_lp' },
                         { key: 'confirm', component: 'moodle' },
                         { key: 'cancel', component: 'moodle' }
-                    ]).done(function (strings) {
-                        var actions = [{'text': strings[2], 'value' : 'delete'},
-                                       {'text': strings[3], 'value' : 'unlink'}];
+                    ]).done(function(strings) {
+                        var actions = [{'text': strings[2], 'value': 'delete'},
+                                       {'text': strings[3], 'value': 'unlink'}];
                         var actionselector = new Actionselector(
                                 strings[0], // Title.
                                 strings[1], // Message
@@ -152,14 +152,13 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
                             doDelete();
                         });
                     }).fail(notification.exception);
-                }
-                else {
+                } else {
                     str.get_strings([
                         { key: 'confirm', component: 'moodle' },
                         { key: 'deletetemplate', component: 'tool_lp', param: template.shortname },
                         { key: 'delete', component: 'moodle' },
                         { key: 'cancel', component: 'moodle' }
-                    ]).done(function (strings) {
+                    ]).done(function(strings) {
                         notification.confirm(
                         strings[0], // Confirm.
                         strings[1], // Delete learning plan template X?

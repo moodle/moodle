@@ -231,7 +231,10 @@ define(['jquery',
                 competencyframeworkid: frameworkId
             }}
         ])[0].done(function(competencies) {
-
+          /**
+           * @param {Object} parent
+           * @param {Array} competencies
+           */
             function addCompetencyChildren(parent, competencies) {
                 for (var i = 0; i < competencies.length; i++) {
                     if (competencies[i].parentid == parent.id) {
@@ -265,6 +268,7 @@ define(['jquery',
      * Find a node in the dialogue.
      *
      * @param {String} selector
+     * @return {JQuery}
      * @method _find
      */
     Picker.prototype._find = function(selector) {
@@ -275,6 +279,7 @@ define(['jquery',
      * Convenience method to get a framework object.
      *
      * @param {Number} fid The framework ID.
+     * @return {Object}
      * @method _getFramework
      */
     Picker.prototype._getFramework = function(fid) {
@@ -437,7 +442,7 @@ define(['jquery',
      *
      * This needs to be set after reset/close.
      *
-     * @params {Number[]} The IDs.
+     * @param {Number[]} ids The IDs.
      * @method _setDisallowedCompetencyIDs
      */
     Picker.prototype.setDisallowedCompetencyIDs = function(ids) {
@@ -448,7 +453,7 @@ define(['jquery',
      * Trigger an event.
      *
      * @param {String} type The type of event.
-     * @param {Object} The data to pass to the listeners.
+     * @param {Object} data The data to pass to the listeners.
      * @method _reset
      */
     Picker.prototype._trigger = function(type, data) {

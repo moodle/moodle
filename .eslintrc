@@ -40,7 +40,7 @@
     'no-unreachable': 'warn',
     'no-unsafe-finally': 'error',
     'use-isnan': 'error',
-    'valid-jsdoc': ['warn', { 'requireReturn': false }],
+    'valid-jsdoc': ['warn', { 'requireReturn': false, 'requireParamDescription': false, 'requireReturnDescription': false }],
     'valid-typeof': 'error',
 
     // === Best Practices ===
@@ -115,7 +115,7 @@
     'max-params': 'off',
     'max-statements': 'off',
     'max-statements-per-line': 'off',
-    'new-cap': 'warn',
+    'new-cap': ['warn', { 'properties': false }],
     'new-parens': 'warn',
     'newline-after-var': 'off',
     'newline-before-return': 'off',

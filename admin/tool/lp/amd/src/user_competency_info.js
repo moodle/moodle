@@ -26,12 +26,12 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
     /**
      * Info
      *
-     * @param {JQuery} Selector to replace when the information needs updating.
-     * @param {Number} The id of the competency.
-     * @param {Number} The id of the user.
-     * @param {Number} The id of the plan.
-     * @param {Number} The id of the course.
-     * @param {Boolean} If we should display the user info.
+     * @param {JQuery} rootElement Selector to replace when the information needs updating.
+     * @param {Number} competencyId The id of the competency.
+     * @param {Number} userId The id of the user.
+     * @param {Number} planId The id of the plan.
+     * @param {Number} courseId The id of the course.
+     * @param {Boolean} displayuser If we should display the user info.
      */
     var Info = function(rootElement, competencyId, userId, planId, courseId, displayuser) {
         this._rootElement = rootElement;

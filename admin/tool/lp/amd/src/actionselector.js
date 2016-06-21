@@ -138,6 +138,7 @@ define(['jquery',
      * Find a node in the dialogue.
      *
      * @param {String} selector
+     * @return {JQuery} The node
      * @method _find
      */
     ActionSelector.prototype._find = function(selector) {
@@ -170,8 +171,8 @@ define(['jquery',
         for (var i in self._actions) {
             choices.push(self._actions[i]);
         }
-        var content = {'message': self._message, 'choices' : choices,
-            'confirm' : self._confirm, 'cancel' : self._cancel};
+        var content = {'message': self._message, 'choices': choices,
+            'confirm': self._confirm, 'cancel': self._cancel};
 
         return Templates.render('tool_lp/action_selector', content);
     };

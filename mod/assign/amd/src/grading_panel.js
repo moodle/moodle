@@ -100,6 +100,8 @@ define(['jquery', 'core/notification', 'core/templates', 'core/fragment',
      * Make form submit via ajax.
      *
      * @private
+     * @param {Object} event
+     * @param {Integer} nextUserId
      * @method _submitForm
      */
     GradingPanel.prototype._submitForm = function(event, nextUserId) {
@@ -180,6 +182,7 @@ define(['jquery', 'core/notification', 'core/templates', 'core/fragment',
      * Open a picker to choose an older attempt.
      *
      * @private
+     * @param {Object} e
      * @method _chooseAttempt
      */
     GradingPanel.prototype._chooseAttempt = function(e) {
@@ -210,7 +213,7 @@ define(['jquery', 'core/notification', 'core/templates', 'core/fragment',
      *
      * @private
      * @method _addPopoutButtons
-     * @param {JQuery} region The region to add popout buttons to.
+     * @param {JQuery} selector The region selector to add popout buttons to.
      */
     GradingPanel.prototype._addPopoutButtons = function(selector) {
         var region = $(selector);
@@ -250,7 +253,8 @@ define(['jquery', 'core/notification', 'core/templates', 'core/fragment',
      * @method _refreshGradingPanel
      * @param {Event} event
      * @param {Number} userid
-     * @param {String} serialised submission data.
+     * @param {String} submissiondata serialised submission data.
+     * @param {Integer} attemptnumber
      */
     GradingPanel.prototype._refreshGradingPanel = function(event, userid, submissiondata, attemptnumber) {
         var contextid = this._region.attr('data-contextid');

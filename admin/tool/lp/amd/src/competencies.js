@@ -35,6 +35,7 @@ define(['jquery',
      *
      * @param {Number} itemid
      * @param {String} itemtype
+     * @param {Number} pagectxid
      */
     var competencies = function(itemid, itemtype, pagectxid) {
         this.itemid = itemid;
@@ -106,7 +107,7 @@ define(['jquery',
                 }
             ]);
         } else {
-            return null;
+            return;
         }
 
         requests[0].fail(notification.exception);
@@ -276,7 +277,7 @@ define(['jquery',
                 { key: message, component: 'tool_lp', param: competency.shortname },
                 { key: 'confirm', component: 'moodle' },
                 { key: 'cancel', component: 'moodle' }
-            ]).done(function (strings) {
+            ]).done(function(strings) {
                 notification.confirm(
                     strings[0], // Confirm.
                     strings[1], // Unlink the competency X from the course?
@@ -300,7 +301,7 @@ define(['jquery',
 
         if (localthis.itemtype == 'course') {
             // Course completion rule handling.
-            $('[data-region="coursecompetenciespage"]').on('change', 'select[data-field="ruleoutcome"]', function(e){
+            $('[data-region="coursecompetenciespage"]').on('change', 'select[data-field="ruleoutcome"]', function(e) {
                 var requests = [];
                 var pagerender = 'tool_lp/course_competencies_page';
                 var pageregion = 'coursecompetenciespage';

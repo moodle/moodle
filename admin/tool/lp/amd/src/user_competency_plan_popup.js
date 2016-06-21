@@ -27,9 +27,9 @@ define(['jquery', 'core/notification', 'core/str', 'core/ajax', 'core/templates'
     /**
      * UserCompetencyPopup
      *
-     * @param {String} The regionSelector
-     * @param {String} The userCompetencySelector
-     * @param {Number} The plan ID
+     * @param {String} regionSelector The regionSelector
+     * @param {String} userCompetencySelector The userCompetencySelector
+     * @param {Number} planId The plan ID
      */
     var UserCompetencyPopup = function(regionSelector, userCompetencySelector, planId) {
         this._regionSelector = regionSelector;
@@ -53,14 +53,14 @@ define(['jquery', 'core/notification', 'core/str', 'core/ajax', 'core/templates'
         var planId = this._planId;
 
         var requests = ajax.call([{
-            methodname : 'tool_lp_data_for_user_competency_summary_in_plan',
+            methodname: 'tool_lp_data_for_user_competency_summary_in_plan',
             args: { competencyid: competencyId, planid: planId },
             done: this._contextLoaded.bind(this),
             fail: notification.exception
         }]);
 
         // Log the user competency viewed in plan event.
-        requests[0].then(function (result) {
+        requests[0].then(function(result) {
             var eventMethodName = 'core_competency_user_competency_viewed_in_plan';
             // Trigger core_competency_user_competency_plan_viewed event instead if plan is already completed.
             if (result.plan.iscompleted) {
@@ -98,7 +98,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/ajax', 'core/templates'
         var planId = this._planId;
 
         ajax.call([{
-            methodname : 'tool_lp_data_for_plan_page',
+            methodname: 'tool_lp_data_for_plan_page',
             args: { planid: planId},
             done: this._pageContextLoaded.bind(this),
             fail: notification.exception

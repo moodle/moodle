@@ -44,8 +44,8 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/t
      *
      * @method getDeleteButton
      * @private
-     * @param object jQuery object representing the tool card.
-     * @return object jQuery object
+     * @param {JQuery} element jQuery object representing the tool card.
+     * @return {JQuery} jQuery object
      */
     var getDeleteButton = function(element) {
         return element.find(SELECTORS.DELETE_BUTTON);
@@ -56,8 +56,8 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/t
      *
      * @method getActivateButton
      * @private
-     * @param object jQuery object representing the tool card.
-     * @return object jQuery object
+     * @param {JQuery} element jQuery object representing the tool card.
+     * @return {JQuery}  jQuery object
      */
     var getActivateButton = function(element) {
         return element.find(SELECTORS.ACTIVATE_BUTTON);
@@ -68,8 +68,8 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/t
      *
      * @method getTypeId
      * @private
-     * @param object jQuery object representing the tool card.
-     * @return string Type ID
+     * @param {JQuery} element jQuery object representing the tool card.
+     * @return {String} Type ID
      */
     var getTypeId = function(element) {
         return element.attr('data-proxy-id');
@@ -80,7 +80,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/t
      *
      * @method clearAllAnnouncements
      * @private
-     * @param object jQuery object representing the tool card.
+     * @param {JQuery} element jQuery object representing the tool card.
      */
     var clearAllAnnouncements = function(element) {
         element.removeClass('announcement loading success fail capabilities');
@@ -91,7 +91,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/t
      *
      * @method startLoading
      * @private
-     * @param object jQuery object representing the tool card.
+     * @param {JQuery} element jQuery object representing the tool card.
      */
     var startLoading = function(element) {
         clearAllAnnouncements(element);
@@ -103,7 +103,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/t
      *
      * @method stopLoading
      * @private
-     * @param object jQuery object representing the tool card.
+     * @param {JQuery} element jQuery object representing the tool card.
      */
     var stopLoading = function(element) {
         element.removeClass('announcement loading');
@@ -115,8 +115,8 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/t
      *
      * @method announceSuccess
      * @private
-     * @param object jQuery object representing the tool card.
-     * @return object jQuery Deferred object
+     * @param {JQuery} element jQuery object representing the tool card.
+     * @return {Promise} jQuery Deferred object
      */
     var announceSuccess = function(element) {
         var promise = $.Deferred();
@@ -137,8 +137,8 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/t
      *
      * @method announceFailure
      * @private
-     * @param object jQuery object representing the tool card.
-     * @return object jQuery Deferred object
+     * @param {JQuery} element jQuery object representing the tool card.
+     * @return {Promise} jQuery Deferred object
      */
     var announceFailure = function(element) {
         var promise = $.Deferred();
@@ -159,8 +159,8 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/t
      *
      * @method deleteType
      * @private
-     * @param object jQuery object representing the tool card.
-     * @return object jQuery Deferred object
+     * @param {JQuery} element jQuery object representing the tool card.
+     * @return {Promise} jQuery Deferred object
      */
     var deleteType = function(element) {
         var promise = $.Deferred();
@@ -205,7 +205,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/t
                                         announceFailure(element);
                                         promise.reject(error);
                                     });
-                    }, function () {
+                    }, function() {
                             stopLoading(element);
                             promise.resolve();
                         });
@@ -226,7 +226,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/t
      *
      * @method activateToolType
      * @private
-     * @param object jQuery object representing the tool card.
+     * @param {JQuery} element jQuery object representing the tool card.
      */
     var activateToolType = function(element) {
         var data = {proxyid: getTypeId(element)};
@@ -238,7 +238,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/t
      *
      * @method registerEventListeners
      * @private
-     * @param object jQuery object representing the tool card.
+     * @param {JQuery} element jQuery object representing the tool card.
      */
     var registerEventListeners = function(element) {
         var deleteButton = getDeleteButton(element);
@@ -275,7 +275,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/t
         /**
          * Initialise this module.
          *
-         * @param object jQuery object representing the tool card.
+         * @param {JQuery} element jQuery object representing the tool card.
          */
         init: function(element) {
             registerEventListeners(element);

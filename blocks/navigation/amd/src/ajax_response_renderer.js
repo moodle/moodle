@@ -28,9 +28,9 @@ define(['jquery'], function($) {
     // Copied from lib/navigationlib.php navigation_node constants.
     var NODETYPE = {
         // @type int Activity (course module) = 40.
-        ACTIVITY : 40,
+        ACTIVITY: 40,
         // @type int Resource (course module = 50.
-        RESOURCE : 50,
+        RESOURCE: 50,
     };
 
     /**
@@ -39,7 +39,6 @@ define(['jquery'], function($) {
      * @method buildDOM
      * @param {Object} rootElement the root element of DOM.
      * @param {object} nodes jquery object representing the nodes to be build.
-     * @return
      */
     function buildDOM(rootElement, nodes) {
         var ul = $('<ul></ul>');
@@ -94,7 +93,7 @@ define(['jquery'], function($) {
 
                 if (icon) {
                     link.append(icon);
-                    link.append('<span class="item-content-wrap">'+node.name+'</span>');
+                    link.append('<span class="item-content-wrap">' + node.name + '</span>');
                 } else {
                     link.append(node.name);
                 }
@@ -109,7 +108,7 @@ define(['jquery'], function($) {
 
                 if (icon) {
                     span.append(icon);
-                    span.append('<span class="item-content-wrap">'+node.name+'</span>');
+                    span.append('<span class="item-content-wrap">' + node.name + '</span>');
                 } else {
                     span.append(node.name);
                 }

@@ -43,7 +43,7 @@ define(['core/yui'], function(Y) {
             wide = false;
         }
 
-        Y.use('moodle-core-notification', 'timers', function () {
+        Y.use('moodle-core-notification', 'timers', function() {
             var width = '480px';
             if (wide) {
                 width = '800px';
@@ -92,6 +92,7 @@ define(['core/yui'], function(Y) {
 
     /**
      * Get content.
+     * @return {node}
      */
     dialogue.prototype.getContent = function() {
         return this.yuiDialogue.bodyNode.getDOMNode();

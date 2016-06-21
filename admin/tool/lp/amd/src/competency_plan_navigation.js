@@ -26,11 +26,11 @@ define(['jquery'], function($) {
     /**
      * CompetencyPlanNavigation
      *
-     * @param {String} The selector of the competency element.
-     * @param {String} The base url for the page (no params).
-     * @param {Number} The user id
-     * @param {Number} The competency id
-     * @param {Number} The plan id
+     * @param {String} competencySelector The selector of the competency element.
+     * @param {String} baseUrl The base url for the page (no params).
+     * @param {Number} userId The user id
+     * @param {Number} competencyId The competency id
+     * @param {Number} planId The plan id
      */
     var CompetencyPlanNavigation = function(competencySelector, baseUrl, userId, competencyId, planId) {
         this._baseUrl = baseUrl;

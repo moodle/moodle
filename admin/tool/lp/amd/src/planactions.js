@@ -178,7 +178,7 @@ define(['jquery',
                 { key: 'deleteplan', component: 'tool_lp', param: plan.name },
                 { key: 'delete', component: 'moodle' },
                 { key: 'cancel', component: 'moodle' }
-            ]).done(function (strings) {
+            ]).done(function(strings) {
                 notification.confirm(
                     strings[0], // Confirm.
                     strings[1], // Delete plan X?
@@ -225,7 +225,7 @@ define(['jquery',
                 { key: 'reopenplanconfirm', component: 'tool_lp', param: plan.name },
                 { key: 'reopenplan', component: 'tool_lp' },
                 { key: 'cancel', component: 'moodle' }
-            ]).done(function (strings) {
+            ]).done(function(strings) {
                 notification.confirm(
                     strings[0], // Confirm.
                     strings[1], // Reopen plan X?
@@ -272,7 +272,7 @@ define(['jquery',
                 { key: 'completeplanconfirm', component: 'tool_lp', param: plan.name },
                 { key: 'completeplan', component: 'tool_lp' },
                 { key: 'cancel', component: 'moodle' }
-            ]).done(function (strings) {
+            ]).done(function(strings) {
                 notification.confirm(
                     strings[0], // Confirm.
                     strings[1], // Complete plan X?
@@ -318,7 +318,7 @@ define(['jquery',
                 { key: 'unlinkplantemplateconfirm', component: 'tool_lp', param: plan.name },
                 { key: 'unlinkplantemplate', component: 'tool_lp' },
                 { key: 'cancel', component: 'moodle' }
-            ]).done(function (strings) {
+            ]).done(function(strings) {
                 notification.confirm(
                     strings[0], // Confirm.
                     strings[1], // Unlink plan X?
@@ -507,7 +507,7 @@ define(['jquery',
                 courses: courses
             };
             templates.render('tool_lp/linked_courses_summary', context).done(function(html) {
-                str.get_string('linkedcourses', 'tool_lp').done(function (linkedcourses) {
+                str.get_string('linkedcourses', 'tool_lp').done(function(linkedcourses) {
                     new Dialogue(
                         linkedcourses, // Title.
                         html // The linked courses.

@@ -120,14 +120,14 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
 
         var promises = ajax.call([{
             methodname: 'core_output_load_template',
-            args:{
+            args: {
                     component: component,
                     template: name,
                     themename: config.theme
             }
         }, {
             methodname: 'tool_templatelibrary_load_canonical_template',
-            args:{
+            args: {
                     component: component,
                     template: name
             }
@@ -136,7 +136,9 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
         // When returns a new promise that is resolved when all the passed in promises are resolved.
         // The arguments to the done become the values of each resolved promise.
         $.when.apply($, promises)
-            .done( function(source, originalSource) { templateLoaded(templateName, source, originalSource); })
+            .done(function(source, originalSource) {
+              templateLoaded(templateName, source, originalSource);
+            })
             .fail(notification.exception);
     };
 

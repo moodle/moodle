@@ -198,7 +198,6 @@ define(['jquery', 'core/notification', 'core/templates', 'core/ajax', 'tool_lp/d
      *
      * @name   scaleChangeHandler
      * @param  {Event} e
-     * @return {Void}
      * @function
      */
     ScaleConfig.prototype.scaleChangeHandler = function(e) {
