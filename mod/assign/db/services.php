@@ -198,7 +198,8 @@ $functions = array(
                 'description'   => 'List the participants for a single assignment, with some summary info about their submissions.',
                 'type'          => 'read',
                 'ajax'          => true,
-                'capabilities'  => 'mod/assign:view, mod/assign:viewgrades'
+                'capabilities'  => 'mod/assign:view, mod/assign:viewgrades',
+                'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 
         'mod_assign_submit_grading_form' => array(
