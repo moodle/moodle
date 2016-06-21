@@ -43,14 +43,12 @@ Feature: Sections can be edited and deleted in topics format
   Scenario: Edit section summary in topics format
     When I edit the section "2" and I fill the form with:
       | Summary | Welcome to section 2 |
-    And I press "Save changes"
     Then I should see "Welcome to section 2" in the "li#section-2" "css_element"
 
   Scenario: Edit section default name in topics format
     When I edit the section "2" and I fill the form with:
       | Use default section name | 0                        |
       | name                     | This is the second topic |
-    And I press "Save changes"
     Then I should see "This is the second topic" in the "li#section-2" "css_element"
     And I should not see "Topic 2" in the "li#section-2" "css_element"
 
