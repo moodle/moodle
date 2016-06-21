@@ -150,7 +150,6 @@
 
 .tool-lp-menu li {
     float: left;
-    display: inline;
     position: relative;
     list-style-type: none;
     white-space: nowrap;

@@ -61,7 +61,7 @@ dir-rtl.path-grade-report-singleview div.groupselector select {
 .path-grade-report-singleview .itemnav {
     font-size: small;
     display: inline;
-    margin-bottom: 0.5em;
+    padding-bottom: 0.5em;
 }
 .path-grade-report-singleview itemnav.previtem {
    float:left;
