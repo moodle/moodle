@@ -77,7 +77,9 @@ class workshop_numerrors_assessment_form extends workshop_assessment_form {
             $mform->addRule('group_grade__idx_' . $i, get_string('required'), 'required');
 
             // comment
-            $label = get_string('dimensioncomment', 'workshopform_numerrors');
+            $labelfor = html_writer::tag('span', get_string('dimensioncommentfor', 'workshopform_numerrors', $dimtitle),
+                            array('class' => 'accesshide'));
+            $label = get_string('dimensioncomment', 'workshopform_numerrors', $labelfor);
             $mform->addElement('textarea', 'peercomment__idx_' . $i, $label, array('cols' => 60, 'rows' => 5));
         }
         $this->set_data($current);

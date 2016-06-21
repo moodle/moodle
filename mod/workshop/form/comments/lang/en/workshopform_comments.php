@@ -24,7 +24,8 @@
  */
 
 $string['addmoredimensions'] = 'Blanks for {$a} more aspects';
-$string['dimensioncomment'] = 'Comment';
+$string['dimensioncomment'] = 'Comment {$a}';
+$string['dimensioncommentfor'] = 'for {$a}';
 $string['dimensiondescription'] = 'Description';
 $string['dimensionnumber'] = 'Aspect {$a}';
 $string['pluginname'] = 'Comments';

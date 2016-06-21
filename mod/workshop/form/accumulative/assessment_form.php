@@ -82,7 +82,9 @@ class workshop_accumulative_assessment_form extends workshop_assessment_form {
             $mform->addRule(array('grade__idx_' . $i, 'minusone') , get_string('mustchoosegrade', 'workshopform_accumulative'), 'compare', 'gt');
 
             // comment
-            $label = get_string('dimensioncomment', 'workshopform_accumulative');
+            $labelfor = html_writer::tag('span', get_string('dimensioncommentfor', 'workshopform_accumulative', $dimtitle),
+                            array('class' => 'accesshide'));
+            $label = get_string('dimensioncomment', 'workshopform_accumulative', $labelfor);
             //$mform->addElement('editor', 'peercomment__idx_' . $i, $label, null, array('maxfiles' => 0));
             $mform->addElement('textarea', 'peercomment__idx_' . $i, $label, array('cols' => 60, 'rows' => 5));
         }

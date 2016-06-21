@@ -26,7 +26,8 @@
 $string['addmoredimensions'] = 'Blanks for {$a} more assertions';
 $string['configgrade0'] = 'The default word describing the negative assessment of an assertion.';
 $string['configgrade1'] = 'The default word describing the positive assessment of an assertion.';
-$string['dimensioncomment'] = 'Comment';
+$string['dimensioncomment'] = 'Comment {$a}';
+$string['dimensioncommentfor'] = 'for {$a}';
 $string['dimensiondescription'] = 'Description';
 $string['dimensiongrade'] = 'Grade';
 $string['dimensionnumber'] = 'Assertion {$a}';

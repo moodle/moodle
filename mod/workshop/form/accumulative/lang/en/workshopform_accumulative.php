@@ -26,7 +26,8 @@
 $string['absent'] = 'Absent';
 $string['addmoredimensions'] = 'Blanks for {$a} more aspects';
 $string['correct'] = 'Correct';
-$string['dimensioncomment'] = 'Comment';
+$string['dimensioncomment'] = 'Comment {$a}';
+$string['dimensioncommentfor'] = 'for {$a}';
 $string['dimensiondescription'] = 'Description';
 $string['dimensiongrade'] = 'Grade';
 $string['dimensionmaxgrade'] = 'Best possible grade / Scale to use';
