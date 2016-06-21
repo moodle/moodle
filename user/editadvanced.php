@@ -239,7 +239,7 @@ if ($usernew = $userform->get_data()) {
 
     // Update user picture.
     if (empty($USER->newadminuser)) {
-        useredit_update_picture($usernew, $userform, $filemanageroptions);
+        core_user::update_picture($usernew, $filemanageroptions);
     }
 
     // Update mail bounces.
