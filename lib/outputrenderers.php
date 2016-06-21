@@ -4092,6 +4092,10 @@ EOD;
             $imagedata = $this->user_picture($user, array('size' => 100));
             // Check to see if we should be displaying a message button.
             if (!empty($CFG->messaging) && $USER->id != $user->id && has_capability('moodle/site:sendmessage', $context)) {
+                $iscontact = !empty(message_get_contact($user->id));
+                $contacttitle = $iscontact ? 'removefromyourcontacts' : 'addtoyourcontacts';
+                $contacturlaction = $iscontact ? 'removecontact' : 'addcontact';
+                $contactimage = $iscontact ? 'removecontact' : 'addcontact';
                 $userbuttons = array(
                     'messages' => array(
                         'buttontype' => 'message',
@@ -4100,8 +4104,22 @@ EOD;
                         'image' => 'message',
                         'linkattributes' => message_messenger_sendmessage_link_params($user),
                         'page' => $this->page
-                    )
+                    ),
+                    'togglecontact' => array(
+                        'buttontype' => 'togglecontact',
+                        'title' => get_string($contacttitle, 'message'),
+                        'url' => new moodle_url('/message/index.php', array(
+                                'user1' => $USER->id,
+                                'user2' => $user->id,
+                                $contacturlaction => $user->id,
+                                'sesskey' => sesskey())
+                        ),
+                        'image' => $contactimage,
+                        'linkattributes' => message_togglecontact_link_params($user, $iscontact),
+                        'page' => $this->page
+                    ),
                 );
+
                 $this->page->requires->string_for_js('changesmadereallygoaway', 'moodle');
             }
         }
@@ -4160,6 +4178,8 @@ EOD;
                     // Include js for messaging.
                     if ($button['buttontype'] === 'message') {
                         message_messenger_requirejs();
+                    } else if ($button['buttontype'] === 'togglecontact') {
+                        message_togglecontact_requirejs();
                     }
                     $image = $this->pix_icon($button['formattedimage'], $button['title'], 'moodle', array(
                         'class' => 'iconsmall',

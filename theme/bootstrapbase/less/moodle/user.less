@@ -52,6 +52,22 @@
         text-align: right;
     }
 }
+.ajax-contact-button {
+    height: 31px;
+    box-sizing: border-box;
+
+    &.loading {
+        > *:not(.loading-icon) {
+            display: none;
+        }
+        .loading-icon {
+            display: block;
+        }
+    }
+    .loading-icon {
+        display: none;
+    }
+}
 
 @media (max-width: 480px) {
     .userprofile .profile_tree {

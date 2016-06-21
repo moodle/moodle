@@ -25,6 +25,7 @@
 $string['addcontact'] = 'Add contact';
 $string['addsomecontacts'] = 'To send a message to someone, or to add a shortcut for them on this page, use the <a href="{$a}">search tab</a> above.';
 $string['addsomecontactsincoming'] = 'These messages are from people who are not in your contact list. To add them to your contacts, click the "Add contact" icon next to their name.';
+$string['addtoyourcontacts'] = 'Add to your contacts';
 $string['ago'] = '{$a} ago';
 $string['ajax_gui'] = 'Ajax chat room';
 $string['allmine'] = 'All messages to me or from me';
@@ -126,6 +127,7 @@ $string['providerstag'] = 'Source';
 $string['recent'] = 'Recent';
 $string['readmessages'] = '{$a} read messages';
 $string['removecontact'] = 'Remove contact';
+$string['removefromyourcontacts'] = 'Remove from your contacts';
 $string['savemysettings'] = 'Save my settings';
 $string['search'] = 'Search';
 $string['searchforperson'] = 'Search for a person';

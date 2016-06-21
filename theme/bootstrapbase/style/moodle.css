@@ -6691,6 +6691,19 @@ body.path-question-type .mform fieldset.hidden {
 .path-user .node_category .viewmore {
   text-align: right;
 }
+.ajax-contact-button {
+  height: 31px;
+  box-sizing: border-box;
+}
+.ajax-contact-button.loading > *:not(.loading-icon) {
+  display: none;
+}
+.ajax-contact-button.loading .loading-icon {
+  display: block;
+}
+.ajax-contact-button .loading-icon {
+  display: none;
+}
 @media (max-width: 480px) {
   .userprofile .profile_tree {
     /** Display the profile on one column on phones. */

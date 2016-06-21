@@ -1806,6 +1806,23 @@ function message_messenger_requirejs() {
 }
 
 /**
+ * Requires the JS libraries for the toggle contact button.
+ *
+ * @return void
+ */
+function message_togglecontact_requirejs() {
+    global $PAGE;
+
+    static $done = false;
+    if ($done) {
+        return;
+    }
+
+    $PAGE->requires->js_call_amd('message/toggle_contact_button', 'enhance', array('#toggle-contact-button'));
+    $done = true;
+}
+
+/**
  * Returns the attributes to place on a link to open the 'Send message' dialog.
  *
  * @param object $user User object.
@@ -1824,6 +1841,25 @@ function message_messenger_sendmessage_link_params($user) {
     } else if (message_is_user_blocked($user)) {
         $params['data-blocked-string'] = 'userisblockingyou';
     }
+
+    return $params;
+}
+
+/**
+ * Returns the attributes to place on a contact button.
+ *
+ * @param object $user User object.
+ * @param bool $iscontact
+ * @return void
+ */
+function message_togglecontact_link_params($user, $iscontact = false) {
+    $params = array(
+        'data-userid' => $user->id,
+        'data-is-contact' => $iscontact,
+        'id' => 'toggle-contact-button',
+        'role' => 'button',
+        'class' => 'ajax-contact-button',
+    );
 
     return $params;
 }
