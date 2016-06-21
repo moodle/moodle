@@ -1,4 +1,4 @@
-@block @block_private_files @file_upload
+@block @block_private_files @_file_upload
 Feature: The private files block allows users to store files privately in moodle
   In order to store a private file in moodle
   As a teacher

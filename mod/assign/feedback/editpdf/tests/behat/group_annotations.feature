@@ -51,7 +51,9 @@ Feature: In a group assignment, teacher can annotate PDF files for all users
     And I follow "Test assignment name"
     And I follow "View all submissions"
     And I click on "Grade" "link" in the "Submitted for grading" "table_row"
+    And I wait until the page is ready
     And I click on ".navigate-next-button" "css_element"
+    And I wait until the page is ready
     And I click on ".stampbutton" "css_element"
     And I draw on the pdf
     And I wait until the page is ready

@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0bd3021c5dea5e28a07d7a58d0f1676d",
-    "content-hash": "528abab2d8628a8442924ec3defc561d",
+    "hash": "949f8a407958a19e2dba7929b3dc0576",
+    "content-hash": "bd742592f8ed4700884f6c651226c961",
     "packages": [],
     "packages-dev": [
         {
@@ -797,16 +797,16 @@
         },
         {
             "name": "moodlehq/behat-extension",
-            "version": "v3.32.0",
+            "version": "v3.32.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/moodlehq/moodle-behat-extension.git",
-                "reference": "f0b6a44de9111fd4fa82796aca712b9e9772d07e"
+                "reference": "f8305058ce9140864c23c9b667e3d7d487fdc006"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/moodlehq/moodle-behat-extension/zipball/f0b6a44de9111fd4fa82796aca712b9e9772d07e",
-                "reference": "f0b6a44de9111fd4fa82796aca712b9e9772d07e",
+                "url": "https://api.github.com/repos/moodlehq/moodle-behat-extension/zipball/f8305058ce9140864c23c9b667e3d7d487fdc006",
+                "reference": "f8305058ce9140864c23c9b667e3d7d487fdc006",
                 "shasum": ""
             },
             "require": {
@@ -842,7 +842,7 @@
                 "Behat",
                 "moodle"
             ],
-            "time": "2016-05-09 03:32:06"
+            "time": "2016-06-20 07:56:08"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -1597,16 +1597,16 @@
         },
         {
             "name": "sebastian/exporter",
-            "version": "1.2.1",
+            "version": "1.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/exporter.git",
-                "reference": "7ae5513327cb536431847bcc0c10edba2701064e"
+                "reference": "42c4c2eec485ee3e159ec9884f95b431287edde4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/exporter/zipball/7ae5513327cb536431847bcc0c10edba2701064e",
-                "reference": "7ae5513327cb536431847bcc0c10edba2701064e",
+                "url": "https://api.github.com/repos/sebastianbergmann/exporter/zipball/42c4c2eec485ee3e159ec9884f95b431287edde4",
+                "reference": "42c4c2eec485ee3e159ec9884f95b431287edde4",
                 "shasum": ""
             },
             "require": {
@@ -1614,12 +1614,13 @@
                 "sebastian/recursion-context": "~1.0"
             },
             "require-dev": {
+                "ext-mbstring": "*",
                 "phpunit/phpunit": "~4.4"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.2.x-dev"
+                    "dev-master": "1.3.x-dev"
                 }
             },
             "autoload": {
@@ -1659,7 +1660,7 @@
                 "export",
                 "exporter"
             ],
-            "time": "2015-06-21 07:55:53"
+            "time": "2016-06-17 09:04:28"
         },
         {
             "name": "sebastian/global-state",
