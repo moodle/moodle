@@ -401,7 +401,7 @@ class behat_course extends behat_base {
     public function i_edit_the_section_and_i_fill_the_form_with($sectionnumber, TableNode $data) {
 
         // Edit given section.
-        $this->execute("behat_course::i_edit_the_section");
+        $this->execute("behat_course::i_edit_the_section", $sectionnumber);
 
         // Set form fields.
         $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $data);
