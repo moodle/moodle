@@ -71,16 +71,24 @@ class behat_form_select extends behat_form_field {
         // Wait for all the possible AJAX requests that have been
         // already triggered by selectOption() to be finished.
         if ($this->running_javascript()) {
-            // Trigger change event as this is needed by some drivers (Phantomjs). Don't do it for
-            // Singleselect as this will cause multiple event fire and lead to race-around condition.
-            $browser = \Moodle\BehatExtension\Driver\MoodleSelenium2Driver::getBrowser();
-            if (!$singleselect && ($browser == 'phantomjs')) {
-                $script = "Syn.trigger('change', {}, {{ELEMENT}})";
-                try {
-                    $this->session->getDriver()->triggerSynScript($this->field->getXpath(), $script);
-                } catch (Exception $e) {
-                    // No need to do anything if element has been removed by JS.
-                    // This is possible when inline editing element is used.
+            // Trigger change event and click on first skip link, as some OS/browsers (Phantomjs, Mac-FF),
+            // don't close select option field and trigger event.
+            if (!$singleselect) {
+                $dialoguexpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' moodle-dialogue-focused ')]";
+                if (!$node = $this->session->getDriver()->find($dialoguexpath)) {
+                    $script = "Syn.trigger('change', {}, {{ELEMENT}})";
+                    try {
+                        $this->session->getDriver()->triggerSynScript($this->field->getXpath(), $script);
+                        $this->session->getDriver()->click('//body//div[@class="skiplinks"]');
+                    } catch (\Exception $e) {
+                        return;
+                    }
+                } else {
+                    try {
+                        $this->session->getDriver()->click($dialoguexpath);
+                    } catch (\Exception $e) {
+                        return;
+                    }
                 }
             }
             $this->session->wait(behat_base::TIMEOUT * 1000, behat_base::PAGE_READY_JS);

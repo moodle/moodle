@@ -48,7 +48,6 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
       | grade_report_showaverages | 0 |
       | grade_report_enableajax | 1 |
 
-
   @javascript
   Scenario: Use the grader report without editing, with AJAX on and quick feedback off
     When the following config values are set as admin:
