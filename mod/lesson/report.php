@@ -123,7 +123,8 @@ if ($action === 'delete') {
     // Only load students if there attempts for this lesson.
     $attempts = $DB->record_exists('lesson_attempts', array('lessonid' => $lesson->id));
     $branches = $DB->record_exists('lesson_branch', array('lessonid' => $lesson->id));
-    if ($attempts or $branches) {
+    $timer = $DB->record_exists('lesson_timer', array('lessonid' => $lesson->id));
+    if ($attempts or $branches or $timer) {
         list($esql, $params) = get_enrolled_sql($context, '', $currentgroup, true);
         list($sort, $sortparams) = users_order_by_sql('u');
 
@@ -131,8 +132,13 @@ if ($action === 'delete') {
         $ufields = user_picture::fields('u');
         $sql = "SELECT DISTINCT $ufields
                 FROM {user} u
-                JOIN (SELECT userid, lessonid FROM {lesson_attempts} a1 UNION
-                SELECT userid, lessonid FROM {lesson_branch} b1) a ON u.id = a.userid
+                JOIN (
+                    SELECT userid, lessonid FROM {lesson_attempts} a1
+                        UNION
+                    SELECT userid, lessonid FROM {lesson_branch} b1
+                        UNION
+                    SELECT userid, lessonid FROM {lesson_timer} c1
+                    ) a ON u.id = a.userid
                 JOIN ($esql) ue ON ue.id = a.userid
                 WHERE a.lessonid = :lessonid
                 ORDER BY $sort";
@@ -271,6 +277,43 @@ if ($action === 'delete') {
     }
     $branches->close();
 
+    // Need the same thing for timed entries that were not completed.
+    foreach ($times as $time) {
+        $endoflesson = $time->completed;
+        // If the time start is the same with another record then we shouldn't be adding another item to this array.
+        if (isset($studentdata[$time->userid])) {
+            $foundmatch = false;
+            $n = 0;
+            foreach ($studentdata[$time->userid] as $key => $value) {
+                if ($value['timestart'] == $time->starttime) {
+                    // Don't add this to the array.
+                    $foundmatch = true;
+                    break;
+                }
+            }
+            $n = count($studentdata[$time->userid]) + 1;
+            if (!$foundmatch) {
+                // Add a record.
+                $studentdata[$time->userid][] = array(
+                                "timestart" => $time->starttime,
+                                "timeend" => $time->lessontime,
+                                "grade" => null,
+                                "end" => $endoflesson,
+                                "try" => $n,
+                                "userid" => $time->userid
+                            );
+            }
+        } else {
+            $studentdata[$time->userid][] = array(
+                                "timestart" => $time->starttime,
+                                "timeend" => $time->lessontime,
+                                "grade" => null,
+                                "end" => $endoflesson,
+                                "try" => 0,
+                                "userid" => $time->userid
+                            );
+        }
+    }
     // Determine if lesson should have a score.
     if ($branchcount > 0 AND $questioncount == 0) {
         // This lesson only contains content pages and is not graded.
