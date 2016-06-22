@@ -43,6 +43,5 @@ Feature: Restrict activities availability
     And I log in as "teacher1"
     And I follow "Course 1"
     When I turn editing mode on
-    And I follow "Activity chooser off"
     Then the "Add an activity to section 'Topic 1'" select box should not contain "Chat"
     Then the "Add an activity to section 'Topic 1'" select box should not contain "Glossary"
