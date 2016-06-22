@@ -99,7 +99,10 @@ class user_editadvanced_form extends moodleform {
         $mform->addElement('text', 'username', get_string('username'), 'size="20"');
         $mform->addHelpButton('username', 'username', 'auth');
         $mform->setType('username', core_user::get_property_type('username'));
-        $mform->disabledIf('username', 'auth', 'in', $cannotchangeusername);
+
+        if ($userid !== -1) {
+            $mform->disabledIf('username', 'auth', 'in', $cannotchangeusername);
+        }
 
         $mform->addElement('selectgroups', 'auth', get_string('chooseauthmethod', 'auth'), $authoptions);
         $mform->addHelpButton('auth', 'chooseauthmethod', 'auth');
