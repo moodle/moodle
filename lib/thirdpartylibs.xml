@@ -261,4 +261,10 @@
     <license>GPL</license>
     <version>2.3.0</version>
   </library>
+  <library>
+    <location>amd/src/chartjs-lazy.js</location>
+    <name>Chart.js</name>
+    <license>MIT</license>
+    <version>2.1.6</version>
+  </library>
 </libraries>

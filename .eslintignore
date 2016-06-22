@@ -49,6 +49,7 @@ lib/mustache/
 lib/amd/src/mustache.js
 lib/graphlib.php
 lib/spout/
+lib/amd/src/chartjs-lazy.js
 mod/assign/feedback/editpdf/fpdi/
 repository/s3/S3.php
 theme/bootstrapbase/less/bootstrap/
