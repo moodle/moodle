@@ -2294,22 +2294,25 @@ function check_unoconv_version(environment_results $result) {
     global $CFG;
 
     if (!during_initial_install() && !empty($CFG->pathtounoconv) && file_is_executable(trim($CFG->pathtounoconv))) {
+        $currentversion = 0;
+        $supportedversion = 0.7;
         $unoconvbin = \escapeshellarg($CFG->pathtounoconv);
         $command = "$unoconvbin --version";
         exec($command, $output);
+
+        // If the command execution returned some output, then get the unoconv version.
         if ($output) {
-            $currentversion = 0;
             foreach ($output as $response) {
                 if (preg_match('/unoconv (\\d+\\.\\d+)/', $response, $matches)) {
                     $currentversion = (float)$matches[1];
                 }
             }
-            $supportedversion = 0.7;
-            if ($currentversion < $supportedversion) {
-                $result->setInfo('unoconv version not supported');
-                $result->setStatus(false);
-                return $result;
-            }
+        }
+
+        if ($currentversion < $supportedversion) {
+            $result->setInfo('unoconv version not supported');
+            $result->setStatus(false);
+            return $result;
         }
     }
     return null;
