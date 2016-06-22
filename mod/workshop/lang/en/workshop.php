@@ -307,6 +307,7 @@ $string['usepeerassessment_help'] = 'If enabled, a user may be allocated submiss
 $string['userdatecreated'] = 'submitted on <span>{$a}</span>';
 $string['userdatemodified'] = 'modified on <span>{$a}</span>';
 $string['userplan'] = 'Workshop planner';
+$string['userplancurrentphase'] = 'Current phase';
 $string['userplan_help'] = 'The workshop planner displays all phases of the activity and lists the tasks for each phase. The current phase is highlighted and task completion is indicated with a tick.';
 $string['useselfassessment'] = 'Use self-assessment';
 $string['useselfassessment_help'] = 'If enabled, a user may be allocated their own submission to assess and will receive a grade for assessment in addition to a grade for their submission.';
