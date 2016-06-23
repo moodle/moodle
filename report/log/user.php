@@ -126,17 +126,14 @@ if (!empty($reportlog->selectedlogreader)) {
 
 echo $output->reader_selector($reportlog);
 
-if ($mode === 'today') {
-    echo '<div class="graph">';
-    report_log_print_graph($course, $user->id, "userday.png", 0, $logreader);
-    echo '</div>';
-    echo $output->render($reportlog);
-} else {
-    echo '<div class="graph">';
-    report_log_print_graph($course, $user->id, "usercourse.png", 0, $logreader);
-    echo '</div>';
+if ($mode === 'all') {
     $reportlog->selecteddate = 0;
-    echo $output->render($reportlog);
 }
 
+// Print the graphic chart accordingly to the mode (all, today).
+echo '<div class="graph">';
+report_log_print_graph($course, $user, $mode, 0, $logreader);
+echo '</div>';
+
+echo $output->render($reportlog);
 echo $OUTPUT->footer();
