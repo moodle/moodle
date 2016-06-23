@@ -64,5 +64,6 @@ $string['phpversionhelp'] = '<p>Moodle necesită o versiune PHP de cel puțin  4
 <p>Trebuie să upgradați PHP sau să îl mutați pe o gazdă cu o nouă versiune de PHP!<br />
 (În cazul 5.0.x puteți, de asemenea, să downgradați la versiunea 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
+$string['welcomep20'] = 'Vedeți această pagină deoarece ați instalat și lansat cu succes pachetul  <strong>{$a->packname} {$a->packversion}</strong> în computerul dumneavoastră. Felicitări!';
 $string['welcomep40'] = 'Pachetul include și <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['wwwroot'] = 'Adresă Web';
