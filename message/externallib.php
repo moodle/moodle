@@ -677,6 +677,72 @@ class core_message_external extends external_api {
     }
 
     /**
+     * The get profile parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function data_for_messagearea_get_profile_parameters() {
+        return new external_function_parameters(
+            array(
+                'currentuserid' => new external_value(PARAM_INT, 'The current user\'s id'),
+                'otheruserid' => new external_value(PARAM_INT, 'The id of the user whose profile we want to view'),
+            )
+        );
+    }
+
+    /**
+     * Get the profile information for a contact.
+     *
+     * @param int $currentuserid The current user's id
+     * @param int $otheruserid The id of the user whose profile we are viewing
+     * @return external_single_structure
+     */
+    public static function data_for_messagearea_get_profile($currentuserid, $otheruserid) {
+        global $CFG, $PAGE;
+
+        // Check if messaging is enabled.
+        if (!$CFG->messaging) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        $params = array(
+            'currentuserid' => $currentuserid,
+            'otheruserid' => $otheruserid
+        );
+        self::validate_parameters(self::data_for_messagearea_get_profile_parameters(), $params);
+
+        self::validate_context(context_user::instance($otheruserid));
+
+        $profile = \core_message\api::get_profile($currentuserid, $otheruserid);
+
+        $renderer = $PAGE->get_renderer('core_message');
+        return $profile->export_for_template($renderer);
+    }
+
+    /**
+     * Get profile returns.
+     *
+     * @return external_single_structure
+     */
+    public static function data_for_messagearea_get_profile_returns() {
+        return new external_single_structure(
+            array(
+                'iscurrentuser' => new external_value(PARAM_BOOL, 'Is the currently logged in user the user we are viewing the profile on behalf of?'),
+                'currentuserid' => new external_value(PARAM_INT, 'The current user\'s id'),
+                'otheruserid' => new external_value(PARAM_INT, 'The id of the user whose profile we are viewing'),
+                'email' => new external_value(core_user::get_property_type('email'), 'An email address'),
+                'country' => new external_value(core_user::get_property_type('country'), 'Home country code of the user'),
+                'city' => new external_value(core_user::get_property_type('city'), 'Home city of the user'),
+                'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
+                'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
+                'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
+                'isblocked' => new external_value(PARAM_BOOL, 'Is the user blocked?'),
+                'iscontact' => new external_value(PARAM_BOOL, 'Is the user a contact?')
+            )
+        );
+    }
+
+    /**
      * Get contacts parameters description.
      *
      * @return external_function_parameters

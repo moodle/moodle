@@ -120,4 +120,43 @@ class api {
 
         return null;
     }
+
+    /**
+     * Returns the profile information for a contact for a user.
+     *
+     * @param int $userid The user id
+     * @param int $otheruserid The id of the user whose profile we want to view.
+     * @return \core_message\output\profile
+     */
+    public static function get_profile($userid, $otheruserid) {
+        global $CFG, $DB;
+
+        require_once($CFG->dirroot . '/user/lib.php');
+
+        if ($user = \core_user::get_user($otheruserid)) {
+            // Create the data we are going to pass to the renderable.
+            $userfields = user_get_user_details($user, null, array('city', 'country', 'email',
+                'profileimageurl', 'profileimageurlsmall'));
+            $data = new \stdClass();
+            $data->userid = $userfields['id'];
+            $data->fullname = $userfields['fullname'];
+            $data->city = isset($userfields['city']) ? $userfields['city'] : '';
+            $data->country = isset($userfields['country']) ? $userfields['country'] : '';
+            $data->email = isset($userfields['email']) ? $userfields['email'] : '';
+            $data->profileimageurl = isset($userfields['profileimageurl']) ? $userfields['profileimageurl'] : '';
+            $data->profileimageurlsmall = isset($userfields['profileimageurlsmall']) ?
+                $userfields['profileimageurlsmall'] : '';
+            // Check if the contact has been blocked.
+            $contact = $DB->get_record('message_contacts', array('userid' => $userid, 'contactid' => $otheruserid));
+            if ($contact) {
+                $data->isblocked = $contact->blocked;
+                $data->iscontact = true;
+            } else {
+                $data->isblocked = false;
+                $data->iscontact = false;
+            }
+
+            return new \core_message\output\profile($userid, $data);
+        }
+    }
 }

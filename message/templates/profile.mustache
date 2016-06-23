@@ -1,0 +1,48 @@
+<div class="row-fluid profile" data-userid="{{otheruserid}}">
+    <div class="row-fluid picture">
+        <div class="span1">
+            <img height="64" src="{{profileimageurl}}" alt="" />
+        </div>
+        <div class="span11">
+            <div class="name">{{fullname}} {{#isonline}}*{{/isonline}}</div>
+        </div>
+    </div>
+    <div class="row-fluid information">
+        <div class="span12">
+            <ul>
+                <li><strong>{{#str}}email{{/str}}:</strong> {{email}}</li>
+                <li><strong>{{#str}}country{{/str}}:</strong> {{country}}</li>
+                <li><strong>{{#str}}city{{/str}}:</strong> {{city}}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="row-fluid actions">
+        <div class="span3">
+            <input class="viewprofilebtn" type="button" value="{{#str}}viewprofile{{/str}}"/>
+        </div>
+        <div class="span3">
+            {{#iscurrentuser}}
+                <input class="newmessagebtn" type="button" value="{{#str}}sendmessage, message{{/str}}"/>
+            {{/iscurrentuser}}
+            {{^iscurrentuser}}
+                <input class="newmessagebtn" type="button" value="{{#str}}viewconversation, message{{/str}}"/>
+            {{/iscurrentuser}}
+        </div>
+        <div class="span3">
+            {{#isblocked}}
+                <input class="unblockcontactbtn" type="button" value="{{#str}}unblockcontact, message{{/str}}"/>
+            {{/isblocked}}
+            {{^isblocked}}
+                <input class="blockcontactbtn" type="button" value="{{#str}}blockcontact, message{{/str}}"/>
+            {{/isblocked}}
+        </div>
+        <div class="span3">
+            {{#iscontact}}
+                <input class="removecontactbtn" type="button" value="{{#str}}removecontact, message{{/str}}"/>
+            {{/iscontact}}
+            {{^iscontact}}
+                <input class="addcontactbtn" type="button" value="{{#str}}addcontact, message{{/str}}"/>
+            {{/iscontact}}
+        </div>
+    </div>
+</div>

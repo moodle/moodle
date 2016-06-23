@@ -5815,6 +5815,23 @@ a.ygtvspacer:hover {
 .messaging-area .contacts-area .tabs .tabcontacts {
   text-align: center;
 }
+.messaging-area .messages-area .profile {
+  padding: 5px;
+  font-size: 16px;
+}
+.messaging-area .messages-area .profile .picture .name {
+  font-weight: bold;
+}
+.messaging-area .messages-area .profile .information {
+  padding-top: 10px;
+}
+.messaging-area .messages-area .profile .information ul {
+  list-style: none;
+  margin: 0;
+}
+.messaging-area .messages-area .profile .actions {
+  padding-top: 10px;
+}
 .messaging-area .messages-area .messages {
   height: 720px;
   overflow-y: auto;
