@@ -50,6 +50,7 @@ Fields have the format [[fieldname]]. All other tags have the format ##sometag##
 
 Only the tags that are in the "Available tags" list may be used for the current template.';
 $string['availabletodate'] = 'Available to';
+$string['availabletodatevalidation'] = 'The available to date cannot be before the available from date.';
 $string['blank'] = 'Blank';
 $string['buttons'] = 'Actions';
 $string['bynameondate'] = 'by {$a->name} - {$a->date}';
@@ -367,4 +368,5 @@ $string['usestandard'] = 'Use a preset';
 $string['usestandard_help'] = 'To use a preset available to the whole site, select it from the list. (If you have added a preset to the list using the save as preset feature then you have the option of deleting it.)';
 $string['viewfromdate'] = 'Read only from';
 $string['viewtodate'] = 'Read only to';
+$string['viewtodatevalidation'] = 'The read only to date cannot be before the read only from date.';
 $string['wrongdataid'] = 'Wrong data id provided';
