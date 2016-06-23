@@ -85,7 +85,7 @@ class theme_clean_core_renderer extends theme_bootstrapbase_core_renderer {
             array('class' => 'small-logo'));
 
         if ($returnlink) {
-            $logocontainer = html_writer::link($CFG->wwwroot, $image,
+            $logocontainer = html_writer::link(new moodle_url('/'), $image,
                 array('class' => 'small-logo-container', 'title' => get_string('home')));
         } else {
             $logocontainer = html_writer::tag('span', $image, array('class' => 'small-logo-container'));
@@ -113,7 +113,7 @@ class theme_clean_core_renderer extends theme_bootstrapbase_core_renderer {
         $sitename = format_string($SITE->shortname, true, array('context' => context_course::instance(SITEID)));
 
         if ($returnlink) {
-            return html_writer::link($CFG->wwwroot, $sitename, array('class' => 'brand', 'title' => get_string('home')));
+            return html_writer::link(new moodle_url('/'), $sitename, array('class' => 'brand', 'title' => get_string('home')));
         }
 
         return html_writer::tag('span', $sitename, array('class' => 'brand'));
