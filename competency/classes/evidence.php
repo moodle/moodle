@@ -284,4 +284,45 @@ class evidence extends persistent {
         return has_capability('moodle/competency:evidencedelete', context_user::instance($userid));
     }
 
+    /**
+     * Load a list of records in a context for a user competency.
+     *
+     * @param int $usercompetencyid The id of the user competency.
+     * @param context $context Context to filter the evidence list.
+     * @param string $sort The field from the evidence table to sort on.
+     * @param string $order The sort direction
+     * @param int $skip Limitstart.
+     * @param int $limit Number of rows to return.
+     *
+     * @return \core_competency\persistent[]
+     */
+    public static function get_records_for_usercompetency($usercompetencyid, \context $context, $sort = '', $order = 'ASC', $skip = 0, $limit = 0) {
+        global $DB;
+
+        $params = array(
+            'usercompid' => $usercompetencyid,
+            'path' => $context->path . '/%',
+            'contextid' => $context->id
+        );
+
+        if (!empty($sort)) {
+            $sort = ' ORDER BY e.' . $sort . ' ' . $order;
+        }
+
+        $sql = 'SELECT e.*
+                  FROM {' . static::TABLE . '} e
+                  JOIN {context} c ON c.id = e.contextid
+                 WHERE (c.path LIKE :path OR c.id = :contextid)
+                   AND e.usercompetencyid = :usercompid
+                 ' . $sort;
+        $records = $DB->get_records_sql($sql, $params, $skip, $limit);
+        $instances = array();
+
+        foreach ($records as $record) {
+            $newrecord = new static(0, $record);
+            array_push($instances, $newrecord);
+        }
+        return $instances;
+    }
+
 }
