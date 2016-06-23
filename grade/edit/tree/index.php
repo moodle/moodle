@@ -45,8 +45,7 @@ require_login($course);
 $context = context_course::instance($course->id);
 require_capability('moodle/grade:manage', $context);
 
-// todo $PAGE->requires->js_module() should be used here instead
-$PAGE->requires->js('/grade/edit/tree/functions.js');
+$PAGE->requires->js_call_amd('grades/edittree_index', 'enhance');
 
 /// return tracking object
 $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'tree', 'courseid'=>$courseid));
@@ -266,7 +265,6 @@ if (!$moving && count($grade_edit_tree->categories) > 1) {
     $attributes = array('id'=>'menumoveafter', 'class' => 'ignoredirty singleselect');
     echo html_writer::label(get_string('moveselectedto', 'grades'), 'menumoveafter');
     echo html_writer::select($grade_edit_tree->categories, 'moveafter', '', array(''=>'choosedots'), $attributes);
-    $OUTPUT->add_action_handler(new component_action('change', 'submit_bulk_move'), 'menumoveafter');
     echo '<div id="noscriptgradetreeform" class="hiddenifjs">
             <input type="submit" value="'.get_string('go').'" />
           </div>';
