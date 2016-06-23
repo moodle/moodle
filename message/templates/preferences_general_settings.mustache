@@ -1,0 +1,59 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_message/preferences_general_settings
+
+    The message preferences general settings
+
+    Classes required for JS:
+    * None
+
+    Data attibutes required for JS:
+    * None
+
+    Context variables required for this template:
+    * None
+
+    Example context (json):
+    { }
+}}
+<h2 class="title-case">{{#str}} generalsettings, admin {{/str}}</h2>
+<div class="general-settings-container" data-user-id="{{userid}}">
+    <label data-preference-key="message_beepnewmessage">
+        <input type="checkbox" {{#beepnewmessage}}checked{{/beepnewmessage}} />
+        {{#str}} beepnewmessage, message {{/str}}
+        <div class="loading-icon">{{> message/loading }}</div>
+    </label>
+    <br/>
+    <label data-preference-key="message_blocknoncontacts">
+        <input type="checkbox" {{#blocknoncontacts}}checked{{/blocknoncontacts}} />
+        {{#str}} blocknoncontacts, message {{/str}}
+        <div class="loading-icon">{{> message/loading }}</div>
+    </label>
+    <br/>
+    <label data-preference-key="disableall">
+        <input type="checkbox" {{#disableall}}checked{{/disableall}} />
+        {{#str}} disableall, message {{/str}}
+        {{{disableallhelpicon}}}
+        <div class="loading-icon">{{> message/loading }}</div>
+    </label>
+</div>
+{{#js}}
+require(['jquery', 'message/preferences_general_settings_controller'], function($, controller) {
+    new controller($('.general-settings-container'));
+});
+{{/js}}

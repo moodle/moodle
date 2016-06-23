@@ -22,6 +22,7 @@
  * @copyright  2009 Petr Skodak
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+ */
 
 require_once("$CFG->libdir/externallib.php");
 
@@ -322,6 +323,148 @@ class core_user_external extends external_api {
         return null;
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.2
+     */
+    public static function update_user_parameters() {
+        return new external_function_parameters(
+            array(
+                'user' => new external_single_structure(
+                    array(
+                        'username' =>
+                            new external_value(core_user::get_property_type('username'), 'Username policy is defined in Moodle security config.',
+                                VALUE_OPTIONAL, '', NULL_NOT_ALLOWED),
+                        'password' =>
+                            new external_value(core_user::get_property_type('password'), 'Plain text password consisting of any characters', VALUE_OPTIONAL,
+                                '', NULL_NOT_ALLOWED),
+                        'firstname' =>
+                            new external_value(core_user::get_property_type('firstname'), 'The first name(s) of the user', VALUE_OPTIONAL, '',
+                                NULL_NOT_ALLOWED),
+                        'lastname' =>
+                            new external_value(core_user::get_property_type('lastname'), 'The family name of the user', VALUE_OPTIONAL),
+                        'email' =>
+                            new external_value(core_user::get_property_type('email'), 'A valid and unique email address', VALUE_OPTIONAL, '',
+                                NULL_NOT_ALLOWED),
+                        'emailstop' =>
+                            new external_value(core_user::get_property_type('emailstop'), 'Enable or disable notifications for this user', VALUE_OPTIONAL, '',
+                                NULL_NOT_ALLOWED),
+                        'auth' =>
+                            new external_value(core_user::get_property_type('auth'), 'Auth plugins include manual, ldap, imap, etc', VALUE_OPTIONAL, '',
+                                NULL_NOT_ALLOWED),
+                        'idnumber' =>
+                            new external_value(core_user::get_property_type('idnumber'), 'An arbitrary ID code number perhaps from the institution',
+                                VALUE_OPTIONAL),
+                        'lang' =>
+                            new external_value(core_user::get_property_type('lang'), 'Language code such as "en", must exist on server',
+                                VALUE_OPTIONAL, '', NULL_NOT_ALLOWED),
+                        'calendartype' =>
+                            new external_value(core_user::get_property_type('calendartype'), 'Calendar type such as "gregorian", must exist on server',
+                                VALUE_OPTIONAL, '', NULL_NOT_ALLOWED),
+                        'theme' =>
+                            new external_value(core_user::get_property_type('theme'), 'Theme name such as "standard", must exist on server',
+                                VALUE_OPTIONAL),
+                        'timezone' =>
+                            new external_value(core_user::get_property_type('timezone'), 'Timezone code such as Australia/Perth, or 99 for default',
+                                VALUE_OPTIONAL),
+                        'mailformat' =>
+                            new external_value(core_user::get_property_type('mailformat'), 'Mail format code is 0 for plain text, 1 for HTML etc',
+                                VALUE_OPTIONAL),
+                        'description' =>
+                            new external_value(core_user::get_property_type('description'), 'User profile description, no HTML', VALUE_OPTIONAL),
+                        'city' =>
+                            new external_value(core_user::get_property_type('city'), 'Home city of the user', VALUE_OPTIONAL),
+                        'country' =>
+                            new external_value(core_user::get_property_type('country'), 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
+                        'firstnamephonetic' =>
+                            new external_value(core_user::get_property_type('firstnamephonetic'), 'The first name(s) phonetically of the user', VALUE_OPTIONAL),
+                        'lastnamephonetic' =>
+                            new external_value(core_user::get_property_type('lastnamephonetic'), 'The family name phonetically of the user', VALUE_OPTIONAL),
+                        'middlename' =>
+                            new external_value(core_user::get_property_type('middlename'), 'The middle name of the user', VALUE_OPTIONAL),
+                        'alternatename' =>
+                            new external_value(core_user::get_property_type('alternatename'), 'The alternate name of the user', VALUE_OPTIONAL),
+                        'customfields' => new external_multiple_structure(
+                            new external_single_structure(
+                                array(
+                                    'type'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the custom field'),
+                                    'value' => new external_value(PARAM_RAW, 'The value of the custom field')
+                                )
+                            ), 'User custom fields (also known as user profil fields)', VALUE_OPTIONAL),
+                        'preferences' => new external_multiple_structure(
+                            new external_single_structure(
+                                array(
+                                    'type'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preference'),
+                                    'value' => new external_value(PARAM_RAW, 'The value of the preference')
+                                )
+                            ), 'User preferences', VALUE_OPTIONAL),
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * Update the currently logged in user
+     *
+     * @param array $users
+     * @return null
+     * @since Moodle 3.2
+     */
+    public static function update_user($user) {
+
+        global $USER, $CFG, $DB;
+        require_once($CFG->dirroot."/user/lib.php");
+        require_once($CFG->dirroot."/user/profile/lib.php"); // Required for customfields related function.
+
+        $params = self::validate_parameters(
+            self::update_user_parameters(),
+            array('user' => $user)
+        );
+
+        $user = $params['user'];
+        $user['id'] = $USER->id;
+
+        $transaction = $DB->start_delegated_transaction();
+
+        user_update_user($user, true, false);
+        // Update user custom fields.
+        if (!empty($user['customfields'])) {
+
+            foreach ($user['customfields'] as $customfield) {
+                // Profile_save_data() saves profile file it's expecting a user with the correct id,
+                // and custom field to be named profile_field_"shortname".
+                $user["profile_field_".$customfield['type']] = $customfield['value'];
+            }
+            profile_save_data((object) $user);
+        }
+
+        // Trigger event.
+        \core\event\user_updated::create_from_userid($user['id'])->trigger();
+
+        // Preferences.
+        if (!empty($user['preferences'])) {
+            foreach ($user['preferences'] as $preference) {
+                set_user_preference($preference['type'], $preference['value'], $user['id']);
+            }
+        }
+
+        $transaction->allow_commit();
+
+        return null;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return null
+     * @since Moodle 3.2
+     */
+    public static function update_user_returns() {
+        return null;
+    }
 
     /**
      * Returns description of method parameters
@@ -350,6 +493,9 @@ class core_user_external extends external_api {
                                 new external_value(core_user::get_property_type('lastname'), 'The family name of the user', VALUE_OPTIONAL),
                             'email' =>
                                 new external_value(core_user::get_property_type('email'), 'A valid and unique email address', VALUE_OPTIONAL, '',
+                                    NULL_NOT_ALLOWED),
+                            'emailstop' =>
+                                new external_value(core_user::get_property_type('emailstop'), 'Enable or disable notifications for this user', VALUE_OPTIONAL, '',
                                     NULL_NOT_ALLOWED),
                             'auth' =>
                                 new external_value(core_user::get_property_type('auth'), 'Auth plugins include manual, ldap, imap, etc', VALUE_OPTIONAL, '',

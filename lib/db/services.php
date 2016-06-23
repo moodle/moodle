@@ -740,6 +740,14 @@ $functions = array(
         'type' => 'write',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_message_message_processor_config_form' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'message_processor_config_form',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Process the message processor config form',
+        'type' => 'write',
+        'ajax' => true,
+    ),
     'core_message_search_contacts' => array(
         'classname' => 'core_message_external',
         'methodname' => 'search_contacts',
@@ -968,6 +976,15 @@ $functions = array(
         'type' => 'write',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_user_update_user' => array(
+        'classname' => 'core_user_external',
+        'methodname' => 'update_user',
+        'classpath' => 'user/externallib.php',
+        'description' => 'Update logged in user',
+        'type' => 'write',
+        'capabilities' => 'moodle/user:update',
+        'ajax' => true,
+    ),
     'core_user_update_users' => array(
         'classname' => 'core_user_external',
         'methodname' => 'update_users',
@@ -975,6 +992,7 @@ $functions = array(
         'description' => 'Update users.',
         'type' => 'write',
         'capabilities' => 'moodle/user:update',
+        'ajax' => true,
     ),
     'core_user_view_user_list' => array(
         'classname' => 'core_user_external',

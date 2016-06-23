@@ -1900,4 +1900,80 @@ class core_message_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since 3.2
+     */
+    public static function message_processor_config_form_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'id of the user, 0 for current user', VALUE_REQUIRED),
+                'name' => new external_value(PARAM_TEXT, 'The name of the message processor'),
+                'formvalues' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_TEXT, 'name of the form element', VALUE_REQUIRED),
+                            'value' => new external_value(PARAM_RAW, 'value of the form element', VALUE_REQUIRED),
+                        )
+                    ),
+                    'Config form values',
+                    VALUE_REQUIRED
+                ),
+            )
+        );
+    }
+
+    /**
+     * Processes a message processor config form.
+     *
+     * @param  int $userid the user id
+     * @param  string $name the name of the processor
+     * @param  array $formvalues the form values
+     * @return external_description
+     * @throws moodle_exception
+     * @since 3.2
+     */
+    public static function message_processor_config_form($userid, $name, $formvalues) {
+        $params = self::validate_parameters(
+            self::message_processor_config_form_parameters(),
+            array(
+                'userid' => $userid,
+                'name' => $name,
+                'formvalues' => $formvalues,
+            )
+        );
+
+        if (empty($params['userid'])) {
+            $params['userid'] = $USER->id;
+        }
+
+        $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+        core_user::require_active_user($user);
+
+        $processor = get_message_processor($name);
+        $preferences = [];
+        $form = new stdClass();
+
+        foreach ($formvalues as $formvalue) {
+            $form->$formvalue['name'] = $formvalue['value'];
+        }
+
+        $processor->process_form($form, $preferences);
+
+        if (!empty($preferences)) {
+            set_user_preferences($preferences, $userid);
+        }
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since 3.2
+     */
+    public static function message_processor_config_form_returns() {
+        return null;
+    }
 }

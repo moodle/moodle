@@ -268,3 +268,149 @@
         bottom: 0;
     }
 }
+
+.dir-rtl {
+    .core_message-messenger-sendmessage {
+        .message-send {
+            float: left;
+        }
+    }
+    .preferences-container {
+        .preference-table {
+            .preference-row {
+                .preference-name {
+                    .loading-icon {
+                        float: left;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.preferences-container {
+    .preference-table {
+        border: 1px solid #ddd;
+
+        tr {
+            td {
+                &:not(:first-child) {
+                    width: 150px;
+                    text-align: center;
+                }
+                &:nth-child(even) {
+                    background-color: #f7f7f7;
+                }
+            }
+            th:nth-child(even) {
+                background-color: #f7f7f7;
+            }
+        }
+        .preference-row {
+            .preference-name {
+                vertical-align: middle;
+
+                .loading-icon {
+                    display: none;
+                    float: right;
+
+                    img {
+                        vertical-align: middle;
+                    }
+                }
+            }
+            .disabled-message {
+                display: none;
+                text-align: center;
+                height: 30px;
+                line-height: 30px;
+            }
+            .preference-state {
+                margin: 0;
+                padding: 0;
+                display: inline-block;
+                vertical-align: middle;
+
+                &:hover {
+                    .preference-state-image-container {
+                        background-color: #e5e5e5;
+                        border-radius: 4px;
+                    }
+                }
+                input[type="radio"]:checked + .preference-state-image-container {
+                    background-color: #424242;
+                    border-radius: 4px;
+                }
+                .preference-state-image-container {
+                    width: 30px;
+                    height: 30px;
+                    line-height: 30px;
+                    text-align: center;
+                }
+            }
+            &.loading {
+                .preference-name {
+                    .loading-icon {
+                        display: block;
+                    }
+                }
+            }
+        }
+    }
+
+    &.disabled {
+        .preference-table {
+            .preference-row {
+                .disabled-message {
+                    display: block;
+                }
+                form {
+                    display: none;
+                }
+            }
+        }
+    }
+}
+.general-settings-container {
+    .loading-icon {
+        display: none;
+    }
+    .loading {
+        .loading-icon {
+            display: inline-block;
+        }
+    }
+    label {
+        display: inline-block;
+    }
+}
+.processors-container {
+    .processor-container {
+        position: relative;
+
+        .loading-container {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.5);
+
+            .vertical-align {
+                height: 100%;
+                width: 0%;
+                display: inline-block;
+                vertical-align: middle;
+            }
+        }
+
+        &.loading {
+            .loading-container {
+                display: block;
+            }
+        }
+    }
+}
+.title-case {
+    text-transform: capitalize;
+}

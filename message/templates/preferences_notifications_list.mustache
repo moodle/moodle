@@ -1,0 +1,96 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_message/preferences_notifications_list
+
+    The list of notifications for the message preferences page
+
+    Classes required for JS:
+    * None
+
+    Data attibutes required for JS:
+    * None
+
+    Context variables required for this template:
+    * None
+
+    Example context (json):
+    { }
+}}
+<h2 class="title-case">{{#str}} messagepreferences, message {{/str}}</h2>
+<div class="preferences-container {{#disableall}}disabled{{/disableall}}" data-user-id="{{userid}}">
+    {{#components}}
+        <table class="table preference-table">
+            <thead>
+                <tr>
+                    <th>{{displayname}}</th>
+                    {{#processornames}}
+                        <th>{{.}}</th>
+                    {{/processornames}}
+                </tr>
+            </thead>
+            <tbody>
+                {{#notifications}}
+                    <tr class="preference-row" data-preference-key="{{preferencekey}}">
+                        <td class="preference-name">
+                            {{displayname}}
+                            <div class="loading-icon">{{> message/loading }}</div>
+                        </td>
+                        {{#processors}}
+                        <td data-processor-name="{{name}}">
+                                {{#locked}}
+                                    <div class="dimmed_text">{{lockedmessage}}</div>
+                                {{/locked}}
+                                {{^locked}}
+                                    <div class="disabled-message">{{#str}} disabled, question {{/str}}</div>
+                                    <form>
+                                        {{#states}}
+                                            <label class="preference-state"
+                                                data-toggle="tooltip"
+                                                title="{{displayname}}"
+                                                data-state="{{name}}">
+
+                                                <span class="accesshide">{{displayname}}</span>
+                                                <input type="radio"
+                                                    class="accesshide"
+                                                    name="{{radioname}}"
+                                                    value="option1"
+                                                    {{#checked}}checked{{/checked}}
+                                                    {{#disableall}}disabled{{/disableall}} />
+                                                <div class="preference-state-image-container">
+                                                    <img src="{{iconurl}}" role="presentation" />
+                                                </div>
+                                            </label>
+                                        {{/states}}
+                                    </form>
+                                {{/locked}}
+                            </td>
+                        {{/processors}}
+                    </tr>
+                {{/notifications}}
+            </tbody>
+        </table>
+    {{/components}}
+</div>
+{{#js}}
+require(['jquery', 'theme_bootstrapbase/bootstrap', 'message/preferences_notifications_list_controller'],
+    function($, bootstrap, controller) {
+
+    $('[data-toggle="tooltip"]').tooltip();
+    new controller($('.preferences-container'));
+});
+{{/js}}
