@@ -32,4 +32,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['parentlanguage'] = 'fr';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Français - Canada';
+$string['thislanguage'] = 'Français (Canada)';
