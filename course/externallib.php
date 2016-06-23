@@ -2499,4 +2499,104 @@ class core_course_external extends external_api {
         return self::get_course_module_returns();
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.2
+     */
+    public static function get_activities_overview_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseids' => new external_multiple_structure(new external_value(PARAM_INT, 'Course id.')),
+            )
+        );
+    }
+
+    /**
+     * Return activities overview for the given courses.
+     *
+     * @param array $courseids a list of course ids
+     * @return array of warnings and the activities overview
+     * @since Moodle 3.2
+     * @throws moodle_exception
+     */
+    public static function get_activities_overview($courseids) {
+        global $USER;
+
+        // Parameter validation.
+        $params = self::validate_parameters(self::get_activities_overview_parameters(), array('courseids' => $courseids));
+        $courseoverviews = array();
+
+        list($courses, $warnings) = external_util::validate_courses($params['courseids']);
+
+        if (!empty($courses)) {
+            // Add lastaccess to each course (required by print_overview function).
+            // We need the complete user data, the ws server does not load a complete one.
+            $user = get_complete_user_data('id', $USER->id);
+            foreach ($courses as $course) {
+                if (isset($user->lastcourseaccess[$course->id])) {
+                    $course->lastaccess = $user->lastcourseaccess[$course->id];
+                } else {
+                    $course->lastaccess = 0;
+                }
+            }
+
+            $overviews = array();
+            if ($modules = get_plugin_list_with_function('mod', 'print_overview')) {
+                foreach ($modules as $fname) {
+                    $fname($courses, $overviews);
+                }
+            }
+
+            // Format output.
+            foreach ($overviews as $courseid => $modules) {
+                $courseoverviews[$courseid]['id'] = $courseid;
+                $courseoverviews[$courseid]['overviews'] = array();
+
+                foreach ($modules as $modname => $overviewtext) {
+                    $courseoverviews[$courseid]['overviews'][] = array(
+                        'module' => $modname,
+                        'overviewtext' => $overviewtext // This text doesn't need formatting.
+                    );
+                }
+            }
+        }
+
+        $result = array(
+            'courses' => $courseoverviews,
+            'warnings' => $warnings
+        );
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.2
+     */
+    public static function get_activities_overview_returns() {
+        return new external_single_structure(
+            array(
+                'courses' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'Course id'),
+                            'overviews' => new external_multiple_structure(
+                                new external_single_structure(
+                                    array(
+                                        'module' => new external_value(PARAM_PLUGIN, 'Module name'),
+                                        'overviewtext' => new external_value(PARAM_RAW, 'Overview text'),
+                                    )
+                                )
+                            )
+                        )
+                    ), 'List of courses'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }
