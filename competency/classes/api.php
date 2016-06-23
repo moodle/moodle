@@ -4166,11 +4166,8 @@ class api {
             return array();
         }
 
-        $params = array(
-            'usercompetencyid' => $usercompetency->get_id(),
-            'contextid' => context_course::instance($courseid)->id
-        );
-        return evidence::get_records($params, $sort, $order, $skip, $limit);
+        $context = context_course::instance($courseid);
+        return evidence::get_records_for_usercompetency($usercompetency->get_id(), $context, $sort, $order, $skip, $limit);
     }
 
     /**
