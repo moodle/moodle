@@ -6254,9 +6254,10 @@ function valid_uploaded_file($newfile) {
  * @param int $sitebytes Set maximum size
  * @param int $coursebytes Current course $course->maxbytes (in bytes)
  * @param int $modulebytes Current module ->maxbytes (in bytes)
+ * @param bool $unused This parameter has been deprecated and is not used any more.
  * @return int The maximum size for uploading files.
  */
-function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0) {
+function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0, $unused = false) {
 
     if (! $filesize = ini_get('upload_max_filesize')) {
         $filesize = '5M';
@@ -6295,9 +6296,11 @@ function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0) 
  * @param int $coursebytes Current course $course->maxbytes (in bytes)
  * @param int $modulebytes Current module ->maxbytes (in bytes)
  * @param stdClass $user The user
+ * @param bool $unused This parameter has been deprecated and is not used any more.
  * @return int The maximum size for uploading files.
  */
-function get_user_max_upload_file_size($context, $sitebytes = 0, $coursebytes = 0, $modulebytes = 0, $user = null) {
+function get_user_max_upload_file_size($context, $sitebytes = 0, $coursebytes = 0, $modulebytes = 0, $user = null,
+        $unused = false) {
     global $USER;
 
     if (empty($user)) {
