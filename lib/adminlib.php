@@ -9531,6 +9531,7 @@ class admin_setting_managewebservicetokens extends admin_setting {
         $strtoken = get_string('token', 'webservice');
         $strservice = get_string('service', 'webservice');
         $struser = get_string('user');
+        $strcreator = get_string('tokencreator', 'webservice');
         $strcontext = get_string('context', 'webservice');
         $strvaliduntil = get_string('validuntil', 'webservice');
         $striprestriction = get_string('iprestriction', 'webservice');
@@ -9538,8 +9539,8 @@ class admin_setting_managewebservicetokens extends admin_setting {
         $return = $OUTPUT->box_start('generalbox webservicestokenui');
 
         $table = new html_table();
-        $table->head  = array($strtoken, $struser, $strservice, $striprestriction, $strvaliduntil, $stroperation);
-        $table->colclasses = array('leftalign', 'leftalign', 'leftalign', 'centeralign', 'centeralign', 'centeralign');
+        $table->head  = array($strtoken, $struser, $strservice, $striprestriction, $strvaliduntil, $strcreator, $stroperation);
+        $table->colclasses = array('leftalign', 'leftalign', 'leftalign', 'centeralign', 'centeralign', 'leftalign', 'centeralign');
         $table->id = 'webservicetokens';
         $table->attributes['class'] = 'admintable generaltable';
         $table->data  = array();
@@ -9549,10 +9550,11 @@ class admin_setting_managewebservicetokens extends admin_setting {
         //TODO: in order to let the administrator delete obsolete token, split this request in multiple request or use LEFT JOIN
 
         //here retrieve token list (including linked users firstname/lastname and linked services name)
-        $sql = "SELECT t.id, t.token, u.id AS userid, u.firstname, u.lastname, s.name, t.iprestriction, t.validuntil, s.id AS serviceid
-                  FROM {external_tokens} t, {user} u, {external_services} s
-                 WHERE t.creatorid=? AND t.tokentype = ? AND s.id = t.externalserviceid AND t.userid = u.id";
-        $tokens = $DB->get_records_sql($sql, array($USER->id, EXTERNAL_TOKEN_PERMANENT));
+        $sql = "SELECT t.id, t.token, u.id AS userid, u.firstname, u.lastname, s.name, t.iprestriction, t.validuntil,
+                   s.id AS serviceid, c.id AS creatorid, c.username AS creator
+                  FROM {external_tokens} t, {user} u, {external_services} s, {user} c
+                 WHERE t.tokentype = ? AND s.id = t.externalserviceid AND t.userid = u.id AND t.creatorid = c.id";
+        $tokens = $DB->get_records_sql($sql, array(EXTERNAL_TOKEN_PERMANENT));
         if (!empty($tokens)) {
             foreach ($tokens as $token) {
                 //TODO: retrieve context
@@ -9594,7 +9596,12 @@ class admin_setting_managewebservicetokens extends admin_setting {
                     }
                 }
 
-                $table->data[] = array($token->token, $useratag, $token->name, $iprestriction, $validuntil, $delete);
+                $creatorprofileurl = new moodle_url('/user/profile.php?id='.$token->creatorid);
+                $creatoratag = html_writer::start_tag('a', array('href' => $creatorprofileurl));
+                $creatoratag .= $token->creator;
+                $creatoratag .= html_writer::end_tag('a');
+
+                $table->data[] = array($token->token, $useratag, $token->name, $iprestriction, $validuntil, $creatoratag, $delete);
             }
 
             $return .= html_writer::table($table);
