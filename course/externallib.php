@@ -195,9 +195,11 @@ class core_course_external extends external_api {
                 $sectionvalues['id'] = $section->id;
                 $sectionvalues['name'] = get_section_name($course, $section);
                 $sectionvalues['visible'] = $section->visible;
+
+                $options = (object) array('noclean' => true);
                 list($sectionvalues['summary'], $sectionvalues['summaryformat']) =
                         external_format_text($section->summary, $section->summaryformat,
-                                $context->id, 'course', 'section', $section->id);
+                                $context->id, 'course', 'section', $section->id, $options);
                 $sectioncontents = array();
 
                 //for each module of the section

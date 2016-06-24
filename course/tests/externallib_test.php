@@ -686,6 +686,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
      * @return array A list with the course object and course modules objects
      */
     private function prepare_get_course_contents_test() {
+        global $DB;
         $course  = self::getDataGenerator()->create_course();
         $forumdescription = 'This is the forum description';
         $forum = $this->getDataGenerator()->create_module('forum',
@@ -709,6 +710,10 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $context = context_course::instance($course->id);
         $roleid = $this->assignUserCapability('moodle/course:view', $context->id);
         $this->assignUserCapability('moodle/course:update', $context->id, $roleid);
+
+        $conditions = array('course' => $course->id, 'section' => 2);
+        $DB->set_field('course_sections', 'summary', 'Text with iframe <iframe src="https://moodle.org"></iframe>', $conditions);
+        rebuild_course_cache($course->id, true);
 
         return array($course, $forumcm, $datacm, $pagecm, $labelcm, $urlcm);
     }
@@ -753,6 +758,8 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         // Check that the only return section has the 5 created modules.
         $this->assertCount(4, $firstsection['modules']);
         $this->assertCount(1, $lastsection['modules']);
+        $this->assertContains('<iframe', $lastsection['summary']);
+        $this->assertContains('</iframe>', $lastsection['summary']);
 
         try {
             $sections = core_course_external::get_course_contents($course->id,
