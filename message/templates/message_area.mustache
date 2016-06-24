@@ -1,19 +1,22 @@
-<div class="messaging-area" data-userid="{{userid}}">
-    <div class="row-fluid">
-        <div class="span4 contacts-area">
-            {{#contacts}}
-                {{> core_message/contacts }}
-            {{/contacts}}
-        </div>
-        <div class="span8 messages-area">
-            {{#messages}}
-                {{> core_message/messages }}
-            {{/messages}}
+<div class="messaging-area-all" data-loggedinuserid="{{loggedinuserid}}" data-userid="{{userid}}">
+    <input class="choosemessagestodeletebtn" type="button" value="{{#str}}delete{{/str}}"/>
+    <div class="messaging-area">
+        <div class="row-fluid">
+            <div class="span4 contacts-area">
+                {{#contacts}}
+                    {{> core_message/contacts }}
+                {{/contacts}}
+            </div>
+            <div class="span8 messages-area">
+                {{#messages}}
+                    {{> core_message/messages }}
+                {{/messages}}
+            </div>
         </div>
     </div>
 </div>
 {{#js}}
     require(['core_message/message-area'], function(Messagearea) {
-        var messageArea = new Messagearea('.messaging-area');
+        var messageArea = new Messagearea('.messaging-area-all');
     });
 {{/js}}

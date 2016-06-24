@@ -48,6 +48,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         this._node.on('click', '.unblockcontactbtn', this._unblockContact.bind(this));
         this._node.on('click', '.addcontactbtn', this._addContact.bind(this));
         this._node.on('click', '.removecontactbtn', this._removeContact.bind(this));
+        this._node.on('click', '.choosemessagestodeletebtn', this._chooseMessagesToDelete.bind(this));
+        this._node.on('click', '.deletemessagesbtn', this._deleteMessages.bind(this));
+        this._node.on('click', '.canceldeletemessagesbtn', this._cancelDeleteMessages.bind(this));
     };
 
     Messagearea.prototype._loadConversations = function() {
@@ -277,6 +280,75 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         }.bind(this)).fail(notification.exception);
     };
 
+    Messagearea.prototype._chooseMessagesToDelete = function() {
+        // Toggle the checkboxes.
+        var checkboxes = this.find('.deletemessagecheckbox').toggle();
+
+        // Check if we didn't toggle to delete the messages.
+        if (checkboxes.is(':hidden')) {
+            // Only show a response field if we are viewing the logged in user's messages.
+            this.find('.response').empty();
+            if (this._getLoggedInUserId() == this._getCurrentUserId()) {
+                templates.render('core_message/message_response', {}).then(function (html, js) {
+                    this.find('.response').append(html);
+                    templates.runTemplateJS(js);
+                }.bind(this));
+            }
+        } else {
+            templates.render('core_message/message_delete_message', {}).then(function(html, js) {
+                this.find('.response').empty().append(html);
+                templates.runTemplateJS(js);
+            }.bind(this));
+        }
+    };
+
+    Messagearea.prototype._deleteMessages = function() {
+        var userid = this._getCurrentUserId();
+        var checkboxes = this.find('.deletemessagecheckbox input:checked');
+        var requests = [];
+        var messagestoremove = [];
+
+        // Go through all the checked checkboxes and prepare them for deletion.
+        checkboxes.each(function(id, element) {
+            var node = $(element);
+            var messageid = node.data('messageid');
+            var isread = node.data('messageread') ? 1 : 0;
+            var message = this.find('#message-' + messageid + '' + isread);
+            messagestoremove.push(message);
+            requests.push({
+                methodname: 'core_message_delete_message',
+                args: {
+                    messageid: messageid,
+                    userid: userid,
+                    read: isread
+                }
+            });
+        }.bind(this));
+
+        ajax.call(requests)[requests.length - 1].then(function() {
+            // Remove the messages from the DOM.
+            $.each(messagestoremove, function(key, message) {
+                // Remove the message.
+                message.remove();
+            }.bind(this));
+            // Now we have removed all the messages from the DOM lets remove any block times we may need to as well.
+            $.each(messagestoremove, function(key, message) {
+                // First - let's make sure there are no more messages in that time block.
+                var blocktime = message.data('blocktime');
+                if (this.find('div.message[data-blocktime=\'' + blocktime + '\']').length == 0) {
+                    this.find('div.blocktime[data-blocktime=\'' + blocktime + '\']').remove();
+                }
+            }.bind(this));
+            // Simple toggle the delete button action.
+            this._chooseMessagesToDelete();
+        }.bind(this), notification.exception);
+    };
+
+    Messagearea.prototype._cancelDeleteMessages = function() {
+        // Simple toggle the delete button action.
+        this._chooseMessagesToDelete();
+    };
+
     Messagearea.prototype._loadMessages = function(userid) {
         // Show loading template.
         templates.render('core_message/loading', {}).done(function(html) {
@@ -315,6 +387,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         button.removeClass(oldclass);
         button.addClass(newclass);
         button.prop('id', newid);
+    };
+
+    Messagearea.prototype._getLoggedInUserId = function() {
+        return this._node.data('loggedinuserid');
     };
 
     Messagearea.prototype._getCurrentUserId = function() {

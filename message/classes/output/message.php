@@ -52,13 +52,16 @@ class message implements templatable, renderable {
 
     public function export_for_template(\renderer_base $output) {
         $message = new \stdClass();
+        $message->id = $this->message->id;
         $message->text = $this->message->text;
-        $message->blocktime = $this->message->blocktime;
+        $message->displayblocktime = $this->message->displayblocktime;
+        $message->blocktime = userdate($this->message->timecreated, get_string('strftimedaydate'));
         $message->position = 'left';
         if ($this->message->currentuserid == $this->message->useridfrom) {
             $message->position = 'right';
         }
         $message->timesent = userdate($this->message->timecreated, get_string('strftimetime'));
+        $message->isread = !empty($this->message->timeread) ? 1 : 0;
 
         return $message;
     }

@@ -629,6 +629,7 @@ $functions = array(
         'description' => 'Deletes a message.',
         'type' => 'write',
         'capabilities' => 'moodle/site:deleteownmessage',
+        'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_get_blocked_users' => array(

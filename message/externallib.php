@@ -606,10 +606,13 @@ class core_message_external extends external_api {
                 'messages' => new external_multiple_structure(
                     new external_single_structure(
                         array(
+                            'id' => new external_value(PARAM_INT, 'The id of the message'),
                             'text' => new external_value(PARAM_RAW, 'The text of the message'),
+                            'displayblocktime' => new external_value(PARAM_BOOL, 'Should we display the block time?'),
                             'blocktime' => new external_value(PARAM_NOTAGS, 'The time to display above the message'),
                             'position' => new external_value(PARAM_ALPHA, 'The position of the text'),
                             'timesent' => new external_value(PARAM_NOTAGS, 'The time the message was sent'),
+                            'isread' => new external_value(PARAM_INT, 'Determines if the message was read or not'),
                         )
                     )
                 )
@@ -668,10 +671,13 @@ class core_message_external extends external_api {
     public static function data_for_messagearea_get_most_recent_message_returns() {
         return new external_single_structure(
             array(
+                'id' => new external_value(PARAM_INT, 'The id of the message'),
                 'text' => new external_value(PARAM_RAW, 'The text of the message'),
+                'displayblocktime' => new external_value(PARAM_BOOL, 'Should we display the block time?'),
                 'blocktime' => new external_value(PARAM_NOTAGS, 'The time to display above the message'),
                 'position' => new external_value(PARAM_ALPHA, 'The position of the text'),
                 'timesent' => new external_value(PARAM_NOTAGS, 'The time the message was sent'),
+                'isread' => new external_value(PARAM_INT, 'Determines if the message was read or not'),
             )
         );
     }

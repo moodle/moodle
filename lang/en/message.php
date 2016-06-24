@@ -131,6 +131,7 @@ $string['search'] = 'Search';
 $string['searchforperson'] = 'Search for a person';
 $string['searchmessages'] = 'Search messages';
 $string['searchcombined'] = 'Search people and messages';
+$string['selectmessagestodelete'] = 'Select messages to delete';
 $string['send'] = 'Send';
 $string['sendingvia'] = 'Sending "{$a->provider}" via "{$a->processor}"';
 $string['sendingviawhen'] = 'Sending "{$a->provider}" via "{$a->processor}" when {$a->state}';

@@ -84,22 +84,24 @@ class helper {
         $year = '';
         foreach ($messages as $message) {
             // Check if we are now viewing a different block period.
-            $blocktime = null;
+            $displayblocktime = false;
             $date = usergetdate($message->timecreated);
             if ($day != $date['mday'] || $month != $date['month'] || $year != $date['year']) {
                 $day = $date['mday'];
                 $month = $date['month'];
                 $year = $date['year'];
-                $blocktime = userdate($message->timecreated, get_string('strftimedaydate'));
+                $displayblocktime = true;
             }
             // Store the message to pass to the renderable.
             $msg = new \stdClass();
+            $msg->id = $message->id;
             $msg->text = message_format_message_text($message);
             $msg->currentuserid = $userid;
             $msg->useridfrom = $message->useridfrom;
             $msg->useridto = $message->useridto;
-            $msg->blocktime = $blocktime;
+            $msg->displayblocktime = $displayblocktime;
             $msg->timecreated = $message->timecreated;
+            $msg->timeread = $message->timeread;
             $arrmessages[] = new \core_message\output\message($msg);
         }
 

@@ -5844,23 +5844,22 @@ a.ygtvspacer:hover {
   font-weight: bold;
   text-align: center;
 }
-.messaging-area .messages-area .messages .left {
-  float: left;
-  width: 80%;
+.messaging-area .messages-area .messages .message .deletemessagecheckbox {
+  display: none;
 }
-.messaging-area .messages-area .messages .right {
-  float: right;
-  padding-right: 5px;
-  margin-right: 5px;
-  max-width: 80%;
-}
-.messaging-area .messages-area .messages .message {
+.messaging-area .messages-area .messages .message .content {
   border: 1px solid black;
   padding-left: 5px;
   margin-bottom: 5px;
-  clear: both;
   font-size: 10px;
   word-wrap: break-word;
+  width: 80%;
+}
+.messaging-area .messages-area .messages .message .content.left {
+  float: left;
+}
+.messaging-area .messages-area .messages .message .content.right {
+  float: right;
 }
 .messaging-area .messages-area .response textarea {
   width: 80%;

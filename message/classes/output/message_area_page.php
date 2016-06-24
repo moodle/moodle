@@ -65,7 +65,10 @@ class message_area_page implements templatable, renderable {
     }
 
     public function export_for_template(\renderer_base $output) {
+        global $USER;
+
         $data = new \stdClass();
+        $data->loggedinuserid = $USER->id;
         $data->userid = $this->userid;
         $data->contacts = $this->contacts->export_for_template($output);
         if ($this->messages) {
