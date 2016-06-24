@@ -198,6 +198,7 @@ class core_course_external extends external_api {
                 list($sectionvalues['summary'], $sectionvalues['summaryformat']) =
                         external_format_text($section->summary, $section->summaryformat,
                                 $context->id, 'course', 'section', $section->id);
+                $sectionvalues['section'] = $section->section;
                 $sectioncontents = array();
 
                 //for each module of the section
@@ -325,6 +326,7 @@ class core_course_external extends external_api {
                     'visible' => new external_value(PARAM_INT, 'is the section visible', VALUE_OPTIONAL),
                     'summary' => new external_value(PARAM_RAW, 'Section description'),
                     'summaryformat' => new external_format_value('summary'),
+                    'section' => new external_value(PARAM_INT, 'Section number inside the course', VALUE_OPTIONAL),
                     'modules' => new external_multiple_structure(
                             new external_single_structure(
                                 array(

@@ -1,0 +1,7 @@
+This files describes API changes in /course/*,
+information provided here is intended especially for developers.
+
+=== 3.2 ===
+
+ * External function core_course_external::get_course_contents now returns the section's number in the course (new section field).
+
