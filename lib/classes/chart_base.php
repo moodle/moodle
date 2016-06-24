@@ -40,6 +40,7 @@ class chart_base implements JsonSerializable, renderable {
 
     protected $series = [];
     protected $labels = [];
+    protected $title = null;
 
     public function __construct() {
     }
@@ -52,7 +53,8 @@ class chart_base implements JsonSerializable, renderable {
         return [
             'type' => $this->get_type(),
             'series' => $this->series,
-            'labels' => $this->labels
+            'labels' => $this->labels,
+            'title' => $this->title
         ];
     }
 
@@ -64,6 +66,10 @@ class chart_base implements JsonSerializable, renderable {
         return $this->series;
     }
 
+    public function get_title() {
+        return $this->title;
+    }
+
     public function get_type() {
         $classname = get_class($this);
         return substr($classname, strpos($classname, '_') + 1);
@@ -73,4 +79,7 @@ class chart_base implements JsonSerializable, renderable {
         $this->labels = $labels;
     }
 
+    public function set_title($title) {
+        $this->title = $title;
+    }
 }
