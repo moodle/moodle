@@ -41,6 +41,8 @@ class chart_base implements JsonSerializable, renderable {
     protected $series = [];
     protected $labels = [];
     protected $title = null;
+    protected $xaxes = [];
+    protected $yaxes = [];
 
     public function __construct() {
     }
@@ -54,8 +56,29 @@ class chart_base implements JsonSerializable, renderable {
             'type' => $this->get_type(),
             'series' => $this->series,
             'labels' => $this->labels,
-            'title' => $this->title
+            'title' => $this->title,
+            'axes' => [
+                'x' => $this->xaxes,
+                'y' => $this->yaxes,
+            ]
         ];
+    }
+
+    private function get_axis($type, $index, $createifnotexists) {
+        if ($type === 'x') {
+            $axes = &$this->xaxes;
+        } else {
+            $axes = &$this->yaxes;
+        }
+
+        if (!isset($axes[$index])) {
+            if (!$createifnotexists) {
+                throw new coding_exception('Unknown axis.');
+            }
+            $axes[$index] = new chart_axis();
+        }
+
+        return $axes[$index];
     }
 
     public function get_labels() {
@@ -75,6 +98,22 @@ class chart_base implements JsonSerializable, renderable {
         return substr($classname, strpos($classname, '_') + 1);
     }
 
+    public function get_xaxes() {
+        return $this->xaxes;
+    }
+
+    public function get_xaxis($index = 0, $createifnotexists = false) {
+        return $this->get_axis('x', $index, $createifnotexists);
+    }
+
+    public function get_yaxes() {
+        return $this->yaxes;
+    }
+
+    public function get_yaxis($index = 0, $createifnotexists = false) {
+        return $this->get_axis('y', $index, $createifnotexists);
+    }
+
     public function set_labels(array $labels) {
         $this->labels = $labels;
     }
@@ -82,4 +121,13 @@ class chart_base implements JsonSerializable, renderable {
     public function set_title($title) {
         $this->title = $title;
     }
+
+    public function set_xaxis(chart_axis $axis, $index = 0) {
+        return $this->xaxes[$index] = $axis;
+    }
+
+    public function set_yaxis(chart_axis $axis, $index = 0) {
+        return $this->yaxes[$index] = $axis;
+    }
+
 }
