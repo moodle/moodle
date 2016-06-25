@@ -92,8 +92,8 @@ class core_externallib_testcase extends advanced_testcase {
 
         $test = '$$ \pi $$';
         $testformat = FORMAT_MARKDOWN;
-        $correct = array('<span class="nolink"><span class="filter_mathjaxloader_equation"><p>$$ \pi $$</p>
-</span></span>', FORMAT_HTML);
+        $correct = array('<span class="filter_mathjaxloader_equation"><p><span class="nolink">$$ \pi $$</span></p>
+</span>', FORMAT_HTML);
         $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0), $correct);
 
         // Filters can be opted out from by the developer.
