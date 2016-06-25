@@ -296,7 +296,12 @@ class evidence extends persistent {
      *
      * @return \core_competency\persistent[]
      */
-    public static function get_records_for_usercompetency($usercompetencyid, \context $context, $sort = '', $order = 'ASC', $skip = 0, $limit = 0) {
+    public static function get_records_for_usercompetency($usercompetencyid,
+                                                          \context $context,
+                                                          $sort = '',
+                                                          $order = 'ASC',
+                                                          $skip = 0,
+                                                          $limit = 0) {
         global $DB;
 
         $params = array(
@@ -306,7 +311,9 @@ class evidence extends persistent {
         );
 
         if (!empty($sort)) {
-            $sort = ' ORDER BY e.' . $sort . ' ' . $order;
+            $sortcolumns = explode(',', $sort);
+            $sortcolumns = array_map('trim', $sortcolumns);
+            $sort = ' ORDER BY e.' . implode(', e.', $sortcolumns) . ' ' . $order;
         }
 
         $sql = 'SELECT e.*
