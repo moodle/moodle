@@ -265,7 +265,7 @@ class quiz_statistics_report extends quiz_default_report {
             if ($quizstats->s()) {
                 echo $OUTPUT->heading(get_string('quizstructureanalysis', 'quiz_statistics'), 3);
                 $this->output_quiz_structure_analysis_table($questionstats);
-                $this->output_statistics_graph($quiz->id, $currentgroup, $whichattempts);
+                $this->output_statistics_graph($quiz, $currentgroup, $whichattempts);
             }
         }
 
@@ -510,18 +510,89 @@ class quiz_statistics_report extends quiz_default_report {
     /**
      * Output the HTML needed to show the statistics graph.
      *
-     * @param $quizid
-     * @param $currentgroup
-     * @param $whichattempts
+     * @param int|object $quizorid The quiz, or its ID.
+     * @param int $currentgroup The current group.
+     * @param string $whichattempts Which attempts constant.
      */
-    protected function output_statistics_graph($quizid, $currentgroup, $whichattempts) {
-        global $PAGE;
+    protected function output_statistics_graph($quizorid, $currentgroup, $whichattempts) {
+        global $DB, $PAGE;
+
+        $quiz = $quizorid;
+        if (!is_object($quiz)) {
+            $quiz = $DB->get_record('quiz', array('id' => $quizorid), '*', MUST_EXIST);
+        }
+        $quizid = $quiz->id;
+
+        if (empty($currentgroup)) {
+            $groupstudents = [];
+        } else {
+            $groupstudents = get_users_by_capability($this->context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),
+                '', '', '', '', $currentgroup, '', false);
+        }
+
+        $qubaids = quiz_statistics_qubaids_condition($quizid, $groupstudents, $whichattempts);
+
+        // Load the rest of the required data.
+        $questions = quiz_report_get_significant_questions($quiz);
+
+        // Only load main question not sub questions.
+        $questionstatistics = $DB->get_records_select('question_statistics', 'hashcode = ? AND slot IS NOT NULL',
+            [$qubaids->get_hash_code()]);
+
+        // Configure what to display.
+        $fieldstoplot = [
+            'facility' => get_string('facility', 'quiz_statistics'),
+            'discriminativeefficiency' => get_string('discriminative_efficiency', 'quiz_statistics')
+        ];
+        $fieldstoplotfactor = ['facility' => 100, 'discriminativeefficiency' => 1];
+
+        // Prepare the arrays to hold the data.
+        $xdata = [];
+        foreach (array_keys($fieldstoplot) as $fieldtoplot) {
+            $ydata[$fieldtoplot] = [];
+        }
+
+        // Fill in the data for each question.
+        foreach ($questionstatistics as $questionstatistic) {
+            $number = $questions[$questionstatistic->slot]->number;
+            $xdata[$number] = $number;
+
+            foreach ($fieldstoplot as $fieldtoplot => $notused) {
+                $value = $questionstatistic->$fieldtoplot;
+                if (is_null($value)) {
+                    $value = 0;
+                }
+                $value *= $fieldstoplotfactor[$fieldtoplot];
+                $ydata[$fieldtoplot][$number] = number_format($value, 2);
+            }
+        }
+
+        // Create the chart.
+        sort($xdata);
+        $chart = new \core\chart_bar();
+        $chart->get_xaxis(0, true)->set_label(get_string('position', 'quiz_statistics'));
+        $chart->set_labels(array_values($xdata));
+
+        foreach ($fieldstoplot as $fieldtoplot => $notused) {
+            ksort($ydata[$fieldtoplot]);
+            $series = new \core\chart_series($fieldstoplot[$fieldtoplot], array_values($ydata[$fieldtoplot]));
+            $chart->add_series($series);
+        }
+
+        // Find max.
+        $max = 0;
+        foreach ($fieldstoplot as $fieldtoplot => $notused) {
+            $max = max($max, max($ydata[$fieldtoplot]));
+        }
+
+        // Set Y properties.
+        $yaxis = $chart->get_yaxis(0, true);
+        $yaxis->set_stepsize(10);
+        $yaxis->set_label('%');
 
         $output = $PAGE->get_renderer('mod_quiz');
-        $imageurl = new moodle_url('/mod/quiz/report/statistics/statistics_graph.php',
-                                    compact('quizid', 'currentgroup', 'whichattempts'));
         $graphname = get_string('statisticsreportgraph', 'quiz_statistics');
-        echo $output->graph($imageurl, $graphname);
+        echo $output->chart($chart, $graphname);
     }
 
     /**
