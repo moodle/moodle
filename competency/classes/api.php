@@ -4152,7 +4152,7 @@ class api {
      * @param int $limit Number of records to return.
      * @return \core_competency\evidence[]
      */
-    public static function list_evidence_in_course($userid = 0, $courseid = 0, $competencyid = 0, $sort = 'timecreated',
+    public static function list_evidence_in_course($userid = 0, $courseid = 0, $competencyid = 0, $sort = 'timecreated, id',
                                                    $order = 'DESC', $skip = 0, $limit = 0) {
         static::require_enabled();
 
@@ -4166,11 +4166,8 @@ class api {
             return array();
         }
 
-        $params = array(
-            'usercompetencyid' => $usercompetency->get_id(),
-            'contextid' => context_course::instance($courseid)->id
-        );
-        return evidence::get_records($params, $sort, $order, $skip, $limit);
+        $context = context_course::instance($courseid);
+        return evidence::get_records_for_usercompetency($usercompetency->get_id(), $context, $sort, $order, $skip, $limit);
     }
 
     /**
