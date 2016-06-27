@@ -523,7 +523,7 @@ class mod_lti_external extends external_api {
         }
 
         if (!empty($capabilityoffered)) {
-            $config->lti_capabilities = $capabilitiesoffered;
+            $config->lti_capabilities = $capabilityoffered;
         }
 
         if (!empty($serviceoffered)) {
