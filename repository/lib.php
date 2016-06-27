@@ -2782,13 +2782,12 @@ abstract class repository implements cacheable_object {
     /**
      * Helper function to indicate if this repository uses post requests for uploading files.
      *
-     * If the respository doesn't rely on uploading via POST requests, this can be overridden to return false,
-     * allowing users with the right permissions to upload files of any size from this repository.
-     *
+     * @deprecated since Moodle 3.2, 3.1.1, 3.0.5
      * @return bool
      */
     public function uses_post_requests() {
-        return true;
+        debugging('The method repository::uses_post_requests() is deprecated and must not be used anymore.', DEBUG_DEVELOPER);
+        return false;
     }
 }
 
