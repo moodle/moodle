@@ -240,11 +240,8 @@ class webservice_soap_server extends webservice_base_server {
         $envelope->appendChild($body);
         $dom->appendChild($envelope);
 
-        // Send headers.
-        $this->send_headers();
-
-        // Output the XML.
-        echo $dom->saveXML();
+        $this->response = $dom->saveXML();
+        $this->send_response();
     }
 
     /**
@@ -263,7 +260,7 @@ class webservice_soap_server extends webservice_base_server {
         header('Expires: ' . gmdate('D, d M Y H:i:s', 0) . ' GMT');
         header('Pragma: no-cache');
         header('Accept-Ranges: none');
-        header('Content-Length: ' . count($this->response));
+        header('Content-Length: ' . strlen($this->response));
         header('Content-Type: application/xml; charset=utf-8');
         header('Content-Disposition: inline; filename="response.xml"');
     }
