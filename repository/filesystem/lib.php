@@ -810,17 +810,6 @@ class repository_filesystem extends repository {
     public function supports_relative_file() {
         return $this->get_option('relativefiles');
     }
-
-    /**
-     * Helper function to indicate if this repository uses post requests for uploading files.
-     *
-     * Files are copied from the filesystem so don't rely on POST requests.
-     *
-     * @return bool
-     */
-    public function uses_post_requests() {
-        return false;
-    }
 }
 
 /**

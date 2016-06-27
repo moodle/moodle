@@ -3,6 +3,10 @@ information provided here is intended especially for developers. Full
 details of the repository API are available on Moodle docs:
 http://docs.moodle.org/dev/Repository_API
 
+=== 3.1.1 ===
+
+* The method repository::uses_post_requests() has been deprecated and must not be used anymore.
+
 === 3.1 ===
 
 * The following functions, previously used (exclusively) by upgrade steps are not available
