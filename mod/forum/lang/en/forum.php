@@ -497,11 +497,11 @@ $string['trackingoff'] = 'Off';
 $string['trackingon'] = 'Forced';
 $string['trackingoptional'] = 'Optional';
 $string['trackingtype'] = 'Read tracking';
-$string['trackingtype_help'] = 'If enabled, participants can track read and unread posts in the forum and in discussions. There are three options:
+$string['trackingtype_help'] = 'Read tracking enables participants to easily check which posts they have not yet seen by highlighting any new posts.
 
-* Optional - Participants can choose whether to turn tracking on or off via a link in the administration block. Forum tracking must also be enabled in the user\'s profile settings.
-* Forced - Tracking is always on, regardless of user setting. Available depending on administrative setting.
-* Off - Read and unread posts are not tracked.';
+If set to optional, participants can choose whether to turn tracking on or off via a link in the administration block. (Users must also enable forum tracking in their forum preferences.)
+
+If \'Allow forced read tracking\' is enabled in the site administration, then a further option is available - forced. This means that tracking is always on, regardless of users\' forum preferences.';
 $string['unread'] = 'Unread';
 $string['unreadposts'] = 'Unread posts';
 $string['unreadpostsnumber'] = '{$a} unread posts';
