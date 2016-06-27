@@ -202,8 +202,10 @@ class helper {
             'connecttimeout' => 5
         );
 
-        if (!$iconfiles = $fs->create_file_from_url($filerecord, $url, $urlparams)) {
-            return self::PROFILE_IMAGE_UPDATE_FAILED;
+        try {
+            $fs->create_file_from_url($filerecord, $url, $urlparams);
+        } catch (\file_exception $e) {
+            return get_string($e->errorcode, $e->module, $e->a);
         }
 
         $iconfile = $fs->get_area_files($context->id, 'user', 'newicon', false, 'itemid', false);
