@@ -40,6 +40,7 @@ class chart_series implements JsonSerializable {
     const TYPE_DEFAULT = null;
     const TYPE_LINE = 'line';
 
+    protected $color;
     protected $label;
     protected $type = self::TYPE_DEFAULT;
     protected $values = [];
@@ -47,6 +48,10 @@ class chart_series implements JsonSerializable {
     public function __construct($label, $values) {
         $this->values = $values;
         $this->label = $label;
+    }
+
+    public function get_color() {
+        return $this->color;
     }
 
     public function get_count() {
@@ -69,7 +74,8 @@ class chart_series implements JsonSerializable {
         $data = [
             'label' => $this->label,
             'type' => $this->type,
-            'values' => $this->values
+            'values' => $this->values,
+            'color' => $this->color,
         ];
         return $data;
     }
