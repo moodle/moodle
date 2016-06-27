@@ -479,7 +479,7 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses) {
 
     //overwrite options value;
     $display->options = array();
-    $totaluser = 0;
+    $allusers = [];
     foreach ($choice->option as $optionid => $optiontext) {
         $display->options[$optionid] = new stdClass;
         $display->options[$optionid]->text = $optiontext;
@@ -487,13 +487,13 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses) {
 
         if (array_key_exists($optionid, $allresponses)) {
             $display->options[$optionid]->user = $allresponses[$optionid];
-            $totaluser += count($allresponses[$optionid]);
+            $allusers = array_merge($allusers, array_keys($allresponses[$optionid]));
         }
     }
     unset($display->option);
     unset($display->maxanswers);
 
-    $display->numberofuser = $totaluser;
+    $display->numberofuser = count(array_unique($allusers));
     $context = context_module::instance($cm->id);
     $display->viewresponsecapability = has_capability('mod/choice:readresponses', $context);
     $display->deleterepsonsecapability = has_capability('mod/choice:deleteresponses',$context);
@@ -830,12 +830,13 @@ function choice_extend_settings_navigation(settings_navigation $settings, naviga
         // Big function, approx 6 SQL calls per user.
         $allresponses = choice_get_response_data($choice, $PAGE->cm, $groupmode, $onlyactive);
 
-        $responsecount =0;
+        $allusers = [];
         foreach($allresponses as $optionid => $userlist) {
             if ($optionid) {
-                $responsecount += count($userlist);
+                $allusers = array_merge($allusers, array_keys($userlist));
             }
         }
+        $responsecount = count(array_unique($allusers));
         $choicenode->add(get_string("viewallresponses", "choice", $responsecount), new moodle_url('/mod/choice/report.php', array('id'=>$PAGE->cm->id)));
     }
 }
@@ -917,8 +918,10 @@ function choice_print_overview($courses, &$htmlarray) {
 
             // Display relevant info based on permissions.
             if (has_capability('mod/choice:readresponses', context_module::instance($choice->coursemodule))) {
-                $attempts = $DB->count_records('choice_answers', array('choiceid' => $choice->id));
-                $str .= $OUTPUT->box(get_string('viewallresponses', 'choice', $attempts), 'info');
+                $attempts = $DB->count_records_sql('SELECT COUNT(DISTINCT userid) FROM {choice_answers} WHERE choiceid = ?',
+                    [$choice->id]);
+                $url = new moodle_url('/mod/choice/report.php', ['id' => $choice->coursemodule]);
+                $str .= $OUTPUT->box(html_writer::link($url, get_string('viewallresponses', 'choice', $attempts)), 'info');
 
             } else if (has_capability('mod/choice:choose', context_module::instance($choice->coursemodule))) {
                 // See if the user has submitted anything.
