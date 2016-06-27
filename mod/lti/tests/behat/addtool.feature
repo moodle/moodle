@@ -20,7 +20,7 @@ Feature: Add tools
     And I follow "Add preconfigured tool"
     And I set the following fields to these values:
       | Tool name | Teaching Tool 1 |
-      | Show when creating activities | Show in activity chooser and as preconfigured tool  |
+      | Tool configuration usage | Show in activity chooser and as a preconfigured tool |
     And I set the field "Tool base URL/cartridge URL" to local url "/mod/lti/tests/fixtures/tool_provider.html"
     And I press "Save changes"
     And I log out
