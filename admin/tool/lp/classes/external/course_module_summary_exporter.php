@@ -40,14 +40,18 @@ class course_module_summary_exporter extends \core_competency\external\exporter 
     }
 
     protected function get_other_values(renderer_base $output) {
-        $context = $this->related['cm']->context;
+        $cm = $this->related['cm'];
+        $context = $cm->context;
 
-        return array(
-            'id' => $this->related['cm']->id,
-            'name' => external_format_string($this->related['cm']->name, $context->id),
-            'url' => $this->related['cm']->url->out(),
-            'iconurl' => $this->related['cm']->get_icon_url()->out()
+        $values = array(
+            'id' => $cm->id,
+            'name' => external_format_string($cm->name, $context->id),
+            'iconurl' => $cm->get_icon_url()->out()
         );
+        if ($cm->url) {
+            $values['url'] = $cm->url->out();
+        }
+        return $values;
     }
 
 
@@ -60,7 +64,8 @@ class course_module_summary_exporter extends \core_competency\external\exporter 
                 'type' => PARAM_TEXT
             ),
             'url' => array(
-                'type' => PARAM_URL
+                'type' => PARAM_URL,
+                'optional' => true,
             ),
             'iconurl' => array(
                 'type' => PARAM_URL
