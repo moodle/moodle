@@ -46,6 +46,7 @@ class chart_axis implements JsonSerializable {
 
     protected $label = null;
     protected $position = self::POS_DEFAULT;
+    protected $stepsize = null;
 
     public function __construct() {
     }
@@ -58,10 +59,15 @@ class chart_axis implements JsonSerializable {
         return $this->position;
     }
 
+    public function get_stepsize() {
+        return $this->stepsize;
+    }
+
     public function jsonSerialize() {
         return [
             'label' => $this->label,
             'position' => $this->position,
+            'stepSize' => $this->stepsize,
         ];
     }
 
@@ -71,6 +77,10 @@ class chart_axis implements JsonSerializable {
 
     public function set_position($position) {
         return $this->position = $position;
+    }
+
+    public function set_stepsize($stepsize) {
+        return $this->stepsize = $stepsize;
     }
 
 }
