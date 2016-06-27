@@ -84,6 +84,8 @@ class backup_lti_activity_structure_step extends backup_activity_structure_step 
             'showdescriptionlaunch',
             'icon',
             'secureicon',
+            new encrypted_final_element('resourcekey'),
+            new encrypted_final_element('password'),
             )
         );
 
