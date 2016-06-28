@@ -66,20 +66,27 @@ class chart_base implements JsonSerializable, renderable {
     }
 
     private function get_axis($type, $index, $createifnotexists) {
-        if ($type === 'x') {
-            $axes = &$this->xaxes;
+        $isx = $type === 'x';
+        if ($isx) {
+            $axis = isset($this->xaxes[$index]) ? $this->xaxes[$index] : null;
         } else {
-            $axes = &$this->yaxes;
+            $axis = isset($this->yaxes[$index]) ? $this->yaxes[$index] : null;
         }
 
-        if (!isset($axes[$index])) {
+        if ($axis === null) {
             if (!$createifnotexists) {
                 throw new coding_exception('Unknown axis.');
             }
-            $axes[$index] = new chart_axis();
+
+            $axis = new chart_axis();
+            if ($isx) {
+                $this->set_xaxis($axis, $index);
+            } else {
+                $this->set_yaxis($axis, $index);
+            }
         }
 
-        return $axes[$index];
+        return $axis;
     }
 
     public function get_labels() {
