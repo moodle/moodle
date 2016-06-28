@@ -117,7 +117,7 @@ Y.extend(DDIMAGEORTEXT_FORM, M.qtype_ddimageortext.dd_base_class, {
         }
     },
     set_options_for_drag_item_selectors : function () {
-        var dragitemsoptions = {0: ''};
+        var dragitemsoptions = {'0': ''};
         for (var i = 0; i < this.form.get_form_value('noitems', []); i++) {
             var label = this.form.get_form_value('draglabel', [i]);
             var file = this.fp.file(this.form.to_name_with_index('dragitem', [i]));
