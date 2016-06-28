@@ -843,11 +843,6 @@
         }
       }
     },
-    "grunt-contrib-jshint": {
-      "version": "0.11.3",
-      "from": "grunt-contrib-jshint@0.11.3",
-      "resolved": "https://registry.npmjs.org/grunt-contrib-jshint/-/grunt-contrib-jshint-0.11.3.tgz"
-    },
     "grunt-contrib-less": {
       "version": "1.1.0",
       "from": "grunt-contrib-less@1.1.0",
@@ -1054,7 +1049,8 @@
       "dependencies": {
         "lodash": {
           "version": "4.13.1",
-          "from": "lodash@>=4.3.0 <5.0.0"
+          "from": "lodash@4.13.1",
+          "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.13.1.tgz"
         }
       }
     },
@@ -1184,23 +1180,6 @@
       "version": "0.1.0",
       "from": "jsbn@>=0.1.0 <0.2.0",
       "resolved": "https://registry.npmjs.org/jsbn/-/jsbn-0.1.0.tgz"
-    },
-    "jshint": {
-      "version": "2.8.0",
-      "from": "jshint@>=2.8.0 <2.9.0",
-      "resolved": "https://registry.npmjs.org/jshint/-/jshint-2.8.0.tgz",
-      "dependencies": {
-        "lodash": {
-          "version": "3.7.0",
-          "from": "lodash@>=3.7.0 <3.8.0",
-          "resolved": "https://registry.npmjs.org/lodash/-/lodash-3.7.0.tgz"
-        },
-        "minimatch": {
-          "version": "2.0.10",
-          "from": "minimatch@>=2.0.0 <2.1.0",
-          "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-2.0.10.tgz"
-        }
-      }
     },
     "jslint": {
       "version": "0.3.4",
@@ -1801,7 +1780,8 @@
       "dependencies": {
         "lodash": {
           "version": "4.13.1",
-          "from": "lodash@>=4.0.0 <5.0.0"
+          "from": "lodash@>=4.0.0 <5.0.0",
+          "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.13.1.tgz"
         }
       }
     },

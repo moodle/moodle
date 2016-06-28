@@ -1,3 +1,6 @@
+// NOTE: We use eslint now. This file is used only by shifter. We keep the configuration
+// here because shifter uses jshint after modules have been concating. Eslint can't
+// currently do this.
 {
     "asi":          false,
     "bitwise":      true,
