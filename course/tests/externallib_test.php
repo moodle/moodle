@@ -749,10 +749,12 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
             }
         }
         $this->assertEquals(2, $testexecuted);
+        $this->assertEquals(0, $firstsection['section']);
 
         // Check that the only return section has the 5 created modules.
         $this->assertCount(4, $firstsection['modules']);
         $this->assertCount(1, $lastsection['modules']);
+        $this->assertEquals(2, $lastsection['section']);
 
         try {
             $sections = core_course_external::get_course_contents($course->id,
