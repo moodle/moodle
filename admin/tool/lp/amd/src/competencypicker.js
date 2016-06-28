@@ -162,10 +162,10 @@ define(['jquery',
             }
 
             if (self._multiSelect) {
-                self._trigger('save', { competencyIds: self._selectedCompetencies });
+                self._trigger('save', {competencyIds: self._selectedCompetencies});
             } else {
                 // We checked above that the array has at least one value.
-                self._trigger('save', { competencyId: self._selectedCompetencies[0] });
+                self._trigger('save', {competencyId: self._selectedCompetencies[0]});
             }
 
             self.close();
@@ -226,7 +226,7 @@ define(['jquery',
         var self = this;
 
         return Ajax.call([
-            { methodname: 'core_competency_search_competencies', args: {
+            {methodname: 'core_competency_search_competencies', args: {
                 searchtext: searchText,
                 competencyframeworkid: frameworkId
             }}
@@ -320,7 +320,7 @@ define(['jquery',
 
         if (self._singleFramework) {
             promise = Ajax.call([
-                { methodname: 'core_competency_read_competency_framework', args: {
+                {methodname: 'core_competency_read_competency_framework', args: {
                     id: this._frameworkId
                 }}
             ])[0].then(function(framework) {
@@ -328,9 +328,9 @@ define(['jquery',
             });
         } else {
             promise = Ajax.call([
-                { methodname: 'core_competency_list_competency_frameworks', args: {
+                {methodname: 'core_competency_list_competency_frameworks', args: {
                     sort: 'shortname',
-                    context: { contextid: self._pageContextId },
+                    context: {contextid: self._pageContextId},
                     includes: self._pageContextIncludes,
                     onlyvisible: self._onlyVisible
                 }}

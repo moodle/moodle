@@ -105,7 +105,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
 
         ajax.call([{
             methodname: 'mod_assign_list_participants',
-            args: { assignid: assignmentid, groupid: groupid, filter: '', onlyids: true },
+            args: {assignid: assignmentid, groupid: groupid, filter: '', onlyids: true},
             done: this._usersLoaded.bind(this),
             fail: notification.exception
         }]);
@@ -244,10 +244,10 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
         if (checker.checkFormForChanges('[data-region="grade-panel"] .gradeform')) {
             // Form has changes, so we need to confirm before switching users.
             str.get_strings([
-                { key: 'unsavedchanges', component: 'mod_assign' },
-                { key: 'unsavedchangesquestion', component: 'mod_assign' },
-                { key: 'saveandcontinue', component: 'mod_assign' },
-                { key: 'cancel', component: 'core' },
+                {key: 'unsavedchanges', component: 'mod_assign'},
+                {key: 'unsavedchangesquestion', component: 'mod_assign'},
+                {key: 'saveandcontinue', component: 'mod_assign'},
+                {key: 'cancel', component: 'core'},
             ]).done(function(strs) {
                 notification.confirm(strs[0], strs[1], strs[2], strs[3], function() {
                     $(document).trigger('save-changes', -1);
@@ -276,10 +276,10 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
         if (checker.checkFormForChanges('[data-region="grade-panel"] .gradeform')) {
             // Form has changes, so we need to confirm before switching users.
             str.get_strings([
-                { key: 'unsavedchanges', component: 'mod_assign' },
-                { key: 'unsavedchangesquestion', component: 'mod_assign' },
-                { key: 'saveandcontinue', component: 'mod_assign' },
-                { key: 'cancel', component: 'core' },
+                {key: 'unsavedchanges', component: 'mod_assign'},
+                {key: 'unsavedchangesquestion', component: 'mod_assign'},
+                {key: 'saveandcontinue', component: 'mod_assign'},
+                {key: 'cancel', component: 'core'},
             ]).done(function(strs) {
                 notification.confirm(strs[0], strs[1], strs[2], strs[3], function() {
                     $(document).trigger('save-changes', useridnumber);
@@ -405,7 +405,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
             if (count) {
                 currentIndex += 1;
             }
-            var param = { x: currentIndex, y: count };
+            var param = {x: currentIndex, y: count};
 
             str.get_string('xofy', 'mod_assign', param).done(function(s) {
                 this._region.find('[data-region="user-count-summary"]').text(s);
@@ -448,10 +448,10 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
         if (checker.checkFormForChanges('[data-region="grade-panel"] .gradeform')) {
             // Form has changes, so we need to confirm before switching users.
             str.get_strings([
-                { key: 'unsavedchanges', component: 'mod_assign' },
-                { key: 'unsavedchangesquestion', component: 'mod_assign' },
-                { key: 'saveandcontinue', component: 'mod_assign' },
-                { key: 'cancel', component: 'core' },
+                {key: 'unsavedchanges', component: 'mod_assign'},
+                {key: 'unsavedchangesquestion', component: 'mod_assign'},
+                {key: 'saveandcontinue', component: 'mod_assign'},
+                {key: 'cancel', component: 'core'},
             ]).done(function(strs) {
                 notification.confirm(strs[0], strs[1], strs[2], strs[3], function() {
                     $(document).trigger('save-changes', userid);

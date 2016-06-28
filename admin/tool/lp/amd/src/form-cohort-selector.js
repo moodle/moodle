@@ -47,7 +47,7 @@ define(['jquery', 'core/ajax', 'core/templates'], function($, Ajax, Templates) {
                 methodname: 'tool_lp_search_cohorts',
                 args: {
                     query: query,
-                    context: { contextid: contextid },
+                    context: {contextid: contextid},
                     includes: includes
                 }
             }]);

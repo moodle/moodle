@@ -153,7 +153,7 @@ define(['jquery',
         var self = this,
             calls = [{
                 methodname: 'core_competency_delete_plan',
-                args: { id: planData.id }
+                args: {id: planData.id}
             }];
         self._callAndRefresh(calls, planData);
     };
@@ -169,15 +169,15 @@ define(['jquery',
 
         requests = ajax.call([{
             methodname: 'core_competency_read_plan',
-            args: { id: planData.id }
+            args: {id: planData.id}
         }]);
 
         requests[0].done(function(plan) {
             str.get_strings([
-                { key: 'confirm', component: 'moodle' },
-                { key: 'deleteplan', component: 'tool_lp', param: plan.name },
-                { key: 'delete', component: 'moodle' },
-                { key: 'cancel', component: 'moodle' }
+                {key: 'confirm', component: 'moodle'},
+                {key: 'deleteplan', component: 'tool_lp', param: plan.name},
+                {key: 'delete', component: 'moodle'},
+                {key: 'cancel', component: 'moodle'}
             ]).done(function(strings) {
                 notification.confirm(
                     strings[0], // Confirm.
@@ -202,7 +202,7 @@ define(['jquery',
         var self = this,
             calls = [{
                 methodname: 'core_competency_reopen_plan',
-                args: { planid: planData.id}
+                args: {planid: planData.id}
             }];
         self._callAndRefresh(calls, planData);
     };
@@ -216,15 +216,15 @@ define(['jquery',
         var self = this,
             requests = ajax.call([{
                 methodname: 'core_competency_read_plan',
-                args: { id: planData.id }
+                args: {id: planData.id}
             }]);
 
         requests[0].done(function(plan) {
             str.get_strings([
-                { key: 'confirm', component: 'moodle' },
-                { key: 'reopenplanconfirm', component: 'tool_lp', param: plan.name },
-                { key: 'reopenplan', component: 'tool_lp' },
-                { key: 'cancel', component: 'moodle' }
+                {key: 'confirm', component: 'moodle'},
+                {key: 'reopenplanconfirm', component: 'tool_lp', param: plan.name},
+                {key: 'reopenplan', component: 'tool_lp'},
+                {key: 'cancel', component: 'moodle'}
             ]).done(function(strings) {
                 notification.confirm(
                     strings[0], // Confirm.
@@ -249,7 +249,7 @@ define(['jquery',
         var self = this,
             calls = [{
                 methodname: 'core_competency_complete_plan',
-                args: { planid: planData.id}
+                args: {planid: planData.id}
             }];
         self._callAndRefresh(calls, planData);
     };
@@ -263,15 +263,15 @@ define(['jquery',
         var self = this,
             requests = ajax.call([{
                 methodname: 'core_competency_read_plan',
-                args: { id: planData.id }
+                args: {id: planData.id}
             }]);
 
         requests[0].done(function(plan) {
             str.get_strings([
-                { key: 'confirm', component: 'moodle' },
-                { key: 'completeplanconfirm', component: 'tool_lp', param: plan.name },
-                { key: 'completeplan', component: 'tool_lp' },
-                { key: 'cancel', component: 'moodle' }
+                {key: 'confirm', component: 'moodle'},
+                {key: 'completeplanconfirm', component: 'tool_lp', param: plan.name},
+                {key: 'completeplan', component: 'tool_lp'},
+                {key: 'cancel', component: 'moodle'}
             ]).done(function(strings) {
                 notification.confirm(
                     strings[0], // Confirm.
@@ -295,7 +295,7 @@ define(['jquery',
         var self = this,
             calls = [{
                 methodname: 'core_competency_unlink_plan_from_template',
-                args: { planid: planData.id}
+                args: {planid: planData.id}
             }];
         self._callAndRefresh(calls, planData);
     };
@@ -309,15 +309,15 @@ define(['jquery',
         var self = this,
             requests = ajax.call([{
                 methodname: 'core_competency_read_plan',
-                args: { id: planData.id }
+                args: {id: planData.id}
             }]);
 
         requests[0].done(function(plan) {
             str.get_strings([
-                { key: 'confirm', component: 'moodle' },
-                { key: 'unlinkplantemplateconfirm', component: 'tool_lp', param: plan.name },
-                { key: 'unlinkplantemplate', component: 'tool_lp' },
-                { key: 'cancel', component: 'moodle' }
+                {key: 'confirm', component: 'moodle'},
+                {key: 'unlinkplantemplateconfirm', component: 'tool_lp', param: plan.name},
+                {key: 'unlinkplantemplate', component: 'tool_lp'},
+                {key: 'cancel', component: 'moodle'}
             ]).done(function(strings) {
                 notification.confirm(
                     strings[0], // Confirm.
@@ -499,7 +499,7 @@ define(['jquery',
         var competencyid = $(e.target).data('id');
         var requests = ajax.call([{
             methodname: 'tool_lp_list_courses_using_competency',
-            args: { id: competencyid }
+            args: {id: competencyid}
         }]);
 
         requests[0].done(function(courses) {

@@ -65,7 +65,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
         // We are chaining ajax requests here.
         var requests = ajax.call([{
             methodname: 'core_competency_duplicate_competency_framework',
-            args: { id: frameworkid }
+            args: {id: frameworkid}
         }, {
             methodname: 'tool_lp_data_for_competency_frameworks_manage_page',
             args: {
@@ -84,7 +84,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
         // We are chaining ajax requests here.
         var requests = ajax.call([{
             methodname: 'core_competency_delete_competency_framework',
-            args: { id: frameworkid }
+            args: {id: frameworkid}
         }, {
             methodname: 'tool_lp_data_for_competency_frameworks_manage_page',
             args: {
@@ -97,12 +97,12 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
             if (success === false) {
                 var req = ajax.call([{
                     methodname: 'core_competency_read_competency_framework',
-                    args: { id: frameworkid }
+                    args: {id: frameworkid}
                 }]);
                 req[0].done(function(framework) {
                     str.get_strings([
-                        { key: 'frameworkcannotbedeleted', component: 'tool_lp', param: framework.shortname },
-                        { key: 'cancel', component: 'moodle' }
+                        {key: 'frameworkcannotbedeleted', component: 'tool_lp', param: framework.shortname},
+                        {key: 'cancel', component: 'moodle'}
                     ]).done(function(strings) {
                         notification.alert(
                             null,
@@ -127,15 +127,15 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
 
         var requests = ajax.call([{
             methodname: 'core_competency_read_competency_framework',
-            args: { id: frameworkid }
+            args: {id: frameworkid}
         }]);
 
         requests[0].done(function(framework) {
             str.get_strings([
-                { key: 'confirm', component: 'moodle' },
-                { key: 'deletecompetencyframework', component: 'tool_lp', param: framework.shortname },
-                { key: 'delete', component: 'moodle' },
-                { key: 'cancel', component: 'moodle' }
+                {key: 'confirm', component: 'moodle'},
+                {key: 'deletecompetencyframework', component: 'tool_lp', param: framework.shortname},
+                {key: 'delete', component: 'moodle'},
+                {key: 'cancel', component: 'moodle'}
             ]).done(function(strings) {
                 notification.confirm(
                     strings[0], // Confirm.

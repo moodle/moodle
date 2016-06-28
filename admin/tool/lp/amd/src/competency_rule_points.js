@@ -115,7 +115,7 @@ define(['jquery',
             children = this._tree.getChildren(this._competency.id),
             context,
             config = {
-                base: { points: 2 },
+                base: {points: 2},
                 competencies: []
             };
 

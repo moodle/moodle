@@ -140,7 +140,7 @@ define(['jquery',
         var self = this,
             calls = [{
                 methodname: 'core_competency_delete_user_evidence',
-                args: { id: evidenceData.id }
+                args: {id: evidenceData.id}
             }];
         self._callAndRefresh(calls, evidenceData);
     };
@@ -156,15 +156,15 @@ define(['jquery',
 
         requests = ajax.call([{
             methodname: 'core_competency_read_user_evidence',
-            args: { id: evidenceData.id }
+            args: {id: evidenceData.id}
         }]);
 
         requests[0].done(function(evidence) {
             str.get_strings([
-                { key: 'confirm', component: 'moodle' },
-                { key: 'deleteuserevidence', component: 'tool_lp', param: evidence.name },
-                { key: 'delete', component: 'moodle' },
-                { key: 'cancel', component: 'moodle' }
+                {key: 'confirm', component: 'moodle'},
+                {key: 'deleteuserevidence', component: 'tool_lp', param: evidence.name},
+                {key: 'delete', component: 'moodle'},
+                {key: 'cancel', component: 'moodle'}
             ]).done(function(strings) {
                 notification.confirm(
                     strings[0], // Confirm.
@@ -295,7 +295,7 @@ define(['jquery',
         var self = this,
             calls = [{
                 methodname: 'core_competency_request_review_of_user_evidence_linked_competencies',
-                args: { id: evidenceData.id }
+                args: {id: evidenceData.id}
             }];
         self._callAndRefresh(calls, evidenceData);
     };
@@ -311,15 +311,15 @@ define(['jquery',
 
         requests = ajax.call([{
             methodname: 'core_competency_read_user_evidence',
-            args: { id: evidenceData.id }
+            args: {id: evidenceData.id}
         }]);
 
         requests[0].done(function(evidence) {
             str.get_strings([
-                { key: 'confirm', component: 'moodle' },
-                { key: 'sendallcompetenciestoreview', component: 'tool_lp', param: evidence.name },
-                { key: 'confirm', component: 'moodle' },
-                { key: 'cancel', component: 'moodle' }
+                {key: 'confirm', component: 'moodle'},
+                {key: 'sendallcompetenciestoreview', component: 'tool_lp', param: evidence.name},
+                {key: 'confirm', component: 'moodle'},
+                {key: 'cancel', component: 'moodle'}
             ]).done(function(strings) {
                 notification.confirm(
                     strings[0], // Confirm.

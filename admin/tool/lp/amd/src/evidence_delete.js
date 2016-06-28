@@ -57,10 +57,10 @@ define(['jquery',
             e.stopPropagation();
 
             Str.get_strings([
-                { key: 'confirm', component: 'moodle' },
-                { key: 'areyousure', component: 'moodle' },
-                { key: 'delete', component: 'moodle' },
-                { key: 'cancel', component: 'moodle' }
+                {key: 'confirm', component: 'moodle'},
+                {key: 'areyousure', component: 'moodle'},
+                {key: 'delete', component: 'moodle'},
+                {key: 'cancel', component: 'moodle'}
             ]).done(function(strings) {
                 Notification.confirm(
                     strings[0], // Confirm.

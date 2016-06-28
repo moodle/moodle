@@ -69,7 +69,7 @@ define(['jquery', 'core/ajax', 'core/str', 'tool_lp/competencypicker', 'core/tem
 
         if (data.competencyId !== 0) {
             ajax.call([
-                { methodname: 'core_competency_read_competency', args: {
+                {methodname: 'core_competency_read_competency', args: {
                     id: data.competencyId
                 }}
             ])[0].done(function(competency) {

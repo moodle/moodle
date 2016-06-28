@@ -52,7 +52,7 @@ define(['jquery',
         var currentValue = $(e.target).closest('a').data('pushratingstouserplans');
         var context = {
             courseid: courseid,
-            settings: { pushratingstouserplans: currentValue }
+            settings: {pushratingstouserplans: currentValue}
         };
         e.preventDefault();
 
@@ -112,11 +112,11 @@ define(['jquery',
 
         var newValue = this._find('input[name="pushratingstouserplans"]:checked').val();
         var courseId = this._find('input[name="courseid"]').val();
-        var settings = { pushratingstouserplans: newValue };
+        var settings = {pushratingstouserplans: newValue};
 
         ajax.call([
-            { methodname: 'core_competency_update_course_competency_settings',
-              args: { courseid: courseId, settings: settings } }
+            {methodname: 'core_competency_update_course_competency_settings',
+              args: {courseid: courseId, settings: settings}}
         ])[0].done(function() {
             this.refreshCourseCompetenciesPage();
         }.bind(this)).fail(notification.exception);
@@ -133,8 +133,8 @@ define(['jquery',
         var courseId = this._find('input[name="courseid"]').val();
 
         ajax.call([
-            { methodname: 'tool_lp_data_for_course_competencies_page',
-              args: { courseid: courseId } }
+            {methodname: 'tool_lp_data_for_course_competencies_page',
+              args: {courseid: courseId}}
         ])[0].done(function(context) {
             templates.render('tool_lp/course_competencies_page', context).done(function(html, js) {
                 $('[data-region="coursecompetenciespage"]').replaceWith(html);

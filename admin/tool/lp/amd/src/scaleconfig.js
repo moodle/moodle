@@ -151,7 +151,7 @@ define(['jquery', 'core/notification', 'core/templates', 'core/ajax', 'tool_lp/d
     ScaleConfig.prototype.setScaleConfig = function() {
         var body = $(this.popup.getContent());
         // Get the data.
-        var data = [{ scaleid: this.scaleid}];
+        var data = [{scaleid: this.scaleid}];
         this.scalevalues.forEach(function(value) {
             var scaledefault = 0;
             var proficient = 0;

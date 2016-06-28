@@ -101,7 +101,7 @@ define(['jquery',
             if (!self._selectedValue.length) {
                 return;
             }
-            self._trigger('save', { action: self._selectedValue });
+            self._trigger('save', {action: self._selectedValue});
             self.close();
         }.bind(self));
     };

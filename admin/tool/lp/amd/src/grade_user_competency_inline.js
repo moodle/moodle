@@ -118,7 +118,7 @@ define(['jquery',
                     methodname: self._methodName,
                     args: args,
                     done: function(evidence) {
-                        self._trigger('competencyupdated', { args: args, evidence: evidence });
+                        self._trigger('competencyupdated', {args: args, evidence: evidence});
                     }.bind(self),
                     fail: notification.exception
                 }]);

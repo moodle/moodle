@@ -82,10 +82,10 @@ define(['jquery',
 
         if (parent !== null && treeModel.hasRule(parent.id)) {
             str.get_strings([
-                { key: 'confirm', component: 'moodle' },
-                { key: 'addingcompetencywillresetparentrule', component: 'tool_lp', param: parent.shortname },
-                { key: 'yes', component: 'core' },
-                { key: 'no', component: 'core' }
+                {key: 'confirm', component: 'moodle'},
+                {key: 'addingcompetencywillresetparentrule', component: 'tool_lp', param: parent.shortname},
+                {key: 'yes', component: 'core'},
+                {key: 'no', component: 'core'}
             ]).done(function(strings) {
                 notification.confirm(
                     strings[0],
@@ -108,11 +108,11 @@ define(['jquery',
         var frameworkid = $('[data-region="filtercompetencies"]').data('frameworkid');
         var requests = ajax.call([{
             methodname: 'core_competency_set_parent_competency',
-            args: { competencyid: moveSource, parentid: moveTarget }
+            args: {competencyid: moveSource, parentid: moveTarget}
         }, {
             methodname: 'tool_lp_data_for_competencies_manage_page',
-            args: { competencyframeworkid: frameworkid,
-                    search: $('[data-region="filtercompetencies"] input').val() }
+            args: {competencyframeworkid: frameworkid,
+                    search: $('[data-region="filtercompetencies"] input').val()}
         }]);
         requests[1].done(reloadPage).fail(notification.exception);
     };
@@ -153,10 +153,10 @@ define(['jquery',
         // Show confirm, and/or do the things.
         if (showConfirm) {
             str.get_strings([
-                { key: 'confirm', component: 'moodle' },
-                { key: confirmMessage, component: 'tool_lp' },
-                { key: 'yes', component: 'moodle' },
-                { key: 'no', component: 'moodle' }
+                {key: 'confirm', component: 'moodle'},
+                {key: confirmMessage, component: 'tool_lp'},
+                {key: 'yes', component: 'moodle'},
+                {key: 'no', component: 'moodle'}
             ]).done(function(strings) {
                 notification.confirm(
                     strings[0], // Confirm.
@@ -260,9 +260,9 @@ define(['jquery',
             }
 
             str.get_strings([
-                { key: 'movecompetency', component: 'tool_lp', param: competency.shortname },
-                { key: 'move', component: 'tool_lp' },
-                { key: 'cancel', component: 'moodle' }
+                {key: 'movecompetency', component: 'tool_lp', param: competency.shortname},
+                {key: 'move', component: 'tool_lp'},
+                {key: 'cancel', component: 'moodle'}
             ]).done(function(strings) {
 
                 var context = {
@@ -330,8 +330,8 @@ define(['jquery',
 
         var requests = ajax.call([{
             methodname: 'tool_lp_data_for_competencies_manage_page',
-            args: { competencyframeworkid: frameworkid,
-                    search: $('[data-region="filtercompetencies"] input').val() }
+            args: {competencyframeworkid: frameworkid,
+                    search: $('[data-region="filtercompetencies"] input').val()}
         }]);
         requests[0].done(reloadPage).fail(notification.exception);
     };
@@ -345,11 +345,11 @@ define(['jquery',
         var competency = $('[data-region="competencyactions"]').data('competency');
         var requests = ajax.call([{
             methodname: 'core_competency_move_up_competency',
-            args: { id: competency.id }
+            args: {id: competency.id}
         }, {
             methodname: 'tool_lp_data_for_competencies_manage_page',
-            args: { competencyframeworkid: competency.competencyframeworkid,
-                    search: $('[data-region="filtercompetencies"] input').val() }
+            args: {competencyframeworkid: competency.competencyframeworkid,
+                    search: $('[data-region="filtercompetencies"] input').val()}
         }]);
         requests[1].done(reloadPage).fail(notification.exception);
     };
@@ -363,11 +363,11 @@ define(['jquery',
         var competency = $('[data-region="competencyactions"]').data('competency');
         var requests = ajax.call([{
             methodname: 'core_competency_move_down_competency',
-            args: { id: competency.id }
+            args: {id: competency.id}
         }, {
             methodname: 'tool_lp_data_for_competencies_manage_page',
-            args: { competencyframeworkid: competency.competencyframeworkid,
-                    search: $('[data-region="filtercompetencies"] input').val() }
+            args: {competencyframeworkid: competency.competencyframeworkid,
+                    search: $('[data-region="filtercompetencies"] input').val()}
         }]);
         requests[1].done(reloadPage).fail(notification.exception);
     };
@@ -381,7 +381,7 @@ define(['jquery',
 
         var requests = ajax.call([{
             methodname: 'tool_lp_list_courses_using_competency',
-            args: { id: competency.id }
+            args: {id: competency.id}
         }]);
 
         requests[0].done(function(courses) {
@@ -417,13 +417,13 @@ define(['jquery',
                 $.each(compIds, function(index, value) {
                     calls.push({
                         methodname: 'core_competency_add_related_competency',
-                        args: { competencyid: value, relatedcompetencyid: relatedTarget.id }
+                        args: {competencyid: value, relatedcompetencyid: relatedTarget.id}
                     });
                 });
 
                 calls.push({
                     methodname: 'tool_lp_data_for_related_competencies_section',
-                    args: { competencyid: relatedTarget.id }
+                    args: {competencyid: relatedTarget.id}
                 });
 
                 var promises = ajax.call(calls);
@@ -462,7 +462,7 @@ define(['jquery',
         };
         var promise = ajax.call([{
             methodname: 'core_competency_update_competency',
-            args: { competency: update }
+            args: {competency: update}
         }]);
         promise[0].then(function(result) {
             if (result) {
@@ -483,17 +483,17 @@ define(['jquery',
         var competency = $('[data-region="competencyactions"]').data('competency');
         var requests = ajax.call([{
             methodname: 'core_competency_delete_competency',
-            args: { id: competency.id }
+            args: {id: competency.id}
         }, {
             methodname: 'tool_lp_data_for_competencies_manage_page',
-            args: { competencyframeworkid: competency.competencyframeworkid,
-                    search: $('[data-region="filtercompetencies"] input').val() }
+            args: {competencyframeworkid: competency.competencyframeworkid,
+                    search: $('[data-region="filtercompetencies"] input').val()}
         }]);
         requests[0].done(function(success) {
             if (success === false) {
                 str.get_strings([
-                { key: 'competencycannotbedeleted', component: 'tool_lp', param: competency.shortname },
-                { key: 'cancel', component: 'moodle' }
+                {key: 'competencycannotbedeleted', component: 'tool_lp', param: competency.shortname},
+                {key: 'cancel', component: 'moodle'}
                 ]).done(function(strings) {
                     notification.alert(
                         null,
@@ -518,10 +518,10 @@ define(['jquery',
         }
 
         str.get_strings([
-            { key: 'confirm', component: 'moodle' },
-            { key: confirmMessage, component: 'tool_lp', param: competency.shortname },
-            { key: 'delete', component: 'moodle' },
-            { key: 'cancel', component: 'moodle' }
+            {key: 'confirm', component: 'moodle'},
+            {key: confirmMessage, component: 'tool_lp', param: competency.shortname},
+            {key: 'delete', component: 'moodle'},
+            {key: 'cancel', component: 'moodle'}
         ]).done(function(strings) {
             notification.confirm(
                 strings[0], // Confirm.
@@ -598,10 +598,10 @@ define(['jquery',
         var relatedid = this.id.substr(11);
         var competency = $('[data-region="competencyactions"]').data('competency');
         var removeRelated = ajax.call([
-            { methodname: 'core_competency_remove_related_competency',
-              args: { relatedcompetencyid: relatedid, competencyid: competency.id } },
-            { methodname: 'tool_lp_data_for_related_competencies_section',
-              args: { competencyid: competency.id } }
+            {methodname: 'core_competency_remove_related_competency',
+              args: {relatedcompetencyid: relatedid, competencyid: competency.id}},
+            {methodname: 'tool_lp_data_for_related_competencies_section',
+              args: {competencyid: competency.id}}
         ]);
 
         removeRelated[1].done(function(context) {
@@ -636,7 +636,7 @@ define(['jquery',
             selectedCompetencyId = competency.id;
             ajax.call([{
                     methodname: 'core_competency_competency_viewed',
-                    args: { id: competency.id }
+                    args: {id: competency.id}
             }]);
         }
     };
@@ -703,7 +703,7 @@ define(['jquery',
         }).done(function() {
             ajax.call([{
                 methodname: 'tool_lp_data_for_related_competencies_section',
-                args: { competencyid: competency.id },
+                args: {competencyid: competency.id},
                 done: function(context) {
                     return templates.render('tool_lp/related_competencies', context).done(function(html, js) {
                         $('[data-region="relatedcompetencies"]').replaceWith(html);

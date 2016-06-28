@@ -44,15 +44,15 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
 
         if (this._planId) {
             this._methodName = 'tool_lp_data_for_user_competency_summary_in_plan';
-            this._args = { competencyid: this._competencyId, planid: this._planId };
+            this._args = {competencyid: this._competencyId, planid: this._planId};
             this._templateName = 'tool_lp/user_competency_summary_in_plan';
         } else if (this._courseId) {
             this._methodName = 'tool_lp_data_for_user_competency_summary_in_course';
-            this._args = { userid: this._userId, competencyid: this._competencyId, courseid: this._courseId };
+            this._args = {userid: this._userId, competencyid: this._competencyId, courseid: this._courseId};
             this._templateName = 'tool_lp/user_competency_summary_in_course';
         } else {
             this._methodName = 'tool_lp_data_for_user_competency_summary';
-            this._args = { userid: this._userId, competencyid: this._competencyId };
+            this._args = {userid: this._userId, competencyid: this._competencyId};
             this._templateName = 'tool_lp/user_competency_summary';
         }
     };

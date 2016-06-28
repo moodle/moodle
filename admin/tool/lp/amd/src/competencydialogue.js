@@ -55,7 +55,7 @@ define(['jquery',
     Competencydialogue.prototype.triggerCompetencyViewedEvent = function(competencyId) {
         ajax.call([{
                 methodname: 'core_competency_competency_viewed',
-                args: { id: competencyId }
+                args: {id: competencyId}
         }]);
     };
 
@@ -143,8 +143,8 @@ define(['jquery',
     Competencydialogue.prototype.getCompetencyDataPromise = function(competencyid, options) {
 
         var requests = ajax.call([
-            { methodname: 'tool_lp_data_for_competency_summary',
-              args: { competencyid: competencyid,
+            {methodname: 'tool_lp_data_for_competency_summary',
+              args: {competencyid: competencyid,
                       includerelated: options.includerelated || false,
                       includecourses: options.includecourses || false
                     }
@@ -170,7 +170,7 @@ define(['jquery',
 
             // Instantiate the one instance and delegate event on the body.
             instance = new Competencydialogue();
-            $('body').delegate('[data-action="competency-dialogue"]', 'click', { compdialogue: instance },
+            $('body').delegate('[data-action="competency-dialogue"]', 'click', {compdialogue: instance},
                 instance.clickEventHandler.bind(instance));
         }
     };

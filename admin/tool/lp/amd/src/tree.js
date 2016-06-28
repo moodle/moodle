@@ -168,7 +168,7 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
         if (!this.multiSelect) {
             allSelected = allSelected.first();
         }
-        this.treeRoot.trigger('selectionchanged', { selected: allSelected });
+        this.treeRoot.trigger('selectionchanged', {selected: allSelected});
     };
 
     /**

@@ -46,16 +46,16 @@ define(['jquery',
         getAll: function() {
             var self = this;
             return Str.get_strings([
-                { key: 'competencyoutcome_none', component: 'tool_lp' },
-                { key: 'competencyoutcome_evidence', component: 'tool_lp' },
-                { key: 'competencyoutcome_recommend', component: 'tool_lp' },
-                { key: 'competencyoutcome_complete', component: 'tool_lp' },
+                {key: 'competencyoutcome_none', component: 'tool_lp'},
+                {key: 'competencyoutcome_evidence', component: 'tool_lp'},
+                {key: 'competencyoutcome_recommend', component: 'tool_lp'},
+                {key: 'competencyoutcome_complete', component: 'tool_lp'},
             ]).then(function(strings) {
                 var outcomes = {};
-                outcomes[self.NONE] = { code: self.NONE, name: strings[0] };
-                outcomes[self.EVIDENCE] = { code: self.EVIDENCE, name: strings[1] };
-                outcomes[self.RECOMMEND] = { code: self.RECOMMEND, name: strings[2] };
-                outcomes[self.COMPLETE] = { code: self.COMPLETE, name: strings[3] };
+                outcomes[self.NONE] = {code: self.NONE, name: strings[0]};
+                outcomes[self.EVIDENCE] = {code: self.EVIDENCE, name: strings[1]};
+                outcomes[self.RECOMMEND] = {code: self.RECOMMEND, name: strings[2]};
+                outcomes[self.COMPLETE] = {code: self.COMPLETE, name: strings[3]};
                 return outcomes;
             });
         },
