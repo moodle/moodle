@@ -111,6 +111,10 @@ foreach ($_FILES as $fieldname=>$uploaded_file) {
             throw new moodle_exception('nofile');
         }
     }
+
+    // Scan for viruses.
+    \core\antivirus\manager::scan_file($_FILES[$fieldname]['tmp_name'], $_FILES[$fieldname]['name'], true);
+
     $file = new stdClass();
     $file->filename = clean_param($_FILES[$fieldname]['name'], PARAM_FILE);
     // check system maxbytes setting
