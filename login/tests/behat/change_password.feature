@@ -11,14 +11,14 @@ Feature: Change password
 
   Scenario: A user can change his password manually
     Given I am on site homepage
-    When I log in as "testuser"
+    And I log in as "testuser"
     And I follow "Preferences" in the user menu
-    And I follow "Change password"
+    When I follow "Change password"
     And I set the field "Current password" to "testuser"
     And I set the field "New password" to "NewPassword1*"
     And I set the field "New password (again)" to "NewPassword1*"
     And I click on "Save changes" "button"
-    And I should see "Password has been changed"
+    Then I should see "Password has been changed"
     And I click on "Continue" "button"
     And I should see "Preferences" in the "#region-main" "css_element"
     And I log out
@@ -30,13 +30,13 @@ Feature: Change password
 
   Scenario: A user with expired password must change it when log in directly and then be redirected to the home page
     Given I force a password change for user "testuser"
-    When I log in as "testuser"
-    Then I should see "You must change your password to proceed"
-    And I set the field "Current password" to "testuser"
+    And I log in as "testuser"
+    And I should see "You must change your password to proceed"
+    When I set the field "Current password" to "testuser"
     And I set the field "New password" to "NewPassword1*"
     And I set the field "New password (again)" to "NewPassword1*"
     And I click on "Save changes" "button"
-    And I should see "Password has been changed"
+    Then I should see "Password has been changed"
     And I click on "Continue" "button"
     And I am on site homepage
 
