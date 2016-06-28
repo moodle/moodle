@@ -286,6 +286,8 @@ module.exports = function(grunt) {
     var changedFiles = Object.create(null);
     var onChange = grunt.util._.debounce(function() {
           var files = Object.keys(changedFiles);
+          grunt.config('eslint.amd.src', files);
+          grunt.config('eslint.yui.src', files);
           grunt.config('jshint.amd.src', files);
           grunt.config('uglify.amd.files', [{ expand: true, src: files, rename: uglifyRename }]);
           grunt.config('shifter.options.paths', files);
