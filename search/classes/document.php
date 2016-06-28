@@ -563,6 +563,8 @@ class document implements \renderable, \templatable {
 
         $title = $this->is_set('title') ? $this->format_text($this->get('title')) : '';
         $data = [
+            'componentname' => $componentname,
+            'areaname' => $areaname,
             'courseurl' => course_get_url($this->get('courseid')),
             'coursefullname' => format_string($this->get('coursefullname'), true, array('context' => $this->get('contextid'))),
             'modified' => userdate($this->get('modified')),
