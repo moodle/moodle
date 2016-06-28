@@ -274,6 +274,8 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
      * @param {Event} e The event.
      * @return {Boolean}
      */
+     // This function should be simplified. In the meantime..
+    // eslint-disable-next-line complexity
     Tree.prototype.handleKeyDown = function(item, e) {
         var currentIndex = this.visibleItems.index(item);
         var newItem = null;

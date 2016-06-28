@@ -104,13 +104,18 @@ module.exports = function(grunt) {
         eslint: {
             // Even though warnings dont stop the build we don't display warnings by default because
             // at this moment we've got too many core warnings.
-            options: { quiet: !grunt.option('show-lint-warnings') },
+            options: {quiet: !grunt.option('show-lint-warnings')},
             // Check AMD files. We add some stricter rules which we can't apply to the default configuration due
             // to YUI rollups.
             amd: {
               src: amdSrc,
               options: {
-                  rules: {'no-undef': 'error', 'no-unused-vars': 'error', 'no-empty': 'error', 'no-unused-expressions': 'error'}
+                  rules: {
+                    'no-undef': 'error',
+                    'no-unused-vars': 'error',
+                    'no-unused-expressions': 'error',
+                    'no-implicit-globals': 'error'
+                  }
               }
             },
             // Check YUI module source files.
