@@ -2433,7 +2433,10 @@ class mod_assign_external extends external_api {
             // We need to change the type of some of the structures retrieved from the renderable.
             if (!empty($lastattempt->submissiongroup)) {
                 $lastattempt->submissiongroup = $lastattempt->submissiongroup->id;
+            } else {
+                unset($lastattempt->submissiongroup);
             }
+
             if (!empty($lastattempt->usergroups)) {
                 $lastattempt->usergroups = array_keys($lastattempt->usergroups);
             }
