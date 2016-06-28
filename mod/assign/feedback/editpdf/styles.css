@@ -14,6 +14,7 @@
     background-color: #ccc;
     margin-left: auto;
     margin-right: auto;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 20px rgba(0,0,0,.2);
 }
 .assignfeedback_editpdf_widget .moodle-dialogue-bd .drawingregion {
     position: inherit;
@@ -32,6 +33,7 @@
     bottom: 0px;
     position: absolute;
     overflow: auto;
+    background-color: #ccc;
 }
 
 .assignfeedback_editpdf_widget {
