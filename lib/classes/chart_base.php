@@ -45,6 +45,7 @@ class chart_base implements JsonSerializable, renderable {
     protected $yaxes = [];
 
     public function __construct() {
+        $this->set_defaults();
     }
 
     public function add_series(chart_series $serie) {
@@ -112,6 +113,10 @@ class chart_base implements JsonSerializable, renderable {
 
     public function get_yaxis($index = 0, $createifnotexists = false) {
         return $this->get_axis('y', $index, $createifnotexists);
+    }
+
+    protected function set_defaults() {
+        // For the child classes to extend.
     }
 
     public function set_labels(array $labels) {
