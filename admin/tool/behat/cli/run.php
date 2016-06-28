@@ -101,6 +101,9 @@ if (empty($options['torun'])) {
 if (extension_loaded('pcntl')) {
     $disabled = explode(',', ini_get('disable_functions'));
     if (!in_array('pcntl_signal', $disabled)) {
+        // Handle interrupts on PHP7.
+        declare(ticks = 1);
+
         pcntl_signal(SIGTERM, "signal_handler");
         pcntl_signal(SIGINT, "signal_handler");
     }
