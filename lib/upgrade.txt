@@ -3,6 +3,7 @@ information provided here is intended especially for developers.
 
 === 3.2 ===
 
+* Node.js versions >=4 are now required to run grunt.
 * New option 'blanktarget' added to format_text. This option adds target="_blank" to links
 * A new webservice structure `external_files` has been created which provides a standardised view of files in Moodle and
   should be used for all file return descriptions.
