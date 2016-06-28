@@ -1,5 +1,9 @@
 This files describes API changes in the assign code.
 
+=== 3.2 ===
+* External function mod_assign_external::get_assignments now returns additional optional fields:
+   - preventsubmissionnotingroup: Prevent submission not in group.
+
 === 3.1 ===
 * The feedback plugins now need to implement the is_feedback_modified() method. The default is to return true
   for backwards compatibiltiy.
