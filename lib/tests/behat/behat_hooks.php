@@ -160,6 +160,14 @@ class behat_hooks extends behat_base {
         if (!empty($CFG->behat_faildump_path) && !is_writable($CFG->behat_faildump_path)) {
             throw new Exception('You set $CFG->behat_faildump_path to a non-writable directory');
         }
+
+        // Handle interrupts on PHP7.
+        if (extension_loaded('pcntl')) {
+            $disabled = explode(',', ini_get('disable_functions'));
+            if (!in_array('pcntl_signal', $disabled)) {
+                declare(ticks = 1);
+            }
+        }
     }
 
     /**
