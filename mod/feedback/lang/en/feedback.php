@@ -44,6 +44,7 @@ $string['cannotsavetempl'] = 'saving templates is not allowed';
 $string['cannotunmap'] = 'Database problem, unable to unmap';
 $string['captcha'] = 'Captcha';
 $string['captchanotset'] = 'Captcha hasn\'t been set.';
+$string['closebeforeopen'] = 'You have specified an end date before the start date.';
 $string['completed_feedbacks'] = 'Submitted answers';
 $string['complete_the_form'] = 'Answer the questions...';
 $string['completionsubmit'] = 'View as completed if the feedback is submitted';
