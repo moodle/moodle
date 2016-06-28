@@ -28,6 +28,7 @@ $string['allowupdate'] = 'Allow choice to be updated';
 $string['allowmultiple'] = 'Allow more than one choice to be selected';
 $string['answered'] = 'Answered';
 $string['cannotsubmit'] = 'Sorry, there was a problem submitting your choice. Please try again.';
+$string['closebeforeopen'] = 'You have specified a close date before the open date.';
 $string['completionsubmit'] = 'Show as complete when user makes a choice';
 $string['displayhorizontal'] = 'Display horizontally';
 $string['displaymode'] = 'Display mode for the options';
