@@ -301,6 +301,62 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get_assignments with submissionstatement.
+     */
+    public function test_get_assignments_with_submissionstatement() {
+        global $DB, $USER, $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Setup test data. Create 2 assigns, one with requiresubmissionstatement and the other without it.
+        $course = $this->getDataGenerator()->create_course();
+        $assign = $this->getDataGenerator()->create_module('assign', array(
+            'course' => $course->id,
+            'requiresubmissionstatement' => 1
+        ));
+        $assign2 = $this->getDataGenerator()->create_module('assign', array('course' => $course->id));
+
+        // Create student.
+        $student = self::getDataGenerator()->create_user();
+
+        // Users enrolments.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id, 'manual');
+
+        // Update the submissionstatement.
+        $submissionstatement = 'This is a fake submission statement.';
+        set_config('submissionstatement', $submissionstatement, 'assign');
+
+        $this->setUser($student);
+
+        $result = mod_assign_external::get_assignments();
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
+
+        // Check that the amount of courses and assignments is right.
+        $this->assertCount(1, $result['courses']);
+        $assignmentsret = $result['courses'][0]['assignments'];
+        $this->assertCount(2, $assignmentsret);
+
+        // Order the returned assignments by ID.
+        usort($assignmentsret, function($a, $b) {
+            return strcmp($a['id'], $b['id']);
+        });
+
+        // Check that the first assign contains the submission statement.
+        $assignmentret = $assignmentsret[0];
+        $this->assertEquals($assign->id, $assignmentret['id']);
+        $this->assertEquals(1, $assignmentret['requiresubmissionstatement']);
+        $this->assertEquals($submissionstatement, $assignmentret['submissionstatement']);
+
+        // Check that the second assign does NOT contain the submission statement.
+        $assignmentret = $assignmentsret[1];
+        $this->assertEquals($assign2->id, $assignmentret['id']);
+        $this->assertEquals(0, $assignmentret['requiresubmissionstatement']);
+        $this->assertArrayNotHasKey('submissionstatement', $assignmentret);
+    }
+
+    /**
      * Test get_submissions
      */
     public function test_get_submissions() {
