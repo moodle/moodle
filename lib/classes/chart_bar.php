@@ -33,4 +33,11 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class chart_bar extends chart_base {
+
+    protected function set_defaults() {
+        parent::set_defaults();
+        $yaxis = $this->get_yaxis(0, true);
+        $yaxis->set_min(0);
+    }
+
 }
