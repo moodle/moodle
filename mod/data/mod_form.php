@@ -81,6 +81,29 @@ class mod_data_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
+    /**
+     * Enforce validation rules here
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array
+     **/
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        // Check open and close times are consistent.
+        if ($data['timeavailablefrom'] && $data['timeavailableto'] &&
+                $data['timeavailableto'] < $data['timeavailablefrom']) {
+            $errors['timeavailableto'] = get_string('availabletodatevalidation', 'data');
+        }
+        if ($data['timeviewfrom'] && $data['timeviewto'] &&
+                $data['timeviewto'] < $data['timeviewfrom']) {
+            $errors['timeviewto'] = get_string('viewtodatevalidation', 'data');
+        }
+
+        return $errors;
+    }
+
     function data_preprocessing(&$default_values){
         parent::data_preprocessing($default_values);
     }
