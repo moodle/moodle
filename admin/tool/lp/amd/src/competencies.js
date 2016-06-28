@@ -65,7 +65,7 @@ define(['jquery',
                                   'drag-parentnode',
                                   'drag-handlecontainer',
                                   function(drag, drop) {
-                                      localthis.handleDrop.call(localthis, drag, drop);
+                                      localthis.handleDrop(drag, drop);
                                   });
             }
         ).fail(notification.exception);

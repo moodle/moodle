@@ -126,7 +126,7 @@ define(['jquery',
         // Apply all the promises, and refresh when the last one is resolved.
         return $.when.apply($.when, ajax.call(calls))
             .then(function() {
-                self._renderView.call(self, arguments[arguments.length - 1]);
+                self._renderView(arguments[arguments.length - 1]);
             })
             .fail(notification.exception);
     };
