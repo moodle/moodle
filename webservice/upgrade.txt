@@ -3,6 +3,10 @@ information provided here is intended especially for developers.
 
 This information is intended for authors of webservices, not people writing webservice clients.
 
+=== 3.2 ===
+
+* webservice->get_external_functions now returns the external function list ordered by name ASC.
+
 === 3.1 ===
 
 * The xmlrpc backend has changed, Zend_XmlRpc has been dropped and there might be slight differences in
