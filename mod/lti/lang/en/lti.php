@@ -191,7 +191,7 @@ Three icons are available after the preconfigured tool dropdown list:
 * **Delete** - Remove the selected course level tool.';
 $string['external_tool_types'] = 'Preconfigured tools';
 $string['failedtoconnect'] = 'Moodle was unable to communicate with the "{$a}" system';
-$string['failedtocreatetooltype'] = 'Failed to create new tool. Please check the url and try again.';
+$string['failedtocreatetooltype'] = 'Failed to create new tool. Please check the URL and try again.';
 $string['failedtodeletetoolproxy'] = 'Failed to delete tool registration. You may need to visit "Manage external tool registrations" and delete it manually.';
 $string['filter_basiclti_configlink'] = 'Configure your preferred sites and their passwords';
 $string['filter_basiclti_password'] = 'Password is mandatory';
@@ -399,11 +399,9 @@ $string['secure_icon_url'] = 'Secure icon URL';
 $string['secure_icon_url_help'] = 'Similar to the icon URL, but used if the user accessing Moodle securely through SSL. The main purpose for this field is to prevent
 the browser from warning the user if the underlying page was accessed over SSL, but requesting to show an unsecure image.';
 $string['secure_launch_url'] = 'Secure launch URL';
-$string['secure_launch_url_help'] = 'Similar to Launch URL, but used instead of the launch url if high security is required. Moodle will use the
-secure launch URL instead of the launch URL if the Moodle site is accessed through SSL, or if the tool configuration
-is set to always launch through SSL.
+$string['secure_launch_url_help'] = 'Similar to the launch URL, but used instead of the launch URL if high security is required. Moodle will use the secure launch URL instead of the launch URL if the Moodle site is accessed through SSL, or if the tool configuration is set to always launch through SSL.
 
-The Launch URL may also be set to an https address to force launching through SSL, and this field may be left blank.';
+The launch URL may also be set to an https address to force launching through SSL, and this field may be left blank.';
 $string['send'] = 'Send';
 $string['services'] = 'Services';
 $string['services_help'] = 'Select those services which you wish to offer to the tool provider.  More than one service can be selected.';
@@ -433,15 +431,13 @@ $string['share_roster_admin_help'] = 'Specify whether the tool can access the li
 $string['share_roster_help'] = 'Specify whether the tool can access the list of users enrolled in this course.
 
 Note that this setting may be overridden in the tool configuration.';
-$string['show_in_course_activity_chooser'] = 'Show in activity chooser and as preconfigured tool';
-$string['show_in_course_lti1'] = 'Show when creating activities';
-$string['show_in_course_lti1_help'] = 'This tool can be shown in the activity chooser for a teacher to select to add to a course. It also can be shown in the preconfigured tool dropdown menu when adding an external tool to a course.
-
-Alternatively, the tool configuration may not show up in the forms but only used if the correct launch URL is entered when adding an external tool to a course.';
-$string['show_in_course_lti2'] = 'Show when creating activities';
+$string['show_in_course_activity_chooser'] = 'Show in activity chooser and as a preconfigured tool';
+$string['show_in_course_lti1'] = 'Tool configuration usage';
+$string['show_in_course_lti1_help'] = 'This tool may be shown in the activity chooser for a teacher to select to add to a course. Alternatively, it may be shown in the preconfigured tool dropdown menu when adding an external tool to a course. A further option is for the tool configuration to only be used if the exact launch URL is entered when adding an external tool to a course.';
+$string['show_in_course_lti2'] = 'Tool configuration usage';
 $string['show_in_course_lti2_help'] = 'This tool can be shown in the activity chooser for a teacher to select to add to a course or in the preconfigured tool dropdown menu when adding an external tool to a course.';
-$string['show_in_course_no'] = 'Do not show, use for launch URL matching only';
-$string['show_in_course_preconfigured'] = 'Show as preconfigured tool when adding External tool';
+$string['show_in_course_no'] = 'Do not show; use only when a matching launch URL is entered';
+$string['show_in_course_preconfigured'] = 'Show as preconfigured tool when adding an external tool';
 $string['size'] = 'Size parameters';
 $string['submission'] = 'Submission';
 $string['submissions'] = 'Submissions';
