@@ -118,7 +118,7 @@ define(['jquery',
                 if (valid) {
                     validIds.push(compId);
                 }
-            }.bind(self));
+            });
 
             self._selectedCompetencies = validIds;
 
@@ -128,14 +128,14 @@ define(['jquery',
             } else {
                 self._find('[data-region="competencylinktree"] [data-action="add"]').removeAttr('disabled');
             }
-        }.bind(self));
+        });
 
         // Add listener for framework change.
         if (!self._singleFramework) {
             self._find('[data-action="chooseframework"]').change(function(e) {
                 self._frameworkId = $(e.target).val();
                 self._loadCompetencies().then(self._refresh.bind(self));
-            }.bind(self));
+            });
         }
 
         // Add listener for search.
@@ -146,13 +146,13 @@ define(['jquery',
             return self._refresh().always(function() {
                 $(e.target).removeAttr('disabled');
             });
-        }.bind(self));
+        });
 
         // Add listener for cancel.
         self._find('[data-region="competencylinktree"] [data-action="cancel"]').click(function(e) {
             e.preventDefault();
             self.close();
-        }.bind(self));
+        });
 
         // Add listener for add.
         self._find('[data-region="competencylinktree"] [data-action="add"]').click(function(e) {
@@ -169,7 +169,7 @@ define(['jquery',
             }
 
             self.close();
-        }.bind(self));
+        });
 
         // The list of selected competencies will be modified while looping (because of the listeners above).
         var currentItems = self._selectedCompetencies.slice(0);
@@ -180,7 +180,7 @@ define(['jquery',
                 tree.toggleItem(node);
                 tree.updateFocus(node);
             }
-        }.bind(self));
+        });
 
     };
 
@@ -210,8 +210,8 @@ define(['jquery',
                     html,
                     self._afterRender.bind(self)
                 );
-            }.bind(self));
-        }.bind(self)).fail(Notification.exception);
+            });
+        }).fail(Notification.exception);
     };
 
     /**
@@ -261,7 +261,7 @@ define(['jquery',
 
             self._competencies = tree;
 
-        }.bind(self)).fail(Notification.exception);
+        }).fail(Notification.exception);
     };
 
     /**
@@ -373,7 +373,7 @@ define(['jquery',
             }
 
             return self._loadCompetencies();
-        }.bind(self));
+        });
     };
 
     /**
@@ -387,7 +387,7 @@ define(['jquery',
         return self._render().then(function(html) {
             self._find('[data-region="competencylinktree"]').replaceWith(html);
             self._afterRender();
-        }.bind(self));
+        });
     };
 
     /**
@@ -419,7 +419,7 @@ define(['jquery',
             };
 
             return Templates.render('tool_lp/competency_picker', context);
-        }.bind(self));
+        });
     };
 
     /**

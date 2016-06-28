@@ -104,7 +104,7 @@ define(['jquery',
         templates.render(self._template, context)
             .done(function(newhtml, newjs) {
                 templates.replaceNode($(self._region), newhtml, newjs);
-            }.bind(self))
+            })
             .fail(notification.exception);
     };
 
@@ -173,7 +173,7 @@ define(['jquery',
                     strings[3], // Cancel.
                     function() {
                         self._doDelete(evidenceData);
-                    }.bind(self)
+                    }
                 );
             }).fail(notification.exception);
         }).fail(notification.exception);
@@ -227,7 +227,7 @@ define(['jquery',
         picker.on('save', function(e, data) {
             var competencyIds = data.competencyIds;
             self._doCreateUserEvidenceCompetency(evidenceData, competencyIds, data.requestReview);
-        }.bind(self));
+        });
 
         picker.display();
     };
@@ -328,7 +328,7 @@ define(['jquery',
                     strings[3], // Cancel.
                     function() {
                         self._doReviewUserEvidenceCompetencies(evidenceData);
-                    }.bind(self)
+                    }
                 );
             }).fail(notification.exception);
         }).fail(notification.exception);

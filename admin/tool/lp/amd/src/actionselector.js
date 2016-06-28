@@ -87,13 +87,13 @@ define(['jquery',
             self._selectedValue = $("input[type='radio']:checked").val();
             self._find('[data-action="action-selector-confirm"]').removeAttr('disabled');
             self._refresh.bind(self);
-        }.bind(self));
+        });
 
         // Add listener for cancel.
         self._find('[data-action="action-selector-cancel"]').click(function(e) {
             e.preventDefault();
             self.close();
-        }.bind(self));
+        });
 
         // Add listener for confirm.
         self._find('[data-action="action-selector-confirm"]').click(function(e) {
@@ -103,7 +103,7 @@ define(['jquery',
             }
             self._trigger('save', {action: self._selectedValue});
             self.close();
-        }.bind(self));
+        });
     };
 
     /**
@@ -131,7 +131,7 @@ define(['jquery',
                 html,
                 self._afterRender.bind(self)
             );
-        }.bind(self)).fail(Notification.exception);
+        }).fail(Notification.exception);
     };
 
     /**
@@ -156,7 +156,7 @@ define(['jquery',
         return self._render().then(function(html) {
             self._find('[data-region="action-selector"]').replaceWith(html);
             self._afterRender();
-        }.bind(self));
+        });
     };
 
     /**

@@ -64,7 +64,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
 
         str.get_string('changeuser', 'mod_assign').done(function(s) {
                 autocomplete.enhance('[data-action=change-user]', false, 'mod_assign/participant_selector', s);
-            }.bind(this)
+            }
         ).fail(notification.exception);
 
         // We do not allow navigation while ajax requests are pending.
@@ -180,7 +180,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
             if ($(ele).prop('checked')) {
                 filterlist[filterlist.length] = $(ele).closest('label').text();
             }
-        }.bind(this));
+        });
         if (filterlist.length) {
             this._region.find('[data-region="user-filters"] span').text(filterlist.join(', '));
         } else {
@@ -213,7 +213,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
                         show = false;
                     }
                 }
-            }.bind(this));
+            });
 
             if (show) {
                 this._filteredUsers[this._filteredUsers.length] = user;
@@ -252,7 +252,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
                 notification.confirm(strs[0], strs[1], strs[2], strs[3], function() {
                     $(document).trigger('save-changes', -1);
                 });
-            }.bind(this));
+            });
         } else {
             $(document).trigger('user-changed', -1);
         }
@@ -284,7 +284,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
                 notification.confirm(strs[0], strs[1], strs[2], strs[3], function() {
                     $(document).trigger('save-changes', useridnumber);
                 });
-            }.bind(this));
+            });
         } else {
             select.attr('data-selected', userid);
 
@@ -456,7 +456,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
                 notification.confirm(strs[0], strs[1], strs[2], strs[3], function() {
                     $(document).trigger('save-changes', userid);
                 });
-            }.bind(this));
+            });
         } else {
             if (!isNaN(userid) && userid > 0) {
                 select.attr('data-selected', userid);

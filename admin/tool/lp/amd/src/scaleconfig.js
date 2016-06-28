@@ -140,7 +140,7 @@ define(['jquery', 'core/notification', 'core/templates', 'core/ajax', 'tool_lp/d
         }.bind(this));
         body.on('click', '[data-action="cancel"]', function() {
             popup.close();
-        }.bind(this));
+        });
     };
 
     /**

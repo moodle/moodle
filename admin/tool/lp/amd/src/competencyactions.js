@@ -608,8 +608,8 @@ define(['jquery',
             templates.render('tool_lp/related_competencies', context).done(function(html) {
                 $('[data-region="relatedcompetencies"]').replaceWith(html);
                 updatedRelatedCompetencies();
-            }.bind(this)).fail(notification.exception);
-        }.bind(this)).fail(notification.exception);
+            }).fail(notification.exception);
+        }).fail(notification.exception);
     };
 
     /**

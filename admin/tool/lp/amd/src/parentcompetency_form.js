@@ -112,13 +112,13 @@ define(['jquery', 'core/ajax', 'core/str', 'tool_lp/competencypicker', 'core/tem
                     };
 
                     return Templates.render('tool_lp/competency_picker_competencyform', context);
-                }.bind(self));
+                });
             };
 
             // On selected competency.
             picker.on('save', function(e, data) {
                 self.setParent(data);
-            }.bind(self));
+            });
 
             picker.display();
         });

@@ -78,7 +78,7 @@ define(['jquery',
             self._find('[data-action="chooseplan"]').change(function(e) {
                 self._planId = $(e.target).val();
                 self._loadCompetencies().then(self._refresh.bind(self));
-            }.bind(self));
+            });
         }
     };
 
@@ -200,7 +200,7 @@ define(['jquery',
             }
 
             return self._loadCompetencies();
-        }.bind(self));
+        });
     };
 
     /**
@@ -232,7 +232,7 @@ define(['jquery',
             };
 
             return Templates.render('tool_lp/competency_picker_user_plans', context);
-        }.bind(self));
+        });
     };
 
     return /** @alias module:tool_lp/competencypicker_user_plans */ Picker;

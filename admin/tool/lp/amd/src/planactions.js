@@ -117,7 +117,7 @@ define(['jquery',
             .done(function(newhtml, newjs) {
                 $(self._region).replaceWith(newhtml);
                 templates.runTemplateJS(newjs);
-            }.bind(self))
+            })
             .fail(notification.exception);
     };
 
@@ -186,7 +186,7 @@ define(['jquery',
                     strings[3], // Cancel.
                     function() {
                         self._doDelete(planData);
-                    }.bind(self)
+                    }
                 );
             }).fail(notification.exception);
         }).fail(notification.exception);
@@ -233,7 +233,7 @@ define(['jquery',
                     strings[3], // Cancel.
                     function() {
                         self._doReopenPlan(planData);
-                    }.bind(self)
+                    }
                 );
             }).fail(notification.exception);
         }).fail(notification.exception);
@@ -280,7 +280,7 @@ define(['jquery',
                     strings[3], // Cancel.
                     function() {
                         self._doCompletePlan(planData);
-                    }.bind(self)
+                    }
                 );
             }).fail(notification.exception);
         }).fail(notification.exception);
@@ -326,7 +326,7 @@ define(['jquery',
                     strings[3], // Cancel.
                     function() {
                         self._doUnlinkPlan(planData);
-                    }.bind(self)
+                    }
                 );
             }).fail(notification.exception);
         }).fail(notification.exception);
