@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/question/type/multianswer/question.php');
  */
 class qtype_multianswer_test_helper extends question_test_helper {
     public function get_test_questions() {
-        return array('twosubq', 'fourmc', 'numericalzero', 'dollarsigns');
+        return array('twosubq', 'fourmc', 'numericalzero', 'dollarsigns', 'multiple');
     }
 
     /**
@@ -382,6 +382,98 @@ class qtype_multianswer_test_helper extends question_test_helper {
 
         $q->subquestions = array(
             1 => $sub,
+        );
+
+        return $q;
+    }
+
+    /**
+     * Makes a multianswer question with multichoice_multiple questions in it.
+     * @return qtype_multianswer_question
+     */
+    public function make_multianswer_question_multiple() {
+        question_bank::load_question_definition_classes('multianswer');
+        $q = new qtype_multianswer_question();
+        test_question_maker::initialise_a_question($q);
+        $q->name = 'Multichoice multiple';
+        $q->questiontext = 'Please select the fruits {#1} and vegetables {#2}';
+        $q->generalfeedback = 'You should know which foods are fruits or vegetables.';
+        $q->qtype = question_bank::get_qtype('multianswer');
+
+        $q->textfragments = array(
+            'Please select the fruits ',
+            ' and vegetables ',
+            ''
+        );
+        $q->places = array('1' => '1', '2' => '2');
+
+        // Multiple-choice subquestion.
+        question_bank::load_question_definition_classes('multichoice');
+        $mc = new qtype_multichoice_multi_question();
+        test_question_maker::initialise_a_question($mc);
+        $mc->name = 'Multianswer 1';
+        $mc->questiontext = '{1:MULTIRESPONSE:=Apple#Good~%-50%Burger~%-50%Hot dog#Not a fruit~%-50%Pizza' .
+            '~=Orange#Correct~=Banana}';
+        $mc->questiontextformat = FORMAT_HTML;
+        $mc->generalfeedback = '';
+        $mc->generalfeedbackformat = FORMAT_HTML;
+
+        $mc->shuffleanswers = 0;
+        $mc->answernumbering = 'none';
+        $mc->layout = qtype_multichoice_base::LAYOUT_VERTICAL;
+        $mc->single = 0;
+
+        $mc->answers = array(
+            16 => new question_answer(16, 'Apple', 0.3333333,
+                                      'Good', FORMAT_HTML),
+            17 => new question_answer(17, 'Burger', -0.5,
+                                      '', FORMAT_HTML),
+            18 => new question_answer(18, 'Hot dog', -0.5,
+                                      'Not a fruit', FORMAT_HTML),
+            19 => new question_answer(19, 'Pizza', -0.5,
+                                      '', FORMAT_HTML),
+            20 => new question_answer(20, 'Orange', 0.3333333,
+                                      'Correct', FORMAT_HTML),
+            21 => new question_answer(21, 'Banana', 0.3333333,
+                                      '', FORMAT_HTML),
+        );
+        $mc->qtype = question_bank::get_qtype('multichoice');
+        $mc->maxmark = 1;
+
+        // Multiple-choice subquestion.
+        question_bank::load_question_definition_classes('multichoice');
+        $mc2 = new qtype_multichoice_multi_question();
+        test_question_maker::initialise_a_question($mc2);
+        $mc2->name = 'Multichoice 2';
+        $mc2->questiontext = '{1:MULTIRESPONSE:=Raddish#Good~%-50%Chocolate~%-50%Biscuit#Not a vegetable~%-50%Cheese' .
+            '~=Carrot#Correct}';
+        $mc2->questiontextformat = FORMAT_HTML;
+        $mc2->generalfeedback = '';
+        $mc2->generalfeedbackformat = FORMAT_HTML;
+
+        $mc2->shuffleanswers = 0;
+        $mc2->answernumbering = 'none';
+        $mc2->layout = qtype_multichoice_base::LAYOUT_VERTICAL;
+        $mc2->single = 0;
+
+        $mc2->answers = array(
+            22 => new question_answer(22, 'Raddish', 0.5,
+                                      'Good', FORMAT_HTML),
+            23 => new question_answer(23, 'Chocolate', -0.5,
+                                      '', FORMAT_HTML),
+            24 => new question_answer(24, 'Biscuit', -0.5,
+                                      'Not a vegetable', FORMAT_HTML),
+            25 => new question_answer(25, 'Cheese', -0.5,
+                                      '', FORMAT_HTML),
+            26 => new question_answer(26, 'Carrot', 0.5,
+                                      'Correct', FORMAT_HTML),
+        );
+        $mc2->qtype = question_bank::get_qtype('multichoice');
+        $mc2->maxmark = 1;
+
+        $q->subquestions = array(
+            1 => $mc,
+            2 => $mc2,
         );
 
         return $q;
