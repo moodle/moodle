@@ -50,7 +50,8 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $result = external::get_plugins_supporting_mobile();
         $result = external_api::clean_returnvalue(external::get_plugins_supporting_mobile_returns(), $result);
         $this->assertCount(0, $result['warnings']);
-        $this->assertCount(0, $result['plugins']);
+        $this->assertArrayHasKey('plugins', $result);
+        $this->assertTrue(is_array($result['plugins']));
     }
 
 }
