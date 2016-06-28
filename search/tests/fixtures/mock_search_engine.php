@@ -49,6 +49,10 @@ class engine extends \core_search\engine {
         return null;
     }
 
+    public function to_document(\core_search\area\base $searcharea, $docdata) {
+        return parent::to_document($searcharea, $docdata);
+    }
+
     public function get_course($courseid) {
         return parent::get_course($courseid);
     }
