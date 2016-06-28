@@ -57,7 +57,7 @@ class behat_gradingform_guide extends behat_base {
      * @param TableNode $guide
      */
     public function i_define_the_following_marking_guide(TableNode $guide) {
-        $steptableinfo = '| Criterion name | Description for students | Description for markers | Maximum mark |';
+        $steptableinfo = '| Criterion name | Description for students | Description for markers | Maximum score |';
 
         if ($criteria = $guide->getHash()) {
             $addcriterionbutton = $this->find_button(get_string('addcriterion', 'gradingform_guide'));
@@ -92,7 +92,7 @@ class behat_gradingform_guide extends behat_base {
                 $this->set_guide_field_value($criterionroot . '[descriptionmarkers]', $criterion['Description for markers']);
 
                 // Set the field value for the Max score field.
-                $this->set_guide_field_value($criterionroot . '[maxscore]', $criterion['Maximum mark']);
+                $this->set_guide_field_value($criterionroot . '[maxscore]', $criterion['Maximum score']);
             }
         }
     }
