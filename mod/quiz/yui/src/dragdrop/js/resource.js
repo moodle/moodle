@@ -1,3 +1,4 @@
+/* global SELECTOR */
 /**
  * Resource drag and drop.
  *

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
  * Resource and activity toolbox class.
  *
@@ -196,4 +197,3 @@ Y.extend(TOOLBOX, Y.Base, {
     }
 }
 );
-

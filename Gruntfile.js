@@ -105,22 +105,25 @@ module.exports = function(grunt) {
             // Even though warnings dont stop the build we don't display warnings by default because
             // at this moment we've got too many core warnings.
             options: {quiet: !grunt.option('show-lint-warnings')},
-            // Check AMD files. We add some stricter rules which we can't apply to the default configuration due
-            // to YUI rollups.
             amd: {
               src: amdSrc,
-              options: {
-                  rules: {
-                    'no-undef': 'error',
-                    'no-unused-vars': 'error',
-                    'no-unused-expressions': 'error',
-                    'no-implicit-globals': 'error'
-                  }
+              // Check AMD with some slightly stricter rules.
+              rules: {
+                'no-unused-vars': 'error',
+                'no-implicit-globals': 'error'
               }
             },
             // Check YUI module source files.
             yui: {
                src: ['**/yui/src/**/*.js', '!*/**/yui/src/*/meta/*.js'],
+               options: {
+                   // Disable some rules which we can't safely define for YUI rollups.
+                   rules: {
+                     'no-undef': 'off',
+                     'no-unused-vars': 'off',
+                     'no-unused-expressions': 'off'
+                   }
+               }
             }
         },
         uglify: {

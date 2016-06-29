@@ -63,7 +63,7 @@
     'no-extra-bind': 'warn',
     'no-fallthrough': 'error',
     'no-floating-decimal': 'warn',
-    // Disabled for YUI rollups, enabled by grunt for AMD: 'no-implicit-globals': 'warn',
+    // Enabled by grunt for AMD modules: 'no-implicit-globals': 'error',
     'no-implied-eval': 'error',
     'no-invalid-this': 'error',
     'no-iterator': 'error',
@@ -85,7 +85,7 @@
     'no-sequences': 'warn',
     'no-throw-literal': 'warn',
     'no-unmodified-loop-condition': 'error',
-    // Disabled for YUI rollups, enabled by grunt for AMD: 'no-unused-expressions': 'error',
+    'no-unused-expressions': 'error',
     'no-unused-labels': 'error',
     'no-useless-call': 'warn',
     'no-useless-escape': 'warn',
@@ -94,9 +94,9 @@
 
     // === Variables ===
     'no-delete-var': 'error',
-    // Disabled for YUI rollups, enabled by grunt for AMD: 'no-undef': 'off',
+    'no-undef': 'error',
     'no-undef-init': 'error',
-    // Disabled for YUI rollups, enabled by grunt for AMD: 'no-unused-vars': 'error',
+    'no-unused-vars': ['error', { 'caughtErrors': 'none', 'argsIgnorePattern': "(e|event)" }],
 
     // === Stylistic Issues ===
     'array-bracket-spacing': 'warn',
