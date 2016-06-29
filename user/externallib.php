@@ -953,9 +953,9 @@ class core_user_external extends external_api {
      * @since Moodle 2.6
      */
     public static function add_user_private_files($draftid) {
-        global $CFG, $USER, $DB;
+        global $CFG, $USER;
+        require_once($CFG->libdir . "/filelib.php");
 
-        require_once($CFG->dirroot . "/user/lib.php");
         $params = self::validate_parameters(self::add_user_private_files_parameters(), array('draftid' => $draftid));
 
         if (isguestuser()) {
@@ -975,10 +975,9 @@ class core_user_external extends external_api {
         $options = array('subdirs' => 1,
                          'maxbytes' => $maxbytes,
                          'maxfiles' => -1,
-                         'accepted_types' => '*',
                          'areamaxbytes' => $maxareabytes);
 
-        file_save_draft_area_files($draftid, $context->id, 'user', 'private', 0, $options);
+        file_merge_files_from_draft_area_into_filearea($draftid, $context->id, 'user', 'private', 0, $options);
 
         return null;
     }
