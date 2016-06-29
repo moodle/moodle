@@ -118,7 +118,7 @@ Y.extend(DDMARKER_FORM, M.qtype_ddmarker.dd_base_class, {
         }
     },
     set_options_for_drag_item_selectors : function () {
-        var dragitemsoptions = {0: ''};
+        var dragitemsoptions = {'0': ''};
         for (var i = 1; i <= this.form.get_form_value('noitems', []); i++) {
             var label = this.get_marker_text(i);
             if (label !== "") {
