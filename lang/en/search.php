@@ -81,6 +81,7 @@ $string['runindexertest'] = 'Run indexer test';
 $string['score'] = 'Score';
 $string['search'] = 'Search';
 $string['search:mycourse'] = 'My courses';
+$string['search:user'] = 'Users';
 $string['searcharea'] = 'Search area';
 $string['searching'] = 'Searching in ...';
 $string['searchnotpermitted'] = 'You are not allowed to do a search';
