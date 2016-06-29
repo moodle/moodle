@@ -1,3 +1,5 @@
+/* global TOOLBOX, BODY, SELECTOR, INDENTLIMITS */
+
 /**
  * Resource and activity toolbox class.
  *
