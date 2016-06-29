@@ -138,13 +138,13 @@ define(['jquery', 'core/ajax', 'core/notification', 'mod_lti/tool_type', 'mod_lt
      */
     var submitCartridgeURL = function() {
         if (isLoading()) {
-            return;
+            return false;
         }
 
         var url = getCartridgeURL();
         // No URL? Do nothing.
         if (url === "") {
-            return;
+            return false;
         }
 
         startLoading();

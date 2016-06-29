@@ -288,7 +288,7 @@ define(['jquery',
         $.each(this._frameworks, function(i, f) {
             if (f.id == fid) {
                 frm = f;
-                return false;
+                return;
             }
         });
         return frm;

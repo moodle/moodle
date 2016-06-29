@@ -129,7 +129,7 @@ define(['jquery',
         $.each(this._plans, function(i, f) {
             if (f.id == id) {
                 plan = f;
-                return false;
+                return;
             }
         });
         return plan;

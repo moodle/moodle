@@ -137,7 +137,7 @@ define(['jquery',
         $.each(this._rules, function(index, rule) {
             if (rule.canConfig()) {
                 can = true;
-                return false;
+                return;
             }
         });
         return can;
@@ -163,7 +163,7 @@ define(['jquery',
     RuleConfig.prototype.display = function() {
         var self = this;
         if (!self._competency) {
-            return;
+            return false;
         }
         return self._render().then(function(html) {
             return Str.get_string('competencyrule', 'tool_lp').then(function(title) {
@@ -276,7 +276,7 @@ define(['jquery',
         $.each(this._rules, function(index, rule) {
             if (rule.getType() == type) {
                 result = rule;
-                return false;
+                return;
             }
         });
 
@@ -297,7 +297,7 @@ define(['jquery',
         $.each(self._rulesModules, function(index, modInfo) {
             if (modInfo.type == type) {
                 name = modInfo.name;
-                return false;
+                return;
             }
         });
         return name;
