@@ -1,11 +1,27 @@
 /* Text Elements
 --------------------------*/
 
-h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul,
+ol,
+dl,
+input,
+textarea {
     font-family: Helvetica, Arial, sans-serif;
 }
 
-h1,h2,h3,h4,h5,h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-weight: bold;
     margin: 0;
 }
@@ -66,7 +82,8 @@ dl dd {
     margin-left: 1.5em;
 }
 
-abbr, acronym {
+abbr,
+acronym {
     border-bottom: 1px dotted #000;
 }
 
@@ -91,7 +108,8 @@ strong {
     font-weight: bold;
 }
 
-em, dfn {
+em,
+dfn {
     font-style: italic;
 }
 
@@ -99,11 +117,14 @@ dfn {
     font-weight: bold;
 }
 
-pre, code {
+pre,
+code {
     white-space: pre;
 }
 
-pre, code, tt {
+pre,
+code,
+tt {
     font: 1.2em monospace;
     line-height: 1.5;
     margin: 1.5em 0;

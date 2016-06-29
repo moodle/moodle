@@ -13,8 +13,8 @@
 #urlintro,
 #pageintro,
 #resourceintro {
-    border-color:#ddd;
-    margin: 0 10% 3%
+    border-color: #ddd;
+    margin: 0 10% 3%;
 }
 
 /* Forums
@@ -33,7 +33,10 @@
     text-align: left;
     border-right: 1px solid #ddd;
 }
-.path-mod-forum.dir-rtl .forumheaderlist th {text-align: right;}
+
+.path-mod-forum.dir-rtl .forumheaderlist th {
+    text-align: right;
+}
 
 .forumnodiscuss,
 .path-mod-forum .forumheaderlist .replies {
@@ -60,7 +63,7 @@
 }
 
 .forumolddiscuss {
-    text-align:right;
+    text-align: right;
 }
 
 /* Folder
@@ -163,7 +166,8 @@
     padding: 5px;
 }
 
-.path-mod-choice .results .header, .path-mod-choice td {
+.path-mod-choice .results .header,
+.path-mod-choice td {
     border-top: 1px solid;
     border-color: #ddd;
 }
@@ -175,14 +179,15 @@
     border-right: 1px solid #ddd;
 }
 
-.path-mod-choice .col1, .path-mod-choice .c0,
+.path-mod-choice .col1,
+.path-mod-choice .c0,
 .path-mod-choice .lastcol {
     border-left: 1px solid #ddd;
 }
 
 .path-mod-choice .lastrow td {
     border-bottom: 1px solid #ddd;
-        border-top: 1px solid #ddd;
+    border-top: 1px solid #ddd;
 }
 
 .path-mod-choice .count {
@@ -291,4 +296,6 @@
 
 /* SCORM Player
 -------------------------*/
-#page-mod-scorm-player div.singleselect {margin: -20px 0 0;}
+#page-mod-scorm-player div.singleselect {
+    margin: -20px 0 0;
+}

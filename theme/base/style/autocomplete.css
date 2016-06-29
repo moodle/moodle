@@ -32,6 +32,7 @@
     margin-top: -0.2em;
     z-index: 1;
 }
+
 .form-autocomplete-suggestions li {
     list-style-type: none;
     padding: 0.2em;
@@ -39,10 +40,12 @@
     cursor: pointer;
     color: #333;
 }
+
 .form-autocomplete-suggestions li:hover {
     background-color: #00E;
     color: #FFF;
 }
+
 .form-autocomplete-suggestions li[aria-selected=true] {
     background-color: #555;
     color: #FFF;
@@ -55,13 +58,16 @@
     cursor: pointer;
     color: #000;
 }
+
 .dir-rtl .form-autocomplete-downarrow {
     right: -1.5em;
     left: inherit;
 }
+
 .form-autocomplete-selection:focus {
     outline: none;
 }
+
 .form-autocomplete-selection [data-active-selection=true] {
     padding: 0.5em;
     font-size: large;

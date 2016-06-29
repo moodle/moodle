@@ -99,6 +99,7 @@
     float:left;
     margin-right:10px;
 }
+
 #page-course-publish-metadata .hubscreenshot img {
     vertical-align: bottom;
 }
@@ -106,8 +107,8 @@
 #page-course-publish-metadata .hubdescription {}
 
 #page-course-publish-metadata .hubinfo {
-    display:block;
-    margin-bottom:20px;
+    display: block;
+    margin-bottom: 20px;
 }
 #page-course-publish-metadata .hublink {}
 
@@ -115,6 +116,6 @@
     text-align: center;
 }
 
-#page-course-publish-backup .sharecoursecontinue  {
+#page-course-publish-backup .sharecoursecontinue {
     text-align: center;
 }
