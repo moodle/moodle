@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,15 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'gradeexport_ods', language 'en', branch 'MOODLE_20_STABLE'
+ * Grade export event.
  *
- * @package   gradeexport_ods
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    gradeexport_txt
+ * @copyright  2016 Zane Karl <zkarl@oid.ucla.edu>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['eventgradeexported'] = 'OpenDocument grade exported';
-$string['pluginname'] = 'OpenDocument spreadsheet';
-$string['ods:publish'] = 'Publish ODS grade export';
-$string['ods:view'] = 'Use OpenDocument grade export';
-$string['timeexported'] = 'Last downloaded from this course';
+namespace gradeexport_txt\event;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Grade export event class.
+ *
+ * @package    gradeexport_txt
+ * @since      Moodle 3.2
+ * @copyright  2016 Zane Karl <zkarl@oid.ucla.edu>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class grade_exported extends \core\event\grade_exported {
+}
