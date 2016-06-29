@@ -1,5 +1,6 @@
 YUI.add('moodle-course-dragdrop', function (Y, NAME) {
 
+/* eslint-disable no-unused-vars */
 /**
  * Drag and Drop for course sections and course modules.
  *

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
  * Drag and Drop for Quiz sections and slots.
  *
