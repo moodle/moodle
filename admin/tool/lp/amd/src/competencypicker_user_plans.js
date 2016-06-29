@@ -100,7 +100,8 @@ define(['jquery',
         ])[0].done(function(competencies) {
 
             // Expand the list of competencies into a fake tree.
-            var i, tree = [], comp;
+            var i, comp;
+            var tree = [];
             for (i = 0; i < competencies.length; i++) {
                 comp = competencies[i].competency;
                 if (comp.shortname.toLowerCase().indexOf(searchText.toLowerCase()) < 0) {

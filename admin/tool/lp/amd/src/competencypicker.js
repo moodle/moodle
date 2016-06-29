@@ -248,7 +248,8 @@ define(['jquery',
             }
 
             // Expand the list of competencies into a tree.
-            var i, tree = [], comp;
+            var i, comp;
+            var tree = [];
             for (i = 0; i < competencies.length; i++) {
                 comp = competencies[i];
                 if (comp.parentid == "0") { // Loose check for now, because WS returns a string.

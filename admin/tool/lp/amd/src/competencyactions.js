@@ -248,7 +248,8 @@ define(['jquery',
         $.when.apply(null, requests).done(function(competencies, framework) {
 
             // Expand the list of competencies into a tree.
-            var i, competenciestree = [];
+            var i;
+            var competenciestree = [];
             for (i = 0; i < competencies.length; i++) {
                 var onecompetency = competencies[i];
                 if (onecompetency.parentid == "0") {

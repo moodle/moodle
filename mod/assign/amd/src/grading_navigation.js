@@ -332,7 +332,8 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
         e.preventDefault();
         var select = this._region.find('[data-action=change-user]');
         var currentUserId = select.attr('data-selected');
-        var i = 0, currentIndex = 0;
+        var i = 0;
+        var currentIndex = 0;
 
         for (i = 0; i < this._filteredUsers.length; i++) {
             if (this._filteredUsers[i].id == currentUserId) {
@@ -361,7 +362,8 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
         e.preventDefault();
         var select = this._region.find('[data-action=change-user]');
         var currentUserId = select.attr('data-selected');
-        var i = 0, currentIndex = 0;
+        var i = 0;
+        var currentIndex = 0;
 
         for (i = 0; i < this._filteredUsers.length; i++) {
             if (this._filteredUsers[i].id == currentUserId) {
