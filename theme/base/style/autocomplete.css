@@ -9,7 +9,6 @@
 }
 
 .form-autocomplete-selection [role=listitem].label {
-    color: #333;
     background-color: #00E;
     border: 4px solid #00E;
     color: #FFF;

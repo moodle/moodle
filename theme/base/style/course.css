@@ -105,7 +105,6 @@
 }
 
 .dir-rtl .section .activity .mod-indent-outer {
-    padding-left: auto;
     padding-right: 24px;
 }
 
@@ -158,7 +157,7 @@
 .dir-rtl.editing .sitetopic .section .activity .contentwithoutlink,
 .dir-rtl.editing .course-content .section .activity .contentwithoutlink {
     padding-left: 200px;
-    padding-right: initial;
+    padding-right: inherit;
 }
 
 .sitetopic .section .activity .activityinstance,
@@ -184,7 +183,7 @@
 .dir-rtl .sitetopic .section .activity .contentwithoutlink,
 .dir-rtl .course-content .section .activity .contentwithoutlink {
     padding-left: 32px;
-    padding-right: initial;
+    padding-right: inherit;
 }
 
 .sitetopic .section .activity .filler,
@@ -633,13 +632,13 @@ li.section.hidden span.commands a.editing_show {
 .course_category_tree .category > .info > .categoryname {
     background-image: url([[pix:moodle|t/collapsed_empty]]);
     background-repeat: no-repeat;
-    background-position: center left;
+    background-position: center;
     margin: 0.5em 5px;
 }
 
 .dir-rtl .course_category_tree .category > .info > .categoryname {
     background-image: url([[pix:moodle|t/collapsed_empty_rtl]]);
-    background-position: center right;
+    background-position: center;
     margin: 0.5em 5px;
 }
 
@@ -752,11 +751,11 @@ input.titleeditor {
 }
 
 .editing .course-content .section .activity.editor_displayed .activityinstance {
-    padding-right: initial;
+    padding-right: inherit;
 }
 
 .dir-rtl.editing .course-content .section .activity.editor_displayed .activityinstance {
-    padding-left: initial;
+    padding-left: inherit;
 }
 
 /* Course drag and drop upload styles */
@@ -809,7 +808,6 @@ input.titleeditor {
     display: inline-block;
     margin: 0;
     padding: 0;
-    float: left;
     box-shadow: 0 0 4px #229b15;
     border-radius: 2px;
     background-repeat: repeat-x;
@@ -1027,13 +1025,11 @@ input.titleeditor {
 #course-category-listings .item-actions {
     margin-right: 1em;
     display: inline-block;
-    display: initial;
 }
 
 #course-category-listings .item-actions .menubar img,
 #course-category-listings .item-actions > a img {
     margin: 0 4px;
-    vertical-align: inherit;
 }
 
 #course-category-listings .item-actions .menu img {
@@ -1293,7 +1289,6 @@ input.titleeditor {
 
 .coursecat-management-header > div {
     display: inline-block;
-    float: right;
 }
 
 .coursecat-management-header > div > div {
@@ -1428,6 +1423,8 @@ input.titleeditor {
 }
 
 /** Custom YUI grid CSS **/
+/*csslint duplicate-properties:false */
+
 
 .grid-col {
     display: inline-block;
@@ -1642,13 +1639,18 @@ input.titleeditor {
     word-spacing: -0.43em;
 }
 
-@media (min-width:980px) {
-    .grid-visible-phone     { display: none; }
-    .grid-visible-tablet    { display: none; }
-    .grid-visible-desktop   { }
-    .grid-hidden-phone      { }
-    .grid-hidden-tablet     { }
-    .grid-hidden-desktop    { display: none; }
+@media (min-width: 980px) {
+    .grid-visible-phone {
+        display: none;
+    }
+
+    .grid-visible-tablet {
+        display: none;
+    }
+
+    .grid-hidden-desktop {
+        display: none;
+    }
 }
 
 @media (min-width: 980px) {
@@ -1683,15 +1685,22 @@ input.titleeditor {
     .grid-visible-desktop {
         display: none;
     }
-    .grid-visible-phone     { }
-    .grid-hidden-phone      { display: none; }
-    .grid-hidden-desktop    { }
-    .grid-visible-desktop   { display: none; }
+
+    .grid-hidden-phone {
+        display: none;
+    }
+
+    .grid-visible-desktop {
+        display: none;
+    }
 }
 
-@media (min-width:768px) and (max-width:979px) {
-    .grid-visible-tablet    {}
-    .grid-hidden-tablet     { display: none; }
-    .grid-hidden-desktop    {}
-    .grid-visible-desktop   { display: none; }
+@media (min-width: 768px) and (max-width: 979px) {
+    .grid-hidden-tablet {
+        display: none;
+    }
+
+    .grid-visible-desktop {
+        display: none;
+    }
 }

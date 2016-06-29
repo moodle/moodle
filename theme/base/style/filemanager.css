@@ -1,3 +1,5 @@
+/* We do nasty things in this stylesheet, disable some lints */
+/*csslint important:false,duplicate-properties:false */
 /**
  * File Picker and File Manager
  */
@@ -460,7 +462,6 @@
 
 .dir-rtl .fp-pathbar span {
     display: inline-block;
-    float: right;
     margin-left: 32px;
 }
 
@@ -1700,7 +1701,6 @@ a.ygtvspacer:hover {
         width: 100%;
         height: auto;
         max-height: 220px;
-        y-scroll: auto;
         float: none;
         border: 0px;
     }

@@ -378,10 +378,6 @@ body {
 /* Roles
 ------------------------*/
 
-.path-admin-roles .generaltable {
-    /* width: 65%; hiding because it's causing problems on role/assign */
-}
-
 .path-admin-roles .generaltable th {
     vertical-align: middle;
 }
@@ -485,6 +481,7 @@ body {
 
 /* Comments
 -----------------------*/
+/*csslint important:false */
 
 .comment-list li {
     background: #eee !important;

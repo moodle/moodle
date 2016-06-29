@@ -216,21 +216,6 @@ body {
     background-image: none;
 }
 
-/** Stabalise some IE6 behaviour **/
-.ie6 #region-pre .region-content,
-.ie6 #region-post .region-content {
-    padding: 0 !important;
-    width: 100%;
-    float: none;
-}
-
-.ie6 #region-pre .region-content .block,
-.ie6 #region-post .region-content .block {
-    width: auto;
-    padding: 0;
-    margin: 10px;
-}
-
 /** Report layout **/
 .pagelayout-report #page {
     width: auto;
