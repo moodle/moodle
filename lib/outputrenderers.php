@@ -4319,15 +4319,14 @@ EOD;
      */
     public function render_chart(\core\chart_base $chart) {
         $id = 'chart' . uniqid();
-        // TODO Handle the canvas in the output module rather than here.
-        $canvas = html_writer::tag('canvas', '', ['id' => $id]);
+        $div = html_writer::tag('div', '', ['id' => $id]);
         $js = "require(['core/chart_builder', 'core/chart_output'], function(Builder, Output) {
             Builder.make(" . json_encode($chart) . ").then(function(ChartInst) {
                 new Output('#" . $id . "', ChartInst);
             });
         });";
         $this->page->requires->js_init_code($js, true);
-        return $canvas;
+        return $div;
     }
 
 }
