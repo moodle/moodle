@@ -139,7 +139,7 @@ function scorm_get_manifest($blocks, $scoes) {
                         $scoes->elements[$manifest][$organization][$identifier]->launch = '';
                         $scoes->elements[$manifest][$organization][$identifier]->scormtype = 'asset';
                     } else {
-                        $idref = $block['attrs']['IDENTIFIERREF'];
+                        $idref = addslashes_js($block['attrs']['IDENTIFIERREF']);
                         $base = '';
                         if (isset($resources[$idref]['XML:BASE'])) {
                             $base = $resources[$idref]['XML:BASE'];
