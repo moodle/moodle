@@ -49,7 +49,7 @@ class mycourse extends \core_search\area\base {
      */
     public function get_recordset_by_timestamp($modifiedfrom = 0) {
         global $DB;
-        return $DB->get_recordset_select('course', 'timemodified >= ?', array($modifiedfrom));
+        return $DB->get_recordset_select('course', 'timemodified >= ?', array($modifiedfrom), 'timemodified ASC');
     }
 
     /**
