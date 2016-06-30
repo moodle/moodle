@@ -26,6 +26,7 @@ namespace core\update;
 
 use core_component;
 use coding_exception;
+use moodle_exception;
 use SplFileInfo;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -159,15 +160,18 @@ class code_manager {
      */
     public function unzip_plugin_file($zipfilepath, $targetdir, $rootdir = '') {
 
+        // Extract the package into a temporary location.
         $fp = get_file_packer('application/zip');
-        $files = $fp->extract_to_pathname($zipfilepath, $targetdir);
+        $tempdir = make_request_directory();
+        $files = $fp->extract_to_pathname($zipfilepath, $tempdir);
 
         if (!$files) {
             return array();
         }
 
+        // If requested, rename the root directory of the plugin.
         if (!empty($rootdir)) {
-            $files = $this->rename_extracted_rootdir($targetdir, $rootdir, $files);
+            $files = $this->rename_extracted_rootdir($tempdir, $rootdir, $files);
         }
 
         // Sometimes zip may not contain all parent directories, add them to make it consistent.
@@ -186,6 +190,9 @@ class code_manager {
                 }
             }
         }
+
+        // Move the extracted files into the target location.
+        $this->move_extracted_plugin_files($tempdir, $targetdir, $files);
 
         // Set the permissions of extracted subdirs and files.
         $this->set_plugin_files_permissions($targetdir, $files);
@@ -443,12 +450,10 @@ class code_manager {
     /**
      * Renames the root directory of the extracted ZIP package.
      *
-     * This method does not validate the presence of the single root directory
-     * (it is the validator's duty). It just searches for the first directory
-     * under the given location and renames it.
-     *
-     * The method will not rename the root if the requested location already
-     * exists.
+     * This internal helper method assumes that the plugin ZIP package has been
+     * extracted into a temporary empty directory so the plugin folder is the
+     * only folder there. The ZIP package is supposed to be validated so that
+     * it contains just a single root folder.
      *
      * @param string $dirname fullpath location of the extracted ZIP package
      * @param string $rootdir the requested name of the root directory
@@ -473,8 +478,11 @@ class code_manager {
                 continue;
             }
             if (is_dir($dirname.'/'.$item)) {
+                if ($found !== null and $found !== $item) {
+                    // Multiple directories found.
+                    throw new moodle_exception('unexpected_archive_structure', 'core_plugin');
+                }
                 $found = $item;
-                break;
             }
         }
 
@@ -517,6 +525,36 @@ class code_manager {
                 @chmod($path, $dirpermissions);
             } else {
                 @chmod($path, $filepermissions);
+            }
+        }
+    }
+
+    /**
+     * Moves the extracted contents of the plugin ZIP into the target location.
+     *
+     * @param string $sourcedir full path to the directory the ZIP file was extracted to
+     * @param mixed $targetdir full path to the directory where the files should be moved to
+     * @param array $files list of extracted files
+     */
+    protected function move_extracted_plugin_files($sourcedir, $targetdir, array $files) {
+        global $CFG;
+
+        foreach ($files as $file => $status) {
+            if ($status !== true) {
+                throw new moodle_exception('corrupted_archive_structure', 'core_plugin', '', $file, $status);
+            }
+
+            $source = $sourcedir.'/'.$file;
+            $target = $targetdir.'/'.$file;
+
+            if (is_dir($source)) {
+                continue;
+
+            } else {
+                if (!is_dir(dirname($target))) {
+                    mkdir(dirname($target), $CFG->directorypermissions, true);
+                }
+                rename($source, $target);
             }
         }
     }
