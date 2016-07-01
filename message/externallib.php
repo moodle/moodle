@@ -198,7 +198,9 @@ class core_message_external extends external_api {
                 'userids' => new external_multiple_structure(
                     new external_value(PARAM_INT, 'User ID'),
                     'List of user IDs'
-                )
+                ),
+                'userid' => new external_value(PARAM_INT, 'The id of the user we are creating the contacts for, 0 for the
+                    current user', VALUE_DEFAULT, 0)
             )
         );
     }
@@ -207,10 +209,11 @@ class core_message_external extends external_api {
      * Create contacts.
      *
      * @param array $userids array of user IDs.
+     * @param int $userid The id of the user we are creating the contacts for
      * @return external_description
      * @since Moodle 2.5
      */
-    public static function create_contacts($userids) {
+    public static function create_contacts($userids, $userid = 0) {
         global $CFG;
 
         // Check if messaging is enabled.
@@ -218,12 +221,12 @@ class core_message_external extends external_api {
             throw new moodle_exception('disabled', 'message');
         }
 
-        $params = array('userids' => $userids);
+        $params = array('userids' => $userids, 'userid' => $userid);
         $params = self::validate_parameters(self::create_contacts_parameters(), $params);
 
         $warnings = array();
         foreach ($params['userids'] as $id) {
-            if (!message_add_contact($id)) {
+            if (!message_add_contact($id, 0, $userid)) {
                 $warnings[] = array(
                     'item' => 'user',
                     'itemid' => $id,
@@ -257,7 +260,9 @@ class core_message_external extends external_api {
                 'userids' => new external_multiple_structure(
                     new external_value(PARAM_INT, 'User ID'),
                     'List of user IDs'
-                )
+                ),
+                'userid' => new external_value(PARAM_INT, 'The id of the user we are deleting the contacts for, 0 for the
+                    current user', VALUE_DEFAULT, 0)
             )
         );
     }
@@ -266,10 +271,11 @@ class core_message_external extends external_api {
      * Delete contacts.
      *
      * @param array $userids array of user IDs.
+     * @param int $userid The id of the user we are deleting the contacts for
      * @return null
      * @since Moodle 2.5
      */
-    public static function delete_contacts($userids) {
+    public static function delete_contacts($userids, $userid = 0) {
         global $CFG;
 
         // Check if messaging is enabled.
@@ -277,11 +283,11 @@ class core_message_external extends external_api {
             throw new moodle_exception('disabled', 'message');
         }
 
-        $params = array('userids' => $userids);
+        $params = array('userids' => $userids, 'userid' => $userid);
         $params = self::validate_parameters(self::delete_contacts_parameters(), $params);
 
         foreach ($params['userids'] as $id) {
-            message_remove_contact($id);
+            message_remove_contact($id, $userid);
         }
 
         return null;
@@ -309,7 +315,9 @@ class core_message_external extends external_api {
                 'userids' => new external_multiple_structure(
                     new external_value(PARAM_INT, 'User ID'),
                     'List of user IDs'
-                )
+                ),
+                'userid' => new external_value(PARAM_INT, 'The id of the user we are blocking the contacts for, 0 for the
+                    current user', VALUE_DEFAULT, 0)
             )
         );
     }
@@ -318,10 +326,11 @@ class core_message_external extends external_api {
      * Block contacts.
      *
      * @param array $userids array of user IDs.
+     * @param int $userid The id of the user we are blocking the contacts for
      * @return external_description
      * @since Moodle 2.5
      */
-    public static function block_contacts($userids) {
+    public static function block_contacts($userids, $userid = 0) {
         global $CFG;
 
         // Check if messaging is enabled.
@@ -329,12 +338,12 @@ class core_message_external extends external_api {
             throw new moodle_exception('disabled', 'message');
         }
 
-        $params = array('userids' => $userids);
+        $params = array('userids' => $userids, 'userid' => $userid);
         $params = self::validate_parameters(self::block_contacts_parameters(), $params);
 
         $warnings = array();
         foreach ($params['userids'] as $id) {
-            if (!message_block_contact($id)) {
+            if (!message_block_contact($id, $userid)) {
                 $warnings[] = array(
                     'item' => 'user',
                     'itemid' => $id,
@@ -368,7 +377,9 @@ class core_message_external extends external_api {
                 'userids' => new external_multiple_structure(
                     new external_value(PARAM_INT, 'User ID'),
                     'List of user IDs'
-                )
+                ),
+                'userid' => new external_value(PARAM_INT, 'The id of the user we are unblocking the contacts for, 0 for the
+                    current user', VALUE_DEFAULT, 0)
             )
         );
     }
@@ -377,10 +388,11 @@ class core_message_external extends external_api {
      * Unblock contacts.
      *
      * @param array $userids array of user IDs.
+     * @param int $userid The id of the user we are unblocking the contacts for
      * @return null
      * @since Moodle 2.5
      */
-    public static function unblock_contacts($userids) {
+    public static function unblock_contacts($userids, $userid = 0) {
         global $CFG;
 
         // Check if messaging is enabled.
@@ -388,11 +400,11 @@ class core_message_external extends external_api {
             throw new moodle_exception('disabled', 'message');
         }
 
-        $params = array('userids' => $userids);
+        $params = array('userids' => $userids, 'userid' => $userid);
         $params = self::validate_parameters(self::unblock_contacts_parameters(), $params);
 
         foreach ($params['userids'] as $id) {
-            message_unblock_contact($id);
+            message_unblock_contact($id, $userid);
         }
 
         return null;

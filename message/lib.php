@@ -496,18 +496,23 @@ function message_format_message_text($message, $forcetexttohtml = false) {
  *
  * @param int $contactid the ID of the user to add as a contact
  * @param int $blocked 1 if you wish to block the contact
+ * @param int $userid the user ID of the user we want to add the contact for, defaults to current user if not specified.
  * @return bool/int false if the $contactid isnt a valid user id. True if no changes made.
  *                  Otherwise returns the result of update_record() or insert_record()
  */
-function message_add_contact($contactid, $blocked=0) {
+function message_add_contact($contactid, $blocked = 0, $userid = 0) {
     global $USER, $DB;
 
     if (!$DB->record_exists('user', array('id' => $contactid))) { // invalid userid
         return false;
     }
 
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
     // Check if a record already exists as we may be changing blocking status.
-    if (($contact = $DB->get_record('message_contacts', array('userid' => $USER->id, 'contactid' => $contactid))) !== false) {
+    if (($contact = $DB->get_record('message_contacts', array('userid' => $userid, 'contactid' => $contactid))) !== false) {
         // Check if blocking status has been changed.
         if ($contact->blocked != $blocked) {
             $contact->blocked = $blocked;
@@ -544,7 +549,7 @@ function message_add_contact($contactid, $blocked=0) {
     } else {
         // New contact record.
         $contact = new stdClass();
-        $contact->userid = $USER->id;
+        $contact->userid = $userid;
         $contact->contactid = $contactid;
         $contact->blocked = $blocked;
         $contact->id = $DB->insert_record('message_contacts', $contact);
@@ -572,12 +577,17 @@ function message_add_contact($contactid, $blocked=0) {
  * remove a contact
  *
  * @param int $contactid the user ID of the contact to remove
+ * @param int $userid the user ID of the user we want to remove the contacts for, defaults to current user if not specified.
  * @return bool returns the result of delete_records()
  */
-function message_remove_contact($contactid) {
+function message_remove_contact($contactid, $userid = 0) {
     global $USER, $DB;
 
-    if ($contact = $DB->get_record('message_contacts', array('userid' => $USER->id, 'contactid' => $contactid))) {
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    if ($contact = $DB->get_record('message_contacts', array('userid' => $userid, 'contactid' => $contactid))) {
         $DB->delete_records('message_contacts', array('id' => $contact->id));
 
         // Trigger event for removing a contact.
@@ -600,20 +610,24 @@ function message_remove_contact($contactid) {
  * Unblock a contact. Note that this reverts the previously blocked user back to a non-contact.
  *
  * @param int $contactid the user ID of the contact to unblock
+ * @param int $userid the user ID of the user we want to unblock the contact for, defaults to current user
+ *  if not specified.
  * @return bool returns the result of delete_records()
  */
-function message_unblock_contact($contactid) {
-    return message_add_contact($contactid, 0);
+function message_unblock_contact($contactid, $userid = 0) {
+    return message_add_contact($contactid, 0, $userid);
 }
 
 /**
  * Block a user.
  *
  * @param int $contactid the user ID of the user to block
+ * @param int $userid the user ID of the user we want to unblock the contact for, defaults to current user
+ *  if not specified.
  * @return bool
  */
-function message_block_contact($contactid) {
-    return message_add_contact($contactid, 1);
+function message_block_contact($contactid, $userid = 0) {
+    return message_add_contact($contactid, 1, $userid);
 }
 
 /**
