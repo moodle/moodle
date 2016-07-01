@@ -65,7 +65,17 @@
         </div>
     </div>
     <div class="content-item-controls">
-        <span class="block-button">{{#pix}} t/block {{/pix}}</span>
+        {{#preferenceenabled}}
+            {{#preference}}
+                <span class="block-button"
+                    data-preference-key="{{key}}"
+                    data-preference-loggedin="{{loggedin}}"
+                    data-preference-loggedoff="{{loggedoff}}">
+                    <div class="block-icon">{{#pix}} t/block {{/pix}}</div>
+                    <div class="loading-icon">{{> message/loading }}</div>
+                </span>
+            {{/preference}}
+        {{/preferenceenabled}}
         <div class="expand-buttons">
             <span class="show-button"
                 tabindex="0"

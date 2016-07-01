@@ -7357,11 +7357,17 @@ body.path-question-type .mform fieldset.hidden {
   box-sizing: border-box;
   text-align: right;
 }
-.mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item-controls .block-button {
-  margin-left: 5px;
-}
 .mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item-controls .block-button img {
   height: 15px;
+}
+.mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item-controls .block-button .loading-icon {
+  padding: 0;
+}
+.mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item-controls .block-button.loading .loading-icon {
+  display: inline-block;
+}
+.mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item-controls .block-button.loading .block-icon {
+  display: none;
 }
 .mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item-controls .mark-read-button img {
   height: 15px;
@@ -7373,6 +7379,7 @@ body.path-question-type .mform fieldset.hidden {
   vertical-align: top;
   float: right;
   text-align: center;
+  margin-top: 20px;
 }
 .mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item-controls .expand-buttons img {
   vertical-align: middle;
@@ -7387,6 +7394,9 @@ body.path-question-type .mform fieldset.hidden {
   width: 100%;
   height: 100%;
   display: none;
+}
+.mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item-controls .block-button + .expand-buttons {
+  margin-top: 0;
 }
 .mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container.expanded .content-item .content-item-body .content-body-short {
   opacity: 0;

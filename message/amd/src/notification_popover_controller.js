@@ -37,6 +37,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         MODE_TOGGLE: '.mdl-popover-header-actions .fancy-toggle',
         UNREAD_NOTIFICATIONS_CONTAINER: '.unread-notifications',
         ALL_NOTIFICATIONS_CONTAINER: '.all-notifications',
+        BLOCK_BUTTON: '.block-button',
         SHOW_BUTTON: '.show-button',
         HIDE_BUTTON: '.hide-button',
         CONTENT_ITEM_CONTAINER: '.content-item-container',
@@ -44,6 +45,8 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         CONTENT_BODY_SHORT: '.content-body-short',
         CONTENT_BODY_FULL: '.content-body-full',
     };
+
+    var PROCESSOR_NAME = 'popup';
 
     /**
      * Constructor for the NotificationPopoverController.
@@ -287,6 +290,16 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
 
         if (notifications.length) {
             $.each(notifications, function(index, notification) {
+                notification.preferenceenabled = false;
+
+                // Check if we should display the preference block button.
+                if (notification.preference) {
+                    var regexp = new RegExp(PROCESSOR_NAME);
+                    if (notification.preference.loggedin.match(regexp) || notification.preference.loggedoff.match(regexp)) {
+                        notification.preferenceenabled = true;
+                    }
+                }
+
                 var promise = templates.render('message/notification_content_item', notification);
                 promise.then(function(html, js) {
                     container.append(html);
@@ -324,6 +337,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
             offset: this.getOffset(),
             useridto: this.userId,
             markasread: true,
+            embedpreference: true,
             embeduserto: false,
             embeduserfrom: true,
         };
@@ -501,6 +515,86 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
     };
 
     /**
+     * Remove the notification buttons for the given type of notification.
+     *
+     * @method removeDisableNotificationButtons
+     * @param type the type of notification to remove the button from
+     */
+    NotificationPopoverController.prototype.removeDisableNotificationButtons = function(type) {
+        this.root.find('[data-preference-key="'+type+'"]').remove();
+    };
+
+    /**
+     * Stop future notifications of this type appearing in the popover menu.
+     *
+     * @method disableNotificationType
+     * @param button jQuery object
+     */
+    NotificationPopoverController.prototype.disableNotificationType = function(button) {
+        if (button.hasClass('loading')) {
+            return $.Deferred();
+        }
+
+        button.addClass('loading');
+
+        var key = button.attr('data-preference-key');
+        var loggedin = button.attr('data-preference-loggedin');
+        var loggedoff = button.attr('data-preference-loggedoff');
+
+        // Remove the popup processor from the list.
+        loggedin = loggedin.split(',').filter(function(element) {
+            return element !== PROCESSOR_NAME;
+        }).join(',');
+
+        // Remove the popup processor from the list.
+        loggedoff = loggedoff.split(',').filter(function(element) {
+            return element !== PROCESSOR_NAME;
+        }).join(',');
+
+        // If no other processors are left then default to none.
+        if (loggedin === '') {
+            loggedin = 'none';
+        }
+
+        // If no other processors are left then default to none.
+        if (loggedoff === '') {
+            loggedoff = 'none';
+        }
+
+        var args = {
+            user: {
+                preferences: [
+                    {
+                        type: key + '_loggedin',
+                        value: loggedin
+                    },
+                    {
+                        type: key + '_loggedoff',
+                        value: loggedoff
+                    }
+                ]
+            }
+        };
+
+        var request = {
+            methodname: 'core_user_update_user',
+            args: args
+        };
+
+        var promise = ajax.call([request])[0];
+
+        promise.fail(debugNotification.exception);
+        promise.always(function() {
+            button.removeClass('loading');
+        });
+        promise.done(function() {
+            this.removeDisableNotificationButtons(key);
+        }.bind(this));
+
+        return promise;
+    };
+
+    /**
      * Add all of the required event listeners for this notification popover.
      *
      * @method registerEventListeners
@@ -542,6 +636,14 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         this.root.on(customEvents.events.previous, SELECTORS.CONTENT_ITEM_CONTAINER, function(e) {
             var contentItem = $(e.target).closest(SELECTORS.CONTENT_ITEM_CONTAINER);
             this.collapseContentItem(contentItem);
+        }.bind(this));
+
+        this.root.on(customEvents.events.activate, SELECTORS.BLOCK_BUTTON, function(e, data) {
+            var button = $(e.target).closest(SELECTORS.BLOCK_BUTTON);
+            this.disableNotificationType(button);
+
+            e.stopPropagation();
+            data.originalEvent.preventDefault();
         }.bind(this));
 
         // Switch between popover states (read/unread) if the user activates the toggle.

@@ -1192,6 +1192,9 @@ class core_message_external extends external_api {
                 'status' => new external_value(
                     PARAM_ALPHA, 'filter the results to just "read" or "unread" notifications',
                     VALUE_DEFAULT, ''),
+                'embedpreference' => new external_value(
+                    PARAM_BOOL, 'true for returning user\'s preference for the notification',
+                    VALUE_DEFAULT, false),
                 'embeduserto' => new external_value(
                     PARAM_BOOL, 'true for returning user details for the recipient in each notification',
                     VALUE_DEFAULT, false),
@@ -1216,18 +1219,20 @@ class core_message_external extends external_api {
      * @since  3.2
      * @throws invalid_parameter_exception
      * @throws moodle_exception
-     * @param  int      $useridto       the user id who received the message
-     * @param  int      $useridfrom     the user id who send the message. -10 or -20 for no-reply or support user
-     * @param  string   $status         filter the results to only read or unread notifications
-     * @param  bool     $embeduserto    true to embed the recipient user details in the record for each notification
-     * @param  bool     $embeduserfrom  true to embed the send user details in the record for each notification
-     * @param  bool     $newestfirst    true for ordering by newest first, false for oldest first
-     * @param  bool     $markasread     mark notifications as read when they are returned by this function
-     * @param  int      $limit          the number of results to return
-     * @param  int      $offset         offset the result set by a given amount
+     * @param  int      $useridto           the user id who received the message
+     * @param  int      $useridfrom         the user id who send the message. -10 or -20 for no-reply or support user
+     * @param  string   $status             filter the results to only read or unread notifications
+     * @param  bool     $embedpreference    true to embed the recipient user details in the record for each notification
+     * @param  bool     $embeduserto        true to embed the recipient user details in the record for each notification
+     * @param  bool     $embeduserfrom      true to embed the send user details in the record for each notification
+     * @param  bool     $newestfirst        true for ordering by newest first, false for oldest first
+     * @param  bool     $markasread         mark notifications as read when they are returned by this function
+     * @param  int      $limit              the number of results to return
+     * @param  int      $offset             offset the result set by a given amount
      * @return external_description
      */
-    public static function get_notifications($useridto, $useridfrom, $status, $embeduserto, $embeduserfrom, $newestfirst, $markasread, $limit, $offset) {
+    public static function get_notifications($useridto, $useridfrom, $status, $embedpreference,
+        $embeduserto, $embeduserfrom, $newestfirst, $markasread, $limit, $offset) {
         global $CFG, $USER, $OUTPUT;
 
         $params = self::validate_parameters(
@@ -1236,6 +1241,7 @@ class core_message_external extends external_api {
                 'useridto' => $useridto,
                 'useridfrom' => $useridfrom,
                 'status' => $status,
+                'embedpreference' => $embedpreference,
                 'embeduserto' => $embeduserto,
                 'embeduserfrom' => $embeduserfrom,
                 'newestfirst' => $newestfirst,
@@ -1251,12 +1257,14 @@ class core_message_external extends external_api {
         $useridto = $params['useridto'];
         $useridfrom = $params['useridfrom'];
         $status = $params['status'];
+        $embedpreference = $params['embedpreference'];
         $embeduserto = $params['embeduserto'];
         $embeduserfrom = $params['embeduserfrom'];
         $newestfirst = $params['newestfirst'];
         $markasread = $params['markasread'];
         $limit = $params['limit'];
         $offset = $params['offset'];
+        $issuperuser = has_capability('moodle/site:readallmessages', $context);
 
         if (!empty($useridto)) {
             if (core_user::is_real_user($useridto)) {
@@ -1274,8 +1282,7 @@ class core_message_external extends external_api {
         }
 
         // Check if the current user is the sender/receiver or just a privileged user.
-        if ($useridto != $USER->id and $useridfrom != $USER->id and
-             !has_capability('moodle/site:readallmessages', $context)) {
+        if ($useridto != $USER->id and $useridfrom != $USER->id and !$issuperuser) {
             throw new moodle_exception('accessdenied', 'admin');
         }
 
@@ -1350,6 +1357,17 @@ class core_message_external extends external_api {
 
                 $notification->iconurl = $iconurl->out();
 
+                // We only return the logged in user's preferences, so if it isn't the sender or receiver
+                // of this notification then skip embedding the preferences.
+                if ($embedpreference && !empty($notification->component) && !empty($notification->eventtype) && !$issuperuser) {
+                    $key = 'message_provider_' . $notification->component . '_' . $notification->eventtype;
+                    $notification->preference = array(
+                        'key' => $key,
+                        'loggedin' => get_user_preferences($key . '_loggedin', $USER->id),
+                        'loggedoff' => get_user_preferences($key . '_loggedoff', $USER->id),
+                    );
+                }
+
                 if ($markasread && !$notification->read) {
                     // Have to clone here because this function mutates the given data. Naughty, naughty...
                     message_mark_message_read(clone $notification, time());
@@ -1397,6 +1415,15 @@ class core_message_external extends external_api {
                             'iconurl' => new external_value(PARAM_URL, 'URL for notification icon'),
                             'component' => new external_value(PARAM_TEXT, 'The component that generated the notification', VALUE_OPTIONAL),
                             'eventtype' => new external_value(PARAM_TEXT, 'The type of notification', VALUE_OPTIONAL),
+                            'preference' => new external_single_structure(
+                                array (
+                                    'key' => new external_value(PARAM_TEXT, 'The preference key'),
+                                    'loggedin' => new external_value(PARAM_TEXT, 'The logged in preference setting'),
+                                    'loggedoff' => new external_value(PARAM_TEXT, 'The logged off preference setting'),
+                                ),
+                                'The preference configuration',
+                                 VALUE_OPTIONAL
+                            ),
                         ), 'message'
                     )
                 ),
