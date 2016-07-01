@@ -3012,6 +3012,39 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $this->assertCount($expectedreplycount, $unmailed);
     }
 
+    /**
+     * Test for forum_is_author_hidden.
+     */
+    public function test_forum_is_author_hidden() {
+        // First post, different forum type.
+        $post = (object) ['parent' => 0];
+        $forum = (object) ['type' => 'standard'];
+        $this->assertFalse(forum_is_author_hidden($post, $forum));
+
+        // Child post, different forum type.
+        $post->parent = 1;
+        $this->assertFalse(forum_is_author_hidden($post, $forum));
+
+        // First post, single simple discussion forum type.
+        $post->parent = 0;
+        $forum->type = 'single';
+        $this->assertTrue(forum_is_author_hidden($post, $forum));
+
+        // Child post, single simple discussion forum type.
+        $post->parent = 1;
+        $this->assertFalse(forum_is_author_hidden($post, $forum));
+
+        // Incorrect parameters: $post.
+        $this->setExpectedException('coding_exception', '$post->parent must be set.');
+        unset($post->parent);
+        forum_is_author_hidden($post, $forum);
+
+        // Incorrect parameters: $forum.
+        $this->setExpectedException('coding_exception', '$forum->type must be set.');
+        unset($forum->type);
+        forum_is_author_hidden($post, $forum);
+    }
+
     public function forum_get_unmailed_posts_provider() {
         return [
             'Untimed discussion; Single post; maxeditingtime not expired' => [
