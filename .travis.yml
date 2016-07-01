@@ -14,9 +14,7 @@ language: php
 php:
     # We only run the highest and lowest supported versions to reduce the load on travis-ci.org.
     - 7.0
-    # - 5.6
-    # - 5.5
-    - 5.4
+    - 5.6
 
 env:
     # Although we want to run these jobs and see failures as quickly as possible, we also want to get the slowest job to
