@@ -52,6 +52,12 @@ if (!function_exists('json_encode') || !function_exists('json_decode')) {
     die();
 }
 
+// Make sure xml extension is available.
+if (!extension_loaded('xml')) {
+    echo 'Moodle requires the xml PHP extension. Please install or enable the xml extension.';
+    die();
+}
+
 define('NO_OUTPUT_BUFFERING', true);
 
 if (isset($_POST['upgradekey'])) {
