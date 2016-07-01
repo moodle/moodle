@@ -45,6 +45,7 @@ class chart_axis implements JsonSerializable {
     const POS_TOP = 'top';
 
     protected $label = null;
+    protected $labels = null;
     protected $max = null;
     protected $min = null;
     protected $position = self::POS_DEFAULT;
@@ -55,6 +56,10 @@ class chart_axis implements JsonSerializable {
 
     public function get_label() {
         return $this->label;
+    }
+
+    public function get_labels() {
+        return $this->labels;
     }
 
     public function get_max() {
@@ -76,6 +81,7 @@ class chart_axis implements JsonSerializable {
     public function jsonSerialize() {
         return [
             'label' => $this->label,
+            'labels' => $this->labels,
             'max' => $this->max,
             'min' => $this->min,
             'position' => $this->position,
@@ -85,6 +91,10 @@ class chart_axis implements JsonSerializable {
 
     public function set_label($label) {
         return $this->label = $label;
+    }
+
+    public function set_labels($labels) {
+        return $this->labels = $labels;
     }
 
     public function set_max($max) {
