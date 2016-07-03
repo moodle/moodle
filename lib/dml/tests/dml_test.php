@@ -1919,13 +1919,16 @@ class core_dml_testcase extends database_driver_testcase {
 
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('onebinary', XMLDB_TYPE_BINARY, 'big', null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
-        $DB->insert_record($tablename, array('course' => 1));
-        $DB->insert_record($tablename, array('course' => 3));
-        $DB->insert_record($tablename, array('course' => 2));
-        $DB->insert_record($tablename, array('course' => 6));
+        $binarydata = '\\'.chr(241);
+
+        $DB->insert_record($tablename, array('course' => 1, 'onebinary' => $binarydata));
+        $DB->insert_record($tablename, array('course' => 3, 'onebinary' => $binarydata));
+        $DB->insert_record($tablename, array('course' => 2, 'onebinary' => $binarydata));
+        $DB->insert_record($tablename, array('course' => 6, 'onebinary' => $binarydata));
 
         $fieldset = $DB->get_fieldset_sql("SELECT * FROM {{$tablename}} WHERE course > ?", array(1));
         $this->assertInternalType('array', $fieldset);
@@ -1934,6 +1937,14 @@ class core_dml_testcase extends database_driver_testcase {
         $this->assertEquals(2, $fieldset[0]);
         $this->assertEquals(3, $fieldset[1]);
         $this->assertEquals(4, $fieldset[2]);
+
+        $fieldset = $DB->get_fieldset_sql("SELECT onebinary FROM {{$tablename}} WHERE course > ?", array(1));
+        $this->assertInternalType('array', $fieldset);
+
+        $this->assertCount(3, $fieldset);
+        $this->assertEquals($binarydata, $fieldset[0]);
+        $this->assertEquals($binarydata, $fieldset[1]);
+        $this->assertEquals($binarydata, $fieldset[2]);
     }
 
     public function test_insert_record_raw() {
@@ -3015,6 +3026,10 @@ class core_dml_testcase extends database_driver_testcase {
         $DB->set_field_select($tablename, 'onebinary', $blob, 'id = ?', array(1));
         $this->assertEquals($clob, $DB->get_field($tablename, 'onetext', array('id' => 1)), 'Test CLOB set_field (full contents output disabled)');
         $this->assertEquals($blob, $DB->get_field($tablename, 'onebinary', array('id' => 1)), 'Test BLOB set_field (full contents output disabled)');
+
+        // Empty data in binary columns works.
+        $DB->set_field_select($tablename, 'onebinary', '', 'id = ?', array(1));
+        $this->assertEquals('', $DB->get_field($tablename, 'onebinary', array('id' => 1)), 'Blobs need to accept empty values.');
 
         // And "small" LOBs too, just in case.
         $newclob = substr($clob, 0, 500);

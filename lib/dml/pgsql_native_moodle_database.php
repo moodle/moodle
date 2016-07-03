@@ -39,7 +39,6 @@ class pgsql_native_moodle_database extends moodle_database {
 
     /** @var resource $pgsql database resource */
     protected $pgsql     = null;
-    protected $bytea_oid = null;
 
     protected $last_error_reporting; // To handle pgsql driver default verbosity
 
@@ -154,6 +153,15 @@ class pgsql_native_moodle_database extends moodle_database {
             $connection = "host='$this->dbhost' $port user='$this->dbuser' password='$pass' dbname='$this->dbname'";
         }
 
+        // ALTER USER and ALTER DATABASE are overridden by these settings.
+        $options = array('--client_encoding=utf8', '--standard_conforming_strings=on');
+        // Select schema if specified, otherwise the first one wins.
+        if (!empty($this->dboptions['dbschema'])) {
+            $options[] = "-c search_path=" . addcslashes($this->dboptions['dbschema'], "'\\");
+        }
+
+        $connection .= " options='".implode(' ', $options)."'";
+
         ob_start();
         if (empty($this->dboptions['dbpersist'])) {
             $this->pgsql = pg_connect($connection, PGSQL_CONNECT_FORCE_NEW);
@@ -168,34 +176,6 @@ class pgsql_native_moodle_database extends moodle_database {
         if ($status === false or $status === PGSQL_CONNECTION_BAD) {
             $this->pgsql = null;
             throw new dml_connection_exception($dberr);
-        }
-
-        $this->query_start("--pg_set_client_encoding()", null, SQL_QUERY_AUX);
-        pg_set_client_encoding($this->pgsql, 'utf8');
-        $this->query_end(true);
-
-        $sql = '';
-        // Only for 9.0 and upwards, set bytea encoding to old format.
-        if ($this->is_min_version('9.0')) {
-            $sql = "SET bytea_output = 'escape'; ";
-        }
-
-        // Select schema if specified, otherwise the first one wins.
-        if (!empty($this->dboptions['dbschema'])) {
-            $sql .= "SET search_path = '".$this->dboptions['dbschema']."'; ";
-        }
-
-        // Find out the bytea oid.
-        $sql .= "SELECT oid FROM pg_type WHERE typname = 'bytea'";
-        $this->query_start($sql, null, SQL_QUERY_AUX);
-        $result = pg_query($this->pgsql, $sql);
-        $this->query_end($result);
-
-        $this->bytea_oid = pg_fetch_result($result, 0, 0);
-        pg_free_result($result);
-        if ($this->bytea_oid === false) {
-            $this->pgsql = null;
-            throw new dml_connection_exception('Can not read bytea type.');
         }
 
         // Connection stabilised and configured, going to instantiate the temptables controller
@@ -271,18 +251,6 @@ class pgsql_native_moodle_database extends moodle_database {
             $this->query_end(true);
         }
         return array('description'=>$info['server'], 'version'=>$info['server']);
-    }
-
-    /**
-     * Returns if the RDBMS server fulfills the required version
-     *
-     * @param string $version version to check against
-     * @return bool returns if the version is fulfilled (true) or no (false)
-     */
-    private function is_min_version($version) {
-        $server = $this->get_server_info();
-        $server = $server['version'];
-        return version_compare($server, $version, '>=');
     }
 
     /**
@@ -623,9 +591,11 @@ class pgsql_native_moodle_database extends moodle_database {
         if (is_bool($value)) { // Always, convert boolean to int
             $value = (int)$value;
 
-        } else if ($column->meta_type === 'B') { // BLOB detected, we return 'blob' array instead of raw value to allow
-            if (!is_null($value)) {             // binding/executing code later to know about its nature
-                $value = array('blob' => $value);
+        } else if ($column->meta_type === 'B') {
+            if (!is_null($value)) {
+                // standard_conforming_strings must be enabled, otherwise pg_escape_bytea() will double escape
+                // \ and produce data errors.  This is set on the connection.
+                $value = pg_escape_bytea($this->pgsql, $value);
             }
 
         } else if ($value === '') {
@@ -756,7 +726,7 @@ class pgsql_native_moodle_database extends moodle_database {
     }
 
     protected function create_recordset($result) {
-        return new pgsql_native_moodle_recordset($result, $this->bytea_oid);
+        return new pgsql_native_moodle_recordset($result);
     }
 
     /**
@@ -794,11 +764,11 @@ class pgsql_native_moodle_database extends moodle_database {
         $this->query_end($result);
 
         // find out if there are any blobs
-        $numrows = pg_num_fields($result);
+        $numfields = pg_num_fields($result);
         $blobs = array();
-        for($i=0; $i<$numrows; $i++) {
-            $type_oid = pg_field_type_oid($result, $i);
-            if ($type_oid == $this->bytea_oid) {
+        for ($i = 0; $i < $numfields; $i++) {
+            $type = pg_field_type($result, $i);
+            if ($type == 'bytea') {
                 $blobs[] = pg_field_name($result, $i);
             }
         }
@@ -812,8 +782,7 @@ class pgsql_native_moodle_database extends moodle_database {
                 $id = reset($row);
                 if ($blobs) {
                     foreach ($blobs as $blob) {
-                        // note: in PostgreSQL 9.0 the returned blobs are hexencoded by default - see http://www.postgresql.org/docs/9.0/static/runtime-config-client.html#GUC-BYTEA-OUTPUT
-                        $row[$blob] = $row[$blob] !== null ? pg_unescape_bytea($row[$blob]) : null;
+                        $row[$blob] = ($row[$blob] !== null ? pg_unescape_bytea($row[$blob]) : null);
                     }
                 }
                 if (isset($return[$id])) {
@@ -843,6 +812,13 @@ class pgsql_native_moodle_database extends moodle_database {
         $this->query_end($result);
 
         $return = pg_fetch_all_columns($result, 0);
+
+        if (pg_field_type($result, 0) == 'bytea') {
+            foreach ($return as $key => $value) {
+                $return[$key] = ($value === null ? $value : pg_unescape_bytea($value));
+            }
+        }
+
         pg_free_result($result);
 
         return $return;
@@ -931,7 +907,6 @@ class pgsql_native_moodle_database extends moodle_database {
         }
 
         $cleaned = array();
-        $blobs   = array();
 
         foreach ($dataobject as $field=>$value) {
             if ($field === 'id') {
@@ -941,33 +916,10 @@ class pgsql_native_moodle_database extends moodle_database {
                 continue;
             }
             $column = $columns[$field];
-            $normalised_value = $this->normalise_value($column, $value);
-            if (is_array($normalised_value) && array_key_exists('blob', $normalised_value)) {
-                $cleaned[$field] = '@#BLOB#@';
-                $blobs[$field] = $normalised_value['blob'];
-            } else {
-                $cleaned[$field] = $normalised_value;
-            }
+            $cleaned[$field] = $this->normalise_value($column, $value);
         }
 
-        if (empty($blobs)) {
-            return $this->insert_record_raw($table, $cleaned, $returnid, $bulk);
-        }
-
-        $id = $this->insert_record_raw($table, $cleaned, true, $bulk);
-
-        foreach ($blobs as $key=>$value) {
-            $value = pg_escape_bytea($this->pgsql, $value);
-            $sql = "UPDATE {$this->prefix}$table SET $key = '$value'::bytea WHERE id = $id";
-            $this->query_start($sql, NULL, SQL_QUERY_UPDATE);
-            $result = pg_query($this->pgsql, $sql);
-            $this->query_end($result);
-            if ($result !== false) {
-                pg_free_result($result);
-            }
-        }
-
-        return ($returnid ? $id : true);
+        return $this->insert_record_raw($table, $cleaned, $returnid, $bulk);
 
     }
 
@@ -1002,14 +954,6 @@ class pgsql_native_moodle_database extends moodle_database {
 
         $columns = $this->get_columns($table, true);
 
-        // Make sure there are no nasty blobs!
-        foreach ($columns as $column) {
-            if ($column->binary) {
-                parent::insert_records($table, $dataobjects);
-                return;
-            }
-        }
-
         $fields = null;
         $count = 0;
         $chunk = array();
@@ -1042,7 +986,7 @@ class pgsql_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Insert records in chunks, no binary support, strict param types...
+     * Insert records in chunks, strict param types...
      *
      * Note: can be used only from insert_records().
      *
@@ -1087,39 +1031,17 @@ class pgsql_native_moodle_database extends moodle_database {
 
         $columns = $this->get_columns($table);
         $cleaned = array();
-        $blobs   = array();
 
         foreach ($dataobject as $field=>$value) {
             $this->detect_objects($value);
             if (!isset($columns[$field])) {
                 continue;
             }
-            if ($columns[$field]->meta_type === 'B') {
-                if (!is_null($value)) {
-                    $cleaned[$field] = '@#BLOB#@';
-                    $blobs[$field] = $value;
-                    continue;
-                }
-            }
-
-            $cleaned[$field] = $value;
+            $column = $columns[$field];
+            $cleaned[$field] = $this->normalise_value($column, $value);
         }
 
-        $this->insert_record_raw($table, $cleaned, false, true, true);
-        $id = $dataobject['id'];
-
-        foreach ($blobs as $key=>$value) {
-            $value = pg_escape_bytea($this->pgsql, $value);
-            $sql = "UPDATE {$this->prefix}$table SET $key = '$value'::bytea WHERE id = $id";
-            $this->query_start($sql, NULL, SQL_QUERY_UPDATE);
-            $result = pg_query($this->pgsql, $sql);
-            $this->query_end($result);
-            if ($result !== false) {
-                pg_free_result($result);
-            }
-        }
-
-        return true;
+        return $this->insert_record_raw($table, $cleaned, false, true, true);
     }
 
     /**
@@ -1182,39 +1104,16 @@ class pgsql_native_moodle_database extends moodle_database {
 
         $columns = $this->get_columns($table);
         $cleaned = array();
-        $blobs   = array();
 
         foreach ($dataobject as $field=>$value) {
             if (!isset($columns[$field])) {
                 continue;
             }
             $column = $columns[$field];
-            $normalised_value = $this->normalise_value($column, $value);
-            if (is_array($normalised_value) && array_key_exists('blob', $normalised_value)) {
-                $cleaned[$field] = '@#BLOB#@';
-                $blobs[$field] = $normalised_value['blob'];
-            } else {
-                $cleaned[$field] = $normalised_value;
-            }
+            $cleaned[$field] = $this->normalise_value($column, $value);
         }
 
         $this->update_record_raw($table, $cleaned, $bulk);
-
-        if (empty($blobs)) {
-            return true;
-        }
-
-        $id = (int)$dataobject['id'];
-
-        foreach ($blobs as $key=>$value) {
-            $value = pg_escape_bytea($this->pgsql, $value);
-            $sql = "UPDATE {$this->prefix}$table SET $key = '$value'::bytea WHERE id = $id";
-            $this->query_start($sql, NULL, SQL_QUERY_UPDATE);
-            $result = pg_query($this->pgsql, $sql);
-            $this->query_end($result);
-
-            pg_free_result($result);
-        }
 
         return true;
     }
@@ -1245,24 +1144,10 @@ class pgsql_native_moodle_database extends moodle_database {
         $columns = $this->get_columns($table);
         $column = $columns[$newfield];
 
-        $normalised_value = $this->normalise_value($column, $newvalue);
-        if (is_array($normalised_value) && array_key_exists('blob', $normalised_value)) {
-            // Update BYTEA and return
-            $normalised_value = pg_escape_bytea($this->pgsql, $normalised_value['blob']);
-            $sql = "UPDATE {$this->prefix}$table SET $newfield = '$normalised_value'::bytea $select";
-            $this->query_start($sql, NULL, SQL_QUERY_UPDATE);
-            $result = pg_query_params($this->pgsql, $sql, $params);
-            $this->query_end($result);
-            pg_free_result($result);
-            return true;
-        }
+        $normalisedvalue = $this->normalise_value($column, $newvalue);
 
-        if (is_null($normalised_value)) {
-            $newfield = "$newfield = NULL";
-        } else {
-            $newfield = "$newfield = \$".$i;
-            $params[] = $normalised_value;
-        }
+        $newfield = "$newfield = \$" . $i;
+        $params[] = $normalisedvalue;
         $sql = "UPDATE {$this->prefix}$table SET $newfield $select";
 
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
@@ -1275,7 +1160,7 @@ class pgsql_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Delete one or more records from a table which match a particular WHERE clause.
+     * Delete one or more records from a table which match a particular WHERE clause, lobs not supported.
      *
      * @param string $table The database table to be checked against.
      * @param string $select A fragment of SQL to be used in a where clause in the SQL call (used to define the selection criteria).
@@ -1315,11 +1200,6 @@ class pgsql_native_moodle_database extends moodle_database {
         if (strpos($param, '%') !== false) {
             debugging('Potential SQL injection detected, sql_like() expects bound parameters (? or :named)');
         }
-        if ($escapechar === '\\') {
-            // Prevents problems with C-style escapes of enclosing '\',
-            // E'... bellow prevents compatibility warnings.
-            $escapechar = '\\\\';
-        }
 
         // postgresql does not support accent insensitive text comparisons, sorry
         if ($casesensitive) {
@@ -1327,7 +1207,7 @@ class pgsql_native_moodle_database extends moodle_database {
         } else {
             $LIKE = $notlike ? 'NOT ILIKE' : 'ILIKE';
         }
-        return "$fieldname $LIKE $param ESCAPE E'$escapechar'";
+        return "$fieldname $LIKE $param ESCAPE '$escapechar'";
     }
 
     public function sql_bitxor($int1, $int2) {
