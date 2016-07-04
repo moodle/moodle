@@ -40,11 +40,11 @@ $url = new moodle_url('/admin/tool/lp/coursecompetencies.php', $urlparams);
 list($title, $subtitle) = \tool_lp\page_helper::setup_for_course($url, $course);
 
 $output = $PAGE->get_renderer('tool_lp');
+$page = new \tool_lp\output\course_competencies_page($course->id);
+
 echo $output->header();
 echo $output->heading($title);
 
-
-$page = new \tool_lp\output\course_competencies_page($course->id);
 echo $output->render($page);
 
 echo $output->footer();
