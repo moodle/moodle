@@ -4315,18 +4315,15 @@ EOD;
      * Renders a chart.
      *
      * @param \core\chart_base $chart The chart.
+     * @param bool $withtable Whether to include a data table with the chart.
      * @return string.
      */
-    public function render_chart(\core\chart_base $chart) {
-        $id = 'chart' . uniqid();
-        $div = html_writer::tag('div', '', ['id' => $id]);
-        $js = "require(['core/chart_builder', 'core/chart_output'], function(Builder, Output) {
-            Builder.make(" . json_encode($chart) . ").then(function(ChartInst) {
-                new Output('#" . $id . "', ChartInst);
-            });
-        });";
-        $this->page->requires->js_init_code($js, true);
-        return $div;
+    public function render_chart(\core\chart_base $chart, $withtable = true) {
+        $chartdata = json_encode($chart);
+        return $this->render_from_template('core/chart', (object) [
+            'chartdata' => $chartdata,
+            'withtable' => $withtable
+        ]);
     }
 
 }

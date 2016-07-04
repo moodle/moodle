@@ -2540,3 +2540,29 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
 .chart-output-htmltable {
     width: 100%;
 }
+
+/** Chart area. */
+.chart-area {
+
+    .chart-table-data {
+        display: none;
+    }
+    .chart-table-expand {
+        text-align: right;
+    }
+
+    .chart-table {
+        /** When accessible, we display the table only. */
+        &.accesshide {
+            .chart-table-expand {
+                display: none;
+            }
+            .chart-table-data {
+                display: block;
+            }
+        }
+    }
+}
+.dir-rtl .chart-area .chart-table-expand {
+    text-align: left;
+}
