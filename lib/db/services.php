@@ -652,6 +652,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true,
     ),
+    'core_message_data_for_messagearea_messages' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'data_for_messagearea_messages',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Retrieve the template data for the messages',
+        'type' => 'read',
+        'ajax' => true,
+    ),
     'core_message_get_contacts' => array(
         'classname' => 'core_message_external',
         'methodname' => 'get_contacts',

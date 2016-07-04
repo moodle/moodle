@@ -531,6 +531,81 @@ class core_message_external extends external_api {
     }
 
     /**
+     * Get messagearea messages parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function data_for_messagearea_messages_parameters() {
+        return new external_function_parameters(
+            array(
+                'currentuserid' => new external_value(PARAM_INT, 'The current user\'s id'),
+                'otheruserid' => new external_value(PARAM_INT, 'The other user\'s id'),
+                'limitfrom' => new external_value(PARAM_INT, 'Limit from', VALUE_DEFAULT, 0),
+                'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Get messagearea messages.
+     *
+     * @param int $currentuserid The current user's id
+     * @param int $otheruserid The other user's id
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return external_description
+     */
+    public static function data_for_messagearea_messages($currentuserid, $otheruserid, $limitfrom = 0, $limitnum = 0) {
+        global $CFG, $PAGE;
+
+        // Check if messaging is enabled.
+        if (!$CFG->messaging) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        $params = array(
+            'currentuserid' => $currentuserid,
+            'otheruserid' => $otheruserid,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        );
+        self::validate_parameters(self::data_for_messagearea_messages_parameters(), $params);
+
+        self::validate_context(context_user::instance($currentuserid));
+
+        $messages = \core_message\api::get_messages($currentuserid, $otheruserid, $limitfrom, $limitnum);
+
+        $renderer = $PAGE->get_renderer('core_message');
+        return $messages->export_for_template($renderer);
+    }
+
+    /**
+     * Get messagearea messages returns.
+     *
+     * @return external_description
+     */
+    public static function data_for_messagearea_messages_returns() {
+        return new external_function_parameters(
+            array(
+                'iscurrentuser' => new external_value(PARAM_BOOL, 'Is the currently logged in user the user we are viewing the messages on behalf of?'),
+                'currentuserid' => new external_value(PARAM_INT, 'The current user\'s id'),
+                'otheruserid' => new external_value(PARAM_INT, 'The other user\'s id'),
+                'otheruserfullname' => new external_value(PARAM_NOTAGS, 'The other user\'s fullname'),
+                'messages' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'text' => new external_value(PARAM_RAW, 'The text of the message'),
+                            'blocktime' => new external_value(PARAM_NOTAGS, 'The time to display above the message'),
+                            'position' => new external_value(PARAM_ALPHA, 'The position of the text'),
+                            'timesent' => new external_value(PARAM_NOTAGS, 'The time the message was sent'),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
      * Get contacts parameters description.
      *
      * @return external_function_parameters

@@ -36,6 +36,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'], function(
     Messagearea.prototype._init = function() {
         this._node.on('click', '.tabconversations', this._loadConversations.bind(this));
         this._node.on('click', '.tabcontacts', this._loadContacts.bind(this));
+        this._node.on('click', '.contact-msg', this._loadMessages.bind(this));
     };
 
     Messagearea.prototype._loadConversations = function() {
@@ -65,6 +66,40 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'], function(
             // We have the data - lets re-render the template with it.
             return templates.render('core_message/contacts', data).then(function(html, js) {
                 this.find('.contacts-area').empty().append(html);
+                // And execute any JS that was in the template.
+                templates.runTemplateJS(js);
+            }.bind(this));
+        }.bind(this)).fail(notification.exception);
+    };
+
+    Messagearea.prototype._loadMessages = function(event) {
+        // Show loading template.
+        templates.render('core_message/loading', {}).done(function(html) {
+            this.find('.messages-area').empty().append(html);
+        }.bind(this));
+
+        // Get the user that was clicked.
+        var userid = $(event.currentTarget).data('userid');
+        // Remove the 'selected' class from any other contact.
+        this.find('.contact').removeClass('selected');
+        // Set the tab for the user to selected.
+        this.find('#contact-' + userid).addClass('selected');
+
+        // Call the web service to get our data.
+        var promises = ajax.call([{
+            methodname: 'core_message_data_for_messagearea_messages',
+            args: {
+                currentuserid: this._getCurrentUserId(),
+                otheruserid: userid
+            }
+        }]);
+
+        // Do stuff when we get data back.
+        promises[0].then(function(data) {
+            // We have the data - lets re-render the template with it.
+            return templates.render('core_message/messages', data).then(function(html, js) {
+                // Append the message.
+                this.find('.messages-area').empty().append(html);
                 // And execute any JS that was in the template.
                 templates.runTemplateJS(js);
             }.bind(this));
