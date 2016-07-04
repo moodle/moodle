@@ -54,7 +54,7 @@ Feature: Preview a Multiple choice question
     And I should see "Mark 1.00 out of 1.00"
     And I should see "Well done!"
     And I should see "The odd numbers are One and Three."
-    And I should see "The correct answer is: One, Three"
+    And I should see "The correct answers are: One, Three"
     And I switch to the main window
 
   @javascript @_switch_window
