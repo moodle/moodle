@@ -7,6 +7,8 @@ information provided here is intended especially for developers.
 * The parameter $usepost of the following functions has been deprecated and is not used any more:
   - get_max_upload_file_size()
   - get_user_max_upload_file_size()
+* The following functions have been deprecated and should not be used any more:
+    - file_modify_html_header() - See MDL-29738 for more information.
 
 === 3.1 ===
 
