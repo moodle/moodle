@@ -36,6 +36,8 @@ require_login($course, false, $cm);
 require_capability('moodle/role:review', $context);
 require_sesskey();
 
+$OUTPUT->header();
+
 list($overridableroles, $overridecounts, $nameswithcounts) = get_overridable_roles($context,
         ROLENAME_BOTH, true);
 
