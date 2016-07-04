@@ -1149,10 +1149,12 @@ function lti_get_configured_types($courseid, $sectionreturn = 0) {
         $type           = new stdClass();
         $type->modclass = MOD_CLASS_ACTIVITY;
         $type->name     = 'lti_type_' . $ltitype->id;
-        $type->title    = $ltitype->name;
+        // Clean the name. We don't want tags here.
+        $type->title    = clean_param($ltitype->name, PARAM_NOTAGS);
         $trimmeddescription = trim($ltitype->description);
         if ($trimmeddescription != '') {
-            $type->help     = $trimmeddescription;
+            // Clean the description. We don't want tags here.
+            $type->help     = clean_param($trimmeddescription, PARAM_NOTAGS);
             $type->helplink = get_string('modulename_shortcut_link', 'lti');
         }
         if (empty($ltitype->icon)) {
@@ -2491,11 +2493,18 @@ function get_tool_type_instance_ids($type) {
 function serialise_tool_type(stdClass $type) {
     $capabilitygroups = get_tool_type_capability_groups($type);
     $instanceids = get_tool_type_instance_ids($type);
-
+    // Clean the name. We don't want tags here.
+    $name = clean_param($type->name, PARAM_NOTAGS);
+    if (!empty($type->description)) {
+        // Clean the description. We don't want tags here.
+        $description = clean_param($type->description, PARAM_NOTAGS);
+    } else {
+        $description = get_string('editdescription', 'mod_lti');
+    }
     return array(
         'id' => $type->id,
-        'name' => $type->name,
-        'description' => isset($type->description) ? $type->description : get_string('editdescription', 'mod_lti'),
+        'name' => $name,
+        'description' => $description,
         'urls' => get_tool_type_urls($type),
         'state' => get_tool_type_state_info($type),
         'hascapabilitygroups' => !empty($capabilitygroups),
