@@ -6372,6 +6372,22 @@ class assign {
     }
 
     /**
+     * Determine if a new submission is empty or not
+     *
+     * @param stdClass $data Submission data
+     * @return bool
+     */
+    public function new_submission_empty($data) {
+        foreach ($this->submissionplugins as $plugin) {
+            if ($plugin->is_enabled() && $plugin->is_visible() && $plugin->allow_submissions() &&
+                    !$plugin->submission_is_empty($data)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Save assignment submission for the current user.
      *
      * @param  stdClass $data
@@ -6403,6 +6419,17 @@ class assign {
         } else {
             $submission = $this->get_user_submission($userid, true);
         }
+
+        // Check that no one has modified the submission since we started looking at it.
+        if (isset($data->lastmodified) && ($submission->timemodified > $data->lastmodified)) {
+            // Another user has submitted something. Notify the current user.
+            if ($submission->status !== ASSIGN_SUBMISSION_STATUS_NEW) {
+                $notices[] = $instance->teamsubmission ? get_string('submissionmodifiedgroup', 'mod_assign')
+                                                       : get_string('submissionmodified', 'mod_assign');
+                return false;
+            }
+        }
+
         if ($instance->submissiondrafts) {
             $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
         } else {
