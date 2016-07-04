@@ -337,10 +337,10 @@ if (file_exists("$CFG->dataroot/climaintenance.html")) {
 
 if (CLI_SCRIPT) {
     // sometimes people use different PHP binary for web and CLI, make 100% sure they have the supported PHP version
-    if (version_compare(phpversion(), '5.4.4') < 0) {
+    if (version_compare(phpversion(), '5.6.5') < 0) {
         $phpversion = phpversion();
         // do NOT localise - lang strings would not work here and we CAN NOT move it to later place
-        echo "Moodle 2.7 or later requires at least PHP 5.4.4 (currently using version $phpversion).\n";
+        echo "Moodle 3.2 or later requires at least PHP 5.6.5 (currently using version $phpversion).\n";
         echo "Some servers may have multiple PHP versions installed, are you using the correct executable?\n";
         exit(1);
     }
