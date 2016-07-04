@@ -61,6 +61,10 @@ class search extends \moodleform {
         foreach ($searchareas as $areaid => $searcharea) {
             $areanames[$areaid] = $searcharea->get_visible_name();
         }
+
+        // Sort the array by the text.
+        \core_collator::asort($areanames);
+
         $options = array(
             'multiple' => true,
             'noselectionstring' => get_string('allareas', 'search'),
