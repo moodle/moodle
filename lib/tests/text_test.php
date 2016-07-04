@@ -345,10 +345,41 @@ class core_text_testcase extends advanced_testcase {
 
     /**
      * Tests the static encode_mimeheader method.
+     * This also tests method moodle_phpmailer::encodeHeader that calls core_text::encode_mimeheader
      */
     public function test_encode_mimeheader() {
+        global $CFG;
+        require_once($CFG->libdir.'/phpmailer/moodle_phpmailer.php');
+        $mailer = new moodle_phpmailer();
+
+        // Encode short string with non-latin characters.
         $str = "Žluťoučký koníček";
-        $this->assertSame('=?utf-8?B?xb1sdcWlb3XEjWvDvSBrb27DrcSNZWs=?=', core_text::encode_mimeheader($str));
+        $encodedstr = '=?utf-8?B?xb1sdcWlb3XEjWvDvSBrb27DrcSNZWs=?=';
+        $this->assertSame($encodedstr, core_text::encode_mimeheader($str));
+        $this->assertSame($encodedstr, $mailer->encodeHeader($str));
+        $this->assertSame('"' . $encodedstr . '"', $mailer->encodeHeader($str, 'phrase'));
+
+        // Encode short string without non-latin characters. Make sure the quotes are escaped in quoted email headers.
+        $latinstr = 'text"with quotes';
+        $this->assertSame($latinstr, core_text::encode_mimeheader($latinstr));
+        $this->assertSame($latinstr, $mailer->encodeHeader($latinstr));
+        $this->assertSame('"text\\"with quotes"', $mailer->encodeHeader($latinstr, 'phrase'));
+
+        // Encode long string without non-latin characters.
+        $longlatinstr = 'This is a very long text that still should not be split into several lines in the email headers because '.
+            'it does not have any non-latin characters. The "quotes" and \\backslashes should be escaped only if it\'s a part of email address';
+        $this->assertSame($longlatinstr, core_text::encode_mimeheader($longlatinstr));
+        $this->assertSame($longlatinstr, $mailer->encodeHeader($longlatinstr));
+        $longlatinstrwithslash = preg_replace(['/\\\\/', "/\"/"], ['\\\\\\', '\\"'], $longlatinstr);
+        $this->assertSame('"' . $longlatinstrwithslash . '"', $mailer->encodeHeader($longlatinstr, 'phrase'));
+
+        // Encode long string with non-latin characters.
+        $longstr = "Неопознанная ошибка в файле C:\\tmp\\: \"Не пользуйтесь виндоуз\"";
+        $encodedlongstr = "=?utf-8?B?0J3QtdC+0L/QvtC30L3QsNC90L3QsNGPINC+0YjQuNCx0LrQsCDQsiDRhNCw?=
+ =?utf-8?B?0LnQu9C1IEM6XHRtcFw6ICLQndC1INC/0L7Qu9GM0LfRg9C50YLQtdGB?=
+ =?utf-8?B?0Ywg0LLQuNC90LTQvtGD0Lci?=";
+        $this->assertSame($encodedlongstr, $mailer->encodeHeader($longstr));
+        $this->assertSame('"' . $encodedlongstr . '"', $mailer->encodeHeader($longstr, 'phrase'));
     }
 
     /**
