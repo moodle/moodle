@@ -285,7 +285,7 @@ class mod_choice_renderer extends plugin_renderer_base {
      * @param object $choices
      * @return string
      */
-    public function display_publish_anonymous_vertical($choices) {
+    public function display_publish_anonymous_horizontal($choices) {
         global $CHOICE_COLUMN_HEIGHT;
 
         $html = '';
@@ -388,7 +388,7 @@ class mod_choice_renderer extends plugin_renderer_base {
      * @param object $choices
      * @return string
      */
-    public function display_publish_anonymous_horizontal($choices) {
+    public function display_publish_anonymous_vertical($choices) {
         global $CHOICE_COLUMN_WIDTH;
 
         $table = new html_table();
