@@ -437,6 +437,13 @@ class mod_scorm_mod_form extends moodleform_mod {
 
         }
 
+        // Validate availability dates.
+        if ($data['timeopen'] && $data['timeclose']) {
+            if ($data['timeopen'] > $data['timeclose']) {
+                $errors['timeclose'] = get_string('closebeforeopen', 'scorm');
+            }
+        }
+
         return $errors;
     }
 
