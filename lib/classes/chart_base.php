@@ -38,20 +38,43 @@ use renderable;
  */
 class chart_base implements JsonSerializable, renderable {
 
+    /** @var chart_series[] The series constituting this chart. */
     protected $series = [];
+    /** @var string[] The labels for the X axis when categorised. */
     protected $labels = [];
+    /** @var string The title of the chart. */
     protected $title = null;
+    /** @var chart_axis[] The X axes. */
     protected $xaxes = [];
+    /** @var chart_axis[] The Y axes. */
     protected $yaxes = [];
 
+    /**
+     * Constructor.
+     *
+     * Must not take any argument.
+     *
+     * Most of the time you do not want to extend this, rather extend the
+     * method {@link self::set_defaults} to set the defaults on instantiation.
+     */
     public function __construct() {
         $this->set_defaults();
     }
 
+    /**
+     * Add a series to the chart.
+     *
+     * @param chart_series $serie The serie.
+     */
     public function add_series(chart_series $serie) {
         $this->series[] = $serie;
     }
 
+    /**
+     * Serialize the object.
+     *
+     * @return array
+     */
     public function jsonSerialize() {
         return [
             'type' => $this->get_type(),
@@ -65,6 +88,14 @@ class chart_base implements JsonSerializable, renderable {
         ];
     }
 
+    /**
+     * Get an axis.
+     *
+     * @param string $type Accepts values 'x' or 'y'.
+     * @param int $index The index of this axis.
+     * @param bool $createifnotexists Whether to create the axis if not found.
+     * @return chart_axis
+     */
     private function get_axis($type, $index, $createifnotexists) {
         $isx = $type === 'x';
         if ($isx) {
@@ -89,55 +120,134 @@ class chart_base implements JsonSerializable, renderable {
         return $axis;
     }
 
+    /**
+     * Get the labels of the X axis.
+     *
+     * @return string[]
+     */
     public function get_labels() {
         return $this->labels;
     }
 
+    /**
+     * Get the series.
+     *
+     * @return chart_series[]
+     */
     public function get_series() {
         return $this->series;
     }
 
+    /**
+     * Get the title.
+     *
+     * @return string
+     */
     public function get_title() {
         return $this->title;
     }
 
+    /**
+     * Get the chart type.
+     *
+     * @return string
+     */
     public function get_type() {
         $classname = get_class($this);
         return substr($classname, strpos($classname, '_') + 1);
     }
 
+    /**
+     * Get the X axes.
+     *
+     * @return chart_axis[]
+     */
     public function get_xaxes() {
         return $this->xaxes;
     }
 
+    /**
+     * Get an X axis.
+     *
+     * @param int $index The index of the axis.
+     * @param bool $createifnotexists When true, create an instance of the axis if none exist at this index yet.
+     * @return chart_axis
+     */
     public function get_xaxis($index = 0, $createifnotexists = false) {
         return $this->get_axis('x', $index, $createifnotexists);
     }
 
+    /**
+     * Get the Y axes.
+     *
+     * @return chart_axis[]
+     */
     public function get_yaxes() {
         return $this->yaxes;
     }
 
+    /**
+     * Get a Y axis.
+     *
+     * @param int $index The index of the axis.
+     * @param bool $createifnotexists When true, create an instance of the axis if none exist at this index yet.
+     * @return chart_axis
+     */
     public function get_yaxis($index = 0, $createifnotexists = false) {
         return $this->get_axis('y', $index, $createifnotexists);
     }
 
+    /**
+     * Set the defaults for this chart type.
+     *
+     * Child classes can extend this to set default values on instantiation.
+     *
+     * In general the constructor could be used, but this method is here to
+     * emphasize and self-document the default values set by the chart type.
+     *
+     * @return void
+     */
     protected function set_defaults() {
-        // For the child classes to extend.
     }
 
+    /**
+     * Set the chart labels.
+     *
+     * @param string[] $labels The labels.
+     */
     public function set_labels(array $labels) {
         $this->labels = $labels;
     }
 
+    /**
+     * Set the title.
+     *
+     * @param string $title The title.
+     */
     public function set_title($title) {
         $this->title = $title;
     }
 
+    /**
+     * Set an X axis.
+     *
+     * Note that this will override any predefined axis without warning.
+     *
+     * @param chart_axis $axis The axis.
+     * @param int $index The index of the axis.
+     */
     public function set_xaxis(chart_axis $axis, $index = 0) {
         return $this->xaxes[$index] = $axis;
     }
 
+    /**
+     * Set an Y axis.
+     *
+     * Note that this will override any predefined axis without warning.
+     *
+     * @param chart_axis $axis The axis.
+     * @param int $index The index of the axis.
+     */
     public function set_yaxis(chart_axis $axis, $index = 0) {
         return $this->yaxes[$index] = $axis;
     }

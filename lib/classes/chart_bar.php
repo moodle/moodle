@@ -34,6 +34,9 @@ defined('MOODLE_INTERNAL') || die();
  */
 class chart_bar extends chart_base {
 
+    /**
+     * Set the defaults.
+     */
     protected function set_defaults() {
         parent::set_defaults();
         $yaxis = $this->get_yaxis(0, true);

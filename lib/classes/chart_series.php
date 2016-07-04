@@ -37,39 +37,81 @@ use JsonSerializable;
  */
 class chart_series implements JsonSerializable {
 
+    /** Default type for a series. */
     const TYPE_DEFAULT = null;
+    /** Series of type line. */
     const TYPE_LINE = 'line';
 
+    /** @var string Color of the series. */
     protected $color;
+    /** @var string Label for this series. */
     protected $label;
+    /** @var string Type of the series. */
     protected $type = self::TYPE_DEFAULT;
+    /** @var float[] Values of the series. */
     protected $values = [];
 
+    /**
+     * Constructor.
+     *
+     * @param string $label The label of the series.
+     * @param float[] $values The values of this series.
+     */
     public function __construct($label, $values) {
         $this->values = $values;
         $this->label = $label;
     }
 
+    /**
+     * Get the color.
+     *
+     * @return string
+     */
     public function get_color() {
         return $this->color;
     }
 
+    /**
+     * Get the number of values in this series.
+     *
+     * @return int
+     */
     public function get_count() {
         return count($this->values);
     }
 
+    /**
+     * Get the label of the series.
+     *
+     * @return string
+     */
     public function get_label() {
         return $this->label;
     }
 
+    /**
+     * Get the type of series.
+     *
+     * @return string
+     */
     public function get_type() {
         return $this->type;
     }
 
+    /**
+     * Get the values of the series.
+     *
+     * @return [type]
+     */
     public function get_values() {
         return $this->values;
     }
 
+    /**
+     * Serialize the object.
+     *
+     * @return array
+     */
     public function jsonSerialize() {
         $data = [
             'label' => $this->label,
@@ -80,10 +122,20 @@ class chart_series implements JsonSerializable {
         return $data;
     }
 
+    /**
+     * Set the color of the series.
+     *
+     * @param string $color CSS compatible color.
+     */
     public function set_color($color) {
         $this->color = $color;
     }
 
+    /**
+     * Set the type of the series.
+     *
+     * @param string $type Constant value from self::TYPE_*.
+     */
     public function set_type($type) {
         if (!in_array($type, [self::TYPE_DEFAULT, self::TYPE_LINE])) {
             throw new coding_exception('Invalid serie type.');
