@@ -74,6 +74,7 @@ $string['incomingcontacts'] = 'Incoming contacts ({$a})';
 $string['keywords'] = 'Keywords';
 $string['keywordssearchresults'] = 'Messages found: {$a}';
 $string['keywordssearchresultstoomany'] = 'More than {$a} messages found. Refine your search.';
+$string['loading'] = 'Loading ...';
 $string['loggedin'] = 'Online';
 $string['loggedindescription'] = 'When I\'m logged in';
 $string['loggedoff'] = 'Not online';

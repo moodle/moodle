@@ -1,4 +1,4 @@
-<div class="messaging-area">
+<div class="messaging-area" data-userid="{{userid}}">
     <div class="row-fluid">
         <div class="span4 contacts-area">
             {{#contacts}}
@@ -12,3 +12,8 @@
         </div>
     </div>
 </div>
+{{#js}}
+    require(['core_message/message-area'], function(Messagearea) {
+        var messageArea = new Messagearea('.messaging-area');
+    });
+{{/js}}

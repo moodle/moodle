@@ -636,6 +636,22 @@ $functions = array(
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_message_data_for_messagearea_conversations' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'data_for_messagearea_conversations',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Retrieve the template data for the conversation list',
+        'type' => 'read',
+        'ajax' => true,
+    ),
+    'core_message_data_for_messagearea_contacts' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'data_for_messagearea_contacts',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Retrieve the template data for the contact list',
+        'type' => 'read',
+        'ajax' => true,
+    ),
     'core_message_get_contacts' => array(
         'classname' => 'core_message_external',
         'methodname' => 'get_contacts',

@@ -409,6 +409,128 @@ class core_message_external extends external_api {
     }
 
     /**
+     * Get messagearea conversations parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function data_for_messagearea_conversations_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'The id of the user who we are viewing conversations for'),
+                'limitfrom' => new external_value(PARAM_INT, 'Limit from', VALUE_DEFAULT, 0),
+                'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Get messagearea conversations.
+     *
+     * @param int $userid The id of the user who we are viewing conversations for
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return external_function_parameters
+     */
+    public static function data_for_messagearea_conversations($userid, $limitfrom = 0, $limitnum = 0) {
+        global $CFG, $PAGE;
+
+        // Check if messaging is enabled.
+        if (!$CFG->messaging) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        $params = array(
+            'userid' => $userid,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        );
+        self::validate_parameters(self::data_for_messagearea_conversations_parameters(), $params);
+
+        self::validate_context(context_user::instance($userid));
+
+        $contacts = \core_message\api::get_conversations($userid, 0, $limitfrom, $limitnum);
+
+        $renderer = $PAGE->get_renderer('core_message');
+        return $contacts->export_for_template($renderer);
+    }
+
+    /**
+     * Get messagearea conversations returns.
+     *
+     * @return external_function_parameters
+     */
+    public static function data_for_messagearea_conversations_returns() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'The id of the user who we are viewing conversations for'),
+                'conversationsselected' => new external_value(PARAM_BOOL, 'Determines if conversations were selected,
+                    otherwise contacts were'),
+                'contacts' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'userid' => new external_value(PARAM_INT, 'The user\'s id'),
+                            'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
+                            'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
+                            'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
+                            'lastmessage' => new external_value(PARAM_NOTAGS, 'The user\'s last message', VALUE_OPTIONAL),
+                            'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status', VALUE_OPTIONAL)
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * Get messagearea contacts parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function data_for_messagearea_contacts_parameters() {
+        return self::data_for_messagearea_conversations_parameters();
+    }
+
+    /**
+     * Get messagearea contacts parameters.
+     *
+     * @param int $userid The id of the user who we are viewing conversations for
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return external_function_parameters
+     */
+    public static function data_for_messagearea_contacts($userid, $limitfrom = 0, $limitnum = 0) {
+        global $CFG, $PAGE;
+
+        // Check if messaging is enabled.
+        if (!$CFG->messaging) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        $params = array(
+            'userid' => $userid,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        );
+        self::validate_parameters(self::data_for_messagearea_contacts_parameters(), $params);
+
+        self::validate_context(context_user::instance($userid));
+
+        $contacts = \core_message\api::get_contacts($userid, $limitfrom, $limitnum);
+
+        $renderer = $PAGE->get_renderer('core_message');
+        return $contacts->export_for_template($renderer);
+    }
+
+    /**
+     * Get messagearea contacts returns.
+     *
+     * @return external_function_parameters
+     */
+    public static function data_for_messagearea_contacts_returns() {
+        return self::data_for_messagearea_conversations_returns();
+    }
+
+    /**
      * Get contacts parameters description.
      *
      * @return external_function_parameters
