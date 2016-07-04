@@ -947,7 +947,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         // Now try a submission.
         $submissionpluginparams = array();
         $submissionpluginparams['files_filemanager'] = $draftidfile;
-        $onlinetexteditorparams = array('text'=>'Yeeha!',
+        $onlinetexteditorparams = array('text' => '<p>Yeeha!</p>',
                                         'format'=>1,
                                         'itemid'=>$draftidonlinetext);
         $submissionpluginparams['onlinetext_editor'] = $onlinetexteditorparams;
