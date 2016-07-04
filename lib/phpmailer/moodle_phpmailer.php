@@ -91,11 +91,15 @@ class moodle_phpmailer extends PHPMailer {
     public function encodeHeader($str, $position = 'text') {
         $encoded = core_text::encode_mimeheader($str, $this->CharSet);
         if ($encoded !== false) {
-            $encoded = str_replace("\n", $this->LE, $encoded);
             if ($position === 'phrase') {
-                return ("\"$encoded\"");
+                // Escape special symbols in each line in the encoded string, join back together and enclose in quotes.
+                $chunks = preg_split("/\\n/", $encoded);
+                $chunks = array_map(function($chunk) {
+                    return addcslashes($chunk, "\0..\37\177\\\"");
+                }, $chunks);
+                return '"' . join($this->LE, $chunks) . '"';
             }
-            return $encoded;
+            return str_replace("\n", $this->LE, $encoded);
         }
 
         return parent::encodeHeader($str, $position);
