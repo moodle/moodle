@@ -88,7 +88,7 @@ class course_competency_settings extends persistent {
     public static function can_read($courseid) {
         $context = context_course::instance($courseid);
 
-        $capabilities = array('moodle/competency:coursecompetencyview');
+        $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
 
         return has_any_capability($capabilities, $context);
     }
