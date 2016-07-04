@@ -37,6 +37,7 @@ $string['choiceno'] = 'Choice {$a}';
 $string['choices'] = 'Available choices';
 $string['clozeaid'] = 'Enter missing word';
 $string['correctansweris'] = 'The correct answer is: {$a}';
+$string['correctanswersare'] = 'The correct answers are: {$a}';
 $string['correctfeedback'] = 'For any correct response';
 $string['deletedchoice'] = 'This choice was deleted after the attempt was started.';
 $string['errgradesetanswerblank'] = 'Grade set, but the Answer is blank';
