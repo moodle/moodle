@@ -90,13 +90,6 @@ header('Cache-Control: no-cache, must-revalidate');
 header('Pragma: no-cache');
 header('Content-Type: text/html; charset=utf-8');
 
-// Required stylesheets.
-$stylesheetshtml = '';
-/*foreach ($CFG->stylesheets as $stylesheet) {
-    //TODO: MDL-21120
-    $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />';
-}*/
-
 $refreshurl = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdated.php?".
               "chat_sid=$chatsid&chat_lasttime=$chatlasttime&chat_lastrow=$chatnewrow&chat_lastid=$chatlastid";
 ?>
@@ -113,7 +106,6 @@ $refreshurl = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdated.php?".
             parent.msg.document.write("<html><head>");
             parent.msg.document.write("<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />");
             parent.msg.document.write("<base target=\"_blank\" />");
-            parent.msg.document.write("<?php echo addslashes_js($stylesheetshtml) ?>");
             parent.msg.document.write("</head><body class=\"mod-chat-gui_header_js course-<?php echo $chatuser->course ?>\" id=\"mod-chat-gui_header_js-jsupdate\"><div style=\"display: none\" id=\"msgStarted\">&nbsp;</div>");
         }
         //]]>

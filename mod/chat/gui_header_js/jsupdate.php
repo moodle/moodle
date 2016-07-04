@@ -98,13 +98,6 @@ header('Pragma: no-cache');
 header('Content-Type: text/html; charset=utf-8');
 header("Refresh: $CFG->chat_refresh_room; url=$refreshurl");
 
-// Required stylesheets.
-$stylesheetshtml = '';
-/*foreach ($CFG->stylesheets as $stylesheet) {
-    //TODO: MDL-21120
-    $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />';
-}*/
-
 // Use ob to be able to send Content-Length headers.
 // Needed for Keep-Alive to work.
 ob_start();
@@ -123,7 +116,6 @@ ob_start();
             parent.msg.document.write("<html><head>");
             parent.msg.document.write("<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />");
             parent.msg.document.write("<base target=\"_blank\" />");
-            parent.msg.document.write("<?php echo addslashes_js($stylesheetshtml) ?>");
             parent.msg.document.write("<\/head><body class=\"mod-chat-gui_header_js course-<?php echo $chatuser->course ?>\" id=\"mod-chat-gui_header_js-jsupdate\"><div style=\"display: none\" id=\"msgStarted\">&nbsp;<\/div>");
         }
 <?php
