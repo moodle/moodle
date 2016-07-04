@@ -2735,3 +2735,16 @@ function tag_autocomplete($text) {
                                    FROM {tag} tg
                                   WHERE tg.name LIKE ?", array(core_text::strtolower($text)."%"));
 }
+
+/**
+ * Add includes (js and css) into uploaded files before returning them,
+ * useful for themes and utf.js includes.
+ *
+ * @param string $text text to search and replace
+ * @return string text
+ * @deprecated Moodle 3.0.5 See MDL-29738
+ */
+function file_modify_html_header($text) {
+    debugging('file_modify_html_header() is deprecated and will not be replaced.', DEBUG_DEVELOPER);
+    return $text;
+}
