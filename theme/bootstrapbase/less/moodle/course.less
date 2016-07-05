@@ -279,7 +279,7 @@
     margin-top: 5px;
     list-style: none;
 }
-.course-content .section-summary .section-title  {
+.course-content .section-summary .section-title {
     margin: 2px 5px 10px 5px;
 }
 .course-content .section-summary .summarytext {
@@ -339,7 +339,8 @@
 }
 .course-content ul li.section.hidden {
     .sectionname > span,
-    .content > div,  /* All the divs but the activities which are in a UL. */
+    .content > div,
+    /* All the divs but the activities which are in a UL. */
     .activity .activityinstance {
         opacity: .5;
     }
@@ -750,7 +751,7 @@ span.editinstructions {
     font-size: 75%;
 }
 
-.course_category_tree .category > .info > .categoryname{
+.course_category_tree .category > .info > .categoryname {
     background-image: url([[pix:moodle|t/collapsed_empty]]);
     background-repeat: no-repeat;
     padding: 2px 18px;
@@ -765,17 +766,17 @@ span.editinstructions {
     background-image: url([[pix:moodle|t/expanded]]);
     cursor: pointer;
 }
-.course_category_tree .category.with_children.collapsed >.info > .categoryname {
+.course_category_tree .category.with_children.collapsed > .info > .categoryname {
     background-image: url([[pix:moodle|t/collapsed]]);
 }
 .dir-rtl .course_category_tree .category.with_children.collapsed > .info > .categoryname {
     background-image: url([[pix:moodle|t/collapsed_rtl]]);
 }
-.course_category_tree .category.collapsed>.content {
+.course_category_tree .category.collapsed > .content {
     display: none;
 }
 
-.course_category_tree .category >.info {
+.course_category_tree .category > .info {
     .well;
     min-height: 0;
     padding: 0;
@@ -783,7 +784,7 @@ span.editinstructions {
     margin-bottom: 3px;
     clear: both;
 }
-.course_category_tree.frontpage-category-names .category >.info {
+.course_category_tree.frontpage-category-names .category > .info {
     background: none;
     border: none;
     margin: 0;

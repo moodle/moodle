@@ -17,7 +17,7 @@
 
 }
 
-@media (min-width: (@navbarCollapseDesktopWidth) ) {
+@media (min-width: (@navbarCollapseDesktopWidth)) {
 
     a[id]:empty::before,
     a[name]:empty::before {
@@ -341,7 +341,7 @@
 }
 
 // Stuart's 2,1,3 layout
-@media (min-width : 768px) {
+@media (min-width: 768px) {
     .row-fluid .desktop-first-column {
         margin-left: 0;
     }
@@ -349,7 +349,7 @@
         display: inline;
     }
 }
-@media (max-width : 767px) {
+@media (max-width: 767px) {
     .row-fluid .desktop-first-column {
         clear: both;
     }
@@ -365,7 +365,7 @@
         padding-top: 0;
         text-align: left;
     }
-    .form-item .form-label label{
+    .form-item .form-label label {
         display: inline-block;
         margin-right: .5em;
     }
@@ -398,7 +398,7 @@
     }
 }
 // Shrink calender when short on space in block
-@media (min-width : 768px) and (max-width: 979px) {
+@media (min-width: 768px) and (max-width: 979px) {
     .block_calendar_month .content,
     .block .minicalendar td {
         padding-left: 0;
@@ -450,8 +450,7 @@
         .dropdown-menu > li > a:hover,
         .dropdown-menu > li > a:focus,
         .dropdown-submenu:hover > a,
-        .dropdown-submenu:focus > a
-        {
+        .dropdown-submenu:focus > a {
             background-image: none;
             color: @grayDark;
         }
@@ -480,7 +479,9 @@
             font-size: round(@fontSizeSmall);
         }
         .discussion {
-            .author, .replies, .lastpost {
+            .author,
+            .replies,
+            .lastpost {
                 font-size: round(@fontSizeSmall);
             }
             .replies .unread a {
