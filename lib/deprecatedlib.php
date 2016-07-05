@@ -4490,3 +4490,15 @@ function external_function_info($function, $strictness=MUST_EXIST) {
     return external_api::external_function_info($function, $strictness);
 }
 
+/**
+ * Add includes (js and css) into uploaded files before returning them,
+ * useful for themes and utf.js includes.
+ *
+ * @param string $text text to search and replace
+ * @return string text
+ * @deprecated Moodle 3.1.1 See MDL-29738
+ */
+function file_modify_html_header($text) {
+    debugging('file_modify_html_header() is deprecated and will not be replaced.', DEBUG_DEVELOPER);
+    return $text;
+}
