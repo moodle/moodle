@@ -533,7 +533,7 @@ class qbehaviour_manualgraded_walkthrough_testcase extends qbehaviour_walkthroug
                 $this->quba->get_response_summary($this->slot));
 
         // Try to process a an invalid grade.
-        $this->setExpectedException('coding_exception');
+        $this->expectException('coding_exception');
         $this->manual_grade('Comment', 'frog', FORMAT_HTML);
     }
 
@@ -580,7 +580,7 @@ class qbehaviour_manualgraded_walkthrough_testcase extends qbehaviour_walkthroug
                 $this->quba->get_response_summary($this->slot));
 
         // Try to process a an invalid grade.
-        $this->setExpectedException('coding_exception');
+        $this->expectException('coding_exception');
         $this->manual_grade('Comment', '10.1', FORMAT_HTML);
     }
 }

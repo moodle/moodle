@@ -181,9 +181,8 @@ class core_setuplib_testcase extends advanced_testcase {
         $this->assertFalse(make_unique_writable_directory($base, false));
 
         // Now check for exception.
-        $this->setExpectedException('invalid_dataroot_permissions',
-                $base . ' is not writable. Unable to create a unique directory within it.'
-            );
+        $this->expectException('invalid_dataroot_permissions');
+        $this->expectExceptionMessage($base . ' is not writable. Unable to create a unique directory within it.');
         make_unique_writable_directory($base);
 
         unlink($base);

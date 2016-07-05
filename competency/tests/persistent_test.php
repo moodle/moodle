@@ -178,12 +178,15 @@ class core_competency_persistent_testcase extends advanced_testcase {
         $this->assertEquals($data, $p->to_record());
     }
 
+    /**
+     * @expectedException coding_exception
+     */
     public function test_from_record_invalid_param() {
         $p = new core_competency_testable_persistent();
         $data = (object) array(
             'invalidparam' => 'abc'
         );
-        $this->setExpectedException('coding_exception');
+
         $p->from_record($data);
     }
 

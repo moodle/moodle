@@ -40,7 +40,7 @@ class core_completionlib_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
 
-        $DB = $this->getMock(get_class($DB));
+        $DB = $this->createMock(get_class($DB));
         $CFG->enablecompletion = COMPLETION_ENABLED;
         $USER = (object)array('id' =>314159);
     }
@@ -127,7 +127,11 @@ class core_completionlib_testcase extends advanced_testcase {
     public function test_update_state() {
         $this->mock_setup();
 
-        $c = $this->getMock('completion_info', array('is_enabled', 'get_data', 'internal_get_state', 'internal_set_data'), array((object)array('id'=>42)));
+        $mockbuilder = $this->getMockBuilder('completion_info');
+        $mockbuilder->setMethods(array('is_enabled', 'get_data', 'internal_get_state', 'internal_set_data'));
+        $mockbuilder->setConstructorArgs(array((object)array('id' => 42)));
+        $c = $mockbuilder->getMock();
+
         $cm = (object)array('id'=>13, 'course'=>42);
 
         // Not enabled, should do nothing.
@@ -223,7 +227,11 @@ class core_completionlib_testcase extends advanced_testcase {
         global $DB;
         $this->mock_setup();
 
-        $c = $this->getMock('completion_info', array('internal_get_grade_state'), array((object)array('id'=>42)));
+        $mockbuilder = $this->getMockBuilder('completion_info');
+        $mockbuilder->setMethods(array('internal_get_grade_state'));
+        $mockbuilder->setConstructorArgs(array((object)array('id' => 42)));
+        $c = $mockbuilder->getMock();
+
         $cm = (object)array('id'=>13, 'course'=>42, 'completiongradeitemnumber'=>null);
 
         // If view is required, but they haven't viewed it yet.
@@ -256,9 +264,10 @@ class core_completionlib_testcase extends advanced_testcase {
     public function test_set_module_viewed() {
         $this->mock_setup();
 
-        $c = $this->getMock('completion_info',
-            array('delete_all_state', 'get_tracked_users', 'update_state', 'internal_get_grade_state', 'is_enabled', 'get_data', 'internal_get_state', 'internal_set_data'),
-            array((object)array('id'=>42)));
+        $mockbuilder = $this->getMockBuilder('completion_info');
+        $mockbuilder->setMethods(array('is_enabled', 'get_data', 'internal_set_data', 'update_state'));
+        $mockbuilder->setConstructorArgs(array((object)array('id' => 42)));
+        $c = $mockbuilder->getMock();
         $cm = (object)array('id'=>13, 'course'=>42);
 
         // Not tracking completion, should do nothing.
@@ -341,9 +350,10 @@ class core_completionlib_testcase extends advanced_testcase {
         global $DB;
         $this->mock_setup();
 
-        $c = $this->getMock('completion_info',
-            array('delete_all_state', 'get_tracked_users', 'update_state', 'internal_get_grade_state', 'is_enabled', 'get_data', 'internal_get_state', 'internal_set_data'),
-            array((object)array('id'=>42)));
+        $mockbuilder = $this->getMockBuilder('completion_info');
+        $mockbuilder->setMethods(array('delete_all_state', 'get_tracked_users', 'update_state'));
+        $mockbuilder->setConstructorArgs(array((object)array('id' => 42)));
+        $c = $mockbuilder->getMock();
 
         $cm = (object)array('id'=>13, 'course'=>42, 'completion'=>COMPLETION_TRACKING_AUTOMATIC);
 
@@ -516,9 +526,10 @@ class core_completionlib_testcase extends advanced_testcase {
         global $DB;
         $this->mock_setup();
 
-        $c = $this->getMock('completion_info',
-            array('delete_all_state', 'get_tracked_users', 'update_state', 'internal_get_grade_state', 'is_enabled', 'get_data', 'internal_get_state', 'internal_set_data'),
-            array((object)array('id'=>42)));
+        $mockbuilder = $this->getMockBuilder('completion_info');
+        $mockbuilder->setMethods(array('get_tracked_users'));
+        $mockbuilder->setConstructorArgs(array((object)array('id' => 42)));
+        $c = $mockbuilder->getMock();
 
         // 1) Basic usage.
         $c->expects($this->at(0))
@@ -593,9 +604,10 @@ class core_completionlib_testcase extends advanced_testcase {
     public function test_inform_grade_changed() {
         $this->mock_setup();
 
-        $c = $this->getMock('completion_info',
-            array('delete_all_state', 'get_tracked_users', 'update_state', 'internal_get_grade_state', 'is_enabled', 'get_data', 'internal_get_state', 'internal_set_data'),
-            array((object)array('id'=>42)));
+        $mockbuilder = $this->getMockBuilder('completion_info');
+        $mockbuilder->setMethods(array('is_enabled', 'update_state'));
+        $mockbuilder->setConstructorArgs(array((object)array('id' => 42)));
+        $c = $mockbuilder->getMock();
 
         $cm = (object)array('course'=>42, 'id'=>13, 'completion'=>0, 'completiongradeitemnumber'=>null);
         $item = (object)array('itemnumber'=>3,  'gradepass'=>1,  'hidden'=>0);

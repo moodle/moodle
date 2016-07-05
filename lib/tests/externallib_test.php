@@ -258,7 +258,7 @@ class core_externallib_testcase extends advanced_testcase {
         $singlestructure['object'] = $object;
         $singlestructure['value2'] = 'Some text';
         $testdata = array($singlestructure);
-        $this->setExpectedException('invalid_response_exception');
+        $this->expectException('invalid_response_exception');
         $cleanedvalue = external_api::clean_returnvalue($returndesc, $testdata);
     }
     /*
@@ -305,7 +305,7 @@ class core_externallib_testcase extends advanced_testcase {
         $this->assertEquals($realcontext, $fetchedcontext);
 
         // Passing wrong level.
-        $this->setExpectedException('invalid_parameter_exception');
+        $this->expectException('invalid_parameter_exception');
         $fetchedcontext = test_exernal_api::get_context_wrapper(array("contextlevel" => "random", "instanceid" => $course->id));
     }
 
@@ -316,7 +316,7 @@ class core_externallib_testcase extends advanced_testcase {
         global $USER;
 
         // Call without correct context details.
-        $this->setExpectedException('invalid_parameter_exception');
+        $this->expectException('invalid_parameter_exception');
         test_exernal_api::get_context_wrapper(array('roleid' => 3, 'userid' => $USER->id));
     }
 
@@ -327,7 +327,7 @@ class core_externallib_testcase extends advanced_testcase {
         global $USER;
 
         // Call without correct context details.
-        $this->setExpectedException('invalid_parameter_exception');
+        $this->expectException('invalid_parameter_exception');
         test_exernal_api::get_context_wrapper(array('roleid' => 3, 'userid' => $USER->id, 'contextlevel' => "course"));
     }
 
@@ -340,7 +340,7 @@ class core_externallib_testcase extends advanced_testcase {
         // Call without correct context details.
         $this->resetAfterTest(true);
         $course = self::getDataGenerator()->create_course();
-        $this->setExpectedException('invalid_parameter_exception');
+        $this->expectException('invalid_parameter_exception');
         test_exernal_api::get_context_wrapper(array('roleid' => 3, 'userid' => $USER->id, 'instanceid' => $course->id));
     }
 

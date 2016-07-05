@@ -85,7 +85,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $nopermission = false;
         $this->students[0]->ignoresesskey = true;
         $this->setUser($this->students[0]);
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         $assign->reveal_identities();
         $this->students[0]->ignoresesskey = false;
 
@@ -93,13 +93,13 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $nopermission = false;
         $this->teachers[0]->ignoresesskey = true;
         $this->setUser($this->teachers[0]);
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         $assign->reveal_identities();
         $this->teachers[0]->ignoresesskey = false;
 
         // Test sesskey is required.
         $this->setUser($this->editingteachers[0]);
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         $assign->reveal_identities();
 
         // Test editingteacher can reveal identities if sesskey is ignored.
@@ -2149,8 +2149,9 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertNotEquals(true, strpos($output, $this->students[0]->lastname));
     }
 
-
-
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_teacher_submit_for_student() {
         global $PAGE;
 
@@ -2229,7 +2230,6 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
                                          'format'=>FORMAT_MOODLE);
 
         $notices = array();
-        $this->setExpectedException('moodle_exception');
         $assign->save_submission($data, $notices);
 
         $sink->close();

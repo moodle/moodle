@@ -18,6 +18,10 @@ information provided here is intended especially for developers.
   External function gradereport_user_external::get_grades_table can be used for retrieving the course grades table.
   Please note that the information returned from that WS is intended for displaying (not for data consumption).
 * New option 'escape' added to format_string. When true (default), escapes HTML entities from the string
+* Phpunit has been upgraded to 5.4.x and following has been deprecated and is not used any more:
+  - setExpectedException(), use @expectedException or $this->expectException() and $this->expectExceptionMessage()
+  - getMock(), use createMock() or getMockBuilder()->getMock()
+  - UnitTestCase class is removed.
 
 === 3.1 ===
 

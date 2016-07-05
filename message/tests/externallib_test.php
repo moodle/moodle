@@ -339,6 +339,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
     /**
      * Test search_contacts.
+     * @expectedException moodle_exception
      */
     public function test_search_contacts() {
         global $DB;
@@ -400,7 +401,6 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($user5->id, $result['id']);
 
         // Empty query, will throw an exception.
-        $this->setExpectedException('moodle_exception');
         $results = core_message_external::search_contacts('');
     }
 

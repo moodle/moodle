@@ -83,32 +83,38 @@ class core_moodle_page_testcase extends advanced_testcase {
         $this->assertSame($originalcourse, $COURSE);
     }
 
+    /**
+     * @expectedException coding_exception
+     */
     public function test_cannot_set_course_once_theme_set() {
         // Setup fixture.
         $this->testpage->force_theme(theme_config::DEFAULT_THEME);
         $course = $this->getDataGenerator()->create_course();
-        // Set expectation.
-        $this->setExpectedException('coding_exception');
+
         // Exercise SUT.
         $this->testpage->set_course($course);
     }
 
+    /**
+     * @expectedException coding_exception
+     */
     public function test_cannot_set_category_once_theme_set() {
         // Setup fixture.
         $this->testpage->force_theme(theme_config::DEFAULT_THEME);
-        // Set expectation.
-        $this->setExpectedException('coding_exception');
+
         // Exercise SUT.
         $this->testpage->set_category_by_id(123);
     }
 
+    /**
+     * @expectedException coding_exception
+     */
     public function test_cannot_set_category_once_course_set() {
         // Setup fixture.
         $course = $this->getDataGenerator()->create_course();
         $this->testpage->set_context(context_system::instance()); // Avoid trying to set the context.
         $this->testpage->set_course($course);
-        // Set expectation.
-        $this->setExpectedException('coding_exception');
+
         // Exercise SUT.
         $this->testpage->set_category_by_id(123);
     }
@@ -139,9 +145,10 @@ class core_moodle_page_testcase extends advanced_testcase {
         $this->assertEquals(moodle_page::STATE_DONE, $this->testpage->state);
     }
 
+    /**
+     * @expectedException coding_exception
+     */
     public function test_set_state_cannot_skip_one() {
-        // Set expectation.
-        $this->setExpectedException('coding_exception');
         // Exercise SUT.
         $this->testpage->set_state(moodle_page::STATE_IN_BODY);
     }
@@ -381,13 +388,14 @@ class core_moodle_page_testcase extends advanced_testcase {
         $this->assertEquals($cm->id, $this->testpage->cm->id);
     }
 
+    /**
+     * @expectedException coding_exception
+     */
     public function test_cannot_set_activity_record_before_cm() {
         // Setup fixture.
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course'=>$course->id));
         $cm = get_coursemodule_from_id('forum', $forum->cmid);
-        // Set expectation.
-        $this->setExpectedException('coding_exception');
         // Exercise SUT.
         $this->testpage->set_activity_record($forum);
     }
@@ -428,27 +436,29 @@ class core_moodle_page_testcase extends advanced_testcase {
         $this->assertEquals($forum, $this->testpage->activityrecord);
     }
 
+    /**
+     * @expectedException coding_exception
+     */
     public function test_cannot_set_inconsistent_activity_record_course() {
         // Setup fixture.
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course'=>$course->id));
         $cm = get_coursemodule_from_id('forum', $forum->cmid);
         $this->testpage->set_cm($cm);
-        // Set expectation.
-        $this->setExpectedException('coding_exception');
         // Exercise SUT.
         $forum->course = 13;
         $this->testpage->set_activity_record($forum);
     }
 
+    /**
+     * @expectedException coding_exception
+     */
     public function test_cannot_set_inconsistent_activity_record_instance() {
         // Setup fixture.
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course'=>$course->id));
         $cm = get_coursemodule_from_id('forum', $forum->cmid);
         $this->testpage->set_cm($cm);
-        // Set expectation.
-        $this->setExpectedException('coding_exception');
         // Exercise SUT.
         $forum->id = 13;
         $this->testpage->set_activity_record($forum);
@@ -480,13 +490,14 @@ class core_moodle_page_testcase extends advanced_testcase {
         $this->assertEquals($forum, $this->testpage->activityrecord);
     }
 
+    /**
+     * @expectedException coding_exception
+     */
     public function test_cannot_set_cm_with_inconsistent_course() {
         // Setup fixture.
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course'=>$course->id));
         $cm = get_coursemodule_from_id('forum', $forum->cmid);
-        // Set expectation.
-        $this->setExpectedException('coding_exception');
         // Exercise SUT.
         $cm->course = 13;
         $this->testpage->set_cm($cm, $course);

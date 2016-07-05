@@ -517,6 +517,8 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test lock_submissions
+     *
+     * @expectedException moodle_exception
      */
     public function test_lock_submissions() {
         global $DB, $USER;
@@ -576,7 +578,6 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
                                          'text'=>'Submission text',
                                          'format'=>FORMAT_MOODLE);
         $notices = array();
-        $this->setExpectedException('moodle_exception');
         $assign->save_submission($data, $notices);
     }
 
@@ -781,6 +782,8 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test reveal_identities
+     *
+     * @expectedException required_capability_exception
      */
     public function test_reveal_identities() {
         global $DB, $USER;
@@ -814,7 +817,6 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
                                               $studentrole->id);
 
         $this->setUser($student1);
-        $this->setExpectedException('required_capability_exception');
         $result = mod_assign_external::reveal_identities($instance->id);
         $result = external_api::clean_returnvalue(mod_assign_external::reveal_identities_returns(), $result);
         $this->assertEquals(1, count($result));
@@ -1229,6 +1231,8 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test save grades for a team submission
+     *
+     * @expectedException invalid_parameter_exception
      */
     public function test_save_grades_with_group_submission() {
         global $DB, $USER, $CFG;
@@ -1321,7 +1325,6 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $student2gradeinfo['plugindata'] = $feedbackpluginparams;
         $grades1[] = $student2gradeinfo;
 
-        $this->setExpectedException('invalid_parameter_exception');
         // Expect an exception since 2 grades have been submitted for the same team.
         $result = mod_assign_external::save_grades($instance->id, true, $grades1);
         $result = external_api::clean_returnvalue(mod_assign_external::save_grades_returns(), $result);
@@ -1533,6 +1536,8 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test view_grading_table
+     *
+     * @expectedException dml_missing_record_exception
      */
     public function test_view_grading_table_invalid_instance() {
         global $DB;
@@ -1546,12 +1551,13 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $cm = get_coursemodule_from_instance('assign', $assign->id);
 
         // Test invalid instance id.
-        $this->setExpectedExceptionRegexp('dml_missing_record_exception');
         mod_assign_external::view_grading_table(0);
     }
 
     /**
      * Test view_grading_table
+     *
+     * @expectedException require_login_exception
      */
     public function test_view_grading_table_not_enrolled() {
         global $DB;
@@ -1568,7 +1574,6 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $user = self::getDataGenerator()->create_user();
         $this->setUser($user);
 
-        $this->setExpectedException('require_login_exception');
         mod_assign_external::view_grading_table($assign->id);
     }
 
@@ -1613,6 +1618,9 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test view_grading_table
+     *
+     * @expectedException        require_login_exception
+     * @expectedExceptionMessage Course or activity not accessible. (Activity is hidden)
      */
     public function test_view_grading_table_without_capability() {
         global $DB;
@@ -1638,7 +1646,6 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
         course_modinfo::clear_instance_cache();
 
-        $this->setExpectedException('require_login_exception', 'Course or activity not accessible. (Activity is hidden)');
         mod_assign_external::view_grading_table($assign->id);
     }
 
@@ -2029,6 +2036,8 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test access control for get_submission_status.
+     *
+     * @expectedException required_capability_exception
      */
     public function test_get_submission_status_access_control() {
         $this->resetAfterTest(true);
@@ -2038,23 +2047,25 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->setUser($student2);
 
         // Access control test.
-        $this->setExpectedException('required_capability_exception');
         mod_assign_external::get_submission_status($assign->get_instance()->id, $student1->id);
 
     }
 
     /**
      * get_participant should throw an excaption if the requested assignment doesn't exist.
+     *
+     * @expectedException moodle_exception
      */
     public function test_get_participant_no_assignment() {
         $this->resetAfterTest(true);
-        $this->setExpectedException('moodle_exception');
         mod_assign_external::get_participant('-1', '-1', false);
     }
 
     /**
      * get_participant should throw a require_login_exception if the user doesn't have access
      * to view assignments.
+     *
+     * @expectedException require_login_exception
      */
     public function test_get_participant_no_view_capability() {
         global $DB;
@@ -2070,13 +2081,14 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->setUser($student);
         assign_capability('mod/assign:view', CAP_PROHIBIT, $studentrole->id, $context->id, true);
 
-        $this->setExpectedException('require_login_exception');
         mod_assign_external::get_participant($assign->id, $student->id, false);
     }
 
     /**
      * get_participant should throw a required_capability_exception if the user doesn't have access
      * to view assignment grades.
+     *
+     * @expectedException required_capability_exception
      */
     public function test_get_participant_no_grade_capability() {
         global $DB;
@@ -2095,12 +2107,13 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         assign_capability('mod/assign:grade', CAP_PROHIBIT, $teacherrole->id, $context->id, true);
         accesslib_clear_all_caches_for_unit_testing();
 
-        $this->setExpectedException('required_capability_exception');
         mod_assign_external::get_participant($assign->id, $student->id, false);
     }
 
     /**
      * get_participant should throw an exception if the user isn't enrolled in the course.
+     *
+     * @expectedException moodle_exception
      */
     public function test_get_participant_no_participant() {
         global $DB;
@@ -2113,7 +2126,6 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
 
         $this->setUser($teacher);
 
-        $this->setExpectedException('moodle_exception');
         $result = mod_assign_external::get_participant($assign->id, $student->id, false);
     }
 

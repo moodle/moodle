@@ -36,6 +36,8 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
 
     /**
      * Test create_groups
+     *
+     * @expectedException required_capability_exception
      */
     public function test_create_groups() {
         global $DB;
@@ -111,12 +113,13 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability
         $this->unassignUserCapability('moodle/course:managegroups', $context->id, $roleid);
-        $this->setExpectedException('required_capability_exception');
         $froups = core_group_external::create_groups(array($group4));
     }
 
     /**
      * Test get_groups
+     *
+     * @expectedException required_capability_exception
      */
     public function test_get_groups() {
         global $DB;
@@ -175,12 +178,13 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability
         $this->unassignUserCapability('moodle/course:managegroups', $context->id, $roleid);
-        $this->setExpectedException('required_capability_exception');
         $groups = core_group_external::get_groups(array($group1->id, $group2->id));
     }
 
     /**
      * Test delete_groups
+     *
+     * @expectedException required_capability_exception
      */
     public function test_delete_groups() {
         global $DB;
@@ -223,7 +227,6 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability
         $this->unassignUserCapability('moodle/course:managegroups', $context->id, $roleid);
-        $this->setExpectedException('required_capability_exception');
         $froups = core_group_external::delete_groups(array($group3->id));
     }
 

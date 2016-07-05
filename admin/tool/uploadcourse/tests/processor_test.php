@@ -160,6 +160,9 @@ class tool_uploadcourse_processor_testcase extends advanced_testcase {
         $this->assertEquals('ID123: Course 1', $c->shortname);
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_empty_csv() {
         $this->resetAfterTest(true);
 
@@ -171,10 +174,12 @@ class tool_uploadcourse_processor_testcase extends advanced_testcase {
         $cir->init();
 
         $options = array('mode' => tool_uploadcourse_processor::MODE_CREATE_NEW);
-        $this->setExpectedException('moodle_exception');
         $p = new tool_uploadcourse_processor($cir, $options, array());
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_not_enough_columns() {
         $this->resetAfterTest(true);
 
@@ -189,7 +194,6 @@ class tool_uploadcourse_processor_testcase extends advanced_testcase {
         $cir->init();
 
         $options = array('mode' => tool_uploadcourse_processor::MODE_CREATE_NEW);
-        $this->setExpectedException('moodle_exception');
         $p = new tool_uploadcourse_processor($cir, $options, array());
     }
 

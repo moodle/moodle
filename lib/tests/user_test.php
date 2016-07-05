@@ -308,10 +308,11 @@ class core_user_testcase extends advanced_testcase {
 
         // Try to fetch type of a non-existent properties.
         $nonexistingproperty = 'userfullname';
-        $this->setExpectedException('coding_exception', 'Invalid property requested: ' . $nonexistingproperty);
+        $this->expectException('coding_exception');
+        $this->expectExceptionMessage('Invalid property requested: ' . $nonexistingproperty);
         core_user::get_property_type($nonexistingproperty);
         $nonexistingproperty = 'mobilenumber';
-        $this->setExpectedException('coding_exception', 'Invalid property requested: ' . $nonexistingproperty);
+        $this->expectExceptionMessage('Invalid property requested: ' . $nonexistingproperty);
         core_user::get_property_type($nonexistingproperty);
     }
 
@@ -331,10 +332,11 @@ class core_user_testcase extends advanced_testcase {
 
         // Try to fetch type of a non-existent properties.
         $nonexistingproperty = 'lastnamefonetic';
-        $this->setExpectedException('coding_exception', 'Invalid property requested: ' . $nonexistingproperty);
+        $this->expectException('coding_exception');
+        $this->expectExceptionMessage('Invalid property requested: ' . $nonexistingproperty);
         core_user::get_property_null($nonexistingproperty);
         $nonexistingproperty = 'midlename';
-        $this->setExpectedException('coding_exception', 'Invalid property requested: ' . $nonexistingproperty);
+        $this->expectExceptionMessage('Invalid property requested: ' . $nonexistingproperty);
         core_user::get_property_null($nonexistingproperty);
     }
 
@@ -365,15 +367,20 @@ class core_user_testcase extends advanced_testcase {
 
         // Try to fetch type of a non-existent properties.
         $nonexistingproperty = 'language';
-        $this->setExpectedException('coding_exception', 'Invalid property requested: ' . $nonexistingproperty);
+        $this->expectException('coding_exception');
+        $this->expectExceptionMessage('Invalid property requested: ' . $nonexistingproperty);
         core_user::get_property_null($nonexistingproperty);
         $nonexistingproperty = 'coutries';
-        $this->setExpectedException('coding_exception', 'Invalid property requested: ' . $nonexistingproperty);
+        $this->expectExceptionMessage('Invalid property requested: ' . $nonexistingproperty);
         core_user::get_property_null($nonexistingproperty);
     }
 
     /**
      * Test get_property_default().
+     *
+     *
+     * @expectedException        coding_exception
+     * @expectedExceptionMessage Invalid property requested, or the property does not has a default value.
      */
     public function test_get_property_default() {
         global $CFG;
@@ -401,7 +408,6 @@ class core_user_testcase extends advanced_testcase {
         $timezone = core_user::get_property_default('timezone');
         $this->assertEquals('Pacific/Auckland', $timezone);
 
-        $this->setExpectedException('coding_exception', 'Invalid property requested, or the property does not has a default value.');
         core_user::get_property_default('firstname');
     }
 
