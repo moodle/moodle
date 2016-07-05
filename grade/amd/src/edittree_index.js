@@ -14,10 +14,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Handle add/remove competency links.
+ * Enhance the gradebook tree setup with various facilities.
  *
- * @module     grade
- * @package    edittree_index
+ * @module     core_grades/edittree_index
+ * @package    core_grades
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -121,7 +121,7 @@ define([
         return selected;
     };
 
-    return /** @alias module:grade/edittree_index */ {
+    return /** @alias module:core_grades/edittree_index */ {
         enhance: edittree
     };
 });
