@@ -84,7 +84,15 @@ if (!is_null($editmode) && $PAGE->user_allowed_editing()) {
     $USER->editing = $editmode;
 }
 
-$PAGE->set_title($workshop->name);
+$userplan = new workshop_user_plan($workshop, $USER->id);
+
+foreach ($userplan->phases as $phase) {
+    if ($phase->active) {
+        $currentphasetitle = $phase->title;
+    }
+}
+
+$PAGE->set_title($workshop->name . " (" . $currentphasetitle . ")");
 $PAGE->set_heading($course->fullname);
 
 if ($perpage and $perpage > 0 and $perpage <= 1000) {
@@ -101,12 +109,12 @@ if ($eval) {
 }
 
 $output = $PAGE->get_renderer('mod_workshop');
-$userplan = new workshop_user_plan($workshop, $USER->id);
 
 /// Output starts here
 
 echo $output->header();
 echo $output->heading_with_help(format_string($workshop->name), 'userplan', 'workshop');
+echo $output->heading(format_string($currentphasetitle), 3);
 echo $output->render($userplan);
 
 switch ($workshop->phase) {
