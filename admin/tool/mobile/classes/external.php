@@ -95,4 +95,54 @@ class external extends external_api {
         );
     }
 
+    /**
+     * Returns description of get_site_public_settings() parameters.
+     *
+     * @return external_function_parameters
+     * @since  Moodle 3.2
+     */
+    public static function get_site_public_settings_parameters() {
+        return new external_function_parameters(array());
+    }
+
+    /**
+     * Returns a list of the site public settings, those not requiring authentication.
+     *
+     * @return array with the settings and warnings
+     * @since  Moodle 3.2
+     */
+    public static function get_site_public_settings() {
+        $result = api::get_site_public_settings();
+        $result['warnings'] = array();
+        return $result;
+    }
+
+    /**
+     * Returns description of get_site_public_settings() result value.
+     *
+     * @return external_description
+     * @since  Moodle 3.2
+     */
+    public static function get_site_public_settings_returns() {
+        return new external_single_structure(
+            array(
+                'wwwroot' => new external_value(PARAM_RAW, 'Site URL.'),
+                'httpswwwroot' => new external_value(PARAM_RAW, 'Site https URL (if httpslogin is enabled).'),
+                'sitename' => new external_value(PARAM_TEXT, 'Site name.'),
+                'guestlogin' => new external_value(PARAM_INT, 'Whether guest login is enabled.'),
+                'rememberusername' => new external_value(PARAM_INT, 'Values: 0 for No, 1 for Yes, 2 for optional.'),
+                'authloginviaemail' => new external_value(PARAM_INT, 'Whether log in via email is enabled.'),
+                'registerauth' => new external_value(PARAM_PLUGIN, 'Authentication method for user registration.'),
+                'forgottenpasswordurl' => new external_value(PARAM_URL, 'Forgotten password URL.'),
+                'authinstructions' => new external_value(PARAM_RAW, 'Authentication instructions.'),
+                'authnoneenabled' => new external_value(PARAM_INT, 'Whether auth none is enabled.'),
+                'enablewebservices' => new external_value(PARAM_INT, 'Whether Web Services are enabled.'),
+                'enablemobilewebservice' => new external_value(PARAM_INT, 'Whether the Mobile service is enabled.'),
+                'maintenanceenabled' => new external_value(PARAM_INT, 'Whether site maintenance is enabled.'),
+                'maintenancemessage' => new external_value(PARAM_RAW, 'Maintenance message.'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }

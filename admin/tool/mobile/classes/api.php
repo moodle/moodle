@@ -26,6 +26,7 @@ namespace tool_mobile;
 
 use core_component;
 use core_plugin_manager;
+use context_system;
 
 /**
  * API exposed by tool_mobile
@@ -80,6 +81,37 @@ class api {
             }
         }
         return $pluginsinfo;
+    }
+
+    /**
+     * Returns a list of the site public settings, those not requiring authentication.
+     *
+     * @return array with the settings and warnings
+     */
+    public static function get_site_public_settings() {
+        global $CFG, $SITE, $PAGE;
+
+        $context = context_system::instance();
+        // We need this to make work the format text functions.
+        $PAGE->set_context($context);
+
+        $settings = array(
+            'wwwroot' => $CFG->wwwroot,
+            'httpswwwroot' => $CFG->httpswwwroot,
+            'sitename' => external_format_string($SITE->fullname, $context->id, true),
+            'guestlogin' => $CFG->guestloginbutton,
+            'rememberusername' => $CFG->rememberusername,
+            'authloginviaemail' => $CFG->authloginviaemail,
+            'registerauth' => $CFG->registerauth,
+            'forgottenpasswordurl' => $CFG->forgottenpasswordurl,
+            'authinstructions' => format_text($CFG->auth_instructions),
+            'authnoneenabled' => (int) is_enabled_auth('none'),
+            'enablewebservices' => $CFG->enablewebservices,
+            'enablemobilewebservice' => $CFG->enablemobilewebservice,
+            'maintenanceenabled' => $CFG->maintenance_enabled,
+            'maintenancemessage' => format_text($CFG->maintenance_message),
+        );
+        return $settings;
     }
 
 }
