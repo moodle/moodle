@@ -1380,13 +1380,15 @@ function format_string($string, $striplinks = true, $options = null) {
         $options['filter'] = true;
     }
 
+    $options['escape'] = !isset($options['escape']) || $options['escape'];
+
     if (!$options['context']) {
         // We did not find any context? weird.
         return $string = strip_tags($string);
     }
 
     // Calculate md5.
-    $md5 = md5($string.'<+>'.$striplinks.'<+>'.$options['context']->id.'<+>'.current_language());
+    $md5 = md5($string.'<+>'.$striplinks.'<+>'.$options['context']->id.'<+>'.$options['escape'].'<+>'.current_language());
 
     // Fetch from cache if possible.
     if (isset($strcache[$md5])) {
@@ -1395,7 +1397,7 @@ function format_string($string, $striplinks = true, $options = null) {
 
     // First replace all ampersands not followed by html entity code
     // Regular expression moved to its own method for easier unit testing.
-    $string = replace_ampersands_not_followed_by_entity($string);
+    $string = $options['escape'] ? replace_ampersands_not_followed_by_entity($string) : $string;
 
     if (!empty($CFG->filterall) && $options['filter']) {
         $filtermanager = filter_manager::instance();
@@ -1405,8 +1407,11 @@ function format_string($string, $striplinks = true, $options = null) {
 
     // If the site requires it, strip ALL tags from this string.
     if (!empty($CFG->formatstringstriptags)) {
-        $string = str_replace(array('<', '>'), array('&lt;', '&gt;'), strip_tags($string));
-
+        if ($options['escape']) {
+            $string = str_replace(array('<', '>'), array('&lt;', '&gt;'), strip_tags($string));
+        } else {
+            $string = strip_tags($string);
+        }
     } else {
         // Otherwise strip just links if that is required (default).
         if ($striplinks) {
