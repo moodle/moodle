@@ -591,7 +591,7 @@ class core_upgradelib_testcase extends advanced_testcase {
         // Create some courses.
         $courses = array();
         $contexts = array();
-        for ($i = 0; $i < 37; $i++) {
+        for ($i = 0; $i < 45; $i++) {
             $course = $this->getDataGenerator()->create_course();
             $context = context_course::instance($course->id);
             if (in_array($i, array(2, 5, 10, 13, 14, 19, 23, 25, 30, 34, 36))) {
@@ -603,37 +603,43 @@ class core_upgradelib_testcase extends advanced_testcase {
                 $this->assign_bad_letter_boundary($context->id);
             }
 
-            if (in_array($i, array(9, 10, 11, 18, 19, 20, 29, 30, 31))) {
+            if (in_array($i, array(3, 9, 10, 11, 18, 19, 20, 29, 30, 31, 40))) {
                 grade_set_setting($course->id, 'displaytype', '3');
             } else if (in_array($i, array(8, 17, 28))) {
                 grade_set_setting($course->id, 'displaytype', '2');
             }
 
-            if ($i >= 7) {
-                $assignrow = $this->getDataGenerator()->create_module('assign', array('course' => $course->id, 'name' => 'Test!'));
-                $gi = grade_item::fetch(
-                        array('itemtype' => 'mod',
-                              'itemmodule' => 'assign',
-                              'iteminstance' => $assignrow->id,
-                              'courseid' => $course->id));
-                if (in_array($i, array(13, 14, 15, 23, 24, 34, 35, 36))) {
-                    grade_item::set_properties($gi, array('display', 3));
-                    $gi->update();
-                } else if (in_array($i, array(12, 21, 32))) {
-                    grade_item::set_properties($gi, array('display', 2));
-                    $gi->update();
-                }
-                $gradegrade = new grade_grade();
-                $gradegrade->itemid = $gi->id;
-                $gradegrade->userid = $user->id;
-                $gradegrade->rawgrade = 55.5563;
-                $gradegrade->finalgrade = 55.5563;
-                $gradegrade->rawgrademax = 100;
-                $gradegrade->rawgrademin = 0;
-                $gradegrade->timecreated = time();
-                $gradegrade->timemodified = time();
-                $gradegrade->insert();
+            if (in_array($i, array(37, 43))) {
+                // Show.
+                grade_set_setting($course->id, 'report_user_showlettergrade', '1');
+            } else if (in_array($i, array(38, 42))) {
+                // Hide.
+                grade_set_setting($course->id, 'report_user_showlettergrade', '0');
             }
+
+            $assignrow = $this->getDataGenerator()->create_module('assign', array('course' => $course->id, 'name' => 'Test!'));
+            $gi = grade_item::fetch(
+                    array('itemtype' => 'mod',
+                          'itemmodule' => 'assign',
+                          'iteminstance' => $assignrow->id,
+                          'courseid' => $course->id));
+            if (in_array($i, array(6, 13, 14, 15, 23, 24, 34, 35, 36, 41))) {
+                grade_item::set_properties($gi, array('display' => 3));
+                $gi->update();
+            } else if (in_array($i, array(12, 21, 32))) {
+                grade_item::set_properties($gi, array('display' => 2));
+                $gi->update();
+            }
+            $gradegrade = new grade_grade();
+            $gradegrade->itemid = $gi->id;
+            $gradegrade->userid = $user->id;
+            $gradegrade->rawgrade = 55.5563;
+            $gradegrade->finalgrade = 55.5563;
+            $gradegrade->rawgrademax = 100;
+            $gradegrade->rawgrademin = 0;
+            $gradegrade->timecreated = time();
+            $gradegrade->timemodified = time();
+            $gradegrade->insert();
 
             $contexts[] = $context;
             $courses[] = $course;
@@ -659,7 +665,7 @@ class core_upgradelib_testcase extends advanced_testcase {
 
         // System setting for grade letter boundaries (default).
         set_config('grade_displaytype', '3');
-        for ($i = 0; $i < 37; $i++) {
+        for ($i = 0; $i < 45; $i++) {
             unset_config('gradebook_calculations_freeze_' . $courses[$i]->id);
         }
         upgrade_course_letter_boundary();
@@ -686,7 +692,7 @@ class core_upgradelib_testcase extends advanced_testcase {
         // System setting for grade letter boundaries (custom with problem).
         $systemcontext = context_system::instance();
         $this->assign_bad_letter_boundary($systemcontext->id);
-        for ($i = 0; $i < 37; $i++) {
+        for ($i = 0; $i < 45; $i++) {
             unset_config('gradebook_calculations_freeze_' . $courses[$i]->id);
         }
         upgrade_course_letter_boundary();
@@ -716,7 +722,7 @@ class core_upgradelib_testcase extends advanced_testcase {
 
         // System setting not showing letters.
         set_config('grade_displaytype', '2');
-        for ($i = 0; $i < 37; $i++) {
+        for ($i = 0; $i < 45; $i++) {
             unset_config('gradebook_calculations_freeze_' . $courses[$i]->id);
         }
         upgrade_course_letter_boundary();
@@ -741,6 +747,37 @@ class core_upgradelib_testcase extends advanced_testcase {
         $this->assertEquals(20160518, $CFG->{'gradebook_calculations_freeze_' . $courses[35]->id});
         // [36] A course with grade display settings of letters with modified and good boundary (not 57) Should not be frozen.
         $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[36]->id}));
+
+        // Previous site conditions still exist.
+        for ($i = 0; $i < 45; $i++) {
+            unset_config('gradebook_calculations_freeze_' . $courses[$i]->id);
+        }
+        upgrade_course_letter_boundary();
+
+        // [37] Site setting for not showing the letter column and course setting set to show (frozen).
+        $this->assertEquals(20160518, $CFG->{'gradebook_calculations_freeze_' . $courses[37]->id});
+        // [38] Site setting for not showing the letter column and course setting set to hide.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[38]->id}));
+        // [39] Site setting for not showing the letter column and course setting set to default.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[39]->id}));
+        // [40] Site setting for not showing the letter column and course setting set to default. Course display set to letters (frozen).
+        $this->assertEquals(20160518, $CFG->{'gradebook_calculations_freeze_' . $courses[40]->id});
+        // [41] Site setting for not showing the letter column and course setting set to default. Grade item display set to letters (frozen).
+        $this->assertEquals(20160518, $CFG->{'gradebook_calculations_freeze_' . $courses[41]->id});
+
+        // Previous site conditions still exist.
+        for ($i = 0; $i < 45; $i++) {
+            unset_config('gradebook_calculations_freeze_' . $courses[$i]->id);
+        }
+        set_config('grade_report_user_showlettergrade', '1');
+        upgrade_course_letter_boundary();
+
+        // [42] Site setting for showing the letter column, but course setting set to hide.
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $courses[42]->id}));
+        // [43] Site setting for showing the letter column and course setting set to show (frozen).
+        $this->assertEquals(20160518, $CFG->{'gradebook_calculations_freeze_' . $courses[43]->id});
+        // [44] Site setting for showing the letter column and course setting set to default (frozen).
+        $this->assertEquals(20160518, $CFG->{'gradebook_calculations_freeze_' . $courses[44]->id});
     }
 
     /**
