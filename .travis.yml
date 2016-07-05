@@ -20,7 +20,7 @@ env:
     # Although we want to run these jobs and see failures as quickly as possible, we also want to get the slowest job to
     # start first so that the total run time is not too high.
     #
-    # We only run MySQL on PHP 5.6, so run that first.
+    # We only run MySQL on PHP 7.0, so run that first.
     # CI Tests should be second-highest in priority as these only take <= 60 seconds to run under normal circumstances.
     # Postgres is significantly is pretty reasonable in its run-time.
 
@@ -48,17 +48,13 @@ matrix:
     exclude:
         # MySQL - it's just too slow.
         # Exclude it on all versions except for 7.0
-        # - env: DB=mysqli   TASK=PHPUNIT
-        #   php: 5.6
-        #
-        # - env: DB=mysqli   TASK=PHPUNIT
-        #   php: 5.5
 
         - env: DB=mysqli   TASK=PHPUNIT
-          php: 5.4
+          php: 5.6
 
+       # One grunt execution is enough.
         - env: DB=none     TASK=GRUNT
-          php: 5.4
+          php: 5.6
 
         # Moodle 2.7 is not compatible with PHP 7 for the upgrade test.
         - env: DB=pgsql    TASK=UPGRADE
