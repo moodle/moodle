@@ -122,7 +122,7 @@ class edit_field extends XMLDBAction {
             $o.= '      <input type="hidden" name ="name" value="' .  s($field->getName()) .'" />';
             $o.= '      <tr valign="top"><td>Name:</td><td colspan="2">' . s($field->getName()) . '</td></tr>';
         } else {
-            $o.= '      <tr valign="top"><td><label for="name" accesskey="n">Name:</label></td><td colspan="2"><input name="name" type="text" size="30" maxlength="30" id="name" value="' . s($field->getName()) . '" /></td></tr>';
+            $o.= '      <tr valign="top"><td><label for="name" accesskey="n">Name:</label></td><td colspan="2"><input name="name" type="text" size="'.xmldb_field::NAME_MAX_LENGTH.'" maxlength="'.xmldb_field::NAME_MAX_LENGTH.'" id="name" value="' . s($field->getName()) . '" /></td></tr>';
         }
         // XMLDB field comment
         $o.= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td colspan="2"><textarea name="comment" rows="3" cols="80" id="comment">' . s($field->getComment()) . '</textarea></td></tr>';
