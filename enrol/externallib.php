@@ -300,7 +300,7 @@ class core_enrol_external extends external_api {
         $params = self::validate_parameters(self::get_users_courses_parameters(), array('userid'=>$userid));
 
         $courses = enrol_get_users_courses($params['userid'], true, 'id, shortname, fullname, idnumber, visible,
-                   summary, summaryformat, format, showgrades, lang, enablecompletion');
+                   summary, summaryformat, format, showgrades, lang, enablecompletion, category');
         $result = array();
 
         foreach ($courses as $course) {
@@ -324,11 +324,21 @@ class core_enrol_external extends external_api {
             list($course->summary, $course->summaryformat) =
                 external_format_text($course->summary, $course->summaryformat, $context->id, 'course', 'summary', null);
 
-            $result[] = array('id' => $course->id, 'shortname' => $course->shortname, 'fullname' => $course->fullname,
-                'idnumber' => $course->idnumber, 'visible' => $course->visible, 'enrolledusercount' => $enrolledusercount,
-                'summary' => $course->summary, 'summaryformat' => $course->summaryformat, 'format' => $course->format,
-                'showgrades' => $course->showgrades, 'lang' => $course->lang, 'enablecompletion' => $course->enablecompletion
-                );
+            $result[] = array(
+                'id' => $course->id,
+                'shortname' => $course->shortname,
+                'fullname' => $course->fullname,
+                'idnumber' => $course->idnumber,
+                'visible' => $course->visible,
+                'enrolledusercount' => $enrolledusercount,
+                'summary' => $course->summary,
+                'summaryformat' => $course->summaryformat,
+                'format' => $course->format,
+                'showgrades' => $course->showgrades,
+                'lang' => $course->lang,
+                'enablecompletion' => $course->enablecompletion,
+                'category' => $course->category
+            );
         }
 
         return $result;
@@ -355,7 +365,8 @@ class core_enrol_external extends external_api {
                     'showgrades' => new external_value(PARAM_BOOL, 'true if grades are shown, otherwise false', VALUE_OPTIONAL),
                     'lang'      => new external_value(PARAM_LANG, 'forced course language', VALUE_OPTIONAL),
                     'enablecompletion' => new external_value(PARAM_BOOL, 'true if completion is enabled, otherwise false',
-                                                                VALUE_OPTIONAL)
+                                                                VALUE_OPTIONAL),
+                    'category' => new external_value(PARAM_INT, 'course category id', VALUE_OPTIONAL),
                 )
             )
         );
