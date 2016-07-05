@@ -97,7 +97,7 @@ if ($data = data_submitted()) {
             if (!array_key_exists($m[2], $SESSION->emailto[$id])) {
                 if ($user = $DB->get_record_select('user', "id = ?", array($m[2]), 'id, '.
                         $namefields . ', idnumber, email, mailformat, lastaccess, lang, '.
-                        'maildisplay, auth, suspended, deleted, emailstop')) {
+                        'maildisplay, auth, suspended, deleted, emailstop, username')) {
                     $SESSION->emailto[$id][$m[2]] = $user;
                     $count++;
                 }
