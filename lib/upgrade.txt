@@ -4,6 +4,10 @@ information provided here is intended especially for developers.
 === 3.2 ===
 
 * New option 'blanktarget' added to format_text. This option adds target="_blank" to links
+* A new webservice structure `external_files` has been created which provides a standardised view of files in Moodle and
+  should be used for all file return descriptions.
+  Files matching this format can be retrieved via the new `external_util::get_area_files` method.
+  See MDL-54951 for further information.
 * The parameter $usepost of the following functions has been deprecated and is not used any more:
   - get_max_upload_file_size()
   - get_user_max_upload_file_size()
