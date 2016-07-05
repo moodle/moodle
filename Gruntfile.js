@@ -157,7 +157,7 @@ module.exports = function(grunt) {
             },
             bootstrapbase: {
                 files: ["theme/bootstrapbase/less/**/*.less"],
-                tasks: ["less:bootstrapbase"]
+                tasks: ["css"]
             },
             yui: {
                 files: ['**/yui/src/**/*.js'],
@@ -168,6 +168,12 @@ module.exports = function(grunt) {
             options: {
                 recursive: true,
                 paths: [cwd]
+            }
+        },
+        stylelint: {
+            less: {
+                options: {syntax: 'less'},
+                src: ['theme/**/*.less', '!theme/bootstrapbase/less/bootstrap/*'],
             }
         }
     });
@@ -295,6 +301,7 @@ module.exports = function(grunt) {
           grunt.config('eslint.yui.src', files);
           grunt.config('uglify.amd.files', [{ expand: true, src: files, rename: uglifyRename }]);
           grunt.config('shifter.options.paths', files);
+          grunt.config('stylelint.less.src', files);
           changedFiles = Object.create(null);
     }, 200);
 
@@ -308,6 +315,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-eslint');
+    grunt.loadNpmTasks('grunt-stylelint');
 
     // Register JS tasks.
     grunt.registerTask('shifter', 'Run Shifter against the current directory', tasks.shifter);
@@ -317,7 +325,7 @@ module.exports = function(grunt) {
     grunt.registerTask('js', ['amd', 'yui']);
 
     // Register CSS taks.
-    grunt.registerTask('css', ['less:bootstrapbase']);
+    grunt.registerTask('css', ['stylelint:less', 'less:bootstrapbase']);
 
     // Register the startup task.
     grunt.registerTask('startup', 'Run the correct tasks for the current directory', tasks.startup);
