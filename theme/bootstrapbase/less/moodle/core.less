@@ -6,14 +6,14 @@
 .layout-option-nofooter #page-footer,
 .layout-option-nocourseheader .course-content-header,
 .layout-option-nocoursefooter .course-content-footer {
-    display:none;
+    display: none;
 }
 
 .empty-region-side-pre #block-region-side-pre, // Pre region is empty.
 .empty-region-side-post #block-region-side-post, // Post region is empty.
 .jsenabled.docked-region-side-post #block-region-side-post, // All post blocks are docked.
 .jsenabled.docked-region-side-pre #block-region-side-pre { // All pre blocks are docked.
-    display:none;
+    display: none;
 }
 
 /** Start Legacy styles. Deprecated since Moodle 2.9. See MDL-48160 for further information. **/
@@ -530,7 +530,7 @@ a.skip:active {
     margin: 0;
     padding: 0;
     margin-bottom: 5px;
-    margin-top:15px;
+    margin-top: 15px;
 }
 .loginbox .signuppanel .subcontent {
     text-align: left;
@@ -591,7 +591,7 @@ a.skip:active {
 .dir-rtl {
     .loginbox.twocolumns .loginpanel,
     .loginbox.twocolumns .signuppanel {
-        float:right;
+        float: right;
     }
 }
 
@@ -975,16 +975,16 @@ tr.flagged-tag a {
     display: inline;
 }
 .tag_list.hideoverlimit .overlimit {
-    display:none;
+    display: none;
 }
 .tag_list .tagmorelink {
-    display:none;
+    display: none;
 }
 .tag_list.hideoverlimit .tagmorelink {
-    display:inline;
+    display: inline;
 }
 .tag_list.hideoverlimit .taglesslink {
-    display:none;
+    display: none;
 }
 
 /**
@@ -1091,7 +1091,7 @@ tr.flagged-tag a {
     border-collapse: collapse;
 }
 .userenrolment tr {
-    vertical-align:top;
+    vertical-align: top;
 }
 .userenrolment td {
     padding: 0;
@@ -1135,7 +1135,7 @@ tr.flagged-tag a {
     padding: 3px;
     margin: 3px;
     > a:hover {
-        border-bottom:1px solid #666;
+        border-bottom: 1px solid #666;
     }
 }
 .userenrolment .col_role .addrole img,
@@ -1249,10 +1249,10 @@ tr.flagged-tag a {
         }
         .user-enroller-panel .uep-search-results .user {
             .count, .picture, .details {
-                float:right;
+                float: right;
             }
             .options .enrol {
-                float:left;
+                float: left;
             }
         }
     }
@@ -1310,8 +1310,8 @@ tr.flagged-tag a {
     display: table-cell;
 }
 .label .mod-indent {
-    float:left;
-    padding-top:20px
+    float: left;
+    padding-top: 20px
 }
 
 /* Creates a series of .mod-indent-# rule declarations based on indent size and number of indent levels. */
@@ -2027,7 +2027,7 @@ ul.badges {
         top: 0px;
         .opacity(85);
         position: absolute;
-        z-index:10;
+        z-index: 10;
     }
 
     .singlebutton {
@@ -2247,7 +2247,7 @@ img#persona_signin {
     .moodle-actionmenu[data-enhance] {
         display: block;
         .menu {
-            display:none;
+            display: none;
         }
         .toggle-display {
             display: inline; /** JS is enabled, we'll be using it so return display to normal **/
@@ -2282,7 +2282,7 @@ img#persona_signin {
             .opacity(100);
         }
         .menu-action-text  {
-            display:inline;
+            display: inline;
         }
     }
 
@@ -2307,19 +2307,19 @@ img#persona_signin {
 
     .menu {
 
-        display:block;
+        display: block;
         position: absolute;
         text-align: left;
         background-color: @dropdownBackground;
         border: 1px solid @dropdownBorder;
-        z-index:1000;
+        z-index: 1000;
         .border-radius(5px);
         .box-shadow(5px 5px 20px 0 #666);
 
         a {
             display: block;
             color: @dropdownLinkColor;
-            padding:2px 1em 2px 28px;
+            padding: 2px 1em 2px 28px;
             &:hover {
                 color: @dropdownLinkColorHover;
                 background-color: @dropdownLinkBackgroundHover;
@@ -2332,7 +2332,7 @@ img#persona_signin {
             }
         }
         a.hidden {
-            display:none;
+            display: none;
         }
         img {
             vertical-align: middle;
@@ -2343,28 +2343,28 @@ img#persona_signin {
             padding: 4px;
         }
         > li {
-            display:block;
+            display: block;
         }
 
         /** bottom left of button **/
-        &.align-tl-bl {top: 100%;left:0;margin-top: 4px;}
+        &.align-tl-bl {top: 100%;left: 0;margin-top: 4px;}
         &.align-tr-bl {top: 100%;right: 100%;}
-        &.align-bl-bl {bottom: 100%;left:0;}
+        &.align-bl-bl {bottom: 100%;left: 0;}
         &.align-br-bl {bottom: 100%;right: 100%;}
         /** bottom right of button **/
-        &.align-tl-br {top: 100%;left:100%;}
+        &.align-tl-br {top: 100%;left: 100%;}
         &.align-tr-br {top: 100%;right: 0;margin-top: 4px;}
-        &.align-bl-br {bottom: 100%;left:100%;}
+        &.align-bl-br {bottom: 100%;left: 100%;}
         &.align-br-br {bottom: 100%;right: 0;}
         /** top left of button **/
-        &.align-tl-tl {top: 0;left:0;}
+        &.align-tl-tl {top: 0;left: 0;}
         &.align-tr-tl {top: 0;right: 100%;margin-right: 4px;}
-        &.align-bl-tl {bottom: 100%;left:0;margin-bottom: 4px;}
+        &.align-bl-tl {bottom: 100%;left: 0;margin-bottom: 4px;}
         &.align-br-tl {bottom: 100%;right: 100%;}
         /** top right of button **/
-        &.align-tl-tr {top: 0;left:100%;margin-left: 4px;}
+        &.align-tl-tr {top: 0;left: 100%;margin-left: 4px;}
         &.align-tr-tr {top: 0;right: 0;}
-        &.align-bl-tr {bottom: 100%;left:100%;}
+        &.align-bl-tr {bottom: 100%;left: 100%;}
         &.align-br-tr {bottom: 100%;right: 0;margin-bottom: 4px;}
     }
     /** no wrap is set - prevent menu items from wrapping **/
