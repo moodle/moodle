@@ -16,18 +16,15 @@
 
 
 /**
- * Accept uploading files by web service token
+ * Accept uploading files by web service token to the user draft file area.
  *
  * POST params:
  *  token => the web service user token (needed for authentication)
- *  filepath => the private file aera path (where files will be stored)
+ *  filepath => file path (where files will be stored)
  *  [_FILES] => for example you can send the files with <input type=file>,
  *              or with curl magic: 'file_1' => '@/path/to/file', or ...
- *  filearea => 'private' or 'draft' (default = 'private'). These are the only 2 areas we are allowing
- *              direct uploads via webservices. The private file area is deprecated - please don't use it.
- *  itemid   => For draft areas this is the draftid - this can be used to add a list of files
+ *  itemid   => The draftid - this can be used to add a list of files
  *              to a draft area in separate requests. If it is 0, a new draftid will be generated.
- *              For private files, this is ignored.
  *
  * @package    core_webservice
  * @copyright  2011 Dongsheng Cai <dongsheng@moodle.com>
@@ -47,10 +44,6 @@ define('NO_MOODLE_COOKIES', true);
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
 $filepath = optional_param('filepath', '/', PARAM_PATH);
-// The default file area is 'private' for user private files. This
-// area is actually deprecated and only supported for backwards compatibility with
-// the mobile app.
-$filearea = optional_param('filearea', 'private', PARAM_ALPHA);
 $itemid = optional_param('itemid', 0, PARAM_INT);
 
 echo $OUTPUT->header();
@@ -64,19 +57,7 @@ if ($fileuploaddisabled) {
     throw new webservice_access_exception('Web service file upload must be enabled in external service settings');
 }
 
-// check the user can manage his own files (can upload)
 $context = context_user::instance($USER->id);
-
-// Allow allways to upload files to the draft area, no matter if the user can't manage his own files.
-// Files required by other webservices (like mod_assign ones) must be uploaded to the draft area.
-if ($filearea === 'private') {
-    throw new moodle_exception('privatefilesupload');
-}
-
-if ($filearea !== 'draft') {
-    // Do not dare to allow more areas here!
-    throw new file_exception('error');
-}
 
 $fs = get_file_storage();
 
@@ -133,12 +114,11 @@ foreach ($_FILES as $fieldname=>$uploaded_file) {
 
 $fs = get_file_storage();
 
-if ($filearea == 'draft' && $itemid <= 0) {
+if ($itemid <= 0) {
     $itemid = file_get_unused_draft_itemid();
 }
 
 // Get any existing file size limits.
-$maxareabytes = FILE_AREA_MAX_BYTES_UNLIMITED;
 $maxupload = get_user_max_upload_file_size($context, $CFG->maxbytes);
 
 // Check the size of this upload.
@@ -157,7 +137,7 @@ foreach ($files as $file) {
     $file_record->component = 'user';
     $file_record->contextid = $context->id;
     $file_record->userid    = $USER->id;
-    $file_record->filearea  = $filearea;
+    $file_record->filearea  = 'draft';
     $file_record->filename = $file->filename;
     $file_record->filepath  = $filepath;
     $file_record->itemid    = $itemid;
