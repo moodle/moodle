@@ -101,10 +101,6 @@ module.exports = function(grunt) {
 
     // Project configuration.
     grunt.initConfig({
-        jshint: {
-            options: {jshintrc: '.jshintrc'},
-            amd: { src: amdSrc }
-        },
         eslint: {
             // Even though warnings dont stop the build we don't display warnings by default because
             // at this moment we've got too many core warnings.
@@ -288,7 +284,6 @@ module.exports = function(grunt) {
           var files = Object.keys(changedFiles);
           grunt.config('eslint.amd.src', files);
           grunt.config('eslint.yui.src', files);
-          grunt.config('jshint.amd.src', files);
           grunt.config('uglify.amd.files', [{ expand: true, src: files, rename: uglifyRename }]);
           grunt.config('shifter.options.paths', files);
           changedFiles = Object.create(null);
@@ -301,7 +296,6 @@ module.exports = function(grunt) {
 
     // Register NPM tasks.
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-eslint');
@@ -310,7 +304,7 @@ module.exports = function(grunt) {
     grunt.registerTask('shifter', 'Run Shifter against the current directory', tasks.shifter);
     grunt.registerTask('ignorefiles', 'Generate ignore files for linters', tasks.ignorefiles);
     grunt.registerTask('yui', ['eslint:yui', 'shifter']);
-    grunt.registerTask('amd', ['eslint:amd', 'jshint', 'uglify']);
+    grunt.registerTask('amd', ['eslint:amd', 'uglify']);
     grunt.registerTask('js', ['amd', 'yui']);
 
     // Register CSS taks.
