@@ -531,7 +531,9 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         $generatedcourses = array();
         $coursedata['idnumber'] = 'idnumbercourse1';
-        $coursedata['fullname'] = 'Course 1 for PHPunit test';
+        // Adding tags here to check that format_string is applied.
+        $coursedata['fullname'] = '<b>Course 1 for PHPunit test</b>';
+        $coursedata['shortname'] = '<b>Course 1 for PHPunit test</b>';
         $coursedata['summary'] = 'Course 1 description';
         $coursedata['summaryformat'] = FORMAT_MOODLE;
         $course1  = self::getDataGenerator()->create_course($coursedata);
@@ -561,14 +563,16 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(2, count($courses));
 
         foreach ($courses as $course) {
+            $coursecontext = context_course::instance($course['id']);
             $dbcourse = $generatedcourses[$course['id']];
             $this->assertEquals($course['idnumber'], $dbcourse->idnumber);
-            $this->assertEquals($course['fullname'], $dbcourse->fullname);
-            $this->assertEquals($course['displayname'], get_course_display_name_for_list($dbcourse));
+            $this->assertEquals($course['fullname'], external_format_string($dbcourse->fullname, $coursecontext->id));
+            $this->assertEquals($course['displayname'], external_format_string(get_course_display_name_for_list($dbcourse),
+                $coursecontext->id));
             // Summary was converted to the HTML format.
             $this->assertEquals($course['summary'], format_text($dbcourse->summary, FORMAT_MOODLE, array('para' => false)));
             $this->assertEquals($course['summaryformat'], FORMAT_HTML);
-            $this->assertEquals($course['shortname'], $dbcourse->shortname);
+            $this->assertEquals($course['shortname'], external_format_string($dbcourse->shortname, $coursecontext->id));
             $this->assertEquals($course['categoryid'], $dbcourse->category);
             $this->assertEquals($course['format'], $dbcourse->format);
             $this->assertEquals($course['showgrades'], $dbcourse->showgrades);
