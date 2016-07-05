@@ -23,11 +23,9 @@
  *  filepath => the private file aera path (where files will be stored)
  *  [_FILES] => for example you can send the files with <input type=file>,
  *              or with curl magic: 'file_1' => '@/path/to/file', or ...
- *  filearea => 'private' or 'draft' (default = 'private'). These are the only 2 areas we are allowing
- *              direct uploads via webservices. The private file area is deprecated - please don't use it.
+ *  filearea => The 'private' file area is not supported anymore, only 'draft' is supported right now.
  *  itemid   => For draft areas this is the draftid - this can be used to add a list of files
  *              to a draft area in separate requests. If it is 0, a new draftid will be generated.
- *              For private files, this is ignored.
  *
  * @package    core_webservice
  * @copyright  2011 Dongsheng Cai <dongsheng@moodle.com>
@@ -47,9 +45,7 @@ define('NO_MOODLE_COOKIES', true);
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
 $filepath = optional_param('filepath', '/', PARAM_PATH);
-// The default file area is 'private' for user private files. This
-// area is actually deprecated and only supported for backwards compatibility with
-// the mobile app.
+// The 'private' file area is not supported anymore, only 'draft' is supported right now.
 $filearea = optional_param('filearea', 'private', PARAM_ALPHA);
 $itemid = optional_param('itemid', 0, PARAM_INT);
 
