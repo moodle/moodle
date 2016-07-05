@@ -232,6 +232,7 @@ class mod_glossary_external extends external_api {
                 $glossary->name = external_format_string($glossary->name, $context->id);
                 list($glossary->intro, $glossary->introformat) = external_format_text($glossary->intro, $glossary->introformat,
                     $context->id, 'mod_glossary', 'intro', null);
+                $glossary->introfiles = external_util::get_area_files($context->id, 'mod_glossary', 'intro', false, false);
 
                 // Make sure we have a number of entries per page.
                 if (!$glossary->entbypage) {
@@ -268,6 +269,7 @@ class mod_glossary_external extends external_api {
                     'name' => new external_value(PARAM_RAW, 'Glossary name'),
                     'intro' => new external_value(PARAM_RAW, 'The Glossary intro'),
                     'introformat' => new external_format_value('intro'),
+                    'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
                     'allowduplicatedentries' => new external_value(PARAM_INT, 'If enabled, multiple entries can have the' .
                         ' same concept name'),
                     'displayformat' => new external_value(PARAM_TEXT, 'Display format type'),

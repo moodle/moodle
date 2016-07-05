@@ -104,6 +104,7 @@ class mod_data_external extends external_api {
                 list($newdb['intro'], $newdb['introformat']) =
                     external_format_text($database->intro, $database->introformat,
                                             $datacontext->id, 'mod_data', 'intro', null);
+                $newdb['introfiles'] = external_util::get_area_files($datacontext->id, 'mod_data', 'intro', false, false);
 
                 // This information should be only available if the user can see the database entries.
                 if (has_capability('mod/data:viewentry', $datacontext)) {
@@ -167,6 +168,7 @@ class mod_data_external extends external_api {
                             'name' => new external_value(PARAM_RAW, 'Database name'),
                             'intro' => new external_value(PARAM_RAW, 'The Database intro'),
                             'introformat' => new external_format_value('intro'),
+                            'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
                             'comments' => new external_value(PARAM_BOOL, 'comments enabled', VALUE_OPTIONAL),
                             'timeavailablefrom' => new external_value(PARAM_INT, 'timeavailablefrom field', VALUE_OPTIONAL),
                             'timeavailableto' => new external_value(PARAM_INT, 'timeavailableto field', VALUE_OPTIONAL),

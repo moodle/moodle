@@ -164,8 +164,8 @@ class mod_book_external_testcase extends externallib_advanced_testcase {
         $books = external_api::clean_returnvalue(mod_book_external::get_books_by_courses_returns(), $books);
         $this->assertCount(1, $books['books']);
         $this->assertEquals('First Book', $books['books'][0]['name']);
-        // We see 9 fields.
-        $this->assertCount(9, $books['books'][0]);
+        // We see 10 fields.
+        $this->assertCount(10, $books['books'][0]);
 
         // As Student you cannot see some book properties like 'section'.
         $this->assertFalse(isset($books['books'][0]['section']));
@@ -186,8 +186,8 @@ class mod_book_external_testcase extends externallib_advanced_testcase {
 
         $this->assertCount(1, $books['books']);
         $this->assertEquals('Second Book', $books['books'][0]['name']);
-        // We see 16 fields.
-        $this->assertCount(16, $books['books'][0]);
+        // We see 17 fields.
+        $this->assertCount(17, $books['books'][0]);
         // As an Admin you can see some book properties like 'section'.
         $this->assertEquals(0, $books['books'][0]['section']);
 

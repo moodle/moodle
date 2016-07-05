@@ -30,6 +30,19 @@ require_once($CFG->libdir . '/externallib.php');
 
 
 class core_externallib_testcase extends advanced_testcase {
+    protected $DB;
+
+    public function setUp() {
+        $this->DB = null;
+    }
+
+    public function tearDown() {
+        global $DB;
+        if ($this->DB !== null) {
+            $DB = $this->DB;
+        }
+    }
+
     public function test_validate_params() {
         $params = array('text'=>'aaa', 'someid'=>'6');
         $description = new external_function_parameters(array('someid' => new external_value(PARAM_INT, 'Some int value'),
@@ -457,6 +470,73 @@ class core_externallib_testcase extends advanced_testcase {
 
         $this->assertSame($beforepage, $PAGE);
         $this->assertSame($beforecourse, $COURSE);
+    }
+
+    /**
+     * Text external_util::get_area_files
+     */
+    public function test_external_util_get_area_files() {
+        global $CFG, $DB;
+
+        $this->DB = $DB;
+        $DB = $this->getMockBuilder('moodle_database')->getMock();
+
+        $content = base64_encode("Let us create a nice simple file.");
+        $timemodified = 102030405;
+        $itemid = 42;
+        $filesize = strlen($content);
+
+        $DB->method('get_records_sql')->willReturn([
+            (object) [
+                'filename'      => 'example.txt',
+                'filepath'      => '/',
+                'mimetype'      => 'text/plain',
+                'filesize'      => $filesize,
+                'timemodified'  => $timemodified,
+                'itemid'        => $itemid,
+                'pathnamehash'  => sha1('/example.txt'),
+            ],
+        ]);
+
+        $component = 'mod_foo';
+        $filearea = 'area';
+        $context = 12345;
+
+        $expectedfiles[] = array(
+            'filename' => 'example.txt',
+            'filepath' => '/',
+            'fileurl' => "{$CFG->wwwroot}/webservice/pluginfile.php/{$context}/{$component}/{$filearea}/{$itemid}/example.txt",
+            'timemodified' => $timemodified,
+            'filesize' => $filesize,
+            'mimetype' => 'text/plain',
+        );
+        // Get all the files for the area.
+        $files = external_util::get_area_files($context, $component, $filearea, false);
+        $this->assertEquals($expectedfiles, $files);
+
+        // Get just the file indicated by $itemid.
+        $files = external_util::get_area_files($context, $component, $filearea, $itemid);
+        $this->assertEquals($expectedfiles, $files);
+
+    }
+
+    /**
+     * Text external files structure.
+     */
+    public function test_external_files() {
+
+        $description = new external_files();
+
+        // First check that the expected default values and keys are returned.
+        $expectedkeys = array_flip(array('filename', 'filepath', 'filesize', 'fileurl', 'timemodified', 'mimetype'));
+        $returnedkeys = array_flip(array_keys($description->content->keys));
+        $this->assertEquals($expectedkeys, $returnedkeys);
+        $this->assertEquals('List of files.', $description->desc);
+        $this->assertEquals(VALUE_REQUIRED, $description->required);
+        foreach ($description->content->keys as $key) {
+            $this->assertEquals(VALUE_OPTIONAL, $key->required);
+        }
+
     }
 
 }

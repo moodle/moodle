@@ -189,8 +189,8 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
 
         // Create what we expect to be returned when querying the two courses.
         // First for the student user.
-        $allusersfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'timeopen', 'timeclose',
-                                'grademethod', 'section', 'visible', 'groupmode', 'groupingid');
+        $allusersfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'timeopen',
+                                'timeclose', 'grademethod', 'section', 'visible', 'groupmode', 'groupingid');
         $userswithaccessfields = array('timelimit', 'attempts', 'attemptonlast', 'grademethod', 'decimalpoints',
                                         'questiondecimalpoints', 'reviewattempt', 'reviewcorrectness', 'reviewmarks',
                                         'reviewspecificfeedback', 'reviewgeneralfeedback', 'reviewrightanswer',
@@ -211,6 +211,7 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $quiz1->hasquestions = 0;
         $quiz1->hasfeedback = 0;
         $quiz1->autosaveperiod = get_config('quiz', 'autosaveperiod');
+        $quiz1->introfiles = [];
 
         $quiz2->coursemodule = $quiz2->cmid;
         $quiz2->introformat = 1;
@@ -221,6 +222,7 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $quiz2->hasquestions = 0;
         $quiz2->hasfeedback = 0;
         $quiz2->autosaveperiod = get_config('quiz', 'autosaveperiod');
+        $quiz2->introfiles = [];
 
         foreach (array_merge($allusersfields, $userswithaccessfields) as $field) {
             $expected1[$field] = $quiz1->{$field};

@@ -129,7 +129,7 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
 
         // Create what we expect to be returned when querying the two courses.
         // First for the student user.
-        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'launchcontainer',
+        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'launchcontainer',
                                 'showtitlelaunch', 'showdescriptionlaunch', 'icon', 'secureicon');
 
         // Add expected coursemodule and data.
@@ -140,6 +140,7 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         $lti1->visible = true;
         $lti1->groupmode = 0;
         $lti1->groupingid = 0;
+        $lti1->introfiles = [];
 
         $lti2->coursemodule = $lti2->cmid;
         $lti2->introformat = 1;
@@ -147,6 +148,7 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         $lti2->visible = true;
         $lti2->groupmode = 0;
         $lti2->groupingid = 0;
+        $lti2->introfiles = [];
 
         foreach ($expectedfields as $field) {
                 $expected1[$field] = $lti1->{$field};

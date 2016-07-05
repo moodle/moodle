@@ -451,6 +451,8 @@ class mod_assign_external extends external_api {
 
                         list($assignment['intro'], $assignment['introformat']) = external_format_text($module->intro,
                             $module->introformat, $context->id, 'mod_assign', 'intro', null);
+                        $assignment['introfiles'] = external_util::get_area_files($context->id, 'mod_assign', 'intro', false,
+                                                                                    false);
 
                         $fs = get_file_storage();
                         if ($files = $fs->get_area_files($context->id, 'mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA,
@@ -528,6 +530,7 @@ class mod_assign_external extends external_api {
                 'intro' => new external_value(PARAM_RAW,
                     'assignment intro, not allways returned because it deppends on the activity configuration', VALUE_OPTIONAL),
                 'introformat' => new external_format_value('intro', VALUE_OPTIONAL),
+                'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
                 'introattachments' => new external_multiple_structure(
                     new external_single_structure(
                         array (
