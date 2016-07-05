@@ -13,6 +13,7 @@ information provided here is intended especially for developers.
   - get_user_max_upload_file_size()
 * The following functions have been removed and should not be used any more:
     - file_modify_html_header() - See MDL-29738 for more information.
+* New option 'escape' added to format_string. When true (default), escapes HTML entities from the string
 
 === 3.1 ===
 

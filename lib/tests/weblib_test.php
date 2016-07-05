@@ -37,6 +37,7 @@ class core_weblib_testcase extends advanced_testcase {
         $this->assertSame("ANother &amp; &amp;&amp;&amp;&amp;&amp; Category", format_string("ANother & &&&&& Category"));
         $this->assertSame("ANother &amp; &amp;&amp;&amp;&amp;&amp; Category", format_string("ANother & &&&&& Category", true));
         $this->assertSame("Nick's Test Site &amp; Other things", format_string("Nick's Test Site & Other things", true));
+        $this->assertSame("& < > \" '", format_string("& < > \" '", true, ['escape' => false]));
 
         // String entities.
         $this->assertSame("&quot;", format_string("&quot;"));
