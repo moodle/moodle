@@ -42,8 +42,8 @@ class chart_series implements JsonSerializable {
     /** Series of type line. */
     const TYPE_LINE = 'line';
 
-    /** @var string Color of the series. */
-    protected $color;
+    /** @var string[] Colors of the series. */
+    protected $colors = [];
     /** @var string Label for this series. */
     protected $label;
     /** @var string Type of the series. */
@@ -65,10 +65,19 @@ class chart_series implements JsonSerializable {
     /**
      * Get the color.
      *
-     * @return string
+     * @return string|null
      */
     public function get_color() {
-        return $this->color;
+        return isset($this->color[0]) ? $this->color[0] : null;
+    }
+
+    /**
+     * Get the colors for each value in the series.
+     *
+     * @return string[]
+     */
+    public function get_colors() {
+        return $this->colors;
     }
 
     /**
@@ -101,10 +110,19 @@ class chart_series implements JsonSerializable {
     /**
      * Get the values of the series.
      *
-     * @return [type]
+     * @return string[]
      */
     public function get_values() {
         return $this->values;
+    }
+
+    /**
+     * Whether there is a color per value.
+     *
+     * @return bool
+     */
+    public function has_colored_values() {
+        return count($this->colors) == $this->get_count();
     }
 
     /**
@@ -117,7 +135,7 @@ class chart_series implements JsonSerializable {
             'label' => $this->label,
             'type' => $this->type,
             'values' => $this->values,
-            'color' => $this->color,
+            'colors' => $this->colors,
         ];
         return $data;
     }
@@ -128,7 +146,16 @@ class chart_series implements JsonSerializable {
      * @param string $color CSS compatible color.
      */
     public function set_color($color) {
-        $this->color = $color;
+        $this->colors = [$color];
+    }
+
+    /**
+     * Set a color for each value in the series.
+     *
+     * @param string[] $colors CSS compatible colors.
+     */
+    public function set_colors(array $colors) {
+        $this->colors = $colors;
     }
 
     /**
