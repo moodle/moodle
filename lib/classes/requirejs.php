@@ -90,7 +90,7 @@ class core_requirejs {
         $subsystems = core_component::get_core_subsystems();
         foreach ($subsystems as $subsystem => $dir) {
             if (!empty($dir) && is_dir($dir . '/amd')) {
-                $jsdirs[$subsystem] = $dir . '/amd';
+                $jsdirs['core_' . $subsystem] = $dir . '/amd';
             }
         }
         $plugintypes = core_component::get_plugin_types();
