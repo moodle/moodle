@@ -33,4 +33,36 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class chart_line extends chart_base {
+
+    /** @var bool Whether the line should be smooth or not. */
+    protected $smooth = false;
+
+    /**
+     * Add the smooth to the parent and return the serialized data.
+     *
+     * @return array
+     */
+    public function jsonSerialize() {
+        $data = parent::jsonSerialize();
+        $data['smooth'] = $this->get_smooth();
+        return $data;
+    }
+
+    /**
+     * Get whether a lines should be smooth or not.
+     *
+     * @return bool
+     */
+    public function get_smooth() {
+        return $this->smooth;
+    }
+
+    /**
+     * Set Whether the line should be smooth or not.
+     *
+     * @param bool $smooth True if the line chart should be smooth, false otherwise.
+     */
+    public function set_smooth($smooth) {
+        $this->smooth = $smooth;
+    }
 }

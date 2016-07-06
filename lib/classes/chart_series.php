@@ -46,6 +46,8 @@ class chart_series implements JsonSerializable {
     protected $colors = [];
     /** @var string Label for this series. */
     protected $label;
+    /** @var bool Whether the line of the serie should be smooth or not. */
+    protected $smooth = null;
     /** @var string Type of the series. */
     protected $type = self::TYPE_DEFAULT;
     /** @var float[] Values of the series. */
@@ -100,6 +102,15 @@ class chart_series implements JsonSerializable {
      */
     public function get_label() {
         return $this->label;
+    }
+
+    /**
+     * Get whether the line of the serie should be smooth or not.
+     *
+     * @return bool
+     */
+    public function get_smooth() {
+        return $this->smooth;
     }
 
     /**
@@ -161,7 +172,8 @@ class chart_series implements JsonSerializable {
             'axes' => [
                 'x' => $this->xaxis,
                 'y' => $this->yaxis,
-            ]
+            ],
+            'smooth' => $this->smooth
         ];
         return $data;
     }
@@ -182,6 +194,17 @@ class chart_series implements JsonSerializable {
      */
     public function set_colors(array $colors) {
         $this->colors = $colors;
+    }
+
+    /**
+     * Set whether the line of the serie should be smooth or not.
+     *
+     * Only applicable for line chart or a line series, if null it assumes the chart default (not smooth).
+     *
+     * @param bool true if the line should be smooth, false if not.
+     */
+    public function set_smooth($smooth) {
+        $this->smooth = $smooth;
     }
 
     /**
