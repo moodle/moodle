@@ -2615,9 +2615,9 @@ class core_competency_api_testcase extends advanced_testcase {
         $evidence2 = api::add_evidence($u1->id, $c->get_id(), $cmcontext->id, \core_competency\evidence::ACTION_LOG,
             'invaliddata', 'error');
 
-        $result = api::list_evidence_in_course($u1->id, $course->id, $c->get_id());
-        $this->assertEquals($result[0]->get_id(), $evidence2->get_id());
-        $this->assertEquals($result[1]->get_id(), $evidence1->get_id());
+        $result = api::list_evidence_in_course($u1->id, $course->id, $c->get_id(), 'timecreated', 'ASC');
+        $this->assertEquals($evidence1->get_id(), $result[0]->get_id());
+        $this->assertEquals($evidence2->get_id(), $result[1]->get_id());
     }
 
     public function test_list_course_modules_using_competency() {

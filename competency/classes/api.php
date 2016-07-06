@@ -4152,7 +4152,7 @@ class api {
      * @param int $limit Number of records to return.
      * @return \core_competency\evidence[]
      */
-    public static function list_evidence_in_course($userid = 0, $courseid = 0, $competencyid = 0, $sort = 'timecreated, id',
+    public static function list_evidence_in_course($userid = 0, $courseid = 0, $competencyid = 0, $sort = 'timecreated',
                                                    $order = 'DESC', $skip = 0, $limit = 0) {
         static::require_enabled();
 
