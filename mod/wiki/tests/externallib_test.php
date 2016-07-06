@@ -1188,6 +1188,64 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test test_get_page_locking.
+     */
+    public function test_get_page_locking() {
+
+        $this->create_individual_wikis_with_groups();
+
+        $pagecontent = '<h1>Title1</h1>Text inside section<h1>Title2</h1>Text inside section';
+        $newpage = $this->getDataGenerator()->get_plugin_generator('mod_wiki')->create_page(
+                                $this->wiki, array('content' => $pagecontent));
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Test Section locking.
+        $expected = array(
+            'version' => '1'
+        );
+
+        $result = mod_wiki_external::get_page_for_editing($newpage->id, 'Title1', true);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_page_for_editing_returns(), $result);
+        $this->assertEquals($expected, $result['pagesection']);
+
+        // Test the section is locked.
+        $this->setUser($this->student2);
+        try {
+            mod_wiki_external::get_page_for_editing($newpage->id, 'Title1', true);
+            $this->fail('Exception expected due to not page locking.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('pageislocked', $e->errorcode);
+        }
+
+        // Test the page is locked.
+        try {
+            mod_wiki_external::get_page_for_editing($newpage->id, null, true);
+            $this->fail('Exception expected due to not page locking.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('pageislocked', $e->errorcode);
+        }
+
+        // Test the other section is not locked.
+        $result = mod_wiki_external::get_page_for_editing($newpage->id, 'Title2', true);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_page_for_editing_returns(), $result);
+        $this->assertEquals($expected, $result['pagesection']);
+
+        // Back to the original user to test version change when editing.
+        $this->setUser($this->student);
+        $newsectioncontent = '<h1>Title2</h1>New test2';
+        $result = mod_wiki_external::edit_page($newpage->id, $newsectioncontent, 'Title1');
+
+        $expected = array(
+            'version' => '2'
+        );
+        $result = mod_wiki_external::get_page_for_editing($newpage->id, 'Title1', true);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_page_for_editing_returns(), $result);
+        $this->assertEquals($expected, $result['pagesection']);
+    }
+
+    /**
      * Test new_page. We won't test all the possible cases because that's already
      * done in the tests for wiki_create_page.
      */
