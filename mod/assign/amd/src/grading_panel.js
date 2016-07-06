@@ -24,8 +24,9 @@
  * @since      3.1
  */
 define(['jquery', 'core/notification', 'core/templates', 'core/fragment',
-        'core/ajax', 'core/str', 'mod_assign/grading_form_change_checker'],
-       function($, notification, templates, fragment, ajax, str, checker) {
+        'core/ajax', 'core/str', 'mod_assign/grading_form_change_checker',
+        'mod_assign/grading_events'],
+       function($, notification, templates, fragment, ajax, str, checker, GradingEvents) {
 
     /**
      * GradingPanel class.
@@ -38,11 +39,7 @@ define(['jquery', 'core/notification', 'core/templates', 'core/fragment',
         this._region = $(selector);
         this._userCache = [];
 
-        $(document).on('user-changed', this._refreshGradingPanel.bind(this));
-        $(document).on('save-changes', this._submitForm.bind(this));
-        $(document).on('reset', this._resetForm.bind(this));
-
-        $(document).on('save-form-state', this._saveFormState.bind(this));
+        this.registerEventListeners();
     };
 
     /** @type {String} Selector for the page region containing the user navigation. */
@@ -301,6 +298,62 @@ define(['jquery', 'core/notification', 'core/templates', 'core/fragment',
                 }
             }.bind(this));
         }.bind(this)).fail(notification.exception);
+    };
+
+    /**
+     * Get the grade panel element.
+     *
+     * @method getPanelElement
+     * @return {jQuery}
+     */
+    GradingPanel.prototype.getPanelElement = function() {
+        return $('[data-region="grade-panel"]');
+    };
+
+    /**
+     * Hide the grade panel.
+     *
+     * @method collapsePanel
+     */
+    GradingPanel.prototype.collapsePanel = function() {
+        this.getPanelElement().addClass('collapsed');
+    };
+
+    /**
+     * Show the grade panel.
+     *
+     * @method expandPanel
+     */
+    GradingPanel.prototype.expandPanel = function() {
+        this.getPanelElement().removeClass('collapsed');
+    };
+
+    /**
+     * Register event listeners for the grade panel.
+     *
+     * @method registerEventListeners
+     */
+    GradingPanel.prototype.registerEventListeners = function() {
+        var docElement = $(document);
+
+        docElement.on('user-changed', this._refreshGradingPanel.bind(this));
+        docElement.on('save-changes', this._submitForm.bind(this));
+        docElement.on('reset', this._resetForm.bind(this));
+
+        docElement.on('save-form-state', this._saveFormState.bind(this));
+
+        docElement.on(GradingEvents.COLLAPSE_GRADE_PANEL, function() {
+            this.collapsePanel();
+        }.bind(this));
+
+        // We should expand if the review panel is collapsed.
+        docElement.on(GradingEvents.COLLAPSE_REVIEW_PANEL, function() {
+            this.expandPanel();
+        }.bind(this));
+
+        docElement.on(GradingEvents.EXPAND_GRADE_PANEL, function() {
+            this.expandPanel();
+        }.bind(this));
     };
 
     return GradingPanel;
