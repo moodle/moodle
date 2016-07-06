@@ -158,6 +158,12 @@ function tool_recyclebin_pre_course_module_delete($cm) {
  * @param \stdClass $course The course record.
  */
 function tool_recyclebin_pre_course_delete($course) {
+    // It is possible that the course deletion which triggered this hook
+    // was from an in progress course restore. In that case we do not want
+    // it in the recycle bin.
+    if (isset($course->deletesource) && $course->deletesource == 'restore') {
+        return;
+    }
     // Delete all the items in the course recycle bin, regardless if it enabled or not.
     // It may have been enabled, then disabled later on, so may still have content.
     $coursebin = new \tool_recyclebin\course_bin($course->id);
