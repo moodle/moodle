@@ -152,14 +152,15 @@ class core_user {
         // If noreply user is set then use it, else create one.
         if (!empty($CFG->noreplyuserid)) {
             self::$noreplyuser = self::get_user($CFG->noreplyuserid);
+            self::$noreplyuser->emailstop = 1; // Force msg stop for this user.
+            return self::$noreplyuser;
+        } else {
+            // Do not cache the dummy user record to avoid language internationalization issues.
+            $noreplyuser = self::get_dummy_user_record();
+            $noreplyuser->maildisplay = '1'; // Show to all.
+            $noreplyuser->emailstop = 1;
+            return $noreplyuser;
         }
-
-        if (empty(self::$noreplyuser)) {
-            self::$noreplyuser = self::get_dummy_user_record();
-            self::$noreplyuser->maildisplay = '1'; // Show to all.
-        }
-        self::$noreplyuser->emailstop = 1; // Force msg stop for this user.
-        return self::$noreplyuser;
     }
 
     /**
@@ -182,18 +183,19 @@ class core_user {
         // If custom support user is set then use it, else if supportemail is set then use it, else use noreply.
         if (!empty($CFG->supportuserid)) {
             self::$supportuser = self::get_user($CFG->supportuserid, '*', MUST_EXIST);
-        }
-
-        // Try sending it to support email if support user is not set.
-        if (empty(self::$supportuser) && !empty($CFG->supportemail)) {
-            self::$supportuser = self::get_dummy_user_record();
-            self::$supportuser->id = self::SUPPORT_USER;
-            self::$supportuser->email = $CFG->supportemail;
+        } else if (empty(self::$supportuser) && !empty($CFG->supportemail)) {
+            // Try sending it to support email if support user is not set.
+            $supportuser = self::get_dummy_user_record();
+            $supportuser->id = self::SUPPORT_USER;
+            $supportuser->email = $CFG->supportemail;
             if ($CFG->supportname) {
-                self::$supportuser->firstname = $CFG->supportname;
+                $supportuser->firstname = $CFG->supportname;
             }
-            self::$supportuser->username = 'support';
-            self::$supportuser->maildisplay = '1'; // Show to all.
+            $supportuser->username = 'support';
+            $supportuser->maildisplay = '1'; // Show to all.
+            // Unset emailstop to make sure support message is sent.
+            $supportuser->emailstop = 0;
+            return $supportuser;
         }
 
         // Send support msg to admin user if nothing is set above.
