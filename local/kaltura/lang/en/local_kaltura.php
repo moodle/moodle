@@ -70,3 +70,4 @@ $string['startover'] = 'Restart migration';
 $string['time'] = 'Time';
 $string['trace_log'] = 'Enable trace logging';
 $string['trace_log_desc'] = 'If enabled, all requests and responses to and from Kaltura are logged.  These logs can be used by Kaltura support to diagnose any problems encountered.  Enabling this setting may affect Moodle performance.  You may download a CSV file of the logs from <a href="{$a}">here</a>.';
+$string['browse_and_embed'] = 'Browse and Embed';
