@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Javascript controller for the "Actions" panel at the bottom of the page.
+ * Events for the grading interface.
  *
  * @module     mod_assign/grading_events
  * @package    mod_assign
