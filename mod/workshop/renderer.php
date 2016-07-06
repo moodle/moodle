@@ -290,7 +290,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         foreach ($plan->phases as $phasecode => $phase) {
             $title = html_writer::tag('span', $phase->title);
             if ($phase->active) {
-                $title .= html_writer::tag('span', get_string('userplancurrentphase', 'workshop'),
+                $title .= ' ' . html_writer::tag('span', get_string('userplancurrentphase', 'workshop'),
                     array('class' => 'accesshide'));
             }
             $actions = '';
