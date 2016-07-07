@@ -35,14 +35,19 @@ env:
     # Run unit tests on Postgres
     - DB=pgsql    TASK=PHPUNIT
 
-    # Run a check for unbuilt files with Grunt.
-    - DB=none     TASK=GRUNT
-
 matrix:
     # Enable fast finish.
     # This will fail the build if a single job fails (except those in allow_failures).
     # It will not stop the jobs from running.
     fast_finish: true
+
+    include:
+          # Run grunt/npm install on lowest supported npm version
+        - php: 7
+          env: DB=none     TASK=GRUNT   NVM_VERSION='0.10'
+          # Run grunt/npm install on highest version ('node' is an alias for the latest node.js version.)
+        - php: 7
+          env: DB=none     TASK=GRUNT   NVM_VERSION='node'
 
     exclude:
         # MySQL - it's just too slow.
@@ -68,14 +73,26 @@ install:
     # Disable xdebug. We aren't generating code coverage, and it has a huge impact upon test performance.
     - rm /home/travis/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
 
-    # Set the encrypted GITHUB_TOKEN if it's available to raise the API limit.
-    - if [ -n "$GITHUB_APITOKEN" ]; then composer config github-oauth.github.com $GITHUB_APITOKEN; fi
-    - echo 'auth.json' >> .git/info/exclude
+    - >
+        if [ "$TASK" = 'PHPUNIT' ];
+        then
+            if [ -n "$GITHUB_APITOKEN" ]; then
+                composer config github-oauth.github.com $GITHUB_APITOKEN;
+                echo 'auth.json' >> .git/info/exclude
+            fi
 
-    # Install composer dependencies.
-    # We need --no-interaction in case we hit API limits for composer. This causes it to fall back to a standard clone.
-    # Typically it should be able to use the Composer cache if any other job has already completed before we started here.
-    - travis_retry composer install --prefer-dist --no-interaction
+            # Install composer dependencies.
+            # We need --no-interaction in case we hit API limits for composer. This causes it to fall back to a standard clone.
+            # Typically it should be able to use the Composer cache if any other job has already completed before we started here.
+            travis_retry composer install --prefer-dist --no-interaction;
+        fi
+
+    - >
+        if [ "$TASK" = 'GRUNT' ];
+        then
+            nvm install $NVM_VERSION ;
+            nvm use $NVM_VERSION ;
+        fi
 
 before_script:
     - >
@@ -142,9 +159,8 @@ before_script:
     - >
       if [ "$TASK" = 'GRUNT' ];
       then
-        npm install ;
-        npm install -g grunt ;
-        grunt ;
+        npm install --no-spin;
+        npm install --no-spin -g grunt ;
       fi
 
     ########################################################################
@@ -197,6 +213,7 @@ script:
     - >
       if [ "$TASK" = 'GRUNT' ];
       then
+        grunt ;
         # Add all files to the git index and then run diff --cached to see all changes.
         # This ensures that we get the status of all files, including new files.
         git add . ;
