@@ -209,4 +209,27 @@ class core_user_testcase extends advanced_testcase {
             $this->assertRegExp('/Invalid property requested./', $e->getMessage());
         }
     }
+
+    /**
+     * Ensure that the noreply user is not cached.
+     */
+    public function test_get_noreply_user() {
+        global $CFG;
+
+        // Create a new fake language 'xx' with the 'noreplyname'.
+        $langfolder = $CFG->dataroot . '/lang/xx';
+        check_dir_exists($langfolder);
+        $langconfig = "<?php\n\defined('MOODLE_INTERNAL') || die();";
+        file_put_contents($langfolder . '/langconfig.php', $langconfig);
+        $langconfig = "<?php\n\$string['noreplyname'] = 'XXX';";
+        file_put_contents($langfolder . '/moodle.php', $langconfig);
+
+        $CFG->lang='en';
+        $enuser = \core_user::get_noreply_user();
+
+        $CFG->lang='xx';
+        $xxuser = \core_user::get_noreply_user();
+
+        $this->assertNotEquals($enuser, $xxuser);
+    }
 }
