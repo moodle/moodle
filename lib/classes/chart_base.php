@@ -237,6 +237,7 @@ class chart_base implements JsonSerializable, renderable {
      * @param int $index The index of the axis.
      */
     public function set_xaxis(chart_axis $axis, $index = 0) {
+        $this->validateAxis('x', $axis, $index);
         return $this->xaxes[$index] = $axis;
     }
 
@@ -249,7 +250,29 @@ class chart_base implements JsonSerializable, renderable {
      * @param int $index The index of the axis.
      */
     public function set_yaxis(chart_axis $axis, $index = 0) {
+        $this->validateAxis('y', $axis, $index);
         return $this->yaxes[$index] = $axis;
+    }
+
+    /**
+     * Validate an axis.
+     *
+     * We validate this from PHP because not doing it here could result in errors being
+     * hard to trace down. For instance, if we were to add axis at keys without another
+     * axis preceding, we would effectively contain the axes in an associative array
+     * rather than a simple array, and that would have consequences on serialisation.
+     *
+     * @param string} $xy Accepts x or y.
+     * @param chart_axis $axis The axis to validate.
+     * @param index $index The index of the axis.
+     */
+    protected function validateAxis($xy, chart_axis $axis, $index = 0) {
+        if ($index > 0) {
+            $axes = $xy == 'x' ? $this->xaxes : $this->yaxes;
+            if (!isset($axes[$index - 1])) {
+                throw new coding_exception('Missing ' . $xy . ' axis at index lower than ' . $index);
+            }
+        }
     }
 
 }

@@ -50,6 +50,10 @@ class chart_series implements JsonSerializable {
     protected $type = self::TYPE_DEFAULT;
     /** @var float[] Values of the series. */
     protected $values = [];
+    /** @var int Index of the X axis. */
+    protected $xaxis = null;
+    /** @var int Index of the Y axis. */
+    protected $yaxis = null;
 
     /**
      * Constructor.
@@ -117,6 +121,24 @@ class chart_series implements JsonSerializable {
     }
 
     /**
+     * Get the index of the X axis.
+     *
+     * @return int
+     */
+    public function get_xaxis() {
+        return $this->xaxis;
+    }
+
+    /**
+     * Get the index of the Y axis.
+     *
+     * @return int
+     */
+    public function get_yaxis() {
+        return $this->yaxis;
+    }
+
+    /**
      * Whether there is a color per value.
      *
      * @return bool
@@ -136,6 +158,10 @@ class chart_series implements JsonSerializable {
             'type' => $this->type,
             'values' => $this->values,
             'colors' => $this->colors,
+            'axes' => [
+                'x' => $this->xaxis,
+                'y' => $this->yaxis,
+            ]
         ];
         return $data;
     }
@@ -168,6 +194,24 @@ class chart_series implements JsonSerializable {
             throw new coding_exception('Invalid serie type.');
         }
         $this->type = $type;
+    }
+
+    /**
+     * Set the index of the X axis.
+     *
+     * @param int $index The index.
+     */
+    public function set_xaxis($index) {
+        $this->xaxis = $index;
+    }
+
+    /**
+     * Set the index of the Y axis.
+     *
+     * @param int $index The index.
+     */
+    public function set_yaxis($index) {
+        $this->yaxis = $index;
     }
 
 }
