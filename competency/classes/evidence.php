@@ -311,11 +311,9 @@ class evidence extends persistent {
         );
 
         if (!empty($sort)) {
-            $sortcolumns = explode(',', $sort);
-            array_walk($sortcolumns, function(&$sortcolumn, $key, $order) {
-                $sortcolumn = trim($sortcolumn) . ' ' . $order;
-            }, $order);
-            $sort = ' ORDER BY e.' . implode(', e.', $sortcolumns);
+            $sort = ' ORDER BY e.' . $sort . ' ' . $order . ', e.id ASC';
+        } else {
+            $sort = ' ORDER BY e.id ASC';
         }
 
         $sql = 'SELECT e.*
