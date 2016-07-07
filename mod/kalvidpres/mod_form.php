@@ -144,8 +144,6 @@ class mod_kalvidpres_mod_form extends moodleform_mod {
         $this->standard_coursemodule_elements();
 
         $this->add_action_buttons();
-
-        $mform->addElement('html', html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'closeltipanel', 'value' => 0)));
     }
 
     /**

@@ -83,7 +83,7 @@ Y.extend(LTISERVICE, Y.Base, {
             Y.one(documentElement.getElementById('closeltipanel')).simulate('click');
         }
 
-        documentElement.body.dispatchEvent(documentElement.body.myEvent);
+        documentElement.body.dispatchEvent(documentElement.body.entrySelectedEvent);
      }
 },
 {

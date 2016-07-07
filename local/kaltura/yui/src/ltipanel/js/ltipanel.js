@@ -91,10 +91,26 @@ Y.extend(LTIPANEL, Y.Base, {
         }
 
         document.body.bsePopup = bsePopup;
-        var entrySelectedEvent = new Event('entrySelected');
-        document.body.myEvent = entrySelectedEvent;
+        var entrySelectedEvent = this.createEntrySelectedEvent();
+        document.body.entrySelectedEvent = entrySelectedEvent;
         document.body.addEventListener('entrySelected', this.close_popup_callback.bind(this), false);
     },
+
+    createEntrySelectedEvent: function() {
+        var entrySelectedEvent;
+        if(typeof window.CustomEvent === 'function') {
+            entrySelectedEvent = new CustomEvent('entrySelected');
+        }
+        else {
+            // ie >= 9
+            entrySelectedEvent = document.createEvent('CustomEvent');
+            entrySelectedEvent.initCustomEvent('entrySelected', false, false, {});
+        }
+
+        return entrySelectedEvent;
+    },
+
+
 
     /**
      * Event handler callback for when a simulated click event is triggered on a specifc element.
@@ -197,9 +213,23 @@ Y.extend(LTIPANELMEDIAASSIGNMENT, Y.Base, {
         }
 
         document.body.bsePopup = bsePopup;
-        var entrySelectedEvent = new Event('entrySelected');
-        document.body.myEvent = entrySelectedEvent;
-        document.body.addEventListener('entrySelected', this.close_popup_callback.bind(this));
+        var entrySelectedEvent = this.createEntrySelectedEvent();
+        document.body.entrySelectedEvent = entrySelectedEvent;
+        document.body.addEventListener('entrySelected', this.close_popup_callback.bind(this), false);
+    },
+
+    createEntrySelectedEvent: function() {
+        var entrySelectedEvent;
+        if(typeof window.CustomEvent === 'function') {
+            entrySelectedEvent = new CustomEvent('entrySelected');
+        }
+        else {
+            // ie >= 9
+            entrySelectedEvent = document.createEvent('CustomEvent');
+            entrySelectedEvent.initCustomEvent('entrySelected', false, false, {});
+        }
+
+        return entrySelectedEvent;
     },
 
     close_popup_callback: function() {
