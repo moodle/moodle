@@ -914,8 +914,6 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
         echo html_writer::end_tag('form');
 
         echo html_writer::end_tag('center');
-
-        echo html_writer::empty_tag('input', array('id' => 'closeltipanel', 'type' => 'hidden'));
     }
 
     /**
@@ -1047,7 +1045,6 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
         $iframe = html_writer::tag('iframe', '', $params);
 
         $output .= html_writer::tag('center', $iframe);
-        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'closeltipanel', 'value' => 0));
 
         return $output;
     }
