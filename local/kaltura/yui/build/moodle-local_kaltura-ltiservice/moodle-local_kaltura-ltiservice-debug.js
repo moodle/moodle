@@ -39,9 +39,6 @@ Y.extend(LTISERVICE, Y.Base, {
      * @type {Object}
      */
     init : function(params) {
-
-debugger;
-
         var documentElement = window.opener ? window.opener.parent.document : window.parent.document;
         if (documentElement.getElementById('video_title')) {
             Y.one(documentElement.getElementById('video_title')).setAttribute('value', params.title);
