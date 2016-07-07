@@ -33,12 +33,6 @@
 }}
 <h2 class="title-case">{{#str}} generalsettings, admin {{/str}}</h2>
 <div class="general-settings-container" data-user-id="{{userid}}">
-    <label data-preference-key="message_beepnewmessage">
-        <input type="checkbox" {{#beepnewmessage}}checked{{/beepnewmessage}} />
-        {{#str}} beepnewmessage, message {{/str}}
-        <div class="loading-icon">{{> message/loading }}</div>
-    </label>
-    <br/>
     <label data-preference-key="message_blocknoncontacts">
         <input type="checkbox" {{#blocknoncontacts}}checked{{/blocknoncontacts}} />
         {{#str}} blocknoncontacts, message {{/str}}

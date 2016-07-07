@@ -269,7 +269,6 @@ class core_message_renderer extends plugin_renderer_base {
 
         //load general messaging preferences
         $preferences->blocknoncontacts  =  get_user_preferences( 'message_blocknoncontacts', '', $user->id);
-        $preferences->beepnewmessage    =  get_user_preferences( 'message_beepnewmessage', '', $user->id);
         $preferences->mailformat        =  $user->mailformat;
         $preferences->mailcharset       =  get_user_preferences( 'mailcharset', '', $user->id);
 
@@ -501,7 +500,6 @@ class core_message_renderer extends plugin_renderer_base {
 
         $generalsettingscontext = [
             'userid' => $user->id,
-            'beepnewmessage' => $preferences->beepnewmessage,
             'blocknoncontacts' => $preferences->blocknoncontacts,
             'disableall' => $user->emailstop,
             'disableallhelpicon' => $this->output->help_icon('disableall', 'message'),

@@ -3198,9 +3198,11 @@ EOD;
      * @return string         HTML for the notification menu
      */
     public function notification_menu() {
-        global $USER;
+        global $USER, $DB;
 
-        if (isloggedin()) {
+        $processor = $DB->get_record('message_processors', array('name' => 'popup'));
+
+        if (isloggedin() && $processor->enabled) {
             $context = [
                 'userid' => $USER->id,
                 'urls' => [
