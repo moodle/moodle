@@ -112,7 +112,8 @@ function choice_user_complete($course, $user, $mod, $choice) {
  * @return int
  */
 function choice_add_instance($choice) {
-    global $DB;
+    global $DB, $CFG;
+    require_once($CFG->dirroot.'/mod/choice/locallib.php');
 
     $choice->timemodified = time();
 
@@ -137,6 +138,9 @@ function choice_add_instance($choice) {
         }
     }
 
+    // Add calendar events if necessary.
+    choice_set_events($choice);
+
     return $choice->id;
 }
 
@@ -150,7 +154,8 @@ function choice_add_instance($choice) {
  * @return bool
  */
 function choice_update_instance($choice) {
-    global $DB;
+    global $DB, $CFG;
+    require_once($CFG->dirroot.'/mod/choice/locallib.php');
 
     $choice->id = $choice->instance;
     $choice->timemodified = time();
@@ -184,6 +189,9 @@ function choice_update_instance($choice) {
             }
         }
     }
+
+    // Add calendar events if necessary.
+    choice_set_events($choice);
 
     return $DB->update_record('choice', $choice);
 
@@ -590,6 +598,10 @@ function choice_delete_instance($id) {
     }
 
     if (! $DB->delete_records("choice", array("id"=>"$choice->id"))) {
+        $result = false;
+    }
+    // Remove old calendar events.
+    if (! $DB->delete_records('event', array('modulename' => 'choice', 'instance' => $choice->id))) {
         $result = false;
     }
 
@@ -1069,3 +1081,34 @@ function choice_get_availability_status($choice) {
     // Choice is available.
     return array($available, $warnings);
 }
+
+/**
+ * This standard function will check all instances of this module
+ * and make sure there are up-to-date events created for each of them.
+ * If courseid = 0, then every chat event in the site is checked, else
+ * only chat events belonging to the course specified are checked.
+ * This function is used, in its new format, by restore_refresh_events()
+ *
+ * @param int $courseid
+ * @return bool
+ */
+function choice_refresh_events($courseid = 0) {
+    global $DB, $CFG;
+    require_once($CFG->dirroot.'/mod/choice/locallib.php');
+
+    if ($courseid) {
+        if (! $choices = $DB->get_records("choice", array("course" => $courseid))) {
+            return true;
+        }
+    } else {
+        if (! $choices = $DB->get_records("choice")) {
+            return true;
+        }
+    }
+
+    foreach ($choices as $choice) {
+        choice_set_events($choice);
+    }
+    return true;
+}
+
