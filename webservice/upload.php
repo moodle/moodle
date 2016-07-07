@@ -159,7 +159,7 @@ foreach ($files as $file) {
     $file_record->itemid    = $itemid;
     $file_record->license   = $CFG->sitedefaultlicense;
     $file_record->author    = fullname($authenticationinfo['user']);
-    $file_record->source    = '';
+    $file_record->source    = serialize((object)array('source' => $file->filename));
 
     //Check if the file already exist
     $existingfile = $fs->file_exists($file_record->contextid, $file_record->component, $file_record->filearea,
