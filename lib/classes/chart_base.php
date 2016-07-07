@@ -262,7 +262,7 @@ class chart_base implements JsonSerializable, renderable {
      * axis preceding, we would effectively contain the axes in an associative array
      * rather than a simple array, and that would have consequences on serialisation.
      *
-     * @param string} $xy Accepts x or y.
+     * @param string $xy Accepts x or y.
      * @param chart_axis $axis The axis to validate.
      * @param index $index The index of the axis.
      */
