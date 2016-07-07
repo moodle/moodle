@@ -29,7 +29,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/group/lib.php');
-
+require_once($CFG->dirroot.'/lib/coursecatlib.php');
 
 /**
  * IMS Enterprise file enrolment plugin.
@@ -80,6 +80,11 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
     protected $rolemappings;
 
     /**
+     * @var $defaultcategoryid id of default category.
+     */
+    protected $defaultcategoryid;
+
+    /**
      * Read in an IMS Enterprise file.
      * Originally designed to handle v1.1 files but should be able to handle
      * earlier types as well, I believe.
@@ -108,6 +113,8 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
             $this->logfp = fopen($logtolocation, 'a');
         }
 
+        $this->defaultcategoryid = null;
+
         $fileisnew = false;
         if ( file_exists($filename) ) {
             core_php_time_limit::raise();
@@ -117,6 +124,9 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
             $this->log_line("IMS Enterprise enrol cron process launched at " . userdate(time()));
             $this->log_line('Found file '.$filename);
             $this->xmlcache = '';
+
+            $categoryseparator = trim($this->get_config('categoryseparator'));
+            $categoryidnumber = $this->get_config('categoryidnumber');
 
             // Make sure we understand how to map the IMS-E roles to Moodle roles.
             $this->load_role_mappings();
@@ -128,7 +138,9 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
 
             // Decide if we want to process the file (based on filepath, modification time, and MD5 hash)
             // This is so we avoid wasting the server's efforts processing a file unnecessarily.
-            if (empty($prevpath)  || ($filename != $prevpath)) {
+            if ($categoryidnumber && empty($categoryseparator)) {
+                $this->log_line('Category idnumber is enabled but category separator is not defined - skipping processing.');
+            } else if (empty($prevpath)  || ($filename != $prevpath)) {
                 $fileisnew = true;
             } else if (isset($prevtime) && ($filemtime <= $prevtime)) {
                 $this->log_line('File modification time is not more recent than last update - skipping processing.');
@@ -292,13 +304,6 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
         $truncatecoursecodes    = $this->get_config('truncatecoursecodes');
         $createnewcourses       = $this->get_config('createnewcourses');
         $updatecourses          = $this->get_config('updatecourses');
-        $createnewcategories    = $this->get_config('createnewcategories');
-        $categoryseparator      = trim($this->get_config('categoryseparator'));
-
-        // Ensure a default is set for the category separator.
-        if (empty($categoryseparator)) {
-            $categoryseparator = '|';
-        }
 
         if ($createnewcourses) {
             require_once("$CFG->dirroot/course/lib.php");
@@ -325,9 +330,10 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
             $group->full = trim($matches[1]);
         }
 
-        $matches = array();
-        if (preg_match('{<org>.*?<orgunit>(.*?)</orgunit>.*?</org>}is', $tagcontents, $matches)) {
-            $group->category = trim($matches[1]);
+        if (preg_match('{<org>(.*?)</org>}is', $tagcontents, $matchesorg)) {
+            if (preg_match_all('{<orgunit>(.*?)</orgunit>}is', $matchesorg[1], $matchesorgunit)) {
+                $group->categories = array_map('trim', $matchesorgunit[1]);
+            }
         }
 
         $recstatus = ($this->get_recstatus($tagcontents, 'group'));
@@ -389,49 +395,8 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
                         $course->enablecompletion = $courseconfig->enablecompletion;
                         // Insert default names for teachers/students, from the current language.
 
-                        // Handle course categorisation (taken from the group.org.orgunit field if present).
-                        if (strlen($group->category) > 0) {
-                            $sep = '{\\'.$categoryseparator.'}';
-                            $matches = preg_split($sep, $group->category, -1, PREG_SPLIT_NO_EMPTY);
-
-                            // Categories can be nested.
-                            // For example: "Fall 2013|Biology" is the "Biology" category nested under the "Fall 2013" category.
-                            // Iterate through each category and create it if necessary.
-
-                            $catid = 0;
-                            $fullnestedcatname = '';
-                            foreach ($matches as $catname) {
-                                $catname = trim($catname);
-                                if (strlen($fullnestedcatname)) {
-                                    $fullnestedcatname .= ' / ';
-                                }
-                                $fullnestedcatname .= $catname;
-                                $parentid = $catid;
-                                if ($catid = $DB->get_field('course_categories', 'id',
-                                        array('name' => $catname, 'parent' => $parentid))) {
-                                    $course->category = $catid;
-                                    continue; // This category already exists.
-                                }
-                                if ($createnewcategories) {
-                                    // Else if we're allowed to create new categories, let's create this one.
-                                    $newcat = new stdClass();
-                                    $newcat->name = $catname;
-                                    $newcat->visible = 0;
-                                    $newcat->parent = $parentid;
-                                    $catid = $DB->insert_record('course_categories', $newcat);
-                                    $this->log_line("Created new (hidden) category '$fullnestedcatname'");
-                                    $course->category = $catid;
-                                } else {
-                                    // If not found and not allowed to create, stick with default.
-                                    $this->log_line('Category '.$group->category.' not found in Moodle database, so using '.
-                                            'default category instead.');
-                                    $course->category = $this->get_default_category_id();
-                                    break;
-                                }
-                            }
-                        } else {
-                            $course->category = $this->get_default_category_id();
-                        }
+                        // Handle course categorisation (taken from the group.org.orgunit or group.org.id fields if present).
+                        $course->category = $this->get_category_from_group($group->categories);
 
                         $course->startdate = time();
                         // Choose a sort order that puts us at the start of the list!
@@ -480,7 +445,7 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
 
     /**
      * Process the person tag. This defines a Moodle user.
-     * 
+     *
      * @param string $tagcontents The raw contents of the XML element
      */
     protected function process_person_tag($tagcontents) {
@@ -591,7 +556,7 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
                 $this->log_line("Ignoring update request for user $person->username");
             }
 
-        } else { // Add record.
+        } else { // Add or update record.
 
             // If the user exists (matching sourcedid) then we don't need to do anything.
             if (!$DB->get_field('user', 'id', array('idnumber' => $person->idnumber)) && $createnewusers) {
@@ -909,14 +874,101 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
         global $CFG;
         require_once($CFG->libdir.'/coursecatlib.php');
 
-        static $defaultcategoryid = null;
-
-        if ($defaultcategoryid === null) {
+        if ($this->defaultcategoryid === null) {
             $category = coursecat::get_default();
-            $defaultcategoryid = $category->id;
+            $this->defaultcategoryid = $category->id;
         }
 
-        return $defaultcategoryid;
+        return $this->defaultcategoryid;
+    }
+
+    /**
+     * Find the category using idnumber or name.
+     *
+     * @param array $categories List of categories
+     *
+     * @return int id of category found.
+     */
+    private function get_category_from_group($categories) {
+        global $DB;
+
+        if (empty($categories)) {
+            $catid = $this->get_default_category_id();
+        } else {
+            $createnewcategories = $this->get_config('createnewcategories');
+            $categoryseparator = trim($this->get_config('categoryseparator'));
+            $nestedcategories = trim($this->get_config('nestedcategories'));
+            $searchbyidnumber = trim($this->get_config('categoryidnumber'));
+
+            if (!empty($categoryseparator)) {
+                $sep = '{\\'.$categoryseparator.'}';
+            }
+
+            $catid = 0;
+            $fullnestedcatname = '';
+
+            foreach ($categories as $categoryinfo) {
+                if ($searchbyidnumber) {
+                    $values = preg_split($sep, $categoryinfo, -1, PREG_SPLIT_NO_EMPTY);
+                    if (count($values) < 2) {
+                        $this->log_line('Category ' . $categoryinfo . ' missing name or idnumber. Using default category instead.');
+                        $catid = $this->get_default_category_id();
+                        break;
+                    }
+                    $categoryname = $values[0];
+                    $categoryidnumber = $values[1];
+                } else {
+                    $categoryname = $categoryinfo;
+                    $categoryidnumber = null;
+                    if (empty($categoryname)) {
+                        $this->log_line('Category ' . $categoryinfo . ' missing name. Using default category instead.');
+                        $catid = $this->get_default_category_id();
+                        break;
+                    }
+                }
+
+                if (!empty($fullnestedcatname)) {
+                    $fullnestedcatname .= ' / ';
+                }
+
+                $fullnestedcatname .= $categoryname;
+                $parentid = $catid;
+
+                // Check if category exist.
+                $params = array();
+                if ($searchbyidnumber) {
+                    $params['idnumber'] = $categoryidnumber;
+                } else {
+                    $params['name'] = $categoryname;
+                }
+                if ($nestedcategories) {
+                    $params['parent'] = $parentid;
+                }
+
+                if ($catid = $DB->get_field('course_categories', 'id', $params)) {
+                    continue; // This category already exists.
+                }
+
+                // If we're allowed to create new categories, let's create this one.
+                if ($createnewcategories) {
+                    $newcat = new stdClass();
+                    $newcat->name = $categoryname;
+                    $newcat->visible = 0;
+                    $newcat->parent = $parentid;
+                    $newcat->idnumber = $categoryidnumber;
+                    $newcat = coursecat::create($newcat);
+                    $catid = $newcat->id;
+                    $this->log_line("Created new (hidden) category '$fullnestedcatname'");
+                } else {
+                    // If not found and not allowed to create, stick with default.
+                    $this->log_line('Category ' . $categoryinfo . ' not found in Moodle database. Using default category instead.');
+                    $catid = $this->get_default_category_id();
+                    break;
+                }
+            }
+        }
+
+        return $catid;
     }
 
     /**

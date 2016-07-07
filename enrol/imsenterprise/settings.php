@@ -98,8 +98,14 @@ if ($ADMIN->fulltree) {
         get_string('createnewcategories', 'enrol_imsenterprise'), get_string('createnewcategories_desc', 'enrol_imsenterprise'),
         0));
 
+    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/nestedcategories',
+        get_string('nestedcategories', 'enrol_imsenterprise'), get_string('nestedcategories_desc', 'enrol_imsenterprise'), 0));
+
+    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/categoryidnumber',
+        get_string('categoryidnumber', 'enrol_imsenterprise'), get_string('categoryidnumber_desc', 'enrol_imsenterprise'), 0));
+
     $settings->add(new admin_setting_configtext('enrol_imsenterprise/categoryseparator',
-        get_string('categoryseparator', 'enrol_imsenterprise'), get_string('categoryseparator_desc', 'enrol_imsenterprise'), '|',
+        get_string('categoryseparator', 'enrol_imsenterprise'), get_string('categoryseparator_desc', 'enrol_imsenterprise'), '',
         PARAM_TEXT, 3));
 
     $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/imsunenrol',

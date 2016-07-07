@@ -242,6 +242,8 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         // Default mapping according to default course attributes - IMS description tags mapping.
         $course1->imsshort = $course1->fullname;
         $course2->imsshort = $course2->fullname;
+        unset($course1->category);
+        unset($course2->category);
 
         $prevncourses = $DB->count_records('course');
 
@@ -264,13 +266,13 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $course1->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
         $course1->idnumber = 'id1';
         $course1->imsshort = 'id1';
-        $course1->category = 'DEFAULT CATNAME';
+        $course1->category[] = 'DEFAULT CATNAME';
 
         $course2 = new StdClass();
         $course2->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
         $course2->idnumber = 'id2';
         $course2->imsshort = 'id2';
-        $course2->category = 'DEFAULT CATNAME';
+        $course2->category[] = 'DEFAULT CATNAME';
 
         $courses = array($course1, $course2);
         $this->set_xml_file(false, $courses);
@@ -295,13 +297,13 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $course1->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
         $course1->idnumber = 'id1';
         $course1->imsshort = 'id1';
-        $course1->category = 'DEFAULT CATNAME';
+        $course1->category[] = 'DEFAULT CATNAME';
 
         $course2 = new StdClass();
         $course2->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
         $course2->idnumber = 'id2';
         $course2->imsshort = 'id2';
-        $course2->category = 'DEFAULT CATNAME';
+        $course2->category[] = 'DEFAULT CATNAME';
 
         $courses = array($course1, $course2);
         $this->set_xml_file(false, $courses);
@@ -329,7 +331,7 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $course1->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
         $course1->idnumber = '';
         $course1->imsshort = 'id1';
-        $course1->category = 'DEFAULT CATNAME';
+        $course1->category[] = 'DEFAULT CATNAME';
 
         $this->set_xml_file(false, array($course1));
         $this->imsplugin->cron();
@@ -353,7 +355,7 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $course1->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
         $course1->idnumber = '123456789';
         $course1->imsshort = 'id1';
-        $course1->category = 'DEFAULT CATNAME';
+        $course1->category[] = 'DEFAULT CATNAME';
 
         $this->set_xml_file(false, array($course1));
         $this->imsplugin->cron();
@@ -383,7 +385,7 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $course1 = new stdClass();
         $course1->idnumber = 'id1';
         $course1->imsshort = 'id1';
-        $course1->category = '';
+        $course1->category[] = '';
         $this->set_xml_file(false, array($course1));
         $this->imsplugin->cron();
 
@@ -410,7 +412,7 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $course1->imsshort = 'description_short1';
         $course1->imslong = 'description_long';
         $course1->imsfull = 'description_full';
-        $course1->category = 'DEFAULT CATNAME';
+        $course1->category[] = 'DEFAULT CATNAME';
 
         $this->set_xml_file(false, array($course1));
         $this->imsplugin->cron();
@@ -432,7 +434,7 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $course2->imsshort = 'description_short2';
         $course2->imslong = 'description_long';
         $course2->imsfull = 'description_full';
-        $course2->category = 'DEFAULT CATNAME';
+        $course2->category[] = 'DEFAULT CATNAME';
 
         $this->set_xml_file(false, array($course2));
         $this->imsplugin->cron();
@@ -452,7 +454,7 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $course3->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
         $course3->idnumber = 'id3';
         $course3->imsshort = 'description_short3';
-        $course3->category = 'DEFAULT CATNAME';
+        $course3->category[] = 'DEFAULT CATNAME';
 
         $this->set_xml_file(false, array($course3));
         $this->imsplugin->cron();
@@ -476,7 +478,7 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $course4->idnumber = 'id4';
         $course4->imsshort = 'id4';
         $course4->imsfull = 'id4';
-        $course4->category = 'DEFAULT CATNAME';
+        $course4->category[] = 'DEFAULT CATNAME';
 
         $this->set_xml_file(false, array($course4));
         $this->imsplugin->cron();
@@ -486,6 +488,7 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $course4u->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_UPDATE;
         $course4u->imsshort = 'description_short_updated';
         $course4u->imsfull = 'description_full_updated';
+        unset($course4u->category);
 
         $this->set_xml_file(false, array($course4u));
         $this->imsplugin->cron();
@@ -507,7 +510,7 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $course8->idnumber = 'id8';
         $course8->imsshort = 'id8';
         $course8->imsfull = 'id8';
-        $course8->category = 'DEFAULT CATNAME';
+        $course8->category[] = 'DEFAULT CATNAME';
 
         $this->set_xml_file(false, array($course8));
         $this->imsplugin->cron();
@@ -516,6 +519,7 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $this->assertEquals($course8d->visible, 1);
 
         $course8d->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_DELETE;
+        unset($course8d->category);
 
         $this->set_xml_file(false, array($course8d));
         $this->imsplugin->cron();
@@ -527,17 +531,15 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
 
 
     /**
-     * Nested categories during course creation
+     * Nested categories with name during course creation
      */
     public function test_nested_categories() {
         global $DB;
 
-        $catsep = trim($this->imsplugin->get_config('categoryseparator'));
+        $this->imsplugin->set_config('nestedcategories', true);
 
         $topcat = 'DEFAULT CATNAME';
         $subcat = 'DEFAULT SUB CATNAME';
-
-        $fullcat = $topcat.$catsep.$subcat;
 
         $course5 = new StdClass();
         $course5->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
@@ -545,7 +547,9 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $course5->imsshort = 'description_short';
         $course5->imslong = 'description_long';
         $course5->imsfull = 'description_full';
-        $course5->category = $fullcat;
+        $course5->category = array();
+        $course5->category[] = $topcat;
+        $course5->category[] = $subcat;
 
         $this->set_xml_file(false, array($course5));
         $this->imsplugin->cron();
@@ -556,15 +560,8 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $this->assertTrue(isset($subcatid));
         $this->assertTrue($subcatid > 0);
 
-        // Change the category separator character.
-        $this->imsplugin->set_config('categoryseparator', ':');
-
-        $catsep = trim($this->imsplugin->get_config('categoryseparator'));
-
         $topcat = 'DEFAULT CATNAME';
         $subcat = 'DEFAULT SUB CATNAME TEST2';
-
-        $fullcat = $topcat.$catsep.$subcat;
 
         $course6 = new StdClass();
         $course6->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
@@ -572,7 +569,9 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $course6->imsshort = 'description_short';
         $course6->imslong = 'description_long';
         $course6->imsfull = 'description_full';
-        $course6->category = $fullcat;
+        $course6->category = array();
+        $course6->category[] = $topcat;
+        $course6->category[] = $subcat;
 
         $this->set_xml_file(false, array($course6));
         $this->imsplugin->cron();
@@ -586,17 +585,15 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
 
 
     /**
-     * Test that duplicate nested categories are not created
+     * Test that duplicate nested categories with name are not created
      */
     public function test_nested_categories_for_dups() {
         global $DB;
 
-        $catsep = trim($this->imsplugin->get_config('categoryseparator'));
+        $this->imsplugin->set_config('nestedcategories', true);
 
         $topcat = 'DEFAULT CATNAME';
         $subcat = 'DEFAULT SUB CATNAME DUPTEST';
-
-        $fullcat = $topcat.$catsep.$subcat;
 
         $course7 = new StdClass();
         $course7->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
@@ -604,7 +601,8 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $course7->imsshort = 'description_short';
         $course7->imslong = 'description_long';
         $course7->imsfull = 'description_full';
-        $course7->category = $fullcat;
+        $course7->category[] = $topcat;
+        $course7->category[] = $subcat;
 
         $this->set_xml_file(false, array($course7));
         $this->imsplugin->cron();
@@ -617,7 +615,8 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $course8->imsshort = 'description_short';
         $course8->imslong = 'description_long';
         $course8->imsfull = 'description_full';
-        $course8->category = $fullcat;
+        $course8->category[] = $topcat;
+        $course8->category[] = $subcat;
 
         $this->set_xml_file(false, array($course8));
         $this->imsplugin->cron();
@@ -625,6 +624,336 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $this->assertEquals($prevncategories, $DB->count_records('course_categories'));
     }
 
+    /**
+     * Nested categories with idnumber during course creation
+     */
+    public function test_nested_categories_idnumber() {
+        global $DB;
+
+        $this->imsplugin->set_config('nestedcategories', true);
+        $this->imsplugin->set_config('categoryidnumber', true);
+        $this->imsplugin->set_config('categoryseparator', '|');
+
+        $catsep = trim($this->imsplugin->get_config('categoryseparator'));
+
+        $topcatname = 'DEFAULT CATNAME';
+        $subcatname = 'DEFAULT SUB CATNAME';
+        $topcatidnumber = '01';
+        $subcatidnumber = '0101';
+
+        $topcat = $topcatname.$catsep.$topcatidnumber;
+        $subcat = $subcatname.$catsep.$subcatidnumber;
+
+        $course1 = new StdClass();
+        $course1->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $course1->idnumber = 'id5';
+        $course1->imsshort = 'description_short';
+        $course1->imslong = 'description_long';
+        $course1->imsfull = 'description_full';
+        $course1->category[] = $topcat;
+        $course1->category[] = $subcat;
+
+        $this->set_xml_file(false, array($course1));
+        $this->imsplugin->cron();
+
+        $parentcatid = $DB->get_field('course_categories', 'id', array('idnumber' => $topcatidnumber));
+        $subcatid = $DB->get_field('course_categories', 'id', array('idnumber' => $subcatidnumber, 'parent' => $parentcatid));
+
+        $this->assertTrue(isset($subcatid));
+        $this->assertTrue($subcatid > 0);
+
+        // Change the category separator character.
+        $this->imsplugin->set_config('categoryseparator', ':');
+
+        $catsep = trim($this->imsplugin->get_config('categoryseparator'));
+
+        $topcatname = 'DEFAULT CATNAME';
+        $subcatname = 'DEFAULT SUB CATNAME TEST2';
+        $topcatidnumber = '01';
+        $subcatidnumber = '0102';
+
+        $topcat = $topcatname.$catsep.$topcatidnumber;
+        $subcat = $subcatname.$catsep.$subcatidnumber;
+
+        $course2 = new StdClass();
+        $course2->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $course2->idnumber = 'id6';
+        $course2->imsshort = 'description_short';
+        $course2->imslong = 'description_long';
+        $course2->imsfull = 'description_full';
+        $course2->category[] = $topcat;
+        $course2->category[] = $subcat;
+
+        $this->set_xml_file(false, array($course2));
+        $this->imsplugin->cron();
+
+        $parentcatid = $DB->get_field('course_categories', 'id', array('idnumber' => $topcatidnumber));
+        $subcatid = $DB->get_field('course_categories', 'id', array('idnumber' => $subcatidnumber, 'parent' => $parentcatid));
+
+        $this->assertTrue(isset($subcatid));
+        $this->assertTrue($subcatid > 0);
+    }
+
+    /**
+     * Test that duplicate nested categories with idnumber are not created
+     */
+    public function test_nested_categories_idnumber_for_dups() {
+        global $DB;
+
+        $this->imsplugin->set_config('nestedcategories', true);
+        $this->imsplugin->set_config('categoryidnumber', true);
+        $this->imsplugin->set_config('categoryseparator', '|');
+
+        $catsep = trim($this->imsplugin->get_config('categoryseparator'));
+
+        $topcatname = 'DEFAULT CATNAME';
+        $subcatname = 'DEFAULT SUB CATNAME';
+        $topcatidnumber = '01';
+        $subcatidnumber = '0101';
+
+        $topcat = $topcatname.$catsep.$topcatidnumber;
+        $subcat = $subcatname.$catsep.$subcatidnumber;
+
+        $course1 = new StdClass();
+        $course1->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $course1->idnumber = 'id1';
+        $course1->imsshort = 'description_short';
+        $course1->imslong = 'description_long';
+        $course1->imsfull = 'description_full';
+        $course1->category[] = $topcat;
+        $course1->category[] = $subcat;
+
+        $this->set_xml_file(false, array($course1));
+        $this->imsplugin->cron();
+
+        $prevncategories = $DB->count_records('course_categories');
+
+        $course2 = new StdClass();
+        $course2->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $course2->idnumber = 'id2';
+        $course2->imsshort = 'description_short';
+        $course2->imslong = 'description_long';
+        $course2->imsfull = 'description_full';
+        $course2->category[] = $topcat;
+        $course2->category[] = $subcat;
+
+        $this->set_xml_file(false, array($course2));
+        $this->imsplugin->cron();
+
+        $this->assertEquals($prevncategories, $DB->count_records('course_categories'));
+    }
+
+    /**
+     * Test that nested categories with idnumber is not created if name is missing
+     */
+    public function test_categories_idnumber_missing_name() {
+        global $DB, $CFG;
+
+        $this->imsplugin->set_config('nestedcategories', true);
+        $this->imsplugin->set_config('categoryidnumber', true);
+        $this->imsplugin->set_config('categoryseparator', '|');
+        $catsep = trim($this->imsplugin->get_config('categoryseparator'));
+
+        $topcatname = 'DEFAULT CATNAME';
+        $subcatname = '';
+        $topcatidnumber = '01';
+        $subcatidnumber = '0101';
+
+        $topcat = $topcatname.$catsep.$topcatidnumber;
+        $subcat = $subcatname.$catsep.$subcatidnumber;
+
+        $course1 = new StdClass();
+        $course1->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $course1->idnumber = 'id1';
+        $course1->imsshort = 'description_short';
+        $course1->imslong = 'description_long';
+        $course1->imsfull = 'description_full';
+        $course1->category[] = $topcat;
+        $course1->category[] = $subcat;
+
+        $this->set_xml_file(false, array($course1));
+        $this->imsplugin->cron();
+
+        // Check all categories except the last subcategory was created.
+        $parentcatid = $DB->get_field('course_categories', 'id', array('idnumber' => $topcatidnumber));
+        $this->assertTrue((boolean)$parentcatid);
+        $subcatid = $DB->get_field('course_categories', 'id', array('idnumber' => $subcatidnumber, 'parent' => $parentcatid));
+        $this->assertFalse((boolean)$subcatid);
+
+        // Check course was put in default category.
+        $defaultcat = coursecat::get_default();
+        $dbcourse = $DB->get_record('course', array('idnumber' => $course1->idnumber), '*', MUST_EXIST);
+        $this->assertEquals($dbcourse->category, $defaultcat->id);
+
+    }
+
+    /**
+     * Create category with name (nested categories not activated).
+     */
+    public function test_create_category_name_no_nested() {
+        global $DB;
+
+        $course = new StdClass();
+        $course->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $course->idnumber = 'id';
+        $course->imsshort = 'description_short';
+        $course->imslong = 'description_long';
+        $course->imsfull = 'description_full';
+        $course->category[] = 'CATNAME';
+
+        $this->set_xml_file(false, array($course));
+        $this->imsplugin->cron();
+
+        $dbcat = $DB->get_record('course_categories', array('name' => $course->category[0]));
+        $this->assertFalse(!$dbcat);
+        $this->assertEquals($dbcat->parent, 0);
+
+        $dbcourse = $DB->get_record('course', array('idnumber' => $course->idnumber));
+        $this->assertFalse(!$dbcourse);
+        $this->assertEquals($dbcourse->category, $dbcat->id);
+
+    }
+
+    /**
+     * Find a category with name (nested categories not activated).
+     */
+    public function test_find_category_name_no_nested() {
+        global $DB;
+
+        $cattop = $this->getDataGenerator()->create_category(array('name' => 'CAT-TOP'));
+        $catsub = $this->getDataGenerator()->create_category(array('name' => 'CAT-SUB', 'parent' => $cattop->id));
+        $prevcats = $DB->count_records('course_categories');
+
+        $course = new StdClass();
+        $course->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $course->idnumber = 'id';
+        $course->imsshort = 'description_short';
+        $course->imslong = 'description_long';
+        $course->imsfull = 'description_full';
+        $course->category[] = 'CAT-SUB';
+
+        $this->set_xml_file(false, array($course));
+        $this->imsplugin->cron();
+
+        $newcats = $DB->count_records('course_categories');
+
+        // Check that no new category was not created.
+        $this->assertEquals($prevcats, $newcats);
+
+        // Check course is associated to CAT-SUB.
+        $dbcourse = $DB->get_record('course', array('idnumber' => $course->idnumber));
+        $this->assertFalse(!$dbcourse);
+        $this->assertEquals($dbcourse->category, $catsub->id);
+
+    }
+
+    /**
+     * Create category with idnumber (nested categories not activated).
+     */
+    public function test_create_category_idnumber_no_nested() {
+        global $DB;
+
+        $this->imsplugin->set_config('categoryidnumber', true);
+        $this->imsplugin->set_config('categoryseparator', '|');
+        $catsep = trim($this->imsplugin->get_config('categoryseparator'));
+
+        $course = new StdClass();
+        $course->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $course->idnumber = 'id';
+        $course->imsshort = 'description_short';
+        $course->imslong = 'description_long';
+        $course->imsfull = 'description_full';
+        $course->category[] = 'CATNAME'. $catsep .  'CATIDNUMBER';
+
+        $this->set_xml_file(false, array($course));
+        $this->imsplugin->cron();
+
+        $dbcat = $DB->get_record('course_categories', array('idnumber' => 'CATIDNUMBER'));
+        $this->assertFalse(!$dbcat);
+        $this->assertEquals($dbcat->parent, 0);
+        $this->assertEquals($dbcat->name, 'CATNAME');
+
+        $dbcourse = $DB->get_record('course', array('idnumber' => $course->idnumber));
+        $this->assertFalse(!$dbcourse);
+        $this->assertEquals($dbcourse->category, $dbcat->id);
+
+    }
+
+    /**
+     * Find a category with idnumber (nested categories not activated).
+     */
+    public function test_find_category_idnumber_no_nested() {
+        global $DB;
+
+        $this->imsplugin->set_config('categoryidnumber', true);
+        $this->imsplugin->set_config('categoryseparator', '|');
+        $catsep = trim($this->imsplugin->get_config('categoryseparator'));
+
+        $topcatname = 'CAT-TOP';
+        $subcatname = 'CAT-SUB';
+        $topcatidnumber = 'ID-TOP';
+        $subcatidnumber = 'ID-SUB';
+
+        $cattop = $this->getDataGenerator()->create_category(array('name' => $topcatname, 'idnumber' => $topcatidnumber));
+        $catsub = $this->getDataGenerator()->create_category(array('name' => $subcatname, 'idnumber' => $subcatidnumber,
+                'parent' => $cattop->id));
+        $prevcats = $DB->count_records('course_categories');
+
+        $course = new StdClass();
+        $course->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $course->idnumber = 'id';
+        $course->imsshort = 'description_short';
+        $course->imslong = 'description_long';
+        $course->imsfull = 'description_full';
+        $course->category[] = $subcatname . $catsep . $subcatidnumber;
+
+        $this->set_xml_file(false, array($course));
+        $this->imsplugin->cron();
+
+        $newcats = $DB->count_records('course_categories');
+
+        // Check that no new category was not created.
+        $this->assertEquals($prevcats, $newcats);
+
+        $dbcourse = $DB->get_record('course', array('idnumber' => $course->idnumber));
+        $this->assertFalse(!$dbcourse);
+        $this->assertEquals($dbcourse->category, $catsub->id);
+
+    }
+
+    /**
+     * Test that category with idnumber is not created if name is missing (nested categories not activated).
+     */
+    public function test_category_idnumber_missing_name_no_nested() {
+        global $DB;
+
+        $this->imsplugin->set_config('categoryidnumber', true);
+        $this->imsplugin->set_config('categoryseparator', '|');
+        $catsep = trim($this->imsplugin->get_config('categoryseparator'));
+
+        $catidnumber = '01';
+
+        $course = new StdClass();
+        $course->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $course->idnumber = 'id1';
+        $course->imsshort = 'description_short';
+        $course->imslong = 'description_long';
+        $course->imsfull = 'description_full';
+        $course->category[] = '' . $catsep . $catidnumber;
+
+        $this->set_xml_file(false, array($course));
+        $this->imsplugin->cron();
+
+        // Check category was not created.
+        $catid = $DB->get_record('course_categories', array('idnumber' => $catidnumber));
+        $this->assertFalse($catid);
+
+        // Check course was put in default category.
+        $defaultcat = coursecat::get_default();
+        $dbcourse = $DB->get_record('course', array('idnumber' => $course->idnumber), '*', MUST_EXIST);
+        $this->assertEquals($dbcourse->category, $defaultcat->id);
+
+    }
 
     /**
      * Sets the plugin configuration for testing
@@ -637,6 +966,9 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $this->imsplugin->set_config('createnewcourses', true);
         $this->imsplugin->set_config('updatecourses', true);
         $this->imsplugin->set_config('createnewcategories', true);
+        $this->imsplugin->set_config('categoryseparator', '');
+        $this->imsplugin->set_config('categoryidnumber', false);
+        $this->imsplugin->set_config('nestedcategories', false);
     }
 
     /**
@@ -726,8 +1058,16 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
                 // The orgunit tag value is used by moodle as category name.
                 $xmlcontent .= '
     </description>
-    <org>
-      <orgunit>'.$course->category.'</orgunit>
+    <org>';
+                // Optional category name.
+                if (isset($course->category) && !empty($course->category)) {
+                    foreach ($course->category as $category) {
+                        $xmlcontent .= '
+      <orgunit>'.$category.'</orgunit>';
+                    }
+                }
+
+                $xmlcontent .= '
     </org>
   </group>';
             }
