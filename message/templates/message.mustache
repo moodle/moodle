@@ -1,10 +1,10 @@
 {{#displayblocktime}}
-    <div id="blocktime-{{id}}{{isread}}" class="blocktime" data-blocktime="{{blocktime}}">
+    <div class="blocktime" data-region="blocktime" data-blocktime="{{blocktime}}" data-id="{{id}}{{isread}}">
         {{blocktime}}
     </div>
 {{/displayblocktime}}
-<div id="message-{{id}}{{isread}}" class="message row-fluid" data-blocktime="{{blocktime}}">
-    <div class="span1 deletemessagecheckbox">
+<div class="message row-fluid" data-region="message" data-blocktime="{{blocktime}}" data-id="{{id}}{{isread}}">
+    <div class="span1 deletemessagecheckbox" data-region="delete-message-checkbox">
         <input type="checkbox" data-messageid="{{id}}" data-messageread="{{isread}}"/>
     </div>
     <div class="span11 content {{position}}">

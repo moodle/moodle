@@ -4,17 +4,17 @@
         <input type="text" id="filter{{uniqid}}" placeholder="{{#str}}search{{/str}}" value="{{search}}">
     </form>
 </div>
-<div class="contacts">
+<div class="contacts" data-region="contacts">
     {{#contacts}}
         {{> core_message/contact }}
     {{/contacts}}
 </div>
 <div class="row-fluid tabs">
-    <div class="span6 tab tabconversations {{#conversationsselected}}selected{{/conversationsselected}}">
+    <div class="span6 tab tabconversations {{#conversationsselected}}selected{{/conversationsselected}}" data-action="conversations-view">
         <div>{{#pix}}t/message, moodle{{/pix}}</div>
         <div>{{#str}}conversations, message{{/str}}</div>
     </div>
-    <div class="span6 tab tabcontacts {{^conversationsselected}}selected{{/conversationsselected}}">
+    <div class="span6 tab tabcontacts {{^conversationsselected}}selected{{/conversationsselected}}" data-action="contacts-view">
         <div>{{#pix}}i/cohort, moodle{{/pix}}</div>
         <div>{{#str}}contacts, message{{/str}}</div>
     </div>

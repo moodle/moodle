@@ -1,4 +1,4 @@
-<div class="row-fluid profile" data-userid="{{otheruserid}}">
+<div class="row-fluid profile" data-userid="{{otheruserid}}" data-region="profile">
     <div class="row-fluid picture">
         <div class="span1">
             <img height="64" src="{{profileimageurl}}" alt="" />
@@ -18,30 +18,30 @@
     </div>
     <div class="row-fluid actions">
         <div class="span3">
-            <input class="viewprofilebtn" type="button" value="{{#str}}viewprofile{{/str}}"/>
+            <input type="button" value="{{#str}}viewprofile{{/str}}" data-action="profile-view"/>
         </div>
         <div class="span3">
             {{#iscurrentuser}}
-                <input class="newmessagebtn" type="button" value="{{#str}}sendmessage, message{{/str}}"/>
+                <input type="button" value="{{#str}}sendmessage, message{{/str}}" data-action="profile-send-message"/>
             {{/iscurrentuser}}
             {{^iscurrentuser}}
-                <input class="newmessagebtn" type="button" value="{{#str}}viewconversation, message{{/str}}"/>
+                <input type="button" value="{{#str}}viewconversation, message{{/str}}" data-action="profile-send-message"/>
             {{/iscurrentuser}}
         </div>
         <div class="span3">
             {{#isblocked}}
-                <input class="unblockcontactbtn" type="button" value="{{#str}}unblockcontact, message{{/str}}"/>
+                <input type="button" value="{{#str}}unblockcontact, message{{/str}}" data-action="profile-unblock-contact"/>
             {{/isblocked}}
             {{^isblocked}}
-                <input class="blockcontactbtn" type="button" value="{{#str}}blockcontact, message{{/str}}"/>
+                <input type="button" value="{{#str}}blockcontact, message{{/str}}" data-action="profile-block-contact"/>
             {{/isblocked}}
         </div>
         <div class="span3">
             {{#iscontact}}
-                <input class="removecontactbtn" type="button" value="{{#str}}removecontact, message{{/str}}"/>
+                <input type="button" value="{{#str}}removecontact, message{{/str}}" data-action="profile-remove-contact"/>
             {{/iscontact}}
             {{^iscontact}}
-                <input class="addcontactbtn" type="button" value="{{#str}}addcontact, message{{/str}}"/>
+                <input type="button" value="{{#str}}addcontact, message{{/str}}" data-action="profile-add-contact"/>
             {{/iscontact}}
         </div>
     </div>

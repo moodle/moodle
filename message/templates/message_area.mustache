@@ -1,13 +1,13 @@
 <div class="messaging-area-all" data-loggedinuserid="{{loggedinuserid}}" data-userid="{{userid}}">
-    <input class="choosemessagestodeletebtn" type="button" value="{{#str}}delete{{/str}}"/>
+    <input type="button" value="{{#str}}delete{{/str}}" data-action="choose-messages-to-delete"/>
     <div class="messaging-area">
         <div class="row-fluid">
-            <div class="span4 contacts-area">
+            <div class="span4 contacts-area" data-region="contacts-area">
                 {{#contacts}}
                     {{> core_message/contacts }}
                 {{/contacts}}
             </div>
-            <div class="span8 messages-area">
+            <div class="span8 messages-area" data-region="messages-area">
                 {{#messages}}
                     {{> core_message/messages }}
                 {{/messages}}
