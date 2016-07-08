@@ -25,6 +25,15 @@
 
 $functions = array(
 
+        'mod_assign_copy_previous_attempt' => array(
+            'classname'     => 'mod_assign_external',
+            'methodname'    => 'copy_previous_attempt',
+            'classpath'     => 'mod/assign/externallib.php',
+            'description'   => 'Copy a students previous attempt to a new attempt.',
+            'type'          => 'write',
+            'capabilities'  => 'mod/assign:view, mod/assign:submit'
+        ),
+
         'mod_assign_get_grades' => array(
                 'classname'   => 'mod_assign_external',
                 'methodname'  => 'get_grades',
