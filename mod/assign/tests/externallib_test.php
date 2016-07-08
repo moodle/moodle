@@ -2391,4 +2391,32 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
             'teacher' => $teacher
         );
     }
+
+    /**
+     * Test test_view_assign
+     */
+    public function test_view_assign() {
+        global $CFG;
+
+        $CFG->enablecompletion = 1;
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $assign = $this->getDataGenerator()->create_module('assign', array('course' => $course->id),
+                                                            array('completion' => 2, 'completionview' => 1));
+        $context = context_module::instance($assign->cmid);
+        $cm = get_coursemodule_from_instance('assign', $assign->id);
+
+        $result = mod_assign_external::view_assign($assign->id);
+        $result = external_api::clean_returnvalue(mod_assign_external::view_assign_returns(), $result);
+        $this->assertTrue($result['status']);
+        $this->assertEmpty($result['warnings']);
+
+        // Check completion status.
+        $completion = new completion_info($course);
+        $completiondata = $completion->get_data($cm);
+        $this->assertEquals(1, $completiondata->completionstate);
+    }
 }

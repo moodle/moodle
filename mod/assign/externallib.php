@@ -2856,4 +2856,79 @@ class mod_assign_external extends external_api {
             'user' => $userdescription,
         ));
     }
+
+    /**
+     * Utility function for validating an assign.
+     *
+     * @param int $assignid assign instance id
+     * @return array array containing the assign, course, context and course module objects
+     * @since  Moodle 3.2
+     */
+    protected static function validate_assign($assignid) {
+        global $DB;
+
+        // Request and permission validation.
+        $assign = $DB->get_record('assign', array('id' => $assignid), 'id', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($assign, 'assign');
+
+        $context = context_module::instance($cm->id);
+        // Please, note that is not required to check mod/assign:view because is done by validate_context->require_login.
+        self::validate_context($context);
+        $assign = new assign($context, $cm, $course);
+
+        return array($assign, $course, $cm, $context);
+    }
+
+    /**
+     * Describes the parameters for view_assign.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.2
+     */
+    public static function view_assign_parameters() {
+        return new external_function_parameters (
+            array(
+                'assignid' => new external_value(PARAM_INT, 'assign instance id'),
+            )
+        );
+    }
+
+    /**
+     * Update the module completion status.
+     *
+     * @param int $assignid assign instance id
+     * @return array of warnings and status result
+     * @since Moodle 3.2
+     */
+    public static function view_assign($assignid) {
+        $warnings = array();
+        $params = array(
+            'assignid' => $assignid,
+        );
+        $params = self::validate_parameters(self::view_assign_parameters(), $params);
+
+        list($assign, $course, $cm, $context) = self::validate_assign($params['assignid']);
+
+        $assign->set_module_viewed();
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the view_assign return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.2
+     */
+    public static function view_assign_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }
