@@ -76,6 +76,9 @@
                 .loading-icon {
                     display: block;
                 }
+                .empty-message {
+                    display: none;
+                }
             }
         }
     }
@@ -100,6 +103,11 @@
             line-height: 42px;
             padding-left: 10px;
             padding-right: 10px;
+
+            img {
+                height: 16px;
+                width: 16px;
+            }
 
             .count-container {
                 padding: 2px;
@@ -231,7 +239,7 @@
                     }
                 }
 
-                #mark-all-read-button {
+                .mark-all-read-button {
                     .normal-icon {
                         display: inline-block;
                     }
@@ -512,6 +520,101 @@
                                 & + .empty-message {
                                     display: none;
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.mdl-popover-messages {
+    &.mdl-popover {
+        .mdl-popover-container {
+            .mdl-popover-header-container {
+                .mdl-popover-header-actions {
+                    .mark-all-read-button {
+                        .normal-icon {
+                            display: inline-block;
+                        }
+                        .loading-icon {
+                            display: none;
+                            height: 12px;
+                            width: 12px;
+                        }
+
+                        &.loading {
+                            .normal-icon {
+                                display: none;
+                            }
+                            .loading-icon {
+                                display: inline-block;
+                            }
+                        }
+                    }
+                }
+            }
+            .mdl-popover-content-container {
+                .mdl-popover-content {
+                    .messages {
+                        &:empty + .empty-message {
+                            display: block;
+                        }
+                    }
+                    .content-item-container {
+                        width: 100%;
+                        border-bottom: 1px solid #ddd;
+                        box-sizing: border-box;
+                        padding: 5px;
+                        height: 85px;
+
+                        &:hover {
+                            opacity: 0.8;
+                        }
+
+                        &[data-context-url] {
+                            cursor: pointer;
+                        }
+
+                        .content-item {
+                            height: 100%;
+                            width: 100%;
+
+                            img {
+                                display: inline-block;
+                                vertical-align: middle;
+                            }
+
+                            .content-item-body {
+                                display: inline-block;
+                                box-sizing: border-box;
+                                vertical-align: middle;
+                                width: ~"calc(100% - 68px)";
+                                height: 100%;
+
+                                h3 {
+                                    font-size: 14px;
+                                    line-height: 14px;
+                                    margin: 0;
+                                    width: 100%;
+                                }
+
+                                p {
+                                    margin: 0;
+                                }
+                            }
+                        }
+                        &:last-child {
+                            border-bottom: none;
+                        }
+                    }
+                }
+                &.loading {
+                    .mdl-popover-content {
+                        .messages {
+                            &:empty + .empty-message {
+                                display: none;
                             }
                         }
                     }

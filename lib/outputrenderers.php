@@ -3216,6 +3216,27 @@ EOD;
     }
 
     /**
+     * Returns the message menu
+     *
+     * @return string         HTML for the message menu
+     */
+    public function message_menu() {
+        global $USER;
+
+        if (isloggedin()) {
+            $context = [
+                'userid' => $USER->id,
+                'urls' => [
+                    'preferences' => (new moodle_url('/message/edit.php', ['id' => $USER->id]))->out(),
+                ],
+            ];
+            return $this->render_from_template('message/message_popover', $context);
+        } else {
+            return '';
+        }
+    }
+
+    /**
      * Construct a user menu, returning HTML that can be echoed out by a
      * layout file.
      *

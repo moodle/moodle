@@ -7104,6 +7104,9 @@ body.path-question-type .mform fieldset.hidden {
 .mdl-popover .mdl-popover-container .mdl-popover-content-container.loading .loading-icon {
   display: block;
 }
+.mdl-popover .mdl-popover-container .mdl-popover-content-container.loading .empty-message {
+  display: none;
+}
 .mdl-popover.collapsed .mdl-popover-container {
   height: 0;
   overflow: hidden;
@@ -7119,6 +7122,10 @@ body.path-question-type .mform fieldset.hidden {
   line-height: 42px;
   padding-left: 10px;
   padding-right: 10px;
+}
+.navbar .mdl-popover .mdl-popover-toggle img {
+  height: 16px;
+  width: 16px;
 }
 .navbar .mdl-popover .mdl-popover-toggle .count-container {
   padding: 2px;
@@ -7230,18 +7237,18 @@ body.path-question-type .mform fieldset.hidden {
 .mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-header-container .mdl-popover-header-actions .fancy-toggle.off .off-text {
   display: block;
 }
-.mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-header-container #mark-all-read-button .normal-icon {
+.mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-header-container .mark-all-read-button .normal-icon {
   display: inline-block;
 }
-.mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-header-container #mark-all-read-button .loading-icon {
+.mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-header-container .mark-all-read-button .loading-icon {
   display: none;
   height: 12px;
   width: 12px;
 }
-.mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-header-container #mark-all-read-button.loading .normal-icon {
+.mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-header-container .mark-all-read-button.loading .normal-icon {
   display: none;
 }
-.mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-header-container #mark-all-read-button.loading .loading-icon {
+.mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-header-container .mark-all-read-button.loading .loading-icon {
   display: inline-block;
 }
 .mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-content-container.loading .mdl-popover-content .unread-notifications:empty + .empty-message,
@@ -7442,6 +7449,66 @@ body.path-question-type .mform fieldset.hidden {
 .mdl-popover-notifications.mdl-popover.unread-only .mdl-popover-container .mdl-popover-content-container.loading .mdl-popover-content .all-notifications:empty + .empty-message,
 .mdl-popover-notifications.mdl-popover.unread-only .mdl-popover-container .mdl-popover-content-container.loading .mdl-popover-content .unread-notifications + .empty-message,
 .mdl-popover-notifications.mdl-popover.unread-only .mdl-popover-container .mdl-popover-content-container.loading .mdl-popover-content .all-notifications + .empty-message {
+  display: none;
+}
+.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-header-container .mdl-popover-header-actions .mark-all-read-button .normal-icon {
+  display: inline-block;
+}
+.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-header-container .mdl-popover-header-actions .mark-all-read-button .loading-icon {
+  display: none;
+  height: 12px;
+  width: 12px;
+}
+.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-header-container .mdl-popover-header-actions .mark-all-read-button.loading .normal-icon {
+  display: none;
+}
+.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-header-container .mdl-popover-header-actions .mark-all-read-button.loading .loading-icon {
+  display: inline-block;
+}
+.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .messages:empty + .empty-message {
+  display: block;
+}
+.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container {
+  width: 100%;
+  border-bottom: 1px solid #ddd;
+  box-sizing: border-box;
+  padding: 5px;
+  height: 85px;
+}
+.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container:hover {
+  opacity: 0.8;
+}
+.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container[data-context-url] {
+  cursor: pointer;
+}
+.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item {
+  height: 100%;
+  width: 100%;
+}
+.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item img {
+  display: inline-block;
+  vertical-align: middle;
+}
+.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item .content-item-body {
+  display: inline-block;
+  box-sizing: border-box;
+  vertical-align: middle;
+  width: calc(100% - 68px);
+  height: 100%;
+}
+.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item .content-item-body h3 {
+  font-size: 14px;
+  line-height: 14px;
+  margin: 0;
+  width: 100%;
+}
+.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item .content-item-body p {
+  margin: 0;
+}
+.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container:last-child {
+  border-bottom: none;
+}
+.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container.loading .mdl-popover-content .messages:empty + .empty-message {
   display: none;
 }
 .dir-rtl .mdl-popover .mdl-popover-container {

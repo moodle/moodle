@@ -32,7 +32,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
             popoverController, notificationRepo) {
 
     var SELECTORS = {
-        MARK_ALL_READ_BUTTON: '#mark-all-read-button',
+        MARK_ALL_READ_BUTTON: '.mark-all-read-button',
         USER_ID: 'data-userid',
         MODE_TOGGLE: '.mdl-popover-header-actions .fancy-toggle',
         UNREAD_NOTIFICATIONS_CONTAINER: '.unread-notifications',
