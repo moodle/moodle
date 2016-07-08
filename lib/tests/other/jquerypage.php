@@ -36,7 +36,6 @@ $PAGE->set_heading('jQuery library test');
 $PAGE->requires->jquery();
 $PAGE->requires->jquery_plugin('ui');
 $PAGE->requires->jquery_plugin('ui-css');
-$PAGE->requires->jquery_plugin('migrate');
 
 echo $OUTPUT->header();
 

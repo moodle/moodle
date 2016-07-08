@@ -4,6 +4,8 @@ information provided here is intended especially for developers.
 === 3.2 ===
 
 * Node.js versions >=4 are now required to run grunt.
+* JQuery has been updated to 3.1.0. JQuery migrate plugins are no longer shipped - please read
+  https://jquery.com/upgrade-guide/3.0/ and update your javascript.
 * New option 'blanktarget' added to format_text. This option adds target="_blank" to links
 * A new webservice structure `external_files` has been created which provides a standardised view of files in Moodle and
   should be used for all file return descriptions.
