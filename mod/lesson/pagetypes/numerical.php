@@ -79,6 +79,10 @@ class lesson_page_type_numerical extends lesson_page {
         $data = $mform->get_data();
         require_sesskey();
 
+        $formattextdefoptions = new stdClass();
+        $formattextdefoptions->noclean = true;
+        $formattextdefoptions->para = false;
+
         // set defaults
         $result->response = '';
         $result->newpageid = 0;
@@ -93,6 +97,7 @@ class lesson_page_type_numerical extends lesson_page {
         $result->studentanswer = $result->userresponse = $result->useranswer;
         $answers = $this->get_answers();
         foreach ($answers as $answer) {
+            $answer = parent::rewrite_answers_urls($answer);
             if (strpos($answer->answer, ':')) {
                 // there's a pairs of values
                 list($min, $max) = explode(':', $answer->answer);
@@ -105,7 +110,7 @@ class lesson_page_type_numerical extends lesson_page {
             }
             if (($result->useranswer >= $minimum) && ($result->useranswer <= $maximum)) {
                 $result->newpageid = $answer->jumpto;
-                $result->response = trim($answer->response);
+                $result->response = format_text($answer->response, $answer->responseformat, $formattextdefoptions);
                 if ($this->lesson->jumpto_is_correct($this->properties->id, $result->newpageid)) {
                     $result->correctanswer = true;
                 }
