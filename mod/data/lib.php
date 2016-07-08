@@ -1332,9 +1332,9 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
         if (!$data->approval) {
             $replacement[] = '';
         } else if ($record->approved) {
-            $replacement[] = 'approved';
+            $replacement[] = get_string('approved', 'data');
         } else {
-            $replacement[] = 'notapproved';
+            $replacement[] = get_string('notapproved', 'data');
         }
 
         $patterns[]='##comments##';
