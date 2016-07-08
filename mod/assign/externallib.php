@@ -933,11 +933,8 @@ class mod_assign_external extends external_api {
                                                   'userflags' => $userflags));
 
         // Load assignment if it exists and if the user has the capability.
-        $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
+        list($assign, $course, $cm, $context) = self::validate_assign($params['assignmentid']);
         require_capability('mod/assign:grade', $context);
-        $assign = new assign($context, null, null);
 
         $results = array();
         foreach ($params['userflags'] as $userflag) {
@@ -1363,11 +1360,7 @@ class mod_assign_external extends external_api {
                         array('assignmentid' => $assignmentid,
                               'userids' => $userids));
 
-        $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
-
-        $assignment = new assign($context, $cm, null);
+        list($assignment, $course, $cm, $context) = self::validate_assign($params['assignmentid']);
 
         $warnings = array();
         foreach ($params['userids'] as $userid) {
@@ -1424,11 +1417,7 @@ class mod_assign_external extends external_api {
                         array('assignmentid' => $assignmentid,
                               'userids' => $userids));
 
-        $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
-
-        $assignment = new assign($context, $cm, null);
+        list($assignment, $course, $cm, $context) = self::validate_assign($params['assignmentid']);
 
         $warnings = array();
         foreach ($params['userids'] as $userid) {
@@ -1485,11 +1474,7 @@ class mod_assign_external extends external_api {
                         array('assignmentid' => $assignmentid,
                               'userids' => $userids));
 
-        $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
-
-        $assignment = new assign($context, $cm, null);
+        list($assignment, $course, $cm, $context) = self::validate_assign($params['assignmentid']);
 
         $warnings = array();
         foreach ($params['userids'] as $userid) {
@@ -1551,11 +1536,7 @@ class mod_assign_external extends external_api {
                                                 'jsonformdata' => $jsonformdata
                                             ));
 
-        $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
-
-        $assignment = new assign($context, $cm, null);
+        list($assignment, $course, $cm, $context) = self::validate_assign($params['assignmentid']);
 
         $serialiseddata = json_decode($params['jsonformdata']);
 
@@ -1627,11 +1608,7 @@ class mod_assign_external extends external_api {
                                             array('assignmentid' => $assignmentid,
                                                   'acceptsubmissionstatement' => $acceptsubmissionstatement));
 
-        $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
-
-        $assignment = new assign($context, $cm, null);
+        list($assignment, $course, $cm, $context) = self::validate_assign($params['assignmentid']);
 
         $warnings = array();
         $data = new stdClass();
@@ -1705,11 +1682,7 @@ class mod_assign_external extends external_api {
             return $warnings;
         }
 
-        $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
-
-        $assignment = new assign($context, $cm, null);
+        list($assignment, $course, $cm, $context) = self::validate_assign($params['assignmentid']);
 
         $warnings = array();
         foreach ($params['userids'] as $idx => $userid) {
@@ -1761,11 +1734,7 @@ class mod_assign_external extends external_api {
         $params = self::validate_parameters(self::reveal_identities_parameters(),
                                             array('assignmentid' => $assignmentid));
 
-        $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
-
-        $assignment = new assign($context, $cm, null);
+        list($assignment, $course, $cm, $context) = self::validate_assign($params['assignmentid']);
 
         $warnings = array();
         if (!$assignment->reveal_identities()) {
@@ -1832,11 +1801,7 @@ class mod_assign_external extends external_api {
                                             array('assignmentid' => $assignmentid,
                                                   'plugindata' => $plugindata));
 
-        $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
-
-        $assignment = new assign($context, $cm, null);
+        list($assignment, $course, $cm, $context) = self::validate_assign($params['assignmentid']);
 
         $notices = array();
 
@@ -1963,11 +1928,7 @@ class mod_assign_external extends external_api {
                                                   'plugindata' => $plugindata,
                                                   'advancedgradingdata' => $advancedgradingdata));
 
-        $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
-
-        $assignment = new assign($context, $cm, null);
+        list($assignment, $course, $cm, $context) = self::validate_assign($params['assignmentid']);
 
         $gradedata = (object)$params['plugindata'];
 
@@ -2101,10 +2062,7 @@ class mod_assign_external extends external_api {
                                                   'applytoall' => $applytoall,
                                                   'grades' => $grades));
 
-        $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
-        $assignment = new assign($context, $cm, null);
+        list($assignment, $course, $cm, $context) = self::validate_assign($params['assignmentid']);
 
         if ($assignment->get_instance()->teamsubmission && $params['applytoall']) {
             // Check that only 1 user per submission group is provided.
@@ -2184,11 +2142,7 @@ class mod_assign_external extends external_api {
         $params = self::validate_parameters(self::copy_previous_attempt_parameters(),
                                             array('assignmentid' => $assignmentid));
 
-        $cm = get_coursemodule_from_instance('assign', $assignmentid, 0, false, MUST_EXIST);
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
-
-        $assignment = new assign($context, $cm, null);
+        list($assignment, $course, $cm, $context) = self::validate_assign($params['assignmentid']);
 
         $notices = array();
 
@@ -2237,7 +2191,6 @@ class mod_assign_external extends external_api {
      * @throws moodle_exception
      */
     public static function view_grading_table($assignid) {
-        global $DB, $CFG;
 
         $params = self::validate_parameters(self::view_grading_table_parameters(),
                                             array(
@@ -2245,16 +2198,8 @@ class mod_assign_external extends external_api {
                                             ));
         $warnings = array();
 
-        // Request and permission validation.
-        $assign = $DB->get_record('assign', array('id' => $params['assignid']), 'id', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($assign, 'assign');
+        list($assign, $course, $cm, $context) = self::validate_assign($params['assignid']);
 
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
-
-        require_capability('mod/assign:view', $context);
-
-        $assign = new assign($context, null, null);
         $assign->require_view_grades();
         \mod_assign\event\grading_table_viewed::create_from_assign($assign)->trigger();
 
@@ -2301,7 +2246,6 @@ class mod_assign_external extends external_api {
      * @since Moodle 3.1
      */
     public static function view_submission_status($assignid) {
-        global $DB, $CFG;
 
         $warnings = array();
         $params = array(
@@ -2309,15 +2253,8 @@ class mod_assign_external extends external_api {
         );
         $params = self::validate_parameters(self::view_submission_status_parameters(), $params);
 
-        // Request and permission validation.
-        $assign = $DB->get_record('assign', array('id' => $params['assignid']), 'id', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($assign, 'assign');
+        list($assign, $course, $cm, $context) = self::validate_assign($params['assignid']);
 
-        $context = context_module::instance($cm->id);
-        // Please, note that is not required to check mod/assign:view because is done by validate_context->require_login.
-        self::validate_context($context);
-
-        $assign = new assign($context, $cm, $course);
         \mod_assign\event\submission_status_viewed::create_from_assign($assign)->trigger();
 
         $result = array();
@@ -2366,7 +2303,7 @@ class mod_assign_external extends external_api {
      * @throws required_capability_exception
      */
     public static function get_submission_status($assignid, $userid = 0) {
-        global $USER, $DB;
+        global $USER;
 
         $warnings = array();
 
@@ -2376,14 +2313,7 @@ class mod_assign_external extends external_api {
         );
         $params = self::validate_parameters(self::get_submission_status_parameters(), $params);
 
-        // Request and permission validation.
-        $assign = $DB->get_record('assign', array('id' => $params['assignid']), 'id', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($assign, 'assign');
-
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
-
-        $assign = new assign($context, $cm, $course);
+        list($assign, $course, $cm, $context) = self::validate_assign($params['assignid']);
 
         // Default value for userid.
         if (empty($params['userid'])) {
@@ -2629,16 +2559,10 @@ class mod_assign_external extends external_api {
                                             ));
         $warnings = array();
 
-        // Request and permission validation.
-        $assign = $DB->get_record('assign', array('id' => $params['assignid']), 'id', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($assign, 'assign');
-
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
+        list($assign, $course, $cm, $context) = self::validate_assign($params['assignid']);
 
         require_capability('mod/assign:view', $context);
 
-        $assign = new assign($context, null, null);
         $assign->require_view_grades();
 
         $participants = $assign->list_participants_with_filter_status_and_group($params['groupid']);
@@ -2794,14 +2718,7 @@ class mod_assign_external extends external_api {
             'embeduser' => $embeduser
         ));
 
-        // Request and permission validation.
-        $assign = $DB->get_record('assign', array('id' => $params['assignid']), 'id', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($assign, 'assign');
-
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
-
-        $assign = new assign($context, null, null);
+        list($assign, $course, $cm, $context) = self::validate_assign($params['assignid']);
         $assign->require_view_grades();
 
         $participant = $assign->get_participant($params['userid']);
