@@ -28,7 +28,7 @@ Feature: Export calendar events
     Given I follow "This month"
     And I click on "Export calendar" "button"
     And I set the field "All events" to "1"
-    And I set the field "This week" to "1"
+    And I set the field "Recent and next 60 days" to "1"
     When I click on "Get calendar URL" "button"
     Then I should see "&preset_what=all&"
 
@@ -36,7 +36,7 @@ Feature: Export calendar events
     Given I follow "This month"
     And I click on "Export calendar" "button"
     And I set the field "Events related to courses" to "1"
-    And I set the field "This week" to "1"
+    And I set the field "Recent and next 60 days" to "1"
     When I click on "Get calendar URL" "button"
     Then I should see "&preset_what=courses&"
 
@@ -44,7 +44,7 @@ Feature: Export calendar events
     Given I follow "This month"
     And I click on "Export calendar" "button"
     And I set the field "Events related to groups" to "1"
-    And I set the field "This week" to "1"
+    And I set the field "Recent and next 60 days" to "1"
     When I click on "Get calendar URL" "button"
     Then I should see "&preset_what=groups&"
 
@@ -52,6 +52,6 @@ Feature: Export calendar events
     Given I follow "This month"
     And I click on "Export calendar" "button"
     And I set the field "My personal events" to "1"
-    And I set the field "This week" to "1"
+    And I set the field "Recent and next 60 days" to "1"
     When I click on "Get calendar URL" "button"
     Then I should see "&preset_what=user&"
