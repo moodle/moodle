@@ -422,6 +422,16 @@ class webservice {
     }
 
     /**
+     * Delete all the tokens belonging to a user.
+     *
+     * @param int $userid the user id whose tokens must be deleted
+     */
+    public static function delete_user_ws_tokens($userid) {
+        global $DB;
+        $DB->delete_records('external_tokens', array('userid' => $userid));
+    }
+
+    /**
      * Delete a service
      * Also delete function references and authorised user references.
      *
