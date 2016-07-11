@@ -53,7 +53,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/ajax', 'core/log', 'cor
 
         var requests = ajax.call([{
             methodname: 'tool_lp_data_for_user_competency_summary_in_course',
-            args: { userid: userId, competencyid: competencyId, courseid: courseId },
+            args: {userid: userId, competencyid: competencyId, courseid: courseId},
             done: this._contextLoaded.bind(this),
             fail: notification.exception
         }]);
@@ -62,7 +62,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/ajax', 'core/log', 'cor
         requests[0].then(function() {
             ajax.call([{
                 methodname: 'core_competency_user_competency_viewed_in_course',
-                args: { userid: userId, competencyid: competencyId, courseid: courseId },
+                args: {userid: userId, competencyid: competencyId, courseid: courseId},
                 fail: notification.exception
             }]);
         });
@@ -97,7 +97,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/ajax', 'core/log', 'cor
 
         ajax.call([{
             methodname: 'report_competency_data_for_report',
-            args: { courseid: courseId, userid: userId },
+            args: {courseid: courseId, userid: userId},
             done: this._pageContextLoaded.bind(this),
             fail: notification.exception
         }]);

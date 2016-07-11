@@ -142,8 +142,8 @@ define(['jquery', 'core/notification', 'core/templates', 'core/fragment',
             $(document).trigger('reset', [this._lastUserId, formdata]);
         } else {
             str.get_strings([
-                { key: 'changessaved', component: 'core' },
-                { key: 'gradechangessaveddetail', component: 'mod_assign' },
+                {key: 'changessaved', component: 'core'},
+                {key: 'gradechangessaveddetail', component: 'mod_assign'},
             ]).done(function(strs) {
                 notification.alert(strs[0], strs[1]);
             }).fail(notification.exception);
@@ -193,9 +193,9 @@ define(['jquery', 'core/notification', 'core/templates', 'core/fragment',
         var formhtml = formcopy.wrap($('<form/>')).html();
 
         str.get_strings([
-            { key: 'viewadifferentattempt', component: 'mod_assign' },
-            { key: 'view', component: 'core' },
-            { key: 'cancel', component: 'core' },
+            {key: 'viewadifferentattempt', component: 'mod_assign'},
+            {key: 'view', component: 'core'},
+            {key: 'cancel', component: 'core'},
         ]).done(function(strs) {
             notification.confirm(strs[0], formhtml, strs[1], strs[2], function() {
                 var attemptnumber = $("input:radio[name='select-attemptnumber']:checked").val();
@@ -277,7 +277,7 @@ define(['jquery', 'core/notification', 'core/templates', 'core/fragment',
                 if (userid > 0) {
                     this._region.show();
                     // Reload the grading form "fragment" for this user.
-                    var params = { userid: userid, attemptnumber: attemptnumber, jsonformdata: JSON.stringify(submissiondata) };
+                    var params = {userid: userid, attemptnumber: attemptnumber, jsonformdata: JSON.stringify(submissiondata)};
                     fragment.loadFragment('mod_assign', 'gradingpanel', contextid, params).done(function(html, js) {
                         this._niceReplaceNodeContents(this._region, html, js)
                         .done(function() {

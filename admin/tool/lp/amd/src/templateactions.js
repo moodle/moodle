@@ -67,8 +67,8 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
         // We are chaining ajax requests here.
         var requests = ajax.call([{
             methodname: 'core_competency_delete_template',
-            args: { id: templateid,
-                    deleteplans: deleteplans }
+            args: {id: templateid,
+                    deleteplans: deleteplans}
         }, {
             methodname: 'tool_lp_data_for_templates_manage_page',
             args: {
@@ -93,7 +93,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
         // We are chaining ajax requests here.
         var requests = ajax.call([{
             methodname: 'core_competency_duplicate_template',
-            args: { id: templateid }
+            args: {id: templateid}
         }, {
             methodname: 'tool_lp_data_for_templates_manage_page',
             args: {
@@ -119,22 +119,22 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
 
         var requests = ajax.call([{
             methodname: 'core_competency_read_template',
-            args: { id: templateid }
+            args: {id: templateid}
         }, {
             methodname: 'core_competency_template_has_related_data',
-            args: { id: templateid }
+            args: {id: templateid}
         }]);
 
         requests[0].done(function(template) {
             requests[1].done(function(templatehasrelateddata) {
                 if (templatehasrelateddata) {
                     str.get_strings([
-                        { key: 'deletetemplate', component: 'tool_lp', param: template.shortname },
-                        { key: 'deletetemplatewithplans', component: 'tool_lp' },
-                        { key: 'deleteplans', component: 'tool_lp' },
-                        { key: 'unlinkplanstemplate', component: 'tool_lp' },
-                        { key: 'confirm', component: 'moodle' },
-                        { key: 'cancel', component: 'moodle' }
+                        {key: 'deletetemplate', component: 'tool_lp', param: template.shortname},
+                        {key: 'deletetemplatewithplans', component: 'tool_lp'},
+                        {key: 'deleteplans', component: 'tool_lp'},
+                        {key: 'unlinkplanstemplate', component: 'tool_lp'},
+                        {key: 'confirm', component: 'moodle'},
+                        {key: 'cancel', component: 'moodle'}
                     ]).done(function(strings) {
                         var actions = [{'text': strings[2], 'value': 'delete'},
                                        {'text': strings[3], 'value': 'unlink'}];
@@ -154,10 +154,10 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
                     }).fail(notification.exception);
                 } else {
                     str.get_strings([
-                        { key: 'confirm', component: 'moodle' },
-                        { key: 'deletetemplate', component: 'tool_lp', param: template.shortname },
-                        { key: 'delete', component: 'moodle' },
-                        { key: 'cancel', component: 'moodle' }
+                        {key: 'confirm', component: 'moodle'},
+                        {key: 'deletetemplate', component: 'tool_lp', param: template.shortname},
+                        {key: 'delete', component: 'moodle'},
+                        {key: 'cancel', component: 'moodle'}
                     ]).done(function(strings) {
                         notification.confirm(
                         strings[0], // Confirm.

@@ -118,7 +118,7 @@ define(['jquery',
                 if (valid) {
                     validIds.push(compId);
                 }
-            }.bind(self));
+            });
 
             self._selectedCompetencies = validIds;
 
@@ -128,14 +128,14 @@ define(['jquery',
             } else {
                 self._find('[data-region="competencylinktree"] [data-action="add"]').removeAttr('disabled');
             }
-        }.bind(self));
+        });
 
         // Add listener for framework change.
         if (!self._singleFramework) {
             self._find('[data-action="chooseframework"]').change(function(e) {
                 self._frameworkId = $(e.target).val();
                 self._loadCompetencies().then(self._refresh.bind(self));
-            }.bind(self));
+            });
         }
 
         // Add listener for search.
@@ -146,13 +146,13 @@ define(['jquery',
             return self._refresh().always(function() {
                 $(e.target).removeAttr('disabled');
             });
-        }.bind(self));
+        });
 
         // Add listener for cancel.
         self._find('[data-region="competencylinktree"] [data-action="cancel"]').click(function(e) {
             e.preventDefault();
             self.close();
-        }.bind(self));
+        });
 
         // Add listener for add.
         self._find('[data-region="competencylinktree"] [data-action="add"]').click(function(e) {
@@ -162,14 +162,14 @@ define(['jquery',
             }
 
             if (self._multiSelect) {
-                self._trigger('save', { competencyIds: self._selectedCompetencies });
+                self._trigger('save', {competencyIds: self._selectedCompetencies});
             } else {
                 // We checked above that the array has at least one value.
-                self._trigger('save', { competencyId: self._selectedCompetencies[0] });
+                self._trigger('save', {competencyId: self._selectedCompetencies[0]});
             }
 
             self.close();
-        }.bind(self));
+        });
 
         // The list of selected competencies will be modified while looping (because of the listeners above).
         var currentItems = self._selectedCompetencies.slice(0);
@@ -180,7 +180,7 @@ define(['jquery',
                 tree.toggleItem(node);
                 tree.updateFocus(node);
             }
-        }.bind(self));
+        });
 
     };
 
@@ -210,8 +210,8 @@ define(['jquery',
                     html,
                     self._afterRender.bind(self)
                 );
-            }.bind(self));
-        }.bind(self)).fail(Notification.exception);
+            });
+        }).fail(Notification.exception);
     };
 
     /**
@@ -226,7 +226,7 @@ define(['jquery',
         var self = this;
 
         return Ajax.call([
-            { methodname: 'core_competency_search_competencies', args: {
+            {methodname: 'core_competency_search_competencies', args: {
                 searchtext: searchText,
                 competencyframeworkid: frameworkId
             }}
@@ -248,7 +248,8 @@ define(['jquery',
             }
 
             // Expand the list of competencies into a tree.
-            var i, tree = [], comp;
+            var i, comp;
+            var tree = [];
             for (i = 0; i < competencies.length; i++) {
                 comp = competencies[i];
                 if (comp.parentid == "0") { // Loose check for now, because WS returns a string.
@@ -261,7 +262,7 @@ define(['jquery',
 
             self._competencies = tree;
 
-        }.bind(self)).fail(Notification.exception);
+        }).fail(Notification.exception);
     };
 
     /**
@@ -287,7 +288,7 @@ define(['jquery',
         $.each(this._frameworks, function(i, f) {
             if (f.id == fid) {
                 frm = f;
-                return false;
+                return;
             }
         });
         return frm;
@@ -320,7 +321,7 @@ define(['jquery',
 
         if (self._singleFramework) {
             promise = Ajax.call([
-                { methodname: 'core_competency_read_competency_framework', args: {
+                {methodname: 'core_competency_read_competency_framework', args: {
                     id: this._frameworkId
                 }}
             ])[0].then(function(framework) {
@@ -328,9 +329,9 @@ define(['jquery',
             });
         } else {
             promise = Ajax.call([
-                { methodname: 'core_competency_list_competency_frameworks', args: {
+                {methodname: 'core_competency_list_competency_frameworks', args: {
                     sort: 'shortname',
-                    context: { contextid: self._pageContextId },
+                    context: {contextid: self._pageContextId},
                     includes: self._pageContextIncludes,
                     onlyvisible: self._onlyVisible
                 }}
@@ -373,7 +374,7 @@ define(['jquery',
             }
 
             return self._loadCompetencies();
-        }.bind(self));
+        });
     };
 
     /**
@@ -387,7 +388,7 @@ define(['jquery',
         return self._render().then(function(html) {
             self._find('[data-region="competencylinktree"]').replaceWith(html);
             self._afterRender();
-        }.bind(self));
+        });
     };
 
     /**
@@ -419,7 +420,7 @@ define(['jquery',
             };
 
             return Templates.render('tool_lp/competency_picker', context);
-        }.bind(self));
+        });
     };
 
     /**

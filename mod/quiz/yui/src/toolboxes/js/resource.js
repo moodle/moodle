@@ -1,3 +1,5 @@
+/* global TOOLBOX, BODY, SELECTOR */
+
 /**
  * Resource and activity toolbox class.
  *
@@ -244,12 +246,6 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             editform.setData('anchor', anchor);
             instance.insert(editinstructions, 'before');
             anchor.replace(editform);
-
-            // Force the editing instruction to match the mod-indent position.
-            var padside = 'left';
-            if (window.right_to_left()) {
-                padside = 'right';
-            }
 
             // We hide various components whilst editing:
             activity.addClass(CSS.EDITINGMAXMARK);

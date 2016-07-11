@@ -104,7 +104,7 @@ define(['jquery',
         templates.render(self._template, context)
             .done(function(newhtml, newjs) {
                 templates.replaceNode($(self._region), newhtml, newjs);
-            }.bind(self))
+            })
             .fail(notification.exception);
     };
 
@@ -126,7 +126,7 @@ define(['jquery',
         // Apply all the promises, and refresh when the last one is resolved.
         return $.when.apply($.when, ajax.call(calls))
             .then(function() {
-                self._renderView.call(self, arguments[arguments.length - 1]);
+                self._renderView(arguments[arguments.length - 1]);
             })
             .fail(notification.exception);
     };
@@ -140,7 +140,7 @@ define(['jquery',
         var self = this,
             calls = [{
                 methodname: 'core_competency_delete_user_evidence',
-                args: { id: evidenceData.id }
+                args: {id: evidenceData.id}
             }];
         self._callAndRefresh(calls, evidenceData);
     };
@@ -156,15 +156,15 @@ define(['jquery',
 
         requests = ajax.call([{
             methodname: 'core_competency_read_user_evidence',
-            args: { id: evidenceData.id }
+            args: {id: evidenceData.id}
         }]);
 
         requests[0].done(function(evidence) {
             str.get_strings([
-                { key: 'confirm', component: 'moodle' },
-                { key: 'deleteuserevidence', component: 'tool_lp', param: evidence.name },
-                { key: 'delete', component: 'moodle' },
-                { key: 'cancel', component: 'moodle' }
+                {key: 'confirm', component: 'moodle'},
+                {key: 'deleteuserevidence', component: 'tool_lp', param: evidence.name},
+                {key: 'delete', component: 'moodle'},
+                {key: 'cancel', component: 'moodle'}
             ]).done(function(strings) {
                 notification.confirm(
                     strings[0], // Confirm.
@@ -173,7 +173,7 @@ define(['jquery',
                     strings[3], // Cancel.
                     function() {
                         self._doDelete(evidenceData);
-                    }.bind(self)
+                    }
                 );
             }).fail(notification.exception);
         }).fail(notification.exception);
@@ -227,7 +227,7 @@ define(['jquery',
         picker.on('save', function(e, data) {
             var competencyIds = data.competencyIds;
             self._doCreateUserEvidenceCompetency(evidenceData, competencyIds, data.requestReview);
-        }.bind(self));
+        });
 
         picker.display();
     };
@@ -295,7 +295,7 @@ define(['jquery',
         var self = this,
             calls = [{
                 methodname: 'core_competency_request_review_of_user_evidence_linked_competencies',
-                args: { id: evidenceData.id }
+                args: {id: evidenceData.id}
             }];
         self._callAndRefresh(calls, evidenceData);
     };
@@ -311,15 +311,15 @@ define(['jquery',
 
         requests = ajax.call([{
             methodname: 'core_competency_read_user_evidence',
-            args: { id: evidenceData.id }
+            args: {id: evidenceData.id}
         }]);
 
         requests[0].done(function(evidence) {
             str.get_strings([
-                { key: 'confirm', component: 'moodle' },
-                { key: 'sendallcompetenciestoreview', component: 'tool_lp', param: evidence.name },
-                { key: 'confirm', component: 'moodle' },
-                { key: 'cancel', component: 'moodle' }
+                {key: 'confirm', component: 'moodle'},
+                {key: 'sendallcompetenciestoreview', component: 'tool_lp', param: evidence.name},
+                {key: 'confirm', component: 'moodle'},
+                {key: 'cancel', component: 'moodle'}
             ]).done(function(strings) {
                 notification.confirm(
                     strings[0], // Confirm.
@@ -328,7 +328,7 @@ define(['jquery',
                     strings[3], // Cancel.
                     function() {
                         self._doReviewUserEvidenceCompetencies(evidenceData);
-                    }.bind(self)
+                    }
                 );
             }).fail(notification.exception);
         }).fail(notification.exception);

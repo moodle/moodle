@@ -57,7 +57,7 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
          * @param {Integer} id Tool proxy ID
          * @return {Promise} jQuery Deferred object
          */
-        delete: function(id) {
+        'delete': function(id) {
             var request = {
                 methodname: 'mod_lti_delete_tool_proxy',
                 args: {

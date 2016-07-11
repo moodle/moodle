@@ -35,9 +35,10 @@ define(['core/ajax', 'jquery', 'core/templates'], function(ajax, $, templates) {
          * @return {Array}
          */
         processResults: function(selector, data) {
-            var results = [], i = 0;
+            var results = [];
+            var i = 0;
             for (i = 0; i < data.length; i++) {
-                results[i] = { value: data[i].id, label: data[i].label };
+                results[i] = {value: data[i].id, label: data[i].label};
             }
             return results;
         },
@@ -61,7 +62,7 @@ define(['core/ajax', 'jquery', 'core/templates'], function(ajax, $, templates) {
             });
 
             var promise = ajax.call([{
-                methodname: 'mod_assign_list_participants', args: { assignid: assignmentid, groupid: 0, filter: query, limit: 30 }
+                methodname: 'mod_assign_list_participants', args: {assignid: assignmentid, groupid: 0, filter: query, limit: 30}
             }]);
 
             promise[0].then(function(results) {

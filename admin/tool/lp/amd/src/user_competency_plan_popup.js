@@ -54,7 +54,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/ajax', 'core/templates'
 
         var requests = ajax.call([{
             methodname: 'tool_lp_data_for_user_competency_summary_in_plan',
-            args: { competencyid: competencyId, planid: planId },
+            args: {competencyid: competencyId, planid: planId},
             done: this._contextLoaded.bind(this),
             fail: notification.exception
         }]);
@@ -99,7 +99,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/ajax', 'core/templates'
 
         ajax.call([{
             methodname: 'tool_lp_data_for_plan_page',
-            args: { planid: planId},
+            args: {planid: planId},
             done: this._pageContextLoaded.bind(this),
             fail: notification.exception
         }]);

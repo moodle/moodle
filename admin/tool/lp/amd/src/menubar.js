@@ -175,7 +175,7 @@ define(['jquery'], function($) {
             if (this.handlers) {
                 $.each(this.handlers, function(selector, handler) {
                     if (eventHandled) {
-                        return false;
+                        return;
                     }
                     if (item.find(selector).length > 0) {
                         var callable = $.proxy(handler, anchor);

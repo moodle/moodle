@@ -69,7 +69,7 @@ define(['jquery', 'core/ajax', 'core/str', 'tool_lp/competencypicker', 'core/tem
 
         if (data.competencyId !== 0) {
             ajax.call([
-                { methodname: 'core_competency_read_competency', args: {
+                {methodname: 'core_competency_read_competency', args: {
                     id: data.competencyId
                 }}
             ])[0].done(function(competency) {
@@ -112,13 +112,13 @@ define(['jquery', 'core/ajax', 'core/str', 'tool_lp/competencypicker', 'core/tem
                     };
 
                     return Templates.render('tool_lp/competency_picker_competencyform', context);
-                }.bind(self));
+                });
             };
 
             // On selected competency.
             picker.on('save', function(e, data) {
                 self.setParent(data);
-            }.bind(self));
+            });
 
             picker.display();
         });

@@ -1,3 +1,5 @@
+/* global DragDrop, Category, Course */
+
 /**
  * Provides drop down menus for list of action links.
  *

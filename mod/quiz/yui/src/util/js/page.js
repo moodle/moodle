@@ -1,3 +1,5 @@
+/* global YUI */
+
 /**
  * A collection of utility classes for use with pages.
  *

@@ -1,3 +1,5 @@
+/* global Item */
+
 /**
  * A managed course.
  *

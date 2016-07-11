@@ -67,9 +67,9 @@ define(['core/str', 'core/yui'], function(str, Y) {
             // Here we are wrapping YUI. This allows us to start transitioning, but
             // wait for a good alternative without having inconsistent UIs.
             str.get_strings([
-                { key: 'emptydragdropregion', component: 'moodle' },
-                { key: 'movecontent', component: 'moodle' },
-                { key: 'tocontent', component: 'moodle' },
+                {key: 'emptydragdropregion', component: 'moodle'},
+                {key: 'movecontent', component: 'moodle'},
+                {key: 'tocontent', component: 'moodle'},
             ]).done(function() {
                 Y.use('moodle-tool_lp-dragdrop-reorder', function() {
 
