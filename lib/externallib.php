@@ -904,6 +904,7 @@ function external_format_string($str, $contextid, $striplinks = true, $options =
  *                      returned. Default false.
  *      allowid     :   If true then id attributes will not be removed, even when using htmlpurifier. Default (different from
  *                      format_text) true. Default changed id attributes are commonly needed.
+ *      blanktarget :   If true all <a> tags will have target="_blank" added unless target is explicitly specified.
  * </pre>
  *
  * @param string $text The content that may contain ULRs in need of rewriting.
