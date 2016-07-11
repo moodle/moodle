@@ -242,6 +242,3 @@ $string['unzipped'] = 'Unzipped successfully';
 $string['wrongcontext'] = 'You cannot access to this context';
 $string['xhtmlerror'] = 'You are probably using an XHTML strict header. Certain YUI components don\'t work in this mode; please turn it off.';
 $string['ziped'] = 'Compress folder successfully';
-
-// Deprecated since Moodle 2.9.
-$string['personalrepositories'] = 'Available repository instances';

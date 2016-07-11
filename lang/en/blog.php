@@ -184,6 +184,3 @@ $string['wrongpostid'] = 'Wrong blog post id';
 $string['page-blog-edit'] = 'Blog editing pages';
 $string['page-blog-index'] = 'Blog listing pages';
 $string['page-blog-x'] = 'All blog pages';
-
-// Deprecated since Moodle 2.9.
-$string['siteblog'] = 'Site blog: {$a}';

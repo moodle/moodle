@@ -1,5 +1,3 @@
-essayemailmessage,mod_lesson
-lessonattempted,mod_lesson
 clicktopost,mod_lesson
 configmaxhighscores,mod_lesson
 configactionaftercorrectanswer,mod_lesson

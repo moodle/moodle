@@ -75,11 +75,11 @@ class core_string_manager_standard_testcase extends advanced_testcase {
         $this->assertFalse($stringman->string_deprecated('hidden', 'grades'));
 
         // Check deprecated string.
-        $this->assertTrue($stringman->string_deprecated('timelimitmin', 'mod_quiz'));
-        $this->assertTrue($stringman->string_exists('timelimitmin', 'mod_quiz'));
+        $this->assertTrue($stringman->string_deprecated('modchooserenable', 'core'));
+        $this->assertTrue($stringman->string_exists('modchooserenable', 'core'));
         $this->assertDebuggingNotCalled();
-        $this->assertEquals('Time limit (minutes)', get_string('timelimitmin', 'mod_quiz'));
-        $this->assertDebuggingCalled('String [timelimitmin,mod_quiz] is deprecated. '.
+        $this->assertEquals('Activity chooser on', get_string('modchooserenable', 'core'));
+        $this->assertDebuggingCalled('String [modchooserenable,core] is deprecated. '.
             'Either you should no longer be using that string, or the string has been incorrectly deprecated, in which case you should report this as a bug. '.
             'Please refer to https://docs.moodle.org/dev/String_deprecation');
     }

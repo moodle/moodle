@@ -177,8 +177,3 @@ $string['unsupportedmode'] = 'Unsupported mode';
 $string['untestable'] = 'Untestable';
 $string['userinputsharingkey'] = 'Custom key for sharing';
 $string['userinputsharingkey_help'] = 'Enter your own private key here. When you set up other stores on other sites you wish to share data with make sure you set the exact same key there.';
-
-// Deprecated since 2.9.
-$string['lockingmeans'] = 'Locking mechanism';
-$string['lockmethod'] = 'Lock method';
-$string['lockmethod_help'] = 'This is the method used for locking when required of this store.';
