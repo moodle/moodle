@@ -47,8 +47,8 @@ class mock_search_area extends \core_search\area\base {
     public function get_recordset_by_timestamp($modifiedfrom = 0) {
         global $DB;
 
-        // Filter by capability as we want this quick.
-        return $DB->get_recordset_sql("SELECT * FROM {temp_mock_search_area} WHERE timemodified >= ?", array($modifiedfrom));
+        $sql = "SELECT * FROM {temp_mock_search_area} WHERE timemodified >= ? ORDER BY timemodified ASC";
+        return $DB->get_recordset_sql($sql, array($modifiedfrom));
     }
 
     public function get_document($record, $options = array()) {
