@@ -53,7 +53,7 @@ class entry extends \core_search\area\base_mod {
 
         $sql = "SELECT ge.*, g.course FROM {glossary_entries} ge
                   JOIN {glossary} g ON g.id = ge.glossaryid
-                WHERE ge.timemodified >= ?";
+                WHERE ge.timemodified >= ? ORDER BY ge.timemodified ASC";
         return $DB->get_recordset_sql($sql, array($modifiedfrom));
     }
 

@@ -62,7 +62,8 @@ abstract class base_activity extends base_mod {
      */
     public function get_recordset_by_timestamp($modifiedfrom = 0) {
         global $DB;
-        return $DB->get_recordset_select($this->get_module_name(), static::MODIFIED_FIELD_NAME . ' >= ?', array($modifiedfrom));
+        return $DB->get_recordset_select($this->get_module_name(), static::MODIFIED_FIELD_NAME . ' >= ?', array($modifiedfrom),
+                static::MODIFIED_FIELD_NAME . ' ASC');
     }
 
     /**
