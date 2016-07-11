@@ -555,6 +555,9 @@ class document implements \renderable, \templatable {
      * Although content is a required field when setting up the document, it accepts '' (empty) values
      * as they may be the result of striping out HTML.
      *
+     * SECURITY NOTE: It is the responsibility of the document to properly escape any text to be displayed.
+     * The renderer will output the content without any further cleaning.
+     *
      * @param renderer_base $output The renderer.
      * @return array
      */
@@ -582,13 +585,13 @@ class document implements \renderable, \templatable {
             if (count($files) > 1) {
                 $filenames = array();
                 foreach ($files as $file) {
-                    $filenames[] = $file->get_filename();
+                    $filenames[] = format_string($file->get_filename(), true, array('context' => $this->get('contextid')));
                 }
                 $data['multiplefiles'] = true;
                 $data['filenames'] = $filenames;
             } else {
                 $file = reset($files);
-                $data['filename'] = $file->get_filename();
+                $data['filename'] = format_string($file->get_filename(), true, array('context' => $this->get('contextid')));
             }
         }
 
