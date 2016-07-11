@@ -25,7 +25,8 @@ information provided here is intended especially for developers.
 * The following functions have been deprecated and are not used any more:
   - get_records_csv() Please use csv_import_reader::load_csv_content() instead.
   - put_records_csv() Please use download_as_dataformat (lib/dataformatlib.php) instead.
-  - zip_files() - See MDL-24343 for more information.
+  - zip_files()   - See MDL-24343 for more information.
+  - unzip_file()  - See MDL-24343 for more information.
 * The password_compat library was removed as it is no longer required.
 * Phpunit has been upgraded to 5.4.x and following has been deprecated and is not used any more:
   - setExpectedException(), use @expectedException or $this->expectException() and $this->expectExceptionMessage()
@@ -47,6 +48,8 @@ information provided here is intended especially for developers.
   Calling them through the magic method __call() will throw a coding exception.
 * The alfresco library has been removed from core. It was an old version of
   the library which was not compatible with newer versions of Alfresco.
+* All file_packer implementations now accept an additional parameter to allow a simple boolean return value instead of
+  an array of individual file statuses.
 
 === 3.1 ===
 
