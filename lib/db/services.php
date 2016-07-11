@@ -393,7 +393,8 @@ $functions = array(
     'core_grades_get_grades' => array(
         'classname' => 'core_grades_external',
         'methodname' => 'get_grades',
-        'description' => 'Returns student course total grade and grades for activities.
+        'description' => '** DEPRECATED ** Please do not call this function any more.
+                                     Returns student course total grade and grades for activities.
                                      This function does not return category or manual items.
                                      This function is suitable for managers or teachers not students.',
         'type' => 'read',
