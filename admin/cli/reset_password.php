@@ -40,7 +40,8 @@ $longparams = array(
 $shortparams = array(
         'h' => 'help',
         'u' => 'username',
-        'p' => 'password'
+        'p' => 'password',
+        'i' => 'ignore-password-policy'
 );
 
 // now get cli options
@@ -66,6 +67,7 @@ Options:
 
 Example:
 \$sudo -u www-data /usr/bin/php admin/cli/reset_password.php
+\$sudo -u www-data /usr/bin/php admin/cli/reset_password.php --username=rosaura --password=jiu3jiu --ignore-password-policy
 "; //TODO: localize - to be translated later when everything is finished
 
     echo $help;
