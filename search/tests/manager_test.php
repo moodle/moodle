@@ -81,12 +81,12 @@ class search_manager_testcase extends advanced_testcase {
         $this->assertArrayHasKey($this->forumpostareaid, \core_search\manager::get_search_areas_list(true));
 
         list($componentname, $varname) = $searcharea->get_config_var_name();
-        set_config($varname . '_enabled', false, $componentname);
+        set_config($varname . '_enabled', 0, $componentname);
         \core_search\manager::clear_static();
 
         $this->assertArrayNotHasKey('mod_forum', \core_search\manager::get_search_areas_list(true));
 
-        set_config($varname . '_enabled', true, $componentname);
+        set_config($varname . '_enabled', 1, $componentname);
 
         // Although the result is wrong, we want to check that \core_search\manager::get_search_areas_list returns cached results.
         $this->assertArrayNotHasKey($this->forumpostareaid, \core_search\manager::get_search_areas_list(true));
@@ -127,10 +127,11 @@ class search_manager_testcase extends advanced_testcase {
 
         // We clean it all but enabled components.
         $search->reset_config($this->forumpostareaid);
-        $this->assertEquals(1, get_config($componentname, $varname . '_enabled'));
-        $this->assertEquals(0, get_config($componentname, $varname . '_indexingstart'));
-        $this->assertEquals(0, get_config($componentname, $varname . '_indexingend'));
-        $this->assertEquals(0, get_config($componentname, $varname . '_lastindexrun'));
+        $config = $searcharea->get_config();
+        $this->assertEquals(1, $config[$varname . '_enabled']);
+        $this->assertEquals(0, $config[$varname . '_indexingstart']);
+        $this->assertEquals(0, $config[$varname . '_indexingend']);
+        $this->assertEquals(0, $config[$varname . '_lastindexrun']);
         // No caching.
         $configs = $search->get_areas_config(array($this->forumpostareaid => $searcharea));
         $this->assertEquals(0, $configs[$this->forumpostareaid]->indexingstart);

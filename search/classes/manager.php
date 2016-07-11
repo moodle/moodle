@@ -682,7 +682,6 @@ class manager {
      */
     public function get_areas_config($searchareas) {
 
-        $allconfigs = get_config('search');
         $vars = array('indexingstart', 'indexingend', 'lastindexrun', 'docsignored', 'docsprocessed', 'recordsprocessed');
 
         $configsettings =  array();
