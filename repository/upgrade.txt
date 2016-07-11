@@ -6,6 +6,8 @@ http://docs.moodle.org/dev/Repository_API
 === 3.2 ===
 
 * The method repository::uses_post_requests() has been deprecated and must not be used anymore.
+* The alfresco repository has been moved to the plugins database. It was
+  using an older version of the Alfresco SDK which is not compatible with recent versions of Alfresco.
 
 === 3.1 ===
 

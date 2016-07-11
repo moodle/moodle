@@ -45,7 +45,7 @@ class core_repository_generator_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
 
         // All the repository types.
-        $all = array('alfresco', 'boxnet', 'coursefiles', 'dropbox', 'equella', 'filesystem', 'flickr',
+        $all = array('boxnet', 'coursefiles', 'dropbox', 'equella', 'filesystem', 'flickr',
             'flickr_public', 'googledocs', 'local', 'merlot', 'picasa', 'recent', 's3', 'upload', 'url',
             'user', 'webdav', 'wikimedia', 'youtube');
 

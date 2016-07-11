@@ -26,6 +26,8 @@ information provided here is intended especially for developers.
   - get_records_csv() Please use csv_import_reader::load_csv_content() instead.
   - put_records_csv() Please use download_as_dataformat (lib/dataformatlib.php) instead.
 * The password_compat library was removed as it is no longer required.
+* The alfresco library has been removed from core. It was an old version of
+  the library which was not compatible with newer versions of Alfresco.
 
 === 3.1 ===
 
