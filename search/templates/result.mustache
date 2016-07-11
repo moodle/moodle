@@ -75,7 +75,7 @@
     {{/description2}}
     {{#filename}}
         <div class="result-content-filename">
-            {{#str}}matchingfile, search, {{filename}}{{/str}}
+            {{#str}}matchingfile, search, {{{filename}}}{{/str}}
         </div>
     {{/filename}}
     {{#multiplefiles}}
@@ -90,9 +90,9 @@
     {{/multiplefiles}}
     <div class="result-context-info">
         <a href="{{{contexturl}}}">{{#str}}viewresultincontext, search{{/str}}</a> -
-        <a href="{{{courseurl}}}">{{#str}}incourse, search, {{coursefullname}}{{/str}}</a>
+        <a href="{{{courseurl}}}">{{#str}}incourse, search, {{{coursefullname}}}{{/str}}</a>
         {{#userfullname}}
-            - <a href="{{{userurl}}}">{{#str}}byname, moodle, {{userfullname}}{{/str}}</a>
+            - <a href="{{{userurl}}}">{{#str}}byname, moodle, {{{userfullname}}}{{/str}}</a>
         {{/userfullname}}
     </div>
 </div>
