@@ -63,6 +63,7 @@ If limits are disabled then any number of participants can select each of the op
 $string['choice:readresponses'] = 'View responses';
 $string['choicesaved'] = 'Your choice has been saved';
 $string['choicetext'] = 'Choice text';
+$string['choice:view'] = 'View choice activity';
 $string['chooseaction'] = 'Choose an action ...';
 $string['description'] = 'Description';
 $string['includeinactive'] = 'Include responses from inactive/suspended users';
