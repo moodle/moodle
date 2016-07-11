@@ -81,6 +81,23 @@ class manager {
     }
 
     /**
+     * Scan data steam using all enabled antiviruses, throws exception in case of infected data.
+     *
+     * @param string $data The varaible containing the data to scan.
+     * @throws \core\antivirus\scanner_exception If data is infected.
+     * @return void
+     */
+    public static function scan_data($data) {
+        $antiviruses = self::get_enabled();
+        foreach ($antiviruses as $antivirus) {
+            $result = $antivirus->scan_data($data);
+            if ($result === $antivirus::SCAN_RESULT_FOUND) {
+                throw new \core\antivirus\scanner_exception('virusfounduser', '', array('item' => get_string('datastream', 'antivirus')));
+            }
+        }
+    }
+
+    /**
      * Returns instance of antivirus.
      *
      * @param string $antivirusname name of antivirus.

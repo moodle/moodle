@@ -26,6 +26,7 @@ $string['actantivirushdr'] = 'Available antivirus plugins';
 $string['antiviruses'] = 'Antivirus plugins';
 $string['antivirussettings'] = 'Manage antivirus plugins';
 $string['configantivirusplugins'] = 'Please choose the antivirus plugins you wish to use and arrange them in order of being applied.';
+$string['datastream'] = 'Data';
 $string['emailsubject'] = '{$a} :: Antivirus notification';
 $string['virusfound'] = '{$a->item} has been scanned by a virus checker and found to be infected!';
 

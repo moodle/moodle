@@ -110,6 +110,26 @@ abstract class scanner {
     public abstract function scan_file($file, $filename);
 
     /**
+     * Scan data.
+     *
+     * By default it saves data variable content to file and then scans it using
+     * scan_file method, however if antivirus plugin permits scanning data directly,
+     * the method can be overridden.
+     *
+     * @param string $data The variable containing the data to scan.
+     * @return int Scanning result constants.
+     */
+    public function scan_data($data) {
+        // Prepare temp file.
+        $tempdir = make_request_directory();
+        $tempfile = $tempdir . DIRECTORY_SEPARATOR . rand();
+        file_put_contents($tempfile, $data);
+
+        // Perform a virus scan now.
+        return $this->scan_file($tempfile, get_string('datastream', 'antivirus'));
+    }
+
+    /**
      * Email admins about antivirus scan outcomes.
      *
      * @param string $notice The body of the email to be sent.
