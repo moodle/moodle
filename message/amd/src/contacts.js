@@ -45,11 +45,13 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
         Contacts.prototype._init = function() {
             this.messageArea.onCustomEvent('conversations-selected', this._viewConversations.bind(this));
             this.messageArea.onCustomEvent('contacts-selected', this._viewContacts.bind(this));
-            this.messageArea.onCustomEvent('messages-deleted', this._viewConversations.bind(this));
+            this.messageArea.onCustomEvent('messages-deleted', this._deleteConversations.bind(this));
             this.messageArea.onCustomEvent('message-send', this._viewConversationsWithUserSelected.bind(this));
             this.messageArea.onCustomEvent('message-sent', this._viewConversationsWithUserSelected.bind(this));
             this.messageArea.onCustomEvent('contact-removed', this._removeContact.bind(this));
             this.messageArea.onCustomEvent('contact-added', this._viewContacts.bind(this));
+            this.messageArea.onCustomEvent('choose-messages-to-delete', this._chooseConversationsToDelete.bind(this));
+            this.messageArea.onCustomEvent('cancel-messages-deleted', this._cancelConversationsToDelete.bind(this));
             this.messageArea.onDelegateEvent('click', "[data-action='view-contact-msg']", this._viewConversation.bind(this));
             this.messageArea.onDelegateEvent('click', "[data-action='view-contact-profile']", this._viewContact.bind(this));
         };
@@ -57,9 +59,14 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
         /**
          * Handles viewing the list of conversations.
          *
+         * @returns {Promise} The promise resolved when the contact area has been rendered,
          * @private
          */
         Contacts.prototype._viewConversations = function() {
+            if (this._isCurrentlyDeleting()) {
+                return;
+            }
+
             return this._loadContactArea('core_message_data_for_messagearea_conversations');
         };
 
@@ -72,6 +79,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          * @private
          */
         Contacts.prototype._viewConversationsWithUserSelected = function(event, userid) {
+            if (this._isCurrentlyDeleting()) {
+                return;
+            }
+
             return this._viewConversations().then(function() {
                 this._setSelectedUser(userid);
             }.bind(this));
@@ -80,9 +91,14 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
         /**
          * Handles viewing the list of contacts.
          *
+         * @returns {Promise} The promise resolved when the contact area has been rendered
          * @private
          */
         Contacts.prototype._viewContacts = function() {
+            if (this._isCurrentlyDeleting()) {
+                return;
+            }
+
             return this._loadContactArea('core_message_data_for_messagearea_contacts');
         };
 
@@ -93,6 +109,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          * @private
          */
         Contacts.prototype._viewConversation = function(event) {
+            if (this._isCurrentlyDeleting()) {
+                return;
+            }
+
             var userid = $(event.currentTarget).data('userid');
             this._setSelectedUser(userid);
             this.messageArea.trigger('conversation-selected', userid);
@@ -105,9 +125,11 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          * @private
          */
         Contacts.prototype._viewContact = function(event) {
-            var userid = $(event.currentTarget).data('userid');
-            this._setSelectedUser(userid);
-            this.messageArea.trigger('contact-selected', userid);
+            if (!this._isCurrentlyDeleting()) {
+                var userid = $(event.currentTarget).data('userid');
+                this._setSelectedUser(userid);
+                this.messageArea.trigger('contact-selected', userid);
+            }
         };
 
         /**
@@ -141,6 +163,72 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
         };
 
         /**
+         * Handles selecting conversations to delete.
+         *
+         * @private
+         */
+        Contacts.prototype._chooseConversationsToDelete = function() {
+            // Only show the checkboxes for the contact if we are also deleting messages.
+            if (this.messageArea.find("[data-region='delete-message-checkbox']").length !== 0) {
+                this.messageArea.find("[data-region='delete-conversation-checkbox']").show();
+            }
+        };
+
+        /**
+         * Handles canceling conversations to delete.
+         *
+         * @private
+         */
+        Contacts.prototype._cancelConversationsToDelete = function() {
+            // Uncheck all checkboxes.
+            this.messageArea.find("[data-region='delete-conversation-checkbox'] input:checked").removeAttr('checked');
+            // Hide the checkboxes.
+            this.messageArea.find("[data-region='delete-conversation-checkbox']").hide();
+        };
+
+        /**
+         * Handles deleting conversations.
+         *
+         * @params {Event} event
+         * @params {int} The user id belonging to the messages we are deleting.
+         * @private
+         */
+        Contacts.prototype._deleteConversations = function(event, userid) {
+            var checkboxes = this.messageArea.find("[data-region='delete-conversation-checkbox'] input:checked");
+            var requests = [];
+
+            // Go through all the checked checkboxes and prepare them for deletion.
+            checkboxes.each(function(id, element) {
+                var node = $(element);
+                var otheruserid = node.parents("[data-region='contact']").data('userid');
+                requests.push({
+                    methodname: 'core_message_delete_conversation',
+                    args: {
+                        userid: this.messageArea.getCurrentUserId(),
+                        otheruserid: otheruserid
+                    }
+                });
+            }.bind(this));
+
+            if (requests.length > 0) {
+                ajax.call(requests)[requests.length - 1].then(function() {
+                    for (var i = 0; i <= requests.length - 1; i++) {
+                        // Trigger conversation deleted events.
+                        this.messageArea.trigger('conversation-deleted', requests[i].args.otheruserid);
+                    }
+                }.bind(this), notification.exception);
+            }
+
+            // Hide all the checkboxes.
+            this._cancelConversationsToDelete();
+
+            // Reload conversation panel. We do this regardless if a conversation was deleted or not
+            // as a message may have been removed which means a conversation in the list may have to
+            // be moved.
+            this._viewConversationsWithUserSelected(event, userid);
+        };
+
+        /**
          * Handles removing a contact from the list.
          *
          * @param {Event} event
@@ -162,6 +250,19 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
             this.messageArea.find("[data-region='contact']").removeClass('selected');
             // Set the tab for the user to selected.
             this.messageArea.find("[data-region='contact'][data-userid='" + userid + "']").addClass('selected');
+        };
+
+        /**
+         * Checks if we are currently choosing conversations to delete.
+         *
+         * @return {Boolean}
+         */
+        Contacts.prototype._isCurrentlyDeleting = function() {
+            if (this.messageArea.find("[data-region='delete-conversation-checkbox']:visible").length !== 0) {
+                return true;
+            }
+
+            return false;
         };
 
         return Contacts;

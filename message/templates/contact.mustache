@@ -1,8 +1,11 @@
 <div class="row-fluid contact {{#selected}}selected{{/selected}}" data-action="{{#lastmessage}}view-contact-msg{{/lastmessage}}{{^lastmessage}}view-contact-profile{{/lastmessage}}" data-userid="{{userid}}" data-region="contact">
+    <div class="span1 deleteconversationcheckbox" data-region="delete-conversation-checkbox">
+        <input type="checkbox"/>
+    </div>
     <div class="span2 picture">
         <img height="64" src="{{profileimageurl}}" alt="" />
     </div>
-    <div class="span10 information">
+    <div class="span9 information">
         <div class="name">{{fullname}} {{#isonline}}*{{/isonline}}</div>
         {{#lastmessage}}
             <p class="lastmessage">{{.}}</p>

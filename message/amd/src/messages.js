@@ -43,6 +43,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          * @private
          */
         Messages.prototype._init = function() {
+            this.messageArea.onCustomEvent('conversation-deleted', this._handleConversationDeleted.bind(this));
             this.messageArea.onCustomEvent('conversation-selected', this._loadMessages.bind(this));
             this.messageArea.onCustomEvent('message-send', this._loadMessages.bind(this));
             this.messageArea.onCustomEvent('choose-messages-to-delete', this._chooseMessagesToDelete.bind(this));
@@ -174,18 +175,38 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
                             this.messageArea.find("[data-region='blocktime'][data-blocktime='" + blocktime + "']").remove();
                         }
                     }.bind(this));
-                    // Simply perform the same action as canceling to delete (hide checkboxes, replace response area etc).
-                    this._cancelMessagesToDelete();
                 }.bind(this), notification.exception);
+            }
+
+            // Hide the items responsible for deleting messages.
+            this._hideDeleteAction();
+
+            // Trigger event letting other modules know messages were deleted.
+            this.messageArea.trigger('messages-deleted',
+                this.messageArea.find("[data-region='messages']").data('userid'));
+        };
+
+        /**
+         * Returns the ID of the other user in the conversation.
+         *
+         * @params {Event} event
+         * @params {int} The user id
+         * @private
+         */
+        Messages.prototype._handleConversationDeleted = function(event, userid) {
+            if (userid == this._getUserId()) {
+                // Clear the current panel.
+                this.messageArea.find("[data-region='messages-area']").empty();
             }
         };
 
         /**
-         * Handles canceling deleting messages.
+         * Handles hiding the delete checkboxes and replacing the response area.
          *
+         * @return {Promise} JQuery promise object resolved when the template has been rendered.
          * @private
          */
-        Messages.prototype._cancelMessagesToDelete = function() {
+        Messages.prototype._hideDeleteAction = function() {
             // Uncheck all checkboxes.
             this.messageArea.find("[data-region='delete-message-checkbox'] input:checked").removeAttr('checked');
             // Hide the checkboxes.
@@ -199,6 +220,18 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
                     templates.replaceNodeContents(responseSelector, html, js);
                 });
             }
+        };
+
+        /**
+         * Handles canceling deleting messages.
+         *
+         * @private
+         */
+        Messages.prototype._cancelMessagesToDelete = function() {
+            // Hide the items responsible for deleting messages.
+            this._hideDeleteAction();
+            // Trigger event letting other modules know message deletion was canceled.
+            this.messageArea.trigger('cancel-messages-deleted');
         };
 
         /**

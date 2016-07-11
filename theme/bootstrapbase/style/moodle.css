@@ -5832,6 +5832,9 @@ a.ygtvspacer:hover {
   background-color: #CCF2FF;
   cursor: pointer;
 }
+.messaging-area .contacts-area .contacts .contact .deleteconversationcheckbox {
+  display: none;
+}
 .messaging-area .contacts-area .contacts .contact .information {
   padding-left: 8px;
   padding-right: 8px;

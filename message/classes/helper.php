@@ -39,30 +39,33 @@ class helper {
      *
      * @param int $userid the current user
      * @param int $otheruserid the other user
+     * @param int $timedeleted the time the message was deleted
      * @param int $limitfrom
      * @param int $limitnum
      * @param string $sort
      * @return array of messages
      */
-    public static function get_messages($userid, $otheruserid, $limitfrom = 0, $limitnum = 0, $sort = 'timecreated ASC') {
+    public static function get_messages($userid, $otheruserid, $timedeleted = 0, $limitfrom = 0, $limitnum = 0, $sort = 'timecreated ASC') {
         global $DB;
 
         $sql = "SELECT id, useridfrom, useridto, subject, fullmessage, fullmessagehtml, fullmessageformat,
                        smallmessage, notification, timecreated, 0 as timeread
                   FROM {message} m
-                 WHERE ((useridto = ? AND useridfrom = ? AND timeusertodeleted = 0)
-                    OR (useridto = ? AND useridfrom = ? AND timeuserfromdeleted = 0))
+                 WHERE ((useridto = ? AND useridfrom = ? AND timeusertodeleted = ?)
+                    OR (useridto = ? AND useridfrom = ? AND timeuserfromdeleted = ?))
                    AND notification = 0
              UNION ALL
                 SELECT id, useridfrom, useridto, subject, fullmessage, fullmessagehtml, fullmessageformat,
                        smallmessage, notification, timecreated, timeread
                   FROM {message_read} mr
-                 WHERE ((useridto = ? AND useridfrom = ? AND timeusertodeleted = 0)
-                    OR (useridto = ? AND useridfrom = ? AND timeuserfromdeleted = 0))
+                 WHERE ((useridto = ? AND useridfrom = ? AND timeusertodeleted = ?)
+                    OR (useridto = ? AND useridfrom = ? AND timeuserfromdeleted = ?))
                    AND notification = 0
               ORDER BY $sort";
-        $params = array($userid, $otheruserid, $otheruserid, $userid,
-                        $userid, $otheruserid, $otheruserid, $userid);
+        $params = array($userid, $otheruserid, $timedeleted,
+                        $otheruserid, $userid, $timedeleted,
+                        $userid, $otheruserid, $timedeleted,
+                        $otheruserid, $userid, $timedeleted);
 
         return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     }

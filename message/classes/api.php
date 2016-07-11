@@ -95,7 +95,7 @@ class api {
      */
     public static function get_messages($userid, $otheruserid, $limitfrom = 0, $limitnum = 0) {
         $arrmessages = array();
-        if ($messages = \core_message\helper::get_messages($userid, $otheruserid, $limitfrom, $limitnum)) {
+        if ($messages = \core_message\helper::get_messages($userid, $otheruserid, 0, $limitfrom, $limitnum)) {
             $arrmessages = \core_message\helper::create_messages($userid, $messages);
         }
 
@@ -111,7 +111,7 @@ class api {
      */
     public static function get_most_recent_message($userid, $otheruserid) {
         // We want two messages here so we get an accurate 'blocktime' value.
-        if ($messages = \core_message\helper::get_messages($userid, $otheruserid, 0, 2, 'timecreated DESC')) {
+        if ($messages = \core_message\helper::get_messages($userid, $otheruserid, 0, 0, 2, 'timecreated DESC')) {
             // Swap the order so we now have them in historical order.
             $messages = array_reverse($messages);
             $arrmessages = \core_message\helper::create_messages($userid, $messages);
@@ -158,5 +158,91 @@ class api {
 
             return new \core_message\output\profile($userid, $data);
         }
+    }
+
+    /**
+     * Checks if a user can delete messages they have either received or sent.
+     *
+     * @param int $userid The user id of who we want to delete the messages for (this may be done by the admin
+     *  but will still seem as if it was by the user)
+     * @return bool Returns true if a user can delete the message, false otherwise.
+     */
+    public static function can_delete_conversation($userid) {
+        global $USER;
+
+        $systemcontext = \context_system::instance();
+
+        // Let's check if the user is allowed to delete this message.
+        if (has_capability('moodle/site:deleteanymessage', $systemcontext) ||
+            ((has_capability('moodle/site:deleteownmessage', $systemcontext) &&
+                $USER->id == $userid))) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Deletes a conversation.
+     *
+     * This function does not verify any permissions.
+     *
+     * @param int $userid The user id of who we want to delete the messages for (this may be done by the admin
+     *  but will still seem as if it was by the user)
+     * @param int $otheruserid The id of the other user in the conversation
+     * @return bool
+     */
+    public static function delete_conversation($userid, $otheruserid) {
+        global $DB, $USER;
+
+        // We need to update the tables to mark all messages as deleted from and to the other user. This seems worse than it
+        // is, that's because our DB structure splits messages into two tables (great idea, huh?) which causes code like this.
+        // This won't be a particularly heavily used function (at least I hope not), so let's hope MDL-36941 gets worked on
+        // soon for the sake of any developers' sanity when dealing with the messaging system.
+        $now = time();
+        $sql = "UPDATE {message}
+                   SET timeuserfromdeleted = :time
+                 WHERE useridfrom = :userid
+                   AND useridto = :otheruserid
+                   AND notification = 0";
+        $DB->execute($sql, array('time' => $now, 'userid' => $userid, 'otheruserid' => $otheruserid));
+
+        $sql = "UPDATE {message}
+                   SET timeusertodeleted = :time
+                 WHERE useridto = :userid
+                   AND useridfrom = :otheruserid
+                   AND notification = 0";
+        $DB->execute($sql, array('time' => $now, 'userid' => $userid, 'otheruserid' => $otheruserid));
+
+        $sql = "UPDATE {message_read}
+                   SET timeuserfromdeleted = :time
+                 WHERE useridfrom = :userid
+                   AND useridto = :otheruserid
+                   AND notification = 0";
+        $DB->execute($sql, array('time' => $now, 'userid' => $userid, 'otheruserid' => $otheruserid));
+
+        $sql = "UPDATE {message_read}
+                   SET timeusertodeleted = :time
+                 WHERE useridto = :userid
+                   AND useridfrom = :otheruserid
+                   AND notification = 0";
+        $DB->execute($sql, array('time' => $now, 'userid' => $userid, 'otheruserid' => $otheruserid));
+
+        // Now we need to trigger events for these.
+        if ($messages = \core_message\helper::get_messages($userid, $otheruserid, $now)) {
+            // Loop through and trigger a deleted event.
+            foreach ($messages as $message) {
+                $messagetable = 'message';
+                if (!empty($message->timeread)) {
+                    $messagetable = 'message_read';
+                }
+
+                // Trigger event for deleting the message.
+                \core\event\message_deleted::create_from_ids($message->useridfrom, $message->useridto,
+                    $USER->id, $messagetable, $message->id)->trigger();
+            }
+        }
+
+        return true;
     }
 }
