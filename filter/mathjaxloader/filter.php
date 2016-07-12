@@ -163,7 +163,22 @@ class filter_mathjaxloader extends moodle_text_filter {
         }
         if ($hasinline || $hasdisplay || $hasextra) {
             $PAGE->requires->yui_module('moodle-filter_mathjaxloader-loader', 'M.filter_mathjaxloader.typeset');
-            return '<span class="nolink"><span class="filter_mathjaxloader_equation">' . $text . '</span></span>';
+            if ($hasextra) {
+                // If custom dilimeters are used, wrap whole text to prevent autolinking.
+                $text = '<span class="nolink">' + $text + '</span>';
+            } else {
+                if ($hasinline) {
+                    // If the default inline TeX delimiters \( \) are present, wrap each pair in nolink.
+                    $text = preg_replace('/\\\\\\([\S\s]*?\\\\\\)/u',
+                        '<span class="nolink">\0</span>', $text);
+                }
+                if ($hasdisplay) {
+                    // If default display TeX is used, wrap $$ $$ or \[ \] individually.
+                    $text = preg_replace('/\$\$[\S\s]*?\$\$|\\\\\\[[\S\s]*?\\\\\\]/u',
+                        '<span class="nolink">\0</span>', $text);
+                }
+            }
+            return '<span class="filter_mathjaxloader_equation">' . $text . '</span>';
         }
         return $text;
     }
