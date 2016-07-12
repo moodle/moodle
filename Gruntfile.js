@@ -132,7 +132,8 @@ module.exports = function(grunt) {
                     expand: true,
                     src: amdSrc,
                     rename: uglifyRename
-                }]
+                }],
+                options: {report: 'none'}
             }
         },
         less: {
