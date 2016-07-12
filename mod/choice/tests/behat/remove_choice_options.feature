@@ -45,6 +45,6 @@ Feature: Update a choice activity removing options
     And I follow "Choice name"
     And I should see "View 2 responses"
     And I navigate to "Edit settings" node in "Choice administration"
-    And I set the field "option[2]" to "" 
+    And I set the field "option[2]" to ""
     And I press "Save and display"
     Then I should see "View 1 responses"
