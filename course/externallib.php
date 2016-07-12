@@ -1449,6 +1449,7 @@ class core_course_external extends external_api {
                             'key' => new external_value(PARAM_ALPHA,
                                          'The category column to search, expected keys (value format) are:'.
                                          '"id" (int) the category id,'.
+                                         '"ids" (string) category ids separated by commas,'.
                                          '"name" (string) the category name,'.
                                          '"parent" (int) the parent category id,'.
                                          '"idnumber" (string) category idnumber'.
@@ -1501,11 +1502,23 @@ class core_course_external extends external_api {
                     switch ($key) {
                         case 'id':
                             $value = clean_param($crit['value'], PARAM_INT);
+                            $conditions[$key] = $value;
+                            $wheres[] = $key . " = :" . $key;
+                            break;
+
+                        case 'ids':
+                            $value = clean_param($crit['value'], PARAM_SEQUENCE);
+                            $ids = explode(',', $value);
+                            list($sqlids, $paramids) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
+                            $conditions = array_merge($conditions, $paramids);
+                            $wheres[] = 'id ' . $sqlids;
                             break;
 
                         case 'idnumber':
                             if (has_capability('moodle/category:manage', $context)) {
                                 $value = clean_param($crit['value'], PARAM_RAW);
+                                $conditions[$key] = $value;
+                                $wheres[] = $key . " = :" . $key;
                             } else {
                                 // We must throw an exception.
                                 // Otherwise the dev client would think no idnumber exists.
@@ -1517,10 +1530,14 @@ class core_course_external extends external_api {
 
                         case 'name':
                             $value = clean_param($crit['value'], PARAM_TEXT);
+                            $conditions[$key] = $value;
+                            $wheres[] = $key . " = :" . $key;
                             break;
 
                         case 'parent':
                             $value = clean_param($crit['value'], PARAM_INT);
+                            $conditions[$key] = $value;
+                            $wheres[] = $key . " = :" . $key;
                             break;
 
                         case 'visible':
@@ -1528,6 +1545,8 @@ class core_course_external extends external_api {
                                 or has_capability('moodle/category:viewhiddencategories',
                                         context_system::instance())) {
                                 $value = clean_param($crit['value'], PARAM_INT);
+                                $conditions[$key] = $value;
+                                $wheres[] = $key . " = :" . $key;
                             } else {
                                 throw new moodle_exception('criteriaerror',
                                         'webservice', '', null,
@@ -1538,6 +1557,8 @@ class core_course_external extends external_api {
                         case 'theme':
                             if (has_capability('moodle/category:manage', $context)) {
                                 $value = clean_param($crit['value'], PARAM_THEME);
+                                $conditions[$key] = $value;
+                                $wheres[] = $key . " = :" . $key;
                             } else {
                                 throw new moodle_exception('criteriaerror',
                                         'webservice', '', null,
@@ -1549,11 +1570,6 @@ class core_course_external extends external_api {
                             throw new moodle_exception('criteriaerror',
                                     'webservice', '', null,
                                     'You can not search on this criteria: ' . $key);
-                    }
-
-                    if (isset($value)) {
-                        $conditions[$key] = $value;
-                        $wheres[] = $key . " = :" . $key;
                     }
                 }
             }
