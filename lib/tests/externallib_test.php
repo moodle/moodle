@@ -183,6 +183,7 @@ class core_externallib_testcase extends advanced_testcase {
         $correct = 'ENFR hi there%';
         $this->assertSame($correct, external_format_string($test, $context->id, false, ['filter' => false]));
 
+        $this->assertSame("& < > \" '", format_string("& < > \" '", true, ['escape' => false]));
 
         $settings->set_raw($currentraw);
         $settings->set_filter($currentfilter);
