@@ -75,7 +75,7 @@ class block_settings_renderer extends plugin_renderer_base {
             }
 
             $content = $this->output->render($item);
-            $id = $item->id ? $item->id : uniqid();
+            $id = $item->id ? $item->id : html_writer::random_id();
             $ulattr = ['id' => $id . '_group', 'role' => 'group'];
             $liattr = ['class' => [$item->get_css_type(), 'depth_'.$depth], 'tabindex' => '-1'];
             $pattr = ['class' => ['tree_item'], 'role' => 'treeitem'];

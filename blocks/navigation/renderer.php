@@ -86,7 +86,7 @@ class block_navigation_renderer extends plugin_renderer_base {
                 continue;
             }
 
-            $id = $item->id ? $item->id : uniqid();
+            $id = $item->id ? $item->id : html_writer::random_id();
             $content = $item->get_content();
             $title = $item->get_title();
             $ulattr = ['id' => $id . '_group', 'role' => 'group'];
