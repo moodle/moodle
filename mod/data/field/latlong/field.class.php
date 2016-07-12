@@ -196,6 +196,14 @@ class data_field_latlong extends data_field_base {
         return false;
     }
 
+    function update_content_import($recordid, $value, $name='') {
+        $values = explode(" ", $value, 2);
+
+        foreach ($values as $index => $value) {
+            $this->update_content($recordid, $value, $name . '_' . $index);
+        }
+    }
+
     function update_content($recordid, $value, $name='') {
         global $DB;
 
