@@ -460,6 +460,8 @@ function css_minify_css($files) {
 
 /**
  * Hack to find out the GD version by parsing phpinfo output
+ *
+ * @deprecated
  */
 function check_gd_version() {
     throw new coding_exception('check_gd_version() is removed, GD extension is always available now');
@@ -2762,6 +2764,7 @@ function tag_delete_instance($record_type, $record_id, $tagid, $userid = null) {
  * Find all records tagged with a tag of a given type ('post', 'user', etc.)
  *
  * @package  core_tag
+ * @deprecated since 3.1
  * @category tag
  * @param    string   $tag       tag to look for
  * @param    string   $type      type to restrict search to.  If null, every matching record will be returned
