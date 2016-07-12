@@ -8,6 +8,9 @@ This information is intended for authors of webservices, not people writing webs
 * webservice->get_external_functions now returns the external function list ordered by name ASC.
 * The filearea optional parameter has been removed from webservice/upload.php.
   Since Moodle 3.1 all the uploads go to the draft area.
+* external_format_text() function: component, filearea and itemid are now optional parameters.
+  In some contexts those parameteres are not necessary because is not required to do a file rewrite via
+  file_rewrite_pluginfile_urls.
 
 === 3.1 ===
 

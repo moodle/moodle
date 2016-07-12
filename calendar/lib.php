@@ -2722,7 +2722,7 @@ class calendar_event {
             if ($this->properties->eventtype != 'user' && $this->properties->eventtype != 'course'
                     && $this->properties->eventtype != 'site' && $this->properties->eventtype != 'group') {
                 // We don't have a context here, do a normal format_text.
-                return array(format_text($this->properties->description, $this->properties->format), $this->properties->format);
+                return external_format_text($this->properties->description, $this->properties->format, $this->editorcontext->id);
             }
         }
 
