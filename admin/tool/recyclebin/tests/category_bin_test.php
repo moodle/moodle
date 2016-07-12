@@ -39,6 +39,11 @@ class tool_recyclebin_category_bin_tests extends advanced_testcase {
     protected $course;
 
     /**
+     * @var stdClass $coursebeingrestored
+     */
+    protected $coursebeingrestored;
+
+    /**
      * Setup for each test.
      */
     protected function setUp() {
@@ -57,10 +62,16 @@ class tool_recyclebin_category_bin_tests extends advanced_testcase {
     public function test_pre_course_delete_hook() {
         global $DB;
 
+        // This simulates a temporary course being cleaned up by a course restore.
+        $this->coursebeingrestored = $this->getDataGenerator()->create_course();
+        $this->coursebeingrestored->deletesource = 'restore';
+
         // Should have nothing in the recycle bin.
         $this->assertEquals(0, $DB->count_records('tool_recyclebin_category'));
 
         delete_course($this->course, false);
+        // This should not be added to the recycle bin.
+        delete_course($this->coursebeingrestored, false);
 
         // Check the course is now in the recycle bin.
         $this->assertEquals(1, $DB->count_records('tool_recyclebin_category'));
