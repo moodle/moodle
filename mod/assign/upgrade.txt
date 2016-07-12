@@ -7,6 +7,10 @@ This files describes API changes in the assign code.
 * Proper checking for empty submissions
 * Submission modification time checking - this will help students working in groups not clobber each others'
   submissions
+* External functions that were returning file information now return the following file fields:
+  filename, filepath, mimetype, filesize, timemodified and fileurl.
+  Those fields are now marked as VALUE_OPTIONAL for backwards compatibility.
+  Please, note that previously the filename was part of the filepath field, now they are separated.
 
 === 3.1 ===
 * The feedback plugins now need to implement the is_feedback_modified() method. The default is to return true

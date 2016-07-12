@@ -30,6 +30,9 @@ information provided here is intended especially for developers.
   - forum_get_subscribed_forums
   - forum_get_optional_subscribed_forums
   - forum_get_potential_subscribers
+ * External functions that were returning file information now return the following file fields:
+   filename, filepath, mimetype, filesize, timemodified and fileurl.
+   Those fields are now marked as VALUE_OPTIONAL for backwards compatibility.
 
 === 3.1 ===
  * The inteface to forum_get_email_message_id() has changed and no longer needs the $host argument.

@@ -91,13 +91,7 @@ class mod_glossary_external extends external_api {
             'definitionformat' => new external_format_value('definition'),
             'definitiontrust' => new external_value(PARAM_BOOL, 'The definition trust flag'),
             'attachment' => new external_value(PARAM_BOOL, 'Whether or not the entry has attachments'),
-            'attachments' => new external_multiple_structure(
-                new external_single_structure(array(
-                    'filename' => new external_value(PARAM_FILE, 'File name'),
-                    'mimetype' => new external_value(PARAM_RAW, 'Mime type'),
-                    'fileurl'  => new external_value(PARAM_URL, 'File download URL')
-                )), 'attachments', VALUE_OPTIONAL
-            ),
+            'attachments' => new external_files('attachments', VALUE_OPTIONAL),
             'timecreated' => new external_value(PARAM_INT, 'Time created'),
             'timemodified' => new external_value(PARAM_INT, 'Time modified'),
             'teacherentry' => new external_value(PARAM_BOOL, 'The entry was created by a teacher, or equivalent.'),
@@ -148,19 +142,7 @@ class mod_glossary_external extends external_api {
         $entry->attachment = !empty($entry->attachment) ? 1 : 0;
         $entry->attachments = array();
         if ($entry->attachment) {
-            $fs = get_file_storage();
-            if ($files = $fs->get_area_files($context->id, 'mod_glossary', 'attachment', $entry->id, 'filename', false)) {
-                foreach ($files as $file) {
-                    $filename = $file->get_filename();
-                    $fileurl = moodle_url::make_webservice_pluginfile_url($context->id, 'mod_glossary', 'attachment',
-                        $entry->id, '/', $filename);
-                    $entry->attachments[] = array(
-                        'filename' => $filename,
-                        'mimetype' => $file->get_mimetype(),
-                        'fileurl'  => $fileurl->out(false)
-                    );
-                }
-            }
+            $files = external_util::get_area_files($context->id, 'mod_glossary', 'attachment', $entry->id);
         }
     }
 

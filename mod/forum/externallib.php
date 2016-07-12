@@ -283,22 +283,7 @@ class mod_forum_external extends external_api {
 
             // List attachments.
             if (!empty($post->attachment)) {
-                $post->attachments = array();
-
-                $fs = get_file_storage();
-                if ($files = $fs->get_area_files($modcontext->id, 'mod_forum', 'attachment', $post->id, "filename", false)) {
-                    foreach ($files as $file) {
-                        $filename = $file->get_filename();
-                        $fileurl = moodle_url::make_webservice_pluginfile_url(
-                                        $modcontext->id, 'mod_forum', 'attachment', $post->id, '/', $filename);
-
-                        $post->attachments[] = array(
-                            'filename' => $filename,
-                            'mimetype' => $file->get_mimetype(),
-                            'fileurl'  => $fileurl->out(false)
-                        );
-                    }
-                }
+                $post->attachments = external_util::get_area_files($modcontext->id, 'mod_forum', 'attachment', $post->id);
             }
 
             $posts[] = $post;
@@ -334,15 +319,7 @@ class mod_forum_external extends external_api {
                                 'messageformat' => new external_format_value('message'),
                                 'messagetrust' => new external_value(PARAM_INT, 'Can we trust?'),
                                 'attachment' => new external_value(PARAM_RAW, 'Has attachments?'),
-                                'attachments' => new external_multiple_structure(
-                                    new external_single_structure(
-                                        array (
-                                            'filename' => new external_value(PARAM_FILE, 'file name'),
-                                            'mimetype' => new external_value(PARAM_RAW, 'mime type'),
-                                            'fileurl'  => new external_value(PARAM_URL, 'file download url')
-                                        )
-                                    ), 'attachments', VALUE_OPTIONAL
-                                ),
+                                'attachments' => new external_files('attachments', VALUE_OPTIONAL),
                                 'totalscore' => new external_value(PARAM_INT, 'The post message total score'),
                                 'mailnow' => new external_value(PARAM_INT, 'Mail now?'),
                                 'children' => new external_multiple_structure(new external_value(PARAM_INT, 'children post id')),
@@ -518,22 +495,8 @@ class mod_forum_external extends external_api {
 
                 // List attachments.
                 if (!empty($discussion->attachment)) {
-                    $discussion->attachments = array();
-
-                    $fs = get_file_storage();
-                    if ($files = $fs->get_area_files($modcontext->id, 'mod_forum', 'attachment',
-                                                        $discussion->id, "filename", false)) {
-                        foreach ($files as $file) {
-                            $filename = $file->get_filename();
-
-                            $discussion->attachments[] = array(
-                                'filename' => $filename,
-                                'mimetype' => $file->get_mimetype(),
-                                'fileurl'  => file_encode_url($CFG->wwwroot.'/webservice/pluginfile.php',
-                                                '/'.$modcontext->id.'/mod_forum/attachment/'.$discussion->id.'/'.$filename)
-                            );
-                        }
-                    }
+                    $discussion->attachments = external_util::get_area_files($modcontext->id, 'mod_forum', 'attachment',
+                                                                                $discussion->id);
                 }
 
                 $discussions[] = $discussion;
@@ -577,15 +540,7 @@ class mod_forum_external extends external_api {
                                 'messageformat' => new external_format_value('message'),
                                 'messagetrust' => new external_value(PARAM_INT, 'Can we trust?'),
                                 'attachment' => new external_value(PARAM_RAW, 'Has attachments?'),
-                                'attachments' => new external_multiple_structure(
-                                    new external_single_structure(
-                                        array (
-                                            'filename' => new external_value(PARAM_FILE, 'file name'),
-                                            'mimetype' => new external_value(PARAM_RAW, 'mime type'),
-                                            'fileurl'  => new external_value(PARAM_URL, 'file download url')
-                                        )
-                                    ), 'attachments', VALUE_OPTIONAL
-                                ),
+                                'attachments' => new external_files('attachments', VALUE_OPTIONAL),
                                 'totalscore' => new external_value(PARAM_INT, 'The post message total score'),
                                 'mailnow' => new external_value(PARAM_INT, 'Mail now?'),
                                 'userfullname' => new external_value(PARAM_TEXT, 'Post author full name'),
