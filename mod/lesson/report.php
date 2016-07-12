@@ -128,19 +128,23 @@ if ($action === 'delete') {
         list($esql, $params) = get_enrolled_sql($context, '', $currentgroup, true);
         list($sort, $sortparams) = users_order_by_sql('u');
 
-        $params['lessonid'] = $lesson->id;
+        $params['a1lessonid'] = $lesson->id;
+        $params['b1lessonid'] = $lesson->id;
+        $params['c1lessonid'] = $lesson->id;
         $ufields = user_picture::fields('u');
         $sql = "SELECT DISTINCT $ufields
                 FROM {user} u
                 JOIN (
                     SELECT userid, lessonid FROM {lesson_attempts} a1
+                    WHERE a1.lessonid = :a1lessonid
                         UNION
                     SELECT userid, lessonid FROM {lesson_branch} b1
+                    WHERE b1.lessonid = :b1lessonid
                         UNION
                     SELECT userid, lessonid FROM {lesson_timer} c1
+                    WHERE c1.lessonid = :c1lessonid
                     ) a ON u.id = a.userid
                 JOIN ($esql) ue ON ue.id = a.userid
-                WHERE a.lessonid = :lessonid
                 ORDER BY $sort";
 
         $students = $DB->get_recordset_sql($sql, $params);
