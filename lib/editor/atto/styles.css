@@ -38,7 +38,6 @@ div.editor_atto_toolbar button {
     margin: 0;
     border-radius: 0;
     cursor: pointer;
-    line-height: initial;
  }
 
 div.editor_atto_toolbar button + button {
