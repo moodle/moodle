@@ -45,7 +45,7 @@ require_login($course);
 $context = context_course::instance($course->id);
 require_capability('moodle/grade:manage', $context);
 
-$PAGE->requires->js_call_amd('grades/edittree_index', 'enhance');
+$PAGE->requires->js_call_amd('core_grades/edittree_index', 'enhance');
 
 /// return tracking object
 $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'tree', 'courseid'=>$courseid));
