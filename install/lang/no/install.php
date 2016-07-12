@@ -66,7 +66,9 @@ $string['pathshead'] = 'Bekreft stier';
 $string['pathsrodataroot'] = 'Dataroot katalog er ikke skrivbar.';
 $string['pathsroparentdataroot'] = 'Overordnet katalog ({$a->parent}) er ikke skrivbar. Datakatalogen ({$a->dataroot}) kan ikke opprettes av installasjonsprogrammet.';
 $string['pathssubadmindir'] = 'Noen ganske få webhoteller bruker  /admin som en egen url for å få tilgang til et kontrollpanel. Dessverre kommer det i konflikt med standard lokalisering av Moodle sine admin-sider. Du kan fikse dette ved å endre navn på admin-mappen og deretter oppgi dette navnet her. F.eks. <em>moodleadmin</em>.  Dette vil fikse adminlenkene i Moodle.';
-$string['pathssubdataroot'] = 'Du trenger et sted hvor Moodle kan lagre opplastede filer. Denne mappen må være med lese og skriverettigheter for webserver-brukeren (veldig ofte \'nobody\' eller \'apache\'), men denne mappen må IKKE være direkte tilgjengelig via web. Installasjonsprogrammet vil forsøke å opprette den om den ikke finnes fra før.';
+$string['pathssubdataroot'] = '<p>En mappe der Moodle vil lagre alle filer lastet opp av brukerne.</p>
+<p>Denne mappen må være med lese og skriverettigheter for webserver-brukeren (vanligvis \'www-data\', \'nobody\' eller \'apache\').</p>
+<p>Denne mappen må IKKE være direkte tilgjengelig via web.</p> <p>Installasjonsprogrammet vil forsøke å opprette den om den ikke finnes fra før.</p>';
 $string['pathssubdirroot'] = '<p>Full mappesti til moodleinstallasjonen.</p>';
 $string['pathssubwwwroot'] = '<p>Full webadresse til der hvor Moodle skal vises, altså den addressen som brukere skriver inn i adresselinjen i nettlseren sin.</p>
 <p>Det er ikke mulig å bruke Moodle med mer enn en adresse. Dersom portalen din har flere webadresser bør du oppgi den enkleste av de her, og bruke videresending for  hver av de andre adressene.</p>
