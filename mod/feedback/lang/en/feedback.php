@@ -240,9 +240,7 @@ $string['show_entry'] = 'Show response';
 $string['show_nonrespondents'] = 'Show non-respondents';
 $string['site_after_submit'] = 'Site after submit';
 $string['sort_by_course'] = 'Sort by course';
-$string['start'] = 'Start';
 $string['started'] = 'started';
-$string['stop'] = 'End';
 $string['subject'] = 'Subject';
 $string['switch_item_to_not_required'] = 'Set as not required';
 $string['switch_item_to_required'] = 'Set as required';
@@ -298,3 +296,6 @@ $string['relateditemsdeleted'] = 'All responses for this question will also be d
 $string['radiorated'] = 'Radiobutton (rated)';
 $string['radiobutton'] = 'Multiple choice - single answer allowed (radio buttons)';
 $string['radiobutton_rated'] = 'Radiobutton (rated)';
+// Deprecated since Moodle 3.2.
+$string['start'] = 'Start';
+$string['stop'] = 'End';

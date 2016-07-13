@@ -23,6 +23,8 @@ relateditemsdeleted,mod_feedback
 separator_decimal,mod_feedback
 separator_thousand,mod_feedback
 saving_failed_because_missing_or_false_values,mod_feedback
+start,mod_feedback
+stop,mod_feedback
 switch_group,mod_feedback
 viewcompleted,mod_feedback
 viewcompleted_help,mod_feedback
