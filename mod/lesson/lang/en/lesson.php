@@ -253,6 +253,7 @@ $string['lesson:edit'] = 'Edit a lesson activity';
 $string['lessonformating'] = 'Lesson formatting';
 $string['lesson:manage'] = 'Manage a lesson activity';
 $string['lesson:manageoverrides'] = 'Manage lesson overrides';
+$string['lesson:view'] = 'View lesson activity';
 $string['lesson:viewreports'] = 'View lesson reports';
 $string['lessonname'] = 'Lesson: {$a}';
 $string['lessonmenu'] = 'Lesson menu';
