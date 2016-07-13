@@ -197,6 +197,7 @@ $string['downloadinfo'] = 'You can download the complete raw data for this surve
 $string['downloadresults'] = 'Download results';
 $string['downloadtext'] = 'Download data as a plain text file';
 $string['editingasurvey'] = 'Editing a survey';
+$string['errorunabletosavenotes'] = 'An error occurred while saving your notes.';
 $string['eventreportdownloaded'] = 'Survey report downloaded';
 $string['eventreportviewed'] = 'Survey report viewed';
 $string['eventresponsesubmitted'] = 'Survey response submitted';
