@@ -8,6 +8,9 @@ information provided here is intended especially for developers.
   This is to allow the same markup to work in "clean" and "boost" themes alot of the time. It is also to allow user text
   with bootstrap classes to keep working in the new theme. See MDL-56004 for the list of supported classes.
 * MForms element 'submitlink' has been deprecated.
+* Searchable selector form element is now a wrapper for autocomplete. A "No selection" option is automatically
+  added to the options list for best backwards compatibility - if you were manually adding a "no selection" option you will need
+  to remove it.
 * Node.js versions >=4 are now required to run grunt.
 * JQuery has been updated to 3.1.0. JQuery migrate plugins are no longer shipped - please read
   https://jquery.com/upgrade-guide/3.0/ and update your javascript.
