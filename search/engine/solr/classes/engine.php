@@ -316,6 +316,9 @@ class engine extends \core_search\engine {
             $query->setGroupLimit(3);
             $query->setGroupNGroups(true);
             $query->addGroupField('solr_filegroupingid');
+        } else {
+            // Make sure we only get text files, in case the index has pre-existing files.
+            $query->addFilterQuery('type:'.\core_search\manager::TYPE_TEXT);
         }
 
         return $query;
