@@ -331,6 +331,7 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
         $toc .= html_writer::start_tag('ul');
         foreach ($chapters as $ch) {
             $title = trim(format_string($ch->title, true, array('context'=>$context)));
+            $titleunescaped = trim(format_string($ch->title, true, array('context' => $context, 'escape' => false)));
             if (!$ch->hidden) {
                 if (!$ch->subchapter) {
                     $nch++;
