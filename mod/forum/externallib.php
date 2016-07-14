@@ -485,6 +485,7 @@ class mod_forum_external extends external_api {
             $userpicture->size = 1; // Size f1.
             $post->userpictureurl = $userpicture->get_url($PAGE)->out(false);
 
+            $post->subject = external_format_string($post->subject, $modcontext->id);
             // Rewrite embedded images URLs.
             list($post->message, $post->messageformat) =
                 external_format_text($post->message, $post->messageformat, $modcontext->id, 'mod_forum', 'post', $post->id);
@@ -717,6 +718,8 @@ class mod_forum_external extends external_api {
                 $userpicture->size = 1; // Size f1.
                 $discussion->usermodifiedpictureurl = $userpicture->get_url($PAGE)->out(false);
 
+                $discussion->name = external_format_string($discussion->name, $modcontext->id);
+                $discussion->subject = external_format_string($discussion->subject, $modcontext->id);
                 // Rewrite embedded images URLs.
                 list($discussion->message, $discussion->messageformat) =
                     external_format_text($discussion->message, $discussion->messageformat,
