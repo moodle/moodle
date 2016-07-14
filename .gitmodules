@@ -1,3 +1,6 @@
 [submodule "theme/eagle"]
 	path = theme/eagle
 	url = https://richardsonsamuel@github.com/ptsaustralia/mcmdl-eagletheme.git
+[submodule "blocks/ned_mentor"]
+	path = blocks/ned_mentor
+	url = https://richardsonsamuel@github.com/ptsaustralia/mcmdl-ned.git
