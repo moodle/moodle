@@ -30,28 +30,15 @@ define([], function() {
      */
     function Actions(messageArea) {
         this.messageArea = messageArea;
-        this._init();
     }
 
     /** @type {Messagearea} The messaging area object. */
     Actions.prototype.messageArea = null;
 
     /**
-     * Initialise the event listeners.
-     *
-     * @private
-     */
-    Actions.prototype._init = function() {
-        this.messageArea.onDelegateEvent('click', "[data-action='choose-messages-to-delete']",
-            this._chooseMessagesToDelete.bind(this));
-    };
-
-    /**
      * Handles when we have selected to delete messages.
-     *
-     * @private
      */
-    Actions.prototype._chooseMessagesToDelete = function() {
+    Actions.prototype.chooseMessagesToDelete = function() {
         this.messageArea.trigger('choose-messages-to-delete');
     };
 

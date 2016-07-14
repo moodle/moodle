@@ -5766,8 +5766,52 @@ a.ygtvspacer:hover {
   padding-left: 5px;
 }
 /** The message area **/
+.messaging-area-all .actions {
+  float: right;
+}
+.messaging-area-all .actions .core-message-menu {
+  margin: 0;
+}
+.messaging-area-all .actions .core-message-menu li {
+  float: left;
+  position: relative;
+  list-style-type: none;
+  white-space: nowrap;
+}
+.messaging-area-all .actions .core-message-menu ul[aria-hidden=true] {
+  display: none;
+}
+.messaging-area-all .actions .core-message-menu .caret {
+  margin: 8px;
+}
+.messaging-area-all .actions .core-message-menu .core-message-sub-menu {
+  position: absolute;
+  list-style: none;
+  margin: 0;
+}
+.messaging-area-all .actions .core-message-menu .core-message-sub-menu li {
+  float: none;
+}
+.messaging-area-all .actions .core-message-menu .core-message-sub-menu .menu-focus a {
+  color: #fff;
+  text-decoration: none;
+  background-color: #00699e;
+  background-image: linear-gradient(to bottom, #0070a8, #005f8f);
+  background-repeat: repeat-x;
+}
+.messaging-area-all .actions .core-message-menu .core-message-sub-menu[aria-hidden=false] {
+  display: block;
+}
+.messaging-area-all .actions .core-message-menu.core-message-menu-open-left .core-message-sub-menu {
+  margin-left: -120px;
+}
+.messaging-area-all .actions .dir-rtl .core-message-menu.core-message-menu-open-left .core-message-sub-menu {
+  margin-left: 0;
+  margin-right: -120px;
+}
 .messaging-area {
   border: 1px solid black;
+  clear: both;
 }
 .messaging-area .contacts-area {
   border-right: 1px solid black;

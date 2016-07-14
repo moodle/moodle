@@ -42,7 +42,6 @@ define(['jquery', 'core_message/actions', 'core_message/contacts', 'core_message
          * Initialise the other objects we require.
          */
         Messagearea.prototype._init = function() {
-            new Actions(this);
             new Contacts(this);
             new Messages(this);
             new Profile(this);

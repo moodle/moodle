@@ -1,6 +1,64 @@
 /** The message area **/
+.messaging-area-all {
+
+    .actions {
+        float: right;
+
+        .core-message-menu {
+            margin: 0;
+
+            li {
+                float: left;
+                position: relative;
+                list-style-type: none;
+                white-space: nowrap;
+            }
+
+            ul[aria-hidden=true] {
+                display: none;
+            }
+
+            .caret {
+                margin: 8px;
+            }
+
+            .core-message-sub-menu {
+                position: absolute;
+                list-style: none;
+                margin: 0;
+
+                li {
+                    float: none;
+                }
+
+                .menu-focus a {
+                    color: #fff;
+                    text-decoration: none;
+                    background-color: #00699e;
+                    background-image: linear-gradient(to bottom, #0070a8, #005f8f);
+                    background-repeat: repeat-x;
+                }
+            }
+
+            .core-message-sub-menu[aria-hidden=false] {
+                display: block;
+            }
+        }
+
+        .core-message-menu.core-message-menu-open-left .core-message-sub-menu {
+            margin-left: -120px;
+        }
+
+        .dir-rtl .core-message-menu.core-message-menu-open-left .core-message-sub-menu {
+            margin-left: 0;
+            margin-right: -120px;
+        }
+    }
+}
+
 .messaging-area {
     border: 1px solid black;
+    clear: both;
 
     .setSelected() {
         background-color: #CCF2FF;

@@ -1,5 +1,18 @@
 <div class="messaging-area-all" data-loggedinuserid="{{loggedinuserid}}" data-userid="{{userid}}">
-    <input type="button" value="{{#str}}delete{{/str}}" data-action="choose-messages-to-delete"/>
+    <div class="actions">
+        <ul title="{{#str}}edit{{/str}}" class="messagingareaactions">
+            <li>
+                <a href="#">{{#pix}}i/settings{{/pix}}</a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a data-action="delete-messages" href="#">
+                            {{#str}}delete{{/str}}
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
     <div class="messaging-area">
         <div class="row-fluid">
             <div class="span4 contacts-area" data-region="contacts-area">
@@ -16,7 +29,14 @@
     </div>
 </div>
 {{#js}}
-    require(['core_message/message-area'], function(Messagearea) {
-        var messageArea = new Messagearea('.messaging-area-all');
-    });
+    require(['core_message/message-area', 'core_message/menubar', 'core_message/actions'],
+        function(Messagearea, Menubar, Actions) {
+            var messageArea = new Messagearea('.messaging-area-all');
+            var actions = new Actions(messageArea);
+
+            Menubar.enhance('.messagingareaactions', {
+                "[data-action='delete-messages']": actions.chooseMessagesToDelete.bind(actions),
+            });
+        }
+    );
 {{/js}}
