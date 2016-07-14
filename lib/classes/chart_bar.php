@@ -34,6 +34,20 @@ defined('MOODLE_INTERNAL') || die();
  */
 class chart_bar extends chart_base {
 
+    /** @var bool Whether the bars should be displayed horizontally or not. */
+    protected $horizontal = false;
+
+   /**
+    * Add the horizontal to the parent and return the serialized data.
+    *
+    * @return array
+    */
+    public function jsonSerialize() {
+        $data = parent::jsonSerialize();
+        $data['horizontal'] = $this->get_horizontal();
+        return $data;
+    }
+
     /**
      * Set the defaults.
      */
@@ -43,4 +57,21 @@ class chart_bar extends chart_base {
         $yaxis->set_min(0);
     }
 
+    /**
+     * Get whether the bars should be displayed horizontally or not.
+     *
+     * @return bool
+     */
+    public function get_horizontal() {
+        return $this->horizontal;
+    }
+
+    /**
+     * Get Set whether the bars should be displayed horizontally or not.
+     *
+     * @param bool $horizontal True if the bars should be displayed horizontally, false otherwise.
+     */
+    public function set_horizontal($horizontal) {
+        $this->horizontal = $horizontal;
+    }
 }
