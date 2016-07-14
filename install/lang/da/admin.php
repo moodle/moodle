@@ -36,7 +36,11 @@ $string['cliincorrectvalueerror'] = 'Fejl, "{$a->value}" er en forkert værdi fo
 $string['cliincorrectvalueretry'] = 'Forkert værdi, prøv igen!';
 $string['clitypevalue'] = 'tast værdi';
 $string['clitypevaluedefault'] = 'tast værdi eller brug standardværdien ({$a}) ved at trykke Enter';
-$string['cliunknowoption'] = 'Ukendte options: {$a} Brug venligst --help option.';
+$string['cliunknowoption'] = 'Ukendte options:
+
+{$a}
+
+Brug venligst --help option.';
 $string['cliyesnoprompt'] = 'j (betyder ja) og n (betyder nej)';
 $string['environmentrequireinstall'] = 'skal være installeret og aktiveret';
 $string['environmentrequireversion'] = 'minimumskravet er version {$a->needed} og du kører {$a->current}';
