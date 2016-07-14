@@ -1,0 +1,3 @@
+[submodule "theme/eagle"]
+	path = theme/eagle
+	url = https://richardsonsamuel@github.com/ptsaustralia/mcmdl-eagletheme.git
