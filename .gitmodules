@@ -4,3 +4,6 @@
 [submodule "course/format/grid"]
 	path = course/format/grid
 	url = https://richardsonsamuel@github.com/ptsaustralia/mcmdl-griddy.git
+[submodule "theme/eagle"]
+	path = theme/eagle
+	url = https://richardsonsamuel@github.com/ptsaustralia/mcmdl-eagle.git
