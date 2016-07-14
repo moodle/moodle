@@ -378,7 +378,7 @@ class assign {
      * @param string $subtype - either submission or feedback
      * @return array - The sorted list of plugins
      */
-    protected function load_plugins($subtype) {
+    public function load_plugins($subtype) {
         global $CFG;
         $result = array();
 

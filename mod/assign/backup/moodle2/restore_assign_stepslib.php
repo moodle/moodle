@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
 /**
  * Define the complete assignment structure for restore, with file and id annotations
  *
@@ -335,12 +337,32 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
     }
 
     /**
+     * Restore files from plugin configuration
+     * @param string $subtype the plugin type to handle
+     * @return void
+     */
+    protected function add_plugin_config_files($subtype) {
+        $dummyassign = new assign(null, null, null);
+        $plugins = $dummyassign->load_plugins($subtype);
+        foreach ($plugins as $plugin) {
+            $component = $plugin->get_subtype() . '_' . $plugin->get_type();
+            $areas = $plugin->get_config_file_areas();
+            foreach ($areas as $area) {
+                $this->add_related_files($component, $area, null);
+            }
+        }
+    }
+
+    /**
      * Once the database tables have been fully restored, restore the files
      * @return void
      */
     protected function after_execute() {
         $this->add_related_files('mod_assign', 'intro', null);
         $this->add_related_files('mod_assign', 'introattachment', null);
+
+        $this->add_plugin_config_files('assignsubmission');
+        $this->add_plugin_config_files('assignfeedback');
 
         $this->set_latest_submission_field();
     }

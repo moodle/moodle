@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
 /**
  * Define the complete choice structure for backup, with file and id annotations
  *
@@ -32,6 +34,24 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_assign_activity_structure_step extends backup_activity_structure_step {
+
+    /**
+     * Annotate files from plugin configuration
+     * @param backup_nested_element $assign the backup structure of the activity
+     * @param string $subtype the plugin type to handle
+     * @return void
+     */
+    protected function annotate_plugin_config_files(backup_nested_element $assign, $subtype) {
+        $dummyassign = new assign(null, null, null);
+        $plugins = $dummyassign->load_plugins($subtype);
+        foreach ($plugins as $plugin) {
+            $component = $plugin->get_subtype() . '_' . $plugin->get_type();
+            $areas = $plugin->get_config_file_areas();
+            foreach ($areas as $area) {
+                $assign->annotate_files($component, $area, null);
+            }
+        }
+    }
 
     /**
      * Define the structure for the assign activity
@@ -153,6 +173,8 @@ class backup_assign_activity_structure_step extends backup_activity_structure_st
         // These file areas don't have an itemid.
         $assign->annotate_files('mod_assign', 'intro', null);
         $assign->annotate_files('mod_assign', 'introattachment', null);
+        $this->annotate_plugin_config_files($assign, 'assignsubmission');
+        $this->annotate_plugin_config_files($assign, 'assignfeedback');
 
         // Return the root element (choice), wrapped into standard activity structure.
 
