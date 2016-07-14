@@ -4,3 +4,6 @@
 [submodule "blocks/ned_mentor"]
 	path = blocks/ned_mentor
 	url = https://richardsonsamuel@github.com/ptsaustralia/mcmdl-ned.git
+[submodule "course/format/grid"]
+	path = course/format/grid
+	url = https://richardsonsamuel@github.com/ptsaustralia/mcmdl-griddy.git
