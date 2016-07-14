@@ -665,5 +665,5 @@ case workshop::PHASE_CLOSED:
     break;
 default:
 }
-
+$PAGE->requires->js_call_amd('mod_workshop/workshopview', 'init');
 echo $output->footer();
