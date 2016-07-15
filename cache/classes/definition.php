@@ -840,17 +840,14 @@ class cache_definition {
     }
 
     /**
-     * Returns true if this definitions cache should be made persistent.
-     *
      * Please call {@link cache_definition::use_static_acceleration()} instead.
      *
      * @see cache_definition::use_static_acceleration()
      * @deprecated since 2.6
-     * @return bool
      */
     public function should_be_persistent() {
-        debugging('Please upgrade your code to use cache_definition::use_static_acceleration', DEBUG_DEVELOPER);
-        return $this->use_static_acceleration();
+        throw new coding_exception('class_definition::should_be_persistent() can not be used anymore.' .
+            ' Please use cache_definition::use_static_acceleration() instead.');
     }
 
     /**
@@ -870,17 +867,14 @@ class cache_definition {
     }
 
     /**
-     * Returns the max size for the static acceleration array.
-     *
      * Please call {@link cache_definition::get_static_acceleration_size()} instead.
      *
      * @see cache_definition::get_static_acceleration_size()
      * @deprecated since 2.6
-     * @return int
      */
     public function get_persistent_max_size() {
-        debugging('Please upgrade your code to call cache_definition::get_static_acceleration_size', DEBUG_DEVELOPER);
-        return $this->get_static_acceleration_size();
+        throw new coding_exception('cache_definition::get_persistent_max_size() can not be used anymore.' .
+            ' Please use cache_definition::get_static_acceleration_size() instead.');
     }
 
     /**

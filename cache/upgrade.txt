@@ -1,6 +1,19 @@
 This files describes API changes in /cache/stores/* - cache store plugins.
 Information provided here is intended especially for developers.
 
+=== 3.2 ===
+* The following methods have been finally deprecated and should no longer be used.
+  - cache_definition::should_be_persistent()
+  - cache_definition::get_persistent_max_size()
+  - cache::is_using_persist_cache()
+  - cache::is_in_persist_cache()
+  - cache::get_from_persist_cache()
+  - cache::set_in_persist_cache()
+  - cache::delete_from_persist_cache()
+  - cache_store::cleanup()
+* cachestore_dummy::cleanup() has been deprecated.
+* cachestore_dummy::instance_deleted() implemented in lieu of cachestore_dummy::cleanup().
+
 === 3.1 ===
 * Cache stores has a new feature DEREFERENCES_OBJECTS.
   This allows the cache loader to decide if it needs to handle dereferencing or whether the data
