@@ -305,7 +305,8 @@ Y.Moodle.mod_quiz.util.slot = {
      */
     reorderPageBreaks: function() {
         // Get list of slot nodes.
-        var slots = this.getSlots(), slotnumber = 0;
+        var slots = this.getSlots();
+        var slotnumber = 0;
         // Loop through slots incrementing the number each time.
         slots.each(function(slot, key) {
             slotnumber++;
@@ -330,7 +331,8 @@ Y.Moodle.mod_quiz.util.slot = {
             var pagebreaklink = pagebreak.get('childNodes').item(0);
 
             // Get the correct title.
-            var action = '', iconname = '';
+            var action = '';
+            var iconname = '';
             if (Y.Moodle.mod_quiz.util.page.isPage(nextitem)) {
                 action = 'removepagebreak';
                 iconname = 'e/remove_page_break';

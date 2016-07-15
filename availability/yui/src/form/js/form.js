@@ -277,6 +277,7 @@ M.core_availability.plugin = {
      * @protected
      */
     initInner: function() {
+        // Can be overriden.
     },
 
     /**
@@ -319,6 +320,7 @@ M.core_availability.plugin = {
      * @param {Y.Node} node YUI node (same one returned from getNode)
      */
     fillErrors: function() {
+        // Can be overriden.
     },
 
     /**
@@ -409,7 +411,9 @@ M.core_availability.List = function(json, root, parentRoot) {
     // Create the button and add it.
     var button = Y.Node.create('<button type="button" class="btn btn-default">' +
             M.util.get_string('addrestriction', 'availability') + '</button>');
-    button.on("click", function() { this.clickAdd(); }, this);
+    button.on("click", function() {
+        this.clickAdd();
+    }, this);
     this.node.one('div.availability-button').appendChild(button);
 
     if (json) {
@@ -1080,7 +1084,9 @@ M.core_availability.EyeIcon = function(individual, shown) {
     };
     this.span.on('click', click, this);
     this.span.on('key', click, 'up:32', this);
-    this.span.on('key', function(e) { e.preventDefault(); }, 'down:32', this);
+    this.span.on('key', function(e) {
+        e.preventDefault();
+    }, 'down:32', this);
 };
 
 /**
@@ -1132,7 +1138,9 @@ M.core_availability.DeleteIcon = function(toDelete) {
     };
     this.span.on('click', click, this);
     this.span.on('key', click, 'up:32', this);
-    this.span.on('key', function(e) { e.preventDefault(); }, 'down:32', this);
+    this.span.on('key', function(e) {
+        e.preventDefault();
+    }, 'down:32', this);
 };
 
 /**

@@ -316,7 +316,8 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
      * @method remove
      */
     this.remove = function() {
-        var i = 0, comments;
+        var i = 0;
+        var comments;
 
         comments = this.editor.pages[this.editor.currentpage].comments;
         for (i = 0; i < comments.length; i++) {

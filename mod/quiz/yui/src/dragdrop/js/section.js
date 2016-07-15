@@ -192,7 +192,9 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
                             new M.core.ajaxException(responsetext);
                         }
                         M.mod_quiz.edit.process_sections(Y, sectionlist, responsetext, loopstart, loopend);
-                    } catch (e) {}
+                    } catch (e) {
+                        // Ignore.
+                    }
 
                     // Update all of the section IDs - first unset them, then set them
                     // to avoid duplicates in the DOM.

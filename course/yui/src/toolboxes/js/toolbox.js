@@ -112,7 +112,9 @@ Y.extend(TOOLBOX, Y.Base, {
                         if (responsetext.error) {
                             new M.core.ajaxException(responsetext);
                         }
-                    } catch (e) {}
+                    } catch (e) {
+                        // Ignore.
+                    }
 
                     // Run the callback if we have one.
                     if (success_callback) {

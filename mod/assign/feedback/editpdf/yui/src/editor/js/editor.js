@@ -347,7 +347,8 @@ EDITOR.prototype = {
      * @method link_handler
      */
     link_handler: function(e) {
-        var drawingcanvas, drawingregion, resize = true;
+        var drawingcanvas, drawingregion;
+        var resize = true;
         e.preventDefault();
 
         if (!this.dialogue) {

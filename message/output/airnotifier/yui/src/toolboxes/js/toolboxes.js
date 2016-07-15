@@ -121,7 +121,9 @@ Y.extend(TOOLBOX, Y.Base, {
                         } else if (responsetext.success) {
                             callbacksuccess();
                         }
-                    } catch (e) {}
+                    } catch (e) {
+                        // Ignore.
+                    }
                     if (statusspinner) {
                         statusspinner.hide();
                     }
