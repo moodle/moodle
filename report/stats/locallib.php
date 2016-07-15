@@ -206,9 +206,9 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
 
 
             if ($mode == STATS_MODE_DETAILED) {
-                echo '<div class="graph"><img src="'.$CFG->wwwroot.'/report/stats/graph.php?mode='.$mode.'&amp;course='.$course->id.'&amp;time='.$time.'&amp;report='.$report.'&amp;userid='.$userid.'" alt="'.get_string('statisticsgraph').'" /></div>';
+                report_stats_print_chart($course->id, $report, $time, $mode, $userid);
             } else {
-                echo '<div class="graph"><img src="'.$CFG->wwwroot.'/report/stats/graph.php?mode='.$mode.'&amp;course='.$course->id.'&amp;time='.$time.'&amp;report='.$report.'&amp;roleid='.$roleid.'" alt="'.get_string('statisticsgraph').'" /></div>';
+                report_stats_print_chart($course->id, $report, $time, $mode, null, $roleid);
             }
 
             $table = new html_table();
@@ -312,4 +312,115 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
             echo html_writer::table($table);
         }
     }
+}
+
+/**
+ * Fetch statistics data and generate a line chart.
+ *
+ * The statistic chart can be view, posts separated by roles and dates.
+ *
+ * @param int $courseid course id.
+ * @param int $report the report type constant eg. STATS_REPORT_LOGINS as defined on statslib.
+ * @param int $time timestamp of the selected time period.
+ * @param int $mode the report mode, eg. STATS_MODE_DETAILED as defined on statslib.
+ * @param int $userid selected user id.
+ * @param int $roleid selected role id.
+ */
+function report_stats_print_chart($courseid, $report, $time, $mode, $userid = 0, $roleid = 0) {
+    global $DB, $CFG, $OUTPUT;
+
+    $course = $DB->get_record("course", array("id" => $courseid), '*', MUST_EXIST);
+    $coursecontext = context_course::instance($course->id);
+
+    stats_check_uptodate($course->id);
+
+    $param = stats_get_parameters($time, $report, $course->id, $mode);
+
+    if (!empty($userid)) {
+        $param->table = 'user_' . $param->table;
+    }
+
+    // TODO: cleanup this ugly mess.
+    $sql = 'SELECT '.((empty($param->fieldscomplete)) ? 'id,roleid,timeend,' : '').$param->fields
+        .' FROM {stats_'.$param->table.'} WHERE '
+        .(($course->id == SITEID) ? '' : ' courseid = '.$course->id.' AND ')
+        .((!empty($userid)) ? ' userid = '.$userid.' AND ' : '')
+        .((!empty($roleid)) ? ' roleid = '.$roleid.' AND ' : '')
+        . ((!empty($param->stattype)) ? ' stattype = \''.$param->stattype.'\' AND ' : '')
+        .' timeend >= '.$param->timeafter
+        .' '.$param->extras
+        .' ORDER BY timeend DESC';
+    $stats = $DB->get_records_sql($sql, $param->params);
+    $stats = stats_fix_zeros($stats, $param->timeafter, $param->table, (!empty($param->line2)),
+            (!empty($param->line3)));
+    $stats = array_reverse($stats);
+
+    $chart = new \core\chart_line();
+    if (empty($param->crosstab)) {
+        $data = [];
+        $times = [];
+        foreach ($stats as $stat) {
+            // Build the array of formatted times indexed by timestamp used as labels.
+            if (!array_key_exists($stat->timeend, $times)) {
+                $times[$stat->timeend] = userdate($stat->timeend, get_string('strftimedate'), $CFG->timezone);
+
+                // Just add the data if the time hasn't been added yet.
+                // The number of lines of data must match the number of labels.
+                $data['line1'][] = $stat->line1;
+                if (isset($stat->line2)) {
+                    $data['line2'][] = $stat->line2;
+                }
+                if (isset($stat->line3)) {
+                    $data['line3'][] = $stat->line3;
+                }
+            }
+        }
+        foreach ($data as $line => $serie) {
+            $series = new \core\chart_series($param->{$line}, array_values($serie));
+            $chart->add_series($series);
+        }
+    } else {
+        $data = array();
+        $times = array();
+        $roles = array();
+        $missedlines = array();
+        $rolenames = role_fix_names(get_all_roles($coursecontext), $coursecontext, ROLENAME_ALIAS, true);
+
+        foreach ($stats as $stat) {
+            $data[$stat->roleid][$stat->timeend] = $stat->line1;
+            if (!empty($stat->zerofixed)) {
+                $missedlines[] = $stat->timeend;
+            }
+            if ($stat->roleid != 0) {
+                if (!array_key_exists($stat->roleid,$roles)) {
+                    $roles[$stat->roleid] = $rolenames[$stat->roleid];
+                }
+            } else {
+                if (!array_key_exists($stat->roleid,$roles)) {
+                    $roles[$stat->roleid] = get_string('all');
+                }
+            }
+
+            // Build the array of formatted times indexed by timestamp used as labels.
+            if (!array_key_exists($stat->timeend, $times)) {
+                $times[$stat->timeend] = userdate($stat->timeend, get_string('strftimedate'), $CFG->timezone);
+            }
+        }
+        // Fill empty days with zero to avoid chart errors.
+        foreach (array_keys($times) as $t) {
+            foreach ($data as $roleid => $stuff) {
+                if (!array_key_exists($t, $stuff)) {
+                    $data[$roleid][$t] = 0;
+                }
+            }
+        }
+        krsort($roles);
+        foreach ($roles as $roleid => $rolename) {
+            ksort($data[$roleid]);
+            $series = new \core\chart_series($rolename, array_values($data[$roleid]));
+            $chart->add_series($series);
+        }
+    }
+    $chart->set_labels(array_values($times));
+    echo $OUTPUT->render_chart($chart, false);
 }
