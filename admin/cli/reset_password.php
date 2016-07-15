@@ -69,7 +69,7 @@ $password = cli_input($prompt);
 
 $errmsg = '';//prevent eclipse warning
 if (!check_password_policy($password, $errmsg)) {
-    cli_error($errmsg);
+    cli_error(html_to_text($errmsg, 0));
 }
 
 $hashedpassword = hash_internal_user_password($password);
@@ -78,4 +78,4 @@ $DB->set_field('user', 'password', $hashedpassword, array('id'=>$user->id));
 
 echo "Password changed\n";
 
-exit(0); // 0 means success
+exit(0); // 0 means success.
