@@ -128,7 +128,7 @@ Y.extend(FetchLogs, Y.Base, {
             });
             return this;
         }
-        this.set('since' , responseobject.until);
+        this.set('since', responseobject.until);
         var logs = responseobject.logs;
         var tbody = Y.one(SELECTORS.TBODY);
         var firstTr = null;

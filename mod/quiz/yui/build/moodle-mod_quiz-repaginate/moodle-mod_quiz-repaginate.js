@@ -43,7 +43,7 @@ Y.extend(POPUP, Y.Base, {
     header: null,
     body: null,
 
-    initializer : function() {
+    initializer: function() {
         var rpcontainerclass = Y.one(CSS.REPAGINATECONTAINERCLASS);
 
         // Set popup header and body.
@@ -52,16 +52,16 @@ Y.extend(POPUP, Y.Base, {
         Y.one(CSS.REPAGINATECOMMAND).on('click', this.display_dialog, this);
     },
 
-    display_dialog : function (e) {
+    display_dialog: function(e) {
         e.preventDefault();
 
         // Configure the popup.
         var config = {
-            headerContent : this.header,
-            bodyContent : this.body,
-            draggable : true,
-            modal : true,
-            zIndex : 1000,
+            headerContent: this.header,
+            bodyContent: this.body,
+            draggable: true,
+            modal: true,
+            zIndex: 1000,
             context: [CSS.REPAGINATECOMMAND, 'tr', 'br', ['beforeShow']],
             centered: false,
             width: '30em',
@@ -70,7 +70,7 @@ Y.extend(POPUP, Y.Base, {
             footerContent: null
         };
 
-        var popup = { dialog: null };
+        var popup = {dialog: null};
         popup.dialog = new M.core.dialogue(config);
         popup.dialog.show();
     }

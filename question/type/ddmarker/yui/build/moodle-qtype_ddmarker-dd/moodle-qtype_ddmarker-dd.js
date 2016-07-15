@@ -23,11 +23,11 @@ var DDMARKER_DD = function() {
  * This is the base class for the question rendering and question editing form code.
  */
 Y.extend(DDMARKER_DD, Y.Base, {
-    doc : null,
-    polltimer : null,
-    afterimageloaddone : false,
-    graphics : null,
-    poll_for_image_load : function (e, waitforimageconstrain, pause, doafterwords) {
+    doc: null,
+    polltimer: null,
+    afterimageloaddone: false,
+    graphics: null,
+    poll_for_image_load: function(e, waitforimageconstrain, pause, doafterwords) {
         if (this.afterimageloaddone) {
             return;
         }
@@ -57,41 +57,41 @@ Y.extend(DDMARKER_DD, Y.Base, {
     /**
      * Object to encapsulate operations on dd area.
      */
-    doc_structure : function () {
+    doc_structure: function() {
         var topnode = Y.one(this.get('topnode'));
         var dragitemsarea = topnode.one('div.dragitems');
         var dropbgarea = topnode.one('div.droparea');
         return {
-            top_node : function() {
+            top_node: function() {
                 return topnode;
             },
-            bg_img : function() {
+            bg_img: function() {
                 return topnode.one('.dropbackground');
             },
-            load_bg_img : function (url) {
+            load_bg_img: function(url) {
                 dropbgarea.setContent('<img class="dropbackground" src="' + url + '"/>');
                 this.bg_img().on('load', this.on_image_load, this, 'bg_image');
             },
-            drag_items : function() {
+            drag_items: function() {
                 return dragitemsarea.all('.dragitem');
             },
-            drag_items_for_choice : function(choiceno) {
+            drag_items_for_choice: function(choiceno) {
                 return dragitemsarea.all('span.dragitem.choice' + choiceno);
             },
-            drag_item_for_choice : function(choiceno, itemno) {
+            drag_item_for_choice: function(choiceno, itemno) {
                 return dragitemsarea.one('span.dragitem.choice' + choiceno +
                                         '.item' + itemno);
             },
-            drag_item_being_dragged : function(choiceno) {
+            drag_item_being_dragged: function(choiceno) {
                 return dragitemsarea.one('span.dragitem.beingdragged.choice' + choiceno);
             },
-            drag_item_home : function (choiceno) {
+            drag_item_home: function(choiceno) {
                 return dragitemsarea.one('span.draghome.choice' + choiceno);
             },
-            drag_item_homes : function() {
+            drag_item_homes: function() {
                 return dragitemsarea.all('span.draghome');
             },
-            get_classname_numeric_suffix : function(node, prefix) {
+            get_classname_numeric_suffix: function(node, prefix) {
                 var classes = node.getAttribute('class');
                 if (classes !== '') {
                     var classesarr = classes.split(' ');
@@ -106,25 +106,25 @@ Y.extend(DDMARKER_DD, Y.Base, {
                 }
                 return null;
             },
-            inputs_for_choices : function () {
+            inputs_for_choices: function() {
                 return topnode.all('input.choices');
             },
-            input_for_choice : function (choiceno) {
+            input_for_choice: function(choiceno) {
                 return topnode.one('input.choice' + choiceno);
             },
-            marker_texts : function () {
+            marker_texts: function() {
                 return topnode.one('div.markertexts');
             }
         };
     },
 
-    colours : ['#FFFFFF', '#B0C4DE', '#DCDCDC', '#D8BFD8',
-               '#87CEFA','#DAA520', '#FFD700', '#F0E68C'],
-    nextcolourindex : 0,
-    restart_colours : function () {
+    colours: ['#FFFFFF', '#B0C4DE', '#DCDCDC', '#D8BFD8',
+               '#87CEFA', '#DAA520', '#FFD700', '#F0E68C'],
+    nextcolourindex: 0,
+    restart_colours: function() {
         this.nextcolourindex = 0;
     },
-    get_next_colour : function () {
+    get_next_colour: function() {
         var colour = this.colours[this.nextcolourindex];
         this.nextcolourindex++;
         if (this.nextcolourindex === this.colours.length) {
@@ -132,14 +132,14 @@ Y.extend(DDMARKER_DD, Y.Base, {
         }
         return colour;
     },
-    convert_to_window_xy : function (bgimgxy) {
+    convert_to_window_xy: function(bgimgxy) {
         // The +1 seems rather odd, but seems to give the best results in
         // the three main browsers at a range of zoom levels.
         return [Number(bgimgxy[0]) + this.doc.bg_img().getX() + 1,
                 Number(bgimgxy[1]) + this.doc.bg_img().getY() + 1];
     },
-    shapes : [],
-    draw_drop_zone : function (dropzoneno, markertext, shape, coords, colour, link) {
+    shapes: [],
+    draw_drop_zone: function(dropzoneno, markertext, shape, coords, colour, link) {
         var existingmarkertext;
         if (link) {
             existingmarkertext = this.doc.marker_texts().one('span.markertext' + dropzoneno + ' a');
@@ -164,7 +164,7 @@ Y.extend(DDMARKER_DD, Y.Base, {
             }
         }
         var drawfunc = 'draw_shape_' + shape;
-        if (this[drawfunc] instanceof Function){
+        if (this[drawfunc] instanceof Function) {
            var xyfortext = this[drawfunc](dropzoneno, coords, colour);
            if (xyfortext !== null) {
                var markerspan = this.doc.top_node().one('div.ddarea div.markertexts span.markertext' + dropzoneno);
@@ -175,7 +175,7 @@ Y.extend(DDMARKER_DD, Y.Base, {
                    markerspan.setXY(this.convert_to_window_xy(xyfortext));
                    var markerspananchor = markerspan.one('a');
                    if (markerspananchor !== null) {
-                       markerspananchor.once('click', function (e, dropzoneno) {
+                       markerspananchor.once('click', function(e, dropzoneno) {
                            var fill = this.shapes[dropzoneno].get('fill');
                            fill.opacity = 1;
                            this.shapes[dropzoneno].set('fill', fill);
@@ -189,7 +189,7 @@ Y.extend(DDMARKER_DD, Y.Base, {
            }
         }
     },
-    draw_shape_circle : function (dropzoneno, coords, colour) {
+    draw_shape_circle: function(dropzoneno, coords, colour) {
         var coordsparts = coords.match(/(\d+),(\d+);(\d+)/);
         if (coordsparts && coordsparts.length === 4) {
             var xy = [Number(coordsparts[1]) - coordsparts[3], Number(coordsparts[2]) - coordsparts[3]];
@@ -215,7 +215,7 @@ Y.extend(DDMARKER_DD, Y.Base, {
         }
         return null;
     },
-    draw_shape_rectangle : function (dropzoneno, coords, colour) {
+    draw_shape_rectangle: function(dropzoneno, coords, colour) {
         var coordsparts = coords.match(/(\d+),(\d+);(\d+),(\d+)/);
         if (coordsparts && coordsparts.length === 5) {
             var xy = [Number(coordsparts[1]), Number(coordsparts[2])];
@@ -242,7 +242,7 @@ Y.extend(DDMARKER_DD, Y.Base, {
         return null;
 
     },
-    draw_shape_polygon : function (dropzoneno, coords, colour) {
+    draw_shape_polygon: function(dropzoneno, coords, colour) {
         var coordsparts = coords.split(';');
         var xy = [];
         for (var i in coordsparts) {
@@ -260,13 +260,13 @@ Y.extend(DDMARKER_DD, Y.Base, {
                 },
                 fill: {
                     color: colour,
-                    opacity : "0.5"
+                    opacity: "0.5"
                 }
             });
-            var maxxy = [0,0];
+            var maxxy = [0, 0];
             var minxy = [this.doc.bg_img().get('width'), this.doc.bg_img().get('height')];
             for (i = 0; i < xy.length; i++) {
-                //calculate min and max points to find center to show marker on
+                // calculate min and max points to find center to show marker on
                 minxy[0] = Math.min(xy[i][0], minxy[0]);
                 minxy[1] = Math.min(xy[i][1], minxy[1]);
                 maxxy[0] = Math.max(xy[i][0], maxxy[0]);
@@ -287,16 +287,16 @@ Y.extend(DDMARKER_DD, Y.Base, {
         }
         return null;
     },
-    coords_in_img : function (coords) {
+    coords_in_img: function(coords) {
         return (coords[0] <= this.doc.bg_img().get('width') &&
                         coords[1] <= this.doc.bg_img().get('height'));
     }
 }, {
-    NAME : DDMARKERDDNAME,
-    ATTRS : {
-        drops : {value : null},
-        readonly : {value : false},
-        topnode : {value : null}
+    NAME: DDMARKERDDNAME,
+    ATTRS: {
+        drops: {value: null},
+        readonly: {value: false},
+        topnode: {value: null}
     }
 });
 M.qtype_ddmarker = M.qtype_ddmarker || {};
@@ -312,7 +312,7 @@ var DDMARKER_QUESTION = function() {
 Y.extend(DDMARKER_QUESTION, M.qtype_ddmarker.dd_base_class, {
     touchscrolldisable: null,
     pendingid: '',
-    initializer : function() {
+    initializer: function() {
         this.pendingid = 'qtype_ddmarker-' + Math.random().toString(36).slice(2); // Random string.
         M.util.js_pending(this.pendingid);
         this.doc = this.doc_structure(this);
@@ -320,12 +320,12 @@ Y.extend(DDMARKER_QUESTION, M.qtype_ddmarker.dd_base_class, {
         this.doc.bg_img().after('load', this.poll_for_image_load, this,
                                                 false, 0, this.after_image_load);
     },
-    after_image_load : function () {
+    after_image_load: function() {
         this.redraw_drags_and_drops();
         M.util.js_complete(this.pendingid);
         Y.later(2000, this, this.redraw_drags_and_drops, [], true);
     },
-    clone_new_drag_item : function (draghome, itemno) {
+    clone_new_drag_item: function(draghome, itemno) {
         var drag = draghome.cloneNode(true);
         drag.removeClass('draghome');
         drag.addClass('dragitem');
@@ -345,7 +345,7 @@ Y.extend(DDMARKER_QUESTION, M.qtype_ddmarker.dd_base_class, {
      * you can scroll by touching other area of the screen apart from the
      * draggable items.
      */
-    prevent_touchmove_from_scrolling : function(drag) {
+    prevent_touchmove_from_scrolling: function(drag) {
         var touchstart = (Y.UA.ie) ? 'MSPointerStart' : 'touchstart';
         var touchend = (Y.UA.ie) ? 'MSPointerEnd' : 'touchend';
         var touchmove = (Y.UA.ie) ? 'MSPointerMove' : 'touchmove';
@@ -370,12 +370,12 @@ Y.extend(DDMARKER_QUESTION, M.qtype_ddmarker.dd_base_class, {
         }, this);
     },
 
-    draggable : function (drag) {
+    draggable: function(drag) {
         var dd = new Y.DD.Drag({
             node: drag,
             dragMode: 'intersect'
         }).plug(Y.Plugin.DDConstrained, {constrain2node: this.doc.top_node()});
-        dd.after('drag:start', function(e){
+        dd.after('drag:start', function(e) {
             var dragnode = e.target.get('node');
             dragnode.addClass('beingdragged');
             var choiceno = this.get_choiceno_for_node(dragnode);
@@ -393,7 +393,7 @@ Y.extend(DDMARKER_QUESTION, M.qtype_ddmarker.dd_base_class, {
             this.save_all_xy_for_choice(choiceno, dragnode);
             this.redraw_drags_and_drops();
         }, this);
-        //--- keyboard accessibility
+        // --- keyboard accessibility
         drag.set('tabIndex', 0);
         drag.on('dragchange', this.drop_zone_key_press, this);
 
@@ -401,7 +401,7 @@ Y.extend(DDMARKER_QUESTION, M.qtype_ddmarker.dd_base_class, {
         this.prevent_touchmove_from_scrolling(drag);
     },
 
-    save_all_xy_for_choice: function (choiceno, dropped) {
+    save_all_xy_for_choice: function(choiceno, dropped) {
         var coords = [];
         var bgimgxy;
         for (var i = 0; i <= this.doc.drag_items_for_choice(choiceno).size(); i++) {
@@ -418,7 +418,7 @@ Y.extend(DDMARKER_QUESTION, M.qtype_ddmarker.dd_base_class, {
                 }
             }
         }
-        if (dropped !== null){
+        if (dropped !== null) {
             bgimgxy = this.convert_to_bg_img_xy(dropped.getXY());
             dropped.addClass('item' + coords.length);
             if (this.xy_in_bgimg(bgimgxy)) {
@@ -427,24 +427,24 @@ Y.extend(DDMARKER_QUESTION, M.qtype_ddmarker.dd_base_class, {
         }
         this.set_form_value(choiceno, coords.join(';'));
     },
-    reset_drag_xy : function (choiceno) {
+    reset_drag_xy: function(choiceno) {
         this.set_form_value(choiceno, '');
     },
-    set_form_value : function (choiceno, value) {
+    set_form_value: function(choiceno, value) {
         this.doc.input_for_choice(choiceno).set('value', value);
     },
-    //make sure xy value is not out of bounds of bg image
-    xy_in_bgimg : function (bgimgxy) {
+    // make sure xy value is not out of bounds of bg image
+    xy_in_bgimg: function(bgimgxy) {
         if ((bgimgxy[0] < 0) ||
                 (bgimgxy[1] < 0) ||
                 (bgimgxy[0] > this.doc.bg_img().get('width')) ||
-                (bgimgxy[1] > this.doc.bg_img().get('height'))){
+                (bgimgxy[1] > this.doc.bg_img().get('height'))) {
             return false;
         } else {
             return true;
         }
     },
-    constrain_to_bgimg : function (windowxy) {
+    constrain_to_bgimg: function(windowxy) {
         var bgimgxy = this.convert_to_bg_img_xy(windowxy);
         bgimgxy[0] = Math.max(0, bgimgxy[0]);
         bgimgxy[1] = Math.max(0, bgimgxy[1]);
@@ -452,17 +452,17 @@ Y.extend(DDMARKER_QUESTION, M.qtype_ddmarker.dd_base_class, {
         bgimgxy[1] = Math.min(this.doc.bg_img().get('height'), bgimgxy[1]);
         return this.convert_to_window_xy(bgimgxy);
     },
-    convert_to_bg_img_xy : function (windowxy) {
+    convert_to_bg_img_xy: function(windowxy) {
         return [Number(windowxy[0]) - this.doc.bg_img().getX() - 1,
                 Number(windowxy[1]) - this.doc.bg_img().getY() - 1];
     },
-    redraw_drags_and_drops : function() {
+    redraw_drags_and_drops: function() {
         this.doc.drag_items().each(function(item) {
-            //if (!item.hasClass('beingdragged')){
+            // if (!item.hasClass('beingdragged')){
                 item.addClass('unneeded');
-            //}
+            // }
         }, this);
-        this.doc.inputs_for_choices().each(function (input) {
+        this.doc.inputs_for_choices().each(function(input) {
             var choiceno = this.get_choiceno_for_node(input);
             var coords = this.get_coords(input);
             var dragitemhome = this.doc.drag_item_home(choiceno);
@@ -485,7 +485,7 @@ Y.extend(DDMARKER_QUESTION, M.qtype_ddmarker.dd_base_class, {
             this.graphics.clear();
         } else {
             this.graphics = new Y.Graphic(
-                {render:this.doc.top_node().one("div.ddarea div.dropzones")}
+                {render: this.doc.top_node().one("div.ddarea div.dropzones")}
             );
         }
         if (this.get('dropzones').length !== 0) {
@@ -503,7 +503,7 @@ Y.extend(DDMARKER_QUESTION, M.qtype_ddmarker.dd_base_class, {
      * return coords of all drag items except any that are currently being dragged
      * based on contents of hidden inputs and whether drags are 'infinite' or how many drags should be shown.
      */
-    get_coords : function (input) {
+    get_coords: function(input) {
         var choiceno = this.get_choiceno_for_node(input);
         var fv = input.get('value');
         var infinite = input.hasClass('infinite');
@@ -522,22 +522,22 @@ Y.extend(DDMARKER_QUESTION, M.qtype_ddmarker.dd_base_class, {
         }
         return coords;
     },
-    drag_home_xy : function (choiceno) {
+    drag_home_xy: function(choiceno) {
         var dragitemhome = this.doc.drag_item_home(choiceno);
         return [dragitemhome.getX(), dragitemhome.getY() - 12];
     },
-    get_choiceno_for_node : function(node) {
+    get_choiceno_for_node: function(node) {
         return Number(this.doc.get_classname_numeric_suffix(node, 'choice'));
     },
-    get_itemno_for_node : function(node) {
+    get_itemno_for_node: function(node) {
         return Number(this.doc.get_classname_numeric_suffix(node, 'item'));
     },
-    get_noofdrags_for_node : function(node) {
+    get_noofdrags_for_node: function(node) {
         return Number(this.doc.get_classname_numeric_suffix(node, 'noofdrags'));
     },
 
     // Keyboard accessibility stuff below here.
-    drop_zone_key_press : function (e) {
+    drop_zone_key_press: function(e) {
         var dragitem = e.target;
         var xy = dragitem.getXY();
         switch (e.direction) {
@@ -567,7 +567,7 @@ Y.extend(DDMARKER_QUESTION, M.qtype_ddmarker.dd_base_class, {
         dragitem.setXY(xy);
         this.save_all_xy_for_choice(choiceno, null);
     }
-}, {NAME : DDMARKERQUESTIONNAME, ATTRS : {dropzones:{value:[]}}});
+}, {NAME: DDMARKERQUESTIONNAME, ATTRS: {dropzones: {value: []}}});
 
 Y.Event.define('dragchange', {
     // Webkit and IE repeat keydown when you hold down arrow keys.
@@ -589,14 +589,14 @@ Y.Event.define('dragchange', {
         '27': 'remove'    // Escape
     },
 
-    _keyHandler: function (e, notifier) {
+    _keyHandler: function(e, notifier) {
         if (this._keys[e.keyCode]) {
             e.direction = this._keys[e.keyCode];
             notifier.fire(e);
         }
     },
 
-    on: function (node, sub, notifier) {
+    on: function(node, sub, notifier) {
         sub._detacher = node.on(this._event, this._keyHandler,
                                 this, notifier);
     }

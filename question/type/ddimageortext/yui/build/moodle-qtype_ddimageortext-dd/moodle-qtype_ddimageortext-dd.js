@@ -24,10 +24,10 @@ var DDIMAGEORTEXT_DD = function() {
  * This is the base class for the question rendering and question editing form code.
  */
 Y.extend(DDIMAGEORTEXT_DD, Y.Base, {
-    doc : null,
-    polltimer : null,
-    afterimageloaddone : false,
-    poll_for_image_load : function (e, waitforimageconstrain, pause, doafterwords) {
+    doc: null,
+    polltimer: null,
+    afterimageloaddone: false,
+    poll_for_image_load: function(e, waitforimageconstrain, pause, doafterwords) {
         if (this.afterimageloaddone) {
             return;
         }
@@ -35,10 +35,10 @@ Y.extend(DDIMAGEORTEXT_DD, Y.Base, {
         if (waitforimageconstrain) {
             bgdone = bgdone && this.doc.bg_img().hasClass('constrained');
         }
-        var alldragsloaded = !this.doc.drag_item_homes().some(function(dragitemhome){
-            //in 'some' loop returning true breaks the loop and is passed as return value from
-            //'some' else returns false. Can be though of as equivalent to ||.
-            if (dragitemhome.get('tagName') !== 'IMG'){
+        var alldragsloaded = !this.doc.drag_item_homes().some(function(dragitemhome) {
+            // in 'some' loop returning true breaks the loop and is passed as return value from
+            // 'some' else returns false. Can be though of as equivalent to ||.
+            if (dragitemhome.get('tagName') !== 'IMG') {
                 return false;
             }
             var done = (dragitemhome.get('complete'));
@@ -69,43 +69,43 @@ Y.extend(DDIMAGEORTEXT_DD, Y.Base, {
     /**
      * Object to encapsulate operations on dd area.
      */
-    doc_structure : function (mainobj) {
+    doc_structure: function(mainobj) {
         var topnode = Y.one(this.get('topnode'));
         var dragitemsarea = topnode.one('div.dragitems');
         var dropbgarea = topnode.one('div.droparea');
         return {
-            top_node : function() {
+            top_node: function() {
                 return topnode;
             },
-            drag_items : function() {
+            drag_items: function() {
                 return dragitemsarea.all('.drag');
             },
-            drop_zones : function() {
+            drop_zones: function() {
                 return topnode.all('div.dropzones div.dropzone');
             },
-            drop_zone_group : function(groupno) {
+            drop_zone_group: function(groupno) {
                 return topnode.all('div.dropzones div.group' + groupno);
             },
-            drag_items_cloned_from : function(dragitemno) {
+            drag_items_cloned_from: function(dragitemno) {
                 return dragitemsarea.all('.dragitems' + dragitemno);
             },
-            drag_item : function(draginstanceno) {
+            drag_item: function(draginstanceno) {
                 return dragitemsarea.one('.draginstance' + draginstanceno);
             },
-            drag_items_in_group : function(groupno) {
+            drag_items_in_group: function(groupno) {
                 return dragitemsarea.all('.drag.group' + groupno);
             },
-            drag_item_homes : function() {
+            drag_item_homes: function() {
                 return dragitemsarea.all('.draghome');
             },
-            bg_img : function() {
+            bg_img: function() {
                 return topnode.one('.dropbackground');
             },
-            load_bg_img : function (url) {
+            load_bg_img: function(url) {
                 dropbgarea.setContent('<img class="dropbackground" src="' + url + '"/>');
                 this.bg_img().on('load', this.on_image_load, this, 'bg_image');
             },
-            add_or_update_drag_item_home : function (dragitemno, url, alt, group) {
+            add_or_update_drag_item_home: function(dragitemno, url, alt, group) {
                 var oldhome = this.drag_item_home(dragitemno);
                 var classes = 'draghome dragitemhomes' + dragitemno + ' group' + group;
                 var imghtml = '<img class="' + classes + '" src="' + url + '" alt="' + alt + '" />';
@@ -130,10 +130,10 @@ Y.extend(DDIMAGEORTEXT_DD, Y.Base, {
                     newlycreated.setData('dragitemno', dragitemno);
                 }
             },
-            drag_item_home : function (dragitemno) {
+            drag_item_home: function(dragitemno) {
                 return dragitemsarea.one('.dragitemhomes' + dragitemno);
             },
-            get_classname_numeric_suffix : function(node, prefix) {
+            get_classname_numeric_suffix: function(node, prefix) {
                 var classes = node.getAttribute('class');
                 if (classes !== '') {
                     var classesarr = classes.split(' ');
@@ -142,13 +142,13 @@ Y.extend(DDIMAGEORTEXT_DD, Y.Base, {
                         if (patt1.test(classesarr[index])) {
                             var patt2 = new RegExp('([0-9])+$');
                             var match = patt2.exec(classesarr[index]);
-                            return + match[0];
+                            return +match[0];
                         }
                     }
                 }
                 throw 'Prefix "' + prefix + '" not found in class names.';
             },
-            clone_new_drag_item : function (draginstanceno, dragitemno) {
+            clone_new_drag_item: function(draginstanceno, dragitemno) {
                 var draghome = this.drag_item_home(dragitemno);
                 if (draghome === null) {
                     return null;
@@ -159,13 +159,13 @@ Y.extend(DDIMAGEORTEXT_DD, Y.Base, {
                 drag.addClass('draginstance' + draginstanceno);
                 drag.removeClass('draghome');
                 drag.addClass('drag');
-                drag.setStyles({'visibility': 'visible', 'position' : 'absolute'});
+                drag.setStyles({'visibility': 'visible', 'position': 'absolute'});
                 drag.setData('draginstanceno', draginstanceno);
                 drag.setData('dragitemno', dragitemno);
                 draghome.get('parentNode').appendChild(drag);
                 return drag;
             },
-            draggable_for_question : function (drag, group, choice) {
+            draggable_for_question: function(drag, group, choice) {
                 new Y.DD.Drag({
                     node: drag,
                     dragMode: 'point',
@@ -175,7 +175,7 @@ Y.extend(DDIMAGEORTEXT_DD, Y.Base, {
                 drag.setData('group', group);
                 drag.setData('choice', choice);
             },
-            draggable_for_form : function (drag) {
+            draggable_for_form: function(drag) {
                 var dd = new Y.DD.Drag({
                     node: drag,
                     dragMode: 'point'
@@ -201,17 +201,17 @@ Y.extend(DDIMAGEORTEXT_DD, Y.Base, {
         };
     },
 
-    update_padding_sizes_all : function () {
+    update_padding_sizes_all: function() {
         for (var groupno = 1; groupno <= 8; groupno++) {
             this.update_padding_size_for_group(groupno);
         }
     },
-    update_padding_size_for_group : function (groupno) {
+    update_padding_size_for_group: function(groupno) {
         var groupitems = this.doc.top_node().all('.draghome.group' + groupno);
         if (groupitems.size() !== 0) {
             var maxwidth = 0;
             var maxheight = 0;
-            groupitems.each(function(item){
+            groupitems.each(function(item) {
                 maxwidth = Math.max(maxwidth, item.get('clientWidth'));
                 maxheight = Math.max(maxheight, item.get('clientHeight'));
             }, this);
@@ -225,16 +225,16 @@ Y.extend(DDIMAGEORTEXT_DD, Y.Base, {
                                                             'height': maxheight + 10});
         }
     },
-    convert_to_window_xy : function (bgimgxy) {
+    convert_to_window_xy: function(bgimgxy) {
         return [Number(bgimgxy[0]) + this.doc.bg_img().getX() + 1,
                 Number(bgimgxy[1]) + this.doc.bg_img().getY() + 1];
     }
 }, {
-    NAME : DDIMAGEORTEXTDDNAME,
-    ATTRS : {
-        drops : {value : null},
-        readonly : {value : false},
-        topnode : {value : null}
+    NAME: DDIMAGEORTEXTDDNAME,
+    ATTRS: {
+        drops: {value: null},
+        readonly: {value: false},
+        topnode: {value: null}
     }
 });
 
@@ -251,7 +251,7 @@ var DDIMAGEORTEXT_QUESTION = function() {
 Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
     touchscrolldisable: null,
     pendingid: '',
-    initializer : function() {
+    initializer: function() {
         this.pendingid = 'qtype_ddimageortext-' + Math.random().toString(36).slice(2); // Random string.
         M.util.js_pending(this.pendingid);
         this.doc = this.doc_structure(this);
@@ -276,7 +276,7 @@ Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
      * you can scroll by touching other area of the screen apart from the
      * draggable items.
      */
-    prevent_touchmove_from_scrolling : function(drag) {
+    prevent_touchmove_from_scrolling: function(drag) {
         var touchstart = (Y.UA.ie) ? 'MSPointerStart' : 'touchstart';
         var touchend = (Y.UA.ie) ? 'MSPointerEnd' : 'touchend';
         var touchmove = (Y.UA.ie) ? 'MSPointerMove' : 'touchmove';
@@ -300,14 +300,14 @@ Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
             }
         }, this);
     },
-    create_all_drag_and_drops : function () {
+    create_all_drag_and_drops: function() {
         this.init_drops();
         this.update_padding_sizes_all();
         var i = 0;
-        this.doc.drag_item_homes().each(function(dragitemhome){
+        this.doc.drag_item_homes().each(function(dragitemhome) {
             var dragitemno = Number(this.doc.get_classname_numeric_suffix(dragitemhome, 'dragitemhomes'));
-            var choice = + this.doc.get_classname_numeric_suffix(dragitemhome, 'choice');
-            var group = + this.doc.get_classname_numeric_suffix(dragitemhome, 'group');
+            var choice = +this.doc.get_classname_numeric_suffix(dragitemhome, 'choice');
+            var group = +this.doc.get_classname_numeric_suffix(dragitemhome, 'group');
             var groupsize = this.doc.drop_zone_group(group).size();
             var dragnode = this.doc.clone_new_drag_item(i, dragitemno);
             i++;
@@ -336,13 +336,13 @@ Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
         if (!this.get('readonly')) {
             this.doc.drop_zones().set('tabIndex', 0);
             this.doc.drop_zones().each(
-                function(v){
+                function(v) {
                     v.on('dragchange', this.drop_zone_key_press, this);
                 }, this);
         }
         M.util.js_complete(this.pendingid);
     },
-    drop_zone_key_press : function (e) {
+    drop_zone_key_press: function(e) {
         switch (e.direction) {
             case 'next' :
                 this.place_next_drag_in(e.target);
@@ -357,13 +357,13 @@ Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
         e.preventDefault();
         this.reposition_drags_for_question();
     },
-    place_next_drag_in : function (drop) {
+    place_next_drag_in: function(drop) {
         this.search_for_unplaced_drop_choice(drop, 1);
     },
-    place_previous_drag_in : function (drop) {
+    place_previous_drag_in: function(drop) {
         this.search_for_unplaced_drop_choice(drop, -1);
     },
-    search_for_unplaced_drop_choice : function (drop, direction) {
+    search_for_unplaced_drop_choice: function(drop, direction) {
         var next;
         var current = this.current_drag_in_drop(drop);
         if ('' === current) {
@@ -377,11 +377,11 @@ Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
                 }, this);
             }
         } else {
-            next = + current + direction;
+            next = +current + direction;
         }
         var drag;
         do {
-            if (this.get_choices_for_drop(next, drop).size() === 0){
+            if (this.get_choices_for_drop(next, drop).size() === 0) {
                 this.remove_drag_from_drop(drop);
                 return;
             } else {
@@ -391,15 +391,15 @@ Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
         } while (drag === null);
         this.place_drag_in_drop(drag, drop);
     },
-    current_drag_in_drop : function (drop) {
+    current_drag_in_drop: function(drop) {
         var inputid = drop.getData('inputid');
         var inputnode = Y.one('input#' + inputid);
         return inputnode.get('value');
     },
-    remove_drag_from_drop : function (drop) {
+    remove_drag_from_drop: function(drop) {
         this.place_drag_in_drop(null, drop);
     },
-    place_drag_in_drop : function (drag, drop) {
+    place_drag_in_drop: function(drag, drop) {
         var inputid = drop.getData('inputid');
         var inputnode = Y.one('input#' + inputid);
         if (drag !== null) {
@@ -408,9 +408,9 @@ Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
             inputnode.set('value', '');
         }
     },
-    reposition_drags_for_question : function(dotimeout) {
+    reposition_drags_for_question: function(dotimeout) {
         this.doc.drag_items().removeClass('placed');
-        this.doc.drag_items().each (function (dragitem) {
+        this.doc.drag_items().each(function(dragitem) {
             if (dragitem.dd !== undefined) {
                 dragitem.dd.detachAll('drag:start');
             }
@@ -427,10 +427,10 @@ Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
                     dragitem.setXY(dropzone.getXY());
                     dragitem.addClass('placed');
                     if (dragitem.dd !== undefined) {
-                        dragitem.dd.once('drag:start', function (e, input) {
+                        dragitem.dd.once('drag:start', function(e, input) {
                             input.set('value', '');
                             e.target.get('node').removeClass('placed');
-                        },this, input);
+                        }, this, input);
                     }
                 }
             }
@@ -445,15 +445,15 @@ Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
             Y.later(500, this, this.reposition_drags_for_question, true);
         }
     },
-    get_choices_for_drop : function(choice, drop) {
+    get_choices_for_drop: function(choice, drop) {
         var group = drop.getData('group');
         return this.doc.top_node().all(
                 'div.dragitemgroup' + group + ' .choice' + choice + '.drag');
     },
-    get_unplaced_choice_for_drop : function(choice, drop) {
+    get_unplaced_choice_for_drop: function(choice, drop) {
         var dragitems = this.get_choices_for_drop(choice, drop);
         var dragitem = null;
-        dragitems.some(function (d) {
+        dragitems.some(function(d) {
             if (this.get('readonly') || (!d.hasClass('placed') && !d.hasClass('yui3-dd-dragging'))) {
                 dragitem = d;
                 return true;
@@ -463,7 +463,7 @@ Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
         });
         return dragitem;
     },
-    init_drops : function () {
+    init_drops: function() {
         var dropareas = this.doc.top_node().one('div.dropzones');
         var groupnodes = {};
         for (var groupno = 1; groupno <= 8; groupno++) {
@@ -474,7 +474,7 @@ Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
         var drop_hit_handler = function(e) {
             var drag = e.drag.get('node');
             var drop = e.drop.get('node');
-            if (Number(drop.getData('group')) === drag.getData('group')){
+            if (Number(drop.getData('group')) === drag.getData('group')) {
                 this.place_drag_in_drop(drag, drop);
             }
         };
@@ -491,11 +491,11 @@ Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
             dropnode.setData('inputid', drop.fieldname.replace(':', '_'));
             dropnode.setData('group', drop.group);
             var dropdd = new Y.DD.Drop({
-                  node: dropnode, groups : [drop.group]});
+                  node: dropnode, groups: [drop.group]});
             dropdd.on('drop:hit', drop_hit_handler, this);
         }
     }
-}, {NAME : DDIMAGEORTEXTQUESTIONNAME, ATTRS : {}});
+}, {NAME: DDIMAGEORTEXTQUESTIONNAME, ATTRS: {}});
 
 Y.Event.define('dragchange', {
     // Webkit and IE repeat keydown when you hold down arrow keys.
@@ -513,14 +513,14 @@ Y.Event.define('dragchange', {
         '27': 'remove'    // Escape
     },
 
-    _keyHandler: function (e, notifier) {
+    _keyHandler: function(e, notifier) {
         if (this._keys[e.keyCode]) {
             e.direction = this._keys[e.keyCode];
             notifier.fire(e);
         }
     },
 
-    on: function (node, sub, notifier) {
+    on: function(node, sub, notifier) {
         sub._detacher = node.on(this._event, this._keyHandler,
                                 this, notifier);
     }
