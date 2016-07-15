@@ -51,20 +51,20 @@ Options:
 
 Example:
 \$sudo -u www-data /usr/bin/php admin/cli/reset_password.php
-"; //TODO: localize - to be translated later when everything is finished
+";
 
     echo $help;
     die;
 }
-cli_heading('Password reset'); // TODO: localize
-$prompt = "enter username (manual authentication only)"; // TODO: localize
+cli_heading('Password reset');
+$prompt = "Enter username (manual authentication only)";
 $username = cli_input($prompt);
 
 if (!$user = $DB->get_record('user', array('auth'=>'manual', 'username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
     cli_error("Can not find user '$username'");
 }
 
-$prompt = "Enter new password"; // TODO: localize
+$prompt = "Enter new password";
 $password = cli_input($prompt);
 
 $errmsg = '';//prevent eclipse warning
