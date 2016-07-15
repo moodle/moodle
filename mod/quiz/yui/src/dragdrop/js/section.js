@@ -13,7 +13,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
 
     initializer: function() {
         // Set group for parent class
-        this.groups = [ CSS.SECTIONDRAGGABLE ];
+        this.groups = [CSS.SECTIONDRAGGABLE];
         this.samenodeclass = 'section';
         this.parentnodeclass = 'slots';
 
@@ -234,7 +234,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
                     lightbox.hide();
                 }
             },
-            context:this
+            context: this
         });
     }
 

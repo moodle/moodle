@@ -13,7 +13,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
 
     initializer: function() {
         // Set group for parent class
-        this.groups = [ CSS.SECTIONDRAGGABLE ];
+        this.groups = [CSS.SECTIONDRAGGABLE];
         this.samenodeclass = M.course.format.get_sectionwrapperclass();
         this.parentnodeclass = M.course.format.get_containerclass();
 
@@ -120,7 +120,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
         containernode.addClass(M.course.format.get_containerclass());
         var sectionnode = Y.Node.create('<' + M.course.format.get_sectionwrappernode() +
                 '></' + M.course.format.get_sectionwrappernode() + '>');
-        sectionnode.addClass( M.course.format.get_sectionwrapperclass());
+        sectionnode.addClass(M.course.format.get_sectionwrapperclass());
         sectionnode.setStyle('margin', 0);
         sectionnode.setContent(drag.get('node').get('innerHTML'));
         containernode.appendChild(sectionnode);
@@ -255,7 +255,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
                     lightbox.hide();
                 }
             },
-            context:this
+            context: this
         });
     }
 

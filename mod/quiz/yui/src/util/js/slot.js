@@ -15,26 +15,26 @@ Y.namespace('Moodle.mod_quiz.util.slot');
  */
 Y.Moodle.mod_quiz.util.slot = {
     CSS: {
-        SLOT : 'slot',
-        QUESTIONTYPEDESCRIPTION : 'qtype_description',
+        SLOT: 'slot',
+        QUESTIONTYPEDESCRIPTION: 'qtype_description',
         CANNOT_DEPEND: 'question_dependency_cannot_depend'
     },
     CONSTANTS: {
-        SLOTIDPREFIX : 'slot-',
-        QUESTION : M.util.get_string('question', 'moodle')
+        SLOTIDPREFIX: 'slot-',
+        QUESTION: M.util.get_string('question', 'moodle')
     },
     SELECTORS: {
         SLOT: 'li.slot',
         INSTANCENAME: '.instancename',
         NUMBER: 'span.slotnumber',
-        PAGECONTENT : 'div#page-content',
-        PAGEBREAK : 'span.page_split_join_wrapper',
-        ICON : 'img.smallicon',
-        QUESTIONTYPEDESCRIPTION : '.qtype_description',
-        SECTIONUL : 'ul.section',
-        DEPENDENCY_WRAPPER : '.question_dependency_wrapper',
-        DEPENDENCY_LINK : '.question_dependency_wrapper .cm-edit-action',
-        DEPENDENCY_ICON : '.question_dependency_wrapper img'
+        PAGECONTENT: 'div#page-content',
+        PAGEBREAK: 'span.page_split_join_wrapper',
+        ICON: 'img.smallicon',
+        QUESTIONTYPEDESCRIPTION: '.qtype_description',
+        SECTIONUL: 'ul.section',
+        DEPENDENCY_WRAPPER: '.question_dependency_wrapper',
+        DEPENDENCY_LINK: '.question_dependency_wrapper .cm-edit-action',
+        DEPENDENCY_ICON: '.question_dependency_wrapper img'
     },
 
     /**
@@ -379,7 +379,7 @@ Y.Moodle.mod_quiz.util.slot = {
             slotnumber = 0,
             previousslot = null;
         // Loop through slots incrementing the number each time.
-        slots.each (function(slot) {
+        slots.each(function(slot) {
             slotnumber++;
 
             if (slotnumber == 1 || previousslot.getData('canfinish') === '0') {

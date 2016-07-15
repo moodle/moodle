@@ -17,7 +17,7 @@ Y.namespace('Moodle.mod_quiz.util.page');
  */
 Y.Moodle.mod_quiz.util.page = {
     CSS: {
-        PAGE : 'page'
+        PAGE: 'page'
     },
     CONSTANTS: {
         ACTIONMENUIDPREFIX: 'action-menu-',

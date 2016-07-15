@@ -31,9 +31,9 @@ var DDWTOS_DD = function() {
  * A DDWTOS_DD class is created for each question.
  */
 Y.extend(DDWTOS_DD, Y.Base, {
-    selectors : null,
+    selectors: null,
     touchscrolldisable: null,
-    initializer : function() {
+    initializer: function() {
         var pendingid = 'qtype_ddwtos-' + Math.random().toString(36).slice(2); // Random string.
         M.util.js_pending(pendingid);
         this.selectors = this.css_selectors(this.get('topnode'));
@@ -54,67 +54,67 @@ Y.extend(DDWTOS_DD, Y.Base, {
      * put all our selectors in the same place so we can quickly find and change them later
      * if the structure of the document changes.
      */
-    css_selectors : function(topnode) {
+    css_selectors: function(topnode) {
         return {
-            top_node : function() {
+            top_node: function() {
                 return topnode;
             },
-            drag_container : function() {
+            drag_container: function() {
                 return topnode + ' div.drags';
             },
-            drags : function() {
+            drags: function() {
                 return this.drag_container() + ' span.drag';
             },
-            drag : function(no) {
+            drag: function(no) {
                 return this.drags() + '.no' + no;
             },
-            drags_in_group : function(groupno) {
+            drags_in_group: function(groupno) {
                 return this.drags() + '.group' + groupno;
             },
-            unplaced_drags_in_group : function(groupno) {
+            unplaced_drags_in_group: function(groupno) {
                 return this.drags_in_group(groupno) + '.unplaced';
             },
-            drags_for_choice_in_group : function(choiceno, groupno) {
+            drags_for_choice_in_group: function(choiceno, groupno) {
                 return this.drags_in_group(groupno) + '.choice' + choiceno;
             },
-            unplaced_drags_for_choice_in_group : function(choiceno, groupno) {
+            unplaced_drags_for_choice_in_group: function(choiceno, groupno) {
                 return this.unplaced_drags_in_group(groupno) + '.choice' + choiceno;
             },
-            drops : function() {
+            drops: function() {
                 return topnode + ' span.drop';
             },
-            drop_for_place : function(placeno) {
+            drop_for_place: function(placeno) {
                 return this.drops() + '.place' + placeno;
             },
-            drops_in_group : function(groupno) {
+            drops_in_group: function(groupno) {
                 return this.drops() + '.group' + groupno;
             },
-            drag_homes : function() {
+            drag_homes: function() {
                 return topnode + ' span.draghome';
             },
-            drag_homes_group : function(groupno) {
+            drag_homes_group: function(groupno) {
                 return topnode + ' .draggrouphomes' + groupno + ' span.draghome';
             },
-            drag_home : function(groupno, choiceno) {
+            drag_home: function(groupno, choiceno) {
                 return topnode + ' .draggrouphomes' + groupno + ' span.draghome.choice' + choiceno;
             },
-            drops_group : function(groupno) {
+            drops_group: function(groupno) {
                 return topnode + ' span.drop.group' + groupno;
             }
         };
     },
-    set_padding_sizes_all : function () {
+    set_padding_sizes_all: function() {
         for (var groupno = 1; groupno <= 8; groupno++) {
             this.set_padding_size_for_group(groupno);
         }
     },
-    set_padding_size_for_group : function (groupno) {
+    set_padding_size_for_group: function(groupno) {
         var groupitems = Y.all(this.selectors.drag_homes_group(groupno));
         if (groupitems.size() !== 0) {
             var maxwidth = 0;
             var maxheight = 0;
-            //find max height and width
-            groupitems.each(function(item){
+            // find max height and width
+            groupitems.each(function(item) {
                 maxwidth = Math.max(maxwidth, Math.ceil(item.get('offsetWidth')));
                 maxheight = Math.max(maxheight, Math.ceil(item.get('offsetHeight')));
             }, this);
@@ -128,7 +128,7 @@ Y.extend(DDWTOS_DD, Y.Base, {
             }, this);
         }
     },
-    pad_to_width_height : function (node, width, height) {
+    pad_to_width_height: function(node, width, height) {
         node.setStyle('width', width + 'px').setStyle('height', height + 'px')
                 .setStyle('lineHeight', height + 'px');
     },
@@ -138,10 +138,10 @@ Y.extend(DDWTOS_DD, Y.Base, {
      * as the drag items but are invisible. We clone these invisible elements to make the
      * actual drag items.
      */
-    clone_drag_items : function () {
+    clone_drag_items: function() {
         Y.all(this.selectors.drag_homes()).each(this.clone_drag_items_for_one_choice, this);
     },
-    clone_drag_items_for_one_choice : function(draghome) {
+    clone_drag_items_for_one_choice: function(draghome) {
         if (draghome.hasClass('infinite')) {
             var groupno = this.get_group(draghome);
             var noofdrags = Y.all(this.selectors.drops_in_group(groupno)).size();
@@ -152,20 +152,20 @@ Y.extend(DDWTOS_DD, Y.Base, {
             this.clone_drag_item(draghome);
         }
     },
-    nextdragitemno : 1,
-    clone_drag_item : function (draghome) {
+    nextdragitemno: 1,
+    clone_drag_item: function(draghome) {
         var drag = draghome.cloneNode(true);
         drag.removeClass('draghome');
         drag.addClass('drag');
         drag.addClass('no' + this.nextdragitemno);
         this.nextdragitemno++;
-        drag.setStyles({'visibility': 'visible', 'position' : 'absolute'});
+        drag.setStyles({'visibility': 'visible', 'position': 'absolute'});
         Y.one(this.selectors.drag_container()).appendChild(drag);
         if (!this.get('readonly')) {
             this.make_draggable(drag);
         }
     },
-    get_classname_numeric_suffix : function(node, prefix) {
+    get_classname_numeric_suffix: function(node, prefix) {
         var classes = node.getAttribute('class');
         if (classes !== '') {
             var classesarr = classes.split(' ');
@@ -180,20 +180,20 @@ Y.extend(DDWTOS_DD, Y.Base, {
         }
         throw 'Prefix "' + prefix + '" not found in class names.';
     },
-    get_choice : function(node) {
+    get_choice: function(node) {
         return this.get_classname_numeric_suffix(node, 'choice');
     },
-    get_group : function(node) {
+    get_group: function(node) {
         return this.get_classname_numeric_suffix(node, 'group');
     },
-    get_place : function(node) {
+    get_place: function(node) {
         return this.get_classname_numeric_suffix(node, 'place');
     },
-    get_no : function(node) {
+    get_no: function(node) {
         return this.get_classname_numeric_suffix(node, 'no');
     },
-    placed : null,
-    initial_place_of_drag_items : function() {
+    placed: null,
+    initial_place_of_drag_items: function() {
         Y.all(this.selectors.drags()).addClass('unplaced');
         this.placed = [];
         for (var placeno in this.get('inputids')) {
@@ -210,7 +210,7 @@ Y.extend(DDWTOS_DD, Y.Base, {
             }
         }
     },
-    make_draggable : function (drag) {
+    make_draggable: function(drag) {
         new Y.DD.Drag({
             node: drag,
             groups: [this.get_group(drag)],
@@ -228,7 +228,7 @@ Y.extend(DDWTOS_DD, Y.Base, {
      * you can scroll by touching other area of the screen apart from the
      * draggable items.
      */
-    prevent_touchmove_from_scrolling : function(drag) {
+    prevent_touchmove_from_scrolling: function(drag) {
         var touchstart = (Y.UA.ie) ? 'MSPointerStart' : 'touchstart';
         var touchend = (Y.UA.ie) ? 'MSPointerEnd' : 'touchend';
         var touchmove = (Y.UA.ie) ? 'MSPointerMove' : 'touchmove';
@@ -253,17 +253,17 @@ Y.extend(DDWTOS_DD, Y.Base, {
         }, this);
     },
 
-    make_drop_zones : function () {
+    make_drop_zones: function() {
         Y.all(this.selectors.drops()).each(this.make_drop_zone, this);
     },
-    make_drop_zone : function (drop) {
+    make_drop_zone: function(drop) {
         var dropdd = new Y.DD.Drop({
             node: drop,
-            groups: [this.get_group(drop)] });
+            groups: [this.get_group(drop)]});
         dropdd.on('drop:hit', function(e) {
             var drag = e.drag.get('node');
             var drop = e.drop.get('node');
-            if (this.get_group(drop) === this.get_group(drag)){
+            if (this.get_group(drop) === this.get_group(drag)) {
                 this.place_drag_in_drop(drag, drop);
             }
         }, this);
@@ -271,7 +271,7 @@ Y.extend(DDWTOS_DD, Y.Base, {
             drop.on('dragchange', this.drop_zone_key_press, this);
         }
     },
-    place_drag_in_drop : function (drag, drop) {
+    place_drag_in_drop: function(drag, drop) {
         var placeno = this.get_place(drop);
         var inputid = this.get('inputids')[placeno];
         var inputnode = Y.one('input#' + inputid);
@@ -292,15 +292,15 @@ Y.extend(DDWTOS_DD, Y.Base, {
         if (drag !== null) {
             this.placed[this.get_no(drag)] = placeno;
             if (drag.dd) {
-                drag.dd.once('drag:start', function (e, inputnode, drag) {
+                drag.dd.once('drag:start', function(e, inputnode, drag) {
                     inputnode.set('value', 0);
                     delete this.placed[this.get_no(drag)];
                     drag.addClass('unplaced');
-                },this, inputnode, drag);
+                }, this, inputnode, drag);
             }
         }
     },
-    remove_drag_from_drop : function (drop) {
+    remove_drag_from_drop: function(drop) {
         this.place_drag_in_drop(null, drop);
     },
 
@@ -311,7 +311,7 @@ Y.extend(DDWTOS_DD, Y.Base, {
      * @param dotimeout (optional) if true, continually re-position the items so
      * they stay in place. Else, if an integer, reposition this many times before stopping.
      */
-    position_drag_items : function (pendingid, dotimeout) {
+    position_drag_items: function(pendingid, dotimeout) {
        Y.all(this.selectors.drags()).each(this.position_drag_item, this);
        M.util.js_complete(pendingid);
        if (dotimeout === true || dotimeout > 0) {
@@ -321,7 +321,7 @@ Y.extend(DDWTOS_DD, Y.Base, {
            Y.later(500, this, this.position_drag_items, [pendingid, dotimeout]);
        }
     },
-    position_drag_item : function (drag) {
+    position_drag_item: function(drag) {
         if (!drag.hasClass('yui3-dd-dragging')) {
             if (!this.placed[this.get_no(drag)]) {
                 var groupno = this.get_group(drag);
@@ -338,7 +338,7 @@ Y.extend(DDWTOS_DD, Y.Base, {
         }
     },
 
-    drop_zone_key_press : function (e) {
+    drop_zone_key_press: function(e) {
         switch (e.direction) {
             case 'next' :
                 this.place_next_drag_in(e.target);
@@ -352,13 +352,13 @@ Y.extend(DDWTOS_DD, Y.Base, {
         }
         e.preventDefault();
     },
-    place_next_drag_in : function (drop) {
+    place_next_drag_in: function(drop) {
         this.choose_next_choice_for_drop(drop, 1);
     },
-    place_previous_drag_in : function (drop) {
+    place_previous_drag_in: function(drop) {
         this.choose_next_choice_for_drop(drop, -1);
     },
-    choose_next_choice_for_drop : function (drop, direction) {
+    choose_next_choice_for_drop: function(drop, direction) {
         var next;
         var groupno = this.get_group(drop);
         var current = this.current_choice_in_drop(drop);
@@ -384,17 +384,17 @@ Y.extend(DDWTOS_DD, Y.Base, {
         } while (drag === null);
         this.place_drag_in_drop(drag, drop);
     },
-    current_choice_in_drop : function(drop) {
+    current_choice_in_drop: function(drop) {
         var inputid = this.get('inputids')[this.get_place(drop)];
         var inputnode = Y.one('input#' + inputid);
         return Number(inputnode.get('value'));
     }
 }, {
-    NAME : DDWTOSDDNAME,
-    ATTRS : {
-        readonly : {value : false},
-        topnode : {value : null},
-        inputids : {value : null}
+    NAME: DDWTOSDDNAME,
+    ATTRS: {
+        readonly: {value: false},
+        topnode: {value: null},
+        inputids: {value: null}
     }
 });
 
@@ -414,14 +414,14 @@ Y.Event.define('dragchange', {
         '27': 'remove'    // Escape
     },
 
-    _keyHandler: function (e, notifier) {
+    _keyHandler: function(e, notifier) {
         if (this._keys[e.keyCode]) {
             e.direction = this._keys[e.keyCode];
             notifier.fire(e);
         }
     },
 
-    on: function (node, sub, notifier) {
+    on: function(node, sub, notifier) {
         sub._detacher = node.on(this._event, this._keyHandler,
                                 this, notifier);
     }

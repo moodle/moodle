@@ -151,7 +151,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         ev.preventDefault();
 
         // Get the element we're working on.
-        var element   = activity,
+        var element = activity,
             // Create confirm string (different if element has or does not have name)
             confirmstring = '',
             qtypename = M.util.get_string('pluginname',
@@ -201,19 +201,19 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {String} action The action that has been requested.
      * @return Boolean
      */
-    edit_maxmark : function(ev, button, activity) {
+    edit_maxmark: function(ev, button, activity) {
         // Get the element we're working on
-        var instancemaxmark  = activity.one(SELECTOR.INSTANCEMAXMARK),
+        var instancemaxmark = activity.one(SELECTOR.INSTANCEMAXMARK),
             instance = activity.one(SELECTOR.ACTIVITYINSTANCE),
             currentmaxmark = instancemaxmark.get('firstChild'),
             oldmaxmark = currentmaxmark.get('data'),
             maxmarktext = oldmaxmark,
             thisevent,
-            anchor = instancemaxmark,// Grab the anchor so that we can swap it with the edit form.
+            anchor = instancemaxmark, // Grab the anchor so that we can swap it with the edit form.
             data = {
-                'class'   : 'resource',
-                'field'   : 'getmaxmark',
-                'id'      : Y.Moodle.mod_quiz.util.slot.getId(activity)
+                'class': 'resource',
+                'field': 'getmaxmark',
+                'id': Y.Moodle.mod_quiz.util.slot.getId(activity)
             };
 
         // Prevent the default actions.
@@ -234,11 +234,11 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             var editinstructions = Y.Node.create('<span class="' + CSS.EDITINSTRUCTIONS + '" id="id_editinstructions" />')
                 .set('innerHTML', M.util.get_string('edittitleinstructions', 'moodle'));
             var editor = Y.Node.create('<input name="maxmark" type="text" class="' + CSS.TITLEEDITOR + '" />').setAttrs({
-                'value' : maxmarktext,
-                'autocomplete' : 'off',
-                'aria-describedby' : 'id_editinstructions',
-                'maxLength' : '12',
-                'size' : parseInt(this.get('config').questiondecimalpoints, 10) + 2
+                'value': maxmarktext,
+                'autocomplete': 'off',
+                'aria-describedby': 'id_editinstructions',
+                'maxLength': '12',
+                'size': parseInt(this.get('config').questiondecimalpoints, 10) + 2
             });
 
             // Clear the existing content and put the editor in.
@@ -274,7 +274,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {Node} activity The activity whose maxmark we are altering.
      * @param {String} originalmaxmark The original maxmark the activity or resource had.
      */
-    edit_maxmark_submit : function(ev, activity, originalmaxmark) {
+    edit_maxmark_submit: function(ev, activity, originalmaxmark) {
         // We don't actually want to submit anything.
         ev.preventDefault();
         var newmaxmark = Y.Lang.trim(activity.one(SELECTOR.ACTIVITYFORM + ' ' + SELECTOR.ACTIVITYMAXMARK).get('value'));
@@ -283,10 +283,10 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         activity.one(SELECTOR.INSTANCEMAXMARK).setContent(newmaxmark);
         if (newmaxmark !== null && newmaxmark !== "" && newmaxmark !== originalmaxmark) {
             var data = {
-                'class'   : 'resource',
-                'field'   : 'updatemaxmark',
-                'maxmark'   : newmaxmark,
-                'id'      : Y.Moodle.mod_quiz.util.slot.getId(activity)
+                'class': 'resource',
+                'field': 'updatemaxmark',
+                'maxmark': newmaxmark,
+                'id': Y.Moodle.mod_quiz.util.slot.getId(activity)
             };
             this.send_request(data, spinner, function(response) {
                 if (response.instancemaxmark) {
@@ -305,7 +305,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {Node} activity The activity whose maxmark we are altering.
      * @param {Boolean} preventdefault If true we should prevent the default action from occuring.
      */
-    edit_maxmark_cancel : function(ev, activity, preventdefault) {
+    edit_maxmark_cancel: function(ev, activity, preventdefault) {
         if (preventdefault) {
             ev.preventDefault();
         }
@@ -319,7 +319,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @method edit_maxmark_clear
      * @param {Node} activity  The activity whose maxmark we were altering.
      */
-    edit_maxmark_clear : function(activity) {
+    edit_maxmark_clear: function(activity) {
         // Detach all listen events to prevent duplicate triggers
         new Y.EventHandle(this.editmaxmarkevents).detach();
 
@@ -437,13 +437,13 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         Y.Moodle.mod_quiz.util.slot.updateAllDependencyIcons();
     },
 
-    NAME : 'mod_quiz-resource-toolbox',
-    ATTRS : {
-        courseid : {
-            'value' : 0
+    NAME: 'mod_quiz-resource-toolbox',
+    ATTRS: {
+        courseid: {
+            'value': 0
         },
-        quizid : {
-            'value' : 0
+        quizid: {
+            'value': 0
         }
     }
 });

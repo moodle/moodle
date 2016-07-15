@@ -185,7 +185,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
                     // TODO: revert nodes location
                 }
             },
-            context:this
+            context: this
         });
     }
 }, {
