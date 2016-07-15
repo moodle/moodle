@@ -95,7 +95,7 @@ if ($options['password'] == '' ) {
 $errmsg = '';//prevent eclipse warning
 if (!$options['ignore-password-policy'] ) {
     if (!check_password_policy($password, $errmsg)) {
-        cli_error($errmsg);
+        cli_error(html_to_text($errmsg, 0));
     }
 }
 
