@@ -1,0 +1,53 @@
+{{{ output.doctype }}}
+<html {{{ output.htmlattributes }}}>
+<head>
+    <title>{{ output.page_title }}</title>
+    <link rel="shortcut icon" href="{{{ output.favicon }}}" />
+    {{{ output.standard_head_html }}}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body {{{ output.body_attributes }}}>
+
+{{{ output.standard_top_of_body_html }}}
+
+<header role="banner" class="navbar navbar-light bg-faded navbar-static-top moodle-has-zindex">
+    <div class="clearfix">
+        <button class="navbar-toggler pull-xs-right hidden-sm-up" data-toggle="collapse" data-target="#bd-main-mav">☰<span class="sr-only">{{#str}}expand{{/str}}</span></button>
+    </div>
+    <a class="navbar-brand" href="{{{ config.wwwroot }}}">{{{ sitename }}}</a>
+
+    <div class="collapse navbar-toggleable-xs" id="bd-main-nav">
+        <nav class="nav navbar-nav">
+            <!-- search_box -->
+            {{{ output.search_box }}}
+            <!-- custom_menu -->
+            {{{ output.custom_menu }}}
+            <!-- page_heading_menu -->
+            {{{ output.page_heading_menu }}}
+            <!-- login info -->
+            {{{ output.login_info }}}
+        </div>
+    </nav>
+</header>
+
+<div id="page" class="container-fluid">
+    {{{ output.full_header }}}
+
+    <div id="page-content" class="row">
+        <div id="region-main-box" class="col-md-9">
+            <div class="row">
+                <section id="region-main" class="col-md-8 col-md-push-4 col-lg-9 col-lg-push-3">
+                    {{{ output.main_content }}}
+                </section>
+                {{{ sidepreblocks }}}
+            </div>
+        </div>
+        {{{ sidepostblocks }}}
+    </div>
+
+    {{{ output.standard_end_of_body_html }}}
+
+</div>
+</body>
+</html>

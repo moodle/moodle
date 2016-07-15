@@ -1,0 +1,34 @@
+// Set image location.
+$iconSpritePath:          "[[pix:theme|glyphicons-halflings]]";
+$iconWhiteSpritePath:     "[[pix:theme|glyphicons-halflings-white]]";
+
+$breadcrumb-divider: "▶";
+
+// Import the bootstrap variables.
+@import "bootstrap/bootstrap";
+
+// Old Moodle stuff from base theme.
+// Massive, needs broken up.
+@import "moodle/core";
+@import "moodle/admin";
+@import "moodle/calendar";
+@import "moodle/course";
+@import "moodle/filemanager";
+@import "moodle/message";
+@import "moodle/question";
+@import "moodle/user";
+@import "moodle/search";
+@import "moodle/blocks";
+@import "moodle/forms";
+@import "moodle/modules";
+@import "moodle/chat";
+@import "moodle/reports";
+@import "moodle/backup-restore";
+@import "moodle/tables";
+@import "moodle/buttons";
+@import "moodle/dock";
+@import "moodle/grade";
+@import "moodle/templates";
+@import "moodle/undo";
+@import "moodle/debug";
+@import "moodle/expendable";

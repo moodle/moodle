@@ -1531,17 +1531,12 @@ class page_requirements_manager {
      * Normally, this method is called automatically by the code that prints the
      * <head> tag. You should not normally need to call it in your own code.
      *
+     * @param renderer_base $renderer
      * @return string the HTML code to go at the start of the <body> tag.
      */
-    public function get_top_of_body_code() {
+    public function get_top_of_body_code(renderer_base $renderer) {
         // First the skip links.
-        $links = '';
-        $attributes = array('class' => 'skip');
-        foreach ($this->skiplinks as $url => $text) {
-            $links .= html_writer::link('#'.$url, $text, $attributes);
-        }
-        $output = html_writer::tag('div', $links, array('class'=>'skiplinks')) . "\n";
-        $this->js_init_call('M.util.init_skiplink');
+        $output = $renderer->render_skip_links($this->skiplinks);
 
         // YUI3 JS needs to be loaded early in the body. It should be cached well by the browser.
         $output .= $this->get_yui3lib_headcode();
