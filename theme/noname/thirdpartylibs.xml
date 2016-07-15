@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>scss/bootstrap</location>
+    <name>Twitter Bootstrap</name>
+    <license>MIT</license>
+    <version>4.0.0-alpha-3</version>
+    <licenseversion></licenseversion>
+  </library>
+</libraries>

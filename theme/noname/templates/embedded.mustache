@@ -1,0 +1,20 @@
+{{{ output.doctype }}}
+<html {{{ output.htmlattributes }}}>
+<head>
+    <title>{{ output.page_title }}</title>
+    <link rel="shortcut icon" href="{{{ output.favicon }}}" />
+    {{{ output.standard_head_html }}}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body {{{ output.body_attributes }}}>
+
+{{{ output.standard_top_of_body_html }}}
+<section id="region-main">
+    {{{ output.course_content_header }}}
+    {{{ output.main_content }}}
+    {{{ output.course_content_footer }}}
+</section>
+{{{ output.standard_end_of_body_html }}}
+</body>
+</html>

@@ -1,0 +1,6 @@
+table.flexible,
+.generaltable {
+    @extend .table;
+}
+// fancier table styles moved to expendable.less
+// to shift after 4096 selector break

@@ -1,0 +1,584 @@
+/* modules.less */
+
+// The home for small tweaks to modules that don't require
+// changes drastic enough to pull in the full module css
+// and replace it completely
+// Plus some misc. odds and ends
+
+select {
+    width: auto;
+}
+
+// Forum module
+
+.path-mod-forum .forumsearch {
+    input,
+    .helptooltip {
+        margin: 0 3px;
+    }
+}
+
+.path-mod-forum .forumheaderlist,
+.path-mod-forum .forumheaderlist td {
+    border: none;
+}
+
+.path-mod-forum {
+    .forumheaderlist {
+        thead .header,
+        tbody .discussion td {
+            white-space: normal;
+            vertical-align: top;
+            padding-left: 0.5em;
+            padding-right: 0.5em;
+        }
+
+        thead .header {
+            white-space: normal;
+            vertical-align: top;
+        }
+
+        thead .header.replies {
+            text-align: center;
+        }
+        thead .header.lastpost {
+            text-align: right;
+        }
+        thead .header th,
+        tbody .discussion td{
+            &.discussionsubscription {
+                width: 16px;
+                padding-left: 0.5em;
+                padding-right: 0.5em;
+            }
+        }
+        .discussion {
+            .author, .replies, .lastpost {
+                white-space: normal;
+            }
+            .discussionsubscription,
+            .replies {
+                text-align: center;
+            }
+            .topic,
+            .discussionsubscription,
+            .topic.starter,
+            .picture,
+            .author,
+            .replies,
+            .lastpost {
+                vertical-align: top;
+            }
+        }
+    }
+}
+
+.forumpost {
+    @extend .card;
+    padding: 6px;
+    .header {
+        margin-bottom: 3px;
+    }
+    .picture img {
+        margin: 3px;
+        &.userpicture {
+            margin-left: 3px;
+            margin-right: 10px;
+        }
+    }
+    .content {
+        .posting.fullpost {
+            margin-top: 8px;
+        }
+    }
+    .row {
+        .topic,
+        .content-mask,
+        .options {
+            margin-left: 48px;
+        }
+        &.side {
+            clear: both;
+        }
+    }
+}
+
+.forumpost .row .left {
+    width: 48px;
+}
+
+.forumpost .options .commands {
+    margin-left: 0;
+}
+
+.forumpost .subject {
+    font-weight: bold;
+}
+
+// Override hardcoded forum modules styling
+.forumsearch input[type=text] {
+     margin-bottom: 0 !important;
+}
+
+#page-mod-forum-discuss .discussioncontrols {
+    width: auto;
+    margin: 0;
+}
+
+#page-footer {
+    margin-top: 1em;
+    padding: 1em 0;
+    border-top: 2px solid $table-border-color;
+}
+
+.maincalendar .calendarmonth td,.maincalendar .calendarmonth th {
+    border: 1px dotted $table-border-color;
+}
+
+.path-grade-report-grader h1 {
+    text-align: inherit;
+}
+
+#page-mod-chat-gui_basic input#message {
+    max-width: 100%;
+}
+
+#page-mod-data-view #singleimage {
+    width: auto;
+}
+
+.path-mod-data form {
+    margin-top: 10px;
+}
+
+.template_heading {
+    margin-top: 10px;
+}
+
+.breadcrumb-button {
+    float: right;
+    margin-top: 4px;
+}
+
+.breadcrumb-button .singlebutton {
+    float: left;
+    margin-left: 4px;
+}
+
+.navbar-fixed-top,
+.navbar-fixed-bottom {
+    z-index: 4030;
+}
+
+.ie .row-fluid .desktop-first-column {
+    margin-left: 0;
+}
+.langmenu form {
+    margin: 0;
+}
+.container-fluid {
+    max-width: 1680px;
+    margin: 0 auto;
+}
+// contributed by Paul Hibbitts, see http://msdn.microsoft@mixin com/en-us/library/ie/jj583807(v=vs.85).aspx
+canvas {
+    -ms-touch-action: auto;
+}
+
+div#dock {
+    display: none;
+}
+
+// Choice module
+
+.path-mod-choice {
+    .horizontal  .choices {
+        margin: 0;
+        .option {
+            display: inline-block;
+            padding: 10px;
+        }
+    }
+    .results .data {
+        white-space: normal;
+    }
+}
+
+// Lesson module
+
+.path-mod-lesson .firstpageoptions {
+    margin: auto;
+    min-width: 280px;
+    width: 60%;
+}
+
+.path-mod-lesson .centerpadded {
+    padding: 5px;
+    text-align: center;
+}
+
+.path-mod-wiki .wiki_headingtitle,
+.path-mod-wiki .midpad,
+.path-mod-wiki .wiki_headingtime {
+    text-align: inherit;
+}
+
+.path-mod-wiki .wiki_contentbox {
+    width: 100%;
+}
+
+// Dropdown styling.
+.dropdown-menu {
+    > li > a {
+        padding: 3px 20px 3px 8px;
+    }
+}
+
+// Survey module
+
+.path-mod-survey {
+    .surveytable {
+      > tbody > tr:nth-of-type(odd) {background-color: $table-bg;}
+      > tbody > tr:nth-of-type(even) {background-color: $table-bg-accent;}
+        .rblock label {text-align: center;}
+    }
+    .resultgraph, .reportsummary, .studentreport, .reportbuttons, .centerpara {
+        text-align:center;
+    }
+}
+
+.nav .caret {
+    margin-left: 4px;
+}
+
+// Dividers
+.nav {
+    .divider {
+        overflow: hidden;
+        width: 0;
+  //      height: $navbarHeight;
+  //      border-left: 1px solid $navbarBackground;
+   //     border-right: 1px solid $navbarBackgroundHighlight;
+    }
+}
+//.navbar-inverse {
+//    .nav {
+   //     .divider {
+       //     border-left-color: $navbarInverseBackground;
+       //     border-right-color: lighten($navbarInverseBackground, 25%);
+      //  }
+ //   }
+//}
+.dropdown-menu {
+    .divider {
+        width: auto;
+        height: 1px;
+        border-left: 0 none;
+        border-right: 0 none;
+    }
+}
+
+// Usermenu
+.usermenu {
+    .login {
+      //  color: $navbarText;
+        line-height: 40px;
+        a {
+            color: $dropdown-link-color;
+            &:hover,
+            &:focus {
+                color: $dropdown-link-hover-color;
+                text-decoration: underline;
+            }
+        }
+    }
+    .moodle-actionmenu {
+
+        .toggle-display {
+            display: block;
+            opacity: 1;
+            color: $dropdown-link-color;
+            line-height: 40px;
+            height: 40px;
+            &:hover {
+                color: $dropdown-link-hover-color;
+            }
+
+            .userbutton {
+                height: 40px;
+                line-height: 40px;
+                .avatars{
+                    display: inline-block;
+                    height: 36px;
+                    width: 36px;
+                    vertical-align: middle;
+                    margin-right: 6px;
+                    margin-left: 6px;
+
+                    .avatar,
+                    img {
+                        display: block;
+                    }
+                }
+                .usertext {
+                    display: inline-block;
+                    vertical-align: middle;
+                    line-height: 1em;
+                    color: inherit;
+                    .meta,
+                    .role {
+                        display: block;
+                        font-size: 12px;
+                        .value {
+                            font-weight: bold;
+                        }
+                    }
+                    .role {
+                        font-weight: bold;
+                    }
+                }
+            }
+
+            // Hide caret when JS is disabled.
+            .caret {
+                display: none;
+            }
+        }
+
+
+        // A little bit of visual feedback for the action menu when Javascript is disabled.
+        .menu {
+            .menu-action.icon {
+                img {
+                    border-radius: 0;
+                    background: transparent;
+                    box-shadow: none;
+                }
+                &:hover img {
+                    background: #fff;
+                    border-radius: 4px;
+                    box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.125);
+                }
+            }
+        }
+        &[data-enhanced] .menu {
+            .menu-action.icon,
+            .menu-action.icon:hover {
+                img {
+                    border-radius: 0;
+                    background: transparent;
+                    box-shadow: none;
+                }
+            }
+        }
+
+    }
+}
+.jsenabled {
+    .usermenu {
+        .moodle-actionmenu {
+            .toggle-display {
+                display: block;
+
+                &.textmenu {
+                    padding-left: 8px;
+                    padding-right: 8px;
+                }
+
+                // Show caret when JS is enabled.
+                .caret {
+                    display: inline-block;
+                    position: relative;
+                    top: 9px;
+                }
+            }
+
+            > .menubar {
+                display: block;
+                margin: 0px;
+            }
+            > .menu {
+                min-width: 160px;
+                .filler {
+                    display: block;
+                    @include nav-divider();
+                }
+            }
+
+            &.show {
+                background-color: $dropdown-link-active-bg;
+                .menu {
+                    padding: 5px 0;
+                    margin: 2px 0 0;
+                    background-clip: padding-box;
+                    &:before {
+                        content: '';
+                        display: inline-block;
+                        border-left:   7px solid transparent;
+                        border-right:  7px solid transparent;
+                        border-bottom: 7px solid #ccc;
+                        border-bottom-color: $dropdown-border-color;
+                        position: absolute;
+                        top: -7px;
+                    }
+                    &:after {
+                        content: '';
+                        display: inline-block;
+                        border-left:   6px solid transparent;
+                        border-right:  6px solid transparent;
+                        border-bottom: 6px solid $dropdown-bg;
+                        position: absolute;
+                        top: -6px;
+                    }
+
+                    a {
+                        border-radius: 0;
+
+                        &:focus {
+                            text-decoration: none;
+                        }
+                        &:hover {
+                            text-decoration: none;
+                            @include gradient-vertical($dropdown-link-hover-bg, darken($dropdown-link-hover-bg, 5%));
+                        }
+                    }
+                    &.align-tr-br {
+                        margin-top: 2px;
+                    }
+                    @include box-shadow (0 5px 10px rgba(0, 0, 0, 0.2));
+                }
+                &:hover .toggle-display {}
+            }
+        }
+    }
+}
+
+.usermenu {
+    float: right;
+    > .moodle-actionmenu {
+        > .menu {
+            &:before {
+                right: 9px;
+            }
+            &:after {
+                right: 10px;
+            }
+        }
+        > .menubar li a {
+            text-align: right;
+        }
+    }
+}
+&.userloggedinas .usermenu .userbutton .avatars {
+    .avatar {
+        &.current {
+            left: 16px;
+        }
+    }
+}
+
+
+.userloggedinas .usermenu .userbutton .avatars {
+    .avatar {
+        &.current {
+            position: relative;
+            top: 4px;
+            left: 4px;
+            width: 20px;
+            height: 20px;
+            margin-top: 11px;
+            margin-bottom: -34px;
+            border: 1px solid #fff;
+            border-radius: 50%;
+            box-shadow: -2px -2px 16px rgba(0,0,0,0.25);
+        }
+        img {
+            width: inherit;
+            height: inherit;
+        }
+        overflow: hidden;
+    }
+}
+
+// Quiz module
+
+// Question navigation block.
+.path-mod-quiz #mod_quiz_navblock {
+    .qnbutton {
+        text-decoration: none;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: normal;
+        background-color: $body-color;
+        background-image: none;
+        height: 40px;
+        width: 30px;
+        border-radius: 3px;
+        border: 0;
+        overflow: visible;
+        margin: 0 6px 6px 0;
+    }
+    span.qnbutton {
+        cursor: default;
+        background-color: $input-bg-disabled;
+        color: $gray;
+    }
+    a.qnbutton:hover,
+    a.qnbutton:active,
+    a.qnbutton:focus {
+        text-decoration: underline;
+    }
+
+    .qnbutton .thispageholder {
+        border: 1px solid;
+        border-radius: 3px;
+        z-index: 1;
+    }
+    .qnbutton.thispage .thispageholder {
+        border-width: 3px;
+    }
+    .allquestionsononepage .qnbutton.thispage .thispageholder {
+        border-width: 1px;
+    }
+
+    .qnbutton.flagged .thispageholder {
+        background: transparent url([[pix:theme|mod/quiz/flag-on]]) 15px 0px no-repeat;
+    }
+
+    .qnbutton .trafficlight {
+        border: 0;
+        background: $body-color none center/10px no-repeat scroll;
+        height: 20px;
+        margin-top: 20px;
+        border-radius: 0 0 3px 3px;
+    }
+
+    .qnbutton.notyetanswered .trafficlight,
+    .qnbutton.invalidanswer .trafficlight {
+        background-color: $body-color;
+    }
+    .qnbutton.invalidanswer .trafficlight {
+        background-image: url([[pix:theme|mod/quiz/warningtriangle]]);
+    }
+    .qnbutton.correct .trafficlight {
+        background-image: url([[pix:theme|mod/quiz/checkmark]]);
+        background-color: $state-success-text;
+    }
+    .qnbutton.blocked .trafficlight {
+        background-image: url([[pix:core|t/locked]]);
+        background-color: $input-bg-disabled;
+    }
+    .qnbutton.notanswered .trafficlight,
+    .qnbutton.incorrect .trafficlight {
+        background-color: $state-danger-text;
+    }
+    .qnbutton.partiallycorrect .trafficlight {
+        background-image: url([[pix:theme|mod/quiz/whitecircle]]);
+        background-color: $state-warning-text;
+    }
+    .qnbutton.complete .trafficlight,
+    .qnbutton.answersaved .trafficlight,
+    .qnbutton.requiresgrading .trafficlight {
+        background-color: $gray-light;
+    }
+}
