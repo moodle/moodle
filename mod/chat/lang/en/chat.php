@@ -62,6 +62,7 @@ $string['chat:readlog'] = 'View chat logs';
 $string['chatreport'] = 'Chat sessions';
 $string['chat:talk'] = 'Talk in a chat';
 $string['chattime'] = 'Next chat time';
+$string['chat:view'] = 'View chat activity';
 $string['entermessage'] = "Enter your message";
 $string['eventmessagesent'] = 'Message sent';
 $string['eventsessionsviewed'] = 'Sessions viewed';
