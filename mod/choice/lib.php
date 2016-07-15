@@ -21,6 +21,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /** @global int $CHOICE_COLUMN_HEIGHT */
 global $CHOICE_COLUMN_HEIGHT;
 $CHOICE_COLUMN_HEIGHT = 300;
