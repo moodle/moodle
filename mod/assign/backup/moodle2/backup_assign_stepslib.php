@@ -110,6 +110,10 @@ class backup_assign_activity_structure_step extends backup_activity_structure_st
                                                          'name',
                                                          'value'));
 
+        $overrides = new backup_nested_element('overrides');
+        $override = new backup_nested_element('override', array('id'), array(
+            'groupid', 'userid', 'allowsubmissionsfromdate', 'duedate', 'cutoffdate'));
+
         // Build the tree.
         $assign->add_child($userflags);
         $userflags->add_child($userflag);
@@ -119,11 +123,16 @@ class backup_assign_activity_structure_step extends backup_activity_structure_st
         $grades->add_child($grade);
         $assign->add_child($pluginconfigs);
         $pluginconfigs->add_child($pluginconfig);
+        $assign->add_child($overrides);
+        $overrides->add_child($override);
 
         // Define sources.
         $assign->set_source_table('assign', array('id' => backup::VAR_ACTIVITYID));
         $pluginconfig->set_source_table('assign_plugin_config',
                                         array('assignment' => backup::VAR_PARENTID));
+
+        // Assign overrides to backup are different depending of user info.
+        $overrideparams = array('assignid' => backup::VAR_PARENTID);
 
         if ($userinfo) {
             $userflag->set_source_table('assign_user_flags',
@@ -138,7 +147,11 @@ class backup_assign_activity_structure_step extends backup_activity_structure_st
             // Support 2 types of subplugins.
             $this->add_subplugin_structure('assignsubmission', $submission, true);
             $this->add_subplugin_structure('assignfeedback', $grade, true);
+        } else {
+            $overrideparams['userid'] = backup_helper::is_sqlparam(null); //  Without userinfo, skip user overrides.
         }
+
+        $override->set_source_table('lesson_overrides', $overrideparams);
 
         // Define id annotations.
         $userflag->annotate_ids('user', 'userid');
