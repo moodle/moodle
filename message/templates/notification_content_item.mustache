@@ -38,16 +38,14 @@
     role="listitem"
     aria-expanded="false"
     aria-label="{{subject}}"
-    tabindex="0"
-    {{#contexturl}}data-context-url="{{{.}}}"{{/contexturl}}>
+    tabindex="0">
 
+    {{#contexturl}}
+    <a class="content-item-link" href="{{{.}}}">
+    {{/contexturl}}
     <div class="content-item">
         <div class="content-item-header">
-            <h3>
-                {{#userfromprofileurl}}<a href="{{{.}}}">{{/userfromprofileurl}}
-                    {{userfromfullname}}
-                {{#userfromprofileurl}}</a>{{/userfromprofileurl}}
-            </h3>
+            <h3 {{#userfromprofileurl}}data-link-url="{{{.}}}" role="link"{{/userfromprofileurl}}>{{userfromfullname}}</h3>
         </div>
         <div class="content-item-body">
             <div class="content-body-short">
@@ -92,4 +90,7 @@
             </span>
         </div>
     </div>
+    {{#contexturl}}
+    </a>
+    {{/contexturl}}
 </div>

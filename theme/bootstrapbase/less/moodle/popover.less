@@ -83,6 +83,21 @@
         }
     }
 
+    [data-link-url] {
+        cursor: pointer;
+        color: @linkColor;
+
+        &:hover,
+        &:active {
+            outline: 0;
+        }
+        &:hover,
+        &:focus {
+            color: @linkColorHover;
+            text-decoration: underline;
+        }
+    }
+
     &.collapsed {
         .mdl-popover-container {
             height: 0;
@@ -307,8 +322,14 @@
                             opacity: 0.8;
                         }
 
-                        &[data-context-url] {
-                            cursor: pointer;
+                        .content-item-link {
+                            color: inherit;
+                            text-decoration: none;
+
+                            &:hover {
+                                color: inherit;
+                                text-decoration: none;
+                            }
                         }
 
                         .content-item {
@@ -568,29 +589,44 @@
                         box-sizing: border-box;
                         padding: 5px;
                         height: 85px;
+                        cursor: pointer;
 
                         &:hover {
                             opacity: 0.8;
                         }
 
-                        &[data-context-url] {
-                            cursor: pointer;
+                        .content-item-link {
+                            color: inherit;
+                            text-decoration: none;
+
+                            &:hover {
+                                color: inherit;
+                                text-decoration: none;
+                            }
                         }
 
                         .content-item {
                             height: 100%;
                             width: 100%;
 
-                            img {
+                            .profile-image-container {
+                                height: 100%;
+                                width: 20%;
                                 display: inline-block;
-                                vertical-align: middle;
+
+                                img {
+                                    height: 100%;
+                                    display: inline-block;
+                                    vertical-align: middle;
+                                    border-radius: 50%;
+                                }
                             }
 
                             .content-item-body {
                                 display: inline-block;
                                 box-sizing: border-box;
                                 vertical-align: middle;
-                                width: ~"calc(100% - 68px)";
+                                width: 75%;
                                 height: 100%;
 
                                 h3 {
@@ -607,6 +643,9 @@
                         }
                         &:last-child {
                             border-bottom: none;
+                        }
+                        &.unread {
+                            background-color: #effaff;
                         }
                     }
                 }

@@ -34,18 +34,25 @@
     }
 
 }}
-<div class="content-item-container"
+<div class="content-item-container {{^isread}}unread{{/isread}}"
     role="listitem"
     aria-expanded="false"
     aria-label=""
-    tabindex="0"
-    {{#contexturl}}data-context-url="{{{.}}}"{{/contexturl}}>
+    tabindex="0">
 
+    {{#contexturl}}
+    <a class="content-item-link" href="{{{.}}}">
+    {{/contexturl}}
     <div class="content-item">
-        {{{picture}}}
+        <div class="profile-image-container">
+            <img src="{{{profileimageurl}}}" />
+        </div>
         <div class="content-item-body">
-            <h3>{{name}}</h3>
+            <h3 data-link-url="{{{profileurl}}}" role="link">{{fullname}}</h3>
             <p>{{lastmessage}}</p>
         </div>
     </div>
+    {{#contexturl}}
+    </a>
+    {{/contexturl}}
 </div>

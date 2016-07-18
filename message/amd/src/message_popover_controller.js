@@ -27,9 +27,9 @@
  */
 define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates', 'core/str',
             'core/notification', 'core/custom_interaction_events', 'core/mdl_popover_controller',
-            'core_message/message_repository'],
+            'core_message/message_repository', 'core/url'],
         function($, bootstrap, ajax, templates, str, debugNotification, customEvents,
-            PopoverController, messageRepo) {
+            PopoverController, messageRepo, URL) {
 
     var SELECTORS = {
         MARK_ALL_READ_BUTTON: '.mark-all-read-button',
@@ -38,6 +38,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         CONTENT: '.messages',
         CONTENT_ITEM_CONTAINER: '.content-item-container',
         EMPTY_MESSAGE: '.empty-message',
+        LINK_URL: '[data-link-url]',
     };
 
     /**
@@ -113,6 +114,26 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
     };
 
     /**
+     * Navigate the browser to the link URL for the item, if it has one.
+     *
+     * @method navigateToLinkURL
+     * @param {jQuery} item The link element
+     * @param {bool} item Should the URL be opened in a new tab or not.
+     */
+    MessagePopoverController.prototype.navigateToLinkURL = function(item, newTab) {
+        var url = item.attr('data-link-url');
+        newTab = newTab || false;
+
+        if (url) {
+            if (newTab) {
+                window.open(url, '_blank');
+            } else {
+                window.location.assign(url);
+            }
+        }
+    };
+
+    /**
      * Show the unread notification count badge on the menu toggle if there
      * are unread notifications, otherwise hide it.
      *
@@ -167,6 +188,15 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
 
         if (messages.length) {
             $.each(messages, function(index, message) {
+                message.contexturl = URL.relativeUrl('/message/index.php', {
+                    user: this.userId,
+                    id: message.userid,
+                }, true);
+
+                message.profileurl = URL.relativeUrl('/user/profile.php', {
+                    id: message.userid,
+                });
+
                 var promise = templates.render('message/message_content_item', message);
                 promise.then(function(html, js) {
                     container.append(html);
@@ -240,6 +270,10 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
      * @method registerEventListeners
      */
     MessagePopoverController.prototype.registerEventListeners = function() {
+        customEvents.define(this.root, [
+            customEvents.events.keyboardActivate,
+        ]);
+
         // Update the notification information when the menu is opened.
         this.root.on(this.events().menuOpened, function() {
             this.hideUnreadCount();
@@ -254,6 +288,31 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         this.root.on(this.events().menuClosed, function() {
             this.renderUnreadCount();
             this.updateButtonAriaLabel();
+        }.bind(this));
+
+        // Load more messages when we scroll to the bottom of the open menu.
+        this.root.on(customEvents.events.scrollBottom, function() {
+            this.loadMoreMessages();
+        }.bind(this));
+
+        // Follow the link URL if the user activates it.
+        this.root.on('click', SELECTORS.LINK_URL, function(e) {
+            var linkItem = $(e.target).closest(SELECTORS.LINK_URL);
+            // Open link in a new tab if the user ctrl + click or command + click.
+            if (e.ctrlKey || e.metaKey) {
+                this.navigateToLinkURL(linkItem, true);
+            } else {
+                this.navigateToLinkURL(linkItem, false);
+            }
+            e.stopPropagation();
+            e.preventDefault();
+        }.bind(this));
+
+        // Follow the link URL if the user activates it.
+        this.root.on(customEvents.events.keyboardActivate, SELECTORS.LINK_URL, function(e) {
+            var linkItem = $(e.target).closest(SELECTORS.LINK_URL);
+            this.navigateToLinkURL(linkItem, false);
+            e.stopPropagation();
         }.bind(this));
     };
 

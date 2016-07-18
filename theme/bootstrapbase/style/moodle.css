@@ -7107,6 +7107,19 @@ body.path-question-type .mform fieldset.hidden {
 .mdl-popover .mdl-popover-container .mdl-popover-content-container.loading .empty-message {
   display: none;
 }
+.mdl-popover [data-link-url] {
+  cursor: pointer;
+  color: #0070a8;
+}
+.mdl-popover [data-link-url]:hover,
+.mdl-popover [data-link-url]:active {
+  outline: 0;
+}
+.mdl-popover [data-link-url]:hover,
+.mdl-popover [data-link-url]:focus {
+  color: #003d5c;
+  text-decoration: underline;
+}
 .mdl-popover.collapsed .mdl-popover-container {
   height: 0;
   overflow: hidden;
@@ -7286,8 +7299,13 @@ body.path-question-type .mform fieldset.hidden {
 .mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container:hover {
   opacity: 0.8;
 }
-.mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container[data-context-url] {
-  cursor: pointer;
+.mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item-link {
+  color: inherit;
+  text-decoration: none;
+}
+.mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item-link:hover {
+  color: inherit;
+  text-decoration: none;
 }
 .mdl-popover-notifications.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item {
   width: calc(100% - 45px);
@@ -7474,26 +7492,39 @@ body.path-question-type .mform fieldset.hidden {
   box-sizing: border-box;
   padding: 5px;
   height: 85px;
+  cursor: pointer;
 }
 .mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container:hover {
   opacity: 0.8;
 }
-.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container[data-context-url] {
-  cursor: pointer;
+.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item-link {
+  color: inherit;
+  text-decoration: none;
+}
+.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item-link:hover {
+  color: inherit;
+  text-decoration: none;
 }
 .mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item {
   height: 100%;
   width: 100%;
 }
-.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item img {
+.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item .profile-image-container {
+  height: 100%;
+  width: 20%;
+  display: inline-block;
+}
+.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item .profile-image-container img {
+  height: 100%;
   display: inline-block;
   vertical-align: middle;
+  border-radius: 50%;
 }
 .mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item .content-item-body {
   display: inline-block;
   box-sizing: border-box;
   vertical-align: middle;
-  width: calc(100% - 68px);
+  width: 75%;
   height: 100%;
 }
 .mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container .content-item .content-item-body h3 {
@@ -7507,6 +7538,9 @@ body.path-question-type .mform fieldset.hidden {
 }
 .mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container:last-child {
   border-bottom: none;
+}
+.mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container .mdl-popover-content .content-item-container.unread {
+  background-color: #effaff;
 }
 .mdl-popover-messages.mdl-popover .mdl-popover-container .mdl-popover-content-container.loading .mdl-popover-content .messages:empty + .empty-message {
   display: none;

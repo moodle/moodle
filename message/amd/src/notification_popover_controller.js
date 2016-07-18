@@ -44,6 +44,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         EMPTY_MESSAGE: '.empty-message',
         CONTENT_BODY_SHORT: '.content-body-short',
         CONTENT_BODY_FULL: '.content-body-full',
+        LINK_URL: '[data-link-url]',
     };
 
     var PROCESSOR_NAME = 'popup';
@@ -501,16 +502,22 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
     };
 
     /**
-     * Navigate the browser to the content URL for the content item, if it has one.
+     * Navigate the browser to the link URL for the item, if it has one.
      *
-     * @method navigateToContextURL
-     * @param item jQuery object representing the content item
+     * @method navigateToLinkURL
+     * @param {jQuery} item The link element
+     * @param {bool} item Should the URL be opened in a new tab or not.
      */
-    NotificationPopoverController.prototype.navigateToContextURL = function(item) {
-        var url = item.attr('data-context-url');
+    NotificationPopoverController.prototype.navigateToLinkURL = function(item, newTab) {
+        var url = item.attr('data-link-url');
+        newTab = newTab || false;
 
         if (url) {
-            window.location.assign(url);
+            if (newTab) {
+                window.open(url, '_blank');
+            } else {
+                window.location.assign(url);
+            }
         }
     };
 
@@ -602,6 +609,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
     NotificationPopoverController.prototype.registerEventListeners = function() {
         customEvents.define(this.root, [
             customEvents.events.activate,
+            customEvents.events.keyboardActivate,
             customEvents.events.next,
             customEvents.events.previous,
             customEvents.events.asterix,
@@ -674,10 +682,23 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
             e.stopPropagation();
         }.bind(this));
 
-        // Follow the context URL if the user activates the content item.
-        this.root.on(customEvents.events.activate, SELECTORS.CONTENT_ITEM_CONTAINER, function(e) {
-            var contentItem = $(e.target).closest(SELECTORS.CONTENT_ITEM_CONTAINER);
-            this.navigateToContextURL(contentItem);
+        // Follow the link URL if the user activates it.
+        this.root.on('click', SELECTORS.LINK_URL, function(e) {
+            var linkItem = $(e.target).closest(SELECTORS.LINK_URL);
+            // Open link in a new tab if the user ctrl + click or command + click.
+            if (e.ctrlKey || e.metaKey) {
+                this.navigateToLinkURL(linkItem, true);
+            } else {
+                this.navigateToLinkURL(linkItem, false);
+            }
+            e.stopPropagation();
+            e.preventDefault();
+        }.bind(this));
+
+        // Follow the link URL if the user activates it.
+        this.root.on(customEvents.events.keyboardActivate, SELECTORS.LINK_URL, function(e) {
+            var linkItem = $(e.target).closest(SELECTORS.LINK_URL);
+            this.navigateToLinkURL(linkItem, false);
             e.stopPropagation();
         }.bind(this));
 

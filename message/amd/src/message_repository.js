@@ -19,21 +19,23 @@
  * @module     core_message/message_repository
  * @class      message_repository
  * @package    message
- * @copyright  2015 Ryan Wyllie <ryan@moodle.com>
+ * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.2
  */
 define(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {
     var query = function(args) {
-        /*
+        // Normalise the arguments to use limit/offset rather than limitnum/limitfrom.
         if (typeof args.limit === 'undefined') {
-            args.limit = 20;
+            args.limit = 0;
         }
 
         if (typeof args.offset === 'undefined') {
             args.offset = 0;
         }
-        */
+
+        args.limitfrom = args.offset;
+        args.limitnum = args.limit;
 
         delete args.limit;
         delete args.offset;
