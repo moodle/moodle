@@ -18,6 +18,9 @@ information provided here is intended especially for developers.
   External function gradereport_user_external::get_grades_table can be used for retrieving the course grades table.
   Please note that the information returned from that WS is intended for displaying (not for data consumption).
 * New option 'escape' added to format_string. When true (default), escapes HTML entities from the string
+* The following functions have been deprecated and are not used any more:
+  - get_records_csv() Please use csv_import_reader::load_csv_content() instead.
+  - put_records_csv() Please use download_as_dataformat (lib/dataformatlib.php) instead.
 
 === 3.1 ===
 
