@@ -1025,6 +1025,7 @@ EOF;
             'filename'  => $filename,
         );
         $file = self::create_draft_file($filerecord);
+        $draftitemid = $file->get_itemid();
 
         $maxbytes = $CFG->userquota;
         $maxareabytes = $CFG->userquota;
@@ -1034,7 +1035,7 @@ EOF;
                          'areamaxbytes' => $maxareabytes);
 
         // Add new file.
-        file_merge_files_from_draft_area_into_filearea($file->get_itemid(), $usercontext->id, 'user', 'private', 0, $options);
+        file_merge_files_from_draft_area_into_filearea($draftitemid, $usercontext->id, 'user', 'private', 0, $options);
 
         $files = $fs->get_area_files($usercontext->id, 'user', 'private', 0);
         // Directory and file.
@@ -1051,12 +1052,12 @@ EOF;
 
         // Add two more files.
         $filerecord = array(
-            'itemid'  => $file->get_itemid(),
+            'itemid'  => $draftitemid,
             'filename'  => 'second.txt',
         );
         self::create_draft_file($filerecord);
         $filerecord = array(
-            'itemid'  => $file->get_itemid(),
+            'itemid'  => $draftitemid,
             'filename'  => 'third.txt',
         );
         $file = self::create_draft_file($filerecord);
