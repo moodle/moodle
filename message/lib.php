@@ -1970,7 +1970,7 @@ function message_togglecontact_requirejs() {
         return;
     }
 
-    $PAGE->requires->js_call_amd('message/toggle_contact_button', 'enhance', array('#toggle-contact-button'));
+    $PAGE->requires->js_call_amd('core_message/toggle_contact_button', 'enhance', array('#toggle-contact-button'));
     $done = true;
 }
 

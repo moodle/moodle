@@ -16,7 +16,7 @@
 /**
  * Controls the preferences page
  *
- * @module     message/preferences_notifications_list_controller
+ * @module     core_message/preferences_notifications_list_controller
  * @class      preferences_notifications_list_controller
  * @package    message
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>

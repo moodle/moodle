@@ -16,7 +16,7 @@
 /**
  * Retrieves notifications from the server.
  *
- * @module     message/message_repository
+ * @module     core_message/message_repository
  * @class      message_repository
  * @package    message
  * @copyright  2015 Ryan Wyllie <ryan@moodle.com>

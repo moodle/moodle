@@ -70,7 +70,7 @@
     {{/content}}
 {{/ core/mdl_popover }}
 {{#js}}
-require(['jquery', 'message/message_popover_controller'], function($, controller) {
+require(['jquery', 'core_message/message_popover_controller'], function($, controller) {
     var container = $('#nav-message-popover-container');
     var controller = new controller(container);
     controller.registerEventListeners();

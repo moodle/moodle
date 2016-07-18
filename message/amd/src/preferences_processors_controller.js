@@ -16,7 +16,7 @@
 /**
  * Controls the processors page
  *
- * @module     message/preferences_processors_controller
+ * @module     core_message/preferences_processors_controller
  * @class      preferences_processors_controller
  * @package    message
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>

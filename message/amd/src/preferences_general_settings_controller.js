@@ -16,7 +16,7 @@
 /**
  * Controls the general settings on the message preferences page
  *
- * @module     message/preferences_general_settings_controller
+ * @module     core_message/preferences_general_settings_controller
  * @class      preferences_processors_controller
  * @package    message
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>

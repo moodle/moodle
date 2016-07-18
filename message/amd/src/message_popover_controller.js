@@ -18,7 +18,7 @@
  *
  * See template: message/message_menu
  *
- * @module     message/message_popover_controller
+ * @module     core_message/message_popover_controller
  * @class      message_popover_controller
  * @package    message
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
@@ -27,7 +27,7 @@
  */
 define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates', 'core/str',
             'core/notification', 'core/custom_interaction_events', 'core/mdl_popover_controller',
-            'message/message_repository'],
+            'core_message/message_repository'],
         function($, bootstrap, ajax, templates, str, debugNotification, customEvents,
             PopoverController, messageRepo) {
 
