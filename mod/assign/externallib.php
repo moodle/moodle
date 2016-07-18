@@ -1999,7 +1999,7 @@ class mod_assign_external extends external_api {
 
     /**
      * Describes the parameters for copy_previous_attempt
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since  Moodle 2.6
      */
     public static function copy_previous_attempt_parameters() {
@@ -2018,13 +2018,13 @@ class mod_assign_external extends external_api {
      * @since Moodle 2.6
      */
     public static function copy_previous_attempt($assignmentid) {
-        global $CFG, $USER;
+        global $CFG;
         require_once("$CFG->dirroot/mod/assign/locallib.php");
 
         $params = self::validate_parameters(self::copy_previous_attempt_parameters(),
                                             array('assignmentid' => $assignmentid));
 
-        $cm = get_coursemodule_from_instance('assign', $assignmentid, 0, false, MUST_EXIST);
+        $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
         $context = context_module::instance($cm->id);
         self::validate_context($context);
 
@@ -2032,7 +2032,7 @@ class mod_assign_external extends external_api {
 
         $notices = array();
 
-        $assignment->copy_previous_attempt($submissiondata, $notices);
+        $assignment->copy_previous_attempt($notices);
 
         $warnings = array();
         foreach ($notices as $notice) {
