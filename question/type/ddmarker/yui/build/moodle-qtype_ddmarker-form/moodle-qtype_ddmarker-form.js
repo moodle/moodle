@@ -32,10 +32,14 @@ Y.extend(DDMARKER_FORM, M.qtype_ddmarker.dd_base_class, {
         var tn = Y.one(this.get('topnode'));
         tn.one('div.fcontainer').append(
                 '<div class="ddarea">' +
-                    '<div class="markertexts"></div>' +
-                    '<div class="droparea"></div>' +
-                    '<div class="dropzones"></div>' +
-                    '<div class="grid"></div>' +
+                '<div class="markertexts"></div>' +
+                '<div class="droparea"></div>' +
+                '<div class="dropzones"></div>' +
+                '<ul class="pager">' +
+                '<li><span id="xcoordpreview">X = </span></li>' +
+                '<li><span id="ycoordpreview">Y = </span></li>' +
+                '</ul>' +
+                '<div class="grid"></div>' +
                 '</div>');
         this.doc = this.doc_structure(this);
         this.stop_selector_events();
@@ -44,6 +48,15 @@ Y.extend(DDMARKER_FORM, M.qtype_ddmarker.dd_base_class, {
         Y.later(500, this, this.update_drop_zones, [pendingid], true);
         Y.after(this.load_bg_image, M.form_filepicker, 'callback', this);
         this.load_bg_image();
+
+        var topnode = Y.one(this.get('topnode'));
+        topnode.one('.grid').on('mousemove', function (e) {
+            var img = topnode.one('.dropbackground');
+            var x = Math.round(Number(e.pageX) - img.getX() - 1);
+            var y = Math.round(Number(e.pageY) - img.getY() - 1);
+            topnode.one('#xcoordpreview').setHTML("X = " + x);
+            topnode.one('#ycoordpreview').setHTML("Y = " + y);
+        });
     },
 
     load_bg_image : function() {
@@ -118,7 +131,7 @@ Y.extend(DDMARKER_FORM, M.qtype_ddmarker.dd_base_class, {
         }
     },
     set_options_for_drag_item_selectors : function () {
-        var dragitemsoptions = {'0': ''};
+        var dragitemsoptions = {0: ''};
         for (var i = 1; i <= this.form.get_form_value('noitems', []); i++) {
             var label = this.get_marker_text(i);
             if (label !== "") {
