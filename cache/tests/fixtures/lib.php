@@ -297,6 +297,7 @@ class cache_config_testing extends cache_config_writer {
  * as it is only used during testing and its highly unlikely anyone has used this.
  *
  * @deprecated since 2.9
+ * @todo MDL-55267 This will be deleted in Moodle 3.3.
  * @copyright  2014 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

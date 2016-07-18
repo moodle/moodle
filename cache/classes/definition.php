@@ -249,6 +249,7 @@ class cache_definition {
     /**
      * Deprecated - this is completely unused.
      * @deprecated since 2.9
+     * @todo MDL-55267 This will be deleted in Moodle 3.3.
      * @var string
      */
     protected $datasourceaggregate = null;
