@@ -2720,6 +2720,10 @@ class mod_assign_external extends external_api {
         $assign->require_view_grades();
 
         $participant = $assign->get_participant($params['userid']);
+
+        // Update assign with override information.
+        $assign->update_effective_access($params['userid']);
+
         if (!$participant) {
             // No participant found so we can return early.
             throw new moodle_exception('usernotincourse');
@@ -2731,6 +2735,10 @@ class mod_assign_external extends external_api {
             'submitted' => $participant->submitted,
             'requiregrading' => $participant->requiregrading,
             'blindmarking' => $assign->is_blind_marking(),
+            'allowsubmissionsfromdate' => $assign->get_instance()->allowsubmissionsfromdate,
+            'duedate' => $assign->get_instance()->duedate,
+            'cutoffdate' => $assign->get_instance()->cutoffdate,
+            'duedatestr' => userdate($assign->get_instance()->duedate),
         );
 
         if (!empty($participant->groupid)) {
@@ -2766,6 +2774,10 @@ class mod_assign_external extends external_api {
             'submitted' => new external_value(PARAM_BOOL, 'have they submitted their assignment'),
             'requiregrading' => new external_value(PARAM_BOOL, 'is their submission waiting for grading'),
             'blindmarking' => new external_value(PARAM_BOOL, 'is blind marking enabled for this assignment'),
+            'allowsubmissionsfromdate' => new external_value(PARAM_INT, 'allowsubmissionsfromdate for the user'),
+            'duedate' => new external_value(PARAM_INT, 'duedate for the user'),
+            'cutoffdate' => new external_value(PARAM_INT, 'cutoffdate for the user'),
+            'duedatestr' => new external_value(PARAM_TEXT, 'duedate for the user'),
             'groupid' => new external_value(PARAM_INT, 'for group assignments this is the group id', VALUE_OPTIONAL),
             'groupname' => new external_value(PARAM_NOTAGS, 'for group assignments this is the group name', VALUE_OPTIONAL),
             'user' => $userdescription,
