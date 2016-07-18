@@ -578,3 +578,93 @@ class data_file_info_container extends file_info {
         return $this->browser->get_file_info($this->context);
     }
 }
+
+/**
+ * This creates new calendar events given as timeavailablefrom and timeclose by $data.
+ *
+ * @param stdClass $data
+ * @return void
+ */
+function data_set_events($data) {
+    global $DB, $CFG;
+
+    require_once($CFG->dirroot.'/calendar/lib.php');
+
+    // Get CMID if not sent as part of $data.
+    if (!isset($data->coursemodule)) {
+        $cm = get_coursemodule_from_instance('data', $data->id, $data->course);
+        $data->coursemodule = $cm->id;
+    }
+    // Data start calendar events.
+    $event = new stdClass();
+    if ($event->id = $DB->get_field('event', 'id',
+            array('modulename' => 'data', 'instance' => $data->id, 'eventtype' => 'open'))) {
+        if ($data->timeavailablefrom > 0) {
+            // Calendar event exists so update it.
+            $event->name         = get_string('calendarstart', 'data', $data->name);
+            $event->description  = format_module_intro('data', $data, $data->coursemodule);
+            $event->timestart    = $data->timeavailablefrom;
+            $event->visible      = instance_is_visible('data', $data);
+            $event->timeduration = 0;
+            $calendarevent = calendar_event::load($event->id);
+            $calendarevent->update($event);
+        } else {
+            // Calendar event is on longer needed.
+            $calendarevent = calendar_event::load($event->id);
+            $calendarevent->delete();
+        }
+    } else {
+        // Event doesn't exist so create one.
+        if (isset($data->timeavailablefrom) && $data->timeavailablefrom > 0) {
+            $event->name         = get_string('calendarstart', 'data', $data->name);
+            $event->description  = format_module_intro('data', $data, $data->coursemodule);
+            $event->courseid     = $data->course;
+            $event->groupid      = 0;
+            $event->userid       = 0;
+            $event->modulename   = 'data';
+            $event->instance     = $data->id;
+            $event->eventtype    = 'open';
+            $event->timestart    = $data->timeavailablefrom;
+            $event->visible      = instance_is_visible('data', $data);
+            $event->timeduration = 0;
+            calendar_event::create($event);
+        }
+    }
+
+    // Data end calendar events.
+    $event = new stdClass();
+    if ($event->id = $DB->get_field('event', 'id',
+            array('modulename' => 'data', 'instance' => $data->id, 'eventtype' => 'close'))) {
+        if ($data->timeavailableto > 0) {
+            // Calendar event exists so update it.
+            $event->name         = get_string('calendarend', 'data', $data->name);
+            $event->description  = format_module_intro('data', $data, $data->coursemodule);
+            $event->timestart    = $data->timeavailableto;
+            $event->visible      = instance_is_visible('data', $data);
+            $event->timeduration = 0;
+            $calendarevent = calendar_event::load($event->id);
+            $calendarevent->update($event);
+        } else {
+            // Calendar event is on longer needed.
+            $calendarevent = calendar_event::load($event->id);
+            $calendarevent->delete();
+        }
+    } else {
+        // Event doesn't exist so create one.
+        if (isset($data->timeavailableto) && $data->timeavailableto > 0) {
+            $event = new stdClass();
+            $event->name         = get_string('calendarend', 'data', $data->name);
+            $event->description  = format_module_intro('data', $data, $data->coursemodule);
+            $event->courseid     = $data->course;
+            $event->groupid      = 0;
+            $event->userid       = 0;
+            $event->modulename   = 'data';
+            $event->instance     = $data->id;
+            $event->eventtype    = 'close';
+            $event->timestart    = $data->timeavailableto;
+            $event->visible      = instance_is_visible('data', $data);
+            $event->timeduration = 0;
+            calendar_event::create($event);
+        }
+    }
+}

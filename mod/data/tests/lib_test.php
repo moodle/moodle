@@ -623,4 +623,47 @@ class mod_data_lib_testcase extends advanced_testcase {
         $this->assertTrue(mod_data_rating_can_see_item_ratings($params1));
 
     }
+
+    /**
+     * Tests for mod_data_refresh_events.
+     */
+    public function test_data_refresh_events() {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $timeopen = time();
+        $timeclose = time() + 86400;
+
+        $course = $this->getDataGenerator()->create_course();
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $params['course'] = $course->id;
+        $params['timeavailablefrom'] = $timeopen;
+        $params['timeavailableto'] = $timeclose;
+        $data = $generator->create_instance($params);
+
+        // Normal case, with existing course.
+        $this->assertTrue(data_refresh_events($course->id));
+        $eventparams = array('modulename' => 'data', 'instance' => $data->id, 'eventtype' => 'open');
+        $openevent = $DB->get_record('event', $eventparams, '*', MUST_EXIST);
+        $this->assertEquals($openevent->timestart, $timeopen);
+
+        $eventparams = array('modulename' => 'data', 'instance' => $data->id, 'eventtype' => 'close');
+        $closeevent = $DB->get_record('event', $eventparams, '*', MUST_EXIST);
+        $this->assertEquals($closeevent->timestart, $timeclose);
+        // In case the course ID is passed as a numeric string.
+        $this->assertTrue(data_refresh_events('' . $course->id));
+        // Course ID not provided.
+        $this->assertTrue(data_refresh_events());
+        $eventparams = array('modulename' => 'data');
+        $events = $DB->get_records('event', $eventparams);
+        foreach ($events as $event) {
+            if ($event->modulename === 'data' && $event->instance === $data->id && $event->eventtype === 'open') {
+                $this->assertEquals($event->timestart, $timeopen);
+            }
+            if ($event->modulename === 'data' && $event->instance === $data->id && $event->eventtype === 'close') {
+                $this->assertEquals($event->timestart, $timeclose);
+            }
+        }
+    }
 }
