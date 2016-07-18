@@ -8072,6 +8072,15 @@ class assign {
         return;
     }
 
+    /**
+     * Update the module completion status (set it viewed).
+     *
+     * @since Moodle 3.2
+     */
+    public function set_module_viewed() {
+        $completion = new completion_info($this->get_course());
+        $completion->set_module_viewed($this->get_course_module());
+    }
 }
 
 /**
