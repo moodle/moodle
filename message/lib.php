@@ -342,7 +342,7 @@ function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
     $uniquefield = $DB->sql_concat('message.useridfrom', "'-'", 'message.useridto');
     $sql = "SELECT $uniquefield, $userfields,
                    message.id as mid, message.notification, message.smallmessage, message.fullmessage,
-                   message.fullmessagehtml, message.fullmessageformat, message.timecreated,
+                   message.fullmessagehtml, message.fullmessageformat, message.timecreated, 1 as isread,
                    contact.id as contactlistid, contact.blocked
               FROM {message_read} message
               JOIN (
@@ -389,6 +389,7 @@ function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
     // exact same query as the one above, except for the table we are querying. So, simply replace references to
     // the 'message_read' table with the 'message' table.
     $sql = str_replace('{message_read}', '{message}', $sql);
+    $sql = str_replace('1 as isread', '0 as isread', $sql);
     $unread = $DB->get_records_sql($sql, $params, $limitfrom, $limitto);
 
     // Union the 2 result sets together looking for the message with the most

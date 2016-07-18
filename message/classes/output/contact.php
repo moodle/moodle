@@ -63,6 +63,7 @@ class contact implements templatable, renderable {
         $contact->profileimageurlsmall = $this->contact->profileimageurlsmall;
         $contact->lastmessage = shorten_text($this->contact->lastmessage, self::MAX_MSG_LENGTH);
         $contact->isonline = $this->contact->isonline;
+        $contact->isread = $this->contact->isread;
 
         return $contact;
     }

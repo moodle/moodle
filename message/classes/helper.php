@@ -146,6 +146,7 @@ class helper {
         }
         // Check if the user is online.
         $data->isonline = $userfields->lastaccess >= $time;
+        $data->isread = isset($contact->isread) ? $contact->isread : 0;
 
         return new \core_message\output\contact($data);
     }
