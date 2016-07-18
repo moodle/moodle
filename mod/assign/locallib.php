@@ -7464,6 +7464,10 @@ class assign {
         // Check if default gradebook feedback is visible and enabled.
         $gradebookfeedbackplugin = $this->get_feedback_plugin_by_type($gradebookplugin);
 
+        if (empty($gradebookfeedbackplugin)) {
+            return false;
+        }
+
         if ($gradebookfeedbackplugin->is_visible() && $gradebookfeedbackplugin->is_enabled()) {
             return true;
         }
