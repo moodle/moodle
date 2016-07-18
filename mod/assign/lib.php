@@ -211,7 +211,7 @@ function assign_reset_course_form_definition(&$mform) {
  * @return array
  */
 function assign_reset_course_form_defaults($course) {
-    return array('reset_assign_submissions'=>1);
+    return array('reset_assign_submissions'=> 1,
             'reset_assign_group_overrides' => 1,
             'reset_assign_user_overrides' => 1);
 }
