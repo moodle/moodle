@@ -1,6 +1,36 @@
 This files describes API changes in /mod/forum/*,
 information provided here is intended especially for developers.
 
+=== 3.2 ===
+ * The following functions have been finally deprecated and should no longer be used.
+  - forum_count_unrated_posts
+  - forum_tp_count_discussion_read_records
+  - forum_get_user_discussions
+  - forum_tp_count_forum_posts
+  - forum_tp_count_forum_read_records
+  - forum_get_open_modes
+  - forum_get_child_posts
+  - forum_get_discussion_posts
+  - forum_get_ratings
+  - forum_get_tracking_link
+  - forum_tp_count_discussion_unread_posts
+  - forum_convert_to_roles
+  - forum_tp_get_read_records
+  - forum_tp_get_discussion_read_records
+  - forum_user_enrolled
+  - forum_user_can_view_post
+  - forum_shorten_post
+  - forum_is_subscribed
+  - forum_subscribe
+  - forum_unsubscribe
+  - forum_subscribed_users
+  - forum_is_forcesubscribed
+  - forum_forcesubscribe
+  - forum_get_forcesubscribed
+  - forum_get_subscribed_forums
+  - forum_get_optional_subscribed_forums
+  - forum_get_potential_subscribers
+
 === 3.1 ===
  * The inteface to forum_get_email_message_id() has changed and no longer needs the $host argument.
 
