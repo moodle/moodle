@@ -37,3 +37,17 @@ https://github.com/aFarkas/html5shiv/blob/master/src/html5shiv.js
 To update to the latest release of html5shiv:
 * download and replace: javascript/html5shiv.js
 * update ./thirdpartylibs.xml
+
+variables.less
+------------
+The calculations for the following variables have been enclosed in parentheses in order for them to be correctly output
+in the compiled CSS (MDL-53152):
+* @fontSizeLarge
+* @fontSizeSmall
+* @fontSizeMini
+* @inputHeight
+* @navbarCollapseDesktopWidth
+* @popoverArrowOuterWidth
+* @gridRowWidth
+* @gridRowWidth1200
+* @gridRowWidth768
