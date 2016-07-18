@@ -798,7 +798,7 @@ abstract class testing_util {
         if (file_exists(self::get_dataroot() . '/filedir')) {
             $handle = opendir(self::get_dataroot() . '/filedir');
             while (false !== ($item = readdir($handle))) {
-                if (in_array('filedir/' . $item, $childclassname::$datarootskiponreset)) {
+                if (in_array('filedir' . DIRECTORY_SEPARATOR . $item, $childclassname::$datarootskiponreset)) {
                     continue;
                 }
                 if (is_dir(self::get_dataroot()."/filedir/$item")) {
@@ -1054,8 +1054,10 @@ abstract class testing_util {
         if (!file_exists($jsonfilepath)) {
 
             $listfiles = array();
-            $listfiles['filedir/.'] = 'filedir/.';
-            $listfiles['filedir/..'] = 'filedir/..';
+            $currentdir = 'filedir' . DIRECTORY_SEPARATOR . '.';
+            $parentdir = 'filedir' . DIRECTORY_SEPARATOR . '..';
+            $listfiles[$currentdir] = $currentdir;
+            $listfiles[$parentdir] = $parentdir;
 
             $filedir = self::get_dataroot() . '/filedir';
             if (file_exists($filedir)) {
