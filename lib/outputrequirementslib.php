@@ -430,10 +430,6 @@ class page_requirements_manager {
      *
      * NOTE: this should not be used in official Moodle distribution!
      *
-     * We are going to bundle jQuery 1.9.x until we drop support
-     * all support for IE 6-8. Use $PAGE->requires->jquery_plugin('migrate')
-     * for code written for earlier jQuery versions.
-     *
      * {@see http://docs.moodle.org/dev/jQuery}
      */
     public function jquery() {
@@ -450,7 +446,6 @@ class page_requirements_manager {
      *
      * Included core plugins:
      *   - jQuery UI
-     *   - jQuery Migrate (useful for code written for previous UI version)
      *
      * Add-ons may include extra jQuery plugins in jquery/ directory,
      * plugins.php file defines the mapping between plugin names and
@@ -497,7 +492,7 @@ class page_requirements_manager {
             return false;
         }
 
-        if ($component !== 'core' and in_array($plugin, array('jquery', 'ui', 'ui-css', 'migrate'))) {
+        if ($component !== 'core' and in_array($plugin, array('jquery', 'ui', 'ui-css'))) {
             debugging("jQuery plugin '$plugin' is included in Moodle core, other components can not use the same name.", DEBUG_DEVELOPER);
             $component = 'core';
         } else if ($component !== 'core' and strpos($component, '_') === false) {

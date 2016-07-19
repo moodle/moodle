@@ -18,7 +18,6 @@
  * This file describes jQuery plugins available in the Moodle
  * core component. These can be included in page using:
  *   $PAGE->requires->jquery();
- *   $PAGE->requires->jquery_plugin('migrate');
  *   $PAGE->requires->jquery_plugin('ui');
  *   $PAGE->requires->jquery_plugin('ui-css');
  *
