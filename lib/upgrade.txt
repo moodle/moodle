@@ -23,6 +23,7 @@ information provided here is intended especially for developers.
 * The following functions have been deprecated and are not used any more:
   - get_records_csv() Please use csv_import_reader::load_csv_content() instead.
   - put_records_csv() Please use download_as_dataformat (lib/dataformatlib.php) instead.
+* The password_compat library was removed as it is no longer required.
 
 === 3.1 ===
 

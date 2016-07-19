@@ -24,7 +24,6 @@ lib/htmlpurifier/
 lib/jabber/
 lib/minify/
 lib/flowplayer/
-lib/password_compat/
 lib/pear/Auth/RADIUS.php
 lib/pear/Crypt/CHAP.php
 lib/pear/HTML/Common.php

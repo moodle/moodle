@@ -953,7 +953,6 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
  */
 function user_add_password_history($userid, $password) {
     global $CFG, $DB;
-    require_once($CFG->libdir.'/password_compat/lib/password.php');
 
     if (empty($CFG->passwordreuselimit) or $CFG->passwordreuselimit < 0) {
         return;
@@ -992,7 +991,6 @@ function user_add_password_history($userid, $password) {
  */
 function user_is_previously_used_password($userid, $password) {
     global $CFG, $DB;
-    require_once($CFG->libdir.'/password_compat/lib/password.php');
 
     if (empty($CFG->passwordreuselimit) or $CFG->passwordreuselimit < 0) {
         return false;
