@@ -54,6 +54,10 @@ class behat_forms extends behat_base {
 
         // Ensures the button is present.
         $buttonnode = $this->find_button($button);
+        // Focus on button to ensure it is in viewport, before pressing it.
+        if ($this->running_javascript()) {
+            $buttonnode->focus();
+        }
         $buttonnode->press();
     }
 
