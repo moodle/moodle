@@ -2217,7 +2217,7 @@ function get_timezone_record($timezonename) {
  * Returns the URL of the HTTP_REFERER, less the querystring portion if required.
  *
  * @deprecated since Moodle 3.0 MDL-49360 - please do not use this function any more.
- * @todo Remove this function in Moodle 3.2
+ * @todo MDL-50265 Remove this function in Moodle 3.4.
  * @param boolean $stripquery if true, also removes the query part of the url.
  * @return string The resulting referer or empty string.
  */
