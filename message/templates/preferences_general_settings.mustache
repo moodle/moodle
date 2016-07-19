@@ -26,24 +26,32 @@
     * None
 
     Context variables required for this template:
-    * None
+    * userid The current user id
+    * blocknoncontacts If the user is blocking non contacts
+    * disableall If the user has disabled all notifications
+    * disablehelpicon HTML for the help icon
 
     Example context (json):
-    { }
+    {
+        "userid": 1,
+        "blocknoncontacts": 1,
+        "disableall": 0,
+        "disableallhelpicon": "<span class='helptooltip'>Help icon</span>"
+    }
 }}
 <h2 class="title-case">{{#str}} generalsettings, admin {{/str}}</h2>
 <div class="general-settings-container" data-user-id="{{userid}}">
     <label data-preference-key="message_blocknoncontacts">
         <input type="checkbox" {{#blocknoncontacts}}checked{{/blocknoncontacts}} />
         {{#str}} blocknoncontacts, message {{/str}}
-        <div class="loading-icon">{{> message/loading }}</div>
+        {{> core/loading }}
     </label>
     <br/>
     <label data-preference-key="disableall">
         <input type="checkbox" {{#disableall}}checked{{/disableall}} />
         {{#str}} disableall, message {{/str}}
         {{{disableallhelpicon}}}
-        <div class="loading-icon">{{> message/loading }}</div>
+        {{> core/loading }}
     </label>
 </div>
 {{#js}}

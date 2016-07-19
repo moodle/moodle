@@ -26,10 +26,61 @@
     * None
 
     Context variables required for this template:
-    * None
+    * userid The logged in user id
+    * disableall If the user has disabled notifications
+    * components The list of notification components
 
     Example context (json):
-    { }
+    {
+        "userid": 1,
+        "disableall": 0,
+        "components": [
+            {
+                "displayname": "System",
+                "processornames": ["Popup notification"],
+                "notifications": [
+                    {
+                        "displayname": "Notices about minor problems",
+                        "preferencekey": "message_provider_moodle_notices",
+                        "processors": [
+                            {
+                                "displayname": "Popup notification",
+                                "name": "popup",
+                                "locked": 0,
+                                "radioname": "popup",
+                                "states": [
+                                    {
+                                        "name": "loggedin",
+                                        "displayname": "When I'm logged in",
+                                        "checked": 0,
+                                        "iconurl": "some url"
+                                    },
+                                    {
+                                        "name": "loggedoff",
+                                        "displayname": "When I'm offline",
+                                        "checked": 0,
+                                        "iconurl": "some url"
+                                    },
+                                    {
+                                        "name": "both",
+                                        "displayname": "Always",
+                                        "checked": 1,
+                                        "iconurl": "some url"
+                                    },
+                                    {
+                                        "name": "none",
+                                        "displayname": "Never",
+                                        "checked": 0,
+                                        "iconurl": "some url"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
 }}
 <h2 class="title-case">{{#str}} messagepreferences, message {{/str}}</h2>
 <div class="preferences-container {{#disableall}}disabled{{/disableall}}" data-user-id="{{userid}}">
@@ -48,7 +99,7 @@
                     <tr class="preference-row" data-preference-key="{{preferencekey}}">
                         <td class="preference-name">
                             {{displayname}}
-                            <div class="loading-icon">{{> message/loading }}</div>
+                            {{> core/loading }}
                         </td>
                         {{#processors}}
                         <td data-processor-name="{{name}}">

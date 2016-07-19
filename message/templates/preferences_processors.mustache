@@ -26,10 +26,20 @@
     * None
 
     Context variables required for this template:
-    * None
+    * userid The logged in user id
+    * processors The list of notification processors
 
     Example context (json):
-    { }
+    {
+        "userid": 1,
+        "processors": [
+            {
+                "displayname": "Email",
+                "name": "email",
+                "formhtml": "<input name='test' type='text' />"
+            }
+        ]
+    }
 }}
 <h2 class="title-case">{{#str}} messageprocessors, message {{/str}}</h2>
 <div class="processors-container" data-user-id="{{userid}}">
@@ -37,7 +47,7 @@
         <div class="processor-container" data-processor-name="{{name}}">
             <div class="loading-container">
                 <div class="vertical-align"></div>
-                {{> message/loading }}
+                {{> core/loading }}
             </div>
             <h3>{{displayname}}</h3>
             <form>
