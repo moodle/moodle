@@ -216,26 +216,6 @@ class core_message_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Get the base key prefix for the given provider.
-     *
-     * @param stdClass message provider
-     * @return string
-     */
-    private function get_preference_base($provider) {
-        return $provider->component.'_'.$provider->name;
-    }
-
-    /**
-     * Get the display name for the given provider.
-     *
-     * @param stdClass $provider message provider
-     * @return string
-     */
-    private function get_provider_display_name($provider) {
-        return get_string('messageprovider:'.$provider->name, $provider->component);
-    }
-
-    /**
      * Get the preferences for the given user.
      *
      * @param array $processors list of message processors
@@ -268,197 +248,11 @@ class core_message_renderer extends plugin_renderer_base {
         }
 
         //load general messaging preferences
-        $preferences->blocknoncontacts  =  get_user_preferences( 'message_blocknoncontacts', '', $user->id);
-        $preferences->mailformat        =  $user->mailformat;
-        $preferences->mailcharset       =  get_user_preferences( 'mailcharset', '', $user->id);
+        $preferences->blocknoncontacts = get_user_preferences('message_blocknoncontacts', '', $user->id);
+        $preferences->mailformat = $user->mailformat;
+        $preferences->mailcharset = get_user_preferences('mailcharset', '', $user->id);
 
         return $preferences;
-    }
-
-    /**
-     * Check if the given preference is enabled or not.
-     *
-     * @param string $name preference name
-     * @param stdClass $processor the processors for the preference
-     * @param stdClass $preferences the preferences config
-     * @return bool
-     */
-    private function is_preference_enabled($name, $processor, $preferences) {
-        $defaultpreferences = get_message_output_default_preferences();
-
-        $checked = false;
-        // See if user has touched this preference
-        if (isset($preferences->{$name})) {
-            // User have some preferneces for this state in the database, use them
-            $checked = isset($preferences->{$name}[$processor->name]);
-        } else {
-            // User has not set this preference yet, using site default preferences set by admin
-            $defaultpreference = 'message_provider_'.$name;
-            if (isset($defaultpreferences->{$defaultpreference})) {
-                $checked = (int)in_array($processor->name, explode(',', $defaultpreferences->{$defaultpreference}));
-            }
-        }
-
-        return $checked;
-    }
-
-    /**
-     * Build the template context for the given processor.
-     *
-     * @param stdClass $processor
-     * @param stdClass $provider
-     * @param stdClass $preferences the preferences config
-     * @return array
-     */
-    private function get_processor_context($processor, $provider, $preferences) {
-        $processorcontext = [
-            'displayname' => get_string('pluginname', 'message_'.$processor->name),
-            'name' => $processor->name,
-            'locked' => false,
-            'radioname' => strtolower(str_replace(" ", "-", $processor->name)),
-            'states' => []
-        ];
-        // determine the default setting
-        $preferencebase = $this->get_preference_base($provider);
-        $permitted = MESSAGE_DEFAULT_PERMITTED;
-        $defaultpreferences = get_message_output_default_preferences();
-        $defaultpreference = $processor->name.'_provider_'.$preferencebase.'_permitted';
-        if (isset($defaultpreferences->{$defaultpreference})) {
-            $permitted = $defaultpreferences->{$defaultpreference};
-        }
-        // If settings are disallowed or forced, just display the
-        // corresponding message, if not use user settings.
-        if ($permitted == 'disallowed') {
-            $processorcontext['locked'] = true;
-            $processorcontext['lockedmessage'] = get_string('disallowed', 'message');
-        } else if ($permitted == 'forced') {
-            $processorcontext['locked'] = true;
-            $processorcontext['lockedmessage'] = get_string('forced', 'message');
-        } else {
-            $statescontext = [
-                'loggedin' => [
-                    'name' => 'loggedin',
-                    'displayname' => get_string('loggedindescription', 'message'),
-                    'checked' => $this->is_preference_enabled($preferencebase.'_loggedin', $processor, $preferences),
-                    'iconurl' => $this->pix_url('i/completion-auto-y')->out(),
-                ],
-                'loggedoff' => [
-                    'name' => 'loggedoff',
-                    'displayname' => get_string('loggedoffdescription', 'message'),
-                    'checked' => $this->is_preference_enabled($preferencebase.'_loggedoff', $processor, $preferences),
-                    'iconurl' => $this->pix_url('i/completion-auto-n')->out(),
-                ],
-                'both' => [
-                    'name' => 'both',
-                    'displayname' => get_string('always'),
-                    'checked' => false,
-                    'iconurl' => $this->pix_url('i/completion-auto-pass')->out(),
-                ],
-                'none' => [
-                    'name' => 'none',
-                    'displayname' => get_string('never'),
-                    'checked' => false,
-                    'iconurl' => $this->pix_url('i/completion-auto-fail')->out(),
-                ],
-            ];
-
-            if ($statescontext['loggedin']['checked'] && $statescontext['loggedoff']['checked']) {
-                $statescontext['both']['checked'] = true;
-                $statescontext['loggedin']['checked'] = false;
-                $statescontext['loggedoff']['checked'] = false;
-            } else if (!$statescontext['loggedin']['checked'] && !$statescontext['loggedoff']['checked']) {
-                $statescontext['none']['checked'] = true;
-            }
-
-            $processorcontext['states'] = array_values($statescontext);
-        }
-
-        return $processorcontext;
-    }
-
-    /**
-     * Build the template context for the given component.
-     *
-     * @param string $component the component name
-     * @param stdClass $processors an array of processors
-     * @param stdClass $providers and array of providers
-     * @param stdClass $preferences the preferences config
-     * @return array
-     */
-    private function get_component_context($component, $processors, $providers, $preferences) {
-        $defaultpreferences = get_message_output_default_preferences();
-
-        if ($component != 'moodle') {
-            $componentname = get_string('pluginname', $component);
-        } else {
-            $componentname = get_string('coresystem');
-        }
-        $componentcontext = [
-            'displayname' => $componentname,
-            'processornames' => [],
-            'notifications' => [],
-        ];
-
-        foreach ($processors as $processor) {
-            $componentcontext['processornames'][] = get_string('pluginname', 'message_'.$processor->name);
-        }
-
-        foreach ($providers as $provider) {
-            $preferencebase = $this->get_preference_base($provider);
-            // If provider component is not same or provider disabled then don't show.
-            if (($provider->component != $component) ||
-                    (!empty($defaultpreferences->{$preferencebase.'_disable'}))) {
-                continue;
-            }
-
-            $notificationcontext = [
-                'displayname' => $this->get_provider_display_name($provider),
-                'preferencekey' => 'message_provider_'.$preferencebase,
-                'processors' => [],
-            ];
-
-            foreach ($processors as $processor) {
-                $notificationcontext['processors'][] = $this->get_processor_context($processor, $provider, $preferences);
-            }
-
-            $componentcontext['notifications'][] = $notificationcontext;
-        }
-
-        return $componentcontext;
-    }
-
-    /**
-     * Build the template context for the message preferences page.
-     *
-     * @param stdClass $processors an array of processors
-     * @param stdClass $providers and array of providers
-     * @param stdClass $preferences the preferences config
-     * @param stdClass $user the current user
-     * @return array
-     */
-    private function get_preferences_context($processors, $providers, $preferences, $user) {
-        foreach($providers as $provider) {
-            if($provider->component != 'moodle') {
-                $components[] = $provider->component;
-            }
-        }
-
-        // Lets arrange by components so that core settings (moodle) appear as the first table.
-        $components = array_unique($components);
-        asort($components);
-        array_unshift($components, 'moodle'); // pop it in front! phew!
-        asort($providers);
-
-        $context = [];
-
-        foreach ($components as $component) {
-            $context['components'][] = $this->get_component_context($component, $processors, $providers, $preferences);
-        }
-
-        $context['userid'] = $user->id;
-        $context['disableall'] = $user->emailstop;
-
-        return $context;
     }
 
     /**
@@ -469,43 +263,19 @@ class core_message_renderer extends plugin_renderer_base {
      */
     public function render_user_preferences($user) {
         // Filter out enabled, available system_configured and user_configured processors only.
-        $readyprocessors = array_filter(get_message_processors(), create_function('$a', 'return $a->enabled && $a->configured && $a->object->is_user_configured();'));
+        $readyprocessors = array_filter(get_message_processors(), function($processor) {
+            return $processor->enabled && $processor->configured && $processor->object->is_user_configured();
+        });
 
         $providers = message_get_providers_for_user($user->id);
         $preferences = $this->get_all_preferences($readyprocessors, $providers, $user);
-        $preferencescontext = $this->get_preferences_context($readyprocessors, $providers, $preferences, $user);
+        $notificationlistoutput = new \core_message\output\preferences\notification_list($readyprocessors, $providers, $preferences, $user);
+        $processorsoutput = new \core_message\output\preferences\processors($readyprocessors, $preferences, $user);
+        $generalsettingsoutput = new \core_message\output\preferences\general_settings($preferences, $user);
 
-        $output = $this->render_from_template('message/preferences_notifications_list', $preferencescontext);
-
-        $processorscontext = [
-            'userid' => $user->id,
-            'processors' => [],
-        ];
-
-        foreach ($readyprocessors as $processor) {
-            $formhtml = $processor->object->config_form($preferences);
-
-            if (!$formhtml) {
-                continue;
-            }
-
-            $processorscontext['processors'][] = [
-                'displayname' => get_string('pluginname', 'message_'.$processor->name),
-                'name' => $processor->name,
-                'formhtml' => $formhtml,
-            ];
-        }
-
-        $output .= $this->render_from_template('message/preferences_processors', $processorscontext);
-
-        $generalsettingscontext = [
-            'userid' => $user->id,
-            'blocknoncontacts' => $preferences->blocknoncontacts,
-            'disableall' => $user->emailstop,
-            'disableallhelpicon' => $this->output->help_icon('disableall', 'message'),
-        ];
-
-        $output .= $this->render_from_template('message/preferences_general_settings', $generalsettingscontext);
+        $output = $this->render_from_template('message/preferences_notifications_list', $notificationlistoutput->export_for_template($this));
+        $output .= $this->render_from_template('message/preferences_processors', $processorsoutput->export_for_template($this));
+        $output .= $this->render_from_template('message/preferences_general_settings', $generalsettingsoutput->export_for_template($this));
 
         return $output;
     }
