@@ -5815,14 +5815,14 @@ a.ygtvspacer:hover {
 }
 .messaging-area .contacts-area {
   border-right: 1px solid black;
-  height: 800px;
+  height: 600px;
 }
 .messaging-area .contacts-area .searcharea {
   padding: 5px;
   text-align: center;
 }
 .messaging-area .contacts-area .contacts {
-  height: 705px;
+  height: 505px;
   overflow-y: scroll;
 }
 .messaging-area .contacts-area .contacts .contact.selected {
@@ -5880,7 +5880,7 @@ a.ygtvspacer:hover {
   padding-top: 10px;
 }
 .messaging-area .messages-area .messages {
-  height: 720px;
+  height: 520px;
   overflow-y: auto;
 }
 .messaging-area .messages-area .messages .name {
