@@ -179,7 +179,7 @@ $capabilities = array(
         )
     ),
 
-    // Edit the lesson overrides.
+    // Edit the assign overrides.
     'mod/assign:manageoverrides' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,

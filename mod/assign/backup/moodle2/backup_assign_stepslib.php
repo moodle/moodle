@@ -151,7 +151,7 @@ class backup_assign_activity_structure_step extends backup_activity_structure_st
             $overrideparams['userid'] = backup_helper::is_sqlparam(null); //  Without userinfo, skip user overrides.
         }
 
-        $override->set_source_table('lesson_overrides', $overrideparams);
+        $override->set_source_table('assign_overrides', $overrideparams);
 
         // Define id annotations.
         $userflag->annotate_ids('user', 'userid');
@@ -161,6 +161,8 @@ class backup_assign_activity_structure_step extends backup_activity_structure_st
         $grade->annotate_ids('user', 'userid');
         $grade->annotate_ids('user', 'grader');
         $assign->annotate_ids('grouping', 'teamsubmissiongroupingid');
+        $override->annotate_ids('user', 'userid');
+        $override->annotate_ids('group', 'groupid');
 
         // Define file annotations.
         // These file areas don't have an itemid.

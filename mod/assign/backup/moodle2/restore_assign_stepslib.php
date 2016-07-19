@@ -52,7 +52,6 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
 
         // Define each element separated.
         $paths[] = new restore_path_element('assign', '/activity/assign');
-        $paths[] = new restore_path_element('assign_override', '/activity/assign/overrides/override');
         if ($userinfo) {
             $submission = new restore_path_element('assign_submission',
                                                    '/activity/assign/submissions/submission');
@@ -64,6 +63,7 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
             $userflag = new restore_path_element('assign_userflag',
                                                    '/activity/assign/userflags/userflag');
             $paths[] = $userflag;
+            $paths[] = new restore_path_element('assign_override', '/activity/assign/overrides/override');
         }
         $paths[] = new restore_path_element('assign_plugin_config',
                                             '/activity/assign/plugin_configs/plugin_config');
