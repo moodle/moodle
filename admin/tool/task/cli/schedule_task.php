@@ -29,7 +29,7 @@ require_once("$CFG->libdir/clilib.php");
 require_once("$CFG->libdir/cronlib.php");
 
 list($options, $unrecognized) = cli_get_params(
-    array('help' => false, 'list' => false, 'execute' => false),
+    array('help' => false, 'list' => false, 'execute' => false, 'showsql' => false, 'showdebugging' => false),
     array('h' => 'help')
 );
 
@@ -45,6 +45,8 @@ if ($options['help'] or (!$options['list'] and !$options['execute'])) {
 Options:
 --execute=\\\\some\\\\task  Execute scheduled task manually
 --list                List all scheduled tasks
+--showsql             Show sql queries before they are executed
+--showdebugging       Show developer level debugging information
 -h, --help            Print out this help
 
 Example:
@@ -56,6 +58,13 @@ Example:
     die;
 }
 
+if ($options['showdebugging']) {
+    set_debugging(DEBUG_DEVELOPER, true);
+}
+
+if ($options['showsql']) {
+    $DB->set_debug(true);
+}
 if ($options['list']) {
     cli_heading("List of scheduled tasks ($CFG->wwwroot)");
 
