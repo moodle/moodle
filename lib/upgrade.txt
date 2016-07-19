@@ -46,6 +46,7 @@ information provided here is intended especially for developers.
   Calling them through the magic method __call() will throw a coding exception.
 * The alfresco library has been removed from core. It was an old version of
   the library which was not compatible with newer versions of Alfresco.
+* Added down arrow: $OUTPUT->darrow.
 
 === 3.1 ===
 

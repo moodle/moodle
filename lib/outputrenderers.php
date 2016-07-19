@@ -3617,6 +3617,17 @@ EOD;
     }
 
     /**
+     * Accessibility: Down arrow-like character.
+     * If the theme does not set characters, appropriate defaults
+     * are set automatically.
+     *
+     * @return string
+     */
+    public function darrow() {
+        return $this->page->theme->darrow;
+    }
+
+    /**
      * Returns the custom menu if one has been set
      *
      * A custom menu can be configured by browsing to

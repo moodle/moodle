@@ -314,6 +314,13 @@ class theme_config {
     public $uarrow = null;
 
     /**
+     * @var string Accessibility: Down arrow-like character.
+     * If the theme does not set characters, appropriate defaults
+     * are set automatically.
+     */
+    public $darrow = null;
+
+    /**
      * @var bool Some themes may want to disable ajax course editing.
      */
     public $enablecourseajax = true;
@@ -491,7 +498,7 @@ class theme_config {
             'parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets',
             'javascripts', 'javascripts_footer', 'parents_exclude_javascripts',
             'layouts', 'enable_dock', 'enablecourseajax', 'supportscssoptimisation',
-            'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow', 'uarrow',
+            'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow', 'uarrow', 'darrow',
             'hidefromselector', 'doctype', 'yuicssmodules', 'blockrtlmanipulations',
             'lessfile', 'extralesscallback', 'lessvariablescallback', 'blockrendermethod');
 
@@ -570,7 +577,7 @@ class theme_config {
     }
 
     /**
-     * Checks if arrows $THEME->rarrow, $THEME->larrow, $THEME->uarrow have been set (theme/-/config.php).
+     * Checks if arrows $THEME->rarrow, $THEME->larrow, $THEME->uarrow, $THEME->darrow have been set (theme/-/config.php).
      * If not it applies sensible defaults.
      *
      * Accessibility: right and left arrow Unicode characters for breadcrumb, calendar,
@@ -584,6 +591,7 @@ class theme_config {
             $this->rarrow = '&#x25BA;';
             $this->larrow = '&#x25C4;';
             $this->uarrow = '&#x25B2;';
+            $this->darrow = '&#x25BC;';
             if (empty($_SERVER['HTTP_USER_AGENT'])) {
                 $uagent = '';
             } else {
@@ -603,6 +611,7 @@ class theme_config {
                 $this->rarrow = '&rarr;';
                 $this->larrow = '&larr;';
                 $this->uarrow = '&uarr;';
+                $this->darrow = '&darr;';
             }
             elseif (isset($_SERVER['HTTP_ACCEPT_CHARSET'])
                 && false === stripos($_SERVER['HTTP_ACCEPT_CHARSET'], 'utf-8')) {
@@ -611,6 +620,7 @@ class theme_config {
                 $this->rarrow = '&gt;';
                 $this->larrow = '&lt;';
                 $this->uarrow = '^';
+                $this->darrow = 'v';
             }
 
             // RTL support - in RTL languages, swap r and l arrows
