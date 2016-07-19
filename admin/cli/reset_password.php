@@ -68,14 +68,14 @@ Options:
 Example:
 \$sudo -u www-data /usr/bin/php admin/cli/reset_password.php
 \$sudo -u www-data /usr/bin/php admin/cli/reset_password.php --username=rosaura --password=jiu3jiu --ignore-password-policy
-"; //TODO: localize - to be translated later when everything is finished
+";
 
     echo $help;
     die;
 }
 if ($options['username'] == '' ) {
-    cli_heading('Password reset'); // TODO: localize.
-    $prompt = "enter username (manual authentication only)"; // TODO: localize.
+    cli_heading('Password reset');
+    $prompt = "Enter username (manual authentication only)";
     $username = cli_input($prompt);
 } else {
     $username = $options['username'];
@@ -86,7 +86,7 @@ if (!$user = $DB->get_record('user', array('auth'=>'manual', 'username'=>$userna
 }
 
 if ($options['password'] == '' ) {
-    $prompt = "Enter new password"; // TODO: localize.
+    $prompt = "Enter new password";
     $password = cli_input($prompt);
 } else {
     $password = $options['password'];
@@ -95,7 +95,7 @@ if ($options['password'] == '' ) {
 $errmsg = '';//prevent eclipse warning
 if (!$options['ignore-password-policy'] ) {
     if (!check_password_policy($password, $errmsg)) {
-        cli_error($errmsg);
+        cli_error(html_to_text($errmsg, 0));
     }
 }
 
