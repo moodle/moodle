@@ -141,7 +141,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          */
         Contacts.prototype._loadContactArea = function(webservice) {
             // Show loading template.
-            templates.render('core_message/loading', {}).done(function(html, js) {
+            templates.render('core/loading', {}).done(function(html, js) {
                 templates.replaceNodeContents("[data-region='contacts']", html, js);
             });
 

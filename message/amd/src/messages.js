@@ -63,7 +63,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          */
         Messages.prototype._loadMessages = function(event, userid) {
             // Show loading template.
-            templates.render('core_message/loading', {}).done(function(html, js) {
+            templates.render('core/loading', {}).done(function(html, js) {
                 templates.replaceNodeContents("[data-region='messages-area']", html, js);
             });
 
