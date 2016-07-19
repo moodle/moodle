@@ -1622,6 +1622,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         ob_end_clean();
 
         // Create the XML file we want to use.
+        $course->category = (array)$course->category;
         $imstestcase = new enrol_imsenterprise_testcase();
         $imstestcase->imsplugin = enrol_get_plugin('imsenterprise');
         $imstestcase->set_test_config();
@@ -1632,7 +1633,13 @@ class core_course_courselib_testcase extends advanced_testcase {
         $imstestcase->imsplugin->cron();
         $events = $sink->get_events();
         $sink->close();
-        $event = $events[0];
+        $event = null;
+        foreach ($events as $eventinfo) {
+            if ($eventinfo instanceof \core\event\course_created ) {
+                $event = $eventinfo;
+                break;
+            }
+        }
 
         // Validate the event triggered is \core\event\course_created. There is no need to validate the other values
         // as they have already been validated in the previous steps. Here we only want to make sure that when the
