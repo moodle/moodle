@@ -25,7 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $THEME->name = 'noname';
-$THEME->sheets = ['build'];
+$THEME->scssfile = 'moodle';
+$THEME->sheets = [];
 $THEME->editor_sheets = ['editor'];
 
 $THEME->layouts = [
