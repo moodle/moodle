@@ -249,6 +249,12 @@
     <version>1.6.3</version>
   </library>
   <library>
+    <location>scssphp</location>
+    <name>scssphp</name>
+    <license>MIT</license>
+    <version>0.6.5</version>
+  </library>
+  <library>
     <location>spout</location>
     <name>Spout</name>
     <license>GPL</license>
