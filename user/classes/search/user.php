@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2016 Devang Gaur {@link http://www.devanggaur.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user extends \core_search\area\base {
+class user extends \core_search\base {
 
     /**
      * Returns recordset containing required data attributes for indexing.

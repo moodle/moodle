@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/mod/wiki/locallib.php');
  * @copyright  2016 Eric Merrill {@link http://www.merrilldigital.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class collaborative_page extends \core_search\area\base_mod {
+class collaborative_page extends \core_search\base_mod {
     /**
      * @var array Cache of wiki records.
      */

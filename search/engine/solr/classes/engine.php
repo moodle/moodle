@@ -1001,7 +1001,7 @@ class engine extends \core_search\engine {
      *
      * Return false to prevent the search area completed time and stats from being updated.
      *
-     * @param \core_search\area\base $searcharea The search area that was complete
+     * @param \core_search\base $searcharea The search area that was complete
      * @param int $numdocs The number of documents that were added to the index
      * @param bool $fullindex True if a full index is being performed
      * @return bool True means that data is considered indexed

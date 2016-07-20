@@ -49,7 +49,7 @@ class engine extends \core_search\engine {
         return null;
     }
 
-    public function to_document(\core_search\area\base $searcharea, $docdata) {
+    public function to_document(\core_search\base $searcharea, $docdata) {
         return parent::to_document($searcharea, $docdata);
     }
 

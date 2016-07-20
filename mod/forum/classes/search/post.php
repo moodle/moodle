@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/mod/forum/lib.php');
  * @copyright  2015 David Monllao {@link http://www.davidmonllao.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class post extends \core_search\area\base_mod {
+class post extends \core_search\base_mod {
 
     /**
      * @var array Internal quick static cache.
