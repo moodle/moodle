@@ -152,7 +152,7 @@ if (strlen($result) > 0) {
         // Email user to let them know. Email admin.
 
         if ($data->payment_status == "Pending" and $data->pending_reason != "echeck") {
-            $eventdata = new stdClass();
+            $eventdata = new \core\message\message();
             $eventdata->modulename        = 'moodle';
             $eventdata->component         = 'enrol_paypal';
             $eventdata->name              = 'paypal_enrolment';
@@ -259,7 +259,7 @@ if (strlen($result) > 0) {
             $a->coursename = format_string($course->fullname, true, array('context' => $coursecontext));
             $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
 
-            $eventdata = new stdClass();
+            $eventdata = new \core\message\message();
             $eventdata->modulename        = 'moodle';
             $eventdata->component         = 'enrol_paypal';
             $eventdata->name              = 'paypal_enrolment';
@@ -278,7 +278,7 @@ if (strlen($result) > 0) {
             $a->course = format_string($course->fullname, true, array('context' => $coursecontext));
             $a->user = fullname($user);
 
-            $eventdata = new stdClass();
+            $eventdata = new \core\message\message();
             $eventdata->modulename        = 'moodle';
             $eventdata->component         = 'enrol_paypal';
             $eventdata->name              = 'paypal_enrolment';
@@ -297,7 +297,7 @@ if (strlen($result) > 0) {
             $a->user = fullname($user);
             $admins = get_admins();
             foreach ($admins as $admin) {
-                $eventdata = new stdClass();
+                $eventdata = new \core\message\message();
                 $eventdata->modulename        = 'moodle';
                 $eventdata->component         = 'enrol_paypal';
                 $eventdata->name              = 'paypal_enrolment';
@@ -320,3 +320,49 @@ if (strlen($result) > 0) {
 
 exit;
 
+
+//--- HELPER FUNCTIONS --------------------------------------------------------------------------------------
+
+
+function message_paypal_error_to_admin($subject, $data) {
+    echo $subject;
+    $admin = get_admin();
+    $site = get_site();
+
+    $message = "$site->fullname:  Transaction failed.\n\n$subject\n\n";
+
+    foreach ($data as $key => $value) {
+        $message .= "$key => $value\n";
+    }
+
+    $eventdata = new \core\message\message();
+    $eventdata->modulename        = 'moodle';
+    $eventdata->component         = 'enrol_paypal';
+    $eventdata->name              = 'paypal_enrolment';
+    $eventdata->userfrom          = $admin;
+    $eventdata->userto            = $admin;
+    $eventdata->subject           = "PAYPAL ERROR: ".$subject;
+    $eventdata->fullmessage       = $message;
+    $eventdata->fullmessageformat = FORMAT_PLAIN;
+    $eventdata->fullmessagehtml   = '';
+    $eventdata->smallmessage      = '';
+    message_send($eventdata);
+}
+
+/**
+ * Silent exception handler.
+ *
+ * @param Exception $ex
+ * @return void - does not return. Terminates execution!
+ */
+function enrol_paypal_ipn_exception_handler($ex) {
+    $info = get_exception_info($ex);
+
+    $logerrmsg = "enrol_paypal IPN exception handler: ".$info->message;
+    if (debugging('', DEBUG_NORMAL)) {
+        $logerrmsg .= ' Debug: '.$info->debuginfo."\n".format_backtrace($info->backtrace, true);
+    }
+    error_log($logerrmsg);
+
+    exit(0);
+}

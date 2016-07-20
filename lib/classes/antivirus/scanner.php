@@ -122,7 +122,7 @@ abstract class scanner {
         $subject = get_string('emailsubject', 'antivirus', format_string($site->fullname));
         $admins = get_admins();
         foreach ($admins as $admin) {
-            $eventdata = new \stdClass();
+            $eventdata = new \core\message\message();
             $eventdata->component         = 'moodle';
             $eventdata->name              = 'errors';
             $eventdata->userfrom          = get_admin();

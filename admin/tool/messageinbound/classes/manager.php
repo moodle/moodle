@@ -920,7 +920,7 @@ class manager {
         $addressmanager->set_handler('\tool_messageinbound\message\inbound\invalid_recipient_handler');
         $addressmanager->set_data($record->id);
 
-        $eventdata = new \stdClass();
+        $eventdata = new \core\message\message();
         $eventdata->component           = 'tool_messageinbound';
         $eventdata->name                = 'invalidrecipienthandler';
 
@@ -970,7 +970,7 @@ class manager {
         $messagedata->subject = $this->currentmessagedata->envelope->subject;
         $messagedata->error = $error;
 
-        $eventdata = new \stdClass();
+        $eventdata = new \core\message\message();
         $eventdata->component           = 'tool_messageinbound';
         $eventdata->name                = 'messageprocessingerror';
         $eventdata->userfrom            = $userfrom;
@@ -1029,7 +1029,7 @@ class manager {
         $messagedata = new \stdClass();
         $messagedata->subject = $this->currentmessagedata->envelope->subject;
 
-        $eventdata = new \stdClass();
+        $eventdata = new \core\message\message();
         $eventdata->component           = 'tool_messageinbound';
         $eventdata->name                = 'messageprocessingsuccess';
         $eventdata->userfrom            = $userfrom;

@@ -834,6 +834,7 @@ function forum_cron() {
                 mtrace('Sending ', '');
 
                 $eventdata = new \core\message\message();
+                $eventdata->courseid            = $course->id;
                 $eventdata->component           = 'mod_forum';
                 $eventdata->name                = 'posts';
                 $eventdata->userfrom            = $userfrom;

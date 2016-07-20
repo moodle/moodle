@@ -2674,7 +2674,7 @@ class course_request {
      * @param string $message
      */
     protected function notify($touser, $fromuser, $name='courserequested', $subject, $message) {
-        $eventdata = new stdClass();
+        $eventdata = new \core\message\message();
         $eventdata->component         = 'moodle';
         $eventdata->name              = $name;
         $eventdata->userfrom          = $fromuser;

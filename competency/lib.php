@@ -116,6 +116,7 @@ function core_competency_comment_add($comment, $params) {
         }
 
         $message = new \core\message\message();
+        $message->courseid = SITEID;
         $message->component = 'moodle';
         $message->name = 'competencyusercompcomment';
         $message->notification = 1;
@@ -184,6 +185,7 @@ function core_competency_comment_add($comment, $params) {
         }
 
         $message = new \core\message\message();
+        $message->courseid = SITEID;
         $message->component = 'moodle';
         $message->name = 'competencyplancomment';
         $message->notification = 1;

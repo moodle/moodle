@@ -201,7 +201,8 @@ class core_message_events_testcase extends advanced_testcase {
             'context'  => context_system::instance(),
             'relateduserid' => 2,
             'other' => array(
-                'messageid' => 3
+                'messageid' => 3,
+                'courseid' => 1
             )
         ));
 

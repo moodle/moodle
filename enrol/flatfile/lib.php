@@ -186,7 +186,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
 
         if ($processed and $mailadmins) {
             if ($log = $buffer->get_buffer()) {
-                $eventdata = new stdClass();
+                $eventdata = new \core\message\message();
                 $eventdata->modulename        = 'moodle';
                 $eventdata->component         = 'enrol_flatfile';
                 $eventdata->name              = 'flatfile_enrolment';
@@ -340,7 +340,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
         }
 
         if (!unlink($filelocation)) {
-            $eventdata = new stdClass();
+            $eventdata = new \core\message\message();
             $eventdata->modulename        = 'moodle';
             $eventdata->component         = 'enrol_flatfile';
             $eventdata->name              = 'flatfile_enrolment';
@@ -463,7 +463,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
                 $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id";
                 $subject = get_string('enrolmentnew', 'enrol', format_string($course->shortname, true, array('context' => $context)));
 
-                $eventdata = new stdClass();
+                $eventdata = new \core\message\message();
                 $eventdata->modulename        = 'moodle';
                 $eventdata->component         = 'enrol_flatfile';
                 $eventdata->name              = 'flatfile_enrolment';
@@ -494,7 +494,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
                 $a->user = fullname($user);
                 $subject = get_string('enrolmentnew', 'enrol', format_string($course->shortname, true, array('context' => $context)));
 
-                $eventdata = new stdClass();
+                $eventdata = new \core\message\message();
                 $eventdata->modulename        = 'moodle';
                 $eventdata->component         = 'enrol_flatfile';
                 $eventdata->name              = 'flatfile_enrolment';
