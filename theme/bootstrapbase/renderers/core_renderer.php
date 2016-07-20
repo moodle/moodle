@@ -107,7 +107,7 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
             } else {
                 $currentlang = $strlang;
             }
-            $this->language = $menu->add($currentlang, new moodle_url('#'), $strlang, 10000);
+            $this->language = $menu->add($currentlang, new moodle_url(''), $strlang, 10000);
             foreach ($langs as $langtype => $langname) {
                 $this->language->add($langname, new moodle_url($this->page->url, array('lang' => $langtype)), $langname);
             }
