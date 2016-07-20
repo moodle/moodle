@@ -25,5 +25,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 debugging('password_compat is now standard in all versions of PHP that Moodle supports. '
-    . 'You no longer need to include the password_compat polyfill.',
+    . 'You no longer need to include the lib/password_compat/lib/password.php',
     DEBUG_DEVELOPER);
