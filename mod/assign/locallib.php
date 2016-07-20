@@ -857,14 +857,14 @@ class assign {
         }
 
         // Check for group overrides.
-        $groupings = groups_get_user_groups($this->course->id, $userid);
+        $groupings = groups_get_user_groups($this->get_instance()->course, $userid);
 
         if (!empty($groupings[0])) {
             // Select all overrides that apply to the User's groups.
             list($extra, $params) = $DB->get_in_or_equal(array_values($groupings[0]));
             $sql = "SELECT * FROM {assign_overrides}
                     WHERE groupid $extra AND assignid = ?";
-            $params[] = $this->get_context()->id;
+            $params[] = $this->get_instance()->id;
             $records = $DB->get_records_sql($sql, $params);
 
             // Combine the overrides.
