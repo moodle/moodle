@@ -16,13 +16,13 @@
 
 .environmenttable {
     .warn {
-        @extend .table-warning;
+        background-color: $state-warning-bg;
     }
     .error {
-        @extend .table-danger;
+        background-color: $state-danger-bg;
     }
     .ok {
-        @extend .table-success;
+        background-color: $state-success-bg;
     }
 }
 
@@ -144,7 +144,7 @@ img.iconsmall {
 }
 
 #page-admin-roles-define .capdefault {
-    @extend .table-hover;
+    background-color: $table-bg-hover;
 }
 
 #page-filter-manage .backlink,
@@ -517,7 +517,7 @@ img.iconsmall {
 
     #plugins-control-panel {
         .status-missing td {
-            @extend .table-warning;
+            background-color: $state-warning-bg;
         }
         .pluginname {
             .displayname img.icon {
@@ -544,7 +544,7 @@ img.iconsmall {
         }
         .uninstall {
             a {
-                @extend .label-warning;
+                color: $state-danger-text;
             }
         }
         .notes {
@@ -603,7 +603,7 @@ img.iconsmall {
 
         .status-missing, .status-downgrade {
             td {
-                @extend .table-danger;
+                background-color:  $state-danger-bg;
             }
         }
 
@@ -674,12 +674,12 @@ img.iconsmall {
 
 #plugins-check-page, #plugins-control-panel {
     .pluginupdateinfo {
-        @extend .table-info;
+        background-color: $state-info-bg;
         &.maturity50 {
-            @extend .table-danger;
+            background-color: $state-danger-bg;
         }
         &.maturity100, &.maturity150 {
-            @extend .table-warning;
+            background-color: $state-warning-bg;
         }
         padding: 5px;
         margin: 10px 0;
