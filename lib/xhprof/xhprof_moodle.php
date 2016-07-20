@@ -69,7 +69,7 @@ function profiling_start() {
     global $CFG, $SESSION, $SCRIPT;
 
     // If profiling isn't available, nothing to start
-    if (!extension_loaded('xhprof') || !function_exists('xhprof_enable')) {
+    if (!extension_loaded('xhprof') && !extension_loaded('tideways')) {
         return false;
     }
 
@@ -146,7 +146,11 @@ function profiling_start() {
 
     // Arrived here, the script is going to be profiled, let's do it
     $ignore = array('call_user_func', 'call_user_func_array');
-    xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY, array('ignored_functions' =>  $ignore));
+    if (extension_loaded('tideways')) {
+        tideways_enable(TIDEWAYS_FLAGS_CPU + TIDEWAYS_FLAGS_MEMORY, array('ignored_functions' =>  $ignore));
+    } else {
+        xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY, array('ignored_functions' => $ignore));
+    }
     profiling_is_running(true);
 
     // Started, return true
@@ -160,7 +164,7 @@ function profiling_stop() {
     global $CFG, $DB, $SCRIPT;
 
     // If profiling isn't available, nothing to stop
-    if (!extension_loaded('xhprof') || !function_exists('xhprof_enable')) {
+    if (!extension_loaded('xhprof') && !extension_loaded('tideways')) {
         return false;
     }
 
@@ -179,7 +183,11 @@ function profiling_stop() {
 
     // Arrived here, profiling is running, stop and save everything
     profiling_is_running(false);
-    $data = xhprof_disable();
+    if (extension_loaded('tideways')) {
+        $data = tideways_disable();
+    } else {
+        $data = xhprof_disable();
+    }
 
     // We only save the run after ensuring the DB table exists
     // (this prevents problems with profiling runs enabled in
