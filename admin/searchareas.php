@@ -95,7 +95,7 @@ if (empty($searchmanagererror)) {
 }
 
 if (!empty($searchmanagererror)) {
-    $errorstr = get_string($searchmanagererror->errorcode, $searchmanagererror->module);
+    $errorstr = get_string($searchmanagererror->errorcode, $searchmanagererror->module, $searchmanagererror->a);
     echo $OUTPUT->notification($errorstr, \core\output\notification::NOTIFY_ERROR);
 } else {
     echo $OUTPUT->notification(get_string('indexinginfo', 'admin'), \core\output\notification::NOTIFY_INFO);

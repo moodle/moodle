@@ -122,6 +122,10 @@ class manager {
             return static::$instance;
         }
 
+        if (empty($CFG->searchengine)) {
+            throw new \core_search\engine_exception('enginenotselected', 'search');
+        }
+
         if (!$engine = static::search_engine_instance()) {
             throw new \core_search\engine_exception('enginenotfound', 'search', '', $CFG->searchengine);
         }
