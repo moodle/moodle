@@ -108,6 +108,11 @@ class core_requirejs {
             if ($debug) {
                 $srcdir = $dir . '/src';
             }
+            if (!is_dir($srcdir) || !is_readable($srcdir)) {
+                // This is probably an empty amd directory without src or build.
+                // Skip it - RecursiveDirectoryIterator fatals if the directory is not readable as an iterator.
+                continue;
+            }
             $items = new RecursiveDirectoryIterator($srcdir);
             foreach ($items as $item) {
                 $extension = $item->getExtension();
