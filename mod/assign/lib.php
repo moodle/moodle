@@ -68,6 +68,7 @@ function assign_reset_userdata($data) {
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
+    $componentstr = get_string('modulenameplural', 'assign');
     $status = array();
     $params = array('courseid'=>$data->courseid);
     $sql = "SELECT a.id FROM {assign} a WHERE a.course=:courseid";
@@ -83,6 +84,39 @@ function assign_reset_userdata($data) {
             $assignment = new assign($context, $cm, $course);
             $status = array_merge($status, $assignment->reset_userdata($data));
         }
+    }
+
+    // Remove user overrides.
+    if (!empty($data->reset_assign_user_overrides)) {
+        $DB->delete_records_select('assign_overrides',
+            'assignid IN (SELECT id FROM {assign} WHERE course = ?) AND userid IS NOT NULL', array($data->courseid));
+        $status[] = array(
+            'component' => $componentstr,
+            'item' => get_string('useroverridesdeleted', 'assign'),
+            'error' => false);
+    }
+    // Remove group overrides.
+    if (!empty($data->reset_assign_group_overrides)) {
+        $DB->delete_records_select('assign_overrides',
+            'assignid IN (SELECT id FROM {assign} WHERE course = ?) AND groupid IS NOT NULL', array($data->courseid));
+        $status[] = array(
+            'component' => $componentstr,
+            'item' => get_string('groupoverridesdeleted', 'assign'),
+            'error' => false);
+    }
+    /// updating dates - shift may be negative too
+    if ($data->timeshift) {
+        $DB->execute("UPDATE {assign_overrides}
+                         SET allowsubmissionsfromdate = allowsubmissionsfromdate + ?
+                       WHERE assignid IN (SELECT id FROM {assign} WHERE course = ?)
+                         AND allowsubmissionsfromdate <> 0", array($data->timeshift, $data->courseid));
+        $DB->execute("UPDATE {assign_overrides}
+                         SET duedate = duedate + ?
+                       WHERE assignid IN (SELECT id FROM {assign} WHERE course = ?)
+                         AND duedate <> 0", array($data->timeshift, $data->courseid));
+
+        shift_course_mod_dates('assign', array('allowsubmissionsfromdate', 'duedate'), $data->timeshift, $data->courseid);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
     }
     return $status;
 }
@@ -166,6 +200,10 @@ function assign_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'assignheader', get_string('modulenameplural', 'assign'));
     $name = get_string('deleteallsubmissions', 'assign');
     $mform->addElement('advcheckbox', 'reset_assign_submissions', $name);
+    $mform->addElement('advcheckbox', 'reset_assign_user_overrides',
+        get_string('removealluseroverrides', 'assign'));
+    $mform->addElement('advcheckbox', 'reset_assign_group_overrides',
+        get_string('removeallgroupoverrides', 'assign'));
 }
 
 /**
@@ -174,7 +212,9 @@ function assign_reset_course_form_definition(&$mform) {
  * @return array
  */
 function assign_reset_course_form_defaults($course) {
-    return array('reset_assign_submissions'=>1);
+    return array('reset_assign_submissions'=> 1,
+            'reset_assign_group_overrides' => 1,
+            'reset_assign_user_overrides' => 1);
 }
 
 /**
@@ -191,6 +231,137 @@ function assign_update_instance(stdClass $data, $form) {
     $context = context_module::instance($data->coursemodule);
     $assignment = new assign($context, null, null);
     return $assignment->update_instance($data);
+}
+
+/**
+ * This function updates the events associated to the assign.
+ * If $override is non-zero, then it updates only the events
+ * associated with the specified override.
+ *
+ * @uses ASSIGN_MAX_EVENT_LENGTH
+ * @param object $assign the assign object.
+ * @param object $override (optional) limit to a specific override
+ */
+function assign_update_events($assign, $override = null) {
+    global $CFG, $DB;
+
+    require_once($CFG->dirroot . '/calendar/lib.php');
+
+    // Load the old events relating to this assign.
+    $conds = array('modulename' => 'assign',
+        'instance' => $assign->get_context()->id);
+    if (!empty($override)) {
+        // Only load events for this override.
+        if (isset($override->userid)) {
+            $conds['userid'] = $override->userid;
+        } else {
+            $conds['groupid'] = $override->groupid;
+        }
+    }
+    $oldevents = $DB->get_records('event', $conds);
+
+    // Now make a todo list of all that needs to be updated.
+    if (empty($override)) {
+        // We are updating the primary settings for the assign, so we
+        // need to add all the overrides.
+        $overrides = $DB->get_records('assign_overrides', array('assignid' => $assign->id));
+        // As well as the original assign (empty override).
+        $overrides[] = new stdClass();
+    } else {
+        // Just do the one override.
+        $overrides = array($override);
+    }
+
+    foreach ($overrides as $current) {
+        $groupid   = isset($current->groupid) ? $current->groupid : 0;
+        $userid    = isset($current->userid) ? $current->userid : 0;
+        $allowsubmissionsfromdate  = isset($current->allowsubmissionsfromdate) ? $current->allowsubmissionsfromdate : $assign->get_context()->allowsubmissionsfromdate;
+        $duedate = isset($current->duedate) ? $current->duedate : $assign->get_context()->duedate;
+
+        // Only add open/close events for an override if they differ from the assign default.
+        $addopen  = empty($current->id) || !empty($current->allowsubmissionsfromdate);
+        $addclose = empty($current->id) || !empty($current->duedate);
+
+        if (!empty($assign->coursemodule)) {
+            $cmid = $assign->coursemodule;
+        } else {
+            $cmid = get_coursemodule_from_instance('assign', $assign->get_context()->id, $assign->get_context()->course)->id;
+        }
+
+        $event = new stdClass();
+        $event->description = format_module_intro('assign', $assign->get_context(), $cmid);
+        // Events module won't show user events when the courseid is nonzero.
+        $event->courseid    = ($userid) ? 0 : $assign->get_context()->course;
+        $event->groupid     = $groupid;
+        $event->userid      = $userid;
+        $event->modulename  = 'assign';
+        $event->instance    = $assign->get_context()->id;
+        $event->timestart   = $allowsubmissionsfromdate;
+        $event->timeduration = max($duedate - $allowsubmissionsfromdate, 0);
+        $event->visible     = instance_is_visible('assign', $assign);
+        $event->eventtype   = 'open';
+
+        // Determine the event name.
+        if ($groupid) {
+            $params = new stdClass();
+            $params->assign = $assign->get_context()->name;
+            $params->group = groups_get_group_name($groupid);
+            if ($params->group === false) {
+                // Group doesn't exist, just skip it.
+                continue;
+            }
+            $eventname = get_string('overridegroupeventname', 'assign', $params);
+        } else if ($userid) {
+            $params = new stdClass();
+            $params->assign = $assign->get_context()->name;
+            $eventname = get_string('overrideusereventname', 'assign', $params);
+        } else {
+            $eventname = $assign->name;
+        }
+        if ($addopen or $addclose) {
+            if ($duedate and $allowsubmissionsfromdate and $event->timeduration <= ASSIGN_MAX_EVENT_LENGTH) {
+                // Single event for the whole assign.
+                if ($oldevent = array_shift($oldevents)) {
+                    $event->id = $oldevent->id;
+                } else {
+                    unset($event->id);
+                }
+                $event->name = $eventname;
+                // The method calendar_event::create will reuse a db record if the id field is set.
+                calendar_event::create($event);
+            } else {
+                // Separate start and end events.
+                $event->timeduration  = 0;
+                if ($allowsubmissionsfromdate && $addopen) {
+                    if ($oldevent = array_shift($oldevents)) {
+                        $event->id = $oldevent->id;
+                    } else {
+                        unset($event->id);
+                    }
+                    $event->name = $eventname.' ('.get_string('open', 'assign').')';
+                    // The method calendar_event::create will reuse a db record if the id field is set.
+                    calendar_event::create($event);
+                }
+                if ($duedate && $addclose) {
+                    if ($oldevent = array_shift($oldevents)) {
+                        $event->id = $oldevent->id;
+                    } else {
+                        unset($event->id);
+                    }
+                    $event->name      = $eventname.' ('.get_string('duedate', 'assign').')';
+                    $event->timestart = $duedate;
+                    $event->eventtype = 'close';
+                    calendar_event::create($event);
+                }
+            }
+        }
+    }
+
+    // Delete any leftover events.
+    foreach ($oldevents as $badevent) {
+        $badevent = calendar_event::load($badevent);
+        $badevent->delete();
+    }
 }
 
 /**
@@ -249,6 +420,17 @@ function assign_grading_areas_list() {
 function assign_extend_settings_navigation(settings_navigation $settings, navigation_node $navref) {
     global $PAGE, $DB;
 
+    // We want to add these new nodes after the Edit settings node, and before the
+    // Locally assigned roles node. Of course, both of those are controlled by capabilities.
+    $keys = $navref->get_children_key_list();
+    $beforekey = null;
+    $i = array_search('modedit', $keys);
+    if ($i === false and array_key_exists(0, $keys)) {
+        $beforekey = $keys[0];
+    } else if (array_key_exists($i + 1, $keys)) {
+        $beforekey = $keys[$i + 1];
+    }
+
     $cm = $PAGE->cm;
     if (!$cm) {
         return;
@@ -259,6 +441,19 @@ function assign_extend_settings_navigation(settings_navigation $settings, naviga
 
     if (!$course) {
         return;
+    }
+
+    if (has_capability('mod/assign:manageoverrides', $PAGE->cm->context)) {
+        $url = new moodle_url('/mod/assign/overrides.php', array('cmid' => $PAGE->cm->id));
+        $node = navigation_node::create(get_string('groupoverrides', 'assign'),
+            new moodle_url($url, array('mode' => 'group')),
+            navigation_node::TYPE_SETTING, null, 'mod_assign_groupoverrides');
+        $navref->add_node($node, $beforekey);
+
+        $node = navigation_node::create(get_string('useroverrides', 'assign'),
+            new moodle_url($url, array('mode' => 'user')),
+            navigation_node::TYPE_SETTING, null, 'mod_assign_useroverrides');
+        $navref->add_node($node, $beforekey);
     }
 
     // Link to gradebook.
