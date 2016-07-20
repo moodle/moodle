@@ -2294,7 +2294,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $DB->update_record('user', $student);
 
         $this->setUser($teacher);
-        $participants = mod_assign_external::list_participants($assignment->id, 0, '', 0, 0);
+        $participants = mod_assign_external::list_participants($assignment->id, 0, '', 0, 0, false);
         $this->assertCount(1, $participants);
 
         // Asser that we have a valid response data.
