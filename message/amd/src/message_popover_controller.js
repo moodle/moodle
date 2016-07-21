@@ -26,10 +26,10 @@
  * @since      3.2
  */
 define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates', 'core/str',
-            'core/notification', 'core/custom_interaction_events', 'core/popover_region_controller',
+            'core/custom_interaction_events', 'core/popover_region_controller',
             'core_message/message_repository', 'core/url'],
-        function($, bootstrap, ajax, templates, str, debugNotification, customEvents,
-            PopoverController, messageRepo, URL) {
+        function($, bootstrap, ajax, templates, str, CustomEvents,
+            PopoverController, MessageRepo, URL) {
 
     var SELECTORS = {
         MARK_ALL_READ_BUTTON: '.mark-all-read-button',
@@ -167,7 +167,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
      * @method loadUnreadMessageCount
      */
     MessagePopoverController.prototype.loadUnreadMessageCount = function() {
-        messageRepo.countUnread({useridto: this.userId}).then(function(count) {
+        MessageRepo.countUnread({useridto: this.userId}).then(function(count) {
             this.unreadCount = count;
             this.renderUnreadCount();
             this.updateButtonAriaLabel();
@@ -231,7 +231,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         };
 
         var container = this.getContent();
-        var promise = messageRepo.query(request).then(function(result) {
+        var promise = MessageRepo.query(request).then(function(result) {
             var messages = result.contacts;
             this.loadedAll = !messages.length || messages.length < this.limit;
             this.initialLoad = true;
@@ -256,7 +256,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
     MessagePopoverController.prototype.markAllAsRead = function() {
         this.markAllReadButton.addClass('loading');
 
-        return messageRepo.markAllAsRead({useridto: this.userId})
+        return MessageRepo.markAllAsRead({useridto: this.userId})
             .then(function() {
                 this.unreadCount = 0;
                 this.clearUnreadNotifications();
@@ -270,8 +270,8 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
      * @method registerEventListeners
      */
     MessagePopoverController.prototype.registerEventListeners = function() {
-        customEvents.define(this.root, [
-            customEvents.events.keyboardActivate,
+        CustomEvents.define(this.root, [
+            CustomEvents.events.keyboardActivate,
         ]);
 
         // Update the notification information when the menu is opened.
@@ -291,7 +291,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         }.bind(this));
 
         // Load more messages when we scroll to the bottom of the open menu.
-        this.root.on(customEvents.events.scrollBottom, function() {
+        this.root.on(CustomEvents.events.scrollBottom, function() {
             this.loadMoreMessages();
         }.bind(this));
 
@@ -309,7 +309,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         }.bind(this));
 
         // Follow the link URL if the user activates it.
-        this.root.on(customEvents.events.keyboardActivate, SELECTORS.LINK_URL, function(e) {
+        this.root.on(CustomEvents.events.keyboardActivate, SELECTORS.LINK_URL, function(e) {
             var linkItem = $(e.target).closest(SELECTORS.LINK_URL);
             this.navigateToLinkURL(linkItem, false);
             e.stopPropagation();

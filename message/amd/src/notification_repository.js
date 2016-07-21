@@ -24,6 +24,12 @@
  * @since      3.2
  */
 define(['core/ajax', 'core/notification'], function(ajax, notification) {
+    /**
+     * Retrieve a list of notifications from the server.
+     *
+     * @param {object} args The request arguments:
+     * @return {jQuery promise}
+     */
     var query = function(args) {
         if (typeof args.limit === 'undefined') {
             args.limit = 20;
@@ -45,6 +51,12 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
         return promise;
     };
 
+    /**
+     * Get the number of unread notifications from the server.
+     *
+     * @param {object} args The request arguments:
+     * @return {jQuery promise}
+     */
     var countUnread = function(args) {
         var request = {
             methodname: 'core_message_get_unread_notification_count',
@@ -58,6 +70,12 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
         return promise;
     };
 
+    /**
+     * Mark all notifications for the given user as read.
+     *
+     * @param {object} args The request arguments:
+     * @return {jQuery promise}
+     */
     var markAllAsRead = function(args) {
         var request = {
             methodname: 'core_message_mark_all_notifications_as_read',

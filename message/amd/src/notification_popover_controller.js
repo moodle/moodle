@@ -28,8 +28,8 @@
 define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates', 'core/str',
             'core/notification', 'core/custom_interaction_events', 'core/popover_region_controller',
             'core_message/notification_repository'],
-        function($, bootstrap, ajax, templates, str, debugNotification, customEvents,
-            popoverController, notificationRepo) {
+        function($, bootstrap, ajax, templates, str, DebugNotification, CustomEvents,
+            PopoverController, NotificationRepo) {
 
     var SELECTORS = {
         MARK_ALL_READ_BUTTON: '.mark-all-read-button',
@@ -58,7 +58,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
      */
     var NotificationPopoverController = function(element) {
         // Initialise base class.
-        popoverController.call(this, element);
+        PopoverController.call(this, element);
 
         this.markAllReadButton = this.root.find(SELECTORS.MARK_ALL_READ_BUTTON);
         this.unreadCount = 0;
@@ -89,7 +89,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
     /**
      * Clone the parent prototype.
      */
-    NotificationPopoverController.prototype = Object.create(popoverController.prototype);
+    NotificationPopoverController.prototype = Object.create(PopoverController.prototype);
 
     /**
      * Set the correct aria label on the menu toggle button to be read out by screen
@@ -270,7 +270,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
      * @method loadUnreadNotificationCount
      */
     NotificationPopoverController.prototype.loadUnreadNotificationCount = function() {
-        notificationRepo.countUnread({useridto: this.userId}).then(function(count) {
+        NotificationRepo.countUnread({useridto: this.userId}).then(function(count) {
             this.unreadCount = count;
             this.renderUnreadCount();
             this.updateButtonAriaLabel();
@@ -348,7 +348,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         }
 
         var container = this.getContent();
-        var promise = notificationRepo.query(request).then(function(result) {
+        var promise = NotificationRepo.query(request).then(function(result) {
             var notifications = result.notifications;
             this.unreadCount = result.unreadcount;
             this.setLoadedAllContent(!notifications.length || notifications.length < this.limit);
@@ -374,7 +374,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
     NotificationPopoverController.prototype.markAllAsRead = function() {
         this.markAllReadButton.addClass('loading');
 
-        return notificationRepo.markAllAsRead({useridto: this.userId})
+        return NotificationRepo.markAllAsRead({useridto: this.userId})
             .then(function() {
                 this.unreadCount = 0;
                 this.clearUnreadNotifications();
@@ -590,7 +590,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
 
         var promise = ajax.call([request])[0];
 
-        promise.fail(debugNotification.exception);
+        promise.fail(DebugNotification.exception);
         promise.always(function() {
             button.removeClass('loading');
         });
@@ -607,17 +607,17 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
      * @method registerEventListeners
      */
     NotificationPopoverController.prototype.registerEventListeners = function() {
-        customEvents.define(this.root, [
-            customEvents.events.activate,
-            customEvents.events.keyboardActivate,
-            customEvents.events.next,
-            customEvents.events.previous,
-            customEvents.events.asterix,
+        CustomEvents.define(this.root, [
+            CustomEvents.events.activate,
+            CustomEvents.events.keyboardActivate,
+            CustomEvents.events.next,
+            CustomEvents.events.previous,
+            CustomEvents.events.asterix,
         ]);
 
         // Expand the content item if the user activates (click/enter/space) the show
         // button.
-        this.root.on(customEvents.events.activate, SELECTORS.SHOW_BUTTON, function(e, data) {
+        this.root.on(CustomEvents.events.activate, SELECTORS.SHOW_BUTTON, function(e, data) {
             var container = $(e.target).closest(SELECTORS.CONTENT_ITEM_CONTAINER);
             this.expandContentItem(container);
 
@@ -626,13 +626,13 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         }.bind(this));
 
         // Expand the content item if the user triggers the next event (right arrow in LTR).
-        this.root.on(customEvents.events.next, SELECTORS.CONTENT_ITEM_CONTAINER, function(e) {
+        this.root.on(CustomEvents.events.next, SELECTORS.CONTENT_ITEM_CONTAINER, function(e) {
             var contentItem = $(e.target).closest(SELECTORS.CONTENT_ITEM_CONTAINER);
             this.expandContentItem(contentItem);
         }.bind(this));
 
         // Collapse the content item if the user activates the hide button.
-        this.root.on(customEvents.events.activate, SELECTORS.HIDE_BUTTON, function(e, data) {
+        this.root.on(CustomEvents.events.activate, SELECTORS.HIDE_BUTTON, function(e, data) {
             var container = $(e.target).closest(SELECTORS.CONTENT_ITEM_CONTAINER);
             this.collapseContentItem(container);
 
@@ -641,12 +641,12 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         }.bind(this));
 
         // Collapse the content item if the user triggers the previous event (left arrow in LTR).
-        this.root.on(customEvents.events.previous, SELECTORS.CONTENT_ITEM_CONTAINER, function(e) {
+        this.root.on(CustomEvents.events.previous, SELECTORS.CONTENT_ITEM_CONTAINER, function(e) {
             var contentItem = $(e.target).closest(SELECTORS.CONTENT_ITEM_CONTAINER);
             this.collapseContentItem(contentItem);
         }.bind(this));
 
-        this.root.on(customEvents.events.activate, SELECTORS.BLOCK_BUTTON, function(e, data) {
+        this.root.on(CustomEvents.events.activate, SELECTORS.BLOCK_BUTTON, function(e, data) {
             var button = $(e.target).closest(SELECTORS.BLOCK_BUTTON);
             this.disableNotificationType(button);
 
@@ -655,7 +655,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         }.bind(this));
 
         // Switch between popover states (read/unread) if the user activates the toggle.
-        this.root.on(customEvents.events.activate, SELECTORS.MODE_TOGGLE, function(e) {
+        this.root.on(CustomEvents.events.activate, SELECTORS.MODE_TOGGLE, function(e) {
             if (this.modeToggle.hasClass('on')) {
                 this.clearUnreadNotifications();
                 this.modeToggle.removeClass('on');
@@ -696,21 +696,21 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         }.bind(this));
 
         // Follow the link URL if the user activates it.
-        this.root.on(customEvents.events.keyboardActivate, SELECTORS.LINK_URL, function(e) {
+        this.root.on(CustomEvents.events.keyboardActivate, SELECTORS.LINK_URL, function(e) {
             var linkItem = $(e.target).closest(SELECTORS.LINK_URL);
             this.navigateToLinkURL(linkItem, false);
             e.stopPropagation();
         }.bind(this));
 
         // Mark all notifications read if the user activates the mark all as read button.
-        this.root.on(customEvents.events.activate, SELECTORS.MARK_ALL_READ_BUTTON, function(e) {
+        this.root.on(CustomEvents.events.activate, SELECTORS.MARK_ALL_READ_BUTTON, function(e) {
             this.markAllAsRead();
             e.stopPropagation();
         }.bind(this));
 
         // Expand all the currently visible content items if the user hits the
         // asterix key.
-        this.root.on(customEvents.events.asterix, function() {
+        this.root.on(CustomEvents.events.asterix, function() {
             this.expandAllContentItems();
         }.bind(this));
 
@@ -743,7 +743,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
 
         // Load more notifications if the user has scrolled to the end of content
         // item list.
-        this.getContentContainer().on(customEvents.events.scrollBottom, function() {
+        this.getContentContainer().on(CustomEvents.events.scrollBottom, function() {
             if (!this.isLoading && !this.hasLoadedAllContent()) {
                 this.loadMoreNotifications();
             }

@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Retrieves notifications from the server.
+ * Retrieves messages from the server.
  *
  * @module     core_message/message_repository
  * @class      message_repository
@@ -24,6 +24,12 @@
  * @since      3.2
  */
 define(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {
+    /**
+     * Retrieve a list of messages from the server.
+     *
+     * @param {object} args The request arguments:
+     * @return {jQuery promise}
+     */
     var query = function(args) {
         // Normalise the arguments to use limit/offset rather than limitnum/limitfrom.
         if (typeof args.limit === 'undefined') {
@@ -53,11 +59,11 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notificat
     };
 
     var countUnread = function() {
-        return $.Deferred();
+        return $.Deferred().resolve();
     };
 
     var markAllAsRead = function() {
-        return $.Deferred();
+        return $.Deferred().resolve();
     };
 
     return {
