@@ -39,7 +39,10 @@ define([], function() {
      * Handles when we have selected to delete messages.
      */
     Actions.prototype.chooseMessagesToDelete = function() {
-        this.messageArea.trigger(this.messageArea.EVENTS.CHOOSEMESSAGESTODELETE);
+        // Only fire the event if we are viewing messages.
+        if (this.messageArea.find(this.messageArea.SELECTORS.MESSAGES).length !== 0) {
+            this.messageArea.trigger(this.messageArea.EVENTS.CHOOSEMESSAGESTODELETE);
+        }
     };
 
     return Actions;

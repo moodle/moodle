@@ -7,8 +7,10 @@
     </div>
     <div class="span8 information">
         <div class="name">{{fullname}} {{#isonline}}*{{/isonline}}</div>
-        {{#lastmessage}}
-            <p class="lastmessage">{{.}}</p>
-        {{/lastmessage}}
+        <p class="lastmessage" data-region="lastmessage">
+            {{#lastmessage}}
+                {{.}}
+            {{/lastmessage}}
+        </p>
     </div>
 </div>

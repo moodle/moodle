@@ -92,6 +92,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          * @private
          */
         Messages.prototype._sendMessage = function() {
+            var text = this.messageArea.find(this.messageArea.SELECTORS.SENDMESSAGETEXT).val();
             // Call the web service to save our message.
             var promises = ajax.call([{
                 methodname: 'core_message_send_instant_messages',
@@ -99,7 +100,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
                     messages: [
                         {
                             touserid: this._getUserId(),
-                            text: this.messageArea.find(this.messageArea.SELECTORS.SENDMESSAGETEXT).val()
+                            text: text
                         }
                     ]
                 }
@@ -107,10 +108,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
 
             // Update the DOM when we get some data back.
             return promises[0].then(function() {
-                // Some variables to pass to the trigger.
-                var userid = this._getUserId();
                 // Fire an event to say the message was sent.
-                this.messageArea.trigger(this.messageArea.EVENTS.MESSAGESENT, userid);
+                this.messageArea.trigger(this.messageArea.EVENTS.MESSAGESENT, [this._getUserId(), text]);
                 // Update the messaging area.
                 this._addMessageToDom();
             }.bind(this)).fail(notification.exception);
@@ -179,15 +178,19 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
                                 "[data-blocktime='" + blocktime + "']").remove();
                         }
                     }.bind(this));
+
+                    // Trigger event letting other modules know messages were deleted.
+                    this.messageArea.trigger(this.messageArea.EVENTS.MESSAGESDELETED, this._getUserId());
                 }.bind(this), notification.exception);
+            } else {
+                // Trigger event letting other modules know messages were deleted.
+                this.messageArea.trigger(this.messageArea.EVENTS.MESSAGESDELETED, this._getUserId());
             }
 
             // Hide the items responsible for deleting messages.
             this._hideDeleteAction();
 
-            // Trigger event letting other modules know messages were deleted.
-            this.messageArea.trigger(this.messageArea.EVENTS.MESSAGESDELETED,
-                this.messageArea.find(this.messageArea.SELECTORS.MESSAGES).data('userid'));
+
         };
 
         /**

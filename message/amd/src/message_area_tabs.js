@@ -33,6 +33,9 @@ define([], function() {
         this._init();
     }
 
+    /** @type {Boolean} checks if we are currently deleting */
+    Tabs.prototype._isDeleting = false;
+
     /** @type {Messagearea} The messaging area object. */
     Tabs.prototype.messageArea = null;
 
@@ -44,6 +47,18 @@ define([], function() {
     Tabs.prototype._init = function() {
         this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.VIEWCONVERSATIONS, this._viewConversations.bind(this));
         this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.VIEWCONTACTS, this._viewContacts.bind(this));
+        this.messageArea.onCustomEvent(this.messageArea.EVENTS.CHOOSEMESSAGESTODELETE, function() {
+            this._isDeleting = true;
+        }.bind(this));
+        this.messageArea.onCustomEvent(this.messageArea.EVENTS.MESSAGESDELETED, function() {
+            this._isDeleting = false;
+        }.bind(this));
+        this.messageArea.onCustomEvent(this.messageArea.EVENTS.CANCELDELETEMESSAGES, function() {
+            this._isDeleting = false;
+        }.bind(this));
+        this.messageArea.onCustomEvent(this.messageArea.EVENTS.MESSAGESENT, function() {
+            this._selectTab(this.messageArea.SELECTORS.VIEWCONVERSATIONS, this.messageArea.SELECTORS.VIEWCONTACTS);
+        }.bind(this));
     };
 
     /**
@@ -52,7 +67,12 @@ define([], function() {
      * @private
      */
     Tabs.prototype._viewConversations = function() {
+        if (this._isDeleting) {
+            return;
+        }
+
         this.messageArea.trigger(this.messageArea.EVENTS.CONVERSATIONSSELECTED);
+        this._selectTab(this.messageArea.SELECTORS.VIEWCONVERSATIONS, this.messageArea.SELECTORS.VIEWCONTACTS);
     };
 
     /**
@@ -61,7 +81,24 @@ define([], function() {
      * @private
      */
     Tabs.prototype._viewContacts = function() {
+        if (this._isDeleting) {
+            return;
+        }
+
         this.messageArea.trigger(this.messageArea.EVENTS.CONTACTSSELECTED);
+        this._selectTab(this.messageArea.SELECTORS.VIEWCONTACTS, this.messageArea.SELECTORS.VIEWCONVERSATIONS);
+    };
+
+    /**
+     * Sets a tab to selected.
+     *
+     * @param {String} tabselect The name of the tab to select
+     * @param {String} tabdeselect The name of the tab to deselect
+     * @private
+     */
+    Tabs.prototype._selectTab = function(tabselect, tabdeselect) {
+        this.messageArea.find(tabdeselect).removeClass('selected');
+        this.messageArea.find(tabselect).addClass('selected');
     };
 
     return Tabs;
