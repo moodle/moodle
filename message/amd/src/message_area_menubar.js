@@ -17,7 +17,7 @@
  * Aria menubar functionality. Enhances a simple nested list structure into a full aria widget.
  * Based on the open ajax example: http://oaa-accessibility.org/example/26/
  *
- * @module     core_message/menubar
+ * @module     core_message/message_area_menubar
  * @package    core_message
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

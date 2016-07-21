@@ -17,19 +17,19 @@
         <div class="row-fluid">
             <div class="span3 contacts-area" data-region="contacts-area">
                 {{#contacts}}
-                    {{> core_message/contacts }}
+                    {{> core_message/message_area_contacts }}
                 {{/contacts}}
             </div>
             <div class="span9 messages-area" data-region="messages-area">
                 {{#messages}}
-                    {{> core_message/messages }}
+                    {{> core_message/message_area_messages }}
                 {{/messages}}
             </div>
         </div>
     </div>
 </div>
 {{#js}}
-    require(['core_message/message-area', 'core_message/menubar', 'core_message/actions'],
+    require(['core_message/message_area', 'core_message/message_area_menubar', 'core_message/message_area_actions'],
         function(Messagearea, Menubar, Actions) {
             var messageArea = new Messagearea('.messaging-area-all');
             var actions = new Actions(messageArea);

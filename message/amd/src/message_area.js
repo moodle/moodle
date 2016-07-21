@@ -16,13 +16,13 @@
 /**
  * This module instantiates the functionality of the messaging area.
  *
- * @module     core_message/message-area
+ * @module     core_message/message_area
  * @package    core_message
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core_message/actions', 'core_message/contacts', 'core_message/messages',
-        'core_message/profile', 'core_message/tabs'],
+define(['jquery', 'core_message/message_area_actions', 'core_message/message_area_contacts',
+        'core_message/message_area_messages', 'core_message/message_area_profile', 'core_message/message_area_tabs'],
     function($, Actions, Contacts, Messages, Profile, Tabs) {
 
         /**

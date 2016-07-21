@@ -16,7 +16,7 @@
 /**
  * This module handles the profile area of the messaging area.
  *
- * @module     core_message/profile
+ * @module     core_message/message_area_profile
  * @package    core_message
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -77,7 +77,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
 
             // Show the profile.
             return promises[0].then(function(data) {
-                return templates.render('core_message/profile', data);
+                return templates.render('core_message/message_area_profile', data);
             }).then(function(html, js) {
                 templates.replaceNodeContents("[data-region='messages-area']", html, js);
             }).fail(notification.exception);

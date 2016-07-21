@@ -16,7 +16,7 @@
 /**
  * This module handles the message area of the messaging area.
  *
- * @module     core_message/messages
+ * @module     core_message/message_area_messages
  * @package    core_message
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -79,7 +79,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
             // Do stuff when we get data back.
             return promises[0].then(function(data) {
                 // We have the data - lets re-render the template with it.
-                return templates.render('core_message/messages', data);
+                return templates.render('core_message/message_area_messages', data);
             }).then(function(html, js) {
                 templates.replaceNodeContents("[data-region='messages-area']", html, js);
             }.bind(this)).fail(notification.exception);
@@ -127,7 +127,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
             this.messageArea.find("[data-region='delete-message-checkbox']").show();
             // Display the confirmation message.
             var responseSelector = "[data-region='messages-area'] [data-region='response']";
-            return templates.render('core_message/message_delete_message', {}).then(function(html, js) {
+            return templates.render('core_message/message_area_delete_confirmation', {}).then(function(html, js) {
                 templates.replaceNodeContents(responseSelector, html, js);
             });
         };
@@ -216,7 +216,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
             this.messageArea.find(responseSelector).empty();
             // Only show a response text area if we are viewing the logged in user's messages.
             if (this.messageArea.getLoggedInUserId() == this.messageArea.getCurrentUserId()) {
-                return templates.render('core_message/message_response', {}).then(function(html, js) {
+                return templates.render('core_message/message_area_response', {}).then(function(html, js) {
                     templates.replaceNodeContents(responseSelector, html, js);
                 });
             }
@@ -252,7 +252,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
 
             // Add the message.
             return promises[0].then(function(data) {
-                return templates.render('core_message/message', data);
+                return templates.render('core_message/message_area_message', data);
             }).then(function(html, js) {
                 templates.appendNodeContents("[data-region='messages']", html, js);
                 // Empty the response text area.

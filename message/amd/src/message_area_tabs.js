@@ -14,9 +14,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The module handles any actions we perform on the message area.
+ * This module handles the tabs of the messaging area.
  *
- * @module     core_message/actions
+ * @module     core_message/message_area_tabs
  * @package    core_message
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,23 +24,45 @@
 define([], function() {
 
     /**
-     * Actions class.
+     * Tabs class.
      *
      * @param {Messagearea} messageArea The messaging area object.
      */
-    function Actions(messageArea) {
+    function Tabs(messageArea) {
         this.messageArea = messageArea;
+        this._init();
     }
 
     /** @type {Messagearea} The messaging area object. */
-    Actions.prototype.messageArea = null;
+    Tabs.prototype.messageArea = null;
 
     /**
-     * Handles when we have selected to delete messages.
+     * Initialise the event listeners.
+     *
+     * @private
      */
-    Actions.prototype.chooseMessagesToDelete = function() {
-        this.messageArea.trigger('choose-messages-to-delete');
+    Tabs.prototype._init = function() {
+        this.messageArea.onDelegateEvent('click', "[data-action='conversations-view']", this._viewConversations.bind(this));
+        this.messageArea.onDelegateEvent('click', "[data-action='contacts-view']", this._viewContacts.bind(this));
     };
 
-    return Actions;
+    /**
+     * Handles when the conversation tab is selected.
+     *
+     * @private
+     */
+    Tabs.prototype._viewConversations = function() {
+        this.messageArea.trigger('conversations-selected');
+    };
+
+    /**
+     * Handles when the contacts tab is selected.
+     *
+     * @private
+     */
+    Tabs.prototype._viewContacts = function() {
+        this.messageArea.trigger('contacts-selected');
+    };
+
+    return Tabs;
 });

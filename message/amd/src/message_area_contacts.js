@@ -16,7 +16,7 @@
 /**
  * This module handles the contacts area of the messaging area.
  *
- * @module     core_message/contacts
+ * @module     core_message/message_area_contacts
  * @package    core_message
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -156,7 +156,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
             // After the request render the contacts area.
             return promises[0].then(function(data) {
                 // We have the data - lets re-render the template with it.
-                return templates.render('core_message/contacts', data);
+                return templates.render('core_message/message_area_contacts', data);
             }).then(function(html, js) {
                 templates.replaceNodeContents("[data-region='contacts-area']", html, js);
             }).fail(notification.exception);
