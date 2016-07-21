@@ -21,6 +21,8 @@ use tabobject;
 use tabtree;
 use custom_menu_item;
 use custom_menu;
+use block_contents;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -256,5 +258,71 @@ class core_renderer extends \core_renderer {
             $params = $tab->selected ? array('class' => 'active') : null;
             return html_writer::tag('li', $link, $params);
         }
+    }
+
+    /**
+     * Prints a nice side block with an optional header.
+     *
+     * @param block_contents $bc HTML for the content
+     * @param string $region the region the block is appearing in.
+     * @return string the HTML to be output.
+     */
+    public function block(block_contents $bc, $region) {
+        $bc = clone($bc); // Avoid messing up the object passed in.
+        if (empty($bc->blockinstanceid) || !strip_tags($bc->title)) {
+            $bc->collapsible = block_contents::NOT_HIDEABLE;
+        }
+        if (!empty($bc->blockinstanceid)) {
+            $bc->attributes['data-instanceid'] = $bc->blockinstanceid;
+        }
+        $skiptitle = strip_tags($bc->title);
+        if ($bc->blockinstanceid && !empty($skiptitle)) {
+            $bc->attributes['aria-labelledby'] = 'instance-'.$bc->blockinstanceid.'-header';
+        } else if (!empty($bc->arialabel)) {
+            $bc->attributes['aria-label'] = $bc->arialabel;
+        }
+        if ($bc->dockable) {
+            $bc->attributes['data-dockable'] = 1;
+        }
+        if ($bc->collapsible == block_contents::HIDDEN) {
+            $bc->add_class('hidden');
+        }
+        if (!empty($bc->controls)) {
+            $bc->add_class('block_with_controls');
+        }
+
+        $id = !empty($bc->attributes['id']) ? $bc->attributes['id'] : uniqid('block-');
+        $context = new stdClass();
+        $context->skipid = $bc->skipid;
+        $context->blockinstanceid = $bc->blockinstanceid;
+        $context->dockable = $bc->dockable;
+        $context->id = $id;
+        $context->hidden = $bc->collapsible == block_contents::HIDDEN;
+        $context->skiptitle = strip_tags($bc->title);
+        $context->showskiplink = !empty($context->skiptitle);
+        $context->arialabel = $bc->arialabel;
+        $context->ariarole = !empty($bc->attributes['role']) ? $bc->attributes['role'] : 'complementary';
+        $context->type = $bc->attributes['data-block'];
+        $context->title = $bc->title;
+        $context->content = $bc->content;
+        $context->annotation = $bc->annotation;
+        $context->footer = $bc->footer;
+        $context->hascontrols = !empty($bc->controls);
+        if ($context->hascontrols) {
+            $context->controls = $this->block_controls($bc->controls, $id);
+        }
+
+        return $this->render_from_template('core/block', $context);
+    }
+
+    /**
+     * Returns the CSS classes to apply to the body tag.
+     *
+     * @since Moodle 2.5.1 2.6
+     * @param array $additionalclasses Any additional classes to apply.
+     * @return string
+     */
+    public function body_css_classes(array $additionalclasses = array()) {
+        return $this->page->bodyclasses;
     }
 }
