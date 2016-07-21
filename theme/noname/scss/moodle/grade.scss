@@ -333,16 +333,3 @@
     }
 }
 
-.has_dock.path-grade-report-grader {
-    .gradeparent .sideonly.floating > .cell,
-    .gradeparent .sideonly.floating > .cell,
-    .gradeparent .sideonly.floating > .cell {
-        padding-left: 5 + ($dockWidth + ($dockTitleMargin * 2));
-    }
-}
-
-.content-only.path-grade-report-grader {
-    .gradeparent table {
-        margin-left: ($dockWidth + ($dockTitleMargin * 2));
-    }
-}
