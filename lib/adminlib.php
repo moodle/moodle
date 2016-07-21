@@ -9220,7 +9220,8 @@ class admin_setting_configstoredfile extends admin_setting {
         $html .= '<input value="" id="'.$id.'" type="hidden" />';
 
         return format_admin_setting($this, $this->visiblename,
-            '<div class="form-filemanager">'.$html.'</div>', $this->description, true, '', '', $query);
+            '<div class="form-filemanager" data-fieldtype="filemanager">'.$html.'</div>',
+            $this->description, true, '', '', $query);
     }
 }
 

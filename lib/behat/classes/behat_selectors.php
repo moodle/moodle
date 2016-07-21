@@ -109,7 +109,7 @@ XPATH
     normalize-space(descendant::div[@class='hd']) = %locator%]
 XPATH
         , 'filemanager' => <<<XPATH
-.//div[contains(concat(' ', normalize-space(@class), ' '), ' ffilemanager ')]
+.//div[@data-fieldtype = 'filemanager']
     /descendant::input[@id = //label[contains(normalize-space(string(.)), %locator%)]/@for]
 XPATH
         , 'list_item' => <<<XPATH

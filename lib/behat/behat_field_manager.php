@@ -228,7 +228,11 @@ class behat_field_manager {
             return 'availability';
         }
 
-        // We look for a parent node with 'felement' class.
+        // We look for a parent node with 'felement' class or data-fieldtype attribute.
+        if ($fieldtype = $fieldnode->getParent()->getAttribute('data-fieldtype')) {
+            return $fieldtype;
+        }
+
         if ($class = $fieldnode->getParent()->getAttribute('class')) {
 
             if (strstr($class, 'felement') != false) {
