@@ -26,7 +26,7 @@
  * @since      3.2
  */
 define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates', 'core/str',
-            'core/notification', 'core/custom_interaction_events', 'core/mdl_popover_controller',
+            'core/notification', 'core/custom_interaction_events', 'core/popover_region_controller',
             'core_message/notification_repository'],
         function($, bootstrap, ajax, templates, str, debugNotification, customEvents,
             popoverController, notificationRepo) {
@@ -34,7 +34,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
     var SELECTORS = {
         MARK_ALL_READ_BUTTON: '.mark-all-read-button',
         USER_ID: 'data-userid',
-        MODE_TOGGLE: '.mdl-popover-header-actions .fancy-toggle',
+        MODE_TOGGLE: '.popover-region-header-actions .fancy-toggle',
         UNREAD_NOTIFICATIONS_CONTAINER: '.unread-notifications',
         ALL_NOTIFICATIONS_CONTAINER: '.all-notifications',
         BLOCK_BUTTON: '.block-button',
@@ -51,7 +51,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
 
     /**
      * Constructor for the NotificationPopoverController.
-     * Extends MdlPopoverController.
+     * Extends PopoverRegionController.
      *
      * @param element jQuery object root element of the popover
      * @return object NotificationPopoverController
@@ -387,7 +387,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
      * list current contains focus, otherwise the first item in the list is
      * given focus.
      *
-     * Overrides MdlPopoverController.focusNextContentItem
+     * Overrides PopoverRegionController.focusNextContentItem
      * @method focusNextContentItem
      */
     NotificationPopoverController.prototype.focusNextContentItem = function() {
@@ -406,7 +406,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
      * Shift focus to the previous content item in the content item list, if the
      * content item list contains focus.
      *
-     * Overrides MdlPopoverController.focusPreviousContentItem
+     * Overrides PopoverRegionController.focusPreviousContentItem
      * @method focusPreviousContentItem
      */
     NotificationPopoverController.prototype.focusPreviousContentItem = function() {
@@ -422,7 +422,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
     /**
      * Give focus to the first item in the list of content items.
      *
-     * Overrides MdlPopoverController.focusFirstContentItem
+     * Overrides PopoverRegionController.focusFirstContentItem
      * @method focusFirstContentItem
      */
     NotificationPopoverController.prototype.focusFirstContentItem = function() {
@@ -442,7 +442,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
      * Give focus to the last item in the list of content items, that is the list
      * of notifications that have already been loaded.
      *
-     * Overrides MdlPopoverController.focusLastContentItem
+     * Overrides PopoverRegionController.focusLastContentItem
      * @method focusLastContentItem
      */
     NotificationPopoverController.prototype.focusLastContentItem = function() {

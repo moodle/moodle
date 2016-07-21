@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/mdl_popover
+    @template core/popover_region
 
-    This template will render a mdl popover
+    This template will render a popover region
 
     Classes required for JS:
     * none
@@ -33,37 +33,37 @@
     }
 
 }}
-<div class="mdl-popover mdl-popover-{{uniqid}} collapsed {{$classes}}{{/classes}}" {{$attributes}}{{/attributes}}>
-    <div class="mdl-popover-toggle"
+<div class="popover-region popover-region-{{uniqid}} collapsed {{$classes}}{{/classes}}" {{$attributes}}{{/attributes}}>
+    <div class="popover-region-toggle"
         aria-role="button"
-        aria-controls="mdl-popover-container-{{uniqid}}"
+        aria-controls="popover-region-container-{{uniqid}}"
         aria-haspopup="true"
         aria-label="{{$togglelabel}}{{#str}}showpopovermenu{{/str}}{{/togglelabel}}"
         tabindex="0">
         {{$togglecontent}}{{/togglecontent}}
     </div>
     <div {{$containerattributes}}{{/containerattributes}}
-        id="mdl-popover-container-{{uniqid}}"
-        class="mdl-popover-container"
+        id="popover-region-container-{{uniqid}}"
+        class="popover-region-container"
         aria-expanded="false"
         aria-hidden="true"
         aria-label="{{$containerlabel}}{{/containerlabel}}"
         role="region">
-        <div class="mdl-popover-header-container">
-            <h3 class="mdl-popover-header-text">{{$headertext}}{{/headertext}}</h3>
-            <div class="mdl-popover-header-actions">{{$headeractions}}{{/headeractions}}</div>
+        <div class="popover-region-header-container">
+            <h3 class="popover-region-header-text">{{$headertext}}{{/headertext}}</h3>
+            <div class="popover-region-header-actions">{{$headeractions}}{{/headeractions}}</div>
         </div>
-        <div class="mdl-popover-content-container">
-            <div class="mdl-popover-content">
+        <div class="popover-region-content-container">
+            <div class="popover-region-content">
                 {{$content}}{{/content}}
             </div>
-            <div class="loading-icon">{{#pix}} y/loading, core, {{#str}} loading, mod_assign {{/str}} {{/pix}}</div>
+            {{> core/loading }}
         </div>
     </div>
 </div>
 {{#js}}
-require(['jquery', 'core/mdl_popover_controller'], function($, controller) {
-    var container = $(".mdl-popover-{{uniqid}}");
+require(['jquery', 'core/popover_region_controller'], function($, controller) {
+    var container = $(".popover-region-{{uniqid}}");
     var controller = new controller(container);
     controller.registerBaseEventListeners();
 });

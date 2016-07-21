@@ -17,7 +17,7 @@
 {{!
     @template message/message_popover
 
-    This template will render the notification popover for the navigation bar.
+    This template will render the message popover for the navigation bar.
 
     Classes required for JS:
     * none
@@ -33,8 +33,8 @@
     }
 
 }}
-{{< core/mdl_popover }}
-    {{$classes}}mdl-popover-messages{{/classes}}
+{{< core/popover_region }}
+    {{$classes}}popover-region-messages{{/classes}}
     {{$attributes}}id="nav-message-popover-container" data-userid="{{userid}}"{{/attributes}}
 
     {{$togglelabel}}{{#str}} showmessagewindownonew, message {{/str}}{{/togglelabel}}
@@ -68,7 +68,7 @@
         <div class="messages" role="log" aria-busy="false" aria-atomic="false" aria-relevant="additions"></div>
         <div class="empty-message" tabindex="0">{{#str}} nomessagesfound, message {{/str}}</div>
     {{/content}}
-{{/ core/mdl_popover }}
+{{/ core/popover_region }}
 {{#js}}
 require(['jquery', 'core_message/message_popover_controller'], function($, controller) {
     var container = $('#nav-message-popover-container');

@@ -1,8 +1,8 @@
-.mdl-popover {
+.popover-region {
     float: right;
     position: relative;
 
-    .mdl-popover-toggle {
+    .popover-region-toggle {
         cursor: pointer;
 
         .count-container {
@@ -18,7 +18,7 @@
         }
     }
 
-    .mdl-popover-container {
+    .popover-region-container {
         position: absolute;
         right: 0;
         top: 0;
@@ -31,7 +31,7 @@
         background-color: #fff;
         z-index: 10000;
 
-        .mdl-popover-header-container {
+        .popover-region-header-container {
             height: 25px;
             line-height: 24px;
             padding-left: 5px;
@@ -39,14 +39,14 @@
             border-bottom: 1px solid #ddd;
             box-sizing: border-box;
 
-            .mdl-popover-header-text {
+            .popover-region-header-text {
                 float: left;
                 margin: 0;
                 font-size: 14px;
                 line-height: 25px;
             }
 
-            .mdl-popover-header-actions {
+            .popover-region-header-actions {
                 float: right;
 
                 > * {
@@ -55,7 +55,7 @@
             }
         }
 
-        .mdl-popover-content-container {
+        .popover-region-content-container {
             height: ~"calc(100% - 25px)";
             width: 100%;
             overflow-y: auto;
@@ -99,7 +99,7 @@
     }
 
     &.collapsed {
-        .mdl-popover-container {
+        .popover-region-container {
             height: 0;
             overflow: hidden;
             opacity: 0;
@@ -110,10 +110,10 @@
 }
 
 .navbar {
-    .mdl-popover {
+    .popover-region {
         float: right;
 
-        .mdl-popover-toggle {
+        .popover-region-toggle {
             height: 42px;
             line-height: 42px;
             padding-left: 10px;
@@ -136,7 +136,7 @@
                 right: 0;
             }
         }
-        .mdl-popover-container {
+        .popover-region-container {
             top: 42px;
 
             &::before {
@@ -161,7 +161,7 @@
             }
         }
         &.collapsed {
-            .mdl-popover-container {
+            .popover-region-container {
                 height: 0;
                 overflow: hidden;
                 opacity: 0;
@@ -172,11 +172,11 @@
     }
 }
 
-.mdl-popover-notifications {
-    &.mdl-popover {
-        .mdl-popover-container {
-            .mdl-popover-header-container {
-                .mdl-popover-header-actions {
+.popover-region-notifications {
+    &.popover-region {
+        .popover-region-container {
+            .popover-region-header-container {
+                .popover-region-header-actions {
                     .fancy-toggle {
                         position: relative;
                         display: inline-block;
@@ -275,10 +275,265 @@
                 }
             }
         }
-        .mdl-popover-container {
-            .mdl-popover-content-container {
+        .popover-region-container {
+            .popover-region-content-container {
+                .popover-region-content {
+                    .unread-notifications,
+                    .all-notifications {
+                        &:empty + .empty-message,
+                        & + .empty-message {
+                            display: none;
+                        }
+                    }
+                }
+            }
+
+            .popover-region-content {
+                .unread-notifications {
+                    opacity: 0;
+                    visibility: hidden;
+                    height: 0;
+                    overflow: hidden;
+                    transition: opacity 0.25s, visibility 101ms 0.25s, height 101ms 0.25s;
+
+                    & + .empty-message {
+                        display: none;
+                    }
+                }
+                .all-notifications {
+                    opacity: 1;
+                    visibility: visible;
+                    height: auto;
+                    overflow: hidden;
+                    transition: opacity 0.25s 0.25s, visibility 101ms 0.5s, height 101ms 0.5s;
+
+                    &:empty + .empty-message {
+                        display: block;
+                    }
+                }
+                .content-item-container {
+                    width: 100%;
+                    border-bottom: 1px solid #ddd;
+                    box-sizing: border-box;
+                    padding: 5px;
+
+                    &:hover {
+                        opacity: 0.8;
+                    }
+
+                    .content-item-link {
+                        color: inherit;
+                        text-decoration: none;
+
+                        &:hover {
+                            color: inherit;
+                            text-decoration: none;
+                        }
+                    }
+
+                    .content-item {
+                        width: ~"calc(100% - 45px)";
+                        display: inline-block;
+                        box-sizing: border-box;
+
+                        .content-item-header {
+                            height: 20px;
+                            margin-bottom: 5px;
+                            box-sizing: border-box;
+
+                            h3 {
+                                font-size: 14px;
+                                line-height: 14px;
+                                float: left;
+                                margin: 0;
+                                max-width: 80%;
+                            }
+                        }
+
+                        .content-item-body {
+                            box-sizing: border-box;
+
+                            .content-body-short {
+                                max-height: 1000px;
+                                width: 100%;
+                                height: 30px;
+                                opacity: 1;
+                                visibility: visible;
+                                transition: opacity 101ms 0.5s, visibility 101ms 0.5s, max-height 1s 0.5s;
+
+                                .notification-image {
+                                    display: inline-block;
+                                    width: 10%;
+
+                                    img {
+                                        height: 30px;
+                                    }
+                                }
+                                .notification-message {
+                                    display: inline-block;
+                                    font-size: 12px;
+                                    line-height: 15px;
+                                    margin: 0;
+                                    vertical-align: top;
+                                    max-width: 80%;
+                                }
+                            }
+                            .content-body-full {
+                                overflow: hidden;
+                                width: 100%;
+                                max-height: 0;
+                                opacity: 0;
+                                visibility: hidden;
+                                transition: max-height 0.5s, opacity 101ms 0.5s, visibility 101ms 0.5s;
+
+                                pre {
+                                    word-break: normal;
+                                    word-wrap: normal;
+                                    font-size: 12px;
+                                    margin: 0;
+                                }
+                            }
+                        }
+
+                        .content-item-footer {
+                            text-align: left;
+                            margin: 5px 0 0;
+                            box-sizing: border-box;
+
+                            p {
+                                font-size: 10px;
+                                line-height: 10px;
+                                margin: 0;
+                            }
+                        }
+                    }
+
+                    .content-item-controls {
+                        width: 40px;
+                        height: 100%;
+                        display: inline-block;
+                        vertical-align: top;
+                        box-sizing: border-box;
+                        text-align: right;
+
+                        .block-button {
+                            img {
+                                height: 15px;
+                            }
+                            .loading-icon {
+                                padding: 0;
+                            }
+
+                            &.loading {
+                                .loading-icon {
+                                    display: inline-block;
+                                }
+                                .block-icon {
+                                    display: none;
+                                }
+                            }
+                        }
+                        .mark-read-button {
+                            img {
+                                height: 15px;
+                            }
+                        }
+                        .expand-buttons {
+                            display: inline-block;
+                            height: 30px;
+                            width: 100%;
+                            vertical-align: top;
+                            float: right;
+                            text-align: center;
+                            margin-top: 20px;
+
+                            img {
+                                vertical-align: middle;
+                                height: 100%;
+                            }
+                            .show-button {
+                                width: 100%;
+                                height: 100%;
+                                display: block;
+                            }
+                            .hide-button {
+                                width: 100%;
+                                height: 100%;
+                                display: none;
+                            }
+                        }
+                        .block-button + .expand-buttons {
+                            margin-top: 0;
+                        }
+                    }
+
+                    &.expanded {
+                        .content-item {
+                            .content-item-body {
+                                .content-body-short {
+                                    opacity: 0;
+                                    visibility: hidden;
+                                    max-height: 0;
+                                    overflow: hidden;
+                                    transition: opacity 101ms 0.25s, visibility 101ms 0.25s, max-height 0.25s;
+                                }
+                                .content-body-full {
+                                    max-height: 1000px;
+                                    opacity: 1;
+                                    visibility: visible;
+                                    transition: max-height 2s 0.25s, opacity 101ms 0.25s, visibility 101ms 0.25s;
+                                }
+                            }
+                        }
+
+                        .content-item-controls {
+                            .expand-buttons {
+                                .show-button {
+                                    display: none;
+                                }
+                                .hide-button {
+                                    display: block;
+                                }
+                            }
+                        }
+                    }
+
+                    &:last-child {
+                        border-bottom: none;
+                    }
+                }
+            }
+        }
+    }
+
+    &.unread-only {
+        .popover-region-container {
+            .popover-region-content-container {
+                .popover-region-content {
+                    .all-notifications {
+                        opacity: 0;
+                        visibility: hidden;
+                        height: 0;
+                        transition: opacity 0.25s, visibility 101ms 0.25s, height 101ms 0.25s;
+
+                        & + .empty-message {
+                            display: none;
+                        }
+                    }
+                    .unread-notifications {
+                        opacity: 1;
+                        visibility: visible;
+                        height: auto;
+                        transition: opacity 0.25s 0.25s, visibility 101ms 0.5s, height 101ms 0.5s;
+
+                        &:empty + .empty-message {
+                            display: block;
+                        }
+                    }
+                }
+
                 &.loading {
-                    .mdl-popover-content {
+                    .popover-region-content {
                         .unread-notifications,
                         .all-notifications {
                             &:empty + .empty-message,
@@ -288,273 +543,17 @@
                         }
                     }
                 }
-
-                .mdl-popover-content {
-                    .unread-notifications {
-                        opacity: 0;
-                        visibility: hidden;
-                        height: 0;
-                        overflow: hidden;
-                        transition: opacity 0.25s, visibility 101ms 0.25s, height 101ms 0.25s;
-
-                        & + .empty-message {
-                            display: none;
-                        }
-                    }
-                    .all-notifications {
-                        opacity: 1;
-                        visibility: visible;
-                        height: auto;
-                        overflow: hidden;
-                        transition: opacity 0.25s 0.25s, visibility 101ms 0.5s, height 101ms 0.5s;
-
-                        &:empty + .empty-message {
-                            display: block;
-                        }
-                    }
-                    .content-item-container {
-                        width: 100%;
-                        border-bottom: 1px solid #ddd;
-                        box-sizing: border-box;
-                        padding: 5px;
-
-                        &:hover {
-                            opacity: 0.8;
-                        }
-
-                        .content-item-link {
-                            color: inherit;
-                            text-decoration: none;
-
-                            &:hover {
-                                color: inherit;
-                                text-decoration: none;
-                            }
-                        }
-
-                        .content-item {
-                            width: ~"calc(100% - 45px)";
-                            display: inline-block;
-                            box-sizing: border-box;
-
-                            .content-item-header {
-                                height: 20px;
-                                margin-bottom: 5px;
-                                box-sizing: border-box;
-
-                                h3 {
-                                    font-size: 14px;
-                                    line-height: 14px;
-                                    float: left;
-                                    margin: 0;
-                                    max-width: 80%;
-                                }
-                            }
-
-                            .content-item-body {
-                                box-sizing: border-box;
-
-                                .content-body-short {
-                                    max-height: 1000px;
-                                    width: 100%;
-                                    height: 30px;
-                                    opacity: 1;
-                                    visibility: visible;
-                                    transition: opacity 101ms 0.5s, visibility 101ms 0.5s, max-height 1s 0.5s;
-
-                                    .notification-image {
-                                        display: inline-block;
-                                        width: 10%;
-
-                                        img {
-                                            height: 30px;
-                                        }
-                                    }
-                                    .notification-message {
-                                        display: inline-block;
-                                        font-size: 12px;
-                                        line-height: 15px;
-                                        margin: 0;
-                                        vertical-align: top;
-                                        max-width: 80%;
-                                    }
-                                }
-                                .content-body-full {
-                                    overflow: hidden;
-                                    width: 100%;
-                                    max-height: 0;
-                                    opacity: 0;
-                                    visibility: hidden;
-                                    transition: max-height 0.5s, opacity 101ms 0.5s, visibility 101ms 0.5s;
-
-                                    pre {
-                                        word-break: normal;
-                                        word-wrap: normal;
-                                        font-size: 12px;
-                                        margin: 0;
-                                    }
-                                }
-                            }
-
-                            .content-item-footer {
-                                text-align: left;
-                                margin: 5px 0 0;
-                                box-sizing: border-box;
-
-                                p {
-                                    font-size: 10px;
-                                    line-height: 10px;
-                                    margin: 0;
-                                }
-                            }
-                        }
-
-                        .content-item-controls {
-                            width: 40px;
-                            height: 100%;
-                            display: inline-block;
-                            vertical-align: top;
-                            box-sizing: border-box;
-                            text-align: right;
-
-                            .block-button {
-                                img {
-                                    height: 15px;
-                                }
-                                .loading-icon {
-                                    padding: 0;
-                                }
-
-                                &.loading {
-                                    .loading-icon {
-                                        display: inline-block;
-                                    }
-                                    .block-icon {
-                                        display: none;
-                                    }
-                                }
-                            }
-                            .mark-read-button {
-                                img {
-                                    height: 15px;
-                                }
-                            }
-                            .expand-buttons {
-                                display: inline-block;
-                                height: 30px;
-                                width: 100%;
-                                vertical-align: top;
-                                float: right;
-                                text-align: center;
-                                margin-top: 20px;
-
-                                img {
-                                    vertical-align: middle;
-                                    height: 100%;
-                                }
-                                .show-button {
-                                    width: 100%;
-                                    height: 100%;
-                                    display: block;
-                                }
-                                .hide-button {
-                                    width: 100%;
-                                    height: 100%;
-                                    display: none;
-                                }
-                            }
-                            .block-button + .expand-buttons {
-                                margin-top: 0;
-                            }
-                        }
-
-                        &.expanded {
-                            .content-item {
-                                .content-item-body {
-                                    .content-body-short {
-                                        opacity: 0;
-                                        visibility: hidden;
-                                        max-height: 0;
-                                        overflow: hidden;
-                                        transition: opacity 101ms 0.25s, visibility 101ms 0.25s, max-height 0.25s;
-                                    }
-                                    .content-body-full {
-                                        max-height: 1000px;
-                                        opacity: 1;
-                                        visibility: visible;
-                                        transition: max-height 2s 0.25s, opacity 101ms 0.25s, visibility 101ms 0.25s;
-                                    }
-                                }
-                            }
-
-                            .content-item-controls {
-                                .expand-buttons {
-                                    .show-button {
-                                        display: none;
-                                    }
-                                    .hide-button {
-                                        display: block;
-                                    }
-                                }
-                            }
-                        }
-
-                        &:last-child {
-                            border-bottom: none;
-                        }
-                    }
-                }
-            }
-        }
-
-        &.unread-only {
-            .mdl-popover-container {
-                .mdl-popover-content-container {
-                    .mdl-popover-content {
-                        .all-notifications {
-                            opacity: 0;
-                            visibility: hidden;
-                            height: 0;
-                            transition: opacity 0.25s, visibility 101ms 0.25s, height 101ms 0.25s;
-
-                            & + .empty-message {
-                                display: none;
-                            }
-                        }
-                        .unread-notifications {
-                            opacity: 1;
-                            visibility: visible;
-                            height: auto;
-                            transition: opacity 0.25s 0.25s, visibility 101ms 0.5s, height 101ms 0.5s;
-
-                            &:empty + .empty-message {
-                                display: block;
-                            }
-                        }
-                    }
-
-                    &.loading {
-                        .mdl-popover-content {
-                            .unread-notifications,
-                            .all-notifications {
-                                &:empty + .empty-message,
-                                & + .empty-message {
-                                    display: none;
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
     }
 }
 
-.mdl-popover-messages {
-    &.mdl-popover {
-        .mdl-popover-container {
-            .mdl-popover-header-container {
-                .mdl-popover-header-actions {
+
+.popover-region-messages {
+    &.popover-region {
+        .popover-region-container {
+            .popover-region-header-container {
+                .popover-region-header-actions {
                     .mark-all-read-button {
                         .normal-icon {
                             display: inline-block;
@@ -576,8 +575,8 @@
                     }
                 }
             }
-            .mdl-popover-content-container {
-                .mdl-popover-content {
+            .popover-region-content-container {
+                .popover-region-content {
                     .messages {
                         &:empty + .empty-message {
                             display: block;
@@ -650,7 +649,7 @@
                     }
                 }
                 &.loading {
-                    .mdl-popover-content {
+                    .popover-region-content {
                         .messages {
                             &:empty + .empty-message {
                                 display: none;
@@ -664,22 +663,22 @@
 }
 
 .dir-rtl {
-    .mdl-popover {
-        .mdl-popover-container {
+    .popover-region {
+        .popover-region-container {
             left: 0;
             right: auto;
 
-            .mdl-popover-header-container {
-                .mdl-popover-header-text {
+            .popover-region-header-container {
+                .popover-region-header-text {
                     float: right;
                 }
-                .mdl-popover-header-actions {
+                .popover-region-header-actions {
                     float: left;
                 }
             }
 
-            .mdl-popover-content-container {
-                .mdl-popover-content {
+            .popover-region-content-container {
+                .popover-region-content {
                     .content-item-container {
                         .content-item {
                             .content-item-header {
@@ -700,10 +699,10 @@
         }
     }
     .navbar {
-        .mdl-popover {
+        .popover-region {
             float: left;
 
-            .mdl-popover-container {
+            .popover-region-container {
                 &::before {
                     right: auto;
                     left: 7px;
@@ -713,22 +712,22 @@
                     left: 8px;
                 }
 
-                .mdl-popover-header-container {
-                    .mdl-popover-header-text {
+                .popover-region-header-container {
+                    .popover-region-header-text {
                         float: right;
                     }
-                    .mdl-popover-header-actions {
+                    .popover-region-header-actions {
                         float: left;
                     }
                 }
             }
         }
     }
-    .mdl-popover-notifications {
-        .mdl-popover {
-            .mdl-popover-container {
-                .mdl-popover-header-container {
-                    .mdl-popover-header-actions {
+    .popover-region-notifications {
+        .popover-region {
+            .popover-region-container {
+                .popover-region-header-container {
+                    .popover-region-header-actions {
                         .fancy-toggle {
                             &.off {
                                 .slider-container {
@@ -751,8 +750,8 @@
                         }
                     }
                 }
-                .mdl-popover-content-container {
-                    .mdl-popover-content {
+                .popover-region-content-container {
+                    .popover-region-content {
                         .content-item-container {
                             .content-item {
                                 .content-item-header {

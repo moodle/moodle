@@ -33,8 +33,8 @@
     }
 
 }}
-{{< core/mdl_popover }}
-    {{$classes}}mdl-popover-notifications unread-only{{/classes}}
+{{< core/popover_region }}
+    {{$classes}}popover-region-notifications unread-only{{/classes}}
     {{$attributes}}id="nav-notification-popover-container" data-userid="{{userid}}"{{/attributes}}
 
     {{$togglelabel}}{{#str}} shownotificationwindownonew, message {{/str}}{{/togglelabel}}
@@ -75,7 +75,7 @@
         <div class="unread-notifications" role="log" aria-busy="false" aria-atomic="false" aria-relevant="additions"></div>
         <div class="empty-message" tabindex="0">{{#str}} nonewnotifications, message {{/str}}</div>
     {{/content}}
-{{/ core/mdl_popover }}
+{{/ core/popover_region }}
 {{#js}}
 require(['jquery', 'core_message/notification_popover_controller'], function($, controller) {
     var container = $('#nav-notification-popover-container');

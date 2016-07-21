@@ -26,7 +26,7 @@
  * @since      3.2
  */
 define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates', 'core/str',
-            'core/notification', 'core/custom_interaction_events', 'core/mdl_popover_controller',
+            'core/notification', 'core/custom_interaction_events', 'core/popover_region_controller',
             'core_message/message_repository', 'core/url'],
         function($, bootstrap, ajax, templates, str, debugNotification, customEvents,
             PopoverController, messageRepo, URL) {
@@ -34,7 +34,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
     var SELECTORS = {
         MARK_ALL_READ_BUTTON: '.mark-all-read-button',
         USER_ID: 'data-userid',
-        MODE_TOGGLE: '.mdl-popover-header-actions .fancy-toggle',
+        MODE_TOGGLE: '.popover-region-header-actions .fancy-toggle',
         CONTENT: '.messages',
         CONTENT_ITEM_CONTAINER: '.content-item-container',
         EMPTY_MESSAGE: '.empty-message',
@@ -43,7 +43,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
 
     /**
      * Constructor for the MessagePopoverController.
-     * Extends MdlPopoverController.
+     * Extends PopoverRegionController.
      *
      * @param element jQuery object root element of the popover
      * @return object MessagePopoverController
