@@ -318,4 +318,130 @@ class core_htmlpurifier_testcase extends basic_testcase {
         $text = '<a href="hmmm://www.example.com">link</a>';
         $this->assertSame('<a>link</a>', purify_html($text));
     }
+
+    /**
+     * Tests media tags.
+     *
+     * @dataProvider media_tags_provider
+     * @param string $mediatag HTML media tag
+     * @param string $expected expected result
+     */
+    public function test_media_tags($mediatag, $expected) {
+        $actual = format_text($mediatag, FORMAT_MOODLE, ['filter' => false, 'noclean' => true]);
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * Test cases for the test_media_tags test.
+     */
+    public function media_tags_provider() {
+        // Given a 1D array, computes the power set of those elements.
+        $p = function(array $set) {
+            return array_reduce($set, function($carry, $element) {
+                return array_merge($carry, array_map(function($subset) use ($element) {
+                    return array_merge([$element], $subset);
+                }, $carry));
+            }, [[]]);
+        };
+
+        // Takes an array of attributes, then generates a test for every possible combination of them
+        // (i.e., every element of the power set). The testcases are named using $prefix and then
+        // a '/' delimited string describing the attributes being used. $templats is for the
+        // raw data and expected result.
+        $generatetestcases = function($prefix, array $attrs, array $templates) use ($p) {
+            $attrcombinations = $p($attrs);
+            return array_reduce($attrcombinations, function($carry, $attrset) use ($prefix, $templates) {
+                $testcase = [$prefix . '/' . join('/', $attrset) => [
+                    sprintf($templates[0], join(" ", $attrset)),
+                    sprintf($templates[1], join(" ", $attrset))
+                ]];
+                return empty(array_values($carry)[0]) ? $testcase : $carry + $testcase;
+            }, [[]]);
+        };
+
+        $audioattrs = [
+            'preload="auto"', 'autoplay=""', 'loop=""', 'muted=""', 'controls=""',
+            'crossorigin="anonymous"', 'crossorigin="use-credentials"'
+        ];
+        $videoattrs = [
+            'crossorigin="anonymous"', 'crossorigin="use-credentials"',
+            'poster="https://upload.wikimedia.org/wikipedia/en/1/14/Space_jam.jpg"',
+            'preload=""', 'autoplay=""', 'playsinline=""', 'loop=""', 'muted=""',
+            'controls=""', 'width="420px"', 'height="69px"'
+        ];
+        return $generatetestcases('Plain audio', $audioattrs + ['src="http://example.com/jam.wav"'], [
+                '<audio %1$s>Looks like you can\'t slam the jams.</audio>',
+                '<div class="text_to_html"><audio %1$s>Looks like you can\'t slam the jams.</audio></div>'
+            ]) + $generatetestcases('Audio with one source', $audioattrs, [
+                '<audio %1$s><source src="http://example.com/getup.wav">No tasty jams for you.</audio>',
+                '<div class="text_to_html">' .
+                    '<audio %1$s>' .
+                        '<source src="http://example.com/getup.wav">' .
+                        'No tasty jams for you.' .
+                    '</audio>' .
+                '</div>'
+            ]) + $generatetestcases('Audio with multiple sources', $audioattrs, [
+                '<audio %1$s>' .
+                    '<source src="http://example.com/getup.wav" type="audio/wav">' .
+                    '<source src="http://example.com/getup.mp3" type="audio/mpeg">' .
+                    '<source src="http://example.com/getup.ogg" type="audio/ogg">' .
+                    'No tasty jams for you.' .
+                '</audio>',
+                '<div class="text_to_html">' .
+                     '<audio %1$s>' .
+                        '<source src="http://example.com/getup.wav" type="audio/wav">' .
+                        '<source src="http://example.com/getup.mp3" type="audio/mpeg">' .
+                        '<source src="http://example.com/getup.ogg" type="audio/ogg">' .
+                        'No tasty jams for you.' .
+                    '</audio>' .
+                '</div>'
+            ]) + $generatetestcases('Plain video', $videoattrs + ['src="http://example.com/prettygood.mp4'], [
+                '<video %1$s>Oh, that\'s pretty bad 😦</video>',
+                '<div class="text_to_html"><video %1$s>Oh, that\'s pretty bad 😦</video></div>'
+            ]) + $generatetestcases('Video with one source', $videoattrs, [
+                '<video %1$s><source src="http://example.com/prettygood.mp4">Oh, that\'s pretty bad 😦</video>',
+                '<div class="text_to_html">' .
+                    '<video %1$s>' .
+                        '<source src="http://example.com/prettygood.mp4">' .
+                        'Oh, that\'s pretty bad 😦' .
+                    '</video>' .
+                '</div>'
+            ]) + $generatetestcases('Video with multiple sources', $videoattrs, [
+                '<video %1$s>' .
+                    '<source src="http://example.com/prettygood.mp4" type="video/mp4">' .
+                    '<source src="http://example.com/eljefe.mp4" type="video/mp4">' .
+                    '<source src="http://example.com/turnitup.mov type="video/mov"' .
+                    'Oh, that\'s pretty bad 😦' .
+                '</video>',
+                '<div class="text_to_html">' .
+                    '<video %1$s>' .
+                        '<source src="http://example.com/prettygood.mp4" type="video/mp4">' .
+                        '<source src="http://example.com/eljefe.mp4" type="video/mp4">' .
+                        '<source src="http://example.com/turnitup.mov type="video/mov"' .
+                        'Oh, that\'s pretty bad 😦' .
+                    '</video>' .
+                '</div>'
+            ] + [
+                'Video with invalid crossorigin' => [
+                    '<video src="http://example.com/turnitup.mov type="video/mov crossorigin="can i pls hab?">' .
+                        'Oh, that\'s pretty bad 😦' .
+                    '</video>',
+                    '<div class="text_to_html">' .
+                       '<video src="http://example.com/turnitup.mov type="video/mov">' .
+                           'Oh, that\'s pretty bad 😦' .
+                        '</video>',
+                    '</div>'
+                ],
+                'Audio with invalid crossorigin' => [
+                    '<audio src="http://example.com/getup.wav" type="audio/wav" crossorigin="give me. the jams.">' .
+                        'nyemnyemnyem' .
+                    '</audio>',
+                    '<div class="text_to_html">' .
+                        '<audio src="http://example.com/getup.wav" type="audio/wav" crossorigin="give me. the jams.">' .
+                            'nyemnyemnyem' .
+                        '</audio>' .
+                    '</div>'
+                ]
+            ]);
+    }
 }
