@@ -1363,4 +1363,97 @@ class core_user_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.2
+     */
+    public static function get_user_preferences_parameters() {
+        return new external_function_parameters(
+            array(
+                'name' => new external_value(PARAM_RAW, 'preference name, empty for all', VALUE_DEFAULT, ''),
+                'userid' => new external_value(PARAM_INT, 'id of the user, default to current user', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Return user preferences.
+     *
+     * @param string $name preference name, empty for all
+     * @param int $userid id of the user, 0 for current user
+     * @return array of warnings and preferences
+     * @since Moodle 3.2
+     * @throws moodle_exception
+     */
+    public static function get_user_preferences($name = '', $userid = 0) {
+        global $USER;
+
+        $params = self::validate_parameters(self::get_user_preferences_parameters(),
+                                            array(
+                                                'name' => $name,
+                                                'userid' => $userid
+                                            ));
+        $preferences = array();
+        $warnings = array();
+
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        if (empty($params['name'])) {
+            $name = null;
+        }
+        if (empty($params['userid'])) {
+            $user = null;
+        } else {
+            $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+            core_user::require_active_user($user);
+            if ($user->id != $USER->id) {
+                // Only admins can retrieve other users preferences.
+                require_capability('moodle/site:config', $context);
+            }
+        }
+
+        $userpreferences = get_user_preferences($name, null, $user);
+        // Check if we received just one preference.
+        if (!is_array($userpreferences)) {
+            $userpreferences = array($name => $userpreferences);
+        }
+
+        foreach ($userpreferences as $name => $value) {
+            $preferences[] = array(
+                'name' => $name,
+                'value' => $value,
+            );
+        }
+
+        $result = array();
+        $result['preferences'] = $preferences;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.2
+     */
+    public static function get_user_preferences_returns() {
+        return new external_single_structure(
+            array(
+                'preferences' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'The name of the preference'),
+                            'value' => new external_value(PARAM_RAW, 'The value of the preference'),
+                        )
+                    ),
+                    'User custom fields (also known as user profile fields)'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }
