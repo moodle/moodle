@@ -1735,7 +1735,7 @@ function purify_html($text, $options = array()) {
         $config = HTMLPurifier_Config::createDefault();
 
         $config->set('HTML.DefinitionID', 'moodlehtml');
-        $config->set('HTML.DefinitionRev', 4);
+        $config->set('HTML.DefinitionRev', 5);
         $config->set('Cache.SerializerPath', $cachedir);
         $config->set('Cache.SerializerPermissions', $CFG->directorypermissions);
         $config->set('Core.NormalizeNewlines', false);
@@ -1774,6 +1774,37 @@ function purify_html($text, $options = array()) {
             $def->addElement('algebra', 'Inline', 'Inline', array());                   // Algebra syntax, equivalent to @@xx@@.
             $def->addElement('lang', 'Block', 'Flow', array(), array('lang'=>'CDATA')); // Original multilang style - only our hacked lang attribute.
             $def->addAttribute('span', 'xxxlang', 'CDATA');                             // Current very problematic multilang.
+
+            // Media elements.
+            // https://html.spec.whatwg.org/#the-video-element
+            $def->addElement('video', 'Block', 'Optional: (source, Flow) | (Flow, source) | Flow', 'Common', [
+                'src' => 'URI',
+                'crossorigin' => 'Enum#anonymous,use-credentials',
+                'poster' => 'URI',
+                'preload' => 'Enum#auto,metadata,none',
+                'autoplay' => 'Bool',
+                'playsinline' => 'Bool',
+                'loop' => 'Bool',
+                'muted' => 'Bool',
+                'controls' => 'Bool',
+                'width' => 'Length',
+                'height' => 'Length',
+            ]);
+            // https://html.spec.whatwg.org/#the-audio-element
+            $def->addElement('audio', 'Block', 'Optional: (source, Flow) | (Flow, source) | Flow', 'Common', [
+                'src' => 'URI',
+                'crossorigin' => 'Enum#anonymous,use-credentials',
+                'preload' => 'Enum#auto,metadata,none',
+                'autoplay' => 'Bool',
+                'loop' => 'Bool',
+                'muted' => 'Bool',
+                'controls' => 'Bool'
+            ]);
+            // https://html.spec.whatwg.org/#the-source-element
+            $def->addElement('source', 'Block', 'Flow', 'Common', [
+                'src' => 'URI',
+                'type' => 'Text'
+            ]);
 
             // Use the built-in Ruby module to add annotation support.
             $def->manager->addModule(new HTMLPurifier_HTMLModule_Ruby());
