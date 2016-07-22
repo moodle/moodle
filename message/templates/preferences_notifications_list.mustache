@@ -47,33 +47,18 @@
                                 "displayname": "Popup notification",
                                 "name": "popup",
                                 "locked": 0,
-                                "radioname": "popup",
-                                "states": [
-                                    {
-                                        "name": "loggedin",
-                                        "displayname": "When I'm logged in",
-                                        "checked": 0,
-                                        "iconurl": "some url"
-                                    },
-                                    {
-                                        "name": "loggedoff",
-                                        "displayname": "When I'm offline",
-                                        "checked": 0,
-                                        "iconurl": "some url"
-                                    },
-                                    {
-                                        "name": "both",
-                                        "displayname": "Always",
-                                        "checked": 1,
-                                        "iconurl": "some url"
-                                    },
-                                    {
-                                        "name": "none",
-                                        "displayname": "Never",
-                                        "checked": 0,
-                                        "iconurl": "some url"
-                                    }
-                                ]
+                                "loggedin": {
+                                    "name": "loggedin",
+                                    "displayname": "When I'm logged in",
+                                    "checked": 0,
+                                    "iconurl": "some url"
+                                },
+                                "loggedoff": {
+                                    "name": "loggedoff",
+                                    "displayname": "When I'm offline",
+                                    "checked": 0,
+                                    "iconurl": "some url"
+                                },
                             }
                         ]
                     }
@@ -82,7 +67,7 @@
         ]
     }
 }}
-<h2 class="title-case">{{#str}} messagepreferences, message {{/str}}</h2>
+<h2 class="title-case">{{#str}} notificationpreferences, message {{/str}}</h2>
 <div class="preferences-container {{#disableall}}disabled{{/disableall}}" data-user-id="{{userid}}">
     {{#components}}
         <table class="table preference-table">
@@ -99,34 +84,51 @@
                     <tr class="preference-row" data-preference-key="{{preferencekey}}">
                         <td class="preference-name">
                             {{displayname}}
-                            {{> core/loading }}
                         </td>
                         {{#processors}}
-                        <td data-processor-name="{{name}}">
+                            <td data-processor-name="{{name}}">
                                 {{#locked}}
                                     <div class="dimmed_text">{{lockedmessage}}</div>
                                 {{/locked}}
                                 {{^locked}}
                                     <div class="disabled-message">{{#str}} disabled, question {{/str}}</div>
                                     <form>
-                                        {{#states}}
+                                        {{#loggedin}}
                                             <label class="preference-state"
                                                 data-toggle="tooltip"
                                                 title="{{displayname}}"
                                                 data-state="{{name}}">
 
                                                 <span class="accesshide">{{displayname}}</span>
-                                                <input type="radio"
+                                                <input type="checkbox"
+                                                    tabindex="-1"
                                                     class="accesshide"
-                                                    name="{{radioname}}"
-                                                    value="option1"
                                                     {{#checked}}checked{{/checked}}
                                                     {{#disableall}}disabled{{/disableall}} />
-                                                <div class="preference-state-image-container">
-                                                    <img src="{{iconurl}}" role="presentation" />
+                                                <div class="preference-state-image-container" tabindex="0">
+                                                    <img class="state-icon" src="{{iconurl}}" role="presentation" />
+                                                    {{> core/loading }}
                                                 </div>
                                             </label>
-                                        {{/states}}
+                                        {{/loggedin}}
+                                        {{#loggedoff}}
+                                            <label class="preference-state"
+                                                data-toggle="tooltip"
+                                                title="{{displayname}}"
+                                                data-state="{{name}}">
+
+                                                <span class="accesshide">{{displayname}}</span>
+                                                <input type="checkbox"
+                                                    tabindex="-1"
+                                                    class="accesshide"
+                                                    {{#checked}}checked{{/checked}}
+                                                    {{#disableall}}disabled{{/disableall}} />
+                                                <div class="preference-state-image-container" tabindex="0">
+                                                    <img class="state-icon" src="{{iconurl}}" role="presentation" />
+                                                    {{> core/loading }}
+                                                </div>
+                                            </label>
+                                        {{/loggedoff}}
                                     </form>
                                 {{/locked}}
                             </td>

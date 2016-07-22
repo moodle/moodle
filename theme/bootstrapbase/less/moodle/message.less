@@ -275,17 +275,6 @@
             float: left;
         }
     }
-    .preferences-container {
-        .preference-table {
-            .preference-row {
-                .preference-name {
-                    .loading-icon {
-                        float: left;
-                    }
-                }
-            }
-        }
-    }
 }
 
 .preferences-container {
@@ -309,15 +298,6 @@
         .preference-row {
             .preference-name {
                 vertical-align: middle;
-
-                .loading-icon {
-                    display: none;
-                    float: right;
-
-                    img {
-                        vertical-align: middle;
-                    }
-                }
             }
             .disabled-message {
                 display: none;
@@ -331,21 +311,30 @@
                 display: inline-block;
                 vertical-align: middle;
 
-                &:hover {
-                    .preference-state-image-container {
-                        background-color: #e5e5e5;
-                        border-radius: 4px;
-                    }
-                }
-                input[type="radio"]:checked + .preference-state-image-container {
-                    background-color: #424242;
-                    border-radius: 4px;
+                input[type="checkbox"]:checked + .preference-state-image-container {
+                    border: 1px solid #5cb85c;
                 }
                 .preference-state-image-container {
                     width: 30px;
                     height: 30px;
                     line-height: 30px;
                     text-align: center;
+                    border-radius: 4px;
+                    border: 1px solid #d9534f;
+
+                    .loading-icon {
+                        display: none;
+                    }
+                }
+                &.loading {
+                    .preference-state-image-container {
+                        .state-icon {
+                            display: none;
+                        }
+                        .loading-icon {
+                            display: block;
+                        }
+                    }
                 }
             }
             &.loading {

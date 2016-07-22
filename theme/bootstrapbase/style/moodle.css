@@ -5995,9 +5995,6 @@ a.ygtvspacer:hover {
 .dir-rtl .core_message-messenger-sendmessage .message-send {
   float: left;
 }
-.dir-rtl .preferences-container .preference-table .preference-row .preference-name .loading-icon {
-  float: left;
-}
 .preferences-container .preference-table {
   border: 1px solid #ddd;
 }
@@ -6014,13 +6011,6 @@ a.ygtvspacer:hover {
 .preferences-container .preference-table .preference-row .preference-name {
   vertical-align: middle;
 }
-.preferences-container .preference-table .preference-row .preference-name .loading-icon {
-  display: none;
-  float: right;
-}
-.preferences-container .preference-table .preference-row .preference-name .loading-icon img {
-  vertical-align: middle;
-}
 .preferences-container .preference-table .preference-row .disabled-message {
   display: none;
   text-align: center;
@@ -6033,19 +6023,25 @@ a.ygtvspacer:hover {
   display: inline-block;
   vertical-align: middle;
 }
-.preferences-container .preference-table .preference-row .preference-state:hover .preference-state-image-container {
-  background-color: #e5e5e5;
-  border-radius: 4px;
-}
-.preferences-container .preference-table .preference-row .preference-state input[type="radio"]:checked + .preference-state-image-container {
-  background-color: #424242;
-  border-radius: 4px;
+.preferences-container .preference-table .preference-row .preference-state input[type="checkbox"]:checked + .preference-state-image-container {
+  border: 1px solid #5cb85c;
 }
 .preferences-container .preference-table .preference-row .preference-state .preference-state-image-container {
   width: 30px;
   height: 30px;
   line-height: 30px;
   text-align: center;
+  border-radius: 4px;
+  border: 1px solid #d9534f;
+}
+.preferences-container .preference-table .preference-row .preference-state .preference-state-image-container .loading-icon {
+  display: none;
+}
+.preferences-container .preference-table .preference-row .preference-state.loading .preference-state-image-container .state-icon {
+  display: none;
+}
+.preferences-container .preference-table .preference-row .preference-state.loading .preference-state-image-container .loading-icon {
+  display: block;
 }
 .preferences-container .preference-table .preference-row.loading .preference-name .loading-icon {
   display: block;

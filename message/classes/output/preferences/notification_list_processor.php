@@ -110,19 +110,29 @@ class notification_list_processor implements templatable, renderable {
         $processor = $this->processor;
         $provider = $this->provider;
         $preferences = $this->preferences;
-
-        $context = [
-            'displayname' => get_string('pluginname', 'message_'.$processor->name),
-            'name' => $processor->name,
-            'locked' => false,
-            'radioname' => strtolower(str_replace(" ", "-", $processor->name)),
-            'states' => []
-        ];
-        // determine the default setting
         $preferencebase = $this->get_preference_base($provider);
         $permitted = MESSAGE_DEFAULT_PERMITTED;
         $defaultpreferences = get_message_output_default_preferences();
         $defaultpreference = $processor->name.'_provider_'.$preferencebase.'_permitted';
+        $context = [
+            'displayname' => get_string('pluginname', 'message_'.$processor->name),
+            'name' => $processor->name,
+            'locked' => false,
+            'loggedin' => [
+                'name' => 'loggedin',
+                'displayname' => get_string('loggedindescription', 'message'),
+                'checked' => $this->is_preference_enabled($preferencebase.'_loggedin', $processor, $preferences),
+                'iconurl' => $output->pix_url('i/marked')->out(),
+            ],
+            'loggedoff' => [
+                'name' => 'loggedoff',
+                'displayname' => get_string('loggedoffdescription', 'message'),
+                'checked' => $this->is_preference_enabled($preferencebase.'_loggedoff', $processor, $preferences),
+                'iconurl' => $output->pix_url('i/marker')->out(),
+            ],
+        ];
+
+        // determine the default setting
         if (isset($defaultpreferences->{$defaultpreference})) {
             $permitted = $defaultpreferences->{$defaultpreference};
         }
@@ -134,43 +144,6 @@ class notification_list_processor implements templatable, renderable {
         } else if ($permitted == 'forced') {
             $context['locked'] = true;
             $context['lockedmessage'] = get_string('forced', 'message');
-        } else {
-            $statescontext = [
-                'loggedin' => [
-                    'name' => 'loggedin',
-                    'displayname' => get_string('loggedindescription', 'message'),
-                    'checked' => $this->is_preference_enabled($preferencebase.'_loggedin', $processor, $preferences),
-                    'iconurl' => $output->pix_url('i/completion-auto-y')->out(),
-                ],
-                'loggedoff' => [
-                    'name' => 'loggedoff',
-                    'displayname' => get_string('loggedoffdescription', 'message'),
-                    'checked' => $this->is_preference_enabled($preferencebase.'_loggedoff', $processor, $preferences),
-                    'iconurl' => $output->pix_url('i/completion-auto-n')->out(),
-                ],
-                'both' => [
-                    'name' => 'both',
-                    'displayname' => get_string('always'),
-                    'checked' => false,
-                    'iconurl' => $output->pix_url('i/completion-auto-pass')->out(),
-                ],
-                'none' => [
-                    'name' => 'none',
-                    'displayname' => get_string('never'),
-                    'checked' => false,
-                    'iconurl' => $output->pix_url('i/completion-auto-fail')->out(),
-                ],
-            ];
-
-            if ($statescontext['loggedin']['checked'] && $statescontext['loggedoff']['checked']) {
-                $statescontext['both']['checked'] = true;
-                $statescontext['loggedin']['checked'] = false;
-                $statescontext['loggedoff']['checked'] = false;
-            } else if (!$statescontext['loggedin']['checked'] && !$statescontext['loggedoff']['checked']) {
-                $statescontext['none']['checked'] = true;
-            }
-
-            $context['states'] = array_values($statescontext);
         }
 
         return $context;

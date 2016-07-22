@@ -26,8 +26,9 @@
  */
 define(['jquery', 'core_message/notification_preference'], function($, NotificationPreference) {
     var SELECTORS = {
+        PREFERENCE: '[data-state]',
         PREFERENCE_ROW: '.preference-row',
-        STATE_INPUTS: '[data-state] input',
+        PREFERENCE_INPUT: '[data-state] input',
     };
 
     /**
@@ -42,9 +43,14 @@ define(['jquery', 'core_message/notification_preference'], function($, Notificat
 
         this.root.on('change', function(e) {
             if (!this.isDisabled()) {
+                var preferenceElement = $(e.target).closest(SELECTORS.PREFERENCE);
                 var preferenceRow = $(e.target).closest(SELECTORS.PREFERENCE_ROW);
                 var preference = new NotificationPreference(preferenceRow, this.userId);
-                preference.save();
+
+                preferenceElement.addClass('loading');
+                preference.save().always(function() {
+                    preferenceElement.removeClass('loading');
+                });
             }
         }.bind(this));
 
@@ -74,7 +80,7 @@ define(['jquery', 'core_message/notification_preference'], function($, Notificat
      */
     PreferencesController.prototype.setDisabled = function() {
         this.root.addClass('disabled');
-        this.root.find(SELECTORS.STATE_INPUTS).prop('disabled', true);
+        this.root.find(SELECTORS.PREFERENCE_INPUT).prop('disabled', true);
     };
 
     /**
@@ -84,7 +90,7 @@ define(['jquery', 'core_message/notification_preference'], function($, Notificat
      */
     PreferencesController.prototype.setEnabled = function() {
         this.root.removeClass('disabled');
-        this.root.find(SELECTORS.STATE_INPUTS).prop('disabled', false);
+        this.root.find(SELECTORS.PREFERENCE_INPUT).prop('disabled', false);
     };
 
     return PreferencesController;
