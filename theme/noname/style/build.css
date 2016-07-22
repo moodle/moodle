@@ -5585,7 +5585,7 @@ a.label:focus, a.label:hover {
 
 .alert-dismissible {
   padding-right: 35px; }
-  .alert-dismissible .close {
+  .alert-dismissible .close, .alert-dismissible .moodle-dialogue-base .closebutton, .moodle-dialogue-base .alert-dismissible .closebutton {
     position: relative;
     top: -2px;
     right: -21px;
@@ -5993,7 +5993,7 @@ button.list-group-item-danger {
 .embed-responsive-1by1 {
   padding-bottom: 100%; }
 
-.close {
+.close, .moodle-dialogue-base .closebutton {
   float: right;
   font-size: 1.5rem;
   font-weight: bold;
@@ -6001,13 +6001,13 @@ button.list-group-item-danger {
   color: #000;
   text-shadow: 0 1px 0 #fff;
   opacity: .2; }
-  .close:focus, .close:hover {
+  .close:focus, .moodle-dialogue-base .closebutton:focus, .close:hover, .moodle-dialogue-base .closebutton:hover {
     color: #000;
     text-decoration: none;
     cursor: pointer;
     opacity: .5; }
 
-button.close {
+button.close, .moodle-dialogue-base button.closebutton {
   padding: 0;
   cursor: pointer;
   background: transparent;
@@ -6043,7 +6043,7 @@ button.close {
   width: auto;
   margin: 10px; }
 
-.modal-content {
+.modal-content, .moodle-dialogue-base .moodle-dialogue-wrap.moodle-dialogue-content {
   position: relative;
   background-color: #fff;
   background-clip: padding-box;
@@ -6064,413 +6064,787 @@ button.close {
   .modal-backdrop.in {
     opacity: 0.5; }
 
-.modal-header {
+.modal-header, .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd {
   padding: 15px;
   border-bottom: 1px solid #e5e5e5; }
-  .modal-header::after {
+  .modal-header::after, .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd::after {
     content: "";
     display: table;
     clear: both; }
 
-.modal-header .close {
+.modal-header .close, .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .close, .modal-header .moodle-dialogue-base .closebutton, .moodle-dialogue-base .modal-header .closebutton, .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .closebutton {
   margin-top: -2px; }
 
-.modal-title {
+.modal-title, .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
   margin: 0;
   line-height: 1.5; }
 
-.modal-body {
+.modal-body, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-bd {
   position: relative;
   padding: 15px; }
 
-.modal-footer {
+.modal-footer, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft {
   padding: 15px;
   text-align: right;
   border-top: 1px solid #e5e5e5; }
-  .modal-footer::after {
+  .modal-footer::after, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft::after {
     content: "";
     display: table;
     clear: both; }
-  .modal-footer .btn + .btn, .modal-footer button + .btn, .modal-footer
+  .modal-footer .btn + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn + .btn, .modal-footer button + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft button + .btn, .modal-footer
+  input.form-submit + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input.form-submit + .btn, .modal-footer
+  input[type="button"] + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input[type="button"] + .btn, .modal-footer
+  input[type="submit"] + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input[type="submit"] + .btn, .modal-footer
-  input[type="reset"] + .btn, .modal-footer #page-grade-grading-manage .actions .action + .btn, #page-grade-grading-manage .actions .modal-footer .action + .btn, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + .btn, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer input + .btn, .modal-footer #rubric-rubric.gradingform_rubric .addcriterion + .btn, #rubric-rubric.gradingform_rubric .modal-footer .addcriterion + .btn, .modal-footer #notice .singlebutton + .singlebutton input + .btn, #notice .singlebutton + .singlebutton .modal-footer input + .btn, .modal-footer
+  input[type="reset"] + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  input[type="reset"] + .btn, .modal-footer #page-grade-grading-manage .actions .action + .btn, #page-grade-grading-manage .actions .modal-footer .action + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions .action + .btn, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .action + .btn, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + .btn, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer input + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + .btn, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input + .btn, .modal-footer #rubric-rubric.gradingform_rubric .addcriterion + .btn, #rubric-rubric.gradingform_rubric .modal-footer .addcriterion + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric .addcriterion + .btn, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .addcriterion + .btn, .modal-footer #notice .singlebutton + .singlebutton input + .btn, #notice .singlebutton + .singlebutton .modal-footer input + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton input + .btn, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input + .btn, .modal-footer
   .submit.buttons input[name="cancel"] + .btn,
-  .submit.buttons .modal-footer input[name="cancel"] + .btn, .modal-footer .btn + button, .modal-footer button + button, .modal-footer
+  .submit.buttons .modal-footer input[name="cancel"] + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons input[name="cancel"] + .btn,
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input[name="cancel"] + .btn, .modal-footer .btn + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn + button, .modal-footer button + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft button + button, .modal-footer
+  input.form-submit + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input.form-submit + button, .modal-footer
+  input[type="button"] + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input[type="button"] + button, .modal-footer
+  input[type="submit"] + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input[type="submit"] + button, .modal-footer
-  input[type="reset"] + button, .modal-footer #page-grade-grading-manage .actions .action + button, #page-grade-grading-manage .actions .modal-footer .action + button, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + button, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer input + button, .modal-footer #rubric-rubric.gradingform_rubric .addcriterion + button, #rubric-rubric.gradingform_rubric .modal-footer .addcriterion + button, .modal-footer #notice .singlebutton + .singlebutton input + button, #notice .singlebutton + .singlebutton .modal-footer input + button, .modal-footer
+  input[type="reset"] + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  input[type="reset"] + button, .modal-footer #page-grade-grading-manage .actions .action + button, #page-grade-grading-manage .actions .modal-footer .action + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions .action + button, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .action + button, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + button, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer input + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + button, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input + button, .modal-footer #rubric-rubric.gradingform_rubric .addcriterion + button, #rubric-rubric.gradingform_rubric .modal-footer .addcriterion + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric .addcriterion + button, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .addcriterion + button, .modal-footer #notice .singlebutton + .singlebutton input + button, #notice .singlebutton + .singlebutton .modal-footer input + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton input + button, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input + button, .modal-footer
   .submit.buttons input[name="cancel"] + button,
-  .submit.buttons .modal-footer input[name="cancel"] + button, .modal-footer .btn +
+  .submit.buttons .modal-footer input[name="cancel"] + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons input[name="cancel"] + button,
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input[name="cancel"] + button, .modal-footer .btn +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn +
   input.form-submit, .modal-footer button +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft button +
   input.form-submit, .modal-footer
+  input.form-submit +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input.form-submit +
   input.form-submit, .modal-footer
   input[type="button"] +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  input[type="button"] +
   input.form-submit, .modal-footer
+  input[type="submit"] +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input[type="submit"] +
   input.form-submit, .modal-footer
   input[type="reset"] +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  input[type="reset"] +
   input.form-submit, .modal-footer #page-grade-grading-manage .actions .action +
   input.form-submit, #page-grade-grading-manage .actions .modal-footer .action +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions .action +
+  input.form-submit, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .action +
   input.form-submit, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input +
   input.form-submit, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer input +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input +
+  input.form-submit, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input +
   input.form-submit, .modal-footer #rubric-rubric.gradingform_rubric .addcriterion +
   input.form-submit, #rubric-rubric.gradingform_rubric .modal-footer .addcriterion +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric .addcriterion +
+  input.form-submit, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .addcriterion +
   input.form-submit, .modal-footer #notice .singlebutton + .singlebutton input +
   input.form-submit, #notice .singlebutton + .singlebutton .modal-footer input +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton input +
+  input.form-submit, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input +
   input.form-submit, .modal-footer
   .submit.buttons input[name="cancel"] +
   input.form-submit,
   .submit.buttons .modal-footer input[name="cancel"] +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons input[name="cancel"] +
+  input.form-submit,
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input[name="cancel"] +
   input.form-submit, .modal-footer .btn +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn +
   input[type="button"], .modal-footer button +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft button +
   input[type="button"], .modal-footer
+  input.form-submit +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input.form-submit +
   input[type="button"], .modal-footer
   input[type="button"] +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  input[type="button"] +
   input[type="button"], .modal-footer
+  input[type="submit"] +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input[type="submit"] +
   input[type="button"], .modal-footer
   input[type="reset"] +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  input[type="reset"] +
   input[type="button"], .modal-footer #page-grade-grading-manage .actions .action +
   input[type="button"], #page-grade-grading-manage .actions .modal-footer .action +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions .action +
+  input[type="button"], #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .action +
   input[type="button"], .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input +
   input[type="button"], #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer input +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input +
+  input[type="button"], #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input +
   input[type="button"], .modal-footer #rubric-rubric.gradingform_rubric .addcriterion +
   input[type="button"], #rubric-rubric.gradingform_rubric .modal-footer .addcriterion +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric .addcriterion +
+  input[type="button"], #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .addcriterion +
   input[type="button"], .modal-footer #notice .singlebutton + .singlebutton input +
   input[type="button"], #notice .singlebutton + .singlebutton .modal-footer input +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton input +
+  input[type="button"], #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input +
   input[type="button"], .modal-footer
   .submit.buttons input[name="cancel"] +
   input[type="button"],
   .submit.buttons .modal-footer input[name="cancel"] +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons input[name="cancel"] +
+  input[type="button"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input[name="cancel"] +
   input[type="button"], .modal-footer .btn +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn +
   input[type="submit"], .modal-footer button +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft button +
   input[type="submit"], .modal-footer
+  input.form-submit +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input.form-submit +
   input[type="submit"], .modal-footer
   input[type="button"] +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  input[type="button"] +
   input[type="submit"], .modal-footer
+  input[type="submit"] +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input[type="submit"] +
   input[type="submit"], .modal-footer
   input[type="reset"] +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  input[type="reset"] +
   input[type="submit"], .modal-footer #page-grade-grading-manage .actions .action +
   input[type="submit"], #page-grade-grading-manage .actions .modal-footer .action +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions .action +
+  input[type="submit"], #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .action +
   input[type="submit"], .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input +
   input[type="submit"], #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer input +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input +
+  input[type="submit"], #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input +
   input[type="submit"], .modal-footer #rubric-rubric.gradingform_rubric .addcriterion +
   input[type="submit"], #rubric-rubric.gradingform_rubric .modal-footer .addcriterion +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric .addcriterion +
+  input[type="submit"], #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .addcriterion +
   input[type="submit"], .modal-footer #notice .singlebutton + .singlebutton input +
   input[type="submit"], #notice .singlebutton + .singlebutton .modal-footer input +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton input +
+  input[type="submit"], #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input +
   input[type="submit"], .modal-footer
   .submit.buttons input[name="cancel"] +
   input[type="submit"],
   .submit.buttons .modal-footer input[name="cancel"] +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons input[name="cancel"] +
+  input[type="submit"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input[name="cancel"] +
   input[type="submit"], .modal-footer .btn +
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn +
   input[type="reset"], .modal-footer button +
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft button +
   input[type="reset"], .modal-footer
+  input.form-submit +
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input.form-submit +
   input[type="reset"], .modal-footer
   input[type="button"] +
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  input[type="button"] +
   input[type="reset"], .modal-footer
+  input[type="submit"] +
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input[type="submit"] +
   input[type="reset"], .modal-footer
   input[type="reset"] +
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  input[type="reset"] +
   input[type="reset"], .modal-footer #page-grade-grading-manage .actions .action +
   input[type="reset"], #page-grade-grading-manage .actions .modal-footer .action +
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions .action +
+  input[type="reset"], #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .action +
   input[type="reset"], .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input +
   input[type="reset"], #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer input +
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input +
+  input[type="reset"], #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input +
   input[type="reset"], .modal-footer #rubric-rubric.gradingform_rubric .addcriterion +
   input[type="reset"], #rubric-rubric.gradingform_rubric .modal-footer .addcriterion +
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric .addcriterion +
+  input[type="reset"], #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .addcriterion +
   input[type="reset"], .modal-footer #notice .singlebutton + .singlebutton input +
   input[type="reset"], #notice .singlebutton + .singlebutton .modal-footer input +
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton input +
+  input[type="reset"], #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input +
   input[type="reset"], .modal-footer
   .submit.buttons input[name="cancel"] +
   input[type="reset"],
   .submit.buttons .modal-footer input[name="cancel"] +
-  input[type="reset"], .modal-footer #page-grade-grading-manage .actions .btn + .action, #page-grade-grading-manage .actions .modal-footer .btn + .action, .modal-footer #page-grade-grading-manage .actions button + .action, #page-grade-grading-manage .actions .modal-footer button + .action, .modal-footer #page-grade-grading-manage .actions
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons input[name="cancel"] +
+  input[type="reset"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input[name="cancel"] +
+  input[type="reset"], .modal-footer #page-grade-grading-manage .actions .btn + .action, #page-grade-grading-manage .actions .modal-footer .btn + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions .btn + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn + .action, .modal-footer #page-grade-grading-manage .actions button + .action, #page-grade-grading-manage .actions .modal-footer button + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions button + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft button + .action, .modal-footer #page-grade-grading-manage .actions
   input.form-submit + .action, #page-grade-grading-manage .actions .modal-footer
+  input.form-submit + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions
+  input.form-submit + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input.form-submit + .action, .modal-footer #page-grade-grading-manage .actions
   input[type="button"] + .action, #page-grade-grading-manage .actions .modal-footer
+  input[type="button"] + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions
+  input[type="button"] + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input[type="button"] + .action, .modal-footer #page-grade-grading-manage .actions
   input[type="submit"] + .action, #page-grade-grading-manage .actions .modal-footer
+  input[type="submit"] + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions
+  input[type="submit"] + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input[type="submit"] + .action, .modal-footer #page-grade-grading-manage .actions
   input[type="reset"] + .action, #page-grade-grading-manage .actions .modal-footer
-  input[type="reset"] + .action, .modal-footer #page-grade-grading-manage .actions .action + .action, #page-grade-grading-manage .actions .modal-footer .action + .action, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + .action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer input + .action, .modal-footer #rubric-rubric.gradingform_rubric #page-grade-grading-manage .actions .addcriterion + .action, #page-grade-grading-manage .actions .modal-footer #rubric-rubric.gradingform_rubric .addcriterion + .action, #rubric-rubric.gradingform_rubric .modal-footer #page-grade-grading-manage .actions .addcriterion + .action, #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric .modal-footer .addcriterion + .action, .modal-footer #notice .singlebutton + .singlebutton #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions .modal-footer #notice .singlebutton + .singlebutton input + .action, #notice .singlebutton + .singlebutton .modal-footer #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions #notice .singlebutton + .singlebutton .modal-footer input + .action, .modal-footer
+  input[type="reset"] + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions
+  input[type="reset"] + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  input[type="reset"] + .action, .modal-footer #page-grade-grading-manage .actions .action + .action, #page-grade-grading-manage .actions .modal-footer .action + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions .action + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .action + .action, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + .action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer input + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + .action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input + .action, .modal-footer #rubric-rubric.gradingform_rubric #page-grade-grading-manage .actions .addcriterion + .action, #page-grade-grading-manage .actions .modal-footer #rubric-rubric.gradingform_rubric .addcriterion + .action, #rubric-rubric.gradingform_rubric .modal-footer #page-grade-grading-manage .actions .addcriterion + .action, #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric .modal-footer .addcriterion + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #page-grade-grading-manage .actions .addcriterion + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric .addcriterion + .action, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions .addcriterion + .action, #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .addcriterion + .action, .modal-footer #notice .singlebutton + .singlebutton #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions .modal-footer #notice .singlebutton + .singlebutton input + .action, #notice .singlebutton + .singlebutton .modal-footer #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions #notice .singlebutton + .singlebutton .modal-footer input + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton input + .action, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input + .action, .modal-footer
   .submit.buttons #page-grade-grading-manage .actions input[name="cancel"] + .action, #page-grade-grading-manage .actions .modal-footer
   .submit.buttons input[name="cancel"] + .action,
   .submit.buttons .modal-footer #page-grade-grading-manage .actions input[name="cancel"] + .action, #page-grade-grading-manage .actions
-  .submit.buttons .modal-footer input[name="cancel"] + .action, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .btn + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn + input, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel button + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer button + input, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
+  .submit.buttons .modal-footer input[name="cancel"] + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons #page-grade-grading-manage .actions input[name="cancel"] + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons input[name="cancel"] + .action,
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions input[name="cancel"] + .action, #page-grade-grading-manage .actions
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input[name="cancel"] + .action, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .btn + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .btn + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn + input, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel button + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer button + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel button + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft button + input, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
   input.form-submit + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer
+  input.form-submit + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
+  input.form-submit + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input.form-submit + input, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
   input[type="button"] + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer
+  input[type="button"] + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
+  input[type="button"] + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input[type="button"] + input, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
   input[type="submit"] + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer
+  input[type="submit"] + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
+  input[type="submit"] + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input[type="submit"] + input, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
   input[type="reset"] + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer
-  input[type="reset"] + input, .modal-footer #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .action + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer #page-grade-grading-manage .actions .action + input, #page-grade-grading-manage .actions .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .action + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #page-grade-grading-manage .actions .modal-footer .action + input, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer input + input, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .addcriterion + input, #rubric-rubric.gradingform_rubric .modal-footer #rubric-criteria .criterion .addlevel .addcriterion + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .addcriterion + input, .modal-footer #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #notice .singlebutton + .singlebutton .modal-footer input + input, .modal-footer
+  input[type="reset"] + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
+  input[type="reset"] + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  input[type="reset"] + input, .modal-footer #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .action + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer #page-grade-grading-manage .actions .action + input, #page-grade-grading-manage .actions .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .action + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #page-grade-grading-manage .actions .modal-footer .action + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .action + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions .action + input, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .action + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .action + input, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer input + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input + input, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .addcriterion + input, #rubric-rubric.gradingform_rubric .modal-footer #rubric-criteria .criterion .addlevel .addcriterion + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .addcriterion + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .addcriterion + input, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-criteria .criterion .addlevel .addcriterion + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .addcriterion + input, .modal-footer #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #notice .singlebutton + .singlebutton .modal-footer input + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input + input, .modal-footer
   .submit.buttons #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input[name="cancel"] + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer
   .submit.buttons input[name="cancel"] + input,
   .submit.buttons .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input[name="cancel"] + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
-  .submit.buttons .modal-footer input[name="cancel"] + input, .modal-footer #rubric-rubric.gradingform_rubric .btn + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer .btn + .addcriterion, .modal-footer #rubric-rubric.gradingform_rubric button + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer button + .addcriterion, .modal-footer #rubric-rubric.gradingform_rubric
+  .submit.buttons .modal-footer input[name="cancel"] + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input[name="cancel"] + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons input[name="cancel"] + input,
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input[name="cancel"] + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input[name="cancel"] + input, .modal-footer #rubric-rubric.gradingform_rubric .btn + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer .btn + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric .btn + .addcriterion, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn + .addcriterion, .modal-footer #rubric-rubric.gradingform_rubric button + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer button + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric button + .addcriterion, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft button + .addcriterion, .modal-footer #rubric-rubric.gradingform_rubric
   input.form-submit + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer
+  input.form-submit + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric
+  input.form-submit + .addcriterion, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input.form-submit + .addcriterion, .modal-footer #rubric-rubric.gradingform_rubric
   input[type="button"] + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer
+  input[type="button"] + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric
+  input[type="button"] + .addcriterion, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input[type="button"] + .addcriterion, .modal-footer #rubric-rubric.gradingform_rubric
   input[type="submit"] + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer
+  input[type="submit"] + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric
+  input[type="submit"] + .addcriterion, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input[type="submit"] + .addcriterion, .modal-footer #rubric-rubric.gradingform_rubric
   input[type="reset"] + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer
-  input[type="reset"] + .addcriterion, .modal-footer #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric .action + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer #page-grade-grading-manage .actions .action + .addcriterion, #page-grade-grading-manage .actions .modal-footer #rubric-rubric.gradingform_rubric .action + .addcriterion, #rubric-rubric.gradingform_rubric #page-grade-grading-manage .actions .modal-footer .action + .addcriterion, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + .addcriterion, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer input + .addcriterion, .modal-footer #rubric-rubric.gradingform_rubric .addcriterion + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer .addcriterion + .addcriterion, .modal-footer #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric input + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer #notice .singlebutton + .singlebutton input + .addcriterion, #notice .singlebutton + .singlebutton .modal-footer #rubric-rubric.gradingform_rubric input + .addcriterion, #rubric-rubric.gradingform_rubric #notice .singlebutton + .singlebutton .modal-footer input + .addcriterion, .modal-footer
+  input[type="reset"] + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric
+  input[type="reset"] + .addcriterion, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  input[type="reset"] + .addcriterion, .modal-footer #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric .action + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer #page-grade-grading-manage .actions .action + .addcriterion, #page-grade-grading-manage .actions .modal-footer #rubric-rubric.gradingform_rubric .action + .addcriterion, #rubric-rubric.gradingform_rubric #page-grade-grading-manage .actions .modal-footer .action + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric .action + .addcriterion, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions .action + .addcriterion, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric .action + .addcriterion, #rubric-rubric.gradingform_rubric #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .action + .addcriterion, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + .addcriterion, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer input + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + .addcriterion, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input + .addcriterion, .modal-footer #rubric-rubric.gradingform_rubric .addcriterion + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer .addcriterion + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric .addcriterion + .addcriterion, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .addcriterion + .addcriterion, .modal-footer #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric input + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer #notice .singlebutton + .singlebutton input + .addcriterion, #notice .singlebutton + .singlebutton .modal-footer #rubric-rubric.gradingform_rubric input + .addcriterion, #rubric-rubric.gradingform_rubric #notice .singlebutton + .singlebutton .modal-footer input + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric input + .addcriterion, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton input + .addcriterion, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric input + .addcriterion, #rubric-rubric.gradingform_rubric #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input + .addcriterion, .modal-footer
   .submit.buttons #rubric-rubric.gradingform_rubric input[name="cancel"] + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer
   .submit.buttons input[name="cancel"] + .addcriterion,
   .submit.buttons .modal-footer #rubric-rubric.gradingform_rubric input[name="cancel"] + .addcriterion, #rubric-rubric.gradingform_rubric
-  .submit.buttons .modal-footer input[name="cancel"] + .addcriterion, .modal-footer #notice .singlebutton + .singlebutton .btn + input, #notice .singlebutton + .singlebutton .modal-footer .btn + input, .modal-footer #notice .singlebutton + .singlebutton button + input, #notice .singlebutton + .singlebutton .modal-footer button + input, .modal-footer #notice .singlebutton + .singlebutton
+  .submit.buttons .modal-footer input[name="cancel"] + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons #rubric-rubric.gradingform_rubric input[name="cancel"] + .addcriterion, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons input[name="cancel"] + .addcriterion,
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric input[name="cancel"] + .addcriterion, #rubric-rubric.gradingform_rubric
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input[name="cancel"] + .addcriterion, .modal-footer #notice .singlebutton + .singlebutton .btn + input, #notice .singlebutton + .singlebutton .modal-footer .btn + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton .btn + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn + input, .modal-footer #notice .singlebutton + .singlebutton button + input, #notice .singlebutton + .singlebutton .modal-footer button + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton button + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft button + input, .modal-footer #notice .singlebutton + .singlebutton
   input.form-submit + input, #notice .singlebutton + .singlebutton .modal-footer
+  input.form-submit + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton
+  input.form-submit + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input.form-submit + input, .modal-footer #notice .singlebutton + .singlebutton
   input[type="button"] + input, #notice .singlebutton + .singlebutton .modal-footer
+  input[type="button"] + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton
+  input[type="button"] + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input[type="button"] + input, .modal-footer #notice .singlebutton + .singlebutton
   input[type="submit"] + input, #notice .singlebutton + .singlebutton .modal-footer
+  input[type="submit"] + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton
+  input[type="submit"] + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input[type="submit"] + input, .modal-footer #notice .singlebutton + .singlebutton
   input[type="reset"] + input, #notice .singlebutton + .singlebutton .modal-footer
-  input[type="reset"] + input, .modal-footer #page-grade-grading-manage .actions #notice .singlebutton + .singlebutton .action + input, #notice .singlebutton + .singlebutton .modal-footer #page-grade-grading-manage .actions .action + input, #page-grade-grading-manage .actions .modal-footer #notice .singlebutton + .singlebutton .action + input, #notice .singlebutton + .singlebutton #page-grade-grading-manage .actions .modal-footer .action + input, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer input + input, .modal-footer #rubric-rubric.gradingform_rubric #notice .singlebutton + .singlebutton .addcriterion + input, #notice .singlebutton + .singlebutton .modal-footer #rubric-rubric.gradingform_rubric .addcriterion + input, #rubric-rubric.gradingform_rubric .modal-footer #notice .singlebutton + .singlebutton .addcriterion + input, #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric .modal-footer .addcriterion + input, .modal-footer #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton .modal-footer input + input, .modal-footer
+  input[type="reset"] + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton
+  input[type="reset"] + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  input[type="reset"] + input, .modal-footer #page-grade-grading-manage .actions #notice .singlebutton + .singlebutton .action + input, #notice .singlebutton + .singlebutton .modal-footer #page-grade-grading-manage .actions .action + input, #page-grade-grading-manage .actions .modal-footer #notice .singlebutton + .singlebutton .action + input, #notice .singlebutton + .singlebutton #page-grade-grading-manage .actions .modal-footer .action + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions #notice .singlebutton + .singlebutton .action + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions .action + input, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton .action + input, #notice .singlebutton + .singlebutton #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .action + input, .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer input + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input + input, .modal-footer #rubric-rubric.gradingform_rubric #notice .singlebutton + .singlebutton .addcriterion + input, #notice .singlebutton + .singlebutton .modal-footer #rubric-rubric.gradingform_rubric .addcriterion + input, #rubric-rubric.gradingform_rubric .modal-footer #notice .singlebutton + .singlebutton .addcriterion + input, #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric .modal-footer .addcriterion + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #notice .singlebutton + .singlebutton .addcriterion + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric .addcriterion + input, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton .addcriterion + input, #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .addcriterion + input, .modal-footer #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton .modal-footer input + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input + input, .modal-footer
   .submit.buttons #notice .singlebutton + .singlebutton input[name="cancel"] + input, #notice .singlebutton + .singlebutton .modal-footer
   .submit.buttons input[name="cancel"] + input,
   .submit.buttons .modal-footer #notice .singlebutton + .singlebutton input[name="cancel"] + input, #notice .singlebutton + .singlebutton
-  .submit.buttons .modal-footer input[name="cancel"] + input, .modal-footer
+  .submit.buttons .modal-footer input[name="cancel"] + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons #notice .singlebutton + .singlebutton input[name="cancel"] + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons input[name="cancel"] + input,
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton input[name="cancel"] + input, #notice .singlebutton + .singlebutton
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input[name="cancel"] + input, .modal-footer
   .submit.buttons .btn + input[name="cancel"],
-  .submit.buttons .modal-footer .btn + input[name="cancel"], .modal-footer
+  .submit.buttons .modal-footer .btn + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons .btn + input[name="cancel"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn + input[name="cancel"], .modal-footer
   .submit.buttons button + input[name="cancel"],
-  .submit.buttons .modal-footer button + input[name="cancel"], .modal-footer
+  .submit.buttons .modal-footer button + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons button + input[name="cancel"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft button + input[name="cancel"], .modal-footer
   .submit.buttons
   input.form-submit + input[name="cancel"],
   .submit.buttons .modal-footer
+  input.form-submit + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons
+  input.form-submit + input[name="cancel"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input.form-submit + input[name="cancel"], .modal-footer
   .submit.buttons
   input[type="button"] + input[name="cancel"],
   .submit.buttons .modal-footer
+  input[type="button"] + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons
+  input[type="button"] + input[name="cancel"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input[type="button"] + input[name="cancel"], .modal-footer
   .submit.buttons
   input[type="submit"] + input[name="cancel"],
   .submit.buttons .modal-footer
+  input[type="submit"] + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons
+  input[type="submit"] + input[name="cancel"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input[type="submit"] + input[name="cancel"], .modal-footer
   .submit.buttons
   input[type="reset"] + input[name="cancel"],
   .submit.buttons .modal-footer
+  input[type="reset"] + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons
+  input[type="reset"] + input[name="cancel"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
   input[type="reset"] + input[name="cancel"], .modal-footer #page-grade-grading-manage .actions
   .submit.buttons .action + input[name="cancel"],
   .submit.buttons .modal-footer #page-grade-grading-manage .actions .action + input[name="cancel"], #page-grade-grading-manage .actions .modal-footer
   .submit.buttons .action + input[name="cancel"],
-  .submit.buttons #page-grade-grading-manage .actions .modal-footer .action + input[name="cancel"], .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
+  .submit.buttons #page-grade-grading-manage .actions .modal-footer .action + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions
+  .submit.buttons .action + input[name="cancel"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #page-grade-grading-manage .actions .action + input[name="cancel"], #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons .action + input[name="cancel"],
+  .submit.buttons #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .action + input[name="cancel"], .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
   .submit.buttons input + input[name="cancel"],
   .submit.buttons .modal-footer #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input[name="cancel"], #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer
   .submit.buttons input + input[name="cancel"],
-  .submit.buttons #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer input + input[name="cancel"], .modal-footer #rubric-rubric.gradingform_rubric
+  .submit.buttons #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer input + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
+  .submit.buttons input + input[name="cancel"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input[name="cancel"], #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons input + input[name="cancel"],
+  .submit.buttons #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input + input[name="cancel"], .modal-footer #rubric-rubric.gradingform_rubric
   .submit.buttons .addcriterion + input[name="cancel"],
   .submit.buttons .modal-footer #rubric-rubric.gradingform_rubric .addcriterion + input[name="cancel"], #rubric-rubric.gradingform_rubric .modal-footer
   .submit.buttons .addcriterion + input[name="cancel"],
-  .submit.buttons #rubric-rubric.gradingform_rubric .modal-footer .addcriterion + input[name="cancel"], .modal-footer #notice .singlebutton + .singlebutton
+  .submit.buttons #rubric-rubric.gradingform_rubric .modal-footer .addcriterion + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric
+  .submit.buttons .addcriterion + input[name="cancel"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #rubric-rubric.gradingform_rubric .addcriterion + input[name="cancel"], #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons .addcriterion + input[name="cancel"],
+  .submit.buttons #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .addcriterion + input[name="cancel"], .modal-footer #notice .singlebutton + .singlebutton
   .submit.buttons input + input[name="cancel"],
   .submit.buttons .modal-footer #notice .singlebutton + .singlebutton input + input[name="cancel"], #notice .singlebutton + .singlebutton .modal-footer
   .submit.buttons input + input[name="cancel"],
-  .submit.buttons #notice .singlebutton + .singlebutton .modal-footer input + input[name="cancel"], .modal-footer .submit.buttons input[name="cancel"] + input[name="cancel"], .submit.buttons .modal-footer input[name="cancel"] + input[name="cancel"] {
+  .submit.buttons #notice .singlebutton + .singlebutton .modal-footer input + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton
+  .submit.buttons input + input[name="cancel"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #notice .singlebutton + .singlebutton input + input[name="cancel"], #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  .submit.buttons input + input[name="cancel"],
+  .submit.buttons #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input + input[name="cancel"], .modal-footer .submit.buttons input[name="cancel"] + input[name="cancel"], .submit.buttons .modal-footer input[name="cancel"] + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .submit.buttons input[name="cancel"] + input[name="cancel"], .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input[name="cancel"] + input[name="cancel"] {
     margin-bottom: 0;
     margin-left: 5px; }
-  .modal-footer .btn-group .btn + .btn, .modal-footer .btn-group button + .btn, .modal-footer .btn-group
+  .modal-footer .btn-group .btn + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .btn + .btn, .modal-footer .btn-group button + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group button + .btn, .modal-footer .btn-group
+  input.form-submit + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input.form-submit + .btn, .modal-footer .btn-group
+  input[type="button"] + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input[type="button"] + .btn, .modal-footer .btn-group
+  input[type="submit"] + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input[type="submit"] + .btn, .modal-footer .btn-group
-  input[type="reset"] + .btn, .modal-footer .btn-group #page-grade-grading-manage .actions .action + .btn, #page-grade-grading-manage .actions .modal-footer .btn-group .action + .btn, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + .btn, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group input + .btn, .modal-footer .btn-group #rubric-rubric.gradingform_rubric .addcriterion + .btn, #rubric-rubric.gradingform_rubric .modal-footer .btn-group .addcriterion + .btn, .modal-footer .btn-group #notice .singlebutton + .singlebutton input + .btn, #notice .singlebutton + .singlebutton .modal-footer .btn-group input + .btn, .modal-footer .btn-group
+  input[type="reset"] + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  input[type="reset"] + .btn, .modal-footer .btn-group #page-grade-grading-manage .actions .action + .btn, #page-grade-grading-manage .actions .modal-footer .btn-group .action + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions .action + .btn, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .action + .btn, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + .btn, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group input + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + .btn, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input + .btn, .modal-footer .btn-group #rubric-rubric.gradingform_rubric .addcriterion + .btn, #rubric-rubric.gradingform_rubric .modal-footer .btn-group .addcriterion + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric .addcriterion + .btn, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .addcriterion + .btn, .modal-footer .btn-group #notice .singlebutton + .singlebutton input + .btn, #notice .singlebutton + .singlebutton .modal-footer .btn-group input + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton input + .btn, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input + .btn, .modal-footer .btn-group
   .submit.buttons input[name="cancel"] + .btn,
-  .submit.buttons .modal-footer .btn-group input[name="cancel"] + .btn, .modal-footer .btn-group .btn + button, .modal-footer .btn-group button + button, .modal-footer .btn-group
+  .submit.buttons .modal-footer .btn-group input[name="cancel"] + .btn, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons input[name="cancel"] + .btn,
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input[name="cancel"] + .btn, .modal-footer .btn-group .btn + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .btn + button, .modal-footer .btn-group button + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group button + button, .modal-footer .btn-group
+  input.form-submit + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input.form-submit + button, .modal-footer .btn-group
+  input[type="button"] + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input[type="button"] + button, .modal-footer .btn-group
+  input[type="submit"] + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input[type="submit"] + button, .modal-footer .btn-group
-  input[type="reset"] + button, .modal-footer .btn-group #page-grade-grading-manage .actions .action + button, #page-grade-grading-manage .actions .modal-footer .btn-group .action + button, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + button, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group input + button, .modal-footer .btn-group #rubric-rubric.gradingform_rubric .addcriterion + button, #rubric-rubric.gradingform_rubric .modal-footer .btn-group .addcriterion + button, .modal-footer .btn-group #notice .singlebutton + .singlebutton input + button, #notice .singlebutton + .singlebutton .modal-footer .btn-group input + button, .modal-footer .btn-group
+  input[type="reset"] + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  input[type="reset"] + button, .modal-footer .btn-group #page-grade-grading-manage .actions .action + button, #page-grade-grading-manage .actions .modal-footer .btn-group .action + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions .action + button, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .action + button, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + button, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group input + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + button, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input + button, .modal-footer .btn-group #rubric-rubric.gradingform_rubric .addcriterion + button, #rubric-rubric.gradingform_rubric .modal-footer .btn-group .addcriterion + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric .addcriterion + button, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .addcriterion + button, .modal-footer .btn-group #notice .singlebutton + .singlebutton input + button, #notice .singlebutton + .singlebutton .modal-footer .btn-group input + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton input + button, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input + button, .modal-footer .btn-group
   .submit.buttons input[name="cancel"] + button,
-  .submit.buttons .modal-footer .btn-group input[name="cancel"] + button, .modal-footer .btn-group .btn +
+  .submit.buttons .modal-footer .btn-group input[name="cancel"] + button, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons input[name="cancel"] + button,
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input[name="cancel"] + button, .modal-footer .btn-group .btn +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .btn +
   input.form-submit, .modal-footer .btn-group button +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group button +
   input.form-submit, .modal-footer .btn-group
+  input.form-submit +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input.form-submit +
   input.form-submit, .modal-footer .btn-group
   input[type="button"] +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  input[type="button"] +
   input.form-submit, .modal-footer .btn-group
+  input[type="submit"] +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input[type="submit"] +
   input.form-submit, .modal-footer .btn-group
   input[type="reset"] +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  input[type="reset"] +
   input.form-submit, .modal-footer .btn-group #page-grade-grading-manage .actions .action +
   input.form-submit, #page-grade-grading-manage .actions .modal-footer .btn-group .action +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions .action +
+  input.form-submit, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .action +
   input.form-submit, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input +
   input.form-submit, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group input +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input +
+  input.form-submit, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input +
   input.form-submit, .modal-footer .btn-group #rubric-rubric.gradingform_rubric .addcriterion +
   input.form-submit, #rubric-rubric.gradingform_rubric .modal-footer .btn-group .addcriterion +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric .addcriterion +
+  input.form-submit, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .addcriterion +
   input.form-submit, .modal-footer .btn-group #notice .singlebutton + .singlebutton input +
   input.form-submit, #notice .singlebutton + .singlebutton .modal-footer .btn-group input +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton input +
+  input.form-submit, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input +
   input.form-submit, .modal-footer .btn-group
   .submit.buttons input[name="cancel"] +
   input.form-submit,
   .submit.buttons .modal-footer .btn-group input[name="cancel"] +
+  input.form-submit, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons input[name="cancel"] +
+  input.form-submit,
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input[name="cancel"] +
   input.form-submit, .modal-footer .btn-group .btn +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .btn +
   input[type="button"], .modal-footer .btn-group button +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group button +
   input[type="button"], .modal-footer .btn-group
+  input.form-submit +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input.form-submit +
   input[type="button"], .modal-footer .btn-group
   input[type="button"] +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  input[type="button"] +
   input[type="button"], .modal-footer .btn-group
+  input[type="submit"] +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input[type="submit"] +
   input[type="button"], .modal-footer .btn-group
   input[type="reset"] +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  input[type="reset"] +
   input[type="button"], .modal-footer .btn-group #page-grade-grading-manage .actions .action +
   input[type="button"], #page-grade-grading-manage .actions .modal-footer .btn-group .action +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions .action +
+  input[type="button"], #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .action +
   input[type="button"], .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input +
   input[type="button"], #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group input +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input +
+  input[type="button"], #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input +
   input[type="button"], .modal-footer .btn-group #rubric-rubric.gradingform_rubric .addcriterion +
   input[type="button"], #rubric-rubric.gradingform_rubric .modal-footer .btn-group .addcriterion +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric .addcriterion +
+  input[type="button"], #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .addcriterion +
   input[type="button"], .modal-footer .btn-group #notice .singlebutton + .singlebutton input +
   input[type="button"], #notice .singlebutton + .singlebutton .modal-footer .btn-group input +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton input +
+  input[type="button"], #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input +
   input[type="button"], .modal-footer .btn-group
   .submit.buttons input[name="cancel"] +
   input[type="button"],
   .submit.buttons .modal-footer .btn-group input[name="cancel"] +
+  input[type="button"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons input[name="cancel"] +
+  input[type="button"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input[name="cancel"] +
   input[type="button"], .modal-footer .btn-group .btn +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .btn +
   input[type="submit"], .modal-footer .btn-group button +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group button +
   input[type="submit"], .modal-footer .btn-group
+  input.form-submit +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input.form-submit +
   input[type="submit"], .modal-footer .btn-group
   input[type="button"] +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  input[type="button"] +
   input[type="submit"], .modal-footer .btn-group
+  input[type="submit"] +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input[type="submit"] +
   input[type="submit"], .modal-footer .btn-group
   input[type="reset"] +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  input[type="reset"] +
   input[type="submit"], .modal-footer .btn-group #page-grade-grading-manage .actions .action +
   input[type="submit"], #page-grade-grading-manage .actions .modal-footer .btn-group .action +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions .action +
+  input[type="submit"], #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .action +
   input[type="submit"], .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input +
   input[type="submit"], #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group input +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input +
+  input[type="submit"], #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input +
   input[type="submit"], .modal-footer .btn-group #rubric-rubric.gradingform_rubric .addcriterion +
   input[type="submit"], #rubric-rubric.gradingform_rubric .modal-footer .btn-group .addcriterion +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric .addcriterion +
+  input[type="submit"], #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .addcriterion +
   input[type="submit"], .modal-footer .btn-group #notice .singlebutton + .singlebutton input +
   input[type="submit"], #notice .singlebutton + .singlebutton .modal-footer .btn-group input +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton input +
+  input[type="submit"], #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input +
   input[type="submit"], .modal-footer .btn-group
   .submit.buttons input[name="cancel"] +
   input[type="submit"],
   .submit.buttons .modal-footer .btn-group input[name="cancel"] +
+  input[type="submit"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons input[name="cancel"] +
+  input[type="submit"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input[name="cancel"] +
   input[type="submit"], .modal-footer .btn-group .btn +
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .btn +
   input[type="reset"], .modal-footer .btn-group button +
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group button +
   input[type="reset"], .modal-footer .btn-group
+  input.form-submit +
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input.form-submit +
   input[type="reset"], .modal-footer .btn-group
   input[type="button"] +
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  input[type="button"] +
   input[type="reset"], .modal-footer .btn-group
+  input[type="submit"] +
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input[type="submit"] +
   input[type="reset"], .modal-footer .btn-group
   input[type="reset"] +
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  input[type="reset"] +
   input[type="reset"], .modal-footer .btn-group #page-grade-grading-manage .actions .action +
   input[type="reset"], #page-grade-grading-manage .actions .modal-footer .btn-group .action +
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions .action +
+  input[type="reset"], #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .action +
   input[type="reset"], .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input +
   input[type="reset"], #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group input +
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input +
+  input[type="reset"], #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input +
   input[type="reset"], .modal-footer .btn-group #rubric-rubric.gradingform_rubric .addcriterion +
   input[type="reset"], #rubric-rubric.gradingform_rubric .modal-footer .btn-group .addcriterion +
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric .addcriterion +
+  input[type="reset"], #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .addcriterion +
   input[type="reset"], .modal-footer .btn-group #notice .singlebutton + .singlebutton input +
   input[type="reset"], #notice .singlebutton + .singlebutton .modal-footer .btn-group input +
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton input +
+  input[type="reset"], #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input +
   input[type="reset"], .modal-footer .btn-group
   .submit.buttons input[name="cancel"] +
   input[type="reset"],
   .submit.buttons .modal-footer .btn-group input[name="cancel"] +
-  input[type="reset"], .modal-footer .btn-group #page-grade-grading-manage .actions .btn + .action, #page-grade-grading-manage .actions .modal-footer .btn-group .btn + .action, .modal-footer .btn-group #page-grade-grading-manage .actions button + .action, #page-grade-grading-manage .actions .modal-footer .btn-group button + .action, .modal-footer .btn-group #page-grade-grading-manage .actions
+  input[type="reset"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons input[name="cancel"] +
+  input[type="reset"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input[name="cancel"] +
+  input[type="reset"], .modal-footer .btn-group #page-grade-grading-manage .actions .btn + .action, #page-grade-grading-manage .actions .modal-footer .btn-group .btn + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions .btn + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .btn + .action, .modal-footer .btn-group #page-grade-grading-manage .actions button + .action, #page-grade-grading-manage .actions .modal-footer .btn-group button + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions button + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group button + .action, .modal-footer .btn-group #page-grade-grading-manage .actions
   input.form-submit + .action, #page-grade-grading-manage .actions .modal-footer .btn-group
+  input.form-submit + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions
+  input.form-submit + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input.form-submit + .action, .modal-footer .btn-group #page-grade-grading-manage .actions
   input[type="button"] + .action, #page-grade-grading-manage .actions .modal-footer .btn-group
+  input[type="button"] + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions
+  input[type="button"] + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input[type="button"] + .action, .modal-footer .btn-group #page-grade-grading-manage .actions
   input[type="submit"] + .action, #page-grade-grading-manage .actions .modal-footer .btn-group
+  input[type="submit"] + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions
+  input[type="submit"] + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input[type="submit"] + .action, .modal-footer .btn-group #page-grade-grading-manage .actions
   input[type="reset"] + .action, #page-grade-grading-manage .actions .modal-footer .btn-group
-  input[type="reset"] + .action, .modal-footer .btn-group #page-grade-grading-manage .actions .action + .action, #page-grade-grading-manage .actions .modal-footer .btn-group .action + .action, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + .action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group input + .action, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #page-grade-grading-manage .actions .addcriterion + .action, #page-grade-grading-manage .actions .modal-footer .btn-group #rubric-rubric.gradingform_rubric .addcriterion + .action, #rubric-rubric.gradingform_rubric .modal-footer .btn-group #page-grade-grading-manage .actions .addcriterion + .action, #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric .modal-footer .btn-group .addcriterion + .action, .modal-footer .btn-group #notice .singlebutton + .singlebutton #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions .modal-footer .btn-group #notice .singlebutton + .singlebutton input + .action, #notice .singlebutton + .singlebutton .modal-footer .btn-group #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions #notice .singlebutton + .singlebutton .modal-footer .btn-group input + .action, .modal-footer .btn-group
+  input[type="reset"] + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions
+  input[type="reset"] + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  input[type="reset"] + .action, .modal-footer .btn-group #page-grade-grading-manage .actions .action + .action, #page-grade-grading-manage .actions .modal-footer .btn-group .action + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions .action + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .action + .action, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + .action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group input + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + .action, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input + .action, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #page-grade-grading-manage .actions .addcriterion + .action, #page-grade-grading-manage .actions .modal-footer .btn-group #rubric-rubric.gradingform_rubric .addcriterion + .action, #rubric-rubric.gradingform_rubric .modal-footer .btn-group #page-grade-grading-manage .actions .addcriterion + .action, #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric .modal-footer .btn-group .addcriterion + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #page-grade-grading-manage .actions .addcriterion + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric .addcriterion + .action, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions .addcriterion + .action, #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .addcriterion + .action, .modal-footer .btn-group #notice .singlebutton + .singlebutton #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions .modal-footer .btn-group #notice .singlebutton + .singlebutton input + .action, #notice .singlebutton + .singlebutton .modal-footer .btn-group #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions #notice .singlebutton + .singlebutton .modal-footer .btn-group input + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton input + .action, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions input + .action, #page-grade-grading-manage .actions #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input + .action, .modal-footer .btn-group
   .submit.buttons #page-grade-grading-manage .actions input[name="cancel"] + .action, #page-grade-grading-manage .actions .modal-footer .btn-group
   .submit.buttons input[name="cancel"] + .action,
   .submit.buttons .modal-footer .btn-group #page-grade-grading-manage .actions input[name="cancel"] + .action, #page-grade-grading-manage .actions
-  .submit.buttons .modal-footer .btn-group input[name="cancel"] + .action, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .btn + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group .btn + input, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel button + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group button + input, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
+  .submit.buttons .modal-footer .btn-group input[name="cancel"] + .action, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons #page-grade-grading-manage .actions input[name="cancel"] + .action, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons input[name="cancel"] + .action,
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions input[name="cancel"] + .action, #page-grade-grading-manage .actions
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input[name="cancel"] + .action, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .btn + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group .btn + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .btn + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .btn + input, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel button + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group button + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel button + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group button + input, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
   input.form-submit + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group
+  input.form-submit + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
+  input.form-submit + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input.form-submit + input, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
   input[type="button"] + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group
+  input[type="button"] + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
+  input[type="button"] + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input[type="button"] + input, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
   input[type="submit"] + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group
+  input[type="submit"] + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
+  input[type="submit"] + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input[type="submit"] + input, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
   input[type="reset"] + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group
-  input[type="reset"] + input, .modal-footer .btn-group #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .action + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group #page-grade-grading-manage .actions .action + input, #page-grade-grading-manage .actions .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .action + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #page-grade-grading-manage .actions .modal-footer .btn-group .action + input, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group input + input, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .addcriterion + input, #rubric-rubric.gradingform_rubric .modal-footer .btn-group #rubric-criteria .criterion .addlevel .addcriterion + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group .addcriterion + input, .modal-footer .btn-group #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #notice .singlebutton + .singlebutton .modal-footer .btn-group input + input, .modal-footer .btn-group
+  input[type="reset"] + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
+  input[type="reset"] + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  input[type="reset"] + input, .modal-footer .btn-group #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .action + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group #page-grade-grading-manage .actions .action + input, #page-grade-grading-manage .actions .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .action + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #page-grade-grading-manage .actions .modal-footer .btn-group .action + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .action + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions .action + input, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .action + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .action + input, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group input + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input + input, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .addcriterion + input, #rubric-rubric.gradingform_rubric .modal-footer .btn-group #rubric-criteria .criterion .addlevel .addcriterion + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group .addcriterion + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .addcriterion + input, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-criteria .criterion .addlevel .addcriterion + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .addcriterion + input, .modal-footer .btn-group #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #notice .singlebutton + .singlebutton .modal-footer .btn-group input + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input + input, .modal-footer .btn-group
   .submit.buttons #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input[name="cancel"] + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group
   .submit.buttons input[name="cancel"] + input,
   .submit.buttons .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input[name="cancel"] + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
-  .submit.buttons .modal-footer .btn-group input[name="cancel"] + input, .modal-footer .btn-group #rubric-rubric.gradingform_rubric .btn + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer .btn-group .btn + .addcriterion, .modal-footer .btn-group #rubric-rubric.gradingform_rubric button + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer .btn-group button + .addcriterion, .modal-footer .btn-group #rubric-rubric.gradingform_rubric
+  .submit.buttons .modal-footer .btn-group input[name="cancel"] + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input[name="cancel"] + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons input[name="cancel"] + input,
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input[name="cancel"] + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input[name="cancel"] + input, .modal-footer .btn-group #rubric-rubric.gradingform_rubric .btn + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer .btn-group .btn + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric .btn + .addcriterion, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .btn + .addcriterion, .modal-footer .btn-group #rubric-rubric.gradingform_rubric button + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer .btn-group button + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric button + .addcriterion, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group button + .addcriterion, .modal-footer .btn-group #rubric-rubric.gradingform_rubric
   input.form-submit + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer .btn-group
+  input.form-submit + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric
+  input.form-submit + .addcriterion, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input.form-submit + .addcriterion, .modal-footer .btn-group #rubric-rubric.gradingform_rubric
   input[type="button"] + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer .btn-group
+  input[type="button"] + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric
+  input[type="button"] + .addcriterion, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input[type="button"] + .addcriterion, .modal-footer .btn-group #rubric-rubric.gradingform_rubric
   input[type="submit"] + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer .btn-group
+  input[type="submit"] + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric
+  input[type="submit"] + .addcriterion, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input[type="submit"] + .addcriterion, .modal-footer .btn-group #rubric-rubric.gradingform_rubric
   input[type="reset"] + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer .btn-group
-  input[type="reset"] + .addcriterion, .modal-footer .btn-group #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric .action + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer .btn-group #page-grade-grading-manage .actions .action + .addcriterion, #page-grade-grading-manage .actions .modal-footer .btn-group #rubric-rubric.gradingform_rubric .action + .addcriterion, #rubric-rubric.gradingform_rubric #page-grade-grading-manage .actions .modal-footer .btn-group .action + .addcriterion, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + .addcriterion, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group input + .addcriterion, .modal-footer .btn-group #rubric-rubric.gradingform_rubric .addcriterion + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer .btn-group .addcriterion + .addcriterion, .modal-footer .btn-group #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric input + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer .btn-group #notice .singlebutton + .singlebutton input + .addcriterion, #notice .singlebutton + .singlebutton .modal-footer .btn-group #rubric-rubric.gradingform_rubric input + .addcriterion, #rubric-rubric.gradingform_rubric #notice .singlebutton + .singlebutton .modal-footer .btn-group input + .addcriterion, .modal-footer .btn-group
+  input[type="reset"] + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric
+  input[type="reset"] + .addcriterion, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  input[type="reset"] + .addcriterion, .modal-footer .btn-group #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric .action + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer .btn-group #page-grade-grading-manage .actions .action + .addcriterion, #page-grade-grading-manage .actions .modal-footer .btn-group #rubric-rubric.gradingform_rubric .action + .addcriterion, #rubric-rubric.gradingform_rubric #page-grade-grading-manage .actions .modal-footer .btn-group .action + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions #rubric-rubric.gradingform_rubric .action + .addcriterion, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions .action + .addcriterion, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric .action + .addcriterion, #rubric-rubric.gradingform_rubric #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .action + .addcriterion, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + .addcriterion, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group input + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + .addcriterion, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input + .addcriterion, .modal-footer .btn-group #rubric-rubric.gradingform_rubric .addcriterion + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer .btn-group .addcriterion + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric .addcriterion + .addcriterion, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .addcriterion + .addcriterion, .modal-footer .btn-group #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric input + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer .btn-group #notice .singlebutton + .singlebutton input + .addcriterion, #notice .singlebutton + .singlebutton .modal-footer .btn-group #rubric-rubric.gradingform_rubric input + .addcriterion, #rubric-rubric.gradingform_rubric #notice .singlebutton + .singlebutton .modal-footer .btn-group input + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric input + .addcriterion, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton input + .addcriterion, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric input + .addcriterion, #rubric-rubric.gradingform_rubric #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input + .addcriterion, .modal-footer .btn-group
   .submit.buttons #rubric-rubric.gradingform_rubric input[name="cancel"] + .addcriterion, #rubric-rubric.gradingform_rubric .modal-footer .btn-group
   .submit.buttons input[name="cancel"] + .addcriterion,
   .submit.buttons .modal-footer .btn-group #rubric-rubric.gradingform_rubric input[name="cancel"] + .addcriterion, #rubric-rubric.gradingform_rubric
-  .submit.buttons .modal-footer .btn-group input[name="cancel"] + .addcriterion, .modal-footer .btn-group #notice .singlebutton + .singlebutton .btn + input, #notice .singlebutton + .singlebutton .modal-footer .btn-group .btn + input, .modal-footer .btn-group #notice .singlebutton + .singlebutton button + input, #notice .singlebutton + .singlebutton .modal-footer .btn-group button + input, .modal-footer .btn-group #notice .singlebutton + .singlebutton
+  .submit.buttons .modal-footer .btn-group input[name="cancel"] + .addcriterion, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons #rubric-rubric.gradingform_rubric input[name="cancel"] + .addcriterion, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons input[name="cancel"] + .addcriterion,
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric input[name="cancel"] + .addcriterion, #rubric-rubric.gradingform_rubric
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input[name="cancel"] + .addcriterion, .modal-footer .btn-group #notice .singlebutton + .singlebutton .btn + input, #notice .singlebutton + .singlebutton .modal-footer .btn-group .btn + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton .btn + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .btn + input, .modal-footer .btn-group #notice .singlebutton + .singlebutton button + input, #notice .singlebutton + .singlebutton .modal-footer .btn-group button + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton button + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group button + input, .modal-footer .btn-group #notice .singlebutton + .singlebutton
   input.form-submit + input, #notice .singlebutton + .singlebutton .modal-footer .btn-group
+  input.form-submit + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton
+  input.form-submit + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input.form-submit + input, .modal-footer .btn-group #notice .singlebutton + .singlebutton
   input[type="button"] + input, #notice .singlebutton + .singlebutton .modal-footer .btn-group
+  input[type="button"] + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton
+  input[type="button"] + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input[type="button"] + input, .modal-footer .btn-group #notice .singlebutton + .singlebutton
   input[type="submit"] + input, #notice .singlebutton + .singlebutton .modal-footer .btn-group
+  input[type="submit"] + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton
+  input[type="submit"] + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input[type="submit"] + input, .modal-footer .btn-group #notice .singlebutton + .singlebutton
   input[type="reset"] + input, #notice .singlebutton + .singlebutton .modal-footer .btn-group
-  input[type="reset"] + input, .modal-footer .btn-group #page-grade-grading-manage .actions #notice .singlebutton + .singlebutton .action + input, #notice .singlebutton + .singlebutton .modal-footer .btn-group #page-grade-grading-manage .actions .action + input, #page-grade-grading-manage .actions .modal-footer .btn-group #notice .singlebutton + .singlebutton .action + input, #notice .singlebutton + .singlebutton #page-grade-grading-manage .actions .modal-footer .btn-group .action + input, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group input + input, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #notice .singlebutton + .singlebutton .addcriterion + input, #notice .singlebutton + .singlebutton .modal-footer .btn-group #rubric-rubric.gradingform_rubric .addcriterion + input, #rubric-rubric.gradingform_rubric .modal-footer .btn-group #notice .singlebutton + .singlebutton .addcriterion + input, #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric .modal-footer .btn-group .addcriterion + input, .modal-footer .btn-group #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton .modal-footer .btn-group input + input, .modal-footer .btn-group
+  input[type="reset"] + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton
+  input[type="reset"] + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  input[type="reset"] + input, .modal-footer .btn-group #page-grade-grading-manage .actions #notice .singlebutton + .singlebutton .action + input, #notice .singlebutton + .singlebutton .modal-footer .btn-group #page-grade-grading-manage .actions .action + input, #page-grade-grading-manage .actions .modal-footer .btn-group #notice .singlebutton + .singlebutton .action + input, #notice .singlebutton + .singlebutton #page-grade-grading-manage .actions .modal-footer .btn-group .action + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions #notice .singlebutton + .singlebutton .action + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions .action + input, #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton .action + input, #notice .singlebutton + .singlebutton #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .action + input, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group input + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input + input, .modal-footer .btn-group #rubric-rubric.gradingform_rubric #notice .singlebutton + .singlebutton .addcriterion + input, #notice .singlebutton + .singlebutton .modal-footer .btn-group #rubric-rubric.gradingform_rubric .addcriterion + input, #rubric-rubric.gradingform_rubric .modal-footer .btn-group #notice .singlebutton + .singlebutton .addcriterion + input, #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric .modal-footer .btn-group .addcriterion + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #notice .singlebutton + .singlebutton .addcriterion + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric .addcriterion + input, #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton .addcriterion + input, #notice .singlebutton + .singlebutton #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .addcriterion + input, .modal-footer .btn-group #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton .modal-footer .btn-group input + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton input + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input + input, .modal-footer .btn-group
   .submit.buttons #notice .singlebutton + .singlebutton input[name="cancel"] + input, #notice .singlebutton + .singlebutton .modal-footer .btn-group
   .submit.buttons input[name="cancel"] + input,
   .submit.buttons .modal-footer .btn-group #notice .singlebutton + .singlebutton input[name="cancel"] + input, #notice .singlebutton + .singlebutton
-  .submit.buttons .modal-footer .btn-group input[name="cancel"] + input, .modal-footer .btn-group
+  .submit.buttons .modal-footer .btn-group input[name="cancel"] + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons #notice .singlebutton + .singlebutton input[name="cancel"] + input, #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons input[name="cancel"] + input,
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton input[name="cancel"] + input, #notice .singlebutton + .singlebutton
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input[name="cancel"] + input, .modal-footer .btn-group
   .submit.buttons .btn + input[name="cancel"],
-  .submit.buttons .modal-footer .btn-group .btn + input[name="cancel"], .modal-footer .btn-group
+  .submit.buttons .modal-footer .btn-group .btn + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons .btn + input[name="cancel"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .btn + input[name="cancel"], .modal-footer .btn-group
   .submit.buttons button + input[name="cancel"],
-  .submit.buttons .modal-footer .btn-group button + input[name="cancel"], .modal-footer .btn-group
+  .submit.buttons .modal-footer .btn-group button + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons button + input[name="cancel"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group button + input[name="cancel"], .modal-footer .btn-group
   .submit.buttons
   input.form-submit + input[name="cancel"],
   .submit.buttons .modal-footer .btn-group
+  input.form-submit + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons
+  input.form-submit + input[name="cancel"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input.form-submit + input[name="cancel"], .modal-footer .btn-group
   .submit.buttons
   input[type="button"] + input[name="cancel"],
   .submit.buttons .modal-footer .btn-group
+  input[type="button"] + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons
+  input[type="button"] + input[name="cancel"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input[type="button"] + input[name="cancel"], .modal-footer .btn-group
   .submit.buttons
   input[type="submit"] + input[name="cancel"],
   .submit.buttons .modal-footer .btn-group
+  input[type="submit"] + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons
+  input[type="submit"] + input[name="cancel"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input[type="submit"] + input[name="cancel"], .modal-footer .btn-group
   .submit.buttons
   input[type="reset"] + input[name="cancel"],
   .submit.buttons .modal-footer .btn-group
+  input[type="reset"] + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons
+  input[type="reset"] + input[name="cancel"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
   input[type="reset"] + input[name="cancel"], .modal-footer .btn-group #page-grade-grading-manage .actions
   .submit.buttons .action + input[name="cancel"],
   .submit.buttons .modal-footer .btn-group #page-grade-grading-manage .actions .action + input[name="cancel"], #page-grade-grading-manage .actions .modal-footer .btn-group
   .submit.buttons .action + input[name="cancel"],
-  .submit.buttons #page-grade-grading-manage .actions .modal-footer .btn-group .action + input[name="cancel"], .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
+  .submit.buttons #page-grade-grading-manage .actions .modal-footer .btn-group .action + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions
+  .submit.buttons .action + input[name="cancel"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #page-grade-grading-manage .actions .action + input[name="cancel"], #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons .action + input[name="cancel"],
+  .submit.buttons #page-grade-grading-manage .actions .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .action + input[name="cancel"], .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
   .submit.buttons input + input[name="cancel"],
   .submit.buttons .modal-footer .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input[name="cancel"], #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group
   .submit.buttons input + input[name="cancel"],
-  .submit.buttons #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group input + input[name="cancel"], .modal-footer .btn-group #rubric-rubric.gradingform_rubric
+  .submit.buttons #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .modal-footer .btn-group input + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel
+  .submit.buttons input + input[name="cancel"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input + input[name="cancel"], #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons input + input[name="cancel"],
+  .submit.buttons #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input + input[name="cancel"], .modal-footer .btn-group #rubric-rubric.gradingform_rubric
   .submit.buttons .addcriterion + input[name="cancel"],
   .submit.buttons .modal-footer .btn-group #rubric-rubric.gradingform_rubric .addcriterion + input[name="cancel"], #rubric-rubric.gradingform_rubric .modal-footer .btn-group
   .submit.buttons .addcriterion + input[name="cancel"],
-  .submit.buttons #rubric-rubric.gradingform_rubric .modal-footer .btn-group .addcriterion + input[name="cancel"], .modal-footer .btn-group #notice .singlebutton + .singlebutton
+  .submit.buttons #rubric-rubric.gradingform_rubric .modal-footer .btn-group .addcriterion + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric
+  .submit.buttons .addcriterion + input[name="cancel"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #rubric-rubric.gradingform_rubric .addcriterion + input[name="cancel"], #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons .addcriterion + input[name="cancel"],
+  .submit.buttons #rubric-rubric.gradingform_rubric .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .addcriterion + input[name="cancel"], .modal-footer .btn-group #notice .singlebutton + .singlebutton
   .submit.buttons input + input[name="cancel"],
   .submit.buttons .modal-footer .btn-group #notice .singlebutton + .singlebutton input + input[name="cancel"], #notice .singlebutton + .singlebutton .modal-footer .btn-group
   .submit.buttons input + input[name="cancel"],
-  .submit.buttons #notice .singlebutton + .singlebutton .modal-footer .btn-group input + input[name="cancel"], .modal-footer .btn-group .submit.buttons input[name="cancel"] + input[name="cancel"], .submit.buttons .modal-footer .btn-group input[name="cancel"] + input[name="cancel"] {
+  .submit.buttons #notice .singlebutton + .singlebutton .modal-footer .btn-group input + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton
+  .submit.buttons input + input[name="cancel"],
+  .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group #notice .singlebutton + .singlebutton input + input[name="cancel"], #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group
+  .submit.buttons input + input[name="cancel"],
+  .submit.buttons #notice .singlebutton + .singlebutton .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input + input[name="cancel"], .modal-footer .btn-group .submit.buttons input[name="cancel"] + input[name="cancel"], .submit.buttons .modal-footer .btn-group input[name="cancel"] + input[name="cancel"], .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group .submit.buttons input[name="cancel"] + input[name="cancel"], .submit.buttons .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-group input[name="cancel"] + input[name="cancel"] {
     margin-left: -1px; }
-  .modal-footer .btn-block + .btn-block, .modal-footer p.arrow_button input + .btn-block, p.arrow_button .modal-footer input + .btn-block, .modal-footer #addcontrols input + .btn-block, #addcontrols .modal-footer input + .btn-block, .modal-footer
+  .modal-footer .btn-block + .btn-block, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-block + .btn-block, .modal-footer p.arrow_button input + .btn-block, p.arrow_button .modal-footer input + .btn-block, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft p.arrow_button input + .btn-block, p.arrow_button .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input + .btn-block, .modal-footer #addcontrols input + .btn-block, #addcontrols .modal-footer input + .btn-block, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #addcontrols input + .btn-block, #addcontrols .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input + .btn-block, .modal-footer
   #removecontrols input + .btn-block,
-  #removecontrols .modal-footer input + .btn-block, .modal-footer p.arrow_button .btn-block + input, p.arrow_button .modal-footer .btn-block + input, .modal-footer p.arrow_button input + input, p.arrow_button .modal-footer input + input, .modal-footer #addcontrols p.arrow_button input + input, .modal-footer
-  #removecontrols p.arrow_button input + input, .modal-footer #addcontrols .btn-block + input, #addcontrols .modal-footer .btn-block + input, #addcontrols .modal-footer p.arrow_button input + input, .modal-footer #addcontrols input + input, #addcontrols .modal-footer input + input, .modal-footer
+  #removecontrols .modal-footer input + .btn-block, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  #removecontrols input + .btn-block,
+  #removecontrols .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input + .btn-block, .modal-footer p.arrow_button .btn-block + input, p.arrow_button .modal-footer .btn-block + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft p.arrow_button .btn-block + input, p.arrow_button .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-block + input, .modal-footer p.arrow_button input + input, p.arrow_button .modal-footer input + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft p.arrow_button input + input, p.arrow_button .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input + input, .modal-footer #addcontrols p.arrow_button input + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #addcontrols p.arrow_button input + input, .modal-footer
+  #removecontrols p.arrow_button input + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  #removecontrols p.arrow_button input + input, .modal-footer #addcontrols .btn-block + input, #addcontrols .modal-footer .btn-block + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #addcontrols .btn-block + input, #addcontrols .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-block + input, #addcontrols .modal-footer p.arrow_button input + input, #addcontrols .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft p.arrow_button input + input, .modal-footer #addcontrols input + input, #addcontrols .modal-footer input + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #addcontrols input + input, #addcontrols .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input + input, .modal-footer
   #removecontrols .btn-block + input,
-  #removecontrols .modal-footer .btn-block + input,
-  #removecontrols .modal-footer p.arrow_button input + input, .modal-footer #removecontrols input + input, #removecontrols .modal-footer input + input {
+  #removecontrols .modal-footer .btn-block + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft
+  #removecontrols .btn-block + input,
+  #removecontrols .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft .btn-block + input,
+  #removecontrols .modal-footer p.arrow_button input + input,
+  #removecontrols .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft p.arrow_button input + input, .modal-footer #removecontrols input + input, #removecontrols .modal-footer input + input, .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft #removecontrols input + input, #removecontrols .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft input + input {
     margin-left: 0; }
 
 .modal-scrollbar-measure {
@@ -8533,74 +8907,26 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   height: 16px;
   background-size: 100%; }
 
-.moodle-dialogue-base .moodle-dialogue {
-  padding: 0;
-  margin: 0;
-  background: none;
-  border: none;
-  z-index: 600;
-  outline: #000 dotted 0; }
-
-.moodle-dialogue-base .moodle-dialogue-wrap {
-  margin-top: -3px;
-  margin-left: -3px;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 10px; }
-
-.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd,
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
-  margin: 0;
-  padding: 5px;
-  font-size: 12px;
-  font-weight: normal;
-  letter-spacing: 1px;
-  color: #333;
-  text-align: center;
-  text-shadow: 1px 1px 1px #fff;
-  border-radius: 10px 10px 0 0;
-  border-bottom: 1px solid #bbb;
-  background: #ccc;
-  background-image: linear-gradient(to bottom, #fff 0%, #ccc 100%);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFFFF', endColorstr='#FFCCCCCC', GradientType=0);
-  filter: 0; }
-
-.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
-  margin: 0;
-  padding: 0;
-  display: inline;
-  font-size: 100%;
-  font-weight: bold; }
+  min-height: initial;
+  color: initial;
+  background-color: initial;
+  background: initial;
+  font-size: 1.5rem;
+  line-height: 1.5; }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
   padding: 5px; }
 
 .moodle-dialogue-base .closebutton {
-  width: 25px;
-  height: 15px;
-  float: right;
-  vertical-align: middle;
-  display: inline-block;
-  cursor: pointer;
-  padding: 0;
-  background-image: url([[pix:theme|sprite]]);
-  background-repeat: no-repeat;
-  border-style: none; }
+  margin: 0;
+  padding: 10px !important;
+  background: 0;
+  border-style: none;
+  box-shadow: none; }
 
-.moodle-dialogue-base .moodle-dialogue .moodle-dialogue-bd {
-  padding: 1em;
-  line-height: 2em;
-  color: #555;
-  font-size: 12px; }
-
-.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-content {
-  padding: 0;
-  background: #FFF; }
-
-.moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-hd {
-  padding: 10px;
-  font-size: 16px; }
+.moodle-dialogue-base .closebutton::after {
+  content: "×"; }
 
 .moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-content {
   overflow: auto;
@@ -8611,10 +8937,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   right: 0px;
   margin: 0px;
   border: 0px; }
-
-.moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-hd,
-.moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-wrap {
-  border-radius: 0px; }
 
 .moodle-dialogue-confirm .confirmation-dialogue {
   text-align: center; }
@@ -8649,12 +8971,8 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   font-size: 90%;
   border-bottom: 1px solid #eee; }
 
-.moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft {
-  padding: 0;
-  margin: 0.7em 1em;
-  text-align: right;
-  background-color: #FFF;
-  font-size: 12px; }
+.moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft.yui3-widget-ft {
+  background: initial; }
 
 .moodle-dialogue-confirm .confirmation-message {
   margin: 0.5em 1em; }
