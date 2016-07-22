@@ -1154,6 +1154,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
         padding-right: 3px;
     }
 }
+
 /* Moodle Dialogue Settings (moodle-core-dialogue)  */
 .moodle-dialogue-base .moodle-dialogue-lightbox {
     background-color: #AAA;
@@ -1180,74 +1181,40 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     height: 16px;
     background-size: 100%;
 }
-.moodle-dialogue-base .moodle-dialogue {
-    padding: 0;
-    margin: 0;
-    background: none;
-    border: none;
-    z-index: 600;
-    outline: #000 dotted 0;
+.moodle-dialogue-base .moodle-dialogue-wrap.moodle-dialogue-content {
+    @extend .modal-content;
 }
-.moodle-dialogue-base .moodle-dialogue-wrap {
-    margin-top: -3px;
-    margin-left: -3px;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    @include border-radius(10px);
-    @include box-shadow(5px 5px 20px 0 #666);
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd {
+    @extend .modal-header;
 }
-.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd,
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
-    margin: 0;
-    padding: 5px;
-    font-size: 12px;
-    font-weight: normal;
-    letter-spacing: 1px;
-    color: #333;
-    text-align: center;
-    text-shadow: 1px 1px 1px #fff;
-    @include border-radius(10px 10px 0 0);
-    border-bottom: 1px solid #bbb;
-    background: #ccc;
-    @include gradient-vertical(#fff, #ccc);
-    filter: 0;
+    // Undo some YUI damage.
+    min-height: initial;
+    color: initial;
+    background-color: initial;
+    background: initial;
+    font-size: 1.5rem;
+    line-height: 1.5;
 }
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
-    margin: 0;
-    padding: 0;
-    display: inline;
-    font-size: 100%;
-    font-weight: bold;
+    @extend .modal-title;
 }
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
     padding: 5px;
 }
 .moodle-dialogue-base .closebutton {
-    width: 25px;
-    height: 15px;
-    float: right;
-    vertical-align: middle;
-    display: inline-block;
-    cursor: pointer;
-    padding: 0;
-    background-image: url([[pix:theme|sprite]]);
-    background-repeat: no-repeat;
+    @extend .close;
+    margin: 0;
+    padding: 10px ! important;
+    background: 0;
     border-style: none;
+    box-shadow: none;
+}
+.moodle-dialogue-base .closebutton::after {
+    content: "×";
 }
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-bd {
-    padding: 1em;
-    line-height: 2em;
-    color: #555;
-    font-size: 12px;
-}
-.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-content {
-    padding: 0;
-    background: #FFF;
-}
-
-.moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-hd {
-    padding: 10px;
-    font-size: 16px;
+    @extend .modal-body;
 }
 
 .moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-content {
@@ -1259,10 +1226,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     right: 0px;
     margin: 0px;
     border: 0px;
-}
-.moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-hd,
-.moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-wrap {
-    border-radius: 0px;
 }
 .moodle-dialogue-confirm .confirmation-dialogue {
     text-align: center;
@@ -1299,11 +1262,11 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     border-bottom: 1px solid #eee;
 }
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft {
-    padding: 0;
-    margin: 0.7em 1em;
-    text-align: right;
-    background-color: #FFF;
-    font-size: 12px;
+    @extend .modal-footer;
+}
+.moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft.yui3-widget-ft {
+    // Undo some YUI damage.
+    background: initial;
 }
 .moodle-dialogue-confirm .confirmation-message {
     margin: 0.5em 1em;
