@@ -2901,35 +2901,143 @@ td.submit input {
     background-color: #0275d8;
     border-color: #0275d8; }
 
-.btn-secondary {
+.btn-secondary, button,
+input.form-submit,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
   color: #373a3c;
   background-color: #fff;
   border-color: #ccc; }
-  .btn-secondary:hover {
+  .btn-secondary:hover, button:hover,
+  input.form-submit:hover,
+  input[type="button"]:hover,
+  input[type="submit"]:hover,
+  input[type="reset"]:hover {
     color: #373a3c;
     background-color: #e6e6e6;
     border-color: #adadad; }
-  .btn-secondary:focus, .btn-secondary.focus {
+  .btn-secondary:focus, button:focus,
+  input.form-submit:focus,
+  input[type="button"]:focus,
+  input[type="submit"]:focus,
+  input[type="reset"]:focus, .btn-secondary.focus, button.focus,
+  input.focus.form-submit,
+  input.focus[type="button"],
+  input.focus[type="submit"],
+  input.focus[type="reset"] {
     color: #373a3c;
     background-color: #e6e6e6;
     border-color: #adadad; }
-  .btn-secondary:active, .btn-secondary.active,
-  .open > .btn-secondary.dropdown-toggle {
+  .btn-secondary:active, button:active,
+  input.form-submit:active,
+  input[type="button"]:active,
+  input[type="submit"]:active,
+  input[type="reset"]:active, .btn-secondary.active, button.active,
+  input.active.form-submit,
+  input.active[type="button"],
+  input.active[type="submit"],
+  input.active[type="reset"],
+  .open > .btn-secondary.dropdown-toggle,
+  .open > button.dropdown-toggle,
+  .open >
+  input.dropdown-toggle.form-submit,
+  .open >
+  input.dropdown-toggle[type="button"],
+  .open >
+  input.dropdown-toggle[type="submit"],
+  .open >
+  input.dropdown-toggle[type="reset"] {
     color: #373a3c;
     background-color: #e6e6e6;
     border-color: #adadad;
     background-image: none; }
-    .btn-secondary:active:hover, .btn-secondary:active:focus, .btn-secondary:active.focus, .btn-secondary.active:hover, .btn-secondary.active:focus, .btn-secondary.active.focus,
+    .btn-secondary:active:hover, button:active:hover,
+    input.form-submit:active:hover,
+    input[type="button"]:active:hover,
+    input[type="submit"]:active:hover,
+    input[type="reset"]:active:hover, .btn-secondary:active:focus, button:active:focus,
+    input.form-submit:active:focus,
+    input[type="button"]:active:focus,
+    input[type="submit"]:active:focus,
+    input[type="reset"]:active:focus, .btn-secondary:active.focus, button:active.focus,
+    input.form-submit:active.focus,
+    input[type="button"]:active.focus,
+    input[type="submit"]:active.focus,
+    input[type="reset"]:active.focus, .btn-secondary.active:hover, button.active:hover,
+    input.active.form-submit:hover,
+    input.active[type="button"]:hover,
+    input.active[type="submit"]:hover,
+    input.active[type="reset"]:hover, .btn-secondary.active:focus, button.active:focus,
+    input.active.form-submit:focus,
+    input.active[type="button"]:focus,
+    input.active[type="submit"]:focus,
+    input.active[type="reset"]:focus, .btn-secondary.active.focus, button.active.focus,
+    input.active.focus.form-submit,
+    input.active.focus[type="button"],
+    input.active.focus[type="submit"],
+    input.active.focus[type="reset"],
     .open > .btn-secondary.dropdown-toggle:hover,
+    .open > button.dropdown-toggle:hover,
+    .open >
+    input.dropdown-toggle.form-submit:hover,
+    .open >
+    input.dropdown-toggle[type="button"]:hover,
+    .open >
+    input.dropdown-toggle[type="submit"]:hover,
+    .open >
+    input.dropdown-toggle[type="reset"]:hover,
     .open > .btn-secondary.dropdown-toggle:focus,
-    .open > .btn-secondary.dropdown-toggle.focus {
+    .open > button.dropdown-toggle:focus,
+    .open >
+    input.dropdown-toggle.form-submit:focus,
+    .open >
+    input.dropdown-toggle[type="button"]:focus,
+    .open >
+    input.dropdown-toggle[type="submit"]:focus,
+    .open >
+    input.dropdown-toggle[type="reset"]:focus,
+    .open > .btn-secondary.dropdown-toggle.focus,
+    .open > button.dropdown-toggle.focus,
+    .open >
+    input.dropdown-toggle.focus.form-submit,
+    .open >
+    input.dropdown-toggle.focus[type="button"],
+    .open >
+    input.dropdown-toggle.focus[type="submit"],
+    .open >
+    input.dropdown-toggle.focus[type="reset"] {
       color: #373a3c;
       background-color: #d4d4d4;
       border-color: #8c8c8c; }
-  .btn-secondary.disabled:focus, .btn-secondary.disabled.focus, .btn-secondary:disabled:focus, .btn-secondary:disabled.focus {
+  .btn-secondary.disabled:focus, button.disabled:focus,
+  input.disabled.form-submit:focus,
+  input.disabled[type="button"]:focus,
+  input.disabled[type="submit"]:focus,
+  input.disabled[type="reset"]:focus, .btn-secondary.disabled.focus, button.disabled.focus,
+  input.disabled.focus.form-submit,
+  input.disabled.focus[type="button"],
+  input.disabled.focus[type="submit"],
+  input.disabled.focus[type="reset"], .btn-secondary:disabled:focus, button:disabled:focus,
+  input.form-submit:disabled:focus,
+  input[type="button"]:disabled:focus,
+  input[type="submit"]:disabled:focus,
+  input[type="reset"]:disabled:focus, .btn-secondary:disabled.focus, button:disabled.focus,
+  input.form-submit:disabled.focus,
+  input[type="button"]:disabled.focus,
+  input[type="submit"]:disabled.focus,
+  input[type="reset"]:disabled.focus {
     background-color: #fff;
     border-color: #ccc; }
-  .btn-secondary.disabled:hover, .btn-secondary:disabled:hover {
+  .btn-secondary.disabled:hover, button.disabled:hover,
+  input.disabled.form-submit:hover,
+  input.disabled[type="button"]:hover,
+  input.disabled[type="submit"]:hover,
+  input.disabled[type="reset"]:hover, .btn-secondary:disabled:hover, button:disabled:hover,
+  input.form-submit:disabled:hover,
+  input[type="button"]:disabled:hover,
+  input[type="submit"]:disabled:hover,
+  input[type="reset"]:disabled:hover {
     background-color: #fff;
     border-color: #ccc; }
 
@@ -14813,11 +14921,6 @@ input[type="submit"],
 input[type="reset"], #notice .singlebutton + .singlebutton input,
 .submit.buttons input[name="cancel"] {
   margin: 0 0 10px 5px; }
-
-button.yui3-button.closebutton {
-  background-position: 0 0; }
-  button.yui3-button.closebutton:hover {
-    background-position: 0 0; }
 
 .gradetreebox h4 {
   font-size: 1rem; }
