@@ -69,29 +69,8 @@ input[type="button"],
 input[type="submit"],
 input[type="reset"] {
     @extend .btn;
-}
-button,
-input.form-submit,
-input[type="button"],
-input[type="submit"],
-input[type="reset"] {
+    @extend .btn-secondary;
     @extend .btn-lineup;
-}
-
-button {
-    &.yui3-button {
-        &.closebutton {
-            background-position: 0 0;
-            &:hover {
-                background-position: 0 0;
-                // Because we assign the button look to every button tag
-                // above, we need to remove some styles from non-standard
-                // looking buttons. Correct fix, assign .btn class to every
-                // actual button in Moodle so we don't need to carpet bomb the
-                // bare button tag.
-            }
-        }
-    }
 }
 
 input {
