@@ -160,4 +160,18 @@ class behat_mod_workshop extends behat_base {
         }
         $this->find('xpath', $xpath);
     }
+
+    /**
+     * Configure portfolio plugin, set value for portfolio instance
+     *
+     * @When /^I set portfolio instance "(?P<portfolioinstance_string>(?:[^"]|\\")*)" to "(?P<value_string>(?:[^"]|\\")*)"$/
+     * @param string $portfolioinstance
+     * @param string $value
+     */
+    public function i_set_portfolio_instance_to($portfolioinstance, $value) {
+        $xpath = "//table[contains(@class, 'generaltable')]//tr//td[contains(text(), '"
+            . $portfolioinstance . "')]/following-sibling::td//select";
+        $select = $this->find('xpath', $xpath);
+        $select->selectOption($value);
+    }
 }
