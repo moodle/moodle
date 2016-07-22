@@ -46,6 +46,8 @@ class chart_series implements JsonSerializable {
     protected $colors = [];
     /** @var string Label for this series. */
     protected $label;
+    /** @var string[] Labels for the values of the series. */
+    protected $labels = null;
     /** @var bool Whether the line of the serie should be smooth or not. */
     protected $smooth = null;
     /** @var string Type of the series. */
@@ -102,6 +104,15 @@ class chart_series implements JsonSerializable {
      */
     public function get_label() {
         return $this->label;
+    }
+
+    /**
+     * Set labels for the values of the series.
+     *
+     * @return array
+     */
+    public function get_labels() {
+        return $this->labels;
     }
 
     /**
@@ -166,6 +177,7 @@ class chart_series implements JsonSerializable {
     public function jsonSerialize() {
         $data = [
             'label' => $this->label,
+            'labels' => $this->labels,
             'type' => $this->type,
             'values' => $this->values,
             'colors' => $this->colors,
@@ -194,6 +206,15 @@ class chart_series implements JsonSerializable {
      */
     public function set_colors(array $colors) {
         $this->colors = $colors;
+    }
+
+    /**
+     * Set labels for the values of the series.
+     *
+     * @param array $labels The labels for the series values.
+     */
+    public function set_labels($labels) {
+        $this->labels = $labels;
     }
 
     /**
