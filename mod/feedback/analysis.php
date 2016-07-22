@@ -78,11 +78,9 @@ echo '<div>';
 if ($check_anonymously) {
     // Print the items in an analysed form.
     foreach ($items as $item) {
-        echo "<table class=\"analysis itemtype_{$item->typ}\">";
         $itemobj = feedback_get_item_class($item->typ);
         $printnr = ($feedback->autonumbering && $item->itemnr) ? ($item->itemnr . '.') : '';
         $itemobj->print_analysed($item, $printnr, $mygroupid);
-        echo '</table>';
     }
 } else {
     echo $OUTPUT->heading_with_help(get_string('insufficient_responses_for_this_group', 'feedback'),

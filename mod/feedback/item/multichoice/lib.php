@@ -207,6 +207,7 @@ class feedback_item_multichoice extends feedback_item_base {
         $analysed_item = $this->get_analysed($item, $groupid, $courseid);
         if ($analysed_item) {
             $itemname = $analysed_item[1];
+            echo "<table class=\"analysis itemtype_{$item->typ}\">";
             echo '<tr><th colspan="2" align="left">';
             echo $itemnr . ' ';
             if (strval($item->label) !== '') {
@@ -214,32 +215,32 @@ class feedback_item_multichoice extends feedback_item_base {
             }
             echo $itemname;
             echo '</th></tr>';
-
+            echo "</table>";
             $analysed_vals = $analysed_item[2];
-            $pixnr = 0;
+            $count = 0;
+            $data = [];
             foreach ($analysed_vals as $val) {
-                $intvalue = $pixnr % 10;
-                $pix = $OUTPUT->pix_url('multichoice/' . $intvalue, 'feedback');
-                $pixspacer = $OUTPUT->pix_url('spacer');
-                $pixnr++;
-                $pixwidth = max(2, intval($val->quotient * FEEDBACK_MAX_PIX_LENGTH));
-                $pixwidthspacer = FEEDBACK_MAX_PIX_LENGTH + 1 - $pixwidth;
                 $quotient = format_float($val->quotient * 100, 2);
                 $str_quotient = '';
                 if ($val->quotient > 0) {
                     $str_quotient = ' ('. $quotient . ' %)';
                 }
-                echo '<tr>';
-                echo '<td class="optionname">' .
-                            format_text(trim($val->answertext), FORMAT_HTML, array('noclean' => true, 'para' => false)).':
-                      </td>
-                      <td class="optioncount" style="width:'.FEEDBACK_MAX_PIX_LENGTH.';">
-                        <img class="feedback_bar_image" alt="'.$intvalue.'" src="'.$pix.'" width="'.$pixwidth.'" />'.
-                        '<img class="feedback_bar_image" alt="" src="'.$pixspacer.'" width="'.$pixwidthspacer.'" />
-                        '.$val->answercount.$str_quotient.'
-                      </td>';
-                echo '</tr>';
+                $answertext = format_text(trim($val->answertext), FORMAT_HTML,
+                        array('noclean' => true, 'para' => false));
+
+                $data['labels'][$count] = $answertext;
+                $data['series'][$count] = $val->answercount;
+                $data['series_labels'][$count] = $str_quotient;
+                $count++;
             }
+            $chart = new \core\chart_bar();
+            $chart->set_horizontal(true);
+            $series = new \core\chart_series(format_string(get_string("responses", "feedback")), $data['series']);
+            $series->set_labels($data['series_labels']);
+            $chart->add_series($series);
+            $chart->set_labels($data['labels']);
+
+            echo $OUTPUT->render($chart);
         }
     }
 

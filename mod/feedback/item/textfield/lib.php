@@ -129,6 +129,7 @@ class feedback_item_textfield extends feedback_item_base {
     public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {
         $values = feedback_get_group_values($item, $groupid, $courseid);
         if ($values) {
+            echo "<table class=\"analysis itemtype_{$item->typ}\">";
             echo '<tr><th colspan="2" align="left">';
             echo $itemnr . ' ';
             if (strval($item->label) !== '') {
@@ -142,6 +143,7 @@ class feedback_item_textfield extends feedback_item_base {
                 echo str_replace("\n", '<br />', $value->value);
                 echo '</td></tr>';
             }
+            echo '</table>';
         }
     }
 
