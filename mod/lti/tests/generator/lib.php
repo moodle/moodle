@@ -41,7 +41,7 @@ class mod_lti_generator extends testing_module_generator {
         $record  = (object) (array) $record;
 
         if (!isset($record->toolurl)) {
-            $record->toolurl = 'http://www.imsglobal.org/developers/LTI/test/v1p1/tool.php';
+            $record->toolurl = '';
         }
         if (!isset($record->resourcekey)) {
             $record->resourcekey = '12345';
