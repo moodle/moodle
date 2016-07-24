@@ -42,8 +42,8 @@ define([], function() {
      * @private
      */
     Tabs.prototype._init = function() {
-        this.messageArea.onDelegateEvent('click', "[data-action='conversations-view']", this._viewConversations.bind(this));
-        this.messageArea.onDelegateEvent('click', "[data-action='contacts-view']", this._viewContacts.bind(this));
+        this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.VIEWCONVERSATIONS, this._viewConversations.bind(this));
+        this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.VIEWCONTACTS, this._viewContacts.bind(this));
     };
 
     /**
@@ -52,7 +52,7 @@ define([], function() {
      * @private
      */
     Tabs.prototype._viewConversations = function() {
-        this.messageArea.trigger('conversations-selected');
+        this.messageArea.trigger(this.messageArea.EVENTS.CONVERSATIONSSELECTED);
     };
 
     /**
@@ -61,7 +61,7 @@ define([], function() {
      * @private
      */
     Tabs.prototype._viewContacts = function() {
-        this.messageArea.trigger('contacts-selected');
+        this.messageArea.trigger(this.messageArea.EVENTS.CONTACTSSELECTED);
     };
 
     return Tabs;

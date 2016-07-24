@@ -43,17 +43,20 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          * @private
          */
         Contacts.prototype._init = function() {
-            this.messageArea.onCustomEvent('conversations-selected', this._viewConversations.bind(this));
-            this.messageArea.onCustomEvent('contacts-selected', this._viewContacts.bind(this));
-            this.messageArea.onCustomEvent('messages-deleted', this._deleteConversations.bind(this));
-            this.messageArea.onCustomEvent('message-send', this._viewConversationsWithUserSelected.bind(this));
-            this.messageArea.onCustomEvent('message-sent', this._viewConversationsWithUserSelected.bind(this));
-            this.messageArea.onCustomEvent('contact-removed', this._removeContact.bind(this));
-            this.messageArea.onCustomEvent('contact-added', this._viewContacts.bind(this));
-            this.messageArea.onCustomEvent('choose-messages-to-delete', this._chooseConversationsToDelete.bind(this));
-            this.messageArea.onCustomEvent('cancel-messages-deleted', this._cancelConversationsToDelete.bind(this));
-            this.messageArea.onDelegateEvent('click', "[data-action='view-contact-msg']", this._viewConversation.bind(this));
-            this.messageArea.onDelegateEvent('click', "[data-action='view-contact-profile']", this._viewContact.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONSSELECTED, this._viewConversations.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONTACTSSELECTED, this._viewContacts.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.MESSAGESDELETED, this._deleteConversations.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.SENDMESSAGE, this._viewConversationsWithUserSelected.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.MESSAGESENT, this._viewConversationsWithUserSelected.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONTACTREMOVED, this._removeContact.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONTACTADDED, this._viewContacts.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CHOOSEMESSAGESTODELETE,
+                this._chooseConversationsToDelete.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CANCELDELETEMESSAGES,
+                this._cancelConversationsToDelete.bind(this));
+            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.VIEWCONVERSATION,
+                this._viewConversation.bind(this));
+            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.VIEWPROFILE, this._viewContact.bind(this));
         };
 
         /**
@@ -115,7 +118,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
 
             var userid = $(event.currentTarget).data('userid');
             this._setSelectedUser(userid);
-            this.messageArea.trigger('conversation-selected', userid);
+            this.messageArea.trigger(this.messageArea.EVENTS.CONVERSATIONSELECTED, userid);
         };
 
         /**
@@ -128,7 +131,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
             if (!this._isCurrentlyDeleting()) {
                 var userid = $(event.currentTarget).data('userid');
                 this._setSelectedUser(userid);
-                this.messageArea.trigger('contact-selected', userid);
+                this.messageArea.trigger(this.messageArea.EVENTS.CONTACTSELECTED, userid);
             }
         };
 
@@ -169,8 +172,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          */
         Contacts.prototype._chooseConversationsToDelete = function() {
             // Only show the checkboxes for the contact if we are also deleting messages.
-            if (this.messageArea.find("[data-region='delete-message-checkbox']").length !== 0) {
-                this.messageArea.find("[data-region='delete-conversation-checkbox']").show();
+            if (this.messageArea.find(this.messageArea.SELECTORS.DELETEMESSAGECHECKBOX).length !== 0) {
+                this.messageArea.find(this.messageArea.SELECTORS.DELETECONVERSATIONCHECKBOX).show();
             }
         };
 
@@ -181,9 +184,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          */
         Contacts.prototype._cancelConversationsToDelete = function() {
             // Uncheck all checkboxes.
-            this.messageArea.find("[data-region='delete-conversation-checkbox'] input:checked").removeAttr('checked');
+            this.messageArea.find(this.messageArea.SELECTORS.DELETECONVERSATIONCHECKBOX + " input:checked").removeAttr('checked');
             // Hide the checkboxes.
-            this.messageArea.find("[data-region='delete-conversation-checkbox']").hide();
+            this.messageArea.find(this.messageArea.SELECTORS.DELETECONVERSATIONCHECKBOX).hide();
         };
 
         /**
@@ -194,13 +197,13 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          * @private
          */
         Contacts.prototype._deleteConversations = function(event, userid) {
-            var checkboxes = this.messageArea.find("[data-region='delete-conversation-checkbox'] input:checked");
+            var checkboxes = this.messageArea.find(this.messageArea.SELECTORS.DELETECONVERSATIONCHECKBOX + " input:checked");
             var requests = [];
 
             // Go through all the checked checkboxes and prepare them for deletion.
             checkboxes.each(function(id, element) {
                 var node = $(element);
-                var otheruserid = node.parents("[data-region='contact']").data('userid');
+                var otheruserid = node.parents(this.messageArea.SELECTORS.CONTACT).data('userid');
                 requests.push({
                     methodname: 'core_message_delete_conversation',
                     args: {
@@ -214,7 +217,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
                 ajax.call(requests)[requests.length - 1].then(function() {
                     for (var i = 0; i <= requests.length - 1; i++) {
                         // Trigger conversation deleted events.
-                        this.messageArea.trigger('conversation-deleted', requests[i].args.otheruserid);
+                        this.messageArea.trigger(this.messageArea.EVENTS.CONVERSATIONDELETED, requests[i].args.otheruserid);
                     }
                 }.bind(this), notification.exception);
             }
@@ -236,7 +239,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          * @private
          */
         Contacts.prototype._removeContact = function(event, userid) {
-            this.messageArea.find("[data-region='contact'][data-userid='" + userid + "']").remove();
+            this.messageArea.find(this.messageArea.SELECTORS.CONTACT + "[data-userid='" + userid + "']").remove();
         };
 
         /**
@@ -247,9 +250,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          */
         Contacts.prototype._setSelectedUser = function(userid) {
             // Remove the 'selected' class from any other contact.
-            this.messageArea.find("[data-region='contact']").removeClass('selected');
+            this.messageArea.find(this.messageArea.SELECTORS.CONTACT).removeClass('selected');
             // Set the tab for the user to selected.
-            this.messageArea.find("[data-region='contact'][data-userid='" + userid + "']").addClass('selected');
+            this.messageArea.find(this.messageArea.SELECTORS.CONTACT + "[data-userid='" + userid + "']").addClass('selected');
         };
 
         /**
@@ -258,7 +261,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          * @return {Boolean}
          */
         Contacts.prototype._isCurrentlyDeleting = function() {
-            if (this.messageArea.find("[data-region='delete-conversation-checkbox']:visible").length !== 0) {
+            if (this.messageArea.find(this.messageArea.SELECTORS.DELETECONVERSATIONCHECKBOX + ":visible").length !== 0) {
                 return true;
             }
 

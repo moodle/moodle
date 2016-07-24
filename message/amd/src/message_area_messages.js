@@ -43,13 +43,13 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          * @private
          */
         Messages.prototype._init = function() {
-            this.messageArea.onCustomEvent('conversation-deleted', this._handleConversationDeleted.bind(this));
-            this.messageArea.onCustomEvent('conversation-selected', this._loadMessages.bind(this));
-            this.messageArea.onCustomEvent('message-send', this._loadMessages.bind(this));
-            this.messageArea.onCustomEvent('choose-messages-to-delete', this._chooseMessagesToDelete.bind(this));
-            this.messageArea.onDelegateEvent('click', "[data-action='send-message']", this._sendMessage.bind(this));
-            this.messageArea.onDelegateEvent('click', "[data-action='delete-messages']", this._deleteMessages.bind(this));
-            this.messageArea.onDelegateEvent('click', "[data-action='cancel-delete-messages']",
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONDELETED, this._handleConversationDeleted.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONSELECTED, this._loadMessages.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.SENDMESSAGE, this._loadMessages.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CHOOSEMESSAGESTODELETE, this._chooseMessagesToDelete.bind(this));
+            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.SENDMESSAGE, this._sendMessage.bind(this));
+            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.DELETEMESSAGES, this._deleteMessages.bind(this));
+            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.CANCELDELETEMESSAGES,
                 this._cancelMessagesToDelete.bind(this));
         };
 
@@ -64,8 +64,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
         Messages.prototype._loadMessages = function(event, userid) {
             // Show loading template.
             templates.render('core/loading', {}).done(function(html, js) {
-                templates.replaceNodeContents("[data-region='messages-area']", html, js);
-            });
+                templates.replaceNodeContents(this.messageArea.SELECTORS.MESSAGESAREA, html, js);
+            }.bind(this));
 
             // Call the web service to get our data.
             var promises = ajax.call([{
@@ -81,7 +81,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
                 // We have the data - lets re-render the template with it.
                 return templates.render('core_message/message_area_messages', data);
             }).then(function(html, js) {
-                templates.replaceNodeContents("[data-region='messages-area']", html, js);
+                templates.replaceNodeContents(this.messageArea.SELECTORS.MESSAGESAREA, html, js);
             }.bind(this)).fail(notification.exception);
         };
 
@@ -99,7 +99,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
                     messages: [
                         {
                             touserid: this._getUserId(),
-                            text: this.messageArea.find("[data-region='send-message-txt']").val()
+                            text: this.messageArea.find(this.messageArea.SELECTORS.SENDMESSAGETEXT).val()
                         }
                     ]
                 }
@@ -110,7 +110,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
                 // Some variables to pass to the trigger.
                 var userid = this._getUserId();
                 // Fire an event to say the message was sent.
-                this.messageArea.trigger('message-sent', userid);
+                this.messageArea.trigger(this.messageArea.EVENTS.MESSAGESENT, userid);
                 // Update the messaging area.
                 this._addMessageToDom();
             }.bind(this)).fail(notification.exception);
@@ -124,9 +124,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          */
         Messages.prototype._chooseMessagesToDelete = function() {
             // Show the checkboxes.
-            this.messageArea.find("[data-region='delete-message-checkbox']").show();
+            this.messageArea.find(this.messageArea.SELECTORS.DELETEMESSAGECHECKBOX).show();
             // Display the confirmation message.
-            var responseSelector = "[data-region='messages-area'] [data-region='response']";
+            var responseSelector = this.messageArea.SELECTORS.MESSAGESAREA + " " +
+                this.messageArea.SELECTORS.MESSAGERESPONSE;
             return templates.render('core_message/message_area_delete_confirmation', {}).then(function(html, js) {
                 templates.replaceNodeContents(responseSelector, html, js);
             });
@@ -139,7 +140,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          */
         Messages.prototype._deleteMessages = function() {
             var userid = this.messageArea.getCurrentUserId();
-            var checkboxes = this.messageArea.find("[data-region='delete-message-checkbox'] input:checked");
+            var checkboxes = this.messageArea.find(this.messageArea.SELECTORS.DELETEMESSAGECHECKBOX + " input:checked");
             var requests = [];
             var messagestoremove = [];
 
@@ -148,7 +149,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
                 var node = $(element);
                 var messageid = node.data('messageid');
                 var isread = node.data('messageread') ? 1 : 0;
-                var message = this.messageArea.find("[data-region='message'][data-id='" + messageid + '' + isread + "']");
+                var message = this.messageArea.find(this.messageArea.SELECTORS.MESSAGE +
+                    "[data-id='" + messageid + '' + isread + "']");
                 messagestoremove.push(message);
                 requests.push({
                     methodname: 'core_message_delete_message',
@@ -171,8 +173,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
                     $.each(messagestoremove, function(key, message) {
                         // First - let's make sure there are no more messages in that time block.
                         var blocktime = message.data('blocktime');
-                        if (this.messageArea.find("[data-region='message'][data-blocktime='" + blocktime + "']").length === 0) {
-                            this.messageArea.find("[data-region='blocktime'][data-blocktime='" + blocktime + "']").remove();
+                        if (this.messageArea.find(this.messageArea.SELECTORS.MESSAGE +
+                            "[data-blocktime='" + blocktime + "']").length === 0) {
+                            this.messageArea.find(this.messageArea.SELECTORS.BLOCKTIME +
+                                "[data-blocktime='" + blocktime + "']").remove();
                         }
                     }.bind(this));
                 }.bind(this), notification.exception);
@@ -182,8 +186,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
             this._hideDeleteAction();
 
             // Trigger event letting other modules know messages were deleted.
-            this.messageArea.trigger('messages-deleted',
-                this.messageArea.find("[data-region='messages']").data('userid'));
+            this.messageArea.trigger(this.messageArea.EVENTS.MESSAGESDELETED,
+                this.messageArea.find(this.messageArea.SELECTORS.MESSAGES).data('userid'));
         };
 
         /**
@@ -196,7 +200,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
         Messages.prototype._handleConversationDeleted = function(event, userid) {
             if (userid == this._getUserId()) {
                 // Clear the current panel.
-                this.messageArea.find("[data-region='messages-area']").empty();
+                this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA).empty();
             }
         };
 
@@ -208,11 +212,11 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          */
         Messages.prototype._hideDeleteAction = function() {
             // Uncheck all checkboxes.
-            this.messageArea.find("[data-region='delete-message-checkbox'] input:checked").removeAttr('checked');
+            this.messageArea.find(this.messageArea.SELECTORS.DELETEMESSAGECHECKBOX + " input:checked").removeAttr('checked');
             // Hide the checkboxes.
-            this.messageArea.find("[data-region='delete-message-checkbox']").hide();
+            this.messageArea.find(this.messageArea.SELECTORS.DELETEMESSAGECHECKBOX).hide();
             // Remove the confirmation message.
-            var responseSelector = "[data-region='messages-area'] [data-region='response']";
+            var responseSelector = this.messageArea.SELECTORS.MESSAGESAREA + " " + this.messageArea.SELECTORS.MESSAGERESPONSE;
             this.messageArea.find(responseSelector).empty();
             // Only show a response text area if we are viewing the logged in user's messages.
             if (this.messageArea.getLoggedInUserId() == this.messageArea.getCurrentUserId()) {
@@ -231,7 +235,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
             // Hide the items responsible for deleting messages.
             this._hideDeleteAction();
             // Trigger event letting other modules know message deletion was canceled.
-            this.messageArea.trigger('cancel-messages-deleted');
+            this.messageArea.trigger(this.messageArea.EVENTS.CANCELDELETEMESSAGES);
         };
 
         /**
@@ -254,9 +258,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
             return promises[0].then(function(data) {
                 return templates.render('core_message/message_area_message', data);
             }).then(function(html, js) {
-                templates.appendNodeContents("[data-region='messages']", html, js);
+                templates.appendNodeContents(this.messageArea.SELECTORS.MESSAGES, html, js);
                 // Empty the response text area.
-                this.messageArea.find("[data-region='send-message-txt']").val('');
+                this.messageArea.find(this.messageArea.SELECTORS.SENDMESSAGETEXT).val('');
             }.bind(this)).fail(notification.exception);
         };
 
@@ -267,7 +271,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          * @private
          */
         Messages.prototype._getUserId = function() {
-            return this.messageArea.find("[data-region='messages']").data('userid');
+            return this.messageArea.find(this.messageArea.SELECTORS.MESSAGES).data('userid');
         };
 
         return Messages;

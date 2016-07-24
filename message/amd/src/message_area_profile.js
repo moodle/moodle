@@ -43,13 +43,16 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          * @private
          */
         Profile.prototype._init = function() {
-            this.messageArea.onCustomEvent('contact-selected', this._viewProfile.bind(this));
-            this.messageArea.onDelegateEvent('click', "[data-action='profile-view']", this._viewFullProfile.bind(this));
-            this.messageArea.onDelegateEvent('click', "[data-action='profile-send-message']", this._sendMessage.bind(this));
-            this.messageArea.onDelegateEvent('click', "[data-action='profile-unblock-contact']", this._unblockContact.bind(this));
-            this.messageArea.onDelegateEvent('click', "[data-action='profile-block-contact']", this._blockContact.bind(this));
-            this.messageArea.onDelegateEvent('click', "[data-action='profile-add-contact']", this._addContact.bind(this));
-            this.messageArea.onDelegateEvent('click', "[data-action='profile-remove-contact']", this._removeContact.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONTACTSELECTED, this._viewProfile.bind(this));
+            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.PROFILEVIEW, this._viewFullProfile.bind(this));
+            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.PROFILESENDMESSAGE, this._sendMessage.bind(this));
+            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.PROFILEUNBLOCKCONTACT,
+                this._unblockContact.bind(this));
+            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.PROFILEBLOCKCONTACT,
+                this._blockContact.bind(this));
+            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.PROFILEADDCONTACT, this._addContact.bind(this));
+            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.PROFILEREMOVECONTACT,
+                this._removeContact.bind(this));
         };
 
         /**
@@ -63,8 +66,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         Profile.prototype._viewProfile = function(event, userid) {
             // Show loading template.
             templates.render('core/loading', {}).done(function(html, js) {
-                templates.replaceNodeContents("[data-region='messages-area']", html, js);
-            });
+                templates.replaceNodeContents(this.messageArea.SELECTORS.MESSAGESAREA, html, js);
+            }.bind(this));
 
             // Call the web service to return the profile.
             var promises = ajax.call([{
@@ -79,8 +82,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             return promises[0].then(function(data) {
                 return templates.render('core_message/message_area_profile', data);
             }).then(function(html, js) {
-                templates.replaceNodeContents("[data-region='messages-area']", html, js);
-            }).fail(notification.exception);
+                templates.replaceNodeContents(this.messageArea.SELECTORS.MESSAGESAREA, html, js);
+            }.bind(this)).fail(notification.exception);
         };
 
         /**
@@ -98,7 +101,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          * @private
          */
         Profile.prototype._sendMessage = function() {
-            this.messageArea.trigger('message-send', this._getUserId());
+            this.messageArea.trigger(this.messageArea.EVENTS.SENDMESSAGE, this._getUserId());
         };
 
         /**
@@ -111,7 +114,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             var action = this._performAction('core_message_block_contacts', 'unblockcontact', 'profile-block-contact',
                 'profile-unblock-contact');
             return action.then(function() {
-                this.messageArea.trigger('contact-blocked', this._getUserId());
+                this.messageArea.trigger(this.messageArea.EVENTS.CONTACTBLOCKED, this._getUserId());
             }.bind(this));
         };
 
@@ -125,7 +128,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             var action = this._performAction('core_message_unblock_contacts', 'blockcontact', 'profile-unblock-contact',
                 'profile-block-contact');
             return action.then(function() {
-                this.messageArea.trigger('contact-unblocked', this._getUserId());
+                this.messageArea.trigger(this.messageArea.EVENTS.CONTACTUNBLOCKED, this._getUserId());
             }.bind(this));
         };
 
@@ -139,7 +142,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             var action = this._performAction('core_message_create_contacts', 'removecontact', 'profile-add-contact',
                 'profile-remove-contact');
             return action.then(function() {
-                this.messageArea.trigger('contact-added', this._getUserId());
+                this.messageArea.trigger(this.messageArea.EVENTS.CONTACTADDED, this._getUserId());
             }.bind(this));
         };
 
@@ -153,7 +156,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             var action = this._performAction('core_message_delete_contacts', 'addcontact', 'profile-remove-contact',
                 'profile-add-contact');
             return action.then(function() {
-                this.messageArea.trigger('contact-removed', this._getUserId());
+                this.messageArea.trigger(this.messageArea.EVENTS.CONTACTREMOVED, this._getUserId());
             }.bind(this));
         };
 
@@ -206,7 +209,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          * @private
          */
         Profile.prototype._getUserId = function() {
-            return this.messageArea.find("[data-region='profile']").data('userid');
+            return this.messageArea.find(this.messageArea.SELECTORS.PROFILE).data('userid');
         };
 
         return Profile;

@@ -35,6 +35,54 @@ define(['jquery', 'core_message/message_area_actions', 'core_message/message_are
             this._init();
         }
 
+        /** @type {Object} The list of selectors for the message area. */
+        Messagearea.prototype.SELECTORS = {
+            BLOCKTIME: "[data-region='blocktime']",
+            CANCELDELETEMESSAGES: "[data-action='cancel-delete-messages']",
+            CONTACT: "[data-region='contact']",
+            CONTACTS: "[data-region='contacts'][data-region-content='contacts']",
+            CONVERSATIONS: "[data-region='contacts'][data-region-content='conversations']",
+            DELETECONVERSATIONCHECKBOX: "[data-region='delete-conversation-checkbox']",
+            DELETEMESSAGES: "[data-action='delete-messages']",
+            DELETEMESSAGECHECKBOX: "[data-region='delete-message-checkbox']",
+            LASTMESSAGE: '.lastmessage',
+            MESSAGE: "[data-region='message']",
+            MESSAGES: "[data-region='messages']",
+            MESSAGESAREA: "[data-region='messages-area']",
+            MESSAGERESPONSE: "[data-region='response']",
+            PROFILE: "[data-region='profile']",
+            PROFILEADDCONTACT: "[data-action='profile-add-contact']",
+            PROFILEBLOCKCONTACT: "[data-action='profile-block-contact']",
+            PROFILEREMOVECONTACT: "[data-action='profile-remove-contact']",
+            PROFILESENDMESSAGE: "[data-action='profile-send-message']",
+            PROFILEUNBLOCKCONTACT: "[data-action='profile-unblock-contact']",
+            PROFILEVIEW: "[data-action='profile-view']",
+            SENDMESSAGE: "[data-action='send-message']",
+            SENDMESSAGETEXT: "[data-region='send-message-txt']",
+            VIEWCONTACTS: "[data-action='contacts-view']",
+            VIEWCONVERSATION: "[data-action='view-contact-msg']",
+            VIEWCONVERSATIONS: "[data-action='conversations-view']",
+            VIEWPROFILE: "[data-action='view-contact-profile']"
+        };
+
+        /** @type {Object} The list of events triggered in the message area. */
+        Messagearea.prototype.EVENTS = {
+            CANCELDELETEMESSAGES: 'cancel-delete-messages',
+            CHOOSEMESSAGESTODELETE: 'choose-messages-to-delete',
+            CONTACTADDED: 'contact-added',
+            CONTACTBLOCKED: 'contact-blocked',
+            CONTACTREMOVED: 'contact-removed',
+            CONTACTSELECTED: 'contact-selected',
+            CONTACTSSELECTED: 'contacts-selected',
+            CONTACTUNBLOCKED: 'contact-unblocked',
+            CONVERSATIONDELETED: 'conversation-deleted',
+            CONVERSATIONSELECTED: 'conversation-selected',
+            CONVERSATIONSSELECTED: 'conversations-selected',
+            MESSAGESDELETED: 'messages-deleted',
+            MESSAGESENT: 'message-sent',
+            SENDMESSAGE: 'message-send'
+        };
+
         /** @type {jQuery} The jQuery node for the page region containing the message area. */
         Messagearea.prototype.node = null;
 

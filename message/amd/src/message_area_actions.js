@@ -39,7 +39,7 @@ define([], function() {
      * Handles when we have selected to delete messages.
      */
     Actions.prototype.chooseMessagesToDelete = function() {
-        this.messageArea.trigger('choose-messages-to-delete');
+        this.messageArea.trigger(this.messageArea.EVENTS.CHOOSEMESSAGESTODELETE);
     };
 
     return Actions;
