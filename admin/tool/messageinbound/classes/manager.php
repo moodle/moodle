@@ -103,6 +103,15 @@ class manager {
             'debug'    => empty($CFG->debugimap) ? null : fopen('php://stderr', 'w'),
         );
 
+        if (strpos($configuration['hostspec'], ':')) {
+            $hostdata = explode(':', $configuration['hostspec']);
+            if (count($hostdata) === 2) {
+                // A hostname in the format hostname:port has been provided.
+                $configuration['hostspec'] = $hostdata[0];
+                $configuration['port'] = $hostdata[1];
+            }
+        }
+
         $this->client = new \Horde_Imap_Client_Socket($configuration);
 
         try {
