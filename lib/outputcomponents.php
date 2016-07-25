@@ -2645,7 +2645,7 @@ class block_move_target {
  * @package core
  * @category output
  */
-class custom_menu_item implements renderable {
+class custom_menu_item implements renderable, templatable {
 
     /**
      * @var string The text to show for the item
@@ -2831,6 +2831,37 @@ class custom_menu_item implements renderable {
      */
     public function set_url(moodle_url $url) {
         $this->url = $url;
+    }
+
+    /**
+     * Export this data so it can be used as the context for a mustache template.
+     *
+     * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
+     * @return array
+     */
+    public function export_for_template(renderer_base $output) {
+        global $CFG;
+
+        require_once($CFG->libdir . '/externallib.php');
+
+        $syscontext = context_system::instance();
+
+        $context = new stdClass();
+        $context->text = external_format_string($this->text, $syscontext->id);
+        $context->url = $this->url ? $this->url->out() : null;
+        $context->title = external_format_string($this->title, $syscontext->id);
+        $context->sort = $this->sort;
+        $context->children = array();
+        if (preg_match("/^#+$/", $this->text)) {
+            $context->divider = true;
+        }
+        $context->haschildren = !empty($this->children) && (count($this->children) > 0);
+        foreach ($this->children as $child) {
+            $child = $child->export_for_template($output);
+            array_push($context->children, $child);
+        }
+
+        return $context;
     }
 }
 

@@ -23,6 +23,7 @@ use custom_menu_item;
 use custom_menu;
 use block_contents;
 use stdClass;
+use moodle_url;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -111,7 +112,7 @@ class core_renderer extends \core_renderer {
         }
 
         if ($haslangmenu) {
-            $strlang =  get_string('language');
+            $strlang = get_string('language');
             $currentlang = current_language();
             if (isset($langs[$currentlang])) {
                 $currentlang = $langs[$currentlang];
@@ -124,69 +125,12 @@ class core_renderer extends \core_renderer {
             }
         }
 
-        $content = '<ul class="nav">';
-        foreach ($menu->get_children() as $item) {
-            $content .= $this->render_custom_menu_item($item, 1);
-        }
-
-        return $content.'</ul>';
-    }
-
-    /*
-     * This code renders the custom menu items for the
-     * bootstrap dropdown menu.
-     */
-    protected function render_custom_menu_item(custom_menu_item $menunode, $level = 0 ) {
-        static $submenucount = 0;
-
         $content = '';
-        if ($menunode->has_children()) {
-
-            if ($level == 1) {
-                $class = 'dropdown';
-            } else {
-                $class = 'dropdown-submenu';
-            }
-
-            if ($menunode === $this->language) {
-                $class .= ' langmenu';
-            }
-            $content = html_writer::start_tag('li', array('class' => $class));
-            // If the child has menus render it as a sub menu.
-            $submenucount++;
-            if ($menunode->get_url() !== null) {
-                $url = $menunode->get_url();
-            } else {
-                $url = '#cm_submenu_'.$submenucount;
-            }
-            $content .= html_writer::start_tag('a', array('href'=>$url, 'class'=>'dropdown-toggle', 'data-toggle'=>'dropdown', 'title'=>$menunode->get_title()));
-            $content .= $menunode->get_text();
-            if ($level == 1) {
-                $content .= '<b class="caret"></b>';
-            }
-            $content .= '</a>';
-            $content .= '<ul class="dropdown-menu">';
-            foreach ($menunode->get_children() as $menunode) {
-                $content .= $this->render_custom_menu_item($menunode, 0);
-            }
-            $content .= '</ul>';
-        } else {
-            // The node doesn't have children so produce a final menuitem.
-            // Also, if the node's text matches '####', add a class so we can treat it as a divider.
-            if (preg_match("/^#+$/", $menunode->get_text())) {
-                // This is a divider.
-                $content = '<li class="divider">&nbsp;</li>';
-            } else {
-                $content = '<li>';
-                if ($menunode->get_url() !== null) {
-                    $url = $menunode->get_url();
-                } else {
-                    $url = '#';
-                }
-                $content .= html_writer::link($url, $menunode->get_text(), array('title' => $menunode->get_title()));
-                $content .= '</li>';
-            }
+        foreach ($menu->get_children() as $item) {
+            $context = $item->export_for_template($this);
+            $content .= $this->render_from_template('core/custom_menu_item', $context);
         }
+
         return $content;
     }
 
