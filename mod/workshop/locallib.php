@@ -2486,6 +2486,9 @@ class workshop {
      * @return array
      */
     public function submission_content_options() {
+        global $CFG;
+        require_once($CFG->dirroot.'/repository/lib.php');
+
         return array(
             'trusttext' => true,
             'subdirs' => false,
@@ -2502,6 +2505,8 @@ class workshop {
      * @return array
      */
     public function submission_attachment_options() {
+        global $CFG;
+        require_once($CFG->dirroot.'/repository/lib.php');
 
         $options = array(
             'subdirs' => true,
@@ -2523,12 +2528,16 @@ class workshop {
      * @return array
      */
     public function overall_feedback_content_options() {
+        global $CFG;
+        require_once($CFG->dirroot.'/repository/lib.php');
+
         return array(
             'subdirs' => 0,
             'maxbytes' => $this->overallfeedbackmaxbytes,
             'maxfiles' => $this->overallfeedbackfiles,
             'changeformat' => 1,
             'context' => $this->context,
+            'return_types' => FILE_INTERNAL,
         );
     }
 
@@ -2538,6 +2547,8 @@ class workshop {
      * @return array
      */
     public function overall_feedback_attachment_options() {
+        global $CFG;
+        require_once($CFG->dirroot.'/repository/lib.php');
 
         $options = array(
             'subdirs' => 1,
