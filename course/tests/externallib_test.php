@@ -724,6 +724,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $context = context_course::instance($course->id);
         $roleid = $this->assignUserCapability('moodle/course:view', $context->id);
         $this->assignUserCapability('moodle/course:update', $context->id, $roleid);
+        $this->assignUserCapability('mod/data:view', $context->id, $roleid);
 
         $conditions = array('course' => $course->id, 'section' => 2);
         $DB->set_field('course_sections', 'summary', 'Text with iframe <iframe src="https://moodle.org"></iframe>', $conditions);

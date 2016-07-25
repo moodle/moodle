@@ -99,6 +99,7 @@ $string['data:viewanyrating'] = 'View total ratings that anyone received';
 $string['data:viewentry'] = 'View entries';
 $string['data:viewrating'] = 'View the total rating you received';
 $string['data:writeentry'] = 'Write entries';
+$string['data:view'] = 'View database activity';
 $string['date'] = 'Date';
 $string['dateentered'] = 'Date entered';
 $string['defaultfielddelimiter'] = '(default is the comma character)';
