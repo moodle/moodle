@@ -37,7 +37,7 @@ class chart_bar extends chart_base {
     /** @var bool Whether the bars should be displayed horizontally or not. */
     protected $horizontal = false;
 
-   /**
+    /**
     * Add the horizontal to the parent and return the serialized data.
     *
     * @return array

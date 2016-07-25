@@ -197,14 +197,14 @@ class feedback_item_multichoicerated extends feedback_item_base {
                 $answertext = format_text(trim($val->answertext), FORMAT_HTML,
                         array('noclean' => true, 'para' => false));
                 if ($val->quotient > 0) {
-                    $str_quotient = ' ('.$quotient.' %)';
+                    $strquotient = ' ('.$quotient.' %)';
                 } else {
-                    $str_quotient = '';
+                    $strquotient = '';
                 }
 
                 $data['labels'][$count] = $answertext;
                 $data['series'][$count] = $val->answercount;
-                $data['series_labels'][$count] = $str_quotient;
+                $data['series_labels'][$count] = $strquotient;
                 $count++;
             }
             $chart = new \core\chart_bar();

@@ -319,7 +319,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         $percentageamount = 0;
         foreach ($choices->options as $optionid => $option) {
             if($choices->numberofuser > 0) {
-                $percentageamount = ((float)count($option->user)/(float)$choices->numberofuser)*100.0;
+                $percentageamount = ((float)count($option->user) / (float)$choices->numberofuser) * 100.0;
             }
 
             $data['labels'][$count] = $option->text;

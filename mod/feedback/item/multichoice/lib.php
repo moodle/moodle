@@ -221,16 +221,16 @@ class feedback_item_multichoice extends feedback_item_base {
             $data = [];
             foreach ($analysed_vals as $val) {
                 $quotient = format_float($val->quotient * 100, 2);
-                $str_quotient = '';
+                $strquotient = '';
                 if ($val->quotient > 0) {
-                    $str_quotient = ' ('. $quotient . ' %)';
+                    $strquotient = ' ('. $quotient . ' %)';
                 }
                 $answertext = format_text(trim($val->answertext), FORMAT_HTML,
                         array('noclean' => true, 'para' => false));
 
                 $data['labels'][$count] = $answertext;
                 $data['series'][$count] = $val->answercount;
-                $data['series_labels'][$count] = $str_quotient;
+                $data['series_labels'][$count] = $strquotient;
                 $count++;
             }
             $chart = new \core\chart_bar();

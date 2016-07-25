@@ -392,11 +392,11 @@ function report_stats_print_chart($courseid, $report, $time, $mode, $userid = 0,
                 $missedlines[] = $stat->timeend;
             }
             if ($stat->roleid != 0) {
-                if (!array_key_exists($stat->roleid,$roles)) {
+                if (!array_key_exists($stat->roleid, $roles)) {
                     $roles[$stat->roleid] = $rolenames[$stat->roleid];
                 }
             } else {
-                if (!array_key_exists($stat->roleid,$roles)) {
+                if (!array_key_exists($stat->roleid, $roles)) {
                     $roles[$stat->roleid] = get_string('all');
                 }
             }

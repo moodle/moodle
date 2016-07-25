@@ -17,8 +17,7 @@
 /**
  * This file contains functions used by the course overview report.
  *
- * @package    report
- * @subpackage courseoverview
+ * @package    report_courseoverview
  * @copyright  2016 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -44,8 +43,8 @@ function report_courseoverview_print_chart($report, $time, $numcourses) {
     } else {
         $sql = "SELECT courseid, $param->fields
                   FROM {" . 'stats_' . $param->table . "}
-                 WHERE timeend >= $param->timeafter 
-                   AND stattype = 'activity' 
+                 WHERE timeend >= $param->timeafter
+                   AND stattype = 'activity'
                    AND roleid = 0
               GROUP BY courseid
                    $param->extras

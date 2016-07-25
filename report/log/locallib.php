@@ -71,7 +71,7 @@ function report_log_print_graph($course, $user, $typeormode, $date=0, $logreader
     if ($typeormode == 'today' || $typeormode == 'userday.png') {
         $logs = report_log_usertoday_data($course, $user, $date, $logreader);
         $title = get_string("hitsoncoursetoday", "", $a);
-    } elseif ($typeormode == 'all' || $typeormode == 'usercourse.png') {
+    } else if ($typeormode == 'all' || $typeormode == 'usercourse.png') {
         $logs = report_log_userall_data($course, $user, $logreader);
         $title = get_string("hitsoncourse", "", $a);
     }

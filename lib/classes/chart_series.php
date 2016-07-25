@@ -222,7 +222,7 @@ class chart_series implements JsonSerializable {
      *
      * Only applicable for line chart or a line series, if null it assumes the chart default (not smooth).
      *
-     * @param bool true if the line should be smooth, false if not.
+     * @param bool $smooth True if the line should be smooth, false for tensioned lines.
      */
     public function set_smooth($smooth) {
         $this->smooth = $smooth;
