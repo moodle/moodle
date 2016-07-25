@@ -126,4 +126,35 @@ class quiz_overview_report_testcase extends advanced_testcase {
         $this->assertArrayHasKey($student3->id . '#0', $table->rawdata);
         $this->assertEquals(0, $table->rawdata[$student3->id . '#0']->gradedattempt);
     }
+
+    /**
+     * Bands provider.
+     * @return array
+     */
+    public function get_bands_count_and_width_provider() {
+        return [
+            [10, [20, .5]],
+            [20, [20, 1]],
+            [30, [15, 2]],
+            // TODO MDL-55068 Handle bands better when grade is 50.
+            // [50, [10, 5]],
+            [100, [20, 5]],
+            [200, [20, 10]],
+        ];
+    }
+
+    /**
+     * Test bands.
+     *
+     * @dataProvider get_bands_count_and_width_provider
+     * @param int $grade grade
+     * @param array $expected
+     */
+    public function test_get_bands_count_and_width($grade, $expected) {
+        $this->resetAfterTest(true);
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => SITEID, 'grade' => $grade]);
+        $this->assertEquals($expected, quiz_overview_report::get_bands_count_and_width($quiz));
+    }
+
 }

@@ -111,8 +111,12 @@ function quiz_statistics_qubaids_condition($quizid, $groupstudents, $whichattemp
  * This helper function returns a sequence of colours each time it is called.
  * Used for choosing colours for graph data series.
  * @return string colour name.
+ * @deprecated since Moodle 3.2
  */
 function quiz_statistics_graph_get_new_colour() {
+    debugging('The function quiz_statistics_graph_get_new_colour() is deprecated, please do not use it any more. '
+        . 'Colours will be handled by the charting library directly.', DEBUG_DEVELOPER);
+
     static $colourindex = -1;
     $colours = array('red', 'green', 'yellow', 'orange', 'purple', 'black',
         'maroon', 'blue', 'ltgreen', 'navy', 'ltred', 'ltltgreen', 'ltltorange',

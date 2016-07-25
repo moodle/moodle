@@ -178,6 +178,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         global $OUTPUT;
         $analysed_item = $this->get_analysed($item, $groupid, $courseid);
         if ($analysed_item) {
+            echo "<table class=\"analysis itemtype_{$item->typ}\">";
             echo '<tr><th colspan="2" align="left">';
             echo $itemnr . ' ';
             if (strval($item->label) !== '') {
@@ -185,34 +186,35 @@ class feedback_item_multichoicerated extends feedback_item_base {
             }
             echo $analysed_item[1];
             echo '</th></tr>';
+            echo '</table>';
             $analysed_vals = $analysed_item[2];
-            $pixnr = 0;
             $avg = 0.0;
+            $count = 0;
+            $data = [];
             foreach ($analysed_vals as $val) {
-                $intvalue = $pixnr % 10;
-                $pix = $OUTPUT->pix_url('multichoice/' . $intvalue, 'feedback');
-                $pixspacer = $OUTPUT->pix_url('spacer');
-                $pixnr++;
-                $pixwidth = intval($val->quotient * FEEDBACK_MAX_PIX_LENGTH);
-                $pixwidthspacer = FEEDBACK_MAX_PIX_LENGTH + 1 - $pixwidth;
-
                 $avg += $val->avg;
                 $quotient = format_float($val->quotient * 100, 2);
-                echo '<tr>';
-                echo '<td class="optionname">';
-                echo '<span class="weight">('.$val->value.') </span>'.
-                        format_text(trim($val->answertext), FORMAT_HTML, array('noclean' => true, 'para' => false)).':</td>';
-                echo '<td class="optionvalue" style="width: '.FEEDBACK_MAX_PIX_LENGTH.'">';
-                echo '<img class="feedback_bar_image" alt="'.$intvalue.'" src="'.$pix.'" width="'.$pixwidth.'" />';
-                echo '<img class="feedback_bar_image" alt="" src="'.$pixspacer.'" width="'.$pixwidthspacer.'" /> ';
-                echo $val->answercount;
+                $answertext = format_text(trim($val->answertext), FORMAT_HTML,
+                        array('noclean' => true, 'para' => false));
                 if ($val->quotient > 0) {
-                    echo ' ('.$quotient.' %)';
+                    $strquotient = ' ('.$quotient.' %)';
                 } else {
-                    echo '';
+                    $strquotient = '';
                 }
-                echo '</td></tr>';
+
+                $data['labels'][$count] = $answertext;
+                $data['series'][$count] = $val->answercount;
+                $data['series_labels'][$count] = $strquotient;
+                $count++;
             }
+            $chart = new \core\chart_bar();
+            $chart->set_horizontal(true);
+            $series = new \core\chart_series(format_string(get_string("responses", "feedback")), $data['series']);
+            $series->set_labels($data['series_labels']);
+            $chart->add_series($series);
+            $chart->set_labels($data['labels']);
+            echo $OUTPUT->render($chart);
+
             $avg = format_float($avg, 2);
             echo '<tr><td align="left" colspan="2"><b>';
             echo get_string('average', 'feedback').': '.$avg.'</b>';

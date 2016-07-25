@@ -1680,6 +1680,7 @@ $string['showallcourses'] = 'Show all courses';
 $string['showallusers'] = 'Show all users';
 $string['showblockcourse'] = 'Show list of courses containing block';
 $string['showcategory'] = 'Show {$a}';
+$string['showchartdata'] = 'Show chart data';
 $string['showcomments'] = 'Show/hide comments';
 $string['showcommentsnonjs'] = 'Show comments';
 $string['showdescription'] = 'Display description on course page';

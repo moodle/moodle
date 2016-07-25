@@ -232,24 +232,25 @@ class quiz_overview_report extends quiz_attempts_report {
 
         if (!$table->is_downloading() && $options->usercanseegrades) {
             $output = $PAGE->get_renderer('mod_quiz');
+            list($bands, $bandwidth) = self::get_bands_count_and_width($quiz);
+            $labels = self::get_bands_labels($bands, $bandwidth, $quiz);
+
             if ($currentgroup && $groupstudents) {
                 list($usql, $params) = $DB->get_in_or_equal($groupstudents);
                 $params[] = $quiz->id;
-                if ($DB->record_exists_select('quiz_grades', "userid $usql AND quiz = ?",
-                        $params)) {
-                    $imageurl = new moodle_url('/mod/quiz/report/overview/overviewgraph.php',
-                            array('id' => $quiz->id, 'groupid' => $currentgroup));
-                    $graphname = get_string('overviewreportgraphgroup', 'quiz_overview',
-                            groups_get_group_name($currentgroup));
-                    echo $output->graph($imageurl, $graphname);
+                if ($DB->record_exists_select('quiz_grades', "userid $usql AND quiz = ?", $params)) {
+                    $data = quiz_report_grade_bands($bandwidth, $bands, $quiz->id, $groupstudents);
+                    $chart = self::get_chart($labels, $data);
+                    $graphname = get_string('overviewreportgraphgroup', 'quiz_overview', groups_get_group_name($currentgroup));
+                    echo $output->chart($chart, $graphname);
                 }
             }
 
             if ($DB->record_exists('quiz_grades', array('quiz'=> $quiz->id))) {
-                $imageurl = new moodle_url('/mod/quiz/report/overview/overviewgraph.php',
-                        array('id' => $quiz->id));
+                $data = quiz_report_grade_bands($bandwidth, $bands, $quiz->id, []);
+                $chart = self::get_chart($labels, $data);
                 $graphname = get_string('overviewreportgraph', 'quiz_overview');
-                echo $output->graph($imageurl, $graphname);
+                echo $output->chart($chart, $graphname);
             }
         }
         return true;
@@ -565,5 +566,71 @@ class quiz_overview_report extends quiz_attempts_report {
         quiz_update_all_attempt_sumgrades($quiz);
         quiz_update_all_final_grades($quiz);
         quiz_update_grades($quiz);
+    }
+
+    /**
+     * Get the bands configuration for the quiz.
+     *
+     * This returns the configuration for having between 11 and 20 bars in
+     * a chart based on the maximum grade to be given on a quiz. The width of
+     * a band is the number of grade points it encapsulates.
+     *
+     * @param object $quiz The quiz object.
+     * @return array Contains the number of bands, and their width.
+     */
+    public static function get_bands_count_and_width($quiz) {
+        $bands = $quiz->grade;
+        while ($bands > 20 || $bands <= 10) {
+            if ($bands > 50) {
+                $bands /= 5;
+            } else if ($bands > 20) {
+                $bands /= 2;
+            }
+            if ($bands < 4) {
+                $bands *= 5;
+            } else if ($bands <= 10) {
+                $bands *= 2;
+            }
+        }
+        // See MDL-34589. Using doubles as array keys causes problems in PHP 5.4, hence the explicit cast to int.
+        $bands = (int) ceil($bands);
+        return [$bands, $quiz->grade / $bands];
+    }
+
+    /**
+     * Get the bands labels.
+     *
+     * @param int $bands The number of bands.
+     * @param int $bandwidth The band width.
+     * @param object $quiz The quiz object.
+     * @return string[] The labels.
+     */
+    public static function get_bands_labels($bands, $bandwidth, $quiz) {
+        $bandlabels = [];
+        for ($i = 1; $i <= $bands; $i++) {
+            $bandlabels[] = quiz_format_grade($quiz, ($i - 1) * $bandwidth) . ' - ' . quiz_format_grade($quiz, $i * $bandwidth);
+        }
+        return $bandlabels;
+    }
+
+    /**
+     * Get a chart.
+     *
+     * @param string[] $labels Chart labels.
+     * @param int[] $data The data.
+     * @return \core\chart_base
+     */
+    protected static function get_chart($labels, $data) {
+        $chart = new \core\chart_bar();
+        $chart->set_labels($labels);
+        $chart->get_xaxis(0, true)->set_label(get_string('grade'));
+
+        $yaxis = $chart->get_yaxis(0, true);
+        $yaxis->set_label(get_string('participants'));
+        $yaxis->set_stepsize(max(1, round(max($data) / 10)));
+
+        $series = new \core\chart_series(get_string('participants'), $data);
+        $chart->add_series($series);
+        return $chart;
     }
 }

@@ -152,6 +152,7 @@ class feedback_item_info extends feedback_item_base {
     }
 
     public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {
+        echo "<table class=\"analysis itemtype_{$item->typ}\">";
         $analysed_item = $this->get_analysed($item, $groupid, $courseid);
         $data = $analysed_item->data;
         if (is_array($data)) {
@@ -170,6 +171,7 @@ class feedback_item_info extends feedback_item_base {
                 echo '</td></tr>';
             }
         }
+        echo '</table>';
     }
 
     public function excelprint_item(&$worksheet, $row_offset,

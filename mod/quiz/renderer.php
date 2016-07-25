@@ -1234,6 +1234,17 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Outputs a chart.
+     *
+     * @param \core\chart_base $chart The chart.
+     * @param string $title The title to display above the graph.
+     * @return string HTML fragment for the graph.
+     */
+    public function chart(\core\chart_base $chart, $title) {
+        return $this->heading($title, 3) . html_writer::tag('div', $this->render($chart), array('class' => 'graph'));
+    }
+
+    /**
      * Output a graph, or a message saying that GD is required.
      * @param moodle_url $url the URL of the graph.
      * @param string $title the title to display above the graph.
