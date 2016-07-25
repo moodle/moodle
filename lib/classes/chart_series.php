@@ -174,7 +174,7 @@ class chart_series implements JsonSerializable {
      *
      * @return array
      */
-    public function jsonSerialize() {
+    public function jsonSerialize() { // @codingStandardsIgnoreLine (CONTRIB-6469).
         $data = [
             'label' => $this->label,
             'labels' => $this->labels,

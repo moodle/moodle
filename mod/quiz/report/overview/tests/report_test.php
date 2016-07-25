@@ -145,7 +145,10 @@ class quiz_overview_report_testcase extends advanced_testcase {
 
     /**
      * Test bands.
+     *
      * @dataProvider get_bands_count_and_width_provider
+     * @param int $grade grade
+     * @param array $expected
      */
     public function test_get_bands_count_and_width($grade, $expected) {
         $this->resetAfterTest(true);

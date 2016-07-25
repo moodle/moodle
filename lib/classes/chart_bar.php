@@ -38,11 +38,11 @@ class chart_bar extends chart_base {
     protected $horizontal = false;
 
     /**
-    * Add the horizontal to the parent and return the serialized data.
-    *
-    * @return array
-    */
-    public function jsonSerialize() {
+     * Add the horizontal to the parent and return the serialized data.
+     *
+     * @return array
+     */
+    public function jsonSerialize() { // @codingStandardsIgnoreLine (CONTRIB-6469).
         $data = parent::jsonSerialize();
         $data['horizontal'] = $this->get_horizontal();
         return $data;

@@ -75,7 +75,7 @@ class chart_base implements JsonSerializable, renderable {
      *
      * @return array
      */
-    public function jsonSerialize() {
+    public function jsonSerialize() { // @codingStandardsIgnoreLine (CONTRIB-6469).
         return [
             'type' => $this->get_type(),
             'series' => $this->series,
