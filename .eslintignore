@@ -55,3 +55,15 @@ repository/s3/S3.php
 theme/bootstrapbase/less/bootstrap/
 theme/bootstrapbase/javascript/html5shiv.js
 theme/bootstrapbase/amd/src/bootstrap.js
+theme/noname/amd/src/alert.js
+theme/noname/amd/src/button.js
+theme/noname/amd/src/carousel.js
+theme/noname/amd/src/collapse.js
+theme/noname/amd/src/dropdown.js
+theme/noname/amd/src/modal.js
+theme/noname/amd/src/popover.js
+theme/noname/amd/src/scrollspy.js
+theme/noname/amd/src/tab.js
+theme/noname/amd/src/tooltip.js
+theme/noname/amd/src/util.js
+theme/noname/amd/src/tether.js
