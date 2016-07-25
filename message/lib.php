@@ -2115,3 +2115,51 @@ function message_is_user_blocked($recipient, $sender = null) {
 
     return false;
 }
+
+function get_providers_preferences($providers, $userid) {
+    $preferences = new stdClass();
+
+    /// Get providers preferences
+    foreach ($providers as $provider) {
+        foreach (array('loggedin', 'loggedoff') as $state) {
+            $linepref = get_user_preferences('message_provider_'.$provider->component.'_'.$provider->name.'_'.$state, '', $userid);
+            if ($linepref == ''){
+                continue;
+            }
+            $lineprefarray = explode(',', $linepref);
+            $preferences->{$provider->component.'_'.$provider->name.'_'.$state} = array();
+            foreach ($lineprefarray as $pref) {
+                $preferences->{$provider->component.'_'.$provider->name.'_'.$state}[$pref] = 1;
+            }
+        }
+    }
+
+    return $preferences;
+}
+
+function message_output_fragment_processor_settings($args = []) {
+    global $PAGE;
+
+    if (!isset($args['type'])) {
+        throw new moodle_exception('Must provide a processor type');
+    }
+
+    if (!isset($args['userid'])) {
+        throw new moodle_exception('Must provide a userid');
+    }
+
+    $type = $args['type'];
+    $userid = $args['userid'];
+
+    $user = core_user::get_user($userid, '*', MUST_EXIST);
+    $processor = get_message_processor($type);
+    $providers = message_get_providers_for_user($userid);
+    $preferences = get_providers_preferences($providers, $userid);
+
+    $processor->load_data($preferences, $userid);
+
+    $processoroutput = new \core_message\output\preferences\processor($processor, $preferences, $user, $type);
+    $renderer = $PAGE->get_renderer('core', 'message');
+
+    return $renderer->render_from_template('core_message/preferences_processor', $processoroutput->export_for_template($renderer));
+}

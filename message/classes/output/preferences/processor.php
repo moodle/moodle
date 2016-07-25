@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains processors class for displaying on message preferences
+ * Contains processor class for displaying on message preferences
  * page.
  *
  * @package   core_message
@@ -29,19 +29,19 @@ use renderable;
 use templatable;
 
 /**
- * Class to create context for each of the message processors settings
+ * Class to create context for one of the message processors settings
  * on the message preferences page.
  *
  * @package   core_message
  * @copyright 2016 Ryan Wyllie <ryan@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class processors implements templatable, renderable {
+class processor implements templatable, renderable {
 
     /**
-     * A list of message processors.
+     * The message processor.
      */
-    protected $processors;
+    protected $processor;
 
     /**
      * A list of message preferences.
@@ -54,38 +54,30 @@ class processors implements templatable, renderable {
     protected $user;
 
     /**
+     * The processor type.
+     */
+    protected $type;
+
+    /**
      * Constructor.
      *
-     * @param array $processors
+     * @param stdClass $processor
      * @param stdClass $preferences
      * @param stdClass $user
      */
-    public function __construct($processors, $preferences, $user) {
-        $this->processors = $processors;
+    public function __construct($processor, $preferences, $user, $type) {
+        $this->processor = $processor;
         $this->preferences = $preferences;
         $this->user = $user;
+        $this->type = $type;
     }
 
     public function export_for_template(\renderer_base $output) {
-        $context = [
+        return [
             'userid' => $this->user->id,
-            'processors' => [],
+            'displayname' => get_string('pluginname', 'message_'.$this->type),
+            'name' => $this->type,
+            'formhtml' => $this->processor->config_form($this->preferences),
         ];
-
-        foreach ($this->processors as $processor) {
-            $formhtml = $processor->object->config_form($this->preferences);
-
-            if (!$formhtml) {
-                continue;
-            }
-
-            $context['processors'][] = [
-                'displayname' => get_string('pluginname', 'message_'.$processor->name),
-                'name' => $processor->name,
-                'formhtml' => $formhtml,
-            ];
-        }
-
-        return $context;
     }
 }

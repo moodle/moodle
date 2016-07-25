@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_message/preferences_processors
+    @template core_message/preferences_processor
 
     The message processor configuration block for the preferences page
 
@@ -32,32 +32,27 @@
     Example context (json):
     {
         "userid": 1,
-        "processors": [
-            {
-                "displayname": "Email",
-                "name": "email",
-                "formhtml": "<input name='test' type='text' />"
-            }
-        ]
+        "displayname": "Email",
+        "name": "email",
+        "formhtml": "<input name='test' type='text' />"
     }
 }}
-<h2 class="title-case">{{#str}} messageprocessors, message {{/str}}</h2>
-<div class="processors-container" data-user-id="{{userid}}">
-    {{#processors}}
-        <div class="processor-container" data-processor-name="{{name}}">
-            <div class="loading-container">
-                <div class="vertical-align"></div>
-                {{> core/loading }}
-            </div>
-            <h3>{{displayname}}</h3>
-            <form>
-                {{{formhtml}}}
-            </form>
-        </div>
-    {{/processors}}
+<h4 class="title-case">{{displayname}}</h4>
+<div class="processor-container"
+    data-user-id="{{userid}}"
+    data-processor-name="{{name}}"
+    data-processor-id="{{uniqid}}">
+
+    <div class="loading-container">
+        <div class="vertical-align"></div>
+        {{> core/loading }}
+    </div>
+    <form>
+        {{{formhtml}}}
+    </form>
 </div>
 {{#js}}
-require(['jquery', 'core_message/preferences_processors_controller'], function($, controller) {
-    new controller($('.processors-container'));
+require(['jquery', 'core_message/preferences_processor_form'], function($, ProcessorForm) {
+    new ProcessorForm($('[data-processor-id="{{uniqid}}"]'));
 });
 {{/js}}

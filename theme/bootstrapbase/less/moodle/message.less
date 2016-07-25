@@ -373,30 +373,28 @@
         display: inline-block;
     }
 }
-.processors-container {
-    .processor-container {
-        position: relative;
+.processor-container {
+    position: relative;
 
-        .loading-container {
-            display: none;
-            position: absolute;
-            width: 100%;
+    .loading-container {
+        display: none;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        background-color: rgba(255, 255, 255, 0.5);
+
+        .vertical-align {
             height: 100%;
-            text-align: center;
-            background-color: rgba(255, 255, 255, 0.5);
-
-            .vertical-align {
-                height: 100%;
-                width: 0%;
-                display: inline-block;
-                vertical-align: middle;
-            }
+            width: 0%;
+            display: inline-block;
+            vertical-align: middle;
         }
+    }
 
-        &.loading {
-            .loading-container {
-                display: block;
-            }
+    &.loading {
+        .loading-container {
+            display: block;
         }
     }
 }

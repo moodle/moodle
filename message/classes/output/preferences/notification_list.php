@@ -94,7 +94,8 @@ class notification_list implements templatable, renderable {
         $context = [];
 
         foreach ($components as $component) {
-            $notificationcomponent = new \core_message\output\preferences\notification_list_component($component, $processors, $providers, $preferences);
+            $notificationcomponent = new \core_message\output\preferences\notification_list_component(
+                $component, $processors, $providers, $preferences, $user);
             $context['components'][] = $notificationcomponent->export_for_template($output);
         }
 

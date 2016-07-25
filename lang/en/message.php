@@ -135,6 +135,7 @@ $string['pagerefreshes'] = 'This page refreshes automatically every {$a} seconds
 $string['permitted'] = 'Permitted';
 $string['page-message-x'] = 'Any message pages';
 $string['private_config'] = 'Popup message window';
+$string['processorsettings'] = 'Processor settings';
 $string['processortag'] = 'Destination';
 $string['providers_config'] = 'Configure notification methods for incoming messages';
 $string['providerstag'] = 'Source';

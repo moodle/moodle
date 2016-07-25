@@ -6061,10 +6061,10 @@ a.ygtvspacer:hover {
 .general-settings-container label {
   display: inline-block;
 }
-.processors-container .processor-container {
+.processor-container {
   position: relative;
 }
-.processors-container .processor-container .loading-container {
+.processor-container .loading-container {
   display: none;
   position: absolute;
   width: 100%;
@@ -6072,13 +6072,13 @@ a.ygtvspacer:hover {
   text-align: center;
   background-color: rgba(255, 255, 255, 0.5);
 }
-.processors-container .processor-container .loading-container .vertical-align {
+.processor-container .loading-container .vertical-align {
   height: 100%;
   width: 0%;
   display: inline-block;
   vertical-align: middle;
 }
-.processors-container .processor-container.loading .loading-container {
+.processor-container.loading .loading-container {
   display: block;
 }
 .title-case {

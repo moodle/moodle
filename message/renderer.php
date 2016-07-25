@@ -224,23 +224,8 @@ class core_message_renderer extends plugin_renderer_base {
      * @return stdClass
      */
     private function get_all_preferences($processors, $providers, $user) {
-        $preferences = new stdClass();
+        $preferences = get_providers_preferences($providers, $user->id);
         $preferences->userdefaultemail = $user->email;//may be displayed by the email processor
-
-        /// Get providers preferences
-        foreach ($providers as $provider) {
-            foreach (array('loggedin', 'loggedoff') as $state) {
-                $linepref = get_user_preferences('message_provider_'.$provider->component.'_'.$provider->name.'_'.$state, '', $user->id);
-                if ($linepref == ''){
-                    continue;
-                }
-                $lineprefarray = explode(',', $linepref);
-                $preferences->{$provider->component.'_'.$provider->name.'_'.$state} = array();
-                foreach ($lineprefarray as $pref) {
-                    $preferences->{$provider->component.'_'.$provider->name.'_'.$state}[$pref] = 1;
-                }
-            }
-        }
 
         /// For every processors put its options on the form (need to get function from processor's lib.php)
         foreach ($processors as $processor) {
@@ -270,11 +255,9 @@ class core_message_renderer extends plugin_renderer_base {
         $providers = message_get_providers_for_user($user->id);
         $preferences = $this->get_all_preferences($readyprocessors, $providers, $user);
         $notificationlistoutput = new \core_message\output\preferences\notification_list($readyprocessors, $providers, $preferences, $user);
-        $processorsoutput = new \core_message\output\preferences\processors($readyprocessors, $preferences, $user);
         $generalsettingsoutput = new \core_message\output\preferences\general_settings($preferences, $user);
 
         $output = $this->render_from_template('message/preferences_notifications_list', $notificationlistoutput->export_for_template($this));
-        $output .= $this->render_from_template('message/preferences_processors', $processorsoutput->export_for_template($this));
         $output .= $this->render_from_template('message/preferences_general_settings', $generalsettingsoutput->export_for_template($this));
 
         return $output;

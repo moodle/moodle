@@ -37,7 +37,15 @@
         "components": [
             {
                 "displayname": "System",
-                "processornames": ["Popup notification"],
+                "processors": [
+                    {
+                        displayname: "Popup notification",
+                        name: "popup",
+                        userid: 1,
+                        contextid: 18,
+                        hassettings: true
+                    }
+                ],
                 "notifications": [
                     {
                         "displayname": "Notices about minor problems",
@@ -74,9 +82,22 @@
             <thead>
                 <tr>
                     <th>{{displayname}}</th>
-                    {{#processornames}}
-                        <th>{{.}}</th>
-                    {{/processornames}}
+                    {{#processors}}
+                        <th>
+                            {{#hassettings}}
+                                <a href="#"
+                                    data-processor-setting
+                                    data-user-id="{{userid}}"
+                                    data-context-id="{{contextid}}"
+                                    data-name="{{name}}">
+                                    {{displayname}} {{#pix}} i/settings {{/pix}}
+                                </a>
+                            {{/hassettings}}
+                            {{^hassettings}}
+                                {{displayname}}
+                            {{/hassettings}}
+                        </th>
+                    {{/processors}}
                 </tr>
             </thead>
             <tbody>

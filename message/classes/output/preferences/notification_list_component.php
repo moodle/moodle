@@ -29,6 +29,7 @@ require_once($CFG->dirroot . '/message/lib.php');
 
 use renderable;
 use templatable;
+use context_user;
 
 /**
  * Class to create context for a notification component on the message
@@ -61,6 +62,11 @@ class notification_list_component implements templatable, renderable {
     protected $component;
 
     /**
+     * A user.
+     */
+    protected $user;
+
+    /**
      * Constructor.
      *
      * @param string $component
@@ -68,11 +74,12 @@ class notification_list_component implements templatable, renderable {
      * @param array $providers
      * @param stdClass $preferences
      */
-    public function __construct($component, $processors, $providers, $preferences) {
+    public function __construct($component, $processors, $providers, $preferences, $user) {
         $this->processors = $processors;
         $this->providers = $providers;
         $this->preferences = $preferences;
         $this->component = $component;
+        $this->user = $user;
     }
 
     /**
@@ -101,6 +108,7 @@ class notification_list_component implements templatable, renderable {
         $preferences = $this->preferences;
         $component = $this->component;
         $defaultpreferences = get_message_output_default_preferences();
+        $usercontext = context_user::instance($this->user->id);
 
         if ($component != 'moodle') {
             $componentname = get_string('pluginname', $component);
@@ -110,12 +118,17 @@ class notification_list_component implements templatable, renderable {
 
         $context = [
             'displayname' => $componentname,
-            'processornames' => [],
+            'processors' => [],
             'notifications' => [],
         ];
 
         foreach ($processors as $processor) {
-            $context['processornames'][] = get_string('pluginname', 'message_'.$processor->name);
+            $context['processors'][] = [
+                'displayname' => get_string('pluginname', 'message_'.$processor->name),
+                'name' => $processor->name,
+                'hassettings' => !empty($processor->object->config_form($preferences)),
+                'contextid' => $usercontext->id,
+            ];
         }
 
         foreach ($providers as $provider) {
