@@ -51,6 +51,7 @@ $string['editpdf'] = 'Annotate PDF';
 $string['editpdf_help'] = 'Annotate students submissions directly in the browser and produce an edited downloadable PDF.';
 $string['enabled'] = 'Annotate PDF';
 $string['enabled_help'] = 'If enabled, the teacher will be able to create annotated PDF files when marking the assignments. This allows the teacher to add comments, drawing and stamps directly on top of the students work. The annotating is done in the browser and no extra software is required.';
+$string['expcolcomments'] = 'Expand/collapse all comments';
 $string['filter'] = 'Filter comments...';
 $string['generatefeedback'] = 'Generate feedback PDF';
 $string['gotopage'] = 'Go to page';

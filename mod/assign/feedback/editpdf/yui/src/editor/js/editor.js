@@ -211,6 +211,15 @@ EDITOR.prototype = {
     editingcomment: false,
 
     /**
+     * Should inactive comments be collapsed?
+     *
+     * @property collapsecomments
+     * @type Boolean
+     * @public
+     */
+    collapsecomments: true,
+
+    /**
      * Called during the initialisation process of the object.
      * @method initializer
      */
@@ -720,6 +729,7 @@ EDITOR.prototype = {
             commentcolourbutton,
             annotationcolourbutton,
             searchcommentsbutton,
+            expcolcommentsbutton,
             currentstampbutton,
             stampfiles,
             picker,
@@ -728,6 +738,10 @@ EDITOR.prototype = {
         searchcommentsbutton = this.get_dialogue_element(SELECTOR.SEARCHCOMMENTSBUTTON);
         searchcommentsbutton.on('click', this.open_search_comments, this);
         searchcommentsbutton.on('key', this.open_search_comments, 'down:13', this);
+
+        expcolcommentsbutton = this.get_dialogue_element(SELECTOR.EXPCOLCOMMENTSBUTTON);
+        expcolcommentsbutton.on('click', this.expandCollapseComments, this);
+        expcolcommentsbutton.on('key', this.expandCollapseComments, 'down:13', this);
 
         if (this.get('readonly')) {
             return;
@@ -911,7 +925,6 @@ EDITOR.prototype = {
      * @method edit_start
      */
     edit_start: function(e) {
-        e.preventDefault();
         var canvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS),
             offset = canvas.getXY(),
             scrolltop = canvas.get('docScrollY'),
@@ -1196,6 +1209,22 @@ EDITOR.prototype = {
 
         this.searchcommentswindow.show();
         e.preventDefault();
+    },
+
+    /**
+     * Toggle function to expand/collapse all comments on page.
+     *
+     * @protected
+     * @method expandCollapseComments
+     */
+    expandCollapseComments: function() {
+        if (this.collapsecomments) {
+            this.collapsecomments = false;
+        } else {
+            this.collapsecomments = true;
+        }
+
+        this.redraw();
     },
 
     /**
