@@ -278,6 +278,11 @@ define(['jquery', 'core/notification', 'core/templates', 'core/fragment',
                         this._niceReplaceNodeContents(this._region, html, js)
                         .done(function() {
                             checker.saveFormState('[data-region="grade-panel"] .gradeform');
+                            $(document).on('editor-content-restored', function() {
+                                // If the editor has some content that has been restored
+                                // then save the form state again for comparison.
+                                checker.saveFormState('[data-region="grade-panel"] .gradeform');
+                            });
                             $('[data-region="attempt-chooser"]').on('click', this._chooseAttempt.bind(this));
                             this._addPopoutButtons('[data-region="grade-panel"] .gradeform');
                             $(document).trigger('finish-loading-user');
