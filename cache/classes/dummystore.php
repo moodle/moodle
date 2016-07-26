@@ -229,8 +229,24 @@ class cachestore_dummy extends cache_store {
 
     /**
      * Performs any necessary clean up when the store instance is being deleted.
+     *
+     * @deprecated since 3.2
+     * @see cachestore_dummy::instance_deleted()
      */
     public function cleanup() {
+        debugging('cachestore_dummy::cleanup() is deprecated. Please use cachestore_dummy::instance_deleted() instead.',
+            DEBUG_DEVELOPER);
+        $this->instance_deleted();
+    }
+
+    /**
+     * Performs any necessary operation when the store instance is being deleted.
+     *
+     * This method may be called before the store has been initialised.
+     *
+     * @since Moodle 3.2
+     */
+    public function instance_deleted() {
         $this->purge();
     }
 

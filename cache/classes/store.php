@@ -264,12 +264,12 @@ abstract class cache_store implements cache_store_interface {
     abstract public function purge();
 
     /**
-     * Performs any necessary clean up when the store instance is being deleted.
-     *
      * @deprecated since 2.5
+     * @see \cache_store::instance_deleted()
      */
     public function cleanup() {
-        debugging('This function has been renamed to instance_deleted. Please update your calls.', DEBUG_DEVELOPER);
+        throw new coding_exception('cache_store::cleanup() can not be used anymore.' .
+            ' Please use cache_store::instance_deleted() instead.');
     }
 
     /**
