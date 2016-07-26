@@ -10,7 +10,7 @@
             "event-simulate",
             "event-custom",
             "node-event-html5",
-	    "node-event-simulate",
+            "node-event-simulate",
             "yui-throttle",
             "moodle-core-notification-dialogue",
             "moodle-core-notification-confirm",
