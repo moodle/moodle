@@ -62,6 +62,7 @@ Feature: A user can navigate to previous and next discussions
     And I set the following fields to these values:
       | Message | Answer to discussion |
     And I press "Post to forum"
+    And I wait to be redirected
     And I should not see "Discussion 2"
     And I should see "Discussion 3"
     And I follow "Discussion 3"
