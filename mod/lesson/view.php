@@ -286,7 +286,11 @@ if (empty($pageid)) {
     }
     // start at the first page
     if (!$pageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id, 'prevpageid' => 0))) {
-            print_error('cannotfindfirstpage', 'lesson');
+        echo $lessonoutput->header($lesson, $cm, 'view', '', null);
+        // Lesson currently has no content. A message for display has been prepared and will be displayed by the header method
+        // of the lesson renderer.
+        echo $lessonoutput->footer();
+        exit();
     }
     /// This is the code for starting a timed test
     if(!isset($USER->startlesson[$lesson->id]) && !$canmanage) {
