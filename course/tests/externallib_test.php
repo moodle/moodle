@@ -223,9 +223,28 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
             $this->assertEquals($category['descriptionformat'], FORMAT_HTML);
         }
 
+        // Check categories by ids.
+        $ids = implode(',', array_keys($generatedcats));
+        $categories = core_course_external::get_categories(array(
+            array('key' => 'ids', 'value' => $ids)), 0);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $categories = external_api::clean_returnvalue(core_course_external::get_categories_returns(), $categories);
+
+        // Check we retrieve the good total number of categories.
+        $this->assertEquals(6, count($categories));
+        // Check ids.
+        $returnedids = [];
+        foreach ($categories as $category) {
+            $returnedids[] = $category['id'];
+        }
+        // Sort the arrays upon comparision.
+        $this->assertEquals(array_keys($generatedcats), $returnedids, '', 0.0, 10, true);
+
         // Check different params.
         $categories = core_course_external::get_categories(array(
             array('key' => 'id', 'value' => $category1->id),
+            array('key' => 'ids', 'value' => $category1->id),
             array('key' => 'idnumber', 'value' => $category1->idnumber),
             array('key' => 'visible', 'value' => 1)), 0);
 
