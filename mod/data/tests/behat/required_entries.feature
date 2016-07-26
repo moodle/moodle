@@ -37,7 +37,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
       | Field name | Required Two-Option Checkbox |
       | Field description | Required Two-Option Checkbox |
       | Required | yes |
-    And I set the field "Options" to multiline
+    And I set the field "Options" to multiline:
     """
     RTOC Option 1
     RTOC Option 2
@@ -85,7 +85,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
       | Field name | Required Two-Option Multimenu |
       | Field description | Required Two-Option Multimenu |
       | Required | yes |
-    And I set the field "Options" to multiline
+    And I set the field "Options" to multiline:
     """
     Option 1
     Option 2
