@@ -13,7 +13,6 @@ lib/editor/tinymce/plugins/pdw/tinymce/
 lib/editor/tinymce/plugins/spellchecker/rpc.php
 lib/editor/tinymce/tiny_mce/
 lib/adodb/
-lib/alfresco/
 lib/bennu/
 lib/evalmath/
 lib/lessphp/

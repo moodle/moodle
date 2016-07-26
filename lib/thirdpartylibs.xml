@@ -8,13 +8,6 @@
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>
-    <location>alfresco</location>
-    <name>Alfresco</name>
-    <license>GPL</license>
-    <version></version>
-    <licenseversion>2.0+</licenseversion>
-  </library>
-  <library>
     <location>bennu</location>
     <name>Bennu</name>
     <license>LGPL</license>
