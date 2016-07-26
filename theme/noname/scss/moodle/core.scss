@@ -1189,7 +1189,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 }
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
     // Undo some YUI damage.
-    min-height: initial;
+    min-height: 3rem;
     color: initial;
     background-color: initial;
     background: initial;

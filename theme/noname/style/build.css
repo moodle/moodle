@@ -9016,7 +9016,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   background-size: 100%; }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
-  min-height: initial;
+  min-height: 3rem;
   color: initial;
   background-color: initial;
   background: initial;
@@ -11459,30 +11459,6 @@ span.editinstructions {
     #course-category-listings.columns-3 #course-detail > div {
       background-color: #fff; } }
 
-.filemanager,
-.filepicker,
-.file-picker {
-  font-size: 11px; }
-
-.filemanager a,
-.file-picker a,
-.filemanager a:hover,
-.file-picker a:hover {
-  color: #555555;
-  text-decoration: none; }
-
-.filemanager input[type="text"],
-.file-picker input[type="text"] {
-  width: 265px; }
-
-.filemanager .fp-license td,
-.file-picker .fp-setlicense td {
-  max-width: 265px; }
-
-.filemanager .fp-license select,
-.file-picker .fp-setlicense select {
-  max-width: 100%; }
-
 .fp-content-center {
   height: 100%;
   width: 100%;
@@ -11495,27 +11471,6 @@ span.editinstructions {
 .yui3-panel-focused {
   outline: none; }
 
-#filesskin .yui3-panel-content {
-  padding-bottom: 20px;
-  background: #F2F2F2;
-  border-radius: 8px;
-  border: 1px solid #fff;
-  display: inline-block; }
-
-#filesskin .yui3-widget-hd {
-  border-radius: 10px 10px 0 0;
-  border-bottom: 1px solid #BBBBBB;
-  padding: 5px;
-  text-align: center;
-  font-size: 12px;
-  color: #333;
-  letter-spacing: 1px;
-  text-shadow: 1px 1px 1px #fff;
-  filter: dropshadow(color=#FFFFFF, offx=1, offy=1);
-  background-image: linear-gradient(to bottom, #fff 0%, #ccc 100%);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFFFF', endColorstr='#FFCCCCCC', GradientType=0); }
-
 .fp-panel-button {
   background: #fff;
   padding: 3px 20px 2px 20px;
@@ -11524,46 +11479,12 @@ span.editinstructions {
   border-radius: 10px;
   display: inline-block; }
 
-.moodle-dialogue h3 {
-  font-size: 14px;
-  margin: 0;
-  line-height: 20px; }
-
-.moodle-dialogue-base .filepicker .moodle-dialogue-wrap .moodle-dialogue-bd {
-  padding: 0px; }
-
-#filesskin .file-picker.fp-generallayout {
-  width: 859px;
-  background: #FFFFFF;
-  border-radius: 10px;
-  border: 1px solid #CCCCCC;
-  position: relative; }
-
-.file-picker .fp-repo-area {
-  width: 180px;
-  overflow: auto;
-  display: inline-block;
-  height: 525px;
-  border-right: 1px solid #BBBBBB; }
-
-.file-picker .fp-repo-items {
-  float: none;
-  width: auto;
-  margin-left: 181px; }
-
-.moodle-dialogue-fullscreen .file-picker .fp-repo-items {
-  margin-left: 0px;
-  margin-right: 0px;
-  float: left; }
+.filepicker .yui3-widget-content-expanded {
+  height: auto; }
 
 .file-picker .fp-navbar {
-  background: #F2F2F2;
-  border-bottom: 1px solid #BBBBBB;
-  min-height: 40px;
-  overflow: hidden; }
-
-.file-picker .fp-navbar .fp-viewbar {
-  margin: 4px; }
+  border-bottom: 1px solid #e5e5e5;
+  min-height: 40px; }
 
 .file-picker .fp-content {
   background: #FFFFFF;
@@ -11621,18 +11542,7 @@ span.editinstructions {
   vertical-align: -15%;
   margin-right: 5px; }
 
-.fp-toolbar .fp-tb-search {
-  width: 235px;
-  height: 27px; }
-
-.fp-toolbar .fp-tb-search input {
-  background: #FFFFFF url("[[pix:a/search]]") no-repeat 7px 7px;
-  padding: 2px 6px 1px 27px;
-  width: 200px;
-  height: 27px;
-  border: 1px solid #BBBBBB; }
-
-.fp-viewbar {
+.fp-viewbaffr {
   float: right;
   height: 30px;
   border: 1px solid #CCC;
@@ -11643,43 +11553,40 @@ span.editinstructions {
 .fp-repo-items fp-viewbar {
   margin: 4px; }
 
-.fp-viewbar a {
+.fp-viddewbar a {
   width: 30px;
   height: 30px;
   border-right: 1px solid #CCC;
   display: block;
   float: left; }
 
-.fp-viewbar a.checked:hover,
-.fp-viewbar a:hover {
+.fp-viddewbar a.checked:hover,
+.fp-viddewbar a:hover {
   background-image: radial-gradient(ellipse at center, #ffffff 60%, #dfdfdf 100%);
   background-color: #ebebeb; }
 
-.fp-viewbar a.checked,
-.fp-viewbar a:active {
+.fp-viddewbar a.checked,
+.fp-vieddwbar a:active {
   background-image: radial-gradient(ellipse at center, #ffffff 40%, #dfdfdf 100%);
   background-color: #dfdfdf; }
 
-.fp-viewbar a.fp-vb-icons {
+.fp-viewddbar a.fp-vb-icons {
   border-radius: 4px 0 0 4px; }
 
-.fp-viewbar a.fp-vb-tree {
+.fp-vieddwbar a.fp-vb-tree {
   border-right: 0;
   border-radius: 0 4px 4px 0; }
 
-.fp-viewbar a img {
+.fp-vieddwbar a img {
   margin: 7px; }
 
-.fp-viewbar.disabled a {
+.fp-viewddbar.disabled a {
   opacity: .45;
   background: none;
   cursor: default; }
 
 .file-picker .fp-clear-left {
   clear: left; }
-
-.file-picker .fp-pathbar {
-  display: table-row; }
 
 .fp-pathbar.empty {
   display: none; }
@@ -11703,8 +11610,7 @@ span.editinstructions {
   margin-left: 32px; }
 
 .fp-pathbar .fp-path-folder-name {
-  margin-left: 32px;
-  line-height: 20px; }
+  margin-left: 32px; }
 
 .fp-iconview .fp-file {
   float: left;
@@ -11748,20 +11654,6 @@ span.editinstructions {
 .file-picker .yui3-datatable table {
   border: 0 solid #BBBBBB;
   width: 100%; }
-
-#filesskin .file-picker .yui3-datatable-header {
-  background: #FFFFFF;
-  border-bottom: 1px solid #CCCCCC;
-  border-left: 0 solid #FFFFFF;
-  color: #555555; }
-
-#filesskin .file-picker .yui3-datatable-odd .yui3-datatable-cell {
-  background-color: #F6F6F6;
-  border-left: 0 solid #F6F6F6; }
-
-#filesskin .file-picker .yui3-datatable-even .yui3-datatable-cell {
-  background-color: #FFFFFF;
-  border-left: 0 solid #FFFFFF; }
 
 .file-picker .ygtvtn,
 .filemanager .ygtvtn {
@@ -11924,24 +11816,6 @@ a.ygtvspacer:hover {
   width: 100%;
   display: table; }
 
-.file-picker .fp-login-form table {
-  margin: 0 auto; }
-
-.file-picker .fp-login-form p {
-  text-align: center;
-  margin-top: 3em; }
-
-.file-picker .fp-login-form .fp-login-input label, .file-picker .fp-login-form .fp-login-input .que .correctness, .que .file-picker .fp-login-form .fp-login-input .correctness {
-  text-align: right;
-  display: block; }
-
-.file-picker .fp-login-form .fp-login-input .input {
-  text-align: left; }
-
-.file-picker .fp-login-form input[type="checkbox"] {
-  width: 15px;
-  height: 15px; }
-
 .file-picker .fp-upload-form {
   height: 100%;
   width: 100%;
@@ -11953,41 +11827,17 @@ a.ygtvspacer:hover {
 .file-picker.fp-dlg {
   text-align: center; }
 
-.file-picker.fp-dlg .fp-dlg-text {
-  padding: 30px 20px 10px;
-  font-size: 12px; }
-
 .file-picker.fp-dlg .fp-dlg-buttons {
   margin: 0 20px; }
 
 .file-picker.fp-msg {
   text-align: center; }
 
-.file-picker.fp-msg .fp-msg-text {
-  padding: 40px 20px 10px 20px;
-  min-width: 200px;
-  max-width: 500px;
-  max-height: 300px;
-  overflow: auto;
-  font-size: 12px; }
-
-.file-picker.fp-msg.fp-msg-error .fp-msg-text {
-  padding: 40px 20px 10px 20px;
-  font-size: 12px; }
-
 .file-picker .fp-content-error {
   height: 100%;
   width: 100%;
   display: table;
   text-align: center; }
-
-.file-picker .fp-content-error .fp-error {
-  height: 100%;
-  width: 100%;
-  display: table-cell;
-  vertical-align: middle;
-  padding: 40px 20px 10px 20px;
-  font-size: 12px; }
 
 .file-picker .fp-nextpage {
   clear: both; }
@@ -12121,77 +11971,16 @@ a.ygtvspacer:hover {
 .filemanager .fp-restrictions {
   text-align: right; }
 
-.filemanager .fp-navbar {
-  background: #F2F2F2;
-  border: 1px solid #BBBBBB;
-  border-bottom: none; }
-
 .filemanager-toolbar {
   padding: 4px;
   overflow: hidden; }
-
-.fp-pathbar {
-  border-top: 1px solid #BBBBBB;
-  padding: 5px 8px 1px;
-  min-height: 20px; }
-
-.file-picker .fp-toolbar {
-  padding: 4px; }
-
-.fp-toolbar .fp-btn-add,
-.fp-toolbar .fp-btn-download,
-.fp-toolbar .fp-btn-mkdir,
-.fp-toolbar .fp-tb-help,
-.fp-toolbar .fp-tb-manage,
-.fp-toolbar .fp-tb-logout,
-.fp-toolbar .fp-tb-refresh {
-  border: 1px solid #CCC;
-  border-bottom: 1px solid #B3B3B3;
-  border-radius: 4px;
-  background: white;
-  width: 30px;
-  height: 30px; }
-
-.fp-toolbar a:hover {
-  background-image: radial-gradient(ellipse at center, #ffffff 60%, #dfdfdf 100%);
-  background-color: #ebebeb; }
-
-.fp-toolbar a:active {
-  background-image: radial-gradient(ellipse at center, #ffffff 40%, #dfdfdf 100%);
-  background-color: #dfdfdf; }
-
-.fp-btn-add a,
-.fp-btn-download a,
-.fp-btn-mkdir a,
-.fp-tb-help a,
-.fp-tb-manage a,
-.fp-tb-logout a,
-.fp-tb-refresh a {
-  display: block;
-  width: 30px;
-  height: 30px;
-  border-radius: 4px; }
-
-.fp-btn-add img,
-.fp-btn-download img,
-.fp-btn-mkdir img,
-.fp-tb-help img,
-.fp-tb-manage img,
-.fp-tb-logout img,
-.fp-tb-refresh img {
-  margin: 7px; }
 
 .filemanager .fp-pathbar.empty {
   display: none; }
 
 .filepicker-filelist,
 .filemanager-container {
-  background: #FFFFFF;
-  clear: both;
-  overflow: auto;
-  border: 1px solid #BBBBBB;
-  min-height: 140px;
-  position: relative; }
+  min-height: 140px; }
 
 .filemanager .fp-content {
   overflow: auto;
@@ -12201,6 +11990,9 @@ a.ygtvspacer:hover {
 .filemanager-container,
 .filepicker-filelist {
   overflow: hidden; }
+
+.file-picker .yui3-datatable-header {
+  background: initial; }
 
 .fitem.disabled .filepicker-filelist,
 .fitem.disabled .filemanager-container {
@@ -12427,9 +12219,6 @@ a.ygtvspacer:hover {
 .filemanager.fp-select .fp-reflist .fp-reflistloading {
   display: none; }
 
-.filemanager.fp-select .fp-refcount {
-  max-width: 265px; }
-
 .filemanager.fp-select .fp-reflist.fp-loading .fp-reflistloading {
   display: inline; }
 
@@ -12438,7 +12227,6 @@ a.ygtvspacer:hover {
   border: 1px solid #BBBBBB;
   padding: 8px 7px;
   margin: 0;
-  max-width: 265px;
   max-height: 75px;
   overflow: auto; }
 
@@ -12455,162 +12243,16 @@ a.ygtvspacer:hover {
 .filemanager.fp-dlg {
   text-align: center; }
 
-.filemanager.fp-dlg .fp-dlg-text {
-  padding: 0 10px;
-  min-width: 200px;
-  max-width: 340px;
-  max-height: 300px;
-  overflow: auto;
-  line-height: 22px;
-  margin: 40px 20px 20px;
-  font-size: 12px; }
-
 .file-picker div.bd {
   text-align: left; }
 
 .fp-formset {
-  max-width: 500px;
   padding: 10px; }
   .fp-formset input[type="file"] {
     line-height: inherit; }
 
 .fp-forminset {
-  max-width: 400px;
   padding: 0 10px; }
-  .fp-forminset .control-group.control-radio, .fp-forminset .form-item .control-radio.form-horizontal, .form-item .fp-forminset .control-radio.form-horizontal, .fp-forminset
-  .mform .fitem .control-radio.form-horizontal,
-  .mform .fitem .fp-forminset .control-radio.form-horizontal {
-    margin-bottom: 0; }
-  .fp-forminset .control-group label.control-label, .fp-forminset .form-item .form-horizontal label.control-label, .form-item .fp-forminset .form-horizontal label.control-label, .fp-forminset
-  .mform .fitem .form-horizontal label.control-label,
-  .mform .fitem .fp-forminset .form-horizontal label.control-label, .fp-forminset .control-group .que .control-label.correctness, .que .fp-forminset .control-group .control-label.correctness, .fp-forminset .form-item .form-horizontal .que .control-label.correctness, .que .fp-forminset .form-item .form-horizontal .control-label.correctness, .form-item .fp-forminset .form-horizontal .que .control-label.correctness, .que .form-item .fp-forminset .form-horizontal .control-label.correctness, .fp-forminset
-  .mform .fitem .form-horizontal .que .control-label.correctness, .que .fp-forminset
-  .mform .fitem .form-horizontal .control-label.correctness,
-  .mform .fitem .fp-forminset .form-horizontal .que .control-label.correctness, .que
-  .mform .fitem .fp-forminset .form-horizontal .control-label.correctness, .fp-forminset .control-group .que .form-item .correctness.form-label, .que .form-item .fp-forminset .control-group .correctness.form-label, .fp-forminset .que .form-item .form-horizontal .correctness.form-label, .que .fp-forminset .form-item .form-horizontal .correctness.form-label, .que .form-item .fp-forminset .form-horizontal .correctness.form-label, .fp-forminset
-  .mform .fitem .form-horizontal .que .form-item .correctness.form-label,
-  .mform .fitem .fp-forminset .form-horizontal .que .form-item .correctness.form-label, .fp-forminset .control-group .form-item .que .correctness.form-label, .form-item .que .fp-forminset .control-group .correctness.form-label, .fp-forminset .form-item .form-horizontal .que .correctness.form-label, .fp-forminset .form-item .que .form-horizontal .correctness.form-label, .form-item .fp-forminset .form-horizontal .que .correctness.form-label, .form-item .que .fp-forminset .form-horizontal .correctness.form-label, .fp-forminset
-  .mform .fitem .form-horizontal .form-item .que .correctness.form-label,
-  .mform .fitem .fp-forminset .form-horizontal .form-item .que .correctness.form-label, .fp-forminset .control-group .que
-  .mform .fitem div.fitemtitle .correctness.form-horizontal, .que
-  .mform .fitem div.fitemtitle .fp-forminset .control-group .correctness.form-horizontal, .fp-forminset .form-item .form-horizontal .que
-  .mform .fitem div.fitemtitle .correctness.form-horizontal, .form-item .fp-forminset .form-horizontal .que
-  .mform .fitem div.fitemtitle .correctness.form-horizontal, .fp-forminset .que .mform .fitem .form-horizontal div.fitemtitle .correctness.form-horizontal, .que .fp-forminset .mform .fitem .form-horizontal div.fitemtitle .correctness.form-horizontal, .fp-forminset .que .mform .fitem div.fitemtitle .form-horizontal .correctness.form-horizontal, .que .fp-forminset .mform .fitem div.fitemtitle .form-horizontal .correctness.form-horizontal, .que .mform .fitem .fp-forminset .form-horizontal div.fitemtitle .correctness.form-horizontal, .que .mform .fitem div.fitemtitle .fp-forminset .form-horizontal .correctness.form-horizontal, .fp-forminset .control-group
-  .mform .fitem div.fitemtitle .que .correctness.form-horizontal,
-  .mform .fitem div.fitemtitle .que .fp-forminset .control-group .correctness.form-horizontal, .fp-forminset .form-item .form-horizontal
-  .mform .fitem div.fitemtitle .que .correctness.form-horizontal, .form-item .fp-forminset .form-horizontal
-  .mform .fitem div.fitemtitle .que .correctness.form-horizontal, .fp-forminset .mform .fitem .form-horizontal div.fitemtitle .que .correctness.form-horizontal, .fp-forminset .mform .fitem div.fitemtitle .que .form-horizontal .correctness.form-horizontal, .mform .fitem .fp-forminset .form-horizontal div.fitemtitle .que .correctness.form-horizontal, .mform .fitem div.fitemtitle .que .fp-forminset .form-horizontal .correctness.form-horizontal, .fp-forminset .control-group .form-item label.form-label, .form-item .fp-forminset .control-group label.form-label, .fp-forminset .form-item .form-horizontal label.form-label, .form-item .fp-forminset .form-horizontal label.form-label, .fp-forminset
-  .mform .fitem .form-horizontal .form-item label.form-label,
-  .mform .fitem .fp-forminset .form-horizontal .form-item label.form-label, .fp-forminset .control-group
-  .mform .fitem div.fitemtitle label.form-horizontal,
-  .mform .fitem div.fitemtitle .fp-forminset .control-group label.form-horizontal, .fp-forminset .form-item .form-horizontal
-  .mform .fitem div.fitemtitle label.form-horizontal, .form-item .fp-forminset .form-horizontal
-  .mform .fitem div.fitemtitle label.form-horizontal, .fp-forminset .mform .fitem .form-horizontal div.fitemtitle label.form-horizontal, .fp-forminset .mform .fitem div.fitemtitle .form-horizontal label.form-horizontal, .mform .fitem .fp-forminset .form-horizontal div.fitemtitle label.form-horizontal, .mform .fitem div.fitemtitle .fp-forminset .form-horizontal label.form-horizontal {
-    width: 105px; }
-  .fp-forminset .control-group label.control-radio, .fp-forminset .form-item .form-horizontal label.control-radio, .form-item .fp-forminset .form-horizontal label.control-radio, .fp-forminset
-  .mform .fitem .form-horizontal label.control-radio,
-  .mform .fitem .fp-forminset .form-horizontal label.control-radio, .fp-forminset .control-group .que .control-radio.correctness, .que .fp-forminset .control-group .control-radio.correctness, .fp-forminset .form-item .form-horizontal .que .control-radio.correctness, .que .fp-forminset .form-item .form-horizontal .control-radio.correctness, .form-item .fp-forminset .form-horizontal .que .control-radio.correctness, .que .form-item .fp-forminset .form-horizontal .control-radio.correctness, .fp-forminset
-  .mform .fitem .form-horizontal .que .control-radio.correctness, .que .fp-forminset
-  .mform .fitem .form-horizontal .control-radio.correctness,
-  .mform .fitem .fp-forminset .form-horizontal .que .control-radio.correctness, .que
-  .mform .fitem .fp-forminset .form-horizontal .control-radio.correctness {
-    float: right;
-    text-align: left;
-    width: 215px; }
-  .fp-forminset .control-group .controls, .fp-forminset .form-item .form-horizontal .controls, .form-item .fp-forminset .form-horizontal .controls, .fp-forminset
-  .mform .fitem .form-horizontal .controls,
-  .mform .fitem .fp-forminset .form-horizontal .controls, .fp-forminset .control-group .form-item .form-setting, .form-item .fp-forminset .control-group .form-setting, .fp-forminset .form-item .form-horizontal .form-setting, .form-item .fp-forminset .form-horizontal .form-setting, .fp-forminset
-  .mform .fitem .form-horizontal .form-item .form-setting,
-  .mform .fitem .fp-forminset .form-horizontal .form-item .form-setting, .fp-forminset .control-group
-  .form-item .form-description,
-  .form-item .fp-forminset .control-group .form-description, .fp-forminset .form-item .form-horizontal .form-description, .form-item .fp-forminset .form-horizontal .form-description, .fp-forminset
-  .mform .fitem .form-horizontal
-  .form-item .form-description,
-  .mform .fitem .fp-forminset .form-horizontal
-  .form-item .form-description, .fp-forminset .control-group
-  .mform .fitem .felement,
-  .mform .fitem .fp-forminset .control-group .felement, .fp-forminset .form-item .form-horizontal
-  .mform .fitem .felement, .form-item .fp-forminset .form-horizontal
-  .mform .fitem .felement, .fp-forminset .mform .fitem .form-horizontal .felement, .mform .fitem .fp-forminset .form-horizontal .felement, .fp-forminset .control-group
-  #page-mod-forum-search .c1 .form-horizontal,
-  #page-mod-forum-search .c1 .fp-forminset .control-group .form-horizontal, .fp-forminset .form-item .form-horizontal
-  #page-mod-forum-search .c1 .form-horizontal,
-  #page-mod-forum-search .c1 .fp-forminset .form-item .form-horizontal .form-horizontal, .form-item .fp-forminset .form-horizontal
-  #page-mod-forum-search .c1 .form-horizontal,
-  #page-mod-forum-search .c1 .form-item .fp-forminset .form-horizontal .form-horizontal, .fp-forminset
-  .mform .fitem .form-horizontal
-  #page-mod-forum-search .c1 .form-horizontal,
-  #page-mod-forum-search .c1 .fp-forminset
-  .mform .fitem .form-horizontal .form-horizontal,
-  .mform .fitem .fp-forminset .form-horizontal
-  #page-mod-forum-search .c1 .form-horizontal,
-  #page-mod-forum-search .c1
-  .mform .fitem .fp-forminset .form-horizontal .form-horizontal {
-    margin-left: 125px; }
-    .fp-forminset .control-group .controls select, .fp-forminset .form-item .form-horizontal .controls select, .form-item .fp-forminset .form-horizontal .controls select, .fp-forminset
-    .mform .fitem .form-horizontal .controls select,
-    .mform .fitem .fp-forminset .form-horizontal .controls select, .fp-forminset .control-group .form-item .form-setting select, .form-item .fp-forminset .control-group .form-setting select, .fp-forminset .form-item .form-horizontal .form-setting select, .form-item .fp-forminset .form-horizontal .form-setting select, .fp-forminset
-    .mform .fitem .form-horizontal .form-item .form-setting select,
-    .mform .fitem .fp-forminset .form-horizontal .form-item .form-setting select, .fp-forminset .control-group
-    .form-item .form-description select,
-    .form-item .fp-forminset .control-group .form-description select, .fp-forminset .form-item .form-horizontal .form-description select, .form-item .fp-forminset .form-horizontal .form-description select, .fp-forminset
-    .mform .fitem .form-horizontal
-    .form-item .form-description select,
-    .mform .fitem .fp-forminset .form-horizontal
-    .form-item .form-description select, .fp-forminset .control-group
-    .mform .fitem .felement select,
-    .mform .fitem .fp-forminset .control-group .felement select, .fp-forminset .form-item .form-horizontal
-    .mform .fitem .felement select, .form-item .fp-forminset .form-horizontal
-    .mform .fitem .felement select, .fp-forminset .mform .fitem .form-horizontal .felement select, .mform .fitem .fp-forminset .form-horizontal .felement select, .fp-forminset .control-group
-    #page-mod-forum-search .c1 .form-horizontal select,
-    #page-mod-forum-search .c1 .fp-forminset .control-group .form-horizontal select, .fp-forminset .form-item .form-horizontal
-    #page-mod-forum-search .c1 .form-horizontal select,
-    #page-mod-forum-search .c1 .fp-forminset .form-item .form-horizontal .form-horizontal select, .form-item .fp-forminset .form-horizontal
-    #page-mod-forum-search .c1 .form-horizontal select,
-    #page-mod-forum-search .c1 .form-item .fp-forminset .form-horizontal .form-horizontal select, .fp-forminset
-    .mform .fitem .form-horizontal
-    #page-mod-forum-search .c1 .form-horizontal select,
-    #page-mod-forum-search .c1 .fp-forminset
-    .mform .fitem .form-horizontal .form-horizontal select,
-    .mform .fitem .fp-forminset .form-horizontal
-    #page-mod-forum-search .c1 .form-horizontal select,
-    #page-mod-forum-search .c1
-    .mform .fitem .fp-forminset .form-horizontal .form-horizontal select {
-      width: 100%; }
-  .fp-forminset .control-group .controls.control-radio input, .fp-forminset .form-item .form-horizontal .controls.control-radio input, .form-item .fp-forminset .form-horizontal .controls.control-radio input, .fp-forminset
-  .mform .fitem .form-horizontal .controls.control-radio input,
-  .mform .fitem .fp-forminset .form-horizontal .controls.control-radio input, .fp-forminset .control-group .form-item .control-radio.form-setting input, .form-item .fp-forminset .control-group .control-radio.form-setting input, .fp-forminset .form-item .form-horizontal .control-radio.form-setting input, .form-item .fp-forminset .form-horizontal .control-radio.form-setting input, .fp-forminset
-  .mform .fitem .form-horizontal .form-item .control-radio.form-setting input,
-  .mform .fitem .fp-forminset .form-horizontal .form-item .control-radio.form-setting input, .fp-forminset .control-group
-  .form-item .control-radio.form-description input,
-  .form-item .fp-forminset .control-group .control-radio.form-description input, .fp-forminset .form-item .form-horizontal .control-radio.form-description input, .form-item .fp-forminset .form-horizontal .control-radio.form-description input, .fp-forminset
-  .mform .fitem .form-horizontal
-  .form-item .control-radio.form-description input,
-  .mform .fitem .fp-forminset .form-horizontal
-  .form-item .control-radio.form-description input, .fp-forminset .control-group
-  .mform .fitem .control-radio.felement input,
-  .mform .fitem .fp-forminset .control-group .control-radio.felement input, .fp-forminset .form-item .form-horizontal
-  .mform .fitem .control-radio.felement input, .form-item .fp-forminset .form-horizontal
-  .mform .fitem .control-radio.felement input, .fp-forminset .mform .fitem .form-horizontal .control-radio.felement input, .mform .fitem .fp-forminset .form-horizontal .control-radio.felement input, .fp-forminset .control-group
-  #page-mod-forum-search .c1 .control-radio.form-horizontal input,
-  #page-mod-forum-search .c1 .fp-forminset .control-group .control-radio.form-horizontal input, .fp-forminset .form-item .form-horizontal
-  #page-mod-forum-search .c1 .control-radio.form-horizontal input,
-  #page-mod-forum-search .c1 .fp-forminset .form-item .form-horizontal .control-radio.form-horizontal input, .form-item .fp-forminset .form-horizontal
-  #page-mod-forum-search .c1 .control-radio.form-horizontal input,
-  #page-mod-forum-search .c1 .form-item .fp-forminset .form-horizontal .control-radio.form-horizontal input, .fp-forminset
-  .mform .fitem .form-horizontal
-  #page-mod-forum-search .c1 .control-radio.form-horizontal input,
-  #page-mod-forum-search .c1 .fp-forminset
-  .mform .fitem .form-horizontal .control-radio.form-horizontal input,
-  .mform .fitem .fp-forminset .form-horizontal
-  #page-mod-forum-search .c1 .control-radio.form-horizontal input,
-  #page-mod-forum-search .c1
-  .mform .fitem .fp-forminset .form-horizontal .control-radio.form-horizontal input {
-    margin-top: 3px; }
-  .fp-forminset .fp-select-buttons {
-    float: none; }
-  .fp-forminset input[type="text"] {
-    width: 228px; }
 
 .fp-fileinfo .fp-value {
   display: inline-block;
