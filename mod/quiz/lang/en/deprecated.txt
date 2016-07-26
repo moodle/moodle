@@ -1,2 +1,0 @@
-timelimitmin,mod_quiz
-timelimitsec,mod_quiz
