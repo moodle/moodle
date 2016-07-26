@@ -282,7 +282,7 @@ class report_log_renderable implements renderable {
                 'r' => get_string('view'),
                 'u' => get_string('update'),
                 'd' => get_string('delete'),
-                '' => get_string('allchanges')
+                'cud' => get_string('allchanges')
                 );
         return $actions;
     }
