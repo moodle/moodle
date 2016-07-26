@@ -24,203 +24,53 @@
  */
 
 require_once('../../config.php');
-require_once($CFG->dirroot . '/course/modlib.php');
-require_once($CFG->dirroot . '/mod/lti/lib.php');
 require_once($CFG->dirroot . '/mod/lti/locallib.php');
-require_once($CFG->dirroot . '/mod/lti/OAuth.php');
-require_once($CFG->dirroot . '/mod/lti/TrivialStore.php');
 
-use moodle\mod\lti as lti;
-
-$courseid = required_param('course', PARAM_INT);
-$sectionid = required_param('section', PARAM_INT);
 $id = required_param('id', PARAM_INT);
-$sectionreturn = required_param('sr', PARAM_INT);
+$courseid = required_param('course', PARAM_INT);
 $messagetype = required_param('lti_message_type', PARAM_TEXT);
 $version = required_param('lti_version', PARAM_TEXT);
-$consumer_key = required_param('oauth_consumer_key', PARAM_RAW);
-
+$consumerkey = required_param('oauth_consumer_key', PARAM_RAW);
 $items = optional_param('content_items', '', PARAM_RAW);
 $errormsg = optional_param('lti_errormsg', '', PARAM_TEXT);
 $msg = optional_param('lti_msg', '', PARAM_TEXT);
 
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-$module = $DB->get_record('modules', array('name' => 'lti'), '*', MUST_EXIST);
-$tool = lti_get_type($id);
-$typeconfig = lti_get_type_config($id);
-
 require_login($course);
 require_sesskey();
+$context = context_course::instance($courseid);
+require_capability('moodle/course:manageactivities', $context);
+require_capability('mod/lti:addcoursetool', $context);
 
-if (isset($tool->toolproxyid)) {
-    $toolproxy = lti_get_tool_proxy($tool->toolproxyid);
-    $key = $toolproxy->guid;
-    $secret = $toolproxy->secret;
-} else {
-    $toolproxy = null;
-    if (!empty($instance->resourcekey)) {
-        $key = $instance->resourcekey;
-    } else if (!empty($typeconfig['resourcekey'])) {
-        $key = $typeconfig['resourcekey'];
-    } else {
-        $key = '';
-    }
-    if (!empty($instance->password)) {
-        $secret = $instance->password;
-    } else if (!empty($typeconfig['password'])) {
-        $secret = $typeconfig['password'];
-    } else {
-        $secret = '';
+$redirecturl = null;
+$returndata = null;
+if (empty($errormsg) && !empty($items)) {
+    try {
+        $returndata = lti_tool_configuration_from_content_item($id, $messagetype, $version, $consumerkey, $items);
+    } catch (moodle_exception $e) {
+        $errormsg = $e->getMessage();
     }
 }
 
-if ($consumer_key !== $key) {
-    throw new Exception('Consumer key is incorrect.');
-}
+$pageurl = new moodle_url('/mod/lti/contentitem_return.php');
+$PAGE->set_url($pageurl);
+$PAGE->set_pagelayout('popup');
+echo $OUTPUT->header();
 
-$store = new lti\TrivialOAuthDataStore();
-$store->add_consumer($key, $secret);
+// Call JS module to redirect the user to the course page or close the dialogue on error/cancel.
+$PAGE->requires->js_call_amd('mod_lti/contentitem_return', 'init', [$returndata]);
 
-$server = new lti\OAuthServer($store);
+echo $OUTPUT->footer();
 
-$method = new lti\OAuthSignatureMethod_HMAC_SHA1();
-$server->add_signature_method($method);
-$request = lti\OAuthRequest::from_request();
+// Add messages to notification stack for rendering later.
+if ($errormsg) {
+    // Content item selection has encountered an error.
+    \core\notification::error($errormsg);
 
-try {
-    $server->verify_request($request);
-} catch (\Exception $e) {
-    $message = $e->getMessage();
-    debugging($e->getMessage() . "\n");
-    throw new lti\OAuthException("OAuth signature failed: " . $message);
-}
-
-if ($items) {
-    $items = json_decode($items);
-    if ($items->{'@context'} !== 'http://purl.imsglobal.org/ctx/lti/v1/ContentItem') {
-        throw new Exception('Invalid media type.');
+} else if (!empty($returndata)) {
+    // Means success.
+    if (!$msg) {
+        $msg = get_string('successfullyfetchedtoolconfigurationfromcontent', 'lti');
     }
-    if (!isset($items->{'@graph'}) || !is_array($items->{'@graph'}) || (count($items->{'@graph'}) > 1)) {
-        throw new Exception('Invalid format.');
-    }
-}
-
-$continueurl = course_get_url($course, $sectionid, array('sr' => $sectionreturn));
-if (count($items->{'@graph'}) > 0) {
-    foreach ($items->{'@graph'} as $item) {
-        $moduleinfo = new stdClass();
-        $moduleinfo->modulename = 'lti';
-        $moduleinfo->name = '';
-        if (isset($item->title)) {
-            $moduleinfo->name = $item->title;
-        }
-        if (empty($moduleinfo->name)) {
-            $moduleinfo->name = $tool->name;
-        }
-        $moduleinfo->module = $module->id;
-        $moduleinfo->section = $sectionid;
-        $moduleinfo->visible = 1;
-        if (isset($item->url)) {
-            $moduleinfo->toolurl = $item->url;
-            $moduleinfo->typeid = 0;
-        } else {
-            $moduleinfo->typeid = $id;
-        }
-        $moduleinfo->instructorchoicesendname = LTI_SETTING_NEVER;
-        $moduleinfo->instructorchoicesendemailaddr = LTI_SETTING_NEVER;
-        $moduleinfo->instructorchoiceacceptgrades = LTI_SETTING_NEVER;
-        $moduleinfo->launchcontainer = LTI_LAUNCH_CONTAINER_DEFAULT;
-        if (isset($item->placementAdvice->presentationDocumentTarget)) {
-            if ($item->placementAdvice->presentationDocumentTarget === 'window') {
-                $moduleinfo->launchcontainer = LTI_LAUNCH_CONTAINER_WINDOW;
-            } else if ($item->placementAdvice->presentationDocumentTarget === 'frame') {
-                $moduleinfo->launchcontainer = LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
-            } else if ($item->placementAdvice->presentationDocumentTarget === 'iframe') {
-                $moduleinfo->launchcontainer = LTI_LAUNCH_CONTAINER_EMBED;
-            }
-        }
-        if (isset($item->custom)) {
-            $moduleinfo->instructorcustomparameters = '';
-            $first = true;
-            foreach ($item->custom as $key => $value) {
-                if (!$first) {
-                    $moduleinfo->instructorcustomparameters .= "\n";
-                }
-                $moduleinfo->instructorcustomparameters .= "{$key}={$value}";
-                $first = false;
-            }
-        }
-        $moduleinfo = add_moduleinfo($moduleinfo, $course, null);
-    }
-    $clickhere = get_string('click_to_continue', 'lti', (object)array('link' => $continueurl->out()));
-} else {
-    $clickhere = get_string('return_to_course', 'lti', (object)array('link' => $continueurl->out()));
-}
-
-if (!empty($errormsg) || !empty($msg)) {
-
-    $url = new moodle_url('/mod/lti/contentitem_return.php',
-        array('course' => $courseid));
-    $PAGE->set_url($url);
-
-    $pagetitle = strip_tags($course->shortname);
-    $PAGE->set_title($pagetitle);
-    $PAGE->set_heading($course->fullname);
-
-    $PAGE->set_pagelayout('embedded');
-
-    echo $OUTPUT->header();
-
-    if (!empty($lti) and !empty($context)) {
-        echo $OUTPUT->heading(format_string($lti->name, true, array('context' => $context)));
-    }
-
-    if (!empty($errormsg)) {
-
-        echo '<p style="color: #f00; font-weight: bold; margin: 1em;">';
-        echo get_string('lti_launch_error', 'lti') . ' ';
-        p($errormsg);
-        echo "</p>\n";
-
-    }
-
-    if (!empty($msg)) {
-
-        echo '<p style="margin: 1em;">';
-        p($msg);
-        echo "</p>\n";
-
-    }
-
-    echo "<p style=\"margin: 1em;\">{$clickhere}</p>";
-
-    echo $OUTPUT->footer();
-
-} else {
-
-    $url = $continueurl->out();
-
-    echo '<html><body>';
-
-    $script = "
-        <script type=\"text/javascript\">
-        //<![CDATA[
-            if(window != top){
-                top.location.href = '{$url}';
-            }
-        //]]
-        </script>
-    ";
-
-    $noscript = "
-        <noscript>
-            {$clickhere}
-        </noscript>
-    ";
-
-    echo $script;
-    echo $noscript;
-
-    echo '</body></html>';
-
+    \core\notification::success($msg);
 }

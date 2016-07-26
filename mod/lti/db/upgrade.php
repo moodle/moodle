@@ -197,5 +197,20 @@ function xmldb_lti_upgrade($oldversion) {
     // Moodle v3.1.0 release upgrade line.
     // Put any upgrade step following this.
 
+    // Moodle v3.2.0 release upgrade line.
+    // Put any upgrade step following this.
+    if ($oldversion < 2016052301) {
+
+        // Changing type of field value on table lti_types_config to text.
+        $table = new xmldb_table('lti_types_config');
+        $field = new xmldb_field('value', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'name');
+
+        // Launch change of type for field value.
+        $dbman->change_field_type($table, $field);
+
+        // Lti savepoint reached.
+        upgrade_mod_savepoint(true, 2016052301, 'lti');
+    }
+
     return true;
 }

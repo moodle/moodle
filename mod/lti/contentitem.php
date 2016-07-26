@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Display a page containing an iframe for the content-item selection process.
+ * Handle sending a user to a tool provider to initiate a content-item selection.
  *
  * @package mod_lti
  * @copyright  2015 Vital Source Technologies http://vitalsource.com
@@ -24,66 +24,33 @@
  */
 
 require_once('../../config.php');
-require_once($CFG->dirroot.'/mod/lti/lib.php');
-require_once($CFG->dirroot.'/mod/lti/locallib.php');
+require_once($CFG->dirroot . '/mod/lti/lib.php');
+require_once($CFG->dirroot . '/mod/lti/locallib.php');
 
-$courseid = required_param('course', PARAM_INT);
-$sectionid = required_param('section', PARAM_INT);
 $id = required_param('id', PARAM_INT);
-$sectionreturn = required_param('sr', PARAM_INT);
+$courseid = required_param('course', PARAM_INT);
+$title = optional_param('title', '', PARAM_TEXT);
+$text = optional_param('text', '', PARAM_RAW);
 
-$title = optional_param('title', null, PARAM_TEXT);
-
+// Check access and capabilities.
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-
 require_login($course);
+$context = context_course::instance($courseid);
+require_capability('moodle/course:manageactivities', $context);
+require_capability('mod/lti:addcoursetool', $context);
 
-$url = new moodle_url('/mod/lti/contentitem.php', array('course' => $courseid));
+// Set the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns.
+$returnurlparams = [
+    'course' => $course->id,
+    'id' => $id,
+    'sesskey' => sesskey()
+];
+$returnurl = new \moodle_url('/mod/lti/contentitem_return.php', $returnurlparams);
 
-$contentitem = new moodle_url('/mod/lti/contentitem2.php',
-    array('course' => $courseid, 'section' => $sectionid, 'id' => $id, 'sr' => $sectionreturn, 'title' => $title));
+// Prepare the request.
+$request = lti_build_content_item_selection_request($id, $course, $returnurl, $title, $text, [], []);
 
-echo "<p id=\"id_warning\" style=\"display: none; color: red; font-weight: bold; margin-top: 1em; padding-top: 1em;\">\n";
-echo get_string('register_warning', 'lti');
-echo "\n</p>\n";
+// Get the launch HTML.
+$content = lti_post_launch_html($request->params, $request->url, false);
 
-echo '<iframe id="contentframe" height="600px" width="100%" src="' . $contentitem->out() . '" onload="doOnload()"></iframe>';
-
-// Output script to make the object tag be as large as possible.
-$resize = '
-        <script type="text/javascript">
-        //<![CDATA[
-            function doReveal() {
-              var el = document.getElementById(\'id_warning\');
-              el.style.display = \'block\';
-            }
-            function doOnload() {
-                window.clearTimeout(mod_lti_timer);
-                parent.M.mod_lti.editor.removeLoading();
-            }
-            var mod_lti_timer = window.setTimeout(doReveal, 20000);
-            parent.YUI().use("node", "event", function(Y) {
-                //Take scrollbars off the outer document to prevent double scroll bar effect
-                var doc = parent.Y.one("body");
-                doc.setStyle("overflow", "hidden");
-
-                var frame = parent.Y.one("#contentframe");
-                var padding = 15; //The bottom of the iframe wasn\'t visible on some themes. Probably because of border widths, etc.
-                var lastHeight;
-                var resize = function(e) {
-                    var viewportHeight = doc.get("winHeight");
-                    if(lastHeight !== Math.min(doc.get("docHeight"), viewportHeight)){
-                        frame.setStyle("height", viewportHeight - frame.getY() - padding + "px");
-                        lastHeight = Math.min(doc.get("docHeight"), doc.get("winHeight"));
-                    }
-                };
-
-                resize();
-
-                parent.Y.on("windowresize", resize);
-            });
-        //]]
-        </script>
-';
-
-echo $resize;
+echo $content;

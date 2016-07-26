@@ -55,6 +55,8 @@ use moodle\mod\lti as lti;
 
 require_once($CFG->dirroot.'/mod/lti/OAuth.php');
 require_once($CFG->libdir.'/weblib.php');
+require_once($CFG->dirroot . '/course/modlib.php');
+require_once($CFG->dirroot . '/mod/lti/TrivialStore.php');
 
 define('LTI_URL_DOMAIN_REGEX', '/(?:https?:\/\/)?(?:www\.)?([^\/]+)(?:\/|$)/i');
 
@@ -82,6 +84,9 @@ define('LTI_SETTING_DELEGATE', 2);
 define('LTI_COURSEVISIBLE_NO', 0);
 define('LTI_COURSEVISIBLE_PRECONFIGURED', 1);
 define('LTI_COURSEVISIBLE_ACTIVITYCHOOSER', 2);
+
+define('LTI_VERSION_1', 'LTI-1p0');
+define('LTI_VERSION_2', 'LTI-2p0');
 
 /**
  * Return the launch data required for opening the external tool.
@@ -396,17 +401,6 @@ function lti_build_request($instance, $typeconfig, $course, $typeid = null, $isl
         $intro = str_replace("\n", "\r\n", $intro);
         $requestparams['resource_link_description'] = $intro;
     }
-    if (!empty($instance->servicesalt)) {
-        $placementsecret = $instance->servicesalt;
-        if ( isset($placementsecret) && ($islti2 ||
-             $typeconfig['acceptgrades'] == LTI_SETTING_ALWAYS ||
-             ($typeconfig['acceptgrades'] == LTI_SETTING_DELEGATE &&
-              $instance->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS))) {
-
-            $sourcedid = json_encode(lti_build_sourcedid($instance->id, $USER->id, $placementsecret, $typeid));
-            $requestparams['lis_result_sourcedid'] = $sourcedid;
-    }
-    }
     if (!empty($instance->id)) {
         $requestparams['resource_link_id'] = $instance->id;
     }
@@ -420,10 +414,11 @@ function lti_build_request($instance, $typeconfig, $course, $typeid = null, $isl
         $requestparams['lis_course_section_sourcedid'] = $course->idnumber;
     }
 
-    if ( !empty($instance->id) && isset($placementsecret) && ($islti2 ||
-         $typeconfig['acceptgrades'] == LTI_SETTING_ALWAYS ||
-         ($typeconfig['acceptgrades'] == LTI_SETTING_DELEGATE && $instance->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS))) {
-
+    if (!empty($instance->id) && !empty($instance->servicesalt) && ($islti2 ||
+            $typeconfig['acceptgrades'] == LTI_SETTING_ALWAYS ||
+            ($typeconfig['acceptgrades'] == LTI_SETTING_DELEGATE && $instance->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS))
+    ) {
+        $placementsecret = $instance->servicesalt;
         $sourcedid = json_encode(lti_build_sourcedid($instance->id, $USER->id, $placementsecret, $typeid));
         $requestparams['lis_result_sourcedid'] = $sourcedid;
 
@@ -445,7 +440,9 @@ function lti_build_request($instance, $typeconfig, $course, $typeid = null, $isl
 
     // Send user's name and email data if appropriate.
     if ($islti2 || $typeconfig['sendname'] == LTI_SETTING_ALWAYS ||
-         ( $typeconfig['sendname'] == LTI_SETTING_DELEGATE && $instance->instructorchoicesendname == LTI_SETTING_ALWAYS ) ) {
+        ($typeconfig['sendname'] == LTI_SETTING_DELEGATE && isset($instance->instructorchoicesendname)
+            && $instance->instructorchoicesendname == LTI_SETTING_ALWAYS)
+    ) {
         $requestparams['lis_person_name_given'] = $USER->firstname;
         $requestparams['lis_person_name_family'] = $USER->lastname;
         $requestparams['lis_person_name_full'] = $USER->firstname . ' ' . $USER->lastname;
@@ -453,7 +450,9 @@ function lti_build_request($instance, $typeconfig, $course, $typeid = null, $isl
     }
 
     if ($islti2 || $typeconfig['sendemailaddr'] == LTI_SETTING_ALWAYS ||
-         ($typeconfig['sendemailaddr'] == LTI_SETTING_DELEGATE && $instance->instructorchoicesendemailaddr == LTI_SETTING_ALWAYS)) {
+        ($typeconfig['sendemailaddr'] == LTI_SETTING_DELEGATE && isset($instance->instructorchoicesendemailaddr)
+            && $instance->instructorchoicesendemailaddr == LTI_SETTING_ALWAYS)
+    ) {
         $requestparams['lis_person_contact_email_primary'] = $USER->email;
     }
 
@@ -492,13 +491,14 @@ function lti_build_request_lti2($tool, $params) {
 /**
  * This function builds the standard parameters for an LTI 1 or 2 request that must be sent to the tool producer
  *
- * @param object    $instance       Basic LTI instance object
+ * @param stdClass  $instance       Basic LTI instance object
  * @param string    $orgid          Organisation ID
  * @param boolean   $islti2         True if an LTI 2 tool is being launched
+ * @param string    $messagetype    The request message type. Defaults to basic-lti-launch-request if empty.
  *
  * @return array                    Request details
  */
-function lti_build_standard_request($instance, $orgid, $islti2) {
+function lti_build_standard_request($instance, $orgid, $islti2, $messagetype = 'basic-lti-launch-request') {
     global $CFG;
 
     $requestparams = array();
@@ -525,7 +525,7 @@ function lti_build_standard_request($instance, $orgid, $islti2) {
     } else {
         $requestparams['lti_version'] = 'LTI-2p0';
     }
-    $requestparams['lti_message_type'] = 'basic-lti-launch-request';
+    $requestparams['lti_message_type'] = $messagetype;
 
     if ($orgid) {
         $requestparams["tool_consumer_instance_guid"] = $orgid;
@@ -584,6 +584,343 @@ function lti_build_custom_parameters($toolproxy, $tool, $instance, $params, $cus
     }
 
     return $custom;
+}
+
+/**
+ * Builds a standard LTI Content-Item selection request.
+ *
+ * @param int $id The tool type ID.
+ * @param stdClass $course The course object.
+ * @param moodle_url $returnurl The return URL in the tool consumer (TC) that the tool provider (TP)
+ *                              will use to return the Content-Item message.
+ * @param string $title The tool's title, if available.
+ * @param string $text The text to display to represent the content item. This value may be a long description of the content item.
+ * @param array $mediatypes Array of MIME types types supported by the TC. If empty, the TC will support ltilink by default.
+ * @param array $presentationtargets Array of ways in which the selected content item(s) can be requested to be opened
+ *                                   (via the presentationDocumentTarget element for a returned content item).
+ *                                   If empty, "frame", "iframe", and "window" will be supported by default.
+ * @param bool $autocreate Indicates whether any content items returned by the TP would be automatically persisted without
+ * @param bool $multiple Indicates whether the user should be permitted to select more than one item. False by default.
+ *                         any option for the user to cancel the operation. False by default.
+ * @param bool $unsigned Indicates whether the TC is willing to accept an unsigned return message, or not.
+ *                       A signed message should always be required when the content item is being created automatically in the
+ *                       TC without further interaction from the user. False by default.
+ * @param bool $canconfirm Flag for can_confirm parameter. False by default.
+ * @param bool $copyadvice Indicates whether the TC is able and willing to make a local copy of a content item. False by default.
+ * @return stdClass The object containing the signed request parameters and the URL to the TP's Content-Item selection interface.
+ * @throws moodle_exception When the LTI tool type does not exist.`
+ * @throws coding_exception For invalid media type and presentation target parameters.
+ */
+function lti_build_content_item_selection_request($id, $course, moodle_url $returnurl, $title = '', $text = '', $mediatypes = [],
+                                                  $presentationtargets = [], $autocreate = false, $multiple = false,
+                                                  $unsigned = false, $canconfirm = false, $copyadvice = false) {
+    $tool = lti_get_type($id);
+    // Validate parameters.
+    if (!$tool) {
+        throw new moodle_exception('errortooltypenotfound', 'mod_lti');
+    }
+    if (!is_array($mediatypes)) {
+        throw new coding_exception('The list of accepted media types should be in an array');
+    }
+    if (!is_array($presentationtargets)) {
+        throw new coding_exception('The list of accepted presentation targets should be in an array');
+    }
+
+    // Check title. If empty, use the tool's name.
+    if (empty($title)) {
+        $title = $tool->name;
+    }
+
+    $typeconfig = lti_get_type_config($id);
+    $key = '';
+    $secret = '';
+    $islti2 = false;
+    if (isset($tool->toolproxyid)) {
+        $islti2 = true;
+        $toolproxy = lti_get_tool_proxy($tool->toolproxyid);
+        $key = $toolproxy->guid;
+        $secret = $toolproxy->secret;
+    } else {
+        $toolproxy = null;
+        if (!empty($typeconfig['resourcekey'])) {
+            $key = $typeconfig['resourcekey'];
+        }
+        if (!empty($typeconfig['password'])) {
+            $secret = $typeconfig['password'];
+        }
+    }
+    $tool->enabledcapability = '';
+    if (!empty($typeconfig['enabledcapability_ContentItemSelectionRequest'])) {
+        $tool->enabledcapability = $typeconfig['enabledcapability_ContentItemSelectionRequest'];
+    }
+
+    $tool->parameter = '';
+    if (!empty($typeconfig['parameter_ContentItemSelectionRequest'])) {
+        $tool->parameter = $typeconfig['parameter_ContentItemSelectionRequest'];
+    }
+
+    // Set the tool URL.
+    if (!empty($typeconfig['toolurl_ContentItemSelectionRequest'])) {
+        $toolurl = new moodle_url($typeconfig['toolurl_ContentItemSelectionRequest']);
+    } else {
+        $toolurl = new moodle_url($typeconfig['toolurl']);
+    }
+
+    // Check if SSL is forced.
+    if (!empty($typeconfig['forcessl'])) {
+        // Make sure the tool URL is set to https.
+        if (strtolower($toolurl->get_scheme()) === 'http') {
+            $toolurl->set_scheme('https');
+        }
+        // Make sure the return URL is set to https.
+        if (strtolower($returnurl->get_scheme()) === 'http') {
+            $returnurl->set_scheme('https');
+        }
+    }
+    $toolurlout = $toolurl->out(false);
+
+    // Get base request parameters.
+    $instance = new stdClass();
+    $instance->course = $course->id;
+    $requestparams = lti_build_request($instance, $typeconfig, $course, $id, $islti2);
+
+    // Get LTI2-specific request parameters and merge to the request parameters if applicable.
+    if ($islti2) {
+        $lti2params = lti_build_request_lti2($tool, $requestparams);
+        $requestparams = array_merge($requestparams, $lti2params);
+    }
+
+    // Get standard request parameters and merge to the request parameters.
+    $orgid = !empty($typeconfig['organizationid']) ? $typeconfig['organizationid'] : '';
+    $standardparams = lti_build_standard_request(null, $orgid, $islti2, 'ContentItemSelectionRequest');
+    $requestparams = array_merge($requestparams, $standardparams);
+
+    // Get custom request parameters and merge to the request parameters.
+    $customstr = '';
+    if (!empty($typeconfig['customparameters'])) {
+        $customstr = $typeconfig['customparameters'];
+    }
+    $customparams = lti_build_custom_parameters($toolproxy, $tool, $instance, $requestparams, $customstr, '', $islti2);
+    $requestparams = array_merge($requestparams, $customparams);
+
+    // Allow request params to be updated by sub-plugins.
+    $plugins = core_component::get_plugin_list('ltisource');
+    foreach (array_keys($plugins) as $plugin) {
+        $pluginparams = component_callback('ltisource_' . $plugin, 'before_launch', [$instance, $toolurlout, $requestparams], []);
+
+        if (!empty($pluginparams) && is_array($pluginparams)) {
+            $requestparams = array_merge($requestparams, $pluginparams);
+        }
+    }
+
+    // Media types. Set to ltilink by default if empty.
+    if (empty($mediatypes)) {
+        $mediatypes = [
+            'application/vnd.ims.lti.v1.ltilink',
+        ];
+    }
+    $requestparams['accept_media_types'] = implode(',', $mediatypes);
+
+    // Presentation targets. Supports frame, iframe, window by default if empty.
+    if (empty($presentationtargets)) {
+        $presentationtargets = [
+            'frame',
+            'iframe',
+            'window',
+        ];
+    }
+    $requestparams['accept_presentation_document_targets'] = implode(',', $presentationtargets);
+
+    // Other request parameters.
+    $requestparams['accept_copy_advice'] = $copyadvice === true ? 'true' : 'false';
+    $requestparams['accept_multiple'] = $multiple === true ? 'true' : 'false';
+    $requestparams['accept_unsigned'] = $unsigned === true ? 'true' : 'false';
+    $requestparams['auto_create'] = $autocreate === true ? 'true' : 'false';
+    $requestparams['can_confirm'] = $canconfirm === true ? 'true' : 'false';
+    $requestparams['content_item_return_url'] = $returnurl->out(false);
+    $requestparams['title'] = $title;
+    $requestparams['text'] = $text;
+    $signedparams = lti_sign_parameters($requestparams, $toolurlout, 'POST', $key, $secret);
+    $toolurlparams = $toolurl->params();
+
+    // Strip querystring params in endpoint url from $signedparams to avoid duplication.
+    if (!empty($toolurlparams) && !empty($signedparams)) {
+        foreach (array_keys($toolurlparams) as $paramname) {
+            if (isset($signedparams[$paramname])) {
+                unset($signedparams[$paramname]);
+            }
+        }
+    }
+
+    // Check for params that should not be passed. Unset if they are set.
+    $unwantedparams = [
+        'resource_link_id',
+        'resource_link_title',
+        'resource_link_description',
+        'launch_presentation_return_url',
+        'lis_result_sourcedid',
+    ];
+    foreach ($unwantedparams as $param) {
+        if (isset($signedparams[$param])) {
+            unset($signedparams[$param]);
+        }
+    }
+
+    // Prepare result object.
+    $result = new stdClass();
+    $result->params = $signedparams;
+    $result->url = $toolurlout;
+
+    return $result;
+}
+
+/**
+ * Processes the tool provider's response to the ContentItemSelectionRequest and builds the configuration data from the
+ * selected content item. This configuration data can be then used when adding a tool into the course.
+ *
+ * @param int $typeid The tool type ID.
+ * @param string $messagetype The value for the lti_message_type parameter.
+ * @param string $ltiversion The value for the lti_version parameter.
+ * @param string $consumerkey The consumer key.
+ * @param string $contentitemsjson The JSON string for the content_items parameter.
+ * @return stdClass The array of module information objects.
+ * @throws moodle_exception
+ * @throws lti\OAuthException
+ */
+function lti_tool_configuration_from_content_item($typeid, $messagetype, $ltiversion, $consumerkey, $contentitemsjson) {
+    $tool = lti_get_type($typeid);
+    // Validate parameters.
+    if (!$tool) {
+        throw new moodle_exception('errortooltypenotfound', 'mod_lti');
+    }
+    // Check lti_message_type. Show debugging if it's not set to ContentItemSelection.
+    // No need to throw exceptions for now since lti_message_type does not seem to be used in this processing at the moment.
+    if ($messagetype !== 'ContentItemSelection') {
+        debugging("lti_message_type is invalid: {$messagetype}. It should be set to 'ContentItemSelection'.",
+            DEBUG_DEVELOPER);
+    }
+
+    $typeconfig = lti_get_type_config($typeid);
+
+    if (isset($tool->toolproxyid)) {
+        $islti2 = true;
+        $toolproxy = lti_get_tool_proxy($tool->toolproxyid);
+        $key = $toolproxy->guid;
+        $secret = $toolproxy->secret;
+    } else {
+        $islti2 = false;
+        $toolproxy = null;
+        if (!empty($typeconfig['resourcekey'])) {
+            $key = $typeconfig['resourcekey'];
+        } else {
+            $key = '';
+        }
+        if (!empty($typeconfig['password'])) {
+            $secret = $typeconfig['password'];
+        } else {
+            $secret = '';
+        }
+    }
+
+    // Check LTI versions from our side and the response's side. Show debugging if they don't match.
+    // No need to throw exceptions for now since LTI version does not seem to be used in this processing at the moment.
+    $expectedversion = LTI_VERSION_1;
+    if ($islti2) {
+        $expectedversion = LTI_VERSION_2;
+    }
+    if ($ltiversion !== $expectedversion) {
+        debugging("lti_version from response does not match the tool's configuration. Tool: {$expectedversion}," .
+            " Response: {$ltiversion}", DEBUG_DEVELOPER);
+    }
+
+    if ($consumerkey !== $key) {
+        throw new moodle_exception('errorincorrectconsumerkey', 'mod_lti');
+    }
+
+    $store = new lti\TrivialOAuthDataStore();
+    $store->add_consumer($key, $secret);
+    $server = new lti\OAuthServer($store);
+    $method = new lti\OAuthSignatureMethod_HMAC_SHA1();
+    $server->add_signature_method($method);
+    $request = lti\OAuthRequest::from_request();
+    try {
+        $server->verify_request($request);
+    } catch (lti\OAuthException $e) {
+        throw new lti\OAuthException("OAuth signature failed: " . $e->getMessage());
+    }
+
+    $items = json_decode($contentitemsjson);
+    if (empty($items)) {
+        throw new moodle_exception('errorinvaliddata', 'mod_lti', '', $contentitemsjson);
+    }
+    if ($items->{'@context'} !== 'http://purl.imsglobal.org/ctx/lti/v1/ContentItem') {
+        throw new moodle_exception('errorinvalidmediatype', 'mod_lti', '', $items->{'@context'});
+    }
+    if (!isset($items->{'@graph'}) || !is_array($items->{'@graph'}) || (count($items->{'@graph'}) > 1)) {
+        throw new moodle_exception('errorinvalidresponseformat', 'mod_lti');
+    }
+
+    $config = null;
+    if (!empty($items->{'@graph'})) {
+        $item = $items->{'@graph'}[0];
+
+        $config = new stdClass();
+        $config->name = '';
+        if (isset($item->title)) {
+            $config->name = $item->title;
+        }
+        if (empty($config->name)) {
+            $config->name = $tool->name;
+        }
+        if (isset($item->text)) {
+            $config->introeditor = [
+                'text' => $item->text,
+                'format' => FORMAT_PLAIN
+            ];
+        }
+        if (isset($item->icon->{'@id'})) {
+            $iconurl = new moodle_url($item->icon->{'@id'});
+            // Assign item's icon URL to secureicon or icon depending on its scheme.
+            if (strtolower($iconurl->get_scheme()) === 'https') {
+                $config->secureicon = $iconurl->out(false);
+            } else {
+                $config->icon = $iconurl->out(false);
+            }
+        }
+        if (isset($item->url)) {
+            $url = new moodle_url($item->url);
+            // Assign item URL to securetoolurl or toolurl depending on its scheme.
+            if (strtolower($url->get_scheme()) === 'https') {
+                $config->securetoolurl = $url->out(false);
+            } else {
+                $config->toolurl = $url->out(false);
+            }
+            $config->typeid = 0;
+        } else {
+            $config->typeid = $typeid;
+        }
+        $config->instructorchoicesendname = LTI_SETTING_NEVER;
+        $config->instructorchoicesendemailaddr = LTI_SETTING_NEVER;
+        $config->instructorchoiceacceptgrades = LTI_SETTING_NEVER;
+        $config->launchcontainer = LTI_LAUNCH_CONTAINER_DEFAULT;
+        if (isset($item->placementAdvice->presentationDocumentTarget)) {
+            if ($item->placementAdvice->presentationDocumentTarget === 'window') {
+                $config->launchcontainer = LTI_LAUNCH_CONTAINER_WINDOW;
+            } else if ($item->placementAdvice->presentationDocumentTarget === 'frame') {
+                $config->launchcontainer = LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
+            } else if ($item->placementAdvice->presentationDocumentTarget === 'iframe') {
+                $config->launchcontainer = LTI_LAUNCH_CONTAINER_EMBED;
+            }
+        }
+        if (isset($item->custom)) {
+            $customparameters = [];
+            foreach ($item->custom as $key => $value) {
+                $customparameters[] = "{$key}={$value}";
+            }
+            $config->instructorcustomparameters = implode("\n", $customparameters);
+        }
+    }
+    return $config;
 }
 
 function lti_get_tool_table($tools, $id) {

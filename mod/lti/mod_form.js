@@ -19,25 +19,10 @@
  * @package    mod
  * @subpackage lti
  * @copyright  Copyright (c) 2011 Moodlerooms Inc. (http://www.moodlerooms.com)
- * @copyright  2015 Vital Source Technologies http://vitalsource.com
- * @author     Stephen Vickers
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 (function(){
     var Y;
-
-    var LTICIP = {
-        BASE : 'base',
-    };
-
-    var CSS = {
-        PANEL : 'lti-contentitem-panel',
-        HIDDEN : 'hidden',
-        WRAP : 'lticip-wrap',
-        HEADER : 'lticip-header',
-        CLOSE : 'close',
-        CONTENT : 'lticip-content',
-    };
 
     M.mod_lti = M.mod_lti || {};
 
@@ -46,13 +31,6 @@
     M.mod_lti.LTI_SETTING_DELEGATE = 2;
 
     M.mod_lti.editor = {
-        _base : null,
-        _escCloseEvent : null,
-        _headingNode : null,
-        _contentNode : null,
-        _toolList : null,
-        _onResize : null,
-        _timer : null,
         init: function(yui3, settings){
             if(yui3){
                 Y = yui3;
@@ -71,22 +49,10 @@
                 self.updateAutomaticToolMatch(Y.one('#id_securetoolurl'));
             };
 
-            var create = Y.Node.create;
-            this._base = create('<div class="'+CSS.PANEL+' '+CSS.HIDDEN+'"></div>')
-                .append(create('<div class="'+CSS.WRAP+'"></div>')
-                    .append(create('<div class="'+CSS.HEADER+' header"></div>')
-                        .append(create('<div class="'+CSS.CLOSE+'"></div>'))
-                        .append(create('<h2>'+M.util.get_string('configure_item', 'lti')+'</h2>')))
-                    .append(create('<div class="'+CSS.CONTENT+'">' +
-                                   '<iframe class="id_contentitem_if" src="about:blank" style="width: 99%;"></iframe></div>'))
-            );
-            Y.one('.lti_contentitem').on('change', this.show, this);
-            this._base.one('.'+CSS.HEADER+' .'+CSS.CLOSE).on('click', this.hide, this);
-            this._headingNode = this._base.one('.'+CSS.HEADER);
-            this._contentNode = this._base.one('.'+CSS.CONTENT);
-            Y.one(document.body).append(this._base);
-
+            var contentItemButton = Y.one('[name="selectcontent"]');
+            var contentItemUrl = contentItemButton.getAttribute('data-contentitemurl');
             var typeSelector = Y.one('#id_typeid');
+
             typeSelector.on('change', function(e){
                 updateToolMatches();
 
@@ -103,7 +69,28 @@
                     allowgrades.set('checked', !self.getSelectedToolTypeOption().getAttribute('nogrades'));
                     self.toggleGradeSection();
                 }
+            });
 
+            // Handle configure from link button click.
+            contentItemButton.on('click', function() {
+                var contentItemId = self.getContentItemId();
+                if (contentItemId) {
+                    // Get activity name and description values.
+                    var title = Y.one('#id_name').get('value').trim();
+                    var text = Y.one('#id_introeditor').get('value').trim();
+
+                    // Set data to be POSTed.
+                    var postData = {
+                        id: contentItemId,
+                        course: self.settings.courseId,
+                        title: title,
+                        text: text
+                    };
+
+                    require(['mod_lti/contentitem'], function(contentitem) {
+                        contentitem.init(contentItemUrl, postData);
+                    });
+                }
             });
 
             this.createTypeEditorButtons();
@@ -531,68 +518,17 @@
             });
         },
 
-        contentItem: function(el){
-            var opt = el.options[el.selectedIndex];
-            if(opt.getAttribute('contentitem') == '1') {
-                window.location.href = opt.getAttribute('contentitemurl') + '&title=' +
-                    encodeURIComponent(document.getElementById('id_name').value);
+        /**
+         * Gets the tool type ID of the selected tool that supports Content-Item selection.
+         *
+         * @returns {number|boolean} The ID of the tool type if it supports Content-Item selection. False, otherwise.
+         */
+        getContentItemId: function() {
+            var selected = this.getSelectedToolTypeOption();
+            if (selected.getAttribute('data-contentitem')) {
+                return selected.getAttribute('data-id');
             }
-        },
-
-        show : function(e) {
-            var opt = e.target.get('options').item(e.target.get('selectedIndex'));
-            if (opt.getAttribute('contentitem') == '1') {
-    					  this._toolList = e.target;
-								e.preventDefault();
-								e.halt();
-								this._timer = window.setTimeout(this.doReveal, 20000);
-								this._base.removeClass(CSS.HIDDEN);
-								var w = this._base.get('winWidth') * 0.8;
-								var h = this._base.get('winHeight') * 0.8;
-								var x = (this._base.get('winWidth') - w) / 2;
-								var y = (this._base.get('winHeight') - h) / 2;
-                this._base.setStyle('width', '' + w + 'px');
-                this._base.setStyle('height', '' + h + 'px');
-								this._base.setXY([x,y]);
-
-								var padding = 15; //The bottom of the iframe wasn\'t visible on some themes. Probably because of border widths, etc.
-
-								var viewportHeight = h - parseInt(this._headingNode.getStyle('height')) - padding;
-
-								this._escCloseEvent = Y.on('key', this.hide, document.body, 'down:27', this);
-
-                var url = opt.getAttribute('contentitemurl') + '&title=' +
-                    encodeURIComponent(Y.one('#id_name').get('value'));
-
-								var ifr = Y.one('.id_contentitem_if');
-								ifr.setAttribute('src', url);
-								ifr.on('load', this.loaded, this);
-								ifr.setStyle("height", viewportHeight);
-
-		            var frm = Y.one('.mform');
-		            frm.reset();
-						}
-        },
-
-        doReveal : function() {
-						var el = Y.one('#id_warning');
-						el.removeClass(CSS.HIDDEN);
-				},
-
-        loaded : function() {
-            window.clearTimeout(this._timer);
-				},
-
-        hide : function(e) {
-					  this.loaded();
-            if (this._escCloseEvent) {
-                this._escCloseEvent.detach();
-                this._escCloseEvent = null;
-            }
-            this._base.addClass(CSS.HIDDEN);
-						var ifr = Y.one('.id_contentitem_if');
-						ifr.setAttribute('src', 'about:blank');
+            return false;
         }
-
     };
 })();
