@@ -128,16 +128,9 @@ input#id_externalurl {
 // Copying in Bootstrap styles.
 .form-item,
 .mform .fitem {
-    .form-horizontal {
-        @extend .control-group;
-    }
     margin-bottom: 10px;
     // Theres's a mysterious extra 10px inside this item,
     // so reduce margin by 10px from 20px standard to compensate.
-}
-.form-item .form-label,
-.mform .fitem div.fitemtitle .form-horizontal {
-    @extend .control-label;
 }
 .form-defaultinfo,
 .form-label .form-shortname {

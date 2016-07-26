@@ -1,0 +1,50 @@
+<div class="file-picker fp-select">
+    <div class="fp-select-loading">
+        <span class="sr-only">{{#str}}loadinghelp{{/str}}</span>
+        {{#pix}}i/loading_small{{/pix}}
+    </div>
+    <form class="form">
+        <div class="fp-forminset">
+                <div class="fp-linktype-2 form-group">
+                    <label class="form-control-label control-radio">{{#str}}makefileinternal, repository{{/str}}</label>
+                    <input class="form-control" type="radio"/>
+                </div>
+                <div class="fp-linktype-1 form-group">
+                    <label class="form-control-label control-radio">{{#str}}makefilelink, repository{{/str}}</label>
+                    <input class="form-control" type="radio"/>
+                </div>
+                <div class="fp-linktype-4 form-group">
+                    <label class="form-control-label control-radio">{{#str}}makefilereference, repository{{/str}}</label>
+                    <input class="form-control" type="radio"/>
+                </div>
+                <div class="fp-saveas form-group">
+                    <label class="form-control-label">{{#str}}saveas, repository{{/str}}</label>
+                    <input class="form-control" type="text"/>
+                </div>
+                <div class="fp-setauthor form-group">
+                    <label class="form-control-label">{{#str}}author, repository{{/str}}</label>
+                    <input class="form-control" type="text"/>
+                </div>
+                <div class="fp-setlicense form-group">
+                    <label class="form-control-label">{{#str}}chooselicense, repository{{/str}}</label>
+                    <select class="form-control"></select>
+                </div>
+        </div>
+       <div class="fp-select-buttons">
+            <button class="fp-select-confirm btn-primary btn">{{#str}}getfile, repository{{/str}}</button>
+            <button class="fp-select-cancel btn-secondary btn">{{#str}}cancel{{/str}}</button>
+        </div>
+    </form>
+    <div class="fp-info clearfix">
+        <hr>
+        <p class="fp-thumbnail"></p>
+        <div class="fp-fileinfo">
+            <div class="fp-datemodified">{{#str}}lastmodified, repository{{/str}}<span class="fp-value"></span></div>
+            <div class="fp-datecreated">{{#str}}datecreated, repository{{/str}}<span class="fp-value"></span></div>
+            <div class="fp-size">{{#str}}size, repository{{/str}}<span class="fp-value"></span></div>
+            <div class="fp-license">{{#str}}license, repository{{/str}}<span class="fp-value"></span></div>
+            <div class="fp-author">{{#str}}author, repository{{/str}}<span class="fp-value"></span></div>
+            <div class="fp-dimensions">{{#str}}dimensions, repository{{/str}}<span class="fp-value"></span></div>
+        </div>
+    </div>
+</div>
