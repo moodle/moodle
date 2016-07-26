@@ -78,12 +78,12 @@ class manager {
     const NO_OWNER_ID = 0;
 
     /**
-     * @var \core_search\area\base[] Enabled search areas.
+     * @var \core_search\base[] Enabled search areas.
      */
     protected static $enabledsearchareas = null;
 
     /**
-     * @var \core_search\area\base[] All system search areas.
+     * @var \core_search\base[] All system search areas.
      */
     protected static $allsearchareas = null;
 
@@ -100,7 +100,7 @@ class manager {
     /**
      * Constructor, use \core_search\manager::instance instead to get a class instance.
      *
-     * @param \core_search\area\base The search engine to use
+     * @param \core_search\base The search engine to use
      */
     public function __construct($engine) {
         $this->engine = $engine;
@@ -194,7 +194,7 @@ class manager {
      * Returns a new area search indexer instance.
      *
      * @param string $areaid
-     * @return \core_search\area\base|bool False if the area is not available.
+     * @return \core_search\base|bool False if the area is not available.
      */
     public static function get_search_area($areaid) {
 
@@ -218,7 +218,7 @@ class manager {
      * Return the list of available search areas.
      *
      * @param bool $enabled Return only the enabled ones.
-     * @return \core_search\area\base[]
+     * @return \core_search\base[]
      */
     public static function get_search_areas_list($enabled = false) {
 
@@ -681,7 +681,7 @@ class manager {
     /**
      * Returns search areas configuration.
      *
-     * @param \core_search\area\base[] $searchareas
+     * @param \core_search\base[] $searchareas
      * @return \stdClass[] $configsettings
      */
     public function get_areas_config($searchareas) {

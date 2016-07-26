@@ -80,10 +80,10 @@ class testable_core_search extends \core_search\manager {
      * Adds an enabled search component to the search areas list.
      *
      * @param string $areaid
-     * @param \core_search\area\base $searcharea
+     * @param \core_search\base $searcharea
      * @return void
      */
-    public function add_search_area($areaid, \core_search\area\base $searcharea) {
+    public function add_search_area($areaid, \core_search\base $searcharea) {
        self::$enabledsearchareas[$areaid] = $searcharea;
        self::$allsearchareas[$areaid] = $searcharea;
     }

@@ -37,4 +37,7 @@ defined('MOODLE_INTERNAL') || die();
 // The array must be called $renamedclasses.
 $renamedclasses = array(
     'core\progress\null' => 'core\progress\none',
+    'core_search\area\base' => 'core_search\base',
+    'core_search\area\base_mod' => 'core_search\base_mod',
+    'core_search\area\base_activity' => 'core_search\base_activity'
 );

@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2016 Eric Merrill {@link http://www.merrilldigital.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class chapter extends \core_search\area\base_mod {
+class chapter extends \core_search\base_mod {
     /**
      * @var array Cache of book records.
      */

@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2015 David Monllao {@link http://www.davidmonllao.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class activity extends \core_search\area\base_activity {
+class activity extends \core_search\base_activity {
 
     /**
      * Overwritten as labels are displayed in-course.

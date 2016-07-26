@@ -70,7 +70,7 @@ class search_manager_testcase extends advanced_testcase {
         $fakeareaid = \core_search\manager::generate_areaid('mod_unexisting', 'chihuaquita');
 
         $searcharea = \core_search\manager::get_search_area($this->forumpostareaid);
-        $this->assertInstanceOf('\core_search\area\base', $searcharea);
+        $this->assertInstanceOf('\core_search\base', $searcharea);
 
         $this->assertFalse(\core_search\manager::get_search_area($fakeareaid));
 
