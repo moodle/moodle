@@ -460,6 +460,8 @@ function css_minify_css($files) {
 
 /**
  * Hack to find out the GD version by parsing phpinfo output
+ *
+ * @deprecated
  */
 function check_gd_version() {
     throw new coding_exception('check_gd_version() is removed, GD extension is always available now');
@@ -2215,7 +2217,7 @@ function get_timezone_record($timezonename) {
  * Returns the URL of the HTTP_REFERER, less the querystring portion if required.
  *
  * @deprecated since Moodle 3.0 MDL-49360 - please do not use this function any more.
- * @todo Remove this function in Moodle 3.2
+ * @todo MDL-50265 Remove this function in Moodle 3.4.
  * @param boolean $stripquery if true, also removes the query part of the url.
  * @return string The resulting referer or empty string.
  */
@@ -2762,6 +2764,7 @@ function tag_delete_instance($record_type, $record_id, $tagid, $userid = null) {
  * Find all records tagged with a tag of a given type ('post', 'user', etc.)
  *
  * @package  core_tag
+ * @deprecated since 3.1
  * @category tag
  * @param    string   $tag       tag to look for
  * @param    string   $type      type to restrict search to.  If null, every matching record will be returned
