@@ -30,7 +30,7 @@ M.core_availability.form = {
      * @property plugins
      * @type Object
      */
-    plugins : {},
+    plugins: {},
 
     /**
      * Availability field (textarea).
@@ -38,7 +38,7 @@ M.core_availability.form = {
      * @property field
      * @type Y.Node
      */
-    field : null,
+    field: null,
 
     /**
      * Main div that replaces the availability field.
@@ -46,7 +46,7 @@ M.core_availability.form = {
      * @property mainDiv
      * @type Y.Node
      */
-    mainDiv : null,
+    mainDiv: null,
 
     /**
      * Object that represents the root of the tree.
@@ -54,7 +54,7 @@ M.core_availability.form = {
      * @property rootList
      * @type M.core_availability.List
      */
-    rootList : null,
+    rootList: null,
 
     /**
      * Counter used when creating anything that needs an id.
@@ -62,7 +62,7 @@ M.core_availability.form = {
      * @property idCounter
      * @type Number
      */
-    idCounter : 0,
+    idCounter: 0,
 
     /**
      * The 'Restrict by group' button if present.
@@ -70,7 +70,7 @@ M.core_availability.form = {
      * @property restrictByGroup
      * @type Y.Node
      */
-    restrictByGroup : null,
+    restrictByGroup: null,
 
     /**
      * Called to initialise the system when the page loads. This method will
@@ -78,9 +78,9 @@ M.core_availability.form = {
      *
      * @method init
      */
-    init : function(pluginParams) {
+    init: function(pluginParams) {
         // Init all plugins.
-        for(var plugin in pluginParams) {
+        for (var plugin in pluginParams) {
             var params = pluginParams[plugin];
             var pluginClass = M[params[0]].form;
             pluginClass.init.apply(pluginClass, params);
@@ -106,7 +106,7 @@ M.core_availability.form = {
         if (value !== '') {
             try {
                 data = Y.JSON.parse(value);
-            } catch(x) {
+            } catch (x) {
                 // If the JSON data is not valid, treat it as empty.
                 this.field.set('value', '');
             }
@@ -152,7 +152,7 @@ M.core_availability.form = {
      *
      * @method update
      */
-    update : function() {
+    update: function() {
         // Convert tree to value.
         var jsValue = this.rootList.getValue();
 
@@ -174,7 +174,7 @@ M.core_availability.form = {
      * Updates the status of the 'restrict by group' button (enables or disables
      * it) based on current availability restrictions and group/grouping settings.
      */
-    updateRestrictByGroup : function() {
+    updateRestrictByGroup: function() {
         if (!this.restrictByGroup) {
             return;
         }
@@ -213,7 +213,7 @@ M.core_availability.form = {
      *
      * @param e Button click event
      */
-    addRestrictByGroup : function(e) {
+    addRestrictByGroup: function(e) {
         // If you don't prevent default, it submits the form for some reason.
         e.preventDefault();
 
@@ -223,10 +223,10 @@ M.core_availability.form = {
         if (groupingid && Number(groupingid.get('value')) !== 0) {
             // Add a grouping restriction if one is specified.
             newChild = new M.core_availability.Item(
-                    {type : 'grouping', id : Number(groupingid.get('value'))}, true);
+                    {type: 'grouping', id: Number(groupingid.get('value'))}, true);
         } else {
             // Otherwise just add a group restriction.
-            newChild = new M.core_availability.Item({type : 'group'}, true);
+            newChild = new M.core_availability.Item({type: 'group'}, true);
         }
 
         // Refresh HTML.
@@ -251,7 +251,7 @@ M.core_availability.plugin = {
      * @property allowAdd
      * @type Boolean
      */
-    allowAdd : false,
+    allowAdd: false,
 
     /**
      * Called (from PHP) to initialise the plugin. Should usually not be
@@ -260,7 +260,7 @@ M.core_availability.plugin = {
      * @method init
      * @param {String} component Component name e.g. 'availability_date'
      */
-    init : function(component, allowAdd, params) {
+    init: function(component, allowAdd, params) {
         var name = component.replace(/^availability_/, '');
         this.allowAdd = allowAdd;
         M.core_availability.form.plugins[name] = this;
@@ -276,7 +276,8 @@ M.core_availability.plugin = {
      * @method initInner
      * @protected
      */
-    initInner : function() {
+    initInner: function() {
+        // Can be overriden.
     },
 
     /**
@@ -287,7 +288,7 @@ M.core_availability.plugin = {
      * @method getNode
      * @return {Y.Node} YUI node
      */
-    getNode : function() {
+    getNode: function() {
         throw 'getNode not implemented';
     },
 
@@ -301,7 +302,7 @@ M.core_availability.plugin = {
      * @param {Object} value Value object (to be written to)
      * @param {Y.Node} node YUI node (same one returned from getNode)
      */
-    fillValue : function() {
+    fillValue: function() {
         throw 'fillValue not implemented';
     },
 
@@ -318,7 +319,8 @@ M.core_availability.plugin = {
      * @param {Array} errors Array of errors (push new errors here)
      * @param {Y.Node} node YUI node (same one returned from getNode)
      */
-    fillErrors : function() {
+    fillErrors: function() {
+        // Can be overriden.
     },
 
     /**
@@ -327,7 +329,7 @@ M.core_availability.plugin = {
      * The default implementation uses a simple algorithm to identify the
      * first focusable input/select and then focuses it.
      */
-    focusAfterAdd : function(node) {
+    focusAfterAdd: function(node) {
         var target = node.one('input:not([disabled]),select:not([disabled])');
         target.focus();
     }
@@ -409,7 +411,9 @@ M.core_availability.List = function(json, root, parentRoot) {
     // Create the button and add it.
     var button = Y.Node.create('<button type="button" class="btn btn-default">' +
             M.util.get_string('addrestriction', 'availability') + '</button>');
-    button.on("click", function() { this.clickAdd(); }, this);
+    button.on("click", function() {
+        this.clickAdd();
+    }, this);
     this.node.one('div.availability-button').appendChild(button);
 
     if (json) {
@@ -530,7 +534,7 @@ M.core_availability.List.prototype.isIndividualShowIcons = function() {
  */
 M.core_availability.List.prototype.renumber = function(parentNumber) {
     // Update heading for list.
-    var headingParams = { count: this.children.length };
+    var headingParams = {count: this.children.length};
     var prefix;
     if (parentNumber === undefined) {
         headingParams.number = '';
@@ -668,7 +672,7 @@ M.core_availability.List.prototype.clickAdd = function() {
     var cancel = content.one('button');
 
     // Make a list of all the dialog options.
-    var dialogRef = { dialog: null };
+    var dialogRef = {dialog: null};
     var ul = content.one('ul');
     var li, id, button, label;
     for (var type in M.core_availability.form.plugins) {
@@ -701,13 +705,13 @@ M.core_availability.List.prototype.clickAdd = function() {
     ul.appendChild(li);
 
     var config = {
-        headerContent : M.util.get_string('addrestriction', 'availability'),
-        bodyContent : content,
-        additionalBaseClass : 'availability-dialogue',
-        draggable : true,
-        modal : true,
-        closeButton : false,
-        width : '450px'
+        headerContent: M.util.get_string('addrestriction', 'availability'),
+        bodyContent: content,
+        additionalBaseClass: 'availability-dialogue',
+        draggable: true,
+        modal: true,
+        closeButton: false,
+        width: '450px'
     };
     dialogRef.dialog = new M.core.dialogue(config);
     dialogRef.dialog.show();
@@ -732,10 +736,10 @@ M.core_availability.List.prototype.getAddHandler = function(type, dialogRef) {
         var newItem;
         if (type) {
             // Create an Item object to represent the child.
-            newItem = new M.core_availability.Item({ type: type, creating: true }, this.root);
+            newItem = new M.core_availability.Item({type: type, creating: true}, this.root);
         } else {
             // Create a new List object to represent the child.
-            newItem = new M.core_availability.List({ c: [], showc: true }, false, this.root);
+            newItem = new M.core_availability.List({c: [], showc: true}, false, this.root);
         }
         // Add to list.
         this.addChild(newItem);
@@ -897,7 +901,7 @@ M.core_availability.Item = function(json, root) {
     // hidden depending on the selected list operator.
     if (root) {
         var shown = true;
-        if(json.showc !== undefined) {
+        if (json.showc !== undefined) {
             shown = json.showc;
         }
         this.eyeIcon = new M.core_availability.EyeIcon(true, shown);
@@ -925,7 +929,7 @@ M.core_availability.Item = function(json, root) {
  * @return {Object} JavaScript object containing value of this item
  */
 M.core_availability.Item.prototype.getValue = function() {
-    var value = { 'type' : this.pluginType };
+    var value = {'type': this.pluginType};
     if (this.plugin) {
         this.plugin.fillValue(value, this.pluginNode);
     }
@@ -966,7 +970,7 @@ M.core_availability.Item.prototype.fillErrors = function(errors) {
  */
 M.core_availability.Item.prototype.renumber = function(number) {
     // Update heading for item.
-    var headingParams = { number: number };
+    var headingParams = {number: number};
     if (this.plugin) {
         headingParams.type = M.util.get_string('title', 'availability_' + this.pluginType);
     } else {
@@ -1062,7 +1066,7 @@ M.core_availability.EyeIcon = function(individual, shown) {
             this.span.set('title', shownStr + ' \u2022 ' +
                     M.util.get_string('hide_verb', 'availability'));
         };
-    if(shown) {
+    if (shown) {
         setShown.call(this);
     } else {
         setHidden.call(this);
@@ -1080,7 +1084,9 @@ M.core_availability.EyeIcon = function(individual, shown) {
     };
     this.span.on('click', click, this);
     this.span.on('key', click, 'up:32', this);
-    this.span.on('key', function(e) { e.preventDefault(); }, 'down:32', this);
+    this.span.on('key', function(e) {
+        e.preventDefault();
+    }, 'down:32', this);
 };
 
 /**
@@ -1132,7 +1138,9 @@ M.core_availability.DeleteIcon = function(toDelete) {
     };
     this.span.on('click', click, this);
     this.span.on('key', click, 'up:32', this);
-    this.span.on('key', function(e) { e.preventDefault(); }, 'down:32', this);
+    this.span.on('key', function(e) {
+        e.preventDefault();
+    }, 'down:32', this);
 };
 
 /**

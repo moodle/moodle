@@ -411,10 +411,10 @@ Y.namespace('M.core_message.messenger').sendMessage = Y.extend(SENDMSGDIALOG, M.
 
         Y.use('moodle-core-notification-confirm', function() {
             var confirm = new M.core.confirm({
-                title : M.util.get_string('confirm', 'moodle'),
-                question : M.util.get_string('changesmadereallygoaway', 'moodle'),
-                yesLabel : M.util.get_string('confirm', 'moodle'),
-                noLabel : M.util.get_string('cancel', 'moodle')
+                title: M.util.get_string('confirm', 'moodle'),
+                question: M.util.get_string('changesmadereallygoaway', 'moodle'),
+                yesLabel: M.util.get_string('confirm', 'moodle'),
+                noLabel: M.util.get_string('cancel', 'moodle')
             });
             confirm.on('complete-yes', function() {
                 M.core_formchangechecker.reset_form_dirty_state();
@@ -617,7 +617,7 @@ Y.Base.modifyAttrs(Y.namespace('M.core_message.messenger.sendMessage'), {
      * @default false
      */
     center: {
-        value : true
+        value: true
     }
 
 });

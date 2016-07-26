@@ -13,44 +13,44 @@ YUI.add('moodle-course-toolboxes', function (Y, NAME) {
 
 // The CSS classes we use.
 var CSS = {
-        ACTIVITYINSTANCE : 'activityinstance',
-        AVAILABILITYINFODIV : 'div.availabilityinfo',
-        CONTENTWITHOUTLINK : 'contentwithoutlink',
-        CONDITIONALHIDDEN : 'conditionalhidden',
-        DIMCLASS : 'dimmed',
-        DIMMEDTEXT : 'dimmed_text',
-        EDITINSTRUCTIONS : 'editinstructions',
-        HIDE : 'hide',
-        MODINDENTCOUNT : 'mod-indent-',
-        MODINDENTHUGE : 'mod-indent-huge',
-        MODULEIDPREFIX : 'module-',
-        SECTIONHIDDENCLASS : 'hidden',
-        SECTIONIDPREFIX : 'section-',
-        SHOW : 'editing_show'
+        ACTIVITYINSTANCE: 'activityinstance',
+        AVAILABILITYINFODIV: 'div.availabilityinfo',
+        CONTENTWITHOUTLINK: 'contentwithoutlink',
+        CONDITIONALHIDDEN: 'conditionalhidden',
+        DIMCLASS: 'dimmed',
+        DIMMEDTEXT: 'dimmed_text',
+        EDITINSTRUCTIONS: 'editinstructions',
+        HIDE: 'hide',
+        MODINDENTCOUNT: 'mod-indent-',
+        MODINDENTHUGE: 'mod-indent-huge',
+        MODULEIDPREFIX: 'module-',
+        SECTIONHIDDENCLASS: 'hidden',
+        SECTIONIDPREFIX: 'section-',
+        SHOW: 'editing_show'
     },
     // The CSS selectors we use.
     SELECTOR = {
         ACTIONAREA: '.actions',
-        ACTIONLINKTEXT : '.actionlinktext',
-        ACTIVITYACTION : 'a.cm-edit-action[data-action]',
-        ACTIVITYICON : 'img.activityicon',
-        ACTIVITYINSTANCE : '.' + CSS.ACTIVITYINSTANCE,
-        ACTIVITYLINK: '.' + CSS.ACTIVITYINSTANCE + ' > a, .'+ CSS.ACTIVITYINSTANCE +
+        ACTIONLINKTEXT: '.actionlinktext',
+        ACTIVITYACTION: 'a.cm-edit-action[data-action]',
+        ACTIVITYICON: 'img.activityicon',
+        ACTIVITYINSTANCE: '.' + CSS.ACTIVITYINSTANCE,
+        ACTIVITYLINK: '.' + CSS.ACTIVITYINSTANCE + ' > a, .' + CSS.ACTIVITYINSTANCE +
             ' > span[data-inplaceeditable] > a:not([data-inplaceeditablelink])',
-        ACTIVITYLI : 'li.activity',
-        COMMANDSPAN : '.commands',
-        CONTENTAFTERLINK : 'div.contentafterlink',
-        CONTENTWITHOUTLINK : 'div.contentwithoutlink',
+        ACTIVITYLI: 'li.activity',
+        COMMANDSPAN: '.commands',
+        CONTENTAFTERLINK: 'div.contentafterlink',
+        CONTENTWITHOUTLINK: 'div.contentwithoutlink',
         GROUPINGLABEL: '.' + CSS.ACTIVITYINSTANCE + ' .groupinglabel',
-        HIDE : 'a.editing_hide',
-        HIGHLIGHT : 'a.editing_highlight',
-        INSTANCENAME : 'span.instancename',
-        MODINDENTDIV : '.mod-indent',
-        MODINDENTOUTER : '.mod-indent-outer',
-        PAGECONTENT : 'body',
-        SECTIONLI : 'li.section',
-        SHOW : 'a.'+CSS.SHOW,
-        SHOWHIDE : 'a.editing_showhide'
+        HIDE: 'a.editing_hide',
+        HIGHLIGHT: 'a.editing_highlight',
+        INSTANCENAME: 'span.instancename',
+        MODINDENTDIV: '.mod-indent',
+        MODINDENTOUTER: '.mod-indent-outer',
+        PAGECONTENT: 'body',
+        SECTIONLI: 'li.section',
+        SHOW: 'a.' + CSS.SHOW,
+        SHOWHIDE: 'a.editing_showhide'
     },
     INDENTLIMITS = {
         MIN: 0,
@@ -114,7 +114,9 @@ Y.extend(TOOLBOX, Y.Base, {
                         if (responsetext.error) {
                             new M.core.ajaxException(responsetext);
                         }
-                    } catch (e) {}
+                    } catch (e) {
+                        // Ignore.
+                    }
 
                     // Run the callback if we have one.
                     if (success_callback) {
@@ -370,7 +372,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         // Prevent the default button action
         ev.preventDefault();
 
-        var direction = (action === 'moveleft') ? -1: 1;
+        var direction = (action === 'moveleft') ? -1 : 1;
 
         // And we need to determine the current and new indent level
         var indentdiv = activity.one(SELECTOR.MODINDENTDIV),
@@ -447,7 +449,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         ev.preventDefault();
 
         // Get the element we're working on
-        var element   = activity,
+        var element = activity,
             // Create confirm string (different if element has or does not have name)
             confirmstring = '',
             plugindata = {
@@ -580,7 +582,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
                     SELECTOR.CONTENTWITHOUTLINK
                 ].join(', ')),
             availabilityinfo = activity.one(CSS.AVAILABILITYINFODIV),
-            nextaction = (action === 'hide') ? 'show': 'hide',
+            nextaction = (action === 'hide') ? 'show' : 'hide',
             buttontext = button.one('span'),
             newstring = M.util.get_string(nextaction, 'moodle'),
             buttonimg = button.one('img');
@@ -598,7 +600,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             buttonimg.setAttribute('alt', newstring);
         }
 
-        button.replaceClass('editing_'+action, 'editing_'+nextaction);
+        button.replaceClass('editing_' + action, 'editing_' + nextaction);
         button.setData('action', nextaction);
         if (buttontext) {
             buttontext.set('text', newstring);
@@ -629,7 +631,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         if (availabilityinfo) {
             availabilityinfo.toggleClass(CSS.HIDE);
         }
-        return (action === 'hide') ? 0: 1;
+        return (action === 'hide') ? 0 : 1;
     },
 
     /**
@@ -786,7 +788,7 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
      * @method initializer
      * @protected
      */
-    initializer : function() {
+    initializer: function() {
         M.course.coursebase.register_module(this);
 
         // Section Highlighting.
@@ -796,7 +798,7 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
         Y.delegate('click', this.toggle_hide_section, SELECTOR.PAGECONTENT, SELECTOR.SECTIONLI + ' ' + SELECTOR.SHOWHIDE, this);
     },
 
-    toggle_hide_section : function(e) {
+    toggle_hide_section: function(e) {
         // Prevent the default button action.
         e.preventDefault();
 
@@ -827,8 +829,8 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
 
         var newstring = M.util.get_string(nextaction + 'fromothers', 'format_' + this.get('format'));
         hideicon.setAttrs({
-            'alt' : newstring,
-            'src'   : M.util.image_url('i/' + nextaction)
+            'alt': newstring,
+            'src': M.util.image_url('i/' + nextaction)
         });
         button.set('title', newstring);
         if (buttontext) {
@@ -837,10 +839,10 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
 
         // Change the show/hide status
         var data = {
-            'class' : 'section',
-            'field' : 'visible',
-            'id'    : Y.Moodle.core_course.util.section.getId(section.ancestor(M.course.format.get_section_wrapper(Y), true)),
-            'value' : value
+            'class': 'section',
+            'field': 'visible',
+            'id': Y.Moodle.core_course.util.section.getId(section.ancestor(M.course.format.get_section_wrapper(Y), true)),
+            'value': value
         };
 
         var lightbox = M.util.add_lightbox(Y, section);
@@ -872,7 +874,7 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
      * @method toggle_highlight
      * @param {EventFacade} e
      */
-    toggle_highlight : function(e) {
+    toggle_highlight: function(e) {
         // Prevent the default button action.
         e.preventDefault();
 
@@ -923,17 +925,17 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
 
         // Change the highlight status.
         var data = {
-            'class' : 'course',
-            'field' : 'marker',
-            'value' : value
+            'class': 'course',
+            'field': 'marker',
+            'value': value
         };
         var lightbox = M.util.add_lightbox(Y, section);
         lightbox.show();
         this.send_request(data, lightbox);
     }
 }, {
-    NAME : 'course-section-toolbox',
-    ATTRS : {
+    NAME: 'course-section-toolbox',
+    ATTRS: {
     }
 });
 

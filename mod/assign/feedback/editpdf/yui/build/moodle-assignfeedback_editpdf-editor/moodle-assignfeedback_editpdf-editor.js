@@ -24,47 +24,47 @@ YUI.add('moodle-assignfeedback_editpdf-editor', function (Y, NAME) {
 var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
     AJAXBASEPROGRESS = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax_progress.php',
     CSS = {
-        DIALOGUE : 'assignfeedback_editpdf_widget'
+        DIALOGUE: 'assignfeedback_editpdf_widget'
     },
     SELECTOR = {
-        PREVIOUSBUTTON :  '.navigate-previous-button',
-        NEXTBUTTON :  ' .navigate-next-button',
-        SEARCHCOMMENTSBUTTON : '.searchcommentsbutton',
-        SEARCHFILTER : '.assignfeedback_editpdf_commentsearch input',
-        SEARCHCOMMENTSLIST : '.assignfeedback_editpdf_commentsearch ul',
-        PAGESELECT : '.navigate-page-select',
-        LOADINGICON : '.loading',
-        PROGRESSBARCONTAINER : '.progress-info.progress-striped',
-        DRAWINGREGION : '.drawingregion',
-        DRAWINGCANVAS : '.drawingcanvas',
-        SAVE : '.savebutton',
-        COMMENTCOLOURBUTTON : '.commentcolourbutton',
-        COMMENTMENU : '.commentdrawable a',
-        ANNOTATIONCOLOURBUTTON :  '.annotationcolourbutton',
-        DELETEANNOTATIONBUTTON : '.deleteannotationbutton',
-        UNSAVEDCHANGESDIV : '.assignfeedback_editpdf_unsavedchanges',
-        UNSAVEDCHANGESINPUT : 'input[name="assignfeedback_editpdf_haschanges"]',
-        STAMPSBUTTON : '.currentstampbutton',
-        DIALOGUE : '.' + CSS.DIALOGUE
+        PREVIOUSBUTTON:  '.navigate-previous-button',
+        NEXTBUTTON:  ' .navigate-next-button',
+        SEARCHCOMMENTSBUTTON: '.searchcommentsbutton',
+        SEARCHFILTER: '.assignfeedback_editpdf_commentsearch input',
+        SEARCHCOMMENTSLIST: '.assignfeedback_editpdf_commentsearch ul',
+        PAGESELECT: '.navigate-page-select',
+        LOADINGICON: '.loading',
+        PROGRESSBARCONTAINER: '.progress-info.progress-striped',
+        DRAWINGREGION: '.drawingregion',
+        DRAWINGCANVAS: '.drawingcanvas',
+        SAVE: '.savebutton',
+        COMMENTCOLOURBUTTON: '.commentcolourbutton',
+        COMMENTMENU: '.commentdrawable a',
+        ANNOTATIONCOLOURBUTTON:  '.annotationcolourbutton',
+        DELETEANNOTATIONBUTTON: '.deleteannotationbutton',
+        UNSAVEDCHANGESDIV: '.assignfeedback_editpdf_unsavedchanges',
+        UNSAVEDCHANGESINPUT: 'input[name="assignfeedback_editpdf_haschanges"]',
+        STAMPSBUTTON: '.currentstampbutton',
+        DIALOGUE: '.' + CSS.DIALOGUE
     },
     SELECTEDBORDERCOLOUR = 'rgba(200, 200, 255, 0.9)',
     SELECTEDFILLCOLOUR = 'rgba(200, 200, 255, 0.5)',
     COMMENTTEXTCOLOUR = 'rgb(51, 51, 51)',
     COMMENTCOLOUR = {
-        'white' : 'rgb(255,255,255)',
-        'yellow' : 'rgb(255,236,174)',
-        'red' : 'rgb(249,181,179)',
-        'green' : 'rgb(214,234,178)',
-        'blue' : 'rgb(203,217,237)',
-        'clear' : 'rgba(255,255,255, 0)'
+        'white': 'rgb(255,255,255)',
+        'yellow': 'rgb(255,236,174)',
+        'red': 'rgb(249,181,179)',
+        'green': 'rgb(214,234,178)',
+        'blue': 'rgb(203,217,237)',
+        'clear': 'rgba(255,255,255, 0)'
     },
     ANNOTATIONCOLOUR = {
-        'white' : 'rgb(255,255,255)',
-        'yellow' : 'rgb(255,207,53)',
-        'red' : 'rgb(239,69,64)',
-        'green' : 'rgb(152,202,62)',
-        'blue' : 'rgb(125,159,211)',
-        'black' : 'rgb(51,51,51)'
+        'white': 'rgb(255,255,255)',
+        'yellow': 'rgb(255,207,53)',
+        'red': 'rgb(239,69,64)',
+        'green': 'rgb(152,202,62)',
+        'blue': 'rgb(125,159,211)',
+        'black': 'rgb(51,51,51)'
     },
     CLICKTIMEOUT = 300,
     TOOLSELECTOR = {
@@ -555,7 +555,7 @@ Y.extend(ANNOTATION, Y.Base, {
      * @type M.assignfeedback_editpdf.editor
      * @public
      */
-    editor : null,
+    editor: null,
 
     /**
      * Grade id
@@ -563,7 +563,7 @@ Y.extend(ANNOTATION, Y.Base, {
      * @type Int
      * @public
      */
-    gradeid : 0,
+    gradeid: 0,
 
     /**
      * Comment page number
@@ -571,7 +571,7 @@ Y.extend(ANNOTATION, Y.Base, {
      * @type Int
      * @public
      */
-    pageno : 0,
+    pageno: 0,
 
     /**
      * X position
@@ -579,7 +579,7 @@ Y.extend(ANNOTATION, Y.Base, {
      * @type Int
      * @public
      */
-    x : 0,
+    x: 0,
 
     /**
      * Y position
@@ -587,7 +587,7 @@ Y.extend(ANNOTATION, Y.Base, {
      * @type Int
      * @public
      */
-    y : 0,
+    y: 0,
 
     /**
      * Ending x position
@@ -595,7 +595,7 @@ Y.extend(ANNOTATION, Y.Base, {
      * @type Int
      * @public
      */
-    endx : 0,
+    endx: 0,
 
     /**
      * Ending y position
@@ -603,7 +603,7 @@ Y.extend(ANNOTATION, Y.Base, {
      * @type Int
      * @public
      */
-    endy : 0,
+    endy: 0,
 
     /**
      * Path
@@ -611,7 +611,7 @@ Y.extend(ANNOTATION, Y.Base, {
      * @type String - list of points like x1,y1:x2,y2
      * @public
      */
-    path : '',
+    path: '',
 
     /**
      * Tool.
@@ -619,7 +619,7 @@ Y.extend(ANNOTATION, Y.Base, {
      * @type String
      * @public
      */
-    type : 'rect',
+    type: 'rect',
 
     /**
      * Annotation colour.
@@ -627,7 +627,7 @@ Y.extend(ANNOTATION, Y.Base, {
      * @type String
      * @public
      */
-    colour : 'red',
+    colour: 'red',
 
     /**
      * Reference to M.assignfeedback_editpdf.drawable
@@ -635,7 +635,7 @@ Y.extend(ANNOTATION, Y.Base, {
      * @type M.assignfeedback_editpdf.drawable
      * @public
      */
-    drawable : false,
+    drawable: false,
 
     /**
      * Initialise the annotation.
@@ -643,7 +643,7 @@ Y.extend(ANNOTATION, Y.Base, {
      * @method initializer
      * @return void
      */
-    initializer : function(config) {
+    initializer: function(config) {
         this.editor = config.editor || null;
         this.gradeid = parseInt(config.gradeid, 10) || 0;
         this.pageno = parseInt(config.pageno, 10) || 0;
@@ -663,17 +663,17 @@ Y.extend(ANNOTATION, Y.Base, {
      * @method clean
      * @return {}
      */
-    clean : function() {
+    clean: function() {
         return {
-            gradeid : this.gradeid,
-            x : parseInt(this.x, 10),
-            y : parseInt(this.y, 10),
-            endx : parseInt(this.endx, 10),
-            endy : parseInt(this.endy, 10),
-            type : this.type,
-            path : this.path,
-            pageno : this.pageno,
-            colour : this.colour
+            gradeid: this.gradeid,
+            x: parseInt(this.x, 10),
+            y: parseInt(this.y, 10),
+            endx: parseInt(this.endx, 10),
+            endy: parseInt(this.endy, 10),
+            type: this.type,
+            path: this.path,
+            pageno: this.pageno,
+            colour: this.colour
         };
     },
 
@@ -683,7 +683,7 @@ Y.extend(ANNOTATION, Y.Base, {
      * @method draw_highlight
      * @return M.assignfeedback_editpdf.drawable
      */
-    draw_highlight : function() {
+    draw_highlight: function() {
         var bounds,
             drawingregion = this.editor.get_dialogue_element(SELECTOR.DRAWINGREGION),
             offsetcanvas = this.editor.get_dialogue_element(SELECTOR.DRAWINGCANVAS).getXY(),
@@ -719,7 +719,7 @@ Y.extend(ANNOTATION, Y.Base, {
                 'alt': M.util.get_string('deleteannotation', 'assignfeedback_editpdf')
             });
             deleteicon.setStyles({
-                'backgroundColor' : 'white'
+                'backgroundColor': 'white'
             });
             deletelink.addClass('deleteannotationbutton');
             deletelink.append(deleteicon);
@@ -744,7 +744,7 @@ Y.extend(ANNOTATION, Y.Base, {
      * @method draw
      * @return M.assignfeedback_editpdf.drawable|false
      */
-    draw : function() {
+    draw: function() {
         // Should be overridden by the subclass.
         this.draw_highlight();
         return this.drawable;
@@ -756,7 +756,7 @@ Y.extend(ANNOTATION, Y.Base, {
      * @method remove
      * @param event
      */
-    remove : function(e) {
+    remove: function(e) {
         var annotations,
             i;
 
@@ -783,7 +783,7 @@ Y.extend(ANNOTATION, Y.Base, {
      * @param int newy
      * @method move_annotation
      */
-    move : function(newx, newy) {
+    move: function(newx, newy) {
         var diffx = newx - this.x,
             diffy = newy - this.y,
             newpath, oldpath, xy,
@@ -820,7 +820,7 @@ Y.extend(ANNOTATION, Y.Base, {
      * @method draw_current_edit
      * @param M.assignfeedback_editpdf.edit edit
      */
-    draw_current_edit : function(edit) {
+    draw_current_edit: function(edit) {
         var noop = edit && false;
         // Override me please.
         return noop;
@@ -834,7 +834,7 @@ Y.extend(ANNOTATION, Y.Base, {
      * @param M.assignfeedback_editpdf.edit edit
      * @return bool if width/height is more than min. required.
      */
-    init_from_edit : function(edit) {
+    init_from_edit: function(edit) {
         var bounds = new M.assignfeedback_editpdf.rect();
         bounds.bound([edit.start, edit.end]);
 
@@ -896,7 +896,7 @@ Y.extend(ANNOTATIONLINE, M.assignfeedback_editpdf.annotation, {
      * @method draw
      * @return M.assignfeedback_editpdf.drawable
      */
-    draw : function() {
+    draw: function() {
         var drawable,
             shape;
 
@@ -927,7 +927,7 @@ Y.extend(ANNOTATIONLINE, M.assignfeedback_editpdf.annotation, {
      * @method draw_current_edit
      * @param M.assignfeedback_editpdf.edit edit
      */
-    draw_current_edit : function(edit) {
+    draw_current_edit: function(edit) {
         var drawable = new M.assignfeedback_editpdf.drawable(this.editor),
             shape;
 
@@ -957,7 +957,7 @@ Y.extend(ANNOTATIONLINE, M.assignfeedback_editpdf.annotation, {
      * @param M.assignfeedback_editpdf.edit edit
      * @return bool true if line bound is more than min width/height, else false.
      */
-    init_from_edit : function(edit) {
+    init_from_edit: function(edit) {
         this.gradeid = this.editor.get('gradeid');
         this.pageno = this.editor.currentpage;
         this.x = edit.start.x;
@@ -1017,7 +1017,7 @@ Y.extend(ANNOTATIONRECTANGLE, M.assignfeedback_editpdf.annotation, {
      * @method draw
      * @return M.assignfeedback_editpdf.drawable
      */
-    draw : function() {
+    draw: function() {
         var drawable,
             bounds,
             shape;
@@ -1052,7 +1052,7 @@ Y.extend(ANNOTATIONRECTANGLE, M.assignfeedback_editpdf.annotation, {
      * @method draw_current_edit
      * @param M.assignfeedback_editpdf.edit edit
      */
-    draw_current_edit : function(edit) {
+    draw_current_edit: function(edit) {
         var drawable = new M.assignfeedback_editpdf.drawable(this.editor),
             shape,
             bounds;
@@ -1132,7 +1132,7 @@ Y.extend(ANNOTATIONOVAL, M.assignfeedback_editpdf.annotation, {
      * @method draw
      * @return M.assignfeedback_editpdf.drawable
      */
-    draw : function() {
+    draw: function() {
         var drawable,
             bounds,
             shape;
@@ -1167,7 +1167,7 @@ Y.extend(ANNOTATIONOVAL, M.assignfeedback_editpdf.annotation, {
      * @method draw_current_edit
      * @param M.assignfeedback_editpdf.edit edit
      */
-    draw_current_edit : function(edit) {
+    draw_current_edit: function(edit) {
         var drawable = new M.assignfeedback_editpdf.drawable(this.editor),
             shape,
             bounds;
@@ -1247,7 +1247,7 @@ Y.extend(ANNOTATIONPEN, M.assignfeedback_editpdf.annotation, {
      * @method draw
      * @return M.assignfeedback_editpdf.drawable
      */
-    draw : function() {
+    draw: function() {
         var drawable,
             shape,
             first,
@@ -1294,7 +1294,7 @@ Y.extend(ANNOTATIONPEN, M.assignfeedback_editpdf.annotation, {
      * @method draw_current_edit
      * @param M.assignfeedback_editpdf.edit edit
      */
-    draw_current_edit : function(edit) {
+    draw_current_edit: function(edit) {
         var drawable = new M.assignfeedback_editpdf.drawable(this.editor),
             shape,
             first;
@@ -1336,7 +1336,7 @@ Y.extend(ANNOTATIONPEN, M.assignfeedback_editpdf.annotation, {
      * @param M.assignfeedback_editpdf.edit edit
      * @return bool true if pen bound is more than min width/height, else false.
      */
-    init_from_edit : function(edit) {
+    init_from_edit: function(edit) {
         var bounds = new M.assignfeedback_editpdf.rect(),
             pathlist = [],
             i = 0;
@@ -1409,7 +1409,7 @@ Y.extend(ANNOTATIONHIGHLIGHT, M.assignfeedback_editpdf.annotation, {
      * @method draw
      * @return M.assignfeedback_editpdf.drawable
      */
-    draw : function() {
+    draw: function() {
         var drawable,
             shape,
             bounds,
@@ -1452,7 +1452,7 @@ Y.extend(ANNOTATIONHIGHLIGHT, M.assignfeedback_editpdf.annotation, {
      * @method draw_current_edit
      * @param M.assignfeedback_editpdf.edit edit
      */
-    draw_current_edit : function(edit) {
+    draw_current_edit: function(edit) {
         var drawable = new M.assignfeedback_editpdf.drawable(this.editor),
             shape,
             bounds,
@@ -1499,7 +1499,7 @@ Y.extend(ANNOTATIONHIGHLIGHT, M.assignfeedback_editpdf.annotation, {
      * @param M.assignfeedback_editpdf.edit edit
      * @return bool true if highlight bound is more than min width/height, else false.
      */
-    init_from_edit : function(edit) {
+    init_from_edit: function(edit) {
         var bounds = new M.assignfeedback_editpdf.rect();
         bounds.bound([edit.start, edit.end]);
 
@@ -1562,7 +1562,7 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
      * @method draw
      * @return M.assignfeedback_editpdf.drawable
      */
-    draw : function() {
+    draw: function() {
         var drawable = new M.assignfeedback_editpdf.drawable(this.editor),
             drawingregion = this.editor.get_dialogue_element(SELECTOR.DRAWINGREGION),
             node,
@@ -1606,7 +1606,7 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
      * @method draw_current_edit
      * @param M.assignfeedback_editpdf.edit edit
      */
-    draw_current_edit : function(edit) {
+    draw_current_edit: function(edit) {
         var bounds = new M.assignfeedback_editpdf.rect(),
             drawable = new M.assignfeedback_editpdf.drawable(this.editor),
             drawingregion = this.editor.get_dialogue_element(SELECTOR.DRAWINGREGION),
@@ -1645,7 +1645,7 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
      * @param M.assignfeedback_editpdf.edit edit
      * @return bool if width/height is more than min. required.
      */
-    init_from_edit : function(edit) {
+    init_from_edit: function(edit) {
         var bounds = new M.assignfeedback_editpdf.rect();
         bounds.bound([edit.start, edit.end]);
 
@@ -1675,7 +1675,7 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
      * @param int newy
      * @method move_annotation
      */
-    move : function(newx, newy) {
+    move: function(newx, newy) {
         var diffx = newx - this.x,
             diffy = newy - this.y;
 
@@ -1727,7 +1727,7 @@ Y.extend(DROPDOWN, M.core.dialogue, {
      * @method initializer
      * @return void
      */
-    initializer : function(config) {
+    initializer: function(config) {
         var button, body, headertext, bb;
         DROPDOWN.superclass.initializer.call(this, config);
 
@@ -1755,7 +1755,9 @@ Y.extend(DROPDOWN, M.core.dialogue, {
             }
         }, this);
 
-        button.on('click', function(e) {e.preventDefault(); this.show();}, this);
+        button.on('click', function(e) {
+            e.preventDefault(); this.show();
+        }, this);
         button.on('key', this.show, 'enter,space', this);
     },
 
@@ -1765,7 +1767,7 @@ Y.extend(DROPDOWN, M.core.dialogue, {
      * @method show
      * @return void
      */
-    show : function() {
+    show: function() {
         var button = this.get('buttonNode'),
             result = DROPDOWN.superclass.show.call(this);
         this.align(button, [Y.WidgetPositionAlign.TL, Y.WidgetPositionAlign.BL]);
@@ -1773,8 +1775,8 @@ Y.extend(DROPDOWN, M.core.dialogue, {
         return result;
     }
 }, {
-    NAME : DROPDOWN_NAME,
-    ATTRS : {
+    NAME: DROPDOWN_NAME,
+    ATTRS: {
         /**
          * The header for the drop down (only accessible to screen readers).
          *
@@ -1782,8 +1784,8 @@ Y.extend(DROPDOWN, M.core.dialogue, {
          * @type String
          * @default ''
          */
-        headerText : {
-            value : ''
+        headerText: {
+            value: ''
         },
 
         /**
@@ -1793,8 +1795,8 @@ Y.extend(DROPDOWN, M.core.dialogue, {
          * @type Y.Node
          * @default null
          */
-        buttonNode : {
-            value : null
+        buttonNode: {
+            value: null
         }
     }
 });
@@ -1848,7 +1850,7 @@ Y.extend(COLOURPICKER, M.assignfeedback_editpdf.dropdown, {
      * @method initializer
      * @return void
      */
-    initializer : function(config) {
+    initializer: function(config) {
         var colourlist = Y.Node.create('<ul role="menu" class="assignfeedback_editpdf_menu"/>'),
             body;
 
@@ -1883,7 +1885,7 @@ Y.extend(COLOURPICKER, M.assignfeedback_editpdf.dropdown, {
 
         COLOURPICKER.superclass.initializer.call(this, config);
     },
-    callback_handler : function(e) {
+    callback_handler: function(e) {
         e.preventDefault();
 
         var callback = this.get('callback'),
@@ -1898,8 +1900,8 @@ Y.extend(COLOURPICKER, M.assignfeedback_editpdf.dropdown, {
         bind();
     }
 }, {
-    NAME : COLOURPICKER_NAME,
-    ATTRS : {
+    NAME: COLOURPICKER_NAME,
+    ATTRS: {
         /**
          * The list of colours this colour picker supports.
          *
@@ -1907,8 +1909,8 @@ Y.extend(COLOURPICKER, M.assignfeedback_editpdf.dropdown, {
          * @type {String: String} (The keys of the array are the colour names and the values are localized strings)
          * @default {}
          */
-        colours : {
-            value : {}
+        colours: {
+            value: {}
         },
 
         /**
@@ -1918,8 +1920,8 @@ Y.extend(COLOURPICKER, M.assignfeedback_editpdf.dropdown, {
          * @type function
          * @default null
          */
-        callback : {
-            value : null
+        callback: {
+            value: null
         },
 
         /**
@@ -1929,8 +1931,8 @@ Y.extend(COLOURPICKER, M.assignfeedback_editpdf.dropdown, {
          * @type Y.Node
          * @default null
          */
-        context : {
-            value : null
+        context: {
+            value: null
         },
 
         /**
@@ -1940,8 +1942,8 @@ Y.extend(COLOURPICKER, M.assignfeedback_editpdf.dropdown, {
          * @type String
          * @default 'colour_'
          */
-        iconprefix : {
-            value : 'colour_'
+        iconprefix: {
+            value: 'colour_'
         }
     }
 });
@@ -1977,7 +1979,7 @@ Y.extend(STAMPPICKER, M.assignfeedback_editpdf.dropdown, {
      * @method initializer
      * @return void
      */
-    initializer : function(config) {
+    initializer: function(config) {
         var stamplist = Y.Node.create('<ul role="menu" class="assignfeedback_editpdf_menu"/>');
 
         // Build a list of stamped buttons.
@@ -2006,7 +2008,7 @@ Y.extend(STAMPPICKER, M.assignfeedback_editpdf.dropdown, {
 
         STAMPPICKER.superclass.initializer.call(this, config);
     },
-    callback_handler : function(e) {
+    callback_handler: function(e) {
         e.preventDefault();
         var callback = this.get('callback'),
             callbackcontext = this.get('context'),
@@ -2020,8 +2022,8 @@ Y.extend(STAMPPICKER, M.assignfeedback_editpdf.dropdown, {
         bind();
     }
 }, {
-    NAME : STAMPPICKER_NAME,
-    ATTRS : {
+    NAME: STAMPPICKER_NAME,
+    ATTRS: {
         /**
          * The list of stamps this stamp picker supports.
          *
@@ -2029,8 +2031,8 @@ Y.extend(STAMPPICKER, M.assignfeedback_editpdf.dropdown, {
          * @type String[] - the stamp filenames.
          * @default {}
          */
-        stamps : {
-            value : []
+        stamps: {
+            value: []
         },
 
         /**
@@ -2040,8 +2042,8 @@ Y.extend(STAMPPICKER, M.assignfeedback_editpdf.dropdown, {
          * @type function
          * @default null
          */
-        callback : {
-            value : null
+        callback: {
+            value: null
         },
 
         /**
@@ -2051,8 +2053,8 @@ Y.extend(STAMPPICKER, M.assignfeedback_editpdf.dropdown, {
          * @type Y.Node
          * @default null
          */
-        context : {
-            value : null
+        context: {
+            value: null
         }
     }
 });
@@ -2089,7 +2091,7 @@ Y.extend(COMMENTMENU, M.assignfeedback_editpdf.dropdown, {
      * @method initializer
      * @return void
      */
-    initializer : function(config) {
+    initializer: function(config) {
         var commentlinks,
             link,
             body,
@@ -2110,8 +2112,16 @@ Y.extend(COMMENTMENU, M.assignfeedback_editpdf.dropdown, {
         link = Y.Node.create('<li><a tabindex="-1" href="#">' +
                M.util.get_string('deletecomment', 'assignfeedback_editpdf') +
                '</a></li>');
-        link.on('click', function(e) { e.preventDefault(); this.menu.hide(); this.remove(); }, comment);
-        link.on('key', function() { comment.menu.hide(); comment.remove(); }, 'enter,space', comment);
+        link.on('click', function(e) {
+            e.preventDefault();
+            this.menu.hide();
+            this.remove();
+        }, comment);
+
+        link.on('key', function() {
+            comment.menu.hide();
+            comment.remove();
+        }, 'enter,space', comment);
 
         commentlinks.append(link);
 
@@ -2136,7 +2146,7 @@ Y.extend(COMMENTMENU, M.assignfeedback_editpdf.dropdown, {
      * @method show
      * @return void
      */
-    show : function() {
+    show: function() {
         var commentlinks = this.get('boundingBox').one('ul');
             commentlinks.all('.quicklist_comment').remove(true);
         var comment = this.get('comment');
@@ -2166,8 +2176,8 @@ Y.extend(COMMENTMENU, M.assignfeedback_editpdf.dropdown, {
         COMMENTMENU.superclass.show.call(this);
     }
 }, {
-    NAME : COMMENTMENUNAME,
-    ATTRS : {
+    NAME: COMMENTMENUNAME,
+    ATTRS: {
         /**
          * The comment this menu is attached to.
          *
@@ -2175,8 +2185,8 @@ Y.extend(COMMENTMENU, M.assignfeedback_editpdf.dropdown, {
          * @type M.assignfeedback_editpdf.comment
          * @default null
          */
-        comment : {
-            value : null
+        comment: {
+            value: null
         }
 
     }
@@ -2220,7 +2230,7 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
      * @method initializer
      * @return void
      */
-    initializer : function(config) {
+    initializer: function(config) {
         var editor,
             container,
             placeholder,
@@ -2256,7 +2266,7 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
      * @protected
      * @method filter_search_comments
      */
-    filter_search_comments : function() {
+    filter_search_comments: function() {
         var filternode,
             commentslist,
             filtertext,
@@ -2268,7 +2278,7 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
 
         filtertext = filternode.get('value');
 
-        commentslist.all('li').each(function (node) {
+        commentslist.all('li').each(function(node) {
             if (node.get('text').indexOf(filtertext) !== -1) {
                 node.show();
             } else {
@@ -2284,7 +2294,7 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
      * @protected
      * @method focus_on_comment
      */
-    focus_on_comment : function(e) {
+    focus_on_comment: function(e) {
         e.preventDefault();
         var target = e.target.ancestor('li'),
             comment = target.getData('comment'),
@@ -2308,7 +2318,7 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
      * @method show
      * @return void
      */
-    show : function() {
+    show: function() {
         var commentlist = this.get('boundingBox').one('ul'),
             editor = this.get('editor');
 
@@ -2327,8 +2337,8 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
         COMMENTSEARCH.superclass.show.call(this);
     }
 }, {
-    NAME : COMMENTSEARCHNAME,
-    ATTRS : {
+    NAME: COMMENTSEARCHNAME,
+    ATTRS: {
         /**
          * The editor this search window is attached to.
          *
@@ -2336,8 +2346,8 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
          * @type M.assignfeedback_editpdf.editor
          * @default null
          */
-        editor : {
-            value : null
+        editor: {
+            value: null
         }
 
     }
@@ -2504,13 +2514,13 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
      */
     this.clean = function() {
         return {
-            gradeid : this.gradeid,
-            x : parseInt(this.x, 10),
-            y : parseInt(this.y, 10),
-            width : parseInt(this.width, 10),
-            rawtext : this.rawtext,
-            pageno : this.currentpage,
-            colour : this.colour
+            gradeid: this.gradeid,
+            x: parseInt(this.x, 10),
+            y: parseInt(this.y, 10),
+            width: parseInt(this.width, 10),
+            rawtext: this.rawtext,
+            pageno: this.currentpage,
+            colour: this.colour
         };
     };
 
@@ -2563,7 +2573,7 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
         node.set('value', this.rawtext);
         scrollheight = node.get('scrollHeight');
         node.setStyles({
-            'height' : scrollheight + 'px',
+            'height': scrollheight + 'px',
             'overflow': 'hidden'
         });
         if (!this.editor.get('readonly')) {
@@ -2686,7 +2696,8 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
      * @method remove
      */
     this.remove = function() {
-        var i = 0, comments;
+        var i = 0;
+        var comments;
 
         comments = this.editor.pages[this.editor.currentpage].comments;
         for (i = 0; i < comments.length; i++) {
@@ -2941,15 +2952,15 @@ var QUICKCOMMENTLIST = function(editor) {
             method: 'post',
             context: this,
             sync: false,
-            data : {
-                'sesskey' : M.cfg.sesskey,
-                'action' : 'addtoquicklist',
-                'userid' : this.editor.get('userid'),
-                'commenttext' : comment.rawtext,
-                'width' : comment.width,
-                'colour' : comment.colour,
-                'attemptnumber' : this.editor.get('attemptnumber'),
-                'assignmentid' : this.editor.get('assignmentid')
+            data: {
+                'sesskey': M.cfg.sesskey,
+                'action': 'addtoquicklist',
+                'userid': this.editor.get('userid'),
+                'commenttext': comment.rawtext,
+                'width': comment.width,
+                'colour': comment.colour,
+                'attemptnumber': this.editor.get('attemptnumber'),
+                'assignmentid': this.editor.get('assignmentid')
             },
             on: {
                 success: function(tid, response) {
@@ -2997,13 +3008,13 @@ var QUICKCOMMENTLIST = function(editor) {
             method: 'post',
             context: this,
             sync: false,
-            data : {
-                'sesskey' : M.cfg.sesskey,
-                'action' : 'removefromquicklist',
-                'userid' : this.editor.get('userid'),
-                'commentid' : comment.id,
-                'attemptnumber' : this.editor.get('attemptnumber'),
-                'assignmentid' : this.editor.get('assignmentid')
+            data: {
+                'sesskey': M.cfg.sesskey,
+                'action': 'removefromquicklist',
+                'userid': this.editor.get('userid'),
+                'commentid': comment.id,
+                'attemptnumber': this.editor.get('attemptnumber'),
+                'assignmentid': this.editor.get('assignmentid')
             },
             on: {
                 success: function() {
@@ -3038,12 +3049,12 @@ var QUICKCOMMENTLIST = function(editor) {
             method: 'get',
             context: this,
             sync: false,
-            data : {
-                'sesskey' : M.cfg.sesskey,
-                'action' : 'loadquicklist',
-                'userid' : this.editor.get('userid'),
-                'attemptnumber' : this.editor.get('attemptnumber'),
-                'assignmentid' : this.editor.get('assignmentid')
+            data: {
+                'sesskey': M.cfg.sesskey,
+                'action': 'loadquicklist',
+                'userid': this.editor.get('userid'),
+                'attemptnumber': this.editor.get('attemptnumber'),
+                'assignmentid': this.editor.get('assignmentid')
             },
             on: {
                 success: function(tid, response) {
@@ -3121,7 +3132,7 @@ EDITOR.prototype = {
      * @type M.core.dialogue
      * @protected
      */
-    dialogue : null,
+    dialogue: null,
 
     /**
      * The panel used for all action menu displays.
@@ -3130,7 +3141,7 @@ EDITOR.prototype = {
      * @type Y.Node
      * @protected
      */
-    panel : null,
+    panel: null,
 
     /**
      * The number of pages in the pdf.
@@ -3139,7 +3150,7 @@ EDITOR.prototype = {
      * @type Number
      * @protected
      */
-    pagecount : 0,
+    pagecount: 0,
 
     /**
      * The active page in the editor.
@@ -3148,7 +3159,7 @@ EDITOR.prototype = {
      * @type Number
      * @protected
      */
-    currentpage : 0,
+    currentpage: 0,
 
     /**
      * A list of page objects. Each page has a list of comments and annotations.
@@ -3157,7 +3168,7 @@ EDITOR.prototype = {
      * @type array
      * @protected
      */
-    pages : [],
+    pages: [],
 
     /**
      * The yui node for the loading icon.
@@ -3166,7 +3177,7 @@ EDITOR.prototype = {
      * @type Node
      * @protected
      */
-    loadingicon : null,
+    loadingicon: null,
 
     /**
      * Image object of the current page image.
@@ -3175,7 +3186,7 @@ EDITOR.prototype = {
      * @type Image
      * @protected
      */
-    pageimage : null,
+    pageimage: null,
 
     /**
      * YUI Graphic class for drawing shapes.
@@ -3184,7 +3195,7 @@ EDITOR.prototype = {
      * @type Graphic
      * @protected
      */
-    graphic : null,
+    graphic: null,
 
     /**
      * Info about the current edit operation.
@@ -3193,7 +3204,7 @@ EDITOR.prototype = {
      * @type M.assignfeedback_editpdf.edit
      * @protected
      */
-    currentedit : new M.assignfeedback_editpdf.edit(),
+    currentedit: new M.assignfeedback_editpdf.edit(),
 
     /**
      * Current drawable.
@@ -3202,7 +3213,7 @@ EDITOR.prototype = {
      * @type M.assignfeedback_editpdf.drawable|false
      * @protected
      */
-    currentdrawable : false,
+    currentdrawable: false,
 
     /**
      * Current drawables.
@@ -3211,7 +3222,7 @@ EDITOR.prototype = {
      * @type array(M.assignfeedback_editpdf.drawable)
      * @protected
      */
-    drawables : [],
+    drawables: [],
 
     /**
      * Current comment when the comment menu is open.
@@ -3219,7 +3230,7 @@ EDITOR.prototype = {
      * @type M.assignfeedback_editpdf.comment
      * @protected
      */
-    currentcomment : null,
+    currentcomment: null,
 
     /**
      * Current annotation when the select tool is used.
@@ -3227,7 +3238,7 @@ EDITOR.prototype = {
      * @type M.assignfeedback_editpdf.annotation
      * @protected
      */
-    currentannotation : null,
+    currentannotation: null,
 
     /**
      * Last selected annotation tool
@@ -3235,7 +3246,7 @@ EDITOR.prototype = {
      * @type String
      * @protected
      */
-    lastanntationtool : "pen",
+    lastanntationtool: "pen",
 
     /**
      * The users comments quick list
@@ -3243,7 +3254,7 @@ EDITOR.prototype = {
      * @type M.assignfeedback_editpdf.quickcommentlist
      * @protected
      */
-    quicklist : null,
+    quicklist: null,
 
     /**
      * The search comments window.
@@ -3251,7 +3262,7 @@ EDITOR.prototype = {
      * @type M.core.dialogue
      * @protected
      */
-    searchcommentswindow : null,
+    searchcommentswindow: null,
 
 
     /**
@@ -3260,7 +3271,7 @@ EDITOR.prototype = {
      * @type String
      * @protected
      */
-    currentstamp : null,
+    currentstamp: null,
 
     /**
      * The stamps.
@@ -3268,7 +3279,7 @@ EDITOR.prototype = {
      * @type Array
      * @protected
      */
-    stamps : [],
+    stamps: [],
 
     /**
      * Prevent new comments from appearing
@@ -3278,13 +3289,13 @@ EDITOR.prototype = {
      * @type Boolean
      * @public
      */
-    editingcomment : false,
+    editingcomment: false,
 
     /**
      * Called during the initialisation process of the object.
      * @method initializer
      */
-    initializer : function() {
+    initializer: function() {
         var link;
 
         link = Y.one('#' + this.get('linkid'));
@@ -3318,7 +3329,7 @@ EDITOR.prototype = {
      * Called to show/hide buttons and set the current colours/stamps.
      * @method refresh_button_state
      */
-    refresh_button_state : function() {
+    refresh_button_state: function() {
         var button, currenttoolnode, imgurl, drawingregion;
 
         // Initalise the colour buttons.
@@ -3353,7 +3364,7 @@ EDITOR.prototype = {
      * Called to get the bounds of the drawing region.
      * @method get_canvas_bounds
      */
-    get_canvas_bounds : function() {
+    get_canvas_bounds: function() {
         var canvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS),
             offsetcanvas = canvas.getXY(),
             offsetleft = offsetcanvas[0],
@@ -3369,7 +3380,7 @@ EDITOR.prototype = {
      * @method get_canvas_coordinates
      * @param M.assignfeedback_editpdf.point point in window coordinats.
      */
-    get_canvas_coordinates : function(point) {
+    get_canvas_coordinates: function(point) {
         var bounds = this.get_canvas_bounds(),
             newpoint = new M.assignfeedback_editpdf.point(point.x - bounds.x, point.y - bounds.y);
 
@@ -3384,7 +3395,7 @@ EDITOR.prototype = {
      * @method get_window_coordinates
      * @param M.assignfeedback_editpdf.point point in window coordinats.
      */
-    get_window_coordinates : function(point) {
+    get_window_coordinates: function(point) {
         var bounds = this.get_canvas_bounds(),
             newpoint = new M.assignfeedback_editpdf.point(point.x + bounds.x, point.y + bounds.y);
 
@@ -3395,7 +3406,7 @@ EDITOR.prototype = {
      * Open the edit-pdf editor in the panel in the page instead of a popup.
      * @method open_in_panel
      */
-    open_in_panel : function(panel) {
+    open_in_panel: function(panel) {
         var drawingcanvas, drawingregion;
 
         this.panel = panel;
@@ -3405,7 +3416,7 @@ EDITOR.prototype = {
         this.loadingicon = this.get_dialogue_element(SELECTOR.LOADINGICON);
 
         drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
-        this.graphic = new Y.Graphic({render : drawingcanvas});
+        this.graphic = new Y.Graphic({render: drawingcanvas});
 
         drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
         drawingregion.on('scroll', this.move_canvas, this);
@@ -3425,8 +3436,9 @@ EDITOR.prototype = {
      * Called to open the pdf editing dialogue.
      * @method link_handler
      */
-    link_handler : function(e) {
-        var drawingcanvas, drawingregion, resize = true;
+    link_handler: function(e) {
+        var drawingcanvas, drawingregion;
+        var resize = true;
         e.preventDefault();
 
         if (!this.dialogue) {
@@ -3446,7 +3458,7 @@ EDITOR.prototype = {
             this.loadingicon = this.get_dialogue_element(SELECTOR.LOADINGICON);
 
             drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
-            this.graphic = new Y.Graphic({render : drawingcanvas});
+            this.graphic = new Y.Graphic({render: drawingcanvas});
 
             drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
             drawingregion.on('scroll', this.move_canvas, this);
@@ -3478,7 +3490,7 @@ EDITOR.prototype = {
      * Called to load the information and annotations for all pages.
      * @method load_all_pages
      */
-    load_all_pages : function() {
+    load_all_pages: function() {
         var ajaxurl = AJAXBASE,
             config,
             checkconversionstatus,
@@ -3488,13 +3500,13 @@ EDITOR.prototype = {
             method: 'get',
             context: this,
             sync: false,
-            data : {
-                sesskey : M.cfg.sesskey,
-                action : 'loadallpages',
-                userid : this.get('userid'),
-                attemptnumber : this.get('attemptnumber'),
-                assignmentid : this.get('assignmentid'),
-                readonly : this.get('readonly') ? 1 : 0
+            data: {
+                sesskey: M.cfg.sesskey,
+                action: 'loadallpages',
+                userid: this.get('userid'),
+                attemptnumber: this.get('attemptnumber'),
+                assignmentid: this.get('assignmentid'),
+                readonly: this.get('readonly') ? 1 : 0
             },
             on: {
                 success: function(tid, response) {
@@ -3514,12 +3526,12 @@ EDITOR.prototype = {
                 method: 'get',
                 context: this,
                 sync: false,
-                data : {
-                    sesskey : M.cfg.sesskey,
-                    action : 'conversionstatus',
-                    userid : this.get('userid'),
-                    attemptnumber : this.get('attemptnumber'),
-                    assignmentid : this.get('assignmentid')
+                data: {
+                    sesskey: M.cfg.sesskey,
+                    action: 'conversionstatus',
+                    userid: this.get('userid'),
+                    attemptnumber: this.get('attemptnumber'),
+                    assignmentid: this.get('assignmentid')
                 },
                 on: {
                     success: function(tid, response) {
@@ -3538,7 +3550,7 @@ EDITOR.prototype = {
                             }
 
                             // New ajax request delayed of a second.
-                            Y.later(1000, this, function () {
+                            Y.later(1000, this, function() {
                                 Y.io(AJAXBASEPROGRESS, checkconversionstatus);
                             });
                         }
@@ -3548,7 +3560,7 @@ EDITOR.prototype = {
                         // We only continue on error if the all pages were not generated,
                         // and if the ajax call did not produce 5 errors in the row.
                         if (this.pagecount === 0 && ajax_error_total < 5) {
-                            Y.later(1000, this, function () {
+                            Y.later(1000, this, function() {
                                 Y.io(AJAXBASEPROGRESS, checkconversionstatus);
                             });
                         }
@@ -3558,7 +3570,7 @@ EDITOR.prototype = {
             };
             // We start the AJAX "generated page total number" call a second later to give a chance to
             // the AJAX "combined pdf generation" call to clean the previous submission images.
-            Y.later(1000, this, function () {
+            Y.later(1000, this, function() {
                 ajax_error_total = 0;
                 Y.io(AJAXBASEPROGRESS, checkconversionstatus);
             });
@@ -3571,7 +3583,7 @@ EDITOR.prototype = {
      * @protected
      * @method all_pages_loaded
      */
-    all_pages_loaded : function(responsetext) {
+    all_pages_loaded: function(responsetext) {
         var data, i, j, comment, error;
         try {
             data = Y.JSON.parse(responsetext);
@@ -3580,7 +3592,7 @@ EDITOR.prototype = {
                     this.dialogue.hide();
                 }
                 // Display alert dialogue.
-                error = new M.core.alert({ message: M.util.get_string('cannotopenpdf', 'assignfeedback_editpdf') });
+                error = new M.core.alert({message: M.util.get_string('cannotopenpdf', 'assignfeedback_editpdf')});
                 error.show();
                 return;
             }
@@ -3589,7 +3601,7 @@ EDITOR.prototype = {
                 this.dialogue.hide();
             }
             // Display alert dialogue.
-            error = new M.core.alert({ title: M.util.get_string('cannotopenpdf', 'assignfeedback_editpdf')});
+            error = new M.core.alert({title: M.util.get_string('cannotopenpdf', 'assignfeedback_editpdf')});
             error.show();
             return;
         }
@@ -3631,7 +3643,7 @@ EDITOR.prototype = {
      * @method get_stamp_image_url
      * @param string filename
      */
-    get_stamp_image_url : function(filename) {
+    get_stamp_image_url: function(filename) {
         var urls = this.get('stampfiles'),
             fullurl = '';
 
@@ -3649,7 +3661,7 @@ EDITOR.prototype = {
      * @protected
      * @method setup_toolbar
      */
-    setup_toolbar : function() {
+    setup_toolbar: function() {
         var toolnode,
             commentcolourbutton,
             annotationcolourbutton,
@@ -3681,7 +3693,7 @@ EDITOR.prototype = {
             buttonNode: commentcolourbutton,
             colours: COMMENTCOLOUR,
             iconprefix: 'background_colour_',
-            callback: function (e) {
+            callback: function(e) {
                 var colour = e.target.getAttribute('data-colour');
                 if (!colour) {
                     colour = e.target.ancestor().getAttribute('data-colour');
@@ -3697,7 +3709,7 @@ EDITOR.prototype = {
             buttonNode: annotationcolourbutton,
             iconprefix: 'colour_',
             colours: ANNOTATIONCOLOUR,
-            callback: function (e) {
+            callback: function(e) {
                 var colour = e.target.getAttribute('data-colour');
                 if (!colour) {
                     colour = e.target.ancestor().getAttribute('data-colour');
@@ -3745,7 +3757,7 @@ EDITOR.prototype = {
      * @protected
      * @method handle_tool_button
      */
-    handle_tool_button : function(e, tool) {
+    handle_tool_button: function(e, tool) {
         var currenttoolnode;
 
         e.preventDefault();
@@ -3768,7 +3780,7 @@ EDITOR.prototype = {
      * @method stringify_current_page
      * @return string
      */
-    stringify_current_page : function() {
+    stringify_current_page: function() {
         var comments = [],
             annotations = [],
             page,
@@ -3781,7 +3793,7 @@ EDITOR.prototype = {
             annotations[i] = this.pages[this.currentpage].annotations[i].clean();
         }
 
-        page = { comments : comments, annotations : annotations };
+        page = {comments: comments, annotations: annotations};
 
         return Y.JSON.stringify(page);
     },
@@ -3791,7 +3803,7 @@ EDITOR.prototype = {
      * @protected
      * @method get_current_drawable
      */
-    get_current_drawable : function() {
+    get_current_drawable: function() {
         var comment,
             annotation,
             drawable = false;
@@ -3818,7 +3830,7 @@ EDITOR.prototype = {
      * @protected
      * @method get_dialogue_element
      */
-    get_dialogue_element : function(selector) {
+    get_dialogue_element: function(selector) {
         if (this.panel) {
             return this.panel.one(selector);
         } else {
@@ -3831,7 +3843,7 @@ EDITOR.prototype = {
      * @protected
      * @method redraw_active_edit
      */
-    redraw_current_edit : function() {
+    redraw_current_edit: function() {
         if (this.currentdrawable) {
             this.currentdrawable.erase();
         }
@@ -3844,14 +3856,14 @@ EDITOR.prototype = {
      * @param Event
      * @method edit_start
      */
-    edit_start : function(e) {
+    edit_start: function(e) {
         e.preventDefault();
         var canvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS),
             offset = canvas.getXY(),
             scrolltop = canvas.get('docScrollY'),
             scrollleft = canvas.get('docScrollX'),
-            point = {x : e.clientX - offset[0] + scrollleft,
-                     y : e.clientY - offset[1] + scrolltop},
+            point = {x: e.clientX - offset[0] + scrollleft,
+                     y: e.clientY - offset[1] + scrolltop},
             selected = false,
             lastannotation;
 
@@ -3870,7 +3882,7 @@ EDITOR.prototype = {
 
         this.currentedit.starttime = new Date().getTime();
         this.currentedit.start = point;
-        this.currentedit.end = {x : point.x, y : point.y};
+        this.currentedit.end = {x: point.x, y: point.y};
 
         if (this.currentedit.tool === 'select') {
             var x = this.currentedit.end.x,
@@ -3903,8 +3915,8 @@ EDITOR.prototype = {
         }
         if (this.currentannotation) {
             // Used to calculate drag offset.
-            this.currentedit.annotationstart = { x : this.currentannotation.x,
-                                                 y : this.currentannotation.y };
+            this.currentedit.annotationstart = {x: this.currentannotation.x,
+                                                 y: this.currentannotation.y};
         }
     },
 
@@ -3914,7 +3926,7 @@ EDITOR.prototype = {
      * @param Event
      * @method edit_move
      */
-    edit_move : function(e) {
+    edit_move: function(e) {
         e.preventDefault();
         var bounds = this.get_canvas_bounds(),
             canvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS),
@@ -3936,7 +3948,7 @@ EDITOR.prototype = {
 
         if (this.currentedit.tool === 'select') {
             if (this.currentannotation && this.currentedit) {
-                this.currentannotation.move( this.currentedit.annotationstart.x + point.x - this.currentedit.start.x,
+                this.currentannotation.move(this.currentedit.annotationstart.x + point.x - this.currentedit.start.x,
                                              this.currentedit.annotationstart.y + point.y - this.currentedit.start.y);
             }
         } else if (this.currentedit.tool === 'drag') {
@@ -3960,7 +3972,7 @@ EDITOR.prototype = {
      * @param Event
      * @method edit_end
      */
-    edit_end : function() {
+    edit_end: function() {
         var duration,
             comment,
             annotation;
@@ -4011,7 +4023,7 @@ EDITOR.prototype = {
      * @public
      * @method resize
      */
-    resize : function() {
+    resize: function() {
         var drawingregion, drawregionheight;
 
         if (this.dialogue) {
@@ -4028,7 +4040,7 @@ EDITOR.prototype = {
         }
         drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
         if (this.dialogue) {
-            drawingregion.setStyle('maxHeight', drawregionheight +'px');
+            drawingregion.setStyle('maxHeight', drawregionheight + 'px');
         }
         this.redraw();
         return true;
@@ -4039,7 +4051,7 @@ EDITOR.prototype = {
      * @public
      * @method create_annotation
      */
-    create_annotation : function(type, data) {
+    create_annotation: function(type, data) {
         data.type = type;
         data.editor = this;
         if (type === "line") {
@@ -4063,7 +4075,7 @@ EDITOR.prototype = {
      * @protected
      * @method save_current_page
      */
-    save_current_page : function() {
+    save_current_page: function() {
         var ajaxurl = AJAXBASE,
             config;
 
@@ -4071,14 +4083,14 @@ EDITOR.prototype = {
             method: 'post',
             context: this,
             sync: false,
-            data : {
-                'sesskey' : M.cfg.sesskey,
-                'action' : 'savepage',
-                'index' : this.currentpage,
-                'userid' : this.get('userid'),
-                'attemptnumber' : this.get('attemptnumber'),
-                'assignmentid' : this.get('assignmentid'),
-                'page' : this.stringify_current_page()
+            data: {
+                'sesskey': M.cfg.sesskey,
+                'action': 'savepage',
+                'index': this.currentpage,
+                'userid': this.get('userid'),
+                'attemptnumber': this.get('attemptnumber'),
+                'assignmentid': this.get('assignmentid'),
+                'page': this.stringify_current_page()
             },
             on: {
                 success: function(tid, response) {
@@ -4119,10 +4131,10 @@ EDITOR.prototype = {
      * @protected
      * @method open_search_comments
      */
-    open_search_comments : function(e) {
+    open_search_comments: function(e) {
         if (!this.searchcommentswindow) {
             this.searchcommentswindow = new M.assignfeedback_editpdf.commentsearch({
-                editor : this
+                editor: this
             });
         }
 
@@ -4135,7 +4147,7 @@ EDITOR.prototype = {
      * @protected
      * @method redraw
      */
-    redraw : function() {
+    redraw: function() {
         var i,
             page;
 
@@ -4160,7 +4172,7 @@ EDITOR.prototype = {
      * @protected
      * @method change_page
      */
-    change_page : function() {
+    change_page: function() {
         var drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS),
             page,
             previousbutton,
@@ -4198,7 +4210,7 @@ EDITOR.prototype = {
      * @protected
      * @method setup_navigation
      */
-    setup_navigation : function() {
+    setup_navigation: function() {
         var pageselect,
             i,
             strinfo,
@@ -4213,7 +4225,7 @@ EDITOR.prototype = {
             for (i = 0; i < this.pages.length; i++) {
                 option = Y.Node.create('<option/>');
                 option.setAttribute('value', i);
-                strinfo = {page: i+1, total: this.pages.length};
+                strinfo = {page: i + 1, total: this.pages.length};
                 option.setHTML(M.util.get_string('pagexofy', 'assignfeedback_editpdf', strinfo));
                 pageselect.append(option);
             }
@@ -4238,7 +4250,7 @@ EDITOR.prototype = {
      * @protected
      * @method previous_page
      */
-    previous_page : function(e) {
+    previous_page: function(e) {
         e.preventDefault();
         this.currentpage--;
         if (this.currentpage < 0) {
@@ -4252,7 +4264,7 @@ EDITOR.prototype = {
      * @protected
      * @method next_page
      */
-    next_page : function(e) {
+    next_page: function(e) {
         e.preventDefault();
         this.currentpage++;
         if (this.currentpage >= this.pages.length) {
@@ -4281,51 +4293,51 @@ EDITOR.prototype = {
 };
 
 Y.extend(EDITOR, Y.Base, EDITOR.prototype, {
-    NAME : 'moodle-assignfeedback_editpdf-editor',
-    ATTRS : {
-        userid : {
-            validator : Y.Lang.isInteger,
-            value : 0
+    NAME: 'moodle-assignfeedback_editpdf-editor',
+    ATTRS: {
+        userid: {
+            validator: Y.Lang.isInteger,
+            value: 0
         },
-        assignmentid : {
-            validator : Y.Lang.isInteger,
-            value : 0
+        assignmentid: {
+            validator: Y.Lang.isInteger,
+            value: 0
         },
-        attemptnumber : {
-            validator : Y.Lang.isInteger,
-            value : 0
+        attemptnumber: {
+            validator: Y.Lang.isInteger,
+            value: 0
         },
-        header : {
-            validator : Y.Lang.isString,
-            value : ''
+        header: {
+            validator: Y.Lang.isString,
+            value: ''
         },
-        body : {
-            validator : Y.Lang.isString,
-            value : ''
+        body: {
+            validator: Y.Lang.isString,
+            value: ''
         },
-        footer : {
-            validator : Y.Lang.isString,
-            value : ''
+        footer: {
+            validator: Y.Lang.isString,
+            value: ''
         },
-        linkid : {
-            validator : Y.Lang.isString,
-            value : ''
+        linkid: {
+            validator: Y.Lang.isString,
+            value: ''
         },
-        deletelinkid : {
-            validator : Y.Lang.isString,
-            value : ''
+        deletelinkid: {
+            validator: Y.Lang.isString,
+            value: ''
         },
-        readonly : {
-            validator : Y.Lang.isBoolean,
-            value : true
+        readonly: {
+            validator: Y.Lang.isBoolean,
+            value: true
         },
-        stampfiles : {
-            validator : Y.Lang.isArray,
-            value : ''
+        stampfiles: {
+            validator: Y.Lang.isArray,
+            value: ''
         },
-        pagetotal : {
-            validator : Y.Lang.isInteger,
-            value : 0
+        pagetotal: {
+            validator: Y.Lang.isInteger,
+            value: 0
         }
     }
 });
@@ -4340,7 +4352,7 @@ M.assignfeedback_editpdf.editor = M.assignfeedback_editpdf.editor || {};
  * @param {Object} params
  */
 M.assignfeedback_editpdf.editor.init = M.assignfeedback_editpdf.editor.init || function(params) {
-    M.assignfeedback_editpdf.instance =  new EDITOR(params);
+    M.assignfeedback_editpdf.instance = new EDITOR(params);
     return M.assignfeedback_editpdf.instance;
 };
 

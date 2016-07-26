@@ -48,9 +48,9 @@ Y.extend(DRAGREORDER, M.core.dragdrop, {
         Y.one('.' + args.parentNodeClass)
          .all('.' + args.dragHandleInsertClass)
          .each(
-            function (node) {
+            function(node) {
                 node.insert(this.draghandle.cloneNode(true));
-            } , this);
+            }, this);
     },
 
     drop_hit: function(e) {

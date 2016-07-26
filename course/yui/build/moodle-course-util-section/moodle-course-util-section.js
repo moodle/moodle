@@ -17,7 +17,7 @@ Y.namespace('Moodle.core_course.util.section');
  */
 Y.Moodle.core_course.util.section = {
     CONSTANTS: {
-        SECTIONIDPREFIX : 'section-'
+        SECTIONIDPREFIX: 'section-'
     },
 
     /**

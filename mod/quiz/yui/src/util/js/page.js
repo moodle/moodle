@@ -17,7 +17,7 @@ Y.namespace('Moodle.mod_quiz.util.page');
  */
 Y.Moodle.mod_quiz.util.page = {
     CSS: {
-        PAGE : 'page'
+        PAGE: 'page'
     },
     CONSTANTS: {
         ACTIONMENUIDPREFIX: 'action-menu-',
@@ -234,7 +234,8 @@ Y.Moodle.mod_quiz.util.page = {
      */
     reorderPages: function() {
         // Get list of page nodes.
-        var pages = this.getPages(), currentpagenumber = 0;
+        var pages = this.getPages();
+        var currentpagenumber = 0;
         // Loop through pages incrementing the number each time.
         pages.each(function(page) {
             // Is the page empty?

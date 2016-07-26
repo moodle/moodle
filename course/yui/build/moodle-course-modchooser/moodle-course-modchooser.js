@@ -7,11 +7,11 @@ YUI.add('moodle-course-modchooser', function (Y, NAME) {
  */
 
 var CSS = {
-    PAGECONTENT : 'body',
+    PAGECONTENT: 'body',
     SECTION: null,
-    SECTIONMODCHOOSER : 'span.section-modchooser-link',
-    SITEMENU : 'div.block_site_main_menu',
-    SITETOPIC : 'div.sitetopic'
+    SECTIONMODCHOOSER: 'span.section-modchooser-link',
+    SITEMENU: 'div.block_site_main_menu',
+    SITETOPIC: 'div.sitetopic'
 };
 
 var MODCHOOSERNAME = 'course-modchooser';
@@ -36,14 +36,14 @@ Y.extend(MODCHOOSER, M.core.chooserdialogue, {
      * @type Number
      * @default null
      */
-    sectionid : null,
+    sectionid: null,
 
     /**
      * Set up the activity chooser.
      *
      * @method initializer
      */
-    initializer : function() {
+    initializer: function() {
         var sectionclass = M.course.format.get_sectionwrapperclass();
         if (sectionclass) {
             CSS.SECTION = '.' + sectionclass;
@@ -65,7 +65,7 @@ Y.extend(MODCHOOSER, M.core.chooserdialogue, {
      * @method setup_for_section
      * @param baseselector The selector to limit scope to
      */
-    setup_for_section : function(baseselector) {
+    setup_for_section: function(baseselector) {
         if (!baseselector) {
             baseselector = CSS.PAGECONTENT;
         }
@@ -96,7 +96,7 @@ Y.extend(MODCHOOSER, M.core.chooserdialogue, {
      * @private
      * @param baseselector The selector to limit scope to
      */
-    _setup_for_section : function(section) {
+    _setup_for_section: function(section) {
         var chooserspan = section.one(CSS.SECTIONMODCHOOSER);
         if (!chooserspan) {
             return;
@@ -114,7 +114,7 @@ Y.extend(MODCHOOSER, M.core.chooserdialogue, {
      * @method display_mod_chooser
      * @param {EventFacade} e Triggering Event
      */
-    display_mod_chooser : function (e) {
+    display_mod_chooser: function(e) {
         // Set the section for this version of the dialogue
         if (e.target.ancestor(CSS.SITETOPIC)) {
             // The site topic has a sectionid of 1
@@ -137,7 +137,7 @@ Y.extend(MODCHOOSER, M.core.chooserdialogue, {
      * @param {String} thisoption The selected option value
      * @private
      */
-    option_selected : function(thisoption) {
+    option_selected: function(thisoption) {
         // Add the sectionid to the URL.
         this.hiddenRadioValue.setAttrs({
             name: 'jump',
@@ -146,8 +146,8 @@ Y.extend(MODCHOOSER, M.core.chooserdialogue, {
     }
 },
 {
-    NAME : MODCHOOSERNAME,
-    ATTRS : {
+    NAME: MODCHOOSERNAME,
+    ATTRS: {
         /**
          * The maximum height (in pixels) of the activity chooser.
          *
@@ -155,8 +155,8 @@ Y.extend(MODCHOOSER, M.core.chooserdialogue, {
          * @type Number
          * @default 800
          */
-        maxheight : {
-            value : 800
+        maxheight: {
+            value: 800
         }
     }
 });

@@ -151,8 +151,8 @@ M.availability_grade.form.fillErrors = function(errors, node) {
     }
 
     // Check numeric values.
-    if ((value.min !== undefined && typeof(value.min) === 'string') ||
-            (value.max !== undefined && typeof(value.max) === 'string')) {
+    if ((value.min !== undefined && typeof (value.min) === 'string') ||
+            (value.max !== undefined && typeof (value.max) === 'string')) {
         errors.push('availability_grade:error_invalidnumber');
     } else if (value.min !== undefined && value.max !== undefined &&
             value.min >= value.max) {

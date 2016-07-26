@@ -41,7 +41,7 @@ Y.extend(ANNOTATIONPEN, M.assignfeedback_editpdf.annotation, {
      * @method draw
      * @return M.assignfeedback_editpdf.drawable
      */
-    draw : function() {
+    draw: function() {
         var drawable,
             shape,
             first,
@@ -88,7 +88,7 @@ Y.extend(ANNOTATIONPEN, M.assignfeedback_editpdf.annotation, {
      * @method draw_current_edit
      * @param M.assignfeedback_editpdf.edit edit
      */
-    draw_current_edit : function(edit) {
+    draw_current_edit: function(edit) {
         var drawable = new M.assignfeedback_editpdf.drawable(this.editor),
             shape,
             first;
@@ -130,7 +130,7 @@ Y.extend(ANNOTATIONPEN, M.assignfeedback_editpdf.annotation, {
      * @param M.assignfeedback_editpdf.edit edit
      * @return bool true if pen bound is more than min width/height, else false.
      */
-    init_from_edit : function(edit) {
+    init_from_edit: function(edit) {
         var bounds = new M.assignfeedback_editpdf.rect(),
             pathlist = [],
             i = 0;
