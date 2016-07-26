@@ -3,6 +3,7 @@ This files describes API changes in the assign code.
 === 3.2 ===
 * External function mod_assign_external::get_assignments now returns additional optional fields:
    - preventsubmissionnotingroup: Prevent submission not in group.
+   - submissionstatement and submissionstatementformat: When there is a submission statement defined.
 * Proper checking for empty submissions
 * Submission modification time checking - this will help students working in groups not clobber each others'
   submissions
