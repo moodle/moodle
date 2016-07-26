@@ -30,6 +30,20 @@ information provided here is intended especially for developers.
   - setExpectedException(), use @expectedException or $this->expectException() and $this->expectExceptionMessage()
   - getMock(), use createMock() or getMockBuilder()->getMock()
   - UnitTestCase class is removed.
+* The following methods have been finally deprecated and should no longer be used:
+  - course_modinfo::build_section_cache()
+  - cm_info::get_deprecated_group_members_only()
+  - cm_info::is_user_access_restricted_by_group()
+* The following methods in cm_info::standardmethods have also been finally deprecated and should no longer be used:
+  - cm_info::get_after_edit_icons()
+  - cm_info::get_after_link()
+  - cm_info::get_content()
+  - cm_info::get_custom_data()
+  - cm_info::get_extra_classes()
+  - cm_info::get_on_click()
+  - cm_info::get_url()
+  - cm_info::obtain_dynamic_data()
+  Calling them through the magic method __call() will throw a coding exception.
 
 === 3.1 ===
 
