@@ -56,7 +56,7 @@
             failedContainer.removeClass('hidden');
         }, 20000);
 
-        iframe.load(function() {
+        iframe.on('load', function() {
             loadingContainer.addClass('hidden');
             iframe.removeClass('hidden');
         });
