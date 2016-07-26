@@ -51,6 +51,7 @@ information provided here is intended especially for developers.
 * Added down arrow: $OUTPUT->darrow.
 * All file_packer implementations now accept an additional parameter to allow a simple boolean return value instead of
   an array of individual file statuses.
+* "I set the field "field_string" to multiline:" now end with colon (:), as PyStrings is supposed to end with ":"
 
 === 3.1 ===
 
