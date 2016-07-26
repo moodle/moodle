@@ -155,6 +155,7 @@ $string['displayscorewithessays'] = '<p>You earned {$a->score} out of {$a->tempm
 <p>Your {$a->essayquestions} essay question(s) will be graded and added into your final score at a later date.</p>
 <p>Your current grade without the essay question(s) is {$a->score} out of {$a->grade}.</p>';
 $string['displayscorewithoutessays'] = 'Your score is {$a->score} (out of {$a->grade}).';
+$string['duplicatepagenamed'] = 'Duplicate page: {$a}';
 $string['edit'] = 'Edit';
 $string['editingquestionpage'] = 'Editing {$a} question page';
 $string['editlessonsettings'] = 'Edit lesson settings';
