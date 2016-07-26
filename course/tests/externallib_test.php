@@ -120,7 +120,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability
         $this->unassignUserCapability('moodle/category:manage', $contextid, $roleid);
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         $createdsubcats = core_course_external::create_categories($subcategories);
 
     }
@@ -163,7 +163,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
          // Call without required capability
         $this->unassignUserCapability('moodle/category:manage', $contextid, $roleid);
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         $createdsubcats = core_course_external::delete_categories(
                 array(array('id' => $category3->id)));
     }
@@ -261,7 +261,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability (it will fail cause of the search on idnumber).
         $this->unassignUserCapability('moodle/category:manage', $context->id, $roleid);
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         $categories = core_course_external::get_categories(array(
             array('key' => 'id', 'value' => $category1->id),
             array('key' => 'idnumber', 'value' => $category1->idnumber),
@@ -327,7 +327,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability.
         $this->unassignUserCapability('moodle/category:manage', $contextid, $roleid);
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         core_course_external::update_categories($categories);
     }
 
@@ -457,7 +457,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability
         $this->unassignUserCapability('moodle/course:create', $contextid, $roleid);
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         $createdsubcats = core_course_external::create_courses($courses);
     }
 
@@ -515,7 +515,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
          // Fail when the user is not allow to access the course (enrolled) or is not admin.
         $this->setGuestUser();
-        $this->setExpectedException('require_login_exception');
+        $this->expectException('require_login_exception');
 
         $result = core_course_external::delete_courses(array($course3->id));
         $result = external_api::clean_returnvalue(core_course_external::delete_courses_returns(), $result);
@@ -690,7 +690,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($coursedata2['fullname'], $results['courses'][0]['fullname']);
 
         // Search by block (use news_items default block). Should fail (only admins allowed).
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         $results = core_course_external::search_courses('blocklist', $blockid);
 
     }
@@ -1519,7 +1519,8 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $course1  = self::getDataGenerator()->create_course();
         $course2  = self::getDataGenerator()->create_course();
 
-        $this->setExpectedException('moodle_exception', get_string('invalidextparam', 'webservice', -1));
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('invalidextparam', 'webservice', -1));
         // Import from course1 to course2, with invalid option
         core_course_external::import_course($course1->id, $course2->id, -1);;
     }

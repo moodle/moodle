@@ -36,7 +36,7 @@ class core_outputrequirementslib_testcase extends advanced_testcase {
         $page = new moodle_page();
         $page->requires->string_for_js('course', 'moodle', 1);
         $page->requires->string_for_js('course', 'moodle', 1);
-        $this->setExpectedException('coding_exception');
+        $this->expectException('coding_exception');
         $page->requires->string_for_js('course', 'moodle', 2);
 
         // Note: we can not switch languages in phpunit yet,
@@ -52,7 +52,7 @@ class core_outputrequirementslib_testcase extends advanced_testcase {
     public function test_one_time_output_repeat_output_throws() {
         $page = new moodle_page();
         $page->requires->set_one_time_item_created('test_item');
-        $this->setExpectedException('coding_exception');
+        $this->expectException('coding_exception');
         $page->requires->set_one_time_item_created('test_item');
     }
 

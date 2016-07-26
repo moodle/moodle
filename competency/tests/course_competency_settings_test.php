@@ -120,7 +120,7 @@ class core_competency_course_competency_settings_testcase extends advanced_testc
         $this->assertEquals(2, $usercompcourse->get_grade());
 
         $this->setUser($u3);
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         api::update_course_competency_settings($c1->id, (object) array('pushratingstouserplans' => false));
     }
 

@@ -166,6 +166,8 @@ class core_competency_api_testcase extends advanced_testcase {
 
     /**
      * Test updating a template.
+     *
+     * @expectedException coding_exception
      */
     public function test_update_template() {
         $cat = $this->getDataGenerator()->create_category();
@@ -184,7 +186,6 @@ class core_competency_api_testcase extends advanced_testcase {
         $this->assertEquals('success', $template->get_shortname());
 
         // Trying to change the context.
-        $this->setExpectedException('coding_exception');
         api::update_template((object) array('id' => $template->get_id(), 'contextid' => context_coursecat::instance($cat->id)));
     }
 
@@ -510,6 +511,9 @@ class core_competency_api_testcase extends advanced_testcase {
         }
     }
 
+    /**
+     * @expectedException coding_exception
+     */
     public function test_create_plan_from_template() {
         $this->resetAfterTest(true);
         $this->setAdminUser();
@@ -531,7 +535,6 @@ class core_competency_api_testcase extends advanced_testcase {
         $this->assertFalse($plan);
 
         // Check that api::create_plan cannot be used.
-        $this->setExpectedException('coding_exception');
         unset($record->id);
         $plan = api::create_plan($record);
     }
@@ -753,6 +756,8 @@ class core_competency_api_testcase extends advanced_testcase {
 
     /**
      * Test that the method to complete a plan.
+     *
+     * @expectedException coding_exception
      */
     public function test_complete_plan() {
         global $DB;
@@ -833,7 +838,6 @@ class core_competency_api_testcase extends advanced_testcase {
         }
 
         // Completing a plan that is completed throws an exception.
-        $this->setExpectedException('coding_exception');
         api::complete_plan($plan);
     }
 
@@ -4430,6 +4434,9 @@ class core_competency_api_testcase extends advanced_testcase {
         $this->assertTrue(evidence::record_exists($ev2->get_id()));
     }
 
+    /**
+     * @expectedException required_capability_exception
+     */
     public function test_delete_evidence_without_permissions() {
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
@@ -4442,7 +4449,6 @@ class core_competency_api_testcase extends advanced_testcase {
         $ev1 = $ccg->create_evidence(['usercompetencyid' => $uc1->get_id()]);
 
         $this->setUser($u1);
-        $this->setExpectedException('required_capability_exception');
 
         api::delete_evidence($ev1);
     }

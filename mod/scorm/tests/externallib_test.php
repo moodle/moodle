@@ -172,6 +172,9 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, $result['attemptscount']);
     }
 
+    /**
+     * @expectedException required_capability_exception
+     */
     public function test_mod_scorm_get_scorm_attempt_count_others_as_student() {
         // Create a second student.
         $student2 = self::getDataGenerator()->create_user();
@@ -181,24 +184,27 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         self::setUser($student2);
 
         // I should not be able to view the attempts of another student.
-        $this->setExpectedException('required_capability_exception');
         mod_scorm_external::get_scorm_attempt_count($this->scorm->id, $this->student->id);
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_mod_scorm_get_scorm_attempt_count_invalid_instanceid() {
         // As student.
         self::setUser($this->student);
 
         // Test invalid instance id.
-        $this->setExpectedException('moodle_exception');
         mod_scorm_external::get_scorm_attempt_count(0, $this->student->id);
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_mod_scorm_get_scorm_attempt_count_invalid_userid() {
         // As student.
         self::setUser($this->student);
 
-        $this->setExpectedException('moodle_exception');
         mod_scorm_external::get_scorm_attempt_count($this->scorm->id, -1);
     }
 

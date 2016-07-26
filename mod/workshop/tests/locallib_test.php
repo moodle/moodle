@@ -317,24 +317,28 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
         $this->assertEquals($part, $total * $percent / 100);
     }
 
+    /**
+     * @expectedException coding_exception
+     */
     public function test_percent_to_value_negative() {
         $this->resetAfterTest(true);
         // fixture setup
         $total = 185;
         $percent = -7.098;
-        // set expectation
-        $this->setExpectedException('coding_exception');
+
         // exercise SUT
         $part = workshop::percent_to_value($percent, $total);
     }
 
+    /**
+     * @expectedException coding_exception
+     */
     public function test_percent_to_value_over_hundred() {
         $this->resetAfterTest(true);
         // fixture setup
         $total = 185;
         $percent = 121.08;
-        // set expectation
-        $this->setExpectedException('coding_exception');
+
         // exercise SUT
         $part = workshop::percent_to_value($percent, $total);
     }
@@ -383,7 +387,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
 
         // modify setup
         $fakerawrecord->weight = 1;
-        $this->setExpectedException('coding_exception');
+        $this->expectException('coding_exception');
         // excersise SUT
         $a = $this->workshop->prepare_example_assessment($fakerawrecord);
     }
@@ -412,7 +416,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
 
         // modify setup
         $fakerawrecord->weight = 0;
-        $this->setExpectedException('coding_exception');
+        $this->expectException('coding_exception');
         // excersise SUT
         $a = $this->workshop->prepare_example_reference_assessment($fakerawrecord);
     }

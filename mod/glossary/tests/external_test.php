@@ -108,6 +108,10 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $sink->close();
     }
 
+    /**
+     * @expectedException        require_login_exception
+     * @expectedExceptionMessage Activity is hidden
+     */
     public function test_view_glossary_without_permission() {
         $this->resetAfterTest(true);
 
@@ -126,10 +130,13 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
 
         // Assertion.
         $this->setUser($u1);
-        $this->setExpectedException('require_login_exception', 'Activity is hidden');
         mod_glossary_external::view_glossary($g1->id, 'letter');
     }
 
+    /**
+     * @expectedException        require_login_exception
+     * @expectedExceptionMessage Activity is hidden
+     */
     public function test_view_entry() {
         $this->resetAfterTest(true);
 
@@ -177,7 +184,6 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         }
 
         // Test non-readable entry.
-        $this->setExpectedException('require_login_exception', 'Activity is hidden');
         mod_glossary_external::view_entry($e4->id);
     }
 
@@ -1034,7 +1040,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
 
         // Permissions are checked.
         $this->setUser($u1);
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         mod_glossary_external::get_entries_to_approve($g1->id, 'ALL', 'CONCEPT', 'ASC', 0, 1);
         $this->fail('Do not test anything else after this.');
     }

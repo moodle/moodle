@@ -566,7 +566,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         $transaction->allow_commit();
 
         // Now commit the other transaction.
-        $this->setExpectedException('dml_write_exception');
+        $this->expectException('dml_write_exception');
         $this->save_quba($DB2);
         $transaction2->allow_commit();
 

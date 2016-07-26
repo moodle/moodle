@@ -42,7 +42,10 @@ class tool_monitor_subscription_testcase extends advanced_testcase {
         $sub->id = 100;
         $sub->name = 'My test rule';
         $sub->courseid = 20;
-        $this->subscription = $this->getMock('\tool_monitor\subscription',null, array($sub));
+        $mockbuilder = $this->getMockBuilder('\tool_monitor\subscription');
+        $mockbuilder->setMethods(null);
+        $mockbuilder->setConstructorArgs(array($sub));
+        $this->subscription = $mockbuilder->getMock();
     }
 
     /**
@@ -56,10 +59,11 @@ class tool_monitor_subscription_testcase extends advanced_testcase {
 
     /**
      * Test for the magic __get method.
+     *
+     * @expectedException coding_exception
      */
     public function test_magic_get() {
         $this->assertEquals(20, $this->subscription->courseid);
-        $this->setExpectedException('coding_exception');
         $this->subscription->ruleid;
     }
 }

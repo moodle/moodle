@@ -523,7 +523,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability
         $this->unassignUserCapability('moodle/user:create', $context->id, $roleid);
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         $createdusers = core_user_external::create_users(array($user1));
     }
 
@@ -554,7 +554,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability.
         $this->unassignUserCapability('moodle/user:delete', $context->id, $roleid);
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         core_user_external::delete_users(array($user1->id, $user2->id));
     }
 
@@ -634,7 +634,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability.
         $this->unassignUserCapability('moodle/user:update', $context->id, $roleid);
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         core_user_external::update_users(array($user1));
     }
 

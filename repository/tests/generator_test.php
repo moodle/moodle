@@ -185,7 +185,7 @@ class core_repository_generator_testcase extends advanced_testcase {
         $this->assertEquals($record->contextid, $instance->contextid);
 
         // Invalid context.
-        $this->setExpectedException('coding_exception');
+        $this->expectException('coding_exception');
         $record->contextid = context_block::instance($block->id)->id;
         $instance = $this->getDataGenerator()->create_repository('webdav', $record);
     }

@@ -126,6 +126,8 @@ class mod_choice_events_testcase extends advanced_testcase {
 
     /**
      * Test custom validations.
+     *
+     * @expectedException coding_exception
      */
     public function test_answer_submitted_other_exception() {
         // Generate user data.
@@ -139,7 +141,6 @@ class mod_choice_events_testcase extends advanced_testcase {
         $eventdata['other'] = array();
 
         // Make sure content identifier is always set.
-        $this->setExpectedException('coding_exception');
         $event = \mod_choice\event\answer_submitted::create($eventdata);
         $event->trigger();
         $this->assertEventContextNotUsed($event);
@@ -180,8 +181,9 @@ class mod_choice_events_testcase extends advanced_testcase {
     }
 
     /**
-     * Test custom validations
-     * for answer_updated event.
+     * Test custom validations for answer_updated event.
+     *
+     * @expectedException coding_exception
      */
     public function test_answer_updated_other_exception() {
         // Generate user data.
@@ -195,7 +197,6 @@ class mod_choice_events_testcase extends advanced_testcase {
         $eventdata['other'] = array();
 
         // Make sure content identifier is always set.
-        $this->setExpectedException('coding_exception');
         $event = \mod_choice\event\answer_updated::create($eventdata);
         $event->trigger();
         $this->assertEventContextNotUsed($event);

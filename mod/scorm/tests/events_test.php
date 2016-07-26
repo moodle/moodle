@@ -57,7 +57,11 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $this->eventcm = get_coursemodule_from_instance('scorm', $this->eventscorm->id);
     }
 
-    /** Tests for attempt deleted event */
+    /**
+     * Tests for attempt deleted event
+     *
+     * @expectedException coding_exception
+     */
     public function test_attempt_deleted_event() {
 
         global $USER;
@@ -83,7 +87,6 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $this->assertEventContextNotUsed($event);
 
         // Test event validations.
-        $this->setExpectedException('coding_exception');
         \mod_scorm\event\attempt_deleted::create(array(
             'contextid' => 5,
             'relateduserid' => 2
@@ -228,6 +231,8 @@ class mod_scorm_event_testcase extends advanced_testcase {
     /** Tests for sco launched event.
      *
      * There is no api involved so the best we can do is test legacy data and validations by triggering event manually.
+     *
+     * @expectedException coding_exception
      */
     public function test_sco_launched_event() {
         $this->resetAfterTest();
@@ -251,7 +256,6 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $this->assertEventContextNotUsed($event);
 
         // Test validations.
-        $this->setExpectedException('coding_exception');
         \mod_scorm\event\sco_launched::create(array(
              'objectid' => $this->eventscorm->id,
              'context' => context_module::instance($this->eventcm->id),

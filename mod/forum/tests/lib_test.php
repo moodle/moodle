@@ -1422,7 +1422,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $this->assertEmpty($neighbours['next']);
 
         // Querying the neighbours of a discussion passing the wrong CM.
-        $this->setExpectedException('coding_exception');
+        $this->expectException('coding_exception');
         forum_get_discussion_neighbours($cm2, $disc11, $forum2);
     }
 
@@ -1622,7 +1622,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $this->assertEmpty($neighbours['next']);
 
         // Querying the neighbours of a discussion passing the wrong CM.
-        $this->setExpectedException('coding_exception');
+        $this->expectException('coding_exception');
         forum_get_discussion_neighbours($cm2, $disc11, $forum2);
     }
 
@@ -3035,12 +3035,14 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $this->assertFalse(forum_is_author_hidden($post, $forum));
 
         // Incorrect parameters: $post.
-        $this->setExpectedException('coding_exception', '$post->parent must be set.');
+        $this->expectException('coding_exception');
+        $this->expectExceptionMessage('$post->parent must be set.');
         unset($post->parent);
         forum_is_author_hidden($post, $forum);
 
         // Incorrect parameters: $forum.
-        $this->setExpectedException('coding_exception', '$forum->type must be set.');
+        $this->expectException('coding_exception');
+        $this->expectExceptionMessage('$forum->type must be set.');
         unset($forum->type);
         forum_is_author_hidden($post, $forum);
     }

@@ -95,7 +95,7 @@ class core_files_externallib_testcase extends advanced_testcase {
         $this->assertNotEmpty($file);
 
         // Make sure the same file cannot be created again.
-        $this->setExpectedException("moodle_exception");
+        $this->expectException("moodle_exception");
         core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath,
                 $filename, $filecontent, $contextlevel, $instanceid);
     }
@@ -120,7 +120,7 @@ class core_files_externallib_testcase extends advanced_testcase {
         $instanceid = null;
 
         // Make sure exception is thrown.
-        $this->setExpectedException("coding_exception");
+        $this->expectException("coding_exception");
         core_files_external::upload($contextid, $component, $filearea, $itemid,
                 $filepath, $filename, $filecontent, $contextlevel, $instanceid);
     }

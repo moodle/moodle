@@ -85,13 +85,13 @@ class question_attempt_step_test extends advanced_testcase {
 
     public function test_cannot_set_qt_var_without_underscore() {
         $step = new question_attempt_step();
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         $step->set_qt_var('x', 1);
     }
 
     public function test_cannot_set_behaviour_var_without_underscore() {
         $step = new question_attempt_step();
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         $step->set_behaviour_var('x', 1);
     }
 

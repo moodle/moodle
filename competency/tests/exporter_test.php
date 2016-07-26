@@ -82,18 +82,22 @@ class core_competency_exporter_testcase extends advanced_testcase {
         $this->assertArrayNotHasKey('otherstrings', $structure->keys);
     }
 
+    /**
+     * @expectedException coding_exception
+     */
     public function test_invalid_data() {
         global $PAGE;
-        $this->setExpectedException('coding_exception');
         $exporter = new core_competency_testable_exporter($this->invaliddata, $this->validrelated);
         $output = $PAGE->get_renderer('tool_lp');
 
         $result = $exporter->export($output);
     }
 
+    /**
+     * @expectedException coding_exception
+     */
     public function test_invalid_related() {
         global $PAGE;
-        $this->setExpectedException('coding_exception');
         $exporter = new core_competency_testable_exporter($this->validdata, $this->invalidrelated);
         $output = $PAGE->get_renderer('tool_lp');
 

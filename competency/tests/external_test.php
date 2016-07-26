@@ -303,9 +303,10 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test we can't create a competency framework with only read permissions.
+     *
+     * @expectedException required_capability_exception
      */
     public function test_create_competency_frameworks_with_read_permissions() {
-        $this->setExpectedException('required_capability_exception');
         $this->setUser($this->user);
 
         $result = $this->create_competency_framework(1, true);
@@ -313,9 +314,10 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test we can't create a competency framework with only read permissions.
+     *
+     * @expectedException required_capability_exception
      */
     public function test_create_competency_frameworks_with_read_permissions_in_category() {
-        $this->setExpectedException('required_capability_exception');
         $this->setUser($this->catuser);
         $result = $this->create_competency_framework(1, false);
     }
@@ -367,10 +369,11 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test we cannot create a competency framework with nasty data.
+     *
+     * @expectedException invalid_parameter_exception
      */
     public function test_create_competency_frameworks_with_nasty_data() {
         $this->setUser($this->creator);
-        $this->setExpectedException('invalid_parameter_exception');
         $framework = array(
             'shortname' => 'short<a href="">',
             'idnumber' => 'id;"number',
@@ -543,9 +546,10 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test we can delete a competency framework with read permissions.
+     *
+     * @expectedException required_capability_exception
      */
     public function test_delete_competency_frameworks_with_read_permissions() {
-        $this->setExpectedException('required_capability_exception');
         $this->setUser($this->creator);
         $result = $this->create_competency_framework(1, true);
 
@@ -624,9 +628,10 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test we can update a competency framework with read permissions.
+     *
+     * @expectedException required_capability_exception
      */
     public function test_update_competency_frameworks_with_read_permissions() {
-        $this->setExpectedException('required_capability_exception');
         $this->setUser($this->creator);
         $result = $this->create_competency_framework(1, true);
 
@@ -757,9 +762,10 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test we can't create a competency with only read permissions.
+     *
+     * @expectedException required_capability_exception
      */
     public function test_create_competency_with_read_permissions() {
-        $this->setExpectedException('required_capability_exception');
         $framework = $this->getDataGenerator()->get_plugin_generator('core_competency')->create_framework();
         $this->setUser($this->user);
         $competency = $this->create_competency(1, $framework->get_id());
@@ -818,11 +824,12 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test we cannot create a competency with nasty data.
+     *
+     * @expectedException invalid_parameter_exception
      */
     public function test_create_competency_with_nasty_data() {
         $this->setUser($this->creator);
         $framework = $this->create_competency_framework(1, true);
-        $this->setExpectedException('invalid_parameter_exception');
         $competency = array(
             'shortname' => 'shortname<a href="">',
             'idnumber' => 'id;"number',
@@ -995,9 +1002,10 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test we can delete a competency with read permissions.
+     *
+     * @expectedException required_capability_exception
      */
     public function test_delete_competency_with_read_permissions() {
-        $this->setExpectedException('required_capability_exception');
         $this->setUser($this->creator);
         $framework = $this->create_competency_framework(1, true);
         $result = $this->create_competency(1, $framework->id);
@@ -1048,9 +1056,10 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test we can update a competency with read permissions.
+     *
+     * @expectedException required_capability_exception
      */
     public function test_update_competency_with_read_permissions() {
-        $this->setExpectedException('required_capability_exception');
         $this->setUser($this->creator);
         $framework = $this->create_competency_framework(1, true);
         $result = $this->create_competency(1, $framework->id);
@@ -1717,7 +1726,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($competency1->id, $r2->id);
         $this->assertEquals($competency2->id, $r3->id);
 
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         $this->setUser($this->user);
         external::reorder_template_competency($template->id, $competency1->id, $competency2->id);
     }
@@ -2694,7 +2703,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
         $this->setUser($this->user);
 
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         $evidence = external::grade_competency_in_plan($plan->get_id(), $c1->get_id(), 1);
     }
 
@@ -2738,7 +2747,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $this->assertFalse((bool)$settings->get_pushratingstouserplans());
         $this->setUser($compnoob);
 
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         $result = external::update_course_competency_settings($course->id, array('pushratingstouserplans' => true));
     }
 

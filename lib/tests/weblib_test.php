@@ -258,10 +258,11 @@ class core_weblib_testcase extends advanced_testcase {
 
     /**
      * Test set bad scheme on Moodle URL objects.
+     *
+     * @expectedException coding_exception
      */
     public function test_moodle_url_set_bad_scheme() {
         $url = new moodle_url('http://moodle.org/foo/bar');
-        $this->setExpectedException('coding_exception');
         $url->set_scheme('not a valid $ scheme');
     }
 
