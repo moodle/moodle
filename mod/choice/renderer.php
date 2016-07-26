@@ -316,16 +316,20 @@ class mod_choice_renderer extends plugin_renderer_base {
         global $OUTPUT;
         $count = 0;
         $data = [];
+        $numberofuser = 0;
         $percentageamount = 0;
         foreach ($choices->options as $optionid => $option) {
-            if($choices->numberofuser > 0) {
-                $percentageamount = ((float)count($option->user) / (float)$choices->numberofuser) * 100.0;
+            if (!empty($option->user)) {
+                $numberofuser = count($option->user);
             }
-
+            if($choices->numberofuser > 0) {
+                $percentageamount = ((float)$numberofuser / (float)$choices->numberofuser) * 100.0;
+            }
             $data['labels'][$count] = $option->text;
-            $data['series'][$count] = count($option->user);
+            $data['series'][$count] = $numberofuser;
             $data['series_labels'][$count] = '(' . format_float($percentageamount, 1) . '%)';
             $count++;
+            $numberofuser = 0;
         }
 
         $chart = new \core\chart_bar();

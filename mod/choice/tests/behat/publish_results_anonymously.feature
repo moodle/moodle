@@ -40,7 +40,6 @@ Feature: A teacher can choose whether to publish choice activity results anonymo
     And I follow "Choice 1"
     Then I should not see "Student 1"
     And I should not see "Users who chose this option"
-    And ".results .graph img" "css_element" should exist
 
   Scenario: Publish full results
     Given I add a "Choice" to section "1" and I fill the form with:

@@ -47,12 +47,10 @@ Feature: A teacher can choose one of 4 options for publishing choice results
     And I follow "Course 1"
     When I follow "Choice 1"
     Then I should not see "Responses"
-    And I should not see "Graph display"
     And I follow "Course 1"
     And I choose "Option 1" from "Choice 1" choice activity
     And I should see "Your selection: Option 1"
     And I should see "Responses"
-    And I should see "Graph display"
 
   Scenario: Show results to students only after the choice is closed
     Given I add a "Choice" to section "1" and I fill the form with:
@@ -66,7 +64,6 @@ Feature: A teacher can choose one of 4 options for publishing choice results
     And I follow "Course 1"
     When I follow "Choice 1"
     Then I should not see "Responses"
-    And I should not see "Graph display"
     And I choose "Option 1" from "Choice 1" choice activity
     And I log out
     And I log in as "teacher1"
@@ -88,7 +85,6 @@ Feature: A teacher can choose one of 4 options for publishing choice results
     And I follow "Course 1"
     And I follow "Choice 1"
     And I should see "Responses"
-    And I should see "Graph display"
 
   Scenario: Always show results to students
     Given I add a "Choice" to section "1" and I fill the form with:
@@ -102,4 +98,3 @@ Feature: A teacher can choose one of 4 options for publishing choice results
     And I follow "Course 1"
     When I follow "Choice 1"
     And I should see "Responses"
-    And I should see "Graph display"
