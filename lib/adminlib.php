@@ -9741,7 +9741,11 @@ class admin_setting_searchsetupinfo extends admin_setting {
                             array('href' => $url));
             // Check the engine status.
             $searchengine = \core_search\manager::search_engine_instance();
-            $serverstatus = $searchengine->is_server_ready();
+            try {
+                $serverstatus = $searchengine->is_server_ready();
+            } catch (\moodle_exception $e) {
+                $serverstatus = $e->getMessage();
+            }
             if ($serverstatus === true) {
                 $status = html_writer::tag('span', get_string('yes'), array('class' => 'statusok'));
             } else {
