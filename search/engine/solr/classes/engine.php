@@ -1160,6 +1160,10 @@ class engine extends \core_search\engine {
             'timeout' => !empty($this->config->server_timeout) ? $this->config->server_timeout : '30'
         );
 
+        if (!class_exists('\SolrClient')) {
+            throw new \core_search\engine_exception('enginenotinstalled', 'search', '', 'solr');
+        }
+
         $client = new \SolrClient($options);
 
         if ($client === false && $triggerexception) {
