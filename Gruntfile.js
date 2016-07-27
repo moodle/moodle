@@ -184,9 +184,6 @@ module.exports = function(grunt) {
                     syntax: 'less',
                     configOverrides: {
                         rules: {
-                            // TODO: MDL-55165 -Enable these rules once we make output-changing changes to less.
-                            "color-hex-case": null,
-                            "color-hex-length": null,
                             // These rules have to be disabled in .stylelintrc for scss compat.
                             "at-rule-no-unknown": true,
                             "no-browser-hacks": [true, {"severity": "warning"}]
