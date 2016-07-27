@@ -650,6 +650,14 @@ class mod_assign_external extends external_api {
                     'text' => $assignplugin->get_editor_text($name, $item->id),
                     'format' => $assignplugin->get_editor_format($name, $item->id)
                 );
+
+                // Now format the text.
+                foreach ($fileareas as $filearea => $name) {
+                    list($editorfieldinfo['text'], $editorfieldinfo['format']) = external_format_text(
+                        $editorfieldinfo['text'], $editorfieldinfo['format'], $assign->get_context()->id,
+                        $component, $filearea, $item->id);
+                }
+
                 $plugin['editorfields'][] = $editorfieldinfo;
             }
             $plugins[] = $plugin;
