@@ -1136,7 +1136,8 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
 
         $this->create_individual_wikis_with_groups();
 
-        $sectioncontent = '<h1>Title1</h1>Text inside section';
+        // We add a <span> in the first title to verify the WS works sending HTML in section.
+        $sectioncontent = '<h1><span>Title1</span></h1>Text inside section';
         $pagecontent = $sectioncontent.'<h1>Title2</h1>Text inside section';
         $newpage = $this->getDataGenerator()->get_plugin_generator('mod_wiki')->create_page(
                                 $this->wiki, array('content' => $pagecontent));
@@ -1162,7 +1163,7 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
             'version' => '1'
         );
 
-        $result = mod_wiki_external::get_page_for_editing($newpage->id, 'Title1');
+        $result = mod_wiki_external::get_page_for_editing($newpage->id, '<span>Title1</span>');
         $result = external_api::clean_returnvalue(mod_wiki_external::get_page_for_editing_returns(), $result);
         $this->assertEquals($expected, $result['pagesection']);
     }
@@ -1254,8 +1255,9 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
             array('group' => $this->group1->id, 'content' => 'Test'));
 
         // Test edit whole page.
-        $sectioncontent = '<h1>Title1</h1>Text inside section';
-        $newpagecontent = $sectioncontent.'<h1>Title2</h1>Text inside section';
+        // We add <span> in the titles to verify the WS works sending HTML in section.
+        $sectioncontent = '<h1><span>Title1</span></h1>Text inside section';
+        $newpagecontent = $sectioncontent.'<h1><span>Title2</span></h1>Text inside section';
 
         $result = mod_wiki_external::edit_page($newpage->id, $newpagecontent);
         $result = external_api::clean_returnvalue(mod_wiki_external::edit_page_returns(), $result);
@@ -1265,8 +1267,8 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($newpagecontent, $version->content);
 
         // Test edit section.
-        $newsectioncontent = '<h1>Title2</h1>New test2';
-        $section = 'Title2';
+        $newsectioncontent = '<h1><span>Title2</span></h1>New test2';
+        $section = '<span>Title2</span>';
 
         $result = mod_wiki_external::edit_page($newpage->id, $newsectioncontent, $section);
         $result = external_api::clean_returnvalue(mod_wiki_external::edit_page_returns(), $result);
@@ -1278,8 +1280,8 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($expected, $version->content);
 
         // Test locked section.
-        $newsectioncontent = '<h1>Title2</h1>New test2';
-        $section = 'Title2';
+        $newsectioncontent = '<h1><span>Title2</span></h1>New test2';
+        $section = '<span>Title2</span>';
 
         try {
             // Using user 1 to avoid other users to edit.
