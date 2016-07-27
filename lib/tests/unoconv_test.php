@@ -85,6 +85,11 @@ class core_unoconv_testcase extends advanced_testcase {
         $this->assertNotFalse($result);
         $this->assertSame($result->get_mimetype(), 'application/pdf');
         $this->assertGreaterThan(0, $result->get_filesize());
+        // Test forcing a refresh of the document.
+        $result = $fs->get_converted_document($this->testfile2, 'pdf', true);
+        $this->assertNotFalse($result);
+        $this->assertSame($result->get_mimetype(), 'application/pdf');
+        $this->assertGreaterThan(0, $result->get_filesize());
     }
 
     public function test_generate_markdown() {
@@ -101,6 +106,12 @@ class core_unoconv_testcase extends advanced_testcase {
         $this->assertSame($result->get_mimetype(), 'text/plain');
         $this->assertGreaterThan(0, $result->get_filesize());
         $result = $fs->get_converted_document($this->testfile2, 'txt');
+        $this->assertNotFalse($result);
+        $this->assertSame($result->get_mimetype(), 'text/plain');
+        $this->assertGreaterThan(0, $result->get_filesize());
+
+        // Test forcing a refresh of the document.
+        $result = $fs->get_converted_document($this->testfile2, 'txt', true);
         $this->assertNotFalse($result);
         $this->assertSame($result->get_mimetype(), 'text/plain');
         $this->assertGreaterThan(0, $result->get_filesize());

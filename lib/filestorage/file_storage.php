@@ -184,16 +184,17 @@ class file_storage {
      *
      * @param stored_file $file the file we want to preview
      * @param string $format The desired format - e.g. 'pdf'. Formats are specified by file extension.
+     * @param boolean $forcerefresh If true, the file will be converted every time (not cached).
      * @return stored_file|bool false if unable to create the conversion, stored file otherwise
      */
-    public function get_converted_document(stored_file $file, $format) {
+    public function get_converted_document(stored_file $file, $format, $forcerefresh = false) {
 
         $context = context_system::instance();
         $path = '/' . $format . '/';
         $conversion = $this->get_file($context->id, 'core', 'documentconversion', 0, $path, $file->get_contenthash());
 
-        if (!$conversion) {
-            $conversion = $this->create_converted_document($file, $format);
+        if (!$conversion || $forcerefresh) {
+            $conversion = $this->create_converted_document($file, $format, $forcerefresh);
             if (!$conversion) {
                 return false;
             }
@@ -259,7 +260,7 @@ class file_storage {
     }
 
     /**
-     * If the test pdf has been generated correctly and send it direct to the browser.
+     * Regenerate the test pdf and send it direct to the browser.
      */
     public static function send_test_pdf() {
         global $CFG;
@@ -286,7 +287,7 @@ class file_storage {
         }
 
         // Convert the doc file to pdf and send it direct to the browser.
-        $result = $fs->get_converted_document($testdocx, 'pdf');
+        $result = $fs->get_converted_document($testdocx, 'pdf', true);
         readfile_accel($result, 'application/pdf', true);
     }
 
@@ -334,7 +335,7 @@ class file_storage {
      * @param string $format The desired format - e.g. 'pdf'. Formats are specified by file extension.
      * @return stored_file|bool false if unable to create the conversion, stored file otherwise
      */
-    protected function create_converted_document(stored_file $file, $format) {
+    protected function create_converted_document(stored_file $file, $format, $forcerefresh = false) {
         global $CFG;
 
         if (empty($CFG->pathtounoconv) || !file_is_executable(trim($CFG->pathtounoconv))) {
@@ -393,14 +394,22 @@ class file_storage {
         }
 
         $context = context_system::instance();
+        $path = '/' . $format . '/';
         $record = array(
             'contextid' => $context->id,
             'component' => 'core',
             'filearea'  => 'documentconversion',
             'itemid'    => 0,
-            'filepath'  => '/' . $format . '/',
+            'filepath'  => $path,
             'filename'  => $file->get_contenthash(),
         );
+
+        if ($forcerefresh) {
+            $existing = $this->get_file($context->id, 'core', 'documentconversion', 0, $path, $file->get_contenthash());
+            if ($existing) {
+                $existing->delete();
+            }
+        }
 
         $convertedfile = $this->create_file_from_pathname($record, $newtmpfile);
         // Cleanup.
