@@ -45,7 +45,7 @@ function choice_set_events($choice) {
     $event = new stdClass();
     if ($event->id = $DB->get_field('event', 'id',
             array('modulename' => 'choice', 'instance' => $choice->id, 'eventtype' => 'open'))) {
-        if ($choice->timeopen > 0) {
+        if ((!empty($choice->timeopen)) && ($choice->timeopen > 0)) {
             // Calendar event exists so update it.
             $event->name         = get_string('calendarstart', 'choice', $choice->name);
             $event->description  = format_module_intro('choice', $choice, $choice->coursemodule);
@@ -61,7 +61,7 @@ function choice_set_events($choice) {
         }
     } else {
         // Event doesn't exist so create one.
-        if ($choice->timeopen > 0) {
+        if ((!empty($choice->timeopen)) && ($choice->timeopen > 0)) {
             $event->name         = get_string('calendarstart', 'choice', $choice->name);
             $event->description  = format_module_intro('choice', $choice, $choice->coursemodule);
             $event->courseid     = $choice->course;
@@ -81,7 +81,7 @@ function choice_set_events($choice) {
     $event = new stdClass();
     if ($event->id = $DB->get_field('event', 'id',
             array('modulename' => 'choice', 'instance' => $choice->id, 'eventtype' => 'close'))) {
-        if ($choice->timeclose > 0) {
+        if ((!empty($choice->timeclose)) && ($choice->timeclose > 0)) {
             // Calendar event exists so update it.
             $event->name         = get_string('calendarend', 'choice', $choice->name);
             $event->description  = format_module_intro('choice', $choice, $choice->coursemodule);
@@ -97,7 +97,7 @@ function choice_set_events($choice) {
         }
     } else {
         // Event doesn't exist so create one.
-        if ($choice->timeclose > 0) {
+        if ((!empty($choice->timeclose)) && ($choice->timeclose > 0)) {
             $event = new stdClass();
             $event->name         = get_string('calendarend', 'choice', $choice->name);
             $event->description  = format_module_intro('choice', $choice, $choice->coursemodule);

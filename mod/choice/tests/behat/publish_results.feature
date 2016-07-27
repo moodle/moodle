@@ -75,10 +75,11 @@ Feature: A teacher can choose one of 4 options for publishing choice results
     And I follow "Edit settings"
     And I expand all fieldsets
     And I set the following fields to these values:
-      | Restrict answering to this time period | 1 |
+      | timeopen[enabled] | 1 |
       | timeopen[day] | 1 |
       | timeopen[month] | January |
       | timeopen[year] | 2010 |
+      | timeclose[enabled] | 1 |
       | timeclose[day] | 2 |
       | timeclose[month] | January |
       | timeclose[year] | 2010 |

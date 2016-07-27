@@ -70,18 +70,16 @@ class mod_choice_mod_form extends moodleform_mod {
         }
 
 //-------------------------------------------------------------------------------
-        $mform->addElement('header', 'timerestricthdr', get_string('availability'));
-        $mform->addElement('checkbox', 'timerestrict', get_string('timerestrict', 'choice'));
+        $mform->addElement('header', 'availabilityhdr', get_string('availability'));
+        $mform->addElement('date_time_selector', 'timeopen', get_string("choiceopen", "choice"),
+            array('optional' => true));
 
-        $mform->addElement('date_time_selector', 'timeopen', get_string("choiceopen", "choice"));
-        $mform->disabledIf('timeopen', 'timerestrict');
-
-        $mform->addElement('date_time_selector', 'timeclose', get_string("choiceclose", "choice"));
-        $mform->disabledIf('timeclose', 'timerestrict');
+        $mform->addElement('date_time_selector', 'timeclose', get_string("choiceclose", "choice"),
+            array('optional' => true));
 
         $mform->addElement('advcheckbox', 'showpreview', get_string('showpreview', 'choice'));
         $mform->addHelpButton('showpreview', 'showpreview', 'choice');
-        $mform->disabledIf('showpreview', 'timerestrict');
+        $mform->disabledIf('showpreview', 'timeopen[enabled]');
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'resultshdr', get_string('results', 'choice'));
@@ -116,11 +114,6 @@ class mod_choice_mod_form extends moodleform_mod {
                 $default_values['optionid['.$key.']'] = $choiceids[$key];
             }
 
-        }
-        if (empty($default_values['timeopen'])) {
-            $default_values['timerestrict'] = 0;
-        } else {
-            $default_values['timerestrict'] = 1;
         }
 
     }

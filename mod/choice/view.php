@@ -141,19 +141,17 @@ if (isloggedin() && (!empty($current)) &&
 
 /// Print the form
 $choiceopen = true;
-if ($choice->timeclose !=0) {
-    if ($choice->timeopen > $timenow ) {
-        if ($choice->showpreview) {
-            echo $OUTPUT->box(get_string('previewonly', 'choice', userdate($choice->timeopen)), 'generalbox alert');
-        } else {
-            echo $OUTPUT->box(get_string("notopenyet", "choice", userdate($choice->timeopen)), "generalbox notopenyet");
-            echo $OUTPUT->footer();
-            exit;
-        }
-    } else if ($timenow > $choice->timeclose) {
-        echo $OUTPUT->box(get_string("expired", "choice", userdate($choice->timeclose)), "generalbox expired");
-        $choiceopen = false;
+if ((!empty($choice->timeopen)) && ($choice->timeopen > $timenow)) {
+    if ($choice->showpreview) {
+        echo $OUTPUT->box(get_string('previewonly', 'choice', userdate($choice->timeopen)), 'generalbox alert');
+    } else {
+        echo $OUTPUT->box(get_string("notopenyet", "choice", userdate($choice->timeopen)), "generalbox notopenyet");
+        echo $OUTPUT->footer();
+        exit;
     }
+} else if ((!empty($choice->timeclose)) && ($timenow > $choice->timeclose)) {
+    echo $OUTPUT->box(get_string("expired", "choice", userdate($choice->timeclose)), "generalbox expired");
+    $choiceopen = false;
 }
 
 if ( (!$current or $choice->allowupdate) and $choiceopen and is_enrolled($context, NULL, 'mod/choice:choose')) {

@@ -24,7 +24,8 @@ Feature: Test the display of the choice module on my home
     And I set the following fields to these values:
       | Choice name | Test choice name |
       | Description | Test choice description |
-      | id_timerestrict| 1 |
+      | timeopen[enabled] | 1 |
+      | timeclose[enabled] | 1 |
       | timeclose[day] | 1 |
       | timeclose[month] | January |
       | timeclose[year] | 2030 |
