@@ -116,17 +116,19 @@ Feature: Mapping courses in a feedback
 
     And I follow "Analysis"
     And I should see "All courses" in the "#feedback_course_filter .fautocomplete .label" "css_element"
+    And I show chart data for the "multichoicerated" feedback
     And I should see "1 (33.33 %)" in the "option a" "table_row"
     And I should see "1 (33.33 %)" in the "option b" "table_row"
     And I should see "1 (33.33 %)" in the "option c" "table_row"
-    And I should see "Average: 2.00" in the "(multichoicerated)" "table"
-    And I click on "Sort by course" "link" in the "(multichoicerated)" "table"
+    And I should see "Average: 2.00"
+    And I follow "Sort by course"
     And I should see "2.50" in the "C1" "table_row"
     And I should see "1.00" in the "Acceptance test site" "table_row"
     And I follow "Back"
     And I set the field "Filter by course" to "Course 1"
     And I press "Filter"
     And I should see "Course 1" in the "#feedback_course_filter .fautocomplete .label" "css_element"
+    And I show chart data for the "multichoicerated" feedback
     And I should see "0" in the "option a" "table_row"
     And I should see "1 (50.00 %)" in the "option b" "table_row"
     And I should see "1 (50.00 %)" in the "option c" "table_row"
@@ -197,27 +199,33 @@ Feature: Mapping courses in a feedback
     And I follow "Course feedback"
     And I follow "Analysis"
     And I should see "All courses" in the "#feedback_course_filter .fautocomplete .label" "css_element"
+    And I show chart data for the "multichoicerated" feedback
     And I should see "0" in the "option a" "table_row"
     And I should see "1 (33.33 %)" in the "option b" "table_row"
     And I should see "2 (66.67 %)" in the "option c" "table_row"
-    And I should see "Average: 3.67" in the "(multichoicerated)" "table"
-    And I click on "Sort by course" "link" in the "(multichoicerated)" "table"
+    And I should see "Average: 3.67"
+    And I click on "Sort by course" "link"
     And I should see "3.00" in the "C3" "table_row"
     And I should see "2.50" in the "C2" "table_row"
     And I follow "Back"
     And I set the field "Filter by course" to "Course 2"
     And I press "Filter"
+    And I show chart data for the "multichoicerated" feedback
     And I should see "0" in the "option a" "table_row"
     And I should see "1 (50.00 %)" in the "option b" "table_row"
     And I should see "1 (50.00 %)" in the "option c" "table_row"
+    And I show chart data for the "multichoicesimple" feedback
     And I should see "2 (100.00 %)" in the "option e" "table_row"
     And I set the field "Filter by course" to "Course 3"
     And I press "Filter"
+    And I show chart data for the "multichoicerated" feedback
     And I should see "0" in the "option a" "table_row"
     And I should see "0" in the "option b" "table_row"
     And I should see "1 (100.00 %)" in the "option c" "table_row"
+    And I show chart data for the "multichoicesimple" feedback
     And I should see "1 (100.00 %)" in the "option d" "table_row"
     And I follow "Show all"
+    And I show chart data for the "multichoicesimple" feedback
     And I should see "1 (33.33 %)" in the "option d" "table_row"
     And I should see "2 (66.67 %)" in the "option e" "table_row"
     And I should see "0" in the "option f" "table_row"

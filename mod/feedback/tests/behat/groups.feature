@@ -62,6 +62,7 @@ Feature: Feedbacks in courses with groups
       | Multiple choice values         | Yes of course\nNot at all\nI don't know |
     And I log out
 
+  @javascript
   Scenario: Non anonymous feedback with groups in a course
     When I log in as "teacher"
     And I follow "Course 1"
@@ -94,6 +95,7 @@ Feature: Feedbacks in courses with groups
     And I follow "Course feedback"
     And I follow "Submitted answers"
     And I should see "Separate groups: Group 1"
+    And I show chart data for the "multichoice1" feedback
     And I should see "2 (50.00 %)" in the "Yes of course" "table_row"
     And I should see "1 (25.00 %)" in the "Not at all" "table_row"
     And I log out
@@ -103,6 +105,7 @@ Feature: Feedbacks in courses with groups
     And I follow "Course feedback"
     And I follow "Submitted answers"
     And I should see "Separate groups: Group 2"
+    And I show chart data for the "multichoice1" feedback
     And I should see "0" in the "Yes of course" "table_row"
     And I should see "2 (66.67 %)" in the "Not at all" "table_row"
     And I log out
@@ -112,9 +115,11 @@ Feature: Feedbacks in courses with groups
     And I follow "Course feedback"
     And I follow "Submitted answers"
     And the field "Separate groups" matches value "Group 1"
+    And I show chart data for the "multichoice1" feedback
     And I should see "2 (50.00 %)" in the "Yes of course" "table_row"
     And I should see "1 (25.00 %)" in the "Not at all" "table_row"
     And I select "Group 2" from the "Separate groups" singleselect
+    And I show chart data for the "multichoice1" feedback
     And I should see "0" in the "Yes of course" "table_row"
     And I should see "2 (66.67 %)" in the "Not at all" "table_row"
     And the "Separate groups" select box should not contain "All participants"
@@ -125,6 +130,7 @@ Feature: Feedbacks in courses with groups
     And I follow "Course feedback"
     And I follow "Submitted answers"
     And I should see "Separate groups: All participants"
+    And I show chart data for the "multichoice1" feedback
     And I should see "2 (28.57 %)" in the "Yes of course" "table_row"
     And I should see "3 (42.86 %)" in the "Not at all" "table_row"
     And I should see "2 (28.57 %)" in the "I don't know" "table_row"
@@ -135,13 +141,16 @@ Feature: Feedbacks in courses with groups
     And I follow "Course feedback"
     And I follow "Analysis"
     And the field "Separate groups" matches value "All participants"
+    And I show chart data for the "multichoice1" feedback
     And I should see "2 (28.57 %)" in the "Yes of course" "table_row"
     And I should see "3 (42.86 %)" in the "Not at all" "table_row"
     And I should see "2 (28.57 %)" in the "I don't know" "table_row"
     And I select "Group 1" from the "Separate groups" singleselect
+    And I show chart data for the "multichoice1" feedback
     And I should see "2 (50.00 %)" in the "Yes of course" "table_row"
     And I should see "1 (25.00 %)" in the "Not at all" "table_row"
     And I select "Group 2" from the "Separate groups" singleselect
+    And I show chart data for the "multichoice1" feedback
     And I should see "0" in the "Yes of course" "table_row"
     And I should see "2 (66.67 %)" in the "Not at all" "table_row"
     And I follow "Show responses"
@@ -156,6 +165,7 @@ Feature: Feedbacks in courses with groups
     And I should see "Username 3"
     And I log out
 
+  @javascript
   Scenario: Anonymous feedback with groups in a course
     When I log in as "teacher"
     And I follow "Course 1"
@@ -195,6 +205,7 @@ Feature: Feedbacks in courses with groups
     And I follow "Course anon feedback"
     And I follow "Submitted answers"
     And I should see "Separate groups: Group 1"
+    And I show chart data for the "multichoice1" feedback
     And I should see "2 (50.00 %)" in the "Yes of course" "table_row"
     And I should see "1 (25.00 %)" in the "Not at all" "table_row"
     And I log out
@@ -204,6 +215,7 @@ Feature: Feedbacks in courses with groups
     And I follow "Course anon feedback"
     And I follow "Submitted answers"
     And I should see "Separate groups: Group 2"
+    And I show chart data for the "multichoice1" feedback
     And I should see "0" in the "Yes of course" "table_row"
     And I should see "2 (66.67 %)" in the "Not at all" "table_row"
     And I log out
@@ -213,9 +225,11 @@ Feature: Feedbacks in courses with groups
     And I follow "Course anon feedback"
     And I follow "Submitted answers"
     And the field "Separate groups" matches value "Group 1"
+    And I show chart data for the "multichoice1" feedback
     And I should see "2 (50.00 %)" in the "Yes of course" "table_row"
     And I should see "1 (25.00 %)" in the "Not at all" "table_row"
     And I select "Group 2" from the "Separate groups" singleselect
+    And I show chart data for the "multichoice1" feedback
     And I should see "0" in the "Yes of course" "table_row"
     And I should see "2 (66.67 %)" in the "Not at all" "table_row"
     And the "Separate groups" select box should not contain "All participants"
@@ -226,6 +240,7 @@ Feature: Feedbacks in courses with groups
     And I follow "Course anon feedback"
     And I follow "Submitted answers"
     And I should see "Separate groups: All participants"
+    And I show chart data for the "multichoice1" feedback
     And I should see "2 (28.57 %)" in the "Yes of course" "table_row"
     And I should see "3 (42.86 %)" in the "Not at all" "table_row"
     And I should see "2 (28.57 %)" in the "I don't know" "table_row"
@@ -236,13 +251,16 @@ Feature: Feedbacks in courses with groups
     And I follow "Course anon feedback"
     And I follow "Analysis"
     And the field "Separate groups" matches value "All participants"
+    And I show chart data for the "multichoice1" feedback
     And I should see "2 (28.57 %)" in the "Yes of course" "table_row"
     And I should see "3 (42.86 %)" in the "Not at all" "table_row"
     And I should see "2 (28.57 %)" in the "I don't know" "table_row"
     And I select "Group 1" from the "Separate groups" singleselect
+    And I show chart data for the "multichoice1" feedback
     And I should see "2 (50.00 %)" in the "Yes of course" "table_row"
     And I should see "1 (25.00 %)" in the "Not at all" "table_row"
     And I select "Group 2" from the "Separate groups" singleselect
+    And I show chart data for the "multichoice1" feedback
     And I should see "0" in the "Yes of course" "table_row"
     And I should see "2 (66.67 %)" in the "Not at all" "table_row"
     And I follow "Show responses"

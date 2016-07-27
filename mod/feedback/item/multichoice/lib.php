@@ -223,7 +223,7 @@ class feedback_item_multichoice extends feedback_item_base {
                 $quotient = format_float($val->quotient * 100, 2);
                 $strquotient = '';
                 if ($val->quotient > 0) {
-                    $strquotient = ' ('. $quotient . ' %)';
+                    $strquotient = '('. $quotient . ' %)';
                 }
                 $answertext = format_text(trim($val->answertext), FORMAT_HTML,
                         array('noclean' => true, 'para' => false));

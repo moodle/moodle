@@ -60,6 +60,7 @@ Feature: Non anonymous feedback
     And I should not see "Submitted answers"
     And I press "Continue"
 
+  @javascript
   Scenario: Complete non anonymous feedback and view analysis on the front page as an authenticated user
     And I log in as "admin"
     And I set the following system permissions of "Authenticated user on frontpage" role:
@@ -86,9 +87,10 @@ Feature: Non anonymous feedback
     And I should see "Submitted answers: 2"
     And I should see "Questions: 1"
     # And I should not see "multichoice2" # TODO MDL-29303 do not show labels to users who can not edit feedback
+    And I show chart data for the "multichoice2" feedback
     And I should see "Do you like our site?"
-    And I should see "1 (50.00 %)" in the "Yes of course:" "table_row"
-    And I should see "1 (50.00 %)" in the "Not at all:" "table_row"
+    And I should see "1 (50.00 %)" in the "Yes of course" "table_row"
+    And I should see "1 (50.00 %)" in the "Not at all" "table_row"
     And I should not see "Show responses"
     And I log out
     And I log in as "manager"
@@ -104,6 +106,7 @@ Feature: Non anonymous feedback
     And I follow "Back"
     And I log out
 
+  @javascript
   Scenario: Non anonymous feedback in a course
     When I log in as "teacher"
     And I follow "Course 1"
@@ -137,9 +140,10 @@ Feature: Non anonymous feedback
     And I should see "Submitted answers: 2"
     And I should see "Questions: 1"
     # And I should not see "multichoice2" # TODO MDL-29303
+    And I show chart data for the "multichoice1" feedback
     And I should see "Do you like this course?"
-    And I should see "1 (50.00 %)" in the "Yes of course:" "table_row"
-    And I should see "1 (50.00 %)" in the "Not at all:" "table_row"
+    And I should see "1 (50.00 %)" in the "Yes of course" "table_row"
+    And I should see "1 (50.00 %)" in the "Not at all" "table_row"
     And I log out
     And I log in as "teacher"
     And I follow "Course 1"
@@ -162,6 +166,7 @@ Feature: Non anonymous feedback
     And I follow "Back"
     # Delete non anonymous response
     And I click on "Delete entry" "link" in the "Username 1" "table_row"
+    And I press "Yes"
     And I should see "Non anonymous entries (1)"
     And I should not see "Username 1"
     And I should see "Username 2"

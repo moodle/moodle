@@ -144,24 +144,28 @@ Feature: Testing multichoice questions in feedback
     And I follow "Analysis"
     And I should see "Submitted answers: 2"
     And I should see "Questions: 3"
-    And I should see "1 (50.00 %)" in the "option a:" "table_row"
-    And I should not see "%" in the "option b:" "table_row"
-    And I should not see "%" in the "option c:" "table_row"
-    And I should see "1 (50.00 %)" in the "option d:" "table_row"
-    And I should not see "%" in the "option e:" "table_row"
-    And I should see "1 (50.00 %)" in the "option f:" "table_row"
-    And I should not see "%" in the "option g:" "table_row"
-    And I should not see "%" in the "option h:" "table_row"
-    And I should see "1 (100.00 %)" in the "option i:" "table_row"
+    And I show chart data for the "multichoice1" feedback
+    And I should see "1 (50.00 %)" in the "option a" "table_row"
+    And I should not see "%" in the "option b" "table_row"
+    And I should not see "%" in the "option c" "table_row"
+    And I show chart data for the "multichoice2" feedback
+    And I should see "1 (50.00 %)" in the "option d" "table_row"
+    And I should not see "%" in the "option e" "table_row"
+    And I should see "1 (50.00 %)" in the "option f" "table_row"
+    And I show chart data for the "multichoice3" feedback
+    And I should not see "%" in the "option g" "table_row"
+    And I should not see "%" in the "option h" "table_row"
+    And I should see "1 (100.00 %)" in the "option i" "table_row"
     # Change the settings so we don't analyse empty submits
     And I follow "Edit questions"
     And I click on "Edit question" "link" in the "//div[contains(@class, 'feedback_itemlist') and contains(.,'multichoice1')]" "xpath_element"
     And I set the field "Do not analyse empty submits" to "Yes"
     And I press "Save changes to question"
     And I follow "Analysis"
-    And I should see "1 (100.00 %)" in the "option a:" "table_row"
-    And I should not see "%" in the "option b:" "table_row"
-    And I should not see "%" in the "option c:" "table_row"
+    And I show chart data for the "multichoice1" feedback
+    And I should see "1 (100.00 %)" in the "option a" "table_row"
+    And I should not see "%" in the "option b" "table_row"
+    And I should not see "%" in the "option c" "table_row"
     And I log out
 
   @javascript
@@ -283,26 +287,31 @@ Feature: Testing multichoice questions in feedback
     And I follow "Analysis"
     And I should see "Submitted answers: 2"
     And I should see "Questions: 3"
-    And I should see "1 (50.00 %)" in the "option a:" "table_row"
-    And I should see "1 (50.00 %)" in the "option b:" "table_row"
-    And I should not see "%" in the "option c:" "table_row"
-    And I should see "1 (50.00 %)" in the "option d:" "table_row"
-    And I should not see "%" in the "option e:" "table_row"
-    And I should see "2 (100.00 %)" in the "option f:" "table_row"
-    And I should not see "%" in the "option g:" "table_row"
-    And I should not see "%" in the "option h:" "table_row"
-    And I should see "1 (100.00 %)" in the "option i:" "table_row"
+    And I show chart data for the "multichoice1" feedback
+    And I should see "1 (50.00 %)" in the "option a" "table_row"
+    And I should see "1 (50.00 %)" in the "option b" "table_row"
+    And I should not see "%" in the "option c" "table_row"
+    And I show chart data for the "multichoice2" feedback
+    And I should see "1 (50.00 %)" in the "option d" "table_row"
+    And I should not see "%" in the "option e" "table_row"
+    And I should see "2 (100.00 %)" in the "option f" "table_row"
+    And I show chart data for the "multichoice3" feedback
+    And I should not see "%" in the "option g" "table_row"
+    And I should not see "%" in the "option h" "table_row"
+    And I should see "1 (100.00 %)" in the "option i" "table_row"
     # Change the settings so we don't analyse empty submits
     And I follow "Edit questions"
     And I click on "Edit question" "link" in the "//div[contains(@class, 'feedback_itemlist') and contains(.,'multichoice1')]" "xpath_element"
     And I set the field "Do not analyse empty submits" to "Yes"
     And I press "Save changes to question"
     And I follow "Analysis"
-    And I should see "1 (100.00 %)" in the "option a:" "table_row"
-    And I should see "1 (100.00 %)" in the "option b:" "table_row"
-    And I should not see "%" in the "option c:" "table_row"
+    And I show chart data for the "multichoice1" feedback
+    And I should see "1 (100.00 %)" in the "option a" "table_row"
+    And I should see "1 (100.00 %)" in the "option b" "table_row"
+    And I should not see "%" in the "option c" "table_row"
     And I log out
 
+  @javascript
   Scenario: Non-rated single-answer dropdown multiple choice questions in feedback
     When I add a "Multiple choice" question to the feedback with:
       | Question         | this is a multiple choice 1 |
@@ -400,22 +409,26 @@ Feature: Testing multichoice questions in feedback
     And I follow "Analysis"
     And I should see "Submitted answers: 2"
     And I should see "Questions: 3"
-    And I should see "1 (50.00 %)" in the "option a:" "table_row"
-    And I should not see "%" in the "option b:" "table_row"
-    And I should not see "%" in the "option c:" "table_row"
-    And I should see "1 (50.00 %)" in the "option d:" "table_row"
-    And I should not see "%" in the "option e:" "table_row"
-    And I should see "1 (50.00 %)" in the "option f:" "table_row"
-    And I should not see "%" in the "option g:" "table_row"
-    And I should not see "%" in the "option h:" "table_row"
-    And I should see "1 (100.00 %)" in the "option i:" "table_row"
+    And I show chart data for the "multichoice1" feedback
+    And I should see "1 (50.00 %)" in the "option a" "table_row"
+    And I should not see "%" in the "option b" "table_row"
+    And I should not see "%" in the "option c" "table_row"
+    And I show chart data for the "multichoice2" feedback
+    And I should see "1 (50.00 %)" in the "option d" "table_row"
+    And I should not see "%" in the "option e" "table_row"
+    And I should see "1 (50.00 %)" in the "option f" "table_row"
+    And I show chart data for the "multichoice3" feedback
+    And I should not see "%" in the "option g" "table_row"
+    And I should not see "%" in the "option h" "table_row"
+    And I should see "1 (100.00 %)" in the "option i" "table_row"
     # Change the settings so we don't analyse empty submits
     And I follow "Edit questions"
     And I click on "Edit question" "link" in the "//div[contains(@class, 'feedback_itemlist') and contains(.,'multichoice1')]" "xpath_element"
     And I set the field "Do not analyse empty submits" to "Yes"
     And I press "Save changes to question"
     And I follow "Analysis"
-    And I should see "1 (100.00 %)" in the "option a:" "table_row"
-    And I should not see "%" in the "option b:" "table_row"
-    And I should not see "%" in the "option c:" "table_row"
+    And I show chart data for the "multichoice1" feedback
+    And I should see "1 (100.00 %)" in the "option a" "table_row"
+    And I should not see "%" in the "option b" "table_row"
+    And I should not see "%" in the "option c" "table_row"
     And I log out
