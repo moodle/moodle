@@ -4,6 +4,9 @@ information provided here is intended especially for developers.
 === 3.2 ===
 
 * Callback delete_course is deprecated and should be replaced with observer for event \core\event\course_content_deleted
+* update_module_button() and core_renderer::update_module_button() have been deprecated and should not be used anymore.
+  Activity modules should not add the edit module button, the link is already available in the Administration block.
+  Themes can choose to display the link in the buttons row consistently for all module types.
 
 === 3.1 ===
 
