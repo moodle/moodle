@@ -5879,12 +5879,12 @@ a.ygtvspacer:hover {
 .messaging-area .messages-area .profile .actions {
   padding-top: 10px;
 }
-.messaging-area .messages-area .messages {
-  height: 520px;
-  overflow-y: auto;
-}
-.messaging-area .messages-area .messages .name {
+.messaging-area .messages-area .name {
   font-weight: bold;
+}
+.messaging-area .messages-area .messages {
+  height: 500px;
+  overflow-y: auto;
 }
 .messaging-area .messages-area .messages .blocktime {
   clear: both;

@@ -91,11 +91,12 @@ class api {
      * @param int $otheruserid the other user
      * @param int $limitfrom
      * @param int $limitnum
+     * @param string $sort
      * @return \core_message\output\messages
      */
-    public static function get_messages($userid, $otheruserid, $limitfrom = 0, $limitnum = 0) {
+    public static function get_messages($userid, $otheruserid, $limitfrom = 0, $limitnum = 0, $sort = 'timecreated ASC') {
         $arrmessages = array();
-        if ($messages = \core_message\helper::get_messages($userid, $otheruserid, 0, $limitfrom, $limitnum)) {
+        if ($messages = \core_message\helper::get_messages($userid, $otheruserid, 0, $limitfrom, $limitnum, $sort)) {
             $arrmessages = \core_message\helper::create_messages($userid, $messages);
         }
 

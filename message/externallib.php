@@ -554,7 +554,8 @@ class core_message_external extends external_api {
                 'currentuserid' => new external_value(PARAM_INT, 'The current user\'s id'),
                 'otheruserid' => new external_value(PARAM_INT, 'The other user\'s id'),
                 'limitfrom' => new external_value(PARAM_INT, 'Limit from', VALUE_DEFAULT, 0),
-                'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 0)
+                'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 0),
+                'newest' => new external_value(PARAM_BOOL, 'Newest first?', VALUE_DEFAULT, false),
             )
         );
     }
@@ -566,9 +567,10 @@ class core_message_external extends external_api {
      * @param int $otheruserid The other user's id
      * @param int $limitfrom
      * @param int $limitnum
+     * @param boolean $newest
      * @return external_description
      */
-    public static function data_for_messagearea_messages($currentuserid, $otheruserid, $limitfrom = 0, $limitnum = 0) {
+    public static function data_for_messagearea_messages($currentuserid, $otheruserid, $limitfrom = 0, $limitnum = 0, $newest = false) {
         global $CFG, $PAGE;
 
         // Check if messaging is enabled.
@@ -580,13 +582,19 @@ class core_message_external extends external_api {
             'currentuserid' => $currentuserid,
             'otheruserid' => $otheruserid,
             'limitfrom' => $limitfrom,
-            'limitnum' => $limitnum
+            'limitnum' => $limitnum,
+            'newest' => $newest
         );
         self::validate_parameters(self::data_for_messagearea_messages_parameters(), $params);
 
         self::validate_context(context_user::instance($currentuserid));
 
-        $messages = \core_message\api::get_messages($currentuserid, $otheruserid, $limitfrom, $limitnum);
+        if ($newest) {
+            $sort = 'timecreated DESC';
+        } else {
+            $sort = 'timecreated ASC';
+        }
+        $messages = \core_message\api::get_messages($currentuserid, $otheruserid, $limitfrom, $limitnum, $sort);
 
         $renderer = $PAGE->get_renderer('core_message');
         return $messages->export_for_template($renderer);

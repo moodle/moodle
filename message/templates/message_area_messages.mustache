@@ -1,13 +1,3 @@
-<div class="messages" data-region="messages" data-userid="{{otheruserid}}">
-    <div class="name">
-        {{otheruserfullname}}
-    </div>
-    {{#messages}}
-        {{> core_message/message_area_message }}
-    {{/messages}}
-</div>
-<div class="response" data-region="response">
-    {{#iscurrentuser}}
-        {{> core_message/message_area_response }}
-    {{/iscurrentuser}}
-</div>
+{{#messages}}
+    {{> core_message/message_area_message }}
+{{/messages}}

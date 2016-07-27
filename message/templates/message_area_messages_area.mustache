@@ -1,0 +1,11 @@
+<div class="name">
+    {{otheruserfullname}}
+</div>
+<div class="messages" data-region="messages" data-userid="{{otheruserid}}">
+    {{> core_message/message_area_messages }}
+</div>
+<div class="response" data-region="response">
+    {{#iscurrentuser}}
+        {{> core_message/message_area_response }}
+    {{/iscurrentuser}}
+</div>

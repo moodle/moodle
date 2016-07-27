@@ -21,8 +21,8 @@
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
-    function($, ajax, templates, notification) {
+define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/custom_interaction_events'],
+    function($, ajax, templates, notification, customEvents) {
 
         /**
          * Messages class.
@@ -34,6 +34,15 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
             this._init();
         }
 
+        /** @type {Boolean} checks if we are currently loading messages */
+        Messages.prototype._isLoadingMessages = false;
+
+        /** @type {int} the number of messagess displayed */
+        Messages.prototype._numMessagesDisplayed = 0;
+
+        /** @type {int} the number of messages to retrieve */
+        Messages.prototype._numMessagesToRetrieve = 20;
+
         /** @type {Messagearea} The messaging area object. */
         Messages.prototype.messageArea = null;
 
@@ -44,8 +53,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          */
         Messages.prototype._init = function() {
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONDELETED, this._handleConversationDeleted.bind(this));
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONSELECTED, this._loadMessages.bind(this));
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.SENDMESSAGE, this._loadMessages.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONSELECTED, this._viewMessages.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.SENDMESSAGE, this._viewMessages.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CHOOSEMESSAGESTODELETE, this._chooseMessagesToDelete.bind(this));
             this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.SENDMESSAGE, this._sendMessage.bind(this));
             this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.DELETEMESSAGES, this._deleteMessages.bind(this));
@@ -54,35 +63,121 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
         };
 
         /**
-         * Loads messages for a specific user.
+         * View the message panel.
          *
          * @param {Event} event
          * @param {int} userid
          * @returns {Promise} The promise resolved when the messages have been loaded.
          * @private
          */
-        Messages.prototype._loadMessages = function(event, userid) {
-            // Show loading template.
-            templates.render('core/loading', {}).done(function(html, js) {
-                templates.replaceNodeContents(this.messageArea.SELECTORS.MESSAGESAREA, html, js);
-            }.bind(this));
+        Messages.prototype._viewMessages = function(event, userid) {
+            // We are viewing another user, or re-loading the panel, so set number of messages displayed to 0.
+            this._numMessagesDisplayed = 0;
 
+            // Keep track of the number of messages received.
+            var numberreceived = 0;
+            // Show loading template.
+            return templates.render('core/loading', {}).then(function(html, js) {
+                templates.replaceNodeContents(this.messageArea.SELECTORS.MESSAGESAREA, html, js);
+                return this._getMessages(userid);
+            }.bind(this)).then(function(data) {
+                numberreceived = data.messages.length;
+                // We have the data - lets render the template with it.
+                return templates.render('core_message/message_area_messages_area', data);
+            }).then(function(html, js) {
+                templates.replaceNodeContents(this.messageArea.SELECTORS.MESSAGESAREA, html, js);
+                // Scroll to the bottom.
+                this._scrollBottom();
+                // Only increment if data was returned.
+                if (numberreceived > 0) {
+                    // Set the number of messages displayed.
+                    this._numMessagesDisplayed = numberreceived;
+                }
+                // Now enable the ability to infinitely scroll through messages.
+                customEvents.define(this.messageArea.SELECTORS.MESSAGES, [
+                    customEvents.events.scrollTop
+                ]);
+                // Assign the event for scrolling.
+                this.messageArea.onCustomEvent(customEvents.events.scrollTop, this._loadMessages.bind(this));
+            }.bind(this)).fail(notification.exception);
+        };
+
+        /**
+         * Loads messages while scrolling.
+         *
+         * @returns {Promise} The promise resolved when the messages have been loaded.
+         * @private
+         */
+        Messages.prototype._loadMessages = function() {
+            if (this._isLoadingMessages) {
+                return;
+            }
+
+            this._isLoadingMessages = true;
+
+            // Keep track of the number of messages received.
+            var numberreceived = 0;
+            // Show loading template.
+            return templates.render('core/loading', {}).then(function(html, js) {
+                templates.prependNodeContents(this.messageArea.SELECTORS.MESSAGES,
+                    "<div style='text-align:center'>" + html + "</div>", js);
+                return this._getMessages(this._getUserId());
+            }.bind(this)).then(function(data) {
+                numberreceived = data.messages.length;
+                // We have the data - lets render the template with it.
+                return templates.render('core_message/message_area_messages', data);
+            }).then(function(html, js) {
+                // Remove the loading icon.
+                this.messageArea.find(this.messageArea.SELECTORS.MESSAGES + " " +
+                    this.messageArea.SELECTORS.LOADINGICON).remove();
+                // Check if we got something to do.
+                if (numberreceived > 0) {
+                    // Let's check if we can remove the block time.
+                    // First, get the block time that is currently being displayed.
+                    var blocktime = this.messageArea.node.find(this.messageArea.SELECTORS.BLOCKTIME + ":first");
+                    var newblocktime = $(html).find(this.messageArea.SELECTORS.BLOCKTIME + ":first").addBack();
+                    if (blocktime.html() == newblocktime.html()) {
+                        // Remove the block time as it's present above.
+                        blocktime.remove();
+                    }
+                    // Get height before we add the messages.
+                    var oldheight = this.messageArea.find(this.messageArea.SELECTORS.MESSAGES)[0].scrollHeight;
+                    // Show the new content.
+                    templates.prependNodeContents(this.messageArea.SELECTORS.MESSAGES, html, js);
+                    // Get height after we add the messages.
+                    var newheight = this.messageArea.find(this.messageArea.SELECTORS.MESSAGES)[0].scrollHeight;
+                    // Make sure scroll bar is at the location before we loaded more messages.
+                    this.messageArea.find(this.messageArea.SELECTORS.MESSAGES).scrollTop(newheight - oldheight);
+                    // Increment the number of messages displayed.
+                    this._numMessagesDisplayed += numberreceived;
+                }
+                // Mark that we are no longer busy loading data.
+                this._isLoadingMessages = false;
+            }.bind(this)).fail(notification.exception);
+        };
+
+        /**
+         * Handles returning a list of messages to display.
+         *
+         * @param {int} userid
+         * @returns {Promise} The promise resolved when the contact area has been rendered
+         * @private
+         */
+        Messages.prototype._getMessages = function(userid) {
             // Call the web service to get our data.
             var promises = ajax.call([{
                 methodname: 'core_message_data_for_messagearea_messages',
                 args: {
                     currentuserid: this.messageArea.getCurrentUserId(),
-                    otheruserid: userid
+                    otheruserid: userid,
+                    limitfrom: this._numMessagesDisplayed,
+                    limitnum: this._numMessagesToRetrieve,
+                    newest: true
                 }
             }]);
 
             // Do stuff when we get data back.
-            return promises[0].then(function(data) {
-                // We have the data - lets re-render the template with it.
-                return templates.render('core_message/message_area_messages', data);
-            }).then(function(html, js) {
-                templates.replaceNodeContents(this.messageArea.SELECTORS.MESSAGESAREA, html, js);
-            }.bind(this)).fail(notification.exception);
+            return promises[0];
         };
 
         /**
@@ -264,6 +359,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
                 templates.appendNodeContents(this.messageArea.SELECTORS.MESSAGES, html, js);
                 // Empty the response text area.
                 this.messageArea.find(this.messageArea.SELECTORS.SENDMESSAGETEXT).val('');
+                // Scroll down.
+                this._scrollBottom();
             }.bind(this)).fail(notification.exception);
         };
 
@@ -275,6 +372,17 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
          */
         Messages.prototype._getUserId = function() {
             return this.messageArea.find(this.messageArea.SELECTORS.MESSAGES).data('userid');
+        };
+
+        /**
+         * Scrolls to the bottom of the messages.
+         *
+         * @private
+         */
+        Messages.prototype._scrollBottom = function() {
+            // Scroll to the bottom.
+            var messages = this.messageArea.find(this.messageArea.SELECTORS.MESSAGES);
+            messages.scrollTop(messages[0].scrollHeight);
         };
 
         return Messages;

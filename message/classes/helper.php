@@ -81,6 +81,13 @@ class helper {
         // Store the messages.
         $arrmessages = array();
 
+        // We always view messages from oldest to newest, ensure we have it in that order.
+        $lastmessage = end($messages);
+        $firstmessage = reset($messages);
+        if ($lastmessage->timecreated < $firstmessage->timecreated) {
+            $messages = array_reverse($messages);
+        }
+
         // Keeps track of the last day, month and year combo we were viewing.
         $day = '';
         $month = '';
