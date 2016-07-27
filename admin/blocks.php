@@ -154,7 +154,10 @@
                 $settings = '<a href="' . $blocksettings->url .  '">' . get_string('settings') . '</a>';
             } else if ($blocksettings instanceof admin_settingpage) {
                 $settings = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=blocksetting'.$block->name.'">'.$strsettings.'</a>';
-            } else {
+            } else if (!file_exists($CFG->dirroot.'/blocks/'.$block->name.'/settings.php')) {
+                // If the block's settings node was not found, we check that the block really provides the settings.php file.
+                // Note that blocks can inject their settings to other nodes in the admin tree without using the default locations.
+                // This can be done by assigning null to $setting in settings.php and it is a valid case.
                 debugging('Warning: block_'.$block->name.' returns true in has_config() but does not provide a settings.php file',
                     DEBUG_DEVELOPER);
             }
