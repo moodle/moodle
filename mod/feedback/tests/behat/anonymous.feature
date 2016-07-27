@@ -60,6 +60,7 @@ Feature: Anonymous feedback
     And I should not see "Submitted answers"
     And I press "Continue"
 
+  @javascript
   Scenario: Complete anonymous feedback and view analysis on the front page as an authenticated user
     And I log in as "admin"
     And I set the following system permissions of "Authenticated user on frontpage" role:
@@ -92,9 +93,10 @@ Feature: Anonymous feedback
     And I should see "Submitted answers: 2"
     And I should see "Questions: 1"
     # And I should not see "multichoice2" # TODO MDL-29303 do not show labels to users who can not edit feedback
+    And I show chart data for the "multichoice2" feedback
     And I should see "Do you like our site?"
-    And I should see "1 (50.00 %)" in the "Yes:" "table_row"
-    And I should see "1 (50.00 %)" in the "No:" "table_row"
+    And I should see "1 (50.00 %)" in the "Yes" "table_row"
+    And I should see "1 (50.00 %)" in the "No" "table_row"
     And I log out
     And I log in as "manager"
     And I am on site homepage
@@ -124,6 +126,7 @@ Feature: Anonymous feedback
     And I should not see "Submitted answers"
     And I press "Continue"
 
+  @javascript
   Scenario: Complete fully anonymous feedback and view analyze on the front page as a guest
     And I log in as "admin"
     And I set the following administration settings values:
@@ -156,9 +159,10 @@ Feature: Anonymous feedback
     And I should see "Submitted answers: 2"
     And I should see "Questions: 1"
     # And I should not see "multichoice2" # TODO MDL-29303
+    And I show chart data for the "multichoice2" feedback
     And I should see "Do you like our site?"
-    And I should see "1 (50.00 %)" in the "Yes:" "table_row"
-    And I should see "1 (50.00 %)" in the "No:" "table_row"
+    And I should see "1 (50.00 %)" in the "Yes" "table_row"
+    And I should see "1 (50.00 %)" in the "No" "table_row"
     And I log in as "manager"
     And I am on site homepage
     And I follow "Site feedback"
@@ -168,6 +172,7 @@ Feature: Anonymous feedback
     And I should see "Response number: 1 (Anonymous)"
     And I log out
 
+  @javascript
   Scenario: Anonymous feedback in a course
     # Teacher can not
     When I log in as "teacher"
@@ -208,9 +213,10 @@ Feature: Anonymous feedback
     And I should see "Submitted answers: 2"
     And I should see "Questions: 1"
     # And I should not see "multichoice2" # TODO MDL-29303
+    And I show chart data for the "multichoice1" feedback
     And I should see "Do you like this course?"
-    And I should see "1 (50.00 %)" in the "Yes:" "table_row"
-    And I should see "1 (50.00 %)" in the "No:" "table_row"
+    And I should see "1 (50.00 %)" in the "Yes" "table_row"
+    And I should see "1 (50.00 %)" in the "No" "table_row"
     And I log out
     And I log in as "teacher"
     And I follow "Course 1"
@@ -233,6 +239,7 @@ Feature: Anonymous feedback
     And I follow "Back"
     # Delete anonymous response
     And I click on "Delete entry" "link" in the "Response number: 1" "table_row"
+    And I press "Yes"
     And I should see "Anonymous entries (1)"
     And I should not see "Response number: 1"
     And I should see "Response number: 2"

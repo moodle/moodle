@@ -129,6 +129,33 @@ class behat_mod_feedback extends behat_base {
     }
 
     /**
+     * Clicks on Show chart data to display chart data if not visible.
+     *
+     * @Then /^I show chart data for the "(?P<feedback_name_string>(?:[^"]|\\")*)" feedback$/
+     * @param string $feedbackname name of the feedback for which chart data needs to be shown.
+     */
+    public function i_show_chart_data_for_the_feedback($feedbackname) {
+
+        $feedbackxpath = "//th[contains(normalize-space(string(.)), \"" . $feedbackname . "\")]/ancestor::table/" .
+            "following-sibling::div[contains(concat(' ', normalize-space(@class), ' '), ' chart-area ')][1]" .
+            "//p[contains(concat(' ', normalize-space(@class), ' '), ' chart-table-expand ')]";
+
+        $charttabledataxpath = $feedbackxpath .
+            "/following-sibling::div[contains(concat(' ', normalize-space(@class), ' '), ' chart-table-data ')][1]";
+
+        // If chart data is not visible then expand.
+        $node = $this->get_selected_node("xpath_element", $charttabledataxpath);
+        if (!$node->isVisible()) {
+            $this->execute('behat_general::i_click_on_in_the', array(
+                get_string('showchartdata'),
+                'link',
+                $feedbackxpath,
+                'xpath_element'
+            ));
+        }
+    }
+
+    /**
      * Ensures two feedback export files are identical
      *
      * Maps the itemids and converts DEPENDITEM if necessary

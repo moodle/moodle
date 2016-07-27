@@ -4,7 +4,8 @@ Feature: Test creating different types of feedback questions for non-anonymous f
   As a teacher
   I need to be able to add different question types
 
-  Background:
+  @javascript
+  Scenario: Create different types of questions in non-anonymous feedback with javascript enabled
     Given the following "users" exist:
       | username | firstname | lastname |
       | teacher1 | Teacher   | 1        |
@@ -113,29 +114,27 @@ Feature: Test creating different types of feedback questions for non-anonymous f
     And I should see "C1" in the "(info)" "table"
     And I should see "my long answer" in the "(longertext)" "table"
     And I should see "lots of feedbacks" in the "(longertext)" "table"
-    And I should see "2 (100.00 %)" in the "option d:" "table_row"
-    And I should see "1 (50.00 %)" in the "option e:" "table_row"
-    And I should see "1 (50.00 %)" in the "option f:" "table_row"
-    And I should see "0" in the "option g:" "table_row"
-    And I should not see "%" in the "option g:" "table_row"
-    And I should see "1 (50.00 %)" in the "option h:" "table_row"
-    And I should see "1 (50.00 %)" in the "option i:" "table_row"
+    And I show chart data for the "multichoice2" feedback
+    And I should see "2 (100.00 %)" in the "option d" "table_row"
+    And I should see "1 (50.00 %)" in the "option e" "table_row"
+    And I should see "1 (50.00 %)" in the "option f" "table_row"
+    And I show chart data for the "multichoice3" feedback
+    And I should see "0" in the "option g" "table_row"
+    And I should not see "%" in the "option g" "table_row"
+    And I should see "1 (50.00 %)" in the "option h" "table_row"
+    And I should see "1 (50.00 %)" in the "option i" "table_row"
+    And I show chart data for the "multichoice4" feedback
     And I should see "0" in the "(0) option k" "table_row"
     And I should not see "%" in the "(0) option k" "table_row"
     And I should see "1 (50.00 %)" in the "(1) option l" "table_row"
-    And I should see "1 (50.00 %)" in the "(5) option m:" "table_row"
-    And I should see "Average: 3.00" in the "(multichoice4)" "table"
+    And I should see "1 (50.00 %)" in the "(5) option m" "table_row"
+    And I should see "Average: 3.00"
     And I should see "35" in the "(numeric)" "table"
     And I should see "71" in the "(numeric)" "table"
     And I should see "Average: 53.00" in the "(numeric)" "table"
     And I should see "no way" in the "(shorttext)" "table"
     And I should see "hello" in the "(shorttext)" "table"
-
-  Scenario: Create different types of questions in non-anonymous feedback with javascript disabled
-    And I log out
-
-  @javascript
-  Scenario: Create different types of questions in non-anonymous feedback with javascript enabled
-    And I should see "1 (50.00 %)" in the "option a:" "table_row"
-    And I should see "1 (50.00 %)" in the "option b:" "table_row"
+    And I show chart data for the "multichoice1" feedback
+    And I should see "1 (50.00 %)" in the "option a" "table_row"
+    And I should see "1 (50.00 %)" in the "option b" "table_row"
     And I log out

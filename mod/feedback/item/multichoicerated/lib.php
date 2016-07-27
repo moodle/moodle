@@ -194,10 +194,11 @@ class feedback_item_multichoicerated extends feedback_item_base {
             foreach ($analysed_vals as $val) {
                 $avg += $val->avg;
                 $quotient = format_float($val->quotient * 100, 2);
-                $answertext = format_text(trim($val->answertext), FORMAT_HTML,
+                $answertext = '('.$val->value.') ' . format_text(trim($val->answertext), FORMAT_HTML,
                         array('noclean' => true, 'para' => false));
+
                 if ($val->quotient > 0) {
-                    $strquotient = ' ('.$quotient.' %)';
+                    $strquotient = '('.$quotient.' %)';
                 } else {
                     $strquotient = '';
                 }
