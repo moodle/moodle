@@ -847,7 +847,7 @@ class cache_definition {
      * @deprecated since 2.6
      */
     public function should_be_persistent() {
-        throw new coding_exception('class_definition::should_be_persistent() can not be used anymore.' .
+        throw new coding_exception('cache_definition::should_be_persistent() can not be used anymore.' .
             ' Please use cache_definition::use_static_acceleration() instead.');
     }
 
