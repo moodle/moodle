@@ -19,12 +19,12 @@
 }
 
 .path-mod-workshop .groupwidget {
-    text-align:center;
+    text-align: center;
     margin: 0.75em auto;
 }
 
 .path-mod-workshop .perpagewidget {
-    text-align:center;
+    text-align: center;
     margin: 0.75em auto;
 }
 
@@ -95,6 +95,7 @@
 .path-mod-workshop .submission-full .header .userdate {
     margin: 0px 0px 0px 80px;
 }
+
 .path-mod-workshop .submission-full.anonymous .header .title,
 .path-mod-workshop .submission-full.anonymous .header .author,
 .path-mod-workshop .submission-full.anonymous .header .userdate {
@@ -293,6 +294,7 @@
 .path-mod-workshop .userplan th .actions {
     display: inline;
 }
+
 .path-mod-workshop .userplan tr.phasetasks li {
     background-image: url([[pix:mod_workshop|userplan/task-todo]]);
     background-position: top left;
@@ -315,7 +317,7 @@
 }
 
 .path-mod-workshop .userplan tr.phasetasks .tasks {
-    list-style:none;
+    list-style: none;
     margin: 3px;
     padding: 0px;
 }
@@ -594,7 +596,9 @@
 
 .path-mod-workshop .nothingfound {
     font-size: 150%;
-    color: #FF4500;
+    color: #ff4500;
 }
 
-.path-mod-workshop .workshop-risk-dataloss { vertical-align: text-bottom; }
+.path-mod-workshop .workshop-risk-dataloss {
+    vertical-align: text-bottom;
+}

@@ -25,7 +25,6 @@
     overflow: scroll;
 }
 
-
 #page-mod-scorm-player #scormtop {
     position: relative;
     width: 100%;
@@ -61,8 +60,8 @@
 }
 
 #page-mod-scorm-player #scormpage #toctree {
-    position:relative;
-    width:100%;
+    position: relative;
+    width: 100%;
 }
 
 #page-mod-scorm-player #tocbox {
@@ -118,7 +117,6 @@
 #page-mod-scorm-player #scormpage #scorm_navpanel {
     text-align: center;
 }
-
 
 #page-mod-scorm-player .toc,
 #page-mod-scorm-player .no-toc {
@@ -178,7 +176,7 @@
 }
 
 #page-mod-scorm-player.pagelayout-popup #page-wrapper {
-    width:100%;
+    width: 100%;
 }
 
 #page-mod-scorm-player .yui-layout-scroll div.yui-layout-bd {
@@ -188,7 +186,6 @@
 #page-mod-scorm-player .yui-layout-unit-left div.yui-layout-bd {
     overflow: auto;
 }
-
 
 .path-mod-scorm.forcejavascript .scorm-center {
     display: none;
@@ -201,7 +198,6 @@
 .path-mod-scorm.forcejavascript #scormpage #tocbox {
     display: none;
 }
-
 
 .path-mod-scorm.jsenabled .forcejavascriptmessage {
     display: none;
@@ -227,17 +223,17 @@
 #page-mod-scorm-report .scormattemptcounts {
     clear: left;
     text-align: center;
-    display:inline;
-    margin-left:20%;
+    display: inline;
+    margin-left: 20%;
 }
 
 #page-mod-scorm-player #scormpage span.yui3-treeview-icon {
     display: none;
 }
+
 #page-mod-scorm-player #scormpage li.yui3-treeview-has-children > div.yui3-treeview-row > span.yui3-treeview-icon {
     display: block;
 }
-
 
 #page-mod-scorm-player #scormpage div.yui3-u-1,
 #page-mod-scorm-player #scormpage div.yui3-u-3-4,
