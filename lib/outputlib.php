@@ -405,6 +405,12 @@ class theme_config {
     private $usesvg = null;
 
     /**
+     * Whether in RTL mode or not.
+     * @var bool
+     */
+    protected $rtlmode = false;
+
+    /**
      * The LESS file to compile. When set, the theme will attempt to compile the file itself.
      * @var bool
      */
@@ -750,6 +756,7 @@ class theme_config {
         $separate = (core_useragent::is_ie() && !core_useragent::check_ie_version('10'));
 
         if ($rev > -1) {
+            $filename = right_to_left() ? 'all-rtl' : 'all';
             $url = new moodle_url("$CFG->httpswwwroot/theme/styles.php");
             if (!empty($CFG->slasharguments)) {
                 $slashargs = '';
@@ -758,13 +765,13 @@ class theme_config {
                     // The underscore is used to ensure that it isn't a valid theme name.
                     $slashargs .= '/_s'.$slashargs;
                 }
-                $slashargs .= '/'.$this->name.'/'.$rev.'/all';
+                $slashargs .= '/'.$this->name.'/'.$rev.'/'.$filename;
                 if ($separate) {
                     $slashargs .= '/chunk0';
                 }
                 $url->set_slashargument($slashargs, 'noparam', true);
             } else {
-                $params = array('theme' => $this->name,'rev' => $rev, 'type' => 'all');
+                $params = array('theme' => $this->name,'rev' => $rev, 'type' => $filename);
                 if (!$svg) {
                     // We add an SVG param so that we know not to serve SVG images.
                     // We do this because all modern browsers support SVG and this param will one day be removed.
@@ -785,6 +792,9 @@ class theme_config {
                 // We add an SVG param so that we know not to serve SVG images.
                 // We do this because all modern browsers support SVG and this param will one day be removed.
                 $baseurl->param('svg', '0');
+            }
+            if (right_to_left()) {
+                $baseurl->param('rtl', 1);
             }
             if ($separate) {
                 // We might need to chunk long files.
@@ -901,14 +911,14 @@ class theme_config {
             // The SCSS file of the theme is requested.
             $csscontent = $this->get_css_content_from_scss(true);
             if ($csscontent !== false) {
-                return $csscontent;
+                return $this->post_process($csscontent);
             }
             return '';
         } else if ($type === 'less') {
             // The LESS file of the theme is requested.
             $csscontent = $this->get_css_content_from_less(true);
             if ($csscontent !== false) {
-                return $csscontent;
+                return $this->post_process($csscontent);
             }
             return '';
         }
@@ -1174,8 +1184,6 @@ class theme_config {
             // Compile the CSS.
             $compiled = $compiler->getCss();
 
-            // Post process the entire thing.
-            $compiled = $this->post_process($compiled);
         } catch (Less_Exception_Parser $e) {
             $compiled = false;
             debugging('Error while compiling LESS ' . $lessfile . ' file: ' . $e->getMessage(), DEBUG_DEVELOPER);
@@ -1220,7 +1228,6 @@ class theme_config {
         try {
             // Compile!
             $compiled = $compiler->to_css();
-            $compiled = $this->post_process($compiled);
 
         } catch (\Leafo\ScssPhp\Exception $e) {
             $compiled = false;
@@ -1533,6 +1540,23 @@ class theme_config {
             }
         }
 
+        // Post processing using an object representation of CSS.
+        $needsparsing = !empty($this->rtlmode);
+        if ($needsparsing) {
+            $parser = new core_cssparser($css);
+            $csstree = $parser->parse();
+            unset($parser);
+        }
+
+        if ($this->rtlmode) {
+            $this->rtlize($csstree);
+        }
+
+        if ($needsparsing) {
+            $css = $csstree->render();
+            unset($csstree);
+        }
+
         // now resolve all theme settings or do any other postprocessing
         $csspostprocess = $this->csspostprocess;
         if (function_exists($csspostprocess)) {
@@ -1540,6 +1564,17 @@ class theme_config {
         }
 
         return $css;
+    }
+
+    /**
+     * Flip a stylesheet to RTL.
+     *
+     * @param Object $csstree The parsed CSS tree structure to flip.
+     * @return void
+     */
+    protected function rtlize($csstree) {
+        $rtlcss = new core_rtlcss($csstree);
+        $rtlcss->flip();
     }
 
     /**
@@ -1869,6 +1904,17 @@ class theme_config {
      */
     public function force_svg_use($setting) {
         $this->usesvg = (bool)$setting;
+    }
+
+    /**
+     * Set to be in RTL mode.
+     *
+     * This will likely be used when post processing the CSS before serving it.
+     *
+     * @param bool $inrtl True when in RTL mode.
+     */
+    public function set_rtl_mode($inrtl = true) {
+        $this->rtlmode = $inrtl;
     }
 
     /**
