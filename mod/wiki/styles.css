@@ -284,7 +284,6 @@ a.wiki_newentry:visited {
 
 a.wiki_edit_section {
     font-size: 0.6em;
-    vertical-align: top;
     position: relative;
     float: right;
 }

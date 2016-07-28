@@ -56,7 +56,7 @@
     padding-bottom: 0.5em;
 }
 
-.path-grade-report-singleview itemnav.previtem {
+.path-grade-report-singleview .itemnav.previtem {
     float: left;
 }
 

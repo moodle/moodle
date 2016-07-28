@@ -265,8 +265,8 @@
 }
 
 #page-mod-scorm-player #scormpage div.yui3-g-r {
-    *letter-spacing: normal;
-    *word-spacing: -0.43em;
+    letter-spacing: normal;
+    word-spacing: -0.43em;
 }
 
 /**

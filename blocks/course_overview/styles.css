@@ -32,7 +32,6 @@
 .block_course_overview .welcome_message {
     float: left;
     padding: 10px;
-    vertical-align: middle;
     border-collapse: separate;
     clear: none;
 }

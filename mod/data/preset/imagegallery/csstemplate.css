@@ -10,20 +10,16 @@
     border-width: thin;
     border-color: #779;
     background-color: white;
-    display: table-cell;
-    display: inline-table;
     display: inline-block;
 }
 
 .pictureframe {
     padding: 5px;
-    display: table-cell;
-    display: inline-table;
     display: inline-block;
 }
 
 .picturediv {
-    display: inline;
+    display: inline-block;
     max-width: 150px;
     max-height: 200px;
 }
