@@ -51,7 +51,7 @@ body.jsenabled .questionflagcheckbox {
     left: 10%;
     color: #555;
     border-radius: 0 0 10px 10px;
-    box-shadow: 5px 5px 20px 0 #666666;
+    box-shadow: 5px 5px 20px 0 #666;
     padding: 1em 1em 0;
     z-index: 10000;
 }
@@ -211,67 +211,67 @@ body.jsenabled .questionflagcheckbox {
 }
 
 #quiz-timer.timeleft15 {
-    background: #ffffff;
+    background: #fff;
 }
 
 #quiz-timer.timeleft14 {
-    background: #ffeeee;
+    background: #fee;
 }
 
 #quiz-timer.timeleft13 {
-    background: #ffdddd;
+    background: #fdd;
 }
 
 #quiz-timer.timeleft12 {
-    background: #ffcccc;
+    background: #fcc;
 }
 
 #quiz-timer.timeleft11 {
-    background: #ffbbbb;
+    background: #fbb;
 }
 
 #quiz-timer.timeleft10 {
-    background: #ffaaaa;
+    background: #faa;
 }
 
 #quiz-timer.timeleft9 {
-    background: #ff9999;
+    background: #f99;
 }
 
 #quiz-timer.timeleft8 {
-    background: #ff8888;
+    background: #f88;
 }
 
 #quiz-timer.timeleft7 {
-    background: #ff7777;
+    background: #f77;
 }
 
 #quiz-timer.timeleft6 {
-    background: #ff6666;
+    background: #f66;
 }
 
 #quiz-timer.timeleft5 {
-    background: #ff5555;
+    background: #f55;
 }
 
 #quiz-timer.timeleft4 {
-    background: #ff4444;
+    background: #f44;
 }
 
 #quiz-timer.timeleft3 {
-    background: #ff3333;
+    background: #f33;
 }
 
 #quiz-timer.timeleft2 {
-    background: #ff2222;
+    background: #f22;
 }
 
 #quiz-timer.timeleft1 {
-    background: #ff1111;
+    background: #f11;
 }
 
 #quiz-timer.timeleft0 {
-    background: #ff0000;
+    background: #f00;
 }
 
 /** mod quiz mod **/
@@ -940,7 +940,7 @@ table.quizreviewsummary td.cell {
 }
 
 #categoryquestions > tbody > tr:nth-of-type(even).highlight {
-    background-color: #aaffaa;
+    background-color: #afa;
 }
 
 #categoryquestions .header {

@@ -1,13 +1,13 @@
 .gradingform_guide-regrade {
     padding: 10px;
-    background: #ffdddd;
+    background: #fdd;
     border: 1px solid #f00;
     margin-bottom: 10px;
 }
 
 .gradingform_guide-restored {
     padding: 10px;
-    background: #ffffdd;
+    background: #ffd;
     border: 1px solid #ff0;
     margin-bottom: 10px;
 }
@@ -27,12 +27,12 @@
 
 .gradingform_guide_editform .status.ready {
     background-color: #e7f1c3;
-    border-color: #aaeeaa;
+    border-color: #aea;
 }
 
 .gradingform_guide_editform .status.draft {
     background-color: #f3f2aa;
-    border-color: #eeee22;
+    border-color: #ee2;
 }
 
 .gradingform_guide.editor .criterion .controls,
@@ -128,7 +128,7 @@
 .gradingform_guide.editor .addcomment input {
     background: transparent url([[pix:t/add]]) no-repeat;
     display: block;
-    color: #555555;
+    color: #555;
     font-weight: bold;
     text-decoration: none;
 }
@@ -163,7 +163,7 @@
 }
 
 .gradingform_guide .criterion .description.error {
-    background: #ffdddd;
+    background: #fdd;
 }
 
 /* special classes for elements created by guideeditor.js */

@@ -50,7 +50,7 @@
 
 .assignfeedback_editpdf_widget .pageheader {
     background-color: #ebebeb;
-    border-bottom: 1px solid #cccccc;
+    border-bottom: 1px solid #ccc;
     padding: 0px;
     padding-left: 20px;
     padding-right: 20px;
@@ -118,18 +118,18 @@
 .assignfeedback_editpdf_widget .pageheader .toolbar button + button,
 .assignfeedback_editpdf_widget .pageheader .navigation select + button,
 .assignfeedback_editpdf_widget .pageheader .toolbar select + button {
-    border-left: 1px solid #cccccc;
+    border-left: 1px solid #ccc;
     border-right: 0px;
 }
 
 .assignfeedback_editpdf_widget .pageheader .navigation button {
-    border-right: 1px solid #cccccc;
+    border-right: 1px solid #ccc;
 }
 
 .assignfeedback_editpdf_widget .pageheader .toolbar,
 .assignfeedback_editpdf_widget .pageheader .navigation-search,
 .assignfeedback_editpdf_widget .pageheader .navigation {
-    border: 1px solid #cccccc;
+    border: 1px solid #ccc;
     border-bottom-color: #b3b3b3;
     border-radius: 4px;
     margin: 10px 4px;
@@ -210,7 +210,7 @@
     background: none;
     padding: 6px 7px;
     border-radius: 0px;
-    border-top: 1px solid #cccccc;
+    border-top: 1px solid #ccc;
 }
 
 .assignfeedback_editpdf_dropdown li:first-child button {
@@ -250,7 +250,7 @@
 .assignfeedback_editpdf_menu li:hover a,
 .assignfeedback_editpdf_menu li a:hover {
     background-color: #ebebeb;
-    background-image: radial-gradient(ellipse at center, #ffffff 60%, #dfdfdf 100%);
+    background-image: radial-gradient(ellipse at center, #fff 60%, #dfdfdf 100%);
 }
 
 ul.assignfeedback_editpdf_menu {
@@ -274,13 +274,13 @@ ul.assignfeedback_editpdf_menu {
 
 .assignfeedback_editpdf_widget .pageheader button:hover {
     background-color: #ebebeb;
-    background-image: radial-gradient(ellipse at center, #ffffff 60%, #dfdfdf 100%);
+    background-image: radial-gradient(ellipse at center, #fff 60%, #dfdfdf 100%);
 }
 
 .assignfeedback_editpdf_widget .pageheader button.assignfeedback_editpdf_selectedbutton:hover,
 .assignfeedback_editpdf_widget .pageheader button.assignfeedback_editpdf_selectedbutton {
     background-color: #dfdfdf;
-    background-image: radial-gradient(ellipse at center, #ffffff 40%, #dfdfdf 100%);
+    background-image: radial-gradient(ellipse at center, #fff 40%, #dfdfdf 100%);
 }
 
 .assignfeedback_editpdf_widget .commentdrawable img {

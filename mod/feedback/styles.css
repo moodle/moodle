@@ -4,17 +4,17 @@
 }
 
 .path-mod-feedback div.feedback_is_dependent {
-    background: #dddddd;
+    background: #ddd;
 }
 
 .path-mod-feedback span.feedback_depend {
-    color: #ff0000;
+    color: #f00;
 }
 
 .path-mod-feedback hr.feedback_pagebreak {
     height: 4px;
-    color: #aaaaaa;
-    background-color: #aaaaaa;
+    color: #aaa;
+    background-color: #aaa;
     border: 0;
     margin: 0;
 }
@@ -43,7 +43,7 @@
 /* Analysis page */
 .path-mod-feedback table.analysis {
     width: 100%;
-    border-top: 1px solid #aaaaaa;
+    border-top: 1px solid #aaa;
     margin-top: 10px;
 }
 

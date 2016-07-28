@@ -223,13 +223,13 @@
 }
 
 .ouw_deleted {
-    background: #ffffaa;
+    background: #ffa;
     color: red;
     text-decoration: line-through;
 }
 
 .ouw_added {
-    background: #ccffcc;
+    background: #cfc;
     color: red;
 }
 

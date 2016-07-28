@@ -4,7 +4,7 @@
     background: #fff3bf;
     padding: 0.5em;
     margin-top: 1em;
-    box-shadow: 0.5em 0.5em 1em #000000;
+    box-shadow: 0.5em 0.5em 1em #000;
 }
 
 body.ie6 .que.multianswer .feedbackspan,

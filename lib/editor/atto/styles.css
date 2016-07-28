@@ -52,13 +52,13 @@ div.editor_atto_toolbar button[disabled] {
 }
 
 .editor_atto_toolbar button:hover {
-    background-image: radial-gradient(ellipse at center, #ffffff 60%, #dfdfdf 100%);
+    background-image: radial-gradient(ellipse at center, #fff 60%, #dfdfdf 100%);
     background-color: #ebebeb;
 }
 
 .editor_atto_toolbar button:active,
 .editor_atto_toolbar button.highlight {
-    background-image: radial-gradient(ellipse at center, #ffffff 40%, #dfdfdf 100%);
+    background-image: radial-gradient(ellipse at center, #fff 40%, #dfdfdf 100%);
     background-color: #dfdfdf;
 }
 

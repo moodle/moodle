@@ -214,7 +214,7 @@
 
 .tool-card:hover,
 .tool-card:focus {
-    border-color: #0088cc;
+    border-color: #08c;
     box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
     -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
     -moz-transition: border linear 0.2s, box-shadow linear 0.2s;

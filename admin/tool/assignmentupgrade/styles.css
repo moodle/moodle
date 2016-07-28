@@ -11,7 +11,7 @@
 */
 
 #page-admin-tool-assignmentupgrade-listnotupgraded .tool_assignmentupgrade_upgradetable tr.selectedrow td {
-    background-color: #ffeecc;
+    background-color: #fec;
 }
 
 #page-admin-tool-assignmentupgrade-listnotupgraded .tool_assignmentupgrade_upgradetable tr.unselectedrow td {

@@ -55,12 +55,12 @@
 
 .gradingform_rubric_editform .status.ready {
     background-color: #e7f1c3;
-    border-color: #aaeeaa;
+    border-color: #aea;
 }
 
 .gradingform_rubric_editform .status.draft {
     background-color: #f3f2aa;
-    border-color: #eeee22;
+    border-color: #ee2;
 }
 
 .gradingform_rubric {
@@ -221,7 +221,7 @@
 .gradingform_rubric.editor .addlevel input {
     background: transparent url([[pix:t/add]]) no-repeat top left;
     display: block;
-    color: #555555;
+    color: #555;
     font-weight: bold;
     text-decoration: none;
 }
@@ -270,19 +270,19 @@
 .gradingform_rubric .criterion .description.error,
 .gradingform_rubric .criterion .levels .level .definition.error,
 .gradingform_rubric .criterion .levels .level .score.error {
-    background: #ffdddd;
+    background: #fdd;
 }
 
 .gradingform_rubric-regrade {
     padding: 10px;
-    background: #ffdddd;
+    background: #fdd;
     border: 1px solid #f00;
     margin-bottom: 10px;
 }
 
 .gradingform_rubric-restored {
     padding: 10px;
-    background: #ffffdd;
+    background: #ffd;
     border: 1px solid #ff0;
     margin-bottom: 10px;
 }

@@ -136,7 +136,7 @@
 }
 
 .path-mod-assign .gradingtable tr.selectedrow td {
-    background-color: #ffeecc;
+    background-color: #fec;
 }
 
 .path-mod-assign .gradingtable tr.unselectedrow td {
@@ -174,7 +174,7 @@
 }
 
 .path-mod-assign div.gradingtable tr .quickgrademodified {
-    background-color: #ffcc99;
+    background-color: #fc9;
 }
 
 .path-mod-assign td.submissioneditable {
@@ -463,7 +463,7 @@
     left: auto;
     box-sizing: border-box;
     border-radius: 0 0 0 4px;
-    border: 1px solid #cccccc;
+    border: 1px solid #ccc;
     border-top: none;
     background-color: #fff;
     z-index: 99999;
@@ -1059,7 +1059,7 @@
         left: 0;
         right: auto;
         box-sizing: border-box;
-        border: 1px solid #cccccc;
+        border: 1px solid #ccc;
         border-radius: 0 0 4px 0;
         background-color: #fff;
         z-index: 99999;

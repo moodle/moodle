@@ -41,7 +41,7 @@
 }
 
 #page-blocks-community-communitycourse .hubadditionaldesc {
-    color: #666666;
+    color: #666;
     font-size: 90%;
     display: block;
 }
@@ -64,12 +64,12 @@
 
 #page-blocks-community-communitycourse .blockdescription {
     font-size: 80%;
-    color: #555555;
+    color: #555;
 }
 
 #page-blocks-community-communitycourse .trusted {
     font-size: 90%;
-    color: #006633;
+    color: #063;
     font-weight: normal;
     font-style: italic;
 }
@@ -82,7 +82,7 @@
 
 #page-blocks-community-communitycourse .comment-link {
     font-size: 80%;
-    color: #555555;
+    color: #555;
 }
 
 #page-blocks-community-communitycourse .coursescreenshot {
@@ -124,7 +124,7 @@
 #page-blocks-community-communitycourse .hubcourserating {
     padding-top: 3px;
     font-size: 80%;
-    color: #555555;
+    color: #555;
 }
 
 #page-blocks-community-communitycourse .coursedescription {
@@ -141,7 +141,7 @@
 }
 
 #page-blocks-community-communitycourse .hubcourseresult {
-    background: none repeat scroll 0 0 #ffffff;
+    background: none repeat scroll 0 0 #fff;
     clear: both;
     margin: 30px auto 0;
     z-index: 90;
@@ -335,15 +335,15 @@
 #page-blocks-community-communitycourse .moodle-dialogue-base .moodle-dialogue-wrap {
     -moz-border-radius: 12px 12px 0px 0px;
     -webkit-border-radius: 12px 12px 0px 0px;
-    background-color: #ffffff;
-    border: 1px solid #555555;
+    background-color: #fff;
+    border: 1px solid #555;
 }
 
 #page-blocks-community-communitycourse .moodle-dialogue-base .moodle-dialogue-hd {
     -moz-border-radius: 12px 12px 0 0;
     -webkit-border-radius: 12px 12px 0 0;
     background-color: #f6f6f6;
-    border: 1px solid #cccccc;
+    border: 1px solid #ccc;
     overflow: auto;
     padding: 7px 6px;
 }

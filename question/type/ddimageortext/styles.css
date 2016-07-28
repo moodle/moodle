@@ -5,7 +5,7 @@
 
 .que.ddimageortext div.droparea img,
 form.mform fieldset#id_previewareaheader div.droparea img {
-    border: 1px solid #000000;
+    border: 1px solid #000;
     max-width: none;
 }
 
@@ -29,7 +29,7 @@ form.mform fieldset#id_previewareaheader div.draghome {
 
 .que.ddimageortext .group1,
 form.mform fieldset#id_previewareaheader .group1 {
-    background-color: #ffffff;
+    background-color: #fff;
 }
 
 .que.ddimageortext .group2,

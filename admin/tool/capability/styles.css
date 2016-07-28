@@ -56,7 +56,7 @@
 }
 
 .path-admin-tool-capability .comparisontable .allow {
-    background-color: #006600;
+    background-color: #060;
     font-weight: bold;
     color: white;
 }
@@ -68,7 +68,7 @@
 }
 
 .path-admin-tool-capability .comparisontable .prohibit {
-    background-color: #880000;
+    background-color: #800;
     font-weight: bold;
     color: white;
 }

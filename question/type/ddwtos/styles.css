@@ -14,7 +14,7 @@
 .que.ddwtos .drop {
     display: inline-block;
     text-align: center;
-    border: 1px solid #000000;
+    border: 1px solid #000;
     margin-bottom: 2px;
 }
 
@@ -28,7 +28,7 @@
 
 .que.ddwtos .draghome,
 .que.ddwtos .drag.unplaced {
-    border: 1px solid #000000;
+    border: 1px solid #000;
 }
 
 .que.ddwtos .draghome {
@@ -67,7 +67,7 @@
 }
 
 .que.ddwtos .group1 {
-    background-color: #ffffff;
+    background-color: #fff;
 }
 
 .que.ddwtos .group2 {
