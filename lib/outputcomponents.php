@@ -3036,7 +3036,7 @@ class custom_menu extends custom_menu_item {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package core
  */
-class tabobject implements renderable {
+class tabobject implements renderable, templatable {
     /** @var string unique id of the tab in this tree, it is used to find selected and/or inactive tabs */
     var $id;
     /** @var moodle_url|string link */
@@ -3127,6 +3127,32 @@ class tabobject implements renderable {
             $tab->set_level($level + 1);
         }
     }
+
+    /**
+     * Export for template.
+     *
+     * @param renderer_base $output Renderer.
+     * @return object
+     */
+    public function export_for_template(renderer_base $output) {
+        if ($this->inactive || ($this->selected && !$this->linkedwhenselected) || $this->activated) {
+            $link = null;
+        } else {
+            $link = $this->link;
+        }
+        $active = $this->activated || $this->selected;
+
+        return (object) [
+            'id' => $this->id,
+            'link' => is_object($link) ? $link->out(false) : $link,
+            'text' => $this->text,
+            'title' => $this->title,
+            'inactive' => !$active && $this->inactive,
+            'active' => $active,
+            'level' => $this->level,
+        ];
+    }
+
 }
 
 /**
@@ -3259,6 +3285,29 @@ class tabtree extends tabobject {
             }
         }
         $this->set_level(0);
+    }
+
+    /**
+     * Export for template.
+     *
+     * @param renderer_base $output Renderer.
+     * @return object
+     */
+    public function export_for_template(renderer_base $output) {
+        $tabs = [];
+        $secondrow = false;
+
+        foreach ($this->subtree as $tab) {
+            $tabs[] = $tab->export_for_template($output);
+            if (!empty($tab->subtree) && ($tab->level == 0 || $tab->selected || $tab->activated)) {
+                $secondrow = new tabtree($tab->subtree);
+            }
+        }
+
+        return (object) [
+            'tabs' => $tabs,
+            'secondrow' => $secondrow ? $secondrow->export_for_template($output) : false
+        ];
     }
 }
 
