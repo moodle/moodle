@@ -1057,6 +1057,18 @@ class action_link implements renderable {
     public function has_class($class) {
         return strpos(' ' . $this->attributes['class'] . ' ', ' ' . $class . ' ') !== false;
     }
+
+    /**
+     * Return the rendered HTML for the icon. Useful for rendering action links in a template.
+     * @return string
+     */
+    public function get_icon_html() {
+        global $OUTPUT;
+        if (!$this->icon) {
+            return '';
+        }
+        return $OUTPUT->render($this->icon);
+    }
 }
 
 /**

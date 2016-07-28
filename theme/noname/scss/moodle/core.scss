@@ -162,39 +162,36 @@ img.resize {
     height: 1em;
     width: 1em;
 }
+.action-menu {
+    white-space: nowrap;
+}
+.action-menu img {
+    width: 16px;
+    height: 16px;
+    box-sizing: content-box;
+    padding-right: 0.5rem;
+}
+.action-menu .userpicture {
+    width: auto;
+    height: auto;
+    padding-left: 1rem;
+}
+.mform {
+    max-width: 720px;
+}
 .block img.resize,
 .breadcrumb img.resize {
     height: 0.9em;
     width: 0.8em;
 }
 /* Icon styles */
-img.icon {
-    height: 16px;
-    vertical-align: text-bottom;
-    width: 16px;
-    padding-right: 6px;
-}
-img.iconsmall {
-    height: 12px;
-    margin-right: 3px;
-    vertical-align: middle;
-    //width: 12px;
-    box-sizing: content-box;
-}
+img.icon,
 img.iconhelp, .helplink img {
     height: 16px;
-    padding-left: 3px;
     vertical-align: text-bottom;
     width: 16px;
-}
-h1 img.iconhelp, h1 img.icon,
-h2 img.iconhelp, h2 img.icon,
-h3 img.iconhelp, h3 img.icon,
-h4 img.iconhelp, h4 img.icon,
-h5 img.iconhelp, h5 img.icon,
-h6 img.iconhelp, h6 img.icon {
-  vertical-align: middle;
-  padding: 4px;
+    padding-right: 0.5rem;
+    box-sizing: content-box;
 }
 img.iconlarge {
     height: 24px;
@@ -266,11 +263,6 @@ form.popupform div {
 .arrow_button input {
     overflow: hidden;
 }
-.action-icon img.smallicon {
-    vertical-align: text-bottom;
-    margin: 0 0.3em;
-}
-
 /** The 1-pixel padding is there to avoid phantom scroll bars on OS X (FF, Safari and Chrome)**/
 .no-overflow {
     overflow: auto;
@@ -325,10 +317,6 @@ a.skip:active {
 }
 .blog_entry .tags {
     margin-top: 15px;
-}
-.blog_entry .tags .action-icon img.smallicon {
-    height: 16px;
-    width: 16px;
 }
 .blog_entry .content {
     margin-left: 43px;
@@ -465,11 +453,6 @@ a.skip:active {
     margin-bottom: -2000px;
     padding-bottom: 2000px;
 //  @include box-sizing(border-box);
-}
-
-.loginbox .potentialidp .smallicon {
-    vertical-align: text-bottom;
-    margin: 0 .3em;
 }
 
 // Notes
@@ -1459,9 +1442,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     background-color: #fff;
     @include box-shadow(0px 0 10px 0 #ccc);
 }
-.section-modchooser-link img.smallicon {
-    padding: 3px;
-}
 /* Form element: listing */
 .formlistingradio {
     padding-bottom: 25px;
@@ -1778,152 +1758,6 @@ img#persona_signin {
             top: -0.4em;
         }
     }
-}
-
-/** Action menu component styles **/
-.moodle-actionmenu,
-.moodle-actionmenu > ul,
-.moodle-actionmenu > ul > li {
-    display: inline-block;
-}
-
-.moodle-actionmenu ul {
-    padding: 0;
-    margin: 0;
-    list-style-type: none;
-}
-
-.section_action_menu .moodle-actionmenu ul.menubar {
-    margin: 0;
-}
-
-.section_action_menu .moodle-actionmenu ul.menu {
-    margin: 0 10px 10px 0;
-}
-
-.moodle-actionmenu .toggle-display,
-.moodle-actionmenu .menu-action-text {
-    display: none; /** Hidden by default, display none so that we don't take up space. **/
-}
-
-.jsenabled {
-    .moodle-actionmenu[data-enhance] {
-        display: block;
-        .menu {
-            display:none;
-        }
-        .toggle-display {
-            display: inline; /** JS is enabled, we'll be using it so return display to normal **/
-            opacity: 0.5;
-        }
-        .toggle-display.textmenu {
-            display: block;
-            margin-left: 4px;
-            padding-left: 4px;
-            padding-right: 4px;
-
-            .iconsmall,
-            .smallicon {
-                margin: 4px 4px 4px 0px;
-                padding: 8px 4px 0px 2px;
-                vertical-align: text-bottom;
-            }
-
-            .caret {
-                margin-top: 8px;
-                margin-left: 2px;
-                border-top-color: $dropdown-link-color;
-                &:hover,
-                &:active {
-                    border-top-color: $dropdown-link-active-color;
-                }
-            }
-        }
-    }
-    .moodle-actionmenu[data-enhanced] {
-        .toggle-display {
-            opacity: 1;
-        }
-        .menu-action-text  {
-            display:inline;
-        }
-    }
-}
-
-.moodle-actionmenu[data-enhanced].show  {
-
-    position: relative;
-
-    .menu {
-
-        display:block;
-        position: absolute;
-        text-align: left;
-        @extend .bg-faded;
-        border: 1px solid $dropdown-border-color;
-        z-index:1000;
-        @include border-radius(5px);
-        @include box-shadow(5px 5px 20px 0 #666);
-
-        a {
-            display: block;
-            color: $dropdown-link-color;
-            padding:2px 1em 2px 28px;
-            &:hover {
-                color: $dropdown-link-hover-color;
-                background-color: $dropdown-link-hover-bg;
-            }
-            &:first-child {
-                @include border-top-radius(4px);
-            }
-            &:last-child {
-                @include border-bottom-radius(4px);
-            }
-        }
-        a.hidden {
-            display:none;
-        }
-        img {
-            vertical-align: middle;
-        }
-        .iconsmall,
-        .smallicon {
-            margin: 4px 4px 4px -24px;
-            padding: 4px;
-        }
-        > li {
-            display:block;
-        }
-
-        /** bottom left of button **/
-        &.align-tl-bl {top: 100%;left:0;margin-top: 4px;}
-        &.align-tr-bl {top: 100%;right: 100%;}
-        &.align-bl-bl {bottom: 100%;left:0;}
-        &.align-br-bl {bottom: 100%;right: 100%;}
-        /** bottom right of button **/
-        &.align-tl-br {top: 100%;left:100%;}
-        &.align-tr-br {top: 100%;right: 0;margin-top: 4px;}
-        &.align-bl-br {bottom: 100%;left:100%;}
-        &.align-br-br {bottom: 100%;right: 0;}
-        /** top left of button **/
-        &.align-tl-tl {top: 0;left:0;}
-        &.align-tr-tl {top: 0;right: 100%;margin-right: 4px;}
-        &.align-bl-tl {bottom: 100%;left:0;margin-bottom: 4px;}
-        &.align-br-tl {bottom: 100%;right: 100%;}
-        /** top right of button **/
-        &.align-tl-tr {top: 0;left:100%;margin-left: 4px;}
-        &.align-tr-tr {top: 0;right: 0;}
-        &.align-bl-tr {bottom: 100%;left:100%;}
-        &.align-br-tr {bottom: 100%;right: 0;margin-bottom: 4px;}
-    }
-    /** no wrap is set - prevent menu items from wrapping **/
-    &.nowrap-items .menu > li {
-        white-space: nowrap;
-    }
-}
-
-.block .moodle-actionmenu {
-    text-align: right;
 }
 
 ul.dragdrop-keyboard-drag li {
