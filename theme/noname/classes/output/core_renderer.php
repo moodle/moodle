@@ -25,13 +25,8 @@ use custom_menu;
 use block_contents;
 use stdClass;
 use moodle_url;
-<<<<<<< HEAD
-||||||| parent of 6c769ad9e6... MDL-XXXX theme_noname: action-menu conversion
-use preferences_groups;
-=======
 use preferences_groups;
 use action_menu;
->>>>>>> 6c769ad9e6... MDL-XXXX theme_noname: action-menu conversion
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -270,16 +265,6 @@ class core_renderer extends \core_renderer {
     }
 
     /**
-     * Renders preferences groups.
-     *
-     * @param  preferences_groups $renderable The renderable
-     * @return string The output.
-     */
-    public function render_preferences_groups(preferences_groups $renderable) {
-        return $this->render_from_template('core/preferences_groups', $renderable);
-    }
-
-    /**
      * Renders an action menu component.
      *
      * @param action_menu $menu
@@ -288,4 +273,5 @@ class core_renderer extends \core_renderer {
     public function render_action_menu(action_menu $menu) {
         return $this->render_from_template('core/action_menu', $menu);
     }
+
 }
