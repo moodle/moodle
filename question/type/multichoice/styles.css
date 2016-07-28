@@ -22,10 +22,6 @@
     padding: 0;
     width: 15px;
 }
-.dir-rtl .que.multichoice .answer div.r0,
-.dir-rtl .que.multichoice .answer div.r1 {
-    padding: 0.3em 25px 0.3em 0;
-}
 
 /* Editing form. */
 body#page-question-type-multichoice div[id^=fitem_id_][id*=answer_] {
@@ -47,13 +43,6 @@ body#page-question-type-multichoice div[id^=fitem_id_] .fitemtitle{
     margin-right: 0px;
     padding-left: 6px;
     padding-right: 0px;
-}
-
-body.dir-rtl#page-question-type-multichoice div[id^=fitem_id_] .fitemtitle {
-    margin-left: 0px;
-    margin-right: 0px;
-    padding-left: 0px;
-    padding-right: 6px;
 }
 
 body#page-question-type-multichoice div[id^=fitem_id_][id*=fraction_] {

@@ -22,6 +22,7 @@
     display: inline;
     margin-left: 2em;
 }
-#page-report-progress-index.dir-rtl #completion-progress th svg {
+/*rtl:ignore*/
+#page-report-progress-index #completion-progress th svg {
     direction: ltr;
 }

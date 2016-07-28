@@ -44,15 +44,6 @@
 .forumpost .post-word-count { font-size: .85em; font-style: italic; }
 .forumpost .shortenedpost .post-word-count { display: inline; padding: 0 .3em; }
 
-.dir-rtl .forumpost .row .topic,
-.dir-rtl .forumpost .row .content-mask,
-.dir-rtl .forumpost .row .options {margin-right:43px;margin-left:0;}
-.dir-rtl .forumpost .row .left {float:right;}
-.dir-rtl.path-mod-forum .indent {
-    margin-right: 3%;
-    margin-left: 0;
-}
-
 .path-mod-forum .forumolddiscuss,
 #page-mod-forum-search .c0 {text-align:right;}
 .path-mod-forum .indent {
@@ -102,7 +93,6 @@
 #page-mod-forum-index .unread img,
 #page-mod-forum-view .unread img {margin-left: 5px;}
 #page-mod-forum-view .unread img {margin-left: 5px;}
-.dir-rtl#page-mod-forum-view .unread img {margin-right: 5px; margin-left: 0; }
 
 /** Unknown Styles ??? */
 #email .unsubscribelink {margin-top:20px;}
@@ -139,19 +129,23 @@ span.unread {
     margin: 0;
     list-style: none;
 }
-.dir-rtl.path-mod-forum .discussion-nav .next-discussion:after,
 .path-mod-forum .discussion-nav .prev-discussion:before {
+    /*rtl:raw:
+    content: ' ► ';
+    */
+    /*rtl:remove*/
     content: ' ◄ ';
 }
-.dir-rtl.path-mod-forum .discussion-nav .prev-discussion:before,
 .path-mod-forum .discussion-nav .next-discussion:after {
+    /*rtl:raw:
+    content: ' ◄ ';
+    */
+    /*rtl:remove*/
     content: ' ► ';
 }
-.dir-rtl.path-mod-forum .discussion-nav .prev-discussion,
 .path-mod-forum .discussion-nav .next-discussion {
     float: right;
 }
-.dir-rtl.path-mod-forum .discussion-nav .next-discussion,
 .path-mod-forum .discussion-nav .prev-discussion {
     float: left;
 }
@@ -175,15 +169,6 @@ span.unread {
     padding: 0 4px;
 }
 
-.dir-rtl .path-mod-forum .discussionsubscription {
-    text-align: left;
-}
-
 #page-mod-forum-view img.timedpost {
     margin-right: 5px;
-}
-
-.dir-rtl#page-mod-forum-view img.timedpost {
-    margin: 3px 0 0 5px;
-    float: right;
 }

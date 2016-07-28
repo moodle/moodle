@@ -613,10 +613,11 @@ span.editinstructions {
     margin:3px;
     background-position:center left;
 }
-/* rtl:ignore */
-.dir-rtl .course_category_tree .category > .info > .categoryname {
+/* rtl:raw:
+.course_category_tree .category > .info > .categoryname {
     background-image:url([[pix:moodle|t/collapsed_empty_rtl]]);
 }
+ */
 .course_category_tree .category.with_children > .info > .categoryname {
     background-image:url([[pix:moodle|t/expanded]]);
     cursor: pointer;
@@ -624,10 +625,11 @@ span.editinstructions {
 .course_category_tree .category.with_children.collapsed >.info > .categoryname {
     background-image:url([[pix:moodle|t/collapsed]]);
 }
-/* rtl:ignore */
-.dir-rtl .course_category_tree .category.with_children.collapsed > .info > .categoryname {
+/* rtl:raw:
+.course_category_tree .category.with_children.collapsed > .info > .categoryname {
     background-image:url([[pix:moodle|t/collapsed_rtl]]);
 }
+*/
 .course_category_tree .category.collapsed>.content {
     display:none;
 }

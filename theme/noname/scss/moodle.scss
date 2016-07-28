@@ -1,8 +1,8 @@
 // Set image location.
-$iconSpritePath:          "[[pix:theme|glyphicons-halflings]]";
-$iconWhiteSpritePath:     "[[pix:theme|glyphicons-halflings-white]]";
+$iconSpritePath:          "[[pix:theme|glyphicons-halflings]]" !default;
+$iconWhiteSpritePath:     "[[pix:theme|glyphicons-halflings-white]]" !default;
 
-$breadcrumb-divider: "▶";
+$breadcrumb-divider: "▶" !default;
 
 // Import the bootstrap variables.
 @import "bootstrap/bootstrap";

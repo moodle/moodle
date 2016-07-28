@@ -276,10 +276,6 @@
     text-align: left;
 }
 
-.dir-rtl .tool-card-subheader {
-    text-align: right;
-}
-
 .tool-card-header .tool-card-icon {
     width: 35px;
     height: 35px;
@@ -294,19 +290,10 @@
     float: right;
 }
 
-.dir-rtl .tool-card-header .tool-card-actions {
-    float: left;
-}
-
 .tool-card-header .tool-card-actions img {
     width: 15px;
     height: 15px;
     margin-left: 7px;
-}
-
-.dir-rtl .tool-card-header .tool-card-actions img {
-    margin-left: 0px;
-    margin-right: 7px;
 }
 
 .tool-card-body {

@@ -60,10 +60,6 @@
     content: url([[pix:t/add]]);
     padding-right:2px;
 }
-.dir-rtl.jsenabled .gradingform_guide .markingguidecomment:before {
-    padding-right: 0;
-    padding-left: 2px;
-}
 .gradingform_guide .commentheader  {font-weight:bold;font-size:1.1em;padding-bottom:5px;}
 
 .jsenabled .gradingform_guide .criterionnamelabel {display: none;}

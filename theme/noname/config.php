@@ -143,13 +143,7 @@ $THEME->layouts = [
 // $THEME->javascripts = array();
 // $THEME->javascripts_footer = array();
 $THEME->parents = [];
-$THEME->rarrow = '▶';
-$THEME->larrow = '◀';
 $THEME->enable_dock = false;
 $THEME->supportscssoptimisation = false;
 $THEME->yuicssmodules = array();
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
-$THEME->blockrtlmanipulations = array(
-    'side-pre' => 'side-post',
-    'side-post' => 'side-pre'
-);
