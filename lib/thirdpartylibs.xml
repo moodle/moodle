@@ -249,6 +249,12 @@
     <version>1.6.3</version>
   </library>
   <library>
+    <location>rtlcss</location>
+    <name>RTLCSS for PHP</name>
+    <license>MIT</license>
+    <version>1.0.0</version>
+  </library>
+  <library>
     <location>scssphp</location>
     <name>scssphp</name>
     <license>MIT</license>
