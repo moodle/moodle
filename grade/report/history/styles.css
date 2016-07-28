@@ -88,18 +88,3 @@
 .gradereport_history_usp .usp-finish input {
     margin: 0;
 }
-
-.dir-rtl .gradereport_history_usp .usp-search-results .usp-user {
-    text-align: right;
-}
-.dir-rtl .gradereport_history_usp .usp-picture,
-.dir-rtl .gradereport_history_usp .usp-checkbox {
-    float: right;
-}
-.dir-rtl .gradereport_history_usp .usp-user .details {
-    margin-right: 67px;
-    margin-left: 0;
-}
-.dir-rtl .gradereport_history_usp input.usp-search-btn {
-    margin-right: 5px;
-}

@@ -55,33 +55,11 @@
     margin-bottom: 0px;
 }
 
-.path-mod-lesson.dir-rtl .answeroption .fcheckbox > span {
-    float: right;
-}
-
-.path-mod-lesson.dir-rtl .answeroption .fcheckbox input,
-.path-mod-lesson.dir-rtl .answeroptiongroup .fgroup input {
-    left: inherit;
-    right: 0;
-}
-
-.path-mod-lesson.dir-rtl .answeroption .fcheckbox label,
-.path-mod-lesson.dir-rtl .mform .fitem.answeroptiongroup fieldset.fgroup label {
-    padding-left: 0;
-    padding-right: 20px;
-    float: right;
-}
-
 /**
  * Style for view.php
  **/
 #page-mod-lesson-view .password-form .submitbutton {display: inline;}
 .path-mod-lesson .reviewessay {width:40%; border:1px solid #DDDDDD; background-color: #EEEEEE;}
-
-.path-mod-lesson.dir-rtl .contents,
-.path-mod-lesson.dir-rtl .standardtable,
-.path-mod-lesson.dir-rtl .mform .box.contents,
-.path-mod-lesson.dir-rtl .invisiblefieldset.fieldsetfix tr {text-align: right;}
 
 /* Countdown timer. */
 #lesson-timer {

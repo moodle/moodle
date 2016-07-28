@@ -124,10 +124,11 @@ a.autolink.glossary:hover {
     padding-left: 20px;
     background: url([[pix:t/collapsed]]) 2px center no-repeat;
 }
-/* rtl:ignore */
-.dir-rtl .collapsible-actions .collapseexpand {
+/*rtl:raw:
+.collapsible-actions .collapseexpand {
     background: url([[pix:t/collapsed_rtl]]) right center no-repeat;
 }
+*/
 .collapsible-actions .collapse-all {
     background-image: url([[pix:t/expanded]]);
 }

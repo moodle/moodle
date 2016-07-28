@@ -18,18 +18,10 @@
     text-align: left;
     padding-top: 1.5em;
 }
-#page-mod-quiz-attempt.dir-rtl .submitbtns,
-#page-mod-quiz-review.dir-rtl .submitbtns {
-    text-align: right;
-}
 
 #page-mod-quiz-attempt .submitbtns .mod_quiz-next-nav,
 #page-mod-quiz-review .submitbtns .mod_quiz-next-nav {
     float: right;
-}
-#page-mod-quiz-attempt.dir-rtl .submitbtns .mod_quiz-next-nav,
-#page-mod-quiz-review.dir-rtl .submitbtns .mod_quiz-next-nav {
-    float: left;
 }
 
 .path-mod-quiz .mod_quiz-redo_question_button {
@@ -128,9 +120,6 @@ body.jsenabled .questionflagcheckbox {
     line-height: 1.5em;
     font-weight: bold;
     text-decoration: none;
-}
-.path-mod-quiz.dir-rtl  .qnbutton {
-    float: right;
 }
 .path-mod-quiz .qnbutton:visited:hover,
 .path-mod-quiz .qnbutton:link:hover {
@@ -267,9 +256,6 @@ body.jsenabled .questionflagcheckbox {
     width: 23%;
     clear: none;
 }
-#page-mod-quiz-mod.dir-rtl #id_reviewoptionshdr .fitem {
-    float: right;
-}
 
 #page-mod-quiz-mod #id_reviewoptionshdr .fitemtitle {
     width: 100%;
@@ -277,9 +263,6 @@ body.jsenabled .questionflagcheckbox {
     text-align: left;
     height: 2.5em;
     margin-left: 0;
-}
-#page-mod-quiz-mod.dir-rtl #id_reviewoptionshdr .fitemtitle {
-    text-align: right;
 }
 
 #page-mod-quiz-mod #id_reviewoptionshdr fieldset.fgroup {
@@ -290,10 +273,6 @@ body.jsenabled .questionflagcheckbox {
     float: left;
     clear: left;
     line-height: 1.7;
-}
-#page-mod-quiz-mod.dir-rtl #id_reviewoptionshdr fieldset.fgroup > span {
-    float: right;
-    clear: right;
 }
 #page-mod-quiz-mod #id_reviewoptionshdr fieldset.fgroup span label {
     margin-left: 0.4em;
@@ -330,9 +309,6 @@ table.quizattemptsummary .noreviewmessage {
 }
 #page-mod-quiz-view .generalbox#feedback h3 {
     text-align: left;
-}
-#page-mod-quiz-view.dir-rtl .generalbox#feedback h3 {
-    text-align: center;
 }
 #page-mod-quiz-view .generalbox#feedback .overriddennotice {
     text-align: center;
@@ -398,12 +374,7 @@ body.path-mod-quiz table tbody tr.gradedattempt > td {
     display:inline;
     margin-left:20%;
 }
-.dir-rtl .quizattemptcounts {
-    margin-left:0;
-    margin-right: 20%;
-}
-#page-mod-quiz-view .quizattemptcounts,
-.dir-rtl #page-mod-quiz-view .quizattemptcounts {
+#page-mod-quiz-view .quizattemptcounts {
     display: block;
     margin-left: 0;
     margin-right: 0;
@@ -444,9 +415,6 @@ table.quizreviewsummary td.cell {
     padding: 1px 1em 1px 0.5em;
     text-align: left;
     background: #fafafa;
-}
-.dir-rtl table.quizreviewsummary td.cell {
-    text-align: right;
 }
 
 /** Mod quiz make comment or override grade popup. **/
@@ -542,10 +510,6 @@ table.quizreviewsummary td.cell {
     vertical-align: text-bottom;
     padding-left: 6px;
 }
-.dir-rtl#page-mod-quiz-report table#attempts .questionflag {
-    padding-right: 6px;
-    padding-left: 0;
-}
 
 #page-mod-quiz-report .graph.flexible-wrap {
     text-align: center;
@@ -587,10 +551,6 @@ table.quizreviewsummary td.cell {
     margin: -2.85em 0 0;
     padding: .2em;
 }
-#page-mod-quiz-edit.dir-rtl .maxgrade,
-#page-mod-quiz-edit.dir-rtl .totalpoints {
-    float: left;
-}
 #page-mod-quiz-edit .maxgrade label {
     display: inline;
 }
@@ -613,10 +573,6 @@ table.quizreviewsummary td.cell {
 #page-mod-quiz-edit .add-menu-outer {
     position: absolute;
     right: 0;
-}
-#page-mod-quiz-edit.dir-rtl .add-menu-outer {
-    right: auto;
-    left: 0;
 }
 
 #page-mod-quiz-edit .slotnumber {
@@ -729,9 +685,6 @@ table.quizreviewsummary td.cell {
     display: inline-block;
     text-align: right;
 }
-#page-mod-quiz-edit.dir-rtl ul.slots li.section li.activity .instancemaxmark {
-    text-align: left;
-}
 #page-mod-quiz-edit ul.slots li.section li.activity .page_split_join_wrapper {
     position: absolute;
 }
@@ -740,11 +693,6 @@ table.quizreviewsummary td.cell {
     left: -20px;
     top: -7px;
 }
-#page-mod-quiz-edit.dir-rtl ul.slots li.section li.activity .page_split_join {
-    left: auto;
-    right: -20px;
-}
-
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmark.decimalplaces_0 {
     min-width: 1.3em;
 }
@@ -789,10 +737,6 @@ table.quizreviewsummary td.cell {
     top: 0;
     right: 0;
 }
-#page-mod-quiz-edit.dir-rtl ul.slots li.section li.activity .question_dependency_wrapper {
-    left: 0;
-    right: auto;
-}
 #page-mod-quiz-edit ul.slots li.section li.activity .question_dependency_wrapper.question_dependency_cannot_depend {
     display: none;
 }
@@ -803,11 +747,6 @@ table.quizreviewsummary td.cell {
     left: 20px;
     top: -1em;
 }
-#page-mod-quiz-edit.dir-rtl ul.slots li.section li.activity .question_dependency_wrapper .currentlink,
-#page-mod-quiz-edit.dir-rtl ul.slots li.section li.activity .question_dependency_wrapper .cm-edit-action {
-    right: 20px;
-    left: auto;
-}
 
 #page-mod-quiz-edit ul.slots li.section li.activity .activityinstance {
     display: block;
@@ -817,17 +756,9 @@ table.quizreviewsummary td.cell {
     left: 5em;
     width: 100%;
 }
-#page-mod-quiz-edit.dir-rtl ul.slots li.section li.activity .activityinstance {
-    left: auto;
-    right: 5em;
-}
 
 #page-mod-quiz-edit ul.slots li.section li.activity .mod-indent-outer {
     padding-left: 22px;
-}
-#page-mod-quiz-edit.dir-rtl ul.slots li.section li.activity .mod-indent-outer {
-    padding-left: 0;
-    padding-right: 22px;
 }
 
 #page-mod-quiz-edit ul.slots .activityinstance form {
@@ -835,10 +766,6 @@ table.quizreviewsummary td.cell {
 }
 #page-mod-quiz-edit span.editinstructions {
     right: 0;
-}
-#page-mod-quiz-edit.dir-rtl span.editinstructions {
-    left: 0;
-    right: auto;
 }
 
 #page-mod-quiz-edit ul.slots .activityinstance span.instancename {
@@ -870,9 +797,6 @@ table.quizreviewsummary td.cell {
     float: left;
     margin: .2em 0 0;
     padding: 0;
-}
-#page-mod-quiz-edit.dir-rtl ul.slots .activityinstance img.activityicon {
-    float: right;
 }
 
 #page-mod-quiz-edit .section .activity .actions {
@@ -939,10 +863,6 @@ table#categoryquestions {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-}
-.dir-rtl #categoryquestions .questiontext {
-    padding-left: 0;
-    padding-right: 0.3em;
 }
 #categoryquestions .questionname {
     white-space: nowrap;

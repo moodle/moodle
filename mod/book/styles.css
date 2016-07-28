@@ -12,10 +12,6 @@
 .path-mod-book .navtop {
     text-align: right;
 }
-.dir-rtl.path-mod-book .navbottom,
-.dir-rtl.path-mod-book .navtop {
-    text-align: left;
-}
 .path-mod-book .navtop {
     margin-bottom: 0.5em;
 }
@@ -30,7 +26,6 @@
     padding-left: 0;
     padding-right: 0;
 }
-.dir-rtl.path-mod-book .block_book_toc ul { margin: 0 5px 0 0; }
 .path-mod-book .block_book_toc li {
     clear: both;
     list-style: none;
@@ -40,14 +35,11 @@
     list-style: none;
 }
 .path-mod-book .block_book_toc .action-list { float: right; }
-.dir-rtl.path-mod-book .block_book_toc .action-list { float: left; }
 .path-mod-book .block_book_toc .action-list img.smallicon {
     margin: 0 3px;
 }
 
-/* toc style NONE */
-.path-mod-book .book_toc_none ul ul,
-.dir-rtl.path-mod-book .book_toc_none ul ul {
+.path-mod-book .book_toc_none ul ul{
     margin-left: 0;
     margin-right: 0;
 }
@@ -55,10 +47,6 @@
 /*toc style BULLETS */
 .path-mod-book .book_toc_bullets ul ul {
     margin-left: 20px;
-}
-.dir-rtl.path-mod-book .book_toc_bullets ul ul {
-    margin-left: 0;
-    margin-right: 20px;
 }
 .path-mod-book .book_toc_bullets li li {
     list-style: circle;
@@ -72,16 +60,8 @@
 .path-mod-book .book_toc_indented ul {
     margin-left: 5px;
 }
-.dir-rtl.path-mod-book .book_toc_indented ul {
-    margin-left: 0;
-    margin-right: 5px;
-}
 .path-mod-book .book_toc_indented ul ul {
     margin-left: 15px;
-}
-.dir-rtl.path-mod-book .book_toc_indented ul ul {
-    margin-left: 0;
-    margin-right: 15px;
 }
 .path-mod-book .book_toc_indented li li {
     list-style: none;
@@ -102,17 +82,10 @@
     float: left;
     text-align: left;
 }
-.dir-rtl .navtop.navtext a.bookprev,
-.dir-rtl .navbottom.navtext a.bookprev {
-    float: right;
-    text-align: right;
-}
 
 @media (max-width: 480px) {
     .path-mod-book .navbottom,
-    .path-mod-book .navtop,
-    .dir-rtl.path-mod-book .navbottom,
-    .dir-rtl.path-mod-book .navtop {
+    .path-mod-book .navtop {
         text-align: center;
     }
     .navtop.navtext a,
@@ -122,9 +95,7 @@
         margin: auto;
     }
     .navtop.navtext a.bookprev,
-    .navbottom.navtext a.bookprev,
-    .dir-rtl .navtop.navtext a.bookprev,
-    .dir-rtl .navbottom.navtext a.bookprev {
+    .navbottom.navtext a.bookprev {
         float: none;
     }
 }

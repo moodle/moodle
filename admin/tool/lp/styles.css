@@ -15,9 +15,6 @@
 .path-admin-tool-lp .progress .bar {
     min-width: 3em;
 }
-.dir-rtl.path-admin-tool-lp .progress .bar {
-    float: right;
-}
 .path-admin-tool-lp [data-region="managecompetencies"] ul[data-enhance="tree"],
 .path-admin-tool-lp [data-region="plans"] ul[data-enhance="tree"],
 .path-admin-tool-lp [data-region="competencylinktree"] ul[data-enhance="linktree"],
@@ -63,10 +60,6 @@
     margin-left: 10px;
 }
 
-.dir-rtl.path-admin-tool-lp [data-region="managecompetencies"] .row-fluid [class*="span"] {
-    float: right;
-}
-
 .path-admin-tool-lp [data-region="link-buttons"],
 .path-admin-tool-lp [data-region="move-buttons"] {
     text-align: center;
@@ -75,10 +68,6 @@
 .path-admin-tool-lp [data-region="competencylinktree"]>ul {
     overflow-y: auto;
     height: 400px;
-}
-
-.dir-rtl.path-admin-tool-lp [data-region="filtercompetencies"] input {
-    margin-right: 10px;
 }
 
 .path-admin-tool-lp span.currentdragtarget {
@@ -101,11 +90,6 @@
 .path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-outcome"] label,
 .path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-type"] label {
     padding-right: 10px;
-}
-.dir-rtl.path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-outcome"] label,
-.dir-rtl.path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-type"] label {
-    padding-left: 10px;
-    padding-right: 0;
 }
 .path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-outcome"] label,
 .path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-outcome"] select,
@@ -181,11 +165,6 @@
     margin-left: -120px;
 }
 
-.dir-rtl .tool-lp-menu.tool-lp-menu-open-left .tool-lp-sub-menu {
-    margin-left: 0px;
-    margin-right: -120px;
-}
-
 /** This highlighting is copied from bootstrap - but can be overridden by a theme */
 .tool-lp-menu .tool-lp-sub-menu .menu-focus a {
     color: #fff ;
@@ -233,18 +212,4 @@ input[type="checkbox"].tool_lp_scale_proficient {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-}
-
-/** Broader RTL changes */
-.dir-rtl.path-admin-tool-lp .pull-left {
-    float: right;
-}
-.dir-rtl.path-admin-tool-lp .pull-right {
-    float: left;
-}
-.dir-rtl.path-admin-tool-lp dd {
-    margin-right: 10px;
-}
-.dir-rtl.path-admin-tool-lp ul.inline {
-    margin-right: 0;
 }

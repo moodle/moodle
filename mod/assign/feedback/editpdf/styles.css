@@ -67,9 +67,6 @@
     left: 20px;
     top: 60px;
 }
-.dir-rtl .assignfeedback_editpdf_widget .assignfeedback_editpdf_unsavedchanges {
-    float: right;
-}
 .yui3-colourpicker-hidden,
 .yui3-commentsearch-hidden,
 .yui3-commentmenu-hidden {
@@ -155,10 +152,6 @@
     float: left;
 }
 
-.dir-rtl .assignfeedback_editpdf_widget .navigation-search,
-.dir-rtl .assignfeedback_editpdf_widget .navigation {
-    float: right;
-}
 .assignfeedback_editpdf_widget .toolbar button {
     box-shadow: none;
     -moz-box-shadow: none;
@@ -166,9 +159,6 @@
 }
 .assignfeedback_editpdf_widget .toolbar {
     float: right;
-}
-.dir-rtl .assignfeedback_editpdf_widget .toolbar {
-    float: left;
 }
 .assignfeedback_editpdf_widget .navigation,
 .assignfeedback_editpdf_widget .navigation-search,
@@ -192,9 +182,6 @@
 }
 .assignfeedback_editpdf_commentmenu a.delete_quicklist_comment {
     float: right;
-}
-.dir-rtl .assignfeedback_editpdf_commentmenu a.delete_quicklist_comment {
-    float: left;
 }
 .assignfeedback_editpdf_dropdown button {
     border: 0px;
@@ -279,13 +266,6 @@ ul.assignfeedback_editpdf_menu {
     line-height: 14px;
 }
 
-.dir-rtl .assignfeedback_editpdf_widget .commentdrawable a {
-    float: left;
-    right: -17px;
-    border-left: 0px;
-    border-right: 1px solid #ccc;
-}
-
 .assignfeedback_editpdf_widget .commentdrawable textarea {
     padding: 4px;
     padding-right: 20px;
@@ -303,10 +283,6 @@ ul.assignfeedback_editpdf_menu {
     display: inline-block;
 }
 
-.dir-rtl .assignfeedback_editpdf_widget .commentdrawable textarea {
-    padding-left: 20px;
-    padding-right: 4px;
-}
 .assignfeedback_editpdf_widget .drawingcanvas .loading .progressbarlabel {
     text-align: center;
 }

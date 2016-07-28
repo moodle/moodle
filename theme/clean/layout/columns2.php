@@ -25,14 +25,8 @@
 // Get the HTML for the settings bits.
 $html = theme_clean_get_html_for_settings($OUTPUT, $PAGE);
 
-// Set default (LTR) layout mark-up for a two column page (side-pre-only).
 $regionmain = 'span9 pull-right';
 $sidepre = 'span3 desktop-first-column';
-// Reset layout mark-up for RTL languages.
-if (right_to_left()) {
-    $regionmain = 'span9 desktop-first-column';
-    $sidepre = 'span3 pull-right';
-}
 
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes(); ?>>

@@ -17,8 +17,4 @@
     .o2k7Skin tr.mceFirst .mceToolbar tr td.mceWrap {
         margin-left: -3px;
     }
-    .dir-rtl .o2k7Skin tr.mceLast .mceToolbar tr td.mceWrap,
-    .dir-rtl .o2k7Skin tr.mceFirst .mceToolbar tr td.mceWrap {
-        margin-left: 0px;
-    }
 }
