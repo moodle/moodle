@@ -97,6 +97,13 @@ class behat_hooks extends behat_base {
     protected static $timings = array();
 
     /**
+     * Keeps track of current running suite name.
+     *
+     * @var string current running suite name
+     */
+    protected static $runningsuite = 'default';
+
+    /**
      * Hook to capture BeforeSuite event so as to give access to moodle codebase.
      * This will try and catch any exception and exists if anything fails.
      *
@@ -128,9 +135,14 @@ class behat_hooks extends behat_base {
         // Defined only when the behat CLI command is running, the moodle init setup process will
         // read this value and switch to $CFG->behat_dataroot and $CFG->behat_prefix instead of
         // the normal site.
-        define('BEHAT_TEST', 1);
+        if (!defined('BEHAT_TEST')) {
+            define('BEHAT_TEST', 1);
+        }
 
-        define('CLI_SCRIPT', 1);
+        if (!defined('CLI_SCRIPT')) {
+            define('CLI_SCRIPT', 1);
+        }
+
         // With BEHAT_TEST we will be using $CFG->behat_* instead of $CFG->dataroot, $CFG->prefix and $CFG->wwwroot.
         require_once(__DIR__ . '/../../../config.php');
 
@@ -263,7 +275,7 @@ class behat_hooks extends behat_base {
      * @throws behat_stop_exception If here we are not using the test database it should be because of a coding error
      */
     public function before_scenario(BeforeScenarioScope $scope) {
-        global $DB, $SESSION, $CFG;
+        global $DB, $CFG;
 
         // As many checks as we can.
         if (!defined('BEHAT_TEST') ||
@@ -333,6 +345,14 @@ class behat_hooks extends behat_base {
 
             self::$initprocessesfinished = true;
         }
+
+        // Set theme if suite is different then default.
+        $suitename = $scope->getSuite()->getName();
+        if ($suitename !== self::$runningsuite) {
+            set_config('theme', $suitename);
+            self::$runningsuite = $suitename;
+        }
+
         // Run all test with medium (1024x768) screen size, to avoid responsive problems.
         $this->resize_window('medium');
     }

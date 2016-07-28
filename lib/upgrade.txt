@@ -65,6 +65,11 @@ information provided here is intended especially for developers.
   - merge_config
   - clean_path
   - get_behat_tests_path
+* behat_util::start_test_mode() accepts 3 options now:
+  - 1. Theme sute with all features: If behat should initialise theme suite with all core features.
+  - 2. Parallel runs: How many parallel runs will be running.
+  - 3. Run: Which process behat should be initialise for.
+* behat_context_helper::set_session() has been deprecated, please use behat_context_helper::set_environment() instead.
 
 === 3.1 ===
 

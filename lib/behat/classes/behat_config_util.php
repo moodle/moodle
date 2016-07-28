@@ -17,7 +17,7 @@
 /**
  * Utils to set Behat config
  *
- * @package    core_behat
+ * @package    core
  * @copyright  2016 Rajesh Taneja
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,7 +34,7 @@ require_once(__DIR__ . '/../../testing/classes/tests_finder.php');
  * Creates/updates Behat config files getting tests
  * and steps from Moodle codebase
  *
- * @package    core_behat
+ * @package    core
  * @copyright  2016 Rajesh Taneja
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -46,9 +46,19 @@ class behat_config_util {
     private $features;
 
     /**
-     * @var array list of stepsdefinitions containing in core.
+     * @var array list of contexts in core.
      */
-    private $stepsdefinitions;
+    private $contexts;
+
+    /**
+     * @var array list of theme specific contexts.
+     */
+    private $themecontexts;
+
+    /**
+     * @var array list of overridden theme contexts.
+     */
+    private $overriddenthemescontexts;
 
     /**
      * @var array list of components with tests.
@@ -56,38 +66,108 @@ class behat_config_util {
     private $componentswithtests;
 
     /**
-     * @var bool Keep track of the automatic profile conversion. So we can notify user.
+     * @var bool keep track of theme to return suite with all core features included or not.
      */
-    public static $autoprofileconversion = false;
+    private $themesuitewithallfeatures = false;
 
     /**
-     * List of components which contain behat context or features.
-     *
-     * @return array
+     * @var string filter features which have tags.
      */
-    private function get_components_with_tests() {
-        if (empty($this->componentswithtests)) {
-            $this->componentswithtests = tests_finder::get_components_with_tests('behat');
+    private $tags = '';
+
+    /**
+     * @var int number of parallel runs.
+     */
+    private $parallelruns = 0;
+
+    /**
+     * @var int current run.
+     */
+    private $currentrun = 0;
+
+    /**
+     * Set value for theme suite to include all core features. This should be used if your want all core features to be
+     * run with theme.
+     *
+     * @param bool $val
+     */
+    public function set_theme_suite_to_include_core_features($val) {
+        $this->themesuitewithallfeatures = $val;
+    }
+
+    /**
+     * Set the value for tags, so features which are returned will be using filtered by this.
+     *
+     * @param string $tags
+     */
+    public function set_tag_for_feature_filter($tags) {
+        $this->tags = $tags;
+    }
+
+    /**
+     * Set parallel run to be used for generating config.
+     *
+     * @param int $parallelruns number of parallel runs.
+     * @param int $currentrun current run
+     */
+    public function set_parallel_run($parallelruns, $currentrun) {
+
+        if ($parallelruns < $currentrun) {
+            behat_error(BEHAT_EXITCODE_REQUIREMENT,
+                'Parallel runs('.$parallelruns.') should be more then current run('.$currentrun.')');
         }
 
-        return $this->componentswithtests;
+        $this->parallelruns = $parallelruns;
+        $this->currentrun = $currentrun;
+    }
+
+    /**
+     * Return parallel runs
+     *
+     * @return int number of parallel runs.
+     */
+    public function get_number_of_parallel_run() {
+        // Get number of parallel runs if not passed.
+        if (empty($this->parallelruns) && ($this->parallelruns !== false)) {
+            $this->parallelruns = behat_config_manager::get_parallel_test_runs();
+        }
+
+        return $this->parallelruns;
+    }
+
+    /**
+     * Return current run
+     *
+     * @return int current run.
+     */
+    public function get_current_run() {
+        global $CFG;
+
+        // Get number of parallel runs if not passed.
+        if (empty($this->currentrun) && ($this->currentrun !== false) && !empty($CFG->behatrunprocess)) {
+            $this->currentrun = $CFG->behatrunprocess;
+        }
+
+        return $this->currentrun;
     }
 
     /**
      * Return list of features.
      *
+     * @param string $tags tags.
      * @return array
      */
-    public function get_components_features() {
+    public function get_components_features($tags = '') {
         global $CFG;
 
         // If we already have a list created then just return that, as it's up-to-date.
-        if (!empty($this->features)) {
+        // If tags are passed then it's a new filter of features we need.
+        if (!empty($this->features) && empty($tags)) {
             return $this->features;
         }
 
         // Gets all the components with features.
-        $this->features = array();
+        $features = array();
         $featurespaths = array();
         $components = $this->get_components_with_tests();
 
@@ -95,28 +175,96 @@ class behat_config_util {
             foreach ($components as $componentname => $path) {
                 $path = $this->clean_path($path) . $this->get_behat_tests_path();
                 if (empty($featurespaths[$path]) && file_exists($path)) {
-
-                    // Standarizes separator (some dirs. comes with OS-dependant separator).
-                    $uniquekey = str_replace('\\', '/', $path);
-                    $featurespaths[$uniquekey] = $path;
+                    list($key, $featurepath) = $this->get_clean_feature_key_and_path($path);
+                    $featurespaths[$key] = $featurepath;
                 }
             }
             foreach ($featurespaths as $path) {
                 $additional = glob("$path/*.feature");
-                $this->features = array_merge($this->features, $additional);
+
+                $additionalfeatures = array();
+                foreach ($additional as $featurepath) {
+                    list($key, $path) = $this->get_clean_feature_key_and_path($featurepath);
+                    $additionalfeatures[$key] = $path;
+                }
+
+                $features = array_merge($features, $additionalfeatures);
             }
         }
 
         // Optionally include features from additional directories.
         if (!empty($CFG->behat_additionalfeatures)) {
-            $this->features = array_merge($this->features, array_map("realpath", $CFG->behat_additionalfeatures));
+            $additional = array_map("realpath", $CFG->behat_additionalfeatures);
+            $additionalfeatures = array();
+            foreach ($additional as $featurepath) {
+                list($key, $path) = $this->get_clean_feature_key_and_path($featurepath);
+                $additionalfeatures[$key] = $path;
+            }
+            $features = array_merge($features, $additionalfeatures);
         }
 
-        return $this->features;
+        $this->features = $features;
+
+        return $this->filtered_features_with_tags($features, $tags);
     }
 
     /**
-     * Gets the list of Moodle steps definitions
+     * Return feature key for featurepath
+     *
+     * @param string $featurepath
+     * @return array key and featurepath.
+     */
+    public function get_clean_feature_key_and_path($featurepath) {
+        global $CFG;
+
+        // Fix directory path.
+        $featurepath = str_replace('\\', DIRECTORY_SEPARATOR, $featurepath);
+        $featurepath = str_replace('/', DIRECTORY_SEPARATOR, $featurepath);
+
+        if (testing_is_cygwin()) {
+            $featurepath = str_replace('\\', '/', $featurepath);
+        }
+
+        $key = basename($featurepath, '.feature');
+
+        // Get relative path.
+        $featuredirname = str_replace($CFG->dirroot . DIRECTORY_SEPARATOR , '', $featurepath);
+        // Get 5 levels of feature path to ensure we have a unique key.
+        for ($i = 0; $i < 5; $i++) {
+            if (($featuredirname = dirname($featuredirname)) && $featuredirname !== '.') {
+                if ($basename = basename($featuredirname)) {
+                    $key .= '_' . $basename;
+                }
+            }
+        }
+
+        return array($key, $featurepath);
+    }
+
+    /**
+     * Get component contexts.
+     *
+     * @param string $component component name.
+     * @return array
+     */
+    private function get_component_contexts($component) {
+
+        if (empty($component)) {
+            return $this->contexts;
+        }
+
+        $componentcontexts = array();
+        foreach ($this->contexts as $key => $path) {
+            if ($component == '' || $component === $key) {
+                $componentcontexts[$key] = $path;
+            }
+        }
+
+        return $componentcontexts;
+    }
+
+    /**
+     * Gets the list of Moodle behat contexts
      *
      * Class name as a key and the filepath as value
      *
@@ -126,35 +274,83 @@ class behat_config_util {
      * @param  string $component Restricts the obtained steps definitions to the specified component
      * @return array
      */
-    public function get_components_steps_definitions($component = '') {
+    public function get_components_contexts($component = '') {
 
         // If we already have a list created then just return that, as it's up-to-date.
-        if (!empty($this->stepsdefinitions)) {
-            return $this->stepsdefinitions;
+        if (!empty($this->contexts)) {
+            return $this->get_component_contexts($component);
         }
 
         $components = $this->get_components_with_tests();
 
-        $this->stepsdefinitions = array();
+        $this->contexts = array();
         foreach ($components as $componentname => $componentpath) {
             $componentpath = self::clean_path($componentpath);
 
-            if (!file_exists($componentpath . self::get_behat_tests_path())) {
+            if (!file_exists($componentpath . $this->get_behat_tests_path())) {
                 continue;
             }
-            $diriterator = new DirectoryIterator($componentpath . self::get_behat_tests_path());
+            $diriterator = new DirectoryIterator($componentpath . $this->get_behat_tests_path());
             $regite = new RegexIterator($diriterator, '|behat_.*\.php$|');
 
-            // All behat_*.php inside behat_config_manager::get_behat_tests_path() are added as steps definitions files.
+            // All behat_*.php inside self::get_behat_tests_path() are added as steps definitions files.
             foreach ($regite as $file) {
                 $key = $file->getBasename('.php');
-                if ($component == '' || $component === $key) {
-                    $this->stepsdefinitions[$key] = $file->getPathname();
-                }
+                $this->contexts[$key] = $file->getPathname();
             }
         }
 
-        return $this->stepsdefinitions;
+        return $this->get_component_contexts($component);
+    }
+
+    /**
+     * Behat config file specifing the main context class,
+     * the required Behat extensions and Moodle test wwwroot.
+     *
+     * @param array $features The system feature files
+     * @param array $contexts The system steps definitions
+     * @param string $tags filter features with specified tags.
+     * @param int $parallelruns number of parallel runs.
+     * @param int $currentrun current run for which config file is needed.
+     * @return string
+     */
+    public function get_config_file_contents($features = '', $contexts = '', $tags = '', $parallelruns = 0, $currentrun = 0) {
+        global $CFG;
+
+        // Set current run and parallel run.
+        if (!empty($parallelruns) && !empty($currentrun)) {
+            $this->set_parallel_run($parallelruns, $currentrun);
+        }
+
+        // If tags defined then use them. This is for BC.
+        if (!empty($tags)) {
+            $this->set_tag_for_feature_filter($tags);
+        }
+
+        // If features not passed then get it. Empty array means we don't need to include features.
+        if (empty($features) && !is_array($features)) {
+            $features = $this->get_components_features();
+        } else {
+            $this->features = $features;
+        }
+
+        // If stepdefinitions not passed then get the list.
+        if (empty($contexts)) {
+            $this->get_components_contexts();
+        } else {
+            $this->contexts = $contexts;
+        }
+
+        // We require here when we are sure behat dependencies are available.
+        require_once($CFG->dirroot . '/vendor/autoload.php');
+
+        $config = $this->build_config();
+
+        $config = $this->merge_behat_config($config);
+
+        $config = $this->merge_behat_profiles($config);
+
+        return Symfony\Component\Yaml\Yaml::dump($config, 10, 2);
     }
 
     /**
@@ -164,10 +360,23 @@ class behat_config_util {
      * @param string $tags list of tags (currently support && only.)
      * @return array filtered list of feature files with tags.
      */
-    public function get_features_with_tags($features, $tags) {
-        if (empty($tags)) {
+    public function filtered_features_with_tags($features = '', $tags = '') {
+
+        // This is for BC. Features if not passed then we already have a list in this object.
+        if (empty($features)) {
+            $features = $this->features;
+        }
+
+        // If no tags defined then return full list.
+        if (empty($tags) && empty($this->tags)) {
             return $features;
         }
+
+        // If no tags passed by the caller, then it's already set.
+        if (empty($tags)) {
+            $tags = $this->tags;
+        }
+
         $newfeaturelist = array();
         // Split tags in and and or.
         $tags = explode('&&', $tags);
@@ -215,62 +424,43 @@ class behat_config_util {
     }
 
     /**
-     * Behat config file specifing the main context class,
-     * the required Behat extensions and Moodle test wwwroot.
+     * Build config for behat.yml.
      *
-     * @param array $features The system feature files
-     * @param array $stepsdefinitions The system steps definitions
-     * @return string
+     * @param int $parallelruns how many parallel runs feature needs to be divided.
+     * @param int $currentrun current run for which features should be returned.
+     * @return array
      */
-    public function get_config_file_contents($features = '', $stepsdefinitions = '', $tags = '') {
+    protected function build_config($parallelruns = 0, $currentrun = 0) {
         global $CFG;
 
-        // If features not passed then get it.
-        if (empty($features)) {
-            $features = $this->get_components_features();
-            $features = $this->get_features_with_tags($features, $tags);
+        if (!empty($parallelruns) && !empty($currentrun)) {
+            $this->set_parallel_run($parallelruns, $currentrun);
+        } else {
+            $currentrun = $this->get_current_run();
+            $parallelruns = $this->get_number_of_parallel_run();
         }
-
-        // If stepdefinitions not passed then get the list.
-        if (empty($stepsdefinitions)) {
-            $this->get_components_steps_definitions();
-        }
-
-        // We require here when we are sure behat dependencies are available.
-        require_once($CFG->dirroot . '/vendor/autoload.php');
 
         $selenium2wdhost = array('wd_host' => 'http://localhost:4444/wd/hub');
-
-        $parallelruns = behat_config_manager::get_parallel_test_runs();
-        // If parallel run, then only divide features.
-        if (!empty($CFG->behatrunprocess) && !empty($parallelruns)) {
-            // Attempt to split into weighted buckets using timing information, if available.
-            if ($alloc = $this->profile_guided_allocate($features, max(1, $parallelruns), $CFG->behatrunprocess)) {
-                $features = $alloc;
-            } else {
-                // Divide the list of feature files amongst the parallel runners.
-                srand(crc32(floor(time() / 3600 / 24) . var_export($features, true)));
-                shuffle($features);
-                // Pull out the features for just this worker.
-                if (count($features)) {
-                    $features = array_chunk($features, ceil(count($features) / max(1, $parallelruns)));
-                    // Check if there is any feature file for this process.
-                    if (!empty($features[$CFG->behatrunprocess - 1])) {
-                        $features = $features[$CFG->behatrunprocess - 1];
-                    } else {
-                        $features = null;
-                    }
-                }
-            }
+        // If parallel run, then set wd_host if specified.
+        if (!empty($currentrun) && !empty($parallelruns)) {
             // Set proper selenium2 wd_host if defined.
-            if (!empty($CFG->behat_parallel_run[$CFG->behatrunprocess - 1]['wd_host'])) {
-                $selenium2wdhost = array('wd_host' => $CFG->behat_parallel_run[$CFG->behatrunprocess - 1]['wd_host']);
+            if (!empty($CFG->behat_parallel_run[$currentrun - 1]['wd_host'])) {
+                $selenium2wdhost = array('wd_host' => $CFG->behat_parallel_run[$currentrun - 1]['wd_host']);
             }
         }
 
         // It is possible that it has no value as we don't require a full behat setup to list the step definitions.
         if (empty($CFG->behat_wwwroot)) {
             $CFG->behat_wwwroot = 'http://itwillnotbeused.com';
+        }
+
+        $suites = $this->get_behat_suites($parallelruns, $currentrun);
+
+        $overriddenthemescontexts = $this->get_overridden_theme_contexts();
+        if (!empty($overriddenthemescontexts)) {
+            $allcontexts = array_merge($this->contexts, $overriddenthemescontexts);
+        } else {
+            $allcontexts = $this->contexts;
         }
 
         // Comments use black color, so failure path is not visible. Using color other then black/white is safer.
@@ -283,12 +473,7 @@ class behat_config_util {
                             'comment' => array('magenta'))
                     )
                 ),
-                'suites' => array(
-                    'default' => array(
-                        'paths' => $features,
-                        'contexts' => array_keys($stepsdefinitions)
-                    )
-                ),
+                'suites' => $suites,
                 'extensions' => array(
                     'Behat\MinkExtension' => array(
                         'base_url' => $CFG->behat_wwwroot,
@@ -297,17 +482,54 @@ class behat_config_util {
                     ),
                     'Moodle\BehatExtension' => array(
                         'moodledirroot' => $CFG->dirroot,
-                        'steps_definitions' => $stepsdefinitions
+                        'steps_definitions' => $allcontexts,
                     )
                 )
             )
         );
 
-        $config = $this->merge_behat_config($config);
+        return $config;
+    }
 
-        $config = $this->merge_behat_profiles($config);
+    /**
+     * Divide features between the runs and return list.
+     *
+     * @param array $features list of features to be divided.
+     * @param int $parallelruns how many parallel runs feature needs to be divided.
+     * @param int $currentrun current run for which features should be returned.
+     * @return array
+     */
+    protected function get_features_for_the_run($features, $parallelruns, $currentrun) {
 
-        return Symfony\Component\Yaml\Yaml::dump($config, 10, 2);
+        // If no features are passed then just return.
+        if (empty($features)) {
+            return $features;
+        }
+
+        $allocatedfeatures = $features;
+
+        // If parallel run, then only divide features.
+        if (!empty($currentrun) && !empty($parallelruns)) {
+            // Attempt to split into weighted buckets using timing information, if available.
+            if ($alloc = $this->profile_guided_allocate($features, max(1, $parallelruns), $currentrun)) {
+                $allocatedfeatures = $alloc;
+            } else {
+                // Divide the list of feature files amongst the parallel runners.
+                // Pull out the features for just this worker.
+                if (count($features)) {
+                    $features = array_chunk($features, ceil(count($features) / max(1, $parallelruns)));
+
+                    // Check if there is any feature file for this process.
+                    if (!empty($features[$currentrun - 1])) {
+                        $allocatedfeatures = $features[$currentrun - 1];
+                    } else {
+                        $allocatedfeatures = array();
+                    }
+                }
+            }
+        }
+
+        return $allocatedfeatures;
     }
 
     /**
@@ -437,7 +659,7 @@ class behat_config_util {
             $totalweight += $weight;
         }
 
-        if ($totalweight && !defined('BEHAT_DISABLE_HISTOGRAM') && $instance == $nbuckets) {
+        if ($totalweight && !defined('BEHAT_DISABLE_HISTOGRAM') && $instance == $nbuckets && !defined('PHPUNIT_TEST')) {
             echo "Bucket weightings:\n";
             foreach ($weights as $k => $weight) {
                 echo $k + 1 . ": " . str_repeat('*', 70 * $nbuckets * $weight / $totalweight) . PHP_EOL;
@@ -593,7 +815,386 @@ class behat_config_util {
      *
      * @return string
      */
-    public final static function get_behat_tests_path() {
+    public final function get_behat_tests_path() {
         return DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'behat';
+    }
+
+
+    /**
+     * List of components which contain behat context or features.
+     *
+     * @return array
+     */
+    private function get_components_with_tests() {
+        if (empty($this->componentswithtests)) {
+            $this->componentswithtests = tests_finder::get_components_with_tests('behat');
+        }
+
+        return $this->componentswithtests;
+    }
+
+    /**
+     * Remove list of blacklisted features from the feature list.
+     *
+     * @param array $features list of original features.
+     * @param array|string $blacklist list of features which needs to be removed.
+     * @return array features - blacklisted features.
+     */
+    protected function remove_blacklisted_features_from_list($features, $blacklist) {
+
+        // If no blacklist passed then return.
+        if (empty($blacklist)) {
+            return $features;
+        }
+
+        // If there is no feature in suite then just return what was passed.
+        if (empty($features)) {
+            return $features;
+        }
+
+        if (!is_array($blacklist)) {
+            $blacklist = array($blacklist);
+        }
+
+        // Remove blacklisted features.
+        foreach ($blacklist as $blacklistpath) {
+
+            list($key, $featurepath) = $this->get_clean_feature_key_and_path($blacklistpath);
+
+            if (isset($features[$key])) {
+                $features[$key] = null;
+                unset($features[$key]);
+            } else if (empty($this->tags)) {
+                // If tags not set, then ensure we have a blacklisted feature in core. Else, let user know that
+                // blacklisted feature is invalid.
+                $featurestocheck = $this->get_components_features();
+                if (!isset($featurestocheck[$key]) && !defined('PHPUNIT_TEST')) {
+                    behat_error(BEHAT_EXITCODE_REQUIREMENT, 'Blacklisted feature "' . $blacklistpath . '" not found.');
+                }
+            }
+        }
+
+        return $features;
+    }
+
+    /**
+     * Return list of behat suites. Multiple suites are returned if theme
+     * overrides default step definitions/features.
+     *
+     * @param int $parallelruns number of parallel runs
+     * @param int $currentrun current run.
+     * @return array list of suites.
+     */
+    protected function get_behat_suites($parallelruns = 0, $currentrun = 0) {
+        $features = $this->get_components_features();
+        $contexts = $this->get_components_contexts();
+
+        // Get number of parallel runs and current run.
+        if (!empty($parallelruns) && !empty($currentrun)) {
+            $this->set_parallel_run($parallelruns, $currentrun);
+        } else {
+            $parallelruns = $this->get_number_of_parallel_run();
+            $currentrun = $this->get_current_run();;
+        }
+
+        $blacklistedfeatures = array();
+        $themefeatures = array();
+        $themecontexts = array();
+
+        $themes = $this->get_list_of_themes();
+
+        // Create list of theme suite features and contexts.
+        foreach ($themes as $theme) {
+            // Get theme features.
+            list($blacklistedfeatures[$theme], $themefeatures[$theme]) = $this->get_behat_features_for_theme($theme);
+
+            $themecontexts[$theme] = $this->get_behat_contexts_for_theme($theme);
+        }
+
+        // Remove list of theme features for default suite, as default suite should not run theme specific features.
+        foreach ($themefeatures as $removethemefeatures) {
+            $features = $this->remove_blacklisted_features_from_list($features, $removethemefeatures);
+        }
+
+        // Return sub-set of features if parallel run.
+        $featuresforrun = $this->get_features_for_the_run($features, $parallelruns, $currentrun);
+
+        // Default suite.
+        $suites = array(
+            'default' => array(
+                'paths' => array_values($featuresforrun),
+                'contexts' => array_keys($contexts),
+            )
+        );
+
+        // Set suite for each theme.
+        foreach ($themes as $theme) {
+            // Get list of features which will be included in theme.
+            // If theme suite with all features is set, then we want all core features to be part of theme suite.
+            if ($this->themesuitewithallfeatures) {
+                // If there is no theme specific feature. Then it's just core features.
+                if (empty($themefeatures[$theme])) {
+                    $themesuitefeatures = $features;
+                } else {
+                    $themesuitefeatures = array_merge($features, $themefeatures[$theme]);
+                }
+            } else {
+                $themesuitefeatures = $themefeatures[$theme];
+            }
+
+            // Remove blacklisted features.
+            $themesuitefeatures = $this->remove_blacklisted_features_from_list($themesuitefeatures, $blacklistedfeatures[$theme]);
+
+            // Return sub-set of features if parallel run.
+            $themesuitefeatures = $this->get_features_for_the_run($themesuitefeatures, $parallelruns, $currentrun);
+
+            // Add suite no matter what. If there is no feature in suite then it will just exist successfully with no
+            // scenarios. But if we don't set this then the user has to know which run doesn't have suite and which run do.
+            $suites = array_merge($suites, array(
+                $theme => array(
+                    'paths'    => array_values($themesuitefeatures),
+                    'contexts' => array_values($themecontexts[$theme]),
+                )
+            ));
+        }
+
+        return $suites;
+    }
+
+    /**
+     * Return list of themes which can be set in moodle.
+     *
+     * @return array list of themes with tests.
+     */
+    protected function get_list_of_themes() {
+        $selectablethemes = array();
+
+        // Get all themes installed on site.
+        $themes = core_component::get_plugin_list('theme');
+        ksort($themes);
+
+        foreach ($themes as $themename => $themedir) {
+            // Load the theme config.
+            try {
+                $theme = theme_config::load($themename);
+            } catch (Exception $e) {
+                // Bad theme, just skip it for now.
+                continue;
+            }
+            if ($themename !== $theme->name) {
+                // Obsoleted or broken theme, just skip for now.
+                continue;
+            }
+            if ($theme->hidefromselector) {
+                // The theme doesn't want to be shown in the theme selector and as theme
+                // designer mode is switched off we will respect that decision.
+                continue;
+            }
+            if ($themename == theme_config::DEFAULT_THEME) {
+                // Don't include default theme, as default suite will be running with this theme.
+                continue;
+            }
+            $selectablethemes[] = $themename;
+        }
+
+        return $selectablethemes;
+    }
+
+    /**
+     * Returns all the directories having overridden tests.
+     *
+     * @param string $theme name of theme
+     * @param string $testtype The kind of test we are looking for
+     * @return array all directories having tests
+     */
+    protected function get_test_directories_overridden_for_theme($theme, $testtype) {
+        global $CFG;
+
+        $testtypes = array(
+            'contexts' => '|behat_.*\.php$|',
+            'features' => '|.*\.feature$|',
+        );
+        $themetestdir = "/theme/" . $theme . '/tests/behat';
+        $themetestdirfullpath = $CFG->dirroot . $themetestdir;
+
+        // If test directory doesn't exist then return.
+        if (!is_dir($themetestdirfullpath)) {
+            return array();
+        }
+
+        $directoriestosearch = glob($themetestdirfullpath . DIRECTORY_SEPARATOR . '*' , GLOB_ONLYDIR);
+
+        // Include theme directory to find tests.
+        $dirs[realpath($themetestdirfullpath)] = trim(str_replace('/', '_', $themetestdir), '_');
+
+        // Search for tests in valid directories.
+        foreach ($directoriestosearch as $dir) {
+            $dirite = new RecursiveDirectoryIterator($dir);
+            $iteite = new RecursiveIteratorIterator($dirite);
+            $regexp = $testtypes[$testtype];
+            $regite = new RegexIterator($iteite, $regexp);
+            foreach ($regite as $path => $element) {
+                $key = dirname($path);
+                $value = trim(str_replace(DIRECTORY_SEPARATOR, '_', str_replace($CFG->dirroot, '', $key)), '_');
+                $dirs[$key] = $value;
+            }
+        }
+        ksort($dirs);
+
+        return array_flip($dirs);
+    }
+
+    /**
+     * Return blacklisted contexts or features for a theme, as defined in blacklist.json.
+     *
+     * @param string $theme themename
+     * @param string $testtype test type (contexts|features)
+     * @return array list of blacklisted contexts or features
+     */
+    protected function get_blacklisted_tests_for_theme($theme, $testtype) {
+        global $CFG;
+
+        $themetestpath = $CFG->dirroot . DIRECTORY_SEPARATOR . "theme" . DIRECTORY_SEPARATOR . $theme .
+            $this->get_behat_tests_path();
+
+        if (file_exists($themetestpath . DIRECTORY_SEPARATOR . 'blacklist.json')) {
+            // Blacklist file exist. Leave it for last to clear the feature and contexts.
+            $blacklisttests = @json_decode(file_get_contents($themetestpath . DIRECTORY_SEPARATOR . 'blacklist.json'), true);
+            if (empty($blacklisttests)) {
+                behat_error(BEHAT_EXITCODE_REQUIREMENT, $themetestpath . DIRECTORY_SEPARATOR . 'blacklist.json is empty');
+            }
+
+            // If features or contexts not defined then no problem.
+            if (!isset($blacklisttests[$testtype])) {
+                $blacklisttests[$testtype] = array();
+            }
+            return $blacklisttests[$testtype];
+        }
+
+        return array();
+    }
+
+    /**
+     * Return list of features and step definitions in theme.
+     *
+     * @param string $theme theme name
+     * @param string $testtype test type, either features or contexts
+     * @return array list of contexts $contexts or $features
+     */
+    protected function get_tests_for_theme($theme, $testtype) {
+
+        $tests = array();
+        $testtypes = array(
+            'contexts' => '|behat_.*\.php$|',
+            'features' => '|.*\.feature$|',
+        );
+
+        // Get all the directories having overridden tests.
+        $directories = $this->get_test_directories_overridden_for_theme($theme, $testtype);
+
+        // Get overridden test contexts.
+        foreach ($directories as $dirpath) {
+            // All behat_*.php inside overridden directory.
+            $diriterator = new DirectoryIterator($dirpath);
+            $regite = new RegexIterator($diriterator, $testtypes[$testtype]);
+
+            // All behat_*.php inside behat_config_manager::get_behat_tests_path() are added as steps definitions files.
+            foreach ($regite as $file) {
+                $key = $file->getBasename('.php');
+                $tests[$key] = $file->getPathname();
+            }
+        }
+
+        return $tests;
+    }
+
+    /**
+     * Return list of blacklisted behat features for theme and features defined by theme only.
+     *
+     * @param string $theme theme name.
+     * @return array ($themeblacklistfeatures, $themefeatures)
+     */
+    protected function get_behat_features_for_theme($theme) {
+
+        // Get list of features defined by theme.
+        $themefeatures = $this->get_tests_for_theme($theme, 'features');
+        $themeblacklistfeatures = $this->get_blacklisted_tests_for_theme($theme, 'features');
+
+        // If tags are specified then we just want features with specified tags.
+        if (!empty($this->tags)) {
+            if (!empty($themefeatures)) {
+                $themefeatures = $this->filtered_features_with_tags($themefeatures);
+            }
+        }
+
+        return array($themeblacklistfeatures, $themefeatures);
+    }
+
+    /**
+     * Return list of contexts overridden by themes.
+     *
+     * @return array.
+     */
+    protected function get_overridden_theme_contexts() {
+        if (empty($this->overriddenthemescontexts)) {
+            $this->overriddenthemescontexts = array();
+        }
+
+        return $this->overriddenthemescontexts;
+    }
+
+    /**
+     * Return list of behat contexts for theme and update $this->stepdefinitions list.
+     *
+     * @param string $theme theme name.
+     * @return array list($features, $contexts)
+     */
+    protected function get_behat_contexts_for_theme($theme) {
+
+        // If we already have this list then just return. This will not change by run.
+        if (!empty($this->themecontexts[$theme])) {
+            return $this->themecontexts[$theme];
+        }
+
+        if (empty($this->overriddenthemescontexts)) {
+            $this->overriddenthemescontexts = array();
+        }
+
+        $contexts = $this->get_components_contexts();
+
+        // Create list of contexts used by theme suite.
+        $overriddencontexts = $this->get_tests_for_theme($theme, 'contexts');
+        $blacklistedcontexts = $this->get_blacklisted_tests_for_theme($theme, 'contexts');
+
+        // Theme suite will use all core contexts, except the one overridden by theme.
+        $themesuitecontexts = $contexts;
+        foreach ($overriddencontexts as $context => $path) {
+
+            // If a context in theme starts with behat_theme_{themename}_behat_* then it's overriding core context.
+            if (preg_match('/^behat_theme_'.$theme.'_(\w+)$/', $context, $match)) {
+
+                if (!empty($themesuitecontexts[$match[1]])) {
+                    unset($themesuitecontexts[$match[1]]);
+                }
+
+                // Add this to the list of overridden paths, so it can be added to final contexts list for class resolver.
+                $this->overriddenthemescontexts[$context] = $path;
+            }
+
+            // Add theme specific contexts with suffix to steps definitions.
+            $themesuitecontexts[$context] = $path;
+        }
+
+        // Remove blacklisted contexts.
+        foreach ($blacklistedcontexts as $blacklistpath) {
+            $blacklistcontext = basename($blacklistpath, '.php');
+
+            unset($themesuitecontexts[$blacklistcontext]);
+        }
+
+        // We are only interested in the class name of context.
+        $this->themecontexts[$theme] = array_keys($themesuitecontexts);
+
+        return $this->themecontexts[$theme];
     }
 }

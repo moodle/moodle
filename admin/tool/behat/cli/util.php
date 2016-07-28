@@ -56,11 +56,13 @@ list($options, $unrecognized) = cli_get_params(
         'updatesteps' => false,
         'fromrun'     => 1,
         'torun'       => 0,
+        'themesuitewithallfeatures' => false,
     ),
     array(
         'h' => 'help',
         'j' => 'parallel',
-        'm' => 'maxruns'
+        'm' => 'maxruns',
+        'a' => 'themesuitewithallfeatures',
     )
 );
 
@@ -78,9 +80,11 @@ Options:
 --disable      Disables test environment
 --diag         Get behat test environment status code
 --updatesteps  Update feature step file.
+
 -j, --parallel Number of parallel behat run operation
 -m, --maxruns  Max parallel processes to be executed at one time.
-
+-a, --themesuitewithallfeatures Theme suite do not include core features by default. If you want to run core features
+                                with theme, then use this option.
 -h, --help     Print out this help
 
 Example from Moodle root directory:
@@ -175,12 +179,15 @@ if ($options['diag'] || $options['enable'] || $options['disable']) {
 } else if ($options['updatesteps']) {
     // Rewrite config file to ensure we have all the features covered.
     if (empty($options['parallel'])) {
-        behat_config_manager::update_config_file();
+        behat_config_manager::update_config_file('', true, '', $options['themesuitewithallfeatures'], false, false);
     } else {
         // Update config file, ensuring we have up-to-date behat.yml.
         for ($i = $options['fromrun']; $i <= $options['torun']; $i++) {
             $CFG->behatrunprocess = $i;
-            behat_config_manager::update_config_file();
+
+            // Update config file for each run.
+            behat_config_manager::update_config_file('', true, '', $options['themesuitewithallfeatures'],
+                $options['parallel'], $i);
         }
         unset($CFG->behatrunprocess);
     }

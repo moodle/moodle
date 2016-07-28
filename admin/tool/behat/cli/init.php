@@ -47,11 +47,13 @@ list($options, $unrecognized) = cli_get_params(
         'help'     => false,
         'fromrun'  => 1,
         'torun'    => 0,
+        'themesuitewithallfeatures' => false,
     ),
     array(
         'j' => 'parallel',
         'm' => 'maxruns',
         'h' => 'help',
+        'a' => 'themesuitewithallfeatures',
     )
 );
 
@@ -68,6 +70,8 @@ Options:
 --fromrun      Execute run starting from (Used for parallel runs on different vms)
 --torun        Execute run till (Used for parallel runs on different vms)
 
+-a, --themesuitewithallfeatures Theme suite do not include core features by default. If you want to run core features
+                                with theme, then use this option.
 -h, --help     Print out this help
 
 Example from Moodle root directory:
@@ -95,6 +99,11 @@ if ($options['parallel'] && $options['parallel'] > 1) {
     }
 }
 
+$themesuitewithallfeatures = '';
+if ($options['themesuitewithallfeatures']) {
+    $themesuitewithallfeatures = '--themesuitewithallfeatures="true"';
+}
+
 // Changing the cwd to admin/tool/behat/cli.
 $cwd = getcwd();
 $output = null;
@@ -104,7 +113,7 @@ testing_update_composer_dependencies();
 
 // Check whether the behat test environment needs to be updated.
 chdir(__DIR__);
-exec("php $utilfile --diag $paralleloption", $output, $code);
+exec("php $utilfile --diag $paralleloption $themesuitewithallfeatures", $output, $code);
 
 if ($code == 0) {
     echo "Behat test environment already installed\n";
@@ -112,7 +121,7 @@ if ($code == 0) {
 } else if ($code == BEHAT_EXITCODE_INSTALL) {
     // Behat and dependencies are installed and we need to install the test site.
     chdir(__DIR__);
-    passthru("php $utilfile --install $paralleloption", $code);
+    passthru("php $utilfile --install $paralleloption $themesuitewithallfeatures", $code);
     if ($code != 0) {
         chdir($cwd);
         exit($code);
@@ -121,14 +130,14 @@ if ($code == 0) {
 } else if ($code == BEHAT_EXITCODE_REINSTALL) {
     // Test site data is outdated.
     chdir(__DIR__);
-    passthru("php $utilfile --drop $paralleloption", $code);
+    passthru("php $utilfile --drop $paralleloption $themesuitewithallfeatures", $code);
     if ($code != 0) {
         chdir($cwd);
         exit($code);
     }
 
     chdir(__DIR__);
-    passthru("php $utilfile --install $paralleloption", $code);
+    passthru("php $utilfile --install $paralleloption $themesuitewithallfeatures", $code);
     if ($code != 0) {
         chdir($cwd);
         exit($code);
@@ -143,7 +152,7 @@ if ($code == 0) {
 
 // Enable editing mode according to config.php vars.
 chdir(__DIR__);
-passthru("php $utilfile --enable $paralleloption", $code);
+passthru("php $utilfile --enable $paralleloption $themesuitewithallfeatures", $code);
 if ($code != 0) {
     echo "Error enabling site" . PHP_EOL;
     chdir($cwd);

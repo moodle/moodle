@@ -943,7 +943,7 @@ abstract class testing_util {
      * Returns the path to the file which holds list of tables updated in scenario.
      * @return string
      */
-    protected final static function get_tables_updated_by_scenario_list_path() {
+    public final static function get_tables_updated_by_scenario_list_path() {
         return self::get_dataroot() . '/tablesupdatedbyscenario.txt';
     }
 

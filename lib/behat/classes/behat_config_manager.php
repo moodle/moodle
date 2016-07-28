@@ -75,9 +75,14 @@ class behat_config_manager {
      * @param  string $component Restricts the obtained steps definitions to the specified component
      * @param  string $testsrunner If the config file will be used to run tests
      * @param  string $tags features files including tags.
+     * @param  bool   $themesuitewithallfeatures if only theme specific features need to be included in the suite.
+     * @param  int    $parallelruns number of parallel runs.
+     * @param  int    $run current run for which config needs to be updated.
      * @return void
      */
-    public static function update_config_file($component = '', $testsrunner = true, $tags = '') {
+    public static function update_config_file($component = '', $testsrunner = true, $tags = '',
+        $themesuitewithallfeatures = false, $parallelruns = 0, $run = 0) {
+
         global $CFG;
 
         // Behat must have a separate behat.yml to have access to the whole set of features and steps definitions.
@@ -88,23 +93,36 @@ class behat_config_manager {
             $configfilepath = self::get_steps_list_config_filepath();
         }
 
+        $behatconfigutil = self::get_behat_config_util();
+        $behatconfigutil->set_theme_suite_to_include_core_features($themesuitewithallfeatures);
+        $behatconfigutil->set_tag_for_feature_filter($tags);
+
         // Gets all the components with features, if running the tests otherwise not required.
         $features = array();
         if ($testsrunner) {
-            $features = self::get_behat_config_util()->get_components_features();
-            $features = self::get_behat_config_util()->get_features_with_tags($features, $tags);
+            $features = $behatconfigutil->get_components_features();
         }
 
         // Gets all the components with steps definitions.
-        $stepsdefinitions = self::get_behat_config_util()->get_components_steps_definitions($component);
+        $stepsdefinitions = $behatconfigutil->get_components_contexts($component);
         // We don't want the deprecated steps definitions here.
         if (!$testsrunner) {
             unset($stepsdefinitions['behat_deprecated']);
         }
 
+        // Get current run.
+        if (empty($run) && ($run !== false) && !empty($CFG->behatrunprocess)) {
+            $run = $CFG->behatrunprocess;
+        }
+
+        // Get number of parallel runs if not passed.
+        if (empty($parallelruns) && ($parallelruns !== false)) {
+            $parallelruns = self::get_parallel_test_runs();
+        }
+
         // Behat config file specifing the main context class,
         // the required Behat extensions and Moodle test wwwroot.
-        $contents = self::get_behat_config_util()->get_config_file_contents($features, $stepsdefinitions);
+        $contents = $behatconfigutil->get_config_file_contents($features, $stepsdefinitions, $tags, $parallelruns, $run);
 
         // Stores the file.
         if (!file_put_contents($configfilepath, $contents)) {
@@ -125,7 +143,7 @@ class behat_config_manager {
     public static function get_features_with_tags($features, $tags) {
 
         debugging('Use of get_features_with_tags is deprecated, please see behat_config_util', DEBUG_DEVELOPER);
-        return self::get_behat_config_util()->get_features_with_tags($features, $tags);
+        return self::get_behat_config_util()->filtered_features_with_tags($features, $tags);
     }
 
     /**
@@ -142,8 +160,9 @@ class behat_config_manager {
      */
     public static function get_components_steps_definitions() {
 
-        debugging('Use of get_components_steps_definitions is deprecated, please see behat_config_util', DEBUG_DEVELOPER);
-        return self::get_behat_config_util()->get_components_steps_definitions();
+        debugging('Use of get_components_steps_definitions is deprecated, please see behat_config_util::get_components_contexts',
+            DEBUG_DEVELOPER);
+        return self::get_behat_config_util()->get_components_contexts();
     }
 
     /**

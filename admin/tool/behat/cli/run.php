@@ -51,15 +51,18 @@ list($options, $unrecognised) = cli_get_params(
         'tags'     => '',
         'profile'  => '',
         'feature'  => '',
+        'suite'    => '',
         'fromrun'  => 1,
         'torun'    => 0,
         'single-run' => false,
+        'themesuitewithallfeatures' => false,
     ),
     array(
         'h' => 'help',
         't' => 'tags',
         'p' => 'profile',
         's' => 'single-run',
+        'a' => 'themesuitewithallfeatures',
     )
 );
 
@@ -73,10 +76,13 @@ Usage:
 Options:
 --BEHAT_OPTION     Any combination of behat option specified in http://behat.readthedocs.org/en/v2.5/guides/6.cli.html
 --feature          Only execute specified feature file (Absolute path of feature file).
+--suite            Specified theme scenarios will be executed.
 --replace          Replace args string with run process number, useful for output.
 --fromrun          Execute run starting from (Used for parallel runs on different vms)
 --torun            Execute run till (Used for parallel runs on different vms)
 
+-a, --themesuitewithallfeatures Theme suite do not include core features by default. If you want to run core features
+                                with theme, then use this option.
 -h, --help         Print out this help
 
 Example from Moodle root directory:
@@ -101,9 +107,6 @@ if (empty($options['torun'])) {
 if (extension_loaded('pcntl')) {
     $disabled = explode(',', ini_get('disable_functions'));
     if (!in_array('pcntl_signal', $disabled)) {
-        // Handle interrupts on PHP7.
-        declare(ticks = 1);
-
         pcntl_signal(SIGTERM, "signal_handler");
         pcntl_signal(SIGINT, "signal_handler");
     }
@@ -144,6 +147,11 @@ if ($options['tags']) {
     $extraopts[] = '--tags="' . $tags . '"';
 }
 
+// Add suite option if specified.
+if ($options['suite']) {
+    $extraopts[] = '--suite="' . $options['suite'] . '"';
+}
+
 // Feature should be added to last, for behat command.
 if ($options['feature']) {
     $extraopts[] = $options['feature'];
@@ -170,6 +178,8 @@ if (empty($parallelrun)) {
 
 // Update config file if tags defined.
 if ($tags) {
+    define('ABORT_AFTER_CONFIG_CANCEL', true);
+    require("$CFG->dirroot/lib/setup.php");
     // Hack to set proper dataroot and wwwroot.
     $behatdataroot = $CFG->behat_dataroot;
     $behatwwwroot  = $CFG->behat_wwwroot;
@@ -186,7 +196,7 @@ if ($tags) {
         } else {
             $CFG->behat_dataroot = $behatdataroot . $i;
         }
-        behat_config_manager::update_config_file('', true, $tags);
+        behat_config_manager::update_config_file('', true, $tags, $options['themesuitewithallfeatures'], $parallelrun);
     }
     $CFG->behat_dataroot = $behatdataroot;
     $CFG->behat_wwwroot = $behatwwwroot;
