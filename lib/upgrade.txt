@@ -55,6 +55,16 @@ information provided here is intended especially for developers.
 * New functions to support deprecation of events have been added to the base event. See MDL-46214 for further details.
 * A new function `get_name_with_info` has been added to the base event. This function adds information about event
   deprecations and should be used where this information is relevant.
+* Following api's have been deprecated in behat_config_manager, please use behat_config_util instead.
+  - get_features_with_tags
+  - get_components_steps_definitions
+  - get_config_file_contents
+  - merge_behat_config
+  - get_behat_profile
+  - profile_guided_allocate
+  - merge_config
+  - clean_path
+  - get_behat_tests_path
 
 === 3.1 ===
 
