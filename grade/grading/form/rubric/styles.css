@@ -152,7 +152,8 @@
     padding-right: 5px;
 }
 
-/* Make invisible the buttons 'Move up' for the first criterion and 'Move down' for the last, because those buttons will make no change */
+/* Make invisible the buttons 'Move up' for the first criterion and
+   'Move down' for the last, because those buttons will make no change */
 .gradingform_rubric.editor .criterion.first .controls .moveup input,
 .gradingform_rubric.editor .criterion.last .controls .movedown input {
     display: none;

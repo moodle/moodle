@@ -240,7 +240,7 @@
 #page-mod-scorm-player #scormpage div.yui3-u-1-5,
 #page-mod-scorm-player #scormpage div.yui3-u-1-24 {
     display: inline-block;
-    *display: inline;
+    *display: inline; /* stylelint-disable-line */
     zoom: 1;
     letter-spacing: normal;
     word-spacing: normal;
