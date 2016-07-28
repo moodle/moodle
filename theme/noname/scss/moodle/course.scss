@@ -677,42 +677,6 @@ span.editinstructions {
     margin: 10px 0 20px;
 }
 
-.section {
-    .summary,
-    .activity {
-        .iconsmall {
-            width: 16px;
-            height: 16px;
-        }
-    }
-    .editing_title {
-        .iconsmall {
-            width: 12px;
-            height: 12px;
-            margin: 8px 8px 0px 0;
-            padding: 4px 8px 0px 0;
-            vertical-align: text-bottom;
-        }
-    }
-    .moodle-actionmenu {
-        .iconsmall {
-            max-width: none !important; /** reset sets 100% !important which breaks on IE8 without this !important */
-            width:16px;
-            height:16px;
-            padding: 4px;
-            vertical-align: text-bottom;
-        }
-    }
-    .moodle-actionmenu[data-enhanced] {
-        .menu {
-            img {
-              width: 12px;
-              height: 12px;
-            }
-        }
-    }
-}
-
 /**
  * Course management page
  * Palette
@@ -968,11 +932,6 @@ span.editinstructions {
             margin-right:2rem;
             min-width:3.5em;
             display:inline-block;
-            .smallicon {
-                width:12px;
-                margin-left:4px;
-                vertical-align: inherit;
-            }
         }
         .bulk-action-checkbox {
             margin-right: -3px;

@@ -102,13 +102,6 @@
     width: 16px;
 }
 
-// Make them more finger friendly.
-img.iconsmall {
-    margin: 0;
-    padding: 0.3em;
-}
-
-
 #page-admin-qbehaviours .cell.c3,
 #page-admin-qtypes .cell.c3 {
     font-size: $font-size-sm;
@@ -327,10 +320,6 @@ img.iconsmall {
     padding: .15em .5em;
 }
 
-.environmenttable img.iconhelp {
-    padding-right: .3em;
-}
-
 #trustedhosts .generaltable {
     margin-left: auto;
     margin-right: auto;
@@ -520,10 +509,6 @@ img.iconsmall {
             background-color: $state-warning-bg;
         }
         .pluginname {
-            .displayname img.icon {
-                padding-top: 0;
-                padding-bottom: 0;
-            }
             .componentname {
                 font-size: $font-size-sm;
                 @extend .text-muted;
@@ -759,11 +744,6 @@ img.iconsmall {
 #core-cache-lock-summary .new-instance {
     margin-top: 0.5em;
     text-align: center;
-}
-
-.tinymcesubplugins img.icon {
-    padding-top: 0;
-    padding-bottom: 0;
 }
 
 .maintenancewarning {

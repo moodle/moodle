@@ -1,0 +1,22 @@
+<div class="action-menu pull-xs-right">
+    {{#get_primary_actions}}
+        {{> core/action_menu_item_icon}}
+    {{/get_primary_actions}}
+    <span class="dropdown">
+        <a class="dropdown-toggle"
+                role="button"
+                href="#"
+                id="dropdown-{{uniqid}}"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false">
+                {{#menutrigger}}{{{menutrigger}}}{{/menutrigger}}
+                {{^menutrigger}}{{#pix}}t/edit{{/pix}}<span class="sr-only">{{#str}}edit{{/str}}</span>{{/menutrigger}}
+                </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown-{{uniqid}}">
+            {{#get_secondary_actions}}
+                {{> core/action_menu_item}}
+            {{/get_secondary_actions}}
+        </div>
+    </span>
+</div>
