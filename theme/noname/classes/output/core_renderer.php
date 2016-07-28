@@ -16,6 +16,7 @@
 
 namespace theme_noname\output;
 
+use coding_exception;
 use html_writer;
 use tabobject;
 use tabtree;
@@ -168,14 +169,8 @@ class core_renderer extends \core_renderer {
         if (empty($tabtree->subtree)) {
             return '';
         }
-        $firstrow = $secondrow = '';
-        foreach ($tabtree->subtree as $tab) {
-            $firstrow .= $this->render($tab);
-            if (($tab->selected || $tab->activated) && !empty($tab->subtree) && $tab->subtree !== array()) {
-                $secondrow = $this->tabtree($tab->subtree);
-            }
-        }
-        return html_writer::tag('ul', $firstrow, array('class' => 'nav nav-tabs')) . $secondrow;
+        $data = $tabtree->export_for_template($this);
+        return $this->render_from_template('core/tabtree', $data);
     }
 
     /**
@@ -188,20 +183,7 @@ class core_renderer extends \core_renderer {
      * @return string HTML fragment
      */
     protected function render_tabobject(tabobject $tab) {
-        if (($tab->selected and (!$tab->linkedwhenselected)) or $tab->activated) {
-            return html_writer::tag('li', html_writer::tag('a', $tab->text), array('class' => 'active'));
-        } else if ($tab->inactive) {
-            return html_writer::tag('li', html_writer::tag('a', $tab->text), array('class' => 'disabled'));
-        } else {
-            if (!($tab->link instanceof moodle_url)) {
-                // backward compartibility when link was passed as quoted string
-                $link = "<a href=\"$tab->link\" title=\"$tab->title\">$tab->text</a>";
-            } else {
-                $link = html_writer::link($tab->link, $tab->text, array('title' => $tab->title));
-            }
-            $params = $tab->selected ? array('class' => 'active') : null;
-            return html_writer::tag('li', $link, $params);
-        }
+        throw new coding_exception('Tab objects should not be directly rendered.');
     }
 
     /**
