@@ -249,6 +249,12 @@
     <version>1.6.3</version>
   </library>
   <library>
+    <location>php-css-parser</location>
+    <name>PHP-CSS-Parser</name>
+    <license>MIT</license>
+    <version>8.1.0</version>
+  </library>
+  <library>
     <location>rtlcss</location>
     <name>RTLCSS for PHP</name>
     <license>MIT</license>
