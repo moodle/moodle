@@ -21,10 +21,6 @@
     text-align: left;
 }
 
-.dir-rtl.path-admin .admintable .leftalign {
-    text-align: right;
-}
-
 .path-admin .admintable .centeralign {
     text-align: center;
 }
@@ -177,14 +173,6 @@
 
 #page-admin-course-manage .editcourse .count {
     text-align: right;
-}
-
-#page-admin-course-manage.dir-rtl .editcourse td[align="left"] {
-    text-align: right;
-}
-
-#page-admin-course-manage.dir-rtl .editcourse td[align="right"] {
-    text-align: left;
 }
 
 #page-admin-report-security-index .timewarninghidden {
@@ -520,10 +508,6 @@
     font-weight: normal;
 }
 
-.path-admin.dir-rtl table.rolecap tr.rolecap th {
-    text-align: right;
-}
-
 .path-admin .rolecap .hiddenrow {
     display: none;
 }
@@ -577,11 +561,6 @@
     padding-right: 0.3em;
 }
 
-.dir-rtl .environmenttable img.iconhelp {
-    padding-left: 0.3em;
-    padding-right: 0;
-}
-
 #trustedhosts .generaltable {
     margin-left: auto;
     margin-right: auto;
@@ -626,16 +605,8 @@
     text-align: right;
 }
 
-.dir-rtl #adminsettings .form-item .form-label {
-    float: right;
-}
-
 #adminsettings .form-item .form-label .form-shortname {
     display: block;
-}
-
-.dir-rtl #adminsettings .form-item .form-label .form-shortname {
-    text-align: left;
 }
 
 #adminsettings .form-item .form-setting {
@@ -644,14 +615,9 @@
     text-align: left;
 }
 
-.dir-rtl #adminsettings .form-item .form-setting {
-    margin-right: 13.5em;
-    margin-left: auto;
-    text-align: right;
-}
-
-.dir-rtl #admin-spelllanguagelist textarea,
-#page-admin-setting-editorsettingstinymce.dir-rtl .form-textarea textarea {
+/*rtl:ignore*/
+#admin-spelllanguagelist textarea,
+#page-admin-setting-editorsettingstinymce .form-textarea textarea {
     text-align: left;
     direction: ltr;
 }
@@ -685,12 +651,6 @@
     display: inline;
 }
 
-.dir-rtl #adminsettings .form-item .form-setting .locked-checkbox {
-    margin-right: 0.5em;
-    margin-left: 0.2em;
-    display: inline;
-}
-
 #adminsettings .form-item .form-setting .form-password .unmask,
 #adminsettings .form-item .form-setting .form-defaultinfo {
     display: inline;
@@ -700,10 +660,6 @@
     display: block;
     margin: 0.5em 0 0em 14.25em;
     text-align: left;
-}
-
-.dir-rtl #adminsettings .form-item .form-description {
-    margin: 0.5em 14.25em 0em 0em;
 }
 
 #adminsettings .form-item .pathok,
@@ -775,27 +731,8 @@
     float: right;
 }
 
-.dir-rtl .adminsettingsflags {
-    float: left;
-}
-
 .adminsettingsflags label {
     margin-right: 7px;
-}
-
-.dir-rtl .adminsettingsflags label {
-    margin-left: 7px;
-}
-
-/** Overide for RTL layout **/
-.dir-rtl #adminsettings .form-item  .form-setting,
-.dir-rtl #adminsettings .form-item  .form-label,
-.dir-rtl #adminsettings .form-item .form-description {
-    text-align: right;
-}
-
-.dir-rtl.path-admin .roleassigntable p {
-    text-align: right;
 }
 
 /** Plugins check */
@@ -1029,12 +966,14 @@
     content: " | ";
 }
 
-.dir-rtl #plugins-check .pluginupdateinfo {
+/*rtl:ignore*/
+#plugins-check .pluginupdateinfo {
     text-align: center;
     direction: ltr;
 }
 
-.dir-rtl #plugins-check .requires-ok {
+/*rtl:ignore*/
+#plugins-check .requires-ok {
     text-align: left;
     direction: ltr;
 }

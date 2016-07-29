@@ -122,16 +122,8 @@
     margin: 0;
 }
 
-.dir-rtl.path-calendar .maincalendar .eventlist .event .name {
-    float: right;
-}
-
 .path-calendar .maincalendar .eventlist .event .date {
     float: right;
-}
-
-.dir-rtl.path-calendar .maincalendar .eventlist .event .date {
-    float: left;
 }
 
 .path-calendar .maincalendar .eventlist .event .subscription {
@@ -139,19 +131,9 @@
     clear: left;
 }
 
-.dir-rtl.path-calendar .maincalendar .eventlist .event .subscription {
-    float: right;
-    clear: right;
-}
-
 .path-calendar .maincalendar .eventlist .event .course {
     float: left;
     clear: left;
-}
-
-.dir-rtl.path-calendar .maincalendar .eventlist .event .course {
-    float: right;
-    clear: right;
 }
 
 .path-calendar .maincalendar .eventlist .event .side {
@@ -174,10 +156,6 @@
     float: right;
 }
 
-.dir-rtl.path-calendar .maincalendar .header .buttons {
-    float: left;
-}
-
 .path-calendar .filters table {
     border-collapse: separate;
     border-spacing: 2px;
@@ -192,17 +170,8 @@
     float: left;
 }
 
-.dir-rtl.path-calendar div.cal_courses_flt {
-    float: right;
-}
-
 .path-calendar .cal_courses_flt label {
     margin-right: .45em;
-}
-
-.dir-rtl.path-calendar .cal_courses_flt label {
-    margin-left: .45em;
-    margin-right: 0;
 }
 
 .block .minicalendar {
@@ -263,11 +232,6 @@
 
 .block .calendar_filters .eventname {
     padding-left: .2em;
-}
-
-.dir-rtl .block .calendar_filters .eventname {
-    padding-right: .2em;
-    padding-left: 0;
 }
 
 .block .content h3.eventskey {

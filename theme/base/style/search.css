@@ -3,11 +3,6 @@
     margin-right: 0;
 }
 
-.dir-rtl .search-results .result {
-    margin-right: 15px;
-    margin-left: 0;
-}
-
 .search-results .result .result-content {
     margin: 7px 0;
 }

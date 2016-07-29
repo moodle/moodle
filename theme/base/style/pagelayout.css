@@ -269,16 +269,6 @@ body {
     margin-left: 0;
 }
 
-/** Correct for right to left languages **/
-.dir-rtl.pagelayout-report #report-main-content .region-content {
-    margin-left: 0;
-    margin-right: 200px;
-}
-
-.dir-rtl.pagelayout-report #report-region-wrap {
-    left: 0;
-}
-
 /** Stabalise IE6 behaviour on the report layout **/
 .ie6.pagelayout-report #report-main-content {
     float: none;

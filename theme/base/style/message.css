@@ -79,10 +79,6 @@ table.message .searchresults td {
     float: left;
 }
 
-.dir-rtl .message .contactselector {
-    float: right;
-}
-
 .message .contactselector .paging {
     z-index: 1;
     position: relative;
@@ -103,37 +99,18 @@ table.message .searchresults td {
     position: absolute;
 }
 
-.dir-rtl .message .message-contacts li .pix {
-    left: auto;
-    right: 0;
-}
-
 .message .message-contacts li .contact {
     margin: 0 24% 0 25px;
     text-align: left;
-}
-
-.dir-rtl .message .message-contacts li .contact {
-    text-align: right;
-    margin: 0 25px 0 24%;
 }
 
 .message .message-contacts li .contact.nolinks {
     margin-right: 5px;
 }
 
-.dir-rtl .message .message-contacts li .contact.nolinks {
-    margin-left: 5px;
-    margin-right: 25px;
-}
-
 .message .message-contacts li .link {
     float: right;
     max-width: 30%;
-}
-
-.dir-rtl .message .message-contacts li .link {
-    float: left;
 }
 
 .message .messagearea {
@@ -164,16 +141,6 @@ table.message .searchresults td {
     margin-right: 13%;
 }
 
-.dir-rtl .message .messagearea .messagehistory .user:first-child {
-    margin-right: 13%;
-    margin-left: 0;
-}
-
-.dir-rtl .message .messagearea .messagehistory .user:last-child {
-    margin-left: 13%;
-    margin-right: 0;
-}
-
 .message .messagearea .messagehistory .user > div {
     text-align: center;
     border: none;
@@ -184,11 +151,6 @@ table.message .searchresults td {
     width: 16px;
     margin: 0 3%;
     padding-top: 40px;
-}
-
-.dir-rtl .message .messagearea .messagehistory .between,
-.dir-rtl .message .messagearea .messagehistory .user {
-    float: right;
 }
 
 .message .messagearea .messagehistory .heading,
@@ -205,10 +167,6 @@ table.message .searchresults td {
     clear: both;
 }
 
-.dir-rtl .message .messagearea .messagehistory .left {
-    float: right;
-}
-
 .message .messagearea .messagehistory .right {
     position: relative;
     margin-bottom: 10px;
@@ -217,23 +175,7 @@ table.message .searchresults td {
     clear: both;
 }
 
-.dir-rtl .message .messagearea .messagehistory .right {
-    float: left;
-}
-
-.dir-ltr .message .messagearea .messagehistory .message {
-    margin-right: 20px;
-}
-
-.dir-ltr .message .messagearea .messagehistory .right .message {
-    margin-left: 20px;
-}
-
-.dir-rtl .message .messagearea .messagehistory .message {
-    margin-left: 20px;
-}
-
-.dir-rtl .message .messagearea .messagehistory .right .message {
+.message .messagearea .messagehistory .message {
     margin-right: 20px;
 }
 
@@ -245,14 +187,6 @@ table.message .searchresults td {
     width: 20px;
     position: absolute;
     top: -2px;
-}
-
-.dir-ltr .message .messagearea .messagehistory .messagecontent .deleteicon {
-    right: 0;
-}
-
-.dir-rtl .message .messagearea .messagehistory .messagecontent .deleteicon {
-    left: 0;
 }
 
 .message .messagearea .messagehistory .notification {
@@ -322,18 +256,9 @@ table.message .searchresults td {
     vertical-align: text-bottom;
 }
 
-.dir-rtl .messagesearchresults td img.userpicture {
-    padding-left: .45em;
-    padding-right: 0;
-}
-
 .messagesearchresults td span img {
     padding: 0 0 0 .45em;
     vertical-align: text-bottom;
-}
-
-.dir-rtl .messagesearchresults td span img {
-    padding: 0 .45em 0 0;
 }
 
 #newmessageoverlay {
@@ -413,8 +338,4 @@ table.message .searchresults td {
 .core_message-messenger-sendmessage .message-history {
     position: absolute;
     bottom: 0;
-}
-
-.dir-rtl .core_message-messenger-sendmessage .message-send {
-    float: left;
 }

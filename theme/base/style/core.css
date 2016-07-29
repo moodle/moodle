@@ -35,15 +35,11 @@ abbr {
     cursor: help;
 }
 
-.dir-ltr,
-.mdl-left,
-.dir-rtl .mdl-right {
+.mdl-left {
     text-align: left;
 }
 
-.dir-rtl,
-.mdl-right,
-.dir-rtl .mdl-left {
+.mdl-right {
     text-align: right;
 }
 
@@ -226,11 +222,6 @@ img.icon {
     padding-right: 6px;
 }
 
-.dir-rtl img.icon {
-    padding-left: 6px;
-    padding-right: 0;
-}
-
 img.iconsmall {
     height: 12px;
     margin-right: 3px;
@@ -247,12 +238,6 @@ img.iconhelp,
     width: 16px;
 }
 
-.dir-rtl img.iconhelp,
-.dir-rtl .helplink img {
-    padding-right: 3px;
-    padding-left: 0;
-}
-
 img.iconlarge {
     height: 24px;
     width: 24px;
@@ -263,11 +248,6 @@ img.iconsort {
     vertical-align: text-bottom;
     padding-left: .3em;
     margin-bottom: .15em;
-}
-
-.dir-rtl img.iconsort {
-    padding-right: .3em;
-    padding-left: 0;
 }
 
 img.icontoggle {
@@ -281,14 +261,12 @@ img.iconkbhelp {
     width: 49px;
 }
 
-img.icon-pre,
-.dir-rtl img.icon-post {
+img.icon-pre {
     padding-right: 3px;
     padding-left: 0;
 }
 
-img.icon-post,
-.dir-rtl img.icon-pre {
+img.icon-post {
     padding-left: 3px;
     padding-right: 0;
 }
@@ -382,11 +360,6 @@ form.popupform div {
     margin-left: .45em;
 }
 
-.dir-rtl .action-icon img.smallicon {
-    margin-right: .45em;
-    margin-left: 0;
-}
-
 h1 img.icon,
 h1 img.iconhelp,
 h2 img.icon,
@@ -409,10 +382,6 @@ table caption {
     font-weight: bold;
     line-height: 42px;
     text-align: left;
-}
-
-.dir-rtl table caption {
-    text-align: right;
 }
 
 /** The 1-pixel padding is there to avoid phantom scroll bars on OS X (FF, Safari and Chrome)**/
@@ -448,11 +417,6 @@ table caption {
     left: -10000px;
     font-weight: normal;
     font-size: 1em;
-}
-
-.dir-rtl .accesshide {
-    top: -30000px;
-    left: auto;
 }
 
 span.hide,
@@ -682,48 +646,24 @@ a.skip:active {
     text-decoration: none;
 }
 
-.dir-ltr .usermenu {
+.usermenu {
     float: right;
 }
 
-.dir-ltr .usermenu > .moodle-actionmenu > .menu:before {
+.usermenu > .moodle-actionmenu > .menu:before {
     right: 9px;
 }
 
-.dir-ltr .usermenu > .moodle-actionmenu > .menu:after {
+.usermenu > .moodle-actionmenu > .menu:after {
     right: 10px;
 }
 
-.dir-ltr .usermenu > .moodle-actionmenu > .menubar li a {
+.usermenu > .moodle-actionmenu > .menubar li a {
     text-align: right;
 }
 
-.dir-ltr.userloggedinas .usermenu .userbutton .avatars .avatar.current {
+.userloggedinas .usermenu .userbutton .avatars .avatar.current {
     left: 16px;
-}
-
-.dir-rtl .usermenu {
-    float: left;
-}
-
-.dir-rtl .usermenu > .moodle-actionmenu > .menu {
-    margin-right: 0px;
-}
-
-.dir-rtl .usermenu > .moodle-actionmenu > .menu:before {
-    left: 9px;
-}
-
-.dir-rtl .usermenu > .moodle-actionmenu > .menu:after {
-    left: 10px;
-}
-
-.dir-rtl .usermenu > .moodle-actionmenu > .menubar li a {
-    text-align: left;
-}
-
-.dir-rtl.userloggedinas .usermenu .userbutton .avatars .avatar.current {
-    left: -14px;
 }
 
 /**
@@ -951,24 +891,15 @@ a.skip:active {
     display: block;
 }
 
-.dir-rtl .collapsible-actions {
-    text-align: left;
-}
-
 .collapseexpand {
     background: url([[pix:t/collapsed]]) left center no-repeat;
+    /*rtl:raw:
+    background-image: url([[pix:t/collapsed_rtl]]);
+    */
     padding-left: 18px;
 }
 
-.dir-rtl .collapseexpand {
-    background-image: url([[pix:t/collapsed_rtl]]);
-    background-position: right center;
-    padding-left: 0;
-    padding-right: 18px;
-}
-
-.collapse-all,
-.dir-rtl .collapse-all {
+.collapse-all {
     background-image: url([[pix:t/expanded]]);
 }
 
@@ -982,6 +913,10 @@ a.skip:active {
 }
 
 .mform fieldset.collapsed legend a.fheader {
+    /*rtl:raw:
+    background-image: url([[pix:t/collapsed_rtl]]);
+    */
+    /*rtl:remove*/
     background-image: url([[pix:t/collapsed]]);
 }
 
@@ -1015,10 +950,6 @@ a.skip:active {
     width: 15%;
     text-align: right;
     float: left;
-}
-
-.dir-rtl .mform .fitem .fitemtitle {
-    text-align: left;
 }
 
 .mform .fitem .fitemtitle div {
@@ -1061,10 +992,6 @@ a.skip:active {
     text-align: right;
 }
 
-.dir-rtl .mform .fdescription.required {
-    text-align: left;
-}
-
 .mform .fpassword .unmask {
     display: inline;
     margin-left: 0.5em;
@@ -1092,10 +1019,6 @@ a.skip:active {
     margin-left: 4px;
 }
 
-.dir-rtl .mform .iconhelp {
-    margin-right: 4px;
-}
-
 .mform label .req,
 .mform label .adv {
     cursor: help;
@@ -1117,16 +1040,6 @@ a.skip:active {
     vertical-align: text-bottom;
 }
 
-.dir-rtl .mform .fcheckbox label,
-.dir-rtl .mform .fduration label,
-.dir-rtl .mform .fitem fieldset.fgroup label,
-.dir-rtl .mform .fradio label,
-.dir-rtl .mform fieldset.fdate_selector label,
-.dir-rtl .mform fieldset.fdate_time_selector label {
-    margin-right: .3em;
-    margin-left: 0;
-}
-
 .mform .ftags label.accesshide {
     display: block;
     position: static;
@@ -1142,12 +1055,6 @@ a.skip:active {
     padding-left: 16px;
 }
 
-.dir-rtl .moreless-toggler {
-    padding-left: 0;
-    padding-right: 16px;
-    background-position: right center;
-}
-
 .mform .moreless-less {
     background-image: url([[pix:t/less]]);
 }
@@ -1157,52 +1064,13 @@ a.skip:active {
     padding: 0;
 }
 
-.dir-rtl .mform .helplink img {
-    margin: 0 .45em 0 0;
-    padding: 0;
-}
-
 .mform legend .helplink img {
     margin-right: .2em;
-}
-
-.dir-rtl .mform legend .helplink img {
-    margin: 0 .45em 0 .2em;
 }
 
 .urlselect label,
 .singleselect label {
     margin-right: .3em;
-}
-
-.dir-rtl .urlselect label,
-.dir-rtl .singleselect label {
-    margin-left: .3em;
-    margin-right: 0;
-}
-
-.dir-rtl .mform fieldset legend {
-    margin-right: 0.5em;
-    margin-left: 0;
-}
-
-.dir-rtl .mform fieldset.collapsible legend a.fheader {
-    background-position: right center;
-    padding-right: 18px;
-    padding-left: 0;
-}
-
-.dir-rtl .mform fieldset.collapsed legend a.fheader {
-    background-image: url([[pix:t/collapsed_rtl]]);
-}
-
-.dir-rtl.jsenabled .mform fieldset.collapsed {
-    border-width: 1px 1px 0 0;
-}
-
-.dir-rtl .mform .fitem fieldset.felement {
-    padding-right: 1%;
-    margin-right: 15%;
 }
 
 .mform .btn-cancel,
@@ -1242,6 +1110,7 @@ a.skip:active {
     text-decoration: none;
 }
 
+/*rtl:ignore*/;
 input#id_externalurl {
     direction: ltr;
 }
@@ -1272,15 +1141,6 @@ input#id_externalurl {
         margin-right: 8px;
     }
 
-    .dir-rtl #region-main .mform:not(.unresponsive) .femptylabel .fitemtitle {
-        margin-right: 0px;
-        margin-left: 8px;
-    }
-
-    .dir-rtl #region-main .mform:not(.unresponsive) .fitem .fitemtitle {
-        text-align: right;
-    }
-
     #region-main .mform:not(.unresponsive) .fitem .felement {
         margin-left: 0;
         width: 100%;
@@ -1300,21 +1160,10 @@ input#id_externalurl {
         width: auto;
     }
 
-    .dir-rtl #region-main .mform:not(.unresponsive) .fitem .felement {
-        margin-right: 0;
-        float: right;
-        padding-right: 0;
-        padding-left: 0;
-    }
-
     #region-main .mform:not(.unresponsive) .fitem_fcheckbox .fitemtitle,
     #region-main .mform:not(.unresponsive) .fitem_fcheckbox .felement {
         display: inline-block;
         width: auto;
-    }
-
-    .dir-rtl #region-main .mform:not(.unresponsive) .fitem_fcheckbox .felement {
-        float: right;
     }
 
     #region-main .mform:not(.unresponsive) .fitem_fcheckbox .felement {
@@ -1439,10 +1288,6 @@ input#id_externalurl {
     font-weight: normal;
 }
 
-.dir-rtl .groupmanagementtable p {
-    text-align: right;
-}
-
 #group-usersummary {
     width: 14em;
 }
@@ -1483,10 +1328,6 @@ input#id_externalurl {
     text-align: left;
 }
 
-.dir-rtl .loginbox .signuppanel .subcontent {
-    text-align: right;
-}
-
 .loginbox .loginsub {
     margin-left: 0;
     margin-right: 0;
@@ -1523,10 +1364,6 @@ input#id_externalurl {
     width: 50%;
 }
 
-.dir-rtl .loginbox .loginform .form-input {
-    margin-right: 1%;
-}
-
 .loginbox .loginform .form-input input {
     width: 6em;
 }
@@ -1554,11 +1391,6 @@ input#id_externalurl {
 .loginbox .potentialidp .smallicon {
     vertical-align: text-bottom;
     margin: 0 .3em;
-}
-
-.dir-rtl .loginbox.twocolumns .loginpanel,
-.dir-rtl.loginbox.twocolumns .signuppanel {
-    float: right;
 }
 
 /**
@@ -1694,10 +1526,6 @@ table.mod_index {
     float: left;
 }
 
-.dir-rtl .comment-message .picture {
-    float: right;
-}
-
 .comment-message .text {
     margin: 0;
     padding: 0;
@@ -1712,13 +1540,6 @@ table.mod_index {
     position: absolute;
     top: 0;
     right: 0;
-    margin: .3em;
-}
-
-.dir-rtl .comment-delete {
-    position: absolute;
-    left: 0;
-    right: auto;
     margin: .3em;
 }
 
@@ -1818,14 +1639,6 @@ img.user-image {
     display: inline-block;
 }
 
-.dir-rtl .tagarea .controls .gotopage.nextpage {
-    float: left;
-}
-
-.dir-rtl .tagarea .controls .gotopage.prevpage {
-    float: right;
-}
-
 .tagarea .controls.controls-bottom {
     margin-top: 5px;
 }
@@ -1854,10 +1667,6 @@ tr.flagged-tag a {
 
 .tag_feed.media-list .media .itemimage {
     float: left;
-}
-
-.dir-rtl .tag_feed.media-list .media .itemimage {
-    float: right;
 }
 
 .tag_feed.media-list .media .itemimage img {
@@ -1984,20 +1793,12 @@ tr.flagged-tag a {
     padding-right: 10px;
 }
 
-.path-backup.dir-rtl .mform .grouped_settings .fitem .fitemtitle {
-    width: 60%;
-}
-
 .path-backup .mform .grouped_settings .fitem .felement {
     width: 50%;
 }
 
 .path-backup .mform .grouped_settings .fitem.backup_selector .felement {
     width: 100%;
-}
-
-.path-backup.dir-rtl .mform .grouped_settings .fitem .felement {
-    width: 99%;
 }
 
 .path-backup .mform .grouped_settings.section_level .include_setting {
@@ -2008,27 +1809,14 @@ tr.flagged-tag a {
     font-weight: bold;
 }
 
-.path-backup.dir-rtl  .mform .grouped_settings.section_level .include_setting {
-    float: right;
-    clear: right;
-}
-
 .path-backup .mform .grouped_settings.section_level .normal_setting {
     width: 50%;
     margin: 0;
     margin-left: 50%;
 }
 
-.path-backup.dir-rtl  .mform .grouped_settings.section_level .normal_setting {
-    margin: 0;
-}
-
 .path-backup .mform .grouped_settings.activity_level .include_setting label {
     font-weight: normal;
-}
-
-.path-backup.dir-rtl .mform .grouped_settings.activity_level .include_setting label img {
-    float: right;
 }
 
 .path-backup .mform .fitem fieldset.felement {
@@ -2073,11 +1861,6 @@ tr.flagged-tag a {
 
 .path-backup .fitemtitle .iconlarge.icon-post {
     padding-left: 6px;
-}
-
-.path-backup.dir-rtl .fitemtitle .iconlarge.icon-post {
-    padding-right: 6px;
-    padding-right: 0;
 }
 
 .path-backup .fitem .smallicon {
@@ -2210,11 +1993,6 @@ x#fitem_id_availabilityconditionsjson input[type=text] {
     margin-right: 8px;
 }
 
-.dir-rtl #fitem_id_availabilityconditionsjson .availability-group {
-    margin-right: 0;
-    margin-left: 8px;
-}
-
 #fitem_id_availabilityconditionsjson .availability-item,
 #fitem_id_availabilityconditionsjson .availability-header {
     margin-bottom: 6px;
@@ -2223,11 +2001,6 @@ x#fitem_id_availabilityconditionsjson input[type=text] {
 #fitem_id_availabilityconditionsjson .availability-none {
     margin-left: 20px;
     margin-bottom: 4px;
-}
-
-.dir-rtl #fitem_id_availabilityconditionsjson .availability-none {
-    margin-right: 20px;
-    margin-left: 0;
 }
 
 #fitem_id_availabilityconditionsjson .availability-plugincontrols {
@@ -2239,22 +2012,9 @@ x#fitem_id_availabilityconditionsjson input[type=text] {
     margin-right: 8px;
 }
 
-.dir-rtl #fitem_id_availabilityconditionsjson .availability-plugincontrols {
-    padding-right: 4px;
-    padding-left: 0px;
-    margin-right: 0;
-    margin-left: 8px;
-}
-
 #fitem_id_availabilityconditionsjson .availability-eye,
 #fitem_id_availabilityconditionsjson .availability-delete {
     margin-right: 8px;
-}
-
-.dir-rtl #fitem_id_availabilityconditionsjson .availability-eye,
-.dir-rtl #fitem_id_availabilityconditionsjson .availability-delete {
-    margin-left: 8px;
-    margin-right: 0;
 }
 
 #fitem_id_availabilityconditionsjson .availability-eye[aria-hidden=true] {
@@ -2269,11 +2029,6 @@ x#fitem_id_availabilityconditionsjson input[type=text] {
 
 #fitem_id_availabilityconditionsjson .availability-button {
     margin-left: 15px;
-}
-
-.dir-rtl #fitem_id_availabilityconditionsjson .availability-button {
-    margin-right: 15px;
-    margin-left: 0;
 }
 
 #fitem_id_availabilityconditionsjson .availability-childlist > .availability-inner {
@@ -2292,11 +2047,6 @@ x#fitem_id_availabilityconditionsjson input[type=text] {
 #fitem_id_availabilityconditionsjson .availability-connector {
     margin-left: 20px;
     margin-bottom: 6px;
-}
-
-.dir-rtl #fitem_id_availabilityconditionsjson .availability-connector {
-    margin-right: 20px;
-    margin-left: 0;
 }
 
 .mform .error .availability-field {
@@ -2330,23 +2080,12 @@ x#fitem_id_availabilityconditionsjson input[type=text] {
     margin-top: 4px;
 }
 
-.dir-rtl .availability-dialogue ul button {
-    float: right;
-    margin-right: 1em;
-    margin-left: 0;
-}
-
 .availability-dialogue label {
     margin-left: 170px;
     margin-right: 1em;
     margin-bottom: 0;
     display: block;
     line-height: 1.5;
-}
-
-.dir-rtl .availability-dialogue label {
-    margin-right: 170px;
-    margin-left: 1em;
 }
 
 .availability-dialogue .availability-buttons button {
@@ -2676,10 +2415,6 @@ x#fitem_id_availabilityconditionsjson input[type=text] {
     display: none;
 }
 
-.dir-rtl .userenrolment .col_role .role {
-    float: right;
-}
-
 .userenrolment .col_enrol .enrolment {
     float: left;
 }
@@ -2711,10 +2446,6 @@ x#fitem_id_availabilityconditionsjson input[type=text] {
 #page-enrol-users .enrol_user_buttons .enrolusersbutton input {
     padding-left: 6px;
     padding-right: 6px;
-}
-
-#page-enrol-users.dir-rtl .col_userdetails .subfield_picture {
-    float: right;
 }
 
 #page-enrol-users #filterform div,
@@ -2749,60 +2480,6 @@ x#fitem_id_availabilityconditionsjson input[type=text] {
 
 #page-enrol-users .paging {
     clear: right;
-}
-
-/**
-* Overide for RTL layout
-**/
-.dir-rtl .headermain {
-    float: right;
-}
-
-.dir-rtl .headermenu {
-    float: left;
-    text-align: left;
-}
-
-.dir-rtl .breadcrumb {
-    float: right;
-}
-
-.dir-rtl .navbutton {
-    float: left;
-}
-
-.dir-rtl .navbutton .singlebutton {
-    margin-right: 4px;
-}
-
-.dir-rtl .breadcrumb ul li {
-    float: right;
-    margin-left: 5px;
-}
-
-.dir-rtl .mform .fitem .fitemtitle {
-    float: right;
-}
-
-.dir-rtl .loginbox .loginform .form-label {
-    float: right;
-    text-align: left;
-}
-
-.dir-rtl .loginbox .loginform .form-input {
-    text-align: right;
-}
-
-.dir-rtl .yui3-menu-hidden {
-    left: 0px;
-}
-
-#page-admin-roles-define.dir-rtl #rolesform .felement {
-    margin-right: 180px;
-}
-
-#page-message-edit.dir-rtl table.generaltable th.c0 {
-    text-align: right;
 }
 
 /**
@@ -2908,13 +2585,6 @@ x#fitem_id_availabilityconditionsjson input[type=text] {
 .path-backup .mform .fgroup .oneclickbackup {
     float: right;
     margin-right: 1%;
-}
-
-.dir-rtl.path-backup .mform .fgroup .proceedbutton,
-.dir-rtl.path-backup .mform .fgroup .oneclickbackup {
-    float: left;
-    margin-left: 1%;
-    margin-right: 0;
 }
 
 .restore-course-search .rcs-results {
@@ -3055,18 +2725,13 @@ x#fitem_id_availabilityconditionsjson input[type=text] {
     width: 480px;
 }
 
-.dir-rtl .mform .fitem .felement {
-    margin-right: 16%;
-    margin-left: auto;
-    text-align: right;
-}
-
-.dir-rtl .mform .fitem .felement input[name=email],
-.dir-rtl .mform .fitem .felement input[name=email2],
-.dir-rtl .mform .fitem .felement input[name=url],
-.dir-rtl .mform .fitem .felement input[name=idnumber],
-.dir-rtl .mform .fitem .felement input[name=phone1],
-.dir-rtl .mform .fitem .felement input[name=phone2] {
+/*rtl:ignore*/
+.mform .fitem .felement input[name=email],
+.mform .fitem .felement input[name=email2],
+.mform .fitem .felement input[name=url],
+.mform .fitem .felement input[name=idnumber],
+.mform .fitem .felement input[name=phone1],
+.mform .fitem .felement input[name=phone2] {
     text-align: left;
     direction: ltr;
 }
@@ -3277,66 +2942,66 @@ sup {
     list-style: decimal outside none;
 }
 
-.dir-rtl #adminsettings #id_s__pathtodu,
-.dir-rtl #adminsettings #id_s__aspellpath,
-.dir-rtl #adminsettings #id_s__pathtodot,
-.dir-rtl #adminsettings #id_s__supportemail,
-.dir-rtl #adminsettings #id_s__supportpage,
-.dir-rtl #adminsettings #id_s__sessioncookie,
-.dir-rtl #adminsettings #id_s__sessioncookiepath,
-.dir-rtl #adminsettings #id_s__sessioncookiedomain,
-.dir-rtl #adminsettings #id_s__proxyhost,
-.dir-rtl #adminsettings #id_s__proxyuser,
-.dir-rtl #adminsettings #id_s__proxypassword,
-.dir-rtl #adminsettings #id_s__proxybypass,
-.dir-rtl #adminsettings #id_s__jabberhost,
-.dir-rtl #adminsettings #id_s__jabberserver,
-.dir-rtl #adminsettings #id_s__jabberusername,
-.dir-rtl #adminsettings #id_s__jabberpassword,
-.dir-rtl #adminsettings #id_s__additionalhtmlhead,
-.dir-rtl #adminsettings #id_s__additionalhtmltopofbody,
-.dir-rtl #adminsettings #id_s__additionalhtmlfooter,
-.dir-rtl #adminsettings #id_s__docroot,
-.dir-rtl #adminsettings #id_s__filter_tex_latexpreamble,
-.dir-rtl #adminsettings #id_s__filter_tex_latexbackground,
-.dir-rtl #adminsettings #id_s__filter_tex_pathlatex,
-.dir-rtl #adminsettings #id_s__filter_tex_pathdvips,
-.dir-rtl #adminsettings #id_s__filter_tex_pathconvert,
-.dir-rtl #adminsettings #id_s__blockedip,
-.dir-rtl #adminsettings #id_s__pathtoclam,
-.dir-rtl #adminsettings #id_s__quarantinedir,
-.dir-rtl #adminsettings #id_s__sitepolicy,
-.dir-rtl #adminsettings #id_s__sitepolicyguest,
-.dir-rtl #adminsettings #id_s__cronremotepassword,
-.dir-rtl #adminsettings #id_s__allowedip,
-.dir-rtl #adminsettings #id_s__blockedip,
-.dir-rtl #adminsettings #id_s_enrol_meta_nosyncroleids,
-.dir-rtl #adminsettings #id_s_enrol_ldap_host_url,
-.dir-rtl #adminsettings #id_s_enrol_ldap_ldapencoding,
-.dir-rtl #adminsettings #id_s_enrol_ldap_bind_dn,
-.dir-rtl #adminsettings #id_s_enrol_ldap_bind_pw,
-.dir-rtl #adminsettings #admin-emoticons .form-text,
-.dir-rtl #adminsettings #admin-role_mapping input[type=text],
-.dir-rtl #adminsettings #id_s_enrol_paypal_paypalbusiness,
-.dir-rtl #adminsettings #id_s_enrol_flatfile_location,
-#page-admin-setting-enrolsettingsflatfile.dir-rtl input[type=text],
-#page-admin-setting-enrolsettingsdatabase.dir-rtl input[type=text],
-#page-admin-auth-db.dir-rtl input[type=text] {
+/*rtl:ignore*/
+#adminsettings #id_s__pathtodu,
+#adminsettings #id_s__aspellpath,
+#adminsettings #id_s__pathtodot,
+#adminsettings #id_s__supportemail,
+#adminsettings #id_s__supportpage,
+#adminsettings #id_s__sessioncookie,
+#adminsettings #id_s__sessioncookiepath,
+#adminsettings #id_s__sessioncookiedomain,
+#adminsettings #id_s__proxyhost,
+#adminsettings #id_s__proxyuser,
+#adminsettings #id_s__proxypassword,
+#adminsettings #id_s__proxybypass,
+#adminsettings #id_s__jabberhost,
+#adminsettings #id_s__jabberserver,
+#adminsettings #id_s__jabberusername,
+#adminsettings #id_s__jabberpassword,
+#adminsettings #id_s__additionalhtmlhead,
+#adminsettings #id_s__additionalhtmltopofbody,
+#adminsettings #id_s__additionalhtmlfooter,
+#adminsettings #id_s__docroot,
+#adminsettings #id_s__filter_tex_latexpreamble,
+#adminsettings #id_s__filter_tex_latexbackground,
+#adminsettings #id_s__filter_tex_pathlatex,
+#adminsettings #id_s__filter_tex_pathdvips,
+#adminsettings #id_s__filter_tex_pathconvert,
+#adminsettings #id_s__blockedip,
+#adminsettings #id_s__pathtoclam,
+#adminsettings #id_s__quarantinedir,
+#adminsettings #id_s__sitepolicy,
+#adminsettings #id_s__sitepolicyguest,
+#adminsettings #id_s__cronremotepassword,
+#adminsettings #id_s__allowedip,
+#adminsettings #id_s__blockedip,
+#adminsettings #id_s_enrol_meta_nosyncroleids,
+#adminsettings #id_s_enrol_ldap_host_url,
+#adminsettings #id_s_enrol_ldap_ldapencoding,
+#adminsettings #id_s_enrol_ldap_bind_dn,
+#adminsettings #id_s_enrol_ldap_bind_pw,
+#adminsettings #admin-emoticons .form-text,
+#adminsettings #admin-role_mapping input[type=text],
+#adminsettings #id_s_enrol_paypal_paypalbusiness,
+#adminsettings #id_s_enrol_flatfile_location,
+#page-admin-setting-enrolsettingsflatfile input[type=text],
+#page-admin-setting-enrolsettingsdatabase input[type=text],
+#page-admin-auth-db input[type=text] {
     direction: ltr;
 }
 
-#page-admin-setting-enrolsettingsflatfile.dir-rtl .informationbox {
+/*rtl:ignore*/;
+#page-admin-setting-enrolsettingsflatfile .informationbox {
     direction: ltr;
     text-align: left;
-}
-
-#page-admin-grade-edit-scale-edit.dir-rtl .error input#id_name {
-    margin-right: 170px;
 }
 
 .initialbar a {
     padding-right: 2px;
 }
+
+.initialbar a {padding-right: 2px;}
 
 /* Moodle Dialogue Settings (moodle-core-dialogue)  */
 .moodle-dialogue-base .moodle-dialogue-lightbox {
@@ -3448,11 +3113,6 @@ sup {
     background-image: url([[pix:theme|sprite]]);
     background-repeat: no-repeat;
     border-style: none;
-}
-
-.dir-rtl .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
-    left: 0px;
-    right: auto;
 }
 
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-bd {
@@ -3612,12 +3272,6 @@ sup {
     overflow: auto;
 }
 
-/* Question Bank - Question Chooser "Close" button */
-#page-question-edit.dir-rtl a.container-close {
-    right: auto;
-    left: 6px;
-}
-
 /**
  * Chooser Dialogues (moodle-core-chooserdialogue)
  *
@@ -3678,10 +3332,6 @@ sup {
     width: 65%;
 }
 
-.dir-rtl.jschooser .choosercontainer #chooseform .alloptions {
-    max-width: 18.3em;
-}
-
 /* Settings for option rows and option subtypes */
 .choosercontainer #chooseform .moduletypetitle,
 .choosercontainer #chooseform .option,
@@ -3701,13 +3351,6 @@ sup {
 .choosercontainer #chooseform .nonoption .typename,
 .choosercontainer #chooseform .nonoption span.modicon img.icon {
     padding: 0 0 0 0.5em;
-}
-
-.dir-rtl .choosercontainer #chooseform .option .typename,
-.dir-rtl .choosercontainer #chooseform .option span.modicon img.icon,
-.dir-rtl .choosercontainer #chooseform .nonoption .typename,
-.dir-rtl .choosercontainer #chooseform .nonoption span.modicon img.icon {
-    padding: 0 0.5em 0 0;
 }
 
 .chooserdialogue-course-modchooser .choosercontainer #chooseform .option span.modicon img.icon,
@@ -3734,26 +3377,13 @@ sup {
     padding-bottom: 0.1em;
 }
 
-.dir-rtl .choosercontainer #chooseform .nonoption {
-    padding-right: 2.7em;
-    padding-left: 0;
-}
-
 .choosercontainer #chooseform .subtype {
     margin-bottom: 0;
     padding: 0 1.6em 0 3.2em;
 }
 
-.dir-rtl .choosercontainer #chooseform .subtype {
-    padding: 0 3.2em 0 1.6em;
-}
-
 .choosercontainer #chooseform .subtype .typename {
     margin: 0 0 0 0.2em;
-}
-
-.dir-rtl .choosercontainer #chooseform .subtype .typename {
-    margin: 0 0.2em 0 0;
 }
 
 /* The instruction/help area */
@@ -3773,13 +3403,6 @@ sup {
     line-height: 2em;
 }
 
-.dir-rtl.jschooser .choosercontainer #chooseform .instruction,
-.dir-rtl.jschooser .choosercontainer #chooseform .typesummary {
-    left: 0px;
-    right: 18.5em;
-    border-right: 1px solid grey;
-}
-
 /* Selected option settings */
 .jschooser .choosercontainer #chooseform .instruction,
 .choosercontainer #chooseform .selected .typesummary {
@@ -3797,12 +3420,9 @@ sup {
     padding-right: 3px;
 }
 
-.dir-rtl .section-modchooser-link img.smallicon {
-    padding-left: 3px;
-    padding-right: 0;
-}
 /* Install Process' text fields Forms, should always be justified to the left */
 
+/*rtl:ignore*/;
 form#installform #id_wwwroot,
 form#installform #id_dirroot,
 form#installform #id_dataroot,
@@ -3814,18 +3434,8 @@ form#installform #id_prefix {
     direction: ltr;
 }
 
-html[dir=rtl] .breadcrumb,
-html[dir=rtl] .headermain,
-html[dir=rtl] #page-header,
-html[dir=rtl] #page-content {
-    float: right;
-}
-
-html[dir=rtl] .formrow label.formlabel {
-    float: right;
-}
-
-html[dir=rtl] .configphp {
+/*rtl:ignore*/;
+.configphp {
     direction: ltr;
     text-align: left;
 }
@@ -3930,10 +3540,6 @@ body.jsenabled .formlisting {
     padding-top: 10px;
 }
 
-.dir-rtl #badge h3 {
-    text-align: right;
-}
-
 #badge-image,
 #badge-details {
     display: inline-block;
@@ -4017,10 +3623,6 @@ table.collection ul {
     margin: 0.5em 0.5em 0.5em 2em;
 }
 
-.dir-rtl table.collection ul {
-    margin: 0.5em 2em 0.5em 0.5em;
-}
-
 #page-badges-view table.collection .badgeimage,
 #page-badges-index table.collection .status {
     width: 15%;
@@ -4040,18 +3642,8 @@ table.collection ul {
     text-align: left;
 }
 
-#page-badges-view.dir-rtl table.collection .description {
-    width: 25%;
-    text-align: right;
-}
-
 table.collection .name {
     text-align: left;
-    vertical-align: middle;
-}
-
-.dir-rtl table.collection .name {
-    text-align: right;
     vertical-align: middle;
 }
 
@@ -4061,18 +3653,10 @@ table.collection .name {
     vertical-align: top;
 }
 
-#page-badges-view.dir-rtl table.collection .criteria {
-    text-align: right;
-}
-
 #page-badges-index table.collection .criteria {
     width: 40%;
     text-align: left;
     vertical-align: top;
-}
-
-#page-badges-index.dir-rtl table.collection .criteria {
-    text-align: right;
 }
 
 #page-badges-index table.collection .actions {
@@ -4084,10 +3668,6 @@ table.collection .name {
 a.criteria-action {
     padding: 0px 3px;
     float: right;
-}
-
-.dir-rtl a.criteria-action {
-    float: left;
 }
 
 ul.badges {
@@ -4119,10 +3699,6 @@ ul.badges {
     left: 10px;
     top: 0px;
     z-index: 1;
-}
-
-.dir-rtl .badges li .badge-image {
-    right: 10px;
 }
 
 .badges li .badge-actions {
@@ -4223,16 +3799,8 @@ div.badge .expireimage {
     margin: 3px;
 }
 
-.dir-rtl .activatebadge {
-    text-align: right;
-}
-
 .addcourse {
     float: right;
-}
-
-.dir-rtl .addcourse {
-    float: left;
 }
 
 img#persona_signin {
@@ -4309,11 +3877,6 @@ div#dateselector-calendar-panel {
     padding-right: 4px;
 }
 
-.jsenabled.dir-rtl .moodle-actionmenu[data-enhance] .toggle-display.textmenu {
-    margin-right: 4px;
-    margin-left: inherit;
-}
-
 .jsenabled .moodle-actionmenu[data-enhance] .toggle-display.textmenu .iconsmall {
     margin: 8px 4px 0px 2px;
 }
@@ -4321,11 +3884,6 @@ div#dateselector-calendar-panel {
 .jsenabled .moodle-actionmenu[data-enhance] .toggle-display.textmenu .caret {
     margin-top: 4px;
     margin-left: 2px;
-}
-
-.jsenabled.dir-rtl .moodle-actionmenu[data-enhance] .toggle-display.textmenu .caret {
-    margin-right: 2px;
-    margin-left: inherit;
 }
 
 .jsenabled .moodle-actionmenu[data-enhanced] .toggle-display {
@@ -4412,27 +3970,6 @@ div#dateselector-calendar-panel {
 
 .block .moodle-actionmenu {
     text-align: right;
-}
-
-.dir-rtl .block .moodle-actionmenu {
-    text-align: right;
-}
-
-.dir-rtl .moodle-actionmenu[data-enhanced].show .menu a {
-    display: block;
-    padding: 2px 28px 2px 1em;
-}
-
-.dir-rtl .moodle-actionmenu[data-enhanced].show .menu {
-    text-align: right;
-    right: auto;
-    left: 0;
-}
-
-.dir-rtl .moodle-actionmenu[data-enhanced].show .menu .iconsmall,
-.dir-rtl .moodle-actionmenu[data-enhanced].show .menu .smallicon {
-    margin-right: -24px;
-    margin-left: 4px;
 }
 
 .jsenabled .moodle-actionmenu[data-enhanced] .menu.align-tl-bl {
@@ -4527,86 +4064,6 @@ div#dateselector-calendar-panel {
 
 .jsenabled .moodle-actionmenu[data-enhance="moodle-core-actionmenu"]> ul> li[role="menuitem"] {
     display: inline-block;
-}
-
-.dir-rtl .menu.align-tl-bl {
-    right: 0;
-    left: auto;
-}
-
-.dir-rtl .menu.align-tr-bl {
-    right: auto;
-    left: 100%;
-}
-
-.dir-rtl .menu.align-bl-bl {
-    right: 0;
-    left: auto;
-}
-
-.dir-rtl .menu.align-br-bl {
-    right: auto;
-    left: 100%;
-}
-
-.dir-rtl .menu.align-tl-br {
-    right: 100%;
-    left: auto;
-}
-
-.dir-rtl .menu.align-tr-br {
-    right: auto;
-    left: 0;
-}
-
-.dir-rtl .menu.align-bl-br {
-    right: 100%;
-    left: auto;
-}
-
-.dir-rtl .menu.align-br-br {
-    right: auto;
-    left: 0;
-}
-
-.dir-rtl .menu.align-tl-tl {
-    right: 0;
-    left: auto;
-}
-
-.dir-rtl .menu.align-tr-tl {
-    right: auto;
-    left: 100%;
-}
-
-.dir-rtl .menu.align-bl-tl {
-    right: 0;
-    left: auto;
-}
-
-.dir-rtl .menu.align-br-tl {
-    right: auto;
-    left: 100%;
-}
-
-.dir-rtl .menu.align-tl-tr {
-    right: 100%;
-    left: auto;
-}
-
-.dir-rtl .menu.align-tr-tr {
-    right: auto;
-    left: 0;
-}
-
-.dir-rtl .menu.align-bl-tr {
-    right: 100%;
-    left: auto;
-}
-
-.dir-rtl .menu.align-br-tr {
-    right: auto;
-    left: 0;
 }
 
 ul.dragdrop-keyboard-drag li {
@@ -4887,12 +4344,6 @@ body.lockscroll {
     margin-right: -300px;
     margin-left: 0;
 }
-
-.dir-rtl .inplaceeditable.inplaceeditingon .editinstructions {
-    margin-left: -300px;
-    margin-right: 0;
-}
-
 .inplaceeditable .quickeditlink .quickediticon img {
     opacity: 0.2;
 }

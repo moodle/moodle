@@ -58,11 +58,6 @@
     color: #000;
 }
 
-.dir-rtl .form-autocomplete-downarrow {
-    right: -1.5em;
-    left: inherit;
-}
-
 .form-autocomplete-selection:focus {
     outline: none;
 }
