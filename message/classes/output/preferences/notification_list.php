@@ -27,6 +27,7 @@ namespace core_message\output\preferences;
 
 use renderable;
 use templatable;
+use context_user;
 
 /**
  * Class to create context for the list of notifications on the message
@@ -78,6 +79,7 @@ class notification_list implements templatable, renderable {
         $providers = $this->providers;
         $preferences = $this->preferences;
         $user = $this->user;
+        $usercontext = context_user::instance($user->id);
 
         foreach($providers as $provider) {
             if($provider->component != 'moodle') {
@@ -91,16 +93,26 @@ class notification_list implements templatable, renderable {
         array_unshift($components, 'moodle'); // pop it in front! phew!
         asort($providers);
 
-        $context = [];
+        $context = [
+            'userid' => $user->id,
+            'disableall' => $user->emailstop,
+            'processors' => [],
+        ];
+
+        foreach ($processors as $processor) {
+            $context['processors'][] = [
+                'displayname' => get_string('pluginname', 'message_'.$processor->name),
+                'name' => $processor->name,
+                'hassettings' => !empty($processor->object->config_form($preferences)),
+                'contextid' => $usercontext->id,
+            ];
+        }
 
         foreach ($components as $component) {
             $notificationcomponent = new \core_message\output\preferences\notification_list_component(
                 $component, $processors, $providers, $preferences, $user);
             $context['components'][] = $notificationcomponent->export_for_template($output);
         }
-
-        $context['userid'] = $user->id;
-        $context['disableall'] = $user->emailstop;
 
         return $context;
     }

@@ -77,30 +77,34 @@
 }}
 <h2 class="title-case">{{#str}} notificationpreferences, message {{/str}}</h2>
 <div class="preferences-container {{#disableall}}disabled{{/disableall}}" data-user-id="{{userid}}">
-    {{#components}}
-        <table class="table preference-table">
-            <thead>
+    <table class="table table-hover preference-table">
+        <thead>
+            <tr>
+                <th>{{displayname}}</th>
+                {{#processors}}
+                    <th>
+                        {{#hassettings}}
+                            <a href="#"
+                                data-processor-setting
+                                data-user-id="{{userid}}"
+                                data-context-id="{{contextid}}"
+                                data-name="{{name}}">
+                                {{displayname}} {{#pix}} i/settings {{/pix}}
+                            </a>
+                        {{/hassettings}}
+                        {{^hassettings}}
+                            {{displayname}}
+                        {{/hassettings}}
+                    </th>
+                {{/processors}}
+            </tr>
+        </thead>
+        <tbody>
+            {{#components}}
                 <tr>
                     <th>{{displayname}}</th>
-                    {{#processors}}
-                        <th>
-                            {{#hassettings}}
-                                <a href="#"
-                                    data-processor-setting
-                                    data-user-id="{{userid}}"
-                                    data-context-id="{{contextid}}"
-                                    data-name="{{name}}">
-                                    {{displayname}} {{#pix}} i/settings {{/pix}}
-                                </a>
-                            {{/hassettings}}
-                            {{^hassettings}}
-                                {{displayname}}
-                            {{/hassettings}}
-                        </th>
-                    {{/processors}}
+                    {{#processors}}<td></td>{{/processors}}
                 </tr>
-            </thead>
-            <tbody>
                 {{#notifications}}
                     <tr class="preference-row" data-preference-key="{{preferencekey}}">
                         <td class="preference-name">
@@ -156,9 +160,9 @@
                         {{/processors}}
                     </tr>
                 {{/notifications}}
-            </tbody>
-        </table>
-    {{/components}}
+            {{/components}}
+        </tbody>
+    </table>
 </div>
 {{#js}}
 require(['jquery', 'theme_bootstrapbase/bootstrap', 'core_message/preferences_notifications_list_controller'],

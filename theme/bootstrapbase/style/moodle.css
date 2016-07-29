@@ -6024,7 +6024,7 @@ a.ygtvspacer:hover {
   vertical-align: middle;
 }
 .preferences-container .preference-table .preference-row .preference-state input[type="checkbox"]:checked + .preference-state-image-container {
-  border: 1px solid #5cb85c;
+  border: 2px solid #5cb85c;
 }
 .preferences-container .preference-table .preference-row .preference-state .preference-state-image-container {
   width: 30px;
@@ -6032,7 +6032,7 @@ a.ygtvspacer:hover {
   line-height: 30px;
   text-align: center;
   border-radius: 4px;
-  border: 1px solid #d9534f;
+  border: 2px solid #d9534f;
 }
 .preferences-container .preference-table .preference-row .preference-state .preference-state-image-container .loading-icon {
   display: none;

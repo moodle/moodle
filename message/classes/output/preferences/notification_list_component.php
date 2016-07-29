@@ -29,7 +29,6 @@ require_once($CFG->dirroot . '/message/lib.php');
 
 use renderable;
 use templatable;
-use context_user;
 
 /**
  * Class to create context for a notification component on the message
@@ -108,7 +107,6 @@ class notification_list_component implements templatable, renderable {
         $preferences = $this->preferences;
         $component = $this->component;
         $defaultpreferences = get_message_output_default_preferences();
-        $usercontext = context_user::instance($this->user->id);
 
         if ($component != 'moodle') {
             $componentname = get_string('pluginname', $component);
@@ -118,18 +116,8 @@ class notification_list_component implements templatable, renderable {
 
         $context = [
             'displayname' => $componentname,
-            'processors' => [],
             'notifications' => [],
         ];
-
-        foreach ($processors as $processor) {
-            $context['processors'][] = [
-                'displayname' => get_string('pluginname', 'message_'.$processor->name),
-                'name' => $processor->name,
-                'hassettings' => !empty($processor->object->config_form($preferences)),
-                'contextid' => $usercontext->id,
-            ];
-        }
 
         foreach ($providers as $provider) {
             $preferencebase = $this->get_preference_base($provider);
