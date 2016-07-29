@@ -223,14 +223,14 @@ class feedback_item_multichoice extends feedback_item_base {
                 $quotient = format_float($val->quotient * 100, 2);
                 $strquotient = '';
                 if ($val->quotient > 0) {
-                    $strquotient = '('. $quotient . ' %)';
+                    $strquotient = ' ('. $quotient . ' %)';
                 }
                 $answertext = format_text(trim($val->answertext), FORMAT_HTML,
                         array('noclean' => true, 'para' => false));
 
                 $data['labels'][$count] = $answertext;
                 $data['series'][$count] = $val->answercount;
-                $data['series_labels'][$count] = $strquotient;
+                $data['series_labels'][$count] = $val->answercount . $strquotient;
                 $count++;
             }
             $chart = new \core\chart_bar();
