@@ -37,17 +37,12 @@ form {
     margin-left: -20px;
     background: url([[pix:t/expanded]]) 2px center no-repeat;
 }
-.dir-rtl .mform fieldset.collapsible legend a.fheader {
-    padding: 0 20px 0 5px;
-    margin-right: -20px;
-    margin-left: 0;
-    background-position: right center;
-}
 .mform fieldset.collapsed legend a.fheader {
-    background-image: url([[pix:t/collapsed]]);
-}
-.dir-rtl .mform fieldset.collapsed legend a.fheader {
+    /*rtl:raw:
     background-image: url([[pix:t/collapsed_rtl]]);
+    */
+    /*rtl:remove*/
+    background-image: url([[pix:t/collapsed]]);
 }
 .jsenabled .mform .collapsed .fcontainer {
     display: none;
@@ -80,9 +75,6 @@ form {
 
 .mform .iconhelp {
     margin-left: 4px;
-}
-.dir-rtl .mform .iconhelp {
-    margin-right: 4px;
 }
 .mform .ftextarea #id_alltext {
     width: 100%;
@@ -129,11 +121,8 @@ form {
 .singleselect label {
     margin-right: .3em;
 }
-.dir-rtl .singleselect label {
-    margin-left: .3em;
-    margin-right: 0;
-}
 input#id_externalurl {
+    /*rtl:ignore*/
     direction: ltr;
 }
 #portfolio-add-button {
@@ -152,13 +141,6 @@ input#id_externalurl {
 .mform .fitem div.fitemtitle {
     .form-horizontal .control-label
 }
-.dir-rtl {
-    .form-item .form-label,
-    .mform .fitem div.fitemtitle {
-        float: right;
-        text-align: left;
-    }
-}
 .form-defaultinfo,
 .form-label .form-shortname {
     .muted;
@@ -166,9 +148,6 @@ input#id_externalurl {
 .form-label .form-shortname {
     font-size: @fontSizeMini;
     display: block;
-}
-.dir-rtl .form-label .form-shortname {
-    text-align: left;
 }
 .form-item .form-setting,
 .form-item .form-description,
@@ -212,22 +191,6 @@ div.backup-section + form,
 .form-buttons { // Add back the padding it would usually get from being inside a .form-horizontal.
     padding-left: @horizontalComponentOffset;
 }
-.dir-rtl {
-    table#form td.submit,
-    .form-buttons,
-    .path-admin .buttons,
-    #fitem_id_submitbutton,
-    .fp-content-center form + div,
-    div.backup-section + form,
-    #fgroup_id_buttonar {
-        .form-actions;
-        padding-right: 0;
-    }
-    .path-admin .buttons,
-    .form-buttons { // Add back the padding it would usually get from being inside a .form-horizontal.
-        padding-right: @horizontalComponentOffset;
-    }
-}
 .form-item .form-setting .form-checkbox.defaultsnext {
     // Need to specify .defaultsnext and the .form-checkbox class
     // is somewhat randomly re-used on various actual checkboxes
@@ -253,75 +216,70 @@ div.backup-section + form,
     color: @textColor;
     text-decoration: none;
 }
-.dir-rtl .mform .fitem .felement {
-    margin-right: 30%;
-    margin-left: auto;
-    text-align: right;
-}
 // I think this could be avoided (or at least tidied up) ifr
 // we used HTML5 input types like url, phone, email, number etc.
-.dir-rtl .mform .fitem .felement input[name=email],
-.dir-rtl .mform .fitem .felement input[name=email2],
-.dir-rtl .mform .fitem .felement input[name=url],
-.dir-rtl .mform .fitem .felement input[name=idnumber],
-.dir-rtl .mform .fitem .felement input[name=phone1],
-.dir-rtl .mform .fitem .felement input[name=phone2] {
+/*rtl:ignore*/
+.mform .fitem .felement input[name=email],
+.mform .fitem .felement input[name=email2],
+.mform .fitem .felement input[name=url],
+.mform .fitem .felement input[name=idnumber],
+.mform .fitem .felement input[name=phone1],
+.mform .fitem .felement input[name=phone2] {
     text-align: left;
     direction: ltr;
 }
-.dir-rtl #id_s__pathtodu,
-.dir-rtl #id_s__aspellpath,
-.dir-rtl #id_s__pathtodot,
-.dir-rtl #id_s__supportemail,
-.dir-rtl #id_s__supportpage,
-.dir-rtl #id_s__sessioncookie,
-.dir-rtl #id_s__sessioncookiepath,
-.dir-rtl #id_s__sessioncookiedomain,
-.dir-rtl #id_s__proxyhost,
-.dir-rtl #id_s__proxyuser,
-.dir-rtl #id_s__proxypassword,
-.dir-rtl #id_s__proxybypass,
-.dir-rtl #id_s__jabberhost,
-.dir-rtl #id_s__jabberserver,
-.dir-rtl #id_s__jabberusername,
-.dir-rtl #id_s__jabberpassword,
-.dir-rtl #id_s__additionalhtmlhead,
-.dir-rtl #id_s__additionalhtmltopofbody,
-.dir-rtl #id_s__additionalhtmlfooter,
-.dir-rtl #id_s__docroot,
-.dir-rtl #id_s__filter_tex_latexpreamble,
-.dir-rtl #id_s__filter_tex_latexbackground,
-.dir-rtl #id_s__filter_tex_pathlatex,
-.dir-rtl #id_s__filter_tex_pathdvips,
-.dir-rtl #id_s__filter_tex_pathconvert,
-.dir-rtl #id_s__blockedip,
-.dir-rtl #id_s__pathtoclam,
-.dir-rtl #id_s__quarantinedir,
-.dir-rtl #id_s__sitepolicy,
-.dir-rtl #id_s__sitepolicyguest,
-.dir-rtl #id_s__cronremotepassword,
-.dir-rtl #id_s__allowedip,
-.dir-rtl #id_s__blockedip,
-.dir-rtl #id_s_enrol_meta_nosyncroleids,
-.dir-rtl #id_s_enrol_ldap_host_url,
-.dir-rtl #id_s_enrol_ldap_ldapencoding,
-.dir-rtl #id_s_enrol_ldap_bind_dn,
-.dir-rtl #id_s_enrol_ldap_bind_pw,
-.dir-rtl #admin-emoticons .form-text,
-.dir-rtl #admin-role_mapping input[type=text],
-.dir-rtl #id_s_enrol_paypal_paypalbusiness,
-.dir-rtl #id_s_enrol_flatfile_location,
-#page-admin-setting-enrolsettingsflatfile.dir-rtl input[type=text],
-#page-admin-setting-enrolsettingsdatabase.dir-rtl input[type=text],
-#page-admin-auth-db.dir-rtl input[type=text] {
+#id_s__pathtodu,
+#id_s__aspellpath,
+#id_s__pathtodot,
+#id_s__supportemail,
+#id_s__supportpage,
+#id_s__sessioncookie,
+#id_s__sessioncookiepath,
+#id_s__sessioncookiedomain,
+#id_s__proxyhost,
+#id_s__proxyuser,
+#id_s__proxypassword,
+#id_s__proxybypass,
+#id_s__jabberhost,
+#id_s__jabberserver,
+#id_s__jabberusername,
+#id_s__jabberpassword,
+#id_s__additionalhtmlhead,
+#id_s__additionalhtmltopofbody,
+#id_s__additionalhtmlfooter,
+#id_s__docroot,
+#id_s__filter_tex_latexpreamble,
+#id_s__filter_tex_latexbackground,
+#id_s__filter_tex_pathlatex,
+#id_s__filter_tex_pathdvips,
+#id_s__filter_tex_pathconvert,
+#id_s__blockedip,
+#id_s__pathtoclam,
+#id_s__quarantinedir,
+#id_s__sitepolicy,
+#id_s__sitepolicyguest,
+#id_s__cronremotepassword,
+#id_s__allowedip,
+#id_s__blockedip,
+#id_s_enrol_meta_nosyncroleids,
+#id_s_enrol_ldap_host_url,
+#id_s_enrol_ldap_ldapencoding,
+#id_s_enrol_ldap_bind_dn,
+#id_s_enrol_ldap_bind_pw,
+#admin-emoticons .form-text,
+#admin-role_mapping input[type=text],
+#id_s_enrol_paypal_paypalbusiness,
+#id_s_enrol_flatfile_location,
+#page-admin-setting-enrolsettingsflatfile input[type=text],
+#page-admin-setting-enrolsettingsdatabase input[type=text],
+#page-admin-auth-db input[type=text] {
+    /*rtl:ignore*/
     direction: ltr;
 }
-#page-admin-setting-enrolsettingsflatfile.dir-rtl .informationbox {
+/*rtl:ignore*/
+#page-admin-setting-enrolsettingsflatfile .informationbox {
     direction: ltr;
     text-align: left;
-}
-#page-admin-grade-edit-scale-edit.dir-rtl .error input#id_name {
-    margin-right: 170px;
 }
 #page-grade-edit-outcome-course .courseoutcomes {
     margin-left: auto;
@@ -332,6 +290,7 @@ div.backup-section + form,
     text-align: center;
 }
 /* Install Process' text fields Forms, should always be justified to the left */
+/*rtl:ignore*/
 #installform #id_wwwroot,
 #installform #id_dirroot,
 #installform #id_dataroot,
@@ -362,13 +321,6 @@ input[type="checkbox"] {
     margin-top: -4px; // Dodgy hack, must be better way.
     margin-right: 7px;
 }
-.dir-rtl {
-    input[type="radio"],
-    input[type="checkbox"] {
-        margin-left: 7px;
-        margin-right: auto;
-    }
-}
 .singleselect {
     display: inline-block;
     form,
@@ -378,9 +330,6 @@ input[type="checkbox"] {
 }
 .form-item .form-label label {
     margin-bottom: 0;
-}
-.dir-rtl .form-item .form-label label {
-    text-align: left;
 }
 .felement.ffilepicker {
     margin-top: 5px;
@@ -448,26 +397,6 @@ fieldset.coursesearchbox label {
             .felement {
                 padding: 6px;
             }
-        }
-    }
-    &.dir-rtl #region-main .mform:not(.unresponsive) {
-        .femptylabel .fitemtitle {
-            margin-right: 0px;
-            margin-left: 8px;
-        }
-        .fitem {
-            .fitemtitle {
-                text-align: right;
-            }
-            .felement {
-                margin-right: 0;
-                float: right;
-                padding-right: 0;
-                padding-left: 0;
-            }
-        }
-        .fitem_fcheckbox .felement {
-            float: right;
         }
     }
 }
@@ -570,35 +499,6 @@ fieldset.coursesearchbox label {
         margin-bottom: 6px;
     }
 }
-.dir-rtl #fitem_id_availabilityconditionsjson {
-    .availability-group {
-        margin-right: 0;
-        margin-left: 8px;
-    }
-    .availability-none {
-        margin-right: 20px;
-        margin-left: 0;
-    }
-    .availability-plugincontrols {
-        padding-right: 4px;
-        padding-left: 0px;
-        margin-right: 0;
-        margin-left: 8px;
-    }
-    .availability-eye,
-    .availability-delete {
-        margin-left: 8px;
-        margin-right: 0;
-    }
-    .availability-button {
-        margin-right: 15px;
-        margin-left: 0;
-    }
-    .availability-connector {
-        margin-right: 20px;
-        margin-left: 0;
-    }
-}
 
 /* Default form styling colours all text red. With availability conditions
    this looks excessive as we show 'Invalid' markers in specific places. */
@@ -640,17 +540,6 @@ fieldset.coursesearchbox label {
         margin-left: 1em;
         margin-right: 1em;
         margin-top: 4px;
-    }
-}
-.dir-rtl .availability-dialogue {
-    ul button {
-        float: right;
-        margin-right: 1em;
-        margin-left: 0;
-    }
-    label {
-        margin-right: 170px;
-        margin-left: 1em;
     }
 }
 
@@ -705,10 +594,6 @@ input[size] {
     top: -0.3em;
     left: -1.5em;
     cursor: pointer;
-}
-.dir-rtl .form-autocomplete-downarrow {
-    right: -1.5em;
-    left: inherit;
 }
 
 .form-autocomplete-selection:focus {

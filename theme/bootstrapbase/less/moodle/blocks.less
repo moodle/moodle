@@ -105,17 +105,6 @@
         }
     }
 }
-.dir-rtl {
-    &.editing {
-        .block {
-            .header {
-                .commands {
-                    text-align: left;
-                }
-            }
-        }
-    }
-}
 
 // Hide the block content when the block has been minimised.
 .jsenabled .block.hidden .content {
@@ -243,50 +232,5 @@
     }
     select {
         max-width: 92%;
-    }
-}
-
-// RTL styles for blocks.
-.dir-rtl {
-
-    // RTL styles for blocks in general.
-    .block {
-        .header {
-            text-align: right;
-            h2 {
-                text-align: right;
-            }
-            .block_action {
-                float: left;
-                > * {
-                    margin-left: 0;
-                    margin-right: 3px;
-                }
-            }
-        }
-    }
-
-    // LTR styles for the calendar upcoming block.
-    .block_calendar_upcoming {
-        .content {
-            .date {
-                padding-right: 22px;
-            }
-            .footer {
-                padding-right: 0px;
-            }
-        }
-    }
-
-    // RTL styles for the news items block.
-    .block_news_items .content {
-        ul li {
-            .name {
-                padding-right: 1ex;
-            }
-        }
-        .footer {
-            padding-left: 0px;
-        }
     }
 }

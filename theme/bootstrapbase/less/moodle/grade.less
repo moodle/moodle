@@ -82,51 +82,6 @@
     }
 }
 
-.dir-rtl {
-    #rubric-rubric.gradingform_rubric {
-        #rubric-criteria .criterion {
-            .level {
-                .score {
-                    text-align: right;
-                    float: right;
-                    margin-left: 28px;
-                    margin-right: 0px;
-                }
-                .delete {
-                    float: left;
-                    input {
-                        left: 0;
-                        right: auto;
-                    }
-                }
-            }
-        }
-        .addcriterion {
-            margin-right: 5px;
-            margin-left: 0px;
-
-            input {
-                padding-right: 26px;
-                padding-left: 10px;
-                background-position: right 8px top 8px;
-            }
-        }
-        .options {
-            .option {
-                .value {
-                    margin-left: 0px;
-                    margin-right: 5px;
-                }
-                input {
-                    // margins flipped for RTL.
-                    margin-left: 12px;
-                    margin-right: 5px;
-                }
-            }
-        }
-    }
-}
-
 #rubric-rubric {
     &.gradingform_rubric {
         #rubric-criteria {
@@ -339,96 +294,6 @@
     }
 }
 
-.dir-rtl {
-    &.path-grade-edit-tree .setup-grades {
-        .category td.column-name {
-            padding-right: 0;
-        }
-        td.column-name {
-            padding-right: 24px;
-        }
-        .column-name h4 img.icon {
-            padding-left: 4px;
-        }
-        .gradeitemdescription {
-            padding-left: 0;
-            padding-right: 24px;
-        }
-        .column-weight {
-            &.level3 {
-                padding-left: 0;
-                padding-right: 37px;
-            }
-            &.level4 {
-                padding-left: 0;
-                padding-right: 66px;
-            }
-            &.level5 {
-                padding-left: 0;
-                padding-right: 95px;
-            }
-            &.level6 {
-                padding-left: 0;
-                padding-right: 124px;
-            }
-            &.level7 {
-                padding-left: 0;
-                padding-right: 153px;
-            }
-            &.level8 {
-                padding-left: 0;
-                padding-right: 182px;
-            }
-            &.level9 {
-                padding-left: 0;
-                padding-right: 211px;
-            }
-            &.level10 {
-                padding-left: 0;
-                padding-right: 240px;
-            }
-        }
-        .column-range {
-            &.level2 {
-                padding-left: 0;
-                padding-right: 37px;
-            }
-            &.level3 {
-                padding-left: 0;
-                padding-right: 66px;
-            }
-            &.level4 {
-                padding-left: 0;
-                padding-right: 95px;
-            }
-            &.level5 {
-                padding-left: 0;
-                padding-right: 124px;
-            }
-            &.level6 {
-                padding-left: 0;
-                padding-right: 153px;
-            }
-            &.level7 {
-                padding-left: 0;
-                padding-right: 182px;
-            }
-            &.level8 {
-                padding-left: 0;
-                padding-right: 211px;
-            }
-            &.level9 {
-                padding-left: 0;
-                padding-right: 240px;
-            }
-            &.level10 {
-                padding-left: 0;
-                padding-right: 269px;
-            }
-        }
-    }
-}
-
 /**
  * Grader report.
  */
@@ -476,26 +341,10 @@
     .gradeparent .sideonly.floating > .cell {
         padding-left: 5 + (@dockWidth + (@dockTitleMargin * 2));
     }
-
-    &.dir-rtl {
-        .gradeparent .sideonly.floating > .cell,
-        .gradeparent .sideonly.floating > .cell,
-        .gradeparent .sideonly.floating > .cell {
-            padding-left: 5px;
-            padding-right: 5 + (@dockWidth + (@dockTitleMargin * 2));
-        }
-    }
 }
 
 .content-only.path-grade-report-grader {
     .gradeparent table {
         margin-left: (@dockWidth + (@dockTitleMargin * 2));
-    }
-
-    &.dir-rtl {
-        .gradeparent table {
-            margin-left: 0;
-            margin-right: (@dockWidth + (@dockTitleMargin * 2));
-        }
     }
 }

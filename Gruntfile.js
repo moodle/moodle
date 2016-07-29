@@ -143,7 +143,7 @@ module.exports = function(grunt) {
                     "theme/bootstrapbase/style/editor.css": "theme/bootstrapbase/less/editor.less",
                 },
                 options: {
-                    compress: true
+                    compress: false // We must not compress to keep the comments.
                 }
            }
         },
