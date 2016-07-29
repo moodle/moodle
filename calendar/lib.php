@@ -2956,6 +2956,14 @@ function calendar_add_subscription($sub) {
         if (empty($sub->id)) {
             $id = $DB->insert_record('event_subscriptions', $sub);
             // we cannot cache the data here because $sub is not complete.
+            $sub->id = $id;
+            // Trigger event, calendar subscription added.
+            $eventparams = array('objectid' => $sub->id,
+                'context' => calendar_get_calendar_context($sub),
+                'other' => array('eventtype' => $sub->eventtype, 'courseid' => $sub->courseid)
+            );
+            $event = \core\event\calendar_subscription_created::create($eventparams);
+            $event->trigger();
             return $id;
         } else {
             // Why are we doing an update here?
@@ -3112,13 +3120,21 @@ function calendar_process_subscription_row($subscriptionid, $pollinterval, $acti
 function calendar_delete_subscription($subscription) {
     global $DB;
 
-    if (is_object($subscription)) {
-        $subscription = $subscription->id;
+    if (!is_object($subscription)) {
+        $subscription = $DB->get_record('event_subscriptions', array('id' => $subscription), '*', MUST_EXIST);
     }
     // Delete subscription and related events.
-    $DB->delete_records('event', array('subscriptionid' => $subscription));
-    $DB->delete_records('event_subscriptions', array('id' => $subscription));
-    cache_helper::invalidate_by_definition('core', 'calendar_subscriptions', array(), array($subscription));
+    $DB->delete_records('event', array('subscriptionid' => $subscription->id));
+    $DB->delete_records('event_subscriptions', array('id' => $subscription->id));
+    cache_helper::invalidate_by_definition('core', 'calendar_subscriptions', array(), array($subscription->id));
+
+    // Trigger event, calendar subscription deleted.
+    $eventparams = array('objectid' => $subscription->id,
+        'context' => calendar_get_calendar_context($subscription),
+        'other' => array('courseid' => $subscription->courseid)
+    );
+    $event = \core\event\calendar_subscription_deleted::create($eventparams);
+    $event->trigger();
 }
 /**
  * From a URL, fetch the calendar and return an iCalendar object.
@@ -3246,6 +3262,14 @@ function calendar_update_subscription($subscription) {
     // Update cache.
     $cache = cache::make('core', 'calendar_subscriptions');
     $cache->set($subscription->id, $subscription);
+    // Trigger event, calendar subscription updated.
+    $eventparams = array('userid' => $subscription->userid,
+        'objectid' => $subscription->id,
+        'context' => calendar_get_calendar_context($subscription),
+        'other' => array('eventtype' => $subscription->eventtype, 'courseid' => $subscription->courseid)
+        );
+    $event = \core\event\calendar_subscription_updated::create($eventparams);
+    $event->trigger();
 }
 
 /**
@@ -3319,4 +3343,24 @@ function calendar_cron() {
     mtrace('Finished updating calendar subscriptions.');
 
     return true;
+}
+
+/**
+ * Helper function to determine the context of a calendar subscription.
+ * Subscriptions can be created in two contexts COURSE, or USER.
+ *
+ * @param stdClass $subscription
+ * @return context instance
+ */
+function calendar_get_calendar_context($subscription) {
+
+    // Determine context based on calendar type.
+    if ($subscription->eventtype === 'site') {
+        $context = context_course::instance(SITEID);
+    } else if ($subscription->eventtype === 'group' || $subscription->eventtype === 'course') {
+        $context = context_course::instance($subscription->courseid);
+    } else {
+        $context = context_user::instance($subscription->userid);
+    }
+    return $context;
 }
