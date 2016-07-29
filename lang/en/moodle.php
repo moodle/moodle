@@ -923,6 +923,7 @@ $string['hiddensectionscollapsed'] = 'Hidden sections are shown in collapsed for
 $string['hiddensectionsinvisible'] = 'Hidden sections are completely invisible';
 $string['hide'] = 'Hide';
 $string['hideadvancedsettings'] = 'Hide advanced settings';
+$string['hidechartdata'] = 'Hide chart data';
 $string['hidepicture'] = 'Hide picture';
 $string['hidesection'] = 'Hide section {$a}';
 $string['hidesettings'] = 'Hide settings';
