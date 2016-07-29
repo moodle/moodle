@@ -44,12 +44,11 @@ class mod_assign_submission_form extends moodleform {
         global $USER;
         $mform = $this->_form;
         list($assign, $data) = $this->_customdata;
-
         $instance = $assign->get_instance();
         if ($instance->teamsubmission) {
-            $submission = $assign->get_group_submission($USER->id, 0, true);
+            $submission = $assign->get_group_submission($data->userid, 0, true);
         } else {
-            $submission = $assign->get_user_submission($USER->id, true);
+            $submission = $assign->get_user_submission($data->userid, true);
         }
         if ($submission) {
             $mform->addElement('hidden', 'lastmodified', $submission->timemodified);
