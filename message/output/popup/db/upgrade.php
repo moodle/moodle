@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param int $oldversion The version that we are upgrading from
  */
 function xmldb_message_popup_upgrade($oldversion) {
-    global $CFG;
+    global $CFG, $DB;
 
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
@@ -43,6 +43,33 @@ function xmldb_message_popup_upgrade($oldversion) {
 
     // Moodle v3.1.0 release upgrade line.
     // Put any upgrade step following this.
+
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2016052309) {
+
+        // Define table message_popup to be created.
+        $table = new xmldb_table('message_popup');
+
+        // Adding fields to table message_popup.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('messageid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('isread', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table message_popup.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Adding indexes to table message_popup.
+        $table->add_index('messageid-isread', XMLDB_INDEX_UNIQUE, array('messageid', 'isread'));
+
+        // Conditionally launch create table for message_popup.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Popup savepoint reached.
+        upgrade_plugin_savepoint(true, 2016052309, 'message', 'popup');
+    }
 
     return true;
 }

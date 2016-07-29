@@ -40,7 +40,7 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
         }
 
         var request = {
-            methodname: 'core_message_get_notifications',
+            methodname: 'core_message_get_popup_notifications',
             args: args
         };
 
@@ -59,7 +59,7 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
      */
     var countUnread = function(args) {
         var request = {
-            methodname: 'core_message_get_unread_notification_count',
+            methodname: 'core_message_get_unread_popup_notification_count',
             args: args
         };
 

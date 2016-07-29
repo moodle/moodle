@@ -708,19 +708,19 @@ $functions = array(
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
         'ajax' => true,
     ),
-    'core_message_get_notifications' => array(
+    'core_message_get_popup_notifications' => array(
         'classname' => 'core_message_external',
-        'methodname' => 'get_notifications',
+        'methodname' => 'get_popup_notifications',
         'classpath' => 'message/externallib.php',
-        'description' => 'Retrieve a list of notifications sent and received by a user',
+        'description' => 'Retrieve a list of popup notifications for a user',
         'type' => 'read',
         'ajax' => true,
     ),
-    'core_message_get_unread_notification_count' => array(
+    'core_message_get_unread_popup_notification_count' => array(
         'classname' => 'core_message_external',
-        'methodname' => 'get_unread_notification_count',
+        'methodname' => 'get_unread_popup_notification_count',
         'classpath' => 'message/externallib.php',
-        'description' => 'Retrieve the count of unread notifications for a given user',
+        'description' => 'Retrieve the count of unread popup notifications for a given user',
         'type' => 'read',
         'ajax' => true,
     ),

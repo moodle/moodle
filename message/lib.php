@@ -1810,20 +1810,19 @@ function message_get_messages($useridto, $useridfrom = 0, $notifications = -1, $
 }
 
 /**
- * Get notifications to and from the specified users.
+ * Get popup notifications for the specified users.
  *
  * @param  int      $useridto       the user id who received the notification
- * @param  int      $useridfrom     the user id who sent the notification. -10 or -20 for no-reply or support user
  * @param  bool     $status         MESSAGE_READ for retrieving read notifications, MESSAGE_UNREAD for unread, empty for both
- * @param  string   $sort           the column name to order by including optionally direction
  * @param  bool     $embeduserto    embed the to user details in the notification response
  * @param  bool     $embeduserfrom  embed the from user details in the notification response
+ * @param  string   $sort           the column name to order by including optionally direction
  * @param  int      $limit          limit the number of result returned
  * @param  int      $offset         offset the result set by this amount
  * @return array                    array of notification records
- * @since  3.1
+ * @since  3.2
  */
-function message_get_notifications($useridto = 0, $useridfrom = 0, $status = '',
+function message_get_popup_notifications($useridto = 0, $status = '',
     $embeduserto = false, $embeduserfrom = false, $sort = 'DESC', $limit = 0, $offset = 0) {
     global $DB;
 
@@ -1837,30 +1836,23 @@ function message_get_notifications($useridto = 0, $useridfrom = 0, $status = '',
         throw new moodle_exception('invalid parameter: sort: must be "DESC" or "ASC"');
     }
 
+    if (empty($useridto)) {
+        $useridto = $USER->id;
+    }
+
     $params = array();
 
-    $buildtablesql = function($table, $prefix, $additionalfields) use ($useridto, $useridfrom, $embeduserto, $embeduserfrom) {
-        $params = array();
+    $buildtablesql = function($table, $prefix, $additionalfields, $messagestatus)
+            use ($status, $useridto, $embeduserto, $embeduserfrom) {
+
+        $joinsql = '';
         $fields = "concat('$prefix', $prefix.id) as uniqueid, $prefix.id, $prefix.useridfrom, $prefix.useridto,
             $prefix.subject, $prefix.fullmessage, $prefix.fullmessageformat,
             $prefix.fullmessagehtml, $prefix.smallmessage, $prefix.notification, $prefix.contexturl,
             $prefix.contexturlname, $prefix.timecreated, $prefix.timeuserfromdeleted, $prefix.timeusertodeleted,
             $prefix.component, $prefix.eventtype, $additionalfields";
-        $where = '';
-        $joinsql = '';
-
-        if (empty($useridto)) {
-            $where .= " AND $prefix.useridfrom = :{$prefix}useridfrom";
-            $params["{$prefix}useridfrom"] = $useridfrom;
-        } else {
-            $where .= " AND $prefix.useridto = :{$prefix}useridto";
-            $params["{$prefix}useridto"] = $useridto;
-
-            if (!empty($useridfrom)) {
-                $where .= " AND $prefix.useridfrom = :{$prefix}useridfrom";
-                $params["{$prefix}useridfrom"] = $useridfrom;
-            }
-        }
+        $where = " AND $prefix.useridto = :{$prefix}useridto";
+        $params = ["{$prefix}useridto" => $useridto];
 
         if ($embeduserto) {
             $embedprefix = "{$prefix}ut";
@@ -1874,22 +1866,38 @@ function message_get_notifications($useridto = 0, $useridfrom = 0, $status = '',
             $joinsql .= " LEFT JOIN {user} $embedprefix ON $embedprefix.id = $prefix.useridfrom";
         }
 
-        return array(sprintf("SELECT %s FROM %s %s %s WHERE %s.notification = 1 %s", $fields, $table, $prefix, $joinsql, $prefix, $where), $params);
+        if ($messagestatus == MESSAGE_READ) {
+            $isread = '1';
+        } else {
+            $isread = '0';
+        }
+
+        return array(
+            sprintf(
+                "SELECT %s
+                FROM %s %s %s
+                WHERE %s.notification = 1
+                AND %s.id IN (SELECT messageid FROM {message_popup} WHERE isread = %s)
+                %s",
+                $fields, $table, $prefix, $joinsql, $prefix, $prefix, $isread, $where
+            ),
+            $params
+        );
     };
 
     $sql = '';
     switch ($status) {
         case MESSAGE_READ:
-            list($sql, $readparams) = $buildtablesql('{message_read}', 'r', 'r.timeread');
+            list($sql, $readparams) = $buildtablesql('{message_read}', 'r', 'r.timeread', MESSAGE_READ);
             $params = array_merge($params, $readparams);
             break;
         case MESSAGE_UNREAD:
-            list($sql, $unreadparams) = $buildtablesql('{message}', 'u', '0 as timeread');
+            list($sql, $unreadparams) = $buildtablesql('{message}', 'u', '0 as timeread', MESSAGE_UNREAD);
             $params = array_merge($params, $unreadparams);
             break;
         default:
-            list($readsql, $readparams) = $buildtablesql('{message_read}', 'r', 'r.timeread');
-            list($unreadsql, $unreadparams) = $buildtablesql('{message}', 'u', '0 as timeread');
+            list($readsql, $readparams) = $buildtablesql('{message_read}', 'r', 'r.timeread', MESSAGE_READ);
+            list($unreadsql, $unreadparams) = $buildtablesql('{message}', 'u', '0 as timeread', MESSAGE_UNREAD);
             $sql = sprintf("SELECT * FROM (%s UNION %s) f", $readsql, $unreadsql);
             $params = array_merge($params, $readparams, $unreadparams);
     }
@@ -1903,24 +1911,23 @@ function message_get_notifications($useridto = 0, $useridfrom = 0, $status = '',
  * Count the unread notifications for a user.
  *
  * @param  int      $useridto       the user id who received the notification
- * @param  int      $useridfrom     the user id who sent the notification. -10 or -20 for no-reply or support user
  * @return int                      count of the unread notifications
- * @since  3.1
+ * @since  3.2
  */
-function message_count_unread_notifications($useridto = 0, $useridfrom = 0) {
+function message_count_unread_popup_notifications($useridto = 0) {
     global $USER, $DB;
 
     if (empty($useridto)) {
         $useridto = $USER->id;
     }
 
-    if (!empty($useridfrom)) {
-        return $DB->count_records_select('message', "useridto = ? AND useridfrom = ? AND notification = 1",
-            array($useridto, $useridfrom), "COUNT('id')");
-    } else {
-        return $DB->count_records_select('message', "useridto = ? AND notification = 1",
-            array($useridto), "COUNT('id')");
-    }
+    return $DB->count_records_sql(
+        "SELECT count(id)
+        FROM {message}
+        WHERE id IN (SELECT messageid FROM {message_popup} WHERE isread = 0)
+        AND useridto = ?",
+        [$useridto]
+    );
 }
 
 /**

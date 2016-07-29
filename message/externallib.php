@@ -1178,18 +1178,15 @@ class core_message_external extends external_api {
     }
 
     /**
-     * Get notifications parameters description.
+     * Get popup notifications parameters description.
      *
      * @return external_function_parameters
      * @since 3.2
      */
-    public static function get_notifications_parameters() {
+    public static function get_popup_notifications_parameters() {
         return new external_function_parameters(
             array(
                 'useridto' => new external_value(PARAM_INT, 'the user id who received the message, 0 for any user', VALUE_REQUIRED),
-                'useridfrom' => new external_value(
-                    PARAM_INT, 'the user id who send the message, 0 for any user. -10 or -20 for no-reply or support user',
-                    VALUE_DEFAULT, 0),
                 'status' => new external_value(
                     PARAM_ALPHA, 'filter the results to just "read" or "unread" notifications',
                     VALUE_DEFAULT, ''),
@@ -1221,7 +1218,6 @@ class core_message_external extends external_api {
      * @throws invalid_parameter_exception
      * @throws moodle_exception
      * @param  int      $useridto           the user id who received the message
-     * @param  int      $useridfrom         the user id who send the message. -10 or -20 for no-reply or support user
      * @param  string   $status             filter the results to only read or unread notifications
      * @param  bool     $embedpreference    true to embed the recipient user details in the record for each notification
      * @param  bool     $embeduserto        true to embed the recipient user details in the record for each notification
@@ -1232,15 +1228,14 @@ class core_message_external extends external_api {
      * @param  int      $offset             offset the result set by a given amount
      * @return external_description
      */
-    public static function get_notifications($useridto, $useridfrom, $status, $embedpreference,
+    public static function get_popup_notifications($useridto, $status, $embedpreference,
         $embeduserto, $embeduserfrom, $newestfirst, $markasread, $limit, $offset) {
         global $CFG, $USER, $OUTPUT;
 
         $params = self::validate_parameters(
-            self::get_notifications_parameters(),
+            self::get_popup_notifications_parameters(),
             array(
                 'useridto' => $useridto,
-                'useridfrom' => $useridfrom,
                 'status' => $status,
                 'embedpreference' => $embedpreference,
                 'embeduserto' => $embeduserto,
@@ -1256,7 +1251,6 @@ class core_message_external extends external_api {
         self::validate_context($context);
 
         $useridto = $params['useridto'];
-        $useridfrom = $params['useridfrom'];
         $status = $params['status'];
         $embedpreference = $params['embedpreference'];
         $embeduserto = $params['embeduserto'];
@@ -1277,41 +1271,26 @@ class core_message_external extends external_api {
             }
         }
 
-        if (!empty($useridfrom) && $embeduserfrom) {
-            // We use get_user here because the from user can be the noreply or support user.
-            $userfrom = core_user::get_user($useridfrom, '*', MUST_EXIST);
-        }
-
         // Check if the current user is the sender/receiver or just a privileged user.
-        if ($useridto != $USER->id and $useridfrom != $USER->id and !$issuperuser) {
+        if ($useridto != $USER->id and !$issuperuser) {
             throw new moodle_exception('accessdenied', 'admin');
         }
 
         $sort = $newestfirst ? 'DESC' : 'ASC';
-        $notifications = message_get_notifications($useridto, $useridfrom, $status, $embeduserto, $embeduserfrom, $sort, $limit, $offset);
+        $notifications = message_get_popup_notifications($useridto, $status, $embeduserto, $embeduserfrom, $sort, $limit, $offset);
 
         if ($notifications) {
-            // In some cases, we don't need to get the to/from user objects from the sql query.
-            $userfromfullname = '';
+            // In some cases, we don't need to get the to user objects from the sql query.
             $usertofullname = '';
 
             // In this case, the useridto field is not empty, so we can get the user destinatary fullname from there.
             if (!empty($useridto) && $embeduserto) {
                 $usertofullname = fullname($userto);
-                // The user from may or may not be filled.
-                if (!empty($useridfrom) && $embeduserfrom) {
-                    $userfromfullname = fullname($userfrom);
-                }
-            } else if (!empty($useridfrom) && $embeduserfrom) {
-                // If the useridto field is empty, the useridfrom must be filled.
-                $userfromfullname = fullname($userfrom);
             }
 
             foreach ($notifications as $notification) {
 
-                if (($useridto == $USER->id and $notification->timeusertodeleted) or
-                        ($useridfrom == $USER->id and $notification->timeuserfromdeleted)) {
-
+                if ($useridto == $USER->id and $notification->timeusertodeleted) {
                     $notification->deleted = true;
                 } else {
                     $notification->deleted = false;
@@ -1319,19 +1298,15 @@ class core_message_external extends external_api {
 
                 // We need to get the user from the query.
                 if ($embeduserfrom) {
-                    if (empty($userfromfullname)) {
-                        // Check for non-reply and support users.
-                        if (core_user::is_real_user($notification->useridfrom)) {
-                            $user = new stdClass();
-                            $user = username_load_fields_from_object($user, $notification, 'userfrom');
-                            $profileurl = new moodle_url('/user/profile.php', array('id' => $notification->useridfrom));
-                            $notification->userfromfullname = fullname($user);
-                            $notification->userfromprofileurl = $profileurl->out();
-                        } else {
-                            $notification->userfromfullname = get_string('coresystem');
-                        }
+                    // Check for non-reply and support users.
+                    if (core_user::is_real_user($notification->useridfrom)) {
+                        $user = new stdClass();
+                        $user = username_load_fields_from_object($user, $notification, 'userfrom');
+                        $profileurl = new moodle_url('/user/profile.php', array('id' => $notification->useridfrom));
+                        $notification->userfromfullname = fullname($user);
+                        $notification->userfromprofileurl = $profileurl->out();
                     } else {
-                        $notification->userfromfullname = $userfromfullname;
+                        $notification->userfromfullname = get_string('coresystem');
                     }
                 }
 
@@ -1378,7 +1353,7 @@ class core_message_external extends external_api {
 
         return array(
             'notifications' => $notifications,
-            'unreadcount' => message_count_unread_notifications($useridto, $useridfrom),
+            'unreadcount' => message_count_unread_popup_notifications($useridto),
         );
     }
 
@@ -1388,7 +1363,7 @@ class core_message_external extends external_api {
      * @return external_single_structure
      * @since 3.2
      */
-    public static function get_notifications_returns() {
+    public static function get_popup_notifications_returns() {
         return new external_single_structure(
             array(
                 'notifications' => new external_multiple_structure(
@@ -1518,13 +1493,10 @@ class core_message_external extends external_api {
      * @return external_function_parameters
      * @since 3.2
      */
-    public static function get_unread_notification_count_parameters() {
+    public static function get_unread_popup_notification_count_parameters() {
         return new external_function_parameters(
             array(
                 'useridto' => new external_value(PARAM_INT, 'the user id who received the message, 0 for any user', VALUE_REQUIRED),
-                'useridfrom' => new external_value(
-                    PARAM_INT, 'the user id who send the message, 0 for any user. -10 or -20 for no-reply or support user',
-                    VALUE_DEFAULT, 0),
             )
         );
     }
@@ -1536,25 +1508,20 @@ class core_message_external extends external_api {
      * @throws invalid_parameter_exception
      * @throws moodle_exception
      * @param  int      $useridto       the user id who received the message
-     * @param  int      $useridfrom     the user id who send the message. -10 or -20 for no-reply or support user
      * @return external_description
      */
-    public static function get_unread_notification_count($useridto, $useridfrom) {
+    public static function get_unread_popup_notification_count($useridto) {
         global $CFG, $USER;
 
         $params = self::validate_parameters(
-            self::get_unread_notification_count_parameters(),
-            array(
-                'useridto' => $useridto,
-                'useridfrom' => $useridfrom,
-            )
+            self::get_unread_popup_notification_count_parameters(),
+            array('useridto' => $useridto)
         );
 
         $context = context_system::instance();
         self::validate_context($context);
 
         $useridto = $params['useridto'];
-        $useridfrom = $params['useridfrom'];
 
         if (!empty($useridto)) {
             if (core_user::is_real_user($useridto)) {
@@ -1564,27 +1531,21 @@ class core_message_external extends external_api {
             }
         }
 
-        if (!empty($useridfrom)) {
-            // We use get_user here because the from user can be the noreply or support user.
-            $userfrom = core_user::get_user($useridfrom, '*', MUST_EXIST);
-        }
-
         // Check if the current user is the sender/receiver or just a privileged user.
-        if ($useridto != $USER->id and $useridfrom != $USER->id and
-             !has_capability('moodle/site:readallmessages', $context)) {
+        if ($useridto != $USER->id and !has_capability('moodle/site:readallmessages', $context)) {
             throw new moodle_exception('accessdenied', 'admin');
         }
 
-        return message_count_unread_notifications($useridto, $useridfrom);
+        return message_count_unread_popup_notifications($useridto);
     }
 
     /**
-     * Get unread notification count return description.
+     * Get unread popup notification count return description.
      *
      * @return external_single_structure
      * @since 3.2
      */
-    public static function get_unread_notification_count_returns() {
+    public static function get_unread_popup_notification_count_returns() {
         return new external_value(PARAM_INT, 'the user whose blocked users we want to retrieve');
     }
 
