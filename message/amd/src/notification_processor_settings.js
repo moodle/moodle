@@ -23,7 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.2
  */
-define(['jquery', 'core/fragment', 'core/templates', 'core/str', 'tool_lp/dialogue'], function($, Fragment, Templates, Str, Dialogue) {
+define(['jquery', 'core/fragment', 'core/templates', 'core/str', 'tool_lp/dialogue'],
+        function($, Fragment, Templates, Str, Dialogue) {
     /**
      * Constructor for the notification processor settings.
      *
@@ -49,12 +50,28 @@ define(['jquery', 'core/fragment', 'core/templates', 'core/str', 'tool_lp/dialog
         })
         .done(function(html, js) {
             Str.get_string('processorsettings', 'message').done(function(string) {
-                new Dialogue(string, html, function() {
-                    Templates.runTemplateJS(js);
+                var dialogue = new Dialogue(
+                    string,
+                    html,
+                    function() {
+                        Templates.runTemplateJS(js);
+                    },
+                    function() {
+                        // Removed dialogue from the DOM after close.
+                        dialogue.close();
+                    }
+                );
+
+                $(document).on('mpp:formsubmitted', function() {
+                    dialogue.close();
+                });
+
+                $(document).on('mpp:formcancelled', function() {
+                    dialogue.close();
                 });
             });
         });
-    }
+    };
 
     return NotificationProcessorSettings;
 });

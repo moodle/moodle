@@ -49,6 +49,10 @@
     </div>
     <form>
         {{{formhtml}}}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">{{#str}} savechanges {{/str}}</button>
+            <button type="button" class="btn" data-cancel-button>{{#str}} cancel {{/str}}</button>
+        </div>
     </form>
 </div>
 {{#js}}

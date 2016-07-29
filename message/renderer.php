@@ -216,31 +216,6 @@ class core_message_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Get the preferences for the given user.
-     *
-     * @param array $processors list of message processors
-     * @param array $providers list of message providers
-     * @param stdClass $user user
-     * @return stdClass
-     */
-    private function get_all_preferences($processors, $providers, $user) {
-        $preferences = get_providers_preferences($providers, $user->id);
-        $preferences->userdefaultemail = $user->email;//may be displayed by the email processor
-
-        /// For every processors put its options on the form (need to get function from processor's lib.php)
-        foreach ($processors as $processor) {
-            $processor->object->load_data($preferences, $user->id);
-        }
-
-        //load general messaging preferences
-        $preferences->blocknoncontacts = get_user_preferences('message_blocknoncontacts', '', $user->id);
-        $preferences->mailformat = $user->mailformat;
-        $preferences->mailcharset = get_user_preferences('mailcharset', '', $user->id);
-
-        return $preferences;
-    }
-
-    /**
      * Display the interface for messaging options
      *
      * @param object $user instance of a user
@@ -253,7 +228,7 @@ class core_message_renderer extends plugin_renderer_base {
         });
 
         $providers = message_get_providers_for_user($user->id);
-        $preferences = $this->get_all_preferences($readyprocessors, $providers, $user);
+        $preferences = get_all_message_preferences($readyprocessors, $providers, $user);
         $notificationlistoutput = new \core_message\output\preferences\notification_list($readyprocessors, $providers, $preferences, $user);
         $generalsettingsoutput = new \core_message\output\preferences\general_settings($preferences, $user);
 

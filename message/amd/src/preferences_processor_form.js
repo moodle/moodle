@@ -23,7 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.2
  */
-define(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {
+define(['jquery', 'core/ajax', 'core/notification', 'core/custom_interaction_events'],
+        function($, ajax, notification, CustomEvents) {
     /**
      * Constructor for the ProcessorForm.
      *
@@ -35,9 +36,21 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notificat
         this.userId = this.root.attr('data-user-id');
         this.name = this.root.attr('data-processor-name');
 
-        this.root.on('change', function(e) {
-            this.save();
+        this.root.find('form').on('submit', function(e) {
+            e.preventDefault();
+            this.save().done(function() {
+                $(document).trigger('mpp:formsubmitted');
+            });
         }.bind(this));
+
+        var cancelButton = this.root.find('[data-cancel-button]');
+        CustomEvents.define(cancelButton, [
+            CustomEvents.events.activate
+        ]);
+
+        cancelButton.on(CustomEvents.events.activate, function() {
+            $(document).trigger('mpp:formcancelled');
+        });
     };
 
     /**
