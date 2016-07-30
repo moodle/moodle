@@ -98,6 +98,11 @@ if ($form->is_cancelled()) {
 
     $newid = $DB->insert_record('badge', $fordb, true);
 
+    // Trigger event, badge created.
+    $eventparams = array('objectid' => $newid, 'context' => $PAGE->context);
+    $event = \core\event\badge_created::create($eventparams);
+    $event->trigger();
+
     $newbadge = new badge($newid);
     badges_process_badge_image($newbadge, $form->save_temp_file('image'));
     // If a user can configure badge criteria, they will be redirected to the criteria page.
