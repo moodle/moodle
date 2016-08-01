@@ -485,6 +485,11 @@ class report_log_table_log extends table_sql {
             $joins[] = "edulevel ".$edulevelsql;
             $params = array_merge($params, $edulevelparams);
         }
+        // Origin.
+        if (isset($this->filterparams->origin) && ($this->filterparams->origin != '')) {
+            $joins[] = "origin = :origin";
+            $params['origin'] = $this->filterparams->origin;
+        }
 
         if (!($this->filterparams->logreader instanceof logstore_legacy\log\store)) {
             // Filter out anonymous actions, this is N/A for legacy log because it never stores them.
