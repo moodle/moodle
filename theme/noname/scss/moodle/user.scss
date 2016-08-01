@@ -27,7 +27,10 @@
     @extend .lead;
 }
 .userprofile dl.list {
-    @extend .dl-horizontal;
+    // Copied from dl.row.
+    > dd + dt {
+      clear: left;
+    }
 }
 .user-box {
     margin: 8px;

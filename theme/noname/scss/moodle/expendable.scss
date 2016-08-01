@@ -46,9 +46,9 @@ table#permissions {
 // copied in because the styles are set on the HTML
 div[id^="bar_pbar_"] {
   overflow: hidden !important;
-  height: $line-height !important;
-  margin-bottom: $line-height !important;
-  @include gradient-vertical(#f5f5f5, #f9f9f9);
+  height: $line-height-base !important;
+  margin-bottom: $line-height-base !important;
+  @include gradient-y(#f5f5f5, #f9f9f9);
   @include box-shadow(inset 0 1px 2px rgba(0,0,0,.1));
   @include border-radius($border-radius);
   border: none !important;
@@ -60,7 +60,7 @@ div[id^="progress_pbar_"] {
   font-size: 12px !important;
   text-align: center !important;
   text-shadow: 0 -1px 0 rgba(0,0,0,.25) !important;
-  @include gradient-vertical(#149bdf, #0480be);
+  @include gradient-y(#149bdf, #0480be);
   @include box-shadow(inset 0 -1px 0 rgba(0,0,0,.15));
   @include transition(width .6s ease);
   padding-top: 0 !important;
