@@ -82,11 +82,11 @@ function workshop_add_instance(stdclass $workshop) {
     $workshop->evaluation            = 'best';
 
     if (isset($workshop->gradinggradepass)) {
-        $workshop->gradinggradepass = unformat_float($workshop->gradinggradepass);
+        $workshop->gradinggradepass = (float)unformat_float($workshop->gradinggradepass);
     }
 
     if (isset($workshop->submissiongradepass)) {
-        $workshop->submissiongradepass = unformat_float($workshop->submissiongradepass);
+        $workshop->submissiongradepass = (float)unformat_float($workshop->submissiongradepass);
     }
 
     if (isset($workshop->submissionfiletypes)) {
@@ -158,11 +158,11 @@ function workshop_update_instance(stdclass $workshop) {
     $workshop->phaseswitchassessment = (int)!empty($workshop->phaseswitchassessment);
 
     if (isset($workshop->gradinggradepass)) {
-        $workshop->gradinggradepass = unformat_float($workshop->gradinggradepass);
+        $workshop->gradinggradepass = (float)unformat_float($workshop->gradinggradepass);
     }
 
     if (isset($workshop->submissiongradepass)) {
-        $workshop->submissiongradepass = unformat_float($workshop->submissiongradepass);
+        $workshop->submissiongradepass = (float)unformat_float($workshop->submissiongradepass);
     }
 
     if (isset($workshop->submissionfiletypes)) {
