@@ -144,6 +144,7 @@ $THEME->layouts = [
 // $THEME->javascripts_footer = array();
 $THEME->parents = [];
 $THEME->enable_dock = false;
+$THEME->csstreepostprocessor = 'theme_noname_css_tree_post_processor';
 $THEME->supportscssoptimisation = false;
 $THEME->yuicssmodules = array();
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
