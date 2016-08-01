@@ -25,7 +25,6 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/locallib.php');
-require_once($CFG->dirroot . '/repository/lib.php');
 
 $cmid = required_param('cmid', PARAM_INT); // Course module id.
 $id = optional_param('id', 0, PARAM_INT); // Submission id.
