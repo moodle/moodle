@@ -230,11 +230,7 @@ class core_message_renderer extends plugin_renderer_base {
         $providers = message_get_providers_for_user($user->id);
         $preferences = get_all_message_preferences($readyprocessors, $providers, $user);
         $notificationlistoutput = new \core_message\output\preferences\notification_list($readyprocessors, $providers, $preferences, $user);
-        $generalsettingsoutput = new \core_message\output\preferences\general_settings($preferences, $user);
 
-        $output = $this->render_from_template('message/preferences_notifications_list', $notificationlistoutput->export_for_template($this));
-        $output .= $this->render_from_template('message/preferences_general_settings', $generalsettingsoutput->export_for_template($this));
-
-        return $output;
+        return $this->render_from_template('message/preferences_notifications_list', $notificationlistoutput->export_for_template($this));
     }
 }

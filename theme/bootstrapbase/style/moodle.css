@@ -7081,6 +7081,33 @@ body.path-question-type .mform fieldset.hidden {
 .popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions > * {
   margin-left: 5px;
 }
+.popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions .loading-icon {
+  display: none;
+  height: 12px;
+  width: 12px;
+}
+.popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions label {
+  display: inline-block;
+}
+.popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions [role="checkbox"].loading .loading-icon {
+  display: inline-block;
+}
+.popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions [role="checkbox"].loading[aria-checked] .checked,
+.popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions [role="checkbox"].loading[aria-checked] .unchecked {
+  display: none;
+}
+.popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions [role="checkbox"][aria-checked="true"] .checked {
+  display: inline-block;
+}
+.popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions [role="checkbox"][aria-checked="true"] .unchecked {
+  display: none;
+}
+.popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions [role="checkbox"][aria-checked="false"] .checked {
+  display: none;
+}
+.popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions [role="checkbox"][aria-checked="false"] .unchecked {
+  display: inline-block;
+}
 .popover-region .popover-region-container .popover-region-content-container {
   height: calc(100% - 25px);
   width: 100%;
@@ -7248,11 +7275,6 @@ body.path-question-type .mform fieldset.hidden {
 }
 .popover-region-notifications.popover-region .popover-region-container .popover-region-header-container .mark-all-read-button .normal-icon {
   display: inline-block;
-}
-.popover-region-notifications.popover-region .popover-region-container .popover-region-header-container .mark-all-read-button .loading-icon {
-  display: none;
-  height: 12px;
-  width: 12px;
 }
 .popover-region-notifications.popover-region .popover-region-container .popover-region-header-container .mark-all-read-button.loading .normal-icon {
   display: none;
@@ -7467,11 +7489,6 @@ body.path-question-type .mform fieldset.hidden {
 }
 .popover-region-messages.popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions .mark-all-read-button .normal-icon {
   display: inline-block;
-}
-.popover-region-messages.popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions .mark-all-read-button .loading-icon {
-  display: none;
-  height: 12px;
-  width: 12px;
 }
 .popover-region-messages.popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions .mark-all-read-button.loading .normal-icon {
   display: none;

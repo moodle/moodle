@@ -28,7 +28,7 @@
 define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates', 'core/str',
             'core/notification', 'core/custom_interaction_events', 'core/popover_region_controller',
             'core_message/notification_repository'],
-        function($, bootstrap, ajax, templates, str, DebugNotification, CustomEvents,
+        function($, Bootstrap, Ajax, Templates, Str, DebugNotification, CustomEvents,
             PopoverController, NotificationRepo) {
 
     var SELECTORS = {
@@ -45,6 +45,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         CONTENT_BODY_SHORT: '.content-body-short',
         CONTENT_BODY_FULL: '.content-body-full',
         LINK_URL: '[data-link-url]',
+        DISABLE_ALL_BUTTON: '[data-disable-all]',
     };
 
     var PROCESSOR_NAME = 'popup';
@@ -61,6 +62,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         PopoverController.call(this, element);
 
         this.markAllReadButton = this.root.find(SELECTORS.MARK_ALL_READ_BUTTON);
+        this.disableAllButton = this.root.find(SELECTORS.DISABLE_ALL_BUTTON);
         this.unreadCount = 0;
         this.userId = this.root.attr(SELECTORS.USER_ID);
         this.modeToggle = this.root.find(SELECTORS.MODE_TOGGLE);
@@ -92,6 +94,11 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
     NotificationPopoverController.prototype = Object.create(PopoverController.prototype);
 
     /**
+     * Make sure the constructor is set correctly.
+     */
+    NotificationPopoverController.prototype.constructor = NotificationPopoverController;
+
+    /**
      * Set the correct aria label on the menu toggle button to be read out by screen
      * readers. The message will indicate the state of the unread notifications.
      *
@@ -99,16 +106,16 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
      */
     NotificationPopoverController.prototype.updateButtonAriaLabel = function() {
         if (this.isMenuOpen()) {
-            str.get_string('hidenotificationwindow', 'message').done(function(string) {
+            Str.get_string('hidenotificationwindow', 'message').done(function(string) {
                 this.menuToggle.attr('aria-label', string);
             }.bind(this));
         } else {
             if (this.unreadCount) {
-                str.get_string('shownotificationwindowwithcount', 'message', this.unreadCount).done(function(string) {
+                Str.get_string('shownotificationwindowwithcount', 'message', this.unreadCount).done(function(string) {
                     this.menuToggle.attr('aria-label', string);
                 }.bind(this));
             } else {
-                str.get_string('shownotificationwindownonew', 'message').done(function(string) {
+                Str.get_string('shownotificationwindownonew', 'message').done(function(string) {
                     this.menuToggle.attr('aria-label', string);
                 }.bind(this));
             }
@@ -301,10 +308,10 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
                     }
                 }
 
-                var promise = templates.render('message/notification_content_item', notification);
+                var promise = Templates.render('message/notification_content_item', notification);
                 promise.then(function(html, js) {
                     container.append(html);
-                    templates.runTemplateJS(js);
+                    Templates.runTemplateJS(js);
                 }.bind(this));
 
                 promises.push(promise);
@@ -380,6 +387,61 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
                 this.clearUnreadNotifications();
             }.bind(this))
             .always(function() { this.markAllReadButton.removeClass('loading'); }.bind(this));
+    };
+
+    /**
+     * Update the disable all notifications user property in the DOM and
+     * send a request to update on the server.
+     *
+     * @method toggleDisableAllStatus
+     */
+    NotificationPopoverController.prototype.toggleDisableAllStatus = function() {
+        var button = this.disableAllButton;
+        var ischecked = (button.attr('aria-checked') === 'true');
+        var disablestring = '';
+        var enablestring = '';
+
+        button.addClass('loading');
+
+        return Str.get_strings([
+                {
+                    key: 'disableall',
+                    component: 'message',
+                },
+                {
+                    key: 'enableall',
+                    component: 'message',
+                }
+            ]).then(function(strings) {
+                // If we could load the strings then update the user preferences.
+                disablestring = strings[0];
+                enablestring = strings[1];
+
+                var request = {
+                    methodname: 'core_user_update_user',
+                    args: {
+                        user: {
+                            emailstop: ischecked ? 0 : 1,
+                        }
+                    }
+                };
+
+                return Ajax.call([request])[0];
+            })
+            .done(function() {
+                // If everything executed correctly then update the DOM.
+                if (ischecked) {
+                    button.attr('aria-checked', false)
+                    button.attr('data-original-title', disablestring);
+                    $(document).trigger('messageprefs:enableall');
+                } else {
+                    button.attr('aria-checked', true)
+                    button.attr('data-original-title', enablestring);
+                    $(document).trigger('messageprefs:disableall');
+                }
+            })
+            .fail(DebugNotification.exception)
+            .always(function() { button.removeClass('loading') });
     };
 
     /**
@@ -588,7 +650,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
             args: args
         };
 
-        var promise = ajax.call([request])[0];
+        var promise = Ajax.call([request])[0];
 
         promise.fail(DebugNotification.exception);
         promise.always(function() {
@@ -662,7 +724,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
                 this.modeToggle.addClass('off');
                 this.root.removeClass('unread-only');
 
-                str.get_string('shownewnotifications', 'message').done(function(string) {
+                Str.get_string('shownewnotifications', 'message').done(function(string) {
                     this.modeToggle.attr('aria-label', string);
                 }.bind(this));
             } else {
@@ -670,7 +732,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
                 this.modeToggle.addClass('on');
                 this.root.addClass('unread-only');
 
-                str.get_string('showallnotifications', 'message').done(function(string) {
+                Str.get_string('showallnotifications', 'message').done(function(string) {
                     this.modeToggle.attr('aria-label', string);
                 }.bind(this));
             }
@@ -706,6 +768,14 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         this.root.on(CustomEvents.events.activate, SELECTORS.MARK_ALL_READ_BUTTON, function(e) {
             this.markAllAsRead();
             e.stopPropagation();
+        }.bind(this));
+
+        // Update the state of preferences when disable all notifications button is activated.
+        this.root.on(CustomEvents.events.activate, SELECTORS.DISABLE_ALL_BUTTON, function(e, data) {
+            this.toggleDisableAllStatus();
+
+            e.stopPropagation();
+            data.originalEvent.preventDefault();
         }.bind(this));
 
         // Expand all the currently visible content items if the user hits the

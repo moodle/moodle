@@ -47,12 +47,34 @@
 
     {{$headertext}}{{#str}} messages, message {{/str}}{{/headertext}}
     {{$headeractions}}
+        <label>
+            <span class="accesshide">{{#str}} blocknoncontacts, message {{/str}}</span>
+            <div role="checkbox"
+                tabindex="0"
+                {{#blocknoncontacts}}
+                    aria-checked="true"
+                    data-original-title="{{#str}} unblocknoncontacts, message {{/str}}"
+                {{/blocknoncontacts}}
+                {{^blocknoncontacts}}
+                    aria-checked="false"
+                    data-original-title="{{#str}} blocknoncontacts, message {{/str}}"
+                {{/blocknoncontacts}}
+                data-block-non-contacts
+                data-preference-key="message_blocknoncontacts"
+                data-toggle="tooltip"
+                data-placement="top">
+
+                <div class="checked">{{#pix}} t/hide, core {{/pix}}</div>
+                <div class="unchecked">{{#pix}} t/show, core {{/pix}}</div>
+                {{> core/loading }}
+            </div>
+        </label>
         <a class="mark-all-read-button"
             href="#"
+            role="button"
             data-toggle="tooltip"
             data-placement="top"
-            data-original-title="{{#str}} markallread {{/str}}"
-            aria-role="button">
+            data-original-title="{{#str}} markallread {{/str}}">
             <span class="normal-icon">{{#pix}} t/markasread, core, {{#str}} markallread {{/str}} {{/pix}}</span>
             {{> core/loading }}
         </a>

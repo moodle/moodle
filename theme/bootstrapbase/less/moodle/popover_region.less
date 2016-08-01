@@ -52,6 +52,43 @@
                 > * {
                     margin-left: 5px;
                 }
+                .loading-icon {
+                    display: none;
+                    height: 12px;
+                    width: 12px;
+                }
+                label {
+                    display: inline-block;
+                }
+                [role="checkbox"] {
+                    &.loading {
+                        .loading-icon {
+                            display: inline-block;
+                        }
+                        &[aria-checked] {
+                            .checked,
+                            .unchecked {
+                                display: none;
+                            }
+                        }
+                    }
+                    &[aria-checked="true"] {
+                        .checked {
+                            display: inline-block;
+                        }
+                        .unchecked {
+                            display: none;
+                        }
+                    }
+                    &[aria-checked="false"] {
+                        .checked {
+                            display: none;
+                        }
+                        .unchecked {
+                            display: inline-block;
+                        }
+                    }
+                }
             }
         }
 
@@ -258,12 +295,6 @@
                     .normal-icon {
                         display: inline-block;
                     }
-                    .loading-icon {
-                        display: none;
-                        height: 12px;
-                        width: 12px;
-                    }
-
                     &.loading {
                         .normal-icon {
                             display: none;
@@ -557,11 +588,6 @@
                     .mark-all-read-button {
                         .normal-icon {
                             display: inline-block;
-                        }
-                        .loading-icon {
-                            display: none;
-                            height: 12px;
-                            width: 12px;
                         }
 
                         &.loading {

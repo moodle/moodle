@@ -26,9 +26,9 @@
  * @since      3.2
  */
 define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates', 'core/str',
-            'core/custom_interaction_events', 'core/popover_region_controller',
+            'core/notification', 'core/custom_interaction_events', 'core/popover_region_controller',
             'core_message/message_repository', 'core/url'],
-        function($, bootstrap, ajax, templates, str, CustomEvents,
+        function($, Bootstrap, Ajax, Templates, Str, Notification, CustomEvents,
             PopoverController, MessageRepo, URL) {
 
     var SELECTORS = {
@@ -39,6 +39,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         CONTENT_ITEM_CONTAINER: '.content-item-container',
         EMPTY_MESSAGE: '.empty-message',
         LINK_URL: '[data-link-url]',
+        BLOCK_NON_CONTACTS_BUTTON: '[data-block-non-contacts]',
     };
 
     /**
@@ -53,6 +54,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         PopoverController.call(this, element);
 
         this.markAllReadButton = this.root.find(SELECTORS.MARK_ALL_READ_BUTTON);
+        this.blockNonContactsButton = this.root.find(SELECTORS.BLOCK_NON_CONTACTS_BUTTON);
         this.content = this.root.find(SELECTORS.CONTENT);
         this.userId = this.root.attr(SELECTORS.USER_ID);
         this.limit = 20;
@@ -69,6 +71,11 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
      * Clone the parent prototype.
      */
     MessagePopoverController.prototype = Object.create(PopoverController.prototype);
+
+    /**
+     * Make sure the constructor is set correctly.
+     */
+    MessagePopoverController.prototype.constructor = MessagePopoverController;
 
     /**
      * Get the element holding the messages.
@@ -91,22 +98,22 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
 
     /**
      * Set the correct aria label on the menu toggle button to be read out by screen
-     * readers. The message will indicate the state of the unread notifications.
+     * readers. The message will indicate the state of the unread messages.
      *
      * @method updateButtonAriaLabel
      */
     MessagePopoverController.prototype.updateButtonAriaLabel = function() {
         if (this.isMenuOpen()) {
-            str.get_string('hidemessagewindow', 'message').done(function(string) {
+            Str.get_string('hidemessagewindow', 'message').done(function(string) {
                 this.menuToggle.attr('aria-label', string);
             }.bind(this));
         } else {
             if (this.unreadCount) {
-                str.get_string('showmessagewindowwithcount', 'message', this.unreadCount).done(function(string) {
+                Str.get_string('showmessagewindowwithcount', 'message', this.unreadCount).done(function(string) {
                     this.menuToggle.attr('aria-label', string);
                 }.bind(this));
             } else {
-                str.get_string('showmessagewindownonew', 'message').done(function(string) {
+                Str.get_string('showmessagewindownonew', 'message').done(function(string) {
                     this.menuToggle.attr('aria-label', string);
                 }.bind(this));
             }
@@ -134,8 +141,8 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
     };
 
     /**
-     * Show the unread notification count badge on the menu toggle if there
-     * are unread notifications, otherwise hide it.
+     * Show the unread message count badge on the menu toggle if there
+     * are unread messages, otherwise hide it.
      *
      * @method renderUnreadCount
      */
@@ -151,7 +158,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
     };
 
     /**
-     * Hide the unread notification count badge on the menu toggle.
+     * Hide the unread message count badge on the menu toggle.
      *
      * @method hideUnreadCount
      */
@@ -160,7 +167,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
     };
 
     /**
-     * Ask the server how many unread notifications are left, render the value
+     * Ask the server how many unread messages are left, render the value
      * as a badge on the menu toggle and update the aria labels on the menu
      * toggle.
      *
@@ -175,12 +182,12 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
     };
 
     /**
-     * Render the notification data with the appropriate template and add it to the DOM.
+     * Render the message data with the appropriate template and add it to the DOM.
      *
      * @method renderMessages
      * @param messages array message data
      * @param container jQuery object the container to append the rendered messages
-     * @return jQuery promise that is resolved when all notifications have been
+     * @return jQuery promise that is resolved when all messages have been
      *                rendered and added to the DOM
      */
     MessagePopoverController.prototype.renderMessages = function(messages, container) {
@@ -197,10 +204,10 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
                     id: message.userid,
                 });
 
-                var promise = templates.render('message/message_content_item', message);
+                var promise = Templates.render('message/message_content_item', message);
                 promise.then(function(html, js) {
                     container.append(html);
-                    templates.runTemplateJS(js);
+                    Templates.runTemplateJS(js);
                 }.bind(this));
 
                 promises.push(promise);
@@ -215,7 +222,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
      * loading some and haven't already loaded all of them.
      *
      * @method loadMoreMessages
-     * @return jQuery promise that is resolved when notifications have been
+     * @return jQuery promise that is resolved when messages have been
      *                        retrieved and added to the DOM
      */
     MessagePopoverController.prototype.loadMoreMessages = function() {
@@ -248,8 +255,8 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
     };
 
     /**
-     * Send a request to the server to mark all unread notifications as read and update
-     * the unread count and unread notification elements appropriately.
+     * Send a request to the server to mark all unread messages as read and update
+     * the unread count and unread messages elements appropriately.
      *
      * @method markAllAsRead
      */
@@ -265,7 +272,65 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
     };
 
     /**
-     * Add all of the required event listeners for this notification popover.
+     * Update the block messages from non-contacts user preference in the DOM and
+     * send a request to update on the server.
+     *
+     * @method toggleBlockNonContactsStatus
+     */
+    MessagePopoverController.prototype.toggleBlockNonContactsStatus = function() {
+        var button = this.blockNonContactsButton;
+        var ischecked = (button.attr('aria-checked') === 'true');
+        var blockstring = '';
+        var unblockstring = '';
+
+        button.addClass('loading');
+
+        return Str.get_strings([
+                {
+                    key: 'blocknoncontacts',
+                    component: 'message',
+                },
+                {
+                    key: 'unblocknoncontacts',
+                    component: 'message',
+                }
+            ]).then(function(strings) {
+                // If we could load the strings then update the user preferences.
+                blockstring = strings[0];
+                unblockstring = strings[1];
+
+                var request = {
+                    methodname: 'core_user_update_user',
+                    args: {
+                        user: {
+                            preferences: [
+                                {
+                                    type: button.attr('data-preference-key'),
+                                    value: ischecked ? 0 : 1,
+                                }
+                            ]
+                        }
+                    }
+                };
+
+                return Ajax.call([request])[0];
+            })
+            .done(function() {
+                // If everything executed correctly then update the DOM.
+                if (ischecked) {
+                    button.attr('aria-checked', false)
+                    button.attr('data-original-title', blockstring);
+                } else {
+                    button.attr('aria-checked', true)
+                    button.attr('data-original-title', unblockstring);
+                }
+            })
+            .fail(Notification.exception)
+            .always(function() { button.removeClass('loading') });
+    };
+
+    /**
+     * Add all of the required event listeners for this messages popover.
      *
      * @method registerEventListeners
      */
@@ -274,7 +339,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
             CustomEvents.events.keyboardActivate,
         ]);
 
-        // Update the notification information when the menu is opened.
+        // Update the message information when the menu is opened.
         this.root.on(this.events().menuOpened, function() {
             this.hideUnreadCount();
             this.updateButtonAriaLabel();
@@ -284,7 +349,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
             }
         }.bind(this));
 
-        // Update the notification information when the menu is opened.
+        // Update the message information when the menu is opened.
         this.root.on(this.events().menuClosed, function() {
             this.renderUnreadCount();
             this.updateButtonAriaLabel();
@@ -313,6 +378,14 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
             var linkItem = $(e.target).closest(SELECTORS.LINK_URL);
             this.navigateToLinkURL(linkItem, false);
             e.stopPropagation();
+        }.bind(this));
+
+        // Update the state of non-contact blocking when button is activated.
+        this.root.on(CustomEvents.events.activate, SELECTORS.BLOCK_NON_CONTACTS_BUTTON, function(e, data) {
+            this.toggleBlockNonContactsStatus();
+
+            e.stopPropagation();
+            data.originalEvent.preventDefault();
         }.bind(this));
     };
 

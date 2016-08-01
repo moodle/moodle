@@ -22,7 +22,6 @@
  * @copyright  2009 Petr Skodak
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- */
 
 require_once("$CFG->libdir/externallib.php");
 
@@ -452,6 +451,14 @@ class core_user_external extends external_api {
         }
 
         $transaction->allow_commit();
+
+        // Everything went well, update the $USER.
+        foreach ($user as $property => $value) {
+            // If the $USER knows about this value.
+            if (isset($USER, $property)) {
+                $USER->$property = $value;
+            }
+        }
 
         return null;
     }
