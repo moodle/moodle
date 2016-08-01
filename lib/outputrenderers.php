@@ -540,6 +540,15 @@ class core_renderer extends renderer_base {
             $output .= '<meta http-equiv="refresh" content="'.$this->page->periodicrefreshdelay.';url='.$this->page->url->out().'" />';
         }
 
+        // Smart App Banners meta tag is only displayed if mobile services are enabled and configured.
+        if ($CFG->enablemobilewebservice) {
+            $mobilesettings = get_config('tool_mobile');
+            if ($mobilesettings->enablesmartappbanners and $mobilesettings->iosappid) {
+                $output .= '<meta name="apple-itunes-app" content="app-id=' . s($mobilesettings->iosappid) . ', ';
+                $output .= 'app-argument=' . $this->page->url->out() . '"/>';
+            }
+        }
+
         // flow player embedding support
         $this->page->requires->js_function_call('M.util.load_flowplayer');
 

@@ -23,11 +23,16 @@
  */
 
 $string['clickheretolaunchtheapp'] = 'Click here if the app does not open automatically.';
+$string['enablesmartappbanners'] = 'Enable Smart App Banners';
+$string['enablesmartappbanners_desc'] = 'This will display a banner promoting the Moodle Mobile app when visiting the site in Mobile Safari.';
 $string['forcedurlscheme'] = 'The URL scheme allows to open the mobile app from other apps like the browser. Use this setting if you want to allow only your custom branded app to be opened by the browser.';
 $string['forcedurlscheme_key'] = 'URL scheme';
+$string['iosappid'] = 'App\'s unique identifier';
+$string['iosappid_desc'] = 'You only need to change this value if you have a custom iOS app';
 $string['loginintheapp'] = 'Via the app';
 $string['logininthebrowser'] = 'Via a browser window (for SSO plugins)';
 $string['loginintheembeddedbrowser'] = 'Via an embedded browser (for SSO plugins)';
 $string['pluginname'] = 'Moodle Mobile tools';
+$string['smartappbanners'] = 'Smart App Banners (iOS only)';
 $string['typeoflogin'] = 'Type of login';
 $string['typeoflogin_desc'] = 'Choose the type of login.';

@@ -58,5 +58,15 @@ if ($hassiteconfig) {
                 new lang_string('forcedurlscheme_key', 'tool_mobile'),
                 new lang_string('forcedurlscheme', 'tool_mobile'), '', PARAM_NOTAGS));
 
+    $temp->add(new admin_setting_heading('tool_mobile/smartappbanners',
+                new lang_string('smartappbanners', 'tool_mobile'), ''));
+
+    $temp->add(new admin_setting_configcheckbox('tool_mobile/enablesmartappbanners',
+                new lang_string('enablesmartappbanners', 'tool_mobile'),
+                new lang_string('enablesmartappbanners_desc', 'tool_mobile'), 0));
+
+    $temp->add(new admin_setting_configtext('tool_mobile/iosappid', new lang_string('iosappid', 'tool_mobile'),
+                new lang_string('iosappid_desc', 'tool_mobile'), '633359593', PARAM_ALPHANUM));
+
     $ADMIN->add('webservicesettings', $temp);
 }
