@@ -34,7 +34,7 @@ p.arrow_button {
 #addcontrols {
     // The margin top is equal the combination of the line-height and margin of a <p>,
     // because the visual parent is a <p>.
-    margin-top: $line-height + ($line-height / 2);
+    margin-top: $line-height-base + ($line-height-base / 2);
     text-align: center;
     margin-bottom: 3em;
     label {

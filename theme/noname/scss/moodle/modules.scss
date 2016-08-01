@@ -439,7 +439,7 @@ div#dock {
                         }
                         &:hover {
                             text-decoration: none;
-                            @include gradient-vertical($dropdown-link-hover-bg, darken($dropdown-link-hover-bg, 5%));
+                            @include gradient-y($dropdown-link-hover-bg, darken($dropdown-link-hover-bg, 5%));
                         }
                     }
                     &.align-tr-br {

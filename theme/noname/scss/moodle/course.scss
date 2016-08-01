@@ -185,7 +185,7 @@
     background-color: $gray-lighter;
 }
 .course-content .current {
-    @extend .label-info;
+    @extend .tag-info;
 }
 .course-content .section-summary {
     border: 1px solid $table-border-color;

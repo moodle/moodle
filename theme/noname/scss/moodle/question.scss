@@ -51,7 +51,7 @@
     @include border-top-radius(10px);
     border: 1px solid #ccc;
     border-bottom: 1px solid #bbb;
-    @include gradient-vertical(#fff, #ccc);
+    @include gradient-y(#fff, #ccc);
 }
 #qtypechoicecontainer {
     font-size: 12px;

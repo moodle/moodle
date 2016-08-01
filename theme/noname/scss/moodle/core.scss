@@ -1008,12 +1008,12 @@ tr.flagged-tag a {
         display: inline-block;
         .fitem {
             display: inline-block;
-            line-height: $line-height * 2;
+            line-height: $line-height-base * 2;
             margin-right: .3em;
             white-space: nowrap;
             label {
                 display: inline;
-                line-height: $line-height;
+                line-height: $line-height-base;
                 padding-right: .3em;
             }
             :before,

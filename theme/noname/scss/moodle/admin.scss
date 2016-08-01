@@ -56,14 +56,14 @@
     display: none;
 }
 .statusok {
-    @extend .label-success;
+    @extend .tag-success;
 }
 .statuswarning {
-    @extend .label-warning;
+    @extend .tag-warning;
 }
 .statusserious,
 .statuscritical {
-    @extend .label-danger;
+    @extend .tag-danger;
 }
 
 #page-admin-report-capability-index #capabilitysearch {
@@ -72,17 +72,17 @@
 
 #page-admin-report-backups-index .backup-error,
 #page-admin-report-backups-index .backup-unfinished {
-    @extend .label-danger;
+    @extend .tag-danger;
 }
 
 #page-admin-report-backups-index .backup-skipped,
 #page-admin-report-backups-index .backup-ok,
 #page-admin-report-backups-index .backup-notyetrun {
-    @extend .label-success;
+    @extend .tag-success;
 }
 
 #page-admin-report-backups-index .backup-warning {
-    @extend .label-warning;
+    @extend .tag-warning;
 }
 
 #page-admin-qtypes .disabled,
@@ -205,7 +205,7 @@
 }
 
 #page-admin-index .updateplugin .updatepluginconfirmexternal {
-    @extend .label-warning;
+    @extend .tag-warning;
 }
 
 #page-admin-user-user_bulk #users .fgroup {
@@ -463,16 +463,16 @@
 }
 
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release {
-    @extend .label-info;
+    @extend .tag-info;
 }
 
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity100 .info.release,
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity150 .info.release {
-    @extend .label-warning;
+    @extend .tag-warning;
 }
 
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity50 .info.release {
-    @extend .label-danger;
+    @extend .tag-danger;
 }
 
 // Plugins overview page at admin/plugins.php

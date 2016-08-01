@@ -194,5 +194,5 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
 // to enable ol lists to use a larger number set.
 
 ol {
-    margin: 0 0 $line-height / 2 2.5em;
+    margin: 0 0 $line-height-base / 2 2.5em;
 }

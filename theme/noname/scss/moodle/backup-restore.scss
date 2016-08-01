@@ -56,9 +56,9 @@
     display: block;
     width: 100%;
     padding: 0;
-    margin-bottom: $line-height;
+    margin-bottom: $line-height-base;
     font-size: $font-size-base * 1.5;
-    line-height: $line-height * 2;
+    line-height: $line-height-base * 2;
     color: $gray-dark;
     border: 0;
     border-bottom: 1px solid #e5e5e5;
