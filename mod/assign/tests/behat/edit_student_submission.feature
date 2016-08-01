@@ -47,7 +47,7 @@ Feature: In an assignment, the administrator can edit students' submissions
     And I click on "Edit" "link" in the "Student 1" "table_row"
     And I follow "Edit submission"
     And I set the following fields to these values:
-      | Online text | I have seen the movie chef. | 
+      | Online text | I have seen the movie chef. |
     And I press "Save changes"
     And I follow "View all submissions"
     Then I should see "I have seen the movie chef."
