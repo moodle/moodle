@@ -327,7 +327,7 @@ class mod_choice_renderer extends plugin_renderer_base {
             }
             $data['labels'][$count] = $option->text;
             $data['series'][$count] = $numberofuser;
-            $data['series_labels'][$count] = '(' . format_float($percentageamount, 1) . '%)';
+            $data['series_labels'][$count] = $numberofuser . ' (' . format_float($percentageamount, 1) . '%)';
             $count++;
             $numberofuser = 0;
         }
