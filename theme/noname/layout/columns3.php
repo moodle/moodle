@@ -24,7 +24,7 @@
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, array('context' => context_course::instance(SITEID))),
     'output' => $OUTPUT,
-    'sidepreblocks' => $OUTPUT->blocks('side-pre', 'col-md-4 col-md-pull-8'),
+    'sidepreblocks' => $OUTPUT->blocks('side-pre', 'col-md-4 pull-md-8'),
     'sidepostblocks' => $OUTPUT->blocks('side-post', 'col-md-3')
 ];
 

@@ -68,20 +68,7 @@ class core_renderer extends \core_renderer {
      * Uses bootstrap compatible html.
      */
     public function navbar() {
-        $items = $this->page->navbar->get_items();
-        if (empty($items)) {
-            return '';
-        }
-
-        $breadcrumbs = array();
-        foreach ($items as $item) {
-            $item->hideicon = true;
-            $breadcrumbs[] = $this->render($item);
-        }
-        $list_items = '<li>'.join(" </li><li>", $breadcrumbs).'</li>';
-        $title = '<span class="accesshide" id="navbar-label">'.get_string('pagepath').'</span>';
-        return $title . '<nav aria-labelledby="navbar-label"><ul class="breadcrumb">' .
-                $list_items . '</ul></nav>';
+        return $this->render_from_template('core/navbar', $this->page->navbar);
     }
 
     /*
