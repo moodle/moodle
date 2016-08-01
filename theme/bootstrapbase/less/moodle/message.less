@@ -50,6 +50,9 @@ table.message .searchresults td {
 .message .contactselector {
     @maxwidth: 240px;
 
+    max-width: 380px;
+    margin: 0 auto;
+
     @media screen and (min-width: 1000px) {
         float: left;
         padding: 0 8px 0 0;
@@ -57,10 +60,6 @@ table.message .searchresults td {
     width: auto;
     .singleselect {
         width: @maxwidth;
-    }
-    float: left;
-    .dir-rtl & {
-        float:right;
     }
     .paging {
         z-index: 1;
@@ -152,6 +151,12 @@ table.message .searchresults td {
             }
         }
     }
+
+    .message .contactselector {
+        @media screen and (min-width: 1000px) {
+            float: right;
+        }
+    }
 }
 .message .messagearea  {
     @media screen and (min-width: 1000px) {
@@ -164,6 +169,15 @@ table.message .searchresults td {
     float: none;
     overflow: hidden;
     min-height: 200px;
+    min-width: 300px;
+}
+
+#message_user_pictures {
+    text-align: center;
+
+    .dir-rtl & {
+        direction: rtl;
+    }
 }
 
 
@@ -175,17 +189,35 @@ table.message .searchresults td {
     vertical-align: top;
     width: 45%;
     min-width: 100px;
-    float: left;
+    display: inline-block;
 }
 .message .messagearea .messagehistory .user > div {
     text-align: center;
 }
 .message .messagearea .messagehistory .between {
-    float: left;
+    display: inline-block;
     width: 16px;
     margin: 0 1%;
     padding-top: 40px;
 }
+
+@media screen and (max-width: 320px) {
+
+    .message .messagearea {
+        min-width: 0;
+    }
+
+    .message .messagearea .messagehistory .user {
+        max-width: 70px;
+        min-width: 0;
+    }
+
+    .message .messagearea .messagehistory .user .userpicture {
+        width: 50px;
+        height: auto;
+    }
+}
+
 @media screen and (min-width: 800px) {
     .message .messagearea .messagehistory .between {
         margin: 0 3%;
@@ -193,43 +225,11 @@ table.message .searchresults td {
     .message .messagearea .messagehistory .user {
         width: 32%
     }
-    .message .messagearea .messagehistory .user:first-child {
-        margin-left: 13%;
-    }
-    .message .messagearea .messagehistory .user:last-child {
-        margin-right: 13%;
-    }
-    .dir-rtl .message .messagearea .messagehistory .user:first-child {
-        margin-right: 13%;
-        margin-left: 0%
-    }
-    .dir-rtl .message .messagearea .messagehistory .user:last-child {
-        margin-left: 13%;
-        margin-right: 0%;
-    }
 }
 @media screen and (min-width: 1200px) {
     .message .messagearea .messagehistory .user {
         width: 25%
     }
-    .message .messagearea .messagehistory .user:first-child {
-        margin-left: 20%;
-    }
-    .message .messagearea .messagehistory .user:last-child {
-        margin-right: 20%;
-    }
-    .dir-rtl .message .messagearea .messagehistory .user:first-child {
-        margin-left: 0;
-        margin-right: 20%;
-    }
-    .dir-rtl .message .messagearea .messagehistory .user:last-child {
-        margin-right: 0%;
-        margin-left: 20%;
-    }
-}
-.dir-rtl .message .messagearea .messagehistory .between,
-.dir-rtl .message .messagearea .messagehistory .user {
-    float: right;
 }
 .message .messagearea .messagehistory .heading {
     width: 100%;
