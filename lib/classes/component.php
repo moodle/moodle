@@ -67,9 +67,12 @@ class core_component {
     protected static $version = null;
     /** @var array list of the files to map. */
     protected static $filestomap = array('lib.php', 'settings.php');
-    /** @var array associative array of PRS-4 and PSR-0 namespaces and corresponding paths. */
-    protected static $psrnamespaces = array(
-            'Horde' => 'lib/horde/framework/Horde',
+    /** @var array associative array of PSR-0 namespaces and corresponding paths. */
+    protected static $psr0namespaces = array(
+        'Horde' => 'lib/horde/framework/Horde'
+    );
+    /** @var array associative array of PRS-4 namespaces and corresponding paths. */
+    protected static $psr4namespaces = array(
     );
 
     /**
@@ -109,51 +112,75 @@ class core_component {
             return;
         }
 
-        if (self::psr_classloader($classname)) {
+        $file = self::psr_classloader($classname);
+        // If the file is found, require it.
+        if (!empty($file)) {
+            require($file);
             return;
         }
     }
 
     /**
-     * Load a class from our defined PSR-0 or PSR-4 standard namespaces on
-     * demand.
+     * Return the path to a class from our defined PSR-0 or PSR-4 standard namespaces on
+     * demand. Only returns paths to files that exist.
      *
      * Adapated from http://www.php-fig.org/psr/psr-4/examples/ and made PSR-0
      * compatible.
      *
-     * @param string $class the name fo the class.
-     * @return bool true if class was loaded.
+     * @param string $class the name of the class.
+     * @return string|bool The full path to the file defining the class. Or false if it could not be resolved or does not exist.
      */
     protected static function psr_classloader($class) {
-        global $CFG;
-
-        // Iterate through each namespace prefix.
-        foreach (self::$psrnamespaces as $prefix => $path) {
-            // Does the class use the namespace prefix?
-            $len = strlen($prefix);
-            if (strncmp($prefix, $class, $len) !== 0) {
-                // No, move to the next prefix.
-                continue;
+        // Iterate through each PSR-4 namespace prefix.
+        foreach (self::$psr4namespaces as $prefix => $path) {
+            $file = self::get_class_file($class, $prefix, $path, array('\\'));
+            if (!empty($file) && file_exists($file)) {
+                return $file;
             }
+        }
 
-            $path = $CFG->dirroot . DIRECTORY_SEPARATOR . $path;
-
-            // Get the relative class name.
-            $relativeclass = substr($class, $len);
-
-            // Replace the namespace prefix with the base directory, replace namespace
-            // separators or _ with directory separators in the relative class name, append
-            // with .php.
-            $file = $path. str_replace(array('\\', '_'), DIRECTORY_SEPARATOR, $relativeclass) . '.php';
-
-            // If the file exists, require it.
-            if (file_exists($file)) {
-                require($file);
-                return true;
+        // Iterate through each PSR-0 namespace prefix.
+        foreach (self::$psr0namespaces as $prefix => $path) {
+            $file = self::get_class_file($class, $prefix, $path, array('\\', '_'));
+            if (!empty($file) && file_exists($file)) {
+                return $file;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Return the path to the class based on the given namespace prefix and path it corresponds to.
+     *
+     * Will return the path even if the file does not exist. Check the file esists before requiring.
+     *
+     * @param string $class the name of the class.
+     * @param string $prefix The namespace prefix used to identify the base directory of the source files.
+     * @param string $path The relative path to the base directory of the source files.
+     * @param string[] $separators The characters that should be used for separating.
+     * @return string|bool The full path to the file defining the class. Or false if it could not be resolved.
+     */
+    protected static function get_class_file($class, $prefix, $path, $separators) {
+        global $CFG;
+
+        // Does the class use the namespace prefix?
+        $len = strlen($prefix);
+        if (strncmp($prefix, $class, $len) !== 0) {
+            // No, move to the next prefix.
+            return false;
+        }
+        $path = $CFG->dirroot . '/' . $path;
+
+        // Get the relative class name.
+        $relativeclass = substr($class, $len);
+
+        // Replace the namespace prefix with the base directory, replace namespace
+        // separators with directory separators in the relative class name, append
+        // with .php.
+        $file = $path . str_replace($separators, '/', $relativeclass) . '.php';
+
+        return $file;
     }
 
 
