@@ -119,7 +119,7 @@ EOD;
      */
     protected static function strip_images($html) {
         $dom = new DOMDocument();
-        $dom->loadHTML($html);
+        $dom->loadHTML("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" . $html);
         $images = $dom->getElementsByTagName('img');
         $i = 0;
 
@@ -135,7 +135,8 @@ EOD;
             $text = $dom->createTextNode($replacement);
             $node->parentNode->replaceChild($text, $node);
         }
-        return $dom->saveHTML();
+        $count = 1;
+        return str_replace("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>", "", $dom->saveHTML(), $count);
     }
 
     /**
