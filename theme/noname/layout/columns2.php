@@ -24,7 +24,7 @@
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, array('context' => context_course::instance(SITEID))),
     'output' => $OUTPUT,
-    'sidepreblocks' => $OUTPUT->blocks('side-pre', 'col-md-3 col-md-pull-9'),
+    'sidepreblocks' => $OUTPUT->blocks('side-pre', 'col-md-3 pull-md-9'),
 ];
 
 echo $OUTPUT->render_from_template('theme_noname/columns2', $templatecontext);
