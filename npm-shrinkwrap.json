@@ -2122,6 +2122,18 @@
         }
       }
     },
+    "stylelint-checkstyle-formatter": {
+      "version": "0.1.0",
+      "from": "stylelint-checkstyle-formatter@latest",
+      "resolved": "https://registry.npmjs.org/stylelint-checkstyle-formatter/-/stylelint-checkstyle-formatter-0.1.0.tgz",
+      "dependencies": {
+        "lodash": {
+          "version": "3.10.1",
+          "from": "lodash@>=3.0.0 <4.0.0",
+          "resolved": "https://registry.npmjs.org/lodash/-/lodash-3.10.1.tgz"
+        }
+      }
+    },
     "sugarss": {
       "version": "0.1.5",
       "from": "sugarss@>=0.1.2 <0.2.0",
