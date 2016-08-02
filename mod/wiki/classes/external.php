@@ -822,7 +822,7 @@ class mod_wiki_external extends external_api {
         return new external_function_parameters (
             array(
                 'pageid' => new external_value(PARAM_INT, 'Page ID to edit.'),
-                'section' => new external_value(PARAM_TEXT, 'Section page title.', VALUE_DEFAULT, null)
+                'section' => new external_value(PARAM_RAW, 'Section page title.', VALUE_DEFAULT, null)
             )
         );
     }
@@ -1086,7 +1086,7 @@ class mod_wiki_external extends external_api {
             array(
                 'pageid' => new external_value(PARAM_INT, 'Page ID.'),
                 'content' => new external_value(PARAM_RAW, 'Page contents.'),
-                'section' => new external_value(PARAM_TEXT, 'Section page title.', VALUE_DEFAULT, null)
+                'section' => new external_value(PARAM_RAW, 'Section page title.', VALUE_DEFAULT, null)
             )
         );
     }
