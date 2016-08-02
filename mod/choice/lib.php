@@ -119,11 +119,6 @@ function choice_add_instance($choice) {
 
     $choice->timemodified = time();
 
-    if (empty($choice->timerestrict)) {
-        $choice->timeopen = 0;
-        $choice->timeclose = 0;
-    }
-
     //insert answers
     $choice->id = $DB->insert_record("choice", $choice);
     foreach ($choice->option as $key => $value) {
@@ -161,12 +156,6 @@ function choice_update_instance($choice) {
 
     $choice->id = $choice->instance;
     $choice->timemodified = time();
-
-
-    if (empty($choice->timerestrict)) {
-        $choice->timeopen = 0;
-        $choice->timeclose = 0;
-    }
 
     //update, delete or insert answers
     foreach ($choice->option as $key => $value) {
@@ -1067,16 +1056,14 @@ function choice_get_availability_status($choice) {
     $available = true;
     $warnings = array();
 
-    if ($choice->timeclose != 0) {
-        $timenow = time();
+    $timenow = time();
 
-        if ($choice->timeopen > $timenow) {
-            $available = false;
-            $warnings['notopenyet'] = userdate($choice->timeopen);
-        } else if ($timenow > $choice->timeclose) {
-            $available = false;
-            $warnings['expired'] = userdate($choice->timeclose);
-        }
+    if (!empty($choice->timeopen) && ($choice->timeopen > $timenow)) {
+        $available = false;
+        $warnings['notopenyet'] = userdate($choice->timeopen);
+    } else if (!empty($choice->timeclose) && ($timenow > $choice->timeclose)) {
+        $available = false;
+        $warnings['expired'] = userdate($choice->timeclose);
     }
     if (!$choice->allowupdate && choice_get_my_response($choice)) {
         $available = false;
