@@ -335,25 +335,12 @@ class core_htmlpurifier_testcase extends basic_testcase {
      * Test cases for the test_media_tags test.
      */
     public function media_tags_provider() {
-        // Given a 1D array, computes the power set of those elements.
-        $p = function(array $set) {
-            return array_reduce($set, function($carry, $element) {
-                return array_merge($carry, array_map(function($subset) use ($element) {
-                    return array_merge([$element], $subset);
-                }, $carry));
-            }, [[]]);
-        };
-
-        // Takes an array of attributes, then generates a test for every possible combination of them
-        // (i.e., every element of the power set). The testcases are named using $prefix and then
-        // a '/' delimited string describing the attributes being used. $templats is for the
-        // raw data and expected result.
+        // Takes an array of attributes, then generates a test for each of them.
         $generatetestcases = function($prefix, array $attrs, array $templates) use ($p) {
-            $attrcombinations = $p($attrs);
-            return array_reduce($attrcombinations, function($carry, $attrset) use ($prefix, $templates) {
-                $testcase = [$prefix . '/' . join('/', $attrset) => [
-                    sprintf($templates[0], join(" ", $attrset)),
-                    sprintf($templates[1], join(" ", $attrset))
+            return array_reduce($attrs, function($carry, $attr) use ($prefix, $templates) {
+                $testcase = [$prefix . '/' . $attr => [
+                    sprintf($templates[0], $attr),
+                    sprintf($templates[1], $attr)
                 ]];
                 return empty(array_values($carry)[0]) ? $testcase : $carry + $testcase;
             }, [[]]);

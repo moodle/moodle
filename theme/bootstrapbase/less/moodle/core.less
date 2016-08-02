@@ -6,14 +6,14 @@
 .layout-option-nofooter #page-footer,
 .layout-option-nocourseheader .course-content-header,
 .layout-option-nocoursefooter .course-content-footer {
-    display:none;
+    display: none;
 }
 
 .empty-region-side-pre #block-region-side-pre, // Pre region is empty.
 .empty-region-side-post #block-region-side-post, // Post region is empty.
 .jsenabled.docked-region-side-post #block-region-side-post, // All post blocks are docked.
 .jsenabled.docked-region-side-pre #block-region-side-pre { // All pre blocks are docked.
-    display:none;
+    display: none;
 }
 
 /** Start Legacy styles. Deprecated since Moodle 2.9. See MDL-48160 for further information. **/
@@ -277,22 +277,30 @@ img.iconsmall {
     vertical-align: middle;
     width: 12px;
 }
-img.iconhelp, .helplink img {
+img.iconhelp,
+.helplink img {
     height: 16px;
     padding-left: 3px;
     vertical-align: text-bottom;
     width: 16px;
 }
-h1 img.iconhelp, h1 img.icon,
-h2 img.iconhelp, h2 img.icon,
-h3 img.iconhelp, h3 img.icon,
-h4 img.iconhelp, h4 img.icon,
-h5 img.iconhelp, h5 img.icon,
-h6 img.iconhelp, h6 img.icon {
+h1 img.iconhelp,
+h1 img.icon,
+h2 img.iconhelp,
+h2 img.icon,
+h3 img.iconhelp,
+h3 img.icon,
+h4 img.iconhelp,
+h4 img.icon,
+h5 img.iconhelp,
+h5 img.icon,
+h6 img.iconhelp,
+h6 img.icon {
     vertical-align: middle;
     padding: 4px;
 }
-.dir-rtl img.iconhelp, .dir-rtl .helplink img {
+.dir-rtl img.iconhelp,
+.dir-rtl .helplink img {
     padding-right: 3px;
     padding-left: 0;
 }
@@ -319,11 +327,13 @@ img.iconkbhelp {
     height: 17px;
     width: 49px;
 }
-img.icon-pre, .dir-rtl img.icon-post {
+img.icon-pre,
+.dir-rtl img.icon-post {
     padding-right: 3px;
     padding-left: 0;
 }
-img.icon-post, .dir-rtl img.icon-pre {
+img.icon-post,
+.dir-rtl img.icon-pre {
     padding-left: 3px;
     padding-right: 0;
 }
@@ -530,7 +540,7 @@ a.skip:active {
     margin: 0;
     padding: 0;
     margin-bottom: 5px;
-    margin-top:15px;
+    margin-top: 15px;
 }
 .loginbox .signuppanel .subcontent {
     text-align: left;
@@ -591,7 +601,7 @@ a.skip:active {
 .dir-rtl {
     .loginbox.twocolumns .loginpanel,
     .loginbox.twocolumns .signuppanel {
-        float:right;
+        float: right;
     }
 }
 
@@ -682,15 +692,15 @@ table.mod_index {
     position: relative;
 }
 .comment-list li.first {
-    display: none
+    display: none;
 }
-.comment-paging{
+.comment-paging {
     text-align: center;
 }
-.comment-paging .pageno{
+.comment-paging .pageno {
     padding: 2px;
 }
-.comment-paging .curpage{
+.comment-paging .curpage {
     border: 1px solid #CCC;
 }
 .comment-message .picture {
@@ -720,20 +730,20 @@ table.mod_index {
     right: auto;
     margin: .3em;
 }
-.comment-report-selectall{
-    display: none
+.comment-report-selectall {
+    display: none;
 }
 .comment-link {
-    display: none
+    display: none;
 }
 .jsenabled .comment-link {
-    display: block
+    display: block;
 }
-.jsenabled .showcommentsnonjs{
-    display: none
+.jsenabled .showcommentsnonjs {
+    display: none;
 }
-.jsenabled .comment-report-selectall{
-    display: inline
+.jsenabled .comment-report-selectall {
+    display: inline;
 }
 /**
 * Completion progress report
@@ -975,16 +985,16 @@ tr.flagged-tag a {
     display: inline;
 }
 .tag_list.hideoverlimit .overlimit {
-    display:none;
+    display: none;
 }
 .tag_list .tagmorelink {
-    display:none;
+    display: none;
 }
 .tag_list.hideoverlimit .tagmorelink {
-    display:inline;
+    display: inline;
 }
 .tag_list.hideoverlimit .taglesslink {
-    display:none;
+    display: none;
 }
 
 /**
@@ -1003,7 +1013,7 @@ tr.flagged-tag a {
 .smartselect .smartselect_mask {
     background-color: #fff;
 }
-.smartselect ul  {
+.smartselect ul {
     padding: 0;
     margin: 0;
 }
@@ -1091,7 +1101,7 @@ tr.flagged-tag a {
     border-collapse: collapse;
 }
 .userenrolment tr {
-    vertical-align:top;
+    vertical-align: top;
 }
 .userenrolment td {
     padding: 0;
@@ -1135,7 +1145,7 @@ tr.flagged-tag a {
     padding: 3px;
     margin: 3px;
     > a:hover {
-        border-bottom:1px solid #666;
+        border-bottom: 1px solid #666;
     }
 }
 .userenrolment .col_role .addrole img,
@@ -1248,18 +1258,20 @@ tr.flagged-tag a {
             }
         }
         .user-enroller-panel .uep-search-results .user {
-            .count, .picture, .details {
-                float:right;
+            .count,
+            .picture,
+            .details {
+                float: right;
             }
             .options .enrol {
-                float:left;
+                float: left;
             }
         }
     }
 }
 
 #page-enrol-users .enrol-users-page-action input {
-    margin-left: 0
+    margin-left: 0;
 }
 
 /**
@@ -1310,8 +1322,8 @@ tr.flagged-tag a {
     display: table-cell;
 }
 .label .mod-indent {
-    float:left;
-    padding-top:20px
+    float: left;
+    padding-top: 20px;
 }
 
 /* Creates a series of .mod-indent-# rule declarations based on indent size and number of indent levels. */
@@ -1333,10 +1345,10 @@ tr.flagged-tag a {
 /* Audio player size in 'block' mode (can only change width, height is hardcoded in JS) */
 .resourcecontent .mediaplugin_mp3 object {
     height: 25px;
-    width: 600px
+    width: 600px;
 }
 .resourcecontent audio.mediaplugin_html5audio {
-    width: 600px
+    width: 600px;
 }
 /** Large resource images should avoid hidden overflow **/
 .resourceimage {
@@ -1345,10 +1357,10 @@ tr.flagged-tag a {
 /* Audio player size in 'inline' mode (can only change width, as above) */
 .mediaplugin_mp3 object {
     height: 15px;
-    width: 300px
+    width: 300px;
 }
 audio.mediaplugin_html5audio {
-    width: 300px
+    width: 300px;
 }
 /* TinyMCE moodle media preview frame should not have padding */
 .core_media_preview.pagelayout-embedded #content {
@@ -1421,7 +1433,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 }
 .dir-rtl .ygtvlph,
 .dir-rtl .ygtvlphh {
-    background-position: 0 -3200px
+    background-position: 0 -3200px;
 }
 .dir-rtl .ygtvdepthcell {
     background-position: 0 -8000px;
@@ -1445,7 +1457,8 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     text-align: right;
 }
 /** Fix TinyMCE editor right to left **/
-.dir-rtl .clearlooks2.ie9 .mceAlert .mceMiddle span,.dir-rtl .clearlooks2 .mceConfirm .mceMiddle span {
+.dir-rtl .clearlooks2.ie9 .mceAlert .mceMiddle span,
+.dir-rtl .clearlooks2 .mceConfirm .mceMiddle span {
     top: 44px;
 }
 .dir-rtl .o2k7Skin table,
@@ -1475,7 +1488,8 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     text-align: center;
 }
 .initialbar {
-    a, strong {
+    a,
+    strong {
         padding-left: 3px;
         padding-right: 3px;
     }
@@ -1601,7 +1615,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     text-align: center;
 }
 .moodle-dialogue-exception .moodle-exception-message {
-    text-align: center
+    text-align: center;
 }
 .moodle-dialogue-exception .moodle-exception-param label {
     font-weight: bold;
@@ -1639,7 +1653,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     margin: 0.5em 1em;
 }
 .moodle-dialogue-confirm .confirmation-dialogue input {
-    min-width: 80px
+    min-width: 80px;
 }
 .moodle-dialogue-exception .moodle-exception-message {
     margin: 1em;
@@ -1951,7 +1965,7 @@ table.collection .description {
 .dir-rtl table.collection {
     .name,
     .criteria,
-    .description  {
+    .description {
         text-align: right;
     }
 }
@@ -2027,7 +2041,7 @@ ul.badges {
         top: 0px;
         .opacity(85);
         position: absolute;
-        z-index:10;
+        z-index: 10;
     }
 
     .singlebutton {
@@ -2114,7 +2128,7 @@ ul.badges {
 .statusbox .activatebadge {
     display: inline-block;
 }
-.statusbox .activatebadge input[type=submit]{
+.statusbox .activatebadge input[type=submit] {
     margin: 3px;
 }
 .activatebadge {
@@ -2247,7 +2261,7 @@ img#persona_signin {
     .moodle-actionmenu[data-enhance] {
         display: block;
         .menu {
-            display:none;
+            display: none;
         }
         .toggle-display {
             display: inline; /** JS is enabled, we'll be using it so return display to normal **/
@@ -2281,8 +2295,8 @@ img#persona_signin {
         .toggle-display {
             .opacity(100);
         }
-        .menu-action-text  {
-            display:inline;
+        .menu-action-text {
+            display: inline;
         }
     }
 
@@ -2301,25 +2315,25 @@ img#persona_signin {
     }
 }
 
-.moodle-actionmenu[data-enhanced].show  {
+.moodle-actionmenu[data-enhanced].show {
 
     position: relative;
 
     .menu {
 
-        display:block;
+        display: block;
         position: absolute;
         text-align: left;
         background-color: @dropdownBackground;
         border: 1px solid @dropdownBorder;
-        z-index:1000;
+        z-index: 1000;
         .border-radius(5px);
         .box-shadow(5px 5px 20px 0 #666);
 
         a {
             display: block;
             color: @dropdownLinkColor;
-            padding:2px 1em 2px 28px;
+            padding: 2px 1em 2px 28px;
             &:hover {
                 color: @dropdownLinkColorHover;
                 background-color: @dropdownLinkBackgroundHover;
@@ -2332,7 +2346,7 @@ img#persona_signin {
             }
         }
         a.hidden {
-            display:none;
+            display: none;
         }
         img {
             vertical-align: middle;
@@ -2343,29 +2357,92 @@ img#persona_signin {
             padding: 4px;
         }
         > li {
-            display:block;
+            display: block;
         }
 
         /** bottom left of button **/
-        &.align-tl-bl {top: 100%;left:0;margin-top: 4px;}
-        &.align-tr-bl {top: 100%;right: 100%;}
-        &.align-bl-bl {bottom: 100%;left:0;}
-        &.align-br-bl {bottom: 100%;right: 100%;}
+        &.align-tl-bl {
+            top: 100%;
+            left: 0;
+            margin-top: 4px;
+        }
+        &.align-tr-bl {
+            top: 100%;
+            right: 100%;
+        }
+        &.align-bl-bl {
+            bottom: 100%;
+            left: 0;
+        }
+        &.align-br-bl {
+            bottom: 100%;
+            right: 100%;
+        }
         /** bottom right of button **/
-        &.align-tl-br {top: 100%;left:100%;}
-        &.align-tr-br {top: 100%;right: 0;margin-top: 4px;}
-        &.align-bl-br {bottom: 100%;left:100%;}
-        &.align-br-br {bottom: 100%;right: 0;}
+        &.align-tl-br {
+            top: 100%;
+            left: 100%;
+        }
+        &.align-tr-br {
+            top: 100%;
+            right: 0;
+            margin-top: 4px;
+        }
+
+        &.align-bl-br {
+            bottom: 100%;
+            left: 100%;
+        }
+
+        &.align-br-br {
+            bottom: 100%;
+            right: 0;
+        }
         /** top left of button **/
-        &.align-tl-tl {top: 0;left:0;}
-        &.align-tr-tl {top: 0;right: 100%;margin-right: 4px;}
-        &.align-bl-tl {bottom: 100%;left:0;margin-bottom: 4px;}
-        &.align-br-tl {bottom: 100%;right: 100%;}
+        &.align-tl-tl {
+            top: 0;
+            left: 0;
+        }
+
+        &.align-tr-tl {
+            top: 0;
+            right: 100%;
+            margin-right: 4px;
+        }
+
+        &.align-bl-tl {
+            bottom: 100%;
+            left: 0;
+            margin-bottom: 4px;
+        }
+
+        &.align-br-tl {
+            bottom: 100%;
+            right: 100%;
+        }
         /** top right of button **/
-        &.align-tl-tr {top: 0;left:100%;margin-left: 4px;}
-        &.align-tr-tr {top: 0;right: 0;}
-        &.align-bl-tr {bottom: 100%;left:100%;}
-        &.align-br-tr {bottom: 100%;right: 0;margin-bottom: 4px;}
+        &.align-tl-tr {
+            top: 0;
+            left: 100%;
+            margin-left: 4px;
+        }
+
+        &.align-tr-tr {
+            top: 0;
+            right: 0;
+        }
+
+        &.align-bl-tr {
+            bottom: 100%;
+            left: 100%;
+        }
+
+        &.align-br-tr {
+            bottom: 100%;
+            right: 0;
+            margin-bottom: 4px;
+        }
+
     }
     /** no wrap is set - prevent menu items from wrapping **/
     &.nowrap-items .menu > li {
@@ -2378,7 +2455,7 @@ img#persona_signin {
 }
 
 .dir-rtl {
-    .moodle-actionmenu[data-enhanced].show  {
+    .moodle-actionmenu[data-enhanced].show {
         .menu {
             text-align: right;
             left: 0;
@@ -2393,25 +2470,85 @@ img#persona_signin {
             }
 
             /** bottom left of button **/
-            &.align-tl-bl {left: auto; right: 0;}
-            &.align-tr-bl {right: auto; left: 100%;}
-            &.align-bl-bl {left: auto; right: 0;}
-            &.align-br-bl {right: auto; left: 100%;}
+            &.align-tl-bl {
+                left: auto;
+                right: 0;
+            }
+
+            &.align-tr-bl {
+                right: auto;
+                left: 100%;
+            }
+
+            &.align-bl-bl {
+                left: auto;
+                right: 0;
+            }
+
+            &.align-br-bl {
+                right: auto;
+                left: 100%;
+            }
             /** bottom right of button **/
-            &.align-tl-br {left: auto; right: 100%;}
-            &.align-tr-br {right: auto; left: 0;}
-            &.align-bl-br {left: auto; right: 100%;}
-            &.align-br-br {right: auto; left: 0;}
+            &.align-tl-br {
+                left: auto;
+                right: 100%;
+            }
+
+            &.align-tr-br {
+                right: auto;
+                left: 0;
+            }
+
+            &.align-bl-br {
+                left: auto;
+                right: 100%;
+            }
+
+            &.align-br-br {
+                right: auto;
+                left: 0;
+            }
             /** top left of button **/
-            &.align-tl-tl {left: auto; right: 0;}
-            &.align-tr-tl {right: auto; left: 100%;}
-            &.align-bl-tl {left: auto; right: 0;}
-            &.align-br-tl {right: auto; left: 100%;}
+            &.align-tl-tl {
+                left: auto;
+                right: 0;
+            }
+
+            &.align-tr-tl {
+                right: auto;
+                left: 100%;
+            }
+
+            &.align-bl-tl {
+                left: auto;
+                right: 0;
+            }
+
+            &.align-br-tl {
+                right: auto;
+                left: 100%;
+            }
             /** top right of button **/
-            &.align-tl-tr {left: auto; right: 100%;}
-            &.align-tr-tr {right: auto; left: 0;}
-            &.align-bl-tr {left: auto; right: 100%;}
-            &.align-br-tr {right: auto; left: 0;}
+            &.align-tl-tr {
+                left: auto;
+                right: 100%;
+            }
+
+            &.align-tr-tr {
+                right: auto;
+                left: 0;
+            }
+
+            &.align-bl-tr {
+                left: auto;
+                right: 100%;
+            }
+
+            &.align-br-tr {
+                right: auto;
+                left: 0;
+            }
         }
     }
     .block .moodle-actionmenu {

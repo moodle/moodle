@@ -45,7 +45,7 @@ select {
             text-align: right;
         }
         thead .header th,
-        tbody .discussion td{
+        tbody .discussion td {
             &.discussionsubscription {
                 width: 16px;
                 padding-left: 0.5em;
@@ -53,7 +53,9 @@ select {
             }
         }
         .discussion {
-            .author, .replies, .lastpost {
+            .author,
+            .replies,
+            .lastpost {
                 white-space: normal;
             }
             .discussionsubscription,
@@ -148,7 +150,8 @@ select {
     border-top: 2px solid @tableBorder;
 }
 
-.maincalendar .calendarmonth td,.maincalendar .calendarmonth th {
+.maincalendar .calendarmonth td,
+.maincalendar .calendarmonth th {
     border: 1px dotted @tableBorder;
 }
 
@@ -299,12 +302,22 @@ div#dock {
 
 .path-mod-survey {
     .surveytable {
-        > tbody > tr:nth-of-type(odd) {background-color: @tableBackground;}
-        > tbody > tr:nth-of-type(even) {background-color: @tableBackgroundAccent;}
-        .rblock label {text-align: center;}
+        > tbody > tr:nth-of-type(odd) {
+            background-color: @tableBackground;
+        }
+        > tbody > tr:nth-of-type(even) {
+            background-color: @tableBackgroundAccent;
+        }
+        .rblock label {
+            text-align: center;
+        }
     }
-    .resultgraph, .reportsummary, .studentreport, .reportbuttons, .centerpara {
-        text-align:center;
+    .resultgraph,
+    .reportsummary,
+    .studentreport,
+    .reportbuttons,
+    .centerpara {
+        text-align: center;
     }
 }
 // rtl overrides
@@ -384,7 +397,7 @@ div#dock {
             .userbutton {
                 height: 40px;
                 line-height: 40px;
-                .avatars{
+                .avatars {
                     display: inline-block;
                     height: 36px;
                     width: 36px;
@@ -563,8 +576,8 @@ div#dock {
                     &:before {
                         content: '';
                         display: inline-block;
-                        border-left:   7px solid transparent;
-                        border-right:  7px solid transparent;
+                        border-left: 7px solid transparent;
+                        border-right: 7px solid transparent;
                         border-bottom: 7px solid #ccc;
                         border-bottom-color: @dropdownBorder;
                         position: absolute;
@@ -573,8 +586,8 @@ div#dock {
                     &:after {
                         content: '';
                         display: inline-block;
-                        border-left:   6px solid transparent;
-                        border-right:  6px solid transparent;
+                        border-left: 6px solid transparent;
+                        border-right: 6px solid transparent;
                         border-bottom: 6px solid @dropdownBackground;
                         position: absolute;
                         top: -6px;
@@ -596,7 +609,6 @@ div#dock {
                     }
                     .box-shadow (0 5px 10px rgba(0, 0, 0, 0.2));
                 }
-                &:hover .toggle-display {}
             }
         }
     }
@@ -678,7 +690,7 @@ div#dock {
             margin-bottom: -34px;
             border: 1px solid #fff;
             border-radius: 50%;
-            box-shadow: -2px -2px 16px rgba(0,0,0,0.25);
+            box-shadow: -2px -2px 16px rgba(0, 0, 0, 0.25);
         }
         img {
             width: inherit;

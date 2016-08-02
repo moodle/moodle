@@ -158,11 +158,12 @@ table.message .searchresults td {
         }
     }
 }
-.message .messagearea  {
+.message .messagearea {
     @media screen and (min-width: 1000px) {
         border-left: 1px solid @tableBorder;
         padding: 0 8px;
     }
+
     @media screen and (max-width: 1000px) {
         width: 100%;
     }
@@ -223,12 +224,13 @@ table.message .searchresults td {
         margin: 0 3%;
     }
     .message .messagearea .messagehistory .user {
-        width: 32%
+        width: 32%;
     }
 }
+
 @media screen and (min-width: 1200px) {
     .message .messagearea .messagehistory .user {
-        width: 25%
+        width: 25%;
     }
 }
 .message .messagearea .messagehistory .heading {
@@ -314,14 +316,15 @@ table.message .searchresults td {
 .message .messagearea .messagerecent .singlemessage .messagedate {
     float: right;
 }
-.message .hiddenelement  {
+.message .hiddenelement {
     display: none;
 }
 // not just using hidden as mform adds that class to its fieldset */
 .message .visible {
     display: inline;
 }
-.message #usergroupselector.fieldset, .message #viewing {
+.message #usergroupselector.fieldset,
+.message #viewing {
     width: 100%;
 }
 .messagesearchresults {
@@ -360,12 +363,12 @@ table.message .searchresults td {
 }
 /* Widen the plain text editor on the bulk message screen */
 #page-user-action_redir #edit-messagebody {
-    width:auto;
+    width: auto;
 }
 
 /** Messenger send message dialog */
 .core_message-messenger-sendmessage-hidden {
-    display:none;
+    display: none;
 }
 .core_message-messenger-sendmessage {
     .message-actions {
