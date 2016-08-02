@@ -18,7 +18,7 @@ form {
     display: block;
 }
 .mform fieldset.group {
-    margin-bottom: 0
+    margin-bottom: 0;
 }
 .mform fieldset.error {
     border: 1px solid @errorText;
@@ -155,7 +155,7 @@ input#id_externalurl {
 .dir-rtl {
     .form-item .form-label,
     .mform .fitem div.fitemtitle {
-        float:right;
+        float: right;
         text-align: left;
     }
 }
@@ -329,7 +329,7 @@ div.backup-section + form,
     width: 100%;
 }
 #page-grade-edit-outcome-course .courseoutcomes td {
-    text-align:center;
+    text-align: center;
 }
 /* Install Process' text fields Forms, should always be justified to the left */
 #installform #id_wwwroot,
@@ -372,7 +372,7 @@ input[type="checkbox"] {
 .singleselect {
     display: inline-block;
     form,
-    select{
+    select {
         margin: 0;
     }
 }
@@ -380,7 +380,7 @@ input[type="checkbox"] {
     margin-bottom: 0;
 }
 .dir-rtl .form-item .form-label label {
-    text-align:left;
+    text-align: left;
 }
 .felement.ffilepicker {
     margin-top: 5px;
@@ -439,7 +439,7 @@ fieldset.coursesearchbox label {
                 width: auto;
             }
         }
-        .fitem_fcheckbox{
+        .fitem_fcheckbox {
             .fitemtitle,
             .felement {
                 display: inline-block;
@@ -489,9 +489,11 @@ fieldset.coursesearchbox label {
  * 1199px + (1199px * 23%)
  * Where 23% is the width of span3
  * Full calculation is:
- *   @maxWidthForVerticalForms: 1199px * (unit(((@fluidGridColumnWidth1200 * 3) + (@fluidGridGutterWidth * (3 - 1)))) / 100) + 1199px;
+ *   @maxWidthForVerticalForms: 1199px * (unit(((@fluidGridColumnWidth1200 * 3) +
+ *    (@fluidGridGutterWidth * (3 - 1)))) / 100) + 1199px;
  */
 @maxWidthForVerticalForms: 1474px;
+
 @media (max-width: @maxWidthForVerticalForms) {
     .used-region-side-pre.used-region-side-post {
         .makeFormsVertical;
@@ -506,7 +508,7 @@ fieldset.coursesearchbox label {
     }
     select,
     input[type=text] {
-        position:relative;
+        position: relative;
         top: 4px;
     }
     label {
