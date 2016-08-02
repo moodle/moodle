@@ -34,3 +34,96 @@ function theme_noname_css_tree_post_processor($tree, $this) {
     $prefixer = new theme_noname\autoprefixer($tree);
     $prefixer->prefix();
 }
+
+/**
+ * Get the SCSS file to include.
+ *
+ * @param theme_config $theme The theme config object.
+ * @return string The name of the file without 'scss'.
+ */
+function theme_noname_get_scss_file($theme) {
+    $preset = !empty($theme->settings->preset) ? $theme->settings->preset : 'default';
+    return 'preset-' . $preset;
+}
+
+/**
+ * Inject additional SCSS.
+ *
+ * @param theme_config $theme The theme config object.
+ * @return string
+ */
+function theme_noname_get_extra_scss($theme) {
+    return !empty($theme->settings->scss) ? $theme->settings->scss : '';
+}
+
+/**
+ * Get additional SCSS variables.
+ *
+ * @param theme_config $theme The theme config object.
+ * @return array
+ */
+function theme_noname_get_scss_variables($theme) {
+    $variables = [];
+    $configurable = [
+        // Config key => [variableName, ...].
+        'brandcolor' => ['brand-primary'],
+    ];
+
+    foreach ($configurable as $configkey => $targets) {
+        $value = $theme->settings->{$configkey};
+        if (empty($value)) {
+            continue;
+        }
+        array_map(function($target) use (&$variables, $value) {
+            $variables[$target] = $value;
+        }, (array) $targets);
+    }
+
+    if (!empty($theme->settings->scss_variables)) {
+        $variables = array_merge($variables, theme_noname_parse_scss_variables($theme->settings->scss_variables));
+    }
+
+    return $variables;
+}
+
+/**
+ * Parse a string into SCSS variables.
+ *
+ * - One variable definition per line,
+ * - The variable name is separated from the value by a colon,
+ * - The dollar sign is optional,
+ * - The trailing semi-colon is optional,
+ * - CSS comments (starting with //) are accepted
+ * - Variables names can only contain letters, numbers, hyphens and underscores.
+ *
+ * @param string $data The string to parse from.
+ * @param bool $lenient When non lenient, an exception will be thrown when a line cannot be parsed.
+ * @return array
+ */
+function theme_noname_parse_scss_variables($data, $lenient = true) {
+    $variables = [];
+    $lines = explode("\n", $data);
+    $i = 0;
+
+    foreach ($lines as $line) {
+        $i++;
+        if (preg_match('@^\s*//@', $line)) {
+            continue;
+        }
+
+        $parts = explode(':', trim($line));
+        $variable = ltrim($parts[0], '$ ');
+        $value = rtrim(ltrim(isset($parts[1]) ? $parts[1] : ''), "; ");
+
+        if (empty($variable) || !preg_match('/^[a-z0-9_-]+$/i', $variable) || (empty($value) && !is_numeric($value))) {
+            if ($lenient) {
+                continue;
+            }
+            throw new moodle_exception('errorparsingscssvariables', 'theme_noname', null, $i);
+        }
+
+        $variables[$variable] = $value;
+    }
+
+    return $variables;
+}

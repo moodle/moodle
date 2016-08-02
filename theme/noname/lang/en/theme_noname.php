@@ -24,8 +24,21 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['advancedsettings'] = 'Advanced settings';
+$string['brandcolor'] = 'Brand colour';
+$string['brandcolor_desc'] = 'The accent colour.';
 $string['choosereadme'] = 'Hey, change me!';
 $string['currentinparentheses'] = '(current)';
+$string['configtitle'] = 'CHANGE ME!';
+$string['errorparsingscssvariables'] = 'There was an error parsing the variable at line {$a}, please double check the syntax.';
+$string['generalsettings'] = 'General settings';
 $string['pluginname'] = 'NONAME';
+$string['preset'] = 'Theme preset';
+$string['preset_desc'] = 'Pick a preset to broadly change the look of the theme.';
+$string['presetdefault'] = 'Default';
+$string['rawscss'] = 'Raw SCSS';
+$string['rawscss_desc'] = 'Use this field to provide SCSS code which will be injected at the end of the the stylesheet.';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
+$string['scssvariables'] = 'SCSS variables';
+$string['scssvariables_desc'] = 'Use this field to set your own SCSS variable values. Define one variable per line. Syntax: $my-color: red;.';
