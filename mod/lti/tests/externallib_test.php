@@ -52,7 +52,8 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
 
         // Setup test data.
         $this->course = $this->getDataGenerator()->create_course();
-        $this->lti = $this->getDataGenerator()->create_module('lti', array('course' => $this->course->id));
+        $this->lti = $this->getDataGenerator()->create_module('lti',
+            array('course' => $this->course->id, 'toolurl' => 'http://localhost/not/real/tool.php'));
         $this->context = context_module::instance($this->lti->cmid);
         $this->cm = get_coursemodule_from_instance('lti', $this->lti->id);
 
