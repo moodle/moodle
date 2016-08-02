@@ -2267,7 +2267,10 @@ class core_course_external extends external_api {
                 $files[] = array(
                     'filename' => $file->get_filename(),
                     'fileurl' => $fileurl,
-                    'filesize' => $file->get_filesize()
+                    'filesize' => $file->get_filesize(),
+                    'filepath' => $file->get_filepath(),
+                    'mimetype' => $file->get_mimetype(),
+                    'timemodified' => $file->get_timemodified(),
                 );
             }
 
@@ -2337,16 +2340,7 @@ class core_course_external extends external_api {
                             'categoryname' => new external_value(PARAM_TEXT, 'category name'),
                             'summary' => new external_value(PARAM_RAW, 'summary'),
                             'summaryformat' => new external_format_value('summary'),
-                            'overviewfiles' => new external_multiple_structure(
-                                new external_single_structure(
-                                    array(
-                                        'filename' => new external_value(PARAM_FILE, 'overview file name'),
-                                        'fileurl'  => new external_value(PARAM_URL, 'overview file url'),
-                                        'filesize'  => new external_value(PARAM_INT, 'overview file size'),
-                                    )
-                                ),
-                                'additional overview files attached to this course'
-                            ),
+                            'overviewfiles' => new external_files('additional overview files attached to this course'),
                             'contacts' => new external_multiple_structure(
                                 new external_single_structure(
                                     array(

@@ -455,22 +455,8 @@ class mod_assign_external extends external_api {
                         $assignment['introfiles'] = external_util::get_area_files($context->id, 'mod_assign', 'intro', false,
                                                                                     false);
 
-                        $fs = get_file_storage();
-                        if ($files = $fs->get_area_files($context->id, 'mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA,
-                                                            0, 'timemodified', false)) {
-
-                            $assignment['introattachments'] = array();
-                            foreach ($files as $file) {
-                                $filename = $file->get_filename();
-
-                                $assignment['introattachments'][] = array(
-                                    'filename' => $filename,
-                                    'mimetype' => $file->get_mimetype(),
-                                    'fileurl'  => moodle_url::make_webservice_pluginfile_url(
-                                        $context->id, 'mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA, 0, '/', $filename)->out(false)
-                                );
-                            }
-                        }
+                        $assignment['introattachments'] = external_util::get_area_files($context->id, 'mod_assign',
+                                                            ASSIGN_INTROATTACHMENT_FILEAREA, 0);
                     }
 
                     if ($module->requiresubmissionstatement) {
@@ -541,15 +527,7 @@ class mod_assign_external extends external_api {
                     'assignment intro, not allways returned because it deppends on the activity configuration', VALUE_OPTIONAL),
                 'introformat' => new external_format_value('intro', VALUE_OPTIONAL),
                 'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
-                'introattachments' => new external_multiple_structure(
-                    new external_single_structure(
-                        array (
-                            'filename' => new external_value(PARAM_FILE, 'file name'),
-                            'mimetype' => new external_value(PARAM_RAW, 'mime type'),
-                            'fileurl'  => new external_value(PARAM_URL, 'file download url')
-                        )
-                    ), 'intro attachments files', VALUE_OPTIONAL
-                )
+                'introattachments' => new external_files('intro attachments files', VALUE_OPTIONAL),
             ), 'assignment information object');
     }
 
@@ -637,24 +615,14 @@ class mod_assign_external extends external_api {
             $fileareas = $assignplugin->get_file_areas();
             foreach ($fileareas as $filearea => $name) {
                 $fileareainfo = array('area' => $filearea);
-                $files = $fs->get_area_files(
+
+                $fileareainfo['files'] = external_util::get_area_files(
                     $assign->get_context()->id,
                     $component,
                     $filearea,
-                    $item->id,
-                    "timemodified",
-                    false
+                    $item->id
                 );
-                foreach ($files as $file) {
-                    $filepath = $file->get_filepath().$file->get_filename();
-                    $fileurl = file_encode_url($CFG->wwwroot . '/webservice/pluginfile.php', '/' . $assign->get_context()->id .
-                        '/' . $component. '/'. $filearea . '/' . $item->id . $filepath);
-                    $fileinfo = array(
-                        'filepath' => $filepath,
-                        'fileurl' => $fileurl
-                        );
-                    $fileareainfo['files'][] = $fileinfo;
-                }
+
                 $plugin['fileareas'][] = $fileareainfo;
             }
 
@@ -822,15 +790,7 @@ class mod_assign_external extends external_api {
                     new external_single_structure(
                         array (
                             'area' => new external_value (PARAM_TEXT, 'file area'),
-                            'files' => new external_multiple_structure(
-                                new external_single_structure(
-                                    array (
-                                        'filepath' => new external_value (PARAM_TEXT, 'file path'),
-                                        'fileurl' => new external_value (PARAM_URL, 'file download url',
-                                            VALUE_OPTIONAL)
-                                    )
-                                ), 'files', VALUE_OPTIONAL
-                            )
+                            'files' => new external_files('files', VALUE_OPTIONAL),
                         )
                     ), 'fileareas', VALUE_OPTIONAL
                 ),

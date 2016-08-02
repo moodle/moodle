@@ -1945,7 +1945,8 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
             $submissionplugins[$plugin['type']] = $plugin;
         }
         $this->assertEquals('Submission text', $submissionplugins['onlinetext']['editorfields'][0]['text']);
-        $this->assertEquals('/t.txt', $submissionplugins['file']['fileareas'][0]['files'][0]['filepath']);
+        $this->assertEquals('/', $submissionplugins['file']['fileareas'][0]['files'][0]['filepath']);
+        $this->assertEquals('t.txt', $submissionplugins['file']['fileareas'][0]['files'][0]['filename']);
     }
 
     /**
@@ -2087,7 +2088,8 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
             $submissionplugins[$plugin['type']] = $plugin;
         }
         $this->assertEquals('Submission text', $submissionplugins['onlinetext']['editorfields'][0]['text']);
-        $this->assertEquals('/t.txt', $submissionplugins['file']['fileareas'][0]['files'][0]['filepath']);
+        $this->assertEquals('/', $submissionplugins['file']['fileareas'][0]['files'][0]['filepath']);
+        $this->assertEquals('t.txt', $submissionplugins['file']['fileareas'][0]['files'][0]['filename']);
     }
 
     /**
