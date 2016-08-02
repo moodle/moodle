@@ -12,6 +12,7 @@
     "grunt-eslint": "19.0.0",
     "grunt-stylelint": "0.6.0",
     "shifter": "0.5.0",
+    "stylelint-checkstyle-formatter": "0.1.0",
     "xmldom": "0.1.22",
     "xpath": "0.0.23"
   },
