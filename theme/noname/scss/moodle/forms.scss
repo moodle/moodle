@@ -33,11 +33,15 @@ form {
     margin-bottom: 4px;
 }
 .mform fieldset.collapsible legend a.fheader {
-    padding: 0 5px 0 20px;
-    margin-left: -20px;
-    background: url([[pix:t/expanded]]) 2px center no-repeat;
+    padding: 0 5px 0 18px;
+    margin-left: -18px;
+    background: url([[pix:t/expanded]]) 0 center no-repeat;
 }
 .mform fieldset.collapsed legend a.fheader {
+    /*rtl:raw:
+    background-image: url([[pix:t/collapsed_rtl]]);
+    */
+    /*rtl:remove*/
     background-image: url([[pix:t/collapsed]]);
 }
 .jsenabled .mform .collapsed .fcontainer {

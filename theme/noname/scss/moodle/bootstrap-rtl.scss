@@ -1,0 +1,7 @@
+.breadcrumb-item {
+    + .breadcrumb-item::before {
+        content: "#{$breadcrumb-divider-rtl}";
+        /*rtl:remove*/
+        content: "#{$breadcrumb-divider}";
+    }
+}

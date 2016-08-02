@@ -3,9 +3,13 @@ $iconSpritePath:          "[[pix:theme|glyphicons-halflings]]" !default;
 $iconWhiteSpritePath:     "[[pix:theme|glyphicons-halflings-white]]" !default;
 
 $breadcrumb-divider: "▶" !default;
+$breadcrumb-divider-rtl: "◀" !default;
 
 // Import the bootstrap variables.
 @import "bootstrap/bootstrap";
+
+// Specific overrides to make Bootstrap RTL.
+@import "moodle/bootstrap-rtl";
 
 // Old Moodle stuff from base theme.
 // Massive, needs broken up.
