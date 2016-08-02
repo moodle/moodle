@@ -36,18 +36,18 @@ Feature: In an assignment, the administrator can edit students' submissions
     And I am on site homepage
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View all submissions"
+    And I follow "View/grade all submissions"
     And I click on "Edit" "link" in the "Student 1" "table_row"
     And I follow "Edit submission"
     And I set the following fields to these values:
       | Online text | Have you seen the movie Chef? |
     And I press "Save changes"
-    And I follow "View all submissions"
+    And I follow "View/grade all submissions"
     Then I should see "Have you seen the movie Chef?"
     And I click on "Edit" "link" in the "Student 1" "table_row"
     And I follow "Edit submission"
     And I set the following fields to these values:
       | Online text | I have seen the movie chef. |
     And I press "Save changes"
-    And I follow "View all submissions"
+    And I follow "View/grade all submissions"
     Then I should see "I have seen the movie chef."
