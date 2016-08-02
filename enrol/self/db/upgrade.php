@@ -39,5 +39,21 @@ function xmldb_enrol_self_upgrade($oldversion) {
     // Moodle v3.1.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2016052301) {
+        global $DB;
+        // Get roles with manager archetype.
+        $managerroles = get_archetype_roles('manager');
+        if (!empty($managerroles)) {
+            // Remove wrong CAP_PROHIBIT from self:holdkey.
+            foreach ($managerroles as $role) {
+                $DB->execute("DELETE
+                                FROM {role_capabilities}
+                               WHERE roleid = ? AND capability = ? AND permission = ?",
+                        array($role->id, 'enrol/self:holdkey', CAP_PROHIBIT));
+            }
+        }
+        upgrade_mod_savepoint(true, 2016052301, 'enrol_self');
+    }
+
     return true;
 }
