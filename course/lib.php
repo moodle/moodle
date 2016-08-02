@@ -4061,3 +4061,53 @@ function course_get_tagged_course_modules($tag, $exclusivemode = false, $fromcon
                 $exclusivemode, $fromcontextid, $contextid, $recursivecontext, $page, $totalpages);
     }
 }
+
+/**
+ * Return an object with the list of navigation options in a course that are avaialable or not for the current user.
+ * This function also handles the frontpage course.
+ *
+ * @param  stdClass $context context object (it can be a course context or the system context for frontpage settings)
+ * @param  stdClass $course  the course where the settings are being rendered (only used when $context is set to frontpage)
+ * @return stdClass          the navigation options in a course and their availability status
+ * @since  Moodle 3.2
+ */
+function course_get_user_navigation_options($context, $course = null) {
+    global $CFG;
+
+    $isloggedin = isloggedin();
+    $isguestuser = isguestuser();
+    $isfrontpage = $context->contextlevel == CONTEXT_SYSTEM;
+
+    if ($isfrontpage) {
+        $sitecontext = $context;
+    } else {
+        $sitecontext = context_system::instance();
+    }
+
+    $options = new stdClass;
+    $options->blogs = !empty($CFG->enableblogs) &&
+                        ($CFG->bloglevel == BLOG_GLOBAL_LEVEL ||
+                        ($CFG->bloglevel == BLOG_SITE_LEVEL and ($isloggedin and !$isguestuser)))
+                        && has_capability('moodle/blog:view', $sitecontext);
+
+    $options->notes = !empty($CFG->enablenotes) && has_any_capability(array('moodle/notes:manage', 'moodle/notes:view'), $context);
+
+    // Frontpage settings?
+    if ($isfrontpage) {
+        if ($course->id == SITEID) {
+            $options->participants = has_capability('moodle/site:viewparticipants', $sitecontext);
+        } else {
+            $options->participants = has_capability('moodle/course:viewparticipants', context_course::instance($course->id));
+        }
+
+        $options->badges = !empty($CFG->enablebadges) && has_capability('moodle/badges:viewbadges', $sitecontext);
+        $options->tags = !empty($CFG->usetags) && $isloggedin;
+        $options->search = !empty($CFG->enableglobalsearch) && has_capability('moodle/search:query', $sitecontext);
+        $options->calendar = $isloggedin;
+    } else {
+        $options->participants = has_capability('moodle/course:viewparticipants', $context);
+        $options->badges = !empty($CFG->enablebadges) && !empty($CFG->badges_allowcoursebadges) &&
+                            has_capability('moodle/badges:viewbadges', $context);
+    }
+    return $options;
+}

@@ -2536,6 +2536,7 @@ class global_navigation extends navigation_node {
      */
     public function add_course_essentials($coursenode, stdClass $course) {
         global $CFG, $SITE;
+        require_once($CFG->dirroot . '/course/lib.php');
 
         if ($course->id == $SITE->id) {
             return $this->add_front_page_course_essentials($coursenode, $course);
@@ -2545,22 +2546,23 @@ class global_navigation extends navigation_node {
             return true;
         }
 
+        $navoptions = course_get_user_navigation_options($this->page->context);
+
         //Participants
-        if (has_capability('moodle/course:viewparticipants', $this->page->context)) {
+        if ($navoptions->participants) {
             $participants = $coursenode->add(get_string('participants'), new moodle_url('/user/index.php?id='.$course->id), self::TYPE_CONTAINER, get_string('participants'), 'participants');
-            if (!empty($CFG->enableblogs)) {
-                if (($CFG->bloglevel == BLOG_GLOBAL_LEVEL or ($CFG->bloglevel == BLOG_SITE_LEVEL and (isloggedin() and !isguestuser())))
-                   and has_capability('moodle/blog:view', context_system::instance())) {
-                    $blogsurls = new moodle_url('/blog/index.php');
-                    if ($currentgroup = groups_get_course_group($course, true)) {
-                        $blogsurls->param('groupid', $currentgroup);
-                    } else {
-                        $blogsurls->param('courseid', $course->id);
-                    }
-                    $participants->add(get_string('blogscourse', 'blog'), $blogsurls->out(), self::TYPE_SETTING, null, 'courseblogs');
+
+            if ($navoptions->blogs) {
+                $blogsurls = new moodle_url('/blog/index.php');
+                if ($currentgroup = groups_get_course_group($course, true)) {
+                    $blogsurls->param('groupid', $currentgroup);
+                } else {
+                    $blogsurls->param('courseid', $course->id);
                 }
+                $participants->add(get_string('blogscourse', 'blog'), $blogsurls->out(), self::TYPE_SETTING, null, 'courseblogs');
             }
-            if (!empty($CFG->enablenotes) && (has_capability('moodle/notes:manage', $this->page->context) || has_capability('moodle/notes:view', $this->page->context))) {
+
+            if ($navoptions->notes) {
                 $participants->add(get_string('notes', 'notes'), new moodle_url('/notes/index.php', array('filtertype' => 'course', 'filterselect' => $course->id)), self::TYPE_SETTING, null, 'currentcoursenotes');
             }
         } else if (count($this->extendforuser) > 0 || $this->page->course->id == $course->id) {
@@ -2568,8 +2570,7 @@ class global_navigation extends navigation_node {
         }
 
         // Badges.
-        if (!empty($CFG->enablebadges) && !empty($CFG->badges_allowcoursebadges) &&
-            has_capability('moodle/badges:viewbadges', $this->page->context)) {
+        if ($navoptions->badges) {
             $url = new moodle_url('/badges/view.php', array('type' => 2, 'id' => $course->id));
 
             $coursenode->add(get_string('coursebadges', 'badges'), null,
@@ -2594,30 +2595,26 @@ class global_navigation extends navigation_node {
      */
     public function add_front_page_course_essentials(navigation_node $coursenode, stdClass $course) {
         global $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
 
         if ($coursenode == false || $coursenode->get('frontpageloaded', navigation_node::TYPE_CUSTOM)) {
             return true;
         }
 
         $sitecontext = context_system::instance();
-        $isfrontpage = ($course->id == SITEID);
+        $navoptions = course_get_user_navigation_options($sitecontext, $course);
 
         // Hidden node that we use to determine if the front page navigation is loaded.
         // This required as there are not other guaranteed nodes that may be loaded.
         $coursenode->add('frontpageloaded', null, self::TYPE_CUSTOM, null, 'frontpageloaded')->display = false;
 
         // Participants.
-        // If this is the site course, they need to have moodle/site:viewparticipants at the site level.
-        // If no, then they need to have moodle/course:viewparticipants at the course level.
-        if (($isfrontpage && has_capability('moodle/site:viewparticipants', $sitecontext)) ||
-                (!$isfrontpage && has_capability('moodle/course:viewparticipants', context_course::instance($course->id)))) {
+        if ($navoptions->participants) {
             $coursenode->add(get_string('participants'), new moodle_url('/user/index.php?id='.$course->id), self::TYPE_CUSTOM, get_string('participants'), 'participants');
         }
 
         // Blogs.
-        if (!empty($CFG->enableblogs)
-          and ($CFG->bloglevel == BLOG_GLOBAL_LEVEL or ($CFG->bloglevel == BLOG_SITE_LEVEL and (isloggedin() and !isguestuser())))
-          and has_capability('moodle/blog:view', $sitecontext)) {
+        if ($navoptions->blogs) {
             $blogsurls = new moodle_url('/blog/index.php');
             $coursenode->add(get_string('blogssite', 'blog'), $blogsurls->out(), self::TYPE_SYSTEM, null, 'siteblog');
         }
@@ -2625,30 +2622,30 @@ class global_navigation extends navigation_node {
         $filterselect = 0;
 
         // Badges.
-        if (!empty($CFG->enablebadges) && has_capability('moodle/badges:viewbadges', $sitecontext)) {
+        if ($navoptions->badges) {
             $url = new moodle_url($CFG->wwwroot . '/badges/view.php', array('type' => 1));
             $coursenode->add(get_string('sitebadges', 'badges'), $url, navigation_node::TYPE_CUSTOM);
         }
 
         // Notes.
-        if (!empty($CFG->enablenotes) && has_any_capability(array('moodle/notes:manage', 'moodle/notes:view'), $sitecontext)) {
+        if ($navoptions->notes) {
             $coursenode->add(get_string('notes', 'notes'), new moodle_url('/notes/index.php',
                 array('filtertype' => 'course', 'filterselect' => $filterselect)), self::TYPE_SETTING, null, 'notes');
         }
 
         // Tags
-        if (!empty($CFG->usetags) && isloggedin()) {
+        if ($navoptions->tags) {
             $node = $coursenode->add(get_string('tags', 'tag'), new moodle_url('/tag/search.php'),
                     self::TYPE_SETTING, null, 'tags');
         }
 
         // Search.
-        if (!empty($CFG->enableglobalsearch) && has_capability('moodle/search:query', $sitecontext)) {
+        if ($navoptions->search) {
             $node = $coursenode->add(get_string('search', 'search'), new moodle_url('/search/index.php'),
                     self::TYPE_SETTING, null, 'search');
         }
 
-        if (isloggedin()) {
+        if ($navoptions->calendar) {
             // Calendar
             $calendarurl = new moodle_url('/calendar/view.php', array('view' => 'month'));
             $coursenode->add(get_string('calendar', 'calendar'), $calendarurl, self::TYPE_CUSTOM, null, 'calendar');
