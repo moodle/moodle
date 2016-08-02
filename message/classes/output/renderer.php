@@ -42,10 +42,10 @@ class renderer extends plugin_renderer_base {
      *
      * Defer to template.
      *
-     * @param message_area_page $page
+     * @param \core_message\output\messagearea\message_area $page
      * @return string html for the page
      */
-    public function render_message_area_page(message_area_page $page) {
+    public function render_message_area(\core_message\output\messagearea\message_area $page) {
         $data = $page->export_for_template($this);
         return parent::render_from_template('core_message/message_area', $data);
     }

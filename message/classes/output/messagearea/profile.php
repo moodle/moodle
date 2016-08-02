@@ -15,61 +15,46 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains class used to prepare the messages for display.
+ * Contains class used to prepare a profile for display.
  *
  * @package   core_message
  * @copyright 2016 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_message\output;
+namespace core_message\output\messagearea;
 
 use renderable;
 use templatable;
 
 /**
- * Class to prepare the messages for display.
+ * Class to prepare a profile for display.
  *
  * @package   core_message
  * @copyright 2016 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class messages implements templatable, renderable {
+class profile implements templatable, renderable {
 
     /**
-     * The messages.
-     */
-    protected $messages;
-
-    /**
-     * The current user id.
+     * The id of the user who is viewing the profile.
      */
     protected $currentuserid;
 
     /**
-     * The other user id.
-     */
-    protected $otheruserid;
-
-    /**
-     * The other user.
+     * The profile of the user we are going to view.
      */
     protected $otheruser;
 
     /**
      * Constructor.
      *
-     * @param int $currentuserid The current user we are wanting to view messages for
-     * @param int $otheruserid The other user we are wanting to view messages for
-     * @param \core_message\output\message[] $messages
+     * @param int $currentuserid
+     * @param \stdClass $otheruser
      */
-    public function __construct($currentuserid, $otheruserid, $messages) {
-        global $DB;
-
+    public function __construct($currentuserid, $otheruser) {
         $this->currentuserid = $currentuserid;
-        $this->otheruserid = $otheruserid;
-        $this->otheruser = $DB->get_record('user', array('id' => $otheruserid));
-        $this->messages = $messages;
+        $this->otheruser = $otheruser;
     }
 
     public function export_for_template(\renderer_base $output) {
@@ -78,12 +63,19 @@ class messages implements templatable, renderable {
         $data = new \stdClass();
         $data->iscurrentuser = $USER->id == $this->currentuserid;
         $data->currentuserid = $this->currentuserid;
-        $data->otheruserid = $this->otheruserid;
-        $data->otheruserfullname = fullname($this->otheruser);
-        $data->messages = array();
-        foreach ($this->messages as $message) {
-            $data->messages[] = $message->export_for_template($output);
+        $data->otheruserid = $this->otheruser->userid;
+        $data->fullname = $this->otheruser->fullname;
+        $data->email = $this->otheruser->email;
+        if (!empty($this->otheruser->country)) {
+            $data->country = get_string($this->otheruser->country, 'countries');
+        } else {
+            $data->country = '';
         }
+        $data->city = $this->otheruser->city;
+        $data->profileimageurl = $this->otheruser->profileimageurl;
+        $data->profileimageurlsmall = $this->otheruser->profileimageurlsmall;
+        $data->isblocked = $this->otheruser->isblocked;
+        $data->iscontact = $this->otheruser->iscontact;
 
         return $data;
     }

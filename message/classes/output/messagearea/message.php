@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_message\output;
+namespace core_message\output\messagearea;
 
 use renderable;
 use templatable;

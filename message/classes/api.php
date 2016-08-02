@@ -43,7 +43,7 @@ class api {
      * @param int $otheruserid The id of the user we have selected, 0 if none have been selected
      * @param int $limitfrom
      * @param int $limitnum
-     * @return \core_message\output\contacts
+     * @return \core_message\output\messagearea\contacts
      */
     public static function get_conversations($userid, $otheruserid = 0, $limitfrom = 0, $limitnum = 0) {
         $arrcontacts = array();
@@ -53,7 +53,7 @@ class api {
             }
         }
 
-        return new \core_message\output\contacts($userid, $otheruserid, $arrcontacts);
+        return new \core_message\output\messagearea\contacts($userid, $otheruserid, $arrcontacts);
     }
 
     /**
@@ -62,7 +62,7 @@ class api {
      * @param int $userid The user id
      * @param int $limitfrom
      * @param int $limitnum
-     * @return \core_message\output\contacts
+     * @return \core_message\output\messagearea\contacts
      */
     public static function get_contacts($userid, $limitfrom = 0, $limitnum = 0) {
         global $DB;
@@ -81,7 +81,7 @@ class api {
             }
         }
 
-        return new \core_message\output\contacts($userid, 0, $arrcontacts, false);
+        return new \core_message\output\messagearea\contacts($userid, 0, $arrcontacts, false);
     }
 
     /**
@@ -92,7 +92,7 @@ class api {
      * @param int $limitfrom
      * @param int $limitnum
      * @param string $sort
-     * @return \core_message\output\messages
+     * @return \core_message\output\messagearea\messages
      */
     public static function get_messages($userid, $otheruserid, $limitfrom = 0, $limitnum = 0, $sort = 'timecreated ASC') {
         $arrmessages = array();
@@ -100,7 +100,7 @@ class api {
             $arrmessages = \core_message\helper::create_messages($userid, $messages);
         }
 
-        return new \core_message\output\messages($userid, $otheruserid, $arrmessages);
+        return new \core_message\output\messagearea\messages($userid, $otheruserid, $arrmessages);
     }
 
     /**
@@ -108,7 +108,7 @@ class api {
      *
      * @param int $userid the current user
      * @param int $otheruserid the other user
-     * @return \core_message\output\message|null
+     * @return \core_message\output\messagearea\message|null
      */
     public static function get_most_recent_message($userid, $otheruserid) {
         // We want two messages here so we get an accurate 'blocktime' value.
@@ -127,7 +127,7 @@ class api {
      *
      * @param int $userid The user id
      * @param int $otheruserid The id of the user whose profile we want to view.
-     * @return \core_message\output\profile
+     * @return \core_message\output\messagearea\profile
      */
     public static function get_profile($userid, $otheruserid) {
         global $CFG, $DB;
@@ -157,7 +157,7 @@ class api {
                 $data->iscontact = false;
             }
 
-            return new \core_message\output\profile($userid, $data);
+            return new \core_message\output\messagearea\profile($userid, $data);
         }
     }
 

@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_message\output;
+namespace core_message\output\messagearea;
 
 use renderable;
 use templatable;
@@ -61,7 +61,7 @@ class contacts implements templatable, renderable {
      *
      * @param int $userid The id of the user the contacts belong to
      * @param int $otheruserid The id of the user we are viewing
-     * @param \core_message\output\contact[] $contacts
+     * @param \core_message\output\messagearea\contact[] $contacts
      * @param bool $conversationsselected
      */
     public function __construct($userid, $otheruserid, $contacts, $conversationsselected = true) {

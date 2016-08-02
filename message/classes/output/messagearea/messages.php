@@ -15,52 +15,60 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains class used to prepare the message area for display.
+ * Contains class used to prepare the messages for display.
  *
  * @package   core_message
  * @copyright 2016 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_message\output;
+namespace core_message\output\messagearea;
 
 use renderable;
 use templatable;
 
 /**
- * Class to prepare the message area for display.
+ * Class to prepare the messages for display.
  *
  * @package   core_message
  * @copyright 2016 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class message_area_page implements templatable, renderable {
+class messages implements templatable, renderable {
 
     /**
-     * The user id.
-     */
-    protected $userid;
-
-    /**
-     * The contacts for the users.
-     */
-    protected $contacts;
-
-    /**
-     * The messages for the user.
+     * The messages.
      */
     protected $messages;
 
     /**
+     * The current user id.
+     */
+    protected $currentuserid;
+
+    /**
+     * The other user id.
+     */
+    protected $otheruserid;
+
+    /**
+     * The other user.
+     */
+    protected $otheruser;
+
+    /**
      * Constructor.
      *
-     * @param int $userid The ID of the user whose contacts and messages we are viewing
-     * @param \core_message\output\contacts $contacts
-     * @param \core_message\output\messages|null $messages
+     * @param int $currentuserid The current user we are wanting to view messages for
+     * @param int $otheruserid The other user we are wanting to view messages for
+     * @param \core_message\output\messagearea\message[] $messages
      */
-    public function __construct($userid, $contacts, $messages) {
-        $this->userid = $userid;
-        $this->contacts = $contacts;
+    public function __construct($currentuserid, $otheruserid, $messages) {
+        global $DB;
+
+        $this->currentuserid = $currentuserid;
+        $this->otheruserid = $otheruserid;
+        $this->otheruser = $DB->get_record('user', array('id' => $otheruserid));
         $this->messages = $messages;
     }
 
@@ -68,11 +76,13 @@ class message_area_page implements templatable, renderable {
         global $USER;
 
         $data = new \stdClass();
-        $data->loggedinuserid = $USER->id;
-        $data->userid = $this->userid;
-        $data->contacts = $this->contacts->export_for_template($output);
-        if ($this->messages) {
-            $data->messages = $this->messages->export_for_template($output);
+        $data->iscurrentuser = $USER->id == $this->currentuserid;
+        $data->currentuserid = $this->currentuserid;
+        $data->otheruserid = $this->otheruserid;
+        $data->otheruserfullname = fullname($this->otheruser);
+        $data->messages = array();
+        foreach ($this->messages as $message) {
+            $data->messages[] = $message->export_for_template($output);
         }
 
         return $data;

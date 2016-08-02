@@ -15,56 +15,66 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains class used to prepare a contact for display.
+ * Contains class used to prepare the message area for display.
  *
  * @package   core_message
  * @copyright 2016 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_message\output;
+namespace core_message\output\messagearea;
 
 use renderable;
 use templatable;
 
 /**
- * Class to prepare a contact for display.
+ * Class to prepare the message area for display.
  *
  * @package   core_message
  * @copyright 2016 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class contact implements templatable, renderable {
+class message_area implements templatable, renderable {
 
     /**
-     * Maximum length of message to show in left panel.
+     * The user id.
      */
-    const MAX_MSG_LENGTH = 60;
+    protected $userid;
 
     /**
-     * The contact.
+     * The contacts for the users.
      */
-    protected $contact;
+    protected $contacts;
+
+    /**
+     * The messages for the user.
+     */
+    protected $messages;
 
     /**
      * Constructor.
      *
-     * @param \stdClass $contact
+     * @param int $userid The ID of the user whose contacts and messages we are viewing
+     * @param \core_message\output\messagearea\contacts $contacts
+     * @param \core_message\output\messagearea\messages|null $messages
      */
-    public function __construct($contact) {
-        $this->contact = $contact;
+    public function __construct($userid, $contacts, $messages) {
+        $this->userid = $userid;
+        $this->contacts = $contacts;
+        $this->messages = $messages;
     }
 
     public function export_for_template(\renderer_base $output) {
-        $contact = new \stdClass();
-        $contact->userid = $this->contact->userid;
-        $contact->fullname = $this->contact->fullname;
-        $contact->profileimageurl = $this->contact->profileimageurl;
-        $contact->profileimageurlsmall = $this->contact->profileimageurlsmall;
-        $contact->lastmessage = shorten_text($this->contact->lastmessage, self::MAX_MSG_LENGTH);
-        $contact->isonline = $this->contact->isonline;
-        $contact->isread = $this->contact->isread;
+        global $USER;
 
-        return $contact;
+        $data = new \stdClass();
+        $data->loggedinuserid = $USER->id;
+        $data->userid = $this->userid;
+        $data->contacts = $this->contacts->export_for_template($output);
+        if ($this->messages) {
+            $data->messages = $this->messages->export_for_template($output);
+        }
+
+        return $data;
     }
 }
