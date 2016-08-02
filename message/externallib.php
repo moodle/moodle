@@ -1238,7 +1238,7 @@ class core_message_external extends external_api {
      */
     public static function get_popup_notifications($useridto, $status, $embedpreference,
         $embeduserto, $embeduserfrom, $newestfirst, $markasread, $limit, $offset) {
-        global $CFG, $USER, $OUTPUT;
+        global $CFG, $USER, $PAGE;
 
         $params = self::validate_parameters(
             self::get_popup_notifications_parameters(),
@@ -1268,6 +1268,7 @@ class core_message_external extends external_api {
         $limit = $params['limit'];
         $offset = $params['offset'];
         $issuperuser = has_capability('moodle/site:readallmessages', $context);
+        $renderer = $PAGE->get_renderer('core_message');
 
         if (!empty($useridto)) {
             if (core_user::is_real_user($useridto)) {
@@ -1286,6 +1287,7 @@ class core_message_external extends external_api {
 
         $sort = $newestfirst ? 'DESC' : 'ASC';
         $notifications = message_get_popup_notifications($useridto, $status, $embeduserto, $embeduserfrom, $sort, $limit, $offset);
+        $notificationcontexts = [];
 
         if ($notifications) {
             // In some cases, we don't need to get the to user objects from the sql query.
@@ -1298,69 +1300,20 @@ class core_message_external extends external_api {
 
             foreach ($notifications as $notification) {
 
-                if ($useridto == $USER->id and $notification->timeusertodeleted) {
-                    $notification->deleted = true;
-                } else {
-                    $notification->deleted = false;
-                }
+                $notificationoutput = new \core_message\output\popup_notification($notification, $embeduserto,
+                    $embeduserfrom, $embedpreference, $usertofullname);
 
-                // We need to get the user from the query.
-                if ($embeduserfrom) {
-                    // Check for non-reply and support users.
-                    if (core_user::is_real_user($notification->useridfrom)) {
-                        $user = new stdClass();
-                        $user = username_load_fields_from_object($user, $notification, 'userfrom');
-                        $profileurl = new moodle_url('/user/profile.php', array('id' => $notification->useridfrom));
-                        $notification->userfromfullname = fullname($user);
-                        $notification->userfromprofileurl = $profileurl->out();
-                    } else {
-                        $notification->userfromfullname = get_string('coresystem');
-                    }
-                }
+                $notificationcontext = $notificationoutput->export_for_template($renderer);
+                $notificationcontexts[] = $notificationcontext;
 
-                // We need to get the user from the query.
-                if ($embeduserto) {
-                    if (empty($usertofullname)) {
-                        $user = new stdClass();
-                        $user = username_load_fields_from_object($user, $notification, 'userto');
-                        $notification->usertofullname = fullname($user);
-                    } else {
-                        $notification->usertofullname = $usertofullname;
-                    }
-                }
-
-                $notification->timecreatedpretty = get_string('ago', 'message', format_time(time() - $notification->timecreated));
-                $notification->text = message_format_message_text($notification);
-                $notification->read = $notification->timeread ? true : false;
-
-                if (!empty($notification->component) && substr($notification->component, 0, 4) == 'mod_') {
-                    $iconurl = $OUTPUT->pix_url('icon', $notification->component);
-                } else {
-                    $iconurl = $OUTPUT->pix_url('i/marker', 'core');
-                }
-
-                $notification->iconurl = $iconurl->out();
-
-                // We only return the logged in user's preferences, so if it isn't the sender or receiver
-                // of this notification then skip embedding the preferences.
-                if ($embedpreference && !empty($notification->component) && !empty($notification->eventtype) && !$issuperuser) {
-                    $key = 'message_provider_' . $notification->component . '_' . $notification->eventtype;
-                    $notification->preference = array(
-                        'key' => $key,
-                        'loggedin' => get_user_preferences($key . '_loggedin', $USER->id),
-                        'loggedoff' => get_user_preferences($key . '_loggedoff', $USER->id),
-                    );
-                }
-
-                if ($markasread && !$notification->read) {
-                    // Have to clone here because this function mutates the given data. Naughty, naughty...
-                    message_mark_message_read(clone $notification, time());
+                if ($markasread && !$notificationcontext->read) {
+                    message_mark_message_read($notification, time());
                 }
             }
         }
 
         return array(
-            'notifications' => $notifications,
+            'notifications' => $notificationcontexts,
             'unreadcount' => message_count_unread_popup_notifications($useridto),
         );
     }
