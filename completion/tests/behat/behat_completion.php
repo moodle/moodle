@@ -102,6 +102,9 @@ class behat_completion extends behat_base {
         // Go to course editing.
         $this->execute("behat_general::click_link", get_string('editsettings'));
 
+        // Expand all the form fields.
+        $this->execute("behat_forms::i_expand_all_fieldsets");
+
         // Enable completion.
         $this->execute("behat_forms::i_set_the_field_to",
             array(get_string('enablecompletion', 'completion'), $toggle));
