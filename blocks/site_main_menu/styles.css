@@ -1,6 +1,12 @@
 .block_site_main_menu li { clear: both; }
 .block_site_main_menu li .column { width: 100%; }
-.block_site_main_menu li .buttons { float: right; margin: 0; }
+.block_site_main_menu li .buttons {
+    float: right;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background-color: inherit;
+}
 .dir-rtl .block_site_main_menu li .buttons { float: left; }
 .block_site_main_menu li .buttons a img{ vertical-align: text-bottom;}
 .block_site_main_menu .footer { margin-top: 1em; }
