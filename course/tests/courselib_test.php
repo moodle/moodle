@@ -3026,4 +3026,102 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertFalse($navoptions->participants);
         $this->assertFalse($navoptions->badges);
     }
+
+    /**
+     * Test course_get_user_administration_options for frontpage.
+     */
+    public function test_course_get_user_administration_options_for_frontpage() {
+        global $CFG, $SITE;
+        $this->resetAfterTest();
+        $course = clone $SITE;
+        $context = context_course::instance($course->id);
+        $this->setAdminUser();
+
+        $adminoptions = course_get_user_administration_options($course, $context);
+        $this->assertTrue($adminoptions->update);
+        $this->assertTrue($adminoptions->filters);
+        $this->assertTrue($adminoptions->reports);
+        $this->assertTrue($adminoptions->backup);
+        $this->assertTrue($adminoptions->restore);
+        $this->assertFalse($adminoptions->files);
+        $this->assertTrue(!isset($adminoptions->tags));
+
+        // Now try with a standard user.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $adminoptions = course_get_user_administration_options($course, $context);
+        $this->assertFalse($adminoptions->update);
+        $this->assertFalse($adminoptions->filters);
+        $this->assertFalse($adminoptions->reports);
+        $this->assertFalse($adminoptions->backup);
+        $this->assertFalse($adminoptions->restore);
+        $this->assertFalse($adminoptions->files);
+        $this->assertTrue(!isset($adminoptions->tags));
+
+    }
+
+    /**
+     * Test course_get_user_administration_options for managers in a normal course.
+     */
+    public function test_course_get_user_administration_options_for_managers() {
+        global $CFG;
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+        $this->setAdminUser();
+
+        $adminoptions = course_get_user_administration_options($course, $context);
+        $this->assertTrue($adminoptions->update);
+        $this->assertTrue($adminoptions->filters);
+        $this->assertTrue($adminoptions->reports);
+        $this->assertTrue($adminoptions->backup);
+        $this->assertTrue($adminoptions->restore);
+        $this->assertFalse($adminoptions->files);
+        $this->assertTrue($adminoptions->tags);
+        $this->assertTrue($adminoptions->gradebook);
+        $this->assertFalse($adminoptions->outcomes);
+        $this->assertTrue($adminoptions->badges);
+        $this->assertTrue($adminoptions->import);
+        $this->assertTrue($adminoptions->publish);
+        $this->assertTrue($adminoptions->reset);
+        $this->assertTrue($adminoptions->roles);
+        $this->assertTrue($adminoptions->grades);
+    }
+
+    /**
+     * Test course_get_user_administration_options for students in a normal course.
+     */
+    public function test_course_get_user_administration_options_for_students() {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        $user = $this->getDataGenerator()->create_user();
+        $roleid = $DB->get_field('role', 'id', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $roleid);
+
+        $this->setUser($user);
+        $adminoptions = course_get_user_administration_options($course, $context);
+
+        $this->assertFalse($adminoptions->update);
+        $this->assertFalse($adminoptions->filters);
+        $this->assertFalse($adminoptions->reports);
+        $this->assertFalse($adminoptions->backup);
+        $this->assertFalse($adminoptions->restore);
+        $this->assertFalse($adminoptions->files);
+        $this->assertFalse($adminoptions->tags);
+        $this->assertFalse($adminoptions->gradebook);
+        $this->assertFalse($adminoptions->outcomes);
+        $this->assertTrue($adminoptions->badges);
+        $this->assertFalse($adminoptions->import);
+        $this->assertFalse($adminoptions->publish);
+        $this->assertFalse($adminoptions->reset);
+        $this->assertFalse($adminoptions->roles);
+        $this->assertTrue($adminoptions->grades);
+
+        $CFG->enablebadges = false;
+        $adminoptions = course_get_user_administration_options($course, $context);
+        $this->assertFalse($adminoptions->badges);
+    }
 }
