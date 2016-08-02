@@ -24,8 +24,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once(__DIR__ . '/lib.php');
+
 $THEME->name = 'noname';
-$THEME->scssfile = 'moodle';
+$THEME->scssfile = theme_noname_get_scss_file($THEME);
 $THEME->sheets = [];
 $THEME->editor_sheets = ['editor'];
 
@@ -145,6 +147,8 @@ $THEME->layouts = [
 $THEME->parents = [];
 $THEME->enable_dock = false;
 $THEME->csstreepostprocessor = 'theme_noname_css_tree_post_processor';
+$THEME->extrascsscallback = 'theme_noname_get_extra_scss';
+$THEME->scssvariablescallback = 'theme_noname_get_scss_variables';
 $THEME->supportscssoptimisation = false;
 $THEME->yuicssmodules = array();
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
