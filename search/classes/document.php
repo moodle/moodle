@@ -277,7 +277,7 @@ class document implements \renderable, \templatable {
             $this->data[$fieldname] = intval($value);
         } else {
             // Replace all groups of line breaks and spaces by single spaces.
-            $this->data[$fieldname] = preg_replace("/\s+/", " ", $value);
+            $this->data[$fieldname] = preg_replace("/\s+/u", " ", $value);
         }
 
         return $this->data[$fieldname];
