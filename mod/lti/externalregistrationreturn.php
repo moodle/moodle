@@ -45,6 +45,17 @@ $PAGE->set_pagelayout('maintenance');
 $output = $PAGE->get_renderer('mod_lti');
 echo $output->header();
 
+// Check status and lti_errormsg.
+if ($status !== 'success' && empty($err)) {
+    // We have a failed status and an empty lti_errormsg. Check if we can use lti_msg.
+    if (!empty($msg)) {
+        // The lti_msg attribute is set, use this as the error message.
+        $err = $msg;
+    } else {
+        // Otherwise, use our generic error message.
+        $err = get_string('failedtocreatetooltype', 'mod_lti');
+    }
+}
 $params = array('message' => s($msg), 'error' => s($err), 'id' => $id, 'status' => s($status));
 
 $page = new \mod_lti\output\external_registration_return_page();
