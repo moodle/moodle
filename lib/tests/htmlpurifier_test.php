@@ -336,7 +336,7 @@ class core_htmlpurifier_testcase extends basic_testcase {
      */
     public function media_tags_provider() {
         // Takes an array of attributes, then generates a test for each of them.
-        $generatetestcases = function($prefix, array $attrs, array $templates) use ($p) {
+        $generatetestcases = function($prefix, array $attrs, array $templates) {
             return array_reduce($attrs, function($carry, $attr) use ($prefix, $templates) {
                 $testcase = [$prefix . '/' . $attr => [
                     sprintf($templates[0], $attr),
