@@ -7063,7 +7063,7 @@ body.path-question-type .mform fieldset.hidden {
 }
 .popover-region .popover-region-container .popover-region-header-container {
   height: 25px;
-  line-height: 24px;
+  line-height: 25px;
   padding-left: 5px;
   padding-right: 5px;
   border-bottom: 1px solid #ddd;
@@ -7088,6 +7088,7 @@ body.path-question-type .mform fieldset.hidden {
 }
 .popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions label {
   display: inline-block;
+  margin: 0;
 }
 .popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions [role="checkbox"].loading .loading-icon {
   display: inline-block;

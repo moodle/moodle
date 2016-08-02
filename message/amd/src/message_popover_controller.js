@@ -174,7 +174,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
      * @method loadUnreadMessageCount
      */
     MessagePopoverController.prototype.loadUnreadMessageCount = function() {
-        MessageRepo.countUnread({useridto: this.userId}).then(function(count) {
+        MessageRepo.countUnreadConversations({useridto: this.userId}).then(function(count) {
             this.unreadCount = count;
             this.renderUnreadCount();
             this.updateButtonAriaLabel();
@@ -261,12 +261,17 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
      * @method markAllAsRead
      */
     MessagePopoverController.prototype.markAllAsRead = function() {
+        if (this.markAllReadButton.hasClass('loading')) {
+            return $.Deferred().resolve();
+        }
+
         this.markAllReadButton.addClass('loading');
 
         return MessageRepo.markAllAsRead({useridto: this.userId})
             .then(function() {
                 this.unreadCount = 0;
-                this.clearUnreadNotifications();
+                this.hideUnreadCount();
+                this.getContent().find(SELECTORS.CONTENT_ITEM_CONTAINER).removeClass('unread');
             }.bind(this))
             .always(function() { this.markAllReadButton.removeClass('loading'); }.bind(this));
     };
@@ -282,6 +287,10 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         var ischecked = (button.attr('aria-checked') === 'true');
         var blockstring = '';
         var unblockstring = '';
+
+        if (button.hasClass('loading')) {
+            return $.Deferred().resolve();
+        }
 
         button.addClass('loading');
 
@@ -383,6 +392,14 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         // Update the state of non-contact blocking when button is activated.
         this.root.on(CustomEvents.events.activate, SELECTORS.BLOCK_NON_CONTACTS_BUTTON, function(e, data) {
             this.toggleBlockNonContactsStatus();
+
+            e.stopPropagation();
+            data.originalEvent.preventDefault();
+        }.bind(this));
+
+        // Mark all messages as read when button is activated.
+        this.root.on(CustomEvents.events.activate, SELECTORS.MARK_ALL_READ_BUTTON, function(e, data) {
+            this.markAllAsRead();
 
             e.stopPropagation();
             data.originalEvent.preventDefault();

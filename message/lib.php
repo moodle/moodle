@@ -290,6 +290,24 @@ function message_count_unread_messages($user1=null, $user2=null) {
 }
 
 /**
+ * Returns the count of unread conversations (collection of messages from a single user) for
+ * the given user.
+ *
+ * @param object $user the user who's conversations should be counted
+ * @return in the count of $user's unread conversations
+ */
+function message_count_unread_conversations($user = null) {
+    global $USER, $DB;
+
+    if (empty($user)) {
+        $user = $USER;
+    }
+
+    return $DB->count_records_select('message', 'useridto = ?',
+        [$user->id], "COUNT(DISTINCT(useridfrom))");
+}
+
+/**
  * Count the number of users blocked by $user1
  *
  * @param object $user1 user object
@@ -341,8 +359,9 @@ function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
     // was so large that it was difficult to be confident in its correctness.
     $uniquefield = $DB->sql_concat('message.useridfrom', "'-'", 'message.useridto');
     $sql = "SELECT $uniquefield, $userfields,
-                   message.id as mid, message.notification, message.smallmessage, message.fullmessage,
-                   message.fullmessagehtml, message.fullmessageformat, message.timecreated, 1 as isread,
+                   message.id as mid, message.notification, message.useridfrom, message.useridto,
+                   message.smallmessage, message.fullmessage, message.fullmessagehtml,
+                   message.fullmessageformat, message.timecreated, 1 as readtable,
                    contact.id as contactlistid, contact.blocked
               FROM {message_read} message
               JOIN (
@@ -389,7 +408,7 @@ function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
     // exact same query as the one above, except for the table we are querying. So, simply replace references to
     // the 'message_read' table with the 'message' table.
     $sql = str_replace('{message_read}', '{message}', $sql);
-    $sql = str_replace('1 as isread', '0 as isread', $sql);
+    $sql = str_replace('1 as readtable', '0 as readtable', $sql);
     $unread = $DB->get_records_sql($sql, $params, $limitfrom, $limitto);
 
     // Union the 2 result sets together looking for the message with the most
@@ -399,6 +418,13 @@ function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
     $conversation_arrays = array($unread, $read);
     foreach ($conversation_arrays as $conversation_array) {
         foreach ($conversation_array as $conversation) {
+            // Only consider it unread if $user has unread messages.
+            if (!$conversation->readtable && $conversation->useridto == $user->id) {
+                $conversation->isread = 0;
+            } else {
+                $conversation->isread = 1;
+            }
+
             if (!isset($conversations[$conversation->id])) {
                 $conversations[$conversation->id] = $conversation;
             } else {

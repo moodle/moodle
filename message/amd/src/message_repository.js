@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.2
  */
-define(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {
+define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notification) {
     /**
      * Retrieve a list of messages from the server.
      *
@@ -51,24 +51,55 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notificat
             args: args
         };
 
-        var promise = ajax.call([request])[0];
+        var promise = Ajax.call([request])[0];
 
-        promise.fail(notification.exception);
+        promise.fail(Notification.exception);
 
         return promise;
     };
 
-    var countUnread = function() {
-        return $.Deferred().resolve();
+    /**
+     * Count the number of unread conversations (one or more messages from a user)
+     * for a given user.
+     *
+     * @param {object} args The request arguments:
+     * @return {jQuery promise}
+     */
+    var countUnreadConversations = function(args) {
+        var request = {
+            methodname: 'core_message_get_unread_conversations_count',
+            args: args
+        };
+
+        var promise = Ajax.call([request])[0];
+
+        promise.fail(Notification.exception);
+
+        return promise;
     };
 
-    var markAllAsRead = function() {
-        return $.Deferred().resolve();
+    /**
+     * Mark all of unread messages for a user as read.
+     *
+     * @param {object} args The request arguments:
+     * @return {jQuery promise}
+     */
+    var markAllAsRead = function(args) {
+        var request = {
+            methodname: 'core_message_mark_all_messages_as_read',
+            args: args
+        };
+
+        var promise = Ajax.call([request])[0];
+
+        promise.fail(Notification.exception);
+
+        return promise;
     };
 
     return {
         query: query,
-        countUnread: countUnread,
+        countUnreadConversations: countUnreadConversations,
         markAllAsRead: markAllAsRead,
     };
 });
