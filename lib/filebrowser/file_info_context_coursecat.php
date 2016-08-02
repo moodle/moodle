@@ -97,7 +97,10 @@ class file_info_context_coursecat extends file_info {
     protected function get_area_coursecat_description($itemid, $filepath, $filename) {
         global $CFG;
 
-        if (!has_capability('moodle/course:update', $this->context)) {
+        if (!$this->category->visible and !has_capability('moodle/category:viewhiddencategories', $this->context)) {
+            return null;
+        }
+        if (!has_capability('moodle/category:manage', $this->context)) {
             return null;
         }
 
