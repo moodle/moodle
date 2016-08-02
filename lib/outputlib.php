@@ -285,6 +285,17 @@ class theme_config {
     public $csspostprocess = null;
 
     /**
+     * @var string Function to do custom CSS post-processing on a parsed CSS tree.
+     *
+     * This is an advanced feature. If you want to do custom post-processing on the
+     * CSS before it is output, you can provide the name of the function here. The
+     * function will receive a CSS tree document as first parameter, and the theme_config
+     * object as second parameter. A return value is not required, the tree can
+     * be edited in place.
+     */
+    public $csstreepostprocess = null;
+
+    /**
      * @var string Accessibility: Right arrow-like character is
      * used in the breadcrumb trail, course navigation menu
      * (previous/next activity), calendar, and search forum block.
@@ -525,7 +536,7 @@ class theme_config {
             'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow', 'uarrow', 'darrow',
             'hidefromselector', 'doctype', 'yuicssmodules', 'blockrtlmanipulations',
             'lessfile', 'extralesscallback', 'lessvariablescallback', 'blockrendermethod',
-            'scssfile', 'extrascsscallback', 'scssvariablescallback');
+            'scssfile', 'extrascsscallback', 'scssvariablescallback', 'csstreepostprocessor');
 
         foreach ($config as $key=>$value) {
             if (in_array($key, $configurable)) {
@@ -1541,7 +1552,8 @@ class theme_config {
         }
 
         // Post processing using an object representation of CSS.
-        $needsparsing = !empty($this->rtlmode);
+        $hastreeprocessor = !empty($this->csstreepostprocessor) && function_exists($this->csstreepostprocessor);
+        $needsparsing = $hastreeprocessor || !empty($this->rtlmode);
         if ($needsparsing) {
             $parser = new core_cssparser($css);
             $csstree = $parser->parse();
@@ -1552,7 +1564,9 @@ class theme_config {
             $this->rtlize($csstree);
         }
 
-        if ($needsparsing) {
+        if ($hastreeprocessor) {
+            $fn = $this->csstreepostprocessor;
+            $fn($csstree, $this);
             $css = $csstree->render();
             unset($csstree);
         }
