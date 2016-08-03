@@ -138,14 +138,15 @@ class behat_mod_feedback extends behat_base {
 
         $feedbackxpath = "//th[contains(normalize-space(string(.)), \"" . $feedbackname . "\")]/ancestor::table/" .
             "following-sibling::div[contains(concat(' ', normalize-space(@class), ' '), ' chart-area ')][1]" .
-            "//p[contains(concat(' ', normalize-space(@class), ' '), ' chart-table-expand ')]";
+            "//p[contains(concat(' ', normalize-space(@class), ' '), ' chart-table-expand ') and ".
+            "//a[contains(normalize-space(string(.)), '".get_string('showchartdata')."')]]";
 
         $charttabledataxpath = $feedbackxpath .
             "/following-sibling::div[contains(concat(' ', normalize-space(@class), ' '), ' chart-table-data ')][1]";
 
         // If chart data is not visible then expand.
         $node = $this->get_selected_node("xpath_element", $charttabledataxpath);
-        if (!$node->isVisible()) {
+        if ($node && !$node->isVisible()) {
             $this->execute('behat_general::i_click_on_in_the', array(
                 get_string('showchartdata'),
                 'link',
