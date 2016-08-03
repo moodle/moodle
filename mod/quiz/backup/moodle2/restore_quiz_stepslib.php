@@ -239,6 +239,10 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
             $data->overduehandling = get_config('quiz', 'overduehandling');
         }
 
+        // Old shufflequestions setting is now stored in quiz sections,
+        // so save it here if necessary so it is available when we need it.
+        $this->legacyshufflequestionsoption = !empty($data->shufflequestions);
+
         // Insert the quiz record.
         $newitemid = $DB->insert_record('quiz', $data);
         // Immediately after inserting "activity" record, call this.
