@@ -356,6 +356,10 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
      * @dataProvider clean_features_path_list
      */
     public function test_get_clean_feature_key_and_path($featurepath, $key, $cleanfeaturepath) {
+        global $CFG;
+
+        // This is a hack so directory name is correctly detected in tests.
+        $CFG->dirroot = 'C:';
 
         $behatconfigutil = $this->behatconfigutil;
         // Fix expected directory path for OS.
@@ -380,10 +384,10 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
             ['/home/test/behat/mod_assign.feature', 'mod_assign_behat_test_home', '/home/test/behat/mod_assign.feature'],
             ['mod_assign.feature', 'mod_assign', 'mod_assign.feature'],
             ['C:\test\this\that\test\behat\mod_assign.feature', 'mod_assign_behat_test_that_this_test', 'C:\test\this\that\test\behat\mod_assign.feature'],
-            ['C:\this\that\test\behat\mod_assign.feature', 'mod_assign_behat_test_that_this_C:', 'C:\this\that\test\behat\mod_assign.feature'],
-            ['C:\that\test\behat\mod_assign.feature', 'mod_assign_behat_test_that_C:', 'C:\that\test\behat\mod_assign.feature'],
-            ['C:\test\behat\mod_assign.feature', 'mod_assign_behat_test_C:', 'C:\test\behat\mod_assign.feature'],
-            ['C:\mod_assign.feature', 'mod_assign_C:', 'C:\mod_assign.feature'],
+            ['C:\this\that\test\behat\mod_assign.feature', 'mod_assign_behat_test_that_this', 'C:\this\that\test\behat\mod_assign.feature'],
+            ['C:\that\test\behat\mod_assign.feature', 'mod_assign_behat_test_that', 'C:\that\test\behat\mod_assign.feature'],
+            ['C:\test\behat\mod_assign.feature', 'mod_assign_behat_test', 'C:\test\behat\mod_assign.feature'],
+            ['C:\mod_assign.feature', 'mod_assign', 'C:\mod_assign.feature'],
         );
     }
 }

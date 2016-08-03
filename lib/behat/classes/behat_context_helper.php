@@ -55,8 +55,22 @@ class behat_context_helper {
      *
      * @param Environment $environment
      * @return void
+     * @deprecated since 3.2 MDL-55072 - please use behat_context_helper::set_environment()
+     * @todo MDL-55365 This will be deleted in Moodle 3.6.
      */
     public static function set_session(Environment $environment) {
+        debugging('set_session is deprecated. Please use set_environment instead.', DEBUG_DEVELOPER);
+
+        self::set_environment($environment);
+    }
+
+    /**
+     * Sets behat environment.
+     *
+     * @param Environment $environment
+     * @return void
+     */
+    public static function set_environment(Environment $environment) {
         self::$environment = $environment;
     }
 

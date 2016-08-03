@@ -173,7 +173,7 @@ class behat_config_util {
 
         if ($components) {
             foreach ($components as $componentname => $path) {
-                $path = $this->clean_path($path) . $this->get_behat_tests_path();
+                $path = $this->clean_path($path) . self::get_behat_tests_path();
                 if (empty($featurespaths[$path]) && file_exists($path)) {
                     list($key, $featurepath) = $this->get_clean_feature_key_and_path($path);
                     $featurespaths[$key] = $featurepath;
@@ -287,10 +287,10 @@ class behat_config_util {
         foreach ($components as $componentname => $componentpath) {
             $componentpath = self::clean_path($componentpath);
 
-            if (!file_exists($componentpath . $this->get_behat_tests_path())) {
+            if (!file_exists($componentpath . self::get_behat_tests_path())) {
                 continue;
             }
-            $diriterator = new DirectoryIterator($componentpath . $this->get_behat_tests_path());
+            $diriterator = new DirectoryIterator($componentpath . self::get_behat_tests_path());
             $regite = new RegexIterator($diriterator, '|behat_.*\.php$|');
 
             // All behat_*.php inside self::get_behat_tests_path() are added as steps definitions files.
@@ -815,10 +815,33 @@ class behat_config_util {
      *
      * @return string
      */
-    public final function get_behat_tests_path() {
+    public static final function get_behat_tests_path() {
         return DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'behat';
     }
 
+    /**
+     * Return context name of behat_theme selector to use.
+     *
+     * @param string $themename name of the theme.
+     * @param bool $includeclass if class should be included.
+     * @return string
+     */
+    public static final function get_behat_theme_selector_override_classname($themename, $includeclass = false) {
+        global $CFG;
+
+        $overridebehatclassname = 'behat_theme_'.$themename.'_behat_selectors';
+
+        if ($includeclass) {
+            $themeoverrideselector = $CFG->dirroot . DIRECTORY_SEPARATOR . 'theme' . DIRECTORY_SEPARATOR . $themename .
+                self::get_behat_tests_path() . DIRECTORY_SEPARATOR . $overridebehatclassname . '.php';
+
+            if (file_exists($themeoverrideselector)) {
+                require_once($themeoverrideselector);
+            }
+        }
+
+        return $overridebehatclassname;
+    }
 
     /**
      * List of components which contain behat context or features.
@@ -1055,7 +1078,7 @@ class behat_config_util {
         global $CFG;
 
         $themetestpath = $CFG->dirroot . DIRECTORY_SEPARATOR . "theme" . DIRECTORY_SEPARATOR . $theme .
-            $this->get_behat_tests_path();
+            self::get_behat_tests_path();
 
         if (file_exists($themetestpath . DIRECTORY_SEPARATOR . 'blacklist.json')) {
             // Blacklist file exist. Leave it for last to clear the feature and contexts.
@@ -1179,6 +1202,11 @@ class behat_config_util {
 
                 // Add this to the list of overridden paths, so it can be added to final contexts list for class resolver.
                 $this->overriddenthemescontexts[$context] = $path;
+            }
+
+            // Don't include behat_selectors.
+            if ($context === self::get_behat_theme_selector_override_classname($theme)) {
+                continue;
             }
 
             // Add theme specific contexts with suffix to steps definitions.
