@@ -142,7 +142,7 @@ class mod_glossary_external extends external_api {
         $entry->attachment = !empty($entry->attachment) ? 1 : 0;
         $entry->attachments = array();
         if ($entry->attachment) {
-            $files = external_util::get_area_files($context->id, 'mod_glossary', 'attachment', $entry->id);
+            $entry->attachments = external_util::get_area_files($context->id, 'mod_glossary', 'attachment', $entry->id);
         }
     }
 
