@@ -608,11 +608,13 @@ function detect_munged_arguments($string, $allowdots=1) {
  * @param string $zipfile The zip file to unzip
  * @param string $destination The location to unzip to
  * @param bool $showstatus_ignored Unused
+ * @deprecated since 2.0 MDL-15919
  */
 function unzip_file($zipfile, $destination = '', $showstatus_ignored = true) {
-    global $CFG;
+    debugging(__FUNCTION__ . '() is deprecated. '
+            . 'Please use the application/zip file_packer implementation instead.', DEBUG_DEVELOPER);
 
-    //Extract everything from zipfile
+    // Extract everything from zipfile.
     $path_parts = pathinfo(cleardoubleslashes($zipfile));
     $zippath = $path_parts["dirname"];       //The path of the zip file
     $zipfilename = $path_parts["basename"];  //The name of the zip file
@@ -674,11 +676,14 @@ function unzip_file($zipfile, $destination = '', $showstatus_ignored = true) {
  * @param array $originalfiles Files to zip
  * @param string $destination The destination path
  * @return bool Outcome
+ *
+ * @deprecated since 2.0 MDL-15919
  */
-function zip_files ($originalfiles, $destination) {
-    global $CFG;
+function zip_files($originalfiles, $destination) {
+    debugging(__FUNCTION__ . '() is deprecated. '
+            . 'Please use the application/zip file_packer implementation instead.', DEBUG_DEVELOPER);
 
-    //Extract everything from destination
+    // Extract everything from destination.
     $path_parts = pathinfo(cleardoubleslashes($destination));
     $destpath = $path_parts["dirname"];       //The path of the zip file
     $destfilename = $path_parts["basename"];  //The name of the zip file

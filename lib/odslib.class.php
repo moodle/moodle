@@ -72,6 +72,9 @@ class MoodleODSWorkbook {
      * Close the Moodle Workbook.
      */
     public function close() {
+        global $CFG;
+        require_once($CFG->libdir . '/filelib.php');
+
         $writer = new MoodleODSWriter($this->worksheets);
         $contents = $writer->get_file_content();
 
@@ -825,53 +828,30 @@ class MoodleODSWriter {
         $this->worksheets = $worksheets;
     }
 
+    /**
+     * Fetch the file ocntnet for the ODS.
+     *
+     * @return string
+     */
     public function get_file_content() {
-        global $CFG;
+        $dir = make_request_directory();
+        $filename = $dir . '/result.ods';
 
-        require_once($CFG->libdir.'/filelib.php');
+        $files = [
+                'mimetype'              => [$this->get_ods_mimetype()],
+                'content.xml'           => [$this->get_ods_content($this->worksheets)],
+                'meta.xml'              => [$this->get_ods_meta()],
+                'styles.xml'            => [$this->get_ods_styles()],
+                'settings.xml'          => [$this->get_ods_settings()],
+                'META-INF/manifest.xml' => [$this->get_ods_manifest()],
+            ];
 
-        do {
-            $dir = 'ods/'.time().'_'.rand(0, 10000);
-        } while (file_exists($CFG->tempdir.'/'.$dir));
+        $packer = get_file_packer('application/zip');
+        $packer->archive_to_pathname($files, $filename);
 
-        make_temp_directory($dir);
-        make_temp_directory($dir.'/META-INF');
-        $dir = "$CFG->tempdir/$dir";
-        $files = array();
+        $contents = file_get_contents($filename);
 
-        $handle = fopen("$dir/mimetype", 'w');
-        fwrite($handle, $this->get_ods_mimetype());
-        $files[] = "$dir/mimetype";
-
-        $handle = fopen("$dir/content.xml", 'w');
-        fwrite($handle, $this->get_ods_content($this->worksheets));
-        $files[] = "$dir/content.xml";
-
-        $handle = fopen("$dir/meta.xml", 'w');
-        fwrite($handle, $this->get_ods_meta());
-        $files[] = "$dir/meta.xml";
-
-        $handle = fopen("$dir/styles.xml", 'w');
-        fwrite($handle, $this->get_ods_styles());
-        $files[] = "$dir/styles.xml";
-
-        $handle = fopen("$dir/settings.xml", 'w');
-        fwrite($handle, $this->get_ods_settings());
-        $files[] = "$dir/settings.xml";
-
-        $handle = fopen("$dir/META-INF/manifest.xml", 'w');
-        fwrite($handle, $this->get_ods_manifest());
-        $files[] = "$dir/META-INF";
-
-        $filename = "$dir/result.ods";
-        zip_files($files, $filename);
-
-        $handle = fopen($filename, 'rb');
-        $contents = fread($handle, filesize($filename));
-        fclose($handle);
-
-        remove_dir($dir); // Cleanup the temp directory.
-
+        remove_dir($dir);
         return $contents;
     }
 
@@ -1286,7 +1266,7 @@ class MoodleODSWriter {
                       office:version="1.2">
     <office:meta>
         <meta:generator>Moodle '.$CFG->release.'</meta:generator>
-        <meta:initial-creator>'.fullname($USER, true).'</meta:initial-creator>
+        <meta:initial-creator>' . htmlspecialchars(fullname($USER, true), ENT_QUOTES, 'utf-8') . '</meta:initial-creator>
         <meta:creation-date>'.strftime('%Y-%m-%dT%H:%M:%S').'</meta:creation-date>
         <meta:document-statistic meta:table-count="1" meta:cell-count="0" meta:object-count="0"/>
     </office:meta>

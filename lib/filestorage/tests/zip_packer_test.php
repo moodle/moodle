@@ -297,6 +297,41 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
     /**
      * @depends test_archive_to_storage
      */
+    public function test_extract_to_pathname_returnvalue_successful() {
+        global $CFG;
+
+        $this->resetAfterTest(false);
+
+        $packer = get_file_packer('application/zip');
+
+        $target = make_request_directory();
+
+        $archive = "$CFG->tempdir/archive.zip";
+        $this->assertFileExists($archive);
+        $result = $packer->extract_to_pathname($archive, $target, null, null, true);
+        $this->assertTrue($result);
+    }
+
+    /**
+     * @depends test_archive_to_storage
+     */
+    public function test_extract_to_pathname_returnvalue_failure() {
+        global $CFG;
+
+        $this->resetAfterTest(false);
+
+        $packer = get_file_packer('application/zip');
+
+        $target = make_request_directory();
+
+        $archive = "$CFG->tempdir/noarchive.zip";
+        $result = $packer->extract_to_pathname($archive, $target, null, null, true);
+        $this->assertFalse($result);
+    }
+
+    /**
+     * @depends test_archive_to_storage
+     */
     public function test_extract_to_storage() {
         global $CFG;
 
