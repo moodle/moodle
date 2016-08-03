@@ -566,6 +566,8 @@ function report_log_userall_data($course, $user, $logreader) {
     $timestart = $coursestart = usergetmidnight($course->startdate);
 
     $i = 0;
+    $logs['series'][$i] = 0;
+    $logs['labels'][$i] = 0;
     while ($timestart < $timenow) {
         $timefinish = $timestart + 86400;
         $logs['labels'][$i] = userdate($timestart, "%a %d %b");
