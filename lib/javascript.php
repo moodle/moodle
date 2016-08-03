@@ -106,4 +106,4 @@ $content = '';
 foreach ($jsfiles as $jsfile) {
     $content .= file_get_contents($jsfile)."\n";
 }
-js_send_uncached($content, $etag);
+js_send_uncached($content);
