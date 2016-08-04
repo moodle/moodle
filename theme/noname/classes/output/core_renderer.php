@@ -27,6 +27,7 @@ use stdClass;
 use moodle_url;
 use preferences_groups;
 use action_menu;
+use help_icon;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -261,4 +262,14 @@ class core_renderer extends \core_renderer {
         return $this->render_from_template('core/action_menu', $menu);
     }
 
+    /**
+     * Implementation of user image rendering.
+     *
+     * @param help_icon $helpicon A help icon instance
+     * @return string HTML fragment
+     */
+    protected function render_help_icon(help_icon $helpicon) {
+        $context = $helpicon->export_for_template($this);
+        return $this->render_from_template('core/help_icon', $context);
+    }
 }
