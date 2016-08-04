@@ -57,6 +57,7 @@
 
 /** UI Usability Hacks **/
 #page-mod-data-export #notice span {padding:0 10px;}
+/*rtl:ignore*/
 #page-mod-data-edit input[id*="url"] {text-align:left;direction:ltr;}
 
 .mod-data-default-template td {vertical-align:top;}

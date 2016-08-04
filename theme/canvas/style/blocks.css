@@ -24,10 +24,6 @@
     font-size: 1.1em;
 }
 
-.dir-rtl .block h3 {
-    text-align: right;
-}
-
 /* Login
 ------------------------------*/
 
@@ -48,10 +44,6 @@
 
 .block_login .footer {
     text-align: left;
-}
-
-.dir-rtl .block_login .footer {
-    text-align: right;
 }
 
 /* News

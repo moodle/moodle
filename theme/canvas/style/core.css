@@ -242,12 +242,6 @@ body {
     padding-left: 10px;
 }
 
-.dir-rtl .userinfobox .content {
-    text-align: right;
-    padding-right: 10px;
-    padding-left: 0px;
-}
-
 .userinfobox .links {
     vertical-align: top;
     background: #f4f4f4;
@@ -259,19 +253,9 @@ body {
     text-align: left;
 }
 
-.dir-rtl .userinfobox .links a {
-    text-align: right;
-}
-
 .profilepicture {
     float: left;
     margin-right: 10px;
-}
-
-.dir-rtl .profilepicture {
-    float: right;
-    margin-left: 10px;
-    margin-right: 0px;
 }
 
 .descriptionbox {
@@ -298,11 +282,6 @@ body {
     float: left;
 }
 
-.dir-rtl .userprofile dl dt,
-.dir-rtl  .userprofile dl dd {
-    float: right;
-}
-
 .userprofile dl dt {
     padding-left: 0;
     font-weight: bold;
@@ -311,11 +290,6 @@ body {
     min-width: 100px;
     width: 15%;
     clear: both;
-}
-
-.dir-rtl .userprofile dl dt {
-    padding-left: 2%;
-    padding-right: 0;
 }
 
 .userprofile dl dd {
@@ -525,10 +499,6 @@ table#user-grades tr.avg td.vmarked {
     text-align: left;
 }
 
-.path-grade-report-grader.dir-rtl form {
-    text-align: right;
-}
-
 /* Footer
 -----------------------*/
 
@@ -669,8 +639,4 @@ table#user-grades tr.avg td.vmarked {
 .pagelayout-redirect #content {
     text-align: center;
     margin: 10% auto;
-}
-
-.path-grade-report.dir-rtl #graded_users_selector .singleselect {
-    margin: 0px;
 }

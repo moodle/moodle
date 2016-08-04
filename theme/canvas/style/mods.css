@@ -35,10 +35,6 @@
     border-right: 1px solid #ddd;
 }
 
-.path-mod-forum.dir-rtl .forumheaderlist th {
-    text-align: right;
-}
-
 .forumnodiscuss,
 .path-mod-forum .forumheaderlist .replies {
     text-align: center;
