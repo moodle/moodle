@@ -1559,4 +1559,27 @@ class behat_general extends behat_base {
         $node = $this->get_selected_node($selectortype, $element);
         $this->getSession()->getDriver()->post_key("\xEE\x80\x84", $node->getXpath());
     }
+
+    /**
+     * Checks if database family used is using one of the specified, else skip. (mysql, postgres, mssql, oracle, etc.)
+     *
+     * @Given /^database family used is one of the following:$/
+     * @param TableNode $databasefamilies list of database.
+     * @return void.
+     * @throws \Moodle\BehatExtension\Exception\SkippedException
+     */
+    public function database_family_used_is_one_of_the_following(TableNode $databasefamilies) {
+        global $DB;
+
+        $dbfamily = $DB->get_dbfamily();
+
+        // Check if used db family is one of the specified ones. If yes then return.
+        foreach ($databasefamilies->getRows() as $dbfamilytocheck) {
+            if ($dbfamilytocheck[0] == $dbfamily) {
+                return;
+            }
+        }
+
+        throw new \Moodle\BehatExtension\Exception\SkippedException();
+    }
 }
