@@ -727,7 +727,7 @@ class single_button implements renderable {
  * @package core
  * @category output
  */
-class single_select implements renderable {
+class single_select implements renderable, templatable {
 
     /**
      * @var moodle_url Target url - includes hidden fields
@@ -868,6 +868,77 @@ class single_select implements renderable {
         $this->label = $label;
         $this->labelattributes = $attributes;
 
+    }
+
+    /**
+     * Export data.
+     *
+     * @param renderer_base $output Renderer.
+     * @return stdClass
+     */
+    public function export_for_template(renderer_base $output) {
+        $attributes = $this->attributes;
+
+        $data = new stdClass();
+        $data->name = $this->name;
+        $data->method = $this->method;
+        $data->action = $this->method === 'get' ? $this->url->out_omit_querystring(true) : $this->url->out_omit_querystring();
+        $data->classes = 'autosubmit ' . $this->class;
+        $data->label = $this->label;
+        $data->disabled = $this->disabled;
+        $data->title = $this->tooltip;
+        $data->id = !empty($attributes['id']) ? $attributes['id'] : html_writer::random_id('single_select');
+        unset($attributes['id']);
+
+        // Form parameters.
+        $params = $this->url->params();
+        if ($this->method === 'post') {
+            $params['sesskey'] = sesskey();
+        }
+        $data->params = array_map(function($key) use ($params) {
+            return ['name' => $key, 'value' => $params[$key]];
+        }, array_keys($params));
+
+        // Select options.
+        $hasnothing = false;
+        if (is_string($this->nothing) && $this->nothing !== '') {
+            $nothing = ['' => $this->nothing];
+            $hasnothing = true;
+        } else if (is_array($this->nothing)) {
+            $key = key($this->nothing);
+            if ($key === 'choose' || $key === 'choosedots') {
+                $nothing = [$key => get_string('choosedots')];
+            } else {
+                $nothing = $this->nothing;
+            }
+            $hasnothing = true;
+        }
+        if ($hasnothing) {
+            $options = $nothing + $this->options;
+        } else {
+            $options = $this->options;
+        }
+        $data->hasnothing = $hasnothing;
+        $data->nothingkey = $hasnothing ? key($nothing) : false;
+
+        foreach ($options as $value => $name) {
+            $data->options[] = [
+                'value' => $value,
+                'name' => $options[$value],
+                'selected' => $this->selected == $value
+            ];
+        }
+
+        // Label attributes.
+        $data->labelattributes = [];
+        foreach ($this->labelattributes as $key => $value) {
+            $data->labelattributes = ['name' => $key, 'value' => $value];
+        }
+
+        // Help icon.
+        $data->helpicon = !empty($this->helpicon) ? $this->helpicon->export_for_template($output) : false;
+
+        return $data;
     }
 }
 
