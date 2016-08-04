@@ -21,9 +21,10 @@
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core_message/message_area_actions', 'core_message/message_area_contacts',
-        'core_message/message_area_messages', 'core_message/message_area_profile', 'core_message/message_area_tabs'],
-    function($, Actions, Contacts, Messages, Profile, Tabs) {
+define(['jquery', 'core_message/message_area_contacts', 'core_message/message_area_messages',
+        'core_message/message_area_profile', 'core_message/message_area_menubar', 'core_message/message_area_tabs',
+        'core_message/message_area_actions'],
+    function($, Contacts, Messages, Profile, Menubar, Tabs, Actions) {
 
         /**
          * Messagearea class.
@@ -47,6 +48,7 @@ define(['jquery', 'core_message/message_area_actions', 'core_message/message_are
             DELETEMESSAGECHECKBOX: "[data-region='delete-message-checkbox']",
             LASTMESSAGE: '.lastmessage',
             LOADINGICON: '.loading-icon',
+            MENU: "[data-region='menu']",
             MESSAGE: "[data-region='message']",
             MESSAGES: "[data-region='messages']",
             MESSAGESAREA: "[data-region='messages-area']",
@@ -96,6 +98,11 @@ define(['jquery', 'core_message/message_area_actions', 'core_message/message_are
             new Messages(this);
             new Profile(this);
             new Tabs(this);
+            var actions = new Actions(this);
+
+            Menubar.enhance(this.find(this.SELECTORS.MENU), {
+                "[data-action='delete-messages']": actions.chooseMessagesToDelete.bind(actions)
+            });
         };
 
         /**
