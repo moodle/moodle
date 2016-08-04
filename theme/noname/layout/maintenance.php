@@ -22,7 +22,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 $templatecontext = [
-    'sitename' => format_string($SITE->shortname, true, array('context' => context_course::instance(SITEID))),
+    // We cannot pass the context to format_string, this layout can be used during
+    // installation. At that stage database tables do not exist yet.
+    'sitename' => format_string($SITE->shortname),
     'output' => $OUTPUT
 ];
 

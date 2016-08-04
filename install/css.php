@@ -103,6 +103,7 @@ fieldset {
 fieldset .configphp,
 fieldset .alert {
     text-align: left;
+    direction: ltr;
 }
 
 .sitelink {
