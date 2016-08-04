@@ -25,9 +25,6 @@
  */
 define(['jquery', './tether'], function(jQuery, Tether) {
 
-    var originalJQuery = window.jQuery;
-    var originalTether = window.Tether;
-
     window.jQuery = jQuery;
     window.Tether = Tether;
 
@@ -44,8 +41,6 @@ define(['jquery', './tether'], function(jQuery, Tether) {
             'theme_noname/popover'],
             function(another) {
         jQuery('[data-toggle="popover"]').popover();
-        window.jQuery = originalJQuery;
-        window.Tether = originalTether;
     });
 
     return {};
