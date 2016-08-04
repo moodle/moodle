@@ -1,4 +1,4 @@
-<div class="messaging-area-all" data-loggedinuserid="{{loggedinuserid}}" data-userid="{{userid}}">
+<div class="messaging-area-container" data-loggedinuserid="{{loggedinuserid}}" data-userid="{{userid}}">
     <div class="actions">
         <ul title="{{#str}}edit{{/str}}" data-region="menu">
             <li>
@@ -31,7 +31,7 @@
 {{#js}}
     require(['core_message/message_area'],
         function(Messagearea) {
-            new Messagearea('.messaging-area-all');
+            new Messagearea('.messaging-area-container');
         }
     );
 {{/js}}

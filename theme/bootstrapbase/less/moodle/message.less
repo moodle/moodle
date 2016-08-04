@@ -1,5 +1,5 @@
 /** The message area **/
-.messaging-area-all {
+.messaging-area-container {
 
     .actions {
         float: right;
@@ -54,149 +54,149 @@
             margin-right: -120px;
         }
     }
-}
 
-.messaging-area {
-    border: 1px solid black;
-    clear: both;
+    .messaging-area {
+        border: 1px solid black;
+        clear: both;
 
-    .setSelected() {
-        background-color: #CCF2FF;
-    }
-
-    .contacts-area {
-        border-right: 1px solid black;
-        height: 600px;
-
-        .searcharea {
-            padding: 5px;
-            text-align: center;
+        .setSelected() {
+            background-color: #CCF2FF;
         }
 
-        .contacts {
-            height: 505px;
-            overflow-y: scroll;
+        .contacts-area {
+            border-right: 1px solid black;
+            height: 600px;
 
-            .contact.selected {
-                .setSelected();
+            .searcharea {
+                padding: 5px;
+                text-align: center;
             }
 
-            .contact {
-                &:hover {
+            .contacts {
+                height: 505px;
+                overflow-y: scroll;
+
+                .contact.selected {
                     .setSelected();
-                    cursor: pointer;
                 }
 
-                .deleteconversationcheckbox {
-                    display: none;
+                .contact {
+                    &:hover {
+                        .setSelected();
+                        cursor: pointer;
+                    }
+
+                    .deleteconversationcheckbox {
+                        display: none;
+                    }
+
+                    .information {
+                        padding-left: 8px;
+                        padding-right: 8px;
+
+                        .name {
+                            font-weight: bold;
+                        }
+
+                        .lastmessage {
+                            word-wrap: break-word;
+                        }
+                    }
+                }
+            }
+
+            .tabs {
+                border-top: 1px solid black;
+
+                .tab {
+                    &:hover {
+                        .setSelected();
+                        cursor: pointer;
+                    }
                 }
 
-                .information {
-                    padding-left: 8px;
-                    padding-right: 8px;
+                .tab.selected {
+                    .setSelected();
+                }
 
+                .tabconversations {
+                    text-align: center;
+                    border-right: 1px solid black;
+                }
+
+                .tabcontacts {
+                    text-align: center;
+                }
+            }
+        }
+
+        .messages-area {
+            .profile {
+                padding: 5px;
+                font-size: 16px;
+
+                .picture {
                     .name {
                         font-weight: bold;
                     }
+                }
 
-                    .lastmessage {
+                .information {
+                    padding-top: 10px;
+
+                    ul {
+                        list-style: none;
+                        margin: 0;
+                    }
+                }
+
+                .actions {
+                    padding-top: 10px;
+                }
+            }
+
+            .name {
+                font-weight: bold;
+            }
+
+            .messages {
+                height: 500px;
+                overflow-y: auto;
+
+                .blocktime {
+                    clear: both;
+                    font-weight: bold;
+                    text-align: center;
+                }
+
+                .message {
+
+                    .deletemessagecheckbox {
+                        display: none;
+                    }
+
+                    .content {
+                        border: 1px solid black;
+                        padding-left: 5px;
+                        margin-bottom: 5px;
+                        font-size: 10px;
                         word-wrap: break-word;
+                        width: 80%;
+                    }
+
+                    .content.left {
+                        float: left;
+                    }
+
+                    .content.right {
+                        float: right;
                     }
                 }
             }
-        }
 
-        .tabs {
-            border-top: 1px solid black;
-
-            .tab {
-                &:hover {
-                    .setSelected();
-                    cursor: pointer;
-                }
+            .response textarea {
+                width: 80%;
             }
-
-            .tab.selected {
-                .setSelected();
-            }
-
-            .tabconversations {
-                text-align: center;
-                border-right: 1px solid black;
-            }
-
-            .tabcontacts {
-                text-align: center;
-            }
-        }
-    }
-
-    .messages-area {
-        .profile {
-            padding: 5px;
-            font-size: 16px;
-
-            .picture {
-                .name {
-                    font-weight: bold;
-                }
-            }
-
-            .information {
-                padding-top: 10px;
-
-                ul {
-                    list-style: none;
-                    margin: 0;
-                }
-            }
-
-            .actions {
-                padding-top: 10px;
-            }
-        }
-
-        .name {
-            font-weight: bold;
-        }
-
-        .messages {
-            height: 500px;
-            overflow-y: auto;
-
-            .blocktime {
-                clear: both;
-                font-weight: bold;
-                text-align: center;
-            }
-
-            .message {
-
-                .deletemessagecheckbox {
-                    display: none;
-                }
-
-                .content {
-                    border: 1px solid black;
-                    padding-left: 5px;
-                    margin-bottom: 5px;
-                    font-size: 10px;
-                    word-wrap: break-word;
-                    width: 80%;
-                }
-
-                .content.left {
-                    float: left;
-                }
-
-                .content.right {
-                    float: right;
-                }
-            }
-        }
-
-        .response textarea {
-            width: 80%;
         }
     }
 }
